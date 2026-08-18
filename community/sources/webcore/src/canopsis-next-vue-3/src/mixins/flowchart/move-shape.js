@@ -1,4 +1,5 @@
 import { SHAPES } from '@/constants';
+
 import { roundByStep } from '@/helpers/flowchart/round';
 
 export const moveShapesMixin = {

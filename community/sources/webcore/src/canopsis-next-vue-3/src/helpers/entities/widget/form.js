@@ -20,6 +20,10 @@ import {
   formToExternalDataTableWidgetParameters,
 } from './forms/external-data-table';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
+import {
+  formToServiceWeatherWidgetParameters,
+  serviceWeatherWidgetParametersToForm,
+} from './forms/service-weather';
 import { textWidgetParametersToForm } from './forms/text';
 
 /**
@@ -177,6 +181,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
+    [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
   };
 
@@ -217,8 +222,7 @@ export const generatePreparedDefaultAlarmListWidget = () =>
  *
  * @return {WidgetForm}
  */
-export const generateDefaultContextWidgetForm = () =>
-  widgetToForm({ type: WIDGET_TYPES.context });
+export const generateDefaultContextWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.context });
 
 /**
  * Generate context widget with default parameters.
@@ -293,6 +297,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
+    [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
   };
 

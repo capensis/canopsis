@@ -106,17 +106,20 @@
 <script>
 import { computed } from 'vue';
 
-import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
-import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 import {
   DATETIME_FORMATS,
   PBEHAVIOR_LIST_FIELDS,
   PATTERN_DURATION_FORMAT,
   TIME_UNITS,
 } from '@/constants';
+
 import { convertDateToTimezoneDateString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
+
 import { useI18n } from '@/hooks/i18n';
+
+import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
+import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
 import PbehaviorActions from './partials/pbehavior-actions.vue';
 import PbehaviorsListAlarmFilteringBtn from './partials/pbehaviors-list-alarm-filtering-btn.vue';

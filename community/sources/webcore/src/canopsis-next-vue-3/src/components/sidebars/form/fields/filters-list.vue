@@ -15,9 +15,11 @@
 <script>
 import { pick } from 'lodash';
 
-import FiltersList from '@/components/other/filter/filters-list.vue';
 import { MODALS } from '@/constants';
+
 import { uid } from '@/helpers/uid';
+
+import FiltersList from '@/components/other/filter/filters-list.vue';
 
 export default {
   components: { FiltersList },

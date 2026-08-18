@@ -121,10 +121,7 @@ export const getEntityChildrenElements = ({
         getShowMoreElements,
       });
 
-      elements.push(
-        createNodeElement(childId, child, hasChildren),
-        ...childChildrenElements,
-      );
+      elements.push(createNodeElement(childId, child, hasChildren), ...childChildrenElements);
     }
 
     elements.push(createEdgeElement(childId, entity._id));

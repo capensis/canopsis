@@ -51,10 +51,11 @@
 import { cloneDeep, find, isEqual, isObject, isString } from 'lodash';
 import { computed, onMounted, provide, ref, watch } from 'vue';
 
-import ViewForm from '@/components/other/view/form/view-form.vue';
 import { MAX_LIMIT, MODALS } from '@/constants';
+
 import { viewToForm, viewToRequest } from '@/helpers/entities/view/form';
 import { uid } from '@/helpers/uid';
+
 import { useAuth } from '@/hooks/auth';
 import { useRegisterClickOutsideHandler } from '@/hooks/click-outside';
 import { useForm } from '@/hooks/form';
@@ -62,6 +63,8 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useView } from '@/hooks/store/modules/view';
+
+import ViewForm from '@/components/other/view/form/view-form.vue';
 
 /**
  * Modal to create view

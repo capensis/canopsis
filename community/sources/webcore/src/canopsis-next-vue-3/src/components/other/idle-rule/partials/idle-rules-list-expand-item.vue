@@ -37,11 +37,14 @@
 <script>
 import { computed, ref } from 'vue';
 
-import IdleRulePatternsForm from '@/components/other/idle-rule/form/idle-rule-patterns-form.vue';
 import { PATTERNS_FIELDS } from '@/constants';
+
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
+
 import { useI18n } from '@/hooks/i18n';
+
+import IdleRulePatternsForm from '@/components/other/idle-rule/form/idle-rule-patterns-form.vue';
 
 import IdleRulesSummaryTab from './idle-rules-summary-tab.vue';
 

@@ -10,8 +10,9 @@
 </template>
 
 <script>
-import ExternalDataTableDatabaseField from '@/components/other/external-data-table/form/fields/exterrnal-data-table-database-field.vue';
 import { useI18n } from '@/hooks/i18n';
+
+import ExternalDataTableDatabaseField from '@/components/other/external-data-table/form/fields/exterrnal-data-table-database-field.vue';
 
 export default {
   components: { ExternalDataTableDatabaseField },

@@ -1,5 +1,8 @@
 import { removeKeyFromEntities } from '@/helpers/array';
-import { metaAlarmRuleInfosItemToForm, metaAlarmRuleTagsToForm } from '@/helpers/entities/meta-alarm/rule/form';
+import {
+  metaAlarmRuleInfosItemToForm,
+  metaAlarmRuleTagsToForm,
+} from '@/helpers/entities/meta-alarm/rule/form';
 
 /**
  * @typedef {Object} MetaAlarmLink

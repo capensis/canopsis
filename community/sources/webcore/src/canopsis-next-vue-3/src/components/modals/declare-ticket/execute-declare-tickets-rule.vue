@@ -51,20 +51,24 @@
 <script>
 import { groupBy, keyBy } from 'lodash';
 
-import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
-import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
 import { SOCKET_ROOMS } from '@/config';
 import { WEBHOOK_EXECUTION_STATUSES, MODALS } from '@/constants';
+
+import Socket from '@/plugins/socket/services/socket';
+
 import {
   isWebhookExecutionFinished,
   isWebhookExecutionRunning,
   isWebhookExecutionSucceeded,
 } from '@/helpers/entities/webhook-execution/entity';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
-import Socket from '@/plugins/socket/services/socket';
+
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
+import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
 
 export default {
   name: MODALS.executeDeclareTickets,

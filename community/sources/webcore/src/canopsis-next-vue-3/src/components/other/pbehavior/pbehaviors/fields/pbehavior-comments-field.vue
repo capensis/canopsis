@@ -18,6 +18,7 @@
 
 <script>
 import { pbehaviorCommentItemToForm } from '@/helpers/entities/pbehavior/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import PbehaviorCommentField from './pbehavior-comment-field.vue';

@@ -2,6 +2,7 @@ import {
   DYNAMIC_INFO_FIELDS_TO_LABELS_KEYS,
   DYNAMIC_INFO_GROUPED_ADVANCED_SEARCH_FIELDS,
 } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import { useAdvancedSearchDynamicInfoAttributes } from './attributes-map';

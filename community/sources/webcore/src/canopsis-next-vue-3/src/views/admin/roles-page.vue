@@ -15,13 +15,15 @@
 </template>
 
 <script>
-import Roles from '@/components/other/role/roles.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useRole } from '@/hooks/store/modules/role';
+
+import Roles from '@/components/other/role/roles.vue';
 
 export default {
   components: {

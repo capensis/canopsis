@@ -18,8 +18,9 @@
 </template>
 
 <script>
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import { useFormModels } from '@/hooks/form';
+
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   components: { TextEditorField },

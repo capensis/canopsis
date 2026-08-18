@@ -35,12 +35,14 @@
 <script>
 import { computed } from 'vue';
 
-import TagForm from '@/components/other/tag/form/tag-form.vue';
 import { tagToForm, formToTag } from '@/helpers/entities/tag/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import TagForm from '@/components/other/tag/form/tag-form.vue';
 
 export default {
   components: {

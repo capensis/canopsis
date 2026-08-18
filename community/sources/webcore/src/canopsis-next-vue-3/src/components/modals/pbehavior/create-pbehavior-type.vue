@@ -34,13 +34,15 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 
-import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue';
 import { formToPbehaviorType, pbehaviorTypeToForm } from '@/helpers/entities/pbehavior/type/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+
+import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue';
 
 export default {
   components: { PbehaviorTypeForm },

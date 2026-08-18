@@ -48,6 +48,7 @@
 import { computed } from 'vue';
 
 import { ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import EntityInfoPropertyTypeField from './form/entity-info-property-type-field.vue';

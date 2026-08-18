@@ -27,6 +27,7 @@ import {
   PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
   PATTERN_OPERATORS_WITHOUT_VALUE,
 } from '@/constants';
+
 import { isArrayOperator, isIntervalDateOperator } from '@/helpers/entities/pattern/form';
 import {
   advancedSearchRuleItemToFormItem,
@@ -38,6 +39,7 @@ import {
   isNumberValueType,
   getRangeValueItemType,
 } from '@/helpers/search/advanced-search';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 

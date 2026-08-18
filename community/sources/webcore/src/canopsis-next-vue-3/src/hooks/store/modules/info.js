@@ -4,10 +4,12 @@ import { computed } from 'vue';
 
 import { DEFAULT_APP_TITLE } from '@/config';
 import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
+
+import { useAppInfoStore } from '@/stores/modules/app-info';
+
 import { compile } from '@/helpers/handlebars';
 import { sanitizeHtml } from '@/helpers/html';
 import { groupedPermissionToPermission } from '@/helpers/permission';
-import { useAppInfoStore } from '@/stores/modules/app-info';
 
 /**
  * App info store facade.

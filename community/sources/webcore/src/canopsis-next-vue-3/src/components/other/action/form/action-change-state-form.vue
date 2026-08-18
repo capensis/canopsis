@@ -25,6 +25,7 @@
 import { computed } from 'vue';
 
 import { ALARM_STATES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import ActionNoteForm from './action-note-form.vue';

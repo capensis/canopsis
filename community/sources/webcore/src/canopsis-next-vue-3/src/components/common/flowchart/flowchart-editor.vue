@@ -52,8 +52,10 @@ import { cloneDeep, isEqual, omit } from 'lodash';
 
 import { COLORS } from '@/config';
 import { KEY_CODES, SHAPES } from '@/constants';
+
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 import { roundByStep } from '@/helpers/flowchart/round';
+
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { selectedShapesMixin } from '@/mixins/flowchart/selected';

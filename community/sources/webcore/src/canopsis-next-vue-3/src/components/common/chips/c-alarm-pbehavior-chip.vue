@@ -11,6 +11,7 @@
 import { computed } from 'vue';
 
 import { COLORS } from '@/config';
+
 import { getMostReadableTextColor } from '@/helpers/color';
 
 export default {

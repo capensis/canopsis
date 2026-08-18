@@ -12,6 +12,7 @@
 
 <script>
 import { ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 
 export default {

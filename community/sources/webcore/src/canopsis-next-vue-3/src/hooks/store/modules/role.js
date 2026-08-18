@@ -1,8 +1,9 @@
 import { storeToRefs } from 'pinia';
 
+import { useRoleStore } from '@/stores/modules/role';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
-import { useRoleStore } from '@/stores/modules/role';
 
 /**
  * Creates hooks for accessing role-related store operations.

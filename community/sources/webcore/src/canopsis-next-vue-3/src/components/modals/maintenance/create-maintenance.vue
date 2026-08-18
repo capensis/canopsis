@@ -36,12 +36,14 @@
 <script setup>
 import { computed, inject } from 'vue';
 
-import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 import { maintenanceToForm } from '@/helpers/entities/maintenance/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 
 const props = defineProps({
   modal: {

@@ -54,15 +54,6 @@
 <script>
 import { filter } from 'lodash';
 
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
-import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
-import FieldResizeColumnBehavior from '@/components/sidebars/alarm/form/fields/resize-column-behavior.vue';
-import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
-import FieldDefaultSortColumnsWithTemplate from '@/components/sidebars/form/fields/default-sort-columns-with-template.vue';
-import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause-settings.vue';
-import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import {
   ALARM_EXPORT_PDF_FIELDS,
   ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
@@ -74,9 +65,22 @@ import {
   SIDE_BARS,
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
+
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
+
 import { formBaseMixin } from '@/mixins/form';
+
+import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
+import FieldResizeColumnBehavior from '@/components/sidebars/alarm/form/fields/resize-column-behavior.vue';
+import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
+import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
+import FieldDefaultSortColumnsWithTemplate from '@/components/sidebars/form/fields/default-sort-columns-with-template.vue';
+import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause-settings.vue';
+import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 
 export default {
   components: {

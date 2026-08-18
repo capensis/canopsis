@@ -30,13 +30,16 @@
 <script>
 import { computed } from 'vue';
 
-import FlowchartMapForm from '@/components/other/map/form/flowchart-map-form.vue';
 import { MODALS } from '@/constants';
+
 import { formToMap, mapToForm } from '@/helpers/entities/map/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import FlowchartMapForm from '@/components/other/map/form/flowchart-map-form.vue';
 
 export default {
   name: MODALS.createFlowchartMap,

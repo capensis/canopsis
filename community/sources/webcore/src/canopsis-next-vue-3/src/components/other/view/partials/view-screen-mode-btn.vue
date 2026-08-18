@@ -1,9 +1,14 @@
 <template>
-  <v-menu :location="location" :offset="10" class="view-screen-mode-btn">
+  <v-menu
+    :location="location"
+    :offset="10"
+    class="view-screen-mode-btn"
+    attach
+  >
     <template #activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
-        :size="large ? 'x-large' : undefined"
+        :size="large ? 'x-large' : 'default'"
         class="view-screen-mode-btn__button"
         icon
       >
@@ -12,7 +17,12 @@
     </template>
 
     <v-list class="view-screen-mode-btn__list bg-grey-darken-3 pa-0">
-      <v-tooltip v-for="item in availableScreenModes" :key="`tooltip-${item.key}`" location="left">
+      <v-tooltip
+        v-for="item in availableScreenModes"
+        :key="`tooltip-${item.key}`"
+        location="left"
+        attach
+      >
         <template #activator="{ props }">
           <v-list-item
             v-bind="props"

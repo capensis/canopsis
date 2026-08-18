@@ -59,6 +59,7 @@ import { isEqual } from 'lodash';
 import { computed, watch } from 'vue';
 
 import { MODALS } from '@/constants';
+
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

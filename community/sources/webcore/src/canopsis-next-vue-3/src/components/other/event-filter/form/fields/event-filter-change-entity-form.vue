@@ -69,8 +69,9 @@
 <script>
 import { computed } from 'vue';
 
-import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 import { useFormModels } from '@/hooks/form';
+
+import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 
 export default {
   components: {

@@ -2,6 +2,7 @@ import { isArray, sortBy } from 'lodash';
 import { computed, unref } from 'vue';
 
 import { groupedPermissionToPermission } from '@/helpers/permission';
+
 import { useCurrentUserPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';

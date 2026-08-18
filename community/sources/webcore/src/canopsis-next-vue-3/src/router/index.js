@@ -9,9 +9,12 @@ import {
   ROUTES_NAMES,
   USER_PERMISSIONS,
 } from '@/constants';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
+
 import { usePopupsStore } from '@/plugins/popups/stores';
+
 import { useAuthStore } from '@/stores/modules/auth';
+
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
 const PlaceholderPage = () => import('@/views/placeholder-page.vue');
 const AdminRights = () => import('@/views/admin/rights-page.vue');

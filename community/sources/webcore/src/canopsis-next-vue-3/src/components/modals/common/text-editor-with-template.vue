@@ -36,9 +36,11 @@
 </template>
 
 <script>
-import TextEditorWithTemplateField from '@/components/common/text-editor/text-editor-with-template.vue';
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
+
 import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
+
+import TextEditorWithTemplateField from '@/components/common/text-editor/text-editor-with-template.vue';
 
 export default {
   components: { TextEditorWithTemplateField },

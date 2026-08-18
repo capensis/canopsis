@@ -105,12 +105,14 @@
 <script>
 import { computed } from 'vue';
 
-import ViewSelector from '@/components/forms/fields/view-selector.vue';
-import UserAuthKeyField from '@/components/other/users/form/fields/user-auth-key-field.vue';
 import { GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
+
 import { useAuth, useCRUDPermissions } from '@/hooks/auth';
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+
+import ViewSelector from '@/components/forms/fields/view-selector.vue';
+import UserAuthKeyField from '@/components/other/users/form/fields/user-auth-key-field.vue';
 
 export default {
   components: {

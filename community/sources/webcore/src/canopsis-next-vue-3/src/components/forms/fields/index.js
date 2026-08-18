@@ -67,6 +67,8 @@ export { default as CPbehaviorPatternsField } from './pbehavior/c-pbehavior-patt
 export { default as CPbehaviorReasonField } from './pbehavior/c-pbehavior-reason-field.vue';
 export { default as CPbehaviorTypeField } from './pbehavior/c-pbehavior-type-field.vue';
 export { default as CServiceWeatherPatternsField } from './service-weather/c-service-weather-patterns-field.vue';
+export { default as CServiceWeatherIconField } from './service-weather/c-service-weather-icon-field.vue';
+export { default as CServiceWeatherStateCounterField } from './service-weather/c-service-weather-state-counter-field.vue';
 export { default as CSortColumnsField } from './sort-column/c-sort-columns-field.vue';
 export { default as FileSelector } from './file-selector.vue';
 export * from './compat';

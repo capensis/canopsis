@@ -42,12 +42,13 @@
 </template>
 
 <script>
+import { ALARM_METRIC_PARAMETERS, METRICS_QUICK_RANGES } from '@/constants';
+
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
-import { ALARM_METRIC_PARAMETERS, METRICS_QUICK_RANGES } from '@/constants';
 
 import FieldAlarmMetricPresets from './fields/alarm-metric-presets.vue';
 import FieldFontSize from './fields/font-size.vue';

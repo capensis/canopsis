@@ -31,16 +31,19 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import { LLM_SOCKET_CONTEXTS } from '@/constants';
+
 import { linkRuleToForm, formToLinkRule, isDefaultSourceCode } from '@/helpers/entities/link/form';
+
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
+
+import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   components: {

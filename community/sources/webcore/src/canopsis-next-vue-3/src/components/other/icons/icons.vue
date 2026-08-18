@@ -17,17 +17,19 @@
 import { onMounted, watch } from 'vue';
 
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
+import {
+  registerCustomIcon,
+  customIconsRegistry,
+  unregisterCustomIcon,
+} from '@/plugins/vuetify/icons';
+
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useIcon } from '@/hooks/store/modules/icon';
-import {
-  registerCustomIcon,
-  customIconsRegistry,
-  unregisterCustomIcon,
-} from '@/plugins/vuetify/icons';
 
 import IconsList from './icons-list.vue';
 

@@ -31,19 +31,22 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
+
 import {
   declareTicketRuleToForm,
   formToDeclareTicketRule,
 } from '@/helpers/entities/declare-ticket/rule/form';
+
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createDeclareTicketRule,

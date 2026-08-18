@@ -64,14 +64,17 @@
 <script>
 import { computed } from 'vue';
 
-import FileDragSelector from '@/components/forms/fields/file-drag-selector.vue';
 import { EXTERNAL_METRIC_UNITS } from '@/constants';
+
 import { saveCsvFile } from '@/helpers/file/files';
 import { convertFileSizeToUnit } from '@/helpers/file/size';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 import { useInfo } from '@/hooks/store/modules/info';
+
+import FileDragSelector from '@/components/forms/fields/file-drag-selector.vue';
 
 export default {
   components: {

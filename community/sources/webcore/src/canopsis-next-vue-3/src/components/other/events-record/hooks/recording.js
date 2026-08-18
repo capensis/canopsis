@@ -1,4 +1,5 @@
 import { MODALS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';

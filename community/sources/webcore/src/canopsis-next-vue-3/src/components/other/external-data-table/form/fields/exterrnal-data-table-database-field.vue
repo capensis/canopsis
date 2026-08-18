@@ -14,6 +14,7 @@
 import { computed } from 'vue';
 
 import { EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 

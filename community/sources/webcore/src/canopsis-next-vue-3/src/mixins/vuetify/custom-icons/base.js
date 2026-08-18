@@ -1,9 +1,10 @@
-import { normalizeHtml } from '@/helpers/html';
 import {
   customIconsRegistry,
   registerCustomIcon,
   unregisterCustomIcon,
 } from '@/plugins/vuetify/icons';
+
+import { normalizeHtml } from '@/helpers/html';
 
 export const vuetifyCustomIconsBaseMixin = {
   methods: {

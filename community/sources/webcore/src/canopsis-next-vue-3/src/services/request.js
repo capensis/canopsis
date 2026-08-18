@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { LOGOUT_RESPONSE_STATUSES } from '@/constants';
+
 import localStorageService from '@/services/local-storage';
 
 /**

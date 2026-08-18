@@ -8,6 +8,9 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
+
+import { i18n } from '@/i18n';
+
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
 import { getColorByHash } from '@/helpers/color';
 import {
@@ -24,7 +27,6 @@ import {
 } from '@/helpers/date/date';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { uid } from '@/helpers/uid';
-import { i18n } from '@/i18n';
 
 /**
  * @typedef {Object} PbehaviorReason
@@ -483,10 +485,7 @@ export const createDowntimePbehavior = ({
  * @returns {string}
  */
 export const getPbehaviorColor = (pbehavior = {}, type = pbehavior.type) =>
-  pbehavior.color
-  || type?.color
-  || pbehavior.type?.color
-  || getColorByHash(pbehavior._id);
+  pbehavior.color || type?.color || pbehavior.type?.color || getColorByHash(pbehavior._id);
 
 /**
  * Generates a default name for a pbehavior based on the provided entities.

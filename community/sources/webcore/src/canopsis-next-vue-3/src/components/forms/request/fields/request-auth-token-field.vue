@@ -39,11 +39,14 @@
 <script>
 import { computed } from 'vue';
 
-import ExternalAuthTokenField from '@/components/other/external-auth-token/form/fields/external-auth-token-field.vue';
 import { REQUEST_AUTH_TOKEN_TYPES } from '@/constants';
+
 import { gridFlexStyle } from '@/helpers/layout';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+
+import ExternalAuthTokenField from '@/components/other/external-auth-token/form/fields/external-auth-token-field.vue';
 
 export default {
   emits: ['update:value'],

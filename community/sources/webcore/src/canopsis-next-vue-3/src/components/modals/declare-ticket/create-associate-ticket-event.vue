@@ -48,19 +48,22 @@
 <script>
 import { computed } from 'vue';
 
-import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
-import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import { MODALS } from '@/constants';
+
 import {
   eventToAssociateTicketForm,
   formToAssociateTicketEvent,
 } from '@/helpers/entities/associate-ticket/event/form';
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
 /**
  * Modal to associate a ticket to an alarm.

@@ -11,11 +11,13 @@ import {
   ALARM_GROUPED_ADVANCED_SEARCH_FIELDS,
   PBEHAVIOR_PATTERN_PREFIX,
 } from '@/constants';
+
 import {
   isAlarmPatternField,
   isAlarmEntityPatternField,
   isPbehaviorPatternField,
 } from '@/helpers/search/advanced-search';
+
 import { useI18n } from '@/hooks/i18n';
 import { useEntityInfoProperty } from '@/hooks/store/modules/entity-info-property';
 
@@ -42,12 +44,11 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
     entityItems: entityInfosItems,
   } = useEntityInfosKeys();
 
-  const {
-    entityInfoPropertiesWithAlias,
-    entityInfoPropertiesPending,
-  } = useEntityInfoProperty();
+  const { entityInfoPropertiesWithAlias, entityInfoPropertiesPending } = useEntityInfoProperty();
 
-  const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({ infosItems: alarmInfosItems });
+  const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({
+    infosItems: alarmInfosItems,
+  });
   const { attributesMap: entityAttributesMap } = useAdvancedSearchEntityAttributes({
     infosItems: entityInfosItems,
     prefix: ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity,
@@ -62,27 +63,39 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
   /**
    * HAS FLAGS
    */
-  const hasOr = computed(() => unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
-  const hasAlarmField = computed(() => unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)));
-  const hasEntityField = computed(() => unref(rules).some(({ attribute }) => isAlarmEntityPatternField(attribute)));
-  const hasPbehaviorField = computed(() => (
-    unref(rules).some(({ attribute }) => (
-      isPbehaviorPatternField(attribute, ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX)
-    ))
-  ));
+  const hasOr = computed(() =>
+    unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or),
+  );
+  const hasAlarmField = computed(() =>
+    unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)),
+  );
+  const hasEntityField = computed(() =>
+    unref(rules).some(({ attribute }) => isAlarmEntityPatternField(attribute)),
+  );
+  const hasPbehaviorField = computed(() =>
+    unref(rules).some(({ attribute }) =>
+      isPbehaviorPatternField(attribute, ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX),
+    ),
+  );
 
   /**
    * ALLOW FLAGS
    */
-  const allowOr = computed(() => [
-    hasEntityField.value,
-    hasPbehaviorField.value,
-    hasAlarmField.value,
-  ].filter(Boolean).length <= 1);
+  const allowOr = computed(
+    () =>
+      [hasEntityField.value, hasPbehaviorField.value, hasAlarmField.value].filter(Boolean).length <=
+      1,
+  );
 
-  const allowAlarmFields = computed(() => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value));
-  const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
-  const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
+  const allowAlarmFields = computed(
+    () => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value),
+  );
+  const allowEntityFields = computed(
+    () => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value),
+  );
+  const allowPbehaviorFields = computed(
+    () => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value),
+  );
 
   const attributesMap = computed(() => ({
     ...alarmAttributesMap.value,

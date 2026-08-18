@@ -15,6 +15,7 @@
 import { toRef } from 'vue';
 
 import { useRemediationInstructionStatsRate } from '@/components/other/remediation/instruction-stats/hooks/remediation-instruction-stats';
+
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
 import { useNotificationActiveId } from './hooks/notifications';

@@ -8,6 +8,7 @@ import {
   ENTITIES_TYPES,
   ENTITY_FIELDS_TO_LABELS_KEYS,
 } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 /**

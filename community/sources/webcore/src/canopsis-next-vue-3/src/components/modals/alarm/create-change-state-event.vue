@@ -37,13 +37,15 @@
 <script>
 import { computed } from 'vue';
 
-import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import { ALARM_STATES, MODALS } from '@/constants';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
 /**
  * Modal to create a 'change-state' event

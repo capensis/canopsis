@@ -1,4 +1,8 @@
-import { ALARM_LINK_ICON_CHIP_COLUMN_GAP, ALARM_LINK_ICON_CHIP_WIDTH, ALARM_LINK_TD_PADDINGS } from '@/constants';
+import {
+  ALARM_LINK_ICON_CHIP_COLUMN_GAP,
+  ALARM_LINK_ICON_CHIP_WIDTH,
+  ALARM_LINK_TD_PADDINGS,
+} from '@/constants';
 
 /**
  * @typedef {0 | 1 | 2} AlarmListWidgetDense
@@ -25,9 +29,7 @@ export const generateAlarmDetailsId = (alarmId, widgetId) => `${alarmId}_${widge
 export const getAlarmIdFromDetailsId = (detailsId, widgetId) => {
   const suffix = `_${widgetId}`;
 
-  return detailsId?.endsWith?.(suffix)
-    ? detailsId.slice(0, -suffix.length)
-    : detailsId;
+  return detailsId?.endsWith?.(suffix) ? detailsId.slice(0, -suffix.length) : detailsId;
 };
 
 /**
@@ -55,9 +57,11 @@ export const getAlarmDetailsDataPreparer = widgetId => data =>
  * @returns {`${number}px`}
  */
 export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) =>
-  `${ALARM_LINK_ICON_CHIP_WIDTH * linksInRowCount
-    + ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1)
-    + ALARM_LINK_TD_PADDINGS[dense] * 2}px`;
+  `${
+    ALARM_LINK_ICON_CHIP_WIDTH * linksInRowCount +
+    ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1) +
+    ALARM_LINK_TD_PADDINGS[dense] * 2
+  }px`;
 
 /**
  * Get the ID for the more info template of an alarm widget.
@@ -65,8 +69,7 @@ export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) =>
  * @param {string} widgetId - The ID of the widget.
  * @returns {string} The more info template ID.
  */
-export const getAlarmWidgetMoreInfoTemplateId = (widgetId = '') =>
-  `${widgetId}-moreInfoTemplate`;
+export const getAlarmWidgetMoreInfoTemplateId = (widgetId = '') => `${widgetId}-moreInfoTemplate`;
 
 /**
  * Get the ID for the column template of an alarm widget.

@@ -8,6 +8,7 @@
 
 <script>
 import { EVENT_ENTITY_TYPES } from '@/constants';
+
 import {
   isWebhookExecutionFailed,
   isWebhookExecutionSucceeded,

@@ -1,4 +1,7 @@
-import { INSTRUCTION_EXECUTION_ICONS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+import {
+  INSTRUCTION_EXECUTION_ICONS,
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
+} from '@/constants';
 
 /**
  * Check type is instruction without any execution.
@@ -15,11 +18,12 @@ export const hasInstructionWithoutAnyExecution = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconManualInProgress = icon => [
-  INSTRUCTION_EXECUTION_ICONS.manualInProgress,
-  INSTRUCTION_EXECUTION_ICONS.manualFailedWithInProgress,
-  INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithInProgress,
-].includes(icon);
+export const isInstructionExecutionIconManualInProgress = icon =>
+  [
+    INSTRUCTION_EXECUTION_ICONS.manualInProgress,
+    INSTRUCTION_EXECUTION_ICONS.manualFailedWithInProgress,
+    INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithInProgress,
+  ].includes(icon);
 
 /**
  * Check type is auto in progress.
@@ -27,11 +31,12 @@ export const isInstructionExecutionIconManualInProgress = icon => [
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconAutoInProgress = icon => [
-  INSTRUCTION_EXECUTION_ICONS.autoInProgress,
-  INSTRUCTION_EXECUTION_ICONS.autoFailedWithInProgress,
-  INSTRUCTION_EXECUTION_ICONS.autoSuccessfulWithInProgress,
-].includes(icon);
+export const isInstructionExecutionIconAutoInProgress = icon =>
+  [
+    INSTRUCTION_EXECUTION_ICONS.autoInProgress,
+    INSTRUCTION_EXECUTION_ICONS.autoFailedWithInProgress,
+    INSTRUCTION_EXECUTION_ICONS.autoSuccessfulWithInProgress,
+  ].includes(icon);
 
 /**
  * Check type is in progress.

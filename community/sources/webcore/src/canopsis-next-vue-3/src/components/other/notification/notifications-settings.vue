@@ -29,6 +29,7 @@
 import { onMounted, ref } from 'vue';
 
 import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
+
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';

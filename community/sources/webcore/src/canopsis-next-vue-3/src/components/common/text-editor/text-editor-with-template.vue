@@ -21,8 +21,9 @@
 <script>
 import { computed } from 'vue';
 
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
+
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   components: { TextEditorField },

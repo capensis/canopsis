@@ -34,6 +34,7 @@
 import { cloneDeep, isEqual } from 'lodash';
 
 import { metricsSettingsToForm } from '@/helpers/entities/metrics-settings/form';
+
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useMetricsSettings } from '@/hooks/store/modules/metrics-settings';
 

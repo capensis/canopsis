@@ -84,9 +84,11 @@
 import { mapActions } from 'pinia';
 
 import { MODALS, ROUTES_NAMES } from '@/constants';
+
+import { useViewStore } from '@/stores/modules/view';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
-import { useViewStore } from '@/stores/modules/view';
 
 export default {
   mixins: [activeViewMixin, viewRouterMixin],

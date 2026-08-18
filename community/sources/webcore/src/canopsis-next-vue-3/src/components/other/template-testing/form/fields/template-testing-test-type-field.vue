@@ -22,6 +22,7 @@ import {
   TEMPLATE_TESTING_TEST_TYPES,
   TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS,
 } from '@/constants';
+
 import { useCurrentUserPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 

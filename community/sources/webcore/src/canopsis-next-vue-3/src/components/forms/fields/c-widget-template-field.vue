@@ -16,6 +16,7 @@
 import { computed } from 'vue';
 
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

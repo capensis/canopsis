@@ -25,6 +25,7 @@
 
 <script>
 import { externalDataItemToForm } from '@/helpers/entities/shared/external-data/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import ExternalDataItemForm from './external-data-item-form.vue';

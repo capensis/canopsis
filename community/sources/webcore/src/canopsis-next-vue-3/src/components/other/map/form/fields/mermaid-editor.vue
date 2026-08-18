@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 import { formMixin } from '@/mixins/form';
+
+import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
 import AddLocationBtn from './add-location-btn.vue';
 import MermaidCodeEditor from './mermaid-code-editor.vue';

@@ -16,7 +16,10 @@ export const findQuickActionIndex = (quickActions = [], action) =>
       return action.link;
     }
 
-    return quickAction === action.type || ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP[action.type] === quickAction;
+    return (
+      quickAction === action.type ||
+      ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP[action.type] === quickAction
+    );
   });
 
 /**
@@ -55,7 +58,9 @@ export const sortActionsByQuickActions = (actions = [], quickActions = []) =>
  * @returns {number} The number of inline actions to display, including the menu button when needed.
  */
 export const getActionsInlineCount = (actions = [], quickActions = []) => {
-  const filteredActions = actions.filter(action => findQuickActionIndex(quickActions, action) !== -1);
+  const filteredActions = actions.filter(
+    action => findQuickActionIndex(quickActions, action) !== -1,
+  );
 
   if (!filteredActions.length) {
     return 0;

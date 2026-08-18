@@ -40,8 +40,9 @@
 <script>
 import { computed } from 'vue';
 
-import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue';
 import { useI18n } from '@/hooks/i18n';
+
+import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue';
 
 export default {
   components: { PlaylistTabItem },

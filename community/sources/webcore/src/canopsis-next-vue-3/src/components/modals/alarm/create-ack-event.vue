@@ -52,15 +52,18 @@
 <script>
 import { computed, ref } from 'vue';
 
-import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
-import AckEventForm from '@/components/widgets/alarm/forms/ack-event-form.vue';
 import { ACK_MODAL_ACTIONS_TYPES, MODALS } from '@/constants';
+
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
+import AckEventForm from '@/components/widgets/alarm/forms/ack-event-form.vue';
 
 /**
  * Modal to create an ack event

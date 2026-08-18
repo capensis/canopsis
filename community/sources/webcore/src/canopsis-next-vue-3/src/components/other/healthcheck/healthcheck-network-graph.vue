@@ -14,7 +14,6 @@
 <script>
 import { get, isNil, minBy } from 'lodash';
 
-import NetworkGraph from '@/components/common/chart/network-graph.vue';
 import { COLORS } from '@/config';
 import {
   HEALTHCHECK_ENGINES_NAMES,
@@ -23,12 +22,15 @@ import {
   HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS,
   MODALS,
 } from '@/constants';
+
 import {
   getHealthcheckInfoDiv,
   getHealthcheckNodeRenderedPositionDiff,
 } from '@/helpers/charts/healthcheck';
 import { convertDateToString } from '@/helpers/date/date';
 import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
+
+import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
   components: { NetworkGraph },

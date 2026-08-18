@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 import { ROUTES_NAMES, ROUTES, RESPONSE_STATUSES } from '@/constants';
+
 import { useAuth } from '@/hooks/auth';
 import { useForm } from '@/hooks/form';
 import { useInfo } from '@/hooks/store/modules/info';

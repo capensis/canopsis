@@ -50,9 +50,11 @@
 </template>
 
 <script>
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { MODALS, WIDGET_ICONS, WIDGET_TYPES } from '@/constants';
+
 import { addKeyInEntity } from '@/helpers/array';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

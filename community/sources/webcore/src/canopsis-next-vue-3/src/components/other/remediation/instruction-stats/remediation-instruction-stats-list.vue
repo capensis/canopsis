@@ -78,12 +78,15 @@
 <script>
 import { computed } from 'vue';
 
-import RatingField from '@/components/forms/fields/rating-field.vue';
 import { USER_PERMISSIONS } from '@/constants';
+
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
+
+import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import AffectAlarmStates from './partials/affect-alarm-states.vue';
 import RemediationInstructionStatsListExpandPanel from './partials/remediation-instruction-stats-list-expand-panel.vue';

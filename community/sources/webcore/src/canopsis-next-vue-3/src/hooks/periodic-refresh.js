@@ -1,11 +1,4 @@
-import {
-  inject,
-  onBeforeMount,
-  onBeforeUnmount,
-  onMounted,
-  unref,
-  watch,
-} from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, onMounted, unref, watch } from 'vue';
 
 import { VIEW_PERIODIC_REFRESH_KEY } from '@/constants';
 

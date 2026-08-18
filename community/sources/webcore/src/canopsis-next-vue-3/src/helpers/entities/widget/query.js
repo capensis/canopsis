@@ -23,6 +23,10 @@ import {
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
 } from '@/helpers/entities/metric/query';
+import {
+  convertWeatherUserPreferenceToQuery,
+  convertWeatherWidgetToQuery,
+} from '@/helpers/entities/service-weather/query';
 
 /**
  * This function converts userPreference to query Object
@@ -39,6 +43,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -63,6 +68,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

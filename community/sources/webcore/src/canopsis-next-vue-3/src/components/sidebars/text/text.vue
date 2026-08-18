@@ -18,6 +18,7 @@
 import { toRef } from 'vue';
 
 import { SIDE_BARS, TEXT_WIDGET_SANITIZE_OPTIONS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useWidgetSettings } from '@/hooks/widget/settings';
 

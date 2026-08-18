@@ -23,6 +23,7 @@
 
 <script>
 import { snmpRuleTagToForm } from '@/helpers/entities/snmp-rule/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
 

@@ -135,7 +135,10 @@ export const widgetStickyAlarmMixin = {
     },
 
     startScrollingForScrollbar() {
-      if (this.$refs.horizontalScrollbar && this.previousScrollTranslateY !== this.scrollBarTranslateY) {
+      if (
+        this.$refs.horizontalScrollbar &&
+        this.previousScrollTranslateY !== this.scrollBarTranslateY
+      ) {
         this.$refs.horizontalScrollbar.setOpacity('0');
       }
     },
@@ -225,10 +228,8 @@ export const widgetStickyAlarmMixin = {
 
       const { height: bodyHeight } = this.stickyTableBody.getBoundingClientRect();
       const { top: headerTop } = this.stickyTableHeader.getBoundingClientRect();
-      const {
-        top: actionsTop = 0,
-        height: actionsHeight = 0,
-      } = this.getStickyActionsEl()?.getBoundingClientRect() ?? {};
+      const { top: actionsTop = 0, height: actionsHeight = 0 } =
+        this.getStickyActionsEl()?.getBoundingClientRect() ?? {};
       const offset = headerTop - this.translateY - this.topBarHeight - actionsHeight;
       const actionsOffset = actionsTop - this.actionsTranslateY - this.topBarHeight;
 
@@ -243,9 +244,8 @@ export const widgetStickyAlarmMixin = {
       }
 
       const { bottom: bodyBottom } = this.stickyTableBody.getBoundingClientRect();
-      const {
-        height: scrollBarHeight = 0,
-      } = this.$refs.horizontalScrollbar?.$el.getBoundingClientRect() ?? {};
+      const { height: scrollBarHeight = 0 } =
+        this.$refs.horizontalScrollbar?.$el.getBoundingClientRect() ?? {};
 
       this.previousScrollTranslateY = this.scrollBarTranslateY;
       this.scrollBarTranslateY = Math.min(window.innerHeight - bodyBottom - scrollBarHeight, 0);

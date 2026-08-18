@@ -27,8 +27,10 @@ import {
   UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
   UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
 } from '@/constants';
-import { useI18n } from '@/hooks/i18n';
+
 import { featuresService } from '@/services/features';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   name: 'QuickAlarmActionsFormItem',

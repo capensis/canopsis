@@ -28,8 +28,11 @@ export const useValidationElementChildrenFields = (parent) => {
     const node = unref(parent);
     const nodeEl = node?.$el;
 
-    return fieldsWithInstances.filter(({ instance } = {}) =>
-      (nodeEl && nodeEl === instance?.$el) || nodeEl?.contains?.(instance?.$el) || isParent(instance, node),
+    return fieldsWithInstances.filter(
+      ({ instance } = {}) =>
+        (nodeEl && nodeEl === instance?.$el) ||
+        nodeEl?.contains?.(instance?.$el) ||
+        isParent(instance, node),
     );
   });
 };

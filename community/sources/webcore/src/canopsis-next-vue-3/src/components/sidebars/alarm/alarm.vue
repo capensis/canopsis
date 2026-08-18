@@ -265,7 +265,30 @@
 <script setup>
 import { computed, onMounted, ref, toRef } from 'vue';
 
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
+import {
+  ALARM_EXPORT_PDF_FIELDS,
+  ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
+  ALARM_TEMPLATE_FIELDS,
+  ALARM_FIELDS_TO_LABELS_KEYS,
+  ALARM_UNSORTABLE_FIELDS,
+  ENTITIES_TYPES,
+  ENTITY_TEMPLATE_FIELDS,
+  MAX_LIMIT,
+  SIDE_BARS,
+  WIDGET_TEMPLATES_TYPES,
+} from '@/constants';
+
+import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
+import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
+
+import { useI18n } from '@/hooks/i18n';
+import { useInfos } from '@/hooks/store/modules/infos';
+import { useTemplateVars } from '@/hooks/store/modules/template-vars';
+import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
+import { useVarsPrepare } from '@/hooks/vars/shared';
+import { useWidgetSettings } from '@/hooks/widget/settings';
+
 import FastPbehaviorForm from '@/components/sidebars/alarm/form/fast-pbehavior-form.vue';
 import FieldCommentTemplates from '@/components/sidebars/alarm/form/fields/comment-templates.vue';
 import FieldFastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
@@ -290,27 +313,8 @@ import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
-import {
-  ALARM_EXPORT_PDF_FIELDS,
-  ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
-  ALARM_TEMPLATE_FIELDS,
-  ALARM_FIELDS_TO_LABELS_KEYS,
-  ALARM_UNSORTABLE_FIELDS,
-  ENTITIES_TYPES,
-  ENTITY_TEMPLATE_FIELDS,
-  MAX_LIMIT,
-  SIDE_BARS,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
-import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
-import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
-import { useI18n } from '@/hooks/i18n';
-import { useInfos } from '@/hooks/store/modules/infos';
-import { useTemplateVars } from '@/hooks/store/modules/template-vars';
-import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
-import { useVarsPrepare } from '@/hooks/vars/shared';
-import { useWidgetSettings } from '@/hooks/widget/settings';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 
 defineOptions({
   name: SIDE_BARS.alarmSettings,

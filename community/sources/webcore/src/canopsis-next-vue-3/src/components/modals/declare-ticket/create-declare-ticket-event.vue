@@ -43,19 +43,22 @@
 import { keyBy } from 'lodash';
 import { computed, ref } from 'vue';
 
-import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 import { MODALS } from '@/constants';
+
 import { isSuccessStepTicketType } from '@/helpers/entities/alarm/step/entity';
 import {
   alarmsToDeclareTicketEventForm,
   formToDeclareTicketEvents,
 } from '@/helpers/entities/declare-ticket/event/form';
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 
 /**
  * Modal to declare a ticket.

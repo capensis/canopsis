@@ -30,15 +30,18 @@
 <script>
 import { onMounted } from 'vue';
 
-import PlaylistsList from '@/components/other/playlists/playlists-list.vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { USER_PERMISSIONS, MODALS } from '@/constants';
+
 import { convertQueryToRequest } from '@/helpers/query';
+
 import { useCRUDPermissions, useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
+
+import PlaylistsList from '@/components/other/playlists/playlists-list.vue';
 
 export default {
   components: {

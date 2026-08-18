@@ -1,4 +1,5 @@
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
+
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
 /**

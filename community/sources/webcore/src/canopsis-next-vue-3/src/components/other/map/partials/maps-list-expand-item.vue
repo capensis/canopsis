@@ -27,6 +27,7 @@
 
 <script>
 import { MAP_TYPES } from '@/constants';
+
 import { useMap } from '@/hooks/store/modules/map';
 
 import MapsListExpandFlowchartItem from './maps-list-expand-flowchart-item.vue';

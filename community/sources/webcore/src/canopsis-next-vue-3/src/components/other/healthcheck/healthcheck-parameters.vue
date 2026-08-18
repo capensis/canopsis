@@ -22,10 +22,13 @@
 </template>
 
 <script>
-import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue';
 import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
-import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form';
+
 import { useHealthcheckParametersStore } from '@/stores/modules/healthcheck-parameters';
+
+import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form';
+
+import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue';
 
 export default {
   components: { HealthcheckForm },

@@ -30,15 +30,17 @@
 <script>
 import { computed } from 'vue';
 
-import EntityInfoPropertyForm from '@/components/other/entity-info-property/form/entity-info-property-form.vue';
 import {
   entityInfoPropertyToForm,
   formToEntityInfoProperty,
 } from '@/helpers/entities/entity-info-property/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import EntityInfoPropertyForm from '@/components/other/entity-info-property/form/entity-info-property-form.vue';
 
 export default {
   components: {

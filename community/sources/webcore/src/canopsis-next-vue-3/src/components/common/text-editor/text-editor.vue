@@ -38,7 +38,9 @@ import 'jodit/esm/plugins/all';
 import 'jodit/es2021/jodit.min.css';
 
 import { BASE_URL, DEFAULT_SANITIZE_OPTIONS } from '@/config';
+
 import { sanitizeHtml } from '@/helpers/html';
+
 import { useI18n } from '@/hooks/i18n';
 
 import { useTextEditorUpload, useTextEditorVariables } from './hooks/text-editor';

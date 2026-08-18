@@ -30,12 +30,14 @@
 <script>
 import { computed } from 'vue';
 
-import IconForm from '@/components/other/icons/form/icon-form.vue';
 import { iconToForm, formToRequest } from '@/helpers/entities/icon/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import IconForm from '@/components/other/icons/form/icon-form.vue';
 
 export default {
   components: {

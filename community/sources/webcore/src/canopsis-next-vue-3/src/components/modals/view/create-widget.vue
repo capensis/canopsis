@@ -71,9 +71,11 @@ import {
   WIDGET_TYPES,
   WIDGET_TYPES_RULES,
 } from '@/constants';
+
+import { useAppInfoStore } from '@/stores/modules/app-info';
+
 import { getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
-import { useAppInfoStore } from '@/stores/modules/app-info';
 
 export default {
   name: MODALS.createWidget,

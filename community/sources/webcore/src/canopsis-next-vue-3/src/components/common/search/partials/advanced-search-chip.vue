@@ -127,11 +127,14 @@
 import { isArray } from 'lodash';
 import { computed, ref, watch, toRef, inject, nextTick, onMounted, onBeforeUnmount } from 'vue';
 
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
 import { KEY_CODES, REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
+
 import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
+
 import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useI18n } from '@/hooks/i18n';
+
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 export default {
   components: { VariablesList },

@@ -1,5 +1,6 @@
-import { groupedPermissionToPermission } from '@/helpers/permission';
 import { featuresService } from '@/services/features';
+
+import { groupedPermissionToPermission } from '@/helpers/permission';
 
 import { ALARM_LIST_ACTIONS_TYPES } from './alarm';
 import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './entity';

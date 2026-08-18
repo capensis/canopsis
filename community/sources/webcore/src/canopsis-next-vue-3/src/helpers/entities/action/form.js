@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
 
 import { ACTION_TYPES, ALARM_STATES, TIME_UNITS } from '@/constants';
+
 import { durationToForm } from '@/helpers/date/duration';
 
 /**

@@ -47,19 +47,22 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX } from '@/config';
 import { MAX_LIMIT, MODALS } from '@/constants';
+
 import {
   exportedGroupsAndViewsToRequest,
   getAllViewsFromGroups,
 } from '@/helpers/entities/view/form';
 import { getFileTextContent } from '@/helpers/file/file-select';
 import { saveJsonFile } from '@/helpers/file/files';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useView } from '@/hooks/store/modules/view';
+
+import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 import ViewsExportExpansionPanel from './partials/views-export-expansion-panel.vue';
 

@@ -27,11 +27,14 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 
-import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 import { MAX_LIMIT } from '@/constants';
+
 import { getTabsFromGroupsByIds } from '@/helpers/entities/playlist/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { useView } from '@/hooks/store/modules/view';
+
+import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
 export default {
   components: { DraggablePlaylistTabs },

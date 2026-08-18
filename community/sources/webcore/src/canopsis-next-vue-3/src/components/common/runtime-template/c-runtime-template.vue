@@ -32,7 +32,7 @@ export default {
 
     methodProps() {
       return Object.entries(this.parentOptions.methods ?? {}).reduce((acc, [key]) => {
-        acc[key] = this.parentNode[key];
+        acc[key] = this.parentNode[key]?.bind(this.parentNode);
 
         return acc;
       }, {});

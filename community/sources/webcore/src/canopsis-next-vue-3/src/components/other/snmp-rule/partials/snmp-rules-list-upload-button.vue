@@ -31,11 +31,13 @@
 <script>
 import { ref } from 'vue';
 
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { getFileTextContent } from '@/helpers/file/file-select';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 import { useSnmpMib } from '@/hooks/store/modules/snmp-mib';
+
+import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 export default {
   components: { FileSelector },

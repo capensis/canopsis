@@ -55,7 +55,9 @@ export const useHealthcheckConnectorsSocket = ({ connectors, meta }) => {
       return;
     }
 
-    socket.join(SOCKET_ROOMS.anomalyMonitoredConnectorStates, { ids }, true).addListener(socketListener);
+    socket
+      .join(SOCKET_ROOMS.anomalyMonitoredConnectorStates, { ids }, true)
+      .addListener(socketListener);
   };
 
   /**

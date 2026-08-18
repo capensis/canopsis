@@ -63,10 +63,12 @@
 <script>
 import { computed } from 'vue';
 
-import ViewSelector from '@/components/forms/fields/view-selector.vue';
 import { ROLE_TYPES } from '@/constants';
+
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+
+import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
 import RoleTemplateField from './fields/role-template-field.vue';
 import RoleTypeField from './fields/role-type-field.vue';

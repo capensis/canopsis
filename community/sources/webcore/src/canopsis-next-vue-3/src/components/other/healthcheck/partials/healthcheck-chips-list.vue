@@ -32,7 +32,9 @@ import { useRouter } from 'vue-router';
 
 import { COLORS, SOCKET_ROOMS } from '@/config';
 import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
+
 import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
+
 import { useCanPermission } from '@/hooks/auth';
 import { useHealthcheckNodes } from '@/hooks/healthcheck-nodes';
 import { useI18n } from '@/hooks/i18n';

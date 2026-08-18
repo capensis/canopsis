@@ -40,10 +40,7 @@ export const serviceToForm = (service = {}) => ({
   infos: infosToArray(service.infos),
   output_template: service.output_template ?? '',
   sli_avail_state: service.sli_avail_state ?? ALARM_STATES.ok,
-  patterns: filterPatternsToForm(
-    service,
-    [PATTERNS_FIELDS.entity],
-  ),
+  patterns: filterPatternsToForm(service, [PATTERNS_FIELDS.entity]),
   coordinates: service.coordinates ?? {
     lat: undefined,
     lng: undefined,

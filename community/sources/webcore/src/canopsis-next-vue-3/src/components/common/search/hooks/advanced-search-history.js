@@ -1,6 +1,7 @@
 import { computed, unref } from 'vue';
 
 import { advancedSearchToForm } from '@/helpers/search/advanced-search';
+
 import { useInfiniteScroll } from '@/hooks/infinite-scroll';
 import { useIntersectionVirtualScroll } from '@/hooks/intersection-virtual-scroll';
 
@@ -22,30 +23,23 @@ export const ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT = 48;
  * }}
  */
 export const useAdvancedSearchHistory = (searches) => {
-  const preparedSearches = computed(() => (unref(searches) ?? []).map(search => ({
-    _id: search._id,
-    pinned: search.pinned,
-    rules: advancedSearchToForm(search),
-  })));
+  const preparedSearches = computed(() =>
+    (unref(searches) ?? []).map(search => ({
+      _id: search._id,
+      pinned: search.pinned,
+      rules: advancedSearchToForm(search),
+    })),
+  );
 
-  const {
-    items,
-    scrollContainerElement,
-    appendItemElement,
-  } = useInfiniteScroll({
+  const { items, scrollContainerElement, appendItemElement } = useInfiniteScroll({
     sourceItems: preparedSearches,
   });
 
-  const {
-    setItemRef,
-    isItemVisible,
-    getItemPlaceholderStyle,
-    listMinWidth,
-    updateListWidth,
-  } = useIntersectionVirtualScroll({
-    scrollContainerElement,
-    itemMinHeight: ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT,
-  });
+  const { setItemRef, isItemVisible, getItemPlaceholderStyle, listMinWidth, updateListWidth } =
+    useIntersectionVirtualScroll({
+      scrollContainerElement,
+      itemMinHeight: ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT,
+    });
 
   return {
     items,

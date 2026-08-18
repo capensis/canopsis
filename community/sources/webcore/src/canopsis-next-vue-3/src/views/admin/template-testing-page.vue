@@ -38,12 +38,15 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data';
-import TemplateTestingData from '@/components/other/template-testing/template-testing-data.vue';
-import TemplateTestingTests from '@/components/other/template-testing/template-testing-tests.vue';
 import { TEMPLATE_TESTING_TABS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
+
+import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data';
+
+import TemplateTestingData from '@/components/other/template-testing/template-testing-data.vue';
+import TemplateTestingTests from '@/components/other/template-testing/template-testing-tests.vue';
 
 export default {
   components: {

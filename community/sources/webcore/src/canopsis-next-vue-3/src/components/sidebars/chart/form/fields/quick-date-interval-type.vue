@@ -10,8 +10,9 @@
 </template>
 
 <script>
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { QUICK_RANGES } from '@/constants';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

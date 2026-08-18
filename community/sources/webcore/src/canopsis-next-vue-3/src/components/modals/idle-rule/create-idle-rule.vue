@@ -30,12 +30,14 @@
 <script>
 import { computed } from 'vue';
 
-import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
 import { formToIdleRule, idleRuleToForm } from '@/helpers/entities/idle-rule/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
 
 export default {
   components: { IdleRuleForm },

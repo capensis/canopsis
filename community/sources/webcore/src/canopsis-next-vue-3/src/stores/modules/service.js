@@ -16,9 +16,7 @@ export const useServiceStore = defineStore('service', () => {
       params: { ...params, _id: id },
     });
   const fetchAlarmsWithoutStore = ({ id, params = {} } = {}) =>
-    request.get(API_ROUTES.serviceAlarms, {
-      params: { ...params, _id: id },
-    });
+    request.get(`${API_ROUTES.serviceAlarms}/${encodeURIComponent(id)}`, { params });
   const fetchEntityUpstreamWithoutStore = ({ params } = {}) =>
     request.get(API_ROUTES.entityUpstream, { params });
   const fetchEntityDownstreamsWithoutStore = ({ params } = {}) =>
@@ -28,8 +26,7 @@ export const useServiceStore = defineStore('service', () => {
   const create = ({ data } = {}) => request.post(API_ROUTES.service, data);
   const update = ({ id, data } = {}) =>
     request.put(`${API_ROUTES.service}/${encodeURIComponent(id)}`, data);
-  const remove = ({ id } = {}) =>
-    request.delete(`${API_ROUTES.service}/${encodeURIComponent(id)}`);
+  const remove = ({ id } = {}) => request.delete(`${API_ROUTES.service}/${encodeURIComponent(id)}`);
   const fetchItemWithoutStore = ({ id, params } = {}) =>
     request.get(`${API_ROUTES.service}/${encodeURIComponent(id)}`, { params });
 

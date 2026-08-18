@@ -25,9 +25,10 @@
 </template>
 
 <script>
+import { AVAILABILITY_QUICK_RANGES } from '@/constants';
+
 import AvailabilityShowTypeRadioField from '@/components/other/availability/form/fields/availability-show-type-radio-field.vue';
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
 export default {
   components: { WidgetSettingsItem, AvailabilityShowTypeRadioField },

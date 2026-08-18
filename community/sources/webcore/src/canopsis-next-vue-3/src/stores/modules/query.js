@@ -7,12 +7,10 @@ export const useQueryStore = defineStore('query', () => {
   const queriesNonces = ref({});
   const lockedQueries = ref({});
 
-  const getQueryById = computed(
-    () => id => ({
-      ...queries.value[id],
-      ...lockedQueries.value[id],
-    }),
-  );
+  const getQueryById = computed(() => id => ({
+    ...queries.value[id],
+    ...lockedQueries.value[id],
+  }));
   const getQueryNonceById = computed(() => id => queriesNonces.value[id] || 0);
 
   const update = ({ id, query } = {}) => {

@@ -42,6 +42,7 @@
 import { computed } from 'vue';
 
 import { PATTERNS_FIELDS, PATTERN_TYPES } from '@/constants';
+
 import { patternToForm } from '@/helpers/entities/pattern/form';
 
 export default {

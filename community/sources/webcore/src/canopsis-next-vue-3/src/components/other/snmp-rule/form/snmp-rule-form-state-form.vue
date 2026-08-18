@@ -71,11 +71,14 @@
 <script>
 import { computed } from 'vue';
 
-import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
+
 import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+
+import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 import SnmpRuleFormModuleMibObjectsForm from './snmp-rule-form-module-mib-objects-form.vue';
 

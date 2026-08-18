@@ -30,12 +30,14 @@
 <script>
 import { computed } from 'vue';
 
-import UserForm from '@/components/other/users/form/user-form.vue';
 import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import UserForm from '@/components/other/users/form/user-form.vue';
 
 export default {
   components: { UserForm },

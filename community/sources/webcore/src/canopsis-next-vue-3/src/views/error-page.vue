@@ -19,6 +19,7 @@ import { isEmpty } from 'lodash';
 
 import { APP_INFO_FETCHING_INTERVAL } from '@/config';
 import { ROUTES_NAMES } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 

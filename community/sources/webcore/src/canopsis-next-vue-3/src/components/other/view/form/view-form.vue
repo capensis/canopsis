@@ -44,8 +44,9 @@
 </template>
 
 <script>
-import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 import { useModelField } from '@/hooks/form';
+
+import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 
 import ViewDuplicatePrivateField from './fields/view-duplicate-private-field.vue';
 import ViewGroupField from './fields/view-group-field.vue';

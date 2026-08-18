@@ -55,7 +55,9 @@ import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { USER_PERMISSIONS } from '@/constants';
+
 import { getEntityColor } from '@/helpers/entities/entity/color';
+
 import { authMixin } from '@/mixins/auth';
 
 export default {

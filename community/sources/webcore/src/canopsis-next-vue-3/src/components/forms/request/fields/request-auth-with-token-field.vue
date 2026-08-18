@@ -41,10 +41,12 @@
 <script>
 import { computed } from 'vue';
 
-import RequestAuthTokenField from '@/components/forms/request/fields/request-auth-token-field.vue';
 import { REQUEST_AUTH_TYPES } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+
+import RequestAuthTokenField from '@/components/forms/request/fields/request-auth-token-field.vue';
 
 export default {
   emits: ['update:value'],

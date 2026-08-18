@@ -59,12 +59,15 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import PointIcon from '@/components/other/map/partials/point-icon.vue';
 import { FLOWCHART_MAX_POSITION_DIFF, FLOWCHART_MAX_TIMESTAMP_DIFF, MODALS } from '@/constants';
+
 import { flowchartPointToForm } from '@/helpers/entities/map/form';
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
+
 import { formMixin } from '@/mixins/form';
 import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
+
+import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
 import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 import PointFormDialogMenu from './point-form-dialog-menu.vue';

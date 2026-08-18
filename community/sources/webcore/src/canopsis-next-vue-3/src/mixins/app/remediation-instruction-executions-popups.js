@@ -1,7 +1,11 @@
 import { mapActions } from 'pinia';
 
 import { SOCKET_ROOMS } from '@/config';
-import { MAX_LIMIT, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, USER_PERMISSIONS } from '@/constants';
+import {
+  MAX_LIMIT,
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
+  USER_PERMISSIONS,
+} from '@/constants';
 
 import { useRemediationInstructionExecutionStore } from '@/stores/modules/remediation-instruction-execution';
 
@@ -71,7 +75,8 @@ export const appRemediationInstructionExecutionsPopupsMixin = {
         return;
       }
 
-      this.$socket.join(SOCKET_ROOMS.simplifiedManualExecutions)
+      this.$socket
+        .join(SOCKET_ROOMS.simplifiedManualExecutions)
         .addListener(this.showInstructionPopup);
     },
 
@@ -80,7 +85,8 @@ export const appRemediationInstructionExecutionsPopupsMixin = {
         return;
       }
 
-      this.$socket.leave(SOCKET_ROOMS.simplifiedManualExecutions)
+      this.$socket
+        .leave(SOCKET_ROOMS.simplifiedManualExecutions)
         .removeListener(this.showInstructionPopup);
     },
 

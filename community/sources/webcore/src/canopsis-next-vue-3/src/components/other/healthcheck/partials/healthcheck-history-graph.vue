@@ -52,8 +52,6 @@
 <script>
 import { debounce } from 'lodash';
 
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
 import { COLORS, HEALTHCHECK_HISTORY_FILENAME_PREFIX } from '@/config';
 import {
   DATETIME_FORMATS,
@@ -62,6 +60,7 @@ import {
   QUICK_RANGES,
   TIME_UNITS,
 } from '@/constants';
+
 import { colorToRgba } from '@/helpers/color';
 import {
   convertDateToStartOfDayTimestamp,
@@ -75,7 +74,11 @@ import {
 } from '@/helpers/date/date-intervals';
 import { convertUnit } from '@/helpers/date/duration';
 import { saveFile } from '@/helpers/file/files';
+
 import { useMessageRateStats } from '@/hooks/store/modules/message-rate-stats';
+
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
+import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
 
 import HealthcheckHistoryFilters from './healthcheck-history-filters.vue';
 

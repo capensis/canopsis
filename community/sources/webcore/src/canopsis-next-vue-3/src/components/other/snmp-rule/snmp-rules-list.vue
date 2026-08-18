@@ -71,6 +71,7 @@
 import { computed } from 'vue';
 
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import SnmpRulesListItemCell from './partials/snmp-rules-list-item-cell.vue';

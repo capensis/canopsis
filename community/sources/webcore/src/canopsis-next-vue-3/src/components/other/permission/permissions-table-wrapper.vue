@@ -38,6 +38,7 @@ import { sortBy } from 'lodash';
 import { computed, nextTick, provide, ref, watch } from 'vue';
 
 import { filterTreeviewPermissions } from '@/helpers/entities/permissions/list';
+
 import { useI18n } from '@/hooks/i18n';
 
 import PermissionsTable from './permissions-table.vue';

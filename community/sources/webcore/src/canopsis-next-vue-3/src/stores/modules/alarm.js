@@ -23,9 +23,10 @@ export const useAlarmStore = defineStore('alarm', () => {
     () => widgetId => widgets.value[widgetId]?.pending ?? false,
   );
   const getDetailsByWidgetId = computed(() => widgetId => detailsByWidget.value[widgetId] ?? {});
-  const getQueriesByWidgetId = computed(() => widgetId => (
-    Object.values(detailsByWidget.value[widgetId] ?? {}).map(({ query }) => query)
-  ));
+  const getQueriesByWidgetId = computed(
+    () => widgetId =>
+      Object.values(detailsByWidget.value[widgetId] ?? {}).map(({ query }) => query),
+  );
   const getFetchingParamsByWidgetId = computed(
     () => widgetId => widgets.value[widgetId]?.fetchingParams,
   );

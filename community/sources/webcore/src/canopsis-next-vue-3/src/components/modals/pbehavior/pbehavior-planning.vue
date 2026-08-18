@@ -45,16 +45,18 @@
 <script>
 import { keyBy, omit } from 'lodash';
 
-import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 import {
   getPbehaviorNameByEntities,
   getPbehaviorsInitialTimezone,
   pbehaviorToDuplicateForm,
   pbehaviorToRequest,
 } from '@/helpers/entities/pbehavior/form';
+
 import { useModals } from '@/hooks/modals';
 import { useInfo } from '@/hooks/store/modules/info';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
+
+import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
 export default {
   components: { PbehaviorPlanningCalendar },

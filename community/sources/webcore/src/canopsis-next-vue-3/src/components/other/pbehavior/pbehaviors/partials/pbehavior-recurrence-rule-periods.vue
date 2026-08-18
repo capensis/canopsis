@@ -50,6 +50,7 @@
 
 <script>
 import { MODALS, PBEHAVIOR_RRULE_PERIODS_RANGES, TIME_UNITS } from '@/constants';
+
 import {
   addUnitToDate,
   convertDateToEndOfUnitTimestamp,
@@ -58,6 +59,7 @@ import {
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';

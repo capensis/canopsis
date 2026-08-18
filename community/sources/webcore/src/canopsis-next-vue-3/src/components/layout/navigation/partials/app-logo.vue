@@ -3,8 +3,9 @@
 </template>
 
 <script>
-import defaultLogo from '@/assets/canopsis.png';
 import { useInfo } from '@/hooks/store/modules/info';
+
+import defaultLogo from '@/assets/canopsis.png';
 
 export default {
   setup() {

@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue';
 
+import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
+
+import { useInfo } from '@/hooks/store/modules/info';
+
 import LoginCard from '@/components/other/login/login-card.vue';
 import LoginFooter from '@/components/other/login/login-footer.vue';
-import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
-import { useInfo } from '@/hooks/store/modules/info';
 
 const {
   maintenance,

@@ -32,11 +32,12 @@
 </template>
 
 <script>
-import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 import {
   isWebhookExecutionRunning,
   isWebhookExecutionSucceeded,
 } from '@/helpers/entities/webhook-execution/entity';
+
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
 export default {
   components: { AlarmWebhookExecutionStatus },

@@ -1,4 +1,5 @@
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
+
 import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 
 /**

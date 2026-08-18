@@ -19,6 +19,7 @@ import { find } from 'lodash';
 import { computed, onMounted, ref } from 'vue';
 
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 

@@ -79,8 +79,10 @@ import { merge } from 'lodash';
 
 import { COLORS } from '@/config';
 import { STROKE_TYPES } from '@/constants';
+
 import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 import { getPropertyValueByShapes } from '@/helpers/flowchart/shapes';
+
 import { formBaseMixin } from '@/mixins/form';
 
 import FlowchartColorField from './fields/flowchart-color-field.vue';

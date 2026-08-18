@@ -45,18 +45,21 @@
 <script>
 import { computed, watch } from 'vue';
 
-import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
 import {
   formToRemediationJob,
   remediationJobToForm,
 } from '@/helpers/entities/remediation/job/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useInfo } from '@/hooks/store/modules/info';
+
+import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 export default {
   components: {

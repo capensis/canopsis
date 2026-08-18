@@ -1,4 +1,5 @@
 import { MODALS, ROUTES_NAMES } from '@/constants';
+
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';

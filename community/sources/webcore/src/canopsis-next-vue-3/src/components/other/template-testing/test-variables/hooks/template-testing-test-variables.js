@@ -2,6 +2,7 @@ import { get, isEmpty, isEqual } from 'lodash';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 import { MODALS, TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
 import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
 import {
   formToTemplateTestingTestValidateForm,
@@ -10,6 +11,7 @@ import {
   templateTestingTestValidateToForm,
 } from '@/helpers/entities/template-testing-test/form';
 import { uid } from '@/helpers/uid';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';

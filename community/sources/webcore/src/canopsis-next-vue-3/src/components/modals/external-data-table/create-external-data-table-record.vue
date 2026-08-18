@@ -30,15 +30,17 @@
 <script>
 import { computed } from 'vue';
 
-import ExternalDataTableRecordForm from '@/components/other/external-data-table/form/external-data-table-record-form.vue';
 import {
   externalDataTableRecordToForm,
   formToExternalDataTableRecord,
 } from '@/helpers/entities/external-data-table/record/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import ExternalDataTableRecordForm from '@/components/other/external-data-table/form/external-data-table-record-form.vue';
 
 export default {
   components: {

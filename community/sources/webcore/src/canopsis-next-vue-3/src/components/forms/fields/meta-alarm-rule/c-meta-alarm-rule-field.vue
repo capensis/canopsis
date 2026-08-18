@@ -25,6 +25,7 @@
 import { ref, computed, onMounted } from 'vue';
 
 import { prepareDataForItemsById } from '@/helpers/search/lazy-search';
+
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 

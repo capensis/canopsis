@@ -1,7 +1,10 @@
 import { API_ROUTES } from '@/config';
-import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
+
 import request from '@/services/request';
+
 import { createCRUDStore } from '@/stores/plugins/crud';
+
+import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
 
 import { useAuthStore } from './auth';
 

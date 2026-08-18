@@ -35,7 +35,6 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
   const { pending: submitting, handler: runSubmit } = usePendingHandler(callback => callback());
   const isSubmitting = computed(() => veeForm.isSubmitting.value || submitting.value);
 
-
   /**
    * Registers a Vue component instance for a field path.
    *
@@ -60,10 +59,11 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
    *
    * @returns {Array<Object>} Path states with an `instance` property.
    */
-  const getAllPathStatesWithInstances = () => veeForm.getAllPathStates().map(state => ({
-    ...state,
-    instance: fieldsInstances.value[state.path],
-  }));
+  const getAllPathStatesWithInstances = () =>
+    veeForm.getAllPathStates().map(state => ({
+      ...state,
+      instance: fieldsInstances.value[state.path],
+    }));
 
   /**
    * Returns a nested value from the local form state.
@@ -257,7 +257,9 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
    * Clears all field errors without resetting form values.
    */
   const resetErrors = () => {
-    veeForm.getAllPathStates().forEach(state => veeForm.setFieldError(unref(state.path), undefined));
+    veeForm
+      .getAllPathStates()
+      .forEach(state => veeForm.setFieldError(unref(state.path), undefined));
     Object.keys(veeForm.errors.value).forEach(path => veeForm.setFieldError(path, undefined));
   };
 

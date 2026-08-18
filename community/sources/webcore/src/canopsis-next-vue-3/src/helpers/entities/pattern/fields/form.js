@@ -1,6 +1,7 @@
 import { isArray, isUndefined, mapValues, mergeWith } from 'lodash';
 
 import { PATTERN_OPERATORS } from '@/constants';
+
 import { indexesByKey } from '@/helpers/array';
 
 /**

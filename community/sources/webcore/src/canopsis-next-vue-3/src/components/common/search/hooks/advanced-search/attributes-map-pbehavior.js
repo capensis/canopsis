@@ -2,6 +2,7 @@ import {
   PBEHAVIOR_FIELDS_TO_LABELS_KEYS,
   PBEHAVIOR_GROUPED_ADVANCED_SEARCH_FIELDS,
 } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import { useAdvancedSearchPbehaviorAttributes } from './attributes-map';

@@ -58,7 +58,10 @@ export const useWidgetUserPreference = ({ widgetId, localWidget = false }) => {
     const method = unref(localWidget) ? updateLocalUserPreference : updateUserPreference;
 
     return method({
-      data: setField(userPreference.value, 'content', prevContent => ({ ...prevContent, ...content })),
+      data: setField(userPreference.value, 'content', prevContent => ({
+        ...prevContent,
+        ...content,
+      })),
     });
   };
 

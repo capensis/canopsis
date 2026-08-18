@@ -58,10 +58,11 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
-import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import { useConfirmableForm } from '@/hooks/confirmable-form';
 import { useModelField } from '@/hooks/form/model-field';
+
+import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 
 import DeclareTicketRuleCheckTicketStatusField from './declare-ticket-rule-check-ticket-status-field.vue';
 import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';

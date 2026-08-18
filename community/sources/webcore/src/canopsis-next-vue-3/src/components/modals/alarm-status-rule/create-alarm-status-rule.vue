@@ -34,16 +34,19 @@
 <script>
 import { computed } from 'vue';
 
-import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
 import { DEFAULT_RESOLVE_RULE_ID } from '@/constants';
+
 import {
   alarmStatusRuleToForm,
   formToAlarmStatusRule,
 } from '@/helpers/entities/alarm-status-rule/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
 
 export default {
   components: { AlarmStatusRuleForm },

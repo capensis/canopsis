@@ -1,6 +1,5 @@
 import { cloneDeep, map } from 'lodash';
 
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 import {
   ALARM_FIELDS,
@@ -22,6 +21,7 @@ import {
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
   TIME_UNITS,
 } from '@/constants';
+
 import { addKeyInEntities, addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import {
@@ -36,6 +36,8 @@ import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availab
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
 import { setSeveralFields } from '@/helpers/immutable';
 import { uid } from '@/helpers/uid';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { formToWidgetQuickActions, widgetQuickActionsToForm } from '../quick-action/form';
@@ -549,9 +551,11 @@ export const createCommentFormToCreateCommentEvent = (form) => {
   }
 
   return {
-    struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
-      field,
-      message: form[field],
-    })).filter(({ message }) => message),
+    struct_comment: (form.template?.fields ?? [])
+      .map(({ name: field }) => ({
+        field,
+        message: form[field],
+      }))
+      .filter(({ message }) => message),
   };
 };

@@ -50,7 +50,9 @@ export const widgetSortToForm = (sort = {}) => ({
  */
 export const externalDataTableWidgetParametersToForm = parameters => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(
+    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
+  ),
   table: parameters.table || '',
   sort: widgetSortToForm(parameters.sort),
   widgetColumns: widgetColumnsToForm(parameters.widgetColumns ?? []),

@@ -24,8 +24,9 @@
 </template>
 
 <script>
-import { eventFilterActionsTypesImages } from '@/assets';
 import { MODALS } from '@/constants';
+
+import { eventFilterActionsTypesImages } from '@/assets';
 
 export default {
   props: {

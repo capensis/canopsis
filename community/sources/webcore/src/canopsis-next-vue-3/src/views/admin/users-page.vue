@@ -35,12 +35,14 @@
 <script>
 import { computed, ref } from 'vue';
 
-import Users from '@/components/other/users/users.vue';
 import { MODALS, USERS_TABS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useUser } from '@/hooks/store/modules/user';
+
+import Users from '@/components/other/users/users.vue';
 
 export default {
   components: {

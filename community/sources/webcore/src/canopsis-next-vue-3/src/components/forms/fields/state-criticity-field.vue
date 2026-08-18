@@ -26,7 +26,9 @@
 import { computed } from 'vue';
 
 import { ALARM_STATES, ALARM_STATES_TEXTS } from '@/constants';
+
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

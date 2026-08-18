@@ -53,9 +53,10 @@
 <script>
 import { difference } from 'lodash';
 
+import { createRangeArray } from '@/helpers/array';
+
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
-import { createRangeArray } from '@/helpers/array';
 
 export default {
   components: { GroupPanel, GroupViewPanel },

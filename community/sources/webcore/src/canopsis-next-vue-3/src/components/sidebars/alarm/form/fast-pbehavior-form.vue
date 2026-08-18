@@ -59,11 +59,14 @@
 </template>
 
 <script>
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
 import { alarmListFastPbehaviorParametersItemToForm } from '@/helpers/entities/widget/forms/alarm';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

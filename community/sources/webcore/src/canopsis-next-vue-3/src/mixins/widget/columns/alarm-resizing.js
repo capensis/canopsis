@@ -20,15 +20,20 @@ export const widgetColumnResizingAlarmMixin = {
   },
   created() {
     this.aggregatedMovementDiff = 0;
-    this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
+    this.throttledResizeColumnByDiff = throttle(
+      this.resizeColumnByDiff,
+      this.resizingColumnThrottleDelay,
+    );
   },
   beforeUnmount() {
     this.finishColumnResize({ suppressClick: false });
   },
   computed: {
     tableHeader() {
-      return this.$refs.dataTable?.$el?.querySelector('thead')
-        ?? this.$el?.querySelector('.alarms-list-widget__table thead');
+      return (
+        this.$refs.dataTable?.$el?.querySelector('thead') ??
+        this.$el?.querySelector('.alarms-list-widget__table thead')
+      );
     },
 
     tableRow() {

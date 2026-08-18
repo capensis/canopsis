@@ -11,8 +11,9 @@
 </template>
 
 <script>
-import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 import { MODALS } from '@/constants';
+
+import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 
 export default {
   components: { SettingsButtonField },

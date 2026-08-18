@@ -83,23 +83,27 @@
 import { pick } from 'lodash';
 import { mapActions } from 'pinia';
 
+import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
+
+import { useAlarmStore } from '@/stores/modules/alarm';
+import { useMapStore } from '@/stores/modules/map';
+import { useServiceStore } from '@/stores/modules/service';
+
+import { durationToSeconds } from '@/helpers/date/duration';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
+
+import { activeViewMixin } from '@/mixins/active-view';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
+import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
+import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
+
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
 import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
 import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 import TreeOfDependenciesPreview from '@/components/other/map/partials/tree-of-dependencies-preview.vue';
-import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
-import { durationToSeconds } from '@/helpers/date/duration';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
-import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
-import { activeViewMixin } from '@/mixins/active-view';
-import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
-import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
-import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
-import { useAlarmStore } from '@/stores/modules/alarm';
-import { useMapStore } from '@/stores/modules/map';
-import { useServiceStore } from '@/stores/modules/service';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 

@@ -10,11 +10,14 @@ import {
   DEFAULT_LOCALE,
 } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
-import { isUserHasOnlyApiRole } from '@/helpers/entities/user/entity';
-import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
-import { i18n } from '@/i18n';
+
 import localStorageService from '@/services/local-storage';
 import request from '@/services/request';
+
+import { i18n } from '@/i18n';
+
+import { isUserHasOnlyApiRole } from '@/helpers/entities/user/entity';
+import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
 
 import { useI18nStore } from './i18n';
 

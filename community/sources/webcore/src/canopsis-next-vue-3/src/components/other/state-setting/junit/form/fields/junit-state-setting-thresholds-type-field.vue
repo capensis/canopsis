@@ -16,6 +16,7 @@
 
 <script>
 import { JUNIT_STATE_SETTING_THRESHOLDS_TYPES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

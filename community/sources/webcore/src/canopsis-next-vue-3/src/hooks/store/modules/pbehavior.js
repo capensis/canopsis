@@ -1,8 +1,10 @@
 import { storeToRefs } from 'pinia';
 
-import { pickIds } from '@/helpers/array';
-import { usePbehaviorComment } from '@/hooks/store/modules/pbehavior-comment';
 import { usePbehaviorStore } from '@/stores/modules/pbehavior';
+
+import { pickIds } from '@/helpers/array';
+
+import { usePbehaviorComment } from '@/hooks/store/modules/pbehavior-comment';
 
 /**
  * Pbehavior store facade.

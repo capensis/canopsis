@@ -1,6 +1,8 @@
 import { DEFAULT_THEME_COLORS } from '@/config';
-import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
+
 import { CANOPSIS_THEME_NAME, vuetify } from '@/plugins/vuetify';
+
+import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
 
 const DEFAULT_CANOPSIS_THEME = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
 

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
 import { API_ROUTES } from '@/config';
+
 import request from '@/services/request';
 
 export const useCopyVarsStore = defineStore('copyVars', () => {

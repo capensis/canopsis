@@ -105,11 +105,12 @@ export const isExternalPercentMetricUnit = unit => unit === EXTERNAL_METRIC_UNIT
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
  */
-export const isExternalTimeMetricUnit = unit => [
-  EXTERNAL_METRIC_UNITS.microsecond,
-  EXTERNAL_METRIC_UNITS.millisecond,
-  EXTERNAL_METRIC_UNITS.second,
-].includes(unit);
+export const isExternalTimeMetricUnit = unit =>
+  [
+    EXTERNAL_METRIC_UNITS.microsecond,
+    EXTERNAL_METRIC_UNITS.millisecond,
+    EXTERNAL_METRIC_UNITS.second,
+  ].includes(unit);
 
 /**
  * Check is external data size metric unit.
@@ -117,14 +118,15 @@ export const isExternalTimeMetricUnit = unit => [
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
  */
-export const isExternalDataSizeMetricUnit = unit => [
-  EXTERNAL_METRIC_UNITS.continuousCounter,
-  EXTERNAL_METRIC_UNITS.byte,
-  EXTERNAL_METRIC_UNITS.kilobyte,
-  EXTERNAL_METRIC_UNITS.megabyte,
-  EXTERNAL_METRIC_UNITS.gigabyte,
-  EXTERNAL_METRIC_UNITS.terabyte,
-].includes(unit);
+export const isExternalDataSizeMetricUnit = unit =>
+  [
+    EXTERNAL_METRIC_UNITS.continuousCounter,
+    EXTERNAL_METRIC_UNITS.byte,
+    EXTERNAL_METRIC_UNITS.kilobyte,
+    EXTERNAL_METRIC_UNITS.megabyte,
+    EXTERNAL_METRIC_UNITS.gigabyte,
+    EXTERNAL_METRIC_UNITS.terabyte,
+  ].includes(unit);
 
 /**
  * Converts one metric preset to its editable form representation.

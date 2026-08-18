@@ -62,15 +62,17 @@
 <script>
 import { computed, ref } from 'vue';
 
-import RequestHeadersField from '@/components/forms/request/fields/request-headers-field.vue';
 import {
   MODALS,
   TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE,
   TEMPLATE_TESTING_DATA_TYPES,
 } from '@/constants';
+
 import { useFormModels, useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import RequestHeadersField from '@/components/forms/request/fields/request-headers-field.vue';
 
 import TemplateTestingDataTypeField from './fields/template-testing-data-type-field.vue';
 

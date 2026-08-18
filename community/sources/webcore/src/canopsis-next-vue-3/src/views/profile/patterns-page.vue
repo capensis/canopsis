@@ -75,14 +75,16 @@
 <script>
 import { ref, computed } from 'vue';
 
-import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
-import Patterns from '@/components/other/pattern/patterns.vue';
 import { MODALS, PATTERN_TABS, PATTERN_TYPES, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePattern } from '@/hooks/store/modules/pattern';
 import { useCorporatePattern } from '@/hooks/store/modules/pattern-corporate';
+
+import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
+import Patterns from '@/components/other/pattern/patterns.vue';
 
 export default {
   components: {

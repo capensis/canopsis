@@ -30,20 +30,23 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import PatternForm from '@/components/forms/pattern-form.vue';
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import {
   MODALS,
   PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS,
   PATTERN_TYPES_TO_PATTERNS_FIELDS,
 } from '@/constants';
+
 import { patternToForm, formToPattern } from '@/helpers/entities/pattern/form';
+
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
+
+import PatternForm from '@/components/forms/pattern-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createPattern,

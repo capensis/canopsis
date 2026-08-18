@@ -46,6 +46,7 @@
 import { computed } from 'vue';
 
 import { widgetSortColumnToForm } from '@/helpers/entities/widget/sort-column/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import SortColumnField from './partials/sort-column-field.vue';

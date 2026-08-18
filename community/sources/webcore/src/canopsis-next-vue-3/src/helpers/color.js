@@ -50,8 +50,7 @@ export const colorToRgb = color => tinycolor(color).toRgbString();
  * @param {number} alpha
  * @return {string}
  */
-export const colorToRgba = (color, alpha = 1.0) =>
-  tinycolor(color).setAlpha(alpha).toRgbString();
+export const colorToRgba = (color, alpha = 1.0) => tinycolor(color).setAlpha(alpha).toRgbString();
 
 /**
  * Convert color to hex

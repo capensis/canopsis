@@ -27,8 +27,10 @@
 
 <script>
 import { MODALS } from '@/constants';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+
 import Socket from '@/plugins/socket/services/socket';
+
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   mixins: [entitiesInfoMixin],

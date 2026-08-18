@@ -27,7 +27,9 @@
 import { computed } from 'vue';
 
 import { CRUD_ACTIONS } from '@/constants';
+
 import { getPermissionCheckboxProps } from '@/helpers/entities/permissions/list';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

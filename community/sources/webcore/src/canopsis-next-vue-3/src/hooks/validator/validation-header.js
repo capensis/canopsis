@@ -10,7 +10,9 @@ import { useValidationElementChildren } from '@/hooks/validator/validation-eleme
  * @returns {Object} Validation state and css classes.
  */
 export const useValidationHeader = (parent) => {
-  const validationChildren = parent ? useValidationElementChildren(parent) : useValidationChildren();
+  const validationChildren = parent
+    ? useValidationElementChildren(parent)
+    : useValidationChildren();
   const { hasChildrenError } = validationChildren;
 
   const hasAnyError = computed(() => hasChildrenError.value);

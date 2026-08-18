@@ -6,6 +6,7 @@ import {
   REQUEST_AUTH_TOKEN_TYPES_TO_HEADERS,
   HEADERS_TO_REQUEST_AUTH_TOKEN_TYPES,
 } from '@/constants';
+
 import { durationToForm, isValidDuration } from '@/helpers/date/duration';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 

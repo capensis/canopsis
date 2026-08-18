@@ -17,9 +17,10 @@ export const useShowExecutionModal = (execution) => {
     const unwrappedExecution = unref(execution);
 
     return modals.show({
-      name: unwrappedExecution.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual
-        ? MODALS.executeRemediationSimpleInstruction
-        : MODALS.executeRemediationInstruction,
+      name:
+        unwrappedExecution.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual
+          ? MODALS.executeRemediationSimpleInstruction
+          : MODALS.executeRemediationInstruction,
       config: {
         alarmId: unwrappedExecution.alarm?._id,
         assignedInstruction: {

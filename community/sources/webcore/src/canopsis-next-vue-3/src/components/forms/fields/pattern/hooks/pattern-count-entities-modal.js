@@ -1,6 +1,8 @@
 import { PATTERNS_FIELDS, MODALS } from '@/constants';
+
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEntity } from '@/hooks/store/modules/entity';

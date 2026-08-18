@@ -26,6 +26,7 @@
 
 <script>
 import { DIRECTIONS } from '@/constants';
+
 import { resizeRectangleShape } from '@/helpers/flowchart/resize';
 
 export default {

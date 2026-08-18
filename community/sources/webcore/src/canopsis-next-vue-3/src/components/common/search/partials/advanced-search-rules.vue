@@ -32,6 +32,7 @@
 import { ref, nextTick } from 'vue';
 
 import { REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
+
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 

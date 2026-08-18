@@ -1,4 +1,5 @@
 import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
+
 import { uid } from '@/helpers/uid';
 
 /**

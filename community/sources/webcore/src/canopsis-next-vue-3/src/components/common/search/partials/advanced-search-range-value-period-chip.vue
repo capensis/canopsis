@@ -39,10 +39,11 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
 import { useModelField } from '@/hooks/form/model-field';
 import { useQuickDateIntervalRange } from '@/hooks/form/quick-date-interval-range';
 import { useI18n } from '@/hooks/i18n';
+
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 export default {
   components: {

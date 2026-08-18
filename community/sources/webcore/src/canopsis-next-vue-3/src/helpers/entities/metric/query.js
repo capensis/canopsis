@@ -72,7 +72,9 @@ export const convertMetricsIntervalToTimestamp = (interval, timezone) => ({
  * @param {Object} userPreference
  * @returns {{ sampling?: string, interval?: Object, filter?: * }}
  */
-export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval, mainFilter } = {} }) => {
+export const convertChartUserPreferenceToQuery = ({
+  content: { sampling, interval, mainFilter } = {},
+}) => {
   const query = {
     filter: mainFilter,
   };

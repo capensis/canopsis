@@ -11,8 +11,9 @@
 </template>
 
 <script>
-import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import { addKeyInEntities } from '@/helpers/array';
+
+import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 
 export default {
   components: { CImagesViewer },

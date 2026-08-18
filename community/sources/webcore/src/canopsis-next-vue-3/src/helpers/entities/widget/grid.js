@@ -1,6 +1,7 @@
 import { get, omit, pick } from 'lodash';
 
 import { WIDGET_GRID_SIZES_KEYS } from '@/constants';
+
 import { compactLayout } from '@/helpers/grid';
 
 /**

@@ -30,15 +30,17 @@
 <script>
 import { computed } from 'vue';
 
-import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue';
 import {
   formToPbehaviorException,
   pbehaviorExceptionToForm,
 } from '@/helpers/entities/pbehavior/exception/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue';
 
 export default {
   components: { PbehaviorExceptionForm },

@@ -30,15 +30,17 @@
 <script>
 import { computed } from 'vue';
 
-import JunitStateSettingForm from '@/components/other/state-setting/junit/form/junit-state-setting-form.vue';
 import {
   formToJunitStateSetting,
   junitStateSettingToForm,
 } from '@/helpers/entities/state-setting/junit/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import JunitStateSettingForm from '@/components/other/state-setting/junit/form/junit-state-setting-form.vue';
 
 export default {
   components: { JunitStateSettingForm },

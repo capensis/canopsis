@@ -7,6 +7,7 @@
 
 <script>
 import { MODALS } from '@/constants';
+
 import { useModals } from '@/hooks/modals';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 

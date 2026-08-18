@@ -6,6 +6,7 @@ import {
   META_ALARMS_THRESHOLD_TYPES,
   PATTERNS_FIELDS,
 } from '@/constants';
+
 import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';

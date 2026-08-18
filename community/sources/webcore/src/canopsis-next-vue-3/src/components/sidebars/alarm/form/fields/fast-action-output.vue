@@ -12,8 +12,9 @@
 <script setup>
 import { computed } from 'vue';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { useI18n } from '@/hooks/i18n';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 const props = defineProps({
   modelValue: {

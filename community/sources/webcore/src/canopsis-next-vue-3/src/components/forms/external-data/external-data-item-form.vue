@@ -66,12 +66,15 @@
 <script>
 import { computed, onMounted } from 'vue';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
 import { EXTERNAL_DATA_TYPES } from '@/constants';
+
 import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useValidator } from '@/hooks/validator/validator';
+
+import RequestForm from '@/components/forms/request/request-form.vue';
 
 import ExternalDataTableForm from './external-data-table-form.vue';
 

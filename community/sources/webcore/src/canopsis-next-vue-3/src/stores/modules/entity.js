@@ -90,10 +90,14 @@ export const useEntityStore = defineStore('entity', () => {
   const fetchListWithPreviousParams = () => {
     const widgetsIds = Object.keys(widgets.value);
 
-    return Promise.all(widgetsIds.map(widgetId => fetchList({
-      widgetId,
-      params: getFetchingParamsByWidgetId.value(widgetId),
-    })));
+    return Promise.all(
+      widgetsIds.map(widgetId =>
+        fetchList({
+          widgetId,
+          params: getFetchingParamsByWidgetId.value(widgetId),
+        }),
+      ),
+    );
   };
 
   const create = ({ data, id } = {}) =>
@@ -118,8 +122,7 @@ export const useEntityStore = defineStore('entity', () => {
       params: { _id: id },
     });
 
-  const createContextExport = ({ data = {} } = {}) =>
-    request.post(API_ROUTES.contextExport, data);
+  const createContextExport = ({ data = {} } = {}) => request.post(API_ROUTES.contextExport, data);
   const fetchContextExport = ({ params, id } = {}) =>
     request.get(`${API_ROUTES.contextExport}/${id}`, { params });
 

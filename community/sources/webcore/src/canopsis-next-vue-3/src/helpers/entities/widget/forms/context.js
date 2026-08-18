@@ -84,7 +84,9 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
     parameters.serviceDependenciesColumnsTemplate,
   ),
   widgetExportColumnsTemplate: widgetTemplateValueToForm(parameters.widgetExportColumnsTemplate),
-  resolvedAlarmsColumnsTemplate: widgetTemplateValueToForm(parameters.resolvedAlarmsColumnsTemplate),
+  resolvedAlarmsColumnsTemplate: widgetTemplateValueToForm(
+    parameters.resolvedAlarmsColumnsTemplate,
+  ),
   activeAlarmsColumnsTemplate: widgetTemplateValueToForm(parameters.activeAlarmsColumnsTemplate),
   widgetColumns: widgetColumnsToForm(parameters.widgetColumns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
   serviceDependenciesColumns: widgetColumnsToForm(

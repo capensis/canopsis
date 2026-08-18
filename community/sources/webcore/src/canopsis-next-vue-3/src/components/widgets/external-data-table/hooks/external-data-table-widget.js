@@ -22,16 +22,10 @@ import { useWidgetUserPreference } from '@/hooks/store/modules/user-preference';
 export const useExternalDataTableWidgetTable = ({ widget }) => {
   const widgetId = computed(() => unref(widget)._id);
 
-  const {
-    userPreference,
-    fetchUserPreference,
-    updateContentInUserPreference,
-  } = useWidgetUserPreference({ widgetId });
+  const { userPreference, fetchUserPreference, updateContentInUserPreference } =
+    useWidgetUserPreference({ widgetId });
 
-  const {
-    updateExternalDataTable,
-    fetchExternalDataTableWithoutStore,
-  } = useExternalDataTable();
+  const { updateExternalDataTable, fetchExternalDataTableWithoutStore } = useExternalDataTable();
 
   const externalDataTable = ref({});
 

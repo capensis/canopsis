@@ -39,6 +39,7 @@
 
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useValidator } from '@/hooks/validator/validator';
 

@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import BarChart from '@/components/common/chart/bar-chart.vue';
-import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
@@ -27,6 +25,7 @@ import {
   TIME_UNITS,
   USER_METRIC_PARAMETERS,
 } from '@/constants';
+
 import { colorToRgba } from '@/helpers/color';
 import {
   convertDurationToMaxUnitDuration,
@@ -34,6 +33,9 @@ import {
   fromSeconds,
 } from '@/helpers/date/duration';
 import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
+
+import BarChart from '@/components/common/chart/bar-chart.vue';
+import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
 export default {
   inject: ['$system'],

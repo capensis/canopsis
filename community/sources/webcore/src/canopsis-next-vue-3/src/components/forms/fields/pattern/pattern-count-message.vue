@@ -8,8 +8,10 @@
 import { computed } from 'vue';
 
 import { TIME_UNITS, PATTERN_DURATION_FORMAT } from '@/constants';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { sanitizeHtml } from '@/helpers/html';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

@@ -1,6 +1,7 @@
 import { inject } from 'vue';
 
 import { exportAlarmToPdf as exportAlarmToPdfFile } from '@/helpers/file/pdf';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 import { useAlarm } from '@/hooks/store/modules/alarm';

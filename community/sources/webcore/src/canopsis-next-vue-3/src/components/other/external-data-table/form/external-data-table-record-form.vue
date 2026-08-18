@@ -16,10 +16,12 @@
 <script>
 import { computed } from 'vue';
 
+import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+
+import { useFormContext } from '@/hooks/form';
+
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import ExternalDataTableGeneralInfoForm from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
-import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
-import { useFormContext } from '@/hooks/form';
 
 export default {
   components: { ExternalDataTableGeneralInfoForm },

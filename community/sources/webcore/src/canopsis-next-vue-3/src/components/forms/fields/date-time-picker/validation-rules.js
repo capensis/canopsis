@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDateToDateObject } from '@/helpers/date/date';
 
 const getRuleValue = rule => (Array.isArray(rule) ? rule[0] : rule);

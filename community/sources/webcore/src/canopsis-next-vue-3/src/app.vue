@@ -20,9 +20,6 @@
 <script>
 import { isEmpty } from 'lodash';
 
-import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
-import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
-import TheSidebar from '@/components/layout/sidebar/the-sidebar.vue';
 import {
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   LOCAL_STORAGE_WARNING_POPUP_KEY,
@@ -30,7 +27,13 @@ import {
   SOCKET_URL,
 } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
+
+import Socket from '@/plugins/socket/services/socket';
+
+import localStorageService from '@/services/local-storage';
+
 import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+
 import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups';
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -39,8 +42,11 @@ import { entitiesUserMixin } from '@/mixins/entities/user';
 import { shownHeaderMixin } from '@/mixins/shown-header';
 import { systemMixin } from '@/mixins/system';
 import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
-import Socket from '@/plugins/socket/services/socket';
-import localStorageService from '@/services/local-storage';
+
+import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
+import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
+import TheSidebar from '@/components/layout/sidebar/the-sidebar.vue';
+
 import '@/assets/styles/main.scss';
 import '@/assets/styles/vuetify-v2-compat.scss';
 

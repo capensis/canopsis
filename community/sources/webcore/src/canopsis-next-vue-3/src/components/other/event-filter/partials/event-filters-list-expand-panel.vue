@@ -88,13 +88,16 @@
 <script>
 import { ref, computed } from 'vue';
 
-import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 import { EVENT_FILTER_EXPAND_PANEL_TABS } from '@/constants';
+
 import { isEnrichmentEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/form';
 import { externalDataToForm } from '@/helpers/entities/shared/external-data/form';
 import { gridFlexStyle } from '@/helpers/layout';
+
 import { useI18n } from '@/hooks/i18n';
+
+import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 
 import EventFilterFailures from './event-filter-failures.vue';
 import EventFiltersRuleSummary from './event-filters-rule-summary.vue';
