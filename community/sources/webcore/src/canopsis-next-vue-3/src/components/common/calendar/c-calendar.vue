@@ -7,6 +7,7 @@
         <c-timezone-field
           v-if="!noTimezone"
           v-model="localTimezone"
+          class="c-timezone-field"
           server
           hide-details
           @update:model-value="updateTimezone"
@@ -162,11 +163,13 @@ import {
   CALENDAR_START_DRAG_DELAY,
   CALENDAR_TYPES,
   LLM_AI_CHAT_WIDTH,
+  TIME_UNITS,
 } from '@/constants';
 
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import { colorToRgba, getColorByHash, isValidColor } from '@/helpers/color';
 import {
+  convertDateToMoment,
   convertDateToEndOfDayDateObject,
   convertDateToStartOfDayDateObject,
   getLocalTimezone,
@@ -531,12 +534,24 @@ export default {
       this.internalType = CALENDAR_TYPES.day;
     },
 
+    getPaginationUnit() {
+      return {
+        [CALENDAR_TYPES.day]: TIME_UNITS.day,
+        [CALENDAR_TYPES.week]: TIME_UNITS.week,
+        [CALENDAR_TYPES.month]: TIME_UNITS.month,
+      }[this.internalType];
+    },
+
+    shiftFocus(value) {
+      this.setFocusDate(convertDateToMoment(this.focus).add(value, this.getPaginationUnit()).toDate());
+    },
+
     prev() {
-      this.calendarElement.prev();
+      this.shiftFocus(-1);
     },
 
     next() {
-      this.calendarElement.next();
+      this.shiftFocus(1);
     },
 
     showCreateEventPopover(event, target) {

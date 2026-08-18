@@ -64,6 +64,7 @@ const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.map,
   WIDGET_TYPES.externalDataTable,
   WIDGET_TYPES.serviceWeather,
+  WIDGET_TYPES.statsCalendar,
 ];
 
 export default {
