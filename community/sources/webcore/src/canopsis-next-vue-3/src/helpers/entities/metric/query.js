@@ -1,9 +1,9 @@
 import { uniq } from 'lodash';
 
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import { QUICK_RANGES } from '@/constants';
 
 import { isOmitEqual } from '@/helpers/collection';
-import { convertDateIntervalToTimestampByTimezone } from '@/helpers/date/date-intervals';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { isRatioMetric } from './form';
 
@@ -49,22 +49,8 @@ export function convertWidgetChartsToPerfDataQuery(charts = []) {
  * @param {string} timezone
  * @returns {{ from: number, to: number }}
  */
-export const convertMetricsIntervalToTimestamp = (interval, timezone) => ({
-  from: convertDateIntervalToTimestampByTimezone(
-    interval.from,
-    DATETIME_INTERVAL_TYPES.start,
-    DATETIME_FORMATS.dateTimePicker,
-    undefined,
-    timezone,
-  ),
-  to: convertDateIntervalToTimestampByTimezone(
-    interval.to,
-    DATETIME_INTERVAL_TYPES.start,
-    DATETIME_FORMATS.dateTimePicker,
-    undefined,
-    timezone,
-  ),
-});
+export const convertMetricsIntervalToTimestamp = (interval, timezone) =>
+  convertMetricIntervalToTimestamp({ interval, timezone });
 
 /**
  * Convert user preference of a chart widget to query.

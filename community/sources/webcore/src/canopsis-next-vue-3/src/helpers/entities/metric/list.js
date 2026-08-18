@@ -1,4 +1,6 @@
 import {
+  AGGREGATE_FUNCTIONS,
+  ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
   EXTERNAL_METRIC_UNITS,
   KPI_RATING_ENTITY_METRICS,
@@ -85,6 +87,27 @@ export const getAvailableMetricByCriteria = (metric, criteria) => {
   const [firstMetric] = metrics;
 
   return firstMetric;
+};
+
+/**
+ * Get default aggregate function by metric.
+ *
+ * @param {string} metric
+ * @returns {string}
+ */
+export const getDefaultAggregateFunctionByMetric = (metric) => {
+  switch (metric) {
+    case ALARM_METRIC_PARAMETERS.createdAlarms:
+    case ALARM_METRIC_PARAMETERS.ackAlarms:
+    case ALARM_METRIC_PARAMETERS.cancelAckAlarms:
+    case ALARM_METRIC_PARAMETERS.ratioCorrelation:
+    case ALARM_METRIC_PARAMETERS.ratioInstructions:
+    case ALARM_METRIC_PARAMETERS.ratioNonDisplayed:
+    case ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms:
+      return AGGREGATE_FUNCTIONS.sum;
+    default:
+      return AGGREGATE_FUNCTIONS.avg;
+  }
 };
 
 /**

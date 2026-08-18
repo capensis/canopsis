@@ -4,6 +4,7 @@
     :value="selectedItem"
     :items="preparedItems"
     :label="label"
+    :name="name"
     :loading="wholePending"
     :has-more="hasMoreItems"
     :hide-no-data="true"
@@ -11,7 +12,6 @@
     :menu-icon="addable ? 'arrow_drop_down' : undefined"
     :required="required"
     :search="searchValue"
-    density="default"
     item-text="text"
     item-value="value"
     return-object
@@ -61,6 +61,10 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: 'metric',
     },
   },
   emits: ['update:modelValue'],

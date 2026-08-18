@@ -29,6 +29,7 @@
         <v-card-text class="px-3 pb-3">
           <chart-metric-preset
             :model-value="metric"
+            :name="`metric-${index}`"
             :with-color="withColor"
             :with-aggregate-function="withAggregateFunction"
             :parameters="parameters"

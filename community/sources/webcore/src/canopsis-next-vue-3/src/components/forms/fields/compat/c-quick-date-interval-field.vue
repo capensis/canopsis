@@ -12,7 +12,6 @@
             <c-text-field
               :model-value="shortValue"
               :label="$t('common.interval')"
-              density="compact"
               readonly
               hide-details
               v-bind="props"
