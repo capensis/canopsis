@@ -1,5 +1,6 @@
-import { useField } from 'vee-validate';
 import { computed, ref, unref, watch } from 'vue';
+
+import { useField } from '@/hooks/form';
 
 import { useValidator } from './validator';
 

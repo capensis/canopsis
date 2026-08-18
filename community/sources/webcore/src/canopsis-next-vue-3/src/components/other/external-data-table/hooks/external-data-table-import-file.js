@@ -6,21 +6,21 @@ import {
   IMPORT_STATUSES,
   EXTERNAL_DATA_TABLE_IMPORT_PREVIEW_STATUSES,
 } from '@/constants';
+
 import {
   externalDataTableColumnConfigsToForm,
   formToExternalDataTableColumnConfigs,
   formToExternalDataTableColumnTags,
   addPriorityColumnForRegexpTypes,
 } from '@/helpers/entities/external-data-table/form';
+
+import { useForm } from '@/hooks/form';
 import { useFilePolling, usePolling } from '@/hooks/polling';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useExternalDataTableImport } from '@/hooks/store/modules/external-data-table-import';
-import { useValidator } from '@/hooks/validator/validator';
 
-const useExternalDataTableImportForm = () => {
-  const validator = useValidator();
-
+const useExternalDataTableImportForm = (formContext) => {
   const form = ref({});
   const originalForm = ref({});
   const needPreview = ref(true);
@@ -46,12 +46,10 @@ const useExternalDataTableImportForm = () => {
       mapValues(form.value, value => ({ ...value, messages: [], rows: [] })),
       true,
     );
-    validator.errors.clear();
+    formContext.resetErrors();
   };
 
   return {
-    validator,
-
     form,
     originalForm,
     needPreview,
@@ -65,7 +63,7 @@ const useExternalDataTableImportForm = () => {
   };
 };
 
-const useExternalDataTableFileUpload = ({ config, validator, setForm }) => {
+const useExternalDataTableFileUpload = ({ config, formContext, setForm }) => {
   const { createExternalDataTableImport, fetchExternalDataTableImportStatus } =
     useExternalDataTableImport();
 
@@ -92,7 +90,7 @@ const useExternalDataTableFileUpload = ({ config, validator, setForm }) => {
         return;
       }
 
-      validator.errors.clear();
+      formContext.resetErrors();
 
       const data = {
         separator: separator.value,
@@ -114,10 +112,8 @@ const useExternalDataTableFileUpload = ({ config, validator, setForm }) => {
         throw err;
       }
 
-      validator.errors.add({
-        field: 'file',
-        msg: err.file ?? err.fail_reason,
-      });
+      formContext.setFieldTouched('file', true);
+      formContext.setFieldError('file', err.file ?? err.fail_reason);
     }
   };
 
@@ -232,10 +228,10 @@ const useExternalDataTableImportCompletion = ({ activeImportFileId, form }) => {
  * @returns {Object} Complete import functionality interface
  */
 export const useExternalDataTableImportFile = ({ config }) => {
+  const formContext = useForm();
   const { fetchExternalDataTableImportData } = useExternalDataTableImport();
 
   const {
-    validator,
     form,
     originalForm,
     needPreview,
@@ -244,7 +240,7 @@ export const useExternalDataTableImportFile = ({ config }) => {
     toggleOffNeedPreview,
     clearErrors,
     setForm,
-  } = useExternalDataTableImportForm();
+  } = useExternalDataTableImportForm(formContext);
 
   const {
     separator,
@@ -254,7 +250,7 @@ export const useExternalDataTableImportFile = ({ config }) => {
   } = useExternalDataTableFileUpload({
     config,
     form,
-    validator,
+    formContext,
     setForm,
   });
 
@@ -294,12 +290,11 @@ export const useExternalDataTableImportFile = ({ config }) => {
   const validate = () => {
     toggleOnNeedPreview();
 
-    nextTick(() => validator.validateAll());
+    nextTick(() => formContext.validate());
   };
 
   return {
-    validator,
-
+    formContext,
     separator,
     activeImportFileId,
     form,

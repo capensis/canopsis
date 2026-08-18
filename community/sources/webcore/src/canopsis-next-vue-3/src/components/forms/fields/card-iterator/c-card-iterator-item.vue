@@ -7,7 +7,7 @@
       justify="space-between"
     >
       <c-layout
-        :class="{ 'c-card-iterator-item__actions--draggable-only': !$slots.default }"
+        :class="{ 'c-card-iterator-item__actions--draggable-only': !isExpandable }"
         class="c-card-iterator-item__actions"
       >
         <c-draggable-step-number
@@ -17,7 +17,7 @@
         >
           {{ itemNumber }}
         </c-draggable-step-number>
-        <c-expand-btn v-if="$slots.default" v-model="expanded" />
+        <c-expand-btn v-if="isExpandable" v-model="expanded" />
       </c-layout>
       <slot name="header" />
       <c-action-btn
@@ -29,7 +29,7 @@
         @click="$emit('remove')"
       />
     </c-layout>
-    <v-expand-transition v-if="$slots.default" mode="out-in">
+    <v-expand-transition v-if="isExpandable" mode="out-in">
       <c-layout
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref, useSlots } from 'vue';
 
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
@@ -73,15 +73,21 @@ export default {
       type: Boolean,
       default: true,
     },
+    expandable: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props) {
+    const slots = useSlots();
     const expanded = ref(props.defaultExpanded);
-
     const { hasChildrenError } = useValidationChildren();
+    const isExpandable = computed(() => props.expandable && !!slots.default);
 
     return {
       expanded,
       hasChildrenError,
+      isExpandable,
     };
   },
 };

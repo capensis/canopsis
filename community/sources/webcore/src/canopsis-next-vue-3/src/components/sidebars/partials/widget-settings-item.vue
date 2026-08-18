@@ -5,11 +5,11 @@
     class="widget-settings-item"
     color=""
   >
-    <template #activator="{ props }">
-      <v-list-item v-bind="props">
+    <template #activator="{ props: activatorProps }">
+      <v-list-item v-bind="activatorProps">
         <template #title>
           <c-layout align="center" gap="1">
-            <span>
+            <span :class="validationHeaderClass">
               <slot name="title">
                 {{ title }}
               </slot>
@@ -27,13 +27,17 @@
       </v-list-item>
     </template>
 
-    <v-container class="widget-settings-item__content">
+    <v-container ref="contentElement" class="widget-settings-item__content">
       <slot />
     </v-container>
   </v-list-group>
 </template>
 
 <script>
+import { ref } from 'vue';
+
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+
 export default {
   inheritAttrs: false,
 
@@ -54,6 +58,16 @@ export default {
       type: Boolean,
       default: true,
     },
+  },
+
+  setup() {
+    const contentElement = ref(null);
+    const { validationHeaderClass } = useValidationHeader(contentElement);
+
+    return {
+      contentElement,
+      validationHeaderClass,
+    };
   },
 };
 </script>

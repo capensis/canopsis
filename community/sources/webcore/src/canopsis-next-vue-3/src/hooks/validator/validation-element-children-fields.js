@@ -2,7 +2,7 @@ import { computed, unref } from 'vue';
 
 import { isParent } from '@/helpers/vue-base';
 
-import { useValidator } from './validator';
+import { useFormContext } from '@/hooks/form';
 
 const EMPTY_VALIDATOR_FIELDS = [];
 
@@ -16,18 +16,20 @@ const EMPTY_VALIDATOR_FIELDS = [];
  * @returns {import('vue').ComputedRef<Array>}
  */
 export const useValidationElementChildrenFields = (parent) => {
-  const validator = useValidator();
+  const formContext = useFormContext();
 
   return computed(() => {
-    if (!validator) {
+    if (!formContext) {
       return EMPTY_VALIDATOR_FIELDS;
     }
+
+    const fieldsWithInstances = formContext.getAllPathStatesWithInstances();
 
     const node = unref(parent);
     const nodeEl = node?.$el;
 
-    return validator.fields.items.filter(
-      ({ vm, el }) => (nodeEl && nodeEl === el) || nodeEl?.contains?.(el) || isParent(vm, node),
+    return fieldsWithInstances.filter(({ instance } = {}) =>
+      (nodeEl && nodeEl === instance?.$el) || nodeEl?.contains?.(instance?.$el) || isParent(instance, node),
     );
   });
 };

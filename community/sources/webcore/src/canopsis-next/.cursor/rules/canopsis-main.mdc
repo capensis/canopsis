@@ -167,6 +167,15 @@ export default {
 - Use Vuetify components when possible — follow existing patterns
 - Use `v-layout` component instead of `v-row` and `v-col`
 - All interactive elements must include **accessibility attributes**: `aria-label`, `tabindex`, `role`, keyboard handlers (`@keydown.enter`, etc.)
+- Do **not** pass `density="default"` on fields. Vuetify already uses default density. If a field looks too compact, fix the component default instead of overriding it at the call site.
+
+```html
+<!-- ❌ BAD -->
+<c-lazy-search-field density="default" />
+
+<!-- ✅ GOOD -->
+<c-lazy-search-field />
+```
 
 ```html
 <v-layout column>

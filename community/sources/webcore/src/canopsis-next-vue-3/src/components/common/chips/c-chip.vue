@@ -7,11 +7,12 @@
     class="c-chip"
     size="small"
   >
-    <span :style="textStyle" class="c-chip__text">
+    <span :class="textColorClass" :style="textStyle" class="c-chip__text">
       <slot />
     </span>
     <v-icon
       v-if="closable"
+      :class="textColorClass"
       :style="textStyle"
       class="cursor-pointer ml-2"
       size="small"
@@ -60,7 +61,23 @@ export default {
       };
     },
 
+    isCssTextColor() {
+      return /^(#|rgb|hsl|var\()/i.test(this.textColor);
+    },
+
+    textColorClass() {
+      if (!this.textColor || this.isCssTextColor) {
+        return undefined;
+      }
+
+      return `text-${this.textColor.replace(/\s+/g, '-')}`;
+    },
+
     textStyle() {
+      if (!this.textColor || !this.isCssTextColor) {
+        return undefined;
+      }
+
       return {
         color: this.textColor,
       };

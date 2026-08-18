@@ -16,6 +16,8 @@
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
 
+import { useValidationChildren } from '@/hooks/validator/validation-children';
+
 export default {
   props: {
     label: {
@@ -54,12 +56,13 @@ export default {
 
   setup(props) {
     const theme = useTheme();
+    const { hasChildrenError } = useValidationChildren();
 
     const layoutClasses = computed(() => ({
       [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
       'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--bottom-border': !!props.bottomBorder,
-      'c-form-block-row--error': props.error,
+      'c-form-block-row--error': hasChildrenError.value || props.error,
       'c-form-block-row--dark': theme.current.value.dark,
       'c-form-block-row--light': !theme.current.value.dark,
     }));

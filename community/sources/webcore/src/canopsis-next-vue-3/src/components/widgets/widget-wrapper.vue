@@ -60,6 +60,7 @@ import { authMixin } from '@/mixins/auth';
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
+import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
 import MapWidget from './map/map.vue';
 import TextWidget from './text/text.vue';
 
@@ -73,6 +74,7 @@ export default {
     AlarmsListWidget,
     CounterWidget,
     EntitiesListWidget,
+    ExternalDataTableWidget,
     MapWidget,
     TextWidget,
   },
@@ -103,6 +105,7 @@ export default {
         [WIDGET_TYPES.text]: TextWidget,
         [WIDGET_TYPES.counter]: CounterWidget,
         [WIDGET_TYPES.map]: MapWidget,
+        [WIDGET_TYPES.externalDataTable]: ExternalDataTableWidget,
       }[this.widget.type];
     },
 

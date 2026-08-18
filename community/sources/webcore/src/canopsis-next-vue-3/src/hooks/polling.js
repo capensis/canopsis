@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { unref } from 'vue';
 
+import { EXPORT_FETCHING_INTERVAL } from '@/config';
+import { EXPORT_STATUSES } from '@/constants';
+
 import { usePendingHandler } from '@/hooks/query/pending';
 
 /**
@@ -118,24 +121,64 @@ export const usePollingWithPending = ({
 export const useFilePolling = ({
   createHandler,
   fetchHandler,
-  completedStatus,
-  failedStatus,
-  interval = 2000,
-}) =>
-  usePolling({
+  endHandler = v => v,
+  failedHandler = v => v,
+  completedStatus = EXPORT_STATUSES.completed,
+  failedStatus = EXPORT_STATUSES.failed,
+  interval = EXPORT_FETCHING_INTERVAL,
+}) => {
+  const processHandler = async ({ _id: id, ...rest }, resolve, reject) => {
+    const response = await fetchHandler({ id, ...rest });
+
+    if (response.status === unref(completedStatus)) {
+      return resolve(response);
+    }
+
+    if (response.status === unref(failedStatus)) {
+      return reject(failedHandler(response));
+    }
+
+    return response;
+  };
+
+  return usePolling({
     startHandler: createHandler,
-    processHandler: async (options, resolve, reject) => {
-      const file = await fetchHandler(options);
-
-      if (file?.status === completedStatus) {
-        resolve(file);
-
-        return;
-      }
-
-      if (file?.status === failedStatus) {
-        reject(file);
-      }
-    },
+    processHandler,
+    endHandler,
     interval,
   });
+};
+
+/**
+ * Creates file polling runner with pending state.
+ *
+ * @param {Object} options
+ * @returns {{ pending: import('vue').Ref<boolean>, poll: Function, cancel: Function }}
+ */
+export const useFilePollingWithPending = ({
+  createHandler,
+  fetchHandler,
+  endHandler,
+  failedHandler,
+  completedStatus,
+  failedStatus,
+  interval,
+  initialPending,
+}) => {
+  const { poll: basicPoll, cancel } = useFilePolling({
+    createHandler,
+    fetchHandler,
+    endHandler,
+    failedHandler,
+    completedStatus,
+    failedStatus,
+    interval,
+  });
+  const { pending, handler: poll } = usePendingHandler(basicPoll, initialPending);
+
+  return {
+    pending,
+    poll,
+    cancel,
+  };
+};

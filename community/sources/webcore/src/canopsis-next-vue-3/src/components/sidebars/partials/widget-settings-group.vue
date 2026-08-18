@@ -5,17 +5,27 @@
     color=""
     eager
   >
-    <template #activator="{ props }">
-      <v-list-item v-bind="props" :title="title" />
+    <template #activator="{ props: activatorProps }">
+      <v-list-item v-bind="activatorProps" :disabled="disabled">
+        <template #title>
+          <span :class="validationHeaderClass">
+            {{ title }}
+          </span>
+        </template>
+      </v-list-item>
     </template>
 
-    <v-list class="widget-settings-group__list px-2 py-0">
+    <v-list ref="contentElement" class="widget-settings-group__list px-2 py-0">
       <slot />
     </v-list>
   </v-list-group>
 </template>
 
 <script>
+import { ref } from 'vue';
+
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+
 export default {
   props: {
     title: {
@@ -26,6 +36,16 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const contentElement = ref(null);
+    const { validationHeaderClass } = useValidationHeader(contentElement);
+
+    return {
+      contentElement,
+      validationHeaderClass,
+    };
   },
 };
 </script>

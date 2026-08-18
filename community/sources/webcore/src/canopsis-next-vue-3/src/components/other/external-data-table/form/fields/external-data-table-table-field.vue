@@ -3,6 +3,7 @@
     :value="selectedItem"
     :items="items"
     :label="label || $t('externalData.tableField')"
+    :name="name"
     :disabled="disabled"
     :required="required"
     :loading="wholePending"
@@ -23,7 +24,7 @@ import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 
 export default {
-  emits: ['update:value'],
+  emits: ['update:value', 'update:selected-items'],
   props: {
     value: {
       type: String,
@@ -40,6 +41,10 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: 'entities',
     },
   },
   setup(props, { emit }) {

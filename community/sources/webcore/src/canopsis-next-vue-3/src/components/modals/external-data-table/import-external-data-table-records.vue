@@ -55,13 +55,14 @@
 <script>
 import { computed } from 'vue';
 
-import ExternalDataTableGeneralInfoForm from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
-import { useExternalDataTableImportFile } from '@/components/other/external-data-table/hooks/external-data-table-import-file';
-import ImportFileUploadSection from '@/components/other/external-data-table/partials/import-file-upload-section.vue';
-import ImportPreviewSection from '@/components/other/external-data-table/partials/import-preview-section.vue';
-import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import { useExternalDataTableImportFile } from '@/components/other/external-data-table/hooks/external-data-table-import-file';
+
+import ExternalDataTableGeneralInfoForm from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
+import ImportFileUploadSection from '@/components/other/external-data-table/partials/import-file-upload-section.vue';
+import ImportPreviewSection from '@/components/other/external-data-table/partials/import-preview-section.vue';
 
 export default {
   components: {
@@ -82,10 +83,8 @@ export default {
     const modals = useModals();
     const config = computed(() => props.modal.config ?? {});
 
-    useForm();
-
     const {
-      validator,
+      formContext,
       separator,
       activeImportFileId,
       form,
@@ -109,9 +108,9 @@ export default {
     const submitting = computed(() => pending.value || uploading.value);
 
     const submit = async () => {
-      const isValid = await validator.validateAll();
+      const { valid } = await formContext.validate();
 
-      if (isValid) {
+      if (valid) {
         if (needPreview.value) {
           await updatePreview();
 

@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <c-layout class="string-array-form" column>
     <c-radio-group
       :model-value="form.selectedType"
       class="mt-0"
@@ -14,14 +14,13 @@
         color="success"
       >
         <template #label>
-          <c-layout justify="space-between">
+          <div class="string-array-form__type-label text-grey-darken-1">
             <span>
+              <span class="text-error">*</span>
               {{ type.text }}
             </span>
-            <span>
-              {{ type.description }}
-            </span>
-          </c-layout>
+            <span>{{ type.description }}</span>
+          </div>
         </template>
       </v-radio>
     </c-radio-group>
@@ -30,7 +29,8 @@
         <c-radio-group
           :model-value="form.selectedSeparator"
           class="mt-0"
-          hide-details
+          name="selectedSeparator"
+          required
           @update:model-value="updateSelectedSeparator"
         >
           <v-radio
@@ -44,6 +44,7 @@
                 :model-value="form.customSeparator"
                 :disabled="!isCustomSeparatorSelected"
                 :required="isCustomSeparatorSelected"
+                :validation-rules="customSeparatorRules"
                 name="separator"
                 @update:model-value="updateField('customSeparator', $event)"
               />
@@ -63,9 +64,9 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS,
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES,
 } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
-import { useValidator } from '@/hooks/validator/validator';
 
 const CUSTOM_SEPARATOR_VALUE = 'custom';
 
@@ -83,7 +84,6 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const validator = useValidator();
     const { updateField } = useModelField(props, emit);
 
     const isCustomTypeSelected = computed(
@@ -94,6 +94,18 @@ export default {
     const isCustomSeparatorSelected = computed(
       () => props.form.selectedSeparator === CUSTOM_SEPARATOR_VALUE,
     );
+
+    const customSeparatorRules = computed(() => {
+      if (!isCustomSeparatorSelected.value) {
+        return [];
+      }
+
+      return [
+        value =>
+          value !== CSV_SEPARATORS_TO_SYMBOLS[props.tableSeparator] ||
+          t('externalData.tableColumnDataTypesAdditionalChips.forbiddenSeparator'),
+      ];
+    });
 
     const types = computed(() =>
       Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES).map(type => ({
@@ -117,23 +129,16 @@ export default {
     ]);
 
     /**
-     * Validates the custom separator field
-     */
-    const validateCustomSeparator = () => validator.validate('separator');
-
-    /**
      * Updates selected separator and validates custom separator field.
      *
      * @param {*} value
      */
-    const updateSelectedSeparator = (value) => {
-      updateField('selectedSeparator', value);
-      validateCustomSeparator();
-    };
+    const updateSelectedSeparator = value => updateField('selectedSeparator', value);
 
     return {
       isCustomTypeSelected,
       isCustomSeparatorSelected,
+      customSeparatorRules,
       types,
       separatorsWithCustom,
       updateField,
@@ -144,6 +149,34 @@ export default {
 </script>
 
 <style lang="scss">
+.string-array-form {
+  width: 100%;
+
+  .v-input,
+  .v-input__control,
+  .v-selection-control-group,
+  .v-selection-control {
+    width: 100%;
+  }
+
+  .v-selection-control .v-label {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: visible;
+    opacity: 1;
+    color: #616161;
+  }
+
+  &__type-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    column-gap: 32px;
+  }
+}
+
 .radio-string-array-separator-custom {
   align-items: start;
 

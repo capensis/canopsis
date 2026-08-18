@@ -1,6 +1,5 @@
 <template>
   <v-form
-    ref="vuetifyForm"
     :class="{ 'widget-settings--divider': divider }"
     class="widget-settings"
     @submit.prevent="emit('submit')"
@@ -23,9 +22,6 @@
 </template>
 
 <script setup>
-import { inject, nextTick, ref } from 'vue';
-
-import { FORM_CONTEXT_KEY, useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 defineProps({
@@ -46,38 +42,6 @@ defineProps({
 const emit = defineEmits(['submit']);
 
 const { t } = useI18n();
-const formContext = inject(FORM_CONTEXT_KEY, null) ?? useForm();
-
-const vuetifyForm = ref(null);
-
-// TODO: remove the exposed validate fallback after every widget settings sidebar uses useWidgetSettings().
-const scrollToFirstError = () => {
-  nextTick(() => {
-    vuetifyForm.value?.$el.querySelector('.v-input--error')?.scrollIntoView({
-      block: 'center',
-      behavior: 'smooth',
-    });
-  });
-};
-
-const validate = async () => {
-  const [formResult, vuetifyResult] = await Promise.all([
-    formContext.validate(),
-    vuetifyForm.value?.validate?.(),
-  ]);
-
-  const valid = (formResult?.valid ?? true) && (vuetifyResult?.valid ?? true);
-
-  if (!valid) {
-    scrollToFirstError();
-  }
-
-  return valid;
-};
-
-defineExpose({
-  validate,
-});
 </script>
 
 <style lang="scss">

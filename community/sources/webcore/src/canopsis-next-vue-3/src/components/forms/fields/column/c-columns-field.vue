@@ -1,6 +1,7 @@
 <template>
   <c-card-iterator-form
     :value="modelValue"
+    :name="name || undefined"
     :handle="`.${dragItemHandleClass}`"
     :iterator-class="{ empty: isColumnsEmpty }"
     @add="add"
@@ -10,7 +11,7 @@
       <column-field
         :key="column.key"
         :model-value="modelValue[index]"
-        :name="column.key"
+        :name="getColumnFieldName(column.key)"
         :type="type"
         :drag-handle-class="dragItemHandleClass"
         :with-html="withHtml"
@@ -37,7 +38,9 @@
 import { computed } from 'vue';
 
 import { ENTITIES_TYPES } from '@/constants';
+
 import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import ColumnField from './partials/column-field.vue';
@@ -102,6 +105,10 @@ export default {
       type: Array,
       required: false,
     },
+    name: {
+      type: String,
+      default: '',
+    },
   },
 
   emits: ['update:modelValue'],
@@ -114,6 +121,7 @@ export default {
       emit,
     );
     const add = () => addItemIntoArray(widgetColumnToForm());
+    const getColumnFieldName = key => [props.name, key].filter(Boolean).join('.');
 
     return {
       dragItemHandleClass,
@@ -121,6 +129,7 @@ export default {
       add,
       remove: removeItemFromArray,
       updateItemInArray,
+      getColumnFieldName,
     };
   },
 };

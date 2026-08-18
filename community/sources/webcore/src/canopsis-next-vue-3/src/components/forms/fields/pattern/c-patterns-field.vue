@@ -199,12 +199,14 @@
 
 <script>
 import { isString } from 'lodash';
-import { useField, useFormContext } from 'vee-validate';
 import { computed, ref, toRef, watch } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
+
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { isValidPatternRule, formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+
+import { useField, useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
