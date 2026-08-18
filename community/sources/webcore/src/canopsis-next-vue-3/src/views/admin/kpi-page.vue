@@ -68,16 +68,18 @@
 </template>
 
 <script>
-import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
-import KpiCollectionSettings from '@/components/other/kpi/collection-settings/kpi-collection-settings.vue';
-import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
-import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
 import { SOCKET_ROOMS } from '@/config';
 import { HEALTHCHECK_SERVICES_NAMES, KPI_TABS, MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFilter } from '@/hooks/store/modules/filter';
 import { useHealthcheck } from '@/hooks/store/modules/healthcheck';
 import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
+
+import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
+import KpiCollectionSettings from '@/components/other/kpi/collection-settings/kpi-collection-settings.vue';
+import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
+import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
 
 export default {
   components: {

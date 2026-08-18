@@ -33,11 +33,13 @@
 <script>
 import { computed } from 'vue';
 
-import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 import { MODALS } from '@/constants';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useModals } from '@/hooks/modals';
+
+import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 
 export default {
   name: MODALS.addInfoPopup,

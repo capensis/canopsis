@@ -53,6 +53,7 @@ import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
 
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
+import { prepareServiceWeatherWidget } from '@/helpers/entities/widget/forms/service-weather';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { authMixin } from '@/mixins/auth';
@@ -62,6 +63,7 @@ import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
 import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
 import MapWidget from './map/map.vue';
+import ServiceWeatherWidget from './service-weather/service-weather.vue';
 import TextWidget from './text/text.vue';
 
 export default {
@@ -76,6 +78,7 @@ export default {
     EntitiesListWidget,
     ExternalDataTableWidget,
     MapWidget,
+    ServiceWeatherWidget,
     TextWidget,
   },
   mixins: [authMixin, activeViewMixin],
@@ -106,6 +109,7 @@ export default {
         [WIDGET_TYPES.counter]: CounterWidget,
         [WIDGET_TYPES.map]: MapWidget,
         [WIDGET_TYPES.externalDataTable]: ExternalDataTableWidget,
+        [WIDGET_TYPES.serviceWeather]: ServiceWeatherWidget,
       }[this.widget.type];
     },
 
@@ -116,6 +120,10 @@ export default {
 
       if (this.widget.type === WIDGET_TYPES.context) {
         return prepareContextWidget(this.widget);
+      }
+
+      if (this.widget.type === WIDGET_TYPES.serviceWeather) {
+        return prepareServiceWeatherWidget(this.widget);
       }
 
       return this.widget;

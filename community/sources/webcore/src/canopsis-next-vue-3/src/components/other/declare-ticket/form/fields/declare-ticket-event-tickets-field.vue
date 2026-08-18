@@ -24,10 +24,12 @@
 <script>
 import { groupBy } from 'lodash';
 
-import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
 import { filterValue } from '@/helpers/array';
 import { isSuccessStepTicketType } from '@/helpers/entities/alarm/step/entity';
+
 import { formMixin } from '@/mixins/form';
+
+import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
 
 export default {
   components: { ExtraDetailsTicket },

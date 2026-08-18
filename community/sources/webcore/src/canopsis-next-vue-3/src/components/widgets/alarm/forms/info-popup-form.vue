@@ -24,11 +24,14 @@
 <script>
 import { computed } from 'vue';
 
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import { ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
+
 import { useModelField } from '@/hooks/form/model-field';
+
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   components: { TextEditorField },

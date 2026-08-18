@@ -20,11 +20,13 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import RatingField from '@/components/forms/fields/rating-field.vue';
 import { convertDateToString } from '@/helpers/date/date';
+
 import { useI18n } from '@/hooks/i18n';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
+
+import RatingField from '@/components/forms/fields/rating-field.vue';
 
 export default {
   components: { RatingField },

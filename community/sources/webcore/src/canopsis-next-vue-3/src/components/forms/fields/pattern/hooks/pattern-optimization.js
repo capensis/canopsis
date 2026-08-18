@@ -10,9 +10,13 @@ import {
   PATTERN_TYPES,
   PATTERN_CUSTOM_ITEM_VALUE,
 } from '@/constants';
+
+import Observer from '@/services/observer';
+
 import { isOmitEqual } from '@/helpers/collection';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { patternToForm } from '@/helpers/entities/pattern/form';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -20,7 +24,6 @@ import { usePollingWithPending } from '@/hooks/polling';
 import { usePopups } from '@/hooks/popups';
 import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entities-optimize';
 import { useValidator } from '@/hooks/validator/validator';
-import Observer from '@/services/observer';
 
 /**
  * Composable hook for managing pattern optimization functionality

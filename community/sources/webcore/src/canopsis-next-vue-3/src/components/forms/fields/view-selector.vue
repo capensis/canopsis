@@ -25,6 +25,7 @@
 import { computed, onMounted } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useView } from '@/hooks/store/modules/view';
 

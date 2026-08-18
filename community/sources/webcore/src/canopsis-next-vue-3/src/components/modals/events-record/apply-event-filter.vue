@@ -42,7 +42,9 @@
 import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
+
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';

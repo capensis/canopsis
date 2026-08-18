@@ -30,18 +30,21 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 
-import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 import { MAX_LIMIT } from '@/constants';
+
 import {
   formToPlaylist,
   getTabsFromGroupsByIds,
   playlistToForm,
 } from '@/helpers/entities/playlist/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useView } from '@/hooks/store/modules/view';
+
+import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 
 export default {
   components: { PlaylistForm },

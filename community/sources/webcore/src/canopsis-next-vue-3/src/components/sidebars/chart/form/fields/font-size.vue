@@ -25,8 +25,9 @@
 </template>
 
 <script>
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

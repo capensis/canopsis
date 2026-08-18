@@ -22,6 +22,7 @@
 
 <script setup>
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useModals } from '@/hooks/modals';
 import { useRole } from '@/hooks/store/modules/role';

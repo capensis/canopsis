@@ -41,6 +41,7 @@
 import { computed, onMounted, ref, toRef } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_VARIABLES_TABS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';

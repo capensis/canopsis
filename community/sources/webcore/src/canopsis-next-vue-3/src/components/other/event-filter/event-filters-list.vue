@@ -71,6 +71,7 @@
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
+
 import { useI18n } from '@/hooks/i18n';
 
 import EventFiltersListExpandPanel from './partials/event-filters-list-expand-panel.vue';

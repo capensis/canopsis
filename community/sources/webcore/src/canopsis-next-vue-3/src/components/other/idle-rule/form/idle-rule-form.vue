@@ -32,6 +32,7 @@
 import { computed, ref } from 'vue';
 
 import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
+
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 

@@ -103,10 +103,12 @@ import {
   REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES,
   REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES,
 } from '@/constants';
+
 import {
   isInstructionTypeAuto,
   isInstructionTypeSimpleManual,
 } from '@/helpers/entities/remediation/instruction/form';
+
 import { useModelField } from '@/hooks/form/model-field';
 
 import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';

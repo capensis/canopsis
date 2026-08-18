@@ -41,6 +41,7 @@ import {
   METRICS_QUICK_RANGES,
   USER_METRIC_PARAMETERS,
 } from '@/constants';
+
 import { isUserCriteria } from '@/helpers/entities/metric/form';
 import { getAvailableMetricByCriteria } from '@/helpers/entities/metric/list';
 

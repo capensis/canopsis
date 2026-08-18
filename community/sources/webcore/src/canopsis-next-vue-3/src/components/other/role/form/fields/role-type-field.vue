@@ -22,6 +22,7 @@
 
 <script>
 import { ROLE_TYPES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

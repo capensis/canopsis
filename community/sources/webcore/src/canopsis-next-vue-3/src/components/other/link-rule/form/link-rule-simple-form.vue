@@ -26,7 +26,9 @@
 import { computed } from 'vue';
 
 import { LINK_RULE_TYPES } from '@/constants';
+
 import { linkRuleLinkToForm } from '@/helpers/entities/link/form';
+
 import { useFormArray, useFormContext } from '@/hooks/form';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
 

@@ -1,73 +1,35 @@
 <template>
   <div v-if="hasSettingsAccess" class="groups-settings-button">
-    <v-menu
-      v-model="isOpen"
+    <c-speed-dial
       :close-on-content-click="false"
       location="top center"
-      transition="slide-y-reverse-transition"
     >
-      <template #activator="{ props: activatorProps }">
+      <template #activator="{ props: activatorProps, isActive }">
         <v-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
+              v-bind="{ ...activatorProps, ...tooltipProps }"
+              :class="{ 'c-speed-dial__btn--active': isActive }"
+              class="c-speed-dial__btn"
               color="primary"
               size="x-large"
               icon
-              v-bind="{ ...activatorProps, ...tooltipProps }"
             >
-              <c-icon v-if="isOpen">
-                close
-              </c-icon>
-              <c-icon v-else>
-                settings
-              </c-icon>
+              <v-icon icon="settings" />
+              <v-icon icon="close" />
             </v-btn>
           </template>
           <span>{{ $t('common.settings') }}</span>
         </v-tooltip>
       </template>
 
-      <c-layout
-        class="groups-settings-button__list"
-        align="center"
-        gap="2"
-        column
-      >
-        <v-tooltip v-if="hasAccessToPrivateView" :location="tooltipLocation">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn
-              color="blue-darken-3"
-              icon
-              v-bind="tooltipProps"
-              @click.stop="showCreatePrivateViewModal"
-            >
-              <c-icon size="40">
-                $vuetify.icons.person_lock
-              </c-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('layout.sideBar.buttons.createPrivateView') }}</span>
-        </v-tooltip>
-
-        <v-tooltip v-if="hasCreateAnyViewAccess" :location="tooltipLocation">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn
-              color="green-darken-4"
-              icon
-              v-bind="tooltipProps"
-              @click.stop="showCreateViewModal"
-            >
-              <c-icon>add</c-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('layout.sideBar.buttons.createView') }}</span>
-        </v-tooltip>
-
-        <v-tooltip v-if="hasEditAccess" :location="tooltipLocation">
+      <div v-if="hasEditAccess" key="edit">
+        <v-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               :active="isNavigationEditingMode"
               color="blue-darken-4"
+              size="default"
               icon
               v-bind="tooltipProps"
               @click.stop="$emit('toggleEditingMode')"
@@ -82,13 +44,50 @@
           </template>
           <span>{{ $t('layout.sideBar.buttons.edit') }}</span>
         </v-tooltip>
-      </c-layout>
-    </v-menu>
+      </div>
+
+      <div v-if="hasCreateAnyViewAccess" key="create-view">
+        <v-tooltip :location="tooltipLocation">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              color="green-darken-4"
+              size="default"
+              icon
+              v-bind="tooltipProps"
+              @click.stop="showCreateViewModal"
+            >
+              <c-icon>add</c-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('layout.sideBar.buttons.createView') }}</span>
+        </v-tooltip>
+      </div>
+
+      <div v-if="hasAccessToPrivateView" key="create-private-view">
+        <v-tooltip :location="tooltipLocation">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              color="blue-darken-3"
+              size="default"
+              icon
+              v-bind="tooltipProps"
+              @click.stop="showCreatePrivateViewModal"
+            >
+              <c-icon size="40">
+                $vuetify.icons.person_lock
+              </c-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('layout.sideBar.buttons.createPrivateView') }}</span>
+        </v-tooltip>
+      </div>
+    </c-speed-dial>
   </div>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
+
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
@@ -114,12 +113,6 @@ export default {
   },
 
   emits: ['toggleEditingMode'],
-
-  data() {
-    return {
-      isOpen: false,
-    };
-  },
 
   computed: {
     hasEditAccess() {
@@ -180,10 +173,5 @@ export default {
   right: 16px;
   bottom: 16px;
   z-index: 8;
-
-  &__list {
-    padding: 8px;
-    align-items: center;
-  }
 }
 </style>

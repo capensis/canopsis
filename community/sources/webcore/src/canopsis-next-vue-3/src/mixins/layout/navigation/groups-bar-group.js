@@ -1,9 +1,11 @@
 import { mapState } from 'pinia';
 
 import { MODALS, ROUTES_NAMES } from '@/constants';
+
+import { useActiveViewStore } from '@/stores/modules/active-view';
+
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
-import { useActiveViewStore } from '@/stores/modules/active-view';
 
 import { layoutNavigationEditingModeMixin } from './editing-mode';
 

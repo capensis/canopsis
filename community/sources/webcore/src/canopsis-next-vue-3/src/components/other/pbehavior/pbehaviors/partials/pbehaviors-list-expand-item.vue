@@ -55,7 +55,9 @@
 import { computed, ref } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
+
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
+
 import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorPatternsForm from '../form/pbehavior-patterns-form.vue';

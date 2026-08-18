@@ -11,7 +11,9 @@
 import { computed } from 'vue';
 
 import { GEMINI_AI_CONSOLE_BILLING_URL } from '@/config';
+
 import { sanitizeHtml } from '@/helpers/html';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

@@ -2,6 +2,7 @@ import { merge } from 'lodash';
 
 import { COLORS, DEFAULT_THEME_COLORS } from '@/config';
 import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants';
+
 import {
   colorToRgba,
   colorToHex,
@@ -76,10 +77,13 @@ const createVuetifyColors = ({ variables, main, table }) => {
     return acc;
   }, {});
 
-  return VUETIFY_PALETTE_VARIATION_KEYS.reduce((acc, key) => ({
-    ...acc,
-    ...createPaletteColorVariations(key, acc[key]),
-  }), colors);
+  return VUETIFY_PALETTE_VARIATION_KEYS.reduce(
+    (acc, key) => ({
+      ...acc,
+      ...createPaletteColorVariations(key, acc[key]),
+    }),
+    colors,
+  );
 };
 
 const createVuetifyRuntimeVariables = ({

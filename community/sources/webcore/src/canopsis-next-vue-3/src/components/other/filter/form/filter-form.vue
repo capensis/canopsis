@@ -28,6 +28,7 @@ import { pick } from 'lodash';
 import { computed } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
+
 import { useFormContext, useFormModel } from '@/hooks/form';
 import {
   usePatternsFields,

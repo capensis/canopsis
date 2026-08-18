@@ -18,11 +18,12 @@
 </template>
 
 <script>
+import { AVAILABLE_COUNTERS } from '@/constants';
+
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import FieldCriticityLevels from '@/components/sidebars/stats/form/fields/criticity-levels.vue';
 import FieldLevelsColorsSelector from '@/components/sidebars/stats/form/fields/levels-colors-selector.vue';
-import { AVAILABLE_COUNTERS } from '@/constants';
 
 export default {
   components: {

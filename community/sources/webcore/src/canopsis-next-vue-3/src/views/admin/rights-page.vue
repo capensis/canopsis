@@ -45,13 +45,15 @@
 <script>
 import { onMounted, ref, watch } from 'vue';
 
+import { USER_PERMISSIONS_GROUPS } from '@/constants';
+
 import {
   useRolePermissionActions,
   useRolePermissionFetching,
 } from '@/components/other/permission/hooks/role-permission';
+
 import PermissionsFabBtn from '@/components/other/permission/permissions-fab-btn.vue';
 import PermissionsTableWrapper from '@/components/other/permission/permissions-table-wrapper.vue';
-import { USER_PERMISSIONS_GROUPS } from '@/constants';
 
 export default {
   components: { PermissionsTableWrapper, PermissionsFabBtn },

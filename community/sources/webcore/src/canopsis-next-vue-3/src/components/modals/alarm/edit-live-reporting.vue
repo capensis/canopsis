@@ -29,11 +29,13 @@
 <script setup>
 import { computed } from 'vue';
 
-import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 import { LIVE_REPORTING_QUICK_RANGES, MODALS } from '@/constants';
+
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
 defineOptions({ name: MODALS.editLiveReporting });
 

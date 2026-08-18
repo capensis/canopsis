@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
+
 import {
   convertDataTableSortToQuery,
   convertQuerySortToDataTableSort,
@@ -25,11 +26,7 @@ export const widgetOptionsMixin = {
       },
 
       set(newOptions = {}) {
-        const {
-          page = 1,
-          itemsPerPage = PAGINATION_LIMIT,
-          sortBy = [],
-        } = newOptions;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [] } = newOptions;
         const sort = convertDataTableSortToQuery(sortBy);
         const oldItemsPerPage = this.query.itemsPerPage ?? PAGINATION_LIMIT;
         const convertedOptions = {

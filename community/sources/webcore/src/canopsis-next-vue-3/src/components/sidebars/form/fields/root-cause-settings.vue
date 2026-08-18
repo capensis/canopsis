@@ -19,8 +19,9 @@
 </template>
 
 <script>
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { useModelField } from '@/hooks/form/model-field';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

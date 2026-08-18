@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import { uid } from '@/helpers/uid';
 
 /**

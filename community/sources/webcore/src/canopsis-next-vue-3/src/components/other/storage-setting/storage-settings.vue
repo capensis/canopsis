@@ -71,12 +71,10 @@
 import { isEqual, cloneDeep } from 'lodash';
 import { ref, onMounted, computed } from 'vue';
 
-import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
-import StorageSettingsArchiveEntityUnlinkedForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-unlinked-form.vue';
-import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
-import StorageSettingsHistoryMessageBtn from '@/components/other/storage-setting/partials/storage-settings-history-message-btn.vue';
 import { MODALS, TIME_UNITS } from '@/constants';
+
 import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
+
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -85,6 +83,11 @@ import { useDataStorage } from '@/hooks/store/modules/data-storage';
 import { useEntity } from '@/hooks/store/modules/entity';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
+
+import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
+import StorageSettingsArchiveEntityUnlinkedForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-unlinked-form.vue';
+import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
+import StorageSettingsHistoryMessageBtn from '@/components/other/storage-setting/partials/storage-settings-history-message-btn.vue';
 
 export default {
   components: {

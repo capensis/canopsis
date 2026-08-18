@@ -19,6 +19,7 @@
 import { computed } from 'vue';
 
 import { TEMPLATE_TESTING_DATA_TYPES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

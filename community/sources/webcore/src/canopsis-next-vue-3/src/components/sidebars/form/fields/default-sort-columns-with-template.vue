@@ -31,11 +31,14 @@
 <script>
 import { computed } from 'vue';
 
+import { ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
+
+import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
+
 import WidgetTemplateSortColumnsForm from '@/components/other/widget-template/form/widget-template-sort-columns-form.vue';
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-import { ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
-import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
-import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
 export default {
   components: { WidgetSettingsItem, WidgetTemplateSortColumnsForm },

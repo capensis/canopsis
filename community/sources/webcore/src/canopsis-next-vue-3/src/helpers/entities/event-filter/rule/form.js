@@ -8,6 +8,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERNS_FIELDS,
 } from '@/constants';
+
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import {
   exceptionsToForm,

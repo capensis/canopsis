@@ -75,7 +75,9 @@ import {
   TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
   TEMPLATE_TESTING_TEST_VARIABLES_MIN_EDITOR_LINES,
 } from '@/constants';
+
 import { getStringLinesCount } from '@/helpers/string';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

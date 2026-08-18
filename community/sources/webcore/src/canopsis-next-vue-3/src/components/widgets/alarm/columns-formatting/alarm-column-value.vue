@@ -41,11 +41,12 @@
 <script>
 import { get } from 'lodash';
 
-import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 import {
   getAlarmWidgetColumnTemplateId,
   getAlarmWidgetGroupColumnTemplateId,
 } from '@/helpers/entities/alarm/list';
+
+import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 import AlarmColumnCell from './alarm-column-cell.vue';
 

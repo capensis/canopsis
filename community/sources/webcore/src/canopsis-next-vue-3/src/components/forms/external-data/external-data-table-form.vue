@@ -69,11 +69,14 @@
 <script>
 import { computed, ref } from 'vue';
 
-import ExternalDataTableTableField from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
 import { SORT_ORDERS } from '@/constants';
+
 import { addPriorityColumnToColumnsArray } from '@/helpers/entities/external-data-table/form';
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
+
 import { useModelField } from '@/hooks/form/model-field';
+
+import ExternalDataTableTableField from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
 
 import ExternalDataTableConditionForm from './external-data-table-condition-form.vue';
 

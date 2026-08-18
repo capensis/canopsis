@@ -102,6 +102,15 @@
 </template>
 
 <script>
+import { COLORS, OPEN_STREET_LAYER_URL } from '@/config';
+import { MODALS } from '@/constants';
+
+import { geomapPointToForm } from '@/helpers/entities/map/form';
+import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
+import { uid } from '@/helpers/uid';
+
+import { formMixin } from '@/mixins/form';
+
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
 import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue';
 import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
@@ -112,12 +121,6 @@ import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
 import Geomap from '@/components/common/geomap/geomap.vue';
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
-import { COLORS, OPEN_STREET_LAYER_URL } from '@/config';
-import { MODALS } from '@/constants';
-import { geomapPointToForm } from '@/helpers/entities/map/form';
-import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
-import { uid } from '@/helpers/uid';
-import { formMixin } from '@/mixins/form';
 
 import PointFormDialogMenu from './point-form-dialog-menu.vue';
 

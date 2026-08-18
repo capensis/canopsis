@@ -1,6 +1,7 @@
 import { isNumber, omit } from 'lodash';
 
 import { ENTITY_TYPES, BASIC_ENTITY_TYPES, ALARM_STATES } from '@/constants';
+
 import { infosToArray } from '@/helpers/entities/shared/form';
 
 /**

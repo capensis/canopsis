@@ -37,7 +37,6 @@
 <script>
 import { isArray } from 'lodash';
 
-import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 import {
   BASIC_ENTITY_TYPES,
   ENTITY_PATTERN_FIELDS,
@@ -50,11 +49,15 @@ import {
   ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
+
 import { getMapEntityText } from '@/helpers/entities/map/list';
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
+
 import { useEntityCategory } from '@/hooks/store/modules/entity-category';
 import { useService } from '@/hooks/store/modules/service';
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
+
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
   emits: ['update:patterns', 'update:value'],

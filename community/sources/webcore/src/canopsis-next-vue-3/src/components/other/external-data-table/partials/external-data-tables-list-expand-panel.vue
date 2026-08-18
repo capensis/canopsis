@@ -32,13 +32,16 @@
 import { pick } from 'lodash';
 import { ref, toRef, inject, watch, onMounted, onBeforeUnmount } from 'vue';
 
-import ExternalDataTableRecordsList from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
+import Observer from '@/services/observer';
+
 import {
   externalDataTableColumnConfigsToForm,
   formToExternalDataTableColumnTags,
 } from '@/helpers/entities/external-data-table/form';
+
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
-import Observer from '@/services/observer';
+
+import ExternalDataTableRecordsList from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
 
 import { useExternalDataTableRecordsList } from '../hooks/external-data-table-records';
 

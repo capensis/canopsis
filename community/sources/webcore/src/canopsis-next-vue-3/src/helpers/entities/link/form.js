@@ -7,6 +7,7 @@ import {
   LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE,
   LINK_RULE_ACTIONS,
 } from '@/constants';
+
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import {
   externalDataToForm,

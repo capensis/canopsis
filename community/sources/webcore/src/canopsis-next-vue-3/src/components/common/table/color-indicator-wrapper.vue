@@ -19,7 +19,9 @@ import { computed } from 'vue';
 
 import { COLORS } from '@/config';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import { getAlarmImpactStateColor, getAlarmStateColor } from '@/helpers/entities/alarm/color';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

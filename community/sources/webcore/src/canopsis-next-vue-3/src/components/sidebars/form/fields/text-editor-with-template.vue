@@ -11,9 +11,11 @@
 </template>
 
 <script>
-import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 import { CUSTOM_WIDGET_TEMPLATE, MODALS } from '@/constants';
+
 import { getWidgetTemplateModalTitle } from '@/helpers/entities/widget/template/modal-title';
+
+import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 
 export default {
   components: { SettingsButtonField },

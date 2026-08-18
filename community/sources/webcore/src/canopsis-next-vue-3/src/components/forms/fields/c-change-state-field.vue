@@ -33,11 +33,13 @@
 import { omit } from 'lodash';
 import { computed } from 'vue';
 
-import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 import { ALARM_STATES } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
+
+import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 export default {
   components: { StateCriticityField },

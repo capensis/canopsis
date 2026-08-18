@@ -6,6 +6,7 @@
 import { merge } from 'lodash';
 
 import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
+
 import { renderMermaid } from '@/helpers/mermaid';
 
 export default {

@@ -70,6 +70,7 @@ import { computed } from 'vue';
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
+
 import { useI18n } from '@/hooks/i18n';
 
 import ScenariosListExpandItem from './partials/scenarios-list-expand-item.vue';

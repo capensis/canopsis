@@ -32,15 +32,17 @@
 <script>
 import { computed } from 'vue';
 
-import TemplateTestingDataForm from '@/components/other/template-testing/form/template-testing-data-form.vue';
 import {
   formToTemplateTestingData,
   templateTestingDataToForm,
 } from '@/helpers/entities/template-testing-data/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import TemplateTestingDataForm from '@/components/other/template-testing/form/template-testing-data-form.vue';
 
 export default {
   components: {

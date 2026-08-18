@@ -33,24 +33,27 @@
 <script>
 import { computed, onMounted, watch } from 'vue';
 
-import BroadcastMessageForm from '@/components/other/broadcast-message/form/broadcast-message-form.vue';
-import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 import {
   BROADCAST_MESSAGE_VIEWS,
   BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS,
   MAX_LIMIT,
 } from '@/constants';
+
 import {
   formToMessage,
   messageToForm,
   prepareMessageViews,
 } from '@/helpers/entities/broadcast-message/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePlaylist } from '@/hooks/store/modules/playlist';
 import { useView } from '@/hooks/store/modules/view';
+
+import BroadcastMessageForm from '@/components/other/broadcast-message/form/broadcast-message-form.vue';
+import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
 export default {
   components: {

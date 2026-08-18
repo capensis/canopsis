@@ -1,10 +1,12 @@
 import { ALARM_FIELDS } from '@/constants';
+
+import { i18n } from '@/i18n';
+
 import {
   getInfosWidgetColumn,
   isAlarmTicketDataWidgetColumn,
   isLinksWidgetColumn,
 } from '@/helpers/entities/widget/column/form';
-import { i18n } from '@/i18n';
 
 /**
  * Get translated label for widget column.

@@ -23,14 +23,16 @@
 <script>
 import { onMounted } from 'vue';
 
-import AnomalyMonitoredConnectorsList from '@/components/other/anomaly-monitored-connector/anomaly-monitored-connectors-list.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
+
+import AnomalyMonitoredConnectorsList from '@/components/other/anomaly-monitored-connector/anomaly-monitored-connectors-list.vue';
 
 export default {
   components: { AnomalyMonitoredConnectorsList },

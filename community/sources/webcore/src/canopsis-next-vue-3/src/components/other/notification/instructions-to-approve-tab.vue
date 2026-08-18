@@ -19,11 +19,15 @@
 <script>
 import { toRef } from 'vue';
 
-import { useRemediationInstructionsActions } from '@/components/other/remediation/instructions/hooks/remediation-instructions';
-import RemediationInstructionsList from '@/components/other/remediation/instructions/remediation-instructions-list.vue';
 import { USER_PERMISSIONS } from '@/constants';
+
 import { isInstructionDismissed } from '@/helpers/entities/remediation/instruction/form';
+
 import { useCRUDPermissions } from '@/hooks/auth';
+
+import { useRemediationInstructionsActions } from '@/components/other/remediation/instructions/hooks/remediation-instructions';
+
+import RemediationInstructionsList from '@/components/other/remediation/instructions/remediation-instructions-list.vue';
 
 import { useNotificationActiveId } from './hooks/notifications';
 

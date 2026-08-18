@@ -99,15 +99,11 @@ export const widgetAlarmsSocketMixin = {
     },
 
     joinToAlarmsSocketRoom(alarms) {
-      this.$socket
-        .join(this.alarmsSocketRoom, mapIds(alarms))
-        .addListener(this.updateAlarmInStore);
+      this.$socket.join(this.alarmsSocketRoom, mapIds(alarms)).addListener(this.updateAlarmInStore);
     },
 
     leaveAlarmsSocketRoom() {
-      this.$socket
-        .leave(this.alarmsSocketRoom)
-        .removeListener(this.updateAlarmInStore);
+      this.$socket.leave(this.alarmsSocketRoom).removeListener(this.updateAlarmInStore);
     },
 
     joinToAlarmDetailsSocketRoom(payload) {

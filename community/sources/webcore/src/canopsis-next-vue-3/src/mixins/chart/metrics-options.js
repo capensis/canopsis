@@ -36,9 +36,7 @@ export const chartMetricsOptionsMixin = {
     },
 
     maxMetricsCount() {
-      return this.hasHistoryData
-        ? MAX_METRICS_DISPLAY_COUNT / 2
-        : MAX_METRICS_DISPLAY_COUNT;
+      return this.hasHistoryData ? MAX_METRICS_DISPLAY_COUNT / 2 : MAX_METRICS_DISPLAY_COUNT;
     },
 
     preparedMetrics() {
@@ -48,9 +46,7 @@ export const chartMetricsOptionsMixin = {
     realMetricsCount() {
       const length = this.metrics?.length ?? 0;
 
-      return this.hasHistoryData
-        ? length * 2
-        : length;
+      return this.hasHistoryData ? length * 2 : length;
     },
 
     tooltipBodyFontSize() {
@@ -118,14 +114,16 @@ export const chartMetricsOptionsMixin = {
       return {
         [X_AXES_IDS.default]: {
           type: 'time',
-          min: convertDateToTimestampByTimezone(
-            convertDateToStartOfDayTimestamp(this.interval.from),
-            this.$system.timezone,
-          ) * 1000,
-          max: convertDateToTimestampByTimezone(
-            convertDateToEndOfUnitTimestamp(this.interval.to, TIME_UNITS.day),
-            this.$system.timezone,
-          ) * 1000,
+          min:
+            convertDateToTimestampByTimezone(
+              convertDateToStartOfDayTimestamp(this.interval.from),
+              this.$system.timezone,
+            ) * 1000,
+          max:
+            convertDateToTimestampByTimezone(
+              convertDateToEndOfUnitTimestamp(this.interval.to, TIME_UNITS.day),
+              this.$system.timezone,
+            ) * 1000,
           ticks: {
             min: this.minDate * 1000,
             max: Date.now(),
@@ -186,7 +184,11 @@ export const chartMetricsOptionsMixin = {
 
   methods: {
     getChartTooltipLabel({ raw, dataset }) {
-      const value = convertMetricValueToString({ value: raw.y, metric: dataset.metric, unit: dataset.unit });
+      const value = convertMetricValueToString({
+        value: raw.y,
+        metric: dataset.metric,
+        unit: dataset.unit,
+      });
       const messageKey = `kpi.metrics.tooltip.${dataset.metric}`;
 
       return this.$te(messageKey)

@@ -60,11 +60,13 @@
 import { computed } from 'vue';
 
 import { ALARM_STATUSES, COLOR_INDICATOR_TYPES_WITH_STATUS } from '@/constants';
+
 import {
   formatAlarmState,
   formatAlarmStatus,
   getColorIndicatorByStatusAndState,
 } from '@/helpers/entities/alarm/formatting';
+
 import { useI18n } from '@/hooks/i18n';
 
 import AlarmStatusChipWithRelations from '../partials/alarm-status-chip-with-relations.vue';

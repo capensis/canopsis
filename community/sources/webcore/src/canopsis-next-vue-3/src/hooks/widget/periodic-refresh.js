@@ -17,8 +17,12 @@ import {
  * @param {Object|import('vue').Ref<Object>} config.options - Periodic refresh settings.
  * @param {Function} config.handler - The function to be called on each refresh interval.
  */
-export const useWidgetPeriodicRefresh = ({ options, handler }) => { // TODO: may be we should remove it later
-  const { periodicRefresh } = usePeriodicRefreshParent({ handler, key: WIDGET_PERIODIC_REFRESH_KEY });
+export const useWidgetPeriodicRefresh = ({ options, handler }) => {
+  // TODO: may be we should remove it later
+  const { periodicRefresh } = usePeriodicRefreshParent({
+    handler,
+    key: WIDGET_PERIODIC_REFRESH_KEY,
+  });
 
   const enabled = computed(() => !!unref(options)?.enabled);
   const delay = computed(() => (unref(options) ? durationToSeconds(unref(options)) : 0));

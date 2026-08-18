@@ -18,6 +18,7 @@
 import { onMounted, ref } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 

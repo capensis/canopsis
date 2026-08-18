@@ -101,12 +101,14 @@
 <script>
 import { computed, ref } from 'vue';
 
-import ProgressCell from '@/components/common/table/progress-cell.vue';
 import { convertDateToString } from '@/helpers/date/date';
 import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/entities/remediation/job/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 import { useRemediationJobExecution } from '@/hooks/store/modules/remediation-job-execution';
+
+import ProgressCell from '@/components/common/table/progress-cell.vue';
 
 export default {
   components: { ProgressCell },

@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
 
 import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
+
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
 

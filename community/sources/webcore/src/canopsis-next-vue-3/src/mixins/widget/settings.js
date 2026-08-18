@@ -2,10 +2,13 @@ import { isEqual } from 'lodash';
 import { mapActions } from 'pinia';
 
 import { MODALS } from '@/constants';
+
+import { useWidgetStore } from '@/stores/modules/widget';
+
 import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
-import { useWidgetStore } from '@/stores/modules/widget';
 
 // TODO: remove after every widget settings sidebar is rewritten to Composition API with useWidgetSettings().
 export const widgetSettingsMixin = {

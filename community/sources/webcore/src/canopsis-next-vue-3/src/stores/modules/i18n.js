@@ -2,8 +2,10 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 import { DEFAULT_LOCALE, LOCALE_PRIORITIES } from '@/config';
-import { setDateLocale } from '@/helpers/date/date';
+
 import { i18n } from '@/i18n';
+
+import { setDateLocale } from '@/helpers/date/date';
 
 export const useI18nStore = defineStore('i18n', () => {
   const localePriority = ref(0);

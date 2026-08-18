@@ -14,10 +14,12 @@
 <script>
 import { computed } from 'vue';
 
-import { useAlarmFiltering } from '@/components/other/pbehavior/pbehaviors/hooks/alarm-filtering';
 import { MODALS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import { useAlarmFiltering } from '@/components/other/pbehavior/pbehaviors/hooks/alarm-filtering';
 
 export default {
   emits: ['refresh'],

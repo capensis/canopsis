@@ -62,11 +62,13 @@ export const widgetColumnDraggingAlarmMixin = {
     },
 
     getColumnValueFromElement(element) {
-      return element?.dataset?.value
-        ?? element?.closest?.('th')?.dataset?.value
-        ?? element?.querySelector?.('[data-value]')?.dataset?.value
-        ?? element?.closest?.('th')?.querySelector?.('[data-value]')?.dataset?.value
-        ?? null;
+      return (
+        element?.dataset?.value ??
+        element?.closest?.('th')?.dataset?.value ??
+        element?.querySelector?.('[data-value]')?.dataset?.value ??
+        element?.closest?.('th')?.querySelector?.('[data-value]')?.dataset?.value ??
+        null
+      );
     },
 
     getHeaderCellByValue(value) {
@@ -120,9 +122,9 @@ export const widgetColumnDraggingAlarmMixin = {
       }
 
       if (
-        this.lastColumnSwapDirection
-        && this.lastSwapClientX != null
-        && direction === -this.lastColumnSwapDirection
+        this.lastColumnSwapDirection &&
+        this.lastSwapClientX != null &&
+        direction === -this.lastColumnSwapDirection
       ) {
         const movedOpposite = (this.lastSwapClientX - clientX) * this.lastColumnSwapDirection;
 

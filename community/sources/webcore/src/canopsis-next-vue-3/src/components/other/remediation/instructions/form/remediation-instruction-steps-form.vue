@@ -27,6 +27,7 @@
 
 <script>
 import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';

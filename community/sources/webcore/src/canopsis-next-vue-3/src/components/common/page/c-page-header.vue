@@ -48,7 +48,9 @@ import { useRoute } from 'vue-router';
 
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
+
 import { removeTrailingSlashes } from '@/helpers/url';
+
 import { useI18n } from '@/hooks/i18n';
 import { useTourBase } from '@/hooks/tour-base';
 

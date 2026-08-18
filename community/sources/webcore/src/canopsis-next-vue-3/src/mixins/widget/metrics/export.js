@@ -6,9 +6,7 @@ import { saveFile } from '@/helpers/file/files';
 import { exportMixinCreator } from '@/mixins/widget/export';
 
 export const metricsExportMixinCreator = ({ createExport, fetchExport }) => ({
-  mixins: [
-    exportMixinCreator({ createExport, fetchExport }),
-  ],
+  mixins: [exportMixinCreator({ createExport, fetchExport })],
   data() {
     return {
       downloading: false,

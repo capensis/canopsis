@@ -22,6 +22,7 @@
 import { onMounted } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithOptions } from '@/hooks/query/shared';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';

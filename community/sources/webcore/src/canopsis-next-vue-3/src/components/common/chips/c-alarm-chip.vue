@@ -21,6 +21,7 @@
 
 <script>
 import { ENTITY_INFOS_TYPE } from '@/constants';
+
 import { formatAlarmState, formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
 
 /**

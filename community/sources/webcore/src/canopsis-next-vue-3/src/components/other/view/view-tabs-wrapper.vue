@@ -40,9 +40,11 @@
 import { isEqual } from 'lodash';
 import { mapActions } from 'pinia';
 
-import { mapIds } from '@/helpers/array';
-import { activeViewMixin } from '@/mixins/active-view';
 import { useViewStore } from '@/stores/modules/view';
+
+import { mapIds } from '@/helpers/array';
+
+import { activeViewMixin } from '@/mixins/active-view';
 
 import ViewTabWidgets from './view-tab-widgets.vue';
 import ViewTabs from './view-tabs.vue';

@@ -47,6 +47,7 @@
               <v-btn
                 v-bind="tooltipProps"
                 class="view-fab-btns__add-widget-btn"
+                size="default"
                 icon
                 @click.stop="showCreateWidgetModal"
               >
@@ -63,6 +64,7 @@
               <v-btn
                 v-bind="tooltipProps"
                 color="green"
+                size="default"
                 icon
                 @click.stop="showCreateTabModal"
               >

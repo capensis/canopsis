@@ -1,4 +1,5 @@
 import { MODALS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useInfo } from '@/hooks/store/modules/info';

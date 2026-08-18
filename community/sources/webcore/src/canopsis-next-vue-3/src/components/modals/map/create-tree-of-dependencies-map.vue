@@ -30,13 +30,16 @@
 <script>
 import { computed } from 'vue';
 
-import TreeOfDependenciesMapForm from '@/components/other/map/form/tree-of-dependencies-map-form.vue';
 import { MODALS } from '@/constants';
+
 import { mapToForm, formToMap } from '@/helpers/entities/map/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import TreeOfDependenciesMapForm from '@/components/other/map/form/tree-of-dependencies-map-form.vue';
 
 export default {
   name: MODALS.createTreeOfDependenciesMap,

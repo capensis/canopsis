@@ -14,6 +14,7 @@
 import { find, isEqual } from 'lodash';
 
 import { EVENT_FILTER_SET_TAGS_REGEX } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 import { validatorMixin } from '@/mixins/validator';
 

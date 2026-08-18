@@ -15,6 +15,7 @@
 
 <script>
 import { BASIC_ENTITY_TYPES } from '@/constants';
+
 import { useFormModels } from '@/hooks/form';
 
 export default {

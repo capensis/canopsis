@@ -87,12 +87,15 @@ import { uniq } from 'lodash';
 import { mapState } from 'pinia';
 
 import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH } from '@/config';
+
+import { useModalsStore } from '@/plugins/modals/stores';
+
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
-import { useModalsStore } from '@/plugins/modals/stores';
 
 import AppLogo from '../app-logo.vue';
 import AppVersion from '../app-version.vue';

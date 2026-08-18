@@ -18,8 +18,5 @@ import { GRID_SIZES } from '@/constants';
 export const getFlexClassesForGridRangeSize = (gridRangeSize) => {
   const [start, end] = gridRangeSize ?? [GRID_SIZES.min, GRID_SIZES.max];
 
-  return [
-    `offset-${start}`,
-    `v-col-${end - start}`,
-  ];
+  return [`offset-${start}`, `v-col-${end - start}`];
 };

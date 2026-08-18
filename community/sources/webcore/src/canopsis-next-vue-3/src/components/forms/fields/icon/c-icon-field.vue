@@ -43,8 +43,9 @@
 <script>
 import { computed } from 'vue';
 
-import materialIcons from '@/assets/material-icons/MaterialIcons.json';
 import { useI18n } from '@/hooks/i18n';
+
+import materialIcons from '@/assets/material-icons/MaterialIcons.json';
 
 export default {
   props: {

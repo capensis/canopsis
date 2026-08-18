@@ -4,6 +4,7 @@ import {
   ALARM_LIST_WIDGET_COLUMNS,
   ENTITY_INFOS_FIELDS,
 } from '@/constants';
+
 import { uid } from '@/helpers/uid';
 
 /**

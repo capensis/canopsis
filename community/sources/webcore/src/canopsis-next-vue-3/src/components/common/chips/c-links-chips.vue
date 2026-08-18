@@ -36,6 +36,7 @@
 
 <script>
 import { DEFAULT_LINKS_INLINE_COUNT, LINK_RULE_ACTIONS } from '@/constants';
+
 import { writeTextToClipboard } from '@/helpers/clipboard';
 import { harmonizeCategoryLinks, harmonizeLinks } from '@/helpers/entities/link/list';
 

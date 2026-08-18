@@ -27,6 +27,7 @@
 
 <script>
 import { ALARM_STATES } from '@/constants';
+
 import { formBaseMixin } from '@/mixins/form';
 
 export default {

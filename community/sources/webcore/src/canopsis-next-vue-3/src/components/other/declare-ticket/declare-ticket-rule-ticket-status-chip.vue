@@ -15,6 +15,7 @@ import { computed } from 'vue';
 
 import { COLORS } from '@/config';
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 const STATUS_VALUE_TO_KEY = {

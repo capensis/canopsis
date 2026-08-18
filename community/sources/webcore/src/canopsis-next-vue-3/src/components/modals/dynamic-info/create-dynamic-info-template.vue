@@ -30,12 +30,14 @@
 <script>
 import { computed } from 'vue';
 
-import DynamicInfoTemplateForm from '@/components/other/dynamic-info/form/dynamic-info-template-form.vue';
 import { formToTemplate, templateToForm } from '@/helpers/entities/dynamic-info/template/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import DynamicInfoTemplateForm from '@/components/other/dynamic-info/form/dynamic-info-template-form.vue';
 
 export default {
   components: { DynamicInfoTemplateForm },

@@ -38,15 +38,17 @@
 <script>
 import { computed } from 'vue';
 
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
 import {
   AVAILABLE_TIME_UNITS,
   MEDIUM_AVAILABLE_TIME_UNITS,
   SHORT_AVAILABLE_TIME_UNITS,
   TIME_UNITS,
 } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 export default {
   components: {

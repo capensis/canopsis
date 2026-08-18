@@ -96,9 +96,9 @@
 </template>
 
 <script>
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { COLORS } from '@/config';
 import { LINE_TYPES } from '@/constants';
+
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { getImageProperties } from '@/helpers/file/image';
 import { generatePoint } from '@/helpers/flowchart/points';
@@ -116,7 +116,10 @@ import {
   rhombusShapeToForm,
   storageShapeToForm,
 } from '@/helpers/flowchart/shapes';
+
 import { formBaseMixin } from '@/mixins/form';
+
+import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 import assetGroups from './assets';
 import FlowchartColorField from './fields/flowchart-color-field.vue';

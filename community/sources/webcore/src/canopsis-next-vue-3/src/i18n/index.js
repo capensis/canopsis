@@ -2,6 +2,7 @@ import { merge } from 'lodash';
 import { createI18n } from 'vue-i18n';
 
 import { DEFAULT_LOCALE } from '@/config';
+
 import { updateDateLocaleMessages } from '@/helpers/date/date';
 
 import durationFrMessages from './duration-fr';

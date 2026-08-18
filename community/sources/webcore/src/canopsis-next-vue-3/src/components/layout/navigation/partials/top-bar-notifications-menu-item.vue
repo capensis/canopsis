@@ -34,6 +34,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { NOTIFICATIONS_PAGE_TABS_KEYS_BY_TYPE, ROUTES_NAMES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

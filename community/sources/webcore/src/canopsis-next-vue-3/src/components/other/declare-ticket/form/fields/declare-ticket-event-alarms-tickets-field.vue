@@ -44,6 +44,7 @@ import { difference } from 'lodash';
 
 import { filterValue, mapIds } from '@/helpers/array';
 import { revertGroupBy } from '@/helpers/collection';
+
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventTicketsField from './declare-ticket-event-tickets-field.vue';

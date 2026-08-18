@@ -32,7 +32,6 @@
 <script>
 import { invert } from 'lodash';
 
-import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 import {
   ALARM_STATES,
   COUNTER_EXPORT_FILE_NAME_PREFIX,
@@ -40,8 +39,12 @@ import {
   MODALS,
   USER_PERMISSIONS,
 } from '@/constants';
+
 import { convertObjectToTreeview } from '@/helpers/treeview';
+
 import { authMixin } from '@/mixins/auth';
+
+import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
 const INVERTED_ALARM_STATES = invert(ALARM_STATES);
 

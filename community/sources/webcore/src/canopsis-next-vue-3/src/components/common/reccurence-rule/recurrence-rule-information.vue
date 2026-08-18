@@ -20,6 +20,7 @@ import { rrulestr } from 'rrule';
 import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
+
 import { useI18n } from '@/hooks/i18n';
 
 const MAX_EXCEPTION_ITEMS = 4;

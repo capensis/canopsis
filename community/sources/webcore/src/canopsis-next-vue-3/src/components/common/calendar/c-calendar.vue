@@ -163,6 +163,7 @@ import {
   CALENDAR_TYPES,
   LLM_AI_CHAT_WIDTH,
 } from '@/constants';
+
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import { colorToRgba, getColorByHash, isValidColor } from '@/helpers/color';
 import {

@@ -30,12 +30,14 @@
 <script>
 import { computed } from 'vue';
 
-import RoleForm from '@/components/other/role/form/role-form.vue';
 import { roleToForm, formToRole } from '@/helpers/entities/role/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import RoleForm from '@/components/other/role/form/role-form.vue';
 
 export default {
   components: { RoleForm },

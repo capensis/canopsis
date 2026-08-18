@@ -74,9 +74,11 @@
 <script>
 import { omit } from 'lodash';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS } from '@/constants';
+
 import { metricPresetToForm, isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 import ChartMetricPreset from './chart-metric-preset.vue';
 

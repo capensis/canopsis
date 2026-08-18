@@ -94,15 +94,21 @@ export const getAvailableMetricByCriteria = (metric, criteria) => {
  * @returns {Object}
  */
 export const getMaxTimeDurationForMetrics = (metrics) => {
-  const maxTimeValue = Math.max.apply(null, metrics.reduce((acc, { title: metric, data, unit }) => {
-    if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
-      const maxDatasetValue = Math.max.apply(null, data.map(({ value }) => value));
+  const maxTimeValue = Math.max.apply(
+    null,
+    metrics.reduce((acc, { title: metric, data, unit }) => {
+      if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
+        const maxDatasetValue = Math.max.apply(
+          null,
+          data.map(({ value }) => value),
+        );
 
-      acc.push(maxDatasetValue);
-    }
+        acc.push(maxDatasetValue);
+      }
 
-    return acc;
-  }, []));
+      return acc;
+    }, []),
+  );
 
   return convertDurationToMaxUnitDuration({
     value: maxTimeValue,
@@ -119,8 +125,10 @@ export const getMaxTimeDurationForMetrics = (metrics) => {
 export const hasHistoryData = (metrics = []) => {
   const [firstMetric = {}] = metrics;
 
-  return firstMetric.data?.length
-    && firstMetric.data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp);
+  return (
+    firstMetric.data?.length &&
+    firstMetric.data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp)
+  );
 };
 
 /**
@@ -140,7 +148,7 @@ export const convertDataSizeMetricValueToBytes = (value, unit) => {
     [EXTERNAL_METRIC_UNITS.continuousCounter]: 0,
   }[unit];
 
-  return value * (1024 ** degree);
+  return value * 1024 ** degree;
 };
 
 /**
@@ -160,7 +168,7 @@ export const convertTimeMetricValueToSeconds = (value, unit) => {
     [EXTERNAL_METRIC_UNITS.microsecond]: 2,
   }[unit];
 
-  return value / (1000 ** degree);
+  return value / 1000 ** degree;
 };
 
 /**
@@ -198,7 +206,7 @@ export const convertDataSizeValueToTickString = (value) => {
   ];
 
   for (let index = 0; index < units.length; index += 1) {
-    const result = value / (1024 ** index);
+    const result = value / 1024 ** index;
 
     if (result < 1024 || index === units.length - 1) {
       const resultUnit = units[index];
@@ -217,7 +225,10 @@ export const convertDataSizeValueToTickString = (value) => {
  * @param {string} [format=DATETIME_FORMATS.durationWithMilliseconds]
  * @returns {string}
  */
-export const convertMetricDurationToString = (value, format = DATETIME_FORMATS.durationWithMilliseconds) => {
+export const convertMetricDurationToString = (
+  value,
+  format = DATETIME_FORMATS.durationWithMilliseconds,
+) => {
   const milliseconds = value * 1000;
   const hasMicroseconds = milliseconds % 1 > 0;
 
@@ -229,7 +240,7 @@ export const convertMetricDurationToString = (value, format = DATETIME_FORMATS.d
   );
 
   if (hasMicroseconds) {
-    const microseconds = (value * (1000 ** 2));
+    const microseconds = value * 1000 ** 2;
     result += ` ${microseconds} μs`;
   }
 

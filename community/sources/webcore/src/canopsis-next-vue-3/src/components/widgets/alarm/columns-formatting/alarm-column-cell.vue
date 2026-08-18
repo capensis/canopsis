@@ -70,9 +70,10 @@
 import { flow, get, isObject } from 'lodash';
 import { computed, inject, ref } from 'vue';
 
-import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 import { getAlarmWidgetColumnPopupTemplateId } from '@/helpers/entities/alarm/list';
 import { linkifyHtml, sanitizeHtml } from '@/helpers/html';
+
+import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';

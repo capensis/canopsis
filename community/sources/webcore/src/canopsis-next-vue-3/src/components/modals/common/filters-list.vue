@@ -25,9 +25,10 @@
 import { pick } from 'lodash';
 import { computed, onMounted, ref, watch } from 'vue';
 
-import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 import { MODALS } from '@/constants';
+
 import { mapIds } from '@/helpers/array';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
@@ -38,6 +39,8 @@ import {
 } from '@/hooks/store/modules/patterns-fields';
 import { useUserPreference } from '@/hooks/store/modules/user-preference';
 import { useWidget } from '@/hooks/store/modules/widget';
+
+import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 
 export default {
   name: MODALS.filtersList,

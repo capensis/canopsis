@@ -48,6 +48,7 @@
 import { keyBy } from 'lodash';
 
 import { PATTERN_FIELD_TYPES, PATTERN_RULE_INFOS_FIELDS } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 export default {

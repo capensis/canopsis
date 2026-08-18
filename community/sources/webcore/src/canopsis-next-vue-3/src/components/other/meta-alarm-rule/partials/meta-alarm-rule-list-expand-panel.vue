@@ -32,12 +32,14 @@
 <script>
 import { computed, ref } from 'vue';
 
-import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 import {
   isMetaAlarmRuleTypeHasTotalEntityPatterns,
   metaAlarmFilterPatternsToForm,
 } from '@/helpers/entities/meta-alarm/rule/form';
+
 import { useI18n } from '@/hooks/i18n';
+
+import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 
 export default {
   components: { MetaAlarmRulePatternsForm },

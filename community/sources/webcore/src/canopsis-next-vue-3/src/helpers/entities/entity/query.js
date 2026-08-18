@@ -12,13 +12,7 @@ import { convertSortToQuery } from '@/helpers/entities/shared/query';
  * @returns {{}}
  */
 export function convertContextWidgetToQuery(widget) {
-  const {
-    itemsPerPage,
-    selectedTypes,
-    widgetColumns,
-    mainFilter,
-    charts = [],
-  } = widget.parameters;
+  const { itemsPerPage, selectedTypes, widgetColumns, mainFilter, charts = [] } = widget.parameters;
 
   const query = {
     page: 1,

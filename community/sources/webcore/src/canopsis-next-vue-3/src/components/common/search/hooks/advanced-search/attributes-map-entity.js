@@ -1,6 +1,7 @@
 import { computed } from 'vue';
 
 import { ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_GROUPED_ADVANCED_SEARCH_FIELDS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import { useAdvancedSearchEntityAttributes } from './attributes-map';

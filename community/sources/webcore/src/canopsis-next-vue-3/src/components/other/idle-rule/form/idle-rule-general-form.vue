@@ -65,11 +65,14 @@
 <script>
 import { computed } from 'vue';
 
-import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 import { ACTION_TYPES } from '@/constants';
+
 import { isAssociateTicketActionType } from '@/helpers/entities/action';
+
 import { useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+
+import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 
 import IdleRuleAlarmTypeField from './fields/idle-rule-alarm-type-field.vue';
 

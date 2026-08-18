@@ -112,10 +112,12 @@ import {
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
   PATTERN_FIELD_TYPES,
 } from '@/constants';
+
 import {
   eventFilterDictionaryActionValueToForm,
   formToEventFilterDictionaryActionValue,
 } from '@/helpers/entities/event-filter/rule/form';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 

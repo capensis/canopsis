@@ -21,9 +21,10 @@
 </template>
 
 <script>
-import QuickAlarmActionsForm from '@/components/common/actions-panel/quick-alarm-actions-form.vue';
 import { useI18n } from '@/hooks/i18n';
 import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
+
+import QuickAlarmActionsForm from '@/components/common/actions-panel/quick-alarm-actions-form.vue';
 
 export default {
   components: { QuickAlarmActionsForm },

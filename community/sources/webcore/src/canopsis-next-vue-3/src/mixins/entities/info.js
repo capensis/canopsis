@@ -1,6 +1,8 @@
 import { DEFAULT_APP_TITLE } from '@/config';
+
 import { compile } from '@/helpers/handlebars';
 import { sanitizeHtml } from '@/helpers/html';
+
 import { useInfo } from '@/hooks/store/modules/info';
 
 const infoComputed = [

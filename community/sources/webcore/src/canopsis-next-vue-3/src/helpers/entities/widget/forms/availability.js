@@ -13,6 +13,7 @@ import {
   ALARM_UNSORTABLE_FIELDS,
   QUICK_RANGES,
 } from '@/constants';
+
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { setSeveralFields } from '@/helpers/immutable';
 

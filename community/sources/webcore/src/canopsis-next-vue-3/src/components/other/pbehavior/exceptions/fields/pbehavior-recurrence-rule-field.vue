@@ -29,10 +29,13 @@
 import { isEmpty } from 'lodash';
 import { computed } from 'vue';
 
-import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
 import { MODALS } from '@/constants';
+
 import { formToRrule } from '@/helpers/entities/shared/recurrence-rule/form';
+
 import { useModals } from '@/hooks/modals';
+
+import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
 
 export default {
   emits: ['update:rrule', 'update:exdates', 'update:exceptions'],

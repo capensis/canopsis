@@ -22,6 +22,7 @@ import {
   PATTERN_OPERATORS,
   PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES,
 } from '@/constants';
+
 import { isPickEqual } from '@/helpers/collection';
 import {
   formRuleToPatternRule,

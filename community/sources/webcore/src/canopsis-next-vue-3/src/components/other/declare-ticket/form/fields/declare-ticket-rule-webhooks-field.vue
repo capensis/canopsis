@@ -31,6 +31,7 @@
 import { computed } from 'vue';
 
 import { declareTicketRuleWebhookToForm } from '@/helpers/entities/declare-ticket/rule/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import DeclareTicketRuleWebhookField from './declare-ticket-rule-webhook-field.vue';

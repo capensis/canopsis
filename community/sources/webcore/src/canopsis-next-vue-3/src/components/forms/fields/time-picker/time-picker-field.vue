@@ -21,6 +21,7 @@
 
 <script>
 import { normalizeTimeString } from '@/helpers/date/date-time-picker';
+
 import { formBaseMixin } from '@/mixins/form';
 
 export default {

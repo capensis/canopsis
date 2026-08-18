@@ -6,6 +6,7 @@
         :active="activeViewEditing"
         :loading="activeViewEditingProcess"
         class="view-editing-btn__button"
+        size="default"
         icon
         @click.stop="toggleEditing"
       >

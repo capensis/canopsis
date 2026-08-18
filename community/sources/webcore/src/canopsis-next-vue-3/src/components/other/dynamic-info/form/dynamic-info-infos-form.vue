@@ -47,7 +47,9 @@
 import { computed } from 'vue';
 
 import { DYNAMIC_INFO_INFORMATION_TYPES, MODALS } from '@/constants';
+
 import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/information/form';
+
 import { useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';

@@ -1,10 +1,4 @@
-import {
-  isArray,
-  isEmpty,
-  isUndefined,
-  map,
-  uniq,
-} from 'lodash';
+import { isArray, isEmpty, isUndefined, map, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import {
@@ -44,8 +38,8 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
  * @param {string} template
  * @returns {string[]}
  */
-export const getAlarmVariablesByTemplate = template => getTemplateVariables(sanitizeHtml(template))
-  .reduce((acc, variable) => {
+export const getAlarmVariablesByTemplate = template =>
+  getTemplateVariables(sanitizeHtml(template)).reduce((acc, variable) => {
     if (variable.startsWith('alarm.') || variable.startsWith('entity.')) {
       acc.push(variable.replace(/^(alarm)\./, ''));
     }
@@ -188,15 +182,10 @@ export function convertAlarmUserPreferenceToQuery({ content = {} } = {}) {
  * @returns {Object}
  */
 export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
-  const {
-    widgetGroupColumns = [],
-    charts = [],
-    sort,
-  } = widget.parameters;
+  const { widgetGroupColumns = [], charts = [], sort } = widget.parameters;
 
-  const columns = widgetGroupColumns.length > 0
-    ? widgetGroupColumns
-    : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
+  const columns =
+    widgetGroupColumns.length > 0 ? widgetGroupColumns : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
     search,
@@ -223,7 +212,9 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
 
   if (sort && isArray(sort) && sort.length > 0) {
     query.children.sortBy = sort.map(sortColumn => sortColumn.sort_by);
-    query.children.sortDesc = sort.map(sortColumn => sortColumn.sort === SORT_ORDERS.desc.toLowerCase());
+    query.children.sortDesc = sort.map(
+      sortColumn => sortColumn.sort === SORT_ORDERS.desc.toLowerCase(),
+    );
   }
 
   return query;
@@ -237,10 +228,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
  */
 export const convertAlarmDetailsQueryToRequest = (query = {}) => {
   const {
-    steps: {
-      itemsPerPage: stepsItemsPerPage,
-      ...steps
-    } = {},
+    steps: { itemsPerPage: stepsItemsPerPage, ...steps } = {},
     children: {
       itemsPerPage: childrenItemsPerPage,
       sortBy: childrenSortBy,

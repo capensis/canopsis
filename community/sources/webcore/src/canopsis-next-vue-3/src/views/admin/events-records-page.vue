@@ -25,15 +25,18 @@
 <script>
 import { ref, watch } from 'vue';
 
-import EventsRecordsHeader from '@/components/other/events-record/events-records-header.vue';
-import EventsRecordsList from '@/components/other/events-record/events-records-list.vue';
-import { useEventRecordCurrentPolling } from '@/components/other/events-record/hooks/current-polling';
-import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
 import { MODALS } from '@/constants';
+
 import { useModals } from '@/hooks/modals';
 import { useQueryOptions } from '@/hooks/query/options';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
+
+import { useEventRecordCurrentPolling } from '@/components/other/events-record/hooks/current-polling';
+import { useEventsRecordRecording } from '@/components/other/events-record/hooks/recording';
+
+import EventsRecordsHeader from '@/components/other/events-record/events-records-header.vue';
+import EventsRecordsList from '@/components/other/events-record/events-records-list.vue';
 
 export default {
   components: {

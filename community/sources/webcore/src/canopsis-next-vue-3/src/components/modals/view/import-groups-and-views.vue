@@ -66,19 +66,22 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-import DraggableGroupViews from '@/components/layout/navigation/partials/groups-side-bar/draggable-group-views.vue';
-import DraggableGroups from '@/components/layout/navigation/partials/groups-side-bar/draggable-groups.vue';
 import { MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+
 import {
   prepareCurrentGroupsForImporting,
   prepareImportedGroups,
   prepareImportedViews,
   prepareViewGroupsForImportRequest,
 } from '@/helpers/entities/view/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useView } from '@/hooks/store/modules/view';
+
+import DraggableGroupViews from '@/components/layout/navigation/partials/groups-side-bar/draggable-group-views.vue';
+import DraggableGroups from '@/components/layout/navigation/partials/groups-side-bar/draggable-groups.vue';
 
 export default {
   components: {

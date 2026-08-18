@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
 
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants';
+
 import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 import { uid } from '@/helpers/uid';
 

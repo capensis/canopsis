@@ -53,9 +53,11 @@
 <script>
 import { computed } from 'vue';
 
-import { useDynamicInfoAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 import { convertDateToString } from '@/helpers/date/date';
+
 import { useI18n } from '@/hooks/i18n';
+
+import { useDynamicInfoAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 
 import DynamicInfosListExpandItem from './partials/dynamic-infos-expand-item.vue';
 

@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 
 import { CANOPSIS_DOCUMENTATION, CANOPSIS_WEBSITE, CANOPSIS_FORUM } from '@/constants';
+
 import { useInfo } from '@/hooks/store/modules/info';
 
 const { version } = useInfo();

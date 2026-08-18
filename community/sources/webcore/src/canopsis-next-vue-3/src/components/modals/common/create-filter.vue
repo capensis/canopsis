@@ -31,13 +31,16 @@
 import { omit } from 'lodash';
 import { computed } from 'vue';
 
-import FilterForm from '@/components/other/filter/form/filter-form.vue';
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
+
 import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import FilterForm from '@/components/other/filter/form/filter-form.vue';
 
 export default {
   name: MODALS.createFilter,

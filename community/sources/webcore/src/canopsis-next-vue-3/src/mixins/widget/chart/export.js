@@ -6,9 +6,7 @@ import { convertDateToString } from '@/helpers/date/date';
 import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 export const widgetChartExportMixinCreator = ({ createExport, fetchExport }) => ({
-  mixins: [
-    metricsExportMixinCreator({ createExport, fetchExport }),
-  ],
+  mixins: [metricsExportMixinCreator({ createExport, fetchExport })],
   methods: {
     getFileName() {
       const { from, to } = this.getIntervalQuery();

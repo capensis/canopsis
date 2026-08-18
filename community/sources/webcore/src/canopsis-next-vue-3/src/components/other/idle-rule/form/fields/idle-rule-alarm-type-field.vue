@@ -18,6 +18,7 @@
 import { computed } from 'vue';
 
 import { IDLE_RULE_ALARM_CONDITIONS } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

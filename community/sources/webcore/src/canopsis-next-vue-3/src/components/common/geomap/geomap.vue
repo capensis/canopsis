@@ -9,9 +9,10 @@ import { Icon, Map } from 'leaflet';
 import { GestureHandling } from 'leaflet-gesture-handling';
 import { debounce } from 'lodash';
 
-import locationUrl from '@/assets/images/location.svg';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { GEOMAP_PANES, GEOMAP_PANE_Z_INDEXES } from '@/constants';
+
+import locationUrl from '@/assets/images/location.svg';
 
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-gesture-handling/dist/leaflet-gesture-handling.css';

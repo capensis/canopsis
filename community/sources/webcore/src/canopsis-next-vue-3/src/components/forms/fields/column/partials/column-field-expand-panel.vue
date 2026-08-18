@@ -167,7 +167,9 @@ import {
   ENTITY_INFOS_FIELDS,
   MODALS,
 } from '@/constants';
+
 import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
+
 import { useInfos } from '@/hooks/store/modules/infos';
 import { formMixin } from '@/mixins/form';
 

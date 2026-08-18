@@ -6,11 +6,13 @@ import {
   REMEDIATION_INSTRUCTION_FILTER_FIELDS,
   REMEDIATION_INSTRUCTION_FILTER_TYPES,
 } from '@/constants';
+
 import {
   isAutoInstructionType,
   isManualInstructionType,
   isAnyManualInstructionType,
 } from '@/helpers/entities/remediation/instruction/list';
+
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 /**
@@ -72,7 +74,10 @@ export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
     instructionsIds.value = uniq([...instructionsIds.value, ...selectedIds]);
   };
 
-  const fetchInstructionsList = async ({ nextPage = 1, search: nextSearch = search.value } = {}) => {
+  const fetchInstructionsList = async ({
+    nextPage = 1,
+    search: nextSearch = search.value,
+  } = {}) => {
     const requestNumber = ++fetchRequestNumber;
 
     try {
@@ -146,10 +151,7 @@ export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
 
   const hasMoreInstructions = computed(() => pageCount.value > page.value);
 
-  watch(
-    () => unref(filter).instruction_ids,
-    fetchSelectedInstructions,
-  );
+  watch(() => unref(filter).instruction_ids, fetchSelectedInstructions);
 
   watch(
     () => unref(filter).instruction_type,

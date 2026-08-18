@@ -1,10 +1,12 @@
 import { computed, unref } from 'vue';
 
 import { PATTERN_QUICK_RANGES_WITHOUT_CUSTOM } from '@/constants';
+
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
 } from '@/helpers/date/date-intervals';
+
 import { useI18n } from '@/hooks/i18n';
 
 /**
@@ -21,11 +23,7 @@ import { useI18n } from '@/hooks/i18n';
  *   itemToDisabled: Function
  * }}
  */
-export const useQuickDateIntervalRange = ({
-  fromRanges,
-  toRanges,
-  value = {},
-} = {}) => {
+export const useQuickDateIntervalRange = ({ fromRanges, toRanges, value = {} } = {}) => {
   const { t } = useI18n();
 
   const fromQuickRanges = computed(() => {
@@ -46,17 +44,16 @@ export const useQuickDateIntervalRange = ({
     }));
   });
 
-  const allQuickRangesIntervals = computed(() => [
-    ...fromQuickRanges.value,
-    ...toQuickRanges.value,
-  ].reduce((acc, range) => {
-    acc[range.value] = {
-      start: convertStartDateIntervalToTimestamp(range.start),
-      stop: convertStopDateIntervalToTimestamp(range.stop),
-    };
+  const allQuickRangesIntervals = computed(() =>
+    [...fromQuickRanges.value, ...toQuickRanges.value].reduce((acc, range) => {
+      acc[range.value] = {
+        start: convertStartDateIntervalToTimestamp(range.start),
+        stop: convertStopDateIntervalToTimestamp(range.stop),
+      };
 
-    return acc;
-  }, {}));
+      return acc;
+    }, {}),
+  );
 
   /**
    * Checks whether a from item should be disabled for the selected to range.

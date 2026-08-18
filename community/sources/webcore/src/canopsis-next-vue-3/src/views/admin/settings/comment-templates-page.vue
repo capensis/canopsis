@@ -22,10 +22,11 @@
 <script>
 import { onMounted, ref } from 'vue';
 
-import CommentTemplatesList from '@/components/other/comment-template/comment-templates-list.vue';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { convertQueryToRequest } from '@/helpers/query';
+
 import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
@@ -33,6 +34,8 @@ import { useModals } from '@/hooks/modals';
 import { useQueryOptions } from '@/hooks/query/options';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useCommentTemplate } from '@/hooks/store/modules/comment-template';
+
+import CommentTemplatesList from '@/components/other/comment-template/comment-templates-list.vue';
 
 export default {
   components: { CommentTemplatesList },

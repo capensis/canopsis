@@ -25,6 +25,7 @@
 import { computed } from 'vue';
 
 import { widgetQuickAlarmActionToForm } from '@/helpers/entities/widget/quick-action/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import QuickAlarmActionsFormItem from './quick-alarm-actions-form-item.vue';

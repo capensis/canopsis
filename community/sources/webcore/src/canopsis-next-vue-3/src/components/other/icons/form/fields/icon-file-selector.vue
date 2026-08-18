@@ -28,10 +28,12 @@
 <script>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
-import FileDragSelector from '@/components/forms/fields/file-drag-selector.vue';
+import { registerCustomIcon, unregisterCustomIcon } from '@/plugins/vuetify/icons';
+
 import { getFileTextContent } from '@/helpers/file/file-select';
 import { uid } from '@/helpers/uid';
-import { registerCustomIcon, unregisterCustomIcon } from '@/plugins/vuetify/icons';
+
+import FileDragSelector from '@/components/forms/fields/file-drag-selector.vue';
 
 import CustomIcon from '../../partials/custom-icon.vue';
 

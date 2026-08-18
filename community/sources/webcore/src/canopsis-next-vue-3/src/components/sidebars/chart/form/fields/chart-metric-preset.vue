@@ -60,6 +60,7 @@
 
 <script>
 import { AGGREGATE_FUNCTIONS } from '@/constants';
+
 import { getMetricColor } from '@/helpers/entities/metric/color';
 
 import AlarmMetricField from './alarm-metric-field.vue';

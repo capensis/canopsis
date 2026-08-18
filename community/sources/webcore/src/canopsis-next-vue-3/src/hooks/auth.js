@@ -2,8 +2,10 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
 import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
-import { checkUserAccess } from '@/helpers/permission';
+
 import { useAuthStore } from '@/stores/modules/auth';
+
+import { checkUserAccess } from '@/helpers/permission';
 
 /**
  * Hook for accessing authentication-related functionality.

@@ -5,6 +5,7 @@
         v-bind="props"
         color="secondary-lighten-2"
         class="text-white"
+        size="default"
         icon
         @click.stop="showCreateShareTokenModal"
       >
@@ -21,7 +22,9 @@ import { useRouter } from 'vue-router';
 
 import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { MODALS, ROUTES_NAMES } from '@/constants';
+
 import { removeTrailingSlashes } from '@/helpers/url';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useShareToken } from '@/hooks/store/modules/share-token';

@@ -76,6 +76,10 @@ export default {
   [MODALS.serviceDependencies]: defineAsyncComponent(
     () => import('./service/service-dependencies.vue'),
   ),
+  [MODALS.serviceEntities]: defineAsyncComponent(() => import('./service/service-entities.vue')),
+  [MODALS.createServicePauseEvent]: defineAsyncComponent(
+    () => import('./service/create-service-pause-event.vue'),
+  ),
   [MODALS.createMaintenance]: defineAsyncComponent(
     () => import('./maintenance/create-maintenance.vue'),
   ),

@@ -10,13 +10,15 @@
 </template>
 
 <script>
-import BroadcastMessages from '@/components/other/broadcast-message/broadcast-messages.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useBroadcastMessages } from '@/hooks/store/modules/broadcast-message';
+
+import BroadcastMessages from '@/components/other/broadcast-message/broadcast-messages.vue';
 
 export default {
   components: {

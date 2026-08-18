@@ -44,7 +44,9 @@
 import { computed, ref } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
+
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
+
 import { useI18n } from '@/hooks/i18n';
 
 import AlarmStatusRulePatternsForm from '../form/alarm-status-rule-patterns-form.vue';

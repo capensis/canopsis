@@ -1,7 +1,10 @@
 import { get } from 'lodash';
 
 import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
-import { convertDurationToMaxUnitDurationString, convertDurationToString } from '@/helpers/date/duration';
+import {
+  convertDurationToMaxUnitDurationString,
+  convertDurationToString,
+} from '@/helpers/date/duration';
 import { stringifyJsonFilter } from '@/helpers/json';
 import { convertNumberToFixedString, convertNumberToRoundedPercentString } from '@/helpers/string';
 

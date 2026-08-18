@@ -4,6 +4,7 @@ import { registerCustomProtocol } from 'linkifyjs';
 import { escape, unescape } from 'lodash';
 
 import { DEFAULT_SANITIZE_OPTIONS, DEFAULT_LINKIFY_OPTIONS, LINKIFY_PROTOCOLS } from '@/config';
+
 import { uid } from '@/helpers/uid';
 
 /**

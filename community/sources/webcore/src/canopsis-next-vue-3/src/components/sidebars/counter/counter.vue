@@ -72,6 +72,22 @@
 <script setup>
 import { computed, onMounted, ref, toRef } from 'vue';
 
+import {
+  COLUMNS_WIDGET_TEMPLATES_TYPES,
+  MAX_LIMIT,
+  QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
+  SIDE_BARS,
+  WIDGET_TEMPLATES_TYPES,
+} from '@/constants';
+
+import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
+
+import { useI18n } from '@/hooks/i18n';
+import { useInfos } from '@/hooks/store/modules/infos';
+import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
+import { useWidgetSettings } from '@/hooks/widget/settings';
+
 import AlarmsListModalForm from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
 import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
@@ -82,19 +98,6 @@ import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import MarginsForm from '@/components/sidebars/form/margins.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
-import {
-  COLUMNS_WIDGET_TEMPLATES_TYPES,
-  MAX_LIMIT,
-  QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
-  SIDE_BARS,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
-import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
-import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
-import { useI18n } from '@/hooks/i18n';
-import { useInfos } from '@/hooks/store/modules/infos';
-import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
-import { useWidgetSettings } from '@/hooks/widget/settings';
 
 import CounterLevelsForm from './form/counter-levels.vue';
 import FieldTemplate from './form/fields/template.vue';

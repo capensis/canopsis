@@ -41,8 +41,9 @@
 </template>
 
 <script>
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
+
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 export default {
   components: { VariablesList },

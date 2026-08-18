@@ -28,7 +28,6 @@
 <script>
 import { isArray, keyBy } from 'lodash';
 
-import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 import {
   ALARM_EVENT_INITIATORS,
   ALARM_PATTERN_FIELDS,
@@ -44,9 +43,13 @@ import {
   PATTERN_EXISTS_OPERATORS,
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
 } from '@/constants';
+
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
+
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
   components: { PatternEditorField },

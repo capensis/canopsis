@@ -49,11 +49,13 @@
 <script>
 import { onMounted, ref } from 'vue';
 
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import { uid } from '@/helpers/uid';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useCommentTemplate } from '@/hooks/store/modules/comment-template';
+
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 export default {
   components: { WidgetSettingsGroup },

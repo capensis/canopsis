@@ -1,8 +1,10 @@
 import { computed, onMounted, ref, unref, watch } from 'vue';
 
-import { patternsFieldsToForm } from '@/helpers/entities/pattern/fields/form';
-import { usePendingHandler } from '@/hooks/query/pending';
 import { usePatternsFieldsStore } from '@/stores/modules/patterns-fields';
+
+import { patternsFieldsToForm } from '@/helpers/entities/pattern/fields/form';
+
+import { usePendingHandler } from '@/hooks/query/pending';
 
 /**
  * Pattern fields store facade.

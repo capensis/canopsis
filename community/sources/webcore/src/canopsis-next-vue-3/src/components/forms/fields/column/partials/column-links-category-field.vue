@@ -13,6 +13,7 @@
 import { mapActions } from 'pinia';
 
 import { LINK_RULE_TYPES, MAX_LIMIT } from '@/constants';
+
 import { useLinkRuleStore } from '@/stores/modules/link-rule';
 
 export default {

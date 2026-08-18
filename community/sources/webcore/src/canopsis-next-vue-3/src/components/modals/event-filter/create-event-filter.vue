@@ -37,9 +37,10 @@
 <script>
 import { computed, inject, watch } from 'vue';
 
-import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import { MODALS } from '@/constants';
+
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
@@ -48,6 +49,8 @@ import {
   usePatternsFields,
   usePatternsFieldsFetching,
 } from '@/hooks/store/modules/patterns-fields';
+
+import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 
 export default {
   name: MODALS.createEventFilter,

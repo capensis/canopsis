@@ -7,8 +7,10 @@ import {
   ROUTES_NAMES,
   VIEW_USER_PERMISSIONS_NAMES,
 } from '@/constants';
-import { checkUserAccess } from '@/helpers/permission';
+
 import { useAuthStore } from '@/stores/modules/auth';
+
+import { checkUserAccess } from '@/helpers/permission';
 
 export const authMixin = {
   computed: {

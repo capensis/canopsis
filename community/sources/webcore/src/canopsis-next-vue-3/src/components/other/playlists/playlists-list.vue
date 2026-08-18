@@ -73,8 +73,10 @@ import { useRouter } from 'vue-router';
 
 import { APP_HOST } from '@/config';
 import { ROUTES_NAMES } from '@/constants';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { removeTrailingSlashes } from '@/helpers/url';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 

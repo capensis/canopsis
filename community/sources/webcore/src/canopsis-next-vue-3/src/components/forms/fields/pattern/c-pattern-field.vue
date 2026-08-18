@@ -27,6 +27,7 @@
 
 <script>
 import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
+
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 export default {

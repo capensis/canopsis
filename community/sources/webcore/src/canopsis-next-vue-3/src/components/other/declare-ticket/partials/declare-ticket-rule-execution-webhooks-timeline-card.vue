@@ -10,9 +10,11 @@
 </template>
 
 <script>
-import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
 import { EVENT_ENTITY_TYPES } from '@/constants';
+
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
+
+import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
 
 export default {
   components: { AlarmWebhookExecutionTimelineCard },

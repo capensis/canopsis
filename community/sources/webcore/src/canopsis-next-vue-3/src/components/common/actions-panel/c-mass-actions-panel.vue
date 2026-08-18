@@ -39,6 +39,7 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { TELEPORTS_NAMES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

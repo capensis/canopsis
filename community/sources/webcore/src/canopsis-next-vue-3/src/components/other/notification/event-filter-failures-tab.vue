@@ -19,10 +19,13 @@
 <script>
 import { nextTick, ref, toRef } from 'vue';
 
-import EventFiltersList from '@/components/other/event-filter/event-filters-list.vue';
-import { useEventFilterActions } from '@/components/other/event-filter/hooks/event-filters';
 import { EVENT_FILTER_EXPAND_PANEL_TABS, USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
+
+import { useEventFilterActions } from '@/components/other/event-filter/hooks/event-filters';
+
+import EventFiltersList from '@/components/other/event-filter/event-filters-list.vue';
 
 import { useNotificationActiveId } from './hooks/notifications';
 

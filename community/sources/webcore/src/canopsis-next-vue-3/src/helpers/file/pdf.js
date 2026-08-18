@@ -1,7 +1,6 @@
 import { Visitor, parseWithoutProcessing } from 'handlebars';
 import JsPDF from 'jspdf';
 
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 import {
   ALARM_EXPORT_PDF_FIELDS,
   ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
@@ -9,10 +8,13 @@ import {
   ALARM_STATUSES,
   DATETIME_FORMATS,
 } from '@/constants';
+
 import { convertDateToStringWithNewTimezone } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { compile } from '@/helpers/handlebars';
 import { createInstanceWithHelpers } from '@/helpers/handlebars/alarm-export-pdf-helper';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 
 /**
  * @typedef {Object} AlarmExport
@@ -54,7 +56,6 @@ class AlarmExportToPdfVisitor extends Visitor {
     this.mutating = true;
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   PathExpression(path) {
     const { parts = [] } = path;
     const lastItem = parts.at(-1);
@@ -188,12 +189,20 @@ const prepareAlarmForExport = (alarm = {}, timezone) => {
  * @param {string} [timezone]
  * @returns {Promise<unknown>}
  */
-export const exportAlarmToPdf = async (template = ALARM_EXPORT_PDF_TEMPLATE, alarm = {}, timezone) => {
+export const exportAlarmToPdf = async (
+  template = ALARM_EXPORT_PDF_TEMPLATE,
+  alarm = {},
+  timezone,
+) => {
   const doc = new JsPDF();
   const handlebars = createInstanceWithHelpers();
   const ast = parseWithoutProcessing(template ?? ALARM_EXPORT_PDF_TEMPLATE);
   const scanner = new AlarmExportToPdfVisitor();
-  const html = await compile(scanner.accept(ast), prepareAlarmForExport(alarm, timezone), handlebars);
+  const html = await compile(
+    scanner.accept(ast),
+    prepareAlarmForExport(alarm, timezone),
+    handlebars,
+  );
 
   return doc
     .html(html, {

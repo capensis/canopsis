@@ -22,9 +22,7 @@ export const widgetRowsSelectingAlarmMixin = {
     },
 
     wrapperListeners() {
-      return this.selectable
-        ? { mousemove: this.throttledMousemoveHandler }
-        : {};
+      return this.selectable ? { mousemove: this.throttledMousemoveHandler } : {};
     },
   },
 
@@ -88,21 +86,26 @@ export const widgetRowsSelectingAlarmMixin = {
     },
 
     getIntersectAlarmsByPosition(newX, newY, prevX, prevY) {
-      return this.rowsPositions?.reduce((acc, { position, alarm }) => {
-        if (
-          (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
-          || (newX < position.x1 && prevX < position.x1)
-          || (newX > position.x2 && prevX > position.x2)
-          || (newY < position.y1 && prevY < position.y1)
-          || (newY > position.y2 && prevY > position.y2)
-        ) {
+      return (
+        this.rowsPositions?.reduce((acc, { position, alarm }) => {
+          if (
+            (prevX >= position.x1 &&
+              prevX <= position.x2 &&
+              prevY >= position.y1 &&
+              prevY <= position.y2) ||
+            (newX < position.x1 && prevX < position.x1) ||
+            (newX > position.x2 && prevX > position.x2) ||
+            (newY < position.y1 && prevY < position.y1) ||
+            (newY > position.y2 && prevY > position.y2)
+          ) {
+            return acc;
+          }
+
+          acc.push(alarm);
+
           return acc;
-        }
-
-        acc.push(alarm);
-
-        return acc;
-      }, []) ?? [];
+        }, []) ?? []
+      );
     },
 
     mousedownHandler(event) {

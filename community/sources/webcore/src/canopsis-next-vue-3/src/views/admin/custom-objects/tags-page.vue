@@ -26,16 +26,19 @@
 import { omit } from 'lodash';
 import { onMounted } from 'vue';
 
-import TagsList from '@/components/other/tag/tags-list.vue';
 import { MODALS, USER_PERMISSIONS } from '@/constants';
+
 import { pickIds } from '@/helpers/array';
 import { isImportedTag } from '@/helpers/entities/tag/entity';
 import { convertQueryToRequest } from '@/helpers/query';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
+
+import TagsList from '@/components/other/tag/tags-list.vue';
 
 export default {
   components: {

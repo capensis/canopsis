@@ -98,10 +98,12 @@
 <script>
 import { computed } from 'vue';
 
+import { createRangeArray } from '@/helpers/array';
+
+import { useI18n } from '@/hooks/i18n';
+
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
-import { createRangeArray } from '@/helpers/array';
-import { useI18n } from '@/hooks/i18n';
 
 export default {
   components: {

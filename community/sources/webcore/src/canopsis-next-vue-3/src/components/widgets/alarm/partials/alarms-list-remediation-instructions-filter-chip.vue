@@ -20,7 +20,9 @@ import { omit } from 'lodash';
 import { computed } from 'vue';
 
 import { REMEDIATION_INSTRUCTION_FILTER_FIELDS } from '@/constants';
+
 import { getSelectionText } from '@/helpers/vuetify';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 

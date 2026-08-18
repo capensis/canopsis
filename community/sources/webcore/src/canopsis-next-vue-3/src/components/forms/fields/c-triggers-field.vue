@@ -86,8 +86,10 @@ import { find } from 'lodash';
 import { computed, ref, watch, nextTick, onBeforeUnmount } from 'vue';
 
 import { TRIGGERS_TYPES, PRO_TRIGGERS } from '@/constants';
+
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 import { setSeveralFields } from '@/helpers/immutable';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';

@@ -30,13 +30,16 @@
 <script>
 import { computed } from 'vue';
 
-import KpiFilterForm from '@/components/other/kpi/filters/form/kpi-filter-form.vue';
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
+
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import KpiFilterForm from '@/components/other/kpi/filters/form/kpi-filter-form.vue';
 
 export default {
   name: MODALS.createKpiFilter,

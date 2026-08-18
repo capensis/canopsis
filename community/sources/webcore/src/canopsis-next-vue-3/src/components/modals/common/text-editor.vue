@@ -46,8 +46,9 @@
 </template>
 
 <script>
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
+
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   components: { TextEditorField },

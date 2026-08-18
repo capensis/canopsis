@@ -1,6 +1,7 @@
 import { isObject } from 'lodash';
 
 import { PAYLOAD_OPERATORS, PAYLOAD_VARIABLE_REGEXP } from '@/constants';
+
 import { uid } from '@/helpers/uid';
 
 /**

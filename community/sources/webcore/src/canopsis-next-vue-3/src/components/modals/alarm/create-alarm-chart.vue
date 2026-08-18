@@ -28,15 +28,18 @@
 <script>
 import { computed } from 'vue';
 
-import BarChartWidgetForm from '@/components/sidebars/chart/form/bar-chart-widget-form.vue';
-import LineChartWidgetForm from '@/components/sidebars/chart/form/line-chart-widget-form.vue';
-import NumbersWidgetForm from '@/components/sidebars/chart/form/numbers-widget-form.vue';
 import { WIDGET_TYPES } from '@/constants';
+
 import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import BarChartWidgetForm from '@/components/sidebars/chart/form/bar-chart-widget-form.vue';
+import LineChartWidgetForm from '@/components/sidebars/chart/form/line-chart-widget-form.vue';
+import NumbersWidgetForm from '@/components/sidebars/chart/form/numbers-widget-form.vue';
 
 export default {
   props: {

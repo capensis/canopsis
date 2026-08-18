@@ -75,8 +75,9 @@
 <script>
 import { computed } from 'vue';
 
-import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import { formMixin } from '@/mixins/form';
+
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 
 import DeclareTicketRuleTicketStatusMappingField from './declare-ticket-rule-ticket-status-mapping-field.vue';
 import DeclareTicketRuleTicketStatusSourceField from './declare-ticket-rule-ticket-status-source-field.vue';

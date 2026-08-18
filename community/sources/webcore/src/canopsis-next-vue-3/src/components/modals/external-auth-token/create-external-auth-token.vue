@@ -30,15 +30,17 @@
 <script>
 import { computed } from 'vue';
 
-import ExternalAuthTokenForm from '@/components/other/external-auth-token/form/external-auth-token-form.vue';
 import {
   externalAuthTokenToForm,
   formToExternalAuthToken,
 } from '@/helpers/entities/external-auth-token/form';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+
+import ExternalAuthTokenForm from '@/components/other/external-auth-token/form/external-auth-token-form.vue';
 
 export default {
   components: { ExternalAuthTokenForm },

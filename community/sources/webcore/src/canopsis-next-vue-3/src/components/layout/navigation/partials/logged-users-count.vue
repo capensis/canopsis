@@ -23,6 +23,7 @@
 import { mapActions } from 'pinia';
 
 import { SOCKET_ROOMS } from '@/config';
+
 import { useAuthStore } from '@/stores/modules/auth';
 
 export default {

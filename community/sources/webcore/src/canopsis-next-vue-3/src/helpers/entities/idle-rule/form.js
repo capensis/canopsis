@@ -7,6 +7,7 @@ import {
   PATTERNS_FIELDS,
   TIME_UNITS,
 } from '@/constants';
+
 import { durationToForm } from '@/helpers/date/duration';
 import {
   actionParametersToForm,

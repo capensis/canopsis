@@ -16,8 +16,9 @@
 </template>
 
 <script>
-import ClusterGraphEditor from '@/components/common/chart/cluster-graph/cluster-graph-editor.vue';
 import { formMixin } from '@/mixins/form';
+
+import ClusterGraphEditor from '@/components/common/chart/cluster-graph/cluster-graph-editor.vue';
 
 export default {
   components: {

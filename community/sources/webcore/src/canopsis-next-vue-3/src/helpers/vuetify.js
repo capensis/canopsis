@@ -1,6 +1,7 @@
 import { isObject } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import { promisedWait } from '@/helpers/async';
 
 /**

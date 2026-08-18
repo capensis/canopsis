@@ -37,6 +37,7 @@
 
 <script>
 import { convertQueryToRequest } from '@/helpers/query';
+
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 
 export default {

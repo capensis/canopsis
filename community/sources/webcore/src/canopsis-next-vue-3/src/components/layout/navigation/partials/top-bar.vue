@@ -56,11 +56,13 @@
 import { computed } from 'vue';
 import { useDisplay } from 'vuetify';
 
-import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
 import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH, TOP_BAR_HEIGHT } from '@/config';
 import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants';
+
 import { useAuth, useCanPermission } from '@/hooks/auth';
 import { useInfo } from '@/hooks/store/modules/info';
+
+import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';

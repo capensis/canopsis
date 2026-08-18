@@ -32,6 +32,7 @@
 
 <script>
 import { ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
+
 import layoutNavigationGroupsBarPlaylistsMixin from '@/mixins/layout/navigation/groups-bar-playlists';
 
 export default {

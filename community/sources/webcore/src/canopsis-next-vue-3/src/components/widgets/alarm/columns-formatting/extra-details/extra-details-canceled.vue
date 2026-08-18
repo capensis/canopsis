@@ -11,6 +11,7 @@
 <script>
 import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 
 import { useExtraDetailsCanceledTooltip } from '../../hooks/extra-details-tooltips';

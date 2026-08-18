@@ -17,15 +17,17 @@
 <script>
 import { computed } from 'vue';
 
-import JavaScriptCodeEditor from '@/components/common/code-editor/javascript-code-editor.vue';
 import {
   LINK_RULE_ADVANCED_ALARM_COMPLETIONS,
   LINK_RULE_ADVANCED_ENTITY_COMPLETIONS,
   LINK_RULE_TYPES,
 } from '@/constants';
+
 import { useFormModel } from '@/hooks/form';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
+
+import JavaScriptCodeEditor from '@/components/common/code-editor/javascript-code-editor.vue';
 
 export default {
   components: { JavaScriptCodeEditor },

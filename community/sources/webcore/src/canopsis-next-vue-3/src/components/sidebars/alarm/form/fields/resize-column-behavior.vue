@@ -39,10 +39,12 @@
 <script>
 import { computed } from 'vue';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import { RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

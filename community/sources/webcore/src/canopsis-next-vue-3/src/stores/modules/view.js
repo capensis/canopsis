@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 import { API_ROUTES } from '@/config';
+
 import request, { useRequestCancelling } from '@/services/request';
 
 export const useViewStore = defineStore('view', () => {

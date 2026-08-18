@@ -23,8 +23,10 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 import { API_ROUTES } from '@/config';
 import { MAX_LIMIT } from '@/constants';
-import { useI18n } from '@/hooks/i18n';
+
 import request from '@/services/request';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {

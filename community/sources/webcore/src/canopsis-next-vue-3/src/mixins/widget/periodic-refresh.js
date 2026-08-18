@@ -78,7 +78,11 @@ export const widgetPeriodicRefreshMixin = {
         return;
       }
 
-      if (this.activeViewPeriodicRefreshPaused || !this.periodicRefreshEnabled || !this.periodicRefreshSeconds) {
+      if (
+        this.activeViewPeriodicRefreshPaused ||
+        !this.periodicRefreshEnabled ||
+        !this.periodicRefreshSeconds
+      ) {
         return;
       }
 
@@ -90,7 +94,11 @@ export const widgetPeriodicRefreshMixin = {
   },
   methods: {
     startPeriodicRefresh() {
-      if (!this.isPeriodicRefreshVisible || !this.periodicRefreshEnabled || !this.periodicRefreshSeconds) {
+      if (
+        !this.isPeriodicRefreshVisible ||
+        !this.periodicRefreshEnabled ||
+        !this.periodicRefreshSeconds
+      ) {
         return;
       }
 
@@ -98,13 +106,20 @@ export const widgetPeriodicRefreshMixin = {
         this.stopPeriodicRefresh();
       }
 
-      this.periodicRefreshInterval = setInterval(this.fetchList, this.periodicRefreshSeconds * 1000);
+      this.periodicRefreshInterval = setInterval(
+        this.fetchList,
+        this.periodicRefreshSeconds * 1000,
+      );
 
       this.intervalStartedAt = Date.now();
     },
 
     resumePriodicRefresh() {
-      if (!this.isPeriodicRefreshVisible || !this.periodicRefreshEnabled || !this.periodicRefreshSeconds) {
+      if (
+        !this.isPeriodicRefreshVisible ||
+        !this.periodicRefreshEnabled ||
+        !this.periodicRefreshSeconds
+      ) {
         return;
       }
 
@@ -121,7 +136,8 @@ export const widgetPeriodicRefreshMixin = {
 
       clearInterval(this.periodicRefreshInterval);
 
-      this.intervalDelay = (this.periodicRefreshSeconds * 1000) - (Date.now() - this.intervalStartedAt);
+      this.intervalDelay =
+        this.periodicRefreshSeconds * 1000 - (Date.now() - this.intervalStartedAt);
     },
 
     stopPeriodicRefresh() {

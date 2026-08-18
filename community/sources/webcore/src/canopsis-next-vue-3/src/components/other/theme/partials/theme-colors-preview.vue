@@ -20,6 +20,7 @@
 import { computed } from 'vue';
 
 import { isReadableColor } from '@/helpers/color';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

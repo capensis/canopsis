@@ -1,15 +1,12 @@
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { queryMixin } from '@/mixins/query';
 
 import { widgetOptionsMixin } from './options';
 
 export const queryWidgetMixin = {
-  mixins: [
-    queryMixin,
-    widgetOptionsMixin,
-    entitiesUserPreferenceMixin,
-  ],
+  mixins: [queryMixin, widgetOptionsMixin, entitiesUserPreferenceMixin],
 
   props: {
     tabId: {

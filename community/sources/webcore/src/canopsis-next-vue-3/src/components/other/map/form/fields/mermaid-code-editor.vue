@@ -8,9 +8,11 @@
 </template>
 
 <script>
-import CodeEditor from '@/components/common/code-editor/code-editor.vue';
 import { validateMermaidDiagram } from '@/helpers/mermaid';
+
 import { formBaseMixin } from '@/mixins/form';
+
+import CodeEditor from '@/components/common/code-editor/code-editor.vue';
 
 export default {
   components: { CodeEditor },

@@ -82,11 +82,11 @@ export const useTableDragging = ({
    * @returns {string|null}
    */
   const getColumnValueFromElement = element =>
-    element?.dataset?.value
-    ?? element?.closest?.('th')?.dataset?.value
-    ?? element?.querySelector?.('[data-value]')?.dataset?.value
-    ?? element?.closest?.('th')?.querySelector?.('[data-value]')?.dataset?.value
-    ?? null;
+    element?.dataset?.value ??
+    element?.closest?.('th')?.dataset?.value ??
+    element?.querySelector?.('[data-value]')?.dataset?.value ??
+    element?.closest?.('th')?.querySelector?.('[data-value]')?.dataset?.value ??
+    null;
 
   /**
    * Handle the sorting of columns when dragging.
@@ -120,17 +120,13 @@ export const useTableDragging = ({
       return false;
     }
 
-    const oldDraggableIndex = sortedHeaders.value.findIndex(
-      ({ value }) => value === draggedValue,
-    );
-    const newDraggableIndex = sortedHeaders.value.findIndex(
-      ({ value }) => value === relatedValue,
-    );
+    const oldDraggableIndex = sortedHeaders.value.findIndex(({ value }) => value === draggedValue);
+    const newDraggableIndex = sortedHeaders.value.findIndex(({ value }) => value === relatedValue);
 
     if (
-      oldDraggableIndex === -1
-      || newDraggableIndex === -1
-      || oldDraggableIndex === newDraggableIndex
+      oldDraggableIndex === -1 ||
+      newDraggableIndex === -1 ||
+      oldDraggableIndex === newDraggableIndex
     ) {
       return false;
     }

@@ -61,6 +61,7 @@ import {
   NOTIFICATIONS_PAGE_TABS_KEYS,
   ROUTES_NAMES,
 } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useSocketRoom } from '@/hooks/socket';

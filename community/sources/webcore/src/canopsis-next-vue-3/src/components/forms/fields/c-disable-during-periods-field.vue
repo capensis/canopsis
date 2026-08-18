@@ -16,6 +16,7 @@
 import { computed } from 'vue';
 
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 const PERIOD_TYPES = [

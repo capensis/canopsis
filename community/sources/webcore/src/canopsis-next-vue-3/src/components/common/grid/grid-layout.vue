@@ -36,6 +36,7 @@ import {
   moveLayoutItem,
   replaceLayoutItemInLayout,
 } from '@/helpers/grid';
+
 import { formBaseMixin } from '@/mixins/form';
 
 import GridItem from './partials/grid-item.vue';

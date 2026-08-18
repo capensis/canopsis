@@ -634,6 +634,8 @@ kbd {
 
   @each $state in $states {
     &-#{$state} {
+      background-color: var(--v-state-#{$state}-base);
+
       &,
       & *:not(svg, g, path) {
         color: var(--v-state-#{$state}-text-base);

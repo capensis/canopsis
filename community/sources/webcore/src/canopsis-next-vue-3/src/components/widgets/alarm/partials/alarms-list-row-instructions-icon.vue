@@ -17,6 +17,7 @@
 import { computed } from 'vue';
 
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
+
 import {
   hasInstructionWithoutAnyExecution,
   isInstructionExecutionIconFailed,
@@ -24,6 +25,7 @@ import {
   isInstructionExecutionIconSuccess,
   isInstructionExecutionManual,
 } from '@/helpers/entities/remediation/instruction-execution/form';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {

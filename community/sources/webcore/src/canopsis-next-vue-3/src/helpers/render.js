@@ -39,28 +39,30 @@ export const getNearestViewportIndexesBound = ({
   }
 
   const itemsPerViewport = Math.round(window.innerHeight / height);
-  const batchSize = Math.round(itemsPerViewport + (itemsPerViewport * threshold * 2));
+  const batchSize = Math.round(itemsPerViewport + itemsPerViewport * threshold * 2);
   const halfBatchSize = Math.round(batchSize / 2);
 
   end = Math.min(batchSize, end);
 
-  const originalMiddleOfVisible = window.scrollY + (window.innerHeight / 2);
+  const originalMiddleOfVisible = window.scrollY + window.innerHeight / 2;
   let middleOfVisible = originalMiddleOfVisible;
 
   const { top: wrapperTop } = wrapperEl.getBoundingClientRect();
 
-  wrapperEl.querySelectorAll(
-    '.v-data-table__expanded__content, .alarms-list-table__expand-row-content',
-  ).forEach((element) => {
-    const { height: expandPanelHeight, top: expandPanelTop } = element.getBoundingClientRect();
+  wrapperEl
+    .querySelectorAll('.v-data-table__expanded__content, .alarms-list-table__expand-row-content')
+    .forEach((element) => {
+      const { height: expandPanelHeight, top: expandPanelTop } = element.getBoundingClientRect();
 
-    if (expandPanelTop < originalMiddleOfVisible) {
-      middleOfVisible -= expandPanelHeight;
-    }
-  });
+      if (expandPanelTop < originalMiddleOfVisible) {
+        middleOfVisible -= expandPanelHeight;
+      }
+    });
 
   if (wrapperTop < window.scrollY) {
-    const middleItemIndex = Math.abs(Math.round((middleOfVisible - (wrapperTop + window.scrollY)) / height));
+    const middleItemIndex = Math.abs(
+      Math.round((middleOfVisible - (wrapperTop + window.scrollY)) / height),
+    );
 
     const startDiff = middleItemIndex - halfBatchSize;
 
@@ -81,11 +83,7 @@ export const getNearestViewportIndexesBound = ({
  * @returns {{ nearest: Array<string | number>, farthest: Array<string | number> }} An object containing nearest and
  * farthest indexes.
  */
-export const getNearestAndFarthestIndexes = ({
-  start = 0,
-  end = 0,
-  ids = [],
-} = {}) => {
+export const getNearestAndFarthestIndexes = ({ start = 0, end = 0, ids = [] } = {}) => {
   const { length } = ids;
   const nearest = [];
   const farthest = [];

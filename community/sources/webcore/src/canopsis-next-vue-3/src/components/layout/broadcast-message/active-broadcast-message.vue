@@ -55,10 +55,11 @@ import { pick } from 'lodash';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, ROUTES_NAMES_TO_BROADCAST_MESSAGES } from '@/constants';
+
 import { isBroadcastMessageViewMatchingRoute } from '@/helpers/entities/broadcast-message/list';
+
 import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -66,6 +67,8 @@ import { useSocketRoom } from '@/hooks/socket';
 import { useBroadcastMessages } from '@/hooks/store/modules/broadcast-message';
 import { useInfo } from '@/hooks/store/modules/info';
 import { useView } from '@/hooks/store/modules/view';
+
+import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
 export default {
   components: { BroadcastMessage },

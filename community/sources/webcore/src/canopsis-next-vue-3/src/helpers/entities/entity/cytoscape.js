@@ -15,10 +15,7 @@ import { getMapEntityText } from '@/helpers/entities/map/list';
  */
 export const getIconElement = (name, color) => {
   const badgeIconEl = document.createElement('i');
-  badgeIconEl.classList.add(
-    'v-icon',
-    'material-icons',
-  );
+  badgeIconEl.classList.add('v-icon', 'material-icons');
 
   if (color) {
     badgeIconEl.classList.add(`text-${color}`);
@@ -107,7 +104,10 @@ export const getProgressElement = () => {
   progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
 
   const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
+  progressContentEl.setAttribute(
+    'viewBox',
+    '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715',
+  );
   progressContentEl.appendChild(progressContentCircleEl);
 
   const progressEl = document.createElement('div');
@@ -188,10 +188,7 @@ export const getButtonHTML = (text) => {
   btnContentEl.textContent = text;
 
   const btnEl = document.createElement('button');
-  btnEl.classList.add(
-    'v-btn',
-    'v-btn--rounded',
-  );
+  btnEl.classList.add('v-btn', 'v-btn--rounded');
   btnEl.appendChild(btnContentEl);
 
   return btnEl.outerHTML;

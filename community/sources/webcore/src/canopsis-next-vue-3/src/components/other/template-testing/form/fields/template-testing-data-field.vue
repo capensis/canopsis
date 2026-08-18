@@ -38,6 +38,7 @@ import { merge } from 'lodash';
 import { toRef, watch } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useI18n } from '@/hooks/i18n';
