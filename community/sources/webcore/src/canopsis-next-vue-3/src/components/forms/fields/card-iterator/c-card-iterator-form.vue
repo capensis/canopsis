@@ -19,15 +19,15 @@
         />
       </template>
     </c-card-iterator-field>
-    <c-layout justify="end">
+    <c-layout>
       <slot name="add-button">
         <c-btn-with-error
           v-if="required"
           :error="
             required && hasErrors ? requiredErrorMessage || $t('common.addAtLeastOneItem') : ''
           "
-          :fab="!addButtonLabel"
-          :small="!addButtonLabel"
+          :icon="!addButtonLabel"
+          :size="!addButtonLabel ? 'small' : undefined"
           variant="outlined"
           @click="$emit('add')"
         >
@@ -62,10 +62,9 @@
 </template>
 
 <script>
-import { computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, toRef, watch } from 'vue';
 
 import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
-import { useComponentInstance } from '@/hooks/vue';
 
 export default {
   inheritAttrs: false,
@@ -105,12 +104,12 @@ export default {
     },
   },
   setup(props) {
-    const instance = useComponentInstance();
+    const fieldName = toRef(props, 'name');
     const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
-      useValidationAttachMinValue(props.name);
+      useValidationAttachMinValue(fieldName);
 
     const isEmpty = computed(() => !props.value?.length);
-    const hasErrors = computed(() => validator?.errors?.has(props.name) ?? false);
+    const hasErrors = computed(() => validator?.errors?.has(fieldName.value) ?? false);
 
     /**
      * Attaches min_value:1 validation rule to require at least one item when required prop is true
@@ -125,7 +124,7 @@ export default {
       () => props.value,
       () => {
         if (props.required) {
-          instance.$nextTick(validateMinValueRule);
+          nextTick(validateMinValueRule);
         }
       },
     );

@@ -69,11 +69,12 @@
 
 <script>
 import { isString } from 'lodash';
-import { useField } from 'vee-validate';
 import { computed } from 'vue';
 
 import { stringifyJson } from '@/helpers/json';
 import { convertPayloadToJson } from '@/helpers/payload-json';
+
+import { useField } from '@/hooks/form';
 
 export default {
   inheritAttrs: false,

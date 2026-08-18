@@ -1,7 +1,7 @@
 import { debounce } from 'lodash';
-import { useField } from 'vee-validate';
-// validation.js
 import { computed, watch } from 'vue';
+
+import { useField } from '@/hooks/form';
 
 import { VALIDATION_DELAY } from '@/constants/common';
 
@@ -136,25 +136,3 @@ export const useVuetifyFieldValidation = (props, emit, attrs = {}) => {
     onBlur,
   };
 };
-
-/**
- * Array field validation hook.
- *
- * @param {Object} props
- * @param {Object} attrs
- * @returns {Object}
- */
-export const useArrayFieldValidation = (props, attrs = {}) =>
-  useFieldValidation(
-    {
-      ...props,
-      rules:
-        props.rules ||
-        (value =>
-          !props.required || (Array.isArray(value) && value.length > 0)
-            ? true
-            : unref(props.message) || false),
-      validateOnValueUpdate: false,
-    },
-    attrs,
-  );

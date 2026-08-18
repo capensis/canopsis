@@ -2,8 +2,10 @@ import { isEqual } from 'lodash';
 import { computed, nextTick, ref, unref, watch } from 'vue';
 
 import { MODALS } from '@/constants';
+
 import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
 import { uid } from '@/helpers/uid';
+
 import { useForm } from '@/hooks/form';
 import { useModals } from '@/hooks/modals';
 import { useSidebar } from '@/hooks/sidebar';

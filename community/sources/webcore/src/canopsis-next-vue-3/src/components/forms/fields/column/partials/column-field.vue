@@ -2,17 +2,19 @@
   <c-card-iterator-item
     :drag-handle-class="dragHandleClass"
     :default-expanded="isExpanded"
+    :expandable="!withoutCustomLabel"
     class="column-field"
     small
     @remove="$emit('remove')"
   >
     <template #header>
-      <c-layout align="center">
+      <c-layout class="column-field__header" align="center" fill>
         <c-name-field
           v-if="isCustom"
           :model-value="column.label"
           :name="columnLabelFieldName"
           :label="$t('common.label')"
+          class="flex-grow-1"
           required
           @update:model-value="updateField('label', $event)"
         />
@@ -22,6 +24,7 @@
           :items="availableColumns"
           :label="$t('common.column', 1)"
           :name="`${name}.column`"
+          class="flex-grow-1"
           item-title="text"
           item-value="value"
           @update:model-value="changeColumn"
@@ -73,7 +76,9 @@
 import { computed, ref, toRef } from 'vue';
 
 import { ALARM_OUTPUT_FIELDS, ENTITIES_TYPES } from '@/constants';
+
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
+
 import { useAvailableColumns } from '@/hooks/form/available-columns';
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -232,7 +237,14 @@ export default {
 </script>
 
 <style lang="scss">
-.column-field .v-input {
-  min-width: 236px;
+.column-field {
+  &__header {
+    min-width: 0;
+  }
+
+  .v-input {
+    min-width: 0;
+    width: 100%;
+  }
 }
 </style>

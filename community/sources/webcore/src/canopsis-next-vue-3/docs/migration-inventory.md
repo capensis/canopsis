@@ -653,7 +653,7 @@ Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/c
 | `[ ]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               |                                                                                                                                                                                                                       |
 | `[ ]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               |                                                                                                                                                                                                                       |
 | `[ ]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             |                                                                                                                                                                                                                       |
-| `[ ]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level                                                                                                                                            |                                                                                                                                                                                                                       |
+| `[~]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level                                                                                                                                            | Widget runtime, settings sidebar, form/query helpers, widget-wrapper registration, user preference, periodic refresh, CSV export and records-list handoff are migrated. Reuses admin-layer store, modals and `external-data-table-records-list`. Remaining: end-to-end verification. |
 
 ## Widget Blocks
 
@@ -768,10 +768,10 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 ### `ExternalDataTable`
 
-- `[ ]` Main content: `src/components/widgets/external-data-table/external-data-table-widget.vue`.
-- `[ ]` Settings: `external-data-table-settings`; migrate table selection, columns, filters and display options.
-- `[ ]` Store/API/socket: external data table queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` Main content: `src/components/widgets/external-data-table/external-data-table-widget.vue`. Runtime orchestrates table fetch, user preference (dense, items per page, column drag/resize settings), periodic refresh, CSV export polling and delegates rendering/actions to migrated `external-data-table-records-list`. Column tag edits at runtime update the table definition via `updateExternalDataTable`.
+- `[~]` Settings: `external-data-table-settings`; title, periodic refresh, table selector, column names, resize/drag behavior, default sort, items per page, density and CSV export settings are migrated through `useWidgetSettings()`.
+- `[~]` Store/API/socket: reuses consolidated Pinia `external-data-table` store for table fetch, record CRUD, export create/status and column-tag updates. Widget query converters registered for pagination/sort defaults. Remaining: runtime parity pass.
+- `[x]` Messages/i18n: reuses `external-data.js`, `settings.js` and modal strings already present in target.
 
 ## Dynamic Feature Extensions
 

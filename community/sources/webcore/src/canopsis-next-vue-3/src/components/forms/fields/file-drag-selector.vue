@@ -5,16 +5,17 @@
     :name="name"
     @change="$emit('change', $event)"
   >
-    <template #activator="{ clear, on, files }">
+    <template #activator="{ clear, on, files, errors }">
       <slot
         v-if="$slots.selected && files.length"
         :clear="clear"
         :files="files"
+        :errors="errors"
         name="selected"
       />
       <c-layout
         v-else
-        :class="{ 'drag-zone--dropping': dropping }"
+        :class="{ 'drag-zone--dropping': dropping, 'drag-zone--has-errors': errors?.length }"
         class="pa-3 drag-zone"
         align="center"
         @drop.prevent="drop"
@@ -86,7 +87,7 @@ export default {
 .drag-zone {
   position: relative;
   border-radius: 10px;
-  border: 3px dashed rgb(var(--v-theme-secondary));
+  border: 3px dashed;
 
   &--dropping:after {
     content: '';
@@ -97,7 +98,45 @@ export default {
     height: 100%;
     z-index: 1;
     opacity: 0.4;
-    background: rgb(var(--v-theme-secondary));
+
+    .theme--light &,
+    .v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) & {
+      background: var(--v-application-background-darken2);
+    }
+
+    .theme--dark &,
+    .v-theme--dark & {
+      background: var(--v-application-background-lighten3);
+    }
+  }
+
+  .theme--light &,
+  .v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) & {
+    border-color: var(--v-application-background-darken2);
+
+    &,
+    :deep(.v-icon) {
+      color: var(--v-application-background-darken2);
+    }
+  }
+
+  .theme--dark &,
+  .v-theme--dark & {
+    border-color: var(--v-application-background-lighten3);
+
+    &,
+    :deep(.v-icon) {
+      color: var(--v-application-background-lighten4);
+    }
+  }
+
+  &--has-errors {
+    border-color: rgb(var(--v-theme-error)) !important;
+
+    &,
+    :deep(.v-icon) {
+      color: rgb(var(--v-theme-error)) !important;
+    }
   }
 }
 </style>

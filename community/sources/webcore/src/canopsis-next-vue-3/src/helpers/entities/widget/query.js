@@ -15,6 +15,10 @@ import {
   convertContextWidgetToQuery,
 } from '@/helpers/entities/entity/query';
 import {
+  convertExternalDataTableUserPreferenceToQuery,
+  convertExternalDataTableWidgetToQuery,
+} from '@/helpers/entities/external-data-table/query';
+import {
   convertChartUserPreferenceToQuery,
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
@@ -34,6 +38,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -57,6 +62,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
+    [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

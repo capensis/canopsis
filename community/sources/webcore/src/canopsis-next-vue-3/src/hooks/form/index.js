@@ -1,8 +1,14 @@
 import { get, set } from 'lodash';
-import { useForm as useVeeForm } from 'vee-validate';
-import { computed, inject, provide, ref, unref } from 'vue';
+import {
+  useField as useVeeField,
+  useForm as useVeeForm,
+  useFormErrors as veeUseFormErrors,
+  useFieldError as veeUseFieldError,
+} from 'vee-validate';
+import { computed, inject, onBeforeUnmount, provide, ref, unref, watch } from 'vue';
 
 import { usePendingHandler } from '@/hooks/query/pending';
+import { useComponentInstance } from '@/hooks/vue';
 
 export { useModelField } from './model-field';
 export { useArrayModelField } from './array-model-field';
@@ -23,10 +29,41 @@ export const FORM_CONTEXT_KEY = Symbol('formContext');
  */
 export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
   const values = ref(initialValues);
+  const fieldsInstances = ref({});
 
   const veeForm = useVeeForm(veeOptions);
   const { pending: submitting, handler: runSubmit } = usePendingHandler(callback => callback());
   const isSubmitting = computed(() => veeForm.isSubmitting.value || submitting.value);
+
+
+  /**
+   * Registers a Vue component instance for a field path.
+   *
+   * @param {string} name Field path.
+   * @param {Vue} instance Field component instance.
+   */
+  const addFieldInstance = (name, instance) => {
+    fieldsInstances.value[name] = instance;
+  };
+
+  /**
+   * Unregisters a Vue component instance for a field path.
+   *
+   * @param {string} name Field path.
+   */
+  const removeFieldInstance = (name) => {
+    delete fieldsInstances.value[name];
+  };
+
+  /**
+   * Returns vee-validate path states with their registered component instances.
+   *
+   * @returns {Array<Object>} Path states with an `instance` property.
+   */
+  const getAllPathStatesWithInstances = () => veeForm.getAllPathStates().map(state => ({
+    ...state,
+    instance: fieldsInstances.value[state.path],
+  }));
 
   /**
    * Returns a nested value from the local form state.
@@ -216,6 +253,14 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
   const handleSubmit = (callback, invalidCallback) =>
     veeForm.handleSubmit((...args) => runSubmit(() => callback(...args)), invalidCallback);
 
+  /**
+   * Clears all field errors without resetting form values.
+   */
+  const resetErrors = () => {
+    veeForm.getAllPathStates().forEach(state => veeForm.setFieldError(unref(state.path), undefined));
+    Object.keys(veeForm.errors.value).forEach(path => veeForm.setFieldError(path, undefined));
+  };
+
   const form = {
     values,
 
@@ -231,11 +276,18 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
     update,
     reset,
 
+    fieldsInstances,
+    addFieldInstance,
+    removeFieldInstance,
+    getAllPathStatesWithInstances,
+
     validate: veeForm.validate,
     validateField: veeForm.validateField,
     setFieldError: veeForm.setFieldError,
     setErrors: veeForm.setErrors,
     setFieldTouched: veeForm.setFieldTouched,
+    resetField: veeForm.resetField,
+    resetErrors,
     handleSubmit,
     errors: veeForm.errors,
     meta: veeForm.meta,
@@ -266,6 +318,44 @@ export const useFormContext = () => {
 };
 
 /**
+ * Registers a vee-validate field and binds the current component instance to the form context.
+ *
+ * @param {string|import('vue').Ref<string>|import('vue').ComputedRef<string>} name Field name.
+ * @param {*} [rules] Validation rules.
+ * @param {Object} [options] Vee-validate field options.
+ * @returns {Object} Vee-validate field API.
+ */
+export const useField = (name, rules, options) => {
+  const field = useVeeField(name, rules, options);
+  const form = inject(FORM_CONTEXT_KEY, null);
+  const instance = useComponentInstance();
+
+  watch(
+    () => unref(name),
+    (fieldName, previousFieldName) => {
+      if (!form) {
+        return;
+      }
+
+      if (previousFieldName && previousFieldName !== fieldName) {
+        form.removeFieldInstance(previousFieldName);
+      }
+
+      form.addFieldInstance(fieldName, instance);
+    },
+    { immediate: true },
+  );
+
+  onBeforeUnmount(() => {
+    if (form) {
+      form.removeFieldInstance(unref(name));
+    }
+  });
+
+  return field;
+};
+
+/**
  * Shortcut for creating a writable model from the current form context.
  *
  * @param {string|import('vue').Ref<string>} path Value path.
@@ -292,3 +382,13 @@ export const useFormModels = (fields = []) => {
  * @returns {import('vue').WritableComputedRef<Array>} Writable array model.
  */
 export const useFormArray = path => useFormContext().array(path);
+
+export const useFormErrors = veeUseFormErrors;
+
+/**
+ * Returns the error message for a field path from the current form errors.
+ *
+ * @param {string|import('vue').Ref<string>|import('vue').ComputedRef<string>} path Field path.
+ * @returns {import('vue').ComputedRef<string|undefined>} Field error message.
+ */
+export const useFieldError = veeUseFieldError;

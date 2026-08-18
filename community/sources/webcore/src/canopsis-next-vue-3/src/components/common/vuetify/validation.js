@@ -1,6 +1,8 @@
 import { debounce, isNil, isNumber, isString } from 'lodash';
-import { isNotNestedPath, useField, validate } from 'vee-validate';
+import { isNotNestedPath, validate } from 'vee-validate';
 import { computed, watch } from 'vue';
+
+import { useField } from '@/hooks/form';
 
 import { VALIDATION_DELAY } from '@/constants/common';
 

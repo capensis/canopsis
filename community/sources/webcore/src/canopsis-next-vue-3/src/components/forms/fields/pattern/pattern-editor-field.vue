@@ -87,15 +87,17 @@
 
 <script>
 import { isEqual, isEmpty } from 'lodash';
-import { useFieldError, useFormContext } from 'vee-validate';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, toRef, watch } from 'vue';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
+
 import {
   formGroupsToPatternRules,
   patternsToGroups,
   patternToForm,
 } from '@/helpers/entities/pattern/form';
+
+import { useFieldError, useFormContext } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
@@ -166,7 +168,7 @@ export default {
     const patternJsonFieldName = computed(() => `${props.name}.json`);
 
     const jsonErrorMessage = useFieldError(patternJsonFieldName);
-    const errorMessage = useFieldError(computed(() => props.name));
+    const errorMessage = useFieldError(toRef(props, 'name'));
     const hasJsonError = computed(() => !!jsonErrorMessage.value);
 
     const isSimpleTab = computed(() => activeTab.value === PATTERN_EDITOR_TABS.simple);

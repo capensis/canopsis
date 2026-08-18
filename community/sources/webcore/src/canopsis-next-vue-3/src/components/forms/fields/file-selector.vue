@@ -18,6 +18,7 @@
       :disabled="fullDisabled"
       :loading="loading"
       :files="selectedFiles"
+      :errors="errorMessages"
       :clear="clear"
       :drop="dropFiles"
       name="activator"
@@ -39,8 +40,10 @@
     />
 
     <v-messages
-      v-if="!hideDetails && errorMessages.length"
+      v-if="!hideDetails"
+      :active="errorMessages.length > 0"
       :messages="errorMessages"
+      class="mt-2"
       color="error"
     />
   </div>
@@ -48,9 +51,9 @@
 
 <script>
 import { unionBy } from 'lodash';
-import { useField } from 'vee-validate';
 import { computed, ref, watch } from 'vue';
 
+import { useField } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -112,11 +115,20 @@ export default {
     const selectedFiles = ref([]);
     const fieldName = computed(() => props.name || 'file');
     const fullDisabled = computed(() => props.disabled || props.loading);
-    const fieldRules = computed(() => ({
-      required: props.required,
-      size: props.maxFileSize ? Number(props.maxFileSize) : false,
-    }));
-    const { errors, setValue } = useField(fieldName, fieldRules, {
+    const fieldRules = computed(() => {
+      const rules = {};
+
+      if (props.required) {
+        rules.required = true;
+      }
+
+      if (props.maxFileSize) {
+        rules.size = Number(props.maxFileSize);
+      }
+
+      return rules;
+    });
+    const { errors, setValue, setErrors, validate } = useField(fieldName, fieldRules, {
       initialValue: props.modelValue,
       validateOnMount: false,
       validateOnValueUpdate: false,
@@ -130,11 +142,17 @@ export default {
       }
     };
 
-    const updateFiles = (files) => {
+    const updateFiles = async (files) => {
       const value = props.multiple ? files : files[0];
 
-      selectedFiles.value = files;
       setValue(value, false);
+      const { valid } = await validate();
+
+      if (!valid) {
+        return;
+      }
+
+      selectedFiles.value = files;
       emit('update:modelValue', value);
       emit('change', value);
     };
@@ -158,7 +176,11 @@ export default {
         inputElement.value.value = '';
       }
 
-      updateFiles([]);
+      selectedFiles.value = [];
+      setErrors([]);
+      setValue(undefined, false);
+      emit('update:modelValue', props.multiple ? [] : undefined);
+      emit('change', props.multiple ? [] : undefined);
     };
 
     const removeFileFromSelections = (fileName) => {

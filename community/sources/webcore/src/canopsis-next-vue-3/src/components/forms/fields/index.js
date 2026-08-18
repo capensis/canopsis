@@ -21,6 +21,7 @@ export { default as CPriorityField } from './c-priority-field.vue';
 export { default as CRetryField } from './c-retry-field.vue';
 export { default as CRoleField } from './c-role-field.vue';
 export { default as CSamplingField } from './c-sampling-field.vue';
+export { default as CSelectChip } from './c-select-chip.vue';
 export { default as CInstructionTypeField } from './c-instruction-type-field.vue';
 export { default as CTriggersField } from './c-triggers-field.vue';
 export { default as CWorkflowField } from './c-workflow-field.vue';

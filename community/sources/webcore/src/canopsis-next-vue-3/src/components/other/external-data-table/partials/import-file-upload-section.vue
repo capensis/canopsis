@@ -148,7 +148,25 @@ export default {
 <style lang="scss" scoped>
 .filename {
   padding: 12px;
-  border: 2px solid rgb(var(--v-theme-secondary));
+  border: 2px solid;
   border-radius: 15px;
+
+  .theme--light &,
+  .v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) & {
+    border-color: var(--v-application-background-darken2);
+
+    .v-icon {
+      color: var(--v-application-background-darken2);
+    }
+  }
+
+  .theme--dark &,
+  .v-theme--dark & {
+    border-color: var(--v-application-background-lighten3);
+
+    .v-icon {
+      color: var(--v-application-background-lighten4);
+    }
+  }
 }
 </style>

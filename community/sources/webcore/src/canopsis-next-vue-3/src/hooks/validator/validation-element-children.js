@@ -1,7 +1,8 @@
 import { computed } from 'vue';
 
+import { useFormErrors, useFormContext } from '@/hooks/form';
+
 import { useValidationElementChildrenFields } from './validation-element-children-fields';
-import { useValidator } from './validator';
 
 /**
  * Provides validation functionalities for the children of a given parent component.
@@ -18,18 +19,19 @@ import { useValidator } from './validator';
  * validator is present, otherwise `undefined`.
  */
 export const useValidationElementChildren = (parent) => {
-  const validator = useValidator();
+  const formErrors = useFormErrors();
+  const formContext = useFormContext();
   const childrenFields = useValidationElementChildrenFields(parent);
 
   const hasChildrenError = computed(() => {
-    if (validator && validator.errors.any()) {
-      return childrenFields.value.some(field => validator.errors.has(field.name));
+    if (!Object.values(formErrors.value).length) {
+      return false;
     }
 
-    return false;
+    return childrenFields.value.some(({ errors } = {}) => errors.length > 0);
   });
 
-  const validateChildren = () => validator?.validateAll?.(childrenFields.value);
+  const validateChildren = () => childrenFields.value.forEach(({ path } = {}) => formContext?.validateField?.(path));
 
   return {
     childrenFields,

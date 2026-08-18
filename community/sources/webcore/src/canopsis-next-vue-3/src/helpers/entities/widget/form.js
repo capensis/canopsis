@@ -15,6 +15,10 @@ import {
   prepareContextWidget,
 } from './forms/context';
 import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
+import {
+  externalDataTableWidgetParametersToForm,
+  formToExternalDataTableWidgetParameters,
+} from './forms/external-data-table';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
 import { textWidgetParametersToForm } from './forms/text';
 
@@ -173,6 +177,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
+    [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
   };
 
   const preparer = widgetsMap[type];
@@ -288,6 +293,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
+    [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
   };
 
   const preparer = widgetsMap[type];

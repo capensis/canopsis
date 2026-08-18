@@ -1,4 +1,3 @@
-import { useField } from 'vee-validate';
 import { computed, provide, inject, ref, unref, watch, onMounted } from 'vue';
 
 import {
@@ -18,9 +17,12 @@ import {
   DEFAULT_PATTERN_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
+
 import { deepKeyBy } from '@/helpers/array';
 import { getOperatorsByFieldType } from '@/helpers/entities/pattern/form';
 import { getNextForFormItemType } from '@/helpers/search/advanced-search';
+
+import { useField } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';

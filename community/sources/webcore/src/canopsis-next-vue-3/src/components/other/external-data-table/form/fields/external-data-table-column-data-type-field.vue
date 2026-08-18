@@ -31,14 +31,15 @@
         :disabled="disabled"
         @update:value="updateModel"
       >
-        <template #selection="{ on }">
-          <c-chip
-            :color="stringArrayChip.color"
-            :text-color="stringArrayChip.textColor"
-            class="mt-2 px-2"
-            outlined
-            v-on="on"
-          >
+        <template #selection="{ props }">
+          <span class="d-inline-flex align-self-start">
+            <c-chip
+              v-bind="props"
+              :color="stringArrayChip.color"
+              :text-color="stringArrayChip.textColor"
+              class="mt-2 px-2"
+              outlined
+            >
             <span v-if="!value.string_array_type" :class="stringArrayChip.prefixColorClass">
               {{
                 $t('externalData.tableColumnDataTypesAdditionalChips.stringArray.selectSeparator')
@@ -57,7 +58,8 @@
                 {{ stringArrayChip.prefix }}
               </span>
             </span>
-          </c-chip>
+            </c-chip>
+          </span>
         </template>
       </external-data-table-column-data-type-field-string-array-menu>
     </template>
