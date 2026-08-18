@@ -17,6 +17,7 @@
     />
     <c-layout
       v-if="showFilter"
+      class="kpi-widget-filters__filter-cell"
       align="end"
     >
       <filter-selector
@@ -118,9 +119,20 @@ export default {
     max-width: 100px;
   }
 
-  &__filter-selector,
   &__interval {
     max-width: 200px;
+    flex-grow: 1;
+  }
+
+  &__filter-cell {
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+    min-width: 260px;
+
+    :deep(.filter-selector) {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
   }
 }
 </style>

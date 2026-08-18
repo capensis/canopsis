@@ -7,9 +7,9 @@
     :items="availableItems"
     :label="label"
     :hide-no-data="false"
+    :name="name"
     item-title="text"
     item-value="value"
-    name="metric"
     return-object
     required
     @keydown.enter.capture="handleEnter"
@@ -19,6 +19,10 @@
       <v-list-item v-bind="getItemProps(props)">
         <v-list-item-title>{{ getItem(item).text }}</v-list-item-title>
       </v-list-item>
+    </template>
+
+    <template #selection="{ item }">
+      {{ getSelectedItemText(item) }}
     </template>
 
     <template #no-data>
@@ -53,6 +57,10 @@ export default {
     disabledParameters: {
       type: Array,
       default: () => [],
+    },
+    name: {
+      type: String,
+      default: 'metric',
     },
   },
 
@@ -109,7 +117,15 @@ export default {
 
   methods: {
     getItem(item) {
-      return item ?? {};
+      return item?.raw ?? item ?? {};
+    },
+
+    getSelectedItemText(item) {
+      const selectedItem = this.getItem(item);
+
+      return selectedItem.text
+        ?? this.availableItems.find(({ value }) => value === this.currentValue)?.text
+        ?? this.currentValue;
     },
 
     getItemProps(props) {

@@ -4,6 +4,7 @@
       v-if="modelValue.external || modelValue.auto"
       :model-value="modelValue.metric"
       :label="modelValue.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')"
+      :name="name"
       :addable="modelValue.auto"
       required
       @update:model-value="updateMetric"
@@ -14,6 +15,7 @@
       :parameters="parameters"
       :disabled-parameters="disabledParameters"
       :label="$t('kpi.selectMetric')"
+      :name="name"
       @update:value="updateMetric"
     />
     <c-name-field
@@ -84,6 +86,10 @@ export default {
     parameters: {
       type: Array,
       default: undefined,
+    },
+    name: {
+      type: String,
+      default: 'metric',
     },
     disabledParameters: {
       type: Array,

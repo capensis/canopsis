@@ -9,6 +9,7 @@ import {
   formToAlarmListWidgetParameters,
   prepareAlarmListWidget,
 } from './forms/alarm';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './forms/bar-chart';
 import {
   contextWidgetParametersToForm,
   formToContextWidgetParameters,
@@ -187,6 +188,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
     [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
     [WIDGET_TYPES.statsCalendar]: statsCalendarWidgetParametersToForm,
+    [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
   };
 
@@ -304,6 +306,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
+    [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
   };
 

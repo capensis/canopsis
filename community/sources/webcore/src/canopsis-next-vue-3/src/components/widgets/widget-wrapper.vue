@@ -60,6 +60,7 @@ import { activeViewMixin } from '@/mixins/active-view';
 import { authMixin } from '@/mixins/auth';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
+import BarChartWidget from './chart/bar-chart-widget.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
 import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
@@ -76,6 +77,7 @@ export default {
   },
   components: {
     AlarmsListWidget,
+    BarChartWidget,
     CounterWidget,
     EntitiesListWidget,
     ExternalDataTableWidget,
@@ -107,6 +109,7 @@ export default {
     component() {
       return {
         [WIDGET_TYPES.alarmList]: AlarmsListWidget,
+        [WIDGET_TYPES.barChart]: BarChartWidget,
         [WIDGET_TYPES.context]: EntitiesListWidget,
         [WIDGET_TYPES.text]: TextWidget,
         [WIDGET_TYPES.counter]: CounterWidget,

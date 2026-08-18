@@ -5,6 +5,11 @@
       v-if="withPeriodicRefresh"
       v-model="localForm.parameters.periodic_refresh"
     />
+    <field-preset
+      v-if="withPreset"
+      v-model="localForm.parameters"
+      :type="localForm.type"
+    />
     <widget-settings-group :title="$t('settings.chart.metricsDisplay')">
       <field-alarm-metric-presets
         v-model="localForm.parameters.metrics"
@@ -55,6 +60,7 @@ import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-
 
 import FieldAlarmMetricPresets from './fields/alarm-metric-presets.vue';
 import FieldBarGraphType from './fields/bar-graph-type.vue';
+import FieldPreset from './fields/preset.vue';
 import FieldQuickDateIntervalType from './fields/quick-date-interval-type.vue';
 import FieldSampling from './fields/sampling.vue';
 
@@ -67,6 +73,7 @@ export default {
     WidgetSettingsGroup,
     FieldAlarmMetricPresets,
     FieldBarGraphType,
+    FieldPreset,
     FieldQuickDateIntervalType,
     FieldSampling,
   },
@@ -76,6 +83,10 @@ export default {
       required: true,
     },
     withPeriodicRefresh: {
+      type: Boolean,
+      default: false,
+    },
+    withPreset: {
       type: Boolean,
       default: false,
     },
