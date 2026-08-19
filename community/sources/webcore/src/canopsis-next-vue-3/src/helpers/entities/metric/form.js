@@ -1,6 +1,7 @@
 import {
   ALARM_METRIC_PARAMETERS,
   EXTERNAL_METRIC_UNITS,
+  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
   KPI_RATING_USER_CRITERIA,
   USER_METRIC_PARAMETERS,
 } from '@/constants';
@@ -207,3 +208,11 @@ export const formToMetricPresets = form => form.map(formToMetricPreset);
  * @returns {boolean}
  */
 export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
+
+/**
+ * Check is custom criteria
+ *
+ * @param {string} criteria
+ * @returns {boolean}
+ */
+export const isCustomCriteria = criteria => criteria === KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA;

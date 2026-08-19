@@ -27,15 +27,13 @@
       </v-list-item>
     </template>
 
-    <v-container ref="contentElement" class="widget-settings-item__content">
+    <v-container class="widget-settings-item__content">
       <slot />
     </v-container>
   </v-list-group>
 </template>
 
 <script>
-import { ref } from 'vue';
-
 import { useValidationHeader } from '@/hooks/validator/validation-header';
 
 export default {
@@ -61,11 +59,9 @@ export default {
   },
 
   setup() {
-    const contentElement = ref(null);
-    const { validationHeaderClass } = useValidationHeader(contentElement);
+    const { validationHeaderClass } = useValidationHeader();
 
     return {
-      contentElement,
       validationHeaderClass,
     };
   },

@@ -86,10 +86,10 @@
 
       <template #[`item.data-table-expand`]="props">
         <c-icon
-          v-if="checkIsExpandableItem(props.item)"
-          :class="{ 'v-data-table__expand-icon--active': isItemExpanded(props.item) }"
+          v-if="checkIsExpandableItem(getRawItem(props.item))"
+          :class="{ 'v-data-table__expand-icon--active': isItemExpanded(getRawItem(props.item)) }"
           class="v-data-table__expand-icon"
-          @click.stop="toggleExpand(props.item)"
+          @click.stop="toggleExpand(getRawItem(props.item))"
         >
           {{ expandIcon }}
         </c-icon>
@@ -356,6 +356,12 @@ export default {
           title: '',
           sortable: false,
           width: '1px',
+          headerProps: {
+            noPadding: false,
+          },
+          cellProps: {
+            noPadding: false,
+          },
         });
       }
 
@@ -459,8 +465,12 @@ export default {
   },
 
   methods: {
+    getRawItem(item) {
+      return item?.raw ?? item;
+    },
+
     getItemKey(item) {
-      return item?.[this.itemKey];
+      return get(this.getRawItem(item), this.itemKey);
     },
 
     checkIsExpandableItem(item) {
@@ -650,7 +660,7 @@ export default {
     },
 
     getItemsProps(state) {
-      const item = state.item?.raw ?? state.item;
+      const item = this.getRawItem(state.item);
 
       return {
         index: state.index,
@@ -686,6 +696,16 @@ export default {
 .c-advanced-data-table {
   :deep(thead th) {
     vertical-align: middle;
+  }
+
+  :deep(.v-data-table__expand-icon) {
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s ease-out;
+  }
+
+  :deep(.v-data-table__expand-icon--active) {
+    transform: rotate(-180deg);
   }
 
   &__expand-cell {

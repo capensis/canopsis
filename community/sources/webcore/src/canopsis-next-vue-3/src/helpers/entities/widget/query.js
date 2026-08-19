@@ -9,6 +9,10 @@ import {
   convertAlarmUserPreferenceToQuery,
   convertAlarmWidgetToQuery,
 } from '@/helpers/entities/alarm/query';
+import {
+  convertAvailabilityUserPreferenceToQuery,
+  convertAvailabilityWidgetParametersToQuery,
+} from '@/helpers/entities/availability/query';
 import { convertCounterWidgetToQuery } from '@/helpers/entities/counter/query';
 import {
   convertContextUserPreferenceToQuery,
@@ -23,6 +27,8 @@ import {
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
   convertPieChartWidgetToQuery,
+  convertStatisticsUserPreferenceToQuery,
+  convertStatisticsWidgetParametersToQuery,
 } from '@/helpers/entities/metric/query';
 import {
   convertWeatherUserPreferenceToQuery,
@@ -45,6 +51,9 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.userStatistics]: convertStatisticsUserPreferenceToQuery,
+    [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
+    [WIDGET_TYPES.availability]: convertAvailabilityUserPreferenceToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
 
@@ -72,6 +81,9 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
+    [WIDGET_TYPES.userStatistics]: convertStatisticsWidgetParametersToQuery,
+    [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
+    [WIDGET_TYPES.availability]: convertAvailabilityWidgetParametersToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
 

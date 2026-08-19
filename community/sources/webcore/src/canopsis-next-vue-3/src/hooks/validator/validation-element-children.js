@@ -28,7 +28,7 @@ export const useValidationElementChildren = (parent) => {
       return false;
     }
 
-    return childrenFields.value.some(({ errors } = {}) => errors.length > 0);
+    return childrenFields.value.some(({ errors } = {}) => errors?.length > 0);
   });
 
   const validateChildren = () =>

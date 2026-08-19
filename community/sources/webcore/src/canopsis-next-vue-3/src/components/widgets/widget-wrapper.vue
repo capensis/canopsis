@@ -52,6 +52,7 @@
 import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
 
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
 import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
 import { prepareServiceWeatherWidget } from '@/helpers/entities/widget/forms/service-weather';
 import { prepareStatsCalendarWidget } from '@/helpers/entities/widget/forms/stats-calendar';
@@ -60,6 +61,7 @@ import { activeViewMixin } from '@/mixins/active-view';
 import { authMixin } from '@/mixins/auth';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
+import AvailabilityWidget from './availability/availability-widget.vue';
 import BarChartWidget from './chart/bar-chart-widget.vue';
 import LineChartWidget from './chart/line-chart-widget.vue';
 import NumbersWidget from './chart/numbers-widget.vue';
@@ -69,6 +71,8 @@ import CounterWidget from './counter/counter.vue';
 import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
 import MapWidget from './map/map.vue';
 import ServiceWeatherWidget from './service-weather/service-weather.vue';
+import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
+import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
 import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
 import TextWidget from './text/text.vue';
 
@@ -80,6 +84,7 @@ export default {
   },
   components: {
     AlarmsListWidget,
+    AvailabilityWidget,
     BarChartWidget,
     CounterWidget,
     EntitiesListWidget,
@@ -91,6 +96,8 @@ export default {
     ServiceWeatherWidget,
     StatsCalendarWidget,
     TextWidget,
+    AlarmStatisticsWidget,
+    UserStatisticsWidget,
   },
   mixins: [authMixin, activeViewMixin],
   props: {
@@ -126,6 +133,9 @@ export default {
         [WIDGET_TYPES.pieChart]: PieChartWidget,
         [WIDGET_TYPES.numbers]: NumbersWidget,
         [WIDGET_TYPES.serviceWeather]: ServiceWeatherWidget,
+        [WIDGET_TYPES.userStatistics]: UserStatisticsWidget,
+        [WIDGET_TYPES.alarmStatistics]: AlarmStatisticsWidget,
+        [WIDGET_TYPES.availability]: AvailabilityWidget,
       }[this.widget.type];
     },
 
@@ -144,6 +154,10 @@ export default {
 
       if (this.widget.type === WIDGET_TYPES.statsCalendar) {
         return prepareStatsCalendarWidget(this.widget);
+      }
+
+      if (this.widget.type === WIDGET_TYPES.availability) {
+        return prepareAvailabilityWidget(this.widget);
       }
 
       return this.widget;
