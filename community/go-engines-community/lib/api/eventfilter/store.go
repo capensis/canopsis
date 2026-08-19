@@ -78,6 +78,7 @@ type store struct {
 	exdataTplVars           []template.VarResponse
 	configTplVars           []template.VarResponse
 	configCopyVars          []template.VarResponse
+	dupErrorParser          validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -128,6 +129,7 @@ func NewStore(
 		exdataTplVars:           exdataTplVars,
 		configTplVars:           configTplVars,
 		configCopyVars:          configCopyVars,
+		dupErrorParser:          validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -160,6 +162,10 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 
 		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, model)
+			}
+
 			return err
 		}
 
@@ -303,6 +309,10 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			update,
 		)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, model)
+			}
+
 			return err
 		}
 
