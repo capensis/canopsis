@@ -647,9 +647,9 @@ Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/c
 | `[ ]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level                                                                                                                                             |                                                                                                                                                                                                                       |
 | `[~]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level                                                                                                                                             | Renderer, settings sidebar, map selector, category filter, filter selector/list/create modal, breadcrumbs, map-state fetch, columns and alarm-list modal handoff are migrated.                                       |
 | `[~]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/bar-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[ ]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     |                                                                                                                                                                                                                       |
-| `[ ]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget                                                                                                                                     |                                                                                                                                                                                                                       |
-| `[ ]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget                                                                                                                                     |                                                                                                                                                                                                                       |
+| `[~]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/line-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
+| `[~]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/pie-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
+| `[~]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/numbers-widget-migration-plan.md`. Runtime metrics, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
 | `[ ]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               |                                                                                                                                                                                                                       |
 | `[ ]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               |                                                                                                                                                                                                                       |
 | `[ ]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             |                                                                                                                                                                                                                       |
@@ -727,23 +727,23 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 ### `LineChart`
 
-- `[ ]` Main content: `src/components/widgets/chart/line-chart-widget.vue`.
-- `[ ]` Settings: `line-chart-settings`; migrate chart metrics, sampling, time range, filters and display options.
-- `[ ]` Store/API/socket: KPI metric queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[~]` Main content: `src/components/widgets/chart/line-chart-widget.vue` is migrated and registered in `widget-wrapper.vue`. Runtime preserves Options API, uses `widgetFetchQueryMixin`, KPI toolbar interval/sampling/filter controls, vector metrics from the Pinia metrics store, migrated `line-chart-metrics`, metric color/label presets and PNG/CSV export actions. Remaining: end-to-end verification.
+- `[x]` Settings: `line-chart-settings`; chart metrics, sampling, time range, filters and display options are migrated through `line-chart-widget-form.vue`.
+- `[x]` Store/API/socket: KPI vector metric queries and alarm metric export use the existing metrics Pinia store.
+- `[x]` Messages/i18n: existing LineChart settings, permissions and modal messages are available.
 
 ### `PieChart`
 
-- `[ ]` Main content: `src/components/widgets/chart/pie-chart-widget.vue`.
-- `[ ]` Settings: `pie-chart-settings`; migrate chart metrics, show mode, time range, filters and display options.
-- `[ ]` Store/API/socket: KPI metric queries.
+- `[x]` Main content: `src/components/widgets/chart/pie-chart-widget.vue`.
+- `[x]` Settings: `pie-chart-settings`; migrate chart metrics, show mode, time range, filters and display options.
+- `[x]` Store/API/socket: KPI metric queries.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `Numbers`
 
-- `[ ]` Main content: `src/components/widgets/chart/numbers-widget.vue`.
-- `[ ]` Settings: `numbers-settings`; migrate number metrics, time range, filters and display options.
-- `[ ]` Store/API/socket: KPI metric queries.
+- `[x]` Main content: `src/components/widgets/chart/numbers-widget.vue`.
+- `[x]` Settings: `numbers-settings`; migrate number metrics, time range, filters and display options.
+- `[x]` Store/API/socket: KPI metric queries.
 - `[ ]` Messages/i18n: not migrated.
 
 ### `UserStatistics`

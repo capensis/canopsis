@@ -66,6 +66,9 @@ const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.serviceWeather,
   WIDGET_TYPES.statsCalendar,
   WIDGET_TYPES.barChart,
+  WIDGET_TYPES.lineChart,
+  WIDGET_TYPES.pieChart,
+  WIDGET_TYPES.numbers,
 ];
 
 export default {

@@ -61,6 +61,9 @@ import { authMixin } from '@/mixins/auth';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import BarChartWidget from './chart/bar-chart-widget.vue';
+import LineChartWidget from './chart/line-chart-widget.vue';
+import NumbersWidget from './chart/numbers-widget.vue';
+import PieChartWidget from './chart/pie-chart-widget.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
 import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
@@ -81,7 +84,10 @@ export default {
     CounterWidget,
     EntitiesListWidget,
     ExternalDataTableWidget,
+    LineChartWidget,
     MapWidget,
+    NumbersWidget,
+    PieChartWidget,
     ServiceWeatherWidget,
     StatsCalendarWidget,
     TextWidget,
@@ -116,6 +122,9 @@ export default {
         [WIDGET_TYPES.statsCalendar]: StatsCalendarWidget,
         [WIDGET_TYPES.map]: MapWidget,
         [WIDGET_TYPES.externalDataTable]: ExternalDataTableWidget,
+        [WIDGET_TYPES.lineChart]: LineChartWidget,
+        [WIDGET_TYPES.pieChart]: PieChartWidget,
+        [WIDGET_TYPES.numbers]: NumbersWidget,
         [WIDGET_TYPES.serviceWeather]: ServiceWeatherWidget,
       }[this.widget.type];
     },

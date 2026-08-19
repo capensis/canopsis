@@ -5,6 +5,11 @@
       v-if="withPeriodicRefresh"
       v-model="localForm.parameters.periodic_refresh"
     />
+    <field-preset
+      v-if="withPreset"
+      v-model="localForm.parameters"
+      :type="localForm.type"
+    />
     <widget-settings-group :title="$t('settings.chart.metricsDisplay')">
       <field-alarm-metric-presets
         v-model="localForm.parameters.metrics"
@@ -52,6 +57,7 @@ import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-
 
 import FieldAlarmMetricPresets from './fields/alarm-metric-presets.vue';
 import FieldFontSize from './fields/font-size.vue';
+import FieldPreset from './fields/preset.vue';
 import FieldQuickDateIntervalType from './fields/quick-date-interval-type.vue';
 import FieldSampling from './fields/sampling.vue';
 
@@ -64,6 +70,7 @@ export default {
     WidgetSettingsGroup,
     FieldAlarmMetricPresets,
     FieldFontSize,
+    FieldPreset,
     FieldQuickDateIntervalType,
     FieldSampling,
   },
@@ -77,6 +84,10 @@ export default {
       default: false,
     },
     withFilters: {
+      type: Boolean,
+      default: false,
+    },
+    withPreset: {
       type: Boolean,
       default: false,
     },
@@ -107,6 +118,7 @@ export default {
         ALARM_METRIC_PARAMETERS.createdAlarms,
         ALARM_METRIC_PARAMETERS.activeAlarms,
         ALARM_METRIC_PARAMETERS.nonDisplayedAlarms,
+        ALARM_METRIC_PARAMETERS.instructionAlarms,
         ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms,
         ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms,
         ALARM_METRIC_PARAMETERS.pbehaviorAlarms,

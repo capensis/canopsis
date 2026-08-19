@@ -19,8 +19,8 @@ import { toRef } from 'vue';
 
 import { SIDE_BARS } from '@/constants';
 
+import { useBarChartFiltersPermissions } from '@/hooks/permissions/widgets/chart/filters';
 import { useWidgetSettings } from '@/hooks/widget/settings';
-import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
 import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
@@ -34,8 +34,6 @@ export default {
     WidgetSettings,
   },
 
-  mixins: [permissionsWidgetsBarChartFilters],
-
   props: {
     sidebar: {
       type: Object,
@@ -46,11 +44,13 @@ export default {
   setup(props) {
     const sidebar = toRef(props, 'sidebar');
     const { form, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+    const { hasAccessToFilter } = useBarChartFiltersPermissions();
 
     return {
       form,
       hasChanges,
       submitting,
+      hasAccessToFilter,
 
       close,
       submit,

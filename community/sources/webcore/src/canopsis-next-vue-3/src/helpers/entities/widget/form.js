@@ -20,7 +20,10 @@ import {
   externalDataTableWidgetParametersToForm,
   formToExternalDataTableWidgetParameters,
 } from './forms/external-data-table';
+import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './forms/line-chart';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
+import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './forms/numbers-chart';
+import { formToPieChartWidgetParameters, pieChartWidgetParametersToForm } from './forms/pie-chart';
 import {
   formToServiceWeatherWidgetParameters,
   serviceWeatherWidgetParametersToForm,
@@ -189,6 +192,9 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
     [WIDGET_TYPES.statsCalendar]: statsCalendarWidgetParametersToForm,
     [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
+    [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
+    [WIDGET_TYPES.pieChart]: pieChartWidgetParametersToForm,
+    [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
   };
 
@@ -307,6 +313,9 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
     [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
+    [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
+    [WIDGET_TYPES.pieChart]: formToPieChartWidgetParameters,
+    [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
   };
 
