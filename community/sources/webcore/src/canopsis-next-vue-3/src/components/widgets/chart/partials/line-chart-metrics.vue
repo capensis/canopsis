@@ -61,6 +61,10 @@ export default {
       type: String,
       default: SAMPLINGS.day,
     },
+    stacked: {
+      type: Boolean,
+      default: false,
+    },
     downloading: {
       type: Boolean,
       default: false,

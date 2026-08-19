@@ -20,6 +20,7 @@
             />
           </c-layout>
           <v-btn
+            :disabled="modelValue.length <= min"
             icon="close"
             variant="text"
             size="small"
@@ -106,6 +107,10 @@ export default {
     parameters: {
       type: Array,
       default: () => Object.values(omit(ALARM_METRIC_PARAMETERS, ['timeToAck', 'timeToResolve'])),
+    },
+    min: {
+      type: Number,
+      default: 0,
     },
     onlyGroup: {
       type: Boolean,

@@ -3,7 +3,7 @@
     <h4 class="kpi-widget__title">
       {{ title }}
     </h4>
-    <c-layout class="kpi-widget__list" wrap>
+    <c-layout class="kpi-widget__list w-100" wrap>
       <numbers-metrics-item
         v-for="metric in metrics"
         :key="metric.title"

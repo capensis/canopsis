@@ -1,12 +1,12 @@
 <template>
   <c-layout
     :style="itemStyle"
-    class="numbers-metrics-item"
+    class="numbers-metrics-item w-100"
     align="center"
     column
   >
-    <c-layout align="center">
-      <div class="numbers-metrics-item__value">
+    <c-layout class="numbers-metrics-item__value-wrapper" align="center">
+      <div class="numbers-metrics-item__value w-100">
         {{ value }}
       </div>
       <c-help-icon
@@ -110,6 +110,12 @@ export default {
 
 <style lang="scss">
 .numbers-metrics-item {
+  text-align: center;
+
+  &__value-wrapper {
+    text-align: center;
+  }
+
   &__value {
     line-height: normal;
     text-align: center;

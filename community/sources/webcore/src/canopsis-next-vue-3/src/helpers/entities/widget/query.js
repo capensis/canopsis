@@ -22,6 +22,7 @@ import {
   convertChartUserPreferenceToQuery,
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
+  convertPieChartWidgetToQuery,
 } from '@/helpers/entities/metric/query';
 import {
   convertWeatherUserPreferenceToQuery,
@@ -42,6 +43,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
     [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
@@ -68,6 +70,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,

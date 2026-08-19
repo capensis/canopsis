@@ -120,6 +120,24 @@ export const convertChartWidgetToQuery = (widget) => {
 };
 
 /**
+ * Convert pie chart widget to query.
+ *
+ * @param {Object} widget
+ * @returns {Object}
+ */
+export const convertPieChartWidgetToQuery = (widget) => {
+  const { metrics = [], aggregate_func: widgetAggregateFunc } = widget.parameters ?? {};
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+    parameters: metrics.map(({ metric, aggregate_func: metricAggregateFunc }) => ({
+      metric,
+      aggregate_func: metricAggregateFunc || widgetAggregateFunc,
+    })),
+  };
+};
+
+/**
  * Convert numbers widget to query.
  *
  * @param {Object} widget
