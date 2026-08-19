@@ -64,6 +64,7 @@ const { t } = useI18n();
   &__submit-btn-wrapper {
     position: sticky;
     bottom: 0;
+    z-index: 2;
     background-color: rgb(var(--v-theme-surface));
   }
 }

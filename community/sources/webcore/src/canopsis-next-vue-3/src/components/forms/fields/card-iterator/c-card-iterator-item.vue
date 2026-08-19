@@ -3,12 +3,13 @@
     <c-layout
       class="c-card-iterator-item__row"
       gap="2"
-      align="center"
+      align="start"
       justify="space-between"
     >
       <c-layout
         :class="{ 'c-card-iterator-item__actions--draggable-only': !isExpandable }"
         class="c-card-iterator-item__actions"
+        align="center"
       >
         <c-draggable-step-number
           :color="!expanded && hasChildrenError ? 'error' : 'primary'"
@@ -19,7 +20,9 @@
         </c-draggable-step-number>
         <c-expand-btn v-if="isExpandable" v-model="expanded" />
       </c-layout>
-      <slot name="header" />
+      <div class="c-card-iterator-item__header">
+        <slot name="header" />
+      </div>
       <c-action-btn
         v-if="removable"
         :icon="small ? 'close' : 'delete'"
@@ -98,6 +101,7 @@ export default {
   --actions-max-width: 100px;
   --actions-min-width: 60px;
   --one-action-width: 26px;
+  --first-field-height: 48px;
 
   &__row > .c-action-btn {
     position: absolute;
@@ -125,7 +129,26 @@ export default {
     }
   }
 
+  &__row {
+    align-items: flex-start;
+  }
+
+  &__header {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+
+    > * {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
+    }
+  }
+
   &__actions {
+    align-self: flex-start;
+    align-items: center;
+    height: var(--first-field-height);
     max-width: var(--actions-max-width);
     min-width: var(--actions-min-width);
 

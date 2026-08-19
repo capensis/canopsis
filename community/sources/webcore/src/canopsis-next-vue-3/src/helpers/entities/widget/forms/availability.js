@@ -133,4 +133,9 @@ export const prepareAvailabilityWidget = (widget = {}) =>
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
+    'parameters.export_settings.widget_export_columns': (columns = []) =>
+      columns.map(column => ({
+        ...column,
+        text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+      })),
   });

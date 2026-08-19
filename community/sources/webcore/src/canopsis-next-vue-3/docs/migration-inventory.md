@@ -650,9 +650,9 @@ Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/c
 | `[~]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/line-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
 | `[~]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/pie-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
 | `[~]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/numbers-widget-migration-plan.md`. Runtime metrics, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[ ]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               |                                                                                                                                                                                                                       |
-| `[ ]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               |                                                                                                                                                                                                                       |
-| `[ ]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             |                                                                                                                                                                                                                       |
+| `[~]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               | Plan: `docs/ai/user-statistics-widget-migration-plan.md`. Runtime table, settings sidebar, form/query helpers, KPI toolbar filters, group metrics fetch and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. AlarmStatistics reuses the shared statistics stack. |
+| `[~]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               | Plan: `docs/ai/alarm-statistics-widget-migration-plan.md`. Runtime table, settings sidebar, shared form/query helpers, KPI toolbar filters, group metrics fetch and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
+| `[~]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             | Plan: `docs/ai/availability-widget-migration-plan.md`. Runtime table, settings sidebar, form/query helpers, toolbar filters, history graph and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
 | `[~]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level                                                                                                                                            | Widget runtime, settings sidebar, form/query helpers, widget-wrapper registration, user preference, periodic refresh, CSV export and records-list handoff are migrated. Reuses admin-layer store, modals and `external-data-table-records-list`. Remaining: end-to-end verification. |
 
 ## Widget Blocks
@@ -748,24 +748,27 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 ### `UserStatistics`
 
-- `[ ]` Main content: `src/components/widgets/statistics/user-statistics-widget.vue`.
-- `[ ]` Settings: `user-statistics-settings`; migrate user statistics parameters, filters and display options.
-- `[ ]` Store/API/socket: user statistics queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Migration plan: staged plan is tracked in `docs/ai/user-statistics-widget-migration-plan.md`. This widget owns the shared statistics stack used by AlarmStatistics.
+- `[x]` Main content: `src/components/widgets/statistics/user-statistics-widget.vue` and shared `partials/statistics-widget.vue`.
+- `[x]` Settings: `user-statistics-settings`; title, periodic refresh, user main parameter, columns, table header, default time range and filters.
+- `[x]` Store/API/socket: group metrics by widget id and rating-settings fetch without store.
+- `[x]` Messages/i18n: existing `settings`, `kpi.statisticsWidgets`, `user.metrics` and `alarm.metrics` keys are wired with the runtime.
 
 ### `AlarmStatistics`
 
-- `[ ]` Main content: `src/components/widgets/statistics/alarm-statistics-widget.vue`.
-- `[ ]` Settings: `alarm-statistics-settings`; migrate alarm statistics parameters, filters and display options.
-- `[ ]` Store/API/socket: alarm statistics queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Migration plan: staged plan is tracked in `docs/ai/alarm-statistics-widget-migration-plan.md`. Reuses the shared statistics stack from the UserStatistics plan.
+- `[x]` Main content: `src/components/widgets/statistics/alarm-statistics-widget.vue`.
+- `[x]` Settings: `alarm-statistics-settings`; entity main parameter including custom criteria, entity metric columns, table header, default time range and filters.
+- `[x]` Store/API/socket: same group metrics / rating-settings path as UserStatistics, with `KPI_RATING_SETTINGS_TYPES.entity`.
+- `[x]` Messages/i18n: existing settings/kpi/metric keys are already present; wire them with the runtime.
 
 ### `Availability`
 
-- `[ ]` Main content: `src/components/widgets/availability/availability-widget.vue`.
-- `[ ]` Settings: `availability-settings`; migrate availability parameters, time range, filters and display options.
-- `[ ]` Store/API/socket: availability queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Migration plan: staged plan is tracked in `docs/ai/availability-widget-migration-plan.md`.
+- `[x]` Main content: `src/components/widgets/availability/availability-widget.vue` with toolbar, list, expand graph and alarm tabs.
+- `[x]` Settings: `availability-settings`; columns, interval, display parameter, show type, filters and export CSV.
+- `[x]` Store/API/socket: availability list/history/export through the existing metrics Pinia store.
+- `[x]` Messages/i18n: existing `availability`, settings and permission keys are wired with the runtime.
 
 ### `ExternalDataTable`
 

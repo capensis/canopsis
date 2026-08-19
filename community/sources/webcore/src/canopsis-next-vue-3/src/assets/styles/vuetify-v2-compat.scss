@@ -262,6 +262,10 @@ $v2-spacer: 4px;
   color: rgb(var(--v-theme-on-surface));
 }
 
+.v-tab.v-tab--selected:not(.text-error):not(.error--text) {
+  color: currentColor !important;
+}
+
 .v-btn:not(.v-btn--round).v-btn--size-default {
   padding: 0 16px;
 }

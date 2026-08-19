@@ -272,6 +272,39 @@ export const findQuickRangeValue = (
   Object.values(ranges).find(range => start === range.start && stop === range.stop) ?? defaultValue;
 
 /**
+ * Find quick range by interval form.
+ *
+ * @param {Object} interval
+ * @param {Array} [ranges=Object.values(QUICK_RANGES)]
+ * @returns {Object}
+ */
+export const findQuickRangeByInterval = (interval, ranges = Object.values(QUICK_RANGES)) =>
+  ranges.find(range => range.start === interval.from && range.stop === interval.to) || QUICK_RANGES.custom;
+
+/**
+ * Convert interval form to timestamp interval with hour precision.
+ *
+ * @param {Object} options
+ * @param {{ from: number|string, to: number|string }} [options.interval={}]
+ * @param {string} [options.format=DATETIME_FORMATS.datePicker]
+ * @param {string} [options.timezone=getLocalTimezone()]
+ * @returns {{ from: number, to: number }}
+ */
+export const convertQueryIntervalToTimestamp = ({
+  interval = {},
+  format = DATETIME_FORMATS.datePicker,
+  timezone = getLocalTimezone(),
+} = {}) => {
+  const from = convertStartDateIntervalToTimestamp(interval.from, format, TIME_UNITS.hour);
+  const to = convertStopDateIntervalToTimestamp(interval.to, format, TIME_UNITS.hour);
+
+  return {
+    from: convertDateToTimestampByTimezone(from, timezone),
+    to: convertDateToTimestampByTimezone(to, timezone),
+  };
+};
+
+/**
  * Convert a selected quick range to the alarm query interval fields.
  *
  * @param {Object} range

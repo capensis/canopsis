@@ -70,7 +70,7 @@
       :items="alarms"
       :items-length="totalItems"
       :items-per-page="options.itemsPerPage"
-      :loading="loading || columnsFiltersPending || entityInfoPropertyPending"
+      :loading="isTableLoading"
       :page="options.page"
       :sort-by="options.sortBy"
       :disable-sort="isColumnsChanging"
@@ -132,6 +132,11 @@
       </template>
 
       <template #body="{ items }">
+        <tr v-if="!items.length && !isTableLoading" class="v-data-table-rows-no-data">
+          <td :colspan="headersColspan">
+            {{ $t('common.noDataAvailable') }}
+          </td>
+        </tr>
         <template
           v-for="item in items"
           :key="getTableItem(item)._id"
@@ -182,14 +187,6 @@
             />
           </alarms-list-expand-row>
         </template>
-      </template>
-
-      <template #no-data>
-        <tr>
-          <td :colspan="headersColspan" class="text-center text-medium-emphasis py-6">
-            {{ $t('common.noData') }}
-          </td>
-        </tr>
       </template>
     </v-data-table-server>
 
@@ -429,6 +426,10 @@ export default {
       return !!this.totalItems;
     },
 
+    isTableLoading() {
+      return this.loading || this.columnsFiltersPending || this.entityInfoPropertyPending;
+    },
+
     isColumnsChanging() {
       return this.resizingMode || this.draggingMode;
     },
@@ -547,7 +548,9 @@ export default {
     tableStyle() {
       if (this.resizableColumn) {
         return {
-          '--alarms-list-table-width': `${this.sumOfColumnsWidth}px`,
+          '--alarms-list-table-width': this.sumOfColumnsWidth
+            ? `${this.sumOfColumnsWidth}px`
+            : '100%',
         };
       }
 
@@ -1169,7 +1172,8 @@ export default {
     > .v-table__wrapper > table {
       table-layout: fixed;
       width: var(--alarms-list-table-width);
-      min-width: var(--alarms-list-table-width);
+      max-width: unset;
+      min-width: 100%;
     }
   }
 

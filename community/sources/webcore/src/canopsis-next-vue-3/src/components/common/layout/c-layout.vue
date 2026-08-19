@@ -112,5 +112,19 @@ const layoutAttrs = computed(() => {
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
+
+  > :deep(*) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  > :deep(*:only-child) {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  &.flex-column > :deep(*) {
+    width: 100%;
+  }
 }
 </style>

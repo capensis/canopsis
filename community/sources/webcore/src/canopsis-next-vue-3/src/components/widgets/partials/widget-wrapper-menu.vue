@@ -69,6 +69,9 @@ const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.lineChart,
   WIDGET_TYPES.pieChart,
   WIDGET_TYPES.numbers,
+  WIDGET_TYPES.userStatistics,
+  WIDGET_TYPES.alarmStatistics,
+  WIDGET_TYPES.availability,
 ];
 
 export default {

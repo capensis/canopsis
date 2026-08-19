@@ -104,25 +104,30 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      if (this.resolved) {
-        const params = convertWidgetQueryToRequest(this.query);
+      try {
+        if (this.resolved) {
+          const params = convertWidgetQueryToRequest(this.query);
 
-        const { data, meta } = await this.fetchResolvedAlarmsListWithoutStore({
-          params: { ...params, _id: this.entity._id },
-        });
+          const { data, meta } = await this.fetchResolvedAlarmsListWithoutStore({
+            params: { ...params, _id: this.entity._id },
+          });
 
-        this.alarms = data;
-        this.meta = meta;
-      } else {
-        const alarm = await this.fetchOpenAlarmsListWithoutStore({
-          params: { _id: this.entity._id },
-        });
+          this.alarms = data ?? [];
+          this.meta = meta ?? {};
+        } else {
+          const alarm = await this.fetchOpenAlarmsListWithoutStore({
+            params: { _id: this.entity._id },
+          });
 
-        this.alarms = alarm ? [alarm] : [];
-        this.meta = { total_count: this.alarms.length };
+          this.alarms = alarm ? [alarm] : [];
+          this.meta = { total_count: this.alarms.length };
+        }
+      } catch {
+        this.alarms = [];
+        this.meta = {};
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
     },
   },
 };
