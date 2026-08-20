@@ -7,6 +7,7 @@
     :removable="hasDeleteAccess"
     :updatable="hasUpdateAccess"
     :active="active"
+    @edit="showEditPbehaviorExceptionModal"
     @remove="showRemovePbehaviorExceptionModal"
     @refresh="fetchList"
     @update:options="updateOptions"
@@ -47,6 +48,7 @@ export default {
       pbehaviorExceptionsPending,
       pbehaviorExceptionsMeta,
       fetchPbehaviorExceptionsList,
+      updatePbehaviorException,
       removePbehaviorException,
     } = usePbehaviorException();
 
@@ -92,6 +94,21 @@ export default {
         },
       });
 
+    const showEditPbehaviorExceptionModal = pbehaviorException =>
+      modals.show({
+        name: MODALS.createPbehaviorException,
+        config: {
+          pbehaviorException,
+          action: async (data) => {
+            await updatePbehaviorException({
+              id: pbehaviorException._id,
+              data,
+            });
+            await fetchList();
+          },
+        },
+      });
+
     onMounted(fetchList);
 
     return {
@@ -103,6 +120,7 @@ export default {
       hasDeleteAccess,
       fetchList,
       updateOptions,
+      showEditPbehaviorExceptionModal,
       showRemovePbehaviorExceptionModal,
     };
   },

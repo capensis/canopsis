@@ -1,6 +1,6 @@
 <template>
   <c-layout gap="2" column>
-    <role-template-field v-model="permissionsField" />
+    <role-template-field v-if="withTemplate" v-model="permissionsField" />
 
     <c-name-field
       v-model="nameField"
@@ -16,9 +16,8 @@
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.description')">
-        <c-text-field
+        <c-description-field
           v-model="descriptionField"
-          :label="t('common.description')"
           name="description"
         />
       </c-form-block-row>
@@ -37,18 +36,28 @@
 
       <v-expand-transition>
         <c-layout v-if="intervalsEnabledField" column>
-          <c-form-block-row :label="t('role.inactivityInterval')">
+          <c-form-block-row v-if="isUiType" :label="t('role.inactivityInterval')">
             <c-duration-field
               v-model:duration="inactivityIntervalField"
               :label="t('role.inactivityInterval')"
-            />
+              long
+            >
+              <template #append>
+                <c-help-icon :text="t('role.inactivityIntervalHelpText')" icon="help" top />
+              </template>
+            </c-duration-field>
           </c-form-block-row>
 
           <c-form-block-row :label="t('role.expirationInterval')" bottom-border>
             <c-duration-field
               v-model:duration="expirationIntervalField"
               :label="t('role.expirationInterval')"
-            />
+              long
+            >
+              <template #append>
+                <c-help-icon :text="t('role.expirationIntervalHelpText')" icon="help" top />
+              </template>
+            </c-duration-field>
           </c-form-block-row>
         </c-layout>
       </v-expand-transition>

@@ -32,7 +32,7 @@
 
     <template #actions="{ item }">
       <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" disabled />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
         <c-action-btn
           v-if="removable"
           :disabled="!item.deletable"
@@ -92,7 +92,7 @@ export default {
     },
   },
 
-  emits: ['update:options', 'remove', 'refresh'],
+  emits: ['update:options', 'edit', 'remove', 'refresh'],
 
   setup() {
     const { t } = useI18n();

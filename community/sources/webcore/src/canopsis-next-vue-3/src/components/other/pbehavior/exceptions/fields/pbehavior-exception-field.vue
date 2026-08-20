@@ -1,7 +1,7 @@
 <template>
   <c-layout class="pbehavior-exception-field" column>
-    <c-layout gap="2" justify="space-between">
-      <div :style="gridFlexStyle(7)" class="pbehavior-exception-field__interval">
+    <c-layout class="pbehavior-exception-field__row" gap="2" justify="space-between">
+      <div :style="gridFlexStyle(8)" class="pbehavior-exception-field__interval">
         <date-time-splitted-range-picker-field
           v-if="editing"
           :start="value.begin"
@@ -26,7 +26,7 @@
           :full-day="fullDay"
         />
       </div>
-      <div v-if="withType" :style="gridFlexStyle(5)">
+      <div v-if="withType" :style="gridFlexStyle(4)">
         <c-pbehavior-type-field
           v-if="editing"
           :model-value="value.type"
@@ -42,8 +42,9 @@
         <v-btn
           :input-value="editing"
           class="btn--editing"
+          size="x-small"
+          variant="text"
           icon
-          fab
           @click="toggleEditing"
         >
           <v-icon v-if="editing" color="primary">
@@ -56,6 +57,8 @@
         <v-btn
           class="v-btn-legacy-m--y"
           color="error"
+          size="x-small"
+          variant="text"
           icon
           @click="$emit('delete')"
         >
@@ -177,17 +180,26 @@ export default {
 
 <style lang="scss" scoped>
 .pbehavior-exception-field {
+  &__row {
+    position: relative;
+    padding-right: 72px;
+  }
+
   &__interval {
     flex-shrink: 0;
   }
 
   &__actions {
-    min-width: 90px;
-
-    .btn--editing {
-      height: 36px;
-      width: 36px;
-    }
+    position: absolute;
+    top: 50%;
+    right: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    width: 72px;
+    transform: translateY(-50%);
   }
 }
 </style>

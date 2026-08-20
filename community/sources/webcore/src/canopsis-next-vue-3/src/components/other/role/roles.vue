@@ -10,6 +10,7 @@
     @edit="showEditRoleModal"
     @duplicate="showDuplicateRoleModal"
     @remove="showRemoveRoleModal"
+    @refresh="fetchList"
     @update:options="updateOptions"
   />
 </template>

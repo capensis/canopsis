@@ -146,27 +146,9 @@ export default {
   display: inline-block;
   width: 56px;
   min-width: 56px;
-  height: 30px;
-  min-height: 30px;
-  max-height: 30px;
-  overflow: hidden;
-
-  .v-input__control,
-  .v-field,
-  .v-field__field,
-  .v-field__input {
-    min-height: 30px;
-    height: 30px;
-    max-height: 30px;
-  }
 
   .v-field__input {
-    align-items: center;
     flex-wrap: nowrap;
-    padding-top: 0;
-    padding-bottom: 0;
-    line-height: 30px;
-    overflow: hidden;
   }
 
   .v-combobox__selection-text {
