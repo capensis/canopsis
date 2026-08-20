@@ -7,6 +7,7 @@
     :removable="hasDeleteAccess"
     :updatable="hasUpdateAccess"
     :active="active"
+    @edit="showEditPbehaviorTypeModal"
     @remove="showRemovePbehaviorTypeModal"
     @refresh="fetchList"
     @update:options="updateOptions"
@@ -47,6 +48,7 @@ export default {
       pbehaviorTypesPending,
       pbehaviorTypesMeta,
       fetchPbehaviorTypesList,
+      updatePbehaviorType,
       removePbehaviorType,
     } = usePbehaviorType();
 
@@ -92,6 +94,21 @@ export default {
         },
       });
 
+    const showEditPbehaviorTypeModal = pbehaviorType =>
+      modals.show({
+        name: MODALS.createPbehaviorType,
+        config: {
+          pbehaviorType,
+          action: async (data) => {
+            await updatePbehaviorType({
+              id: pbehaviorType._id,
+              data,
+            });
+            await fetchList();
+          },
+        },
+      });
+
     onMounted(fetchList);
 
     return {
@@ -103,6 +120,7 @@ export default {
       hasDeleteAccess,
       fetchList,
       updateOptions,
+      showEditPbehaviorTypeModal,
       showRemovePbehaviorTypeModal,
     };
   },

@@ -7,6 +7,7 @@
     :removable="hasDeleteAccess"
     :updatable="hasUpdateAccess"
     :active="active"
+    @edit="showEditPbehaviorReasonModal"
     @remove="showRemovePbehaviorReasonModal"
     @refresh="fetchList"
     @update:options="updateOptions"
@@ -47,6 +48,7 @@ export default {
       pbehaviorReasonsPending,
       pbehaviorReasonsMeta,
       fetchPbehaviorReasonsList,
+      updatePbehaviorReason,
       removePbehaviorReason,
     } = usePbehaviorReason();
 
@@ -92,6 +94,21 @@ export default {
         },
       });
 
+    const showEditPbehaviorReasonModal = pbehaviorReason =>
+      modals.show({
+        name: MODALS.createPbehaviorReason,
+        config: {
+          pbehaviorReason,
+          action: async (data) => {
+            await updatePbehaviorReason({
+              id: pbehaviorReason._id,
+              data,
+            });
+            await fetchList();
+          },
+        },
+      });
+
     onMounted(fetchList);
 
     return {
@@ -103,6 +120,7 @@ export default {
       hasDeleteAccess,
       fetchList,
       updateOptions,
+      showEditPbehaviorReasonModal,
       showRemovePbehaviorReasonModal,
     };
   },
