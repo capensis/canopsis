@@ -70,25 +70,17 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
-import {
-  ENTITIES_TYPES,
-  ALARM_FIELDS,
-  ALARM_OUTPUT_FIELDS,
-  ALARM_LIST_WIDGET_GROUPED_COLUMNS,
-  CONTEXT_WIDGET_GROUPED_COLUMNS,
-  ALARM_FIELDS_TO_LABELS_KEYS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-} from '@/constants';
+import { ENTITIES_TYPES, ALARM_OUTPUT_FIELDS } from '@/constants';
 
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
-import { useI18n } from '@/hooks/i18n';
 import { useValidator } from '@/hooks/validator/validator';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 import { useModelField } from '@/hooks/form/model-field';
 import { useAsyncBootingChild } from '@/hooks/render/async-booting';
+import { useAvailableColumns } from '@/hooks/form/available-columns';
 
 import CardIteratorItem from '@/components/forms/fields/card-iterator/c-card-iterator-item.vue';
 
@@ -171,7 +163,6 @@ export default {
     const isCustom = ref(false);
     const isExpanded = ref(!props.column.column);
 
-    const { t, tc } = useI18n();
     const validator = useValidator();
     const { updateModel } = useModelField(props, emit);
     const { booted: bootedExpandPanel } = useAsyncBootingChild(!props.column?.column);
@@ -181,53 +172,11 @@ export default {
       contentClass: 'column-field-menu',
     };
 
-    const groupedColumnsToColumns = (groupedColumns = {}, keys = {}) => (
-      Object.entries(groupedColumns).reduce((acc, [group, items]) => {
-        const preparedItems = items.map(value => ({
-          value,
-          text: tc(keys[value], 2),
-        }));
-
-        if (!preparedItems.length) {
-          return acc;
-        }
-
-        acc.push(
-          { header: t(`settings.columnsGroups.${group}`) },
-          ...preparedItems,
-        );
-
-        return acc;
-      }, [])
-    );
-
-    /**
-     * COMPUTED
-     */
-    const isAlarmType = computed(() => props.type === ENTITIES_TYPES.alarm);
-
-    const alarmListAvailableColumns = computed(() => {
-      const columns = groupedColumnsToColumns(ALARM_LIST_WIDGET_GROUPED_COLUMNS, ALARM_FIELDS_TO_LABELS_KEYS);
-
-      return props.withInstructions
-        ? columns.filter(({ value }) => value !== ALARM_FIELDS.assignedInstructions)
-        : columns;
-    });
-
-    const contextAvailableColumns = computed(() => (
-      groupedColumnsToColumns(CONTEXT_WIDGET_GROUPED_COLUMNS, ENTITY_FIELDS_TO_LABELS_KEYS)
-    ));
-
-    const availableColumns = computed(() => {
-      if (props.items) {
-        return props.items;
-      }
-
-      const columns = isAlarmType.value
-        ? alarmListAvailableColumns.value
-        : contextAvailableColumns.value;
-
-      return columns.filter(({ value }) => !props.excludedColumns.includes(value));
+    const { availableColumns } = useAvailableColumns({
+      type: toRef(props, 'type'),
+      items: toRef(props, 'items'),
+      excludedColumns: toRef(props, 'excludedColumns'),
+      withInstructions: toRef(props, 'withInstructions'),
     });
 
     const columnLabelFieldName = computed(() => `${props.name}.label`);

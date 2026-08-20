@@ -33,8 +33,8 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => ({
   enabled: dynamicInfo.enabled ?? true,
   description: dynamicInfo.description ?? '',
   disable_during_periods: dynamicInfo.disable_during_periods ?? [],
-  infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],
   patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+  infos: dynamicInfo.infos ?? [],
 });
 
 /**

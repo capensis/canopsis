@@ -8,6 +8,7 @@ export default {
   diffInstancesConfig: 'Invalid instances configuration',
   queueLength: 'Queue length {queueLength}/{maxQueueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
+  runningNodes: 'Running nodes {runningNodes}/{nodes}',
   activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
   queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
   engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
@@ -32,6 +33,24 @@ export default {
   systemStatusChipError: 'The system is not operational',
   systemStatusServerError: 'System configuration is invalid, please contact the administrator',
   systemsOperational: 'All systems are operational',
+  connectors: 'Connectors',
+  connectorsBlocks: {
+    description: 'Model training in progress, please check later',
+    manageMonitoredConnectors: 'Manage monitored connectors',
+    enabledConnectors: 'Enabled connectors',
+    disabledConnectors: 'Disabled connectors',
+    noConnectors: 'No connectors',
+    numberOfEvents: 'Number of events',
+    notEnoughData: 'Not enough data',
+    disabled: 'Disabled',
+    graphNotEnoughData: 'Not enough data yet to display anomalies graph',
+    anomaliesDetected: 'Anomalies detected',
+    averageEvents: 'Average events',
+    chartYAxis: 'Number of events',
+    tooltipEvents: '{count} events',
+    eventsSeries: 'Events',
+    yesterdaySuffix: '(yesterday)',
+  },
   validation: {
     max_value: 'The field must be equal or less than the optimal instance count',
     min_value: 'The field must be equal or more than the minimal instance count',
@@ -79,7 +98,7 @@ export default {
 
     [HEALTHCHECK_ENGINES_NAMES.fifo]: {
       name: 'FIFO',
-      edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      edgeLabel: 'RabbitMQ status\nIncoming flow KPIs',
       description: 'Manages the queue of events and alarms',
     },
 

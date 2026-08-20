@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -28,6 +29,7 @@ const (
 	OutputStepPrefix       = "Step: "
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "
+	OutputUpstreamPrefix   = "Upstream: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -43,7 +45,7 @@ type AlarmStep struct {
 	Message                string           `bson:"m" json:"m"`
 	Role                   string           `bson:"role,omitempty" json:"role,omitempty"`
 	Value                  CpsNumber        `bson:"val" json:"val"`
-	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
+	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter"`
 	PbehaviorCanonicalType string           `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
 	IconName               string           `bson:"icon_name,omitempty" json:"icon_name,omitempty"`
 	Color                  string           `bson:"color,omitempty" json:"color,omitempty"`
@@ -57,6 +59,8 @@ type AlarmStep struct {
 
 	DisplayGroup        string `bson:"dgroup,omitempty" json:"dgroup,omitempty"`
 	InPbehaviorInterval bool   `bson:"in_pbh,omitempty" json:"in_pbh,omitempty"`
+
+	StructuredMessage []StructuredMessage `bson:"struct_m,omitempty" json:"struct_m,omitempty"`
 }
 
 func (s *AlarmStep) GetInitiator() string {
@@ -68,15 +72,22 @@ func (s *AlarmStep) GetInitiator() string {
 }
 
 type TicketInfo struct {
-	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketURLTitle    string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title,omitempty"`
-	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
-	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
-	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
-	TicketRuleID      string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
-	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
-	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	Ticket                        string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL                     string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketURLTitle                string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title,omitempty"`
+	TicketComment                 string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
+	TicketSystemName              string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
+	TicketMetaAlarmID             string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketRuleID                  string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
+	TicketRuleName                string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
+	TicketData                    map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	TicketStatus                  int               `bson:"ticket_status,omitempty" json:"ticket_status,omitempty"`
+	TicketPrevStatus              int               `bson:"ticket_prev_status,omitempty" json:"ticket_prev_status,omitempty"`
+	TicketSourceStatus            string            `bson:"ticket_source_status,omitempty" json:"ticket_source_status,omitempty"`
+	TicketPrevSourceStatus        string            `bson:"ticket_prev_source_status,omitempty" json:"ticket_prev_source_status,omitempty"`
+	TicketLastCheckTime           datetime.CpsTime  `bson:"ticket_last_check_time,omitempty" json:"ticket_last_check_time,omitzero" swaggertype:"integer"`
+	TicketCheckStatusJobID        string            `bson:"ticket_check_status_job_id,omitempty" json:"ticket_check_status_job_id,omitempty"`
+	TicketCheckStatusJobIsStopped bool              `bson:"ticket_check_status_job_is_stopped,omitempty" json:"ticket_check_status_job_is_stopped,omitempty"`
 }
 
 func (t TicketInfo) GetStepMessage() string {
@@ -272,13 +283,21 @@ func (s *AlarmSteps) Add(step AlarmStep) error {
 	return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
 }
 
-// Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step
-// Returns :
-//   - the updated alarm steps
-//   - True if it was updated, false else
+// Crop keeps at most cropNum most recent AlarmStepStateIncrease/AlarmStepStateDecrease
+// steps located after currentStatus. Older stateinc/statedec steps are merged into
+// an AlarmStepStateCounter step placed right after currentStatus.
 //
-// param currentStatus: the current status of the alarm. The steps will be cropped from this status
-// param cropNum: crop only if we have at least cropNum steps with type AlarmStepStateIncrease or AlarmStepStateDecrease
+// currentStatus must be non-nil and is used both as crop boundary and as the insertion
+// point for the statecounter step.
+//
+// Crop returns updated steps and true when crop is applied. It returns the original
+// steps and false when no crop is needed.
+//
+// Example:
+//
+//	steps after currentStatus: [stateinc, comment, statedec, stateinc]
+//	cropNum: 1
+//	result: [statecounter(2 changes), comment, stateinc]
 func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, bool) {
 	nbStepsToCrop := 0
 	currentStatusIdx := -1
@@ -288,9 +307,9 @@ func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, boo
 	for i := len(s) - 1; i >= 0 && currentStatusIdx < 0; i-- {
 		step := s[i]
 		if step.Type == AlarmStepStateIncrease || step.Type == AlarmStepStateDecrease {
-			nbStepsToCrop += 1
+			nbStepsToCrop++
 		}
-		if step.Type == currentStatus.Type && step.Timestamp.Time.Equal(currentStatus.Timestamp.Time) {
+		if step.Type == currentStatus.Type && step.Timestamp.Equal(currentStatus.Timestamp) && step.Value == currentStatus.Value {
 			currentStatusIdx = i
 		}
 	}
@@ -442,13 +461,7 @@ func (i *PbehaviorInfo) Is(t string) bool {
 }
 
 func (i *PbehaviorInfo) OneOf(t []string) bool {
-	for _, v := range t {
-		if i.Is(v) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(t, i.Is)
 }
 
 func (i PbehaviorInfo) IsZero() bool {
@@ -509,9 +522,13 @@ type AlarmValue struct {
 	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	ChangeState *AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
-	// Ticket contains the last created ticket
+	// Ticket contains the last created ticket.
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps  AlarmSteps `bson:"steps" json:"steps"`
+	// FailedTicket contains the last ticket if it failed.
+	FailedTicket *AlarmStep `bson:"failed_ticket,omitempty" json:"failed_ticket,omitempty"`
+	Steps        AlarmSteps `bson:"steps" json:"steps"`
+	// NoEventsDate indicates if an alarm is under no events idle rule.
+	NoEventsDate *datetime.CpsTime `bson:"no_events_date,omitempty" json:"no_events_date,omitempty"`
 
 	Component                   string            `bson:"component" json:"component"`
 	Connector                   string            `bson:"connector" json:"connector"`
@@ -526,11 +543,11 @@ type AlarmValue struct {
 	LongOutput                  string            `bson:"long_output" json:"long_output"`
 	LongOutputHistory           []string          `bson:"long_output_history" json:"long_output_history"`
 	LastUpdateDate              datetime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
-	LastEventDate               datetime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
+	LastEventDate               *datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	LastStateOrStatusUpdateDate datetime.CpsTime  `bson:"last_st_upd_dt" json:"last_st_upd_dt"`
 	Resource                    string            `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
-	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	Meta                        string            `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath               string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
@@ -543,8 +560,8 @@ type AlarmValue struct {
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos           map[string]map[string]interface{} `bson:"infos" json:"infos"`
-	LastInfosUpdate datetime.MicroTime                `bson:"last_infos_update,omitempty" json:"last_infos_update,omitempty"`
+	Infos           map[string]map[string]any `bson:"infos" json:"infos"`
+	LastInfosUpdate datetime.MicroTime        `bson:"last_infos_update,omitempty" json:"last_infos_update,omitzero"`
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.
@@ -569,8 +586,9 @@ type AlarmValue struct {
 	// CloseDelay should have a state step copy when alarm is closed by a close delay job.
 	CloseDelay *AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 
-	MaxState     CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
-	InitialState CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
+	MaxState      CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState  CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
+	InitialStatus CpsNumber `bson:"initial_status,omitempty" json:"initial_status,omitempty"`
 }
 
 func (v *AlarmValue) Transform() {

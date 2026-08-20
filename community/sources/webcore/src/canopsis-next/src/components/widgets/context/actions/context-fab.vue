@@ -33,7 +33,7 @@
           @click.prevent.stop="showCreateServiceModal"
         >
           <v-icon size="24">
-            $vuetify.icons.engineering
+            engineering
           </v-icon>
         </v-btn>
       </template>
@@ -70,9 +70,11 @@ export default {
         config: {
           title: this.$t('modals.createService.create.title'),
           action: async (service) => {
-            await this.createService({ data: service });
+            const result = await this.createService({ data: service });
 
             this.$popups.success({ text: this.$t('modals.createService.success.create') });
+
+            return result;
           },
         },
       });

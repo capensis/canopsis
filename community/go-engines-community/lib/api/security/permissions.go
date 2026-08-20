@@ -81,6 +81,8 @@ const (
 	PermPbhPatterns = "api_pbehavior_patterns"
 
 	ObjTemplateData = "api_template_data"
+
+	ObjCommentTemplate = "api_comment_template"
 )
 
 // PermCheck defines the permission check configuration where Obj is an object and Act is an action

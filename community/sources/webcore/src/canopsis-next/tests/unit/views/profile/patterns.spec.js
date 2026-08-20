@@ -129,7 +129,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createPattern,
       config: {
         pattern,
@@ -147,7 +147,7 @@ describe('patterns', () => {
 
     await config.action(newPattern);
 
-    expect(updatePattern).toBeCalledWith(
+    expect(updatePattern).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: newPattern,
@@ -174,7 +174,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createPattern,
       config: {
         pattern,
@@ -196,7 +196,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createPattern,
       config: {
         pattern: {
@@ -216,7 +216,7 @@ describe('patterns', () => {
 
     await config.action(pattern);
 
-    expect(createPattern).toBeCalledWith(
+    expect(createPattern).toHaveBeenCalledWith(
       expect.any(Object),
       { data: pattern },
     );
@@ -235,7 +235,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createPattern,
       config: {
         pattern: {
@@ -255,7 +255,7 @@ describe('patterns', () => {
 
     await config.action(pattern);
 
-    expect(createPattern).toBeCalledWith(
+    expect(createPattern).toHaveBeenCalledWith(
       expect.any(Object),
       { data: pattern },
     );
@@ -274,7 +274,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createPattern,
       config: {
         pattern: {
@@ -294,7 +294,7 @@ describe('patterns', () => {
 
     await config.action(pattern);
 
-    expect(createPattern).toBeCalledWith(
+    expect(createPattern).toHaveBeenCalledWith(
       expect.any(Object),
       { data: pattern },
     );
@@ -317,7 +317,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.confirmation,
       config: {
         action: expect.any(Function),
@@ -327,7 +327,7 @@ describe('patterns', () => {
 
     await config.action();
 
-    expect(removePattern).toBeCalledWith(
+    expect(removePattern).toHaveBeenCalledWith(
       expect.any(Object),
       { id: pattern._id },
     );
@@ -347,7 +347,7 @@ describe('patterns', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.confirmation,
       config: {
         action: expect.any(Function),
@@ -357,7 +357,7 @@ describe('patterns', () => {
 
     await config.action();
 
-    expect(bulkRemovePattern).toBeCalledWith(
+    expect(bulkRemovePattern).toHaveBeenCalledWith(
       expect.any(Object),
       { data: patterns },
     );

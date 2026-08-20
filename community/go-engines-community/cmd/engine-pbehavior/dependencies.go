@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -46,8 +47,11 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubConn := m.DepAmqpConnection(logger, cfg)
+	amqpConsumeConn := m.DepAmqpConnection(logger, cfg)
+	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
+	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -56,6 +60,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(cfg, logger))
 	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
+	// longTimeoutClient should be used by compute intervals only
+	longTimeoutClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+		RetryCount:      cfg.Global.ReconnectRetries,
+		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
+		ClientTimeout:   frameDuration,
+		ReadPreference:  mongo.SecondaryPreferred(),
+	})
 	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
 
 	healthCheckCfg, err := config.NewHealthCheckAdapter(dbClient).GetConfig(ctx)
@@ -67,7 +78,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
-		amqpChannel,
+		amqpConsumeChPool,
 		logger,
 	)
 
@@ -81,15 +92,15 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		TimezoneConfigProvider: timezoneConfigProvider,
 		Logger:                 logger,
 	}
+	pbhLongTimeoutService := pbehavior.NewService(longTimeoutClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
-			pbhService := pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
 			now := time.Now()
 			newSpan := timespan.New(now, now.Add(frameDuration))
-			resolver, count, err := pbhService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
+			resolver, count, err := pbhLongTimeoutService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -118,7 +129,27 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 
-			err = amqpConnection.Close()
+			err = longTimeoutClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpPubChPool.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channels")
+			}
+
+			err = amqpConsumeChPool.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channels")
+			}
+
+			err = amqpPubConn.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = amqpConsumeConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -150,7 +181,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
 		EventManager:             eventManager,
 		TimezoneConfigProvider:   timezoneConfigProvider,
-		PubChannel:               amqpChannel,
+		Publisher:                amqpPublisher,
 		Decoder:                  json.NewDecoder(),
 		Encoder:                  json.NewEncoder(),
 		Logger:                   logger,
@@ -161,7 +192,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		options.Workers,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		rpcMessageProcessor,
 		logger,
 	))
@@ -177,7 +209,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		"",
 		options.Workers,
 		false,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		&recomputeMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
@@ -186,7 +219,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			EventManager:             eventManager,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
-			Publisher:                amqpChannel,
+			Publisher:                amqpPublisher,
 			InheritedServiceResolver: pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient),
 			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
@@ -201,9 +234,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
 			TechMetricsSender:        techMetricsSender,
-			ChannelPub:               amqpChannel,
+			Publisher:                amqpPublisher,
 			PeriodicalInterval:       options.PeriodicalWaitTime,
-			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			PbhService:               pbhLongTimeoutService,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
 			EntityAdapter:            entity.NewAdapter(dbClient),
 			EventManager:             eventManager,

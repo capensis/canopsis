@@ -83,7 +83,7 @@ type AggregationDataResult struct {
 	TotalCount int64          `json:"total_count" bson:"total_count"`
 }
 
-func (r *AggregationDataResult) GetData() interface{} {
+func (r *AggregationDataResult) GetData() any {
 	return r.Data
 }
 
@@ -121,12 +121,13 @@ type EditTestRequest struct {
 	Type *int   `json:"type" binding:"required"`
 	Rule string `json:"rule" binding:"required"`
 	Data struct {
-		Event     string         `json:"event"`
-		Response  string         `json:"response"`
-		Responses map[int]string `json:"responses"`
-		Alarm     string         `json:"alarm"`
-		Entity    string         `json:"entity"`
-		User      string         `json:"user"`
+		Event                 string         `json:"event"`
+		Response              string         `json:"response"`
+		Responses             map[int]string `json:"responses"`
+		TicketStatusResponses map[int]string `json:"ticket_status_responses"`
+		Alarm                 string         `json:"alarm"`
+		Entity                string         `json:"entity"`
+		User                  string         `json:"user"`
 	} `json:"data" binding:"required"`
 	Author string `json:"author" swaggerignore:"true"`
 }
@@ -172,6 +173,10 @@ type TestResponse struct {
 			ID   string `json:"_id" bson:"_id"`
 			Name string `json:"name" bson:"name"`
 		} `json:"responses,omitempty" bson:"responses,omitempty"`
+		TicketStatusResponses map[int]struct {
+			ID   string `json:"_id" bson:"_id"`
+			Name string `json:"name" bson:"name"`
+		} `json:"ticket_status_responses,omitempty" bson:"ticket_status_responses,omitempty"`
 		Alarm  *alarm.RefResponse  `json:"alarm,omitempty" bson:"alarm,omitempty"`
 		Entity *entity.RefResponse `json:"entity,omitempty" bson:"entity,omitempty"`
 		User   *struct {
@@ -193,12 +198,13 @@ type TestModel struct {
 		Name string `bson:"name"`
 	} `bson:"rule"`
 	Data struct {
-		Event     string                      `bson:"event,omitempty"`
-		Response  string                      `bson:"response,omitempty"`
-		Responses map[int]string              `bson:"responses,omitempty"`
-		Alarm     *types.AlarmWithEntityField `bson:"alarm,omitempty"`
-		Entity    *types.Entity               `bson:"entity,omitempty"`
-		User      string                      `bson:"user,omitempty"`
+		Event                 string                      `bson:"event,omitempty"`
+		Response              string                      `bson:"response,omitempty"`
+		Responses             map[int]string              `bson:"responses,omitempty"`
+		TicketStatusResponses map[int]string              `bson:"ticket_status_responses,omitempty"`
+		Alarm                 *types.AlarmWithEntityField `bson:"alarm,omitempty"`
+		Entity                *types.Entity               `bson:"entity,omitempty"`
+		User                  string                      `bson:"user,omitempty"`
 	} `bson:"data"`
 	Author  string            `bson:"author"`
 	Created *datetime.CpsTime `bson:"created,omitempty"`
@@ -210,7 +216,7 @@ type AggregationTestResult struct {
 	TotalCount int64          `json:"total_count" bson:"total_count"`
 }
 
-func (r *AggregationTestResult) GetData() interface{} {
+func (r *AggregationTestResult) GetData() any {
 	return r.Data
 }
 
@@ -240,8 +246,14 @@ type TemplateParameters struct {
 
 // TemplateWebhookDeclareTicket is a model with all required WebhookDeclareTicket fields for template validation requests.
 type TemplateWebhookDeclareTicket struct {
-	TicketIDTpl  string `json:"ticket_id_tpl"`
-	TicketURLTpl string `json:"ticket_url_tpl"`
+	TicketIDTpl               string                     `json:"ticket_id_tpl"`
+	TicketURLTpl              string                     `json:"ticket_url_tpl"`
+	TemplateCheckTicketStatus *TemplateCheckTicketStatus `json:"check_ticket_status"`
+}
+
+type TemplateCheckTicketStatus struct {
+	Request         TemplateParameters `json:"request"`
+	TicketStatusTpl string             `json:"ticket_status_tpl"`
 }
 
 type AliasInfo struct {

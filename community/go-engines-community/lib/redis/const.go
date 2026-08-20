@@ -26,13 +26,13 @@ const (
 
 	FifoEngineLockKey      = "fifo-engine-lock-key"
 	FifoDataStorageLockKey = "fifo-datastorage-lock-key"
+	FifoSuspendedEventKey  = "fifo-suspended-event-key"
 
 	ChePeriodicalLockKey                      = "che-periodical-lock-key"
 	CheSoftDeletePeriodicalLockKey            = "che-soft-delete-periodical-lock-key"
 	CheEntityInfosDictionaryPeriodicalLockKey = "che-entity-infos-dictionary-periodical-lock-key"
 	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
-
-	RecorderLockKey = "recorder-lock-key"
+	CheSuspendedEventKey                      = "che-suspended-event-key"
 
 	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
 	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
@@ -52,4 +52,6 @@ const (
 	ApiPbhPatternCountLockKey    = "api-pbh-pattern-count-lock-key"
 
 	CorrelationInactiveDelayPeriodicalLockKey = "correlation-inactive-delay-periodical-lock-key"
+
+	WebhookCheckTicketStatusLockKey = "webhook-check-ticket-status-lock-key"
 )

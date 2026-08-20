@@ -2,11 +2,9 @@
 
 exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-  both-counters=""
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
   disabled="true"
-  entity-attributes="[object Object]"
-  flapping="true"
+  entity-attributes="[object Object],[object Object],[object Object]"
   some-required=""
   value="[object Object]"
   with-alarm=""
@@ -16,9 +14,8 @@ exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-fo
 
 exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-  both-counters=""
-  entity-attributes="[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object],[object Object],[object Object]"
   some-required=""
   value="[object Object]"
   with-alarm=""

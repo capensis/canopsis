@@ -54,7 +54,7 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
 </div>
 `;
 
-exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
+exports[`pattern-form Renders \`pattern-form\` with pbehavior type 1`] = `
 <div
   class="layout column"
 >

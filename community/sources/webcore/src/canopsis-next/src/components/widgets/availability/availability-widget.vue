@@ -1,18 +1,11 @@
 <template>
   <v-layout class="gap-3" column>
     <availability-widget-filters
-      :search="query.search"
+      :query="query"
       :columns="widget.parameters.widget_columns"
-      :type="query.showType"
-      :display-parameter="query.displayParameter"
-      :trend="query.showTrend"
-      :interval="query.interval"
-      :value-filter="query.valueFilter"
       :widget-id="widget._id"
       :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
-      :locked-filter="query.lockedFilter"
-      :filters="query.filter"
       :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToUserFilter"
       :show-export="!hideActions && hasAccessToExportAsCsv"
@@ -26,7 +19,7 @@
       @update:type="updateShowType"
       @update:display-parameter="updateDisplayParameter"
       @update:value-filter="updateValueFilter"
-      @update:search="updateSearch"
+      @update:query="updateWidgetQuery"
     />
 
     <availability-list
@@ -48,7 +41,12 @@
 <script>
 import { isEmpty, pick } from 'lodash';
 
-import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_VALUE_FILTER_METHODS, TIME_UNITS } from '@/constants';
+import {
+  ADVANCED_SEARCH_FIELDS,
+  AVAILABILITY_DISPLAY_PARAMETERS,
+  AVAILABILITY_VALUE_FILTER_METHODS,
+  TIME_UNITS,
+} from '@/constants';
 
 import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { toSeconds } from '@/helpers/date/duration';
@@ -186,9 +184,8 @@ export default {
       this.updateQueryField('valueFilter', value);
     },
 
-    updateSearch(value) {
-      this.updateQueryField('search', value);
-      this.updateQueryField('page', 1);
+    updateWidgetQuery(newQuery) {
+      this.query = newQuery;
     },
 
     getQuery() {
@@ -206,7 +203,7 @@ export default {
 
       const query = {
         ...this.interval,
-        ...pick(this.query, ['page', 'search', 'active_columns']),
+        ...pick(this.query, ['page', 'search', 'active_columns', ADVANCED_SEARCH_FIELDS.search]),
         ...convertSortToRequest(
           sortBy.map(prepareAvailabilityWidgetColumnValue),
           sortDesc,

@@ -14,7 +14,7 @@ export const PATTERN_OPERATORS = {
   notEqual: 'not_equal',
   notContains: 'not_contains',
 
-  beginsWith: 'begins_with',
+  beginWith: 'begin_with',
   notBeginWith: 'not_begin_with',
   endsWith: 'ends_with',
   notEndWith: 'not_end_with',
@@ -60,6 +60,9 @@ export const PATTERN_OPERATORS = {
   activated: 'activated',
   inactive: 'inactive',
 
+  enabled: 'enabled',
+  disabled: 'disabled',
+
   isMetaAlarm: 'is_meta_alarm',
   isNotMetaAlarm: 'is_not_meta_alarm',
   ruleIs: 'rule_is',
@@ -89,7 +92,7 @@ export const PATTERN_CONDITIONS = {
   absoluteTime: 'absolute_time',
   contains: 'contain',
   notContains: 'not_contain',
-  beginsWith: 'begin_with',
+  beginWith: 'begin_with',
   notBeginWith: 'not_begin_with',
   endsWith: 'end_with',
   notEndWith: 'not_end_with',
@@ -105,6 +108,13 @@ export const PATTERN_FIELD_TYPES = {
   stringArray: 'string_array',
   timestamp: 'timestamp',
 };
+
+export const PATTERN_DATE_OPERATORS = [
+  PATTERN_OPERATORS.within,
+  PATTERN_OPERATORS.olderThan,
+  PATTERN_OPERATORS.inRangePeriod,
+  PATTERN_OPERATORS.inRangeDates,
+];
 
 export const DEFAULT_PATTERN_FIELD_TYPES = [
   { value: PATTERN_FIELD_TYPES.string },
@@ -135,6 +145,8 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.isGrey,
   PATTERN_OPERATORS.activated,
   PATTERN_OPERATORS.inactive,
+  PATTERN_OPERATORS.enabled,
+  PATTERN_OPERATORS.disabled,
   PATTERN_OPERATORS.isMetaAlarm,
   PATTERN_OPERATORS.isNotMetaAlarm,
 ];
@@ -185,7 +197,7 @@ export const PATTERN_STRING_OPERATORS = [
   PATTERN_OPERATORS.notEqual,
   PATTERN_OPERATORS.contains,
   PATTERN_OPERATORS.notContains,
-  PATTERN_OPERATORS.beginsWith,
+  PATTERN_OPERATORS.beginWith,
   PATTERN_OPERATORS.notBeginWith,
   PATTERN_OPERATORS.endsWith,
   PATTERN_OPERATORS.notEndWith,
@@ -262,4 +274,18 @@ export const PATTERNS_FIELDS = {
   event: 'event_pattern',
   totalEntity: 'total_entity_pattern',
   serviceWeather: 'weather_service_pattern',
+};
+
+export const PATTERN_TYPES_TO_PATTERNS_FIELDS = {
+  [PATTERN_TYPES.alarm]: PATTERNS_FIELDS.alarm,
+  [PATTERN_TYPES.entity]: PATTERNS_FIELDS.entity,
+  [PATTERN_TYPES.pbehavior]: PATTERNS_FIELDS.pbehavior,
+  [PATTERN_TYPES.serviceWeather]: PATTERNS_FIELDS.serviceWeather,
+};
+
+export const PATTERN_OPTIMIZATION_STATUSES = {
+  created: 0,
+  running: 1,
+  success: 2,
+  failed: 3,
 };

@@ -240,6 +240,15 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
             key: action.key,
             type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
           }));
+
+          if (action.parameters?.webhook?.declare_ticket?.check_ticket_status?.enabled) {
+            acc.push(getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              key: `${action.key}.check_ticket_status.ticket_status_tpl`,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+            }));
+          }
         }
 
         return acc;
@@ -283,14 +292,25 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
         params: { opened: true },
       }),
 
-      ...form.webhooks.map((webhook, index) => (
-        getTemplateTestingTestValidateFormItem({
+      ...form.webhooks.reduce((acc, webhook, index) => {
+        acc.push(getTemplateTestingTestValidateFormItem({
           index,
           required: true,
           key: webhook.key,
           type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-        })
-      )),
+        }));
+
+        if (webhook?.declare_ticket?.check_ticket_status?.enabled) {
+          acc.push(getTemplateTestingTestValidateFormItem({
+            index,
+            required: true,
+            key: `${webhook.key}.check_ticket_status.ticket_status_tpl`,
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+          }));
+        }
+
+        return acc;
+      }, []),
     ];
   }
 
@@ -369,18 +389,25 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
  */
 export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
-  if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
+  const isResponse = [
+    TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+    TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+  ].includes(item.type);
+
+  if (isResponse) {
     if (isNil(item.index)) {
       acc.response = item.value;
 
       return acc;
     }
 
-    if (!acc.responses) {
-      acc.responses = {};
+    const responsesField = item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse ? 'ticket_status_responses' : 'responses';
+
+    if (!acc[responsesField]) {
+      acc[responsesField] = {};
     }
 
-    acc.responses[item.index] = item.value;
+    acc[responsesField][item.index] = item.value;
 
     return acc;
   }
@@ -399,10 +426,16 @@ export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc
  */
 export const templateTestingTestValidateToForm = (originalForm = [], validate = {}) => {
   const responses = Object.values(validate.responses || {});
+  const ticketStatusResponses = Object.values(validate.ticket_status_responses || {});
 
   return originalForm.map((item) => {
-    if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
-      const response = responses.pop();
+    const isResponse = [
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+    ].includes(item.type);
+
+    if (isResponse) {
+      const response = ticketStatusResponses.length ? ticketStatusResponses.pop() : responses.pop();
 
       return {
         ...item,

@@ -51,6 +51,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Prometheus](Supervision/Prometheus.md) | [Prometheus](https://prometheus.io/docs/introduction/overview/) | Community | Oui | Toutes versions |
 | [PRTG](Supervision/PRTG.md) | [PRTG](https://www.paessler.com/manuals/prtg/introduction) | Community | Oui | >= 4.3 |
 | [Grafana](Supervision/Grafana.md) | [Grafana](https://grafana.com/docs/grafana/latest/fundamentals/) | Community | Oui | Toutes versions |
+| [Dynatrace](Supervision/Dynatrace.md) | [Dynatrace](https://docs.dynatrace.com/docs) | Community | Oui | Toutes versions |
 
 
 ## Drivers
@@ -91,9 +92,11 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Version Validée(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
-| [AWX](https://doc.canopsis.net/guide-administration/remediation/#configuration-awx) | 14.0.0 | Pro | Non | Version ≥ 4 (moteurs Go) |
-| [Rundeck](https://doc.canopsis.net/guide-administration/remediation/#configuration-pour-rundeck) | 3.3.7 | Pro | Non | Version ≥ 4 (moteurs Go) |
-| [Jenkins](https://doc.canopsis.net/guide-administration/remediation/#configuration-pour-jenkins) | 2.297 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [AWX](../guide-administration/remediation/index.md#configuration-awx) | 24.6.1 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [Rundeck](../guide-administration/remediation/index.md#configuration-pour-rundeck) | 5.13.0 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [Jenkins](../guide-administration/remediation/index.md#configuration-pour-jenkins) | 2.516.3 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [VTOM](../guide-administration/remediation/index.md#configuration-visualtom-vtom) | 7.3 | Pro | Non | Version ≥ 4 (moteurs Go) |
+
 
 
 ### Ticketing

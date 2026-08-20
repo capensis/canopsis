@@ -126,8 +126,8 @@ describe('create-declare-ticket-event', () => {
     await flushPromises(true);
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith([], false);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith([], false);
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Confirmation modal showed after submit with exist tickets', async () => {
@@ -169,7 +169,7 @@ describe('create-declare-ticket-event', () => {
 
     await flushPromises(true);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.confirmation,
         config: expect.objectContaining({
@@ -183,7 +183,7 @@ describe('create-declare-ticket-event', () => {
     await confirmationModalConfig.action();
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith([
+    expect(action).toHaveBeenCalledWith([
       {
         _id: ticketRuleId,
         alarms: [alarmWithTickets._id],
@@ -191,7 +191,7 @@ describe('create-declare-ticket-event', () => {
         ticket_resources: false,
       },
     ], false);
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -218,12 +218,12 @@ describe('create-declare-ticket-event', () => {
 
     await flushPromises(true);
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith([], false);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith([], false);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });

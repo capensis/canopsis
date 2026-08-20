@@ -1,115 +1,127 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
-import { createButtonStub } from '@unit/stubs/button';
+import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
+import { installResizeObserver, uninstallResizeObserver } from '@unit/utils/resize-observer';
+import { ackAction, deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 
 import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
+const cActionBtnStub = {
+  template: '<button class="c-action-btn-stub" type="button" v-on="$listeners" />',
+};
+
 const stubs = {
-  'c-action-btn': createButtonStub('c-action-btn'),
-  'v-list-item': createButtonStub('v-list-item'),
+  'c-action-btn': cActionBtnStub,
 };
 
 const snapshotStubs = {
   'c-action-btn': true,
 };
 
+const threeActionsWithTypes = [
+  { ...editAction, type: 'edit' },
+  { ...deleteAction, type: 'delete' },
+  { ...ackAction, type: 'ack' },
+];
+
 describe('mass-actions-panel', () => {
   const factory = generateShallowRenderer(MassActionsPanel, { stubs });
   const snapshotFactory = generateRenderer(MassActionsPanel, { stubs: snapshotStubs });
 
-  it('Method into list called after trigger click on action item button. On the large size.', () => {
+  afterEach(() => {
+    uninstallResizeObserver();
+  });
+
+  it('Method into inline button called after click when layout is wide enough', async () => {
+    installResizeObserver(400);
+
     const actions = [
-      fakeAction(),
-      fakeAction(),
+      { ...fakeAction(), type: 'a' },
+      { ...fakeAction(), type: 'b' },
     ];
+
     const wrapper = factory({
-      propsData: {
-        actions,
-      },
-      mocks: {
-        $mq: 'l+',
-      },
+      propsData: { actions },
     });
 
-    const actionElements = wrapper.findAll('button.c-action-btn');
+    await flushPromises();
 
-    expect(actionElements).toHaveLength(actions.length);
+    const buttons = wrapper.findAll('button.c-action-btn-stub');
 
-    const secondActionElement = actionElements.at(1);
+    expect(buttons.length).toBe(2);
 
-    secondActionElement.trigger('click');
+    buttons.at(1).trigger('click');
 
-    const [, secondAction] = actions;
-    expect(secondAction.method).toHaveBeenCalledTimes(1);
+    expect(actions[1].method).toHaveBeenCalledTimes(1);
   });
 
-  it('Method into dropdown called after trigger click on action item button. On the tablet size.', () => {
+  it('Method into overflow menu called after click when layout is narrow', async () => {
+    installResizeObserver(36);
+
     const actions = [
-      fakeAction(),
-      fakeAction(),
+      { ...fakeAction(), type: 'a' },
+      { ...fakeAction(), type: 'b' },
     ];
-    const wrapper = factory({
-      propsData: {
-        actions,
-      },
-      mocks: {
-        $mq: 't',
-      },
+
+    const wrapper = snapshotFactory({
+      propsData: { actions },
     });
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-item');
+    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(dropdownActionElements).toHaveLength(actions.length);
+    const menuItems = wrapper.findAll('.v-list-item');
 
-    const secondActionElement = dropdownActionElements.at(1);
-    secondActionElement.trigger('click');
+    expect(menuItems.length).toBe(2);
 
-    const [, secondAction] = actions;
-    expect(secondAction.method).toBeCalledTimes(1);
+    menuItems.at(1).trigger('click');
+
+    expect(actions[1].method).toHaveBeenCalledTimes(1);
   });
 
-  it('Renders `mass-actions-panel` with actions on the large size', () => {
+  it('Renders `mass-actions-panel` with actions on the large size', async () => {
+    installResizeObserver(400);
+
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'l+',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        actions: threeActionsWithTypes,
       },
     });
+
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with actions correctly on the tablet size', () => {
+  it('Renders `mass-actions-panel` with actions correctly on the tablet size', async () => {
+    installResizeObserver(100);
+
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 't',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        actions: threeActionsWithTypes,
       },
     });
 
-    const dropdownContent = wrapper.findMenu();
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with actions correctly on the mobile size', () => {
+  it('Renders `mass-actions-panel` with actions correctly on the mobile size', async () => {
+    installResizeObserver(36);
+
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'm',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        actions: threeActionsWithTypes,
       },
     });
 
-    const dropdownContent = wrapper.findMenu();
+    await flushPromises();
 
     expect(wrapper).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
+
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

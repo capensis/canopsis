@@ -22,6 +22,7 @@ const (
 	AlarmChangeTypeCancel            AlarmChangeType = "cancel"
 	AlarmChangeTypeUncancel          AlarmChangeType = "uncancel"
 	AlarmChangeTypeAssocTicket       AlarmChangeType = "assocticket"
+	AlarmChangeTypeTicketRemove      AlarmChangeType = "ticketremove"
 	AlarmChangeTypeSnooze            AlarmChangeType = "snooze"
 	AlarmChangeTypeUnsnooze          AlarmChangeType = "unsnooze"
 	AlarmChangeTypeResolve           AlarmChangeType = "resolve"
@@ -156,11 +157,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 	case AlarmChangeTypeWebhookStart,
 		AlarmChangeTypeWebhookComplete,
 		AlarmChangeTypeWebhookFail,
-		AlarmChangeTypeDeclareTicketWebhookFail,
 		AlarmChangeTypeAutoWebhookStart,
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
-		AlarmChangeTypeAutoDeclareTicketWebhookFail,
 		AlarmChangeTypeAutoInstructionActivate,
 		AlarmChangeTypeMetaAlarmChildActivate,
 		AlarmChangeTypeMetaAlarmChildDeactivate:
@@ -168,6 +167,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:
 		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhook))
+	case AlarmChangeTypeDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoDeclareTicketWebhookFail:
+		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhookFail))
 	default:
 		trigger := string(ac.Type)
 		if trigger != "" {

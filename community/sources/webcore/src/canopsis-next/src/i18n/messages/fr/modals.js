@@ -155,6 +155,7 @@ export default {
     },
     success: {
       create: 'Comportement périodique créé avec succès !',
+      remove: 'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
     },
     cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
   },
@@ -302,6 +303,9 @@ export default {
     errors: {
       isNotEmpty: 'Ce groupe n\'est pas vide',
     },
+  },
+  aiChatHistory: {
+    title: 'Historique du chat',
   },
   alarmsList: {
     title: 'Bac à alarmes',
@@ -480,6 +484,28 @@ export default {
     },
     defaultMessage: 'Votre message ici',
   },
+  createCommentTemplate: {
+    create: {
+      title: 'Créer un modèle de commentaire',
+    },
+    edit: {
+      title: 'Modifier le modèle de commentaire',
+    },
+  },
+  createAnomalyMonitoredConnector: {
+    create: {
+      title: 'Créer un connecteur surveillé pour anomalies',
+    },
+    edit: {
+      title: 'Modifier le connecteur surveillé pour anomalies',
+    },
+    remove: {
+      text: 'Supprimer <strong>{connectorName}</strong> de la liste des connecteurs de surveillance d\'anomalies ?',
+    },
+  },
+  anomalyMonitoredConnectorHistory: {
+    disableConfirm: 'Désactiver la surveillance des anomalies pour <strong>{connectorName}</strong> ?',
+  },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
   },
@@ -526,7 +552,7 @@ export default {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {
@@ -621,6 +647,11 @@ export default {
       popups: {
         success: '{jobName} a été dupliquée avec succès',
       },
+    },
+  },
+  createTicketStatusJob: {
+    edit: {
+      title: 'Éditer la tâche : {jobName}',
     },
   },
   clickOutsideConfirmation: {
@@ -826,6 +857,20 @@ export default {
         + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
     },
+    deleteLlm: {
+      title: 'Supprimer le LLM',
+      text: 'Vous êtes sur le point de supprimer la connexion LLM.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du LLM pour confirmer :',
+    },
+    deleteSelectedLlms: {
+      title: 'Supprimer {count} modèle ? | Supprimer {count} modèles ?',
+      text: 'Vous êtes sur le point de supprimer {count} modèle.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
+      phrase: 'supprimer',
+    },
     templateTestingData: {
       title: 'Supprimer les données de test',
       text: 'Vous êtes sur le point de supprimer les données de test.\n'
@@ -981,6 +1026,12 @@ export default {
   entityDependenciesList: {
     title: 'Diagramme de cause racine',
   },
+  entityUpstream: {
+    entities: 'Entités',
+    topLevelEntities: 'Entités de niveau supérieur',
+    seeEntities: 'Voir les entités',
+    seeTopEntities: 'Voir les entités principales',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Créer une règle de déclaration de ticket',
@@ -1000,6 +1051,11 @@ export default {
   },
   createAssociateTicketEvent: {
     title: 'Associer un numéro de ticket',
+  },
+  removeAssociatedTicketEvent: {
+    title: 'Retirer le ticket associé',
+    associatedTicketLabel: 'Ticket associé',
+    associatedTicketHint: 'Le ticket associé sélectionné sera retiré de l\'alarme sélectionnée',
   },
   createAckEvent: {
     title: 'Acquitter',
@@ -1112,6 +1168,8 @@ export default {
     title: 'Enregistrement des événements {date}',
     subtitle: '{count} événements reçus',
     buttonTooltip: 'Supprimer les événements reçus',
+    eventsTab: 'Événements',
+    patternTab: 'Modèle',
   },
   createExternalDataTable: {
     create: {
@@ -1140,6 +1198,14 @@ export default {
       title: 'Modifier le jeton d\'authentification externe',
     },
   },
+  createLlm: {
+    create: {
+      title: 'Ajouter un modèle LLM',
+    },
+    edit: {
+      title: 'Modifier le modèle LLM',
+    },
+  },
   createTemplateTestingData: {
     create: {
       title: 'Créer des données de test de modèle',
@@ -1155,5 +1221,11 @@ export default {
   },
   createTemplateData: {
     title: 'Créer des données de modèle',
+  },
+  entitiesComparison: {
+    title: 'Comparaison des entités de motif',
+    infoMessage: 'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n\n<strong>Vous pouvez relancer la vérification pour être sûr.</strong>',
+    foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
+    foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
   },
 };

@@ -27,6 +27,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -279,7 +280,7 @@ func benchmarkMessageProcessor(
 		}
 	})
 
-	amqpConnection, err := libamqp.NewConnection(zerolog.Nop(), 0, 0)
+	amqpConnection, err := libamqp.New(0, 0, zerolog.Nop())
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
@@ -290,7 +291,7 @@ func benchmarkMessageProcessor(
 		}
 	})
 
-	amqpChannel, err := amqpConnection.Channel()
+	amqpChannel, err := amqpConnection.Channel(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
@@ -305,7 +306,7 @@ func benchmarkMessageProcessor(
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
-	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
+	alarmStatusService := alarmstatus.NewService(dbClient, flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
 	metaAlarmPostProcessor := event.NewMetaAlarmPostProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, correlation.NewMetaAlarmStateService(dbClient), json.NewEncoder(), libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), nil, metricsSender, logger)
@@ -334,7 +335,7 @@ func benchmarkMessageProcessor(
 			alarmStatusService,
 			pbehavior.NewEntityTypeResolver(pbhStore, logger),
 			event.NewNullAutoInstructionMatcher(),
-			calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, tzConfigProvider), eventsSender),
+			calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, tzConfigProvider), eventsSender, logger),
 			calculator.NewComponentCountersCalculator(dbClient, eventsSender),
 			eventsSender,
 			metaAlarmPostProcessor,
@@ -347,6 +348,7 @@ func benchmarkMessageProcessor(
 			amqpChannel,
 			libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
 			template.NewExecutor(templateConfigProvider, tzConfigProvider),
+			webhook.NewNullJobStatusService(),
 			logger,
 		),
 		TechMetricsSender: techmetrics.NewSender(canopsis.AxeEngineName+"/"+utils.NewID(), techMetricsConfigProvider, time.Minute, 0, 0, logger),

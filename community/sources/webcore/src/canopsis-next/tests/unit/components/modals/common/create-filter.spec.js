@@ -1,5 +1,8 @@
+import { merge } from 'lodash';
+
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -12,6 +15,7 @@ import CreateFilter from '@/components/modals/common/create-filter.vue';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'patterns-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -19,6 +23,7 @@ const stubs = {
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
   'patterns-form': true,
 };
 
@@ -27,9 +32,37 @@ const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectPatternsForm = wrapper => wrapper.find('patterns-form-stub');
 
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
 describe('create-filter', () => {
-  const $modals = mockModals();
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
+  const $sidebar = mockSidebar();
   const $popups = mockPopups();
+
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
 
   const defaultPattern = {
     field: '',
@@ -46,36 +79,34 @@ describe('create-filter', () => {
     },
   };
 
-  const factory = generateShallowRenderer(CreateFilter, {
+  const shallowCreateFilter = generateShallowRenderer(CreateFilter, {
     stubs,
+    store,
     attachTo: document.body,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreateFilter, {
+  const factory = (options = {}) => shallowCreateFilter(withModalInject(options));
+
+  const renderCreateFilter = generateRenderer(CreateFilter, {
     stubs: snapshotStubs,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    store,
   });
+  const snapshotFactory = (options = {}) => renderCreateFilter(withModalInject(options));
 
   test('Form submitted without fields after trigger submit button', async () => {
     const action = jest.fn();
+    const modal = {
+      config: {
+        action,
+      },
+    };
     const wrapper = factory({
       propsData: {
-        modal: {
-          config: {
-            action,
-          },
-        },
+        modal,
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -83,30 +114,33 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       title: '',
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form submitted with all fields after trigger submit button', async () => {
     const action = jest.fn();
+    const modal = {
+      config: {
+        withTitle: true,
+        withEntity: true,
+        withPbehavior: true,
+        withAlarm: true,
+        withEvent: true,
+        action,
+      },
+    };
     const wrapper = factory({
       propsData: {
-        modal: {
-          config: {
-            withTitle: true,
-            withEntity: true,
-            withPbehavior: true,
-            withAlarm: true,
-            withEvent: true,
-            action,
-          },
-        },
+        modal,
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -114,15 +148,15 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       title: '',
       alarm_pattern: [],
       entity_pattern: [],
-      event_pattern: [],
       pbehavior_pattern: [],
+      event_pattern: [],
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -137,6 +171,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -156,21 +192,24 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
+    expect(action).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalled();
 
     validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
+    const modal = {
+      config: {},
+    };
     const wrapper = factory({
       propsData: {
-        modal: {
-          config: {},
-        },
+        modal,
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -178,7 +217,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -187,7 +226,6 @@ describe('create-filter', () => {
       alarm_pattern: 'Alarm pattern error',
       entity_pattern: 'Entity pattern error',
       pbehavior_pattern: 'PBehavior pattern error',
-      weather_service_pattern: 'Weather service pattern error',
     };
     const action = jest.fn().mockRejectedValue({
       ...formErrors,
@@ -208,6 +246,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -218,7 +258,7 @@ describe('create-filter', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(addedErrors).toEqual(formErrors);
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       is_user_preference: false,
       alarm_pattern: [],
       entity_pattern: [],
@@ -226,7 +266,7 @@ describe('create-filter', () => {
       weather_service_pattern: [],
       title: '',
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalled();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -257,6 +297,7 @@ describe('create-filter', () => {
       mocks: {
         $modals,
         $popups,
+        $sidebar,
       },
     });
 
@@ -264,12 +305,12 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(customFilter);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(customFilter);
+    expect($modals.hide).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });
@@ -301,6 +342,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -330,7 +373,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       alarm_pattern: [
         [
           {
@@ -346,7 +389,7 @@ describe('create-filter', () => {
       is_user_preference: filter.is_user_preference,
       title: filter.title,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -358,6 +401,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -365,7 +410,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-filter` with empty modal', () => {
@@ -377,6 +422,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 
@@ -399,6 +446,8 @@ describe('create-filter', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
+        $popups,
       },
     });
 

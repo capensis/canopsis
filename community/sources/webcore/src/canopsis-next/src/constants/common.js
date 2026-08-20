@@ -8,20 +8,29 @@ export const ROUTES_NAMES = {
   adminRights: 'admin-rights',
   adminUsers: 'admin-users',
   adminRoles: 'admin-roles',
-  adminParameters: 'admin-parameters',
   adminBroadcastMessages: 'admin-broadcast-messages',
   adminPlaylists: 'admin-playlists',
   adminPlanning: 'admin-planning-administration',
-  adminRemediation: 'admin-remediation-administration',
   adminHealthcheck: 'admin-healthcheck',
   adminKPI: 'admin-kpi',
-  adminMaps: 'admin-maps',
-  adminTags: 'admin-tags',
-  adminStorageSettings: 'admin-storage-settings',
-  adminStateSettings: 'admin-state-settings',
   adminEventsRecords: 'admin-events-records',
-  adminExternalAuthTokens: 'admin-external-auth-tokens',
+  adminAnomalyMonitoredConnectors: 'admin-anomaly-monitored-connectors',
+  adminCustomObjectsExternalAuthTokens: 'admin-custom-objects-external-auth-tokens',
+  adminCustomObjectsExternalDataTables: 'admin-custom-objects-external-data-tables',
+  adminCustomObjectsEntityInfosProperties: 'admin-custom-objects-entity-infos-properties',
+  adminCustomObjectsIcons: 'admin-custom-objects-icons',
+  adminCustomObjectsMaps: 'admin-custom-objects-maps',
+  adminCustomObjectsTags: 'admin-custom-objects-tags',
+  adminCustomObjectsLlms: 'admin-custom-objects-llms',
   adminTemplateTesting: 'admin-template-testing',
+  adminJobsManagement: 'admin-jobs-management',
+  adminSettingsUserInterface: 'admin-settings-user-interface',
+  adminSettingsViewsImportExport: 'admin-settings-views-import-export',
+  adminSettingsNotifications: 'admin-settings-notifications',
+  adminSettingsCommentTemplates: 'admin-settings-comment-templates',
+  adminSettingsWidgetTemplates: 'admin-settings-widget-templates',
+  adminSettingsStorageSettings: 'admin-settings-storage-settings',
+  adminSettingsStateSettings: 'admin-settings-state-settings',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -34,12 +43,20 @@ export const ROUTES_NAMES = {
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
+  exploitationRemediation: 'exploitation-remediation',
   playlist: 'playlist',
   notifications: 'notifications',
   exploitationEntityInfosProperties: 'exploitation-entity-infos-properties',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
+};
+
+export const OLD_ROUTES = {
+  remediation: '/admin/remediation', // Is using for rederect to exploitationRemediation
+  externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminCustomObjectsExternalDataTables
+  entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminCustomObjectsEntityInfosProperties
+  parameters: '/admin/parameters', // Is using for redirect to adminSettingsUserInterface
 };
 
 export const ROUTES = {
@@ -52,20 +69,29 @@ export const ROUTES = {
   adminRights: '/admin/rights',
   adminUsers: '/admin/users',
   adminRoles: '/admin/roles',
-  adminParameters: '/admin/parameters',
   adminBroadcastMessages: '/admin/broadcast-messages',
   adminPlaylists: '/admin/playlists',
   adminPlanning: '/admin/planning',
-  adminRemediation: '/admin/remediation',
   adminHealthcheck: '/admin/healthcheck',
   adminKPI: '/admin/kpi',
-  adminMaps: '/admin/maps',
-  adminTags: '/admin/tags',
-  adminStorageSettings: '/admin/storage-settings',
-  adminStateSettings: '/admin/state-settings',
   adminEventsRecords: '/admin/events-records',
-  adminExternalAuthTokens: '/admin/external-auth-tokens',
+  adminAnomalyMonitoredConnectors: '/admin/anomaly-monitored-connectors',
   adminTemplateTesting: '/admin/template-testing',
+  adminJobsManagement: '/admin/jobs',
+  adminCustomObjectsExternalAuthTokens: '/admin/external-auth-tokens',
+  adminCustomObjectsExternalDataTables: '/admin/external-data-tables',
+  adminCustomObjectsEntityInfosProperties: '/admin/entity-infos-properties',
+  adminCustomObjectsIcons: '/admin/icons',
+  adminCustomObjectsMaps: '/admin/maps',
+  adminCustomObjectsTags: '/admin/tags',
+  adminCustomObjectsLlms: '/admin/llms',
+  adminSettingsUserInterface: '/admin/user-interface',
+  adminSettingsViewsImportExport: '/admin/views-import-export',
+  adminSettingsNotifications: '/admin/notifications',
+  adminSettingsCommentTemplates: '/admin/comment-templates',
+  adminSettingsWidgetTemplates: '/admin/widget-templates',
+  adminSettingsStorageSettings: '/admin/storage-settings',
+  adminSettingsStateSettings: '/admin/state-settings',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -77,10 +103,9 @@ export const ROUTES = {
   exploitationResolveRules: '/exploitation/resolve-rules',
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
   exploitationLinkRules: '/exploitation/link-rules',
-  exploitationExternalDataTables: '/exploitation/external-data-tables',
+  exploitationRemediation: '/exploitation/remediation',
   playlist: '/playlist/:id',
   notifications: '/notifications/:tabId',
-  exploitationEntityInfosProperties: '/exploitation/entity-infos-properties',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
@@ -105,6 +130,7 @@ export const POPUP_TYPES = {
 
 export const PORTALS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
+  massActionsPanel: 'mass-actions-panel',
 };
 
 export const MAX_LIMIT = 10000;
@@ -365,6 +391,7 @@ export const TRIGGERS_TYPES = {
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
+  ticketremove: 'ticketremove',
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
@@ -413,10 +440,12 @@ export const CONTENT_TYPES = {
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  success: 200,
+
   badRequest: 400,
   unauthorized: 401,
-  notFound: 404,
   forbidden: 403,
+  notFound: 404,
   timeout: 408,
 
   internalServerError: 500,

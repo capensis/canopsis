@@ -1,10 +1,15 @@
+import { REQUEST_MESSAGES_TYPES } from '@/plugins/socket/constants';
+
 class SocketRoom {
-  constructor(name, data, authNeeded) {
+  constructor(name, payload, authNeeded, send) {
     this.name = name;
-    this.data = data;
+    this.payload = payload;
     this.authNeeded = authNeeded;
     this.count = 1;
     this.listeners = [];
+    this.parentSend = send;
+    this.joined = false;
+    this.messagesToSend = [];
   }
 
   /**
@@ -73,6 +78,61 @@ class SocketRoom {
     this.listeners.forEach(listener => listener.call(context, ...restArgs));
 
     return this;
+  }
+
+  /**
+   * Send payload to room
+   *
+   * @param {Object} payload
+   * @return {SocketRoom}
+   */
+  send(payload) {
+    const message = {
+      type: REQUEST_MESSAGES_TYPES.send,
+      room: this.name,
+      payload,
+    };
+
+    if (!this.joined) {
+      this.messagesToSend.push(message);
+
+      return this;
+    }
+
+    this.parentSend(message);
+
+    return this;
+  }
+
+  /**
+   * Marks the room as joined or not on the socket layer.
+   *
+   * When `joined` becomes true, sends every message queued by `send` while the room was not joined,
+   * then clears that queue.
+   *
+   * @param {boolean} joined - Whether the socket has successfully joined this room.
+   */
+  setJoined(joined) {
+    this.joined = joined;
+
+    if (joined) {
+      this.messagesToSend.forEach(message => this.parentSend(message));
+      this.messagesToSend = [];
+    }
+  }
+
+  /**
+   * Update the payload of the room
+   *
+   * @param {string} field
+   * @param {*} value
+   */
+  updatePayloadField(field, value) {
+    if (!this.payload) {
+      this.payload = {};
+    }
+
+    this.payload[field] = value;
   }
 }
 

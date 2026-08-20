@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
@@ -26,6 +27,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityupstream"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -73,6 +75,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -119,7 +122,8 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
-	amqpPublisher amqp.Channel,
+	amqpPubPool amqp.ChannelPool,
+	amqpPublisher amqp.Publisher,
 	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
@@ -132,7 +136,7 @@ func RegisterRoutes(
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	websocketHub websocket.Hub,
-	websocketStore websocket.Store,
+	websocketStore wsconn.Store,
 	broadcastMessageChan chan<- bool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -144,8 +148,9 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	tplTestTypePermMapping map[int][]any,
 	logger zerolog.Logger,
 ) error {
@@ -158,6 +163,7 @@ func RegisterRoutes(
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(primaryDbClient)
+	patternFieldGetter := patternfields.NewFieldGetter(secondaryDbClient)
 
 	authApi := auth.NewApi(
 		security.GetTokenService(),
@@ -197,7 +203,14 @@ func RegisterRoutes(
 	{
 		protected.Use(authMiddleware...)
 
-		protected.Group("/ws").GET("", websocket.NewApi(websocketHub, errorResponder).Handler)
+		protected.Group("/ws").GET("", func(c *gin.Context) {
+			err := websocketHub.Connect(c.Writer, c.Request)
+			if err != nil {
+				errorResponder.Respond(c, err)
+
+				return
+			}
+		})
 
 		accountRouter := protected.Group("/account/me")
 		{
@@ -317,7 +330,7 @@ func RegisterRoutes(
 
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, patternfields.NewTransformer(primaryDbClient),
 			timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), errorResponder, logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), json.NewDecoder(), errorResponder, logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger),
 			errorResponder)
@@ -362,6 +375,11 @@ func RegisterRoutes(
 				"/:id/assocticket",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 				alarmActionAPI.AssocTicket,
+			)
+			alarmRouter.PUT(
+				"/:id/ticketremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+				alarmActionAPI.TicketRemove,
 			)
 			alarmRouter.PUT(
 				"/:id/comment",
@@ -501,7 +519,7 @@ func RegisterRoutes(
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
-				notifStore, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer,
+				notifStore, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataGetter,
 				json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
@@ -551,6 +569,10 @@ func RegisterRoutes(
 			"/eventfilter-template-vars",
 			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer, errorResponder),
 			eventFilterApi.GetTemplateVars)
+		protected.GET(
+			"/eventfilter-pattern-fields",
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.EventFilterRuleCollection))
 		protected.GET(
 			"/eventfilter-copy-vars",
 			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer, errorResponder),
@@ -627,6 +649,10 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermPbhPatterns, model.PermissionCan, enforcer, errorResponder),
 			pbehaviorApi.ExecAllPatterns,
 		)
+		protected.GET(
+			"/pbehavior-pattern-fields",
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.PbehaviorMongoCollection))
 
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
@@ -770,6 +796,27 @@ func RegisterRoutes(
 				"/entityservice-template-vars",
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer, errorResponder),
 				entityserviceAPI.GetTemplateVars)
+			protected.GET(
+				"/entityservice-pattern-fields",
+				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer, errorResponder),
+				pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.EntityMongoCollection))
+		}
+
+		entityupstreamAPI := entityupstream.NewApi(
+			entityupstream.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
+			errorResponder,
+		)
+		{
+			protected.GET(
+				"/entity-downstreams",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
+				entityupstreamAPI.GetDownstreams,
+			)
+			protected.GET(
+				"/entity-upstream",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
+				entityupstreamAPI.GetUpstream,
+			)
 		}
 
 		entityCommentRouter := protected.Group("/entity-comments")
@@ -794,95 +841,95 @@ func RegisterRoutes(
 			)
 		}
 
+		pbehaviorTypeAPI := pbehaviortype.NewApi(
+			pbehaviortype.NewStore(primaryDbClient, authorProvider),
+			pbhComputeChan,
+			errorResponder,
+			logger,
+		)
 		typeRouter := protected.Group("/pbehavior-types")
 		{
-			pbehaviorTypeApi := pbehaviortype.NewApi(
-				pbehaviortype.NewStore(primaryDbClient, authorProvider),
-				pbhComputeChan,
-				errorResponder,
-				logger,
-			)
 			pbhTypeAuthorizeRead := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionRead, enforcer, errorResponder)
 			pbhTypeAuthorizeCreate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionCreate, enforcer, errorResponder)
 			pbhTypeAuthorizeUpdate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer, errorResponder)
 			pbhTypeAuthorizeDelete := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer, errorResponder)
 
-			typeRouter.GET("", pbhTypeAuthorizeRead, pbehaviorTypeApi.List)
-			typeRouter.POST("", pbhTypeAuthorizeCreate, middleware.SetAuthor(errorResponder), pbehaviorTypeApi.Create)
-			typeRouter.GET("/next-priority", pbhTypeAuthorizeRead, pbehaviorTypeApi.GetNextPriority)
-			typeRouter.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeApi.Get)
-			typeRouter.PUT("/:id", pbhTypeAuthorizeUpdate, middleware.SetAuthor(errorResponder), pbehaviorTypeApi.Update)
-			typeRouter.DELETE("/:id", pbhTypeAuthorizeDelete, pbehaviorTypeApi.Delete)
+			typeRouter.GET("", pbhTypeAuthorizeRead, pbehaviorTypeAPI.List)
+			typeRouter.POST("", pbhTypeAuthorizeCreate, middleware.SetAuthor(errorResponder), pbehaviorTypeAPI.Create)
+			typeRouter.GET("/next-priority", pbhTypeAuthorizeRead, pbehaviorTypeAPI.GetNextPriority)
+			typeRouter.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeAPI.Get)
+			typeRouter.PUT("/:id", pbhTypeAuthorizeUpdate, middleware.SetAuthor(errorResponder), pbehaviorTypeAPI.Update)
+			typeRouter.DELETE("/:id", pbhTypeAuthorizeDelete, pbehaviorTypeAPI.Delete)
 		}
 
-		reasonRouter := protected.Group("/pbehavior-reasons")
+		pbehaviorReasonAPI := pbehaviorreason.NewApi(
+			pbehaviorreason.NewStore(primaryDbClient, authorProvider),
+			pbhComputeChan,
+			errorResponder,
+			logger,
+		)
+		pbehaviorReasonRouter := protected.Group("/pbehavior-reasons")
 		{
-			reasonAPI := pbehaviorreason.NewApi(
-				pbehaviorreason.NewStore(primaryDbClient, authorProvider),
-				pbhComputeChan,
-				errorResponder,
-				logger,
-			)
-			reasonRouter.POST(
+			pbehaviorReasonRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
-				reasonAPI.Create)
-			reasonRouter.GET(
+				pbehaviorReasonAPI.Create)
+			pbehaviorReasonRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionRead, enforcer, errorResponder),
-				reasonAPI.List)
-			reasonRouter.GET(
+				pbehaviorReasonAPI.List)
+			pbehaviorReasonRouter.GET(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionRead, enforcer, errorResponder),
-				reasonAPI.Get)
-			reasonRouter.PUT(
+				pbehaviorReasonAPI.Get)
+			pbehaviorReasonRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
-				reasonAPI.Update)
-			reasonRouter.DELETE(
+				pbehaviorReasonAPI.Update)
+			pbehaviorReasonRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionDelete, enforcer, errorResponder),
-				reasonAPI.Delete)
+				pbehaviorReasonAPI.Delete)
 		}
-		exceptionAPI := pbehaviorexception.NewApi(
+		pbehaviorExceptionAPI := pbehaviorexception.NewApi(
 			pbehaviorexception.NewStore(primaryDbClient, timezoneConfigProvider, authorProvider),
 			pbhComputeChan,
 			conf.File.ImportMaxSize,
 			errorResponder,
 			logger,
 		)
-		exceptionRouter := protected.Group("/pbehavior-exceptions")
+		pbehaviorExceptionRouter := protected.Group("/pbehavior-exceptions")
 		{
-			exceptionRouter.POST(
+			pbehaviorExceptionRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
-				exceptionAPI.Create)
-			exceptionRouter.GET(
+				pbehaviorExceptionAPI.Create)
+			pbehaviorExceptionRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionRead, enforcer, errorResponder),
-				exceptionAPI.List)
-			exceptionRouter.GET(
+				pbehaviorExceptionAPI.List)
+			pbehaviorExceptionRouter.GET(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionRead, enforcer, errorResponder),
-				exceptionAPI.Get)
-			exceptionRouter.PUT(
+				pbehaviorExceptionAPI.Get)
+			pbehaviorExceptionRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
-				exceptionAPI.Update)
-			exceptionRouter.DELETE(
+				pbehaviorExceptionAPI.Update)
+			pbehaviorExceptionRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionDelete, enforcer, errorResponder),
-				exceptionAPI.Delete)
+				pbehaviorExceptionAPI.Delete)
 		}
 
 		protected.POST(
 			"/pbehavior-exception-import",
 			middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer, errorResponder),
-			exceptionAPI.Import,
+			pbehaviorExceptionAPI.Import,
 		)
 
 		weatherRouter := protected.Group("/weather-services")
@@ -940,7 +987,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(amqpPublisher, errorResponder, logger)
+		eventApi := event.NewApi(amqpPubPool, errorResponder, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -1278,6 +1325,19 @@ func RegisterRoutes(
 			}, enforcer, errorResponder),
 			widgetFilterAPI.UpdatePositions,
 		)
+		protected.GET(
+			"/widget-filter-pattern-fields",
+			middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjView,
+					Act: model.PermissionRead,
+				},
+				{
+					Obj: apisecurity.PermPrivateViewGroups,
+					Act: model.PermissionCan,
+				},
+			}, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.WidgetFiltersMongoCollection))
 
 		widgetTemplateAPI := widgettemplate.NewApi(
 			widgettemplate.NewStore(primaryDbClient, authorProvider), errorResponder)
@@ -1576,6 +1636,10 @@ func RegisterRoutes(
 			"/scenario-template-vars",
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer, errorResponder),
 			scenarioAPI.GetTemplateVars)
+		protected.GET(
+			"/scenario-pattern-fields",
+			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.ScenarioCollection))
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(primaryDbClient),
 			workers.NewJobPublisher(jobKeyImport, amqpPublisher), conf.File.ImportMaxSize, errorResponder, logger)
@@ -1628,6 +1692,10 @@ func RegisterRoutes(
 				stateSettingsApi.Delete,
 			)
 		}
+		protected.GET(
+			"/state-setting-pattern-fields",
+			middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.StateSettingsMongoCollection))
 
 		notificationAPI := notification.NewApi(notification.NewStore(primaryDbClient, authorProvider), errorResponder)
 		protected.GET("/notifications", notificationAPI.List)
@@ -1646,42 +1714,42 @@ func RegisterRoutes(
 			)
 		}
 
+		playlistAPI := playlist.NewApi(playlist.NewStore(primaryDbClient, authorProvider),
+			viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer,
+				patternfields.NewTransformer(primaryDbClient), validator.NewValidator(tplExecutor),
+				templateConfigProvider), authorProvider, enforcer), enforcer, errorResponder)
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(primaryDbClient, authorProvider),
-				viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer,
-					patternfields.NewTransformer(primaryDbClient), validator.NewValidator(tplExecutor),
-					templateConfigProvider), authorProvider, enforcer), enforcer, errorResponder)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
-				playlistApi.Create,
+				playlistAPI.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 			playlistRouter.GET(
 				"",
 				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, nil, errorResponder),
-				playlistApi.List,
+				playlistAPI.List,
 			)
 			playlistRouter.GET(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionRead, enforcer, errorResponder),
 				middleware.AuthorizeByID(model.PermissionRead, enforcer, errorResponder),
-				playlistApi.Get,
+				playlistAPI.Get,
 			)
 			playlistRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.AuthorizeByID(model.PermissionUpdate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
-				playlistApi.Update,
+				playlistAPI.Update,
 			)
 			playlistRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionDelete, enforcer, errorResponder),
 				middleware.AuthorizeByID(model.PermissionDelete, enforcer, errorResponder),
-				playlistApi.Delete,
+				playlistAPI.Delete,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
 		}
@@ -1722,10 +1790,13 @@ func RegisterRoutes(
 			"idle-rules-db-export",
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
 			idleRuleAPI.DBExport)
+		protected.GET(
+			"/idle-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.IdleRuleMongoCollection))
 
-		patternAPI := pattern.NewApi(
-			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder)
+		patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+		patternAPI := pattern.NewAPI(patternStore, userInterfaceConfig, enforcer, patternOptimizeWorker, errorResponder, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth(errorResponder))
@@ -1762,10 +1833,30 @@ func RegisterRoutes(
 			middleware.OnlyAuth(errorResponder),
 			patternAPI.CountEntities,
 		)
+		protected.POST(
+			"/patterns-entities-optimize",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.Optimize,
+		)
+		protected.GET(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeStatus,
+		)
+		protected.PUT(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeAccept,
+		)
+		protected.DELETE(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(errorResponder),
+			patternAPI.OptimizeCancel,
+		)
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
-				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer, enforcer),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataGetter, enforcer),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
 		)
@@ -1812,6 +1903,10 @@ func RegisterRoutes(
 			"/link-rule-template-vars",
 			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer, errorResponder),
 			linkRuleAPI.GetTemplateVars)
+		protected.GET(
+			"/link-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.LinkRuleMongoCollection))
 
 		linkCategoryRouter := protected.Group("/link-categories")
 		{
@@ -1861,6 +1956,11 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
 			alarmTagAPI.ListLabels,
 		)
+		protected.GET(
+			"alarm-tag-pattern-fields",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.AlarmTagCollection),
+		)
 
 		colorThemeApi := colortheme.NewApi(
 			colortheme.NewStore(primaryDbClient, authorProvider, userInterfaceAdapter),
@@ -1875,12 +1975,12 @@ func RegisterRoutes(
 			)
 			colorThemeRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.List,
 			)
 			colorThemeRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.Get,
 			)
 			colorThemeRouter.PUT(
@@ -2048,6 +2148,52 @@ func RegisterRoutes(
 		templateAPI := template.NewAPI(template.NewStore(primaryDbClient, authorProvider, enforcer,
 			tplTestTypePermMapping, json.NewDecoder()), templateConfigProvider, errorResponder, logger)
 
+		flappingRuleAPI := flappingrule.NewApi(
+			flappingrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
+			dbexport.NewExporter(primaryDbClient), errorResponder,
+		)
+
+		resolveRuleAPI := resolverule.NewApi(
+			resolverule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
+			errorResponder,
+		)
+
+		commentTemplateAPI := commenttemplate.NewApi(
+			commenttemplate.NewStore(primaryDbClient, authorProvider),
+			errorResponder,
+			logger,
+		)
+		commentTemplatesRouter := protected.Group("/comment-templates")
+		{
+			commentTemplatesRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionCreate, enforcer, errorResponder),
+				middleware.SetAuthor(errorResponder),
+				commentTemplateAPI.Create,
+			)
+			commentTemplatesRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer, errorResponder),
+				commentTemplateAPI.List,
+			)
+			commentTemplatesRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer, errorResponder),
+				commentTemplateAPI.Get,
+			)
+			commentTemplatesRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionUpdate, enforcer, errorResponder),
+				middleware.SetAuthor(errorResponder),
+				commentTemplateAPI.Update,
+			)
+			commentTemplatesRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer, errorResponder),
+				commentTemplateAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2059,91 +2205,235 @@ func RegisterRoutes(
 				)
 			}
 
-			scenarioRouter := bulkRouter.Group("/scenarios")
+			scenarioBulkRouter := bulkRouter.Group("/scenarios")
 			{
-				scenarioRouter.POST(
+				scenarioBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjAction, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					scenarioAPI.BulkCreate,
 				)
-				scenarioRouter.PUT(
+				scenarioBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjAction, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					scenarioAPI.BulkUpdate,
 				)
-				scenarioRouter.DELETE(
+				scenarioBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjAction, model.PermissionDelete, enforcer, errorResponder),
-					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					scenarioAPI.BulkDelete,
+				)
+				scenarioBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjAction, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					scenarioAPI.BulkEnable,
+				)
+				scenarioBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjAction, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					scenarioAPI.BulkDisable,
 				)
 			}
 
-			idleruleRouter := bulkRouter.Group("/idle-rules")
+			idleruleBulkRouter := bulkRouter.Group("/idle-rules")
 			{
-				idleruleRouter.POST(
+				idleruleBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					idleRuleAPI.BulkCreate,
 				)
-				idleruleRouter.PUT(
+				idleruleBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					idleRuleAPI.BulkUpdate,
 				)
-				idleruleRouter.DELETE(
+				idleruleBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionDelete, enforcer, errorResponder),
-					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					idleRuleAPI.BulkDelete,
+				)
+				idleruleBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					idleRuleAPI.BulkEnable,
+				)
+				idleruleBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					idleRuleAPI.BulkDisable,
 				)
 			}
 
-			eventFilterRouter := bulkRouter.Group("/eventfilters")
+			eventFilterBulkRouter := bulkRouter.Group("/eventfilters")
 			{
-				eventFilterRouter.POST(
+				eventFilterBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					eventFilterApi.BulkCreate,
 				)
-				eventFilterRouter.PUT(
+				eventFilterBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					eventFilterApi.BulkUpdate,
 				)
-				eventFilterRouter.DELETE(
+				eventFilterBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionDelete, enforcer, errorResponder),
-					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					eventFilterApi.BulkDelete,
+				)
+				eventFilterBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					eventFilterApi.BulkEnable,
+				)
+				eventFilterBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					eventFilterApi.BulkDisable,
 				)
 			}
 
-			entityserviceRouter := bulkRouter.Group("/entityservices")
+			entityserviceBulkRouter := bulkRouter.Group("/entityservices")
 			{
-				entityserviceRouter.POST(
+				entityserviceBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjEntityService, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					entityserviceAPI.BulkCreate,
 				)
-				entityserviceRouter.PUT(
+				entityserviceBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjEntityService, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					entityserviceAPI.BulkUpdate,
 				)
-				entityserviceRouter.DELETE(
+				entityserviceBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjEntityService, model.PermissionDelete, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 					entityserviceAPI.BulkDelete,
+				)
+			}
+
+			flappingRuleBulkRouter := bulkRouter.Group("/flapping-rules")
+			{
+				flappingRuleBulkRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionDelete, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					flappingRuleAPI.BulkDelete,
+				)
+				flappingRuleBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					flappingRuleAPI.BulkEnable,
+				)
+				flappingRuleBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					flappingRuleAPI.BulkDisable,
+				)
+			}
+
+			resolveRuleBulkRouter := bulkRouter.Group("/resolve-rules")
+			{
+				resolveRuleBulkRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionDelete, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					resolveRuleAPI.BulkDelete,
+				)
+				resolveRuleBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					resolveRuleAPI.BulkEnable,
+				)
+				resolveRuleBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					resolveRuleAPI.BulkDisable,
+				)
+			}
+
+			pbehaviorTypesBulkRouter := bulkRouter.Group("/pbehavior-types")
+			{
+				pbehaviorTypesBulkRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorTypeAPI.BulkDelete,
+				)
+				pbehaviorTypesBulkRouter.PUT(
+					"/hide",
+					middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorTypeAPI.BulkHide,
+				)
+				pbehaviorTypesBulkRouter.PUT(
+					"/unhide",
+					middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorTypeAPI.BulkUnhide,
+				)
+			}
+			pbehaviorReasonsBulkRouter := bulkRouter.Group("/pbehavior-reasons")
+			{
+				pbehaviorReasonsBulkRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionDelete, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorReasonAPI.BulkDelete,
+				)
+				pbehaviorReasonsBulkRouter.PUT(
+					"/hide",
+					middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorReasonAPI.BulkHide,
+				)
+				pbehaviorReasonsBulkRouter.PUT(
+					"/unhide",
+					middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorReasonAPI.BulkUnhide,
+				)
+			}
+			pbehaviorExceptionBulkRouter := bulkRouter.Group("/pbehavior-exceptions")
+			{
+				pbehaviorExceptionBulkRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionDelete, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorExceptionAPI.BulkDelete,
+				)
+				pbehaviorExceptionBulkRouter.PUT(
+					"/hide",
+					middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorExceptionAPI.BulkHide,
+				)
+				pbehaviorExceptionBulkRouter.PUT(
+					"/unhide",
+					middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorExceptionAPI.BulkUnhide,
 				)
 			}
 
@@ -2154,57 +2444,89 @@ func RegisterRoutes(
 				roleApi.BulkUpdatePermissions,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 			)
+			bulkRouter.DELETE(
+				"/roles",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				roleApi.BulkDelete,
+			)
 
-			userRouter := bulkRouter.Group("/users")
+			userBulkRouter := bulkRouter.Group("/users")
 			{
-				userRouter.POST(
+				userBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkCreate,
 					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
-				userRouter.PUT(
+				userBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkUpdate,
 					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
-				userRouter.PATCH(
+				userBulkRouter.PATCH(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkPatch,
 					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
-				userRouter.DELETE(
+				userBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
-					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					userApi.BulkDelete,
+				)
+				userBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					userApi.BulkEnable,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
+				)
+				userBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					userApi.BulkDisable,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
 				)
 			}
 
-			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
+			pbehaviorBulkRouter := bulkRouter.Group("/pbehaviors")
 			{
-				pbehaviorRouter.POST(
+				pbehaviorBulkRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					pbehaviorApi.BulkCreate,
 				)
-				pbehaviorRouter.PUT(
+				pbehaviorBulkRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					pbehaviorApi.BulkUpdate,
 				)
-				pbehaviorRouter.DELETE(
+				pbehaviorBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 					pbehaviorApi.BulkDelete,
+				)
+				pbehaviorBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorApi.BulkEnable,
+				)
+				pbehaviorBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					pbehaviorApi.BulkDisable,
 				)
 			}
 
@@ -2263,13 +2585,47 @@ func RegisterRoutes(
 				)
 			}
 
-			linkRuleRouter := bulkRouter.Group("/link-rules")
+			linkRuleBulkRouter := bulkRouter.Group("/link-rules")
 			{
-				linkRuleRouter.DELETE(
+				linkRuleBulkRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionDelete, enforcer, errorResponder),
-					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					linkRuleAPI.BulkDelete,
+				)
+				linkRuleBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					linkRuleAPI.BulkEnable,
+				)
+				linkRuleBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					linkRuleAPI.BulkDisable,
+				)
+			}
+
+			playlistBulkRouter := bulkRouter.Group("/playlists")
+			{
+				playlistBulkRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionDelete, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					playlistAPI.BulkDelete,
+				)
+				playlistBulkRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					playlistAPI.BulkEnable,
+				)
+				playlistBulkRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
+					playlistAPI.BulkDisable,
 				)
 			}
 
@@ -2304,6 +2660,11 @@ func RegisterRoutes(
 					"/assocticket",
 					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
 					alarmActionAPI.BulkAssocTicket,
+				)
+				alarmRouter.PUT(
+					"/ticketremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer, errorResponder),
+					alarmActionAPI.BulkTicketRemove,
 				)
 				alarmRouter.PUT(
 					"/comment",
@@ -2342,6 +2703,13 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer, errorResponder),
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				externalDataTableAPI.BulkDeleteData,
+			)
+
+			bulkRouter.DELETE(
+				"/comment-templates",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				commentTemplateAPI.BulkDelete,
 			)
 		}
 
@@ -2445,10 +2813,6 @@ func RegisterRoutes(
 
 		resolveRuleRouter := protected.Group("/resolve-rules")
 		{
-			resolveRuleAPI := resolverule.NewApi(
-				resolverule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
-				errorResponder,
-			)
 			resolveRuleRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionCreate, enforcer, errorResponder),
@@ -2477,11 +2841,11 @@ func RegisterRoutes(
 				resolveRuleAPI.Delete,
 			)
 		}
+		protected.GET(
+			"/resolve-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.ResolveRuleMongoCollection))
 
-		flappingRuleAPI := flappingrule.NewApi(
-			flappingrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
-			dbexport.NewExporter(primaryDbClient), errorResponder,
-		)
 		flappingRuleRouter := protected.Group("/flapping-rules")
 		{
 			flappingRuleRouter.POST(
@@ -2516,6 +2880,10 @@ func RegisterRoutes(
 			"flapping-rules-db-export",
 			middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer, errorResponder),
 			flappingRuleAPI.DBExport)
+		protected.GET(
+			"/flapping-rule-pattern-fields",
+			middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer, errorResponder),
+			pattern.GetPatternFieldsHandler(patternFieldGetter, errorResponder, mongo.FlappingRuleMongoCollection))
 
 		entityInfoDictionaryApi := entityinfodictionary.NewApi(
 			entityinfodictionary.NewStore(primaryDbClient), errorResponder, logger)

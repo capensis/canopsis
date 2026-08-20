@@ -12,6 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/v2/x/bsonx/bsoncore"
 )
 
+const MicroSecInSec = 1e6
+
 // CpsTime allows conversion from time.Time to time.Time.Unix()
 type CpsTime struct {
 	time.Time

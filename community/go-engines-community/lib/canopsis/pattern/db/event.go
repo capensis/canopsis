@@ -52,7 +52,7 @@ func getEventPatternGroupMongoQueries(p pattern.Event, prefix string) ([]bson.M,
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
-					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+					err = fmt.Errorf("invalid field type for %q field: %w", cond.Field, pattern.ErrUnsupportedFieldType)
 				}
 
 			} else {

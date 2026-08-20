@@ -94,6 +94,18 @@ export default createEntityModule({
       });
     },
 
+    fetchUpstreamWithoutStore(context, { id, params = {} }) {
+      return request.get(API_ROUTES.entityUpstream, {
+        params: { ...params, _id: id },
+      });
+    },
+
+    fetchDownstreamsWithoutStore(context, { id, params = {} }) {
+      return request.get(API_ROUTES.entityDownstreams, {
+        params: { ...params, _id: id },
+      });
+    },
+
     fetchAlarmsWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.serviceAlarms}/${id}`, { params });
     },
@@ -104,6 +116,10 @@ export default createEntityModule({
 
     fetchInfosKeysWithoutStore(context, { params }) {
       return request.get(API_ROUTES.entityInfosDictionaryKeys, { params });
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.bulkService, { data });
     },
   },
 });

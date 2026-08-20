@@ -42,12 +42,15 @@ export const useView = () => {
   const { useGetters, useActions } = useViewStoreModule();
 
   const getters = useGetters({
+    groups: 'items',
+    getGroupById: 'getGroupById',
     getViewById: 'getViewById',
     getViewTabById: 'getViewTabById',
   });
 
   const actions = useActions({
     createView: 'createView',
+    createViewTab: 'createViewTab',
     updateView: 'updateView',
     updateViewsPositions: 'updateViewPositions',
     updateViewWithoutStore: 'updateWithoutStoreView',

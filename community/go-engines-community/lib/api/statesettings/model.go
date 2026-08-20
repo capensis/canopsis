@@ -174,14 +174,14 @@ type InheritedEntityPatternRequest struct {
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
 }
 
-func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName string) statesetting.InheritedEntityPatternFields {
+func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName, t string) statesetting.InheritedEntityPatternFields {
 	if r.CorporatePattern.ID == "" {
 		return statesetting.InheritedEntityPatternFields{
 			InheritedEntityPattern: r.InheritedEntityPattern,
 		}
 	}
 
-	forbiddenFields := patternfields.GetForbiddenFieldsInEntityPattern(collectionName)
+	forbiddenFields := patternfields.GetForbiddenFieldsInInheritedEntityPattern(collectionName, t)
 
 	return statesetting.InheritedEntityPatternFields{
 		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
@@ -195,7 +195,7 @@ type AggregationResult struct {
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 

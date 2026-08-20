@@ -1,13 +1,11 @@
 import { COLORS } from '@/config';
 
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
-
 import { WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE } from './common';
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const ENTITY_FIELDS = {
   id: '_id',
+  customId: 'custom_id',
   name: 'name',
   categoryName: 'category.name',
   type: 'type',
@@ -34,6 +32,7 @@ export const ENTITY_FIELDS = {
   links: 'links',
   alarmDisplayName: 'alarm_display_name',
   alarmCreationDate: 'alarm_creation_date',
+  lastAlarmUpdateDate: 'alarm_last_update_date',
   importSource: 'import_source',
   imported: 'imported',
   alarmLastComment: 'alarm_last_comment',
@@ -49,42 +48,6 @@ export const ENTITY_FIELDS = {
   ticket: 'ticket',
   snooze: 'snooze',
 };
-
-export const ENTITY_ADVANCED_SEARCH_FIELDS = [
-  ENTITY_FIELDS.id,
-  ENTITY_FIELDS.name,
-  ENTITY_FIELDS.categoryName,
-  ENTITY_FIELDS.component,
-  ENTITY_FIELDS.connector,
-  ENTITY_FIELDS.connectorName,
-  ENTITY_FIELDS.resource,
-  ENTITY_FIELDS.impactLevel,
-  ENTITY_FIELDS.lastEventDate,
-  ENTITY_FIELDS.lastPbehaviorDate,
-  ENTITY_FIELDS.lastUpdateDate,
-  ENTITY_FIELDS.koEvents,
-  ENTITY_FIELDS.okEvents,
-  ENTITY_FIELDS.statsOk,
-  ENTITY_FIELDS.statsKo,
-  ENTITY_FIELDS.pbehaviorInfo,
-  ENTITY_FIELDS.impactState,
-  ENTITY_FIELDS.idleSince,
-  ENTITY_FIELDS.infos,
-  ENTITY_FIELDS.componentInfos,
-  ENTITY_FIELDS.alarmDisplayName,
-  ENTITY_FIELDS.alarmCreationDate,
-  ENTITY_FIELDS.importSource,
-  ENTITY_FIELDS.imported,
-  ENTITY_FIELDS.alarmLastComment,
-
-  /**
-   * OBJECTS
-   */
-  ENTITY_FIELDS.ack,
-  ENTITY_FIELDS.category,
-  ENTITY_FIELDS.ticket,
-  ENTITY_FIELDS.snooze,
-];
 
 export const EVENT_ENTITY_TYPES = { // TODO: remove it in the future
   ack: 'ack', // TODO: ServiceWeather
@@ -168,7 +131,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
   [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
   [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
-  [EVENT_ENTITY_TYPES.assocTicket]: '$vuetify.icons.sticky_note_2',
+  [EVENT_ENTITY_TYPES.assocTicket]: 'sticky_note_2',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
@@ -264,6 +227,12 @@ export const COLOR_INDICATOR_TYPES = {
   impactState: 'impact_state',
 };
 
+export const COLOR_INDICATOR_TYPES_WITH_STATUS = {
+  ...COLOR_INDICATOR_TYPES,
+
+  status: 'status',
+};
+
 export const STATE_SETTING_ENTITY_TYPES = [
   ENTITY_TYPES.component,
   ENTITY_TYPES.service,
@@ -273,6 +242,8 @@ export const STATE_SETTING_METHODS = {
   inherited: 'inherited',
   dependencies: 'dependencies',
 };
+
+export const STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD = 'inherited_entity_pattern';
 
 export const STATE_SETTING_THRESHOLDS_METHODS = {
   share: 'share',
@@ -378,15 +349,29 @@ export const CONTEXT_WIDGET_GROUPED_COLUMNS = {
 
 export const ENTITY_PATTERN_FIELDS = {
   id: ENTITY_FIELDS.id,
+  customId: ENTITY_FIELDS.customId,
   name: ENTITY_FIELDS.name,
   type: ENTITY_FIELDS.type,
   component: ENTITY_FIELDS.component,
   connector: ENTITY_FIELDS.connector,
+  resource: ENTITY_FIELDS.resource,
   infos: ENTITY_FIELDS.infos,
   componentInfos: ENTITY_FIELDS.componentInfos,
   category: ENTITY_FIELDS.category,
   impactLevel: ENTITY_FIELDS.impactLevel,
+  impactState: ENTITY_FIELDS.impactState,
+  importSource: ENTITY_FIELDS.importSource,
+  state: ENTITY_FIELDS.state,
+  status: ENTITY_FIELDS.status,
+  koEvents: ENTITY_FIELDS.koEvents,
+  okEvents: ENTITY_FIELDS.okEvents,
+  idleSince: ENTITY_FIELDS.idleSince,
+  imported: ENTITY_FIELDS.imported,
+  lastUpdateDate: ENTITY_FIELDS.lastUpdateDate,
+  lastPbehaviorDate: ENTITY_FIELDS.lastPbehaviorDate,
   lastEventDate: ENTITY_FIELDS.lastEventDate,
+  lastAlarmUpdateDate: ENTITY_FIELDS.lastAlarmUpdateDate,
+  enabled: ENTITY_FIELDS.enabled,
 };
 
 export const ENTITY_TEMPLATE_FIELDS = {
@@ -420,6 +405,7 @@ export const ENTITY_TEMPLATE_FIELDS = {
 
 export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.id]: 'common.id',
+  [ENTITY_FIELDS.customId]: 'common.id',
   [ENTITY_FIELDS.name]: 'common.name',
   [ENTITY_FIELDS.categoryName]: 'entity.fields.categoryName',
   [ENTITY_FIELDS.type]: 'common.type',
@@ -446,6 +432,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.links]: 'common.link',
   [ENTITY_FIELDS.alarmDisplayName]: 'alarm.alarmDisplayName',
   [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
+  [ENTITY_FIELDS.lastAlarmUpdateDate]: 'entity.fields.lastAlarmUpdateDate',
   [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
   [ENTITY_FIELDS.imported]: 'entity.fields.imported',
   [ENTITY_FIELDS.alarmLastComment]: 'entity.fields.alarmLastComment',
@@ -513,20 +500,29 @@ export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
   name: 'dagre',
   animate: 'end',
   fit: true,
-  rankDir: 'LR',
+  rankDir: 'RL',
   padding: 40,
   minLen: 5,
+};
+
+export const ENTITY_UPSTREAM_GRAPH_LAYOUT_OPTIONS = {
+  name: 'dagre',
+  animate: 'end',
+  fit: true,
+  rankDir: 'BT',
+  padding: 40,
+  minLen: 4,
 };
 
 export const ENTITY_TYPES_ICONS = {
   [ENTITY_TYPES.component]: 'developer_board',
   [ENTITY_TYPES.connector]: 'perm_identity',
   [ENTITY_TYPES.resource]: 'perm_identity',
-  [ENTITY_TYPES.service]: '$vuetify.icons.engineering',
+  [ENTITY_TYPES.service]: 'engineering',
 };
 
 export const ENTITY_TYPES_ICONS_FOR_CYTOSCAPE = {
   ...ENTITY_TYPES_ICONS,
 
-  [ENTITY_TYPES.service]: engineeringIcon,
+  [ENTITY_TYPES.service]: 'engineering',
 };

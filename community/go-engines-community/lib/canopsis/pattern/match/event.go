@@ -67,19 +67,24 @@ func (m *EventRegexMatches) SetMatchedRegexp(regexp utils.RegexExpression) (err 
 }
 
 func ValidateEventPattern(p pattern.Event) bool {
-	emptyEvent := types.Event{}
+	return len(EventPatternErrors(p)) == 0
+}
 
-	for idx := range p {
-		if len(p[idx]) == 0 {
-			return false
+func EventPatternErrors(p pattern.Event) []ConditionError {
+	emptyEvent := types.Event{}
+	var errs []ConditionError
+	for gidx := range p {
+		if len(p[gidx]) == 0 {
+			errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: -1, Err: pattern.ErrEmptyGroup})
+			continue
 		}
 
-		for _, v := range p[idx] {
+		for cidx, v := range p[gidx] {
 			f := v.Field
 
 			if infoName := pattern.GetEventExtraInfoName(f); infoName != "" {
-				if !v.ValidateInfoCondition() {
-					return false
+				if err := v.InfoConditionError(); err != nil {
+					errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 				}
 
 				continue
@@ -95,12 +100,12 @@ func ValidateEventPattern(p pattern.Event) bool {
 			}
 
 			if err != nil {
-				return false
+				errs = append(errs, ConditionError{GroupIdx: gidx, CondIdx: cidx, Err: err})
 			}
 		}
 	}
 
-	return true
+	return errs
 }
 
 func MatchEventPatternWithRegexMatches(p pattern.Event, event *types.Event) (bool, EventRegexMatches, error) {
@@ -155,7 +160,7 @@ func MatchEventPatternWithRegexMatches(p pattern.Event, event *types.Event) (boo
 							matched, err = v.Condition.MatchStringArray(a)
 						}
 					default:
-						return false, eventRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+						return false, eventRegexMatches, fmt.Errorf("invalid field type for %q field: %w", f, pattern.ErrUnsupportedFieldType)
 					}
 				}
 

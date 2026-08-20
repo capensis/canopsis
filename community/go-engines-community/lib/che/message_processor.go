@@ -6,8 +6,6 @@ import (
 	"runtime/trace"
 	"time"
 
-	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -16,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
+	libcheevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -29,15 +27,15 @@ type messageProcessor struct {
 	AlarmConfigProvider      config.AlarmConfigProvider
 	MetricsConfigProvider    config.MetricsConfigProvider
 	MetricsSender            metrics.Sender
-	MetaUpdater              metrics.MetaUpdater
 	TechMetricsSender        techmetrics.Sender
-	AmqpPublisher            libamqp.Publisher
 	EntityCollection         mongo.DbCollection
+	ExternalData             ExternalDataCoordinator
+	PostProcessor            *EventPostProcessor
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 
-	EventProcessorContainer event.ProcessorContainer
+	EventProcessorContainer libcheevent.ProcessorContainer
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -75,11 +73,16 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
+	isSuspended := false
 	defer func() {
-		eventMetric.Interval = time.Since(start)
-		eventMetric.Timestamp = start
+		if !isSuspended {
+			if eventMetric.Timestamp.IsZero() {
+				eventMetric.Timestamp = start
+			}
 
-		p.TechMetricsSender.SendCheEvent(eventMetric)
+			eventMetric.Interval = time.Since(eventMetric.Timestamp)
+			p.TechMetricsSender.SendCheEvent(eventMetric)
+		}
 	}()
 
 	alarmConfig := p.AlarmConfigProvider.Get()
@@ -88,16 +91,15 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 	}
 
-	var updatedEntitiesForEvent []types.Entity
-	var updatedEntityIdsForMetrics []string
-
 	proc, ok := p.EventProcessorContainer.Get(event.SourceType)
 	if !ok {
 		p.logError(err, "unsupported source type", d.Body)
 		return nil, nil
 	}
 
-	updatedEntitiesForEvent, updatedEntityIdsForMetrics, eventMetric, err = proc.Process(ctx, &event)
+	pr, err := proc.Process(ctx, &event, nil)
+	pr.EventMetric.Timestamp = start
+	eventMetric = pr.EventMetric
 	if err != nil {
 		if errors.Is(err, eventfilter.ErrDropOutcome) {
 			return nil, nil
@@ -111,15 +113,27 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 		return nil, nil
 	}
 
-	go p.postProcessUpdatedEntities(ctx, event, updatedEntitiesForEvent, updatedEntityIdsForMetrics)
+	if pr.IsSuspended() {
+		// It parks the partially processed event until the webhook RPC answers.
+		// Processing continues when the RPC response is consumed and the event resumed.
+		err = p.ExternalData.Dispatch(ctx, event, pr, 1)
+		if err != nil {
+			if engine.IsConnectionError(err) {
+				return nil, err
+			}
 
-	p.handlePerfData(ctx, &event)
+			p.logError(err, "cannot suspend event for external data", d.Body)
 
-	if event.EventType == types.EventTypeContextUpdate {
-		return nil, nil
+			return nil, nil
+		}
+
+		isSuspended = true
+
+		return nil, engine.ErrAckWithoutForward
 	}
 
-	event.Format()
+	p.PostProcessor.Run(ctx, event, pr)
+	p.handlePerfData(ctx, &event)
 
 	body, err := p.Encoder.Encode(&event)
 	if err != nil {
@@ -135,68 +149,6 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	}
 
 	return body, nil
-}
-
-func (p *messageProcessor) postProcessUpdatedEntities(
-	ctx context.Context,
-	event types.Event,
-	entitiesForEvent []types.Entity,
-	updatedEntityIdsForMetrics []string,
-) {
-	now := datetime.NewCpsTime()
-
-	for _, ent := range entitiesForEvent {
-		var updateCountersEvent types.Event
-
-		switch ent.Type {
-		case types.EntityTypeComponent:
-			updateCountersEvent = types.Event{
-				EventType:     types.EventTypeUpdateCounters,
-				SourceType:    types.SourceTypeComponent,
-				Connector:     canopsis.CheConnector,
-				ConnectorName: canopsis.CheConnector,
-				Component:     ent.Component,
-				Timestamp:     now,
-				Entity:        &ent,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
-		case types.EntityTypeConnector:
-			updateCountersEvent = types.Event{
-				EventType:     types.EventTypeUpdateCounters,
-				SourceType:    types.SourceTypeConnector,
-				Connector:     event.Connector,
-				ConnectorName: event.ConnectorName,
-				Timestamp:     now,
-				Entity:        &ent,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
-		}
-
-		body, err := p.Encoder.Encode(updateCountersEvent)
-		if err != nil {
-			p.Logger.Err(err).Msg("unable to serialize event")
-		}
-
-		err = p.AmqpPublisher.PublishWithContext(
-			ctx,
-			canopsis.EngineExchangeName,
-			canopsis.AxeSystemQueueName,
-			false,
-			false,
-			amqp.Publishing{
-				Body:         body,
-				ContentType:  "application/json",
-				DeliveryMode: amqp.Persistent,
-			},
-		)
-		if err != nil {
-			p.Logger.Err(err).Msg("unable to send service event")
-		}
-	}
-
-	p.MetaUpdater.UpdateById(ctx, updatedEntityIdsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

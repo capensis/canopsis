@@ -50,6 +50,7 @@ type Store interface {
 	GetCategories(ctx context.Context, r CategoriesRequest) (*CategoryResponse, error)
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
 	GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -66,7 +67,7 @@ type store struct {
 	tplValidator              tplvalidator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
-	externalDataContainer     *externaldata.GetterContainer
+	externalDataGetter        externaldata.Getter
 	enforcer                  security.Enforcer
 
 	defaultSearchByFields []string
@@ -85,7 +86,7 @@ func NewStore(
 	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	enforcer security.Enforcer,
 ) Store {
 	userTplVars := []template.VarResponse{
@@ -112,7 +113,7 @@ func NewStore(
 		tplValidator:              tplValidator,
 		tplExecutor:               tplExecutor,
 		tplConfigProvider:         tplConfigProvider,
-		externalDataContainer:     externalDataContainer,
+		externalDataGetter:        externalDataGetter,
 		enforcer:                  enforcer,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
@@ -336,6 +337,23 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return deleted > 0, err
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle link rule: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }
 
 // GetCategories returns list of distinct categories
@@ -812,11 +830,6 @@ func (s *store) processTableExdata(
 	idx int,
 	r TemplateRequest,
 ) (any, error) {
-	getter, ok := s.externalDataContainer.Get(d.Type)
-	if !ok {
-		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)
-	}
-
 	refParam := externaldata.RefParameters{
 		Reference: d.Reference,
 		Type:      d.Type,
@@ -845,7 +858,9 @@ func (s *store) processTableExdata(
 		return nil, errors.New("expected not empty array")
 	}
 
-	res, err := getter.Get(ctx, parsedParams[0], tplData)
+	res, err := s.externalDataGetter.Get(ctx, externaldata.Rule{
+		ExternalData: parsedParams,
+	}, tplData)
 	if err != nil {
 		getterTplErr := &externaldata.GetterTplError{}
 		getterErr := &externaldata.GetterError{}
@@ -857,5 +872,5 @@ func (s *store) processTableExdata(
 		return nil, err
 	}
 
-	return res, nil
+	return res.ExternalData[d.Reference], nil
 }

@@ -2,11 +2,17 @@
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 1`] = `
 <div
-  class="layout"
+  class="mass-actions-panel__wrapper"
+  style="width: 108px;"
 >
   <div
-    class="v-menu"
+    class="layout mass-actions-panel__actions"
   >
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
     <button
       class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
       type="button"
@@ -22,20 +28,119 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
         </i>
       </span>
     </button>
-    <!---->
   </div>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `undefined`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
+          >
+            edit
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Edit title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
 <div
-  class="layout"
+  class="mass-actions-panel__wrapper"
+  style="width: 108px;"
 >
   <div
-    class="v-menu"
+    class="layout mass-actions-panel__actions"
   >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <div
+      class="v-menu"
+    >
+      <!---->
+    </div>
     <button
       class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
       type="button"
@@ -51,27 +156,99 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
         </i>
       </span>
     </button>
-    <!---->
   </div>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `undefined`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <div
+    class="v-list v-sheet theme--light"
+  >
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Delete title
+        </span>
+      </div>
+    </div>
+    <div
+      class="v-list-item v-list-item--link theme--light"
+      role="menuitem"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__title"
+      >
+        <span
+          class="mr-4"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
+          >
+            done
+          </i>
+        </span>
+        <span
+          class="text-body-1"
+        >
+              Ack title
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
 <div
-  class="layout"
+  class="mass-actions-panel__wrapper"
+  style="width: 108px;"
 >
-  <c-action-btn-stub
-    color="primary"
-    icon="edit"
-    tooltip="Edit title"
-  />
-  <c-action-btn-stub
-    color="secondary"
-    icon="delete"
-    tooltip="Delete title"
-  />
-  <!---->
+  <div
+    class="layout mass-actions-panel__actions"
+  >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="done"
+      tooltip="Ack title"
+    />
+    <!---->
+  </div>
 </div>
 `;

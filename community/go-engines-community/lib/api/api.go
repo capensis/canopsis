@@ -8,7 +8,6 @@ import (
 	"runtime/debug"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -23,22 +22,24 @@ const (
 type Router func(*gin.Engine) error
 
 // Worker is used to implement adding new worker to API.
-type Worker func(context.Context)
+type Worker func(context.Context) error
 
 type DeferFunc func(ctx context.Context)
 
-// FatalWorkerError should be used in the Worker function with panic() call, when there is a need to stop the api, when worker fails.
-// the worker will be recovered from the panic, but it won't be restarted and the api will be stopped normally.
-type FatalWorkerError struct {
+type ReloadWorkerError struct {
 	err error
 }
 
-func NewFatalWorkerError(err error) error {
-	return FatalWorkerError{err: err}
+func NewReloadWorkerError(err error) error {
+	return ReloadWorkerError{err: err}
 }
 
-func (e FatalWorkerError) Error() string {
+func (e ReloadWorkerError) Error() string {
 	return e.err.Error()
+}
+
+func (e ReloadWorkerError) Unwrap() error {
+	return e.err
 }
 
 // API is used to implement API http server.
@@ -53,10 +54,6 @@ type API interface {
 	AddNoRoute(...gin.HandlerFunc)
 	// AddNoMethod adds handlers for no method.
 	AddNoMethod(...gin.HandlerFunc)
-	// SetWebsocketHub sets websocket hub.
-	SetWebsocketHub(websocket.Hub)
-	// GetWebsocketHub gets websocket hub.
-	GetWebsocketHub() websocket.Hub
 }
 
 type api struct {
@@ -68,8 +65,6 @@ type api struct {
 
 	noRouteHandlers  []gin.HandlerFunc
 	noMethodHandlers []gin.HandlerFunc
-
-	websocketHub websocket.Hub
 }
 
 // New creates new api.
@@ -122,7 +117,7 @@ func (a *api) Run(ctx context.Context) error {
 		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
-	go func() {
+	go func() { // nolint:gosec
 		<-ctx.Done()
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimout)
 		defer shutdownCancel()
@@ -156,13 +151,6 @@ func (a *api) Run(ctx context.Context) error {
 	return apiErrGroup.Wait()
 }
 
-func (a *api) SetWebsocketHub(v websocket.Hub) {
-	a.websocketHub = v
-}
-func (a *api) GetWebsocketHub() websocket.Hub {
-	return a.websocketHub
-}
-
 func (a *api) registerRoutes() (http.Handler, error) {
 	ginRouter := gin.New()
 	ginRouter.HandleMethodNotAllowed = true
@@ -193,9 +181,7 @@ func (a *api) runWorkers(ctx context.Context) *errgroup.Group {
 		f := a.workers[key]
 
 		restartGoroutine(g, "worker "+key, func() error {
-			f(ctx)
-
-			return nil
+			return f(ctx)
 		}, a.logger)
 	}
 
@@ -221,16 +207,29 @@ func restartGoroutine(
 
 				logger.Err(err).Str("worker", key).Msgf("panic recovered\n%s\n", debug.Stack())
 
-				var fatalErr FatalWorkerError
-				if errors.As(err, &fatalErr) {
-					gErr = fatalErr
-					return
-				}
-
 				restartGoroutine(g, key, f, logger)
 			}
 		}()
 
-		return f()
+		for {
+			err := f()
+			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					logger.Debug().Err(err).Str("worker", key).Msg("worker is canceled")
+
+					return nil
+				}
+
+				if _, ok := errors.AsType[ReloadWorkerError](err); ok {
+					logger.Err(err).Str("worker", key).Msgf("worker restart")
+
+					continue
+				}
+
+				return err
+			}
+
+			return nil
+		}
 	})
 }

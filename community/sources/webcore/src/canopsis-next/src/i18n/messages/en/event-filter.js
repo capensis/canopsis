@@ -24,6 +24,7 @@ export default {
   component: 'Component ID or template',
   connector: 'Connector ID or template',
   connectorName: 'Connector name or template',
+  upstream: 'Upstream ID or template',
   duringPeriod: 'Applied during this period only',
   enrichmentOptions: 'Enrichment options',
   changeEntityOptions: 'Change entity options',
@@ -34,6 +35,9 @@ export default {
   event: 'Event',
   eventCopied: 'Event copied to clipboard',
   syntaxIsValid: 'Syntax is valid',
+  massRemove: 'Remove event filters',
+  massEnable: 'Enable event filters',
+  massDisable: 'Disable event filters',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',

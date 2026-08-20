@@ -15,6 +15,9 @@ export default {
 
   instruction: {
     name: 'Nom de l\'instruction',
+    massRemove: 'Supprimer les consignes sélectionnées',
+    massEnable: 'Activer les consignes sélectionnées',
+    massDisable: 'Désactiver les consignes sélectionnées',
     manualInstructionsProgress: 'Progression des consignes manuelles',
     usingInstruction: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     addStep: 'Ajouter une étape',
@@ -70,6 +73,7 @@ export default {
   configuration: {
     usingConfiguration: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     host: 'Hôte',
+    massRemove: 'Supprimer les configurations sélectionnées',
   },
 
   instructionExecute: {
@@ -89,6 +93,7 @@ export default {
       wasPaused: 'La consigne {instructionName} a été mise en pause.',
       wasFinished: 'La consigne {instructionName} s\'est terminée.',
       wasFailed: 'La consigne {instructionName} a échoué.',
+      wasWaitingResult: 'La consigne {instructionName} attend un résultat.',
       wasRemovedOrDisabled: 'La consigne {instructionName} a été supprimée ou désactivée.',
     },
     jobs: {
@@ -203,6 +208,7 @@ export default {
     jobId: 'Identifiant de la tâche',
     addJobs: 'Ajouter {count} tâche | Ajouter {count} tâches',
     usingJob: 'La tâche ne peut être supprimée, car elle est en cours d\'utilisation',
+    massRemove: 'Supprimer les tâches sélectionnées',
     query: 'Requête',
     multipleExecutions: 'Autoriser l\'exécution parallèle',
     jobWaitInterval: 'Intervalle d\'attente des tâches',

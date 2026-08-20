@@ -15,6 +15,9 @@ export default {
 
   instruction: {
     name: 'Instruction name',
+    massRemove: 'Delete selected instructions',
+    massEnable: 'Enable selected instructions',
+    massDisable: 'Disable selected instructions',
     manualInstructionsProgress: 'Manual instructions progress',
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
@@ -70,6 +73,7 @@ export default {
   configuration: {
     host: 'Host',
     usingConfiguration: 'Cannot be deleted since it is in use',
+    massRemove: 'Delete selected configurations',
   },
 
   instructionExecute: {
@@ -89,6 +93,7 @@ export default {
       wasPaused: '{instructionName} instruction paused.',
       wasFinished: '{instructionName} instruction finished.',
       wasFailed: '{instructionName} instruction failed.',
+      wasWaitingResult: '{instructionName} instruction is waiting for a result.',
       wasRemovedOrDisabled: 'The {instructionName} instruction was removed or disabled.',
     },
     jobs: {
@@ -203,6 +208,7 @@ export default {
     jobId: 'Job ID',
     addJobs: 'Add {count} job | Add {count} jobs',
     usingJob: 'Cannot be deleted since it is in use',
+    massRemove: 'Delete selected jobs',
     query: 'Query',
     multipleExecutions: 'Allow parallel execution',
     jobWaitInterval: 'Job wait interval',

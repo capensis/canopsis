@@ -59,6 +59,8 @@ export const usePbehavior = () => {
     removeEntityPbehaviors: 'bulkRemoveEntityPbehaviors',
     updatePbehavior: 'update',
     bulkUpdatePbehaviors: 'bulkUpdate',
+    bulkEnablePbehaviors: 'bulkEnable',
+    bulkDisablePbehaviors: 'bulkDisable',
     removePbehavior: 'remove',
     bulkRemovePbehaviors: 'bulkRemove',
     fetchPbehaviorsByEntityId: 'fetchListByEntityId',

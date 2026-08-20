@@ -144,7 +144,7 @@
       :close-on-click="false"
       :position-x="positionX"
       :position-y="positionY"
-      attach=".modals-wrapper"
+      attach=".pbehavior-calendar-event-menu"
       content-class="c-calendar__popover-wrapper"
     >
       <v-card v-if="popoverOpen">
@@ -166,7 +166,7 @@
 import { getStartOfWeek, getEndOfWeek } from 'vuetify/lib/components/VCalendar/util/timestamp';
 
 import { LOCALES } from '@/config';
-import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY } from '@/constants';
+import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY, CALENDAR_POPOVER_WIDTH, LLM_AI_CHAT_WIDTH } from '@/constants';
 
 import {
   convertDateToEndOfDayDateObject,
@@ -508,11 +508,15 @@ export default {
     },
 
     showCreateEventPopover(event, target) {
-      const { top, left, width } = target.getBoundingClientRect();
+      const { top } = target.getBoundingClientRect();
 
       this.setPopoverEvent(event);
 
-      this.positionX = left + width / 2;
+      const wrapperWidth = window.innerWidth * 0.95;
+      const wrapperWidthWidhoutAiChat = wrapperWidth - LLM_AI_CHAT_WIDTH;
+      const left = (wrapperWidthWidhoutAiChat - CALENDAR_POPOVER_WIDTH) / 2;
+
+      this.positionX = left;
       this.positionY = top;
 
       this.popoverOpen = true;
@@ -710,6 +714,10 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --c-calendar-popover-width: 980px;
+}
+
 .c-calendar {
   position: relative;
 
@@ -823,9 +831,11 @@ export default {
   &__popover-wrapper {
     max-height: 95%;
     max-width: 95% !important;
-    width: 980px !important;
-    top: 50% !important;
-    transform: translate3d(0, -50%, 0);
+    width: var(--c-calendar-popover-width) !important;
+    top: unset !important;
+    bottom: unset !important;
+    contain: none !important;
+    position: relative !important;
   }
 
   &__week-day-label-btn {

@@ -154,6 +154,14 @@ export default {
       return request.put(API_ROUTES.pbehavior.bulkPbehaviors, data);
     },
 
+    bulkEnable(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkPbehaviorsEnable, data);
+    },
+
+    bulkDisable(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkPbehaviorsDisable, data);
+    },
+
     async remove({ dispatch }, { id }) {
       try {
         await request.delete(`${API_ROUTES.pbehavior.pbehaviors}/${id}`);

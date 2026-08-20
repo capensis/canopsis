@@ -37,11 +37,10 @@ func (p *duplicateErrorParser) Parse(err error, validatedStruct any) error {
 
 func (p *duplicateErrorParser) findStructFieldByTag(rt reflect.Type, tagKey, tagVal string) *reflect.StructField {
 	switch rt.Kind() {
-	case reflect.Ptr, reflect.Interface:
+	case reflect.Pointer, reflect.Interface:
 		return p.findStructFieldByTag(rt.Elem(), tagKey, tagVal)
 	case reflect.Struct:
-		for i := 0; i < rt.NumField(); i++ {
-			rf := rt.Field(i)
+		for rf := range rt.Fields() {
 			if rf.Anonymous {
 				ft := p.findStructFieldByTag(rf.Type, tagKey, tagVal)
 				if ft != nil {

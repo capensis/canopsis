@@ -2,7 +2,12 @@ import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createTemplateVarsModule, createEntityInfoPropertyModule } from '@unit/utils/store';
+import {
+  createMockedStoreModules,
+  createTemplateVarsModule,
+  createEntityInfoPropertyModule,
+  createCommentTemplateModule,
+} from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -39,6 +44,7 @@ import {
   formToWidgetParameters,
 } from '@/helpers/entities/widget/form';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
+import { formToWidgetSortColumns } from '@/helpers/entities/widget/sort-column/form';
 import { availabilityFieldToForm } from '@/helpers/entities/widget/forms/availability';
 
 import AlarmSettings from '@/components/sidebars/alarm/alarm.vue';
@@ -49,7 +55,7 @@ const stubs = {
   'widget-settings-group': true,
   'field-title': createInputStub('field-title'),
   'field-periodic-refresh': createInputStub('field-periodic-refresh'),
-  'field-default-sort-column': createInputStub('field-default-sort-column'),
+  'field-default-sort-columns-with-template': createInputStub('field-default-sort-columns-with-template'),
   'field-columns': createInputStub('field-columns'),
   'field-default-elements-per-page': createInputStub('field-default-elements-per-page'),
   'field-opened-resolved-filter': createInputStub('field-opened-resolved-filter'),
@@ -77,7 +83,7 @@ const snapshotStubs = {
   'widget-settings-group': true,
   'field-title': true,
   'field-periodic-refresh': true,
-  'field-default-sort-column': true,
+  'field-default-sort-columns-with-template': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-opened-resolved-filter': true,
@@ -97,12 +103,13 @@ const snapshotStubs = {
   'field-root-cause-settings': true,
   'field-availability-graph-settings': true,
   'field-quick-alarm-actions': true,
+  'field-comment-templates': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
-const selectFieldDefaultSortColumn = wrapper => wrapper.find('input.field-default-sort-column');
+const selectFieldDefaultSortColumnsWithTemplate = wrapper => wrapper.find('input.field-default-sort-columns-with-template');
 const selectFieldWidgetColumns = wrapper => wrapper.findAll('input.field-columns').at(0);
 const selectFieldWidgetGroupColumns = wrapper => wrapper.findAll('input.field-columns').at(1);
 const selectFieldServiceDependenciesColumns = wrapper => wrapper.findAll('input.field-columns').at(2);
@@ -118,6 +125,10 @@ const selectFieldClearFilterDisabled = wrapper => selectSwitcherFieldByTitle(
   'Clear of selected filter allowed',
 );
 const selectFieldHtmlEnabledSwitcher = wrapper => selectSwitcherFieldByTitle(wrapper, 'HTML enabled on timeline');
+const selectFieldOpenExpandPanelByDoubleClickSwitcher = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Open expandable panel on double click alarm',
+);
 const selectFieldAckNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Ack - note field required');
 const selectFieldMultiAckEnabled = wrapper => selectSwitcherFieldByTitle(wrapper, 'Multiple ack');
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
@@ -136,6 +147,10 @@ const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrappe
 const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle(
   wrapper,
   'Actions allowed when state OK',
+);
+const selectFieldKeepSelectedAfterAction = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Keep selected after action',
 );
 const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
   wrapper,
@@ -186,6 +201,7 @@ describe('alarm', () => {
 
   const { templateVarsModule } = createTemplateVarsModule();
   const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+  const { commentTemplateModule } = createCommentTemplateModule();
 
   const widget = {
     ...generateDefaultAlarmListWidget(),
@@ -207,6 +223,7 @@ describe('alarm', () => {
   widget.parameters.moreInfoTemplate = '';
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.alarmSettings,
     config: {
       widget,
@@ -225,6 +242,7 @@ describe('alarm', () => {
     serviceModule,
     infosModule,
     templateVarsModule,
+    commentTemplateModule,
   ]);
 
   const timestamp = 1386435600000;
@@ -402,14 +420,16 @@ describe('alarm', () => {
       },
     });
 
-    const fieldDefaultSortColumn = selectFieldDefaultSortColumn(wrapper);
+    const fieldDefaultSortColumnsWithTemplate = selectFieldDefaultSortColumnsWithTemplate(wrapper);
 
-    const sort = {
-      order: SORT_ORDERS.desc,
-      column: Faker.datatype.string(),
-    };
+    const sort = [
+      {
+        sort_by: Faker.datatype.string(),
+        sort: SORT_ORDERS.desc,
+      },
+    ];
 
-    fieldDefaultSortColumn.triggerCustomEvent('input', sort);
+    fieldDefaultSortColumnsWithTemplate.triggerCustomEvent('input', sort);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -417,7 +437,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'sort', sort),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'sort', formToWidgetSortColumns(sort)),
       },
     });
   });
@@ -637,6 +657,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -687,6 +708,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -970,6 +992,38 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isHtmlEnabledOnTimeLine', isHtmlEnabledOnTimeLine),
+      },
+    });
+  });
+
+  test('Open expandable panel on double click alarm changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldOpenExpandPanelByDoubleClickSwitcher = selectFieldOpenExpandPanelByDoubleClickSwitcher(wrapper);
+
+    const openExpandPanelByDoubleClick = Faker.datatype.boolean();
+
+    fieldOpenExpandPanelByDoubleClickSwitcher.triggerCustomEvent('input', openExpandPanelByDoubleClick);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(
+          widget,
+          'openExpandPanelByDoubleClick',
+          openExpandPanelByDoubleClick,
+        ),
       },
     });
   });
@@ -1356,6 +1410,32 @@ describe('alarm', () => {
     });
   });
 
+  test('Keep selected after action changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const keepSelectedAfterAction = Faker.datatype.boolean();
+
+    selectFieldKeepSelectedAfterAction(wrapper).triggerCustomEvent('input', keepSelectedAfterAction);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'keepSelectedAfterAction', keepSelectedAfterAction),
+      },
+    });
+  });
+
   test('Actions allowed with state ok changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
@@ -1613,6 +1693,7 @@ describe('alarm', () => {
         entityInfoPropertyModule,
         serviceModule,
         templateVarsModule,
+        commentTemplateModule,
         {
           ...authModule,
           getters: {
@@ -1664,7 +1745,7 @@ describe('alarm', () => {
                 viewFilters: [],
                 mainFilter: null,
                 liveReporting: {},
-                sort: { order: SORT_ORDERS.desc, column: 'connector' },
+                sort: [{ sort_by: 'connector', sort: SORT_ORDERS.desc.toLowerCase() }],
                 opened: true,
                 expandGridRangeSize: [1, 11],
                 exportCsvSeparator: 'comma',

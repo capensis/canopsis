@@ -94,7 +94,8 @@ const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
-const selectDefaultInheritedPbehaviorField = wrapper => wrapper.find('.field-switcher');
+const selectDefaultInheritedPbehaviorField = wrapper => wrapper.findAll('.field-switcher').at(0);
+const selectKeepSelectedAfterActionField = wrapper => wrapper.findAll('.field-switcher').at(1);
 
 describe('context', () => {
   const $sidebar = mockSidebar();
@@ -140,6 +141,7 @@ describe('context', () => {
   };
 
   const sidebar = {
+    id: 'test-sidebar-id',
     name: SIDE_BARS.contextSettings,
     config: {
       widget,
@@ -759,6 +761,34 @@ describe('context', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'defaultInheritedPbehavior', defaultInheritedPbehavior),
+      },
+    });
+  });
+
+  test('Keep selected after action changed after trigger keep selected after action switcher', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldKeepSelectedAfterAction = selectKeepSelectedAfterActionField(wrapper);
+
+    const keepSelectedAfterAction = true;
+
+    fieldKeepSelectedAfterAction.triggerCustomEvent('input', keepSelectedAfterAction);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'keepSelectedAfterAction', keepSelectedAfterAction),
       },
     });
   });

@@ -3,6 +3,7 @@ package alarm
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm Store
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -498,7 +499,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 			return nil, err
 		}
 	} else {
-		return nil, nil
+		return nil, cursor.Err()
 	}
 
 	if r.Steps != nil {
@@ -523,10 +524,13 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 			}
 			defer childrenCursor.Close(ctx)
 			if childrenCursor.Next(ctx) {
-				err = childrenCursor.Decode(&children)
-				if err != nil {
+				if err = childrenCursor.Decode(&children); err != nil {
 					return nil, err
 				}
+			}
+
+			if err = childrenCursor.Err(); err != nil {
+				return nil, err
 			}
 
 			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false, userID)
@@ -757,7 +761,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, validation.GetRealFormatTime(r.TimeFormat), location,
+	exportCursor := newExportCursor(cursor, t.Fields, validation.GetRealFormatTime(cmp.Or(r.TimeFormat, validation.DefaultTimeFormat)), location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }
@@ -1649,57 +1653,93 @@ func (s *store) postProcessResult(
 
 func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 	pipeline := make([]bson.M, 0)
+
 	var sortQuery bson.M
-	var firstStepFunc string
 	if steps.Reversed {
 		sortQuery = bson.M{"$sort": bson.M{"step_index": -1}}
-		firstStepFunc = "$last"
 	} else {
 		sortQuery = bson.M{"$sort": bson.M{"step_index": 1}}
-		firstStepFunc = "$first"
 	}
 
 	var cond bson.M
 	if steps.Type == "" {
-		// Remove deprecated steps
+		// Remove deprecated steps.
 		cond = bson.M{"$in": bson.A{"$$this._t", s.alarmStepTypes}}
 	} else {
 		cond = bson.M{"$eq": bson.A{"$$this._t", steps.Type}}
 	}
 
 	pipeline = append(pipeline,
+		// Strip v.steps from data to avoid carrying the full steps array in every
+		// unwound document (O(N) copies of the array for N steps). Embed _id and
+		// step_index directly into each step element via $map+$range so they are
+		// available inside group accumulators without a separate $addFields stage.
 		bson.M{"$project": bson.M{
-			"data":  "$$ROOT",
-			"steps": "$v.steps",
+			"data": bson.M{"$mergeObjects": bson.A{
+				"$$ROOT",
+				bson.M{"v": bson.M{"$unsetField": bson.M{
+					"field": "steps",
+					"input": "$v",
+				}}},
+			}},
+			"steps": bson.M{"$map": bson.M{
+				"input": bson.M{"$range": bson.A{
+					0,
+					bson.M{"$size": bson.M{"$ifNull": bson.A{"$v.steps", bson.A{}}}},
+				}},
+				"as": "i",
+				"in": bson.M{"$mergeObjects": bson.A{
+					bson.M{"$arrayElemAt": bson.A{"$v.steps", "$$i"}},
+					bson.M{"_id": bson.M{"$toString": "$$i"}, "step_index": "$$i"},
+				}},
+			}},
 		}},
 		bson.M{"$unwind": bson.M{
 			"path":                       "$steps",
 			"preserveNullAndEmptyArrays": true,
-			"includeArrayIndex":          "step_index",
 		}},
+		// Promote the embedded step_index to document level so sortQuery and $group
+		// key expressions work identically for both the Group and non-Group paths.
 		bson.M{"$addFields": bson.M{
-			"steps._id": bson.M{"$toString": "$step_index"},
+			"step_index": "$steps.step_index",
 		}},
 	)
+
 	if steps.Group {
+		// Use $min (ascending) or $max (descending) to identify the representative
+		// step_index for each group. This removes the blocking inner $sort stage
+		// that previously ran over all unwound step documents just to enable
+		// $first/$last accumulators.
+		var stepIndexAgg string
+		var nestedStepsSortDir int
+		if steps.Reversed {
+			stepIndexAgg = "$max"
+			nestedStepsSortDir = -1
+		} else {
+			stepIndexAgg = "$min"
+			nestedStepsSortDir = 1
+		}
+
 		pipeline = append(pipeline,
-			bson.M{"$addFields": bson.M{
-				"group": "$steps.dgroup",
-			}},
-			sortQuery,
 			bson.M{"$group": bson.M{
 				"_id": bson.M{
 					"_id": "$_id",
+					// Access dgroup directly from the step; no prior $addFields needed.
 					"group": bson.M{"$cond": bson.M{
-						"if":   "$group",
-						"then": "$group",
+						"if":   "$steps.dgroup",
+						"then": "$steps.dgroup",
 						"else": "$step_index",
 					}},
 				},
-				"data":       bson.M{"$first": "$data"},
-				"group":      bson.M{"$first": "$group"},
-				"step_index": bson.M{firstStepFunc: "$step_index"},
-				"first_step": bson.M{firstStepFunc: "$steps"},
+				"data":  bson.M{"$first": "$data"},
+				"group": bson.M{"$first": "$steps.dgroup"},
+				// Representative step_index for this group (min or max depending on direction).
+				"step_index": bson.M{stepIndexAgg: "$step_index"},
+				// all_steps serves as both the first_step candidate pool and nested_steps.
+				"all_steps": bson.M{"$push": "$steps"},
+				// min_t is the earliest timestamp across all steps in this group;
+				// it is used as the display timestamp of the representative grouped step.
+				"min_t": bson.M{"$min": "$steps.t"},
 				"ticket_step": bson.M{"$push": bson.M{"$cond": bson.M{
 					"if": bson.M{"$or": []bson.M{
 						{"$eq": bson.A{"$steps._t", types.AlarmStepDeclareTicket}},
@@ -1729,11 +1769,18 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 					"then": 1,
 					"else": 0,
 				}}},
-				"nested_steps": bson.M{"$push": "$steps"},
 			}},
+			// Extract first_step by filtering all_steps to the element whose
+			// step_index matches the accumulated representative index. This replaces
+			// the sort-dependent $first/$last approach.
 			bson.M{"$addFields": bson.M{
 				"ticket_step":   bson.M{"$first": "$ticket_step"},
 				"complete_step": bson.M{"$first": "$complete_step"},
+				"first_step": bson.M{"$first": bson.M{"$filter": bson.M{
+					"input": "$all_steps",
+					"as":    "s",
+					"cond":  bson.M{"$eq": bson.A{"$$s.step_index", "$step_index"}},
+				}}},
 			}},
 			bson.M{"$addFields": bson.M{
 				"steps": bson.M{"$cond": bson.M{
@@ -1752,7 +1799,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 										"$ticket_step",
 										bson.M{
 											"_t": AlarmStepDeclareTicketRuleComplete,
-											"t":  "$first_step.t",
+											"t":  "$min_t",
 										},
 									}},
 								},
@@ -1765,7 +1812,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 										"$ticket_step",
 										bson.M{
 											"_t": AlarmStepDeclareTicketRuleFail,
-											"t":  "$first_step.t",
+											"t":  "$min_t",
 										},
 									}},
 								},
@@ -1774,6 +1821,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 								"$first_step",
 								bson.M{
 									"_t": AlarmStepDeclareTicketRuleInProgress,
+									"t":  "$min_t",
 								},
 							}},
 						}},
@@ -1784,7 +1832,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 									"then": bson.M{"$mergeObjects": bson.A{
 										"$ticket_step",
 										bson.M{
-											"t": "$first_step.t",
+											"t": "$min_t",
 										},
 									}},
 								},
@@ -1793,7 +1841,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 									"then": bson.M{"$mergeObjects": bson.A{
 										"$complete_step",
 										bson.M{
-											"t": "$first_step.t",
+											"t": "$min_t",
 										},
 									}},
 								},
@@ -1802,6 +1850,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 								"$first_step",
 								bson.M{
 									"_t": AlarmStepWebhookInProgress,
+									"t":  "$min_t",
 								},
 							}},
 						}},
@@ -1814,8 +1863,12 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 					"then": bson.M{"$mergeObjects": bson.A{
 						"$steps",
 						bson.M{
-							"steps": "$nested_steps",
-							"_id":   "$group",
+							// Sort nested steps to match the outer display order.
+							"steps": bson.M{"$sortArray": bson.M{
+								"input":  "$all_steps",
+								"sortBy": bson.M{"step_index": nestedStepsSortDir},
+							}},
+							"_id": "$group",
 						},
 					}},
 					"else": "$steps",

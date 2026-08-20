@@ -3,6 +3,7 @@ export const MODALS = {
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
+  removeAssociatedTicketEvent: 'remove-associated-ticket-event',
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -34,6 +35,9 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createBroadcastMessage: 'create-broadcast-message',
+  createCommentTemplate: 'create-comment-template',
+  createAnomalyMonitoredConnector: 'create-anomaly-monitored-connector',
+  anomalyMonitoredConnectorHistory: 'anomaly-monitored-connector-history',
   createEventFilter: 'create-event-filter',
   createMetaAlarmRule: 'create-meta-alarm-rule',
   createPattern: 'create-pattern',
@@ -67,6 +71,7 @@ export const MODALS = {
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
+  createTicketStatusJob: 'create-ticket-status-job',
   executeRemediationInstruction: 'execute-remediation-instruction',
   executeRemediationSimpleInstruction: 'execute-remediation-simple-instruction',
   pbehaviorPatterns: 'pbehavior-patterns',
@@ -97,6 +102,9 @@ export const MODALS = {
 
   createLinkRule: 'create-link-rule',
 
+  createLlm: 'create-llm',
+  aiChatHistory: 'ai-chat-history',
+
   createMaintenance: 'create-maintenance',
 
   createTag: 'create-tag',
@@ -105,10 +113,12 @@ export const MODALS = {
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
   entitiesRootCauseDiagram: 'entities-root-cause-diagram',
+  entityUpstream: 'entity-upstream',
   createEntityInfoProperty: 'create-entity-info-property',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
+  entitiesComparison: 'entities-comparison',
 
   createTheme: 'create-theme',
 

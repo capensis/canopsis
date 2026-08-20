@@ -132,7 +132,7 @@ describe('groups-side-bar', () => {
     });
     expect(fetchGroupsList).toBeCalled();
 
-    expect($popups.success).toBeCalledWith({ text: 'The groups was reordered' });
+    expect($popups.success).toHaveBeenCalledWith({ text: 'The groups was reordered' });
   });
 
   it('Error popup showed after trigger submit button with error', async () => {
@@ -160,7 +160,7 @@ describe('groups-side-bar', () => {
     await flushPromises();
 
     expect(updateViewsPositions).toBeCalled();
-    expect($popups.error).toBeCalledWith({ text: 'Several groups wasn\'t reordered' });
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Several groups wasn\'t reordered' });
   });
 
   it('Cancel groups order after trigger cancel button', async () => {

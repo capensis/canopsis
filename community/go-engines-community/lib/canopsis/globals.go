@@ -28,6 +28,7 @@ const (
 	RemediationEngineName  = "engine-remediation"
 	SnmpEngineName         = "engine-snmp"
 	WebhookEngineName      = "engine-webhook"
+	RecorderName           = "recorder"
 )
 
 // Internal connectors
@@ -69,10 +70,11 @@ const (
 	AxeDynamicInfosRPCClientQueueName = AxeQueuePrefix + "_dynamic_infos_rpc_client"
 	AxeRPCQueueServerName             = AxeQueuePrefix + "_rpc_server"
 
-	CheQueuePrefix       = "Engine_che"
-	CheExternalQueueName = CheQueuePrefix + "_external"
-	CheSystemQueueName   = CheQueuePrefix + "_system"
-	CheUserQueueName     = CheQueuePrefix + "_user"
+	CheQueuePrefix               = "Engine_che"
+	CheExternalQueueName         = CheQueuePrefix + "_external"
+	CheSystemQueueName           = CheQueuePrefix + "_system"
+	CheUserQueueName             = CheQueuePrefix + "_user"
+	CheWebhookRPCClientQueueName = CheQueuePrefix + "_webhook_rpc_client"
 
 	CorrelationQueuePrefix           = "Engine_correlation"
 	CorrelationExternalQueueName     = CorrelationQueuePrefix + "_external"
@@ -86,8 +88,9 @@ const (
 	DynamicInfosUserQueueName      = DynamicInfosQueuePrefix + "_user"
 	DynamicInfosRPCQueueServerName = DynamicInfosQueuePrefix + "_rpc_server"
 
-	FIFOQueueName    = "Engine_fifo"
-	FIFOAckQueueName = "FIFO_ack"
+	FIFOQueueName                 = "Engine_fifo"
+	FIFOAckQueueName              = "FIFO_ack"
+	FIFOWebhookRPCClientQueueName = "Engine_fifo_webhook_rpc_client"
 
 	PBehaviorRPCQueueServerName = "Engine_pbehavior_rpc_server"
 	PBehaviorQueueRecomputeName = "Engine_pbehavior_recompute"
@@ -115,6 +118,7 @@ const (
 	CheExternalConsumerName = "che_external"
 	CheSystemConsumerName   = "che_system"
 	CheUserConsumerName     = "che_user"
+	CheRPCConsumerName      = "che_rpc"
 
 	CorrelationExternalConsumerName = "correlation_external"
 	CorrelationSystemConsumerName   = "correlation_system"
@@ -128,9 +132,13 @@ const (
 
 	FIFOConsumerName    = "fifo"
 	FIFOAckConsumerName = "fifo_ack"
+	FIFORPCConsumerName = "fifo_rpc"
 
 	PBehaviorRPCConsumerName = "pbehavior_rpc"
 	PBehaviorConsumerName    = "pbehavior"
+
+	RecorderConsumerName    = "recorder"
+	RecorderRPCConsumerName = "recorder_rpc"
 
 	RemediationRPCConsumerName = "remediation_rpc"
 
@@ -142,12 +150,11 @@ const (
 	DefaultBulkSize      = 1000
 	DefaultBulkBytesSize = 16000000 // < MongoDB limit (16 megabytes)
 
+	DefaultAMQPPublishPoolSize = 20
+
 	DefaultEventAuthor = "system"
 
 	JsonContentType = "application/json"
-
-	RecorderConsumerName    = "recorder"
-	RecorderRPCConsumerName = "recorder_rpc"
 
 	PeriodicalWaitTime       = time.Minute
 	TechMetricsFlushInterval = time.Second * 10

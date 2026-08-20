@@ -31,7 +31,6 @@ import * as sidebarsComponents from '@/components/sidebars';
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
-
   Vue.use(VueFullScreen);
 
   Vue.use(VueMq, {
@@ -57,8 +56,10 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createWidgetTemplate]: { maxWidth: 920 },
       [MODALS.alarmsList]: { maxWidth: '95%' },
       [MODALS.entitiesList]: { maxWidth: '95%' },
+      [MODALS.entitiesComparison]: { maxWidth: 1100 },
       [MODALS.createFilter]: { maxWidth: 1100 },
-      [MODALS.textEditor]: { maxWidth: 700, persistent: true },
+      [MODALS.textEditor]: { maxWidth: 900, persistent: true },
+      [MODALS.textEditorWithTemplate]: { maxWidth: 900, persistent: true },
       [MODALS.addInfoPopup]: { maxWidth: 700, persistent: true },
       [MODALS.serviceEntities]: { maxWidth: 920 },
       [MODALS.serviceDependencies]: { maxWidth: 1100 },
@@ -69,6 +70,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', persistent: true },
       [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
       [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+      [MODALS.createTicketStatusJob]: { maxWidth: 1200 },
       [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
       [MODALS.executeRemediationInstruction]: { maxWidth: 960 },
       [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
@@ -91,10 +93,12 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createFlowchartMap]: { maxWidth: 1600 },
       [MODALS.entityDependenciesList]: { maxWidth: 1600 },
       [MODALS.entitiesRootCauseDiagram]: { maxWidth: 1600 },
+      [MODALS.entityUpstream]: { maxWidth: 1600 },
       [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
       [MODALS.createLinkRule]: { maxWidth: 920 },
+      [MODALS.anomalyMonitoredConnectorHistory]: { maxWidth: 1400 },
       [MODALS.createAlarmChart]: { maxWidth: 500 },
       [MODALS.createTag]: { maxWidth: 920 },
       [MODALS.createStateSetting]: { maxWidth: 960 },
@@ -106,6 +110,8 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true },
       [MODALS.createTheme]: { maxWidth: 500 },
       [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
+      [MODALS.createLlm]: { maxWidth: 920 },
+      [MODALS.aiChatHistory]: { maxWidth: 700 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

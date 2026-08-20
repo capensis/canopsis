@@ -24,8 +24,11 @@
 </template>
 
 <script>
-import { computed, ref, toRef, onMounted } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
+import { TEMPLATE_TESTING_TEST_VARIABLES_TABS } from '@/constants';
+
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
@@ -55,9 +58,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const activeTab = ref(0);
+    const activeTab = ref(TEMPLATE_TESTING_TEST_VARIABLES_TABS.general);
 
-    const isActiveTestingTab = computed(() => activeTab.value === 1);
+    const isActiveTestingTab = computed(
+      () => activeTab.value === TEMPLATE_TESTING_TEST_VARIABLES_TABS.testVariables,
+    );
 
     const {
       vars: copyVars,
@@ -84,6 +89,8 @@ export default {
     } = useTestVariablesTabData(props, toRef(props, 'type'), emit);
 
     const pending = computed(() => templateVarsPending.value || copyVarsPending.value);
+
+    useAiChatExpand({ activeTab, neededTab: TEMPLATE_TESTING_TEST_VARIABLES_TABS.general });
 
     onMounted(() => {
       fetchCopyVarsList();

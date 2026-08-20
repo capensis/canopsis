@@ -118,7 +118,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_name": "test name",
 						},
@@ -139,7 +139,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_name": "test another name",
 						},
@@ -175,7 +175,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_name": 2,
 						},
@@ -209,7 +209,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_name": 0,
 						},
@@ -229,7 +229,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_another_name": 0,
 						},
@@ -249,7 +249,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_another_name": 0,
 						},
@@ -269,7 +269,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Infos: map[string]map[string]interface{}{
+					Infos: map[string]map[string]any{
 						"rule1": {
 							"info_name": 0,
 						},
@@ -339,6 +339,50 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 				},
 			},
 			matchResult: false,
+		},
+		"given exist failed_ticket condition and existing failed_ticket should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.failed_ticket",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					FailedTicket: &types.AlarmStep{},
+				},
+			},
+			matchResult: true,
+		},
+		"given exist failed_ticket condition and missing failed_ticket should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.failed_ticket",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: false,
+		},
+		"given not exist failed_ticket condition and missing failed_ticket should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.failed_ticket",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: true,
 		},
 		"given not exist v.output condition should match": {
 			pattern: pattern.Alarm{
@@ -854,7 +898,7 @@ func BenchmarkMatchAlarmPattern_Infos_Equal(b *testing.B) {
 	}
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
-			Infos: map[string]map[string]interface{}{
+			Infos: map[string]map[string]any{
 				"rule1": {
 					"test": "test",
 				},
@@ -877,7 +921,7 @@ func BenchmarkMatchAlarmPattern_Infos_Regexp(b *testing.B) {
 	}
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
-			Infos: map[string]map[string]interface{}{
+			Infos: map[string]map[string]any{
 				"rule1": {
 					"test": "test",
 				},
@@ -933,7 +977,7 @@ func BenchmarkMatchAlarmPattern_UnmarshalBson_Infos_Equal(b *testing.B) {
 	}
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
-			Infos: map[string]map[string]interface{}{
+			Infos: map[string]map[string]any{
 				"rule1": {
 					"test": "test",
 				},
@@ -955,7 +999,7 @@ func BenchmarkMatchAlarmPattern_UnmarshalBson_Infos_Regexp(b *testing.B) {
 	}
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
-			Infos: map[string]map[string]interface{}{
+			Infos: map[string]map[string]any{
 				"rule1": {
 					"test": "test",
 				},

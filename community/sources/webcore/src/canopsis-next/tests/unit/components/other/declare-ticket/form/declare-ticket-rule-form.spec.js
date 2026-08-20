@@ -6,6 +6,7 @@ import { USER_PERMISSIONS } from '@/constants';
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 
 const stubs = {
+  'c-enabled-field': true,
   'declare-ticket-rule-general-form': true,
   'declare-ticket-rule-patterns-form': true,
   'declare-ticket-rule-test-query': true,

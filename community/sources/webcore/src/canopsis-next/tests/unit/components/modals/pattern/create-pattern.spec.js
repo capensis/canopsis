@@ -1,7 +1,9 @@
 import Faker from 'faker';
+import { merge } from 'lodash';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -30,27 +32,51 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectPatternForm = wrapper => wrapper
   .find('pattern-form-stub');
 
-describe('create-pattern', () => {
-  const $modals = mockModals();
-  const $popups = mockPopups();
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
 
-  const factory = generateShallowRenderer(CreatePattern, {
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
+describe('create-pattern', () => {
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
+  const $popups = mockPopups();
+  const $sidebar = mockSidebar();
+
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
+
+  const shallowCreatePattern = generateShallowRenderer(CreatePattern, {
     stubs,
+    store,
     attachTo: document.body,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
   });
-  const snapshotFactory = generateRenderer(CreatePattern, {
+  const factory = (options = {}) => shallowCreatePattern(withModalInject(options));
+
+  const renderCreatePattern = generateRenderer(CreatePattern, {
     stubs: snapshotStubs,
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
+    store,
   });
+  const snapshotFactory = (options = {}) => renderCreatePattern(withModalInject(options));
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
@@ -64,6 +90,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -71,13 +98,14 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       title: '',
       is_corporate: false,
       type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
     });
-    expect($modals.hide).toBeCalledWith();
+
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -92,6 +120,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -126,6 +155,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -133,7 +163,7 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -153,6 +183,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -163,13 +194,14 @@ describe('create-pattern', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       title: '',
       is_corporate: false,
       type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
     });
-    expect($modals.hide).not.toBeCalledWith();
+
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -199,6 +231,7 @@ describe('create-pattern', () => {
       mocks: {
         $modals,
         $popups,
+        $sidebar,
       },
     });
 
@@ -206,17 +239,18 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       entity_pattern: customPattern.entity_pattern,
       is_corporate: customPattern.is_corporate,
       type: customPattern.type,
       title: customPattern.title,
     });
-    expect($modals.hide).not.toBeCalledWith();
+
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -238,6 +272,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -253,12 +288,12 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
+    expect(action).toHaveBeenCalledWith({
       type: newForm.type,
       name: newForm.name,
       [expectedField]: [],
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -270,6 +305,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -277,7 +313,7 @@ describe('create-pattern', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toBeCalledWith(wrapper.props().modal);
   });
 
   test('Renders `create-pattern` with empty modal', () => {
@@ -289,6 +325,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -314,6 +351,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
@@ -332,6 +370,7 @@ describe('create-pattern', () => {
       },
       mocks: {
         $modals,
+        $sidebar,
       },
     });
 
