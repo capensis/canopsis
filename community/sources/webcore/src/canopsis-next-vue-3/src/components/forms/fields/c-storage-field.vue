@@ -4,7 +4,7 @@
       <c-text-field
         :model-value="modelValue"
         :disabled="disabled"
-        :required="!disabled"
+        :required="isRequired"
         :name="name"
         class="mt-0 pt-0"
         readonly
@@ -26,23 +26,29 @@
       <c-text-field
         :model-value="modelValue"
         :disabled="disabled"
-        :required="!disabled"
+        :required="isRequired"
         :name="name"
         class="d-none"
+        hide-details
       />
-      <v-btn
+      <c-btn-with-error
+        :error="errorMessage"
         :disabled="disabled"
-        color="primary"
         class="ml-0"
         @click="$emit('add')"
       >
-        {{ $t('common.add') }}
-      </v-btn>
+        {{ t('common.add') }}
+      </c-btn-with-error>
     </template>
   </c-layout>
 </template>
 
 <script>
+import { computed, toRef } from 'vue';
+
+import { useFieldError } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     modelValue: {
@@ -53,6 +59,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       default: 'storage',
@@ -60,5 +70,18 @@ export default {
   },
 
   emits: ['update:modelValue', 'edit', 'remove', 'add'],
+
+  setup(props) {
+    const { t } = useI18n();
+    const fieldError = useFieldError(toRef(props, 'name'));
+    const errorMessage = computed(() => fieldError.value || '');
+    const isRequired = computed(() => props.required && !props.disabled);
+
+    return {
+      t,
+      errorMessage,
+      isRequired,
+    };
+  },
 };
 </script>

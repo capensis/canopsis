@@ -8,6 +8,7 @@
       :model-value="modelValue"
       :required="required"
       :disabled="disabled"
+      :name="name"
       @add="$emit('add')"
       @edit="$emit('edit', $event)"
       @remove="$emit('remove')"
@@ -36,7 +37,11 @@ export default {
     },
     required: {
       type: Boolean,
-      default: false,
+      default: true,
+    },
+    name: {
+      type: String,
+      default: 'parameters.directory',
     },
   },
 
