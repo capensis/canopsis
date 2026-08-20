@@ -6,7 +6,7 @@ export default {
      * VIEWS PERMISSIONS
      */
     [USER_VIEWS_PERMISSIONS.viewActions]: 'Vue : actions',
-    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'Vue : général',
+    [USER_VIEWS_PERMISSIONS.viewGeneral]: 'Vue : autre',
 
     /**
      * GROUPS
@@ -61,11 +61,15 @@ export default {
     [USER_PERMISSIONS_GROUPS.apiRules]: 'Règles',
     [USER_PERMISSIONS_GROUPS.apiRemediation]: 'Remédiation',
     [USER_PERMISSIONS_GROUPS.apiPlanning]: 'Planification',
+    [USER_PERMISSIONS_GROUPS.apiLlmChat]: 'Chat LLM',
     [USER_PERMISSIONS_GROUPS.technical]: 'Technique',
     [USER_PERMISSIONS_GROUPS.technicalAdmin]: 'Admin',
     [USER_PERMISSIONS_GROUPS.technicalAdminCommunication]: 'Communication',
-    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Général',
+    [USER_PERMISSIONS_GROUPS.technicalAdminGeneral]: 'Autre',
     [USER_PERMISSIONS_GROUPS.technicalAdminAccess]: 'Accès',
+    [USER_PERMISSIONS_GROUPS.technicalAdminMaintenance]: '@:common.maintenance',
+    [USER_PERMISSIONS_GROUPS.technicalAdminCustomObjects]: '@:layout.topbar.customObjects',
+    [USER_PERMISSIONS_GROUPS.technicalAdminSettings]: '@:common.settings',
     [USER_PERMISSIONS_GROUPS.technicalExploitation]: 'Exploitation',
     [USER_PERMISSIONS_GROUPS.technicalNotification]: 'Notifications',
     [USER_PERMISSIONS_GROUPS.technicalViewsandwidgets]: 'Vues et widgets',
@@ -89,6 +93,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Mettre en veille',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Déclarer un ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associer un ticket',
+    [USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket]: 'Désassocier le ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.cancel]: 'Annuler l\'alarme',
     [USER_PERMISSIONS.business.alarmsList.actions.unCancel]: 'Annuler la suppression de l\'alarme',
     [USER_PERMISSIONS.business.alarmsList.actions.fastCancel]: 'Annuler rapidement l\'alarme',
@@ -231,31 +236,32 @@ export default {
     [USER_PERMISSIONS.technical.eventsRecord]: 'Enregistrements d\'événements',
     [USER_PERMISSIONS.technical.healthcheck]: 'Bilan de santé',
     [USER_PERMISSIONS.technical.healthcheckStatus]: 'Statut du bilan de santé',
-    [USER_PERMISSIONS.technical.icon]: 'Paramètres - icônes',
+    [USER_PERMISSIONS.technical.icon]: 'Icônes',
     [USER_PERMISSIONS.technical.kpi]: 'Graphiques KPI',
     [USER_PERMISSIONS.technical.kpiCollectionSettings]: 'Paramètres de collecte des KPI',
     [USER_PERMISSIONS.technical.kpiFilters]: 'Filtres KPI',
     [USER_PERMISSIONS.technical.kpiRatingSettings]: 'Paramètres de notation des KPI',
     [USER_PERMISSIONS.technical.maintenance]: 'Mode maintenance',
     [USER_PERMISSIONS.technical.map]: 'Cartographie',
-    [USER_PERMISSIONS.technical.parameters]: 'Paramètres - onglet paramètres',
+    [USER_PERMISSIONS.technical.parameters]: 'Interface utilisateur',
     [USER_PERMISSIONS.technical.planningExceptions]: 'Dates d\'exceptions de comportement périodique',
     [USER_PERMISSIONS.technical.planningReason]: 'Raisons de comportement périodique',
     [USER_PERMISSIONS.technical.planningType]: 'Type de comportement périodique',
-    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Consignes - onglet consignes',
-    [USER_PERMISSIONS.technical.remediationInstruction]: 'Consignes - onglet instructions',
-    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Consignes - approuver',
-    [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
-    [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
-    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
-    [USER_PERMISSIONS.technical.stateSetting]: 'Paramètres de calcul d\'état/sévérité',
-    [USER_PERMISSIONS.technical.storageSettings]: 'Paramètres de stockage',
+    [USER_PERMISSIONS.technical.stateSetting]: 'État',
+    [USER_PERMISSIONS.technical.storageSettings]: 'Stockage',
     [USER_PERMISSIONS.technical.tag]: 'Gestion des tags',
     [USER_PERMISSIONS.technical.techmetrics]: 'Bilan de santé - métriques des moteurs',
-    [USER_PERMISSIONS.technical.widgetTemplate]: 'Paramètres - modèles de widgets',
-    [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
+    [USER_PERMISSIONS.technical.widgetTemplate]: 'Modèles de widget',
+    [USER_PERMISSIONS.technical.viewImportExport]: 'Import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
+    [USER_PERMISSIONS.technical.templateData]: 'Données de modèle',
     [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
+    [USER_PERMISSIONS.technical.jobManagement]: 'Jobs',
+    [USER_PERMISSIONS.technical.commentTemplate]: 'Modèles de commentaires',
+    [USER_PERMISSIONS.technical.externalDataTable]: 'Données externes',
+    [USER_PERMISSIONS.technical.entityInfoProperty]: 'Informations d\'entité',
+    [USER_PERMISSIONS.technical.llm]: 'LLMs',
+    [USER_PERMISSIONS.technical.anomalyMonitoredConnector]: 'Connecteurs surveillés pour anomalies',
 
     /**
      * Technical Admin Access
@@ -267,6 +273,12 @@ export default {
     /**
      * Technical Admin Exploitation
      */
+    [USER_PERMISSIONS.technical.exploitation.remediationConfiguration]: 'Consignes - onglet consignes',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstruction]: 'Consignes - onglet instructions',
+    [USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove]: 'Consignes - approuver',
+    [USER_PERMISSIONS.technical.exploitation.remediationJob]: 'Consignes - onglet tâches',
+    [USER_PERMISSIONS.technical.exploitation.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
+    [USER_PERMISSIONS.technical.exploitation.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Règles de déclaration de ticket',
     [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Règles d\'informations dynamiques',
     [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Filtres d\'événements',
@@ -278,13 +290,11 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Règles de résolution',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scénarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
-    [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
-    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Informations d\'entité',
 
     /**
-     * Technical Admin Notification
-     */
-    [USER_PERMISSIONS.technical.notification.common]: 'Paramètres - paramètres de notification',
+    * Technical Admin Notification
+    */
+    [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
      * Technical Admin Views and widgets
@@ -312,6 +322,7 @@ export default {
     [USER_PERMISSIONS.api.general.alarmUpdate]: 'Mettre à jour les alarmes',
     [USER_PERMISSIONS.api.general.associativeTable]: 'Tables associatives',
     [USER_PERMISSIONS.api.general.broadcastMessage]: 'Message de diffusion',
+    [USER_PERMISSIONS.api.general.commentTemplate]: 'Modèles de commentaires',
     [USER_PERMISSIONS.api.general.theme]: 'Gérer les thèmes',
     [USER_PERMISSIONS.api.general.contextgraph]: 'Importn de référentiels',
     [USER_PERMISSIONS.api.general.corporatePattern]: 'Patterns partagés',
@@ -323,11 +334,13 @@ export default {
     [USER_PERMISSIONS.api.general.entityservice]: 'Entités de type Service',
     [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Propriétés d\'informations des entités',
     [USER_PERMISSIONS.api.general.event]: 'Événements',
+    [USER_PERMISSIONS.api.general.externalDataTable]: 'Tables de données externes',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Exporter les configurations',
     [USER_PERMISSIONS.api.general.files]: 'Fichiers',
     [USER_PERMISSIONS.api.general.healthcheck]: 'Bilan de santé',
     [USER_PERMISSIONS.api.general.icon]: 'Icônes',
     [USER_PERMISSIONS.api.general.junit]: 'JUnit',
+    [USER_PERMISSIONS.api.general.llmConfig]: 'Configuration LLM',
     [USER_PERMISSIONS.api.general.kpiFilter]: 'Filtres KPI',
     [USER_PERMISSIONS.api.general.launchEventRecording]: 'Lancer l\'enregistrement des événements',
     [USER_PERMISSIONS.api.general.maintenance]: 'Mode maintenance',
@@ -343,6 +356,7 @@ export default {
     [USER_PERMISSIONS.api.general.shareToken]: 'Partager les jetons',
     [USER_PERMISSIONS.api.general.stateSettings]: 'Paramètres d\'état/sévérité',
     [USER_PERMISSIONS.api.general.techmetrics]: 'Métriques techniques',
+    [USER_PERMISSIONS.api.general.ticketStatusJobManagement]: 'Gestion des tâches de statut de ticket',
     [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Paramètres des métriques techniques',
     [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Supprimer l\'interface utilisateur',
     [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Mettre à jour l\'interface utilisateur',
@@ -350,6 +364,7 @@ export default {
     [USER_PERMISSIONS.api.general.viewgroup]: 'Groupes de vues',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Modèles de widgets',
     [USER_PERMISSIONS.api.general.templateData]: 'Données de modèle',
+    [USER_PERMISSIONS.api.general.anomalyMonitoredConnector]: 'Connecteurs surveillés pour anomalies',
 
     /**
      * API Permissions Rules
@@ -366,6 +381,7 @@ export default {
     [USER_PERMISSIONS.api.rules.resolveRule]: 'Règles de résolution',
     [USER_PERMISSIONS.api.rules.snmpRule]: 'Règles SNMP',
     [USER_PERMISSIONS.api.rules.snmpMib]: 'MIB SNMP',
+    [USER_PERMISSIONS.api.rules.webhookTokenRule]: 'Règles de jetons webhook',
 
     /**
      * API Permissions Remediation

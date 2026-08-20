@@ -74,6 +74,56 @@ func getTranslations() map[string]map[string]string {
 			types.LocaleEn: "The field",
 			types.LocaleFr: "Le champ",
 		},
+		"meta_alarm_rule": {
+			types.LocaleEn: "meta alarm rule",
+			types.LocaleFr: "règle de méta-alarme",
+		},
+		"category": {
+			types.LocaleEn: "category",
+			types.LocaleFr: "catégorie",
+		},
+		"pbehavior": {
+			types.LocaleEn: "pbehavior",
+			types.LocaleFr: "comportement périodique",
+		},
+		"pbehavior_type": {
+			types.LocaleEn: "pbehavior type",
+			types.LocaleFr: "type de comportement périodique",
+		},
+		"pbehavior_reason": {
+			types.LocaleEn: "pbehavior reason",
+			types.LocaleFr: "raison de comportement périodique",
+		},
+
+		// LLM
+		"llm_pattern_empty_group": {
+			types.LocaleEn: "Empty group in {0}.",
+			types.LocaleFr: "Groupe vide dans {0}.",
+		},
+		"llm_pattern_unsupported_field": {
+			types.LocaleEn: "The field '{0}' ({1}) doesn't exist.",
+			types.LocaleFr: "Le champ '{0}' ({1}) n'existe pas.",
+		},
+		"llm_pattern_forbidden_field": {
+			types.LocaleEn: "The field '{0}' is a forbidden {1} in the {2} context.",
+			types.LocaleFr: "Le champ '{0}' est un {1} interdit dans le contexte {2}.",
+		},
+		"llm_pattern_unsupported_cond": {
+			types.LocaleEn: "The '{0}' condition is not allowed for the '{1}' field in {2}.",
+			types.LocaleFr: "La condition '{0}' n'est pas autorisée pour le champ '{1}' dans {2}.",
+		},
+		"llm_pattern_wrong_cond_val": {
+			types.LocaleEn: "Wrong condition value for the field '{0}' in {1}.",
+			types.LocaleFr: "Valeur de condition incorrecte pour le champ '{0}' dans {1}.",
+		},
+		"llm_pattern_unsupported_field_type": {
+			types.LocaleEn: "The '{0}' field type is not allowed for the '{1}' field in {2}.",
+			types.LocaleFr: "Le type de champ '{0}' n'est pas autorisé pour le champ '{1}' dans {2}.",
+		},
+		"llm_pattern_name_not_exist": {
+			types.LocaleEn: "{0} '{1}' ({2}) doesn't exist.",
+			types.LocaleFr: "{0} '{1}' ({2}) n'existe pas.",
+		},
 	}
 }
 
@@ -127,6 +177,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} est un champ obligatoire",
 			},
 		},
+		"required_closed_mapping": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must contain a closed status mapping",
+				types.LocaleFr: "{0} doit contenir un mapping de statut fermé",
+			},
+		},
 		"required_not_both": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} is an excluded field",
@@ -175,6 +231,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit être un modèle d'entité valide",
 			},
 		},
+		"negative_entity_pattern": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid negative entity pattern",
+				types.LocaleFr: "{0} doit être un modèle d'entité négatif valide",
+			},
+		},
 		"pbehavior_pattern": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid pbehavior pattern",
@@ -191,6 +253,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid weather service pattern",
 				types.LocaleFr: "{0} doit être un modèle de météo de service valide",
+			},
+		},
+		"search_pattern": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid search pattern",
+				types.LocaleFr: "{0} doit être un modèle de recherche valide",
 			},
 		},
 		"id": {
@@ -409,10 +477,22 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit contenir toutes les colonnes [{1}]",
 			},
 		},
+		"reservedcols": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains reserved columns [{1}]",
+				types.LocaleFr: "{0} contient des colonnes réservées [{1}]",
+			},
+		},
 		"invalidpayload": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a payload that cannot be executed",
 				types.LocaleFr: "{0} contient une charge utile qui ne peut pas être exécutée",
+			},
+		},
+		"pbh_type_not_pause": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be of type pause",
+				types.LocaleFr: "{0} doit être de type pause",
 			},
 		},
 	}

@@ -68,6 +68,12 @@ type Config struct {
 	EntityInfosLog struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"entity_infos_log" json:"entity_infos_log"`
+	ConnectorAnomalies struct {
+		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"connector_anomalies" json:"connector_anomalies"`
+	LLMChat struct {
+		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"llm_chat" json:"llm_chat"`
 }
 
 type HistoryWithCount struct {

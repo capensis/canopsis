@@ -320,18 +320,12 @@ export default {
         });
       }
 
-      if (request.auth) {
+      if (request.auth?.username) {
         result.push(
           {
             icon: 'person',
             label: this.$t('common.username'),
             value: request.auth.username,
-            flexClass: 'xs6',
-          },
-          {
-            icon: 'lock',
-            label: this.$t('common.password'),
-            value: request.auth.password,
             flexClass: 'xs6',
           },
         );

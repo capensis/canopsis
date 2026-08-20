@@ -5,9 +5,13 @@
       :pending="pbehaviorExceptionsPending"
       :total-items="pbehaviorExceptionsMeta.total_count"
       :options.sync="options"
+      :removable="hasDeleteAnyPbehaviorExceptionAccess"
+      :updatable="hasUpdateAnyPbehaviorExceptionAccess"
+      :active="active"
       @remove-selected="showRemoveSelectedPbehaviorExceptionModal"
       @remove="showRemovePbehaviorExceptionModal"
       @edit="showEditPbehaviorExceptionModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>
@@ -28,6 +32,12 @@ export default {
     entitiesPbehaviorExceptionMixin,
     permissionsTechnicalPbehaviorExceptionsMixin,
   ],
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
   mounted() {
     this.fetchList();
   },
@@ -35,6 +45,7 @@ export default {
     fetchList() {
       const params = this.getQuery();
       params.with_flags = true;
+      params.with_hidden = true;
 
       this.fetchPbehaviorExceptionsList({ params });
     },
@@ -59,7 +70,8 @@ export default {
               data: newPbehaviorException,
               id: pbehaviorException._id,
             });
-            await this.fetchList();
+
+            return this.fetchList();
           },
         },
       });
@@ -71,7 +83,8 @@ export default {
         config: {
           action: async () => {
             await this.tryRemovePbehaviorException(pbehaviorExceptionId);
-            await this.fetchList();
+
+            return this.fetchList();
           },
         },
       });
@@ -84,7 +97,7 @@ export default {
           action: async () => {
             await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorException(id)));
 
-            await this.fetchList();
+            return this.fetchList();
           },
         },
       });

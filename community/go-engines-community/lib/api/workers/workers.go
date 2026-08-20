@@ -2,7 +2,6 @@ package workers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 
@@ -13,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"golang.org/x/sync/errgroup"
 )
 
 type JobPublisher interface {
@@ -27,97 +25,82 @@ type Job struct {
 	Type string `json:"type"`
 }
 
-func NewRunner(amqpConn libamqp.Connection, logger zerolog.Logger) *Runner {
+func NewRunner(amqpChannelPool libamqp.ChannelPool, prefetchCount, prefetchSize int, logger zerolog.Logger) *Runner {
 	return &Runner{
-		amqpConn:     amqpConn,
-		queue:        canopsis.ApiWorkersQueueName,
-		decoder:      json.NewDecoder(),
-		workers:      10,
-		jobExecutors: make(map[string]JobExecutor),
-		logger:       logger,
+		amqpChannelPool: amqpChannelPool,
+		queue:           canopsis.ApiWorkersQueueName,
+		prefetchCount:   prefetchCount,
+		prefetchSize:    prefetchSize,
+		decoder:         json.NewDecoder(),
+		workers:         10,
+		jobExecutors:    make(map[string]JobExecutor),
+		logger:          logger,
 	}
 }
 
 type Runner struct {
-	amqpConn       libamqp.Connection
-	queue          string
-	decoder        encoding.Decoder
-	workers        int
-	jobExecutorsMx sync.RWMutex
-	jobExecutors   map[string]JobExecutor
-	logger         zerolog.Logger
+	amqpChannelPool libamqp.ChannelPool
+	queue           string
+	prefetchCount   int
+	prefetchSize    int
+	decoder         encoding.Decoder
+	workers         int
+	jobExecutorsMx  sync.RWMutex
+	jobExecutors    map[string]JobExecutor
+	logger          zerolog.Logger
 }
 
 func (r *Runner) Run(ctx context.Context) error {
-	amqpConsumer, err := r.amqpConn.Channel()
-	if err != nil {
-		return fmt.Errorf("cannot create rmq channel: %w", err)
-	}
-
-	defer amqpConsumer.Close()
-	// check if queue exists because Consume method doesn't return appropriate error
-	_, err = amqpConsumer.QueueInspect(r.queue)
+	ch, err := r.amqpChannelPool.Get(ctx)
 	if err != nil {
 		return err
 	}
 
-	ch, err := amqpConsumer.Consume(r.queue, "", false, false, false, false, nil)
+	defer r.amqpChannelPool.Put(ch)
+
+	// check if queue exists because Consume method doesn't return appropriate error
+	_, err = ch.QueueDeclarePassive(ctx, r.queue, false, false, false, false, nil)
 	if err != nil {
-		return fmt.Errorf("failed to consume jobs: %w", err)
+		return err
 	}
 
-	g, ctx := errgroup.WithContext(ctx)
-	for i := 0; i < r.workers; i++ {
-		g.Go(func() error {
-			var err error
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case msg, ok := <-ch:
-					if !ok {
-						return errors.New("channel closed")
-					}
-
-					r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
-					job := Job{}
-					err = r.decoder.Decode(msg.Body, &job)
-					if err != nil {
-						r.logger.Err(err).Msg("failed to decode job")
-						continue
-					}
-
-					r.jobExecutorsMx.RLock()
-					e, ok := r.jobExecutors[job.Type]
-					r.jobExecutorsMx.RUnlock()
-					if !ok {
-						r.logger.Warn().Str("type", job.Type).Str("id", job.ID).Msg("unknown job type")
-						continue
-					}
-
-					err = e(ctx, job.ID)
-					if err != nil {
-						r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
-						if mongo.IsConnectionError(err) {
-							err = amqpConsumer.Nack(msg.DeliveryTag, false, true)
-							if err != nil {
-								r.logger.Err(err).Msg("failed to negatively acknowledge message")
-							}
-
-							continue
-						}
-					}
-
-					err = amqpConsumer.Ack(msg.DeliveryTag, false)
-					if err != nil {
-						r.logger.Err(err).Msg("failed to acknowledge message")
-					}
-				}
-			}
-		})
+	opts := libamqp.ConsumeOptions{
+		Queue:         r.queue,
+		PrefetchCount: r.prefetchCount,
+		PrefetchSize:  r.prefetchSize,
 	}
 
-	return g.Wait()
+	return libamqp.ConsumeWithReconnect(ctx, ch, opts, r.workers, r.process, r.logger)
+}
+
+func (r *Runner) process(ctx context.Context, msg amqp.Delivery) (libamqp.AckAction, error) {
+	r.logger.Debug().Str("msg", string(msg.Body)).Msg("worker job message")
+	job := Job{}
+	err := r.decoder.Decode(msg.Body, &job)
+	if err != nil {
+		r.logger.Err(err).Msg("failed to decode job")
+
+		return libamqp.Ack, nil
+	}
+
+	r.jobExecutorsMx.RLock()
+	e, ok := r.jobExecutors[job.Type]
+	r.jobExecutorsMx.RUnlock()
+	if !ok {
+		r.logger.Warn().Str("type", job.Type).Str("id", job.ID).Msg("unknown job type")
+
+		return libamqp.Ack, nil
+	}
+
+	err = e(ctx, job.ID)
+	if err != nil {
+		r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
+		if mongo.IsConnectionError(err) {
+			return libamqp.Nack, nil
+		}
+	}
+
+	return libamqp.Ack, nil
 }
 
 func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
@@ -130,7 +113,7 @@ func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
 	r.jobExecutors[t] = e
 }
 
-func NewJobPublisher(t string, amqpPublisher libamqp.Channel) JobPublisher {
+func NewJobPublisher(t string, amqpPublisher libamqp.Publisher) JobPublisher {
 	return &jobPublisher{
 		jobType:       t,
 		amqpPublisher: amqpPublisher,
@@ -143,7 +126,7 @@ func NewJobPublisher(t string, amqpPublisher libamqp.Channel) JobPublisher {
 
 type jobPublisher struct {
 	jobType         string
-	amqpPublisher   libamqp.Channel
+	amqpPublisher   libamqp.Publisher
 	exchange, queue string
 	encoder         encoding.Encoder
 	contentType     string

@@ -127,8 +127,8 @@ describe('create-ack-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith(ackEventData, { needAssociateTicket: false, needDeclareTicket: false });
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(ackEventData, { needAssociateTicket: false, needDeclareTicket: false });
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -191,8 +191,8 @@ describe('create-ack-event', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith(ackEventData, { needAssociateTicket: false, needDeclareTicket: false });
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(ackEventData, { needAssociateTicket: false, needDeclareTicket: false });
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -218,12 +218,12 @@ describe('create-ack-event', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(ackEventData, { needAssociateTicket: false, needDeclareTicket: false });
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(ackEventData, { needAssociateTicket: false, needDeclareTicket: false });
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -257,7 +257,7 @@ describe('create-ack-event', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(newForm, { needAssociateTicket: false, needDeclareTicket: false });
+    expect(action).toHaveBeenCalledWith(newForm, { needAssociateTicket: false, needDeclareTicket: false });
     expect($modals.hide).toBeCalled();
   });
 

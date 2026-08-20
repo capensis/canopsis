@@ -44,18 +44,18 @@ func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 }
 
 // Apply mocks base method.
-func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 *types.Event, arg3 map[string]eventfilter.UpdatedValue, arg4 eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
+func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 *types.Event, arg3 map[string]eventfilter.UpdatedValue, arg4 eventfilter.RegexMatch, arg5 map[string]any) (eventfilter.RuleResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3, arg4)
+	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3, arg4, arg5)
 	ret0, _ := ret[0].(eventfilter.RuleResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Apply indicates an expected call of Apply.
-func (mr *MockRuleApplicatorMockRecorder) Apply(arg0, arg1, arg2, arg3, arg4 any) *gomock.Call {
+func (mr *MockRuleApplicatorMockRecorder) Apply(arg0, arg1, arg2, arg3, arg4, arg5 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*MockRuleApplicator)(nil).Apply), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*MockRuleApplicator)(nil).Apply), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
 // MockRuleAdapter is a mock of RuleAdapter interface.
@@ -202,20 +202,18 @@ func (mr *MockServiceMockRecorder) LoadRules(arg0, arg1 any) *gomock.Call {
 }
 
 // ProcessEvent mocks base method.
-func (m *MockService) ProcessEvent(arg0 context.Context, arg1 *types.Event) (map[string]eventfilter.UpdatedValue, int64, map[string]int64, error) {
+func (m *MockService) ProcessEvent(arg0 context.Context, arg1 *types.Event, arg2 eventfilter.ServiceResult) (eventfilter.ServiceResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessEvent", arg0, arg1)
-	ret0, _ := ret[0].(map[string]eventfilter.UpdatedValue)
-	ret1, _ := ret[1].(int64)
-	ret2, _ := ret[2].(map[string]int64)
-	ret3, _ := ret[3].(error)
-	return ret0, ret1, ret2, ret3
+	ret := m.ctrl.Call(m, "ProcessEvent", arg0, arg1, arg2)
+	ret0, _ := ret[0].(eventfilter.ServiceResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // ProcessEvent indicates an expected call of ProcessEvent.
-func (mr *MockServiceMockRecorder) ProcessEvent(arg0, arg1 any) *gomock.Call {
+func (mr *MockServiceMockRecorder) ProcessEvent(arg0, arg1, arg2 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessEvent", reflect.TypeOf((*MockService)(nil).ProcessEvent), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessEvent", reflect.TypeOf((*MockService)(nil).ProcessEvent), arg0, arg1, arg2)
 }
 
 // MockActionProcessor is a mock of ActionProcessor interface.
@@ -243,18 +241,18 @@ func (m *MockActionProcessor) EXPECT() *MockActionProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActionProcessor) Process(ctx context.Context, ruleID, ruleDesc string, action eventfilter.ParsedAction, event *types.Event, updatedEntityInfos map[string]eventfilter.UpdatedValue, regexMatch eventfilter.RegexMatch, externalData map[string]any) (map[string]eventfilter.UpdatedValue, error) {
+func (m *MockActionProcessor) Process(ctx context.Context, rule eventfilter.ParsedRule, action eventfilter.ParsedAction, event *types.Event, updatedEntityInfos map[string]eventfilter.UpdatedValue, regexMatch eventfilter.RegexMatch, externalData map[string]any) (map[string]eventfilter.UpdatedValue, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Process", ctx, ruleID, ruleDesc, action, event, updatedEntityInfos, regexMatch, externalData)
+	ret := m.ctrl.Call(m, "Process", ctx, rule, action, event, updatedEntityInfos, regexMatch, externalData)
 	ret0, _ := ret[0].(map[string]eventfilter.UpdatedValue)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Process indicates an expected call of Process.
-func (mr *MockActionProcessorMockRecorder) Process(ctx, ruleID, ruleDesc, action, event, updatedEntityInfos, regexMatch, externalData any) *gomock.Call {
+func (mr *MockActionProcessorMockRecorder) Process(ctx, rule, action, event, updatedEntityInfos, regexMatch, externalData any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), ctx, ruleID, ruleDesc, action, event, updatedEntityInfos, regexMatch, externalData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), ctx, rule, action, event, updatedEntityInfos, regexMatch, externalData)
 }
 
 // MockFailureService is a mock of FailureService interface.
@@ -282,15 +280,15 @@ func (m *MockFailureService) EXPECT() *MockFailureServiceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockFailureService) Add(ruleID, ruleDesc string, failureType int64, message string, event *types.Event) {
+func (m *MockFailureService) Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Add", ruleID, ruleDesc, failureType, message, event)
+	m.ctrl.Call(m, "Add", ruleID, ruleDesc, ruleUpdated, failureType, message, event)
 }
 
 // Add indicates an expected call of Add.
-func (mr *MockFailureServiceMockRecorder) Add(ruleID, ruleDesc, failureType, message, event any) *gomock.Call {
+func (mr *MockFailureServiceMockRecorder) Add(ruleID, ruleDesc, ruleUpdated, failureType, message, event any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockFailureService)(nil).Add), ruleID, ruleDesc, failureType, message, event)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockFailureService)(nil).Add), ruleID, ruleDesc, ruleUpdated, failureType, message, event)
 }
 
 // Run mocks base method.

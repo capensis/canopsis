@@ -2,15 +2,14 @@
   <c-page @refresh="fetchList">
     <v-expand-transition>
       <events-records-header
-        v-if="!isCurrentEmpty"
-        :current="current"
+        :recordings="recordings"
+        :resendings="resendings"
+        :limit="limit"
         @start:recording="startRecording"
-        @stop:recording="stopRecording"
-        @stop:resending="stopResending"
       />
     </v-expand-transition>
     <events-records-list
-      :events-records="preparedEventsRecords"
+      :events-records="eventsRecords"
       :pending="pending"
       :options.sync="options"
       :total-items="meta.total_count"
@@ -22,8 +21,13 @@
 </template>
 
 <script>
-import { pick, isEmpty } from 'lodash';
-import { computed, ref, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  set,
+  onMounted,
+} from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -52,23 +56,39 @@ export default {
      * STORE
      */
     const { removeEventsRecord, fetchEventsRecordsListWithoutStore } = useEventsRecord();
-    const { current } = useEventsRecordCurrent();
+    const { resendings, recordings, limit, recordingsById, resendingsById } = useEventsRecordCurrent();
 
-    useEventRecordCurrentPolling();
+    /**
+     * Syncs events records with current recording/resending state from recordingsById and resendingsById.
+     * Updates count, is_recording, and is_resending when they differ from the live state.
+     */
+    const prepareEventsRecords = () => eventsRecords.value.forEach((eventRecord, index) => {
+      const recording = recordingsById.value[eventRecord._id];
+      const resending = resendingsById.value[eventRecord._id];
+      const isRecording = !!recording;
+      const isResending = !!resending;
 
-    const isCurrentEmpty = computed(() => isEmpty(current.value));
+      if (
+        !!eventRecord.is_recording !== isRecording
+         || !!eventRecord.is_resending !== isResending
+         || eventRecord.count < recording?.n
+      ) {
+        set(eventsRecords.value, index, {
 
-    const preparedEventsRecords = computed(() => (
-      current.value?._id
-        ? eventsRecords.value.map(
-          eventsRecord => (
-            eventsRecord._id === current.value._id
-              ? { ...eventsRecord, ...pick(current.value, ['is_resending', 'is_recording', 'count']) }
-              : eventsRecord
-          ),
-        )
-        : eventsRecords.value
-    ));
+          ...eventRecord,
+
+          count: recording?.n || eventRecord.count || 0,
+          is_recording: isRecording,
+          is_resending: isResending,
+        });
+      }
+    });
+
+    const { fetchEventsRecordCurrent } = useEventRecordCurrentPolling();
+
+    const inProgressCount = computed(() => recordings.value.length);
+
+    watch(() => [resendings.value, recordings.value], prepareEventsRecords);
 
     /**
      * QUERY
@@ -80,15 +100,20 @@ export default {
       handler: fetchList,
     } = usePendingWithLocalQuery({
       fetchHandler: async (fetchQuery) => {
-        const response = await fetchEventsRecordsListWithoutStore({
-          params: {
-            limit: fetchQuery.itemsPerPage,
-            page: fetchQuery.page,
-          },
-        });
+        const [response] = await Promise.all([
+          fetchEventsRecordsListWithoutStore({
+            params: {
+              limit: fetchQuery.itemsPerPage,
+              page: fetchQuery.page,
+            },
+          }),
+          fetchEventsRecordCurrent(),
+        ]);
 
         eventsRecords.value = response.data;
         meta.value = response.meta;
+
+        prepareEventsRecords();
       },
     });
 
@@ -101,7 +126,9 @@ export default {
     const { stopResending } = useEventsRecordResending();
 
     /**
-     * METHODS
+     * Shows confirmation modal to remove an events record. On confirm, removes it and refetches the list.
+     *
+     * @param {string} id - Events record id to remove
      */
     const showRemoveEventsRecordModal = id => modals.show({
       name: MODALS.confirmation,
@@ -114,6 +141,11 @@ export default {
       },
     });
 
+    /**
+     * Shows events record modal with events record details and actions.
+     *
+     * @param {Object} eventsRecord - Events record to display
+     */
     const showEventsRecordModal = eventsRecord => modals.show({
       name: MODALS.eventsRecord,
       config: {
@@ -127,10 +159,12 @@ export default {
     onMounted(() => fetchList(query.value));
 
     return {
-      preparedEventsRecords,
+      eventsRecords,
       meta,
-      current,
-      isCurrentEmpty,
+      recordings,
+      resendings,
+      limit,
+      inProgressCount,
       pending,
       options,
 

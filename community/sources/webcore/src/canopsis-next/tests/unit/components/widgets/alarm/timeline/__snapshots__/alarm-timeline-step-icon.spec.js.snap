@@ -33,7 +33,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`assocticket\` correctly 1`] = `
 <div>
   <v-icon-stub>
-    $vuetify.icons.sticky_note_2
+    sticky_note_2
   </v-icon-stub>
 </div>
 `;
@@ -72,6 +72,14 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 <div>
   <c-alarm-state-chip-stub
     type="changestate"
+    value="1"
+  />
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`changeticketstatus\` correctly 1`] = `
+<div>
+  <declare-ticket-rule-ticket-status-chip-stub
     value="1"
   />
 </div>
@@ -315,7 +323,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`0\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="var(--v-status-closed-base)"
+    color="var(--v-success-base)"
   >
     $vuetify.icons.delayed_check
   </v-icon-stub>
@@ -365,9 +373,19 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`5\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="var(--v-status-noEvents-base)"
+    color="var(--v-error-base)"
   >
     sync_problem
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`statusinc\` and status \`6\` correctly 1`] = `
+<div>
+  <v-icon-stub
+    color="var(--v-status-unknown-base)"
+  >
+    $vuetify.icons.question_mark
   </v-icon-stub>
 </div>
 `;
@@ -378,6 +396,22 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
     color="var(--v-status-ongoing-base)"
   >
     warning
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`ticketRemove\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    $vuetify.icons.remove_note
+  </v-icon-stub>
+</div>
+`;
+
+exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`ticketremove\` correctly 1`] = `
+<div>
+  <v-icon-stub>
+    $vuetify.icons.remove_note
   </v-icon-stub>
 </div>
 `;
@@ -395,7 +429,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -405,7 +439,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -415,7 +449,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;
@@ -425,7 +459,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="#6A6A6A"
   >
-    $vuetify.icons.webhook
+    webhook
   </v-icon-stub>
 </div>
 `;

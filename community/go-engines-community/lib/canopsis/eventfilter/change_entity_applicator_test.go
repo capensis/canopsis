@@ -6,13 +6,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
-	mock_externaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/externaldata"
 	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
@@ -22,7 +20,7 @@ func TestChangeEntityApply(t *testing.T) {
 	defer ctrl.Finish()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	applicator := eventfilter.NewChangeEntityApplicator(externaldata.NewGetterContainer(), mockFailureService, tplExecutor)
+	applicator := eventfilter.NewChangeEntityApplicator(mockFailureService, tplExecutor)
 
 	var dataSets = []struct {
 		testName      string
@@ -319,7 +317,7 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			res, err := applicator.Apply(t.Context(), dataSet.rule, &dataSet.event, nil, dataSet.regexMatches)
+			res, err := applicator.Apply(t.Context(), dataSet.rule, &dataSet.event, nil, dataSet.regexMatches, nil)
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
@@ -332,68 +330,5 @@ func TestChangeEntityApply(t *testing.T) {
 				t.Errorf("expected event %v, but got %v", dataSet.expectedEvent, dataSet.event)
 			}
 		})
-	}
-}
-
-func TestChangeEntityApplyWithExternalData(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockGetter := mock_externaldata.NewMockGetter(ctrl)
-	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(map[string]any{"ID": "test_value"}, nil)
-
-	externalDataContainer := externaldata.NewGetterContainer()
-	externalDataContainer.Set("test", mockGetter)
-
-	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockFailureService, tplExecutor)
-
-	externalData := []externaldata.ParsedRefParameters{
-		{
-			Reference: "test",
-			Type:      "test",
-		},
-	}
-
-	event := types.Event{
-		Resource:      "resource",
-		Component:     "component",
-		Connector:     "connector",
-		ConnectorName: "connector name",
-	}
-
-	expectedEvent := types.Event{
-		Resource:      "test_value",
-		Component:     "component",
-		Connector:     "connector",
-		ConnectorName: "connector name",
-	}
-
-	res, err := applicator.Apply(
-		t.Context(),
-		eventfilter.ParsedRule{
-			ExternalData: externalData,
-			Config: eventfilter.ParsedRuleConfig{
-				Resource: tplExecutor.Parse("{{.ExternalData.test.ID}}"),
-			},
-		},
-		&event,
-		nil,
-		eventfilter.RegexMatch{},
-	)
-
-	if err != nil {
-		t.Errorf("expected not error but got %v", err)
-	}
-
-	if res.Outcome != eventfilter.OutcomePass {
-		t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, res.Outcome)
-	}
-
-	if !reflect.DeepEqual(expectedEvent, event) {
-		t.Errorf("expected event %v, but got %v", expectedEvent, event)
 	}
 }

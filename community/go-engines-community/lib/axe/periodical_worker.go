@@ -22,7 +22,7 @@ import (
 type periodicalWorker struct {
 	TechMetricsSender   techmetrics.Sender
 	PeriodicalInterval  time.Duration
-	ChannelPub          libamqp.Channel
+	Publisher           libamqp.Publisher
 	AlarmService        libalarm.Service
 	AlarmAdapter        libalarm.Adapter
 	Encoder             encoding.Encoder
@@ -132,7 +132,7 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 		return fmt.Errorf("cannot encode event: %w", err)
 	}
 
-	return w.ChannelPub.PublishWithContext(
+	return w.Publisher.PublishWithContext(
 		ctx,
 		"",
 		canopsis.FIFOQueueName,

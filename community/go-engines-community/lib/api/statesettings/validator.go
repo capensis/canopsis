@@ -18,14 +18,16 @@ type Validator interface {
 }
 
 type baseValidator struct {
-	invalidRulesPatternFields           []string
-	invalidInheritedEntityPatternFields []string
+	invalidEntityPatternFields             map[string]bool
+	invalidServiceInheritedPatternFields   map[string]bool
+	invalidComponentInheritedPatternFields map[string]bool
 }
 
 func NewValidator() Validator {
 	return &baseValidator{
-		invalidRulesPatternFields:           patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
-		invalidInheritedEntityPatternFields: append(patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
+		invalidEntityPatternFields:             patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
+		invalidServiceInheritedPatternFields:   patternfields.GetForbiddenFieldsInInheritedEntityPattern(mongo.StateSettingsMongoCollection, statesetting.RuleTypeService),
+		invalidComponentInheritedPatternFields: patternfields.GetForbiddenFieldsInInheritedEntityPattern(mongo.StateSettingsMongoCollection, statesetting.RuleTypeComponent),
 	}
 }
 
@@ -38,13 +40,18 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		return
 	}
 
+	invalidInheritedPatternFields := v.invalidServiceInheritedPatternFields
+	if r.Type != nil && *r.Type == statesetting.RuleTypeComponent {
+		invalidInheritedPatternFields = v.invalidComponentInheritedPatternFields
+	}
+
 	switch r.Method {
 	case statesetting.MethodInherited:
 		if r.InheritedEntityPattern == nil && r.CorporateInheritedEntityPattern == "" {
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "required", "")
 		}
 
-		if r.InheritedEntityPattern != nil && !match.ValidateEntityPattern(r.InheritedEntityPattern, v.invalidInheritedEntityPatternFields) {
+		if r.InheritedEntityPattern != nil && !match.ValidateEntityPattern(r.InheritedEntityPattern, invalidInheritedPatternFields) {
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "entity_pattern", "")
 		}
 
@@ -82,7 +89,7 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
 	}
 
-	if r.EntityPattern != nil && !match.ValidateEntityPattern(r.EntityPattern, v.invalidRulesPatternFields) {
+	if r.EntityPattern != nil && !match.ValidateEntityPattern(r.EntityPattern, v.invalidEntityPatternFields) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 

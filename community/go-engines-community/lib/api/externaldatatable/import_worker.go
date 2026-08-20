@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
@@ -232,14 +233,8 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 	job := ImportJob{}
 	err := w.dbImportCollection.FindOneAndUpdate(ctx,
 		bson.M{
-			"_id": id,
-			"$or": []bson.M{
-				{"status": ImportStatusCreated},
-				{
-					"status":    ImportStatusRunning,
-					"last_ping": bson.M{"$lt": time.Now().Add(-2 * w.pingInterval).Unix()},
-				},
-			},
+			"_id":    id,
+			"status": bson.M{"$in": bson.A{ImportStatusCreated, ImportStatusRunning}},
 		},
 		bson.M{"$set": bson.M{
 			"status":    ImportStatusRunning,
@@ -443,8 +438,6 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 	uniqueNewConfigColumns := make(map[string]bool, len(newConfigs))
 	newConfigsIndexMap := make(map[string]int, len(newConfigs))
 	oldConfigsIndexMap := make(map[string]int, len(newConfigs))
-	priorityNameExists := false
-	regexpColumnName := ""
 
 	for i := range oldConfigs {
 		oldName := oldConfigs[i].Name
@@ -459,18 +452,6 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 		if oldName != newName {
 			oldConfigsIndexMap[oldName] = i
 			newConfigsIndexMap[newName] = i
-		}
-
-		if oldName == priorityColumnName {
-			priorityNameExists = true
-		}
-
-		if newConfigs[i].IsRegexp() {
-			regexpColumnName = newName
-		}
-
-		if priorityNameExists && regexpColumnName != "" {
-			return fmt.Errorf("column %q is regexp, but priority column already exists", regexpColumnName)
 		}
 	}
 
@@ -640,7 +621,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			case externaldata.ColumnTypeStringArray:
 				columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 			default:
-				return false, fmt.Errorf("unsupported column type %q", c.Type)
+				return false, fmt.Errorf("unsupported column type %d", c.Type)
 			}
 
 			sql := ""
@@ -706,7 +687,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
 	default:
-		return false, fmt.Errorf("invalid table type: %q", table.Type)
+		return false, fmt.Errorf("invalid table type: %d", table.Type)
 	}
 
 	err = w.deleteTable(ctx, job)
@@ -732,7 +713,7 @@ func (w *importWorker) ProcessAbandonedJobs(ctx context.Context) {
 		case <-ticker.C:
 			now := datetime.NewCpsTime()
 			cursor, err := w.dbImportCollection.Find(ctx, bson.M{
-				"status":    ImportStatusRunning,
+				"status":    bson.M{"$in": bson.A{ImportStatusCreated, ImportStatusRunning}},
 				"last_ping": bson.M{"$lt": now.Time.Add(-2 * w.pingInterval).Unix()},
 			})
 			if err != nil {
@@ -1336,15 +1317,21 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 
 	invalidCols := make([]string, 0)
 	existColumns := make(map[string]bool, len(columns))
+	hasPriority := false
 	for _, c := range columns {
 		existColumns[c] = true
 		if !validation.IsTableName(c) || c == externaldata.IDColumnName {
 			invalidCols = append(invalidCols, strconv.Quote(c))
 		}
+
+		if c == priorityColumnName {
+			hasPriority = true
+		}
 	}
 
+	valErrs := validator.ValidationErrors{}
 	if len(invalidCols) > 0 {
-		return validation.NewSingleErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " "), nil)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " ")))
 	}
 
 	missingCols := make([]string, 0)
@@ -1357,7 +1344,15 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(missingCols) > 0 {
-		return validation.NewSingleErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " "), nil)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " ")))
+	}
+
+	if hasPriority {
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("reservedcols", "file", "file", priorityColumnName))
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, nil)
 	}
 
 	_, err = f.Seek(0, io.SeekStart)
@@ -1379,22 +1374,23 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	case externaldata.TypePostgreSQL:
-		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
+		var sql strings.Builder
+		sql.WriteString("CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
+			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, ")
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") "
+			sql.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
 			if i != len(columns)-1 {
-				sql += ","
+				sql.WriteString(",")
 			}
 		}
 
-		sql += ")"
+		sql.WriteString(")")
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, sql)
+		_, err = pgPool.Exec(ctx, sql.String())
 		if err != nil {
 			return fmt.Errorf("failed to create postgres table: %w", err)
 		}
@@ -1407,7 +1403,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }
 
@@ -1433,6 +1429,6 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
+		return fmt.Errorf("invalid job type: %d", job.Type)
 	}
 }

@@ -56,7 +56,7 @@ describe('corporate-patterns', () => {
     await flushPromises();
 
     expect(fetchPatternsList).toBeCalledTimes(1);
-    expect(fetchPatternsList).toBeCalledWith(
+    expect(fetchPatternsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -98,7 +98,7 @@ describe('corporate-patterns', () => {
     await flushPromises();
 
     expect(fetchPatternsList).toBeCalledTimes(1);
-    expect(fetchPatternsList).toBeCalledWith(
+    expect(fetchPatternsList).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
@@ -127,7 +127,7 @@ describe('corporate-patterns', () => {
     await flushPromises();
 
     expect(edit).toBeCalledTimes(1);
-    expect(edit).toBeCalledWith(data);
+    expect(edit).toHaveBeenCalledWith(data);
   });
 
   it('Remove selected event emitted after trigger remove selected event on patterns list', async () => {
@@ -148,7 +148,7 @@ describe('corporate-patterns', () => {
     await flushPromises();
 
     expect(removeSelected).toBeCalledTimes(1);
-    expect(removeSelected).toBeCalledWith(data);
+    expect(removeSelected).toHaveBeenCalledWith(data);
   });
 
   it('Remove event emitted after trigger remove event on patterns list', async () => {
@@ -169,7 +169,7 @@ describe('corporate-patterns', () => {
     await flushPromises();
 
     expect(remove).toBeCalledTimes(1);
-    expect(remove).toBeCalledWith(data);
+    expect(remove).toHaveBeenCalledWith(data);
   });
 
   it('Renders `corporate-patterns` without patterns', () => {

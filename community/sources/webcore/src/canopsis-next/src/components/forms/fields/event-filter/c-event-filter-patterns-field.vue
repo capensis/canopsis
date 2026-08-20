@@ -7,11 +7,12 @@
     :required="required"
     :attributes="availableEventFilterAttributes"
     :counter="counter"
+    class="c-event-filter-patterns-field"
   />
 </template>
 
 <script>
-import { isArray, keyBy, map, omit } from 'lodash';
+import { isArray, keyBy } from 'lodash';
 
 import {
   ALARM_STATES,
@@ -23,6 +24,8 @@ import {
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
 } from '@/constants';
+
+import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 
 import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-state-field.vue';
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
@@ -38,9 +41,9 @@ export default {
       type: Object,
       required: true,
     },
-    excludedAttributes: {
+    attributes: {
       type: Array,
-      default: () => [],
+      required: false,
     },
     disabled: {
       type: Boolean,
@@ -72,6 +75,8 @@ export default {
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
         PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.beginWith,
+        PATTERN_OPERATORS.notBeginWith,
         PATTERN_OPERATORS.regexp,
       ];
     },
@@ -151,6 +156,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
@@ -190,6 +197,8 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
@@ -217,14 +226,23 @@ export default {
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
           PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginWith,
+          PATTERN_OPERATORS.notBeginWith,
           PATTERN_OPERATORS.regexp,
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
           is: 'c-select-field',
-          props: {
-            items: Object.values(ALARM_EVENT_INITIATORS),
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+              items: Object.values(ALARM_EVENT_INITIATORS),
+            };
           },
         },
       };
@@ -325,10 +343,12 @@ export default {
       return keyBy(this.eventFilterAttributes, 'value');
     },
 
-    availableEventFilterAttributes() {
-      const mergedAttributes = omit(this.availableAttributesByValue, map(this.excludedAttributes, 'value'));
+    externalAttributesByValue() {
+      return keyBy(this.attributes, 'value');
+    },
 
-      return Object.values(mergedAttributes);
+    availableEventFilterAttributes() {
+      return mergePatternAttributes(this.eventFilterAttributes, this.attributes);
     },
   },
 };

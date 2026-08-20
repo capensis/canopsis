@@ -9,7 +9,7 @@ type Encoder interface {
 	//
 	// var in MyTime
 	// bytes, err := encoder.Encode(in)
-	Encode(in interface{}) ([]byte, error)
+	Encode(in any) ([]byte, error)
 }
 
 // Decoder interface ease the use of decoders like encoding/gob...
@@ -19,5 +19,5 @@ type Decoder interface {
 	//
 	// var out MyType
 	// err := decoder.Decode(data, &out)
-	Decode(in []byte, out interface{}) error
+	Decode(in []byte, out any) error
 }

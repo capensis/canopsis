@@ -219,7 +219,7 @@ type OptionalInterface struct {
 
 	// Value contains the value of the interface{}. It should only be taken
 	// into account if Set is true.
-	Value interface{}
+	Value any
 }
 
 func (i *OptionalInterface) UnmarshalBSONValue(valueType byte, b []byte) error {

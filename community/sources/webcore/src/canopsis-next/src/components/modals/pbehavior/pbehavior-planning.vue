@@ -120,14 +120,14 @@ export default {
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
       const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      await Promise.all([
+      const [createdPbehaviorsResult, updatedPbehaviorsResult, removedPbehaviorsResult] = await Promise.all([
         createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
         updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors, originalPbehaviors),
         removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
       ]);
 
       if (this.config.afterSubmit) {
-        await this.config.afterSubmit();
+        await this.config.afterSubmit(createdPbehaviorsResult, updatedPbehaviorsResult, removedPbehaviorsResult);
       }
 
       this.$modals.hide();

@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -10,17 +10,23 @@
           v-bind="patternsProps"
           autofocus
         />
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -34,16 +40,20 @@
 
 <script>
 import { omit } from 'lodash';
+import { computed, ref, toRef } from 'vue';
 
-import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY, LLM_SOCKET_CONTEXTS } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import PatternsForm from '@/components/forms/patterns-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -53,29 +63,19 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { PatternsForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: filterToForm(this.modal.config.filter, this.getPatternsFields()),
-    };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createFilter.create.title');
+  components: { PatternsForm, ModalWrapper, AiChatSidebar },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
 
-    patternsProps() {
-      return omit(this.config, ['title', 'action']);
-    },
-  },
-  methods: {
-    getPatternsFields() {
-      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = this.modal.config;
+    const patternsFields = computed(() => {
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = config.value;
 
       return [
         withAlarm && PATTERNS_FIELDS.alarm,
@@ -84,19 +84,64 @@ export default {
         withEvent && PATTERNS_FIELDS.event,
         withServiceWeather && PATTERNS_FIELDS.serviceWeather,
       ].filter(Boolean);
-    },
+    });
 
-    async submit() {
-      const isFormValid = await this.$validator.validate();
+    const form = ref(filterToForm(config.value.filter, patternsFields.value));
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.getPatternsFields(), this.config.corporate));
+    const title = computed(() => config.value.title ?? t('modals.createFilter.create.title'));
+    const patternsProps = computed(() => omit(config.value, ['title', 'action']));
+
+    const chatContext = computed(() => `${LLM_SOCKET_CONTEXTS.widgetFilter}_${config.value.widgetType}`);
+
+    const {
+      chatIds,
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
+
+      modal: toRef(props, 'modal'),
+      ruleId: config.value?.filter?._id,
+      context: chatContext,
+      withoutLink: config.value?.withoutLink,
+    });
+
+    /**
+     * Submits the form and calls the action callback if provided
+     */
+    const { submit, submitting, isDisabled } = useSubmittableForm({
+      form,
+      method: async () => {
+        const newFilter = formToFilter(form.value, patternsFields.value, config.value.corporate);
+
+        if (config.value?.withoutLink && chatIds.value.length) {
+          newFilter.llm_chat = chatIds.value.at(-1);
         }
 
-        this.$modals.hide();
-      }
-    },
+        const result = await config.value.action?.(newFilter);
+
+        await config.value.afterSubmit?.(result);
+
+        close();
+
+        return result;
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    return {
+      form,
+      title,
+      patternsProps,
+      submitting,
+      isDisabled,
+      submit,
+      close,
+
+      chatShown,
+      chatOptions,
+    };
   },
 };
 </script>

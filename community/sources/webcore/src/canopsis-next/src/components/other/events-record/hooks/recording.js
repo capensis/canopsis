@@ -1,6 +1,4 @@
-import { EVENT_FILTER_PATTERN_FIELDS, MODALS } from '@/constants';
-
-import { promisedWait } from '@/helpers/async';
+import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -25,35 +23,26 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
     name: MODALS.applyEventFilter,
     config: {
       title: t('eventsRecord.launchEventRecording'),
-      excludedAttributes: [
-        { value: EVENT_FILTER_PATTERN_FIELDS.eventType },
-        { value: EVENT_FILTER_PATTERN_FIELDS.state },
-        { value: EVENT_FILTER_PATTERN_FIELDS.sourceType },
-        { value: EVENT_FILTER_PATTERN_FIELDS.output },
-        { value: EVENT_FILTER_PATTERN_FIELDS.extraInfos },
-        { value: EVENT_FILTER_PATTERN_FIELDS.longOutput },
-        { value: EVENT_FILTER_PATTERN_FIELDS.author },
-        { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
-      ],
-      action: eventPattern => startEventsRecordCurrent({ data: { event_pattern: eventPattern } }),
+      required: false,
+      action: async (eventPattern) => {
+        const result = await startEventsRecordCurrent({ data: { event_pattern: eventPattern } });
+
+        return result;
+      },
       afterSubmit: fetchListHandler,
     },
   });
 
   /**
-   * Stop the current event recording.
+   * Stop the event recording by id.
+   *
+   * @param {string} [recordingId] - ID of the recording to stop. Required when multiple recordings exist.
    */
-  const stopRecording = () => modals.show({
+  const stopRecording = recordingId => modals.show({
     name: MODALS.confirmation,
     config: {
       action: async () => {
-        await stopEventsRecordCurrent();
-
-        /**
-         * We've added that to avoiding problem with async on the backend side.
-         * There is 3000ms timeout on the backend side for sync
-         */
-        await promisedWait(3000);
+        await stopEventsRecordCurrent({ id: recordingId });
 
         return fetchListHandler();
       },

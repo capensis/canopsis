@@ -1,13 +1,6 @@
 <template>
   <v-layout column>
     <v-layout>
-      <v-flex xs6>
-        <c-enabled-field
-          v-if="!noEnabled"
-          v-field="form.enabled"
-          hide-details
-        />
-      </v-flex>
       <v-flex v-if="withInherited" xs6>
         <c-enabled-field
           v-field="form.inherited"

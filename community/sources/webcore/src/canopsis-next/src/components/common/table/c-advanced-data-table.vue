@@ -4,38 +4,42 @@
       <v-flex v-if="shownSearch" xs4>
         <c-search
           v-if="search"
-          @submit="updateSearchHandler"
+          :label="searchLabel"
+          @submit="updateSearch"
         />
         <c-advanced-search
           v-else-if="advancedSearch"
-          :fields="preparedAdvancedSearchFields"
-          @submit="updateSearchHandler"
+          :attributes="advancedSearchAttributes"
+          :pending="advancedSearchLoading"
+          @submit="updateAdvancedSearch"
+          @reset="resetSearch"
         />
       </v-flex>
       <slot
         :selected="selected"
-        :update-search="updateSearchHandler"
+        :update-search="updateSearch"
+        :update-advanced-search="updateAdvancedSearch"
+        :reset-search="resetSearch"
         name="toolbar"
       />
-      <v-flex
-        v-if="hasMassActionsSlot"
-        xs12
+      <c-mass-actions-panel
+        v-if="selectAll && selected.length && hasMassActionsSlot && !hideMassActions"
+        v-model="keepSelectedAfterAction"
+        v-bind="massActionsGridParameters"
+        :selected="selected"
+        :default-value="defaultKeepSelectedAfterAction"
+        @clear:selected="clearSelected(keepSelectedAfterAction, true)"
       >
-        <v-expand-transition>
-          <v-layout
-            v-if="selected.length"
-            class="px-2 mt-1"
-          >
-            <slot
-              :selected="selected"
-              :selected-keys="selectedKeys"
-              :count="selected.length"
-              :clear-selected="clearSelected"
-              name="mass-actions"
-            />
-          </v-layout>
-        </v-expand-transition>
-      </v-flex>
+        <template #actions>
+          <slot
+            :selected="selected"
+            :selected-keys="selectedKeys"
+            :count="selected.length"
+            :clear-selected="clearSelected"
+            name="mass-actions"
+          />
+        </template>
+      </c-mass-actions-panel>
     </v-layout>
     <v-data-table
       v-model="selected"
@@ -45,7 +49,7 @@
       :loading="loading"
       :server-items-length="totalItems"
       :no-data-text="noDataText"
-      :options="options"
+      :options="vDataTableOptions"
       :header-text="headerText"
       :footer-props="{ itemsPerPageOptions: itemsPerPageItems }"
       :item-key="itemKey"
@@ -60,8 +64,12 @@
       :ellipsis-headers="ellipsisHeaders"
       :expand-icon="expandIcon"
       checkbox-color="primary"
-      @update:options="updateOptions"
+      @update:options="updateDataTableOptions"
     >
+      <template v-if="hasHeaderSelectSlot" #header.data-table-select="props">
+        <slot name="header.data-table-select" v-bind="props" />
+      </template>
+
       <template v-if="hasItemSlot" #item="props">
         <slot name="item" v-bind="props" />
       </template>
@@ -151,7 +159,10 @@
 </template>
 
 <script>
+import { keyBy, pick } from 'lodash';
+
 import { mapIds } from '@/helpers/array';
+import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
 
 export default {
   model: {
@@ -235,6 +246,10 @@ export default {
       type: Object,
       required: false,
     },
+    searchLabel: {
+      type: String,
+      default: '',
+    },
     tableClass: {
       type: [String, Object],
       required: false,
@@ -259,17 +274,38 @@ export default {
       type: String,
       default: '$expand',
     },
-    advancedSearchFields: {
+    advancedSearchAttributes: {
       type: Array,
       default: () => [],
+    },
+    advancedSearchLoading: {
+      type: Boolean,
+      default: false,
+    },
+    massActionsGridParameters: {
+      type: Object,
+      required: false,
+    },
+    defaultKeepSelectedAfterAction: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
       selectedItems: [],
+      keepSelectedAfterAction: this.defaultKeepSelectedAfterAction ?? false,
     };
   },
   computed: {
+    vDataTableOptions() {
+      return pick(this.options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']);
+    },
+
     preparedHeaders() {
       const headers = [];
 
@@ -318,6 +354,10 @@ export default {
       return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
     },
 
+    hasHeaderSelectSlot() {
+      return this.$slots['header.data-table-select'] || this.$scopedSlots['header.data-table-select'];
+    },
+
     hasItemSlot() {
       return this.$slots.item || this.$scopedSlots.item;
     },
@@ -334,18 +374,14 @@ export default {
       return this.search || this.advancedSearch;
     },
 
-    preparedAdvancedSearchFields() {
-      return this.advancedSearchFields?.length
-        ? this.advancedSearchFields
-        : this.headers;
+    selectedItemsByKeys() {
+      return keyBy(this.selectedItems, this.itemKey);
     },
   },
   watch: {
     items(items) {
       if (this.selectAll) {
-        const itemKeys = items.map(item => item[this.itemKey]);
-
-        this.selectedItems = this.selectedItems.filter(selectedItem => itemKeys.includes(selectedItem[this.itemKey]));
+        this.selectedItems = items.filter(item => this.selectedItemsByKeys[item[this.itemKey]]);
       }
     },
   },
@@ -360,8 +396,23 @@ export default {
       this.$emit('update:options', options);
     },
 
-    updateSearchHandler(search) {
+    updateDataTableOptions(options) {
+      return this.updateOptions({
+        ...this.options,
+        ...pick(options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']),
+      });
+    },
+
+    updateSearch(search) {
       this.updateOptions({ ...this.options, search, page: 1 });
+    },
+
+    updateAdvancedSearch(search) {
+      this.updateOptions(prepareQueryWithAdvancedSearch(this.options, search));
+    },
+
+    resetSearch() {
+      this.updateOptions(prepareQueryWithoutAdvancedSearch(this.options));
     },
 
     updateItemsPerPage(itemsPerPage) {
@@ -376,12 +427,17 @@ export default {
       this.updateOptions({ ...this.options, page, itemsPerPage });
     },
 
-    clearSelected() {
+    clearSelected(keepSelected = this.keepSelectedAfterAction, force = false) {
+      if (keepSelected && !force) {
+        return;
+      }
+
       this.selectedItems = [];
     },
 
     getItemsProps(state) {
       return {
+        index: state.index,
         item: state.item,
         selected: state.selected,
         disabled: this.isDisabledItem(state.item),

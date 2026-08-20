@@ -95,5 +95,10 @@ export default {
       height: 16px;
     }
   }
+
+  p {
+    margin: 0;
+    display: inline-flex;
+  }
 }
 </style>

@@ -6,9 +6,12 @@
       :total-items="pbehaviorTypesMeta.total_count"
       :options.sync="options"
       :removable="hasDeleteAnyPbehaviorTypeAccess"
+      :updatable="hasUpdateAnyPbehaviorTypeAccess"
+      :active="active"
       @remove-selected="showRemoveSelectedPbehaviorTypeModal"
       @remove="showRemovePbehaviorTypeModal"
       @edit="showEditPbehaviorTypeModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>
@@ -33,6 +36,10 @@ export default {
     params: {
       type: Object,
       default: () => ({}),
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   mounted() {

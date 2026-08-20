@@ -23,7 +23,6 @@ exports[`variables-menu Renders \`variables-menu\` with custom props 2`] = `
     itemtext="text"
     itemvalue="value"
     search=""
-    selecteditems=""
     value="entity._id"
   />
 </div>

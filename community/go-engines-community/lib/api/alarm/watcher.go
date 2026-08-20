@@ -5,22 +5,23 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"slices"
 	"sync"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Watcher interface {
-	StartWatch(ctx context.Context, connId, userID, roomId string, data any) error
-	StartWatchDetails(ctx context.Context, connId, userID, roomId string, data any) error
-	StopWatch(connId, roomId string) error
+	StartWatch(ctx context.Context, opts websocket.JoinOptions) error
+	StartWatchDetails(ctx context.Context, opts websocket.JoinOptions) error
+	StopWatch(ctx context.Context, opts websocket.LeaveOptions) error
 }
 
 func NewWatcher(
@@ -61,23 +62,30 @@ type streamData struct {
 }
 
 // StartWatch creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string, data any) error {
-	b, err := w.encoder.Encode(data)
+func (w *watcher) StartWatch(ctx context.Context, opts websocket.JoinOptions) (err error) {
+	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
-	}
-
-	k := w.genKey(b)
-	streamCtx, streamCancel := context.WithCancel(ctx)
-	if !w.newStream(roomId, k, connId, userID, streamCancel) {
-		return nil
+		return fmt.Errorf("failed to encode payload: %w", err)
 	}
 
 	var alarmIds []string
 	err = w.decoder.Decode(b, &alarmIds)
-	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
+	if err != nil || len(alarmIds) == 0 {
+		return validation.NewSingleError("invalid", "payload", "payload", nil)
 	}
+
+	k := w.genKey(b)
+	streamCtx, streamCancel := context.WithCancel(ctx)
+	roomID := opts.RoomID
+	if !w.newStream(roomID, k, opts.ConnID, opts.UserID, streamCancel) {
+		return nil
+	}
+
+	defer func() {
+		if err != nil {
+			w.removeStream(roomID, opts.ConnID)
+		}
+	}()
 
 	stream, err := w.collection.Watch(ctx, []bson.M{
 		{"$match": bson.M{
@@ -91,7 +99,11 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 
 	go func() {
 		defer func() {
-			_ = stream.Close(streamCtx)
+			err := stream.Close(streamCtx)
+			if err != nil {
+				w.logger.Warn().Err(err).Msg("failed to close stream")
+			}
+
 			streamCancel()
 		}()
 
@@ -107,7 +119,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 				continue
 			}
 
-			connIdsByUserId := w.getConnIds(roomId, k)
+			connIdsByUserId := w.getConnIds(roomID, k)
 			for userID, connIds := range connIdsByUserId {
 				res, err := w.store.GetByID(streamCtx, changeEvent.DocumentKey.ID, userID)
 				if err != nil {
@@ -119,7 +131,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 					continue
 				}
 
-				w.hub.SendGroupRoomByConnections(connIds, websocket.RoomAlarmsGroup, roomId, res)
+				w.hub.SendMessage(ctx, res, websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomID), connIds...))
 			}
 		}
 	}()
@@ -128,34 +140,49 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userID, roomId string,
 }
 
 // StartWatchDetails creates a new stream change or adds a connection to an existed one if there is already a stream change with the same request.
-func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId string, data any) error {
-	b, err := w.encoder.Encode(data)
+func (w *watcher) StartWatchDetails(ctx context.Context, opts websocket.JoinOptions) (err error) {
+	b, err := w.encoder.Encode(opts.Payload)
 	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
-	}
-
-	k := w.genKey(b)
-	streamCtx, streamCancel := context.WithCancel(ctx)
-	if !w.newStream(roomId, k, connId, userID, streamCancel) {
-		return nil
+		return fmt.Errorf("failed to encode payload: %w", err)
 	}
 
 	var requests []DetailsRequest
 	err = w.decoder.Decode(b, &requests)
-	if err != nil {
-		return fmt.Errorf("unexpected data type: %w", err)
+	if err != nil || len(requests) == 0 {
+		return validation.NewSingleError("invalid", "payload", "payload", nil)
 	}
+
+	for i := range requests {
+		requests[i].Format()
+	}
+
+	valStruct := struct {
+		Requests []DetailsRequest `json:"-" binding:"dive"`
+	}{
+		Requests: requests,
+	}
+	err = validation.ValidateStruct(valStruct)
+	if err != nil {
+		return err
+	}
+
+	k := w.genKey(b)
+	streamCtx, streamCancel := context.WithCancel(ctx)
+	roomID := opts.RoomID
+	if !w.newStream(roomID, k, opts.ConnID, opts.UserID, streamCancel) {
+		return nil
+	}
+
+	defer func() {
+		if err != nil {
+			w.removeStream(roomID, opts.ConnID)
+		}
+	}()
 
 	requestsById := make(map[string]DetailsRequest, len(requests))
 	alarmIds := make([]string, len(requests))
 	metaAlarmIds := make([]string, 0, len(requests))
 	for i, request := range requests {
-		request.Format()
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			return fmt.Errorf("invalid request %d: %w", i, err)
-		}
-
 		requestsById[request.ID] = request
 		alarmIds[i] = request.ID
 		if request.Children != nil && request.Children.Page > 0 {
@@ -190,7 +217,7 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId 
 	}
 
 	var pipeline []bson.M
-	opts := options.ChangeStream()
+	csOts := options.ChangeStream()
 	if len(metaAlarmEntityIds) == 0 {
 		pipeline = []bson.M{
 			{"$match": bson.M{
@@ -211,10 +238,10 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId 
 				},
 			}}},
 		}
-		opts = opts.SetFullDocument(options.UpdateLookup)
+		csOts = csOts.SetFullDocument(options.UpdateLookup)
 	}
 
-	stream, err := w.collection.Watch(ctx, pipeline, opts)
+	stream, err := w.collection.Watch(ctx, pipeline, csOts)
 	if err != nil {
 		return fmt.Errorf("cannot watch collection: %w", err)
 	}
@@ -237,12 +264,12 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userID, roomId 
 				continue
 			}
 
-			connIdsByUserId := w.getConnIds(roomId, k)
-			w.sendGroupRoomAlrmDetails(streamCtx, changeEvent.DocumentKey.ID, roomId, requestsById, connIdsByUserId)
+			connIdsByUserId := w.getConnIds(roomID, k)
+			w.sendGroupRoomAlrmDetails(streamCtx, changeEvent.DocumentKey.ID, roomID, requestsById, connIdsByUserId)
 
 			for _, parent := range changeEvent.FullDocument.Value.Parents {
 				if metaAlarmId, ok := metaAlarmIdByEntityId[parent]; ok {
-					w.sendGroupRoomAlrmDetails(streamCtx, metaAlarmId, roomId, requestsById, connIdsByUserId)
+					w.sendGroupRoomAlrmDetails(streamCtx, metaAlarmId, roomID, requestsById, connIdsByUserId)
 				}
 			}
 		}
@@ -264,45 +291,41 @@ func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId 
 		}
 		if res != nil {
 			res.ID = request.ID
-			w.hub.SendGroupRoomByConnections(connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+			w.hub.SendMessage(ctx, res, websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connIds...))
 		}
 	}
 }
 
-func (w *watcher) StopWatch(connId, roomId string) error {
+func (w *watcher) StopWatch(_ context.Context, opts websocket.LeaveOptions) error {
+	w.removeStream(opts.RoomID, opts.ConnID)
+
+	return nil
+}
+
+func (w *watcher) removeStream(roomID, connID string) {
 	w.streamsMx.Lock()
 	defer w.streamsMx.Unlock()
 
-	for k, v := range w.streams[roomId] {
+	for k, v := range w.streams[roomID] {
 		for userID, connIds := range v.connIdsByUserId {
-			index := -1
-
-			for i, streamConnId := range connIds {
-				if streamConnId == connId {
-					index = i
-					break
-				}
-			}
-
+			index := slices.Index(connIds, connID)
 			if index < 0 {
 				continue
 			}
 
-			w.streams[roomId][k].connIdsByUserId[userID] = append(connIds[:index], connIds[index+1:]...)
-			if len(w.streams[roomId][k].connIdsByUserId[userID]) == 0 {
-				delete(w.streams[roomId][k].connIdsByUserId, userID)
+			w.streams[roomID][k].connIdsByUserId[userID] = slices.Delete(connIds, index, index+1)
+			if len(w.streams[roomID][k].connIdsByUserId[userID]) == 0 {
+				delete(w.streams[roomID][k].connIdsByUserId, userID)
 
-				if len(w.streams[roomId][k].connIdsByUserId) == 0 {
-					delete(w.streams[roomId], k)
+				if len(w.streams[roomID][k].connIdsByUserId) == 0 {
+					delete(w.streams[roomID], k)
 					v.cancel()
 				}
 			}
 
-			return nil
+			return
 		}
 	}
-
-	return nil
 }
 
 func (w *watcher) newStream(roomId, k, connId, userID string, streamCancel context.CancelFunc) bool {

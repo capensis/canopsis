@@ -10,15 +10,20 @@
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :enablable="updatable"
+        :disablable="updatable"
+        :removable="removable"
+        user
+        small
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
-    <template #enable="{ item }">
-      <c-enabled :value="item.enable" />
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
     </template>
     <template #active="{ item }">
       <c-enabled :value="item.active_connects > 0" />
@@ -118,7 +123,7 @@ export default {
       },
       {
         text: t('common.enabled'),
-        value: 'enable',
+        value: 'enabled',
       },
       {
         text: t('user.auth'),

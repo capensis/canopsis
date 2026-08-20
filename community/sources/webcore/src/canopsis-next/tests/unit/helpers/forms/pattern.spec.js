@@ -256,7 +256,7 @@ describe('pattern form converters', () => {
     const value = Faker.lorem.word();
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connector,
-      cond: { type: PATTERN_CONDITIONS.beginsWith, value },
+      cond: { type: PATTERN_CONDITIONS.beginWith, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -264,7 +264,7 @@ describe('pattern form converters', () => {
     expect(form).toEqual({
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connector,
-      operator: PATTERN_OPERATORS.beginsWith,
+      operator: PATTERN_OPERATORS.beginWith,
       value,
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
@@ -413,12 +413,13 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasEvery,
-      value,
     });
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -431,12 +432,13 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasOneOf,
-      value,
     });
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -449,12 +451,13 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.hasNot,
-      value,
     });
+    expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
@@ -703,15 +706,16 @@ describe('pattern form converters', () => {
 
     const form = patternRuleToForm(patternRule);
 
-    expect(form).toEqual({
-      ...defaultForm,
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
       attribute: ALARM_PATTERN_FIELDS.infos,
       field: PATTERN_RULE_INFOS_FIELDS.value,
       fieldType: PATTERN_FIELD_TYPES.stringArray,
       operator: PATTERN_OPERATORS.hasNot,
       dictionary,
-      value,
     });
+    expect(form.value).toEqual(value.map(item => ({ key: expect.any(String), value: item })));
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 

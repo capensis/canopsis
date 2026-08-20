@@ -2,7 +2,11 @@ import { ALARM_FIELDS } from '@/constants';
 
 import i18n from '@/i18n';
 
-import { getInfosWidgetColumn, isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
+import {
+  getInfosWidgetColumn,
+  isAlarmTicketDataWidgetColumn,
+  isLinksWidgetColumn,
+} from '@/helpers/entities/widget/column/form';
 
 /**
  * Get translated label for widget column
@@ -24,6 +28,10 @@ export const getWidgetColumnLabel = (column = {}, labelsMap = {}) => {
 
   if (isLinksWidgetColumn(column.value)) {
     return i18n.tc(labelsMap[ALARM_FIELDS.links], 2);
+  }
+
+  if (isAlarmTicketDataWidgetColumn(column.value)) {
+    return i18n.tc(labelsMap[ALARM_FIELDS.ticketData], 2);
   }
 
   return i18n.tc(labelsMap[column.value], 2);

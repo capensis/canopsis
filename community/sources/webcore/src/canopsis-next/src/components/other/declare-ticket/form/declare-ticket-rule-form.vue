@@ -1,58 +1,61 @@
 <template>
-  <v-tabs
-    v-model="activeTab"
-    slider-color="primary"
-    fixed-tabs
-  >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
-    <v-tab :class="{ 'error--text': hasPatternsError }">
-      {{ $tc('common.pattern') }}
-    </v-tab>
-    <v-tab>{{ $t('common.testQuery') }}</v-tab>
+  <v-layout class="gap-2" column>
+    <c-enabled-field v-field="form.enabled" with-background />
+    <v-tabs
+      v-model="activeTab"
+      slider-color="primary"
+      centered
+    >
+      <v-tab :class="{ 'error--text': hasGeneralError }">
+        {{ $t('common.general') }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasPatternsError }">
+        {{ $tc('common.pattern') }}
+      </v-tab>
+      <v-tab>{{ $t('common.testQuery') }}</v-tab>
 
-    <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
+      <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
-    <v-tab-item eager>
-      <declare-ticket-rule-general-form
-        v-field="form"
-        ref="general"
-        :template-vars="templateVars"
-        class="mt-2"
-      />
-    </v-tab-item>
-    <v-tab-item eager>
-      <declare-ticket-rule-patterns-form
-        v-field="form.patterns"
-        ref="patterns"
-        class="mt-2"
-      />
-    </v-tab-item>
-    <v-tab-item>
-      <v-layout>
-        <v-flex
-          offset-xs1
-          xs10
-        >
-          <declare-ticket-rule-test-query
-            :form="form"
-            class="mt-2"
-          />
-        </v-flex>
-      </v-layout>
-    </v-tab-item>
-    <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
-      <template-testing-test-variables
-        :general-form="form"
-        :variables-fields="variablesFields"
-        :template-vars="templateVars"
-        :rule-id="ruleId"
-        :type="type"
-        :active="isActiveTestingTab"
-      />
-    </v-tab-item>
-  </v-tabs>
+      <v-tab-item eager>
+        <declare-ticket-rule-general-form
+          v-field="form"
+          ref="general"
+          :template-vars="templateVars"
+          class="mt-2"
+        />
+      </v-tab-item>
+      <v-tab-item eager>
+        <declare-ticket-rule-patterns-form
+          v-field="form.patterns"
+          ref="patterns"
+          class="mt-2"
+        />
+      </v-tab-item>
+      <v-tab-item>
+        <v-layout>
+          <v-flex
+            offset-xs1
+            xs10
+          >
+            <declare-ticket-rule-test-query
+              :form="form"
+              class="mt-2"
+            />
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
+        <template-testing-test-variables
+          :general-form="form"
+          :variables-fields="variablesFields"
+          :template-vars="templateVars"
+          :rule-id="ruleId"
+          :type="type"
+          :active="isActiveTestingTab"
+        />
+      </v-tab-item>
+    </v-tabs>
+  </v-layout>
 </template>
 
 <script>
@@ -67,6 +70,7 @@ import {
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { useTemplateVarsList } from '@/hooks/vars/template';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
 import {
   useTestVariablesTabData,
@@ -79,6 +83,13 @@ import DeclareTicketRuleTestQuery from '../partials/declare-ticket-rule-test-que
 
 import DeclareTicketRuleGeneralForm from './declare-ticket-rule-general-form.vue';
 import DeclareTicketRulePatternsForm from './declare-ticket-rule-patterns-form.vue';
+
+const DECLARE_TICKET_RULE_FORM_TABS = {
+  general: 0,
+  patterns: 1,
+  testQuery: 2,
+  testVariables: 3,
+};
 
 export default {
   components: {
@@ -104,7 +115,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const activeTab = ref(0);
+    const activeTab = ref(DECLARE_TICKET_RULE_FORM_TABS.general);
 
     const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
 
@@ -114,7 +125,7 @@ export default {
     const general = ref(null);
     const patterns = ref(null);
 
-    const isActiveTestingTab = computed(() => activeTab.value === 3);
+    const isActiveTestingTab = computed(() => activeTab.value === DECLARE_TICKET_RULE_FORM_TABS.testVariables);
 
     const {
       vars: templateVars,
@@ -131,6 +142,8 @@ export default {
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
     } = useTestVariablesTabData(props, type, emit);
+
+    useAiChatExpand({ activeTab, neededTab: DECLARE_TICKET_RULE_FORM_TABS.patterns });
 
     watch(() => general.value?.hasAnyError, value => hasGeneralError.value = value);
     watch(() => patterns.value?.hasAnyError, value => hasPatternsError.value = value);

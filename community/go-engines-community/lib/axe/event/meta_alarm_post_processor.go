@@ -48,36 +48,34 @@ func NewMetaAlarmPostProcessor(
 	logger zerolog.Logger,
 ) MetaAlarmPostProcessor {
 	return &metaAlarmPostProcessor{
-		dbClient:                  dbClient,
-		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
-		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
-		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
-		adapter:                   adapter,
-		ruleAdapter:               ruleAdapter,
-		alarmStatusService:        alarmStatusService,
-		metaAlarmStatesService:    metaAlarmStatesService,
-		encoder:                   encoder,
-		eventGenerator:            eventGenerator,
-		amqpPublisher:             amqpPublisher,
-		metricsSender:             metricsSender,
-		logger:                    logger,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       dbClient.Collection(mongo.EntityMongoCollection),
+		adapter:                adapter,
+		ruleAdapter:            ruleAdapter,
+		alarmStatusService:     alarmStatusService,
+		metaAlarmStatesService: metaAlarmStatesService,
+		encoder:                encoder,
+		eventGenerator:         eventGenerator,
+		amqpPublisher:          amqpPublisher,
+		metricsSender:          metricsSender,
+		logger:                 logger,
 	}
 }
 
 type metaAlarmPostProcessor struct {
-	dbClient                  mongo.DbClient
-	alarmCollection           mongo.DbCollection
-	metaAlarmStatesCollection mongo.DbCollection
-	entityCollection          mongo.DbCollection
-	adapter                   libalarm.Adapter
-	ruleAdapter               correlation.RulesAdapter
-	alarmStatusService        alarmstatus.Service
-	metaAlarmStatesService    correlation.MetaAlarmStateService
-	encoder                   encoding.Encoder
-	eventGenerator            event.Generator
-	amqpPublisher             libamqp.Publisher
-	metricsSender             metrics.Sender
-	logger                    zerolog.Logger
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	adapter                libalarm.Adapter
+	ruleAdapter            correlation.RulesAdapter
+	alarmStatusService     alarmstatus.Service
+	metaAlarmStatesService correlation.MetaAlarmStateService
+	encoder                encoding.Encoder
+	eventGenerator         event.Generator
+	amqpPublisher          libamqp.Publisher
+	metricsSender          metrics.Sender
+	logger                 zerolog.Logger
 }
 
 func (p *metaAlarmPostProcessor) Process(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
@@ -175,6 +173,7 @@ func (p *metaAlarmPostProcessor) processComponent(ctx context.Context, event rpc
 		resourceEvent.Author = event.Parameters.Author
 		resourceEvent.UserID = event.Parameters.User
 		resourceEvent.Initiator = event.Parameters.Initiator
+		resourceEvent.AlarmID = resource.Alarm.ID
 		err = p.sendToFifo(ctx, resourceEvent)
 		if err != nil {
 			return err
@@ -518,12 +517,12 @@ func (p *metaAlarmPostProcessor) resolveParents(ctx context.Context, parentIDs [
 						return nil
 					}
 
-					resolvedCount, err := p.adapter.CountResolvedAlarm(ctx, parentAlarm.Alarm.Value.Children)
+					openedCount, err := p.adapter.CountOpenedChildrenAlarmsByParent(ctx, parentAlarm.Entity.ID)
 					if err != nil {
 						return fmt.Errorf("cannot fetch alarms: %w", err)
 					}
 
-					if resolvedCount < len(parentAlarm.Alarm.Value.Children) {
+					if openedCount > 0 {
 						return nil
 					}
 
@@ -602,18 +601,15 @@ func (p *metaAlarmPostProcessor) updateParentState(ctx context.Context, childAla
 					}
 
 					var newState types.CpsNumber
-					var newLastEventDate datetime.CpsTime
+					var newLastEventDate *datetime.CpsTime
 					if childState > parentState {
 						newState = childState
 					} else if childState < parentState {
-						state, lastEventDate, err := p.adapter.GetWorstAlarmStateAndMaxLastEventDate(ctx,
+						newState, newLastEventDate, err = p.adapter.GetWorstAlarmStateAndMaxLastEventDate(ctx,
 							parentAlarm.Alarm.Value.Children)
 						if err != nil {
 							return fmt.Errorf("cannot fetch children state: %w", err)
 						}
-
-						newState = types.CpsNumber(state)
-						newLastEventDate = datetime.NewCpsTime(lastEventDate)
 					} else {
 						return nil
 					}
@@ -733,6 +729,7 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 	childEvent.Initiator = event.Parameters.Initiator
 	childEvent.TicketInfo = event.Parameters.TicketInfo
 	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
+	childEvent.AlarmID = childAlarm.Alarm.ID
 	output := event.Parameters.Output
 	isTicket := false
 	switch eventRes.AlarmChangeType {
@@ -741,7 +738,8 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
 		output = event.Parameters.TicketInfo.GetStepMessage()
 		isTicket = true
-	case types.AlarmChangeTypeAssocTicket:
+	case types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeTicketRemove:
 		isTicket = true
 	}
 
@@ -791,6 +789,7 @@ func (p *metaAlarmPostProcessor) applyOnChild(changeType types.AlarmChangeType) 
 	case types.AlarmChangeTypeAck,
 		types.AlarmChangeTypeAckremove,
 		types.AlarmChangeTypeAssocTicket,
+		types.AlarmChangeTypeTicketRemove,
 		types.AlarmChangeTypeCancel,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeComment,

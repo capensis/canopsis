@@ -6,30 +6,36 @@
     :total-items="totalItems"
     :options="options"
     :is-disabled-item="isDisabledReason"
-    select-all
+    :select-all="removable || updatable"
+    :hide-mass-actions="!active"
     expand
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="hasDeleteAnyPbehaviorReasonAccess"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :hideable="updatable"
+        :unhideable="updatable"
+        pbehavior-reason
+        small
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
-    <template #hidden="{ item }">
-      <c-enabled :value="item.hidden" />
+    <template #visible="{ item }">
+      <c-enabled :value="!item.hidden" />
     </template>
     <template #actions="{ item }">
       <c-action-btn
-        v-if="hasUpdateAnyPbehaviorReasonAccess"
+        v-if="updatable"
         type="edit"
         @click="$emit('edit', item)"
       />
       <c-action-btn
-        v-if="hasDeleteAnyPbehaviorReasonAccess"
+        v-if="removable"
         :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.reasons.usingReason')"
         :disabled="!item.deletable"
         type="delete"
@@ -43,7 +49,9 @@
 </template>
 
 <script>
-import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorReasonsListExpandPanel from './partials/pbehavior-reasons-list-expand-panel.vue';
 
@@ -51,7 +59,6 @@ export default {
   components: {
     PbehaviorReasonsListExpandPanel,
   },
-  mixins: [permissionsTechnicalPbehaviorReasonsMixin],
   props: {
     pbehaviorReasons: {
       type: Array,
@@ -69,30 +76,46 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.hidden'),
-          value: 'hidden',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
+    removable: {
+      type: Boolean,
+      required: true,
+    },
+    updatable: {
+      type: Boolean,
+      required: true,
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
-  methods: {
-    isDisabledReason({ deletable }) {
-      return !deletable;
-    },
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('pbehavior.visible'),
+        value: 'visible',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const isDisabledReason = ({ deletable }) => !deletable;
+
+    return {
+      headers,
+
+      isDisabledReason,
+    };
   },
 };
 </script>

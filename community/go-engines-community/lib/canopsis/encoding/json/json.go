@@ -22,7 +22,7 @@ func NewEncoder() encoding.Encoder {
 	}
 }
 
-func (e *jsonEncoder) Encode(in interface{}) ([]byte, error) {
+func (e *jsonEncoder) Encode(in any) ([]byte, error) {
 	var b []byte
 	var err error
 
@@ -45,7 +45,7 @@ func NewDecoder() encoding.Decoder {
 	}
 }
 
-func (e *jsonDecoder) Decode(in []byte, out interface{}) error {
+func (e *jsonDecoder) Decode(in []byte, out any) error {
 	var err error
 
 	if m, ok := out.(easyjson.Unmarshaler); ok {

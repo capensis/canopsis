@@ -2,7 +2,6 @@ package entityinfodictionary
 
 import (
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -46,7 +45,7 @@ func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationRes
 					{
 						"$match": bson.M{
 							"name": bson.Regex{
-								Pattern: fmt.Sprintf(".*%s.*", r.Search),
+								Pattern: mongoquery.GetSearchPattern(r.Search),
 								Options: "i",
 							},
 						},

@@ -127,7 +127,10 @@ export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alar
 export const formToLinkRule = ({ patterns, links, source_code: sourceCode, external_data: externalData, ...form }) => {
   const linkRule = {
     ...form,
-    ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+    ...formFilterToPatterns(
+      patterns,
+      form.type === LINK_RULE_TYPES.entity ? [PATTERNS_FIELDS.entity] : [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+    ),
     external_data: formToExternalData(externalData),
   };
 

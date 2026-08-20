@@ -30,9 +30,11 @@ type SectionAlarm struct {
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
-	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
-	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
-	CropStepsNumber                   int  `toml:"CropStepsNumber"`
+	ActivateAlarmAfterAutoRemediation bool   `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool   `toml:"EnableArraySortingInEntityInfos"`
+	CropStepsNumber                   int    `toml:"CropStepsNumber"`
+	CheckTicketStatusInterval         string `toml:"CheckTicketStatusInterval"`
+	CheckTicketStatusMaxPeriod        string `toml:"CheckTicketStatusMaxPeriod"`
 }
 
 // SectionGlobal ...
@@ -49,7 +51,8 @@ type SectionGlobal struct {
 
 	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
 
-	EventsRecorderLimit int `toml:"EventsRecorderLimit"`
+	EventsRecorderLimit   int `toml:"EventsRecorderLimit"`
+	EventsRecorderWorkers int `toml:"EventsRecorderWorkers"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -87,10 +90,15 @@ type SectionApi struct {
 	ExportMongoClientTimeout string   `toml:"ExportMongoClientTimeout"`
 	AuthorScheme             []string `toml:"AuthorScheme"`
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
-	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
-	EventsRecorderFetchStatusTimeout string `toml:"EventsRecorderFetchStatusTimeout"`
-	WebsocketPingInterval            string `toml:"WebsocketPingInterval"`
-	NotificationDisplayCount         int    `toml:"NotificationDisplayCount"`
+	WebsocketPingInterval    string   `toml:"WebsocketPingInterval"`
+	NotificationDisplayCount int      `toml:"NotificationDisplayCount"`
+	ActionLogger             struct {
+		Enabled bool `toml:"Enabled"`
+	} `toml:"action_logger"`
+	LLM struct {
+		OffTopicErrors  []string       `toml:"off_topic_errors"`
+		SuggestedModels []LLMModelConf `toml:"suggested_models"`
+	} `toml:"llm"`
 }
 
 type SectionLogger struct {
@@ -103,6 +111,11 @@ type ConsoleWriter struct {
 	NoColor    bool     `toml:"NoColor"`
 	TimeFormat string   `toml:"TimeFormat"`
 	PartsOrder []string `toml:"PartsOrder"`
+}
+
+type SectionEntityInfosLogs struct {
+	Enabled       bool   `toml:"Enabled"`
+	FlushInterval string `toml:"FlushInterval"`
 }
 
 type SectionMetrics struct {
@@ -134,19 +147,20 @@ type SectionExternalData struct {
 
 // CanopsisConf represents a generic configuration object.
 type CanopsisConf struct {
-	ID           string              `bson:"_id,omitempty" toml:"omitempty"`
-	Global       SectionGlobal       `bson:"global" toml:"global"`
-	Alarm        SectionAlarm        `bson:"alarm" toml:"alarm"`
-	Timezone     SectionTimezone     `bson:"timezone" toml:"timezone"`
-	ImportCtx    SectionImportCtx    `bson:"import_ctx" toml:"import_ctx"`
-	File         SectionFile         `bson:"file" toml:"file"`
-	DataStorage  SectionDataStorage  `bson:"data_storage" toml:"data_storage"`
-	Logger       SectionLogger       `bson:"logger" toml:"logger"`
-	API          SectionApi          `bson:"api" toml:"api"`
-	Metrics      SectionMetrics      `bson:"metrics" toml:"metrics"`
-	TechMetrics  SectionTechMetrics  `bson:"tech_metrics" toml:"tech_metrics"`
-	Template     SectionTemplate     `bson:"template" toml:"template"`
-	ExternalData SectionExternalData `bson:"external_data" toml:"external_data"`
+	ID              string                 `bson:"_id,omitempty" toml:"omitempty"`
+	Global          SectionGlobal          `bson:"global" toml:"global"`
+	Alarm           SectionAlarm           `bson:"alarm" toml:"alarm"`
+	Timezone        SectionTimezone        `bson:"timezone" toml:"timezone"`
+	ImportCtx       SectionImportCtx       `bson:"import_ctx" toml:"import_ctx"`
+	File            SectionFile            `bson:"file" toml:"file"`
+	DataStorage     SectionDataStorage     `bson:"data_storage" toml:"data_storage"`
+	Logger          SectionLogger          `bson:"logger" toml:"logger"`
+	API             SectionApi             `bson:"api" toml:"api"`
+	EntityInfosLogs SectionEntityInfosLogs `bson:"entity_infos_logs" toml:"entity_infos_logs"`
+	Metrics         SectionMetrics         `bson:"metrics" toml:"metrics"`
+	TechMetrics     SectionTechMetrics     `bson:"tech_metrics" toml:"tech_metrics"`
+	Template        SectionTemplate        `bson:"template" toml:"template"`
+	ExternalData    SectionExternalData    `bson:"external_data" toml:"external_data"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.
@@ -164,4 +178,10 @@ type VersionConf struct {
 
 	Version        string            `bson:"version"`
 	VersionUpdated *datetime.CpsTime `bson:"version_updated,omitempty"`
+}
+
+type LLMModelConf struct {
+	Name           string   `bson:"name" json:"name" toml:"name"`
+	Recommended    bool     `bson:"recommended" json:"recommended" toml:"recommended"`
+	ThinkingLevels []string `bson:"thinking_levels" json:"thinking_levels" toml:"thinking_levels"`
 }

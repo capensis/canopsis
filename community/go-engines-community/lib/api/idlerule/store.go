@@ -3,6 +3,7 @@ package idlerule
 import (
 	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
@@ -20,11 +21,12 @@ import (
 )
 
 type Store interface {
-	Insert(context.Context, CreateRequest) (*Rule, error)
+	Insert(context.Context, CreateRequest) (*Response, error)
 	Find(context.Context, FilteredQuery) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*Rule, error)
-	Update(context.Context, UpdateRequest) (*Rule, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Update(context.Context, UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
+	Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error)
 }
 
 type store struct {
@@ -84,7 +86,7 @@ func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, 
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 	}
@@ -96,7 +98,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 	}
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		rule := &Rule{}
+		rule := &Response{}
 		err = cursor.Decode(rule)
 		if err != nil {
 			return nil, err
@@ -108,7 +110,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 
@@ -116,7 +118,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	rule.Created = now
 	rule.Updated = now
 
-	var idleRule *Rule
+	var idleRule *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
@@ -162,12 +164,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	return idleRule, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
 	model.Updated = datetime.NewCpsTime()
 
-	var idleRule *Rule
+	var idleRule *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
@@ -229,6 +231,23 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return deleted > 0, err
+}
+
+func (s *store) Toggle(ctx context.Context, r BulkToggleRequestItem, enabled bool) (bool, error) {
+	res, err := s.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": r.ID},
+		bson.M{"$set": bson.M{
+			"enabled": enabled,
+			"author":  r.Author,
+			"updated": datetime.NewCpsTime(),
+		}},
+	)
+	if err != nil {
+		return false, fmt.Errorf("failed to toggle idle rule: %w", err)
+	}
+
+	return res.MatchedCount != 0, nil
 }
 
 func (s *store) getSort(r FilteredQuery) bson.M {

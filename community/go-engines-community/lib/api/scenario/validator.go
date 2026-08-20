@@ -1,7 +1,9 @@
 package scenario
 
 import (
+	"slices"
 	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -27,6 +29,14 @@ func (v *Validator) ValidateActionRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(ActionRequest)
 
 	if r.Type != "" {
+		if r.EmitTriggerFail == nil {
+			if r.Type == types.ActionTypeWebhook && r.Parameters.DeclareTicket != nil {
+				sl.ReportError(r.EmitTriggerFail, "EmitTriggerFail", "EmitTriggerFail", "required", "")
+			}
+		} else if r.Type != types.ActionTypeWebhook || r.Parameters.DeclareTicket == nil {
+			sl.ReportError(r.EmitTriggerFail, "EmitTriggerFail", "EmitTriggerFail", "must_be_empty", "")
+		}
+
 		v.validateActionParametersRequest(sl, r.Type, r.Parameters)
 	}
 
@@ -66,24 +76,17 @@ func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t 
 				types.AlarmStateMajor,
 				types.AlarmStateCritical,
 			}
-			param := ""
+			var param strings.Builder
+			param.Grow(len(validTypes)*2 - 1)
 			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
+				param.WriteString(strconv.Itoa(int(validTypes[i])))
 				if i < len(validTypes)-1 {
-					param += " "
+					param.WriteString(" ")
 				}
 			}
 
-			found := false
-			for _, v := range validTypes {
-				if v == *params.State {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				sl.ReportError(params.State, "State", "Parameters.State", "oneof", param)
+			if !slices.Contains(validTypes, *params.State) {
+				sl.ReportError(params.State, "State", "Parameters.State", "oneof", param.String())
 			}
 		}
 	case types.ActionTypeSnooze:

@@ -37,6 +37,256 @@ func TestMatchEntityPattern(t *testing.T) {
 	}
 }
 
+func TestValidateEntityPattern(t *testing.T) {
+	dataSets := map[string]struct {
+		pattern         pattern.Entity
+		forbiddenFields map[string]bool
+		expectedResult  bool
+	}{
+		"given empty pattern should be valid": {
+			pattern:        pattern.Entity{},
+			expectedResult: true,
+		},
+		"given empty group should be invalid": {
+			pattern:        pattern.Entity{{}},
+			expectedResult: false,
+		},
+		"given valid string field condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-name"),
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given invalid string field condition should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "name",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 10),
+					},
+				},
+			},
+			expectedResult: false,
+		},
+		"given valid int field condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "impact_level",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 2),
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given invalid int field condition should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "impact_level",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "not-an-int"),
+					},
+				},
+			},
+			expectedResult: false,
+		},
+		"given valid time field condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "last_event_date",
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given invalid time field condition should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "last_event_date",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "not-a-time"),
+					},
+				},
+			},
+			expectedResult: false,
+		},
+		"given unsupported field should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "created",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			expectedResult: false,
+		},
+		"given exact forbidden field should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-name"),
+					},
+				},
+			},
+			forbiddenFields: map[string]bool{"name": true},
+			expectedResult:  false,
+		},
+		"given forbidden infos field but not infos in pattern should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-name"),
+					},
+				},
+			},
+			forbiddenFields: map[string]bool{"infos": true},
+			expectedResult:  true,
+		},
+		"given forbidden component infos field but not component infos in pattern should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-name"),
+					},
+				},
+			},
+			forbiddenFields: map[string]bool{"component_infos": true},
+			expectedResult:  true,
+		},
+		"given forbidden infos should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "infos.team",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+					},
+				},
+			},
+			forbiddenFields: map[string]bool{"infos": true},
+			expectedResult:  false,
+		},
+		"given forbidden component infos should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "component_infos.team",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+					},
+				},
+			},
+			forbiddenFields: map[string]bool{"component_infos": true},
+			expectedResult:  false,
+		},
+		"given valid alias condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "alias-value"),
+						Alias:     "display_name",
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given valid alias condition and forbidden infos should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "alias-value"),
+						Alias:     "display_name",
+					},
+				},
+			},
+			forbiddenFields: map[string]bool{"infos": true},
+			expectedResult:  false,
+		},
+		"given invalid alias condition should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						FieldType: "invalid",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "alias-value"),
+						Alias:     "display_name",
+					},
+				},
+			},
+			expectedResult: false,
+		},
+		"given valid info condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "infos.team",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given invalid info condition should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "infos.team",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 10),
+					},
+				},
+			},
+			expectedResult: false,
+		},
+		"given valid component info condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "component_infos.rank",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 10),
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given invalid component info condition should be invalid": {
+			pattern: pattern.Entity{
+				{
+					pattern.FieldCondition{
+						Field:     "component_infos.rank",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "wrong-type"),
+					},
+				},
+			},
+			expectedResult: false,
+		},
+	}
+
+	for name, test := range dataSets {
+		t.Run(name, func(t *testing.T) {
+			actual := match.ValidateEntityPattern(test.pattern, test.forbiddenFields)
+			if actual != test.expectedResult {
+				t.Fatalf("expected %v, got %v", test.expectedResult, actual)
+			}
+		})
+	}
+}
+
 type entityDataSet struct {
 	pattern     pattern.Entity
 	entity      types.Entity

@@ -16,21 +16,24 @@ func CheckAll(
 	ctx context.Context,
 	retryDelay time.Duration,
 	retries int,
-	withPostgres, withTechPostgres bool,
+	diagnosePostgresMigration, withPostgres, withTechPostgres bool,
 	logger zerolog.Logger,
 ) error {
+	var err error
 	logger.Info().Msg("checking")
-	err := Check(ctx, CheckRedis, "redis", retryDelay, retries, logger)
-	if err != nil {
-		return err
-	}
-	err = Check(ctx, CheckMongo, "mongo", retryDelay, retries, logger)
-	if err != nil {
-		return err
-	}
-	err = Check(ctx, CheckAMQP, "amqp", retryDelay, retries, logger)
-	if err != nil {
-		return err
+	if !diagnosePostgresMigration {
+		err = Check(ctx, CheckRedis, "redis", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
+		err = Check(ctx, CheckMongo, "mongo", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
+		err = Check(ctx, CheckAMQP, "amqp", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
 	}
 
 	if withPostgres {
@@ -107,13 +110,24 @@ func CheckMongo(ctx context.Context, _ zerolog.Logger) error {
 	return nil
 }
 
-func CheckAMQP(_ context.Context, logger zerolog.Logger) error {
-	q, err := amqp.NewConnection(logger, 0, 0)
+func CheckAMQP(ctx context.Context, logger zerolog.Logger) error {
+	conn, err := amqp.New(0, 0, logger)
 	if err != nil {
 		return err
 	}
 
-	_ = q.Close()
+	defer conn.Close()
+
+	// amqp.New dials asynchronously in a background goroutine, so on its own it never reports an unreachable broker.
+	// Opening a channel blocks until that dial succeeds (returning nil) or
+	// fails (returning ErrConnectionClosed once reconnectCount=0 gives up), which is what we want to probe.
+	ch, err := conn.Channel(ctx)
+	if err != nil {
+		return err
+	}
+
+	_ = ch.Close()
+
 	return nil
 }
 

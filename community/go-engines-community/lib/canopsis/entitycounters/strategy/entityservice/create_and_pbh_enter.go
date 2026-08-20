@@ -13,11 +13,21 @@ func (s CreateAndPbhEnterStrategy) CanSkip(_ entitycounters.EntityServiceCounter
 
 func (s CreateAndPbhEnterStrategy) Calculate(calcData entitycounters.EntityServiceCountersCalcData) entitycounters.EntityCounters {
 	if calcData.ServicesToRemove[calcData.Counters.ID] {
+		inheritedMode := entitycounters.InheritedNone
+		if calcData.PrevInherited {
+			inheritedMode = entitycounters.InheritedWith
+		}
+
 		calcData.Counters.Depends--
-		calcData.Counters.DecrementState(types.AlarmStateOK, calcData.Inherited)
+		calcData.Counters.DecrementState(types.AlarmStateOK, inheritedMode)
 	} else if calcData.ServicesToAdd[calcData.Counters.ID] {
+		inheritedMode := entitycounters.InheritedNone
+		if calcData.CurInherited {
+			inheritedMode = entitycounters.InheritedWith
+		}
+
 		calcData.Counters.Depends++
-		calcData.Counters.IncrementState(calcData.CurState, calcData.Inherited)
+		calcData.Counters.IncrementState(calcData.CurState, inheritedMode)
 
 		calcData.Counters.IncrementAlarmCounters(false, calcData.CurActive)
 
@@ -25,8 +35,17 @@ func (s CreateAndPbhEnterStrategy) Calculate(calcData entitycounters.EntityServi
 			calcData.Counters.IncrementPbhCounters(calcData.CurPbhTypeID)
 		}
 	} else {
-		calcData.Counters.DecrementState(types.AlarmStateOK, calcData.Inherited)
-		calcData.Counters.IncrementState(calcData.CurState, calcData.Inherited)
+		prevInheritedMode := entitycounters.InheritedNone
+		if calcData.PrevInherited {
+			prevInheritedMode = entitycounters.InheritedWith
+		}
+		curInheritedMode := entitycounters.InheritedNone
+		if calcData.CurInherited {
+			curInheritedMode = entitycounters.InheritedWith
+		}
+
+		calcData.Counters.DecrementState(types.AlarmStateOK, prevInheritedMode)
+		calcData.Counters.IncrementState(calcData.CurState, curInheritedMode)
 
 		calcData.Counters.IncrementAlarmCounters(false, calcData.CurActive)
 

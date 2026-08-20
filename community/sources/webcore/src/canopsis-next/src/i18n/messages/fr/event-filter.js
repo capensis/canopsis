@@ -24,6 +24,7 @@ export default {
   component: 'ID de composant ou modèle',
   connector: 'ID ou modèle de connecteur',
   connectorName: 'Nom ou modèle de connecteur',
+  upstream: 'ID amont ou modèle',
   duringPeriod: 'Appliqué pendant cette période uniquement',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
@@ -34,6 +35,9 @@ export default {
   event: 'Evénement',
   eventCopied: 'Evénement copié dans le presse papier',
   syntaxIsValid: 'La syntaxe est valide',
+  massRemove: 'Supprimer les filtres d\'événements',
+  massEnable: 'Activer les filtres d\'événements',
+  massDisable: 'Désactiver les filtres d\'événements',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Suppression',
     [EVENT_FILTER_TYPES.break]: 'Break',

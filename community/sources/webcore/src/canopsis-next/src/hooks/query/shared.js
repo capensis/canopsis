@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import { convertQueryToRequest } from '@/helpers/query';
+import { convertQueryToRequest as convertQueryToRequestHelper } from '@/helpers/query';
 
 import { usePendingHandler } from './pending';
 import { useLocalQuery } from './local-query';
@@ -87,7 +87,7 @@ export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate })
  */
 export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) => useLocalQueryWithOptions({
   initialQuery,
-  onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequest(fetchQuery) }),
+  onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
 });
 
 /**
@@ -100,9 +100,14 @@ export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) => u
  * @param {Object} options - Configuration options for the hook
  * @param {Function} options.fetchListHandler - Async function that fetches data based on provided parameters
  * @param {Object} [options.initialQuery] - Initial query state
+ * @param {Function} [options.convertQueryToRequest] - Function to convert query to request parameters
  * @returns {Object}
  */
-export const useFetchListWithoutStoreWithOptions = ({ fetchListHandler, initialQuery }) => {
+export const useFetchListWithoutStoreWithOptions = ({
+  fetchListHandler,
+  initialQuery,
+  convertQueryToRequest = convertQueryToRequestHelper,
+}) => {
   const data = ref([]);
   const meta = ref({});
 

@@ -1,16 +1,20 @@
 <script>
 import VDialog from 'vuetify/lib/components/VDialog';
+import VThemeProvider from 'vuetify/lib/components/VThemeProvider';
 import { getZIndex, convertToUnit } from 'vuetify/lib/util/helpers';
+
+import { getMaxZIndex } from '@/helpers/vuetify';
 
 import ClickOutside from '../../directives/click-outside';
 import overlayableMixin from '../../mixins/overlayable';
+import stackableMixin from '../../mixins/stackable';
 
 export default {
   directives: {
     ClickOutside,
   },
   extends: VDialog,
-  mixins: [overlayableMixin],
+  mixins: [overlayableMixin, stackableMixin],
   props: {
     customCloseConditional: {
       type: Function,
@@ -26,6 +30,10 @@ export default {
     },
     contentWrapperClass: {
       type: String,
+      required: false,
+    },
+    contentWrapperStyle: {
+      type: Object,
       required: false,
     },
   },
@@ -44,7 +52,7 @@ export default {
        */
       const index = !this.isActive
         ? getZIndex(content)
-        : this.getMaxZIndex(this.stackExclude || [content]) + 12;
+        : getMaxZIndex(this.$el, 300, this.stackExclude || [content]) + 12;
 
       if (index == null) {
         return index;
@@ -67,6 +75,32 @@ export default {
     },
   },
   methods: {
+    genContent() {
+      return this.showLazyContent(() => [this.$createElement(VThemeProvider, {
+        props: {
+          root: true,
+          light: this.light,
+          dark: this.dark,
+        },
+      }, [this.$createElement('div', {
+        class: this.contentClasses,
+        attrs: {
+          role: 'dialog',
+          'aria-modal': this.hideOverlay ? undefined : 'true',
+          ...this.getScopeIdAttrs(),
+        },
+        on: {
+          keydown: this.onKeydown,
+        },
+        style: {
+          ...this.contentWrapperStyle,
+
+          zIndex: this.activeZIndex,
+        },
+        ref: 'content',
+      }, [this.genTransition()])])]);
+    },
+
     onFocusin(event) {
       if (!event || !this.retainFocus) return;
 

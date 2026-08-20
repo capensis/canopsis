@@ -171,6 +171,7 @@ export default {
     },
     success: {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
+      remove: 'Pbehavior successfully removed! You may need to wait 60 sec to see it in interface',
     },
     cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
   },
@@ -318,6 +319,9 @@ export default {
     errors: {
       isNotEmpty: 'The group is not empty',
     },
+  },
+  aiChatHistory: {
+    title: 'Chat history',
   },
   alarmsList: {
     title: 'Alarm list',
@@ -480,6 +484,28 @@ export default {
     },
     defaultMessage: 'Your message here',
   },
+  createCommentTemplate: {
+    create: {
+      title: 'Create comment template',
+    },
+    edit: {
+      title: 'Edit comment template',
+    },
+  },
+  createAnomalyMonitoredConnector: {
+    create: {
+      title: 'Create anomaly monitored connector',
+    },
+    edit: {
+      title: 'Edit anomaly monitored connector',
+    },
+    remove: {
+      text: 'Delete <strong>{connectorName}</strong> from the list of anomalies monitoring connectors?',
+    },
+  },
+  anomalyMonitoredConnectorHistory: {
+    disableConfirm: 'Disable anomalies monitoring for <strong>{connectorName}</strong>?',
+  },
   createCommentEvent: {
     title: 'Add comment',
   },
@@ -526,7 +552,7 @@ export default {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {
@@ -621,6 +647,11 @@ export default {
       popups: {
         success: '{jobName} has been successfully duplicated',
       },
+    },
+  },
+  createTicketStatusJob: {
+    edit: {
+      title: 'Edit job : check ticket status',
     },
   },
   clickOutsideConfirmation: {
@@ -826,6 +857,20 @@ export default {
         + '<strong>Deletion operation won’t be cancellable.</strong>',
       phraseText: 'Please type the token name to confirm:',
     },
+    deleteLlm: {
+      title: 'Delete LLM',
+      text: 'You are about to delete LLM connection.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type LLM name to confirm:',
+    },
+    deleteSelectedLlms: {
+      title: 'Delete {count} model? | Delete {count} models?',
+      text: 'You are about to delete {count} model.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong> | You are about to delete {count} models.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type the following to confirm <strong>delete operation</strong> :',
+      phrase: 'delete',
+    },
     templateTestingData: {
       title: 'Delete test data',
       text: 'You are about to delete test data.\n'
@@ -981,6 +1026,12 @@ export default {
   entityDependenciesList: {
     title: '{name} impacted entities',
   },
+  entityUpstream: {
+    entities: 'Entities',
+    topLevelEntities: 'Top level entities',
+    seeEntities: 'See entities',
+    seeTopEntities: 'See top entities',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Create a declare ticket rule',
@@ -1000,6 +1051,11 @@ export default {
   },
   createAssociateTicketEvent: {
     title: 'Associate ticket number',
+  },
+  removeAssociatedTicketEvent: {
+    title: 'Remove associated ticket',
+    associatedTicketLabel: 'Associated ticket',
+    associatedTicketHint: 'Selected associated ticket will be removed from selected alarm',
   },
   createAckEvent: {
     title: 'Ack',
@@ -1112,6 +1168,8 @@ export default {
     title: 'Events recording {date}',
     subtitle: '{count} events from RabbitMQ received',
     buttonTooltip: 'Delete received events',
+    eventsTab: 'Events',
+    patternTab: 'Pattern',
   },
   createExternalDataTable: {
     create: {
@@ -1140,6 +1198,14 @@ export default {
       title: 'Edit external auth token',
     },
   },
+  createLlm: {
+    create: {
+      title: 'Add LLM model',
+    },
+    edit: {
+      title: 'Edit LLM model',
+    },
+  },
   createTemplateTestingData: {
     create: {
       title: 'Create template testing data',
@@ -1155,5 +1221,11 @@ export default {
   },
   createTemplateData: {
     title: 'Create template data',
+  },
+  entitiesComparison: {
+    title: 'Pattern entities comparison',
+    infoMessage: 'Counts may differ because of 2 reasons :\n<span class="font-weight-regular">1. changes happened in Canopsis during the check (some if initially filtered entity changed and do not fit the pattern anymore)</span>\n<span class="font-weight-regular">2. suggested pattern isn\'t correct</span>\n\n<strong>You can run the check again to be sure.</strong>',
+    foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN',
+    foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN',
   },
 };

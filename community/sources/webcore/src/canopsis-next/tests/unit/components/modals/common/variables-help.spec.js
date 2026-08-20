@@ -88,8 +88,8 @@ describe('variables-help', () => {
 
     await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 10), 0).trigger('click');
 
-    expect(copyText).toBeCalledWith('test2.array_prop.[0].obj_prop.deep_prop');
-    expect($popups.success).toBeCalledWith({ text: 'Path copied to clipboard' });
+    expect(copyText).toHaveBeenCalledWith('test2.array_prop.[0].obj_prop.deep_prop');
+    expect($popups.success).toHaveBeenCalledWith({ text: 'Path copied to clipboard' });
   });
 
   test('Path error copied after trigger copy button', async () => {
@@ -108,8 +108,8 @@ describe('variables-help', () => {
 
     await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 10), 0).trigger('click');
 
-    expect(copyText).toBeCalledWith('test2.array_prop.[0].obj_prop.deep_prop');
-    expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
+    expect(copyText).toHaveBeenCalledWith('test2.array_prop.[0].obj_prop.deep_prop');
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Something went wrong...' });
   });
 
   test('Object exported after trigger action button', async () => {
@@ -126,7 +126,7 @@ describe('variables-help', () => {
 
     await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 7), 0).trigger('click');
 
-    expect(saveJsonFile).toBeCalledWith(
+    expect(saveJsonFile).toHaveBeenCalledWith(
       variablesObjectSecond.array_prop,
       'array_prop-07/12/2013 18:00:00',
     );

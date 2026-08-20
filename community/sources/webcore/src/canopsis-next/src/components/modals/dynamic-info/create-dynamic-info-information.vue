@@ -17,7 +17,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -39,7 +39,10 @@ import { computed, ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/information/form';
+import {
+  dynamicInfoInformationToForm,
+  formToDynamicInfoInformation,
+} from '@/helpers/entities/dynamic-info/information/form';
 
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
@@ -83,7 +86,7 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const data = await config.value.action?.(form.value);
+        const data = await config.value.action?.(formToDynamicInfoInformation(form.value));
 
         close();
 
@@ -103,6 +106,7 @@ export default {
       isDisabled,
       submitting,
       submit,
+      close,
     };
   },
 };

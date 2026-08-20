@@ -1,5 +1,7 @@
 import { uniq } from 'lodash';
 
+import { MAX_SAVED_ADVANCED_SEARCHES } from '@/constants';
+
 /**
  * @typedef {Object} Search
  * @property {string} search
@@ -20,3 +22,11 @@ export const sortPinnedSearches = (searches, activeSearch, key = 'search') => un
 
   return bFactor - aFactor;
 });
+
+/**
+ * Keep only the first MAX_SAVED_ADVANCED_SEARCHES searches
+ *
+ * @param {Search[]} searches
+ * @returns {Search[]}
+ */
+export const sliceSavedSearches = searches => searches.slice(0, MAX_SAVED_ADVANCED_SEARCHES);

@@ -34,7 +34,7 @@ type rpcServerMessageProcessor struct {
 	PbhService               libpbehavior.Service
 	EventManager             libpbehavior.EventManager
 	TimezoneConfigProvider   config.TimezoneConfigProvider
-	PubChannel               libamqp.Channel
+	Publisher                libamqp.Publisher
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -87,7 +87,7 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 			return nil, nil
 		}
 
-		err = p.PubChannel.PublishWithContext(
+		err = p.Publisher.PublishWithContext(
 			ctx,
 			"",
 			canopsis.FIFOQueueName,

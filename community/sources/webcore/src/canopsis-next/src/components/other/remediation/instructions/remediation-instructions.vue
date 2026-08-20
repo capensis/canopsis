@@ -8,6 +8,8 @@
       :updatable="hasUpdateAnyRemediationInstructionAccess"
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"
+      :active="active"
+      @refresh="fetchList"
       @remove-selected="showRemoveSelectedRemediationInstructionModal"
       @duplicate="showDuplicateRemediationInstructionModal"
       @remove="showRemoveRemediationInstructionModal"
@@ -24,7 +26,7 @@ import { onMounted } from 'vue';
 import { USER_PERMISSIONS } from '@/constants';
 
 import { useFetchListWithOptions } from '@/hooks/query/shared';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useCRUDPermissions } from '@/hooks/auth';
 
 import { useRemediationInstructionsActions } from './hooks/remediation-instructions';
@@ -32,13 +34,19 @@ import RemediationInstructionsList from './remediation-instructions-list.vue';
 
 export default {
   components: { RemediationInstructionsList },
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
   setup() {
     const {
       remediationInstructions,
       remediationInstructionsMeta,
       remediationInstructionsPending,
       fetchRemediationInstructionsList,
-    } = useRemdeitionInstruction();
+    } = useRemediationInstruction();
 
     const {
       options,
@@ -58,7 +66,7 @@ export default {
       hasCreateAccess: hasCreateAnyRemediationInstructionAccess,
       hasUpdateAccess: hasUpdateAnyRemediationInstructionAccess,
       hasDeleteAccess: hasDeleteAnyRemediationInstructionAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstruction);
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.remediationInstruction);
 
     const {
       showDuplicateRemediationInstructionModal,
@@ -84,6 +92,7 @@ export default {
       showApproveRemediationInstructionModal,
       showRemoveRemediationInstructionModal,
       showRemoveSelectedRemediationInstructionModal,
+      fetchList,
     };
   },
 };

@@ -10,17 +10,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -1652,17 +1646,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -2007,17 +1995,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -3237,20 +3219,14 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
     <div
       class="flex xs4"
     >
-      <c-search-stub />
+      <c-search-stub
+        label=""
+      />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
-    class="v-data-table theme--light v-data-table--expand"
+    class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
     header-text="text"
   >
     <div
@@ -3258,56 +3234,59 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
     >
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="11"
+        colspan="12"
         tag="td"
       />
       <table>
         <colgroup>
+          <col
+            class=""
+          />
           <col
             class=""
           />
@@ -3346,6 +3325,32 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           class="v-data-table-header"
         >
           <tr>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-select"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </th>
             <th
               aria-label=""
               class="text-start"
@@ -3580,7 +3585,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <th
               class="column"
-              colspan="11"
+              colspan="12"
             >
               <div
                 aria-valuemax="100"
@@ -3618,6 +3623,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           <tr
             class=""
           >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
             <td
               class="text-start"
             >
@@ -3702,6 +3728,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           <tr
             class=""
           >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
             <td
               class="text-start"
             >
@@ -3791,6 +3838,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
             <td
               class="text-start"
             >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
               <button
                 class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
                 type="button"
@@ -3872,6 +3940,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           <tr
             class=""
           >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
             <td
               class="text-start"
             >
@@ -3961,6 +4050,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
             <td
               class="text-start"
             >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
               <button
                 class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
                 type="button"
@@ -4042,6 +4152,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           <tr
             class=""
           >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
             <td
               class="text-start"
             >
@@ -4131,6 +4262,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
             <td
               class="text-start"
             >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
               <button
                 class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
                 type="button"
@@ -4212,6 +4364,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           <tr
             class=""
           >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
             <td
               class="text-start"
             >
@@ -4301,6 +4474,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
             <td
               class="text-start"
             >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
               <button
                 class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
                 type="button"
@@ -4382,6 +4576,27 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           <tr
             class=""
           >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
             <td
               class="text-start"
             >

@@ -72,7 +72,8 @@ func NewEngineAction(
 	options Options,
 	cfg config.CanopsisConf,
 	mongoClient mongo.DbClient,
-	amqpConnection amqp.Connection,
+	amqpPubConn amqp.Connection,
+	amqpConsumeConn amqp.Connection,
 	webhookRpcClient engine.RPCClient,
 	rpcPublishQueues []string,
 	logger zerolog.Logger,
@@ -81,7 +82,9 @@ func NewEngineAction(
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
-	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
+	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
+	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
 	actionRedisClient := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
@@ -98,9 +101,9 @@ func NewEngineAction(
 		json.NewDecoder(), options.LastRetryInterval, logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
-		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
+		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpPublisher,
 		options.FifoAckExchange, options.FifoAckQueue,
-		alarm.NewActivationService(json.NewEncoder(), amqpChannel), techMetricsSender, logger)
+		alarm.NewActivationService(json.NewEncoder(), amqpPublisher), techMetricsSender, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
@@ -113,8 +116,8 @@ func NewEngineAction(
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		options.RpcWorkers,
-		amqpConnection,
-		amqpChannel,
+		amqpPublisher,
+		amqpConsumeChPool,
 		&axeRpcClientMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			Decoder:                  json.NewDecoder(),
@@ -133,7 +136,7 @@ func NewEngineAction(
 		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisClient),
 		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, nil, rpcPublishQueues),
-		amqpChannel,
+		amqpConsumeChPool,
 		logger,
 	)
 
@@ -170,7 +173,7 @@ func NewEngineAction(
 			listener := &delayedScenarioListener{
 				PeriodicalInterval:     options.PeriodicalWaitTime,
 				DelayedScenarioManager: delayedScenarioManager,
-				AmqpChannel:            amqpChannel,
+				AmqpPublisher:          amqpPublisher,
 				Queue:                  canopsis.FIFOQueueName,
 				EventGenerator:         libevent.NewGenerator(canopsis.ActionConnector, canopsis.ActionConnector),
 				Encoder:                json.NewEncoder(),
@@ -197,6 +200,16 @@ func NewEngineAction(
 			err = runInfoRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = amqpPubChPool.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp publish channels")
+			}
+
+			err = amqpConsumeChPool.Close()
+			if err != nil {
+				logger.Err(err).Msg("failed to close amqp consumer channels")
 			}
 		},
 		logger,
@@ -225,7 +238,8 @@ func NewEngineAction(
 		"",
 		options.ExternalWorkers,
 		false,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))
@@ -241,7 +255,8 @@ func NewEngineAction(
 		"",
 		options.SystemWorkers,
 		false,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))
@@ -257,7 +272,8 @@ func NewEngineAction(
 		"",
 		options.UserWorkers,
 		false,
-		amqpConnection,
+		amqpPublisher,
+		amqpConsumeChPool,
 		mainMessageProcessor,
 		logger,
 	))

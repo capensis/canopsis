@@ -5,8 +5,8 @@
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
-    :select-all="removable || enablable || disablable"
-    :advanced-search-fields="advancedSearchFields"
+    :select-all="removable || updatable"
+    :advanced-search-attributes="advancedSearchAttributes"
     advanced-search
     advanced-pagination
     expand
@@ -25,12 +25,15 @@
       </v-layout>
     </template>
     <template #mass-actions="{ selected, clearSelected }">
-      <pbehaviors-mass-actions-panel
+      <c-table-mass-actions-panel
         :items="selected"
         :removable="removable"
-        :enablable="enablable"
-        :disablable="disablable"
+        :enablable="updatable"
+        :disablable="updatable"
+        pbehavior
+        small
         @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
     <template #name="{ item }">
@@ -94,18 +97,13 @@
 <script>
 import { computed } from 'vue';
 
-import {
-  ADVANCED_SEARCH_DATE_CONDITIONS,
-  PBEHAVIOR_LIST_FIELDS,
-  PATTERN_DURATION_FORMAT,
-  TIME_UNITS,
-} from '@/constants';
+import { PBEHAVIOR_LIST_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
+import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
-import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorActions from './partials/pbehavior-actions.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 import PbehaviorsListAlarmFilteringBtn from './partials/pbehaviors-list-alarm-filtering-btn.vue';
@@ -115,7 +113,6 @@ export default {
   components: {
     PbehaviorActions,
     PbehaviorsListExpandItem,
-    PbehaviorsMassActionsPanel,
     PbehaviorsListAlarmFilteringBtn,
   },
   props: {
@@ -147,14 +144,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    enablable: {
-      type: Boolean,
-      default: false,
-    },
-    disablable: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup() {
     const durationFormat = PATTERN_DURATION_FORMAT;
@@ -162,6 +151,8 @@ export default {
 
     const { t, tc } = useI18n();
     const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
+
+    const { attributes: advancedSearchAttributes } = usePbehaviorAdvancedSearchAttributes();
 
     const headers = computed(() => [
       { text: t('common.name'), value: PBEHAVIOR_LIST_FIELDS.name },
@@ -184,40 +175,14 @@ export default {
       { text: t('common.actionsLabel'), value: PBEHAVIOR_LIST_FIELDS.actions, sortable: false },
     ]);
 
-    const notSearchableFields = [
-      PBEHAVIOR_LIST_FIELDS.rruleEnd,
-      PBEHAVIOR_LIST_FIELDS.lastAlarmDate,
-      PBEHAVIOR_LIST_FIELDS.alarmCount,
-      PBEHAVIOR_LIST_FIELDS.typeIcon,
-      PBEHAVIOR_LIST_FIELDS.status,
-      PBEHAVIOR_LIST_FIELDS.actions,
-    ];
-
-    const dateSearchableFields = [
-      PBEHAVIOR_LIST_FIELDS.begins,
-      PBEHAVIOR_LIST_FIELDS.ends,
-      PBEHAVIOR_LIST_FIELDS.created,
-      PBEHAVIOR_LIST_FIELDS.updated,
-      PBEHAVIOR_LIST_FIELDS.patternExecAt,
-    ];
-
-    const advancedSearchFields = computed(() => (
-      headers.value.filter(header => !notSearchableFields.includes(header.value))
-        .map(header => (
-          dateSearchableFields.includes(header.value)
-            ? { ...header, conditions: ADVANCED_SEARCH_DATE_CONDITIONS }
-            : header
-        ))
-    ));
-
     return {
       durationFormat,
       millisecondUnit,
 
+      advancedSearchAttributes,
       timezone,
       shownUserTimezone,
       headers,
-      advancedSearchFields,
 
       formatIntervalDate,
       formatRruleEndDate,

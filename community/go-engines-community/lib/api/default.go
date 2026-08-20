@@ -25,6 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
@@ -33,6 +34,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -61,6 +63,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
+	ut "github.com/go-playground/universal-translator"
 	gorillawebsocket "github.com/gorilla/websocket"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -73,10 +76,11 @@ const (
 	websocketReadBufferSize  = 1024
 	websocketWriteBufferSize = 2048
 
-	jobKeyExport        = "export"
-	jobKeyImport        = "import"
-	jobKeyExtDataImport = "extdataimport"
-	jobKeyPbhPatterns   = "pbhpatterns"
+	jobKeyExport          = "export"
+	jobKeyImport          = "import"
+	jobKeyExtDataImport   = "extdataimport"
+	jobKeyPbhPatterns     = "pbhpatterns"
+	jobKeyPatternOptimize = "patternoptimize"
 )
 
 //go:embed swaggerui/*
@@ -91,14 +95,16 @@ type Services struct {
 	Enforcer           libsecurity.Enforcer
 	DocsFile           fs.ReadFileFS
 
+	WebsocketHub                websocket.Hub
+	WebsocketRoomRegistry       websocket.RoomRegistry
+	WebsocketAuthorize          func(perms ...string) websocket.Authorize
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
-	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
-	ApiConfigProvider           *config.BaseApiConfigProvider
-	TemplateConfigProvider      *config.BaseTemplateConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
-	ExternalDataContainer       *externaldata.GetterContainer
+	ApiConfigProvider           *config.BaseApiConfigProvider
+	AlarmConfigProvider         *config.BaseAlarmConfigProvider
 	NotificationStore           usernotification.Store
 	ErrorResponder              httperror.Responder
+	Translator                  *ut.UniversalTranslator
 }
 
 func Default(
@@ -109,6 +115,7 @@ func Default(
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	tplTestTypePermMapping map[int][]any,
+	externalDataGetter externaldata.Getter,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, Services, error) {
@@ -156,18 +163,21 @@ func Default(
 		return nil, services, fmt.Errorf("cannot create security enforcer: %w", err)
 	}
 
-	services.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
-	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	// Connect to rmq.
-	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
+	amqpPubConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpPublisher, err := amqpConn.Channel()
+	amqpConsumeConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
+	amqpPubPool := libamqp.NewChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
+	amqpPublisher := libamqp.NewPooledPublisher(amqpPubPool)
+	amqpConsumePool := libamqp.NewChannelPool(amqpConsumeConn, 0)
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
@@ -183,7 +193,7 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to redis: %w", err)
 	}
-	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
+	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir, logger)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot load security config: %w", err)
 	}
@@ -193,13 +203,14 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
-	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
-	uniTrans, err := RegisterValidators(securityConfig, tplExecutor)
+	services.AlarmConfigProvider = config.NewAlarmConfigProvider(cfg, logger)
+	tplExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
+	services.Translator, err = RegisterValidators(securityConfig, tplExecutor)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
 	}
 
-	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
+	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(services.Translator, logger), logger)
 	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer,
 		services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
 		services.ErrorResponder, logger)
@@ -241,10 +252,10 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpConn, logger)
+	workersRunner := workers.NewRunner(amqpConsumePool, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, logger)
 	// Create csv exporter.
 	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
-		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+		timezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
 		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
 	})
@@ -266,35 +277,56 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
 		return importWorker.ProcessFirstJob(ctx)
 	})
-	websocketStore := websocket.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
+	websocketStore := wsconn.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
+	websocketUpgrader := websocket.NewUpgrader(&gorillawebsocket.Upgrader{
 		ReadBufferSize:  websocketReadBufferSize,
 		WriteBufferSize: websocketWriteBufferSize,
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},
 	})
+	services.WebsocketRoomRegistry = websocket.NewRoomRegistry()
+	wsRoomAuthenticate := func(ctx context.Context, token string) (websocket.User, error) {
+		tokenProviders := security.GetTokenProviders()
+		for _, provider := range tokenProviders {
+			user, err := provider.Auth(ctx, token)
+			if err != nil {
+				return websocket.User{}, err
+			}
 
-	websocketAuthorizer := websocket.NewAuthorizer(services.Enforcer, security.GetTokenProviders())
-	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, services.ApiConfigProvider, logger)
-	err = registerWebsocketRooms(websocketHub)
-	if err != nil {
-		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
+			if user != nil {
+				return websocket.User{ID: user.ID, Locale: user.Language}, nil
+			}
+		}
+
+		return websocket.User{}, errors.New("invalid token")
 	}
-
-	services.ExternalDataContainer = externaldata.NewGetterContainer()
-	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
+	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate,
+		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(services.Translator, logger),
+		json.NewEncoder(), json.NewDecoder(), logger)
+	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, externalDataGetter, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
 	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, patternfields.NewTransformer(primaryDbClient),
-		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
-	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+		timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
+	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, services.WebsocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
-	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
+	messageRateWatcher := messageratestats.NewWatcher(services.WebsocketHub, messageratestats.NewStore(pgPoolProvider),
 		json.NewEncoder(), json.NewDecoder(), flags.IntegrationPeriodicalWaitTime, logger)
 
-	err = registerWebsocketGroups(websocketHub, alarmWatcher, messageRateWatcher)
+	services.WebsocketAuthorize = func(perms ...string) websocket.Authorize {
+		return func(ctx context.Context, userID string) (bool, error) {
+			vals := make([]any, len(perms)+1)
+			vals[0] = userID
+			for i, v := range perms {
+				vals[i+1] = v
+			}
+
+			return services.Enforcer.Enforce(vals...)
+		}
+	}
+	err = registerWebsocketRooms(services.WebsocketRoomRegistry, services.WebsocketAuthorize, alarmWatcher, messageRateWatcher)
 	if err != nil {
-		return nil, services, fmt.Errorf("cannot register websocket groups: %w", err)
+		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
 	}
 
 	broadcastMessageChan := make(chan bool, chanBuf)
@@ -302,7 +334,12 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(primaryDbClient), filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(
+		apitechmetrics.NewStore(primaryDbClient),
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExport),
+		flags.PeriodicalWaitTime,
+		logger,
+	)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(primaryDbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
@@ -317,7 +354,7 @@ func Default(
 		healthCheckConfigAdapter,
 		healthCheckConfigProvider,
 		logger,
-		websocketHub,
+		services.WebsocketHub,
 	)
 
 	exdataImportWorker := apiexternaldata.NewImportWorker(primaryDbClient, pgPoolProvider,
@@ -326,17 +363,26 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
+
+	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+
+	patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger)
+	patternOptimizeWorker := pattern.NewOptimizeWorker(patternStore, primaryDbClient, workers.NewJobPublisher(jobKeyPatternOptimize, amqpPublisher), patternfields.NewTransformer(primaryDbClient), logger)
+	workersRunner.AddJobExecutor(jobKeyPatternOptimize, func(ctx context.Context, id string) error {
+		return patternOptimizeWorker.ProcessJob(ctx, id)
+	})
 	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
 		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
-		services.TimezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
-		websocketHub, services.UserInterfaceConfigProvider)
+		timezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
+		services.WebsocketHub, services.UserInterfaceConfigProvider)
 	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
 		return apiPbhStore.ExecPatternsAndUpdate(ctx)
 	})
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, websocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConsumePool,
+		cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, services.WebsocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
@@ -389,7 +435,22 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 
-			err = amqpConn.Close()
+			err = amqpPubPool.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp channels")
+			}
+
+			err = amqpConsumePool.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp channels")
+			}
+
+			err = amqpPubConn.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = amqpConsumeConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -415,8 +476,6 @@ func Default(
 		},
 		logger,
 	)
-
-	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
 
 	api.AddRouter(func(router *gin.Engine) error {
 		router.Use(middleware.Logger(services.ErrorResponder, logger, flags.LogBody, flags.LogBodyOnError))
@@ -447,11 +506,12 @@ func Default(
 			secondaryDbClient,
 			dbExportClient,
 			pgPoolProvider,
+			amqpPubPool,
 			amqpPublisher,
 			lockRedisSession,
 			services.ApiConfigProvider,
-			services.TimezoneConfigProvider,
-			services.TemplateConfigProvider,
+			timezoneConfigProvider,
+			templateConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
@@ -459,7 +519,7 @@ func Default(
 			services.ExportTaskExecutor,
 			techMetricsTaskExecutor,
 			services.UserInterfaceConfigProvider,
-			websocketHub,
+			services.WebsocketHub,
 			websocketStore,
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
@@ -472,8 +532,9 @@ func Default(
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			securityConfig,
 			exdataImportWorker,
+			patternOptimizeWorker,
 			services.NotificationStore,
-			services.ExternalDataContainer,
+			externalDataGetter,
 			tplTestTypePermMapping,
 			logger,
 		)
@@ -496,7 +557,11 @@ func Default(
 				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			api.AddRouter(func(router *gin.Engine) error {
-				router.GET("/swagger.yaml", docs.GetHandler(services.ErrorResponder, schemasContent, content))
+				router.GET("/swagger.yaml", docs.GetHandler(
+					services.ErrorResponder,
+					[][]byte{schemasContent},
+					[][]byte{content},
+				))
 
 				return nil
 			})
@@ -509,97 +574,124 @@ func Default(
 	api.AddNoMethod(func(c *gin.Context) {
 		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
-	api.SetWebsocketHub(websocketHub)
 
-	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	api.AddWorker("action_log", func(ctx context.Context) {
-		err := actionLogger.Watch(ctx)
-		if err != nil && !errors.Is(err, context.Canceled) {
-			panic(FatalWorkerError{err: err})
-		}
-	})
+	if services.ApiConfigProvider.Get().ActionLogger.Enabled {
+		actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+		api.AddWorker("action_log", func(ctx context.Context) error {
+			return actionLogger.Watch(ctx)
+		})
+	}
 
-	api.AddWorker("amqp_workers", func(ctx context.Context) {
+	api.AddWorker("amqp_workers", func(ctx context.Context) error {
 		err = workersRunner.Run(ctx)
 		if err != nil {
-			var amqpErr *amqp.Error
-			if errors.As(err, &amqpErr) && amqpErr.Code == amqp.NotFound {
-				panic(NewFatalWorkerError(err))
+			if amqpErr, ok := errors.AsType[*amqp.Error](err); ok && amqpErr.Code == amqp.NotFound {
+				return err
 			}
 
-			panic(err)
+			return NewReloadWorkerError(err)
 		}
+
+		return nil
 	})
 
-	api.AddWorker("tech_metrics", func(ctx context.Context) {
+	api.AddWorker("tech_metrics", func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
+
+		return nil
 	})
-	api.AddWorker("session_clean", func(ctx context.Context) {
+	api.AddWorker("session_clean", func(ctx context.Context) error {
 		security.GetSessionStore().StartAutoClean(ctx, flags.PeriodicalWaitTime)
+
+		return nil
 	})
-	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
+	api.AddWorker("enforce_policy_load", func(ctx context.Context) error {
 		services.Enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
+
+		return nil
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpPublisher, logger))
 
 	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpPublisher, canopsis.ApiConnector,
 		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
-	api.AddWorker("state_settings_listener", func(ctx context.Context) {
+	api.AddWorker("state_settings_listener", func(ctx context.Context) error {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
+
+		return nil
 	})
-	api.AddWorker("state_settings_worker", func(ctx context.Context) {
+	api.AddWorker("state_settings_worker", func(ctx context.Context) error {
 		stateSettingsListener.Work(ctx)
+
+		return nil
 	})
-	api.AddWorker("entity_event_publish", func(ctx context.Context) {
+	api.AddWorker("entity_event_publish", func(ctx context.Context) error {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
+
+		return nil
 	})
-	api.AddWorker("entity_cleaner", func(ctx context.Context) {
+	api.AddWorker("entity_cleaner", func(ctx context.Context) error {
 		disabledEntityCleaner.RunCleanerProcess(ctx, entityCleanerTaskChan)
+
+		return nil
 	})
-	api.AddWorker("data_import_abandoned", func(ctx context.Context) {
+	api.AddWorker("data_import_abandoned", func(ctx context.Context) error {
 		importWorker.ProcessAbandonedJob(ctx)
+
+		return nil
 	})
-	api.AddWorker("data_import_delete_old", func(ctx context.Context) {
+	api.AddWorker("data_import_delete_old", func(ctx context.Context) error {
 		importWorker.DeleteOldJobs(ctx)
+
+		return nil
 	})
-	api.AddWorker("config_reload", updateConfig(services.TimezoneConfigProvider, services.DataStorageConfigProvider,
-		services.ApiConfigProvider, services.TemplateConfigProvider, techMetricsConfigProvider, configAdapter,
-		services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
-	api.AddWorker("data_export_abandoned", func(ctx context.Context) {
+	api.AddWorker("config_reload", updateConfig(timezoneConfigProvider, services.DataStorageConfigProvider,
+		services.ApiConfigProvider, templateConfigProvider, techMetricsConfigProvider, services.AlarmConfigProvider,
+		configAdapter, services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
+	api.AddWorker("data_export_abandoned", func(ctx context.Context) error {
 		services.ExportTaskExecutor.ProcessAbandonedTasks(ctx)
+
+		return nil
 	})
-	api.AddWorker("data_export_delete_old", func(ctx context.Context) {
+	api.AddWorker("data_export_delete_old", func(ctx context.Context) error {
 		services.ExportTaskExecutor.DeleteOldTasks(ctx)
+
+		return nil
 	})
-	api.AddWorker("tech_metrics_export", func(ctx context.Context) {
+	api.AddWorker("tech_metrics_export", func(ctx context.Context) error {
 		techMetricsTaskExecutor.Run(ctx)
+
+		return nil
 	})
 	tokenStore := token.NewMongoStore(primaryDbClient, logger)
 	shareTokenStore := sharetoken.NewMongoStore(primaryDbClient, logger)
 	api.AddWorker("auth_token_activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
-		websocketHub, logger))
+		services.WebsocketHub, logger))
 	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
 		logger))
-	api.AddWorker("websocket", func(ctx context.Context) {
-		websocketHub.Start(ctx)
+	api.AddWorker("websocket", func(ctx context.Context) error {
+		services.WebsocketHub.Run(ctx)
+
+		return nil
 	})
-	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
+	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, services.WebsocketHub, websocketStore, logger))
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
 	broadcastMessageService := broadcastmessage.NewService(
-		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub,
+		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), services.WebsocketHub,
 		flags.BroadcastMessagePeriodicalWaitTime, logger)
-	api.AddWorker("broadcast_message", func(ctx context.Context) {
+	api.AddWorker("broadcast_message", func(ctx context.Context) error {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
+
+		return nil
 	})
-	api.AddWorker("links", func(ctx context.Context) {
+	api.AddWorker("links", func(ctx context.Context) error {
 		ticker := time.NewTicker(flags.PeriodicalWaitTime)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case <-ticker.C:
 				err := services.LinkGenerator.Load(ctx)
 				if err != nil {
@@ -608,89 +700,101 @@ func Default(
 			}
 		}
 	})
-	api.AddWorker("data_exdata_import_abandoned", func(ctx context.Context) {
+	api.AddWorker("data_exdata_import_abandoned", func(ctx context.Context) error {
 		exdataImportWorker.ProcessAbandonedJobs(ctx)
+
+		return nil
 	})
-	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) {
+	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) error {
 		exdataImportWorker.DeleteOldJobs(ctx)
+
+		return nil
 	})
-	api.AddWorker("healthcheck", func(ctx context.Context) {
+	api.AddWorker("pattern_optimize_abandoned", func(ctx context.Context) error {
+		patternOptimizeWorker.ProcessAbandonedJobs(ctx)
+
+		return nil
+	})
+	api.AddWorker("healthcheck", func(ctx context.Context) error {
 		healthcheckStore.Load(ctx)
+
+		return nil
 	})
-	api.AddWorker("notification_queue_listen", func(ctx context.Context) {
+	api.AddWorker("notification_queue_listen", func(ctx context.Context) error {
 		err := notifQueueListener.Listen(ctx)
 		if err != nil {
-			var amqpErr *amqp.Error
-			if errors.As(err, &amqpErr) && amqpErr.Code == amqp.NotFound {
-				panic(NewFatalWorkerError(err))
+			if amqpErr, ok := errors.AsType[*amqp.Error](err); ok && amqpErr.Code == amqp.NotFound {
+				return err
 			}
 
-			panic(err)
+			return NewReloadWorkerError(err)
 		}
+
+		return nil
 	})
 
 	return api, services, nil
 }
 
-func registerWebsocketRooms(websocketHub websocket.Hub) error {
-	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomNotifications); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheck, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheckStatus, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	if err := websocketHub.RegisterRoom(websocket.RoomPbhPatterns, apisecurity.PermPbhPatterns, securitymodel.PermissionCan); err != nil {
-		return fmt.Errorf("fail to register websocket room: %w", err)
-	}
-
-	return nil
-}
-
-func registerWebsocketGroups(
-	websocketHub websocket.Hub,
+func registerWebsocketRooms(
+	roomRegistry websocket.RoomRegistry,
+	authorize func(perms ...string) websocket.Authorize,
 	alarmWatcher alarmapi.Watcher,
 	messageRateWatcher messageratestats.Watcher,
 ) error {
-	err := websocketHub.RegisterGroup(websocket.RoomAlarmsGroup, websocket.GroupParameters{
-		OnJoin:  alarmWatcher.StartWatch,
-		OnLeave: alarmWatcher.StopWatch,
-	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	if err := roomRegistry.Register(websocket.RoomBroadcastMessages, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomLoggedUserCount, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomNotifications, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomHealthcheck, websocket.RoomHandlers{Authorize: authorize(apisecurity.PermHealthcheck, securitymodel.PermissionCan)}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomHealthcheckStatus, websocket.RoomHandlers{Authorize: authorize(apisecurity.PermHealthcheck, securitymodel.PermissionCan)}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomIcons, websocket.RoomHandlers{}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := roomRegistry.Register(websocket.RoomPbhPatterns, websocket.RoomHandlers{Authorize: authorize(apisecurity.PermPbhPatterns, securitymodel.PermissionCan)}); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	err := roomRegistry.RegisterGroup(websocket.RoomAlarmsGroup, websocket.RoomHandlers{
+		OnJoin:    alarmWatcher.StartWatch,
+		OnLeave:   alarmWatcher.StopWatch,
+		Authorize: authorize(apisecurity.PermAlarmRead, securitymodel.PermissionCan),
+	})
 	if err != nil {
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
-	err = websocketHub.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.GroupParameters{
-		OnJoin:  alarmWatcher.StartWatchDetails,
-		OnLeave: alarmWatcher.StopWatch,
-	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	err = roomRegistry.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.RoomHandlers{
+		OnJoin:    alarmWatcher.StartWatchDetails,
+		OnLeave:   alarmWatcher.StopWatch,
+		Authorize: authorize(apisecurity.PermAlarmRead, securitymodel.PermissionCan),
+	})
 	if err != nil {
 		return fmt.Errorf("fail to register websocket group: %w", err)
 	}
 
-	err = websocketHub.RegisterGroup(websocket.RoomMessageRates, websocket.GroupParameters{
-		OnJoin:  messageRateWatcher.StartWatch,
-		OnLeave: messageRateWatcher.StopWatch,
-	}, apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan)
+	err = roomRegistry.Register(websocket.RoomMessageRates, websocket.RoomHandlers{
+		OnJoin:    messageRateWatcher.StartWatch,
+		OnLeave:   messageRateWatcher.StopWatch,
+		Authorize: authorize(apisecurity.PermMessageRateStatsRead, securitymodel.PermissionCan),
+	})
 	if err != nil {
-		return fmt.Errorf("fail to register websocket group: %w", err)
+		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
 	return nil

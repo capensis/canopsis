@@ -5,9 +5,13 @@
       :pending="pbehaviorReasonsPending"
       :total-items="pbehaviorReasonsMeta.total_count"
       :options.sync="options"
+      :removable="hasDeleteAnyPbehaviorReasonAccess"
+      :updatable="hasUpdateAnyPbehaviorReasonAccess"
+      :active="active"
       @remove-selected="showRemoveSelectedPbehaviorReasonModal"
       @remove="showRemovePbehaviorReasonModal"
       @edit="showEditPbehaviorReasonModal"
+      @refresh="fetchList"
     />
   </v-card-text>
 </template>
@@ -32,6 +36,10 @@ export default {
     params: {
       type: Object,
       default: () => ({}),
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   mounted() {

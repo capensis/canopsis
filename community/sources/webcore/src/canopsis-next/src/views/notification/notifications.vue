@@ -58,8 +58,8 @@ import { useSocketRoom } from '@/hooks/socket';
 import { useCanPermission, useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
-import { useRemdeitionInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import InstructionsToApproveTab from '@/components/other/notification/instructions-to-approve-tab.vue';
 import InstructionsToRateTab from '@/components/other/notification/instructions-to-rate-tab.vue';
@@ -88,7 +88,7 @@ export default {
 
     const {
       hasAccess: hasInstructionApprovalAccess,
-    } = useCanPermission(USER_PERMISSIONS.technical.remediationInstructionApprove);
+    } = useCanPermission(USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove);
 
     const {
       hasAccess: hasExecuteManualInstructionsAccess,
@@ -117,7 +117,7 @@ export default {
       return href;
     };
 
-    const { fetchRemediationInstructionsListWithoutStore } = useRemdeitionInstruction();
+    const { fetchRemediationInstructionsListWithoutStore } = useRemediationInstruction();
     const {
       data: instructionsToApprove,
       meta: instructionsToApproveMeta,
@@ -135,7 +135,7 @@ export default {
       }),
     });
 
-    const { fetchRemediationInstructionStatsListWithoutStore } = useRemdeitionInstructionStats();
+    const { fetchRemediationInstructionStatsListWithoutStore } = useRemediationInstructionStats();
     const {
       data: instructionsToRate,
       meta: instructionsToRateMeta,

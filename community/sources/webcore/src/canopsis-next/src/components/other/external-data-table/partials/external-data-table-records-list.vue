@@ -103,6 +103,7 @@
       <template #mass-actions="{ selected }">
         <c-action-btn
           type="delete"
+          small
           @click="$emit('remove-selected', selected)"
         />
       </template>
@@ -192,15 +193,15 @@
           @click.stop=""
         />
       </template>
-      <template #actions="{ item }">
+      <template #actions="{ item, index }">
         <v-layout>
           <c-action-btn
             type="edit"
-            @click="$emit('edit', item)"
+            @click="$emit('edit', records[index])"
           />
           <c-action-btn
             type="duplicate"
-            @click="$emit('duplicate', item)"
+            @click="$emit('duplicate', records[index])"
           />
           <c-action-btn
             type="delete"

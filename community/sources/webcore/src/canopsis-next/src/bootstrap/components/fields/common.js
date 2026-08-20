@@ -33,9 +33,11 @@ export { default as CArrayTextField } from '@/components/forms/fields/c-array-te
 export { default as CStoragesField } from '@/components/forms/fields/c-storages-field.vue';
 export { default as CStorageField } from '@/components/forms/fields/c-storage-field.vue';
 export { default as CFileNameMaskField } from '@/components/forms/fields/c-file-name-mask-field.vue';
+export { default as CHoursIntervalField } from '@/components/forms/fields/c-hours-interval-field.vue';
 export { default as CPercentsField } from '@/components/forms/fields/c-percents-field.vue';
 export { default as CColumnsField } from '@/components/forms/fields/column/c-columns-field.vue';
 export { default as CColumnsWithTemplateField } from '@/components/forms/fields/column/c-columns-with-template-field.vue';
+export { default as CSortColumnsField } from '@/components/forms/fields/sort-column/c-sort-columns-field.vue';
 export { default as CUserPickerField } from '@/components/forms/fields/c-user-picker-field.vue';
 export { default as CInstructionTypeField } from '@/components/forms/fields/c-instruction-type-field.vue';
 export { default as CItemsPerPageField } from '@/components/forms/fields/c-items-per-page-field.vue';
@@ -44,7 +46,8 @@ export { default as CDraggableListField } from '@/components/forms/fields/list/c
 export { default as CColumnSizeField } from '@/components/forms/fields/c-column-size-field.vue';
 export { default as CInfosAttributeField } from '@/components/forms/fields/c-infos-attribute-field.vue';
 export { default as CCardIteratorField } from '@/components/forms/fields/card-iterator/c-card-iterator-field.vue';
+export { default as CCardIteratorForm } from '@/components/forms/fields/card-iterator/c-card-iterator-form.vue';
 export { default as CCardIteratorItem } from '@/components/forms/fields/card-iterator/c-card-iterator-item.vue';
 export { default as CMovableCardIteratorField } from '@/components/forms/fields/card-iterator/c-movable-card-iterator-field.vue';
 export { default as CCsvSeparatorField } from '@/components/forms/fields/c-csv-separator-field.vue';
-export { default as CWidgetTemplateField } from '@/components/forms/fields/c-widget-template.vue';
+export { default as CWidgetTemplateField } from '@/components/forms/fields/c-widget-template-field.vue';

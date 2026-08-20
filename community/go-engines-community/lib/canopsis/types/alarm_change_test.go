@@ -123,6 +123,16 @@ func TestGetTriggers(t *testing.T) {
 				string(types.AlarmChangeTypeChangedLongOutput),
 			},
 		},
+		{
+			name:             "declare ticket webhook fail trigger",
+			alarmChange:      types.AlarmChange{Type: types.AlarmChangeTypeDeclareTicketWebhookFail},
+			expectedTriggers: []string{"declareticketwebhookfail"},
+		},
+		{
+			name:             "auto declare ticket webhook fail trigger",
+			alarmChange:      types.AlarmChange{Type: types.AlarmChangeTypeAutoDeclareTicketWebhookFail},
+			expectedTriggers: []string{"declareticketwebhookfail"},
+		},
 	}
 
 	for _, tt := range tests {

@@ -46,48 +46,46 @@ func NewMetaAlarmProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &metaAlarmProcessor{
-		autoInstructionMatcher:    autoInstructionMatcher,
-		metricsSender:             metricsSender,
-		remediationRpcClient:      remediationRpcClient,
-		dbClient:                  dbClient,
-		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
-		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
-		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:       dbClient.Collection(mongo.PbehaviorMongoCollection),
-		metaAlarmStatesService:    metaAlarmStatesService,
-		adapter:                   adapter,
-		ruleAdapter:               ruleAdapter,
-		pbhTypeResolver:           pbhTypeResolver,
-		alarmStatusService:        alarmStatusService,
-		alarmConfigProvider:       alarmConfigProvider,
-		templateExecutor:          templateExecutor,
-		encoder:                   encoder,
-		eventGenerator:            eventGenerator,
-		amqpPublisher:             amqpPublisher,
-		logger:                    logger,
+		autoInstructionMatcher: autoInstructionMatcher,
+		metricsSender:          metricsSender,
+		remediationRpcClient:   remediationRpcClient,
+		dbClient:               dbClient,
+		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       dbClient.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:    dbClient.Collection(mongo.PbehaviorMongoCollection),
+		metaAlarmStatesService: metaAlarmStatesService,
+		adapter:                adapter,
+		ruleAdapter:            ruleAdapter,
+		pbhTypeResolver:        pbhTypeResolver,
+		alarmStatusService:     alarmStatusService,
+		alarmConfigProvider:    alarmConfigProvider,
+		templateExecutor:       templateExecutor,
+		encoder:                encoder,
+		eventGenerator:         eventGenerator,
+		amqpPublisher:          amqpPublisher,
+		logger:                 logger,
 	}
 }
 
 type metaAlarmProcessor struct {
-	dbClient                  mongo.DbClient
-	alarmCollection           mongo.DbCollection
-	metaAlarmStatesCollection mongo.DbCollection
-	entityCollection          mongo.DbCollection
-	pbehaviorCollection       mongo.DbCollection
-	metaAlarmStatesService    correlation.MetaAlarmStateService
-	adapter                   libalarm.Adapter
-	ruleAdapter               correlation.RulesAdapter
-	pbhTypeResolver           pbehavior.EntityTypeResolver
-	alarmStatusService        alarmstatus.Service
-	alarmConfigProvider       config.AlarmConfigProvider
-	autoInstructionMatcher    AutoInstructionMatcher
-	metricsSender             metrics.Sender
-	remediationRpcClient      engine.RPCClient
-	encoder                   encoding.Encoder
-	eventGenerator            libevent.Generator
-	amqpPublisher             libamqp.Publisher
-	templateExecutor          template.Executor
-	logger                    zerolog.Logger
+	dbClient               mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	pbehaviorCollection    mongo.DbCollection
+	metaAlarmStatesService correlation.MetaAlarmStateService
+	adapter                libalarm.Adapter
+	ruleAdapter            correlation.RulesAdapter
+	pbhTypeResolver        pbehavior.EntityTypeResolver
+	alarmStatusService     alarmstatus.Service
+	alarmConfigProvider    config.AlarmConfigProvider
+	autoInstructionMatcher AutoInstructionMatcher
+	metricsSender          metrics.Sender
+	remediationRpcClient   engine.RPCClient
+	encoder                encoding.Encoder
+	eventGenerator         libevent.Generator
+	amqpPublisher          libamqp.Publisher
+	templateExecutor       template.Executor
+	logger                 zerolog.Logger
 }
 
 func (p *metaAlarmProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -143,7 +141,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		metaAlarm = p.newMetaAlarm(event.Parameters, entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
-		metaAlarm.Value.LastEventDate = datetime.CpsTime{} // should be empty
+		metaAlarm.Value.LastEventDate = nil // should be empty
 
 		stateID := rule.GetStateID(event.Parameters.MetaAlarmValuePath)
 		var childEntityIDs []string
@@ -232,7 +230,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 					updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
 					eventsCount += childAlarm.Alarm.Value.EventsCount
 					lastChild = childAlarm
-					if metaAlarm.Value.LastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+					if childAlarm.Alarm.Value.LastEventDate != nil && (metaAlarm.Value.LastEventDate == nil || metaAlarm.Value.LastEventDate.Before(*childAlarm.Alarm.Value.LastEventDate)) {
 						metaAlarm.Value.LastEventDate = childAlarm.Alarm.Value.LastEventDate
 					}
 				}
@@ -299,6 +297,8 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			return err
 		}
 
+		metaAlarm.Value.InitialState = metaAlarm.Value.State.Value
+		metaAlarm.Value.InitialStatus = metaAlarm.Value.Status.Value
 		metaAlarm.Value.EventsCount = eventsCount
 
 		pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, metaAlarm.Time, p.pbhTypeResolver)
@@ -410,11 +410,11 @@ func (p *metaAlarmProcessor) newMetaAlarm(
 			LongOutputHistory:           []string{params.LongOutput},
 			LastUpdateDate:              params.Timestamp,
 			LastStateOrStatusUpdateDate: params.Timestamp,
-			LastEventDate:               now,
+			LastEventDate:               &now,
 			Parents:                     []string{},
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
-			Infos:                       map[string]map[string]interface{}{},
+			Infos:                       map[string]map[string]any{},
 		},
 	}
 	if params.DisplayName == "" {

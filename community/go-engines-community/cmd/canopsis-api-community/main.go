@@ -1,6 +1,6 @@
 package main
 
-//go:generate go tool github.com/swaggo/swag/cmd/swag init -d ../../lib -g ../cmd/canopsis-api-community/$GOFILE -o ../../lib/api/docs --outputTypes yaml --instanceName schemas
+//go:generate go tool github.com/swaggo/swag/cmd/swag init -parseDependency -d ../../lib/api -g ../../cmd/canopsis-api-community/$GOFILE -o ../../lib/api/docs --outputTypes yaml --instanceName schemas
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -62,6 +63,7 @@ func main() {
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
 		nil,
+		externaldata.NewNullGetter(),
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

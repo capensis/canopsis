@@ -129,7 +129,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 			curState = int(depEnt.Alarm.CurrentState())
 		}
 
-		counters.IncrementState(curState, false)
+		counters.IncrementState(curState, entitycounters.InheritedNone)
 	}
 
 	_, err = s.entityCountersCollection.UpdateOne(
