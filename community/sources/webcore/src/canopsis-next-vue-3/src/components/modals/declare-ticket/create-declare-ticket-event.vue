@@ -56,7 +56,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 
@@ -84,7 +83,7 @@ export default {
     const form = useForm({
       initialValues: alarmsToDeclareTicketEventForm(config.value.alarmsByTickets),
     });
-    const { values } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const close = () => modals.hide({ id: props.modal.id });
     const updateForm = (nextForm) => {
@@ -118,27 +117,25 @@ export default {
       close();
     };
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        if (isSomeOneSuccessTicketExist()) {
-          const isSingleAlarm = config.value.items.length === 1;
+    const submit = handleSubmit(async () => {
+      if (isSomeOneSuccessTicketExist()) {
+        const isSingleAlarm = config.value.items.length === 1;
 
-          modals.show({
-            name: MODALS.confirmation,
-            config: {
-              title: isSingleAlarm
-                ? t('modals.confirmationCreateNewTicketForAlarm.title')
-                : t('modals.confirmationCreateNewTicketForAlarms.title'),
-              text: isSingleAlarm
-                ? t('modals.confirmationCreateNewTicketForAlarm.text')
-                : t('modals.confirmationCreateNewTicketForAlarms.text'),
-              action: callActionAndHideModal,
-            },
-          });
-        } else {
-          await callActionAndHideModal();
-        }
-      }),
+        modals.show({
+          name: MODALS.confirmation,
+          config: {
+            title: isSingleAlarm
+              ? t('modals.confirmationCreateNewTicketForAlarm.title')
+              : t('modals.confirmationCreateNewTicketForAlarms.title'),
+            text: isSingleAlarm
+              ? t('modals.confirmationCreateNewTicketForAlarm.text')
+              : t('modals.confirmationCreateNewTicketForAlarms.text'),
+            action: callActionAndHideModal,
+          },
+        });
+      } else {
+        await callActionAndHideModal();
+      }
     });
 
     useFormConfirmableCloseModal({

@@ -25,14 +25,12 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 import { MODALS } from '@/constants';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import ServicePauseEventForm from '@/components/widgets/service-weather/service-pause-event-form.vue';
 
@@ -52,24 +50,22 @@ export default {
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
-    const form = ref({
-      comment: '',
-      reason: '',
+    const { values: form, handleSubmit, isSubmitting: submitting } = useForm({
+      initialValues: {
+        comment: '',
+        reason: '',
+      },
     });
 
-    const { submitting, submit: submitForm } = useSubmittableForm({
-      method: async () => {
-        if (config.value.action) {
-          await config.value.action(form.value);
-        }
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(form.value);
 
-        close();
-      },
+      close();
     });
 
     useFormConfirmableCloseModal({
       form,
-      submit: submitForm,
+      submit,
       close,
     });
 
@@ -78,7 +74,7 @@ export default {
       form,
       submitting,
       close,
-      submit: submitForm,
+      submit,
     };
   },
 };

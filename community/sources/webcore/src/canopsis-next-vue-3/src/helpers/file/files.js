@@ -38,3 +38,15 @@ export const saveCsvFile = (data, name) => {
 
   return saveFile(blob, `${name}.csv`);
 };
+
+/**
+ * Save file as txt
+ *
+ * @param {string} text
+ * @param {string} name
+ */
+export const saveTextFile = (text, name) => {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
+
+  return saveFile(blob, `${name}.txt`);
+};

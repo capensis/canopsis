@@ -35,7 +35,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
 
@@ -61,13 +60,12 @@ export default {
     const form = useForm({
       initialValues: snoozeToForm(),
     });
+    const { handleSubmit, isSubmitting: submitting } = form;
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        await config.value?.action?.(form.values.value);
+    const submit = handleSubmit(async () => {
+      await config.value?.action?.(form.values.value);
 
-        close();
-      }),
+      close();
     });
 
     useFormConfirmableCloseModal({

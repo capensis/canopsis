@@ -58,20 +58,21 @@ export default {
     const modals = useModals();
     const config = computed(() => props.modal.config ?? {});
     const field = computed(() => config.value.field ?? { name: 'text', label: 'Text' });
+    const fieldName = computed(() => field.value.name ?? 'text');
     const fieldProps = computed(() => omit(field.value, ['validationRules', 'value']));
 
     const form = useForm({
       initialValues: {
-        text: field.value.value ?? field.value.text ?? '',
+        [fieldName.value]: field.value.value ?? field.value.text ?? '',
       },
     });
-    const { values, model, handleSubmit, isSubmitting } = form;
-    const text = model('text');
+    const { model, handleSubmit, isSubmitting } = form;
+    const text = model(fieldName);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      await config.value?.action?.(values.value.text);
+      await config.value?.action?.(text.value);
 
       closeModal();
     });

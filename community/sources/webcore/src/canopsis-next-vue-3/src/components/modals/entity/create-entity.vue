@@ -41,7 +41,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import EntityForm from '@/components/other/entity/form/entity-form.vue';
 
@@ -68,22 +67,20 @@ export default {
     const form = useForm({
       initialValues: entityToForm(entity.value),
     });
-    const { values, handleSubmit } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
     const updateForm = value => (values.value = value);
+    const submitLabel = computed(() => t(entity.value?._id ? 'common.save' : 'common.create'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      item: entity,
-      method: handleSubmit(async () => {
-        const result = await config.value.action?.(formToEntity(values.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToEntity(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        closeModal();
+      closeModal();
 
-        return result;
-      }),
+      return result;
     });
 
     useFormConfirmableCloseModal({

@@ -5,14 +5,23 @@ import {
   useFormErrors as veeUseFormErrors,
   useFieldError as veeUseFieldError,
 } from 'vee-validate';
-import { computed, inject, onBeforeUnmount, provide, ref, unref, watch } from 'vue';
+import { computed, inject, nextTick, onBeforeUnmount, provide, ref, unref, watch } from 'vue';
 
+import Observer from '@/services/observer';
+
+import { scrollToFirstFormError } from '@/helpers/vuetify';
+
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useComponentInstance } from '@/hooks/vue';
+
+import { applyServerFormErrors, getSubmitErrorPopupText, toVeeFormPath, unwrapFieldPath } from './server-errors';
 
 export { useModelField } from './model-field';
 export { useArrayModelField } from './array-model-field';
 export { useLazySearch } from './lazy-search';
+export { applyServerFormErrors, getServerFieldErrors } from './server-errors';
 
 export const FORM_CONTEXT_KEY = Symbol('formContext');
 
@@ -25,11 +34,17 @@ export const FORM_CONTEXT_KEY = Symbol('formContext');
  *
  * @param {Object} [options={}] Vee-validate form options.
  * @param {Object} [options.initialValues={}] Initial form values.
+ * @param {Function} [options.errorsToValidation=v => v] Maps a server error to field errors.
  * @returns {Object} Form context.
  */
-export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
+export const useForm = ({ initialValues = {}, errorsToValidation = v => v, ...veeOptions } = {}) => {
   const values = ref(initialValues);
   const fieldsInstances = ref({});
+
+  const instance = useComponentInstance();
+  const popups = usePopups();
+  const { t } = useI18n();
+  const afterSubmitObserver = new Observer();
 
   const veeForm = useVeeForm(veeOptions);
   const { pending: submitting, handler: runSubmit } = usePendingHandler(callback => callback());
@@ -244,14 +259,9 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
   };
 
   /**
-   * Creates a submit handler with shared form pending state.
-   *
-   * @param {Function} callback Valid submit callback.
-   * @param {Function} [invalidCallback] Invalid submit callback.
-   * @returns {Function} Submit handler.
+   * Scrolls to the first invalid field visible in the current tab.
    */
-  const handleSubmit = (callback, invalidCallback) =>
-    veeForm.handleSubmit((...args) => runSubmit(() => callback(...args)), invalidCallback);
+  const scrollToFirstError = () => nextTick(() => scrollToFirstFormError(instance?.$el));
 
   /**
    * Clears all field errors without resetting form values.
@@ -261,6 +271,23 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
       .getAllPathStates()
       .forEach(state => veeForm.setFieldError(unref(state.path), undefined));
     Object.keys(veeForm.errors.value).forEach(path => veeForm.setFieldError(path, undefined));
+  };
+
+  /**
+   * Sets a vee-validate error on a field and marks it as touched.
+   * Accepts unwrapped server keys (`directory`) and resolves the registered path.
+   *
+   * @param {string} field Field path.
+   * @param {string|string[]} message Error message.
+   */
+  const addError = (field, message) => {
+    const unwrapped = unwrapFieldPath(field);
+    const candidates = new Set([field, unwrapped, `[${unwrapped}]`, toVeeFormPath(field)]);
+    const state = veeForm.getAllPathStates().find(item => candidates.has(unref(item.path)));
+    const path = state ? unref(state.path) : field;
+
+    veeForm.setFieldError(path, message);
+    veeForm.setFieldTouched(path, true);
   };
 
   const form = {
@@ -290,7 +317,8 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
     setFieldTouched: veeForm.setFieldTouched,
     resetField: veeForm.resetField,
     resetErrors,
-    handleSubmit,
+    addError,
+    scrollToFirstError,
     errors: veeForm.errors,
     meta: veeForm.meta,
     submitCount: veeForm.submitCount,
@@ -298,7 +326,58 @@ export const useForm = ({ initialValues = {}, ...veeOptions } = {}) => {
     isSubmitting,
   };
 
+  /**
+   * Maps server errors onto vee-validate fields and returns whether any were applied.
+   *
+   * @param {*} errors Server error payload.
+   * @param {string} [scope] Optional field name prefix.
+   * @returns {boolean}
+   */
+  const setFormErrors = (errors, scope) => applyServerFormErrors(form, errors, scope);
+
+  /**
+   * Creates a submit handler with shared form pending state and server error mapping.
+   *
+   * @param {Function} callback Valid submit callback.
+   * @param {Function} [invalidCallback] Invalid submit callback.
+   * @returns {Function} Submit handler.
+   */
+  const handleSubmit = (callback, invalidCallback) =>
+    veeForm.handleSubmit(
+      async (...args) => {
+        try {
+          const data = await runSubmit(() => callback(...args));
+
+          await afterSubmitObserver.notify(data);
+
+          return data;
+        } catch (err) {
+          const wasSet = setFormErrors(errorsToValidation(err));
+
+          if (wasSet) {
+            scrollToFirstError();
+
+            return;
+          }
+
+          console.error(err);
+
+          popups.error({
+            text: getSubmitErrorPopupText(err, t('errors.default')),
+          });
+        }
+      },
+      (...args) => {
+        scrollToFirstError();
+        invalidCallback?.(...args);
+      },
+    );
+
+  form.setFormErrors = setFormErrors;
+  form.handleSubmit = handleSubmit;
+
   provide(FORM_CONTEXT_KEY, form);
+  provide('$afterSubmitObserver', afterSubmitObserver);
 
   return form;
 };

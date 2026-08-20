@@ -48,7 +48,6 @@ import { getDefaultSeparator } from '@/helpers/entities/external-data-table/form
 
 import { useForm } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import ExternalDataTableColumnDataTypeFieldStringArrayForm from './external-data-table-column-data-type-field-string-array-form.vue';
 
@@ -73,20 +72,21 @@ export default {
   },
   setup(props, { emit }) {
     const { updateModel } = useModelField(props, emit);
-    const formContext = useForm();
 
     const menuElement = ref(null);
     const isOpen = ref(false);
 
     const defaultSeparator = getDefaultSeparator(props.value, props.tableSeparator);
 
-    const form = ref({
-      selectedType: props.value.string_array_type ?? null,
-      selectedSeparator: defaultSeparator,
-      customSeparator:
-        defaultSeparator === EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR
-          ? props.value.string_array_separator
-          : '',
+    const { values: form, handleSubmit, isSubmitting: submitting } = useForm({
+      initialValues: {
+        selectedType: props.value.string_array_type ?? null,
+        selectedSeparator: defaultSeparator,
+        customSeparator:
+          defaultSeparator === EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR
+            ? props.value.string_array_separator
+            : '',
+      },
     });
 
     const isCustomSeparatorSelected = computed(
@@ -95,27 +95,16 @@ export default {
         EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR,
     );
 
-    /**
-     * Handles form submission by validating the form data and updating the model
-     * Closes the menu if validation passes
-     */
-    const { submit, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        const { valid } = await formContext.validate();
+    const submit = handleSubmit(() => {
+      updateModel({
+        ...props.value,
 
-        if (valid) {
-          updateModel({
-            ...props.value,
-
-            string_array_type: form.value.selectedType,
-            string_array_separator: isCustomSeparatorSelected.value
-              ? form.value.customSeparator
-              : form.value.selectedSeparator,
-          });
-          isOpen.value = false;
-        }
-      },
+        string_array_type: form.value.selectedType,
+        string_array_separator: isCustomSeparatorSelected.value
+          ? form.value.customSeparator
+          : form.value.selectedSeparator,
+      });
+      isOpen.value = false;
     });
 
     /**

@@ -9,6 +9,7 @@ import CCircleBadge from '@/components/common/badge/c-circle-badge.vue';
 import * as BlockComponents from '@/components/common/block';
 import * as ButtonComponents from '@/components/common/buttons';
 import * as CalendarComponents from '@/components/common/calendar';
+import * as ChartComponents from '@/components/common/chart';
 import * as ChipComponents from '@/components/common/chips';
 import * as DragDropComponents from '@/components/common/drag-drop';
 import * as IconComponents from '@/components/common/icon';
@@ -95,6 +96,10 @@ Object.entries(ChipComponents).forEach(([name, component]) => {
 });
 
 Object.entries(CalendarComponents).forEach(([name, component]) => {
+  app.component(name, component);
+});
+
+Object.entries(ChartComponents).forEach(([name, component]) => {
   app.component(name, component);
 });
 

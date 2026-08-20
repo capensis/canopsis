@@ -1,6 +1,6 @@
 import { debounce, isNil, isNumber, isString } from 'lodash';
-import { isNotNestedPath, validate } from 'vee-validate';
-import { computed, watch } from 'vue';
+import { validate } from 'vee-validate';
+import { computed, onBeforeUnmount, watch } from 'vue';
 
 import { useField } from '@/hooks/form';
 
@@ -314,20 +314,10 @@ export const validationProps = {
 
 export const validationEmits = ['update:modelValue', 'blur'];
 
-const normalizeFlatFieldName = (name) => {
-  if (!name || isNotNestedPath(name)) {
-    return name;
-  }
-
-  return `[${name}]`;
-};
-
 export function useVuetifyFieldValidation(props, emit, attrs = {}) {
   const inputName = computed(() => props.name || attrs.name || undefined);
 
-  const fieldName = computed(() =>
-    normalizeFlatFieldName(props.name || attrs.name || attrs.id || props.label || 'field'),
-  );
+  const fieldName = computed(() => props.name || attrs.name || attrs.id || props.label || 'field');
 
   const fieldLabel = computed(() => getFieldLabel(props));
 
@@ -349,10 +339,21 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
     standalone: props.standalone,
   });
 
-  const debouncedValidate = computed(() => debounce(validateField, props.validationDelay));
+  const debouncedValidate = debounce(validateField, props.validationDelay);
 
-  const internalValidate = () =>
-    props.validationDelay ? debouncedValidate.value() : validateField();
+  const internalValidate = () => {
+    if (!props.validationDelay) {
+      debouncedValidate.cancel();
+
+      return validateField();
+    }
+
+    return debouncedValidate();
+  };
+
+  onBeforeUnmount(() => {
+    debouncedValidate.cancel();
+  });
 
   const inputValue = computed({
     get: () => (props.modelValue !== undefined ? props.modelValue : value.value),
@@ -369,6 +370,10 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
   const errorMessages = computed(() => errors.value);
 
   const onBlur = (event, shouldValidate = props.validateOnBlur) => {
+    if (shouldValidate) {
+      debouncedValidate.cancel();
+    }
+
     handleBlur(event, shouldValidate);
     emit('blur', event);
   };

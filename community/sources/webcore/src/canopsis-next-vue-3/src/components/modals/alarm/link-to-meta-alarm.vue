@@ -42,7 +42,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
@@ -72,7 +71,7 @@ export default {
     const form = useForm({
       initialValues: metaAlarmLinkToForm(),
     });
-    const { values } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const alarms = computed(() => config.value.items?.filter(isAlarmStateNotOk) ?? []);
 
@@ -80,17 +79,15 @@ export default {
       values.value = nextForm;
     };
 
-    const { submit, submitting } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        const data = {
-          ...formToMetaAlarmLinkRequest(values.value),
-          alarms: mapIds(alarms.value),
-        };
+    const submit = handleSubmit(async () => {
+      const data = {
+        ...formToMetaAlarmLinkRequest(values.value),
+        alarms: mapIds(alarms.value),
+      };
 
-        await config.value?.action?.(data);
+      await config.value?.action?.(data);
 
-        close();
-      }),
+      close();
     });
 
     useFormConfirmableCloseModal({

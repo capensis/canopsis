@@ -38,7 +38,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
@@ -66,16 +65,17 @@ export default {
     const form = useForm({
       initialValues: snmpRuleToForm(config.value.snmpRule),
     });
+    const { handleSubmit, isSubmitting: submitting } = form;
 
     const title = computed(() => config.value.title || t('modals.createSnmpRule.create.title'));
+    const submitLabel = computed(() =>
+      t(config.value.snmpRule?._id ? 'common.save' : 'common.create'),
+    );
 
-    const { submitting, submit, submitLabel } = useSubmittableForm({
-      item: config.value.snmpRule,
-      method: form.handleSubmit(async () => {
-        await config.value.action?.(formToSnmpRule(form.values.value));
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToSnmpRule(form.values.value));
 
-        close();
-      }),
+      close();
     });
 
     useFormConfirmableCloseModal({

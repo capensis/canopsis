@@ -12,3 +12,4 @@ export { default as CLinksChips } from './c-links-chips.vue';
 export { default as CPatternOperatorChip } from './c-pattern-operator-chip.vue';
 export { default as CStateCountChangesChip } from './c-state-count-changes-chip.vue';
 export { default as CStateCountChangesChips } from './c-state-count-changes-chips.vue';
+export { default as CTestSuiteChip } from './c-test-suite-chip.vue';

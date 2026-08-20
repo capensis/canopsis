@@ -60,7 +60,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import AckEventForm from '@/components/widgets/alarm/forms/ack-event-form.vue';
@@ -126,22 +125,21 @@ export default {
     });
 
     const isNoteRequired = computed(() => config.value?.isNoteRequired);
+    const { handleSubmit, isSubmitting: submitting } = form;
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        if (config.value.action) {
-          const needDeclareTicket = actionType.value === ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket;
-          const needAssociateTicket =
-            actionType.value === ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket;
+    const submit = handleSubmit(async () => {
+      if (config.value.action) {
+        const needDeclareTicket = actionType.value === ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket;
+        const needAssociateTicket =
+          actionType.value === ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket;
 
-          await config.value.action(form.values.value, {
-            needDeclareTicket,
-            needAssociateTicket,
-          });
-        }
+        await config.value.action(form.values.value, {
+          needDeclareTicket,
+          needAssociateTicket,
+        });
+      }
 
-        close();
-      }),
+      close();
     });
 
     useFormConfirmableCloseModal({

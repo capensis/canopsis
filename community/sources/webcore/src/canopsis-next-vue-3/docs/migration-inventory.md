@@ -644,7 +644,7 @@ Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/c
 | `[~]`  | `StatsCalendar`     | `stats-calendar-widget`      | `src/components/widgets/stats/calendar/stats-calendar.vue`                  | `calendar_today`         | Pro, top-level                                                                                                                                             | Plan: `docs/ai/stats-calendar-widget-migration-plan.md`. Runtime calendar, grouped event menu, form/query helpers, settings sidebar, alarm-list drilldown and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
 | `[x]`  | `Text`              | `text-widget`                | `src/components/widgets/text/text.vue`                                      | `view_headline`          | Core, top-level                                                                                                                                            | Renderer and settings sidebar are migrated.                                                                                                                                                                           |
 | `[~]`  | `Counter`           | `counter-widget`             | `src/components/widgets/counter/counter.vue`                                | `numbers`                | Renderer, settings sidebar, embedded alarm-list display settings, filter editor, variables-help action and alarm-list modal handoff are migrated.          |                                                                                                                                                                                                                       |
-| `[ ]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level                                                                                                                                             |                                                                                                                                                                                                                       |
+| `[~]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level                                                                                                                                             | Plan: `docs/ai/junit-widget-migration-plan.md`. Runtime cards, settings sidebar, test-suite modal/details stack and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification.                 |
 | `[~]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level                                                                                                                                             | Renderer, settings sidebar, map selector, category filter, filter selector/list/create modal, breadcrumbs, map-state fetch, columns and alarm-list modal handoff are migrated.                                       |
 | `[~]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/bar-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
 | `[~]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/line-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
@@ -666,7 +666,7 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 - `[ ]` TODO: check gantt in the alarms list table expand panel (Entity gantt tab: intervals, pagination, tooltips and layout inside the expanded row).
 - `[x]` Settings: `alarm-settings`; widget parameters form, columns, filters, actions, quick actions, fast pbehavior, Export PDF, Export CSV, Charts and expand panel settings are migrated. Final save/reopen verification remains part of the runtime parity pass.
 - `[~]` Store/API/socket: alarm list query/pagination/user-preference foundation is migrated through the Pinia alarm/query stores. Periodic refresh, live watching, alarm/alarm-details socket rooms and opened-details refresh on list fetch are migrated. When migrating the alarm expand pbehavior tab, do not rely on old embedded entity cleanup; `pbehaviors-simple-list` should refresh its own list after pbehavior delete.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing `alarm` and settings keys are wired.
 
 ### `Context`
 
@@ -695,28 +695,30 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 - `[x]` Main content: `src/components/widgets/text/text.vue`; runtime template renderer is migrated.
 - `[x]` Settings: `text-settings`; template editor sidebar is migrated with `useWidgetSettings`.
 - `[~]` Store/API/socket: text widget does not require a dedicated runtime store; broader widget refresh parity remains part of the view stack.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing settings keys are wired.
 
 ### `Counter`
 
 - `[x]` Main content: `src/components/widgets/counter/counter.vue`; runtime renderer, state color/icon logic, block template context, counter store fetch and variables-help action are migrated.
 - `[~]` Settings: `counter-settings`; levels, margins, columns, height, block template, opened/resolved selector, filter editor, embedded alarm-list display settings and info popup create/edit modals are migrated.
 - `[~]` Store/API/socket: counter queries and alarm-list handoff modal are migrated. Remaining: socket/runtime parity pass.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing settings keys are wired.
 
 ### `Junit`
 
-- `[ ]` Main content: `src/components/widgets/testing-weather/testing-weather.vue`.
-- `[ ]` Settings: `testing-weather-settings`; migrate test suite parameters and display options.
-- `[ ]` Store/API/socket: testing weather queries and statistics.
-- `[ ]` Messages/i18n: not migrated.
+- Working plan: `docs/ai/junit-widget-migration-plan.md`.
+- `[~]` Main content: `src/components/widgets/testing-weather/testing-weather.vue` and `testing-weather-item.vue` are migrated and registered in `widget-wrapper.vue`. Runtime includes periodic refresh, widget-scoped test-suite list fetch, status-colored cards, mini chart, statistics and alarm-list handoff. Remaining: end-to-end verification.
+- `[x]` Settings: `testing-weather-settings`; title, periodic refresh, result directory, receive-by-API, screenshot/video directories and filename masks are migrated with `useWidgetSettings`.
+- `[~]` Store/API/socket: Pinia `test-suite` store is reused for widget list, directory validation, summary, gantt, details and history. No dedicated socket layer (parity with legacy). Remaining: verification pass.
+- `[x]` Modals: `MODALS.testSuite` (`test-suite.vue` + history/details stack under `other/test-suite/`) and alarm-list handoff from widget runtime.
+- `[x]` Messages/i18n: existing `test-suite` and settings keys are wired.
 
 ### `Map`
 
 - `[~]` Main content: `src/components/widgets/map/map.vue`; renderer, map-state fetch, category selector, filter selector/list/create modal, nested-map navigation breadcrumbs, preview component dispatch for geo/flowchart/mermaid/tree maps and alarm-list modal handoff are migrated.
 - `[~]` Settings: `map-settings`; map selector, periodic refresh, filter editor, color indicator, pbehavior marker display toggle, entity info popup editor and alarm/entity columns are migrated.
 - `[~]` Store/API/socket: map queries use the migrated Pinia map store and service-alarm route helper is restored; periodic refresh is local to the widget. Remaining: full socket/runtime parity pass.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing `map` and settings keys are wired.
 
 ### `BarChart`
 
@@ -737,14 +739,14 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 - `[x]` Main content: `src/components/widgets/chart/pie-chart-widget.vue`.
 - `[x]` Settings: `pie-chart-settings`; migrate chart metrics, show mode, time range, filters and display options.
 - `[x]` Store/API/socket: KPI metric queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing PieChart settings, permissions and modal messages are available.
 
 ### `Numbers`
 
 - `[x]` Main content: `src/components/widgets/chart/numbers-widget.vue`.
 - `[x]` Settings: `numbers-settings`; migrate number metrics, time range, filters and display options.
 - `[x]` Store/API/socket: KPI metric queries.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing Numbers settings, permissions and modal messages are available.
 
 ### `UserStatistics`
 
@@ -760,7 +762,7 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 - `[x]` Main content: `src/components/widgets/statistics/alarm-statistics-widget.vue`.
 - `[x]` Settings: `alarm-statistics-settings`; entity main parameter including custom criteria, entity metric columns, table header, default time range and filters.
 - `[x]` Store/API/socket: same group metrics / rating-settings path as UserStatistics, with `KPI_RATING_SETTINGS_TYPES.entity`.
-- `[x]` Messages/i18n: existing settings/kpi/metric keys are already present; wire them with the runtime.
+- `[x]` Messages/i18n: existing settings/kpi/metric keys are wired with the runtime.
 
 ### `Availability`
 

@@ -43,7 +43,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
@@ -72,7 +71,7 @@ export default {
     const form = useForm({
       initialValues: declareTicketRuleToForm(config.value.declareTicketRule),
     });
-    const { values } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const { shown: chatShown, options: chatOptions } = useAiChatForm({
       form: values,
@@ -86,18 +85,16 @@ export default {
     const title = computed(
       () => config.value.title ?? t('modals.createDeclareTicketRule.create.title'),
     );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      item: config.value.declareTicketRule,
-      method: form.handleSubmit(async () => {
-        const result = await config.value.action?.(formToDeclareTicketRule(values.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToDeclareTicketRule(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        close();
+      close();
 
-        return result;
-      }),
+      return result;
     });
     const submitDisabled = computed(() => submitting.value || chatOptions.value.bind.pending);
 

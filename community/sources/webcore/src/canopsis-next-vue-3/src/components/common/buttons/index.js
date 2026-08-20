@@ -1,6 +1,7 @@
 export { default as CActionBtn } from './c-action-btn.vue';
 export { default as CActionFabBtn } from './c-action-fab-btn.vue';
 export { default as CCopyBtn } from './c-copy-btn.vue';
+export { default as CDownloadBtn } from './c-download-btn.vue';
 export { default as CDbExportBtn } from './c-db-export-btn.vue';
 export { default as CExpandBtn } from './c-expand-btn.vue';
 export { default as CFabExpandBtn } from './c-fab-expand-btn.vue';

@@ -1,71 +1,50 @@
-import { has } from 'lodash';
-import { unref } from 'vue';
-
-import { useValidator } from './validator';
+import { useFormContext } from '@/hooks/form';
+import { getMatchedServerFieldErrors } from '@/hooks/form/server-errors';
 
 /**
- * Provides utilities for managing form validation errors using a validator object.
+ * Provides utilities for mapping server errors onto the current form context.
  *
- * @param {Object|import('vue').Ref<Object>} form - The form object which contains the fields to validate.
- * @returns {Object} An object containing the validator instance and a method to set form errors.
+ * @param {Object|import('vue').Ref<Object>} [form] Form values used to match server fields.
+ * @returns {Object} An object containing a method to set form errors.
+ *
+ * @example
+ * const form = { username: '', password: '' };
+ * const { setFormErrors } = useValidationFormErrors(form);
+ *
+ * const hasErrors = setFormErrors({
+ *   username: 'Username is required',
+ *   password: 'Password must be at least 6 characters',
+ * });
  */
 export const useValidationFormErrors = (form) => {
-  const validator = useValidator();
+  const formContext = useFormContext();
+  const { addError, values } = formContext;
 
   /**
-   * Get errors for existing fields in current form.
-   *
-   * @param {Object} errors
-   * @returns {[string, string][]}
-   */
-  const getExistingFieldsErrors = (errors = {}) => {
-    const unwrappedForm = unref(form);
-
-    return Object.entries(errors).filter(
-      ([field]) => has(unwrappedForm, field) || Array.isArray(unwrappedForm),
-    );
-  };
-
-  /**
-   * Add existing field errors to validator errors.
-   *
-   * @param {[string, string][]} existingFieldsErrors
-   * @param {string} [scope]
-   */
-  const addExistingFieldsErrors = (existingFieldsErrors, scope) => {
-    validator.errors.add(
-      existingFieldsErrors.map(([field, msg]) => ({
-        field: scope ? `${scope}.${field}` : field,
-        msg,
-      })),
-    );
-  };
-
-  /**
-   * Set form errors from response error and returns true if form errors exist.
+   * Set form errors from a server response and returns true if any field errors were applied.
    *
    * @param {Object} [errors={}]
    * @param {string} [scope]
    * @returns {boolean}
    */
   const setFormErrors = (errors = {}, scope) => {
-    if (!validator) {
+    const existingFieldErrors = getMatchedServerFieldErrors(errors, {
+      formValues: form ?? values,
+      formContext,
+    });
+
+    if (!existingFieldErrors.length) {
       return false;
     }
 
-    const existingFieldErrors = getExistingFieldsErrors(errors);
+    existingFieldErrors.forEach(([field, msg]) => {
+      addError(scope ? `${scope}.${field}` : field, msg);
+    });
 
-    if (existingFieldErrors.length) {
-      addExistingFieldsErrors(existingFieldErrors, scope);
-
-      return true;
-    }
-
-    return false;
+    return true;
   };
 
   return {
-    validator,
     setFormErrors,
   };
 };
