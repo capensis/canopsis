@@ -211,4 +211,5 @@ export default {
   [MODALS.createRemediationJob]: defineAsyncComponent(
     () => import('./remediation/create-remediation-job.vue'),
   ),
+  [MODALS.testSuite]: defineAsyncComponent(() => import('./test-suite/test-suite.vue')),
 };

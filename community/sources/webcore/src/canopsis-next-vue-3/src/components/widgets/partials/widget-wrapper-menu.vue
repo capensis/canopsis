@@ -72,6 +72,7 @@ const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.userStatistics,
   WIDGET_TYPES.alarmStatistics,
   WIDGET_TYPES.availability,
+  WIDGET_TYPES.testingWeather,
 ];
 
 export default {

@@ -81,7 +81,6 @@ import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDataStorage } from '@/hooks/store/modules/data-storage';
 import { useEntity } from '@/hooks/store/modules/entity';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
@@ -98,6 +97,7 @@ export default {
     let dataStorageSettings = null;
 
     const form = useForm();
+    const { handleSubmit, isSubmitting: submitting } = form;
     const originalForm = ref(null);
     const history = ref({});
     const loaded = ref(false);
@@ -220,28 +220,26 @@ export default {
         },
       });
 
-    const { submit, submitting } = useSubmittableForm({
-      method: form.handleSubmit(() =>
-        modals.show({
-          name: MODALS.confirmationPhrase,
-          config: {
-            ...getConfirmationPhraseMessages('modals.confirmationPhrase.updateStorageSettings'),
+    const submit = handleSubmit(() =>
+      modals.show({
+        name: MODALS.confirmationPhrase,
+        config: {
+          ...getConfirmationPhraseMessages('modals.confirmationPhrase.updateStorageSettings'),
 
-            action: async () => {
-              try {
-                dataStorageSettings = await updateDataStorage({ data: form.values.value });
+          action: async () => {
+            try {
+              dataStorageSettings = await updateDataStorage({ data: form.values.value });
 
-                popups.success({ text: t('success.default') });
+              popups.success({ text: t('success.default') });
 
-                resetForm();
-              } catch (err) {
-                setFormErrors(err);
-              }
-            },
+              resetForm();
+            } catch (err) {
+              setFormErrors(err);
+            }
           },
-        }),
-      ),
-    });
+        },
+      }),
+    );
 
     onMounted(async () => {
       dataStorageSettings = await fetchDataStorageWithoutStore();

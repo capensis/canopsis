@@ -37,7 +37,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import ThemeForm from '@/components/other/theme/form/theme-form.vue';
 
@@ -60,22 +59,20 @@ export default {
     const form = useForm({
       initialValues: themeToForm(config.value.theme),
     });
-    const { values, handleSubmit } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const title = computed(() => config.value.title ?? t('modals.createTheme.create.title'));
     const closeModal = () => modals.hide({ id: props.modal.id });
+    const submitLabel = computed(() => t(config.value.theme?._id ? 'common.save' : 'common.create'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      item: computed(() => config.value.theme),
-      method: handleSubmit(async () => {
-        const result = await config.value.action?.(formToTheme(values.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToTheme(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        closeModal();
+      closeModal();
 
-        return result;
-      }),
+      return result;
     });
 
     useFormConfirmableCloseModal({

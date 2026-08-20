@@ -24,6 +24,10 @@ import {
   externalDataTableWidgetParametersToForm,
   formToExternalDataTableWidgetParameters,
 } from './forms/external-data-table';
+import {
+  formToTestingWeatherWidgetParameters,
+  testingWeatherWidgetParametersToForm,
+} from './forms/junit';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './forms/line-chart';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './forms/numbers-chart';
@@ -207,6 +211,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.alarmStatistics]: statisticsWidgetParametersToForm,
     [WIDGET_TYPES.availability]: availabilityWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
+    [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
   };
 
   const preparer = widgetsMap[type];
@@ -331,6 +336,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.alarmStatistics]: formToStatisticsWidgetParameters,
     [WIDGET_TYPES.availability]: formToAvailabilityWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
+    [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
   };
 
   const preparer = widgetsMap[type];

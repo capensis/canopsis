@@ -69,6 +69,41 @@ export const isElementVisibleInTabs = (el, rootEl) => {
   return true;
 };
 
+/**
+ * Scrolls to the first invalid field visible in the current tab.
+ *
+ * @param {HTMLElement} [rootEl] Form or modal root element.
+ */
+export const scrollToFirstFormError = (rootEl) => {
+  if (!rootEl?.querySelector) {
+    return;
+  }
+
+  const errorElements = [...rootEl.querySelectorAll('.v-input--error, .v-field--error')];
+
+  if (!errorElements.length) {
+    return;
+  }
+
+  const visibleError = errorElements.find(el => isElementVisibleInTabs(el, rootEl));
+
+  if (visibleError) {
+    visibleError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    return;
+  }
+
+  rootEl.querySelector('.v-card-text, .v-card__text')?.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+/**
+ * Reads a possibly nested property from an item using a dotted path.
+ *
+ * @param {*} item Source value.
+ * @param {string} property Property path, for example `text` or `user.name`.
+ * @param {*} fallback Value returned when `item` is not an object or the path is missing.
+ * @returns {*} Property value or `fallback`.
+ */
 const getPropertyFromItem = (item, property, fallback) => {
   if (!isObject(item)) {
     return fallback;
@@ -77,6 +112,19 @@ const getPropertyFromItem = (item, property, fallback) => {
   return property.split('.').reduce((acc, key) => acc?.[key], item) ?? fallback;
 };
 
+/**
+ * Resolves the display text for a selected Vuetify select/combobox value.
+ *
+ * If `selectionItem` is an object, its `itemText` property is returned.
+ * If it is a primitive, the matching item is found in `items` by `itemValue`
+ * and that item's `itemText` is returned.
+ *
+ * @param {Array} items Select items.
+ * @param {*} selectionItem Selected object or primitive value.
+ * @param {string} [itemValue='value'] Value property path on each item.
+ * @param {string} [itemText='text'] Text property path on each item.
+ * @returns {*} Display text for the selection.
+ */
 export const getSelectionText = (items, selectionItem, itemValue = 'value', itemText = 'text') => {
   const text = getPropertyFromItem(selectionItem, itemText, selectionItem);
 

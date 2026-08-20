@@ -43,7 +43,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
@@ -74,13 +73,11 @@ export default {
         state: firstItem && items.value.length === 1 ? firstItem.v.state.val : ALARM_STATES.major,
       },
     });
-    const { values } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        await config.value.action?.(values.value);
-        close();
-      }),
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(values.value);
+      close();
     });
 
     useFormConfirmableCloseModal({

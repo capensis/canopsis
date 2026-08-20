@@ -43,7 +43,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
@@ -71,22 +70,20 @@ export default {
     const form = useForm({
       initialValues: serviceToForm(item.value),
     });
-    const { values, handleSubmit } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
     const updateForm = value => (values.value = value);
+    const submitLabel = computed(() => t(item.value?._id ? 'common.save' : 'common.create'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      item,
-      method: handleSubmit(async () => {
-        const result = await config.value.action?.(formToService(values.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToService(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        closeModal();
+      closeModal();
 
-        return result;
-      }),
+      return result;
     });
 
     const { vars: templateVars, pending, fetchList } = useTemplateVarsList({

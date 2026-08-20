@@ -44,7 +44,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
@@ -73,18 +72,17 @@ export default {
       },
     });
     const comment = form.model('comment');
+    const { handleSubmit, isSubmitting: submitting } = form;
 
     const isCommentRequired = computed(() => config.value.isCommentRequired ?? true);
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        await config.value?.action?.({
-          ...form.values.value,
-          alarms: mapIds(config.value.items),
-        });
+    const submit = handleSubmit(async () => {
+      await config.value?.action?.({
+        ...form.values.value,
+        alarms: mapIds(config.value.items),
+      });
 
-        close();
-      }),
+      close();
     });
 
     useFormConfirmableCloseModal({

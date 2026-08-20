@@ -74,6 +74,7 @@ import ServiceWeatherWidget from './service-weather/service-weather.vue';
 import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
 import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
 import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
+import TestingWeatherWidget from './testing-weather/testing-weather.vue';
 import TextWidget from './text/text.vue';
 
 export default {
@@ -95,6 +96,7 @@ export default {
     PieChartWidget,
     ServiceWeatherWidget,
     StatsCalendarWidget,
+    TestingWeatherWidget,
     TextWidget,
     AlarmStatisticsWidget,
     UserStatisticsWidget,
@@ -136,6 +138,7 @@ export default {
         [WIDGET_TYPES.userStatistics]: UserStatisticsWidget,
         [WIDGET_TYPES.alarmStatistics]: AlarmStatisticsWidget,
         [WIDGET_TYPES.availability]: AvailabilityWidget,
+        [WIDGET_TYPES.testingWeather]: TestingWeatherWidget,
       }[this.widget.type];
     },
 

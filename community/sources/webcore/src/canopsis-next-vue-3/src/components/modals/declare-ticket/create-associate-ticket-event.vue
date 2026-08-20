@@ -60,7 +60,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
@@ -88,7 +87,7 @@ export default {
     const form = useForm({
       initialValues: eventToAssociateTicketForm(config.value.associateTicket),
     });
-    const { values } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const close = () => modals.hide({ id: props.modal.id });
     const updateForm = (nextForm) => {
@@ -110,12 +109,10 @@ export default {
       (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
     );
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        await config.value.action?.(formToAssociateTicketEvent(values.value));
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToAssociateTicketEvent(values.value));
 
-        close();
-      }),
+      close();
     });
 
     useFormConfirmableCloseModal({

@@ -43,7 +43,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import PatternForm from '@/components/forms/pattern-form.vue';
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
@@ -77,22 +76,20 @@ export default {
     const form = useForm({
       initialValues,
     });
-    const { values, handleSubmit } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const title = computed(() => config.value.title);
     const closeModal = () => modals.hide({ id: props.modal.id });
+    const submitLabel = computed(() => t(config.value.pattern?._id ? 'common.save' : 'common.create'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      item: computed(() => config.value.pattern),
-      method: handleSubmit(async () => {
-        const result = await config.value.action?.(formToPattern(values.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToPattern(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        closeModal();
+      closeModal();
 
-        return result;
-      }),
+      return result;
     });
 
     useFormConfirmableCloseModal({

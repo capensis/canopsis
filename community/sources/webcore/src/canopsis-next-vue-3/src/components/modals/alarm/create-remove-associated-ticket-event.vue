@@ -49,7 +49,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import RemoveAssociatedTicketEventForm from '@/components/widgets/alarm/forms/remove-associated-ticket-event-form.vue';
@@ -80,7 +79,7 @@ export default {
         comment: '',
       },
     });
-    const { values } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const submittingItem = (item, ticketValue) => (
       ticketValue && !item.v.tickets?.find?.(ticket => ticket.ticket === ticketValue)
@@ -94,13 +93,11 @@ export default {
 
     const updateForm = nextForm => values.value = nextForm;
 
-    const { submitting, submit } = useSubmittableForm({
-      method: form.handleSubmit(async () => {
-        if (config.value.action) {
-          await config.value.action(values.value);
-          close();
-        }
-      }),
+    const submit = handleSubmit(async () => {
+      if (config.value.action) {
+        await config.value.action(values.value);
+        close();
+      }
     });
 
     useFormConfirmableCloseModal({

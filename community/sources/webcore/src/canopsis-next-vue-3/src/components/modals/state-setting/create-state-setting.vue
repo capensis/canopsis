@@ -40,7 +40,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
@@ -69,7 +68,7 @@ export default {
       initialValues: stateSettingToForm(stateSetting.value),
     });
 
-    const { values, handleSubmit } = form;
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const { shown: chatShown, options: chatOptions } = useAiChatForm({
       form: values,
@@ -80,18 +79,16 @@ export default {
     const chatPending = computed(() => chatOptions.value.bind.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
+    const submitLabel = computed(() => t(stateSetting.value?._id ? 'common.save' : 'common.create'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      item: stateSetting,
-      method: handleSubmit(async () => {
-        const result = await config.value.action?.(formToStateSetting(values.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToStateSetting(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        closeModal();
+      closeModal();
 
-        return result;
-      }),
+      return result;
     });
 
     useFormConfirmableCloseModal({
