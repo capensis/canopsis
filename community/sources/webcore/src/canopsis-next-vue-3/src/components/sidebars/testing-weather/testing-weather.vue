@@ -12,6 +12,8 @@
       v-model="form.parameters.directory"
       :title="t('settings.resultDirectory')"
       :disabled="form.parameters.is_api"
+      name="parameters.directory"
+      required
       @add="editResultDirectory"
       @edit="editResultDirectory"
       @remove="removeResultDirectory"
