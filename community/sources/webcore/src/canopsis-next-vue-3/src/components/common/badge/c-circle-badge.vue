@@ -71,6 +71,7 @@ export default {
 
   &--outlined {
     background: transparent;
+    color: var(--c-circle-badge-color);
   }
 
   &--small {

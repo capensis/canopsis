@@ -1,10 +1,10 @@
 <template>
   <c-alert type="info">
-    <c-layout justify-space-between>
+    <c-layout justify="space-between" align="center">
       <div>
         <span v-html="$t('pattern.tryOptimizationHint')" />
       </div>
-      <v-btn color="info" @click="tryOptimization">
+      <v-btn color="info" type="button" @click="tryOptimization">
         <v-icon class="mr-2" color="white">
           wand_shine
         </v-icon>

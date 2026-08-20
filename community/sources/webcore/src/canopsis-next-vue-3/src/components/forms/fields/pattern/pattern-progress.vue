@@ -22,10 +22,10 @@
         {{ failedMessageText || $t('pattern.optimizationFailed', { reason: failedReason }) }}
       </span>
       <c-layout gap="2" justify-center>
-        <v-btn color="primary" outlined @click="close">
+        <v-btn color="primary" variant="outlined" type="button" @click="close">
           {{ closeButtonLabel || $t('common.close') }}
         </v-btn>
-        <v-btn color="primary" @click="tryAgain">
+        <v-btn color="primary" type="button" @click="tryAgain">
           {{ tryAgainButtonLabel || $t('common.tryAgain') }}
         </v-btn>
       </c-layout>
@@ -41,7 +41,7 @@
         {{ inProgressText || $t('pattern.optimizationInProgress') }}
       </span>
       <c-layout justify-center>
-        <v-btn color="primary" outlined @click="cancel">
+        <v-btn color="primary" variant="outlined" type="button" @click="cancel">
           {{ cancelButtonLabel || $t('pattern.cancelOptimization') }}
         </v-btn>
       </c-layout>

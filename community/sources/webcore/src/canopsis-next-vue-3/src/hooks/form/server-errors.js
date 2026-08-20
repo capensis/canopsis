@@ -24,6 +24,33 @@ const isFieldErrorMessage = (message) => {
 export const unwrapFieldPath = (path = '') => String(path).replace(/^\[(.+)]$/i, '$1');
 
 /**
+ * Converts a field name to a vee-validate literal path.
+ *
+ * Dotted names are identifiers in this app, not nested form values. Wrapping them
+ * in brackets stops vee-validate from treating `uid.operator` as a nested path.
+ *
+ * @param {string|import('vue').Ref<string>|import('vue').ComputedRef<string>} name Field name.
+ * @returns {string|undefined} Literal vee-validate path.
+ */
+export const toLiteralVeeFieldPath = (name) => {
+  const path = unref(name);
+
+  if (!isString(path) || path === '') {
+    return path;
+  }
+
+  if (/^\[.+]$/.test(path)) {
+    return path;
+  }
+
+  if (!path.includes('.')) {
+    return path;
+  }
+
+  return `[${path}]`;
+};
+
+/**
  * Converts a dotted numeric path to vee-validate array syntax.
  * `tags.0.name` -> `tags[0].name`
  *

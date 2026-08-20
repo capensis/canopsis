@@ -9,7 +9,7 @@
     />
     <c-progress-overlay :pending="pending" />
     <c-layout class="c-patterns-field" column>
-      <c-label :label="$t('common.pattern', 2)" :required="isPatternRequired" />
+      <c-label :label="$t('common.pattern', 2)" :required="someRequired || required" />
       <c-alert v-if="errorMessage" type="error" density="compact">
         {{ errorMessage }}
       </c-alert>

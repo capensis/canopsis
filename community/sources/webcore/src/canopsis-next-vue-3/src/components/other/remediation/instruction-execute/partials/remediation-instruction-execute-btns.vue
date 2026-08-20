@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="ga-2" justify="end">
+  <c-layout class="flex-grow-1" justify="end" gap="2">
     <v-btn
       :loading="cancelPending"
       :disabled="cancelPending"
@@ -17,7 +17,7 @@
     >
       {{ t('remediation.instructionExecute.pauseInstruction') }}
     </v-btn>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

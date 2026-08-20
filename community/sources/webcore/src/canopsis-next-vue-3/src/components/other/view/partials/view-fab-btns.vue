@@ -2,6 +2,7 @@
   <div :class="{ 'view-fab-btns__fullscreen': isFullscreen }" class="view-fab-btns fab ma-2">
     <c-layout gap="3">
       <view-scroll-top-btn />
+      <view-executions-btn v-if="hasAccessToExecuteInstruction" />
       <view-periodic-refresh-btn />
       <view-screen-mode-btn
         v-if="isFullscreen"
@@ -86,9 +87,11 @@ import {
   FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
   KEYS_TO_VIEW_SCREEN_MODES,
   MODALS,
+  USER_PERMISSIONS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
 
+import { useCanPermission } from '@/hooks/auth';
 import { useFullscreen } from '@/hooks/fullscreen';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -98,6 +101,7 @@ import { useView } from '@/hooks/store/modules/view';
 import { useViewRouter } from '@/hooks/view/router';
 
 import ViewEditingBtn from './view-editing-btn.vue';
+import ViewExecutionsBtn from './view-executions-btn.vue';
 import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
 import ViewScreenModeBtn from './view-screen-mode-btn.vue';
 import ViewScrollTopBtn from './view-scroll-top-btn.vue';
@@ -106,6 +110,7 @@ import ViewShareLinkBtn from './view-share-link-btn.vue';
 export default {
   components: {
     ViewEditingBtn,
+    ViewExecutionsBtn,
     ViewPeriodicRefreshBtn,
     ViewScreenModeBtn,
     ViewShareLinkBtn,
@@ -137,6 +142,9 @@ export default {
     const { createViewTab } = useView();
     const { view, activeViewScreenMode, fetchActiveView, toggleEditing, setActiveViewScreenMode } =
       useActiveView();
+    const { hasAccess: hasAccessToExecuteInstruction } = useCanPermission(
+      USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,
+    );
 
     const enterFullscreen = () => {
       if (!props.activeTab) {
@@ -253,6 +261,7 @@ export default {
       isFullscreen,
       view,
       activeViewScreenMode,
+      hasAccessToExecuteInstruction,
       changeScreenMode,
       showCreateWidgetModal,
       showCreateTabModal,

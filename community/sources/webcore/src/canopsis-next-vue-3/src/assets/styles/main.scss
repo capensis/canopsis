@@ -729,7 +729,8 @@ kbd {
         .v-btn__content:has(.v-icon),
         .v-pagination__navigation:has(.v-icon),
         .v-input--selection-controls__input:has(.v-icon),
-        .v-alert__wrapper:has(.v-icon)
+        .v-alert__wrapper:has(.v-icon),
+        .v-alert__prepend:has(.v-icon)
       )
       > .v-icon:not(button, .success--text, .primary--text, .error--text) {
       color: var(--v-application-background-darken4) !important;
@@ -764,6 +765,7 @@ kbd {
         .v-btn__content:has(.v-icon),
         .v-pagination__navigation:has(.v-icon),
         .v-alert__wrapper:has(.v-icon),
+        .v-alert__prepend:has(.v-icon),
         .v-input--selection-controls__input:has(.v-icon)
       )
       > .v-icon:not(button, .success--text, .primary--text, .error--text) {

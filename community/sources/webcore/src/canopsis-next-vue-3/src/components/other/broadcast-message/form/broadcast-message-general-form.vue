@@ -12,8 +12,8 @@
     </c-form-block-row>
 
     <c-form-block-row :label="t('common.period')">
-      <c-layout gap="3">
-        <div class="flex-1-1">
+      <v-row>
+        <v-col cols="6">
           <date-time-picker-field
             v-model:value="startField"
             :label="t('common.start')"
@@ -25,8 +25,8 @@
               <c-icon>calendar_today</c-icon>
             </template>
           </date-time-picker-field>
-        </div>
-        <div class="flex-1-1">
+        </v-col>
+        <v-col cols="6">
           <date-time-picker-field
             v-model:value="endField"
             :label="t('common.end')"
@@ -38,8 +38,8 @@
               <c-icon>calendar_today</c-icon>
             </template>
           </date-time-picker-field>
-        </div>
-      </c-layout>
+        </v-col>
+      </v-row>
     </c-form-block-row>
 
     <c-form-block-row :label="t('common.color')" align-center>

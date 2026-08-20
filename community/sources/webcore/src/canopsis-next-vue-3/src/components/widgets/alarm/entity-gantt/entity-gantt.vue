@@ -3,20 +3,18 @@
     <c-progress-overlay :pending="pending" />
     <junit-gantt-chart
       :items="ganttIntervals"
-      :total-items="meta.total_count"
+      :total-items="totalItems"
       :query="query"
       :width="840"
-      @update:query="query = $event"
+      @update:query="updateQuery"
     />
   </c-layout>
 </template>
 
 <script>
-import { mapActions } from 'pinia';
-
 import { PAGINATION_LIMIT } from '@/config';
 
-import { useTestSuiteStore } from '@/stores/modules/test-suite';
+import { useTestSuite } from '@/hooks/store/modules/test-suite';
 
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
@@ -42,6 +40,16 @@ export default {
     };
   },
 
+  computed: {
+    entityId() {
+      return this.alarm.entity?._id;
+    },
+
+    totalItems() {
+      return this.meta.total_count ?? 0;
+    },
+  },
+
   watch: {
     query: {
       deep: true,
@@ -53,20 +61,35 @@ export default {
   },
 
   methods: {
-    ...mapActions(useTestSuiteStore, ['fetchEntityGanttIntervalsWithoutStore']),
+    fetchEntityGanttIntervalsWithoutStore(params) {
+      const { fetchTestSuiteEntityGanttIntervalsWithoutStore } = useTestSuite();
+
+      return fetchTestSuiteEntityGanttIntervalsWithoutStore(params);
+    },
+
+    updateQuery(query) {
+      this.query = query;
+    },
 
     async fetchList() {
+      if (!this.entityId) {
+        this.ganttIntervals = [];
+        this.meta = {};
+
+        return;
+      }
+
       try {
         this.pending = true;
 
         const { page, itemsPerPage: limit } = this.query;
         const { data, meta } = await this.fetchEntityGanttIntervalsWithoutStore({
-          id: this.alarm.entity._id,
+          id: this.entityId,
           params: { page, limit },
         });
 
-        this.ganttIntervals = data;
-        this.meta = meta;
+        this.ganttIntervals = data ?? [];
+        this.meta = meta ?? {};
       } catch (err) {
         console.error(err);
         this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
