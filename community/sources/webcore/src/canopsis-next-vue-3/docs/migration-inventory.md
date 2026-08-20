@@ -68,9 +68,9 @@ widget runtimes/settings are ready to test inside migrated views:
 
 ## Immediate Tasks
 
-- `[ ]` Remove `normalizr` from the old store migration path before porting larger entity modules. Prefer plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of carrying over the old Vuex/normalizr shape.
-  - Do not port the old `SCHEMA_EMBEDDED_KEY` / `entities/removeFromStore` mechanism. Embedded metadata was only used internally by the normalizr plugin for mark-and-sweep and parent cleanup.
-  - Single pbehavior delete reaches `entities/removeFromStore` from `pbehavior-actions`, but the affected tables refresh themselves. `AlarmsList` and `Context` expand pbehavior tabs already refresh locally. Revisit only when migrating `ServiceWeather`; if needed, add explicit local refresh/parent update there instead of restoring global embedded cleanup.
+- `[x]` Keep `normalizr` out of the target migration path. The Vue 3 project does not depend on `normalizr`; use plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of restoring the old Vuex/normalizr shape.
+  - Do not port the old `entities/removeFromStore` cleanup mechanism. Embedded metadata was only used internally by the old normalizr plugin for mark-and-sweep and parent cleanup.
+  - Single pbehavior delete paths now use API delete plus local list refresh. `AlarmsList`, `Context` and `ServiceWeather` pbehavior tabs refresh locally instead of restoring global embedded cleanup.
 - `[x]` Port remaining old entity store modules to Pinia facades.
   - Simple list/detail/bulk modules are wrapped with `createCRUDStore` where the old Vuex module was only CRUD around an API route.
   - Request-only or widget-scoped modules stay as explicit Pinia stores: `metrics` keeps per-widget buckets for aggregated/group/vector/availability data and meta, `template-testing` also covers old `copy/vars`, `snmp` is split into `snmp-rule` and `snmp-mib`, and `info` remains covered by `app-info` plus `infos`.
