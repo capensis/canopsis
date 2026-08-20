@@ -18,9 +18,7 @@
             <users />
           </v-window-item>
           <v-window-item :value="USERS_TABS.shareTokens">
-            <div class="text-medium-emphasis pa-4">
-              {{ t('common.sharedTokens') }}
-            </div>
+            <share-tokens />
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -40,12 +38,15 @@ import { MODALS, USERS_TABS, USER_PERMISSIONS } from '@/constants';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useShareToken } from '@/hooks/store/modules/share-token';
 import { useUser } from '@/hooks/store/modules/user';
 
+import ShareTokens from '@/components/other/share-token/share-tokens.vue';
 import Users from '@/components/other/users/users.vue';
 
 export default {
   components: {
+    ShareTokens,
     Users,
   },
 
@@ -53,6 +54,7 @@ export default {
     const modals = useModals();
     const { t } = useI18n();
     const { fetchUsersListWithPreviousParams, createUser } = useUser();
+    const { fetchShareTokensListWithPreviousParams } = useShareToken();
 
     const { hasCreateAccess: hasCreateAnyUserAccess, hasReadAccess: hasReadAnyUserAccess } =
       useCRUDPermissions(USER_PERMISSIONS.technical.user);
@@ -61,7 +63,9 @@ export default {
       USER_PERMISSIONS.technical.shareToken,
     );
 
-    const activeTab = ref(USERS_TABS.users);
+    const activeTab = ref(
+      hasReadAnyUserAccess.value ? USERS_TABS.users : USERS_TABS.shareTokens,
+    );
 
     const hasCreateAccess = computed(
       () =>
@@ -88,6 +92,9 @@ export default {
       switch (activeTab.value) {
         case USERS_TABS.users:
           fetchUsersListWithPreviousParams();
+          break;
+        case USERS_TABS.shareTokens:
+          fetchShareTokensListWithPreviousParams();
           break;
       }
     };

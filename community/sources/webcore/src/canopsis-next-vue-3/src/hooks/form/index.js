@@ -1,4 +1,4 @@
-import { get, set } from 'lodash';
+import { get, isString, set } from 'lodash';
 import {
   useField as useVeeField,
   useForm as useVeeForm,
@@ -16,12 +16,18 @@ import { usePopups } from '@/hooks/popups';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useComponentInstance } from '@/hooks/vue';
 
-import { applyServerFormErrors, getSubmitErrorPopupText, toVeeFormPath, unwrapFieldPath } from './server-errors';
+import {
+  applyServerFormErrors,
+  getSubmitErrorPopupText,
+  toLiteralVeeFieldPath,
+  toVeeFormPath,
+  unwrapFieldPath,
+} from './server-errors';
 
 export { useModelField } from './model-field';
 export { useArrayModelField } from './array-model-field';
 export { useLazySearch } from './lazy-search';
-export { applyServerFormErrors, getServerFieldErrors } from './server-errors';
+export { applyServerFormErrors, getServerFieldErrors, toLiteralVeeFieldPath } from './server-errors';
 
 export const FORM_CONTEXT_KEY = Symbol('formContext');
 
@@ -75,10 +81,14 @@ export const useForm = ({ initialValues = {}, errorsToValidation = v => v, ...ve
    * @returns {Array<Object>} Path states with an `instance` property.
    */
   const getAllPathStatesWithInstances = () =>
-    veeForm.getAllPathStates().map(state => ({
-      ...state,
-      instance: fieldsInstances.value[state.path],
-    }));
+    veeForm.getAllPathStates().map((state) => {
+      const path = unref(state.path);
+
+      return {
+        ...state,
+        instance: fieldsInstances.value[path] ?? fieldsInstances.value[unwrapFieldPath(path)],
+      };
+    });
 
   /**
    * Returns a nested value from the local form state.
@@ -284,11 +294,24 @@ export const useForm = ({ initialValues = {}, errorsToValidation = v => v, ...ve
     const unwrapped = unwrapFieldPath(field);
     const candidates = new Set([field, unwrapped, `[${unwrapped}]`, toVeeFormPath(field)]);
     const state = veeForm.getAllPathStates().find(item => candidates.has(unref(item.path)));
-    const path = state ? unref(state.path) : field;
+    const path = state ? unref(state.path) : toLiteralVeeFieldPath(field);
 
     veeForm.setFieldError(path, message);
     veeForm.setFieldTouched(path, true);
   };
+
+  const toVeePath = (field) => {
+    if (!isString(field)) {
+      return field;
+    }
+
+    return toLiteralVeeFieldPath(field);
+  };
+
+  const setFieldError = (field, message) => veeForm.setFieldError(toVeePath(field), message);
+  const validateField = (field, opts) => veeForm.validateField(toVeePath(field), opts);
+  const setFieldTouched = (field, touched) => veeForm.setFieldTouched(toVeePath(field), touched);
+  const resetField = (field, state) => veeForm.resetField(toVeePath(field), state);
 
   const form = {
     values,
@@ -311,11 +334,11 @@ export const useForm = ({ initialValues = {}, errorsToValidation = v => v, ...ve
     getAllPathStatesWithInstances,
 
     validate: veeForm.validate,
-    validateField: veeForm.validateField,
-    setFieldError: veeForm.setFieldError,
+    validateField,
+    setFieldError,
     setErrors: veeForm.setErrors,
-    setFieldTouched: veeForm.setFieldTouched,
-    resetField: veeForm.resetField,
+    setFieldTouched,
+    resetField,
     resetErrors,
     addError,
     scrollToFirstError,
@@ -407,7 +430,8 @@ export const useFormContext = () => {
  * @returns {Object} Vee-validate field API.
  */
 export const useField = (name, rules, options) => {
-  const field = useVeeField(name, rules, options);
+  const fieldPath = computed(() => toLiteralVeeFieldPath(name));
+  const field = useVeeField(fieldPath, rules, options);
   const form = inject(FORM_CONTEXT_KEY, null);
   const instance = useComponentInstance();
 
@@ -472,4 +496,12 @@ export const useFormErrors = veeUseFormErrors;
  * @param {string|import('vue').Ref<string>|import('vue').ComputedRef<string>} path Field path.
  * @returns {import('vue').ComputedRef<string|undefined>} Field error message.
  */
-export const useFieldError = veeUseFieldError;
+export const useFieldError = (path) => {
+  if (path == null) {
+    return veeUseFieldError(path);
+  }
+
+  const fieldPath = computed(() => toLiteralVeeFieldPath(path));
+
+  return veeUseFieldError(fieldPath);
+};

@@ -19,6 +19,7 @@
           :hide-details="hideDetails"
           :required="fieldRequired"
           :validation-rules="validationRules"
+          :validate-on-blur="false"
           readonly
           @click:append-inner="clear"
         >

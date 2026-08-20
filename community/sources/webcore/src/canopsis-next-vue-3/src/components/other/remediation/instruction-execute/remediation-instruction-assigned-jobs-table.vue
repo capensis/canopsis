@@ -1,6 +1,15 @@
 <template>
-  <table class="jobs-assigned-table">
-    <thead>
+  <v-data-table
+    v-model:expanded="expandedJobIds"
+    :headers="headers"
+    :items="jobs"
+    class="jobs-assigned-table"
+    item-value="_id"
+    hide-default-footer
+    hide-default-header
+    show-expand
+  >
+    <template #headers>
       <tr>
         <th />
         <th class="text-center pre-line">
@@ -13,26 +22,28 @@
           {{ t('remediation.instructionExecute.jobs.completedAt') }}
         </th>
       </tr>
-    </thead>
-    <tbody>
-      <template v-for="job in jobs" :key="job._id || job.job_id || job.name">
-        <remediation-instruction-assigned-jobs-row
-          :job="job"
-          :expanded="expandedJobIds.includes(job._id)"
-          :executable="executable"
-          :cancelable="cancelable"
-          @execute-job="$emit('execute-job', $event)"
-          @cancel-job-execution="$emit('cancel-job-execution', $event)"
-          @update:expanded="toggleExpanded(job._id, $event)"
-        />
-        <tr v-if="expandedJobIds.includes(job._id)">
-          <td colspan="4">
-            <remediation-instruction-assigned-jobs-expand-panel :job="job" />
-          </td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
+    </template>
+
+    <template #item="{ item }">
+      <remediation-instruction-assigned-jobs-row
+        :job="getRawJob(item)"
+        :expanded="isJobExpanded(item)"
+        :executable="executable"
+        :cancelable="cancelable"
+        @execute-job="$emit('execute-job', $event)"
+        @cancel-job-execution="$emit('cancel-job-execution', $event)"
+        @update:expanded="toggleExpanded(item, $event)"
+      />
+    </template>
+
+    <template #expanded-row="{ item, columns }">
+      <tr>
+        <td :colspan="columns.length" class="jobs-assigned-table__expand-cell">
+          <remediation-instruction-assigned-jobs-expand-panel :job="getRawJob(item)" />
+        </td>
+      </tr>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -69,8 +80,24 @@ export default {
   setup() {
     const { t } = useI18n();
     const expandedJobIds = ref([]);
+    const headers = [
+      { title: '', key: 'name', sortable: false },
+      { title: '', key: 'startedAt', sortable: false },
+      { title: '', key: 'launchedAt', sortable: false },
+      { title: '', key: 'completedAt', sortable: false },
+    ];
 
-    const toggleExpanded = (id, expanded) => {
+    const getRawJob = job => job?.raw ?? job;
+    const getJobId = (job) => {
+      const rawJob = getRawJob(job);
+
+      return rawJob._id || rawJob.job_id || rawJob.name;
+    };
+    const isJobExpanded = job => expandedJobIds.value.includes(getJobId(job));
+
+    const toggleExpanded = (job, expanded) => {
+      const id = getJobId(job);
+
       expandedJobIds.value = expanded
         ? [...expandedJobIds.value, id]
         : expandedJobIds.value.filter(jobId => jobId !== id);
@@ -78,7 +105,10 @@ export default {
 
     return {
       t,
+      headers,
       expandedJobIds,
+      getRawJob,
+      isJobExpanded,
       toggleExpanded,
     };
   },
@@ -87,7 +117,16 @@ export default {
 
 <style lang="scss" scoped>
 .jobs-assigned-table {
-  width: 100%;
-  border-collapse: collapse;
+  :deep(tr) {
+    border-bottom: none !important;
+  }
+
+  :deep(tbody tr:hover) {
+    background: unset !important;
+  }
+
+  &__expand-cell {
+    padding: 0;
+  }
 }
 </style>

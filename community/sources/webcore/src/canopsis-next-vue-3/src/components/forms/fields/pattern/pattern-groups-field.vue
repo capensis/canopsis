@@ -32,16 +32,17 @@
 </template>
 
 <script>
+import { computed, nextTick, onBeforeUnmount, toRef, watch } from 'vue';
+
 import { patternRulesToGroup } from '@/helpers/entities/pattern/form';
 
-import { formArrayMixin } from '@/mixins/form';
-import { validatorMixin } from '@/mixins/validator';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
 
 import PatternGroupField from './pattern-group-field.vue';
 
 export default {
   components: { PatternGroupField },
-  mixins: [formArrayMixin, validatorMixin],
   emits: ['update:groups'],
   props: {
     groups: {
@@ -69,62 +70,69 @@ export default {
       default: false,
     },
   },
-  computed: {
-    hasGroupsErrors() {
-      return this.errors.has(this.name);
-    },
-  },
-  watch: {
-    groups() {
-      this.$nextTick(() => {
-        if (this.required) {
-          this.$validator.validate(this.name);
-        }
-      });
-    },
-    required: {
-      immediate: true,
-      handler(value) {
-        if (value) {
-          this.attachMinValueRule();
-        } else {
-          this.detachMinValueRule();
-        }
-      },
-    },
-  },
-  beforeUnmount() {
-    this.detachMinValueRule();
-  },
-  methods: {
-    attachMinValueRule() {
-      this.$validator.attach({
-        name: this.name,
-        rules: 'min_value:1',
-        getter: () => this.groups.length,
-        vm: this,
-      });
-    },
+  setup(props, { emit }) {
+    const { addItemIntoArray, updateItemInArray, removeItemFromArray } = useArrayModelField(
+      props,
+      emit,
+    );
+    const fieldName = toRef(props, 'name');
+    const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+      useValidationAttachMinValue(fieldName);
 
-    detachMinValueRule() {
-      this.$validator.detach(this.name);
-    },
+    const hasGroupsErrors = computed(() => validator.errors.has(fieldName.value));
+    const groupsLengthGetter = () => props.groups?.length ?? 0;
 
-    async validateGroupsField() {
-      if (!this.required) {
-        this.errors.clear(this.name);
+    /**
+     * Attaches min_value:1 when the groups field is required.
+     */
+    const attachRequiredMinValueRule = () => attachMinValueRule(groupsLengthGetter);
+
+    const validateGroupsField = async () => {
+      if (!props.required) {
+        validator.errors.clear(fieldName.value);
 
         return true;
       }
 
-      return await this.$validator.validate(this.name);
-    },
+      return validateMinValueRule();
+    };
 
-    addFilterGroup() {
-      const [firstAttribute] = this.attributes;
+    const addFilterGroup = () => {
+      const [firstAttribute] = props.attributes;
 
-      this.addItemIntoArray(patternRulesToGroup([{ field: firstAttribute?.value }]));
-    },
+      addItemIntoArray(patternRulesToGroup([{ field: firstAttribute?.value }]));
+    };
+
+    watch(
+      () => props.groups,
+      () => {
+        if (props.required) {
+          nextTick(validateMinValueRule);
+        }
+      },
+    );
+
+    watch(
+      () => props.required,
+      (required) => {
+        if (required) {
+          attachRequiredMinValueRule();
+        } else {
+          detachMinValueRule();
+        }
+      },
+      { immediate: true },
+    );
+
+    onBeforeUnmount(detachMinValueRule);
+
+    return {
+      hasGroupsErrors,
+      validateGroupsField,
+      addFilterGroup,
+      updateItemInArray,
+      removeItemFromArray,
+    };
   },
 };
 </script>

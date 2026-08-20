@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
 
 <template>
   <v-fade-transition>
-    <v-alert
+    <c-alert
       v-if="visible"
       :type="type"
       class="alert-without-border"
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
         :template-props="context"
         class="pre-line"
       />
-    </v-alert>
+    </c-alert>
   </v-fade-transition>
 </template>
 
@@ -159,13 +159,10 @@ onBeforeUnmount(() => {
   }
 }
 
-.alert-without-border {
+:deep(.alert-without-border.v-alert) {
   border: 0;
-
-  &.v-alert {
-    margin-left: 0;
-    margin-right: 0;
-  }
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .progress {

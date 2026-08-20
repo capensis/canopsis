@@ -18,11 +18,13 @@ import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { patternToForm } from '@/helpers/entities/pattern/form';
 
 import { useModelField } from '@/hooks/form/model-field';
+import { unwrapFieldPath } from '@/hooks/form/server-errors';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePollingWithPending } from '@/hooks/polling';
 import { usePopups } from '@/hooks/popups';
 import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entities-optimize';
+import { useValidationElementChildrenFields } from '@/hooks/validator/validation-element-children-fields';
 import { useValidator } from '@/hooks/validator/validator';
 
 /**
@@ -36,6 +38,7 @@ import { useValidator } from '@/hooks/validator/validator';
  * - Tracking applied suggestions for form submission
  *
  * @param {Ref|Object} value - Reactive form value containing pattern data
+ * @param {Ref<Element|null>} wrapperElement - Patterns field wrapper used to scope validation
  * @param {Function} emit - Vue emit function for updating parent component
  *
  * @returns {Object} Pattern optimization API
@@ -51,12 +54,13 @@ import { useValidator } from '@/hooks/validator/validator';
  * @returns {Function} returns.rejectAllSuggestions - Rejects all suggestions and resets optimization state
  * @returns {Function} returns.showEntitiesComparisonModal - Shows modal comparing current pattern with suggestion
  */
-export const usePatternOptimization = ({ value }, emit) => {
+export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
   const { t } = useI18n();
   const modals = useModals();
   const popups = usePopups();
   const validator = useValidator();
   const { updateModel } = useModelField({ value }, emit);
+  const childrenFields = useValidationElementChildrenFields(wrapperElement);
 
   const afterSubmitObserver = inject('$afterSubmitObserver', new Observer());
 
@@ -162,9 +166,14 @@ export const usePatternOptimization = ({ value }, emit) => {
     try {
       rejectAllSuggestions();
 
-      const isValid = await validator.validateAll();
+      const fieldsWithoutTitle = childrenFields.value.filter(
+        ({ path } = {}) => unwrapFieldPath(unref(path)) !== 'title',
+      );
+      const results = await Promise.all(
+        fieldsWithoutTitle.map(({ path } = {}) => validator.validate(unref(path))),
+      );
 
-      if (!isValid) {
+      if (results.some(valid => !valid)) {
         return;
       }
 

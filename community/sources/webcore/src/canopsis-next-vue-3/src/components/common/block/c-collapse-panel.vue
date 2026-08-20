@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 
+import { CSS_COLORS_VARS } from '@/config';
+
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 const props = defineProps({
@@ -38,23 +40,15 @@ const localExpanded = ref(props.expanded ? 0 : undefined);
 
 const { hasChildrenError } = useValidationChildren();
 
-const panelStyle = computed(() => ({
-  outlineColor: props.outlineColor,
-}));
-
 const hasError = computed(() => props.error || hasChildrenError.value);
 
-const headerColor = computed(() => (hasError.value ? 'error' : undefined));
+const panelStyle = computed(() => ({
+  outlineColor: hasError.value ? CSS_COLORS_VARS.error : props.outlineColor,
+}));
 
-const headerStyle = computed(() => {
-  if (hasError.value) {
-    return {};
-  }
-
-  return {
-    backgroundColor: props.color,
-  };
-});
+const headerStyle = computed(() => ({
+  backgroundColor: props.color,
+}));
 
 watch(
   () => props.expanded,
@@ -72,7 +66,7 @@ watch(
     class="c-collapse-panel"
   >
     <v-expansion-panel class="c-collapse-panel__panel">
-      <v-expansion-panel-title :color="headerColor" :style="headerStyle" class="c-collapse-panel__title">
+      <v-expansion-panel-title :style="headerStyle" class="c-collapse-panel__title">
         <div class="c-collapse-panel__header">
           <slot name="header">
             <span class="c-collapse-panel__header-text">

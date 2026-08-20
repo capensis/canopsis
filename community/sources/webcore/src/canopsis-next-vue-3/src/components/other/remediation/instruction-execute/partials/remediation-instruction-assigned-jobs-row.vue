@@ -1,6 +1,6 @@
 <template>
-  <tr>
-    <td class="pa-0">
+  <tr class="jobs-assigned-table__row">
+    <td>
       <c-layout align="center">
         <v-btn
           v-if="executable"
@@ -31,6 +31,7 @@
               :loading="outputPending"
               class="mr-1"
               size="small"
+              variant="text"
               icon
               @click="toggleExpanded"
             >

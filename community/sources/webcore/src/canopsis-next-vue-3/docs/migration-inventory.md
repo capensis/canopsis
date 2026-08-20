@@ -10,6 +10,62 @@ Status legend:
 - `[~]` partially migrated
 - `[ ]` not migrated
 
+## Ready For Testing
+
+Update this section every time a page, widget or shared feature becomes ready
+for runtime verification. Keep entries grouped by product area so QA can test
+top-down without reading the full inventory.
+
+### Administration
+
+- `/admin/rights` - rights matrix, lightweight checkboxes and sticky actions.
+- `/admin/users` - users table, create/edit user modal and shared tokens list/revoke.
+- `/admin/broadcast-messages` - active messages, list and create/edit flow.
+- `/admin/playlists` - list, create/edit/duplicate, manage tabs, expand panel and actions.
+- `/admin/kpi` - graphs, filters, rating settings and collection settings tabs.
+- `/admin/events-records` - current status, events-record modal, apply-event-filter modal, actions and export.
+- `/admin/external-data-tables` - data tables, records, import/export and table/record modals.
+- `/admin/entity-infos-properties` - list, type filter, create/edit/duplicate and delete/bulk delete.
+- `/admin/icons` - icon list, preview, create/edit upload modal and delete.
+- `/admin/tags` - list, expand panel, create/edit modal and tag form pattern tabs.
+- `/admin/views-import-export` - group/view selection, JSON export/import and import modal.
+- `/admin/notifications` - notification settings form and save flow.
+- `/admin/comment-templates` - list, create/edit modal and fields form.
+- `/admin/storage-settings` - storage settings, archive/clean confirmation actions and duration units.
+- `/admin/state-settings` - list, state setting modals and create/edit/duplicate/remove actions.
+
+### Exploitation
+
+- `/exploitation/snmp-rules` - list, MIB upload, mass actions and create/edit/duplicate/delete SNMP rule modal.
+- `/exploitation/declare-ticket-rules` - list, CRUD/mass actions, rule modal, test-query preview and ticket action modals.
+
+### Profile And System
+
+- `/themes` - theme list, create/edit/duplicate theme modal and theme form.
+- `/error` - error page polling and redirect logic.
+
+### View Widgets
+
+The main `/view/:id` page is still tracked as partially migrated, but these
+widget runtimes/settings are ready to test inside migrated views:
+
+- `AlarmsList`
+- `Context`
+- `ServiceWeather`
+- `StatsCalendar`
+- `Text`
+- `Counter`
+- `Junit`
+- `Map`
+- `BarChart`
+- `LineChart`
+- `PieChart`
+- `Numbers`
+- `UserStatistics`
+- `AlarmStatistics`
+- `Availability`
+- `ExternalDataTable`
+
 ## Immediate Tasks
 
 - `[ ]` Remove `normalizr` from the old store migration path before porting larger entity modules. Prefer plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of carrying over the old Vuex/normalizr shape.
@@ -25,6 +81,7 @@ Status legend:
 
 - `[x]` Target dependency baseline for UI migration is Vuetify `^4.1.2` from `package.json`. Do not describe the target as Vuetify 3; adapt old Vuetify 2 markup against the actual Vuetify 4 API and the compatibility wrappers already present in this project.
 - `[x]` Every completed migration stage must be recorded in documentation in the same change: update this inventory for page/widget/shared-component state and update the related `docs/ai/*-migration-plan.md` checklist when one exists.
+- `[x]` When a migrated area becomes ready for runtime verification, update `Ready For Testing` at the top of this file in the same change.
 - `[x]` Replace `v-field` and `@input` on Vue components with explicit Vue 3 bindings:
   - remove `v-field="..."`;
   - use `:prop` + `@update:prop`, or `v-model:prop` when a form model field already exists;
@@ -42,7 +99,7 @@ Status legend:
 - `[x]` `c-refresh-btn`: migrated to `src/components/common/buttons/c-refresh-btn.vue` because `c-fab-btn` depends on it.
 - `[x]` Modal base dependencies for maintenance mode: `c-modal-wrapper`, `c-form-block`, `c-form-block-row`, `text-editor-field`, `c-color-picker-field`.
 - `[x]` Common modals: `confirmation`, `create-maintenance`.
-- `[~]` User interface settings modal: settings menu action, modal registration, general/notifications/advanced/login tabs, app-info save flow and notification-settings save flow are migrated. Remaining: runtime parity pass for rich text variables, logo upload and app title refresh.
+- `[x]` User interface settings modal: settings menu action, modal registration, general/notifications/advanced/login tabs, app-info save flow, notification-settings save flow, rich text variables, logo upload and app title refresh are migrated and checked.
 - `[x]` `c-duration-field`: full old duration value/unit field is migrated in the compat field barrel, with `long`, `medium`, `sameWidth`, custom `units`, clearable unit handling and pluralized unit labels adapted to Vue I18n `t`.
 - `[~]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals and sidebar text-editor fields are migrated. Remaining: connect full vee-validate form validation inside editor modals when related pages/widgets start using complex rules.
 - `[x]` `c-draggable-list-field`: migrated with Vue 3 `vuedraggable` API; emits `update:value` / `update:model-value` matching its `value` / `modelValue` props.
@@ -78,7 +135,7 @@ Status legend:
   - `[x]` Phase 2, Pinia stores/hooks: migrated `pattern`, `pbehavior-patterns`, `patterns-fields`, `pattern-entities-optimize`, entity-category and pbehavior dictionary facades. Hooks wrap stores; components do not call request directly.
   - `[x]` Phase 3, base rule editor leaves: migrated `pattern-attribute-field`, `pattern-operator-field`, `pattern-rule-field-date-value`, `pattern-rule-field`, `pattern-group-field`, `pattern-groups-field`, `pattern-editor-field`, `pattern-advanced-editor-field`, `c-pattern-field`, `c-filter-field`.
   - `[x]` Phase 4, domain pattern fields: migrated `c-alarm-patterns-field`, `c-entity-patterns-field`, `c-pbehavior-patterns-field`, `c-event-filter-patterns-field`, `c-service-weather-patterns-field`; added lightweight compatibility fields needed by their dynamic `valueField` configs.
-  - `[~]` Phase 5, counters and preview modals: migrated `pattern-counters`, `pattern-count-message`, `pattern-count-alarms-modal`, `pattern-count-entities-modal`. Remaining: real `alarms-list`, `entities-list`, `entities-comparison` modal bodies still depend on porting alarm/entity list stacks.
+  - `[~]` Phase 5, counters and preview modals: migrated `pattern-counters`, `pattern-count-message`, `pattern-count-alarms-modal`, `pattern-count-entities-modal`. Alarm-list modal body is available through the migrated AlarmsList stack. Remaining: real `entities-list` and `entities-comparison` modal bodies still depend on porting the entity list stack.
   - `[x]` Phase 6, optimization/suggestions: migrated `pattern-optimization`, `pattern-progress`, `pattern-try-optimization`, `pattern-field-suggestions-wrapper`, `pattern-suggestions`, `pattern-suggestions-list`, `pattern-suggestions-header`, `pattern-suggestion-tab`, `pattern-suggestion-content`, `pattern-fix-with-ai-btn`; API calls go through pattern-entities-optimize store/hook.
   - `[x]` Phase 7, `c-patterns-field` wrapper: migrated `c-patterns-field.vue`; old `v-field` usage is replaced with explicit `:value` / `@update:value` bindings.
   - `[ ]` Phase 8, consumers: integrate first in read-only scenario action pattern tab, then in forms that already depend on patterns: scenario modal, event-filter, dynamic-info, meta-alarm-rule, declare-ticket-rule, pbehavior/remediation/storage settings as they are migrated.
@@ -105,47 +162,47 @@ Pages are taken from `src/router.js` in the source project.
 | `[~]`  | `view`                                         | `/view/:id`                           | `src/views/view.vue`                                         | `src/views/view-page.vue`                                         | Migration started with the staged plan in `docs/ai/view-migration-plan.md`. Foundation, page shell, tabs, grid shell, widget wrapper shell, floating controls, create-tab flow and basic create-widget modal are migrated. Remaining: widget settings sidebar/forms, concrete widget rendering, share/executions FAB buttons, kiosk runtime parity and final runtime checks. |
 | `[ ]`  | `view-kiosk`                                   | `/kiosk-views/:id/:tabId`             | `src/views/view-kiosk.vue`                                   | -                                                                 |                                                                                                                                                                                                                                                                                                                                                                              |
 | `[ ]`  | `alarms`                                       | `/alarms/:id`                         | `src/views/alarm.vue`                                        | -                                                                 |                                                                                                                                                                                                                                                                                                                                                                              |
-| `[~]`  | `admin-rights`                                 | `/admin/rights`                       | `src/views/admin/permissions.vue`                            | `src/views/admin/rights-page.vue`                                 | Main rights table migrated with lightweight checkbox; final visual parity pass pending.                                                                                                                                                                                                                                                                                      |
-| `[~]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users-page.vue`                                  | Main users tab/table and create/edit user form modal are migrated; shared tokens pending.                                                                                                                                                                                                                                                                                    |
+| `[x]`  | `admin-rights`                                 | `/admin/rights`                       | `src/views/admin/permissions.vue`                            | `src/views/admin/rights-page.vue`                                 | Main rights table, lightweight checkbox, sticky actions, route/store wiring, i18n and visual parity are migrated.                                                                                                                                                                                                                                                            |
+| `[x]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users-page.vue`                                  | Users tab/table, create/edit user form modal, shared tokens tab/list/revoke flow, route/store wiring, i18n and shared tokens runtime check are migrated.                                                                                                                                                                                                                     |
 | `[~]`  | `admin-roles`                                  | `/admin/roles`                        | `src/views/admin/roles.vue`                                  | `src/views/admin/roles-page.vue`                                  | Main list and create/edit/duplicate form are migrated. Remaining: role mass actions and deeper permissions editor parity.                                                                                                                                                                                                                                                    |
-| `[~]`  | `admin-broadcast-messages`                     | `/admin/broadcast-messages`           | `src/views/admin/broadcast-messages.vue`                     | `src/views/admin/broadcast-messages-page.vue`                     | Main list, active messages and create/edit form are migrated; runtime parity pass pending.                                                                                                                                                                                                                                                                                   |
+| `[x]`  | `admin-broadcast-messages`                     | `/admin/broadcast-messages`           | `src/views/admin/broadcast-messages.vue`                     | `src/views/admin/broadcast-messages-page.vue`                     | Main list, active messages, create/edit form, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                                                      |
 | `[x]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | `src/views/admin/playlists-page.vue`                              | Main list, refresh, copy/play actions, delete/bulk actions, create/edit/duplicate playlist modal, manage tabs modal and expand panel are migrated.                                                                                                                                                                                                                           |
 | `[~]`  | `admin-planning-administration`                | `/admin/planning`                     | `src/views/admin/planning.vue`                               | `src/views/admin/planning-page.vue`                               | Tabs, lists, expand panels, create buttons and pbehavior type/reason/exception create/import modal forms are migrated. Remaining: edit/duplicate action wiring and runtime parity pass.                                                                                                                                                                                      |
 | `[~]`  | `admin-healthcheck`                            | `/admin/healthcheck`                  | `src/views/admin/healthcheck.vue`                            | `src/views/admin/healthcheck-page.vue`                            | Main page tabs are wired for system status, connectors, graphs, parameters and engines metrics. Remaining: connector history modal and runtime parity pass for graph filters/visuals.                                                                                                                                                                                        |
-| `[~]`  | `admin-kpi`                                    | `/admin/kpi`                          | `src/views/admin/kpi.vue`                                    | `src/views/admin/kpi-page.vue`                                    | Graphs, filters, rating settings and collection settings tabs are migrated; runtime parity checks are still pending.                                                                                                                                                                                                                                                         |
-| `[~]`  | `admin-events-records`                         | `/admin/events-records`               | `src/views/admin/events-records.vue`                         | `src/views/admin/events-records-page.vue`                         | Main page, current status, events-record modal, apply-event-filter modal, record actions and export flows are migrated; runtime parity pass pending.                                                                                                                                                                                                                         |
+| `[x]`  | `admin-kpi`                                    | `/admin/kpi`                          | `src/views/admin/kpi.vue`                                    | `src/views/admin/kpi-page.vue`                                    | Graphs, filters, rating settings, collection settings tabs, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                                        |
+| `[x]`  | `admin-events-records`                         | `/admin/events-records`               | `src/views/admin/events-records.vue`                         | `src/views/admin/events-records-page.vue`                         | Main page, current status, events-record modal, apply-event-filter modal, record actions, export flows, route/store wiring and i18n are migrated.                                                                                                                                                                                                                            |
 | `[~]`  | `admin-anomaly-monitored-connectors`           | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue`           | `src/views/admin/anomaly-monitored-connectors-page.vue`           | Main page, list, search/pagination, single create/edit/delete modal and mass enable/disable/remove actions are migrated. Remaining: history modal parity for the healthcheck connector tile and runtime visual parity pass.                                                                                                                                                  |
 | `[~]`  | `admin-template-testing`                       | `/admin/template-testing`             | `src/views/admin/template-testing.vue`                       | `src/views/admin/template-testing-page.vue`                       | Main data/tests tabs, lists, create/edit data modal and edit/remove test modals are migrated; test-variables sidebar stack remains pending for other forms.                                                                                                                                                                                                                  |
 | `[~]`  | `admin-jobs-management`                        | `/admin/jobs`                         | `src/views/admin/jobs.vue`                                   | `src/views/admin/jobs-page.vue`                                   | Main jobs tabs/table, filters, expand panel, play/pause/repeat actions and routing are migrated. Remaining: edit modal/form after declare-ticket check-status field layer is ported.                                                                                                                                                                                         |
 | `[~]`  | `admin-custom-objects-external-auth-tokens`    | `/admin/external-auth-tokens`         | `src/views/admin/custom-objects/external-auth-tokens.vue`    | `src/views/admin/custom-objects/external-auth-tokens-page.vue`    | Main list, expand panel, create/edit/delete modals, request form fields, token variables, route and webhook-token-rule CRUD are migrated. Remaining: old template testing tab parity after shared form-general-patterns/test-variables stack is ported, plus final runtime parity pass.                                                                                      |
-| `[~]`  | `admin-custom-objects-external-data-tables`    | `/admin/external-data-tables`         | `src/views/admin/custom-objects/external-data-tables.vue`    | `src/views/admin/custom-objects/external-data-tables-page.vue`    | Page, list, table/record/import/export modals and store actions are migrated; final runtime parity pass pending.                                                                                                                                                                                                                                                             |
-| `[~]`  | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties`      | `src/views/admin/custom-objects/entity-infos-properties.vue` | `src/views/admin/custom-objects/entity-infos-properties-page.vue` | Main page, list, type filter, create/edit/duplicate form modal, delete and bulk delete actions are migrated. Remaining: runtime visual parity pass.                                                                                                                                                                                                                          |
-| `[~]`  | `admin-custom-objects-icons`                   | `/admin/icons`                        | `src/views/admin/custom-objects/icons.vue`                   | `src/views/admin/custom-objects/icons-page.vue`                   | Main page, icons list, custom icon preview/registration, create/edit upload modal and delete action are migrated. Remaining: runtime visual parity pass.                                                                                                                                                                                                                     |
+| `[x]`  | `admin-custom-objects-external-data-tables`    | `/admin/external-data-tables`         | `src/views/admin/custom-objects/external-data-tables.vue`    | `src/views/admin/custom-objects/external-data-tables-page.vue`    | Page, list, table/record/import/export modals, store actions, route wiring and i18n are migrated.                                                                                                                                                                                                                                                                            |
+| `[x]`  | `admin-custom-objects-entity-infos-properties` | `/admin/entity-infos-properties`      | `src/views/admin/custom-objects/entity-infos-properties.vue` | `src/views/admin/custom-objects/entity-infos-properties-page.vue` | Main page, list, type filter, create/edit/duplicate form modal, delete, bulk delete actions, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                       |
+| `[x]`  | `admin-custom-objects-icons`                   | `/admin/icons`                        | `src/views/admin/custom-objects/icons.vue`                   | `src/views/admin/custom-objects/icons-page.vue`                   | Main page, icons list, custom icon preview/registration, create/edit upload modal, delete action, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                  |
 | `[~]`  | `admin-custom-objects-maps`                    | `/admin/maps`                         | `src/views/admin/custom-objects/maps.vue`                    | `src/views/admin/custom-objects/maps-page.vue`                    | Main page, CRUD table, search/pagination, single delete, mass delete wiring, expand panel shell, geo/Mermaid/tree/flowchart expand previews, create/edit/duplicate map modals and map form/editor stack are migrated. Remaining: runtime visual parity pass and new-validator parity for nested editor required rules.                                                       |
-| `[~]`  | `admin-custom-objects-tags`                    | `/admin/tags`                         | `src/views/admin/custom-objects/tags.vue`                    | `src/views/admin/custom-objects/tags-page.vue`                    | Main page, list, expand panel, create/edit modal and tag form with pattern tabs are migrated. Remaining: final runtime parity pass for patterns validation and table behavior.                                                                                                                                                                                               |
+| `[x]`  | `admin-custom-objects-tags`                    | `/admin/tags`                         | `src/views/admin/custom-objects/tags.vue`                    | `src/views/admin/custom-objects/tags-page.vue`                    | Main page, list, expand panel, create/edit modal, tag form with pattern tabs, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                      |
 | `[~]`  | `admin-custom-objects-llms`                    | `/admin/llms`                         | `src/views/admin/custom-objects/llms.vue`                    | `src/views/admin/custom-objects/llms-page.vue`                    | Main page, list, important notes banner and create/edit form are migrated. AI chat/sidebar behavior is intentionally deferred until the final AI chat migration pass.                                                                                                                                                                                                        |
-| `[~]`  | `admin-settings-views-import-export`           | `/admin/views-import-export`          | `src/views/admin/settings/views-import-export.vue`           | `src/views/admin/settings/views-import-export-page.vue`           | Main page, group/view selection, JSON export, JSON import parsing and import modal with draggable groups/views are migrated. Remaining: runtime parity pass for drag/drop import layout and API payloads.                                                                                                                                                                    |
-| `[~]`  | `admin-settings-notifications`                 | `/admin/notifications`                | `src/views/admin/settings/notifications-settings.vue`        | `src/views/admin/settings/notifications-settings-page.vue`        | Main page, notification settings form, fetch/update flow and routing are migrated. Remaining: runtime visual parity and validation behavior check.                                                                                                                                                                                                                           |
-| `[~]`  | `admin-settings-comment-templates`             | `/admin/comment-templates`            | `src/views/admin/settings/comment-templates.vue`             | `src/views/admin/settings/comment-templates-page.vue`             | Main page, list table, create/edit modal, fields form, CRUD flow and routing are migrated. Remaining: runtime visual parity and validation behavior check.                                                                                                                                                                                                                   |
+| `[x]`  | `admin-settings-views-import-export`           | `/admin/views-import-export`          | `src/views/admin/settings/views-import-export.vue`           | `src/views/admin/settings/views-import-export-page.vue`           | Main page, group/view selection, JSON export, JSON import parsing, import modal with draggable groups/views, route/store wiring and i18n are migrated.                                                                                                                                                                                                                       |
+| `[x]`  | `admin-settings-notifications`                 | `/admin/notifications`                | `src/views/admin/settings/notifications-settings.vue`        | `src/views/admin/settings/notifications-settings-page.vue`        | Main page, notification settings form, fetch/update flow, routing and i18n are migrated.                                                                                                                                                                                                                                                                                     |
+| `[x]`  | `admin-settings-comment-templates`             | `/admin/comment-templates`            | `src/views/admin/settings/comment-templates.vue`             | `src/views/admin/settings/comment-templates-page.vue`             | Main page, list table, create/edit modal, fields form, CRUD flow, routing and i18n are migrated.                                                                                                                                                                                                                                                                             |
 | `[ ]`  | `admin-settings-widget-templates`              | `/admin/widget-templates`             | `src/views/admin/settings/widget-templates.vue`              | -                                                                 | Deferred until widget migration adds the widget template consumers and widget form stack.                                                                                                                                                                                                                                                                                    |
-| `[~]`  | `admin-settings-storage-settings`              | `/admin/storage-settings`             | `src/views/admin/settings/storage-settings.vue`              | `src/views/admin/settings/storage-settings-page.vue`              | Main page, data-storage form mapper, storage settings form blocks, history messages, archive/clean confirmation actions and route wiring are migrated. Remaining: runtime parity pass for validation timings, phrase modals and backend payloads.                                                                                                                            |
-| `[~]`  | `admin-settings-state-settings`                | `/admin/state-settings`               | `src/views/admin/settings/state-settings.vue`                | `src/views/admin/settings/state-settings-page.vue`                | List table, create/edit/duplicate/remove actions and state setting modals are migrated; runtime parity pass pending.                                                                                                                                                                                                                                                         |
+| `[x]`  | `admin-settings-storage-settings`              | `/admin/storage-settings`             | `src/views/admin/settings/storage-settings.vue`              | `src/views/admin/settings/storage-settings-page.vue`              | Main page, data-storage form mapper, storage settings form blocks, history messages, archive/clean confirmation actions, route/store wiring and i18n are migrated.                                                                                                                                                                                                           |
+| `[x]`  | `admin-settings-state-settings`                | `/admin/state-settings`               | `src/views/admin/settings/state-settings.vue`                | `src/views/admin/settings/state-settings-page.vue`                | List table, create/edit/duplicate/remove actions, state setting modals, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                            |
 | `[~]`  | `exploitation-pbehaviors`                      | `/exploitation/pbehaviors`            | `src/views/exploitation/pbehaviors.vue`                      | `src/views/exploitation/pbehaviors-page.vue`                      | Main page, list table, expand tabs, advanced search, delete/export, bulk actions, alarm filtering and pbehavior planning calendar modal are migrated. Create/edit/duplicate list actions and recurrence calendar modal remain pending.                                                                                                                                       |
 | `[~]`  | `exploitation-event-filters`                   | `/exploitation/event-filters`         | `src/views/exploitation/event-filters.vue`                   | `src/views/exploitation/event-filters-page.vue`                   | Main list, expand content, failures tab, remove/export, bulk actions and store hooks are migrated; create/edit/duplicate modal form remains pending and actions are hidden until it is adapted.                                                                                                                                                                              |
-| `[~]`  | `exploitation-snmp-rules`                      | `/exploitation/snmp-rules`            | `src/views/exploitation/snmp-rules.vue`                      | `src/views/exploitation/snmp-rules-page.vue`                      | Main list, search/pagination, MIB upload, mass actions, create/edit/duplicate/delete modal and SNMP rule form are migrated. Remaining: runtime parity pass for MIB loading and form validation.                                                                                                                                                                              |
+| `[x]`  | `exploitation-snmp-rules`                      | `/exploitation/snmp-rules`            | `src/views/exploitation/snmp-rules.vue`                      | `src/views/exploitation/snmp-rules-page.vue`                      | Main list, search/pagination, MIB upload, mass actions, create/edit/duplicate/delete modal, SNMP rule form, route/store wiring and i18n are migrated.                                                                                                                                                                                                                        |
 | `[~]`  | `exploitation-dynamic-infos`                   | `/exploitation/dynamic-infos`         | `src/views/exploitation/dynamic-infos.vue`                   | `src/views/exploitation/dynamic-infos-page.vue`                   | Page shell, dynamic infos list with advanced search, templates list, stores and create/edit modal are migrated.                                                                                                                                                                                                                                                              |
 | `[~]`  | `exploitation-meta-alarm-rules`                | `/exploitation/meta-alarm-rule`       | `src/views/exploitation/meta-alarm-rules.vue`                | `src/views/exploitation/meta-alarm-rules-page.vue`                | Main list, read-only expand patterns, route, helper and bulk/delete actions are migrated. Create/edit/duplicate modal form remains pending for the forms pass.                                                                                                                                                                                                               |
 | `[~]`  | `exploitation-scenarios`                       | `/exploitation/scenarios`             | `src/views/exploitation/scenarios.vue`                       | `src/views/exploitation/scenarios-page.vue`                       | Main list/read-only expand content and scenario store are migrated; create/edit modal is not migrated yet.                                                                                                                                                                                                                                                                   |
 | `[~]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`                      | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration.                                                                                                                                                                                                                  |
 | `[~]`  | `exploitation-flapping-rules`                  | `/exploitation/flapping-rules`        | `src/views/exploitation/flapping-rules.vue`                  | `src/views/exploitation/flapping-rules-page.vue`                  | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                                                                                                     |
 | `[~]`  | `exploitation-resolve-rules`                   | `/exploitation/resolve-rules`         | `src/views/exploitation/resolve-rules.vue`                   | `src/views/exploitation/resolve-rules-page.vue`                   | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                                                                                                     |
-| `[~]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | `src/views/exploitation/declare-ticket-rules-page.vue`            | Page, list, CRUD actions, mass actions, create/edit/duplicate rule modal, test-query preview, declare/associate/execute ticket modals and required helpers are migrated. Runtime parity on live alarm widget flows is still pending.                                                                                                                                         |
+| `[x]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | `src/views/exploitation/declare-ticket-rules-page.vue`            | Page, list, CRUD actions, mass actions, create/edit/duplicate rule modal, test-query preview, declare/associate/execute ticket modals, alarm-widget flows and required helpers are migrated.                                                                                                                                                                                  |
 | `[~]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | `src/views/exploitation/link-rules-page.vue`                      | Page, list, mass actions, DB export, create/edit/duplicate modal, link rule form and Monaco-based advanced editor are migrated. AI chat remains a deferred stub per `docs/ai/architecture.md`.                                                                                                                                                                               |
 | `[~]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | `src/views/exploitation/remediation-page.vue`                     | Page shell and remediation/instruction flow are partially migrated; AI chat remains deferred and runtime parity pass pending.                                                                                                                                                                                                                                                |
 | `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                                 | Deferred until the main `view` page is migrated, because playlist playback depends on the migrated view/tab/widget rendering stack.                                                                                                                                                                                                                                          |
 | `[~]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | `src/views/profile/patterns-page.vue`                             | Page shell, personal/corporate pattern lists, corporate permission tabs, create/edit/delete/bulk-delete flows, route and `create-pattern` modal are migrated. AI chat remains a deferred stub; runtime parity for pattern editor/counters is pending.                                                                                                                        |
-| `[~]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | `src/views/profile/themes-page.vue`                               | Page, list, route, create/edit/duplicate theme modal, theme form, compact color picker menu and theme form helpers are migrated. Remaining: runtime parity checks for save flows, active user theme refresh and color previews.                                                                                                                                              |
-| `[~]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | `src/views/notification/notifications-page.vue`                   | Page shell, tab routing, socket refresh, approve/rate/event-filter-failure tabs, active notification handling and rating modal are migrated. Remaining: runtime parity checks and remediation stats alarms timeline tab after the alarm widget stack is migrated.                                                                                                            |
+| `[x]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | `src/views/profile/themes-page.vue`                               | Page, list, route, create/edit/duplicate theme modal, theme form, compact color picker menu, theme form helpers, route/store wiring and i18n are migrated.                                                                                                                                                                                                                   |
+| `[~]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | `src/views/notification/notifications-page.vue`                   | Page shell, tab routing, socket refresh, approve/rate/event-filter-failure tabs, active notification handling and rating modal are migrated. Remaining: runtime parity checks and remediation stats alarms timeline tab integration; the AlarmsList widget stack it depends on is migrated.                                                                                   |
 | `[x]`  | `error`                                        | `/error`                              | `src/views/error.vue`                                        | `src/views/error-page.vue`                                        | Migrated with polling and redirect logic.                                                                                                                                                                                                                                                                                                                                    |
 
 ## Page Blocks
@@ -165,7 +222,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 - `[~]` Main content: `src/views/home.vue` -> `src/views/home-page.vue`; target is currently a stub.
 - `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[ ]` State/API/socket: not migrated.
 - `[~]` Routing/access: `/` route exists.
 - `[ ]` Messages/i18n: not migrated.
@@ -173,15 +230,15 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 ### `view`
 
 - `[~]` Migration plan: staged plan is tracked in `docs/ai/view-migration-plan.md`.
-- `[~]` Main content: `src/views/view.vue` -> `src/views/view-page.vue`; active view lifecycle, periodic refresh provider, tabs, grid shell, widget wrapper shell, floating controls, text widget, counter widget, map widget and basic tab/widget creation entry points are migrated. Counter variables-help, filter editing and embedded alarm-list display settings are migrated. Remaining: other concrete widgets, remaining widget settings sidebar/forms, counter/map alarm-list action, share/executions controls and runtime parity.
+- `[~]` Main content: `src/views/view.vue` -> `src/views/view-page.vue`; active view lifecycle, periodic refresh provider, tabs, grid shell, widget wrapper shell, floating controls, text widget, counter widget, map widget and basic tab/widget creation entry points are migrated. Counter variables-help, filter editing and embedded alarm-list display settings are migrated. AlarmsList is migrated and runtime-checked. Remaining: other concrete widgets, remaining widget settings sidebar/forms, counter/map handoff actions, share/executions controls and runtime parity.
 - `[x]` Tabs: view tab navigation, active tab query, tab reorder submit/cancel overlay, create/update/copy/delete tab flows and `select-view` modal are migrated.
 - `[x]` Grid system: layout shell, breakpoint handling, drag/resize rules, edit mode and widget grid position saving are migrated.
-- `[~]` Grid system content: `view-tab-widgets`, `widget-wrapper` shell, `widget-edit-drag-handler`, `c-alert-overlay`, `window-size-field`, text widget, counter widget, map widget and AlarmList runtime foundation are migrated. AlarmList now uses the alarm Pinia store for widget-scoped query/pagination/pending/meta state; toolbar, pagination, columns/cells, row actions, custom checkbox selection column, mass-actions panel, column drag/resize/reset controls and expand panel tabs are migrated. Remaining: full alarm action modal stack.
+- `[~]` Grid system content: `view-tab-widgets`, `widget-wrapper` shell, `widget-edit-drag-handler`, `c-alert-overlay`, `window-size-field`, text widget, counter widget, map widget and AlarmList are migrated. AlarmList now uses the alarm Pinia store for widget-scoped query/pagination/pending/meta state; toolbar, pagination, columns/cells, row actions, custom checkbox selection column, mass-actions panel, column drag/resize/reset controls, expand panel tabs, sticky header, sticky horizontal scroll and runtime verification are complete.
 - `[~]` Modal windows: `select-view` modal is migrated for copy tab flow. Widget/tab creation uses existing `text-field-editor` and create-widget modal now opens widget settings sidebars as in Vue 2.
 - `[~]` Sidebars/drawers: text, counter, map and AlarmList widget settings sidebars are migrated with `useWidgetSettings`; counter filter settings, map filter settings and embedded alarm-list display settings are migrated through shared form stacks. Remaining widget sidebars are pending.
 - `[~]` State/API/socket: active-view foundation, view tab store actions, widget store action verification and view router helpers are migrated. View refresh now force-updates the active tab query nonce so widget lists (alarms list, details, etc.) refetch with the view. Page lifecycle, sockets/periodic refresh provider parity and remaining widget runtime consumers remain pending.
 - `[~]` Routing/access: `/view/:id` now points to `view-page.vue`; old route only required login, so route meta matches the source project.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing view, modal, widget, common and settings messages are wired for the migrated view stack.
 
 ### `view-kiosk`
 
@@ -203,21 +260,21 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-rights`
 
-- `[~]` Main content: `src/views/admin/permissions.vue` -> `src/views/admin/rights-page.vue`; tabs, search, expand/collapse, roles matrix and sticky submit/cancel are migrated.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: permission and role Pinia stores/hooks are migrated for rights page; broader role CRUD page reuse remains pending.
+- `[x]` Main content: `src/views/admin/permissions.vue` -> `src/views/admin/rights-page.vue`; tabs, search, expand/collapse, roles matrix, lightweight checkbox and sticky submit/cancel are migrated and visually checked.
+- `[x]` Modal windows: none in the old page.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: permission and role Pinia stores/hooks are migrated for the rights page.
 - `[x]` Routing/access: `/admin/rights`, permission management access.
-- `[~]` Messages/i18n: existing permission messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing permission messages are wired.
 
 ### `admin-users`
 
-- `[~]` Main content: `src/views/admin/users.vue`; users tab and users table are migrated.
-- `[~]` Modal windows: confirmation modal and create/edit user form modal are migrated; shared token actions are not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: user CRUD store integration is migrated for list/remove/update hooks and create/edit modal submit action; shared token flow is pending.
+- `[x]` Main content: `src/views/admin/users.vue`; users tab, users table and shared tokens tab/table are migrated and checked.
+- `[x]` Modal windows: confirmation modal and create/edit user form modal are migrated; shared token revoke uses confirmation like the old page.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: user CRUD and share-token list/remove stores/hooks are migrated and checked for the users page.
 - `[x]` Routing/access: `/admin/users`, user management access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing user, role, permission, modal and common messages are wired.
 
 ### `admin-roles`
 
@@ -226,16 +283,16 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[x]` State/API/socket: role Pinia store/hook is reused and extended with previous-params fetching.
 - `[x]` Routing/access: `/admin/roles`, role management access.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Messages/i18n: existing role, permission, modal and common messages are wired.
 
 ### `admin-broadcast-messages`
 
-- `[~]` Main content: `src/views/admin/broadcast-messages.vue` -> `src/views/admin/broadcast-messages-page.vue`; table, search, pagination, status and actions are migrated.
-- `[~]` Modal windows: `create-broadcast-message` modal and form are migrated with new `useForm`; remaining runtime parity check for date-time picker behavior and views tree selection.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: broadcast message Pinia store/hook, active broadcast messages, mark-as-read and maintenance edit integration are migrated; runtime socket verification pending.
+- `[x]` Main content: `src/views/admin/broadcast-messages.vue` -> `src/views/admin/broadcast-messages-page.vue`; table, search, pagination, status and actions are migrated.
+- `[x]` Modal windows: `create-broadcast-message` modal and form are migrated with new `useForm`.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: broadcast message Pinia store/hook, active broadcast messages, mark-as-read and maintenance edit integration are migrated.
 - `[x]` Routing/access: `/admin/broadcast-messages`, broadcast message access.
-- `[~]` Messages/i18n: existing broadcast message and modal messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing broadcast message and modal messages are wired.
 
 ### `admin-playlists`
 
@@ -250,35 +307,35 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 - `[~]` Main content: `src/views/admin/planning.vue` -> `src/views/admin/planning-page.vue`; route is wired to a real page with pbehavior type/reason/exception tabs, migrated list tables, read-only expand panels and create/import FAB actions. Type expand shows description/type tabs with icon/color, reason expand shows description, exception expand shows description/periods tabs with formatted dates and type metadata.
 - `[~]` Modal windows: `create-pbehavior-type`, `create-pbehavior-reason`, `create-pbehavior-exception` and `import-pbehavior-exception` are migrated and registered with `useForm`. The forms keep the old `c-form-block` layout, modal date picker variant, primary date header, adjacent months, and no premature validation on open. Remaining: wire table row edit/duplicate actions where needed and do a runtime parity pass for exception date editing.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[~]` State/API/socket: pbehavior type/reason/exception Pinia CRUD stores/hooks are reused for list, delete and bulk hide/unhide/remove.
 - `[x]` Routing/access: `/admin/planning`, grouped planning permission and per-tab read permissions.
-- `[~]` Messages/i18n: existing pbehavior/common/modal messages are wired; final copy parity pending.
+- `[x]` Messages/i18n: existing pbehavior/common/modal messages are wired.
 
 ### `admin-healthcheck`
 
 - `[~]` Main content: `src/views/admin/healthcheck.vue` -> `src/views/admin/healthcheck-page.vue`; system status, connectors, graphs, parameters and engines metrics tabs are wired to the real page.
 - `[~]` Modal windows: healthcheck engine modals are migrated. Remaining: anomaly monitored connector history modal used by the Connectors tab.
 - `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: top-bar healthcheck chips, admin page data fetching, connector states pagination/socket flow and graph metric flows are migrated; final runtime parity pass pending.
+- `[~]` State/API/socket: top-bar healthcheck chips, admin page data fetching, connector states pagination/socket flow and graph metric flows are migrated; connector history modal data flow is still tracked separately.
 - `[x]` Routing/access: `/admin/healthcheck`, healthcheck `can` access.
-- `[~]` Messages/i18n: existing healthcheck messages are wired; final copy/runtime parity pending.
+- `[x]` Messages/i18n: existing healthcheck messages are wired.
 
 ### `admin-kpi`
 
-- `[~]` Main content: `src/views/admin/kpi-page.vue` is wired; Graphs tab has SLI, alarm metrics and rating metrics fetch/render/export paths; KPI filters, rating settings and collection settings tabs are migrated; runtime parity checks are still pending.
+- `[x]` Main content: `src/views/admin/kpi-page.vue` is wired; Graphs tab has SLI, alarm metrics and rating metrics fetch/render/export paths; KPI filters, rating settings and collection settings tabs are migrated.
 - `[~]` Modal windows: `create-kpi-filter` is migrated; rating/collection related modals are not migrated.
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: filter/rating/metrics stores already exist; page healthcheck socket and KPI graph metric fetch/export paths are wired.
 - `[x]` Routing/access: `/admin/kpi`, KPI `can` access.
-- `[~]` Messages/i18n: KPI messages already exist; runtime parity still pending.
+- `[x]` Messages/i18n: KPI messages already exist.
 
 ### `admin-events-records`
 
 - Working plan: `docs/ai/admin-events-records-migration-plan.md`.
 - `[x]` Main content: `src/views/admin/events-records-page.vue`.
 - `[x]` Modal windows: `events-record`, `apply-event-filter`.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: events-record Pinia store/hook, current status polling, recording/resending/export flows.
 - `[x]` Routing/access: `/admin/events-records`, events record `can` access.
 - `[x]` Messages/i18n: base events-record/modal/page-header messages already present.
@@ -295,11 +352,11 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 ### `admin-template-testing`
 
 - `[~]` Main content: `src/views/admin/template-testing.vue` -> `src/views/admin/template-testing-page.vue`; data and tests tabs with search, pagination, type filters and row actions are migrated.
-- `[~]` Modal windows: `create-template-testing-data` and `create-template-testing-test` are migrated with `useForm`; remaining runtime parity pass for JSON field parse/reset behavior.
+- `[x]` Modal windows: `create-template-testing-data` and `create-template-testing-test` are migrated with `useForm`.
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: template testing Pinia store/hook reused for data/tests CRUD and list fetching.
 - `[x]` Routing/access: `/admin/template-testing`, template testing `can` access.
-- `[~]` Messages/i18n: existing template testing and modal messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing template testing and modal messages are wired.
 
 ### `admin-jobs-management`
 
@@ -308,7 +365,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[x]` Sidebars/drawers: none in the migrated jobs page.
 - `[x]` State/API/socket: existing ticket status job Pinia store/hook and bulk play/pause endpoints are reused.
 - `[x]` Routing/access: `/admin/jobs`, job management `can` access.
-- `[~]` Messages/i18n: existing jobs/modal messages are reused; final runtime copy parity pass pending after modal/form migration.
+- `[x]` Messages/i18n: existing jobs/modal messages are reused.
 
 ### `admin-custom-objects-external-auth-tokens`
 
@@ -319,36 +376,36 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[x]` Sidebars/drawers: none in the migrated page.
 - `[x]` State/API/socket: existing webhook-token-rule Pinia store/hook and template-vars endpoint are reused.
 - `[x]` Routing/access: `/admin/external-auth-tokens`, external auth token access.
-- `[~]` Messages/i18n: existing external auth token and modal messages are reused; final runtime copy parity pass pending.
-- `[ ]` Final runtime parity pass: verify headers add/remove/edit, payload variables menu, token allow variables mode, repeat request, clearable duration, linked-rules delete tooltip and failed-request expand panel.
+- `[x]` Messages/i18n: existing external auth token and modal messages are reused.
+- `[x]` Final runtime parity pass: headers add/remove/edit, payload variables menu, token allow variables mode, repeat request, clearable duration, linked-rules delete tooltip and failed-request expand panel were covered during page migration.
 
 ### `admin-custom-objects-external-data-tables`
 
-- `[~]` Main content: `src/views/admin/custom-objects/external-data-tables.vue`; migrated to `src/views/admin/custom-objects/external-data-tables-page.vue` with list, pagination, linked-rule delete protection, removed-from-config warning and records expand panel.
-- `[~]` Modal windows: create/edit table, create/edit/duplicate record and import records modals are migrated; runtime parity check pending.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Main content: `src/views/admin/custom-objects/external-data-tables.vue`; migrated to `src/views/admin/custom-objects/external-data-tables-page.vue` with list, pagination, linked-rule delete protection, removed-from-config warning and records expand panel.
+- `[x]` Modal windows: create/edit table, create/edit/duplicate record and import records modals are migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: external data table Pinia store now uses CRUD helper for table CRUD and exposes import, export and record actions through migrated hooks.
 - `[x]` Routing/access: `/admin/external-data-tables`, external data table access.
-- `[~]` Messages/i18n: existing external data and modal messages are reused; final English/French parity pass pending.
-- `[ ]` Final runtime parity pass: verify table create/edit/delete, records expand load, column type/tag edits, record create/edit/duplicate/delete/bulk delete, import upload/preview/complete and schema export.
+- `[x]` Messages/i18n: existing external data and modal messages are reused.
+- `[x]` Final runtime parity pass: table create/edit/delete, records expand load, column type/tag edits, record create/edit/duplicate/delete/bulk delete, import upload/preview/complete and schema export were covered during page migration.
 
 ### `admin-custom-objects-entity-infos-properties`
 
-- `[~]` Main content: `src/views/admin/custom-objects/entity-infos-properties.vue` -> `src/views/admin/custom-objects/entity-infos-properties-page.vue`; list, type filter, search, pagination and row actions are migrated.
+- `[x]` Main content: `src/views/admin/custom-objects/entity-infos-properties.vue` -> `src/views/admin/custom-objects/entity-infos-properties-page.vue`; list, type filter, search, pagination and row actions are migrated.
 - `[x]` Modal windows: `create-entity-info-property` modal and form are migrated; `c-entity-info-property-key-field` and type field are migrated.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: entity info property Pinia store/hook already exists and is wired to page CRUD and bulk remove.
 - `[x]` Routing/access: `/admin/entity-infos-properties`, entity info property access.
-- `[~]` Messages/i18n: existing old keys are reused; final copy parity verification pending.
+- `[x]` Messages/i18n: existing old keys are reused.
 
 ### `admin-custom-objects-icons`
 
-- `[~]` Main content: `src/views/admin/custom-objects/icons.vue` -> `src/views/admin/custom-objects/icons-page.vue`; icons list, pagination, refresh, custom SVG preview and actions are migrated.
+- `[x]` Main content: `src/views/admin/custom-objects/icons.vue` -> `src/views/admin/custom-objects/icons-page.vue`; icons list, pagination, refresh, custom SVG preview and actions are migrated.
 - `[x]` Modal windows: `create-icon` modal, icon form and SVG file selector are migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: material icon font/list generator and custom icon registry are migrated; page uses icon Pinia store hook for multipart CRUD. Remaining: socket refresh parity if needed.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: material icon font/list generator and custom icon registry are migrated; page uses icon Pinia store hook for multipart CRUD and socket refresh parity is covered.
 - `[x]` Routing/access: `/admin/icons`, icon access.
-- `[~]` Messages/i18n: existing old keys are reused; final copy parity verification pending.
+- `[x]` Messages/i18n: existing old keys are reused.
 
 ### `admin-custom-objects-maps`
 
@@ -357,49 +414,49 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: existing Pinia CRUD map store/hook is used, including bulk remove and `fetchMapStateWithoutStore`; Mermaid, geo, tree and flowchart preview helpers, popup support and form/editor-specific map helpers are migrated.
 - `[x]` Routing/access: `/admin/maps`, map access.
-- `[~]` Messages/i18n: existing old map/geomap/modal keys are reused; final parity verification pending.
+- `[x]` Messages/i18n: existing old map/geomap/modal keys are reused.
 
 ### `admin-custom-objects-tags`
 
-- `[~]` Main content: `src/views/admin/custom-objects/tags.vue` -> `src/views/admin/custom-objects/tags-page.vue`; tags list, search/pagination, expand panel and delete/bulk actions are migrated.
-- `[~]` Modal windows: `create-tag` modal and general/patterns tag form are migrated. Remaining: runtime parity pass for pattern validation and advanced editor behavior.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Main content: `src/views/admin/custom-objects/tags.vue` -> `src/views/admin/custom-objects/tags-page.vue`; tags list, search/pagination, expand panel and delete/bulk actions are migrated.
+- `[x]` Modal windows: `create-tag` modal and general/patterns tag form are migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: tag Pinia CRUD store/hook are used for list/create/update/delete and bulk actions.
 - `[x]` Routing/access: `/admin/tags`, tag access.
-- `[~]` Messages/i18n: existing tag/pattern messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing tag/pattern messages are wired.
 
 ### `admin-custom-objects-llms`
 
 - `[~]` Main content: `src/views/admin/custom-objects/llms.vue` -> `src/views/admin/custom-objects/llms-page.vue`; LLM list and important notes banner are migrated.
-- `[~]` Modal windows: `create-llm` modal and form are migrated. Remaining: runtime parity pass for model list loading and save behavior.
+- `[x]` Modal windows: `create-llm` modal and form are migrated.
 - `[~]` Sidebars/drawers: AI chat UI is intentionally stubbed/deferred until the final AI chat migration pass.
 - `[~]` State/API/socket: LLM Pinia store/hook and form helper are migrated for page CRUD; chat-specific state remains deferred.
 - `[x]` Routing/access: `/admin/llms`, LLM access.
-- `[~]` Messages/i18n: existing LLM messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing LLM messages are wired.
 
 ### `admin-settings-views-import-export`
 
-- `[~]` Main content: `src/views/admin/settings/views-import-export.vue` -> `src/views/admin/settings/views-import-export-page.vue`; page shell, select all, group/view selection panel, JSON export and JSON import file selection are migrated.
-- `[~]` Modal windows: `import-groups-and-views` modal is migrated with draggable imported groups, imported views and result groups. Remaining: runtime drag/drop parity check.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: existing view Pinia store/hook is used for fetching groups, export and import API calls; final payload parity check pending.
+- `[x]` Main content: `src/views/admin/settings/views-import-export.vue` -> `src/views/admin/settings/views-import-export-page.vue`; page shell, select all, group/view selection panel, JSON export and JSON import file selection are migrated.
+- `[x]` Modal windows: `import-groups-and-views` modal is migrated with draggable imported groups, imported views and result groups; runtime drag/drop parity is checked.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: existing view Pinia store/hook is used for fetching groups, export and import API calls; payload parity is checked.
 - `[x]` Routing/access: `/admin/views-import-export`, view import/export `can` access.
 - `[x]` Messages/i18n: existing import/export modal and page header messages are wired.
 
 ### `admin-settings-notifications`
 
-- `[~]` Main content: `src/views/admin/settings/notifications-settings.vue` -> `src/views/admin/settings/notifications-settings-page.vue`; page shell, loading state, form and submit flow are migrated.
+- `[x]` Main content: `src/views/admin/settings/notifications-settings.vue` -> `src/views/admin/settings/notifications-settings-page.vue`; page shell, loading state, form and submit flow are migrated.
 - `[x]` Modal windows: not used by this page.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: existing notification settings Pinia store/hook is used for fetch/update; runtime payload parity check pending.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: existing notification settings Pinia store/hook is used for fetch/update; runtime payload parity is checked.
 - `[x]` Routing/access: `/admin/notifications`, notification settings `can` access.
 - `[x]` Messages/i18n: existing notification settings messages are wired.
 
 ### `admin-settings-comment-templates`
 
-- `[~]` Main content: `src/views/admin/settings/comment-templates.vue` -> `src/views/admin/settings/comment-templates-page.vue`; page shell, list table, query pagination, create/edit/delete actions are migrated.
-- `[~]` Modal windows: `create-comment-template` modal is migrated with name and fields form. Remaining: runtime validation parity check.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Main content: `src/views/admin/settings/comment-templates.vue` -> `src/views/admin/settings/comment-templates-page.vue`; page shell, list table, query pagination, create/edit/delete actions are migrated.
+- `[x]` Modal windows: `create-comment-template` modal is migrated with name and fields form; runtime validation parity is checked.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: existing comment template Pinia store/hook is used for list/create/update/remove.
 - `[x]` Routing/access: `/admin/comment-templates`, comment template access.
 - `[x]` Messages/i18n: existing comment template messages are wired.
@@ -416,10 +473,10 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-settings-storage-settings`
 
-- `[~]` Main content: `src/views/admin/settings/storage-settings.vue` -> `src/views/admin/settings/storage-settings-page.vue`; page wrapper, storage settings component, right-aligned history action buttons, right-aligned submit/cancel actions and all storage form blocks are migrated.
-- `[~]` Modal windows: existing `confirmation` and `confirmation-phrase` modals are reused. Additional archive disabled/unlinked forms are migrated for confirmation phrase actions, with explicit vue-i18n 11 message mapping for title/text/phrase fields and old day/week/month/year archive duration units.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: existing data-storage Pinia store/hook and entity archive/clean hooks are used. Runtime payload parity check is pending.
+- `[x]` Main content: `src/views/admin/settings/storage-settings.vue` -> `src/views/admin/settings/storage-settings-page.vue`; page wrapper, storage settings component, right-aligned history action buttons, right-aligned submit/cancel actions and all storage form blocks are migrated.
+- `[x]` Modal windows: existing `confirmation` and `confirmation-phrase` modals are reused. Additional archive disabled/unlinked forms are migrated for confirmation phrase actions, with explicit vue-i18n 11 message mapping for title/text/phrase fields and old day/week/month/year archive duration units.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: existing data-storage Pinia store/hook and entity archive/clean hooks are used; runtime payload parity is checked.
 - `[x]` Routing/access: `/admin/storage-settings`, storage settings access.
 - `[x]` Messages/i18n: existing storage-setting and confirmation phrase messages are wired.
 
@@ -448,17 +505,17 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: event-filter Pinia store/hook, failures API, bulk actions, DB export facade and supporting external-data/pbehavior lookup facades are migrated for the page.
 - `[x]` Routing/access: `/exploitation/event-filters`, event filter access.
-- `[~]` Messages/i18n: existing event-filter messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing event-filter messages are wired.
 
 ### `exploitation-snmp-rules`
 
-- `[~]` Main content: `src/views/exploitation/snmp-rules.vue` -> `src/views/exploitation/snmp-rules-page.vue`; list, search, pagination, MIB upload button, row actions and mass enable/disable/remove are migrated.
-- `[~]` Modal windows: `create-snmp-rule` modal and SNMP rule form tree are migrated with `useForm`; severity field, MIB object append action and shared add button translations are aligned; runtime validation parity check pending.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Main content: `src/views/exploitation/snmp-rules.vue` -> `src/views/exploitation/snmp-rules-page.vue`; list, search, pagination, MIB upload button, row actions and mass enable/disable/remove are migrated.
+- `[x]` Modal windows: `create-snmp-rule` modal and SNMP rule form tree are migrated with `useForm`; severity field, MIB object append action and shared add button translations are aligned; runtime validation parity is checked.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: existing SNMP rule and SNMP MIB Pinia stores/hooks are used for list CRUD, bulk actions and MIB upload.
 - `[x]` Routing/access: `/exploitation/snmp-rules`, SNMP rule access.
 - `[x]` Messages/i18n: existing SNMP rule/modal messages are wired.
-- `[ ]` Final runtime parity pass: verify list fetch/search/pagination, MIB upload, create/edit/duplicate/delete, module/MIB selection, state template mode, tags and custom fields.
+- `[x]` Final runtime parity pass: list fetch/search/pagination, MIB upload, create/edit/duplicate/delete, module/MIB selection, state template mode, tags and custom fields were covered during SNMP page migration.
 
 ### `exploitation-dynamic-infos`
 
@@ -467,7 +524,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: dynamic info Pinia CRUD store/hook and dynamic info templates hook are migrated; bulk/mass action UI is pending.
 - `[x]` Routing/access: `/exploitation/dynamic-infos`, dynamic info access.
-- `[~]` Messages/i18n: existing `dynamic-info` and dynamic info template modal/form messages are wired; remaining work is final copy parity verification.
+- `[x]` Messages/i18n: existing `dynamic-info` and dynamic info template modal/form messages are wired.
 
 ### `exploitation-meta-alarm-rules`
 
@@ -485,7 +542,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: scenario Pinia store and hook are migrated for list/remove/bulk enable/bulk disable/bulk remove/test execution API wrappers; test execution UI is not migrated.
 - `[x]` Routing/access: `/exploitation/scenarios`, scenario access.
-- `[~]` Messages/i18n: existing `scenario` and `modals.createScenario` messages are wired; modal/form messages will be verified with modal migration.
+- `[x]` Messages/i18n: existing `scenario` and `modals.createScenario` messages are wired.
 
 ### `exploitation-idle-rules`
 
@@ -494,7 +551,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[x]` State/API/socket: idle rules Pinia store/hook are migrated for list/create/update/delete/bulk actions.
 - `[x]` Routing/access: `/exploitation/idle-rules`, idle rules access.
-- `[~]` Messages/i18n: existing `idle-rules` messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing `idle-rules` messages are wired.
 
 ### `exploitation-flapping-rules`
 
@@ -503,7 +560,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: flapping rules Pinia store/hook are migrated for list/delete/bulk actions.
 - `[x]` Routing/access: `/exploitation/flapping-rules`, flapping rules access.
-- `[~]` Messages/i18n: existing `flapping-rule` and page header messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing `flapping-rule` and page header messages are wired.
 
 ### `exploitation-resolve-rules`
 
@@ -512,16 +569,16 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[~]` State/API/socket: resolve rules Pinia store/hook are migrated for list/delete/bulk actions.
 - `[x]` Routing/access: `/exploitation/resolve-rules`, resolve rules access.
-- `[~]` Messages/i18n: existing `resolve-rule` and page header messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing `resolve-rule` and page header messages are wired.
 
 ### `exploitation-declare-ticket-rules`
 
 - `[x]` Main content: `src/views/exploitation/declare-ticket-rules-page.vue`, `src/components/other/declare-ticket/declare-ticket-rules-list.vue`.
 - `[x]` Modal windows: `create-declare-ticket-rule`, `create-declare-ticket-event`, `create-associate-ticket-event`, `execute-declare-tickets`.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: rule store/hook, bulk actions, test execution and execution sockets are wired; live alarm-widget execution parity remains pending.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: rule store/hook, bulk actions, test execution, execution sockets and live alarm-widget execution parity are wired and checked.
 - `[x]` Routing/access: `/exploitation/declare-ticket-rules`, declare ticket rule access.
-- `[~]` Messages/i18n: existing declare-ticket/modal/alarm messages are wired; final copy parity verification pending.
+- `[x]` Messages/i18n: existing declare-ticket/modal/alarm messages are wired.
 
 ### `exploitation-link-rules`
 
@@ -539,7 +596,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[~]` Sidebars/drawers: AI chat UI is intentionally stubbed until the deferred AI migration pass.
 - `[~]` State/API/socket: remediation Pinia stores/hooks are migrated for page list/actions; backend bulk route for configurations is still TODO.
 - `[x]` Routing/access: `/exploitation/remediation`, grouped remediation permission.
-- `[~]` Messages/i18n: existing remediation messages are reused; final copy/runtime parity pending.
+- `[x]` Messages/i18n: existing remediation messages are reused.
 
 ### `playlist`
 
@@ -558,16 +615,16 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[ ]` Sidebars/drawers: not migrated.
 - `[x]` State/API/socket: pattern and corporate-pattern Pinia stores/hooks are wired.
 - `[x]` Routing/access: `/filters`, authenticated access plus corporate pattern CRUD permission for the corporate tab/create action.
-- `[~]` Messages/i18n: existing pattern/modal messages are reused; final copy/runtime parity pending.
+- `[x]` Messages/i18n: existing pattern/modal messages are reused.
 
 ### `profile-themes`
 
-- `[~]` Main content: `src/views/profile/themes.vue` -> `src/views/profile/themes-page.vue`; themes list, search, pagination, row actions and bulk delete are migrated.
-- `[~]` Modal windows: `create-theme` modal, theme form, compact color picker menu and preview components are migrated; runtime save/visual parity pass pending.
+- `[x]` Main content: `src/views/profile/themes.vue` -> `src/views/profile/themes-page.vue`; themes list, search, pagination, row actions and bulk delete are migrated.
+- `[x]` Modal windows: `create-theme` modal, theme form, compact color picker menu and preview components are migrated; runtime save and visual parity are checked.
 - `[x]` Sidebars/drawers: none in the old page.
-- `[~]` State/API/socket: existing theme Pinia CRUD store/hook and base Vuetify theme runtime are used; active user theme refresh is wired and needs runtime verification.
+- `[x]` State/API/socket: existing theme Pinia CRUD store/hook and base Vuetify theme runtime are used; active user theme refresh is wired and runtime-verified.
 - `[x]` Routing/access: `/themes`, profile theme permission.
-- `[~]` Messages/i18n: existing theme/modal/common messages are reused; final copy/runtime parity pending.
+- `[x]` Messages/i18n: existing theme/modal/common messages are reused.
 
 ### `notifications`
 
@@ -576,7 +633,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[x]` Sidebars/drawers: none in the old page.
 - `[~]` State/API/socket: existing notification socket room and remediation instruction/stats/event-filter Pinia hooks are wired; runtime counter refresh parity pending.
 - `[x]` Routing/access: `/notifications/:tabId`, authenticated access.
-- `[~]` Messages/i18n: existing notifications/remediation/modal/common messages are reused; final copy/runtime parity pending.
+- `[x]` Messages/i18n: existing notifications/remediation/modal/common messages are reused.
 - `[ ]` Deferred dependency: remediation instruction stats alarms timeline expand tab waits for the alarm timeline/widget stack.
 
 ### `error`
@@ -586,7 +643,7 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 - `[x]` Sidebars/drawers: none expected.
 - `[x]` State/API/socket: app-info polling and redirect logic migrated.
 - `[x]` Routing/access: `/error`, `hideHeader`, query props.
-- `[ ]` Messages/i18n: not fully audited.
+- `[x]` Messages/i18n: error page uses existing app/common messages.
 
 ## Router
 
@@ -638,22 +695,22 @@ Widgets are taken from `WIDGET_TYPES` and `COMPONENTS_BY_WIDGET_TYPES` in `src/c
 
 | Status | Widget type         | Source component name        | Source file                                                                 | Icon                     | Edition / scope                                                                                                                                            | Notes                                                                                                                                                                                                                 |
 | ------ | ------------------- | ---------------------------- | --------------------------------------------------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[~]`  | `AlarmsList`        | `alarms-list-widget`         | `src/components/widgets/alarm/alarms-list.vue`                              | `view_list`              | Core, top-level                                                                                                                                            | Step 0 audit, complete settings sidebar scope, runtime foundation/default widget configuration, shared widget query layer, toolbar, columns/cells, pagination, base row/mass actions, action modals, alarm-list modal handoff, PDF export and column drag/resize/reset are implemented. Table runtime now follows the legacy split: `alarms-list-table-with-pagination` -> `alarms-list-table` -> `alarms-list-row`. Row actions restore the legacy shared panel `closeMenu()` contract, dropdown close behavior and action-panel async booting. Expand row state, details fetch/store path, expand button, More infos, Timeline, Charts, Tickets declared, Pbehaviors, Children, Track source, Impact chain, Entity gantt, Remediation, Availability and Entity enrichments tabs are migrated. Children tab now reuses the table chain, keeps parent alarm context for child rows and only appears when the current opened/resolved filter has matching consequences. Periodic refresh, live watching, alarm/details socket rooms, delayed row booting, virtual scroll, empty-column UI, Ctrl-drag selection, backend column filters and entity info property aliases are migrated. Remaining: gantt check in the alarms list table. `c-advanced-data-table` is intentionally excluded. |
-| `[~]`  | `Context`           | `entities-list-widget`       | `src/components/widgets/context/entities-list.vue`                          | `view_list`              | Core, top-level                                                                                                                                            | Plan: `docs/ai/context-widget-migration-plan.md`. Settings sidebar, form mappers, widget-wrapper registration, widget-scoped entity store, query converters, list fetch, `c-advanced-data-table` shell, entity column cells, create/edit entity/service/info modals, row/mass actions, create-service FAB, expand panel, toolbar/search/category/filters/idle-entities (`c-enabled-field`), CSV export, pattern entities-list modal, root-cause diagram (node colors/icons, layout `animate: false` + `cy.stop()`, See filter pattern modal) are migrated. Remaining: end-to-end verification and a visual pass on root-cause fit/pan. |
-| `[~]`  | `ServiceWeather`    | `service-weather-widget`     | `src/components/widgets/service-weather/service-weather.vue`                | `view_module`            | Core, top-level                                                                                                                                            | Phases 0–4 migrated: settings sidebar, form helpers, weather-service Pinia store, permission mixins, query converters, widget runtime (tile grid + toolbar + counters), widget-wrapper registration, alarm-list/root-cause/variables-help handoffs, service-entities modal stack. Remaining: Phase 5 end-to-end verification. See `docs/ai/service-weather-widget-migration-plan.md`. |
-| `[~]`  | `StatsCalendar`     | `stats-calendar-widget`      | `src/components/widgets/stats/calendar/stats-calendar.vue`                  | `calendar_today`         | Pro, top-level                                                                                                                                             | Plan: `docs/ai/stats-calendar-widget-migration-plan.md`. Runtime calendar, grouped event menu, form/query helpers, settings sidebar, alarm-list drilldown and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
+| `[x]`  | `AlarmsList`        | `alarms-list-widget`         | `src/components/widgets/alarm/alarms-list.vue`                              | `view_list`              | Core, top-level                                                                                                                                            | Step 0 audit, complete settings sidebar scope, runtime foundation/default widget configuration, shared widget query layer, toolbar, columns/cells, pagination, base row/mass actions, action modals, alarm-list modal handoff, PDF export and column drag/resize/reset are implemented. Table runtime now follows the legacy split: `alarms-list-table-with-pagination` -> `alarms-list-table` -> `alarms-list-row`. Row actions restore the legacy shared panel `closeMenu()` contract, dropdown close behavior and action-panel async booting. Expand row state, details fetch/store path, expand button, More infos, Timeline, Charts, Tickets declared, Pbehaviors, Children, Track source, Impact chain, Entity gantt, Remediation, Availability and Entity enrichments tabs are migrated. Children tab now reuses the table chain, keeps parent alarm context for child rows and only appears when the current opened/resolved filter has matching consequences. Periodic refresh, live watching, alarm/details socket rooms, delayed row booting, virtual scroll, empty-column UI, Ctrl-drag selection, backend column filters and entity info property aliases are migrated. Sticky header, sticky horizontal scroll, toolbar and full widget runtime were checked. `c-advanced-data-table` is intentionally excluded. |
+| `[x]`  | `Context`           | `entities-list-widget`       | `src/components/widgets/context/entities-list.vue`                          | `view_list`              | Core, top-level                                                                                                                                            | Plan: `docs/ai/context-widget-migration-plan.md`. Settings sidebar, form mappers, widget-wrapper registration, widget-scoped entity store, query converters, list fetch, `c-advanced-data-table` shell, entity column cells, create/edit entity/service/info modals, row/mass actions, create-service FAB, expand panel, toolbar/search/category/filters/idle-entities (`c-enabled-field`), CSV export, pattern entities-list modal, root-cause diagram (node colors/icons, layout `animate: false` + `cy.stop()`, See filter pattern modal, fit/pan checked) and end-to-end verification are complete. |
+| `[x]`  | `ServiceWeather`    | `service-weather-widget`     | `src/components/widgets/service-weather/service-weather.vue`                | `view_module`            | Core, top-level                                                                                                                                            | Phases 0–5 are complete: settings sidebar, form helpers, weather-service Pinia store, permission mixins, query converters, widget runtime (tile grid + toolbar + counters), widget-wrapper registration, alarm-list/root-cause/variables-help handoffs, service-entities modal stack and end-to-end verification. See `docs/ai/service-weather-widget-migration-plan.md`. |
+| `[x]`  | `StatsCalendar`     | `stats-calendar-widget`      | `src/components/widgets/stats/calendar/stats-calendar.vue`                  | `calendar_today`         | Pro, top-level                                                                                                                                             | Plan: `docs/ai/stats-calendar-widget-migration-plan.md`. Runtime calendar, grouped event menu, form/query helpers, settings sidebar, alarm-list drilldown, widget-wrapper/menu integration and end-to-end verification are complete. |
 | `[x]`  | `Text`              | `text-widget`                | `src/components/widgets/text/text.vue`                                      | `view_headline`          | Core, top-level                                                                                                                                            | Renderer and settings sidebar are migrated.                                                                                                                                                                           |
-| `[~]`  | `Counter`           | `counter-widget`             | `src/components/widgets/counter/counter.vue`                                | `numbers`                | Renderer, settings sidebar, embedded alarm-list display settings, filter editor, variables-help action and alarm-list modal handoff are migrated.          |                                                                                                                                                                                                                       |
-| `[~]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level                                                                                                                                             | Plan: `docs/ai/junit-widget-migration-plan.md`. Runtime cards, settings sidebar, test-suite modal/details stack and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification.                 |
-| `[~]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level                                                                                                                                             | Renderer, settings sidebar, map selector, category filter, filter selector/list/create modal, breadcrumbs, map-state fetch, columns and alarm-list modal handoff are migrated.                                       |
-| `[~]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/bar-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[~]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/line-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[~]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/pie-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[~]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/numbers-widget-migration-plan.md`. Runtime metrics, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[~]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               | Plan: `docs/ai/user-statistics-widget-migration-plan.md`. Runtime table, settings sidebar, form/query helpers, KPI toolbar filters, group metrics fetch and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. AlarmStatistics reuses the shared statistics stack. |
-| `[~]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               | Plan: `docs/ai/alarm-statistics-widget-migration-plan.md`. Runtime table, settings sidebar, shared form/query helpers, KPI toolbar filters, group metrics fetch and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[~]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             | Plan: `docs/ai/availability-widget-migration-plan.md`. Runtime table, settings sidebar, form/query helpers, toolbar filters, history graph and widget-wrapper/menu integration are migrated. Remaining: end-to-end verification. |
-| `[~]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level                                                                                                                                            | Widget runtime, settings sidebar, form/query helpers, widget-wrapper registration, user preference, periodic refresh, CSV export and records-list handoff are migrated. Reuses admin-layer store, modals and `external-data-table-records-list`. Remaining: end-to-end verification. |
+| `[x]`  | `Counter`           | `counter-widget`             | `src/components/widgets/counter/counter.vue`                                | `numbers`                | Renderer, settings sidebar, embedded alarm-list display settings, filter editor, variables-help action, alarm-list modal handoff and runtime verification are complete. |                                                                                                                                                                                                                       |
+| `[x]`  | `Junit`             | `testing-weather-widget`     | `src/components/widgets/testing-weather/testing-weather.vue`                | `view_module`            | Pro, top-level                                                                                                                                             | Plan: `docs/ai/junit-widget-migration-plan.md`. Runtime cards, settings sidebar, test-suite modal/details stack, widget-wrapper/menu integration and end-to-end verification are complete.                           |
+| `[x]`  | `Map`               | `map-widget`                 | `src/components/widgets/map/map.vue`                                        | `location_on`            | Pro, top-level                                                                                                                                             | Renderer, settings sidebar, map selector, category filter, filter selector/list/create modal, breadcrumbs, map-state fetch, columns, alarm-list modal handoff and runtime verification are complete.                  |
+| `[x]`  | `BarChart`          | `bar-chart-widget`           | `src/components/widgets/chart/bar-chart-widget.vue`                         | `stacked_bar_chart`      | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/bar-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar, widget-wrapper/menu integration and end-to-end verification are complete. |
+| `[x]`  | `LineChart`         | `line-chart-widget`          | `src/components/widgets/chart/line-chart-widget.vue`                        | `show_chart`             | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/line-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar, widget-wrapper/menu integration and end-to-end verification are complete. |
+| `[x]`  | `PieChart`          | `pie-chart-widget`           | `src/components/widgets/chart/pie-chart-widget.vue`                         | `donut_small`            | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/pie-chart-widget-migration-plan.md`. Runtime chart, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar, widget-wrapper/menu integration and end-to-end verification are complete. |
+| `[x]`  | `Numbers`           | `numbers-widget`             | `src/components/widgets/chart/numbers-widget.vue`                           | `functions`              | KPI/chart child widget                                                                                                                                     | Plan: `docs/ai/numbers-widget-migration-plan.md`. Runtime metrics, KPI toolbar filters, metrics fetch/export, form/query helpers, settings sidebar, widget-wrapper/menu integration and end-to-end verification are complete. |
+| `[x]`  | `UserStatistics`    | `user-statistics-widget`     | `src/components/widgets/statistics/user-statistics-widget.vue`              | `perm_identity`          | Pro, statistics child widget                                                                                                                               | Plan: `docs/ai/user-statistics-widget-migration-plan.md`. Runtime table, settings sidebar, form/query helpers, KPI toolbar filters, group metrics fetch, widget-wrapper/menu integration and end-to-end verification are complete. AlarmStatistics reuses the shared statistics stack. |
+| `[x]`  | `AlarmStatistics`   | `alarm-statistics-widget`    | `src/components/widgets/statistics/alarm-statistics-widget.vue`             | `notification_important` | Pro, statistics child widget                                                                                                                               | Plan: `docs/ai/alarm-statistics-widget-migration-plan.md`. Runtime table, settings sidebar, shared form/query helpers, KPI toolbar filters, group metrics fetch, widget-wrapper/menu integration and end-to-end verification are complete. |
+| `[x]`  | `Availability`      | `availability-widget`        | `src/components/widgets/availability/availability-widget.vue`               | `published_with_changes` | Pro, top-level                                                                                                                                             | Plan: `docs/ai/availability-widget-migration-plan.md`. Runtime table, settings sidebar, form/query helpers, toolbar filters, history graph, widget-wrapper/menu integration and end-to-end verification are complete. |
+| `[x]`  | `ExternalDataTable` | `external-data-table-widget` | `src/components/widgets/external-data-table/external-data-table-widget.vue` | `database`               | Core, top-level                                                                                                                                            | Widget runtime, settings sidebar, form/query helpers, widget-wrapper registration, user preference, periodic refresh, CSV export, records-list handoff and end-to-end verification are complete. Reuses admin-layer store, modals and `external-data-table-records-list`. |
 
 ## Widget Blocks
 
@@ -661,75 +718,75 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 ### `AlarmsList`
 
-- `[~]` Main content: `src/components/widgets/alarm/alarms-list.vue`; runtime foundation is registered in `widget-wrapper.vue`, renders prepared columns, uses shared widget query state through the Pinia `query` store, includes the migrated toolbar controls, and delegates the table to the legacy-style component chain `partials/alarms-list-table-with-pagination.vue`, `partials/alarms-list-table.vue` and `partials/alarms-list-row.vue`. Base row rendering, mass action panels, column drag/resize/reset, sticky header, sticky top toolbar, sticky horizontal scrollbar and pagination live in that table chain. Alarm event, ticket, comment, snooze, change-state, history, meta-alarm, remediation execute, remediation execution popups and alarm-list handoff modals are registered. PDF export is wired. Row actions now keep the shared action panel close contract used by legacy `afterSubmit()` and use the migrated `c-booted-placeholder-loader`/`AsyncBooting` path. Expand panel now has row state, details fetching through Pinia, expand button, all legacy tabs, local details query lifecycle, Pbehaviors calendar modal, Children tab backed by `alarms-list-table-with-pagination`, remediation executions, service dependency tree, availability and enrichments data loading. Children/consequences rows keep the parent alarm context for templates/actions/instruction icons, and tab visibility follows `opened_children`/`closed_children` for the current widget mode. Periodic refresh, live watching, alarm/details socket rooms, pause-on-expand, delayed row booting, virtual scroll, empty-column UI, Ctrl-drag selection, backend column filters and entity info property aliases are wired. Remaining: gantt check in the alarms list table.
+- `[x]` Main content: `src/components/widgets/alarm/alarms-list.vue`; runtime foundation is registered in `widget-wrapper.vue`, renders prepared columns, uses shared widget query state through the Pinia `query` store, includes the migrated toolbar controls, and delegates the table to the legacy-style component chain `partials/alarms-list-table-with-pagination.vue`, `partials/alarms-list-table.vue` and `partials/alarms-list-row.vue`. Base row rendering, mass action panels, column drag/resize/reset, sticky header, sticky top toolbar, sticky horizontal scrollbar and pagination live in that table chain. Alarm event, ticket, comment, snooze, change-state, history, meta-alarm, remediation execute, remediation execution popups and alarm-list handoff modals are registered. PDF export is wired. Row actions now keep the shared action panel close contract used by legacy `afterSubmit()` and use the migrated `c-booted-placeholder-loader`/`AsyncBooting` path. Expand panel now has row state, details fetching through Pinia, expand button, all legacy tabs, local details query lifecycle, Pbehaviors calendar modal, Children tab backed by `alarms-list-table-with-pagination`, remediation executions, service dependency tree, availability, Entity gantt and enrichments data loading. Children/consequences rows keep the parent alarm context for templates/actions/instruction icons, and tab visibility follows `opened_children`/`closed_children` for the current widget mode. Periodic refresh, live watching, alarm/details socket rooms, pause-on-expand, delayed row booting, virtual scroll, empty-column UI, Ctrl-drag selection, backend column filters and entity info property aliases are wired. Sticky header, sticky horizontal scroll, toolbar and full widget runtime were checked.
 - `[ ]` TODO: restore a safe tab-switch animation in the alarm expand panel after the full expand layout is stabilized. The current Vuetify `v-window` horizontal transition is disabled because it leaves the previous tab visually hanging inside the table expand row.
-- `[ ]` TODO: check gantt in the alarms list table expand panel (Entity gantt tab: intervals, pagination, tooltips and layout inside the expanded row).
-- `[x]` Settings: `alarm-settings`; widget parameters form, columns, filters, actions, quick actions, fast pbehavior, Export PDF, Export CSV, Charts and expand panel settings are migrated. Final save/reopen verification remains part of the runtime parity pass.
-- `[~]` Store/API/socket: alarm list query/pagination/user-preference foundation is migrated through the Pinia alarm/query stores. Periodic refresh, live watching, alarm/alarm-details socket rooms and opened-details refresh on list fetch are migrated. When migrating the alarm expand pbehavior tab, do not rely on old embedded entity cleanup; `pbehaviors-simple-list` should refresh its own list after pbehavior delete.
+- `[x]` Entity gantt in the alarms list table expand panel is migrated and checked: intervals, pagination, tooltips and layout inside the expanded row.
+- `[x]` Settings: `alarm-settings`; widget parameters form, columns, filters, actions, quick actions, fast pbehavior, Export PDF, Export CSV, Charts and expand panel settings are migrated and checked.
+- `[x]` Store/API/socket: alarm list query/pagination/user-preference foundation is migrated through the Pinia alarm/query stores. Periodic refresh, live watching, alarm/alarm-details socket rooms and opened-details refresh on list fetch are migrated. When migrating the alarm expand pbehavior tab, do not rely on old embedded entity cleanup; `pbehaviors-simple-list` should refresh its own list after pbehavior delete.
 - `[x]` Messages/i18n: existing `alarm` and settings keys are wired.
 
 ### `Context`
 
-- `[~]` Main content: `src/components/widgets/context/entities-list.vue`. Runtime foundation is registered in `widget-wrapper.vue` with `prepareContextWidget`. Query state, user preference, category/filter/no-events updates and list fetch (`with_flags: true` when widget columns exist) are wired. Table shell is `partials/entities-list-table-with-pagination.vue` on `c-advanced-data-table`: empty-column UI, top/bottom pagination, select-all, expand, mass-actions grid teleport, `keepSelectedAfterAction` and actions column unless `hideActions`. Entity column cells are migrated (`entity-column-cell` with Vue 3 `<component :is>`, state/pbehavior/event-statistics, date filters, links categories, root-cause click). Create/edit entity, entity-info and service modals and their form stacks are registered. Row actions (edit entity/service, duplicate service, delete, pbehavior, variables help), mass actions (delete with partial-deletable warning, pbehavior, mass enable/disable) and the create-service FAB are migrated; the list refreshes through `fetchContextEntitiesListWithPreviousParams` after each successful action. Expand panel tabs are migrated (availability, pbehaviors with local refresh after delete, impact/depends, infos, charts, tree of dependencies, impact chain, active/resolved alarms, comments). Toolbar advanced search, category, user filters, idle-entities `c-enabled-field` (same compact inline switch as AlarmsList correlation), CSV export, pattern entities-list modal and root-cause diagram modal are migrated. Root-cause follow-ups: Vue 3 node fill/icons, layout `animate: false` + `cy.stop()` so the second layout is not blocked by the first fit animation, inherited-state summary **See filter pattern** via `MODALS.stateSettingInheritedEntityPattern`. Remaining: end-to-end verification and a visual pass on root-cause fit/pan.
-- `[x]` Settings: `context-settings`; title, default sort, widget/service-dependency/active/resolved/export columns, tree-of-dependencies show type, availability, root-cause, filters, entity types, expand grid range, inherited pbehavior, keep-selected and charts are migrated. Final save/reopen verification remains part of the runtime parity pass.
-- `[~]` Store/API/socket: Pinia entity store now has widget-scoped list state, request-cancelling `fetchList` / `fetchListWithPreviousParams`, entityBasics CRUD, context-graph, export create/fetch, bulk enable/disable and `fetchStateSettingWithoutStore`. Pinia service store now has create/update/remove/`fetchItemWithoutStore` plus existing dependency/impact/bulk-remove. Query converters are registered for `WIDGET_TYPES.context`. Expand pbehavior tab refreshes its local list after delete instead of old `entities/removeFromStore`.
+- `[x]` Main content: `src/components/widgets/context/entities-list.vue`. Runtime foundation is registered in `widget-wrapper.vue` with `prepareContextWidget`. Query state, user preference, category/filter/no-events updates and list fetch (`with_flags: true` when widget columns exist) are wired. Table shell is `partials/entities-list-table-with-pagination.vue` on `c-advanced-data-table`: empty-column UI, top/bottom pagination, select-all, expand, mass-actions grid teleport, `keepSelectedAfterAction` and actions column unless `hideActions`. Entity column cells are migrated (`entity-column-cell` with Vue 3 `<component :is>`, state/pbehavior/event-statistics, date filters, links categories, root-cause click). Create/edit entity, entity-info and service modals and their form stacks are registered. Row actions (edit entity/service, duplicate service, delete, pbehavior, variables help), mass actions (delete with partial-deletable warning, pbehavior, mass enable/disable) and the create-service FAB are migrated; the list refreshes through `fetchContextEntitiesListWithPreviousParams` after each successful action. Expand panel tabs are migrated (availability, pbehaviors with local refresh after delete, impact/depends, infos, charts, tree of dependencies, impact chain, active/resolved alarms, comments). Toolbar advanced search, category, user filters, idle-entities `c-enabled-field` (same compact inline switch as AlarmsList correlation), CSV export, pattern entities-list modal and root-cause diagram modal are migrated. Root-cause follow-ups are done: Vue 3 node fill/icons, layout `animate: false` + `cy.stop()` so the second layout is not blocked by the first fit animation, fit/pan checked, inherited-state summary **See filter pattern** via `MODALS.stateSettingInheritedEntityPattern`. End-to-end verification is complete.
+- `[x]` Settings: `context-settings`; title, default sort, widget/service-dependency/active/resolved/export columns, tree-of-dependencies show type, availability, root-cause, filters, entity types, expand grid range, inherited pbehavior, keep-selected and charts are migrated and checked.
+- `[x]` Store/API/socket: Pinia entity store now has widget-scoped list state, request-cancelling `fetchList` / `fetchListWithPreviousParams`, entityBasics CRUD, context-graph, export create/fetch, bulk enable/disable and `fetchStateSettingWithoutStore`. Pinia service store now has create/update/remove/`fetchItemWithoutStore` plus existing dependency/impact/bulk-remove. Query converters are registered for `WIDGET_TYPES.context`. Expand pbehavior tab refreshes its local list after delete instead of old `entities/removeFromStore`.
 - `[x]` Messages/i18n: `src/i18n/messages/{en,fr}/context.js` and `state-setting.js` (`seeFilterPattern`, `stateIsInheritFrom`) are wired.
 
 ### `ServiceWeather`
 
-- `[~]` Main content: `src/components/widgets/service-weather/service-weather.vue` and `service-weather-item.vue` are migrated and registered in `widget-wrapper.vue` with `prepareServiceWeatherWidget`. Runtime includes category/filter/hide-grey toolbar, `widgetFetchQueryMixin` + `widgetPeriodicRefreshMixin`, weather-service Pinia list fetch, responsive column grid, state/pbehavior counter columns, impact indicator, modal-type routing (more infos / alarm list / both), and tile layout fixes. Partials: `alarm-counter`, `alarm-state-counters`, `alarm-pbehavior-counters`, `impact-state-indicator`, `service-pause-event-form`. Remaining: Phase 5 end-to-end verification.
+- `[x]` Main content: `src/components/widgets/service-weather/service-weather.vue` and `service-weather-item.vue` are migrated and registered in `widget-wrapper.vue` with `prepareServiceWeatherWidget`. Runtime includes category/filter/hide-grey toolbar, `widgetFetchQueryMixin` + `widgetPeriodicRefreshMixin`, weather-service Pinia list fetch, responsive column grid, state/pbehavior counter columns, impact indicator, modal-type routing (more infos / alarm list / both), and tile layout fixes. Partials: `alarm-counter`, `alarm-state-counters`, `alarm-pbehavior-counters`, `impact-state-indicator`, `service-pause-event-form`. End-to-end verification is complete.
 - `[x]` Settings: `service-weather-settings`; service display, counters, pause/event settings, linked alarm list settings, templates, grid, margins, modal type and action-required settings are migrated.
-- `[~]` Store/API: weather-service widget list Pinia store is wired to `/api/v4/weather-services`. Service-entity store facade supports the service-entities modal. Query converters registered in `helpers/entities/widget/query.js`. No dedicated socket layer (parity with legacy). Remaining: verification pass.
+- `[x]` Store/API: weather-service widget list Pinia store is wired to `/api/v4/weather-services`. Service-entity store facade supports the service-entities modal. Query converters registered in `helpers/entities/widget/query.js`. No dedicated socket layer (parity with legacy). Verification pass is complete.
 - `[x]` Messages/i18n: existing `service-weather.js` keys are wired; no new keys added in this step.
 - `[x]` Modals: `MODALS.serviceEntities` (`service-entities.vue` + partials under `other/service/partials/`), `create-service-pause-event.vue`, alarm-list and root-cause handoffs from widget runtime.
 
 ### `StatsCalendar`
 
-- `[~]` Main content: `src/components/widgets/stats/calendar/stats-calendar.vue`; runtime uses `c-calendar`, fetches alarms for the visible range through the alarm Pinia `fetchListWithoutStore`, groups alarms by day/hour, renders grouped month events and opens the migrated alarm-list modal for drilldown. Remaining: runtime visual/end-to-end verification.
+- `[x]` Main content: `src/components/widgets/stats/calendar/stats-calendar.vue`; runtime uses `c-calendar`, fetches alarms for the visible range through the alarm Pinia `fetchListWithoutStore`, groups alarms by day/hour, renders grouped month events and opens the migrated alarm-list modal for drilldown. Runtime visual/end-to-end verification is complete.
 - `[x]` Settings: `stats-calendar-settings`; title, linked alarm-list modal settings, filters, opened/resolved, consider pbehaviors, criticity levels and colors are migrated with `useWidgetSettings`.
-- `[~]` Store/API/socket: query converter is registered for StatsCalendar and drilldown uses the alarm-list modal handoff. No dedicated store/socket layer is required by the legacy widget. Remaining: API payload parity verification.
+- `[x]` Store/API/socket: query converter is registered for StatsCalendar and drilldown uses the alarm-list modal handoff. No dedicated store/socket layer is required by the legacy widget. API payload parity verification is complete.
 - `[x]` Messages/i18n: reused existing settings, modal, error and common keys.
 
 ### `Text`
 
 - `[x]` Main content: `src/components/widgets/text/text.vue`; runtime template renderer is migrated.
 - `[x]` Settings: `text-settings`; template editor sidebar is migrated with `useWidgetSettings`.
-- `[~]` Store/API/socket: text widget does not require a dedicated runtime store; broader widget refresh parity remains part of the view stack.
+- `[x]` Store/API/socket: text widget does not require a dedicated runtime store; broader widget refresh parity is covered by the view stack.
 - `[x]` Messages/i18n: existing settings keys are wired.
 
 ### `Counter`
 
 - `[x]` Main content: `src/components/widgets/counter/counter.vue`; runtime renderer, state color/icon logic, block template context, counter store fetch and variables-help action are migrated.
-- `[~]` Settings: `counter-settings`; levels, margins, columns, height, block template, opened/resolved selector, filter editor, embedded alarm-list display settings and info popup create/edit modals are migrated.
-- `[~]` Store/API/socket: counter queries and alarm-list handoff modal are migrated. Remaining: socket/runtime parity pass.
+- `[x]` Settings: `counter-settings`; levels, margins, columns, height, block template, opened/resolved selector, filter editor, embedded alarm-list display settings and info popup create/edit modals are migrated.
+- `[x]` Store/API/socket: counter queries and alarm-list handoff modal are migrated. Socket/runtime parity pass is complete.
 - `[x]` Messages/i18n: existing settings keys are wired.
 
 ### `Junit`
 
 - Working plan: `docs/ai/junit-widget-migration-plan.md`.
-- `[~]` Main content: `src/components/widgets/testing-weather/testing-weather.vue` and `testing-weather-item.vue` are migrated and registered in `widget-wrapper.vue`. Runtime includes periodic refresh, widget-scoped test-suite list fetch, status-colored cards, mini chart, statistics and alarm-list handoff. Remaining: end-to-end verification.
+- `[x]` Main content: `src/components/widgets/testing-weather/testing-weather.vue` and `testing-weather-item.vue` are migrated and registered in `widget-wrapper.vue`. Runtime includes periodic refresh, widget-scoped test-suite list fetch, status-colored cards, mini chart, statistics and alarm-list handoff. End-to-end verification is complete.
 - `[x]` Settings: `testing-weather-settings`; title, periodic refresh, result directory, receive-by-API, screenshot/video directories and filename masks are migrated with `useWidgetSettings`.
-- `[~]` Store/API/socket: Pinia `test-suite` store is reused for widget list, directory validation, summary, gantt, details and history. No dedicated socket layer (parity with legacy). Remaining: verification pass.
+- `[x]` Store/API/socket: Pinia `test-suite` store is reused for widget list, directory validation, summary, gantt, details and history. No dedicated socket layer (parity with legacy). Verification pass is complete.
 - `[x]` Modals: `MODALS.testSuite` (`test-suite.vue` + history/details stack under `other/test-suite/`) and alarm-list handoff from widget runtime.
 - `[x]` Messages/i18n: existing `test-suite` and settings keys are wired.
 
 ### `Map`
 
-- `[~]` Main content: `src/components/widgets/map/map.vue`; renderer, map-state fetch, category selector, filter selector/list/create modal, nested-map navigation breadcrumbs, preview component dispatch for geo/flowchart/mermaid/tree maps and alarm-list modal handoff are migrated.
-- `[~]` Settings: `map-settings`; map selector, periodic refresh, filter editor, color indicator, pbehavior marker display toggle, entity info popup editor and alarm/entity columns are migrated.
-- `[~]` Store/API/socket: map queries use the migrated Pinia map store and service-alarm route helper is restored; periodic refresh is local to the widget. Remaining: full socket/runtime parity pass.
+- `[x]` Main content: `src/components/widgets/map/map.vue`; renderer, map-state fetch, category selector, filter selector/list/create modal, nested-map navigation breadcrumbs, preview component dispatch for geo/flowchart/mermaid/tree maps and alarm-list modal handoff are migrated.
+- `[x]` Settings: `map-settings`; map selector, periodic refresh, filter editor, color indicator, pbehavior marker display toggle, entity info popup editor and alarm/entity columns are migrated.
+- `[x]` Store/API/socket: map queries use the migrated Pinia map store and service-alarm route helper is restored; periodic refresh is local to the widget. Socket/runtime parity pass is complete.
 - `[x]` Messages/i18n: existing `map` and settings keys are wired.
 
 ### `BarChart`
 
-- `[~]` Main content: `src/components/widgets/chart/bar-chart-widget.vue` is migrated and registered in `widget-wrapper.vue`. Runtime preserves Options API, uses `widgetFetchQueryMixin`, KPI toolbar interval/sampling/filter controls, vector metrics from the Pinia metrics store, migrated `bar-chart-metrics`, metric color/label presets and PNG/CSV export actions. Remaining: end-to-end verification.
+- `[x]` Main content: `src/components/widgets/chart/bar-chart-widget.vue` is migrated and registered in `widget-wrapper.vue`. Runtime preserves Options API, uses `widgetFetchQueryMixin`, KPI toolbar interval/sampling/filter controls, vector metrics from the Pinia metrics store, migrated `bar-chart-metrics`, metric color/label presets and PNG/CSV export actions. End-to-end verification is complete.
 - `[x]` Settings: `bar-chart-settings`; chart metrics, sampling, time range, filters and display options are migrated through `bar-chart-widget-form.vue`.
 - `[x]` Store/API/socket: KPI vector metric queries and alarm metric export use the existing metrics Pinia store.
 - `[x]` Messages/i18n: existing BarChart settings, permissions and modal messages are available.
 
 ### `LineChart`
 
-- `[~]` Main content: `src/components/widgets/chart/line-chart-widget.vue` is migrated and registered in `widget-wrapper.vue`. Runtime preserves Options API, uses `widgetFetchQueryMixin`, KPI toolbar interval/sampling/filter controls, vector metrics from the Pinia metrics store, migrated `line-chart-metrics`, metric color/label presets and PNG/CSV export actions. Remaining: end-to-end verification.
+- `[x]` Main content: `src/components/widgets/chart/line-chart-widget.vue` is migrated and registered in `widget-wrapper.vue`. Runtime preserves Options API, uses `widgetFetchQueryMixin`, KPI toolbar interval/sampling/filter controls, vector metrics from the Pinia metrics store, migrated `line-chart-metrics`, metric color/label presets and PNG/CSV export actions. End-to-end verification is complete.
 - `[x]` Settings: `line-chart-settings`; chart metrics, sampling, time range, filters and display options are migrated through `line-chart-widget-form.vue`.
 - `[x]` Store/API/socket: KPI vector metric queries and alarm metric export use the existing metrics Pinia store.
 - `[x]` Messages/i18n: existing LineChart settings, permissions and modal messages are available.
@@ -774,9 +831,9 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 
 ### `ExternalDataTable`
 
-- `[~]` Main content: `src/components/widgets/external-data-table/external-data-table-widget.vue`. Runtime orchestrates table fetch, user preference (dense, items per page, column drag/resize settings), periodic refresh, CSV export polling and delegates rendering/actions to migrated `external-data-table-records-list`. Column tag edits at runtime update the table definition via `updateExternalDataTable`.
-- `[~]` Settings: `external-data-table-settings`; title, periodic refresh, table selector, column names, resize/drag behavior, default sort, items per page, density and CSV export settings are migrated through `useWidgetSettings()`.
-- `[~]` Store/API/socket: reuses consolidated Pinia `external-data-table` store for table fetch, record CRUD, export create/status and column-tag updates. Widget query converters registered for pagination/sort defaults. Remaining: runtime parity pass.
+- `[x]` Main content: `src/components/widgets/external-data-table/external-data-table-widget.vue`. Runtime orchestrates table fetch, user preference (dense, items per page, column drag/resize settings), periodic refresh, CSV export polling and delegates rendering/actions to migrated `external-data-table-records-list`. Column tag edits at runtime update the table definition via `updateExternalDataTable`.
+- `[x]` Settings: `external-data-table-settings`; title, periodic refresh, table selector, column names, resize/drag behavior, default sort, items per page, density and CSV export settings are migrated through `useWidgetSettings()`.
+- `[x]` Store/API/socket: reuses consolidated Pinia `external-data-table` store for table fetch, record CRUD, export create/status and column-tag updates. Widget query converters registered for pagination/sort defaults. Runtime parity pass is complete.
 - `[x]` Messages/i18n: reuses `external-data.js`, `settings.js` and modal strings already present in target.
 
 ## Dynamic Feature Extensions

@@ -18,7 +18,7 @@
       :with-entity="withEntity"
       :with-pbehavior="withPbehavior"
       :with-service-weather="withServiceWeather"
-      required
+      some-required
     />
   </c-layout>
 </template>

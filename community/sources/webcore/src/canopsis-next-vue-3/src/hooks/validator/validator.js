@@ -1,7 +1,7 @@
 import { defineRule, useFormErrors } from 'vee-validate';
 import { inject } from 'vue';
 
-import { FORM_CONTEXT_KEY } from '@/hooks/form';
+import { FORM_CONTEXT_KEY, toLiteralVeeFieldPath } from '@/hooks/form';
 
 const adaptRule = (name, rule) => {
   if (typeof rule === 'function') {
@@ -25,7 +25,11 @@ export const useValidator = () => {
   const formErrors = useFormErrors();
   const form = inject(FORM_CONTEXT_KEY, null);
 
-  const getFieldError = name => formErrors.value[name];
+  const getFieldError = (name) => {
+    const errors = formErrors.value;
+
+    return errors?.[name] ?? errors?.[toLiteralVeeFieldPath(name)];
+  };
   const setFieldError = (name, message) => form?.setFieldError?.(name, message);
   const clear = name => (name ? setFieldError(name, undefined) : form?.setErrors?.({}));
 
