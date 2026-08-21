@@ -29,6 +29,7 @@ export default {
   connectorName: 'Connector name or template',
   upstream: 'Upstream ID or template',
   duringPeriod: 'Applied during this period only',
+  executionDate: 'Execution date',
   enrichmentOptions: 'Enrichment options',
   changeEntityOptions: 'Change entity options',
   eventsFilteredSinceLastUpdate: 'Events filtered since last update',

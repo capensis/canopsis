@@ -1,16 +1,23 @@
+import { isFunction, isPlainObject } from 'lodash';
 import { defineRule, useFormErrors } from 'vee-validate';
-import { inject } from 'vue';
 
-import { FORM_CONTEXT_KEY, toLiteralVeeFieldPath } from '@/hooks/form';
+import { toLiteralVeeFieldPath, useFormContext } from '@/hooks/form';
 
+/**
+ * Converts a legacy validator rule definition to a vee-validate compatible rule function.
+ *
+ * @param {string} name Rule name used as a fallback field label in validation messages.
+ * @param {Function|Object} rule Rule function or legacy rule object with validate/getMessage methods.
+ * @returns {Function} Vee-validate compatible validation rule.
+ */
 const adaptRule = (name, rule) => {
-  if (typeof rule === 'function') {
+  if (isFunction(rule)) {
     return rule;
   }
 
   return async (value, params, ctx) => {
     const result = await rule.validate(value, params, ctx);
-    const valid = typeof result === 'object' ? result.valid !== false : !!result;
+    const valid = isPlainObject(result) ? result.valid !== false : !!result;
 
     return valid || rule.getMessage?.(ctx?.field || name, params, ctx) || false;
   };
@@ -22,16 +29,16 @@ const adaptRule = (name, rule) => {
  * @returns {Object}
  */
 export const useValidator = () => {
+  const form = useFormContext();
   const formErrors = useFormErrors();
-  const form = inject(FORM_CONTEXT_KEY, null);
 
   const getFieldError = (name) => {
     const errors = formErrors.value;
 
     return errors?.[name] ?? errors?.[toLiteralVeeFieldPath(name)];
   };
-  const setFieldError = (name, message) => form?.setFieldError?.(name, message);
-  const clear = name => (name ? setFieldError(name, undefined) : form?.setErrors?.({}));
+  const setFieldError = (name, message) => form.setFieldError(name, message);
+  const clear = name => (name ? setFieldError(name, undefined) : form.setErrors({}));
 
   return {
     errors: {

@@ -30,6 +30,7 @@ export default {
   connectorName: 'Nom ou modèle de connecteur',
   upstream: 'ID amont ou modèle',
   duringPeriod: 'Appliqué pendant cette période uniquement',
+  executionDate: 'Date d\'exécution',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
   eventsFilteredSinceLastUpdate: 'Evénements filtrés depuis la dernière mise à jour',

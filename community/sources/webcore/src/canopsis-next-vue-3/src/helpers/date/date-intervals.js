@@ -126,11 +126,8 @@ export const convertStartDateIntervalToMoment = (
  * @param {string} [unit]
  * @returns {Moment}
  */
-export const convertStopDateIntervalToMoment = (
-  date,
-  format = DATETIME_FORMATS.datePicker,
-  unit,
-) => convertDateIntervalToMoment(date, DATETIME_INTERVAL_TYPES.stop, format, unit);
+export const convertStopDateIntervalToMoment = (date, format = DATETIME_FORMATS.datePicker, unit) =>
+  convertDateIntervalToMoment(date, DATETIME_INTERVAL_TYPES.stop, format, unit);
 
 /**
  * Parse date in every format to moment object by timezone.
@@ -279,7 +276,8 @@ export const findQuickRangeValue = (
  * @returns {Object}
  */
 export const findQuickRangeByInterval = (interval, ranges = Object.values(QUICK_RANGES)) =>
-  ranges.find(range => range.start === interval.from && range.stop === interval.to) || QUICK_RANGES.custom;
+  ranges.find(range => range.start === interval.from && range.stop === interval.to) ||
+  QUICK_RANGES.custom;
 
 /**
  * Convert interval form to timestamp interval with hour precision.

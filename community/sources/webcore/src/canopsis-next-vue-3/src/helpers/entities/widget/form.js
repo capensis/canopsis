@@ -28,9 +28,15 @@ import {
   formToTestingWeatherWidgetParameters,
   testingWeatherWidgetParametersToForm,
 } from './forms/junit';
-import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './forms/line-chart';
+import {
+  formToLineChartWidgetParameters,
+  lineChartWidgetParametersToForm,
+} from './forms/line-chart';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
-import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './forms/numbers-chart';
+import {
+  formToNumbersWidgetParameters,
+  numbersWidgetParametersToForm,
+} from './forms/numbers-chart';
 import { formToPieChartWidgetParameters, pieChartWidgetParametersToForm } from './forms/pie-chart';
 import {
   formToServiceWeatherWidgetParameters,

@@ -4,8 +4,6 @@ import { isParent } from '@/helpers/vue-base';
 
 import { useFormContext } from '@/hooks/form';
 
-const EMPTY_VALIDATOR_FIELDS = [];
-
 /**
  * Resolves a Vue component instance or a DOM node to a native Element.
  *
@@ -31,10 +29,6 @@ export const useValidationElementChildrenFields = (parent) => {
   const formContext = useFormContext();
 
   return computed(() => {
-    if (!formContext) {
-      return EMPTY_VALIDATOR_FIELDS;
-    }
-
     const fieldsWithInstances = formContext.getAllPathStatesWithInstances();
 
     const node = unref(parent);

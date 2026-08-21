@@ -1,5 +1,5 @@
 <template>
-  <v-sheet color="grey lighten-2" class="c-word-break-all pa-3" rounded="xxl">
+  <v-sheet color="grey lighten-2" class="c-word-break-all pa-3" rounded="lg">
     <p>{{ recurrenceRuleString }}</p>
     <p>{{ recurrenceRuleText }}</p>
     <template v-if="exceptionItems.length > 0">

@@ -278,9 +278,9 @@ import {
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
-import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
-import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInfos } from '@/hooks/store/modules/infos';
@@ -338,19 +338,7 @@ const { prepare: prepareTemplateVars } = useVarsPrepare('templateTesting.templat
 
 const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
 
-const preparedWidgetTemplates = computed(() =>
-  widgetTemplates.value.map((template) => {
-    if (template.type === 'alarm_columns' || template.type === 'entity_columns') {
-      return { ...template, columns: widgetColumnsToForm(template.columns) };
-    }
-
-    if (template.type === 'alarm_sort_columns') {
-      return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
-    }
-
-    return template;
-  }),
-);
+const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
 const alarmSortColumnsWidgetTemplates = computed(() =>
   preparedWidgetTemplates.value.filter(
@@ -385,7 +373,7 @@ const alarmMassQuickActionsWidgetTemplates = computed(() =>
 );
 const defaultExportPdfTemplateValue = ALARM_EXPORT_PDF_TEMPLATE;
 const preparedWidgetColumns = computed(() =>
-  form.value.parameters.widgetColumns.map(column => ({
+  formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
     ...column,
     text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
   })),

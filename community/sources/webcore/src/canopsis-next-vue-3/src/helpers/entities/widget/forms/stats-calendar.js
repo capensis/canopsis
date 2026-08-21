@@ -69,12 +69,13 @@ export const formToStatsCalendarWidgetParameters = form => ({
  * @param {Object} widget
  * @returns {Object}
  */
-export const prepareStatsCalendarWidget = (widget = {}) => setSeveralFields(widget, {
-  'parameters.alarmsList.widgetColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
-    columns.map(column => ({
-      ...column,
+export const prepareStatsCalendarWidget = (widget = {}) =>
+  setSeveralFields(widget, {
+    'parameters.alarmsList.widgetColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
+      columns.map(column => ({
+        ...column,
 
-      sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
-      text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-    })),
-});
+        sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      })),
+  });

@@ -1,25 +1,23 @@
 <template>
-  <v-data-iterator :items="exceptions" hide-default-footer>
-    <template #item="{ item, index }">
-      <c-layout column>
-        <c-layout align="center">
-          <h4>{{ item.name }}</h4>
-          <c-action-btn type="delete" @click="removeItem(index)" />
-        </c-layout>
-        <c-advanced-data-table :items="item.exdates" :headers="exdatesHeaders">
-          <template #begin="{ item: exdate }">
-            {{ convertDateToString(exdate.begin) }}
-          </template>
-          <template #end="{ item: exdate }">
-            {{ convertDateToString(exdate.end) }}
-          </template>
-          <template #type="{ item: exdate }">
-            {{ exdate.type.name }}
-          </template>
-        </c-advanced-data-table>
+  <c-layout column>
+    <c-layout v-for="(item, index) in exceptions" :key="item.key || item._id || index" column>
+      <c-layout align="center">
+        <h4>{{ item.name }}</h4>
+        <c-action-btn v-if="!disabled" type="delete" @click="removeItem(index)" />
       </c-layout>
-    </template>
-  </v-data-iterator>
+      <c-advanced-data-table :items="item.exdates" :headers="exdatesHeaders">
+        <template #begin="{ item: exdate }">
+          {{ convertDateToString(exdate.begin) }}
+        </template>
+        <template #end="{ item: exdate }">
+          {{ convertDateToString(exdate.end) }}
+        </template>
+        <template #type="{ item: exdate }">
+          {{ exdate.type?.name || '-' }}
+        </template>
+      </c-advanced-data-table>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -36,6 +34,10 @@ export default {
     exceptions: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

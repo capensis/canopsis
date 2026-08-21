@@ -4,6 +4,8 @@
     :model-value="value"
     :items="types"
     :name="name"
+    item-title="text"
+    item-value="value"
     clearable
     @update:model-value="$emit('update:modelValue', $event)"
   />

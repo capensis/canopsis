@@ -21,11 +21,12 @@ import { getDefaultAggregateFunctionByMetric } from '@/helpers/entities/metric/l
  * @returns {string[]}
  */
 export const getWidgetChartPresetTypesByWidgetType = (type) => {
-  const keys = {
-    [WIDGET_TYPES.barChart]: BAR_CHART_WIDGET_PRESET_TYPES,
-    [WIDGET_TYPES.pieChart]: PIE_CHART_WIDGET_PRESET_TYPES,
-    [WIDGET_TYPES.numbers]: NUMBERS_CHART_WIDGET_PRESET_TYPES,
-  }[type] ?? [];
+  const keys =
+    {
+      [WIDGET_TYPES.barChart]: BAR_CHART_WIDGET_PRESET_TYPES,
+      [WIDGET_TYPES.pieChart]: PIE_CHART_WIDGET_PRESET_TYPES,
+      [WIDGET_TYPES.numbers]: NUMBERS_CHART_WIDGET_PRESET_TYPES,
+    }[type] ?? [];
 
   return Object.values(pick(CHART_WIDGET_PRESET_TYPES, keys));
 };

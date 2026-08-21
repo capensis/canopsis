@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-import { useFormErrors, useFormContext } from '@/hooks/form';
+import { useFormContext, useFormErrors } from '@/hooks/form';
 
 import { useValidationElementChildrenFields } from './validation-element-children-fields';
 
@@ -19,8 +19,9 @@ import { useValidationElementChildrenFields } from './validation-element-childre
  * validator is present, otherwise `undefined`.
  */
 export const useValidationElementChildren = (parent) => {
-  const formErrors = useFormErrors();
   const formContext = useFormContext();
+
+  const formErrors = useFormErrors();
   const childrenFields = useValidationElementChildrenFields(parent);
 
   const hasChildrenError = computed(() => {
@@ -32,7 +33,7 @@ export const useValidationElementChildren = (parent) => {
   });
 
   const validateChildren = () =>
-    childrenFields.value.forEach(({ path } = {}) => formContext?.validateField?.(path));
+    childrenFields.value.forEach(({ path } = {}) => formContext.validateField(path));
 
   return {
     childrenFields,

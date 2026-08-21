@@ -4,7 +4,7 @@
     class="bg-secondary-lighten-1"
     slider-color="primary"
     color="white"
-    centered
+    align-tabs="center"
   >
     <v-tab :value="tabs.summary">
       {{ $t('common.summary') }}
@@ -27,20 +27,22 @@
 
   <v-window v-model="activeTab" mandatory>
     <v-window-item :value="tabs.summary">
-      <c-layout class="py-3 secondary lighten-2" justify-center>
+      <c-layout class="py-3 secondary lighten-2" justify="center">
         <div :style="gridFlexStyle(11)">
           <v-card>
             <v-card-text>
-              <div>
-                <event-filters-rule-summary :event-filter="eventFilter" />
-              </div>
+              <v-row justify="center">
+                <v-col cols="12" md="8" lg="6">
+                  <event-filters-rule-summary :event-filter="eventFilter" />
+                </v-col>
+              </v-row>
             </v-card-text>
           </v-card>
         </div>
       </c-layout>
     </v-window-item>
     <v-window-item :value="tabs.pattern">
-      <c-layout class="pa-3 secondary lighten-2" justify-center>
+      <c-layout class="pa-3 secondary lighten-2" justify="center">
         <div :style="gridFlexStyle(10)">
           <v-card>
             <v-card-text>
@@ -57,22 +59,22 @@
     </v-window-item>
     <template v-if="isEnrichment">
       <v-window-item :value="tabs.action">
-        <c-layout class="py-3 secondary lighten-2" justify-center>
+        <c-layout class="py-3 secondary lighten-2" justify="center">
           <div :style="gridFlexStyle(11)">
             <v-data-table :items="eventFilter.config.actions" :headers="headers" />
           </div>
         </c-layout>
       </v-window-item>
       <v-window-item :value="tabs.externalData">
-        <c-layout class="py-3 secondary lighten-2" justify-center>
+        <c-layout class="py-3 secondary lighten-2" justify="center">
           <div :style="gridFlexStyle(11)">
-            <external-data-field :form="externalDataForm" disabled optionally />
+            <external-data-field :external-data="externalDataForm" disabled optionally />
           </div>
         </c-layout>
       </v-window-item>
     </template>
     <v-window-item v-if="eventFilter.failures_count" :value="tabs.errors">
-      <c-layout class="py-3 secondary lighten-2" justify-center>
+      <c-layout class="py-3 secondary lighten-2" justify="center">
         <div :style="gridFlexStyle(11)">
           <v-card>
             <v-card-text>
@@ -114,6 +116,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['refresh'],
   setup(props) {
     const { t } = useI18n();
 
