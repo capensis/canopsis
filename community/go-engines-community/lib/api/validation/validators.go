@@ -9,6 +9,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+const DefaultTimeFormat = "2006-01-02T15:04:05"
+
+var timeFormats = map[string]string{
+	"YYYY-MM-DDThh:mm:ss":        DefaultTimeFormat,
+	"YYYY-MM-DDThh:mm:ssZ":       "2006-01-02T15:04:05-0700",
+	"DD MMM YYYY hh:mm:ss":       "02 Jan 2006 15:04",
+	"DD MMM YYYY hh:mm:ss ZZ":    "02 Jan 2006 15:04 MST",
+	"W, DD MMM YYYY hh:mm:ss ZZ": "Mon, 02 Jan 2006 15:04:05 MST",
+}
+
 func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
 	field := fl.Field()
 
@@ -64,4 +74,17 @@ func ValidateCpsTimeType(field reflect.Value) any {
 	}
 
 	return nil
+}
+
+func ValidateTimeFormat(fl validator.FieldLevel) bool {
+	v := fl.Field().String()
+
+	return v == "" || timeFormats[v] != ""
+}
+
+func GetRealFormatTime(f string) string {
+	if f == "" {
+		return ""
+	}
+	return timeFormats[f]
 }

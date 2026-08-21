@@ -190,6 +190,465 @@ paths:
         '403':
           $ref: '#/components/schemas/Forbidden'
 
+  /entities:
+    get:
+      tags:
+        - entities
+      summary: Find all entities
+      description: |
+        Get paginated list of entities.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entities-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: search
+          in: query
+          description: full text search
+          schema:
+            type: string
+        - name: search_by
+          in: query
+          style: form
+          explode: true
+          description: restrict the full text search to these fields
+          schema:
+            type: array
+            items:
+              type: string
+        - name: enabled
+          in: query
+          description: filter by enabled state
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by entity types
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - connector
+                - component
+                - resource
+                - service
+        - name: category
+          in: query
+          style: form
+          explode: true
+          description: filter by category ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: connector
+          in: query
+          style: form
+          explode: true
+          description: filter by connector ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: component
+          in: query
+          style: form
+          explode: true
+          description: filter by component ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: upstream
+          in: query
+          style: form
+          explode: true
+          description: filter by ids of the entities which depend on the returned ones
+          schema:
+            type: array
+            items:
+              type: string
+        - name: import_source
+          in: query
+          description: filter by the source of the import which created the entity
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entities/search:
+    post:
+      tags:
+        - entities
+      summary: Search entities
+      description: |
+        Get paginated list of entities matching a pattern.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entities-search
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.SearchRequest'
+            examples:
+              resources:
+                summary: Resources of a component
+                description: Find the enabled resources of one component
+                value: {
+                  "page": 1,
+                  "limit": 100,
+                  "enabled": true,
+                  "sort": "name:asc",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              paused:
+                summary: Paused entities
+                description: Find the entities which are under a pause pbehavior type
+                value: {
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "canonical_type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pause"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entity-exports:
+    post:
+      tags:
+        - entity-exports
+      summary: Start an entity export
+      description: |
+        Start an export of the entities matching a pattern.
+
+        The export runs in the background: this returns a job, whose progress is followed with
+        `GET /entity-exports/{id}` and whose result is fetched with `GET /entity-exports/{id}/download` once
+        its status is `done`.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-exports-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entityexport.Request'
+            examples:
+              csv:
+                summary: CSV
+                description: Export to a semicolon separated csv
+                value: {
+                  "format": "csv",
+                  "delimiter": "semicolon",
+                  "time_format": "DD MMM YYYY hh:mm:ss ZZ",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "name", "label": "Name" },
+                    { "name": "type", "label": "Type" },
+                    { "name": "created", "label": "Created" }
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              json:
+                summary: JSON
+                description: Export the infos of every entity to json
+                value: {
+                  "format": "json",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "infos", "label": "Infos" },
+                    { "name": "infos.my_info.value", "label": "My info" }
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /entity-exports/{id}:
+    get:
+      tags:
+        - entity-exports
+      summary: Get an entity export by id
+      description: |
+        Get the status of an export job.
+
+        Poll it until the status is `done` or `failed`.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-exports-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /entity-exports/{id}/download:
+    get:
+      tags:
+        - entity-exports
+      summary: Download an entity export by id
+      description: |
+        Download the file produced by an export job.
+
+        The job must be `done`: not found is returned while it's still running, or if it failed.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-exports-download
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Disposition:
+              description: attachment, with the generated file name
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entity-imports:
+    post:
+      tags:
+        - entity-imports
+      summary: Start an entity import
+      description: |
+        Import entities from the request body.
+
+        The import runs in the background: this returns a job, whose progress is followed
+        with `GET /entity-imports/{id}`.
+
+        Only one import runs at a time, so a job can stay `pending` while another one is ongoing.
+
+        -  PERMISSIONS: `api_entity:create`
+      operationId: entity-imports-create
+      parameters:
+        - name: source
+          in: query
+          required: true
+          description: name of the system the entities come from, stored on every imported entity
+          schema:
+            type: string
+      requestBody:
+        description: the entities to import
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entityimport.RequestItem'
+            examples:
+              set:
+                summary: Set
+                description: Create or update a component and one of its resources
+                value: [
+                  {
+                    "action": "set",
+                    "name": "cps_component",
+                    "type": "component",
+                    "enabled": true,
+                    "infos": {
+                      "location": {
+                        "description": "Datacenter",
+                        "value": "eu-west-1"
+                      }
+                    }
+                  },
+                  {
+                    "action": "set",
+                    "name": "cps_resource",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "enabled": true
+                  }
+                ]
+              service:
+                summary: Service
+                description: Create a service from an entity pattern
+                value: [
+                  {
+                    "action": "set",
+                    "name": "cps_service",
+                    "type": "service",
+                    "enabled": true,
+                    "output_template": "Dependencies: {{ .All }}",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "infos.cps_info",
+                          "field_type": "string",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_test"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                ]
+              disable:
+                summary: Disable and delete
+                description: Disable a component and delete a resource
+                value: [
+                  {
+                    "action": "disable",
+                    "name": "cps_component",
+                    "type": "component"
+                  },
+                  {
+                    "action": "delete",
+                    "name": "cps_resource",
+                    "component": "cps_component",
+                    "type": "resource"
+                  }
+                ]
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+        '413':
+          $ref: '#/components/schemas/RequestEntityTooLarge'
+  /entity-imports/{id}:
+    get:
+      tags:
+        - entity-imports
+      summary: Get an entity import by id
+      description: |
+        Get the status of an import job.
+
+        Poll it until the status is `done` or `failed`. A failed job reports why in `error_message`.
+
+        -  PERMISSIONS: `api_entity:create`
+      operationId: entity-imports-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
   /pbehaviors:
     get:
       tags:
@@ -204,7 +663,6 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
-        - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/author'
         - name: enabled
           in: query
@@ -901,7 +1359,6 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
-        - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/author'
       responses:
         '200':
@@ -1063,7 +1520,6 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
-        - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/author'
         - name: type
           in: query
@@ -1259,18 +1715,14 @@ components:
     sort:
       name: sort
       in: query
-      description: sort direction
+      description: |
+        Comma separated list of `field:direction`, applied in order.
+        
+        The direction is `asc` or `desc`, and may be omitted to sort ascending.
+        The fields which can be sorted on depend on the endpoint.
       schema:
         type: string
-        enum:
-          - asc
-          - desc
-    sort_by:
-      name: sort_by
-      in: query
-      description: field to sort by
-      schema:
-        type: string
+      example: name:asc,created:desc
     author:
       name: author
       in: query
@@ -1416,6 +1868,14 @@ components:
           example:
             error: "Forbidden"
             message: "The admin role cannot be deleted."
+    RequestEntityTooLarge:
+      description: RequestEntityTooLarge
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Request Entity Too Large"
     Conflict:
       description: Conflict
       content:

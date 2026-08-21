@@ -406,6 +406,14 @@ exclusive = false
 noWait = false
 # args =
 
+[[RabbitMQ.queues]]
+name = "public_api_jobs"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.global]

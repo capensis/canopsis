@@ -8,18 +8,17 @@ import (
 
 type ListRequest struct {
 	pagination.Query
-	Sort    string   `form:"sort" binding:"oneoforempty=asc desc"`
-	SortBy  string   `form:"sort_by,default:name" binding:"oneoforempty=_id name priority created updated"`
-	Author  string   `form:"author"`
+	Sort    string   `form:"sort"`
+	Author  string   `form:"author" binding:"max=50"`
 	Default *bool    `form:"default"`
-	Types   []string `form:"type"`
+	Types   []string `form:"type" binding:"dive,oneof=active inactive maintenance pause"`
 }
 
 type EditRequest struct {
 	Name        string `json:"name" binding:"required,max=255"`
 	Description string `json:"description" binding:"required,max=255"`
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
-	Priority    int64  `json:"priority" binding:"required,min=1"`
+	Priority    int64  `json:"priority" binding:"required,min=1,max=100000"`
 	Color       string `json:"color" binding:"required,iscolor"`
 	Author      string `json:"author" swaggerignore:"true"`
 }

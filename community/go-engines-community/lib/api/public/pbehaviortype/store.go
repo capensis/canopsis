@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/sortparam"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -45,8 +46,12 @@ func NewStore(db mongo.DbClient) Store {
 	}
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListResponse[Response], error) {
-	res := pagination.ListResponse[Response]{}
+func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListResponse[Response], err error) {
+	sort, err := sortparam.Validate(r.Sort, []string{"_id", "name", "priority", "created", "updated"}, "name")
+	if err != nil {
+		return res, err
+	}
+
 	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return res, err
@@ -85,7 +90,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListRespons
 	pipeline := pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		mongoquery.SortQuery(r.SortBy, r.Sort),
+		sort,
 		afterLimit,
 	)
 	opts := options.Aggregate().SetCollation(&options.Collation{Locale: "en"})

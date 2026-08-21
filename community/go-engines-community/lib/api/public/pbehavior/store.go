@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/sortparam"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -69,8 +70,12 @@ func NewStore(
 	}
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListResponse[Response], error) {
-	res := pagination.ListResponse[Response]{}
+func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListResponse[Response], err error) {
+	sort, err := sortparam.Validate(r.Sort, []string{"_id", "name", "tstart", "tstop", "rrule", "created", "updated"}, "name")
+	if err != nil {
+		return res, err
+	}
+
 	filter := bson.M{}
 	if r.Enabled != nil {
 		filter["enabled"] = *r.Enabled
@@ -101,7 +106,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListRespons
 		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
 
-	sort := mongoquery.SortQuery(r.SortBy, r.Sort)
 	afterLimit := nestedObjectsPipeline()
 	afterLimit = append(afterLimit, sort)
 	pipeline := pagination.CreateAggregationPipeline(

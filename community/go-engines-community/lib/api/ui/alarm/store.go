@@ -15,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
-	uivalidation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -762,7 +761,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, uivalidation.GetRealFormatTime(cmp.Or(r.TimeFormat, uivalidation.DefaultTimeFormat)), location,
+	exportCursor := newExportCursor(cursor, t.Fields, cmp.Or(validation.GetRealFormatTime(r.TimeFormat), validation.DefaultTimeFormat), location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }
