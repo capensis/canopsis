@@ -207,7 +207,9 @@ export function convertStatisticsWidgetParametersToQuery(widget) {
  * @param {Object} userPreference
  * @returns {Object}
  */
-export const convertStatisticsUserPreferenceToQuery = ({ content: { interval, mainFilter } = {} }) => {
+export const convertStatisticsUserPreferenceToQuery = ({
+  content: { interval, mainFilter } = {},
+}) => {
   const query = {
     filter: mainFilter,
   };

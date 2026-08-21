@@ -87,6 +87,7 @@ import {
   FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
   KEYS_TO_VIEW_SCREEN_MODES,
   MODALS,
+  ROUTES_NAMES,
   USER_PERMISSIONS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
@@ -97,6 +98,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useActiveView } from '@/hooks/store/modules/active-view';
+import { useInfo } from '@/hooks/store/modules/info';
 import { useView } from '@/hooks/store/modules/view';
 import { useViewRouter } from '@/hooks/view/router';
 
@@ -140,11 +142,25 @@ export default {
     const fullscreen = useFullscreen();
     const { route, redirectToFirstTab } = useViewRouter();
     const { createViewTab } = useView();
+    const { showHeaderOnKioskMode } = useInfo();
     const { view, activeViewScreenMode, fetchActiveView, toggleEditing, setActiveViewScreenMode } =
       useActiveView();
     const { hasAccess: hasAccessToExecuteInstruction } = useCanPermission(
       USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,
     );
+
+    const isHeaderShown = () => {
+      if (
+        [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(
+          activeViewScreenMode.value,
+        ) ||
+        route.name === ROUTES_NAMES.viewKiosk
+      ) {
+        return showHeaderOnKioskMode.value;
+      }
+
+      return !route.meta?.hideHeader;
+    };
 
     const enterFullscreen = () => {
       if (!props.activeTab) {
@@ -163,6 +179,7 @@ export default {
         fullscreenClass: 'full-screen',
         callback: (value) => {
           viewElement.classList.toggle('view-fullscreen', value);
+          viewElement.classList.toggle('view-fullscreen--with-top-bar', value && isHeaderShown());
           isFullscreen.value = value;
 
           const newMode = FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[activeViewScreenMode.value];
@@ -294,5 +311,9 @@ export default {
   inset: 0;
   z-index: 7;
   background: rgb(var(--v-theme-surface));
+
+  &--with-top-bar {
+    top: 48px;
+  }
 }
 </style>

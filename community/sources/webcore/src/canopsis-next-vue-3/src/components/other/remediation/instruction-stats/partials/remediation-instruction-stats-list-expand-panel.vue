@@ -8,6 +8,9 @@
     >
       <v-tab value="summary">{{ t('common.summary') }}</v-tab>
       <v-tab value="statistics">{{ t('common.statistics') }}</v-tab>
+      <v-tab v-if="remediationInstructionStatsItem.has_executions" value="alarmsTimeline">
+        {{ t('remediation.instructionStat.alarmsTimeline') }}
+      </v-tab>
       <v-tab value="rating">{{ t('common.rating') }}</v-tab>
     </v-tabs>
 
@@ -31,6 +34,12 @@
               </v-col>
             </v-row>
           </v-window-item>
+          <v-window-item v-if="remediationInstructionStatsItem.has_executions" value="alarmsTimeline">
+            <remediation-instruction-stats-alarms-timeline-tab
+              :remediation-instruction="remediationInstruction"
+              :interval="interval"
+            />
+          </v-window-item>
           <v-window-item value="rating">
             <v-row justify="center">
               <v-col cols="8">
@@ -53,12 +62,14 @@ import { onMounted, ref, watch } from 'vue';
 import { useI18n } from '@/hooks/i18n';
 import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
+import RemediationInstructionStatsAlarmsTimelineTab from './remediation-instruction-stats-alarms-timeline-tab.vue';
 import RemediationInstructionStatsRatingTab from './remediation-instruction-stats-rating-tab.vue';
 import RemediationInstructionStatsStatisticsTab from './remediation-instruction-stats-statistics-tab.vue';
 import RemediationInstructionStatsSummaryTab from './remediation-instruction-stats-summary-tab.vue';
 
 export default {
   components: {
+    RemediationInstructionStatsAlarmsTimelineTab,
     RemediationInstructionStatsRatingTab,
     RemediationInstructionStatsStatisticsTab,
     RemediationInstructionStatsSummaryTab,

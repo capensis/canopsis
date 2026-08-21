@@ -16,7 +16,7 @@ import { useWidget } from '@/hooks/store/modules/widget';
 /**
  * Hook for widget settings sidebars.
  *
- * Keeps the old widget settings mixin behavior available for Composition API sidebars:
+ * Keeps shared widget settings behavior available for Composition API sidebars:
  * local widget form state, dirty-close confirmation, submit, user preference sync and
  * active view refresh.
  *

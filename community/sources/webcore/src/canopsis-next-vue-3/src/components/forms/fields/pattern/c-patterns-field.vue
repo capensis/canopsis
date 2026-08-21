@@ -387,7 +387,7 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { setFieldError } = useFormContext();
+    const formContext = useFormContext();
     const { showPatternAlarmsModal } = usePatternCountAlarmsModal(props);
     const { showPatternEntitiesModal } = usePatternCountEntitiesModal(props);
 
@@ -585,7 +585,7 @@ export default {
       });
 
     const updatePatternAndClear = (field, name, pattern) => {
-      setFieldError(name, undefined);
+      formContext.setFieldError(name, undefined);
       setErrors([]);
       setTouched(false);
       updatePattern(field, pattern);

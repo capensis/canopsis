@@ -1,6 +1,10 @@
 import { isUndefined } from 'lodash';
 
-import { AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE, AVAILABILITY_TREND_TYPES, QUICK_RANGES } from '@/constants';
+import {
+  AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE,
+  AVAILABILITY_TREND_TYPES,
+  QUICK_RANGES,
+} from '@/constants';
 
 import { findQuickRangeByInterval } from '@/helpers/date/date-intervals';
 import { getInfosWidgetColumn } from '@/helpers/entities/widget/column/form';
@@ -93,5 +97,8 @@ export const getAvailabilitiesTrendByInterval = (interval) => {
   const selectedQuickRange = findQuickRangeByInterval(interval);
   const selectedQuickRangeType = selectedQuickRange?.value;
 
-  return AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE[selectedQuickRangeType] || AVAILABILITY_TREND_TYPES.custom;
+  return (
+    AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE[selectedQuickRangeType] ||
+    AVAILABILITY_TREND_TYPES.custom
+  );
 };

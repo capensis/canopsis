@@ -140,22 +140,19 @@
 import { computed, onMounted, ref, toRef } from 'vue';
 
 import {
-  COLUMNS_WIDGET_TEMPLATES_TYPES,
   ENTITIES_TYPES,
   ENTITY_FIELDS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
   ENTITY_TEMPLATE_FIELDS,
   ENTITY_TYPES,
   MAX_LIMIT,
-  QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
   SIDE_BARS,
   USER_PERMISSIONS,
   VARIABLES_STEP_FIELDS,
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
-import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
-import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
 import { useCanPermission } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
@@ -286,23 +283,7 @@ const entityTemplateVariables = computed(() => [
   },
 ]);
 
-const preparedWidgetTemplates = computed(() =>
-  widgetTemplates.value.map((template) => {
-    if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-      return { ...template, columns: widgetColumnsToForm(template.columns) };
-    }
-
-    if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-      return template;
-    }
-
-    if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
-      return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
-    }
-
-    return template;
-  }),
-);
+const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
 const weatherItemWidgetTemplates = computed(() =>
   preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherItem),

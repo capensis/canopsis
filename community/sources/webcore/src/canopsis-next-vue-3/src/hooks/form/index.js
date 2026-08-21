@@ -27,9 +27,15 @@ import {
 export { useModelField } from './model-field';
 export { useArrayModelField } from './array-model-field';
 export { useLazySearch } from './lazy-search';
-export { applyServerFormErrors, getServerFieldErrors, toLiteralVeeFieldPath } from './server-errors';
+export {
+  applyServerFormErrors,
+  getServerFieldErrors,
+  toLiteralVeeFieldPath,
+} from './server-errors';
 
 export const FORM_CONTEXT_KEY = Symbol('formContext');
+
+const fallbackFormContexts = new WeakMap();
 
 /**
  * Creates form state separated from vee-validate.
@@ -43,7 +49,11 @@ export const FORM_CONTEXT_KEY = Symbol('formContext');
  * @param {Function} [options.errorsToValidation=v => v] Maps a server error to field errors.
  * @returns {Object} Form context.
  */
-export const useForm = ({ initialValues = {}, errorsToValidation = v => v, ...veeOptions } = {}) => {
+export const useForm = ({
+  initialValues = {},
+  errorsToValidation = v => v,
+  ...veeOptions
+} = {}) => {
   const values = ref(initialValues);
   const fieldsInstances = ref({});
 
@@ -406,19 +416,28 @@ export const useForm = ({ initialValues = {}, errorsToValidation = v => v, ...ve
 };
 
 /**
- * Returns the nearest provided form context.
+ * Returns the nearest provided form context or creates a local one for the current component.
  *
  * @returns {Object} Form context created by useForm.
- * @throws {Error} When called outside of a form context.
  */
 export const useFormContext = () => {
-  const form = inject(FORM_CONTEXT_KEY);
+  const form = inject(FORM_CONTEXT_KEY, null);
 
-  if (!form) {
-    throw new Error('Missing form context');
+  if (form) {
+    return form;
   }
 
-  return form;
+  const instance = useComponentInstance();
+
+  if (!instance) {
+    return useForm();
+  }
+
+  if (!fallbackFormContexts.has(instance)) {
+    fallbackFormContexts.set(instance, useForm());
+  }
+
+  return fallbackFormContexts.get(instance);
 };
 
 /**
@@ -429,19 +448,16 @@ export const useFormContext = () => {
  * @param {Object} [options] Vee-validate field options.
  * @returns {Object} Vee-validate field API.
  */
-export const useField = (name, rules, options) => {
+export const useField = (name, rules, options = {}) => {
+  const form = useFormContext();
+
   const fieldPath = computed(() => toLiteralVeeFieldPath(name));
   const field = useVeeField(fieldPath, rules, options);
-  const form = inject(FORM_CONTEXT_KEY, null);
   const instance = useComponentInstance();
 
   watch(
     () => unref(name),
     (fieldName, previousFieldName) => {
-      if (!form) {
-        return;
-      }
-
       if (previousFieldName && previousFieldName !== fieldName) {
         form.removeFieldInstance(previousFieldName);
       }
@@ -452,9 +468,7 @@ export const useField = (name, rules, options) => {
   );
 
   onBeforeUnmount(() => {
-    if (form) {
-      form.removeFieldInstance(unref(name));
-    }
+    form.removeFieldInstance(unref(name));
   });
 
   return field;
@@ -497,6 +511,8 @@ export const useFormErrors = veeUseFormErrors;
  * @returns {import('vue').ComputedRef<string|undefined>} Field error message.
  */
 export const useFieldError = (path) => {
+  useFormContext();
+
   if (path == null) {
     return veeUseFieldError(path);
   }

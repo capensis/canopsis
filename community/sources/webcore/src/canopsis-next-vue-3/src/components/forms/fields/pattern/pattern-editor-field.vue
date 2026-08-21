@@ -159,7 +159,7 @@ export default {
   },
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
-    const { setFieldError } = useFormContext();
+    const formContext = useFormContext();
 
     const activeTab = ref(PATTERN_EDITOR_TABS.simple);
     const patternsJson = ref([]);
@@ -193,7 +193,7 @@ export default {
       () => props.patterns.groups,
       (groups, oldGroups) => {
         if (hasJsonError.value) {
-          setFieldError(patternJsonFieldName.value, undefined);
+          formContext.setFieldError(patternJsonFieldName.value, undefined);
 
           if (activeTab.value === PATTERN_EDITOR_TABS.advanced) {
             patternsJson.value = formGroupsToPatternRules(groups);
@@ -201,7 +201,7 @@ export default {
         }
 
         if (!isEqual(groups, oldGroups)) {
-          setFieldError(props.name, undefined);
+          formContext.setFieldError(props.name, undefined);
         }
       },
     );

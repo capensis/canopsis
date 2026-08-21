@@ -20,43 +20,37 @@
       </template>
     </c-card-iterator-field>
     <c-layout>
-      <slot name="add-button">
-        <c-btn-with-error
-          v-if="required"
-          :error="
-            required && hasErrors ? requiredErrorMessage || $t('common.addAtLeastOneItem') : ''
-          "
-          :icon="!addButtonLabel"
-          :size="!addButtonLabel ? 'small' : undefined"
-          variant="outlined"
-          @click="$emit('add')"
-        >
-          <span v-if="addButtonLabel">
-            {{ addButtonLabel }}
-          </span>
-          <v-icon v-else>
-            add
-          </v-icon>
-        </c-btn-with-error>
-        <v-tooltip v-else location="left">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn
-              :error="
-                required && hasErrors ? requiredErrorMessage || $t('common.addAtLeastOneItem') : ''
-              "
-              color="primary"
-              size="small"
-              variant="outlined"
-              icon
-              v-bind="tooltipProps"
-              @click="$emit('add')"
-            >
-              <v-icon>add</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('common.add') }}</span>
-        </v-tooltip>
-      </slot>
+      <v-tooltip v-if="!addButtonLabel && !addButtonError" location="left">
+        <template #activator="{ props: tooltipProps }">
+          <c-btn-with-error
+            :error="addButtonError"
+            size="small"
+            variant="outlined"
+            icon
+            v-bind="tooltipProps"
+            @click="$emit('add')"
+          >
+            <v-icon>add</v-icon>
+          </c-btn-with-error>
+        </template>
+        <span>{{ $t('common.add') }}</span>
+      </v-tooltip>
+
+      <c-btn-with-error
+        v-else
+        :error="addButtonError"
+        :icon="!addButtonLabel"
+        :size="!addButtonLabel ? 'small' : undefined"
+        variant="outlined"
+        @click="$emit('add')"
+      >
+        <span v-if="addButtonLabel">
+          {{ addButtonLabel }}
+        </span>
+        <v-icon v-else>
+          add
+        </v-icon>
+      </c-btn-with-error>
     </c-layout>
   </c-layout>
 </template>
@@ -64,6 +58,8 @@
 <script>
 import { computed, nextTick, onBeforeUnmount, onMounted, toRef, watch } from 'vue';
 
+import { useFieldError, useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
 
 export default {
@@ -104,12 +100,21 @@ export default {
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const fieldName = toRef(props, 'name');
+    useFormContext();
+    const fieldError = useFieldError(fieldName);
     const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
       useValidationAttachMinValue(fieldName);
 
     const isEmpty = computed(() => !props.value?.length);
     const hasErrors = computed(() => validator?.errors?.has(fieldName.value) ?? false);
+    const requiredAddButtonError = computed(() =>
+      props.required && hasErrors.value
+        ? props.requiredErrorMessage || fieldError.value || t('common.addAtLeastOneItem')
+        : '',
+    );
+    const addButtonError = computed(() => requiredAddButtonError.value || fieldError.value);
 
     /**
      * Attaches min_value:1 validation rule to require at least one item when required prop is true
@@ -136,6 +141,7 @@ export default {
     return {
       isEmpty,
       hasErrors,
+      addButtonError,
     };
   },
 };

@@ -39,6 +39,8 @@ const AdminSettingsNotifications = () =>
   import('@/views/admin/settings/notifications-settings-page.vue');
 const AdminSettingsCommentTemplates = () =>
   import('@/views/admin/settings/comment-templates-page.vue');
+const AdminSettingsWidgetTemplates = () =>
+  import('@/views/admin/settings/widget-templates-page.vue');
 const AdminSettingsStorageSettings = () =>
   import('@/views/admin/settings/storage-settings-page.vue');
 const AdminSettingsStateSettings = () => import('@/views/admin/settings/state-settings-page.vue');
@@ -345,7 +347,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.widgetTemplate,
       },
     }),
-    component: DeclareTicketRulesPage,
+    component: AdminSettingsWidgetTemplates,
   },
   {
     path: ROUTES.adminSettingsStorageSettings,

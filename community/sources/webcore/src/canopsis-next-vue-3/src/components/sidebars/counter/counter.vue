@@ -72,16 +72,9 @@
 <script setup>
 import { computed, onMounted, ref, toRef } from 'vue';
 
-import {
-  COLUMNS_WIDGET_TEMPLATES_TYPES,
-  MAX_LIMIT,
-  QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
-  SIDE_BARS,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
+import { MAX_LIMIT, SIDE_BARS } from '@/constants';
 
-import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
-import { widgetSortColumnsToForm } from '@/helpers/entities/widget/sort-column/form';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInfos } from '@/hooks/store/modules/infos';
@@ -124,23 +117,7 @@ const { form, widget, hasChanges, submitting, close, submit } = useWidgetSetting
   sidebar,
 });
 
-const preparedWidgetTemplates = computed(() =>
-  widgetTemplates.value.map((template) => {
-    if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-      return { ...template, columns: widgetColumnsToForm(template.columns) };
-    }
-
-    if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-      return template;
-    }
-
-    if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
-      return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
-    }
-
-    return template;
-  }),
-);
+const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
 const fetchWidgetTemplates = async () => {
   try {

@@ -1,9 +1,9 @@
 <template>
-  <c-layout class="pt-2">
+  <c-layout class="pt-2" align="center">
     <div :style="labelStyles">
-      <h4 class="text-subtitle-1 font-weight-bold">
+      <div class="text-subtitle-1 font-weight-bold">
         {{ label }}
-      </h4>
+      </div>
     </div>
     <div class="text-break">
       <slot>{{ value }}</slot>

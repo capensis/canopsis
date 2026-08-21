@@ -1,4 +1,8 @@
-import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_FIELDS, AVAILABILITY_SHOW_TYPE } from '@/constants';
+import {
+  AVAILABILITY_DISPLAY_PARAMETERS,
+  AVAILABILITY_FIELDS,
+  AVAILABILITY_SHOW_TYPE,
+} from '@/constants';
 
 /**
  * @typedef {Object} Availability

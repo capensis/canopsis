@@ -25,14 +25,9 @@
 <script>
 import { computed, onMounted, ref, toRef } from 'vue';
 
-import {
-  COLUMNS_WIDGET_TEMPLATES_TYPES,
-  MAX_LIMIT,
-  SIDE_BARS,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
+import { MAX_LIMIT, SIDE_BARS, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
 import {
   useAvailabilityExportPermissions,
@@ -71,15 +66,7 @@ export default {
     const widgetTemplates = ref([]);
     const widgetTemplatesPending = ref(false);
 
-    const preparedWidgetTemplates = computed(() =>
-      widgetTemplates.value.map((template) => {
-        if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
-          return { ...template, columns: widgetColumnsToForm(template.columns) };
-        }
-
-        return template;
-      }),
-    );
+    const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
     const alarmColumnsWidgetTemplates = computed(() =>
       preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),

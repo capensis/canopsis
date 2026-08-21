@@ -70,6 +70,12 @@ export default {
   [MODALS.selectViewTab]: defineAsyncComponent(() => import('./view/select-view-tab.vue')),
   [MODALS.shareView]: defineAsyncComponent(() => import('./view/share-view.vue')),
   [MODALS.createWidget]: defineAsyncComponent(() => import('./view/create-widget.vue')),
+  [MODALS.selectWidgetTemplateType]: defineAsyncComponent(
+    () => import('./widget-template/select-widget-template-type.vue'),
+  ),
+  [MODALS.createWidgetTemplate]: defineAsyncComponent(
+    () => import('./widget-template/create-widget-template.vue'),
+  ),
   [MODALS.createShareToken]: defineAsyncComponent(
     () => import('./share-token/create-share-token.vue'),
   ),
