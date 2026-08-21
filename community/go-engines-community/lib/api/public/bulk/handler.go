@@ -39,7 +39,7 @@ import (
 func Handler[T any](
 	w http.ResponseWriter,
 	r *http.Request,
-	f func(T) (string, error),
+	f func(context.Context, T) (string, error),
 	responder response.Responder,
 	binder binding.Binder,
 	decoder encoding.Decoder,
@@ -80,7 +80,7 @@ func Handler[T any](
 			continue
 		}
 
-		id, err := f(req)
+		id, err := f(r.Context(), req)
 		if err != nil {
 			res.SetArrayItem(idx, getErrResponseItem(r, err, responder, &ar))
 			continue
@@ -126,7 +126,7 @@ func HandlerWithGrouping[T any](
 	r *http.Request,
 	compareWithPrev func(prev, cur T) bool,
 	mergeReqs func(merged, cur T) T,
-	procReq func(T) (id string, err error),
+	procReq func(context.Context, T) (id string, err error),
 	responder response.Responder,
 	binder binding.Binder,
 	decoder encoding.Decoder,
@@ -186,7 +186,7 @@ func HandlerWithGrouping[T any](
 
 	for _, g := range groupedReqs {
 		req := g.Req
-		id, err := procReq(req)
+		id, err := procReq(r.Context(), req)
 		if err != nil {
 			for idx := range g.Items {
 				res.SetArrayItem(idx, getErrResponseItem(r, err, responder, &ar))

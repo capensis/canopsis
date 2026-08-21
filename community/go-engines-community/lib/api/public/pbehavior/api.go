@@ -186,8 +186,8 @@ func (a *api) Delete(w http.ResponseWriter, r *http.Request) {
 func (a *api) BulkCreate(w http.ResponseWriter, r *http.Request) {
 	ids := make([]string, 0)
 	recomputeInherited := false
-	bulk.Handler(w, r, func(d EditRequest) (string, error) {
-		res, err := a.store.Insert(r.Context(), d)
+	bulk.Handler(w, r, func(ctx context.Context, d EditRequest) (string, error) {
+		res, err := a.store.Insert(ctx, d)
 		if err != nil {
 			return "", err
 		}
@@ -209,8 +209,8 @@ func (a *api) BulkUpdate(w http.ResponseWriter, r *http.Request) {
 	ids := make([]string, 0)
 	recomputeInherited := false
 	processed := make(map[string]bool)
-	bulk.Handler(w, r, func(d BulkUpdateRequestItem) (string, error) {
-		res, current, err := a.store.Update(r.Context(), d.ID, d.EditRequest)
+	bulk.Handler(w, r, func(ctx context.Context, d BulkUpdateRequestItem) (string, error) {
+		res, current, err := a.store.Update(ctx, d.ID, d.EditRequest)
 		if err != nil {
 			return "", err
 		}
@@ -242,8 +242,8 @@ func (a *api) BulkDelete(w http.ResponseWriter, r *http.Request) {
 
 	ids := make([]string, 0)
 	recomputeInherited := false
-	bulk.Handler(w, r, func(d bulk.DeleteRequestItem) (string, error) {
-		current, err := a.store.Delete(r.Context(), d.ID, userID)
+	bulk.Handler(w, r, func(ctx context.Context, d bulk.DeleteRequestItem) (string, error) {
+		current, err := a.store.Delete(ctx, d.ID, userID)
 		if err != nil {
 			return "", err
 		}
@@ -277,8 +277,8 @@ func (a *api) BulkConnectorCreate(w http.ResponseWriter, r *http.Request) {
 
 			return merged
 		},
-		func(d BulkConnectorCreateRequestItem) (string, error) {
-			pbh, err := a.store.ConnectorCreate(r.Context(), d)
+		func(ctx context.Context, d BulkConnectorCreateRequestItem) (string, error) {
+			pbh, err := a.store.ConnectorCreate(ctx, d)
 			if err != nil {
 				return "", err
 			}
@@ -326,8 +326,8 @@ func (a *api) BulkConnectorDelete(w http.ResponseWriter, r *http.Request) {
 
 			return merged
 		},
-		func(d BulkConnectorDeleteRequestItem) (string, error) {
-			id, err := a.store.ConnectorDelete(r.Context(), d)
+		func(ctx context.Context, d BulkConnectorDeleteRequestItem) (string, error) {
+			id, err := a.store.ConnectorDelete(ctx, d)
 			if err != nil {
 				return "", err
 			}
@@ -373,13 +373,13 @@ func (a *api) BulkConnectorEdit(w http.ResponseWriter, r *http.Request) {
 
 			return merged
 		},
-		func(request BulkConnectorEditRequestItem) (string, error) {
+		func(ctx context.Context, request BulkConnectorEditRequestItem) (string, error) {
 			var id string
 			var err error
 			switch request.Action {
 			case BulkConnectorActionCreate:
 				var res Response
-				res, err = a.store.ConnectorCreate(r.Context(), BulkConnectorCreateRequestItem{
+				res, err = a.store.ConnectorCreate(ctx, BulkConnectorCreateRequestItem{
 					Author:   request.Author,
 					Entities: request.Entities,
 					Origin:   request.Origin,
@@ -393,7 +393,7 @@ func (a *api) BulkConnectorEdit(w http.ResponseWriter, r *http.Request) {
 				})
 				id = res.ID
 			case BulkConnectorActionDelete:
-				id, err = a.store.ConnectorDelete(r.Context(), BulkConnectorDeleteRequestItem{
+				id, err = a.store.ConnectorDelete(ctx, BulkConnectorDeleteRequestItem{
 					Author:   request.Author,
 					Entities: request.Entities,
 					Origin:   request.Origin,

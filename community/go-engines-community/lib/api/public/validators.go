@@ -5,14 +5,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(secConfig libsecurity.Config) (*validator.Validate, *ut.UniversalTranslator, error) {
+func RegisterValidators() (*validator.Validate, *ut.UniversalTranslator, error) {
 	v := validator.New()
 	v.SetTagName("binding")
 	trans, err := libvalidator.NewTranslator(v, "")
@@ -25,7 +24,7 @@ func RegisterValidators(secConfig libsecurity.Config) (*validator.Validate, *ut.
 		return v, nil, err
 	}
 
-	registerStructValidations(v, secConfig)
+	registerStructValidations(v)
 
 	return v, trans, nil
 }
@@ -48,7 +47,6 @@ func registerTagValidations(v *validator.Validate) error {
 
 func registerStructValidations(
 	v *validator.Validate,
-	secConfig libsecurity.Config,
 ) {
 	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
 

@@ -101,7 +101,7 @@ func main() {
 
 	s.APIConfigProvider = config.NewApiConfigProvider(s.Config, s.Logger)
 	s.TimezoneConfigProvider = config.NewTimezoneConfigProvider(s.Config, s.Logger)
-	validator, uniTrans, err := api.RegisterValidators(s.SecurityConfig)
+	validator, uniTrans, err := api.RegisterValidators()
 	if err != nil {
 		s.Logger.Fatal().Err(err).Msg("cannot register validators")
 	}
