@@ -1374,24 +1374,23 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 		return nil
 	case externaldata.TypePostgreSQL:
-		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
-		var sqlSb1379 strings.Builder
+		var sql strings.Builder
+		sql.WriteString("CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
+			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, ")
 		for i, field := range columns {
-			sqlSb1379.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
+			sql.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
 			if i != len(columns)-1 {
-				sqlSb1379.WriteString(",")
+				sql.WriteString(",")
 			}
 		}
-		sql += sqlSb1379.String()
+		sql.WriteString(")")
 
-		sql += ")"
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, sql)
+		_, err = pgPool.Exec(ctx, sql.String())
 		if err != nil {
 			return fmt.Errorf("failed to create postgres table: %w", err)
 		}
