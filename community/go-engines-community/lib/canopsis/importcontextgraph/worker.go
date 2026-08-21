@@ -63,9 +63,7 @@ type worker struct {
 }
 
 var (
-	ErrEmptyImport          = errors.New("empty import")
-	ErrCantCreateAndDisable = errors.New("can't create and disable component simutaneously")
-	ErrCantCreateAndDelete  = errors.New("can't create and delete component simutaneously")
+	ErrEmptyImport = errors.New("empty import")
 )
 
 func NewWorker(
@@ -250,9 +248,10 @@ func (w *worker) parseEntities(
 	componentInfos := make(map[string]map[string]types.Info)
 
 	componentsExist := make(map[string]bool)
-	componentsToDelete := make(map[string]bool)
-	componentsToDisable := make(map[string]bool)
+	componentsToDelete := make(map[string]int)
+	componentsToDisable := make(map[string]int)
 	componentsToEnable := make(map[string]bool)
+	componentRefs := make(map[string]int)
 
 	deletedResources := make(map[string]bool)
 	disabledResources := make(map[string]bool)
@@ -261,11 +260,13 @@ func (w *worker) parseEntities(
 	resourceEvents := make([]types.Event, 0)
 	updatedComponentEvents := make([]types.Event, 0)
 
+	idx := -1
 	for decoder.More() {
+		idx++
 		var ci EntityConfiguration
 		err := decoder.Decode(&ci)
 		if err != nil {
-			return res, fmt.Errorf("failed to decode cis item: %w", err)
+			return res, fmt.Errorf("item %d: invalid json: %w", idx, err)
 		}
 
 		id := ""
@@ -280,23 +281,17 @@ func (w *worker) parseEntities(
 
 		err = w.validate(ci)
 		if err != nil {
-			if ci.Type == types.EntityTypeService {
-				return res, fmt.Errorf("ci = %s, validation error: %s", ci.Name, err.Error())
-			}
-
-			return res, fmt.Errorf("ci = %s, validation error: %s", id, err.Error())
+			return res, fmt.Errorf("item %d: %s", idx, err.Error())
 		}
 
 		if ci.Type == types.EntityTypeService {
 			if !patternfields.ValidateEntityPattern(ci.EntityPattern, libmongo.EntityMongoCollection) {
-				w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
-				continue
+				return res, fmt.Errorf("item %d: invalid entity pattern", idx)
 			}
 
 			ci.EntityPattern, ci.Aliases, err = w.transformer.TransformAliases(ctx, ci.EntityPattern, ci)
 			if err != nil {
-				w.logger.Warn().Str("entity_name", ci.Name).Msgf("failed to transform entity pattern: %v, skip", err)
-				continue
+				return res, fmt.Errorf("item %d: invalid entity pattern: %w", idx, err)
 			}
 		}
 
@@ -407,6 +402,12 @@ func (w *worker) parseEntities(
 				updatedIds = append(updatedIds, oldEntity.ID)
 			}
 
+			if ci.Type == types.EntityTypeResource {
+				if _, ok := componentRefs[ci.Component]; !ok {
+					componentRefs[ci.Component] = idx
+				}
+			}
+
 			if ci.Type == types.EntityTypeComponent {
 				componentInfos[id] = mergedEntity.Infos
 				componentsExist[id] = true
@@ -426,19 +427,13 @@ func (w *worker) parseEntities(
 			}
 		case ActionDelete:
 			if oldEntity.ID == "" {
-				if ci.Type == types.EntityTypeService {
-					err = fmt.Errorf("failed to delete an entity service with name = %s", ci.Name)
-				} else {
-					err = fmt.Errorf("failed to delete an entity with _id = %s", id)
-				}
-
-				return res, err
+				return res, fmt.Errorf("item %d: cannot delete entity %q: it doesn't exist", idx, ci.Name)
 			}
 
 			if ci.Type == types.EntityTypeResource && !deletedResources[id] {
 				deletedResources[id] = true
 			} else if ci.Type == types.EntityTypeComponent {
-				componentsToDelete[id] = true
+				componentsToDelete[id] = idx
 
 				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
@@ -455,13 +450,7 @@ func (w *worker) parseEntities(
 			removedIds = append(removedIds, oldEntity.ID)
 		case ActionEnable:
 			if oldEntity.ID == "" {
-				if ci.Type == types.EntityTypeService {
-					err = fmt.Errorf("failed to enable an entity service with name = %s", ci.Name)
-				} else {
-					err = fmt.Errorf("failed to enable an entity with _id = %s", id)
-				}
-
-				return res, err
+				return res, fmt.Errorf("item %d: cannot enable entity %q: it doesn't exist", idx, ci.Name)
 			}
 
 			switch ci.Type {
@@ -479,19 +468,13 @@ func (w *worker) parseEntities(
 			updatedIds = append(updatedIds, oldEntity.ID)
 		case ActionDisable:
 			if oldEntity.ID == "" {
-				if ci.Type == types.EntityTypeService {
-					err = fmt.Errorf("failed to disable an entity service with name = %s", ci.Name)
-				} else {
-					err = fmt.Errorf("failed to disable an entity with _id = %s", id)
-				}
-
-				return res, err
+				return res, fmt.Errorf("item %d: cannot disable entity %q: it doesn't exist", idx, ci.Name)
 			}
 
 			if ci.Type == types.EntityTypeResource && !deletedResources[id] {
 				disabledResources[id] = true
 			} else if ci.Type == types.EntityTypeComponent {
-				componentsToDisable[id] = true
+				componentsToDisable[id] = idx
 
 				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
@@ -512,7 +495,8 @@ func (w *worker) parseEntities(
 			writeModels = append(writeModels, w.changeState(oldEntity.ID, false, source, now))
 			updatedIds = append(updatedIds, oldEntity.ID)
 		default:
-			return res, fmt.Errorf("the action %s is not recognized", ci.Action)
+			return res, fmt.Errorf("item %d: unknown action %q, must be one of [%s %s %s %s]", idx, ci.Action,
+				ActionSet, ActionDelete, ActionEnable, ActionDisable)
 		}
 
 		if withEvents && eventType != "" {
@@ -528,12 +512,12 @@ func (w *worker) parseEntities(
 	}
 
 	for componentName, exists := range componentsExist {
-		if componentsToDelete[componentName] {
-			return res, ErrCantCreateAndDelete
+		if cidx, ok := componentsToDelete[componentName]; ok {
+			return res, fmt.Errorf("item %d: cannot create resource: item %d deletes its component %q", componentRefs[componentName], cidx, componentName)
 		}
 
-		if componentsToDisable[componentName] {
-			return res, ErrCantCreateAndDisable
+		if cidx, ok := componentsToDisable[componentName]; ok {
+			return res, fmt.Errorf("item %d: cannot create resource: item %d disables its component %q", componentRefs[componentName], cidx, componentName)
 		}
 
 		if !exists {
@@ -556,7 +540,7 @@ func (w *worker) parseEntities(
 				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now, source, nil))
 			} else {
 				if !oldEntity.Enabled && !componentsToEnable[oldEntity.ID] {
-					return res, errors.New("can't create resource for disabled component")
+					return res, fmt.Errorf("item %d: cannot create resource: its component %q is disabled", componentRefs[componentName], componentName)
 				}
 
 				componentInfos[componentName] = oldEntity.Infos
@@ -656,23 +640,24 @@ func (w *worker) validate(ci EntityConfiguration) error {
 	switch ci.Type {
 	case types.EntityTypeService:
 		if len(ci.EntityPattern) == 0 && ci.Action == ActionSet {
-			return fmt.Errorf("service %s contains empty pattern", ci.Name)
+			return errors.New("entity_pattern is required to set a service")
 		}
 	case types.EntityTypeResource:
 		if ci.Component == "" {
-			return fmt.Errorf("resource %s contains empty component", ci.Name)
+			return errors.New("component is required for a resource")
 		}
 	case types.EntityTypeComponent:
 	default:
-		return fmt.Errorf("type is not valid %s", ci.Type)
+		return fmt.Errorf("unknown type %q, must be one of [%s, %s, %s]", ci.Type,
+			types.EntityTypeService, types.EntityTypeResource, types.EntityTypeComponent)
 	}
 
 	if ci.Name == "" {
-		return errors.New("empty name is not allowed")
+		return errors.New("name is required")
 	}
 
 	if ci.Type != types.EntityTypeService && len(ci.EntityPattern) > 0 {
-		return errors.New("contains entity pattern, but ci is not a service")
+		return fmt.Errorf("entity_pattern is only allowed for a service, but %q is a %s", ci.Name, ci.Type)
 	}
 
 	return nil

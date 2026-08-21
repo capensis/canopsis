@@ -18,16 +18,6 @@ const (
 	tableNameMaxLen      = 63
 )
 
-const DefaultTimeFormat = "YYYY-MM-DDThh:mm:ss"
-
-var timeFormats = map[string]string{
-	DefaultTimeFormat:            "2006-01-02T15:04:05",
-	"YYYY-MM-DDThh:mm:ssZ":       "2006-01-02T15:04:05-0700",
-	"DD MMM YYYY hh:mm:ss":       "02 Jan 2006 15:04",
-	"DD MMM YYYY hh:mm:ss ZZ":    "02 Jan 2006 15:04 MST",
-	"W, DD MMM YYYY hh:mm:ss ZZ": "Mon, 02 Jan 2006 15:04:05 MST",
-}
-
 var tableNameRegex = regexp.MustCompile(tableNameRegexString)
 
 func ValidateID(fl validator.FieldLevel) bool {
@@ -37,19 +27,6 @@ func ValidateID(fl validator.FieldLevel) bool {
 	}
 
 	return !strings.ContainsAny(v, InvalidIDChars) && len(v) <= MaxIDLength
-}
-
-func ValidateTimeFormat(fl validator.FieldLevel) bool {
-	v := fl.Field().String()
-
-	return v == "" || timeFormats[v] != ""
-}
-
-func GetRealFormatTime(f string) string {
-	if f == "" {
-		return ""
-	}
-	return timeFormats[f]
 }
 
 func ValidateFilteredQuery(sl validator.StructLevel) {

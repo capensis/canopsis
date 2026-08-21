@@ -4,15 +4,22 @@ import (
 	"embed"
 	"fmt"
 	"net/http"
+	"path/filepath"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataimport"
 	publicdocs "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/docs"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/entityexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/entityimport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
@@ -20,6 +27,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -43,6 +51,7 @@ type Services struct {
 	Binder                 binding.Binder
 	Responder              response.Responder
 	PrimaryDbClient        mongo.DbClient
+	SecondaryDbClient      mongo.DbClient
 	AMQPPubChPool          amqp.ChannelPool
 	Config                 config.CanopsisConf
 	SecurityConfig         security.Config
@@ -50,6 +59,7 @@ type Services struct {
 	AuthProviders          []security.HttpProvider
 	APIConfigProvider      config.ApiConfigProvider
 	TimezoneConfigProvider config.TimezoneConfigProvider
+	JobPublisher           asyncjob.Publisher
 }
 
 func (s *Services) authorize(obj, act string) func(next http.Handler) http.Handler {
@@ -138,6 +148,40 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 						Put("/", pbhAPI.BulkConnectorEdit)
 				})
 			}
+			{
+				entityAPI := entity.NewAPI(entity.NewStore(s.PrimaryDbClient, patternfields.NewTransformer(s.PrimaryDbClient)), s.Binder, s.Responder)
+				r.Route("/entities", func(r chi.Router) {
+					r.With(authorize(apisecurity.ObjEntity, model.PermissionRead)).
+						Get("/", entityAPI.List)
+
+					r.With(authorize(apisecurity.ObjEntity, model.PermissionRead)).
+						Post("/search", entityAPI.Search)
+				})
+			}
+			{
+				entityImportAPI := entityimport.NewAPI(
+					asyncjob.NewStore[entityimport.Job](s.PrimaryDbClient, mongo.EntityImportPublicCollection),
+					s.JobPublisher,
+					filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityImportPublic),
+					s.Config.File.ImportMaxSize,
+					s.Binder,
+					s.Responder,
+					s.Logger,
+				)
+				registerDataImportRoutes(r, "/entity", apisecurity.ObjEntity, entityImportAPI, s)
+			}
+			{
+				entityExportAPI := entityexport.NewAPI(
+					asyncjob.NewStore[entityexport.Job](s.PrimaryDbClient, mongo.EntityExportPublicCollection),
+					s.JobPublisher,
+					filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityExportPublic),
+					patternfields.NewTransformer(s.PrimaryDbClient),
+					s.Binder,
+					s.Responder,
+					s.Logger,
+				)
+				registerDataExportRoutes(r, "/entity", apisecurity.ObjEntity, entityExportAPI, s)
+			}
 		})
 	})
 
@@ -202,6 +246,38 @@ func registerBulkRoutes(
 		r.With(authorize(permObj, model.PermissionDelete)).
 			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, false)).
 			Delete("/", a.BulkDelete)
+	})
+}
+
+func registerDataExportRoutes(
+	r chi.Router,
+	pattern, permObj string,
+	a dataexport.API,
+	s Services,
+) {
+	authorize := s.authorize
+	r.Route(pattern+"-exports", func(r chi.Router) {
+		r.With(authorize(permObj, model.PermissionRead)).
+			Post("/", a.Start)
+		r.With(authorize(permObj, model.PermissionRead)).
+			Get("/{id}", a.Status)
+		r.With(authorize(permObj, model.PermissionRead)).
+			Get("/{id}/download", a.Download)
+	})
+}
+
+func registerDataImportRoutes(
+	r chi.Router,
+	pattern, permObj string,
+	a dataimport.API,
+	s Services,
+) {
+	authorize := s.authorize
+	r.Route(pattern+"-imports", func(r chi.Router) {
+		r.With(authorize(permObj, model.PermissionCreate)).
+			Post("/", a.Start)
+		r.With(authorize(permObj, model.PermissionCreate)).
+			Get("/{id}", a.Status)
 	})
 }
 
