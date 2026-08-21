@@ -48,19 +48,19 @@ type api[TList, TCreate, TUpdate, TBulkUpdate, TBulkDelete, TResp any] struct {
 }
 
 func (a *api[TList, TCreate, TUpdate, TBulkUpdate, TBulkDelete, TResp]) BulkCreate(w http.ResponseWriter, r *http.Request) {
-	Handler(w, r, func(d TCreate) (string, error) {
-		return a.store.BulkInsert(r.Context(), d)
+	Handler(w, r, func(ctx context.Context, d TCreate) (string, error) {
+		return a.store.BulkInsert(ctx, d)
 	}, a.responder, a.binder, a.decoder)
 }
 
 func (a *api[TList, TCreate, TUpdate, TBulkUpdate, TBulkDelete, TResp]) BulkUpdate(w http.ResponseWriter, r *http.Request) {
-	Handler(w, r, func(d TBulkUpdate) (string, error) {
-		return a.store.BulkUpdate(r.Context(), d)
+	Handler(w, r, func(ctx context.Context, d TBulkUpdate) (string, error) {
+		return a.store.BulkUpdate(ctx, d)
 	}, a.responder, a.binder, a.decoder)
 }
 
 func (a *api[TList, TCreate, TUpdate, TBulkUpdate, TBulkDelete, TResp]) BulkDelete(w http.ResponseWriter, r *http.Request) {
-	Handler(w, r, func(d TBulkDelete) (string, error) {
-		return a.store.BulkDelete(r.Context(), d)
+	Handler(w, r, func(ctx context.Context, d TBulkDelete) (string, error) {
+		return a.store.BulkDelete(ctx, d)
 	}, a.responder, a.binder, a.decoder)
 }
