@@ -52,7 +52,7 @@ require (
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.10
-	go.mongodb.org/mongo-driver/v2 v2.3.1
+	go.mongodb.org/mongo-driver/v2 v2.4.2
 	go.uber.org/mock v0.6.0
 	golang.org/x/crypto v0.55.0
 	golang.org/x/oauth2 v0.36.0
@@ -62,7 +62,7 @@ require (
 )
 
 require (
-	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
+	github.com/Azure/go-ntlmssp v0.1.1 // indirect
 	github.com/ChannelMeter/iso8601duration v0.0.0-20150204201828-8da3af7a2a61 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
