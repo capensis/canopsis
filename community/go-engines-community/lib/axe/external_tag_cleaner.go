@@ -13,6 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const colorCleanupPageSize = 1000
+
 func NewExternalTagCleaner(logger zerolog.Logger) datastorage.Cleaner {
 	return &externalTagCleaner{
 		logger: logger,
@@ -52,7 +54,7 @@ func (c *externalTagCleaner) Clean(ctx context.Context, dbClient mongo.DbClient,
 		return res, fmt.Errorf("cannot delete tags: %w", err)
 	}
 
-	deletedColors, err = c.deleteColors(ctx, limit, datastorage.BulkSize, colorDbCollection)
+	deletedColors, err = c.deleteColors(ctx, limit, datastorage.BulkSize, dbCollection, colorDbCollection)
 	if err != nil {
 		return res, fmt.Errorf("cannot delete colors: %w", err)
 	}
@@ -127,81 +129,89 @@ func (c *externalTagCleaner) deleteColors(
 	ctx context.Context,
 	limit int,
 	bulkSize int,
+	tagDbCollection mongo.DbCollection,
 	dbCollection mongo.DbCollection,
 ) (int64, error) {
-	pipeline := []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.AlarmTagCollection,
-			"localField":   "_id",
-			"foreignField": "label",
-			"as":           "tags",
-			"pipeline": []bson.M{
-				{"$limit": 1},
-				{"$project": bson.M{
-					"_id": 1,
-				}},
-			},
-		}},
-		{"$match": bson.M{
-			"tags": bson.A{},
-		}},
-		{"$project": bson.M{
-			"_id": 1,
-		}},
-	}
-
-	if limit > 0 {
-		pipeline = append(pipeline, bson.M{
-			"$limit": limit,
-		})
-	}
-
-	cursor, err := dbCollection.Aggregate(ctx, pipeline)
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-	ids := make([]string, 0, bulkSize)
 	var deleted int64
-	for cursor.Next(ctx) {
-		var color struct {
-			ID string `bson:"_id"`
+	var selected int
+	var lastID string
+	var hasLastID bool
+	for limit <= 0 || selected < limit {
+		filter := bson.M{}
+		if hasLastID {
+			filter["_id"] = bson.M{"$gt": lastID}
 		}
-		err := cursor.Decode(&color)
+
+		cursor, err := dbCollection.Find(ctx, filter, options.Find().
+			SetProjection(bson.M{"_id": 1}).
+			SetSort(bson.M{"_id": 1}).
+			SetLimit(colorCleanupPageSize))
 		if err != nil {
 			return deleted, err
 		}
 
-		ids = append(ids, color.ID)
-		if len(ids) >= bulkSize {
-			res, err := dbCollection.DeleteMany(
-				ctx,
-				bson.M{"_id": bson.M{"$in": ids}},
-			)
+		colorIDs := make([]string, 0, colorCleanupPageSize)
+		for cursor.Next(ctx) {
+			var color struct {
+				ID string `bson:"_id"`
+			}
+			if err = cursor.Decode(&color); err != nil {
+				cursor.Close(ctx)
+				return deleted, err
+			}
+
+			colorIDs = append(colorIDs, color.ID)
+		}
+
+		if err = cursor.Err(); err != nil {
+			cursor.Close(ctx)
+			return deleted, err
+		}
+		if err = cursor.Close(ctx); err != nil {
+			return deleted, err
+		}
+		if len(colorIDs) == 0 {
+			break
+		}
+
+		lastID = colorIDs[len(colorIDs)-1]
+		hasLastID = true
+		labels, err := tagDbCollection.Distinct(ctx, "label", bson.M{"label": bson.M{"$in": colorIDs}})
+		if err != nil {
+			return deleted, err
+		}
+
+		usedColorIDs := make(map[string]struct{}, len(labels))
+		for _, label := range labels {
+			labelID, ok := label.(string)
+			if !ok {
+				return deleted, fmt.Errorf("unexpected label type %[1]T for value %[1]v", label)
+			}
+			usedColorIDs[labelID] = struct{}{}
+		}
+
+		orphanIDs := make([]string, 0, len(colorIDs))
+		for _, colorID := range colorIDs {
+			if _, ok := usedColorIDs[colorID]; ok {
+				continue
+			}
+			if limit > 0 && selected+len(orphanIDs) >= limit {
+				break
+			}
+			orphanIDs = append(orphanIDs, colorID)
+		}
+		selected += len(orphanIDs)
+
+		for len(orphanIDs) > 0 {
+			batchSize := min(len(orphanIDs), bulkSize)
+			res, err := dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": orphanIDs[:batchSize]}})
 			if err != nil {
 				return deleted, err
 			}
 
 			deleted += res
-			ids = ids[:0]
+			orphanIDs = orphanIDs[batchSize:]
 		}
-	}
-
-	if err = cursor.Err(); err != nil {
-		return deleted, err
-	}
-
-	if len(ids) > 0 {
-		res, err := dbCollection.DeleteMany(
-			ctx,
-			bson.M{"_id": bson.M{"$in": ids}},
-		)
-		if err != nil {
-			return deleted, err
-		}
-
-		deleted += res
 	}
 
 	return deleted, nil
