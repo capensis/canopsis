@@ -132,6 +132,10 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 		counters.IncrementState(curState, false)
 	}
 
+	if err = cursor.Err(); err != nil {
+		return 0, err
+	}
+
 	_, err = s.entityCountersCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": component.ID},
