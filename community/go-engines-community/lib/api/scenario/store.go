@@ -95,7 +95,7 @@ func NewStore(
 			Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
 		},
 	}
-	outputTplVars := make([]template.VarResponse, len(authorTplVars))
+	outputTplVars := make([]template.VarResponse, len(authorTplVars), len(authorTplVars)+6)
 	copy(outputTplVars, authorTplVars)
 	outputTplVars = append(outputTplVars,
 		template.VarResponse{Name: "trigger", Value: "{{ .AdditionalData.Trigger }}"},
@@ -110,7 +110,7 @@ func NewStore(
 		{Name: "responseField", Value: "{{ index .Response \"%field_name%\" }}"},
 		{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
 	}
-	firstWhTplVars := make([]template.VarResponse, len(outputTplVars))
+	firstWhTplVars := make([]template.VarResponse, len(outputTplVars), len(outputTplVars)+2)
 	copy(firstWhTplVars, outputTplVars)
 	firstWhTplVars = append(firstWhTplVars,
 		template.VarResponse{

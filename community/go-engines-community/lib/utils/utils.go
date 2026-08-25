@@ -2,9 +2,11 @@ package utils
 
 import (
 	crand "crypto/rand"
+	"crypto/sha3"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"hash"
 	"io"
 	"math/big"
 	"regexp"
@@ -12,7 +14,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/uuid"
-	"golang.org/x/crypto/sha3"
 )
 
 const NamingCharacterSet = "abcdefghijklmnopqrstuvwxyz1234567890"
@@ -194,7 +195,7 @@ func ToObjectIDHex(s string) string {
 	const hexLen = 24
 	re := regexp.MustCompile(fmt.Sprintf(`^[0-9a-fA-F]{%d}$`, hexLen))
 	if len(s) != hexLen || !re.MatchString(s) {
-		hash := sha3.New384()
+		hash := hash.Hash(sha3.New384())
 		hash.Write([]byte(s))
 		s = hex.EncodeToString(hash.Sum(nil)[:hexLen/2])
 	}
