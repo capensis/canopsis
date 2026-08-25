@@ -95,11 +95,7 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 		options.UpdateOne().SetUpsert(upsert),
 	)
 	if err != nil || res.MatchedCount == 0 && res.UpsertedCount == 0 {
-		if mongodriver.IsDuplicateKeyError(err) {
-			return false, nil
-		}
-
-		return false, err
+		return false, duplicateKeyBehavior(ctx, err)
 	}
 
 	return true, nil
@@ -107,13 +103,11 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 
 func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error) {
 	state.ID = state.ID + "-" + state.GetEntityID()
-	_, err := a.metaAlarmStatesCollection.InsertOne(ctx, state)
+	filter := bson.D{{Key: "_id", Value: state.ID}}
+	update := bson.D{{Key: "$setOnInsert", Value: state}}
+	_, err := a.metaAlarmStatesCollection.UpdateOne(ctx, filter, update, options.UpdateOne().SetUpsert(true))
 	if err != nil {
-		if mongodriver.IsDuplicateKeyError(err) {
-			return false, nil
-		}
-
-		return false, err
+		return false, duplicateKeyBehavior(ctx, err)
 	}
 
 	return true, nil
@@ -155,11 +149,7 @@ func (a *metaAlarmStateService) SwitchStateToReady(
 		options.UpdateOne().SetUpsert(upsert),
 	)
 	if err != nil || res.MatchedCount == 0 && res.UpsertedCount == 0 {
-		if mongodriver.IsDuplicateKeyError(err) {
-			return false, nil
-		}
-
-		return false, err
+		return false, duplicateKeyBehavior(ctx, err)
 	}
 
 	return true, nil
@@ -336,4 +326,16 @@ func (a *metaAlarmStateService) UpdateInactiveDelay(ctx context.Context, entityI
 	)
 
 	return err
+}
+
+func duplicateKeyBehavior(ctx context.Context, err error) error {
+	if err == nil {
+		return nil
+	}
+
+	if !mongodriver.IsDuplicateKeyError(err) || mongo.RetriesDisabled(ctx) {
+		return err
+	}
+
+	return nil
 }

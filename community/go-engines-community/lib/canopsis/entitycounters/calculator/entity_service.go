@@ -161,6 +161,10 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	counters.Output, err = s.templateExecutor.Execute(counters.OutputTemplate, counters)
 	if err != nil {
 		s.logger.Warn().Err(err).Msg("unable to execute service output template, service output is set to empty string")
