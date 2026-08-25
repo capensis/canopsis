@@ -193,7 +193,7 @@ func toString(v any) (string, error) {
 func unwrapPointer(v reflect.Value) reflect.Value {
 	for {
 		switch v.Kind() {
-		case reflect.Interface, reflect.Ptr:
+		case reflect.Interface, reflect.Pointer:
 			v = v.Elem()
 		default:
 			return v

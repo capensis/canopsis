@@ -2,6 +2,7 @@ package scenario
 
 import (
 	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -67,12 +68,14 @@ func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t 
 				types.AlarmStateCritical,
 			}
 			param := ""
+			var paramSb70 strings.Builder
 			for i := range validTypes {
-				param += strconv.Itoa(int(validTypes[i]))
+				paramSb70.WriteString(strconv.Itoa(int(validTypes[i])))
 				if i < len(validTypes)-1 {
-					param += " "
+					paramSb70.WriteString(" ")
 				}
 			}
+			param += paramSb70.String()
 
 			found := false
 			for _, v := range validTypes {
