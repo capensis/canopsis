@@ -28,6 +28,12 @@ const autocompleteValue = computed({
 
 const getLegacySlotProps = slotProps => ({
   ...slotProps,
+  props: slotProps.props && slotProps.name === 'item'
+    ? {
+      ...slotProps.props,
+      title: undefined,
+    }
+    : slotProps.props,
   item: slotProps?.item?.raw ?? slotProps?.item,
   vuetifyItem: slotProps?.item,
 });
@@ -58,7 +64,7 @@ const getItemProps = (item) => {
     </template>
 
     <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="getLegacySlotProps(slotProps || {})" />
+      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
     </template>
   </v-autocomplete>
 </template>

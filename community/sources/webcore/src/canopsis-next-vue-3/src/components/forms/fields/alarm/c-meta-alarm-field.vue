@@ -89,7 +89,7 @@ export default {
     },
   },
 
-  emits: ['update:value', 'update:modelValue'],
+  emits: ['update:value', 'update:modelValue', 'update:selected-items'],
 
   setup(props, { emit }) {
     const { t } = useI18n();

@@ -71,6 +71,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    confirmDisable: {
+      type: Function,
+      default: undefined,
+    },
   },
 
   emits: ['update:modelValue'],
@@ -91,7 +95,15 @@ export default {
       }),
     );
 
-    const updateModel = (value) => {
+    const updateModel = async (value) => {
+      if (!value && props.confirmDisable) {
+        const confirmed = await props.confirmDisable();
+
+        if (!confirmed) {
+          return;
+        }
+      }
+
       emit('update:modelValue', value);
     };
 

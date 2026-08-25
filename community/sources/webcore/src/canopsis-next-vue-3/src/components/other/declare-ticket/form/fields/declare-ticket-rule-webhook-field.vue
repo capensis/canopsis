@@ -117,7 +117,6 @@ export default {
     const { confirmAction: removeWebhook } = useConfirmableForm({
       form: toRef(props, 'form'),
       action: () => emit('remove'),
-      cloning: true,
     });
 
     return {

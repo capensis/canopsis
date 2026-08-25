@@ -585,6 +585,9 @@ export default {
     [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Ticket déclaré par le webhook',
     },
+    [TRIGGERS_TYPES.declareticketwebhookfail]: {
+      text: 'La déclaration du ticket par le webhook a échoué',
+    },
     [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket associé à une alarme',
     },

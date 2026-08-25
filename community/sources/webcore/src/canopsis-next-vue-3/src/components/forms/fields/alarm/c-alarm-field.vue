@@ -66,14 +66,14 @@ export default {
     },
   },
 
-  emits: ['update:value'],
+  emits: ['update:value', 'update:selected-items'],
 
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { fetchListWithoutStore } = useAlarm();
+    const { fetchDisplayNamesWithoutStore } = useAlarm();
 
     const fetchHandler = ({ params }) =>
-      fetchListWithoutStore({
+      fetchDisplayNamesWithoutStore({
         params: merge(params, props.params),
       });
 

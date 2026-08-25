@@ -1,5 +1,5 @@
 import { get, isEmpty, isEqual } from 'lodash';
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, unref, watch } from 'vue';
 
 import { MODALS, TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
@@ -18,7 +18,12 @@ import { usePopups } from '@/hooks/popups';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useValidator } from '@/hooks/validator/validator';
+
+const validateFormContext = async (formContext) => {
+  const { valid } = (await unref(formContext)?.validate?.()) ?? { valid: true };
+
+  return valid;
+};
 
 /**
  * Hook for managing template testing validation form
@@ -28,7 +33,7 @@ import { useValidator } from '@/hooks/validator/validator';
  * @param {string} props.type - The type of template testing
  * @returns {Object} Validation form state and methods
  */
-export const useTemplateTestingValidationForm = (props) => {
+export const useTemplateTestingValidationForm = (props, formContext) => {
   const originalValidationForm = ref([]);
   const validationForm = ref([]);
   const selectedTest = ref({});
@@ -43,7 +48,7 @@ export const useTemplateTestingValidationForm = (props) => {
     isEqual(originalValidationForm.value, validationForm.value),
   );
 
-  const { setFormErrors } = useValidationFormErrors(validationForm);
+  const { setFormErrors } = useValidationFormErrors(validationForm, formContext);
 
   watch(
     () => props.active,
@@ -181,14 +186,12 @@ export const useTemplateTestingValidationForm = (props) => {
  * @param {Object} props - Component props
  * @returns {Object} Test actions state and methods
  */
-export const useTemplateTestActions = (props) => {
+export const useTemplateTestActions = (props, { testFormContext, testDataFormContext }) => {
   const templateTestRequestData = ref(null);
 
   const { t } = useI18n();
   const popups = usePopups();
   const modals = useModals();
-  const validator = useValidator();
-
   const { createTemplateTestingTest, updateTemplateTestingTest } = useTemplateTesting();
 
   /**
@@ -204,7 +207,10 @@ export const useTemplateTestActions = (props) => {
       data: getValidationFormData(),
     };
 
-    const isValid = await validator.validateAll();
+    const isValid = await Promise.all([
+      validateFormContext(testFormContext),
+      validateFormContext(testDataFormContext),
+    ]).then(results => results.every(Boolean));
 
     if (!isValid) {
       return;
@@ -233,7 +239,7 @@ export const useTemplateTestActions = (props) => {
    * @returns {Promise<void>}
    */
   const saveAsNew = async (getValidationFormData, onTestCreated) => {
-    const isValid = await validator.validateAll();
+    const isValid = await validateFormContext(testDataFormContext);
 
     if (!isValid) {
       return;
@@ -317,10 +323,8 @@ export const useTemplateTestActions = (props) => {
  * @param {Object} props - Component props
  * @returns {Object} Test runner state and methods
  */
-export const useTemplateTestRunner = (props) => {
+export const useTemplateTestRunner = (props, { mainFormContext, testDataFormContext }) => {
   const testResult = ref({});
-
-  const validator = useValidator();
 
   const { validateJobsVariables } = useTemplateTesting();
 
@@ -345,12 +349,16 @@ export const useTemplateTestRunner = (props) => {
     onLastRunVariablesChange,
   ) => {
     const { pending: running, handler: runTest } = usePendingHandler(async () => {
-      validator.errors.clear();
+      unref(testDataFormContext)?.resetErrors?.();
 
-      const isValid = await validator.validateAll();
+      const [isMainFormValid, isTestDataFormValid] = await Promise.all([
+        validateFormContext(mainFormContext),
+        validateFormContext(testDataFormContext),
+      ]);
+      const isValid = isMainFormValid && isTestDataFormValid;
 
       if (onValidationStateChange) {
-        onValidationStateChange(isValid);
+        onValidationStateChange(isMainFormValid);
       }
 
       if (!isValid || !validateHandler.value || !formToRequest.value) {
@@ -370,10 +378,7 @@ export const useTemplateTestRunner = (props) => {
             return;
           }
 
-          validator.errors.add({
-            field: key,
-            msg: `${err.line}|${err.message}`,
-          });
+          unref(testDataFormContext)?.addError?.(key, `${err.line}|${err.message}`);
         });
 
         const newLastRunVariables = props.variablesFields.reduce((acc, field) => {
@@ -405,7 +410,7 @@ export const useTemplateTestRunner = (props) => {
           onValidationStateChange(false);
         }
 
-        setFormErrors(mainFormErrors);
+        unref(mainFormContext)?.setFormErrors?.(mainFormErrors);
         setFormErrors(testDataErrors, 'testdata');
       }
     });

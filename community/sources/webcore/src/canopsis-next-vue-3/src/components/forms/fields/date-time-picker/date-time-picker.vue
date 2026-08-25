@@ -166,6 +166,15 @@ export default {
     width: 360px;
   }
 
+  .v-date-picker-controls {
+    width: 100%;
+    padding: 0;
+  }
+
+  .v-date-picker-month {
+    width: 100%;
+  }
+
   .v-date-picker-month__day {
     height: 36px;
   }

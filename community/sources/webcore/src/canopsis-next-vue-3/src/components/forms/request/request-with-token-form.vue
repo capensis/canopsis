@@ -66,6 +66,7 @@ export default {
     const updateMultiple = multiple => updateField('multiple_urls', multiple);
 
     return {
+      updateField,
       updateAuthToken,
       updateMultiple,
     };

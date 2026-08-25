@@ -36,21 +36,29 @@ top-down without reading the full inventory.
 - `/admin/widget-templates` - fully migrated: list, template type selector, create/edit modal, columns/quick-actions/sort/text template forms and widget settings consumers.
 - `/admin/storage-settings` - storage settings, archive/clean confirmation actions and duration units.
 - `/admin/state-settings` - list, state setting modals and create/edit/duplicate/remove actions.
+- `/admin/healthcheck` - system status, connectors, connector history modal, graphs, parameters and engines metrics.
+- `/admin/anomaly-monitored-connectors` - list, CRUD modal, history modal parity from healthcheck connector tiles and mass enable/disable/remove actions.
 
 ### Exploitation
 
+- `/exploitation/remediation` - instructions/configurations/jobs/statistics/instruction-stats tabs, execution components, approval modal and template-testing variables output editor.
 - `/exploitation/snmp-rules` - list, MIB upload, mass actions and create/edit/duplicate/delete SNMP rule modal.
 - `/exploitation/declare-ticket-rules` - list, CRUD/mass actions, rule modal, test-query preview and ticket action modals.
 
 ### Profile And System
 
+- `/` - home route default view redirect: user default view first, then role default view fallback with legacy info popups.
+- `/kiosk-views/:id/:tabId` - standalone kiosk view route with tab widgets and view periodic refresh.
+- `/alarms/:id` - standalone alarm route with single-alarm AlarmList table, optional widget configuration and expand panel.
+- `/playlist/:id` - standalone playlist player with top-bar playback controls, tab rotation, autoplay and fullscreen handling.
+- `/notifications/:tabId` - notifications tabs, socket refresh, approval/rating/event-filter failures and remediation stats alarms timeline.
 - `/themes` - theme list, create/edit/duplicate theme modal and theme form.
 - `/error` - error page polling and redirect logic.
 
 ### View Widgets
 
-The main `/view/:id` page is still tracked as partially migrated, but these
-widget runtimes/settings are ready to test inside migrated views:
+The main `/view/:id` page and these widget runtimes/settings are ready to test
+inside migrated views:
 
 - `AlarmsList`
 - `Context`
@@ -104,6 +112,7 @@ widget runtimes/settings are ready to test inside migrated views:
 - `[x]` Common modals: `confirmation`, `create-maintenance`.
 - `[x]` User interface settings modal: settings menu action, modal registration, general/notifications/advanced/login tabs, app-info save flow, notification-settings save flow, rich text variables, logo upload and app title refresh are migrated and checked.
 - `[x]` `c-duration-field`: full old duration value/unit field is migrated in the compat field barrel, with `long`, `medium`, `sameWidth`, custom `units`, clearable unit handling and pluralized unit labels adapted to Vue I18n `t`.
+- `[x]` `c-payload-textarea-field` parity audit: old usage inventory is recorded in `docs/ai/coding-standards.md`; migrated uses are aligned, `MODALS.payloadTextareaEditor` is restored for simple template editors, and the only remaining old usage is explicitly tied to the future meta-alarm rule create/edit form port.
 - `[~]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals and sidebar text-editor fields are migrated. Remaining: connect full vee-validate form validation inside editor modals when related pages/widgets start using complex rules.
 - `[x]` `c-draggable-list-field`: migrated with Vue 3 `vuedraggable` API; emits `update:value` / `update:model-value` matching its `value` / `modelValue` props.
 - `[x]` `c-treeview`: migrated as a Vuetify 4 `VTreeview` compatibility wrapper with legacy `item-key` / `item-text` / `open` / `active` / `value` aliases and old `label` slot `leaf` support. `variables-help` now uses this wrapper instead of a local recursive tree.
@@ -161,20 +170,20 @@ Pages are taken from `src/router.js` in the source project.
 | Status | Route name                                     | Path                                  | Source component                                             | Target component                                                  | Notes                                                                                                                                                                                                                                                                                                                                                                        |
 | ------ | ---------------------------------------------- | ------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `[~]`  | `login`                                        | `/login`                              | `src/views/login.vue`                                        | `src/views/login-page.vue`                                        | Main login page and form are migrated; messages will be moved later.                                                                                                                                                                                                                                                                                                         |
-| `[~]`  | `home`                                         | `/`                                   | `src/views/home.vue`                                         | `src/views/home-page.vue`                                         | Stub/basic page exists.                                                                                                                                                                                                                                                                                                                                                      |
-| `[~]`  | `view`                                         | `/view/:id`                           | `src/views/view.vue`                                         | `src/views/view-page.vue`                                         | Migration started with the staged plan in `docs/ai/view-migration-plan.md`. Foundation, page shell, tabs, grid shell, widget wrapper shell, floating controls including executions menu, create-tab flow, basic create-widget modal and view screen-mode kiosk behavior are migrated. Remaining: standalone kiosk/alarms routes and playlist control. |
-| `[ ]`  | `view-kiosk`                                   | `/kiosk-views/:id/:tabId`             | `src/views/view-kiosk.vue`                                   | -                                                                 | Standalone kiosk page is not migrated yet; do not confuse it with the completed kiosk screen-mode behavior on `/view/:id`.                                                                                                                                                                                                                                                    |
-| `[ ]`  | `alarms`                                       | `/alarms/:id`                         | `src/views/alarm.vue`                                        | -                                                                 |                                                                                                                                                                                                                                                                                                                                                                              |
+| `[~]`  | `home`                                         | `/`                                   | `src/views/home.vue`                                         | `src/views/home-page.vue`                                         | Default-view redirect is migrated in `app.vue`: user default view first, then role default view fallback with legacy info popups. The standalone `home-page.vue` remains a basic fallback stub.                                                                                                                                                                               |
+| `[x]`  | `view`                                         | `/view/:id`                           | `src/views/view.vue`                                         | `src/views/view-page.vue`                                         | Foundation, page shell, tabs, grid shell, widget wrapper shell, floating controls including executions menu, create-tab flow, basic create-widget modal, migrated widgets/settings and view screen-mode kiosk behavior are migrated. Playlist playback now uses the same migrated view/tab/widget stack.             |
+| `[x]`  | `view-kiosk`                                   | `/kiosk-views/:id/:tabId`             | `src/views/view-kiosk.vue`                                   | `src/views/view-kiosk-page.vue`                                   | Standalone kiosk page is migrated with active view loading, tab fallback, kiosk screen mode, widget rendering and view periodic refresh.                                                                                                                                                                                                                                      |
+| `[x]`  | `alarms`                                       | `/alarms/:id`                         | `src/views/alarm.vue`                                        | `src/views/alarm-page.vue`                                        | Standalone alarm page is migrated with one-alarm fetch, optional `widgetId` query configuration, AlarmList table rendering, expand panel and legacy technical-view route permission.                                                                                                                                                                                          |
 | `[x]`  | `admin-rights`                                 | `/admin/rights`                       | `src/views/admin/permissions.vue`                            | `src/views/admin/rights-page.vue`                                 | Main rights table, lightweight checkbox, sticky actions, route/store wiring, i18n and visual parity are migrated.                                                                                                                                                                                                                                                            |
 | `[x]`  | `admin-users`                                  | `/admin/users`                        | `src/views/admin/users.vue`                                  | `src/views/admin/users-page.vue`                                  | Users tab/table, create/edit user form modal, shared tokens tab/list/revoke flow, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                  |
 | `[x]`  | `admin-roles`                                  | `/admin/roles`                        | `src/views/admin/roles.vue`                                  | `src/views/admin/roles-page.vue`                                  | Main list, search/pagination, single delete, mass delete, create/edit/duplicate role modal, template permissions, route/store wiring and i18n are migrated. Full permissions matrix editing belongs to `/admin/rights`.                                                                                                                                                    |
 | `[x]`  | `admin-broadcast-messages`                     | `/admin/broadcast-messages`           | `src/views/admin/broadcast-messages.vue`                     | `src/views/admin/broadcast-messages-page.vue`                     | Main list, active messages, create/edit form, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                                                      |
 | `[x]`  | `admin-playlists`                              | `/admin/playlists`                    | `src/views/admin/playlists.vue`                              | `src/views/admin/playlists-page.vue`                              | Main list, refresh, copy/play actions, delete/bulk actions, create/edit/duplicate playlist modal, manage tabs modal and expand panel are migrated.                                                                                                                                                                                                                           |
 | `[x]`  | `admin-planning-administration`                | `/admin/planning`                     | `src/views/admin/planning.vue`                               | `src/views/admin/planning-page.vue`                               | Tabs, lists, expand panels, create buttons and pbehavior type/reason/exception create/edit/import modal forms are migrated.                                                                                                                                                                                                                                                  |
-| `[~]`  | `admin-healthcheck`                            | `/admin/healthcheck`                  | `src/views/admin/healthcheck.vue`                            | `src/views/admin/healthcheck-page.vue`                            | Main page tabs are wired for system status, connectors, graphs, parameters and engines metrics. Remaining: connector history modal.                                                                                                                                                                                                                                          |
+| `[x]`  | `admin-healthcheck`                            | `/admin/healthcheck`                  | `src/views/admin/healthcheck.vue`                            | `src/views/admin/healthcheck-page.vue`                            | Main page tabs are wired for system status, connectors, connector history modal, graphs, parameters and engines metrics.                                                                                                                                                                                                                                                     |
 | `[x]`  | `admin-kpi`                                    | `/admin/kpi`                          | `src/views/admin/kpi.vue`                                    | `src/views/admin/kpi-page.vue`                                    | Graphs, filters, rating settings, collection settings tabs, route/store wiring and i18n are migrated.                                                                                                                                                                                                                                                                        |
 | `[x]`  | `admin-events-records`                         | `/admin/events-records`               | `src/views/admin/events-records.vue`                         | `src/views/admin/events-records-page.vue`                         | Main page, current status, events-record modal, apply-event-filter modal, record actions, export flows, route/store wiring and i18n are migrated.                                                                                                                                                                                                                            |
-| `[~]`  | `admin-anomaly-monitored-connectors`           | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue`           | `src/views/admin/anomaly-monitored-connectors-page.vue`           | Main page, list, search/pagination, single create/edit/delete modal and mass enable/disable/remove actions are migrated. Remaining: history modal parity for the healthcheck connector tile.                                                                                                                                                                                  |
+| `[x]`  | `admin-anomaly-monitored-connectors`           | `/admin/anomaly-monitored-connectors` | `src/views/admin/anomaly-monitored-connectors.vue`           | `src/views/admin/anomaly-monitored-connectors-page.vue`           | Main page, list, search/pagination, single create/edit/delete modal, history modal parity from healthcheck connector tiles and mass enable/disable/remove actions are migrated.                                                                                                                                                                                               |
 | `[~]`  | `admin-template-testing`                       | `/admin/template-testing`             | `src/views/admin/template-testing.vue`                       | `src/views/admin/template-testing-page.vue`                       | Main data/tests tabs, lists, create/edit data modal and edit/remove test modals are migrated; test-variables sidebar stack remains pending for other forms.                                                                                                                                                                                                                  |
 | `[~]`  | `admin-jobs-management`                        | `/admin/jobs`                         | `src/views/admin/jobs.vue`                                   | `src/views/admin/jobs-page.vue`                                   | Main jobs tabs/table, filters, expand panel, play/pause/repeat actions and routing are migrated. Remaining: edit modal/form after declare-ticket check-status field layer is ported.                                                                                                                                                                                         |
 | `[~]`  | `admin-custom-objects-external-auth-tokens`    | `/admin/external-auth-tokens`         | `src/views/admin/custom-objects/external-auth-tokens.vue`    | `src/views/admin/custom-objects/external-auth-tokens-page.vue`    | Main list, expand panel, create/edit/delete modals, request form fields, token variables, route and webhook-token-rule CRUD are migrated. Remaining: old template testing tab parity after shared form-general-patterns/test-variables stack is ported.                                                                                                                       |
@@ -195,17 +204,17 @@ Pages are taken from `src/router.js` in the source project.
 | `[x]`  | `exploitation-snmp-rules`                      | `/exploitation/snmp-rules`            | `src/views/exploitation/snmp-rules.vue`                      | `src/views/exploitation/snmp-rules-page.vue`                      | Main list, search/pagination, MIB upload, mass actions, create/edit/duplicate/delete modal, SNMP rule form, route/store wiring and i18n are migrated.                                                                                                                                                                                                                        |
 | `[x]`  | `exploitation-dynamic-infos`                   | `/exploitation/dynamic-infos`         | `src/views/exploitation/dynamic-infos.vue`                   | `src/views/exploitation/dynamic-infos-page.vue`                   | Page shell, dynamic infos list with advanced search, expand item, dynamic info templates list, create/edit modals, add-from-template modal, route/store wiring, i18n and dynamic-info/template mass actions are migrated.                                                                                                                                                    |
 | `[~]`  | `exploitation-meta-alarm-rules`                | `/exploitation/meta-alarm-rule`       | `src/views/exploitation/meta-alarm-rules.vue`                | `src/views/exploitation/meta-alarm-rules-page.vue`                | Main list, read-only expand patterns, route, helper and bulk/delete actions are migrated. Create/edit/duplicate modal form remains pending for the forms pass.                                                                                                                                                                                                               |
-| `[~]`  | `exploitation-scenarios`                       | `/exploitation/scenarios`             | `src/views/exploitation/scenarios.vue`                       | `src/views/exploitation/scenarios-page.vue`                       | Main list/read-only expand content and scenario store are migrated; create/edit modal is not migrated yet.                                                                                                                                                                                                                                                                   |
+| `[~]`  | `exploitation-scenarios`                       | `/exploitation/scenarios`             | `src/views/exploitation/scenarios.vue`                       | `src/views/exploitation/scenarios-page.vue`                       | Main list/read-only expand content, scenario store and create/edit/duplicate modal are migrated. Remaining: scenario test execution UI and row DB export button.                                                                                                                                                                                                            |
 | `[~]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`                      | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration.                                                                                                                                                                                                                  |
 | `[~]`  | `exploitation-flapping-rules`                  | `/exploitation/flapping-rules`        | `src/views/exploitation/flapping-rules.vue`                  | `src/views/exploitation/flapping-rules-page.vue`                  | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                                                                                                     |
 | `[~]`  | `exploitation-resolve-rules`                   | `/exploitation/resolve-rules`         | `src/views/exploitation/resolve-rules.vue`                   | `src/views/exploitation/resolve-rules-page.vue`                   | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated; AI sidebar parity pending.                                                                                                                                                                                                                                                     |
 | `[x]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | `src/views/exploitation/declare-ticket-rules-page.vue`            | Page, list, CRUD actions, mass actions, create/edit/duplicate rule modal, test-query preview, declare/associate/execute ticket modals, alarm-widget flows and required helpers are migrated.                                                                                                                                                                                  |
 | `[~]`  | `exploitation-link-rules`                      | `/exploitation/link-rules`            | `src/views/exploitation/link-rules.vue`                      | `src/views/exploitation/link-rules-page.vue`                      | Page, list, mass actions, DB export, create/edit/duplicate modal, link rule form and Monaco-based advanced editor are migrated. AI chat remains a deferred stub per `docs/ai/architecture.md`.                                                                                                                                                                               |
-| `[~]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | `src/views/exploitation/remediation-page.vue`                     | Page shell and remediation/instruction flow are partially migrated; AI chat remains deferred.                                                                                                                                                                                                                                                                                |
-| `[ ]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | -                                                                 | Deferred until the main `view` page is migrated, because playlist playback depends on the migrated view/tab/widget rendering stack.                                                                                                                                                                                                                                          |
+| `[~]`  | `exploitation-remediation`                     | `/exploitation/remediation`           | `src/views/exploitation/remediation.vue`                     | `src/views/exploitation/remediation-page.vue`                     | Instructions, configurations, jobs, statistics, instruction stats, execution components, approval modal and template-testing variables output editor are migrated; AI chat remains deferred.                                                                                                                                                                                |
+| `[x]`  | `playlist`                                     | `/playlist/:id`                       | `src/views/playlist.vue`                                     | `src/views/playlist-page.vue`                                     | Standalone playlist player is migrated with playlist fetch, tab fetch, top-bar playback controls, timer rotation, autoplay, fullscreen and migrated `view-tab-widgets` rendering.                                                                                                                                                                                           |
 | `[~]`  | `profile-patterns`                             | `/filters`                            | `src/views/profile/patterns.vue`                             | `src/views/profile/patterns-page.vue`                             | Page shell, personal/corporate pattern lists, corporate permission tabs, create/edit/delete/bulk-delete flows, route and `create-pattern` modal are migrated. AI chat remains a deferred stub.                                                                                                                 |
 | `[x]`  | `profile-themes`                               | `/themes`                             | `src/views/profile/themes.vue`                               | `src/views/profile/themes-page.vue`                               | Page, list, route, create/edit/duplicate theme modal, theme form, compact color picker menu, theme form helpers, route/store wiring and i18n are migrated.                                                                                                                                                                                                                   |
-| `[~]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | `src/views/notification/notifications-page.vue`                   | Page shell, tab routing, socket refresh, approve/rate/event-filter-failure tabs, active notification handling and rating modal are migrated. Remaining: remediation stats alarms timeline tab integration; the AlarmsList widget stack it depends on is migrated.                                                                                                             |
+| `[x]`  | `notifications`                                | `/notifications/:tabId`               | `src/views/notification/notifications.vue`                   | `src/views/notification/notifications-page.vue`                   | Page shell, tab routing, socket refresh, approve/rate/event-filter-failure tabs, active notification handling, rating modal and remediation stats alarms timeline expand tab are migrated.                                                                                                                                                                                   |
 | `[x]`  | `error`                                        | `/error`                              | `src/views/error.vue`                                        | `src/views/error-page.vue`                                        | Migrated with polling and redirect logic.                                                                                                                                                                                                                                                                                                                                    |
 
 ## Page Blocks
@@ -224,43 +233,43 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 ### `home`
 
 - `[~]` Main content: `src/views/home.vue` -> `src/views/home-page.vue`; target is currently a stub.
-- `[ ]` Modal windows: not migrated.
+- `[x]` Modal windows: none in the old page.
 - `[x]` Sidebars/drawers: none in the old page.
-- `[ ]` State/API/socket: not migrated.
-- `[~]` Routing/access: `/` route exists.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` State/API/socket: current-user default view and role default view are reused from auth state.
+- `[x]` Routing/access: `/` route exists and redirects to user default view, or role default view when the user default view is missing/forbidden.
+- `[x]` Messages/i18n: legacy default-view redirect info messages are wired.
 
 ### `view`
 
-- `[~]` Migration plan: staged plan is tracked in `docs/ai/view-migration-plan.md`.
-- `[~]` Main content: `src/views/view.vue` -> `src/views/view-page.vue`; active view lifecycle, periodic refresh provider, tabs, grid shell, widget wrapper, floating controls including executions menu, tab/widget creation entry points, migrated widget types/settings and view screen-mode kiosk behavior are migrated. Remaining: standalone kiosk/alarms routes and playlist control.
+- `[x]` Migration plan: staged plan is tracked in `docs/ai/view-migration-plan.md`.
+- `[x]` Main content: `src/views/view.vue` -> `src/views/view-page.vue`; active view lifecycle, periodic refresh provider, tabs, grid shell, widget wrapper, floating controls including executions menu, tab/widget creation entry points, migrated widget types/settings and view screen-mode kiosk behavior are migrated.
 - `[x]` Tabs: view tab navigation, active tab query, tab reorder submit/cancel overlay, create/update/copy/delete tab flows and `select-view` modal are migrated.
 - `[x]` Grid system: layout shell, breakpoint handling, drag/resize rules, edit mode and widget grid position saving are migrated.
 - `[x]` Grid system content: `view-tab-widgets`, `widget-wrapper`, `widget-edit-drag-handler`, `c-alert-overlay`, `window-size-field` and migrated widget rendering are complete. AlarmList uses the alarm Pinia store for widget-scoped query/pagination/pending/meta state; toolbar, pagination, columns/cells, row actions, custom checkbox selection column, mass-actions panel, column drag/resize/reset controls, expand panel tabs, sticky header and sticky horizontal scroll are complete.
-- `[~]` Modal windows: `select-view` modal is migrated for copy tab flow. Widget/tab creation uses existing `text-field-editor` and create-widget modal now opens widget settings sidebars as in Vue 2.
+- `[x]` Modal windows: `select-view`, create/edit/duplicate view, create/update/copy/delete tab, create-widget, widget duplication, widget delete and widget settings sidebar modal-like flows are migrated.
 - `[x]` Sidebars/drawers: migrated widget settings sidebars use `useWidgetSettings`; shared settings stacks, dirty-close confirmation and widget settings forms are migrated. The old widget settings mixin is removed.
-- `[~]` State/API/socket: active-view foundation, view tab store actions, widget store action verification and view router helpers are migrated. View refresh now force-updates the active tab query nonce so widget lists (alarms list, details, etc.) refetch with the view. Remaining widget runtime consumers remain pending.
-- `[~]` Routing/access: `/view/:id` now points to `view-page.vue`; old route only required login, so route meta matches the source project.
+- `[x]` State/API/socket: active-view foundation, view tab store actions, widget store action verification and view router helpers are migrated. View refresh now force-updates the active tab query nonce so widget lists (alarms list, details, etc.) refetch with the view.
+- `[x]` Routing/access: `/view/:id` now points to `view-page.vue`; old route only required login, so route meta matches the source project.
 - `[x]` Messages/i18n: existing view, modal, widget, common and settings messages are wired for the migrated view stack.
 
 ### `view-kiosk`
 
-- `[ ]` Standalone page: not migrated yet. Kiosk screen-mode behavior inside `/view/:id` is complete and tracked under `view`.
-- `[ ]` Main content: `src/views/view-kiosk.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/kiosk-views/:id/:tabId`, simple navigation, view permission by route id.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Standalone page: `src/views/view-kiosk.vue` -> `src/views/view-kiosk-page.vue`.
+- `[x]` Main content: renders `view-tab-widgets` for the selected tab in kiosk screen mode.
+- `[x]` Modal windows: none in the old page.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: active view fetch, tab fallback and view-level periodic refresh are migrated.
+- `[x]` Routing/access: `/kiosk-views/:id/:tabId`, simple navigation, view permission by route id.
+- `[x]` Messages/i18n: no dedicated old page messages.
 
 ### `alarms`
 
-- `[ ]` Main content: `src/views/alarm.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: alarm fetch, widget fetch and alarm widget integration not migrated.
-- `[ ]` Routing/access: `/alarms/:id`, technical view permission.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Main content: `src/views/alarm.vue` -> `src/views/alarm-page.vue`; renders the migrated AlarmList table for the requested alarm.
+- `[x]` Modal windows: old page has no dedicated modals; row/expand action modals come from the migrated AlarmList stack.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: one-alarm fetch through the alarm Pinia store, optional `widgetId` fetch through the widget store and default AlarmList widget fallback are migrated.
+- `[x]` Routing/access: `/alarms/:id`, technical view permission.
+- `[x]` Messages/i18n: no dedicated old page messages; AlarmList messages are reused.
 
 ### `admin-rights`
 
@@ -318,10 +327,10 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-healthcheck`
 
-- `[~]` Main content: `src/views/admin/healthcheck.vue` -> `src/views/admin/healthcheck-page.vue`; system status, connectors, graphs, parameters and engines metrics tabs are wired to the real page.
-- `[~]` Modal windows: healthcheck engine modals are migrated. Remaining: anomaly monitored connector history modal used by the Connectors tab.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: top-bar healthcheck chips, admin page data fetching, connector states pagination/socket flow and graph metric flows are migrated; connector history modal data flow is still tracked separately.
+- `[x]` Main content: `src/views/admin/healthcheck.vue` -> `src/views/admin/healthcheck-page.vue`; system status, connectors, graphs, parameters and engines metrics tabs are wired to the real page.
+- `[x]` Modal windows: healthcheck engine modals and anomaly monitored connector history modal used by the Connectors tab are migrated.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: top-bar healthcheck chips, admin page data fetching, connector states pagination/socket flow, graph metric flows and connector history modal data flow are migrated.
 - `[x]` Routing/access: `/admin/healthcheck`, healthcheck `can` access.
 - `[x]` Messages/i18n: existing healthcheck messages are wired.
 
@@ -346,9 +355,9 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `admin-anomaly-monitored-connectors`
 
-- `[~]` Main content: `src/views/admin/anomaly-monitored-connectors.vue` -> `src/views/admin/anomaly-monitored-connectors-page.vue`; list, search, pagination, refresh, create/edit/delete entry points and mass enable/disable/remove actions are migrated.
-- `[~]` Modal windows: `create-anomaly-monitored-connector` modal and form are migrated. Remaining: `anomaly-monitored-connector-history` modal parity for healthcheck connector tile.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Main content: `src/views/admin/anomaly-monitored-connectors.vue` -> `src/views/admin/anomaly-monitored-connectors-page.vue`; list, search, pagination, refresh, create/edit/delete entry points and mass enable/disable/remove actions are migrated.
+- `[x]` Modal windows: `create-anomaly-monitored-connector` modal/form and `anomaly-monitored-connector-history` modal from healthcheck connector tiles are migrated.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: Pinia store/hook, CRUD, enabled patch, states/history fetches and bulk actions are migrated.
 - `[x]` Routing/access: `/admin/anomaly-monitored-connectors`, anomaly monitored connector access.
 - `[x]` Messages/i18n: base page-header, modal and anomaly monitored connector messages already present.
@@ -538,10 +547,10 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-scenarios`
 
-- `[~]` Main content: `src/views/exploitation/scenarios.vue` -> `src/views/exploitation/scenarios-page.vue`; table, search, pagination, row expand and action general tab are migrated. Remaining: full pattern tab rendering depends on porting `c-patterns-field`; row db export button depends on porting `c-db-export-btn` and db-export store.
-- `[ ]` Modal windows: `create-scenario` intentionally not migrated yet; page create/edit/duplicate actions are hidden until that modal is ported. Confirmation modal is reused for remove.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[~]` State/API/socket: scenario Pinia store and hook are migrated for list/remove/bulk enable/bulk disable/bulk remove/test execution API wrappers; test execution UI is not migrated.
+- `[~]` Main content: `src/views/exploitation/scenarios.vue` -> `src/views/exploitation/scenarios-page.vue`; table, search, pagination, row expand, action general tab and page create/edit/duplicate entry points are migrated. Remaining: row db export button depends on porting `c-db-export-btn` and db-export store.
+- `[x]` Modal windows: `create-scenario` modal is migrated for create/edit/duplicate, including general fields, scenario actions, webhook/pbehavior/action parameters, declare-ticket mapping, action patterns and template variables tab. Confirmation modal is reused for remove.
+- `[~]` Sidebars/drawers: old create-scenario AI chat sidebar remains deferred/stubbed per the shared AI migration scope.
+- `[~]` State/API/socket: scenario Pinia store and hook are migrated for list/create/update/remove/bulk enable/bulk disable/bulk remove/test execution API wrappers; test execution UI is not migrated.
 - `[x]` Routing/access: `/exploitation/scenarios`, scenario access.
 - `[x]` Messages/i18n: existing `scenario` and `modals.createScenario` messages are wired.
 
@@ -592,22 +601,22 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-remediation`
 
-- `[~]` Main content: `src/views/exploitation/remediation.vue` -> `src/views/exploitation/remediation-page.vue`; remediation configurations, instructions and jobs page shell/main tabs are migrated.
-- `[~]` Modal windows: remediation configuration and instruction/job modal stack is partially migrated; AI chat remains deferred/stubbed.
+- `[x]` Main content: `src/views/exploitation/remediation.vue` -> `src/views/exploitation/remediation-page.vue`; remediation configurations, instructions, jobs, statistics and instruction stats tabs are migrated.
+- `[x]` Modal windows: remediation configuration, instruction/job, execution and instruction approval modals are migrated; AI chat remains deferred/stubbed.
 - `[~]` Sidebars/drawers: AI chat UI is intentionally stubbed until the deferred AI migration pass.
-- `[~]` State/API/socket: remediation Pinia stores/hooks are migrated for page list/actions; backend bulk route for configurations is still TODO.
+- `[x]` State/API/socket: remediation Pinia stores/hooks are migrated for page list/actions, statistics, instruction stats, execution flows and approval flow; backend bulk route for configurations remains a backend/API TODO outside the UI migration.
 - `[x]` Routing/access: `/exploitation/remediation`, grouped remediation permission.
 - `[x]` Messages/i18n: existing remediation messages are reused.
 
 ### `playlist`
 
-- Prerequisite: migrate the main `view` page first. Do not start standalone playlist playback before the view/tab/widget rendering stack exists in the target project.
-- `[ ]` Main content: `src/views/playlist.vue`.
-- `[ ]` Modal windows: not migrated.
-- `[ ]` Sidebars/drawers: not migrated.
-- `[ ]` State/API/socket: not migrated.
-- `[ ]` Routing/access: `/playlist/:id`, playlist read permission by route id.
-- `[ ]` Messages/i18n: not migrated.
+- `[x]` Main content: `src/views/playlist.vue` -> `src/views/playlist-page.vue`; renders the selected playlist tab through the migrated `view-tab-widgets` stack and shows the central play overlay before playback starts.
+- `[x]` Top-bar controls: timer, previous, play/pause, next and fullscreen controls are teleported into the top bar.
+- `[x]` Modal windows: none in the old page.
+- `[x]` Sidebars/drawers: none in the old page.
+- `[x]` State/API/socket: playlist fetch, per-tab fetch, timer rotation, autoplay and view-level periodic refresh provider are migrated.
+- `[x]` Routing/access: `/playlist/:id`, playlist read permission by route id.
+- `[x]` Messages/i18n: existing common and playlist messages are reused.
 
 ### `profile-patterns`
 
@@ -629,13 +638,13 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `notifications`
 
-- `[~]` Main content: `src/views/notification/notifications.vue` -> `src/views/notification/notifications-page.vue`; route page, tab badges, refresh FAB and approve/rate/event-filter-failure tabs are migrated.
-- `[~]` Modal windows: `rate` modal/form is migrated for instruction rating. Existing remediation instruction approval/edit and event-filter modals are reused from their migrated slices.
+- `[x]` Main content: `src/views/notification/notifications.vue` -> `src/views/notification/notifications-page.vue`; route page, tab badges, refresh FAB, approve/rate/event-filter-failure tabs and remediation stats alarms timeline expand tab are migrated.
+- `[x]` Modal windows: `rate` modal/form is migrated for instruction rating. Existing remediation instruction approval/edit and event-filter modals are reused from their migrated slices.
 - `[x]` Sidebars/drawers: none in the old page.
-- `[~]` State/API/socket: existing notification socket room and remediation instruction/stats/event-filter Pinia hooks are wired.
+- `[x]` State/API/socket: existing notification socket room and remediation instruction/stats/event-filter Pinia hooks are wired.
 - `[x]` Routing/access: `/notifications/:tabId`, authenticated access.
 - `[x]` Messages/i18n: existing notifications/remediation/modal/common messages are reused.
-- `[ ]` Deferred dependency: remediation instruction stats alarms timeline expand tab waits for the alarm timeline/widget stack.
+- `[x]` Remediation instruction stats alarms timeline expand tab is migrated, including executions list, horizontal alarm timeline, failed-executions switch and per-execution steps expand panel.
 
 ### `error`
 
@@ -720,7 +729,7 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 ### `AlarmsList`
 
 - `[x]` Main content: `src/components/widgets/alarm/alarms-list.vue`; runtime foundation is registered in `widget-wrapper.vue`, renders prepared columns, uses shared widget query state through the Pinia `query` store, includes the migrated toolbar controls, and delegates the table to the legacy-style component chain `partials/alarms-list-table-with-pagination.vue`, `partials/alarms-list-table.vue` and `partials/alarms-list-row.vue`. Base row rendering, mass action panels, column drag/resize/reset, sticky header, sticky top toolbar, sticky horizontal scrollbar and pagination live in that table chain. Alarm event, ticket, comment, snooze, change-state, history, meta-alarm, remediation execute, remediation execution popups and alarm-list handoff modals are registered. PDF export is wired. Row actions now keep the shared action panel close contract used by legacy `afterSubmit()` and use the migrated `c-booted-placeholder-loader`/`AsyncBooting` path. Expand panel now has row state, details fetching through Pinia, expand button, all legacy tabs, local details query lifecycle, Pbehaviors calendar modal, Children tab backed by `alarms-list-table-with-pagination`, remediation executions, service dependency tree, availability, Entity gantt and enrichments data loading. Children/consequences rows keep the parent alarm context for templates/actions/instruction icons, and tab visibility follows `opened_children`/`closed_children` for the current widget mode. Periodic refresh, live watching, alarm/details socket rooms, pause-on-expand, delayed row booting, virtual scroll, empty-column UI, Ctrl-drag selection, backend column filters, entity info property aliases, sticky header, sticky horizontal scroll and toolbar are wired.
-- `[ ]` TODO: restore a safe tab-switch animation in the alarm expand panel after the full expand layout is stabilized. The current Vuetify `v-window` horizontal transition is disabled because it leaves the previous tab visually hanging inside the table expand row.
+- `[x]` Expand panel tab switching is complete for migration scope. The only remaining note was a cosmetic TODO to restore a safe tab-switch animation later; the current non-animated switch is intentional because the Vuetify `v-window` horizontal transition leaves the previous tab visually hanging inside the table expand row.
 - `[x]` Entity gantt in the alarms list table expand panel is migrated and checked: intervals, pagination, tooltips and layout inside the expanded row.
 - `[x]` Settings: `alarm-settings`; widget parameters form, columns, filters, actions, quick actions, fast pbehavior, Export PDF, Export CSV, Charts and expand panel settings are migrated and checked.
 - `[x]` Store/API/socket: alarm list query/pagination/user-preference foundation is migrated through the Pinia alarm/query stores. Periodic refresh, live watching, alarm/alarm-details socket rooms and opened-details refresh on list fetch are migrated. When migrating the alarm expand pbehavior tab, do not rely on old embedded entity cleanup; `pbehaviors-simple-list` should refresh its own list after pbehavior delete.

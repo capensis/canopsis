@@ -7,7 +7,7 @@
       :disabled="disabled"
       :item-key="itemKey"
       :item-to-form="textPairToForm"
-      :error-messages="errors.collect(name)"
+      :error-messages="collectErrors(name)"
       :required-error-message="requiredErrorMessage"
       :label="title || ''"
       @update:form="updateModel"
@@ -40,8 +40,8 @@
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useValidator } from '@/hooks/validator/validator';
 
 export default {
   emits: ['update:items'],
@@ -109,10 +109,10 @@ export default {
   },
   setup(props, { emit }) {
     const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
-    const validator = useValidator();
+    const { collectErrors } = useFormErrorsMap();
 
     return {
-      errors: validator.errors,
+      collectErrors,
       textPairToForm,
       updateModel,
       updateItemInArray,

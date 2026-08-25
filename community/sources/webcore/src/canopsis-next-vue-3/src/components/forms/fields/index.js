@@ -1,4 +1,5 @@
 export { default as CEnabledField } from './c-enabled-field.vue';
+export { default as CHoursIntervalField } from './c-hours-interval-field.vue';
 export { default as CIdField } from './c-id-field.vue';
 export { default as CItemsPerPageField } from './c-items-per-page-field.vue';
 export { default as CLabel } from './c-label.vue';

@@ -5,6 +5,8 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { ROUTES_NAMES, ROUTES, RESPONSE_STATUSES } from '@/constants';
 
+import { getDefaultViewId } from '@/helpers/entities/user/entity';
+
 import { useAuth } from '@/hooks/auth';
 import { useForm } from '@/hooks/form';
 import { useInfo } from '@/hooks/store/modules/info';
@@ -38,17 +40,19 @@ const submit = handleSubmit(async () => {
     await login(form.values.value);
 
     const { defaultview: userDefaultView } = currentUser.value ?? {};
+    const userDefaultViewId = getDefaultViewId(userDefaultView);
 
     if (redirect && redirect !== ROUTES.home) {
       await router.push(redirect);
       return;
     }
 
-    if (userDefaultView) {
+    if (userDefaultViewId) {
       await router.push({
         name: ROUTES_NAMES.view,
-        params: { id: userDefaultView._id },
+        params: { id: userDefaultViewId },
       });
+
       return;
     }
 

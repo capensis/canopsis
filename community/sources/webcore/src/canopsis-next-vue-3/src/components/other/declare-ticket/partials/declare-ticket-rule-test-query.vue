@@ -18,188 +18,47 @@
   </alarm-webhook-execution>
 </template>
 
-<script>
+<script setup>
+import { toRef } from 'vue';
+
 import { SOCKET_ROOMS } from '@/config';
 
-import Socket from '@/plugins/socket/services/socket';
-
 import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
-import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
 
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useValidator } from '@/hooks/validator/validator';
+
+import { useAlarmWebhookTestQuery } from '@/components/other/alarm/hooks/alarm-webhook-test-query';
 
 import AlarmWebhookExecutionTimeline from '@/components/other/alarm/partials/alarm-webhook-execution-timeline.vue';
 import AlarmWebhookExecution from '@/components/other/alarm/partials/alarm-webhook-execution.vue';
 
 import DeclareTicketRuleExecutionWebhooksTimelineCard from './declare-ticket-rule-execution-webhooks-timeline-card.vue';
 
-export default {
-  components: {
-    DeclareTicketRuleExecutionWebhooksTimelineCard,
-    AlarmWebhookExecutionTimeline,
-    AlarmWebhookExecution,
+const props = defineProps({
+  form: {
+    type: Object,
+    default: () => ({}),
   },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  setup(props) {
-    const popups = usePopups();
-    const modals = useModals();
-    const validator = useValidator();
-    const { setFormErrors } = useValidationFormErrors(props.form);
-    const { createTestDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } =
-      useDeclareTicketRule();
+});
 
-    return {
-      popups,
-      modals,
-      validator,
-      setFormErrors,
-      createTestDeclareTicketExecution,
-      fetchDeclareTicketExecutionWithoutStore,
-    };
-  },
-  data() {
-    return {
-      query: {
-        search: null,
-      },
-
-      alarm: '',
-      pending: false,
-      executionStatus: undefined,
-    };
-  },
-  computed: {
-    hasErrors() {
-      return this.validator.errors.any();
-    },
-
-    alarmsPatternsParams() {
-      return Object.entries(formFilterToPatterns(this.form.patterns)).reduce(
-        (acc, [key, value]) => {
-          acc[key] = JSON.stringify(value);
-
-          return acc;
-        },
-        {},
-      );
-    },
-  },
-  watch: {
-    executionStatus(executionStatus) {
-      if (isWebhookExecutionFinished(executionStatus)) {
-        this.leaveFromSocketRoom();
-      }
-    },
-  },
-  beforeUnmount() {
-    if (this.executionStatus) {
-      this.leaveFromSocketRoom();
-    }
-  },
-  methods: {
-    getSocketRoomName(id) {
-      return `${SOCKET_ROOMS.declareticket}/${id}`;
-    },
-
-    async setExecutionStatus(executionStatus) {
-      this.executionStatus = executionStatus;
-    },
-
-    /**
-     * Socket customClose event handler (we need to use for connection checking)
-     */
-    socketCloseHandler() {
-      if (!this.$socket.isConnectionOpen) {
-        this.modals.hide();
-        this.popups.error({
-          text: this.$t('remediation.instructionExecute.popups.connectionError'),
-          autoClose: false,
-        });
-      }
-    },
-
-    /**
-     * Socket closeRoom event handler
-     */
-    socketCloseRoomHandler() {
-      this.modals.hide();
-    },
-
-    async handleSocketError() {
-      this.executionStatus = await this.fetchDeclareTicketExecutionWithoutStore({
-        id: this.executionStatus._id,
-      });
-    },
-
-    /**
-     * Join from execution room
-     */
-    joinToSocketRoom() {
-      this.$socket
-        .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
-        .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
-        .on(Socket.EVENTS_TYPES.error, this.handleSocketError)
-        .join(this.getSocketRoomName(this.executionStatus._id))
-        .addListener(this.setExecutionStatus);
-    },
-
-    /**
-     * Leave from execution room
-     */
-    leaveFromSocketRoom() {
-      this.$socket
-        .off(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
-        .off(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
-        .off(Socket.EVENTS_TYPES.error, this.handleSocketError)
-        .leave(this.getSocketRoomName(this.executionStatus._id))
-        .removeListener(this.setExecutionStatus);
-    },
-
-    async runTestExecution() {
-      const isFormValid = await this.validator.validateAll();
-
-      if (isFormValid) {
-        this.pending = true;
-        this.clearWebhookStatus();
-
-        const declareTicket = formToDeclareTicketRule(this.form);
-
-        try {
-          this.executionStatus = await this.createTestDeclareTicketExecution({
-            data: {
-              alarms: [this.alarm],
-              ...declareTicket,
-            },
-          });
-
-          this.joinToSocketRoom();
-        } catch (err) {
-          if (err.error) {
-            this.popups.error({ text: err.error });
-          } else {
-            this.setFormErrors(err);
-          }
-
-          this.executionStatus = undefined;
-        } finally {
-          this.pending = false;
-        }
-      }
-    },
-
-    clearWebhookStatus() {
-      this.executionStatus = null;
-    },
-  },
-};
+const { createTestDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } =
+  useDeclareTicketRule();
+const {
+  alarm,
+  pending,
+  executionStatus,
+  hasErrors,
+  alarmsPatternsParams,
+  clearWebhookStatus,
+  runTestExecution,
+} = useAlarmWebhookTestQuery({
+  form: toRef(props, 'form'),
+  socketRoom: SOCKET_ROOMS.declareticket,
+  createExecution: createTestDeclareTicketExecution,
+  fetchExecution: fetchDeclareTicketExecutionWithoutStore,
+  getExecutionData: ({ alarm: alarmId, form }) => ({
+    alarms: [alarmId],
+    ...formToDeclareTicketRule(form),
+  }),
+});
 </script>

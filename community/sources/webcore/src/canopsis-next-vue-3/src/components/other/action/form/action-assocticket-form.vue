@@ -4,6 +4,7 @@
       :model-value="modelValue"
       :name="name"
       :depth="depth"
+      :template-vars="templateVars"
       @update:model-value="$emit('update:modelValue', $event)"
     />
 
@@ -47,6 +48,10 @@ export default {
     depth: {
       type: Number,
       default: 0,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
 

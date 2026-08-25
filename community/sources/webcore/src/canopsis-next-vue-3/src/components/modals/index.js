@@ -49,6 +49,9 @@ export default {
   [MODALS.imageViewer]: defineAsyncComponent(() => import('./common/image-viewer.vue')),
   [MODALS.imagesViewer]: defineAsyncComponent(() => import('./common/images-viewer.vue')),
   [MODALS.textEditor]: defineAsyncComponent(() => import('./common/text-editor.vue')),
+  [MODALS.payloadTextareaEditor]: defineAsyncComponent(
+    () => import('./common/payload-textarea-editor.vue'),
+  ),
   [MODALS.textEditorWithTemplate]: defineAsyncComponent(
     () => import('./common/text-editor-with-template.vue'),
   ),
@@ -117,6 +120,7 @@ export default {
   ),
   [MODALS.createIdleRule]: defineAsyncComponent(() => import('./idle-rule/create-idle-rule.vue')),
   [MODALS.createLinkRule]: defineAsyncComponent(() => import('./link-rule/create-link-rule.vue')),
+  [MODALS.createScenario]: defineAsyncComponent(() => import('./scenario/create-scenario.vue')),
   [MODALS.createDeclareTicketRule]: defineAsyncComponent(
     () => import('./declare-ticket/create-declare-ticket-rule.vue'),
   ),
@@ -166,6 +170,9 @@ export default {
   [MODALS.createAnomalyMonitoredConnector]: defineAsyncComponent(
     () => import('./anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
   ),
+  [MODALS.anomalyMonitoredConnectorHistory]: defineAsyncComponent(
+    () => import('./anomaly-monitored-connector/anomaly-monitored-connector-history.vue'),
+  ),
   [MODALS.createSnmpRule]: defineAsyncComponent(() => import('./snmp-rule/create-snmp-rule.vue')),
   [MODALS.createTemplateTestingData]: defineAsyncComponent(
     () => import('./template-testing/create-template-testing-data.vue'),
@@ -213,6 +220,9 @@ export default {
   ),
   [MODALS.createRemediationInstruction]: defineAsyncComponent(
     () => import('./remediation/create-remediation-instruction.vue'),
+  ),
+  [MODALS.remediationInstructionApproval]: defineAsyncComponent(
+    () => import('./remediation/remediation-instruction-approval.vue'),
   ),
   [MODALS.createRemediationJob]: defineAsyncComponent(
     () => import('./remediation/create-remediation-job.vue'),

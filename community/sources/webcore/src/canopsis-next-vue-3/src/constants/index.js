@@ -25,6 +25,7 @@ export * from './user';
 export * from './service-weather';
 export * from './map';
 export * from './flowchart';
+export * from './form';
 export * from './parameters';
 export * from './declare-ticket';
 export * from './link-rule';

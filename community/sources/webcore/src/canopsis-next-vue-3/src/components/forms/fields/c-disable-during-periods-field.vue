@@ -51,7 +51,7 @@ export default {
     const items = computed(() =>
       PERIOD_TYPES.map(value => ({
         value,
-        text: t(`pbehavior.types.${value}`),
+        text: t(`pbehavior.types.types.${value}`),
       })),
     );
 

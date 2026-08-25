@@ -15,6 +15,7 @@
           :color="!expanded && hasChildrenError ? 'error' : 'primary'"
           :hide-number="small"
           :drag-class="dragHandleClass"
+          class="c-card-iterator-item__step-number"
         >
           {{ itemNumber }}
         </c-draggable-step-number>
@@ -148,6 +149,7 @@ export default {
   &__actions {
     align-self: flex-start;
     align-items: center;
+    gap: 8px;
     height: var(--first-field-height);
     max-width: var(--actions-max-width);
     min-width: var(--actions-min-width);
@@ -156,6 +158,10 @@ export default {
       min-width: var(--one-action-width);
       max-width: var(--one-action-width);
     }
+  }
+
+  &__step-number {
+    gap: 8px;
   }
 
   &__content {

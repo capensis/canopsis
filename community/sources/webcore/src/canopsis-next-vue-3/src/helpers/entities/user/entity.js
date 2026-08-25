@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 import { ROLE_TYPES } from '@/constants';
 
 /**
@@ -26,4 +28,21 @@ export const isUserHasOnlyApiRole = (user = {}) =>
  * @return {Role | undefined}
  */
 export const getFirstRoleWithDefaultView = (user = {}) =>
-  user.roles?.find(role => !!role.defaultview);
+  user.roles?.find(role => !!role.defaultview || !!role.default_view);
+
+/**
+ * Get default view id from default view entity or id.
+ *
+ * @param {DefaultView|string} defaultView
+ * @return {string|undefined}
+ */
+export const getDefaultViewId = defaultView =>
+  (isString(defaultView) ? defaultView : defaultView?._id);
+
+/**
+ * Gets user or role default view from legacy and API naming variants.
+ *
+ * @param {User|Role} entity
+ * @returns {DefaultView|string|undefined}
+ */
+export const getDefaultView = (entity = {}) => entity.defaultview ?? entity.default_view;

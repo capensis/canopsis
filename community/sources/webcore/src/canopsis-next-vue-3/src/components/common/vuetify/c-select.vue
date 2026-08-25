@@ -114,13 +114,19 @@ const onMenuUpdate = (value) => {
 
 const getLegacySlotProps = slotProps => ({
   ...slotProps,
+  props: slotProps.props && slotProps.name === 'item'
+    ? {
+      ...slotProps.props,
+      title: undefined,
+    }
+    : slotProps.props,
   item: slotProps?.item?.raw ?? slotProps?.item,
   vuetifyItem: slotProps?.item,
 });
 
 const getItemProps = (item) => {
   if (typeof props.itemProps === 'function') {
-    return props.itemProps(item?.raw ?? item);
+    return props.itemProps(item);
   }
 
   return props.itemProps;
@@ -147,7 +153,7 @@ const getItemProps = (item) => {
     </template>
 
     <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="getLegacySlotProps(slotProps || {})" />
+      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
     </template>
   </v-select>
 </template>

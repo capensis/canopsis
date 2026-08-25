@@ -14,15 +14,13 @@
     </c-form-block-row>
 
     <c-form-block-row :label="t('common.note')" :depth="depth">
-      <component
-        :is="textareaComponent"
-        :model-value="selectedValue.output"
+      <c-payload-textarea-field
+        :value="selectedValue.output"
         :label="label || t('common.note')"
         :name="outputFieldName"
         :variables="variables"
         required
         autofocus
-        @update:model-value="updateField('output', $event)"
         @update:value="updateField('output', $event)"
       />
     </c-form-block-row>
@@ -83,16 +81,12 @@ export default {
     const availableStateValues = computed(() => (
       allowChangeSeverityToInfo.value ? ALARM_STATES : omit(ALARM_STATES, ['ok'])
     ));
-    const textareaComponent = computed(() => (
-      props.variables?.length ? 'c-payload-textarea-field' : 'c-textarea'
-    ));
 
     return {
       t,
       selectedValue,
       outputFieldName,
       availableStateValues,
-      textareaComponent,
       updateField,
     };
   },

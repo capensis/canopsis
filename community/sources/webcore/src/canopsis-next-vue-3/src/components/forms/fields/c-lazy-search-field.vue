@@ -79,14 +79,14 @@
 </template>
 
 <script>
-import { debounce, isArray, isString, isFunction, get } from 'lodash';
+import { debounce, isArray, isString, isNumber, isFunction, get } from 'lodash';
 import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   inheritAttrs: false,
   props: {
     value: {
-      type: [Array, String, Object],
+      type: [Array, String, Number, Object],
       default: '',
     },
     name: {
@@ -167,7 +167,7 @@ export default {
     },
     density: {
       type: String,
-      default: 'compact',
+      required: false,
     },
   },
   emits: ['update:value', 'update:modelValue', 'update:search', 'fetch', 'fetch:more'],
@@ -188,7 +188,7 @@ export default {
     const resolvedItemTitle = computed(() => props.itemTitle || props.itemText);
 
     const getItemValue = (item) => {
-      if (isString(item)) {
+      if (isString(item) || isNumber(item)) {
         return item;
       }
 
@@ -196,7 +196,7 @@ export default {
     };
 
     const getItemText = (item) => {
-      if (isString(item)) {
+      if (isString(item) || isNumber(item)) {
         return item;
       }
 

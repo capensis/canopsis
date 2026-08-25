@@ -32,6 +32,11 @@ import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
+import {
+  getDefaultView,
+  getDefaultViewId,
+  getFirstRoleWithDefaultView,
+} from '@/helpers/entities/user/entity';
 import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 
 import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups';
@@ -113,6 +118,17 @@ export default {
   watch: {
     templateVars: 'setTitle',
     currentUser: 'setTitle',
+
+    '$route.name'(routeName) {
+      if (
+        routeName === ROUTES_NAMES.home &&
+        this.isLoggedIn &&
+        !this.currentUserLocalPending &&
+        !isEmpty(this.currentUser)
+      ) {
+        this.redirectHomeToDefaultView();
+      }
+    },
   },
 
   beforeCreate() {
@@ -126,11 +142,14 @@ export default {
   async mounted() {
     this.showLocalStorageWarningPopupMessage();
 
-    await Promise.all([
-      this.fetchCurrentUserWithErrorHandling(),
-      this.fetchTemplateVarsWithErrorHandling(),
-      this.fetchIconsWithRegistering(),
-    ]);
+    await this.fetchCurrentUserWithErrorHandling();
+
+    if (this.isLoggedIn) {
+      await this.$router.isReady();
+      await this.redirectHomeToDefaultView();
+    }
+
+    await Promise.all([this.fetchTemplateVarsWithErrorHandling(), this.fetchIconsWithRegistering()]);
 
     await this.fetchAppInfoWithErrorHandling();
 
@@ -225,6 +244,52 @@ export default {
         text: this.$t('errors.socketConnectionProblem'),
         autoClose: false,
       });
+    },
+
+    async redirectHomeToDefaultView() {
+      if (
+        this.$route.name !== ROUTES_NAMES.home ||
+        this.currentUserLocalPending ||
+        isEmpty(this.currentUser)
+      ) {
+        return;
+      }
+
+      const userDefaultView = getDefaultView(this.currentUser);
+      const userDefaultViewId = getDefaultViewId(userDefaultView);
+
+      if (!userDefaultViewId) {
+        await this.redirectHomeToRoleDefaultView();
+      } else if (!this.checkReadAccess(userDefaultViewId)) {
+        this.addDefaultViewRedirectInfoPopup(this.$t('home.popups.info.noAccessToDefaultView'));
+
+        await this.redirectHomeToRoleDefaultView({ showMissingPopup: false });
+      } else {
+        await this.$router.push({ name: ROUTES_NAMES.view, params: { id: userDefaultViewId } });
+      }
+    },
+
+    async redirectHomeToRoleDefaultView({ showMissingPopup = true } = {}) {
+      const roleDefaultView = getDefaultView(getFirstRoleWithDefaultView(this.currentUser));
+      const roleDefaultViewId = getDefaultViewId(roleDefaultView);
+
+      if (!roleDefaultViewId) {
+        if (showMissingPopup) {
+          this.addDefaultViewRedirectInfoPopup(
+            this.$t('home.popups.info.notSelectedRoleDefaultView'),
+          );
+        }
+      } else if (!this.checkReadAccess(roleDefaultViewId)) {
+        this.addDefaultViewRedirectInfoPopup(
+          this.$t('home.popups.info.noAccessToRoleDefaultView'),
+        );
+      } else {
+        await this.$router.push({ name: ROUTES_NAMES.view, params: { id: roleDefaultViewId } });
+      }
+    },
+
+    addDefaultViewRedirectInfoPopup(text) {
+      return this.$popups.info({ text, autoClose: 10000 });
     },
 
     async fetchCurrentUserWithErrorHandling() {

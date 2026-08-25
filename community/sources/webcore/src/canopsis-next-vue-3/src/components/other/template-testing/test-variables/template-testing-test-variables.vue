@@ -53,8 +53,11 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 
+import { TEMPLATE_STUDIO_FORMS_CONTEXT } from '@/constants';
+
+import { useForm, useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import TemplateTestingTestVariablesForm from './form/template-testing-test-variables-form.vue';
@@ -99,6 +102,15 @@ export default {
 
   setup(props) {
     const { t } = useI18n();
+    const mainFormContext = useFormContext();
+    const testFormContext = useForm();
+    const testDataFormContext = useForm();
+
+    provide(TEMPLATE_STUDIO_FORMS_CONTEXT, {
+      mainFormContext,
+      testFormContext,
+      testDataFormContext,
+    });
 
     const isGeneralFormValid = ref(true);
 
@@ -114,16 +126,22 @@ export default {
       updateSelectedTest: updateSelectedTestHook,
       resetLastRunVariables,
       setLastRunVariables,
-    } = useTemplateTestingValidationForm(props);
+    } = useTemplateTestingValidationForm(props, testDataFormContext);
 
     const {
       save: saveAction,
       saveAsNew: saveAsNewAction,
       getTemplateTestRequestData,
       clearTemplateTestRequestData,
-    } = useTemplateTestActions(props);
+    } = useTemplateTestActions(props, {
+      testFormContext,
+      testDataFormContext,
+    });
 
-    const { testResult, createRunTestHandler } = useTemplateTestRunner(props);
+    const { testResult, createRunTestHandler } = useTemplateTestRunner(props, {
+      mainFormContext,
+      testDataFormContext,
+    });
 
     const { running, runTest } = createRunTestHandler(
       getValidationFormData,

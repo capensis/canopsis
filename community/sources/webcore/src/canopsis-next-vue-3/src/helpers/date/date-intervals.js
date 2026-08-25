@@ -227,6 +227,16 @@ export const convertStopDateIntervalToTimestamp = (
 ) => convertDateIntervalToTimestamp(date, DATETIME_INTERVAL_TYPES.stop, format, unit);
 
 /**
+ * Build an interval expression for the current hour or one of the previous hours.
+ *
+ * @param {number} hours
+ * @param {string} [roundUnit]
+ * @returns {string}
+ */
+export const getNowIntervalValueForHours = (hours, roundUnit) =>
+  `now${hours ? `-${hours}h` : ''}${roundUnit ? `/${roundUnit}` : ''}`;
+
+/**
  * Convert metric interval form to timestamp interval.
  *
  * @param {Object} options

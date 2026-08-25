@@ -56,6 +56,7 @@
         :key="`item-${tab.id}`"
         :value="tab.id"
         :class="tabItemClass(tab)"
+        :eager="tab.general || tab.patterns || tab.additional"
         :disabled="tab.testing && isEmptyVariablesFields"
       >
         <slot
@@ -85,10 +86,16 @@
           name="patterns"
         />
 
-        <slot v-else-if="tab['test-query']" :form="form" name="test-query" />
+        <slot
+          v-else-if="tab['test-query']"
+          :set-ref="setTestQueryRef"
+          :form="form"
+          name="test-query"
+        />
 
         <template-testing-test-variables
           v-else-if="tab.testing"
+          :ref="setTestingRef"
           :general-form="form"
           :variables-fields="variablesFields"
           :template-vars="templateVars"
@@ -189,6 +196,7 @@ export default {
       default: null,
     },
   },
+  emits: ['update:form'],
   setup(props, { emit }) {
     const slots = useSlots();
     const { t } = useI18n();
@@ -198,15 +206,22 @@ export default {
     const generalElement = ref(null);
     const patternsElement = ref(null);
     const additionalElement = ref(null);
+    const testQueryElement = ref(null);
+    const testingElement = ref(null);
 
     const setGeneralRef = refElement => (generalElement.value = refElement);
     const setPatternsRef = refElement => (patternsElement.value = refElement);
     const setAdditionalRef = refElement => (additionalElement.value = refElement);
+    const setTestQueryRef = refElement => (testQueryElement.value = refElement);
+    const setTestingRef = refElement => (testingElement.value = refElement);
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
     const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
     const { hasChildrenError: hasAdditionalError } =
       useValidationElementChildren(additionalElement);
+    const { hasChildrenError: hasTestQueryError } =
+      useValidationElementChildren(testQueryElement);
+    const { hasChildrenError: hasTestingError } = useValidationElementChildren(testingElement);
     const {
       vars: copyVars,
       pending: copyVarsPending,
@@ -279,11 +294,15 @@ export default {
       () => testingTabIndex.value !== null && activeTab.value === testingTabIndex.value,
     );
 
+    const tabHasError = tab =>
+      (tab.general && hasGeneralError.value) ||
+      (tab.patterns && hasPatternsError.value) ||
+      (tab.additional && hasAdditionalError.value) ||
+      (tab['test-query'] && hasTestQueryError.value) ||
+      (tab.testing && hasTestingError.value);
+
     const tabTabClass = tab => ({
-      'error--text':
-        (tab.general && hasGeneralError.value) ||
-        (tab.patterns && hasPatternsError.value) ||
-        (tab.additional && hasAdditionalError.value),
+      'text-error': tabHasError(tab),
       'v-tab--tooltip': tab['test-query'],
     });
 
@@ -325,9 +344,12 @@ export default {
     });
 
     onMounted(() => {
+      if (isNumber(props.type)) {
+        fetchTemplateVarsList();
+      }
+
       if (hasTemplateTestingTab.value) {
         fetchCopyVarsList();
-        fetchTemplateVarsList();
       }
     });
 
@@ -340,10 +362,13 @@ export default {
 
       hasGeneralError,
       hasPatternsError,
+      hasAdditionalError,
 
       setGeneralRef,
       setPatternsRef,
       setAdditionalRef,
+      setTestQueryRef,
+      setTestingRef,
 
       copyVars,
       templateVars,
