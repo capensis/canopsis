@@ -34,7 +34,7 @@ db.permission.aggregate([
         ],
     });
     db.role.updateOne({name: "admin"}, {$set: {["permissions." + newPermID]: 1}});
-    db.role.updateMany({["permissions." + doc._id]: {$bitsAllSet: [3]}}, {$set: {["permissions." + newPermID]: 1}});
+    db.role.updateMany({["permissions." + doc._id]: {$gt: 0}}, {$set: {["permissions." + newPermID]: 1}});
 });
 
 db.permission.aggregate([
