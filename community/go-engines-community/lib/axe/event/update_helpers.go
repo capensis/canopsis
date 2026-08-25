@@ -70,7 +70,8 @@ func removeMetaAlarmState(
 		return fmt.Errorf("cannot get meta alarm state: %w", err)
 	}
 
-	if metaAlarmState.ID == "" {
+	// ownership check: meta alarm state should be removed only by the entity that created it
+	if metaAlarmState.ID == "" || metaAlarmState.GetEntityID() != metaAlarm.EntityID {
 		return nil
 	}
 
