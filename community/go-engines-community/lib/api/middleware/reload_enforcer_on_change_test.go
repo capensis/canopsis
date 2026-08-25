@@ -23,7 +23,7 @@ func TestReloadEnforcerPolicyOnChange_GivenOkResponse_ShouldLoadPolicy(t *testin
 		ReloadEnforcerPolicyOnChange(mockEnforcer),
 	)
 
-	_ = performRequest(router, "GET", okURL)
+	_ = performRequest(t.Context(), router, "GET", okURL)
 }
 
 func TestReloadEnforcerPolicyOnChange_GivenNotOkResponse_ShouldNotLoadPolicy(t *testing.T) {
@@ -42,5 +42,5 @@ func TestReloadEnforcerPolicyOnChange_GivenNotOkResponse_ShouldNotLoadPolicy(t *
 		ReloadEnforcerPolicyOnChange(mockEnforcer),
 	)
 
-	_ = performRequest(router, "GET", okURL)
+	_ = performRequest(t.Context(), router, "GET", okURL)
 }

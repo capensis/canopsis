@@ -93,7 +93,7 @@ func (p *resolveCancelProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	go postProcessResolve(
-		context.Background(),
+		context.WithoutCancel(ctx),
 		event,
 		result,
 		updatedServiceStates,

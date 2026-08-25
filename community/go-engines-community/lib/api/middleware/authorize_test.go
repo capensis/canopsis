@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,8 +17,8 @@ type header struct {
 	Value string
 }
 
-func performRequest(r http.Handler, method, path string, headers ...header) *httptest.ResponseRecorder {
-	req := httptest.NewRequest(method, path, nil)
+func performRequest(ctx context.Context, r http.Handler, method, path string, headers ...header) *httptest.ResponseRecorder {
+	req := httptest.NewRequestWithContext(ctx, method, path, nil)
 	for _, h := range headers {
 		req.Header.Add(h.Key, h.Value)
 	}
@@ -54,7 +55,7 @@ func TestAuthorize_GivenAuthorizedUser_ShouldReturnResponse(t *testing.T) {
 		okHandler,
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)
@@ -83,7 +84,7 @@ func TestAuthorize_GivenNotAuthorizedUser_ShouldForbiddenError(t *testing.T) {
 		okHandler,
 	)
 
-	w := performRequest(router, "GET", okURL)
+	w := performRequest(t.Context(), router, "GET", okURL)
 
 	if w.Code != expectedCode {
 		t.Errorf("expected code: %v but got %v", expectedCode, w.Code)

@@ -2,9 +2,9 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 
 // The go line declares a required minimum version of Go to use with this module. (https://golang.org/ref/mod#go-mod-file-go)
 // The .env:GOLANG_VERSION be greater than or equal to the version below.
-go 1.25
+go 1.26
 
-toolchain go1.25.3
+toolchain go1.26.7
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
@@ -22,7 +22,7 @@ require (
 	github.com/casbin/casbin/v2 v2.128.0
 	github.com/chenyahui/gin-cache v1.10.0
 	github.com/coreos/go-oidc/v3 v3.16.0
-	github.com/dlclark/regexp2 v1.11.5
+	github.com/dlclark/regexp2 v1.12.0
 	github.com/dop251/goja v0.0.0-20250309171923-bcd7cc6bf64c
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/gin-gonic/gin v1.10.1
@@ -31,16 +31,16 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.28.0
 	github.com/goccy/go-yaml v1.18.0
-	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.3
-	github.com/jackc/pgx/v5 v5.7.6
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kylelemons/godebug v1.1.0
-	github.com/mailru/easyjson v0.9.1
+	github.com/mailru/easyjson v0.9.2
 	github.com/pelletier/go-toml/v2 v2.2.4
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/procfs v0.18.0
@@ -48,21 +48,21 @@ require (
 	github.com/redis/go-redis/v9 v9.14.1
 	github.com/rs/zerolog v1.34.0
 	github.com/russellhaering/gosaml2 v0.9.1 // do not upgrade! v0.10.0 contains a dirty code, which breakes an assertion decryption.
-	github.com/russellhaering/goxmldsig v1.5.0
+	github.com/russellhaering/goxmldsig v1.6.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.10
-	go.mongodb.org/mongo-driver/v2 v2.3.1
+	go.mongodb.org/mongo-driver/v2 v2.4.2
 	go.uber.org/mock v0.6.0
-	golang.org/x/crypto v0.43.0
-	golang.org/x/oauth2 v0.32.0
-	golang.org/x/sync v0.17.0
-	golang.org/x/text v0.30.0
+	golang.org/x/crypto v0.55.0
+	golang.org/x/oauth2 v0.36.0
+	golang.org/x/sync v0.22.0
+	golang.org/x/text v0.41.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
+	github.com/Azure/go-ntlmssp v0.1.1 // indirect
 	github.com/ChannelMeter/iso8601duration v0.0.0-20150204201828-8da3af7a2a61 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
@@ -82,7 +82,7 @@ require (
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
@@ -127,10 +127,10 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/arch v0.22.0 // indirect
-	golang.org/x/mod v0.29.0 // indirect
-	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
-	golang.org/x/tools v0.38.0 // indirect
+	golang.org/x/mod v0.40.0 // indirect
+	golang.org/x/net v0.58.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
