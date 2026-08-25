@@ -51,12 +51,18 @@ type Task struct {
 func NewTaskExecutor(
 	store Store,
 	dir string,
+	periodicalWaitTime time.Duration,
 	logger zerolog.Logger,
 ) TaskExecutor {
+	if periodicalWaitTime <= 0 {
+		periodicalWaitTime = time.Minute
+	}
+
 	return &taskExecutor{
-		store:  store,
-		dir:    dir,
-		logger: logger,
+		store:              store,
+		dir:                dir,
+		logger:             logger,
+		periodicalWaitTime: periodicalWaitTime,
 	}
 }
 
@@ -64,6 +70,8 @@ type taskExecutor struct {
 	store  Store
 	dir    string
 	logger zerolog.Logger
+
+	periodicalWaitTime time.Duration
 
 	pgPoolMx     sync.Mutex
 	pgPool       postgres.Pool
@@ -95,9 +103,7 @@ func (e *taskExecutor) Run(ctx context.Context) {
 
 	wg := sync.WaitGroup{}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		for {
 			select {
 			case <-ctx.Done():
@@ -110,12 +116,10 @@ func (e *taskExecutor) Run(ctx context.Context) {
 				e.executeLastTask(ctx)
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		ticker := time.NewTicker(time.Minute)
+	wg.Go(func() {
+		ticker := time.NewTicker(e.periodicalWaitTime)
 		defer ticker.Stop()
 
 		for {
@@ -126,12 +130,10 @@ func (e *taskExecutor) Run(ctx context.Context) {
 				e.deleteTasks(ctx)
 			}
 		}
-	}()
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		ticker := time.NewTicker(time.Minute)
+	wg.Go(func() {
+		ticker := time.NewTicker(e.periodicalWaitTime)
 		defer ticker.Stop()
 
 		for {
@@ -172,7 +174,7 @@ func (e *taskExecutor) Run(ctx context.Context) {
 				}
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 }
@@ -316,7 +318,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 	}
 
 	dumpKeepInterval, err := time.ParseDuration(conf.DumpKeepInterval)
-	if err == nil || dumpKeepInterval <= 0 {
+	if err != nil || dumpKeepInterval <= 0 {
 		dumpKeepInterval = config.TechMetricsDumpKeepInterval
 	}
 
