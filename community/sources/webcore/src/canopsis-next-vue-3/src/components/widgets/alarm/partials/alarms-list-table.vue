@@ -331,6 +331,14 @@ export default {
       type: Number,
       default: undefined,
     },
+    resizableColumn: {
+      type: Boolean,
+      default: false,
+    },
+    draggableColumn: {
+      type: Boolean,
+      default: false,
+    },
     widgetGridParameters: {
       type: Object,
       default: () => ({}),
@@ -394,14 +402,6 @@ export default {
       );
     },
 
-    resizableColumn() {
-      return !!this.preparedWidget.parameters?.columns?.resizable;
-    },
-
-    draggableColumn() {
-      return !!this.preparedWidget.parameters?.columns?.draggable;
-    },
-
     cellsContentBehavior() {
       return this.preparedWidget.parameters?.columns?.cells_content_behavior;
     },
@@ -423,7 +423,7 @@ export default {
     },
 
     shownTopPagination() {
-      return !!this.totalItems;
+      return !this.hidePagination && !!this.totalItems;
     },
 
     isTableLoading() {

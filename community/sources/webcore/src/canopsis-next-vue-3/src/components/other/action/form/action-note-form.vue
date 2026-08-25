@@ -1,6 +1,16 @@
 <template>
-  <c-form-block-row :label="t('common.output')" :depth="depth">
-    <c-description-field v-model="output" :name="`${name}.output`" :label="t('common.output')" />
+  <c-form-block-row :label="t('scenario.output')" :depth="depth">
+    <c-payload-textarea-field
+      :value="output"
+      :name="`${name}.output`"
+      :label="t('scenario.output')"
+      :variables="outputVariables"
+      @update:value="output = $event"
+    >
+      <template #append>
+        <c-help-icon :text="t('scenario.outputHelp')" icon="help" left />
+      </template>
+    </c-payload-textarea-field>
   </c-form-block-row>
 </template>
 
@@ -23,6 +33,10 @@ export default {
       type: Number,
       default: 0,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   emits: ['update:modelValue'],
@@ -42,9 +56,12 @@ export default {
       set: value => updateField('output', value),
     });
 
+    const outputVariables = computed(() => props.templateVars.output ?? []);
+
     return {
       t,
       output,
+      outputVariables,
     };
   },
 };

@@ -24,7 +24,9 @@
     </template>
 
     <template v-if="$slots.append || variables.length || lines.length" #append-inner>
-      <slot name="append" />
+      <div v-if="$slots.append" class="c-payload-textarea-field__append-slot">
+        <slot name="append" />
+      </div>
 
       <div class="c-payload-textarea-field__append">
         <variables-menu
@@ -87,9 +89,10 @@
 <script>
 import { keyBy } from 'lodash';
 
+import { FORM_CONTEXT_KEY } from '@/constants';
+
 import { getStringLinesCount } from '@/helpers/string';
 
-import { FORM_CONTEXT_KEY } from '@/hooks/form';
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
 import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
@@ -393,6 +396,14 @@ $iconBarWidth: 18px;
         var(--v-field-padding-end, 16px) var(--v-field-input-padding-bottom, 0)
         var(--v-field-padding-start, 16px);
     }
+  }
+
+  &__append-slot {
+    position: absolute;
+    top: var(--v-field-padding-top, 0);
+    right: var(--v-field-padding-end, 16px);
+    z-index: 2;
+    pointer-events: auto;
   }
 }
 </style>

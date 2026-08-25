@@ -1,6 +1,42 @@
 import { isArray, isObject, difference } from 'lodash';
 
 /**
+ * Check whether the value is a DOM node.
+ *
+ * @param {*} value
+ * @returns {boolean}
+ */
+const isNode = value => !!globalThis.Node && value instanceof globalThis.Node;
+
+/**
+ * Resolve the parent Vue component instance from Options API or Composition API setup.
+ *
+ * @param {Object} component Vue component instance.
+ * @returns {Object|undefined} Parent component instance, if available.
+ */
+const getParentComponent = component => component?.$parent ?? component?.$.parent?.proxy;
+
+/**
+ * Safely check whether an object has an own property.
+ *
+ * @param {Object} object
+ * @param {string} property
+ * @returns {boolean}
+ */
+const hasOwnProperty = (object, property) =>
+  Object.prototype.hasOwnProperty.call(object, property);
+
+/**
+ * Check whether a child component is a wrapper whose `_original` reference points to the parent.
+ *
+ * @param {Object} child
+ * @param {Object} parent
+ * @returns {boolean}
+ */
+const isOriginalChild = (child, parent) =>
+  hasOwnProperty(child, '_original') && child._original === parent;
+
+/**
  * Check if child component has parent component in the $parent chain.
  *
  * @param {Object|HTMLElement} child
@@ -15,12 +51,18 @@ export function isParent(child, parent) {
   const childElement = child.$el ?? child;
   const parentElement = parent.$el ?? parent;
 
-  if (child === parent || child._original === parent || parentElement?.contains?.(childElement)) {
+  if (
+    child === parent ||
+    isOriginalChild(child, parent) ||
+    (isNode(parentElement) && isNode(childElement) && parentElement.contains(childElement))
+  ) {
     return true;
   }
 
-  if (child.$parent) {
-    return isParent(child.$parent, parent);
+  const childParent = getParentComponent(child);
+
+  if (childParent) {
+    return isParent(childParent, parent);
   }
 
   return false;

@@ -9,8 +9,8 @@
       <template #patterns="{ setRef }">
         <declare-ticket-rule-patterns-form :ref="setRef" />
       </template>
-      <template #test-query>
-        <declare-ticket-rule-test-query :form="values" />
+      <template #test-query="{ setRef }">
+        <declare-ticket-rule-test-query :ref="setRef" :form="values" />
       </template>
     </c-form-general-patterns-tabs>
   </c-layout>

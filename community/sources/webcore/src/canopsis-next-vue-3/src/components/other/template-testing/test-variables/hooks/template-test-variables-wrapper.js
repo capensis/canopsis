@@ -50,7 +50,7 @@ export const useTestVariablesTabData = (props = {}, type, emit) => {
         };
       });
     },
-    { immediate: true },
+    { deep: true, immediate: true },
   );
 
   return {

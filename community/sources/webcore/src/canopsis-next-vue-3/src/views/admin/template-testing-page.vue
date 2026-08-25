@@ -11,7 +11,10 @@
       color="primary"
       align-tabs="center"
     >
-      <v-tab v-if="hasReadAccessForTemplateData" :value="TEMPLATE_TESTING_TABS.data">
+      <v-tab
+        v-if="hasReadAccessForTemplateData"
+        :value="TEMPLATE_TESTING_TABS.data"
+      >
         {{ t('templateTesting.tabs.data') }}
       </v-tab>
       <v-tab :value="TEMPLATE_TESTING_TABS.tests">

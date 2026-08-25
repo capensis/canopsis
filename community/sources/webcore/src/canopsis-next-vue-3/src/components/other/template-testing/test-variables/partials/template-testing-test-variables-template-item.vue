@@ -54,12 +54,11 @@
       </div>
 
       <div class="template-item__output-section">
-        <c-payload-textarea-field
+        <simple-code-editor
           :value="formattedOutput"
-          :line-height="TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT"
+          :language="isJson ? 'json' : 'plaintext'"
           :style="{ height: `${editorHeight}px` }"
           class="template-item__output-editor"
-          rows="2"
           readonly
         />
       </div>
@@ -80,7 +79,10 @@ import { getStringLinesCount } from '@/helpers/string';
 
 import { useI18n } from '@/hooks/i18n';
 
+import SimpleCodeEditor from '@/components/common/code-editor/simple-code-editor.vue';
+
 export default {
+  components: { SimpleCodeEditor },
   props: {
     template: {
       type: String,
@@ -160,13 +162,13 @@ export default {
     const formattedOutput = computed(() => {
       if (isJson.value) {
         try {
-          return JSON.stringify(JSON.parse(props.result.result), null, 2);
+          return JSON.stringify(JSON.parse(props.result.result), null, 2) || '';
         } catch {
-          return props.result.result;
+          return props.result.result || '';
         }
       }
 
-      return props.result.result;
+      return props.result.result || '';
     });
 
     const updateTemplate = value => emit('update:template', value);
@@ -195,23 +197,26 @@ export default {
 <style lang="scss" scoped>
 .template-item {
   --paddings: 8px;
-  --border-color: rgba(var(--v-border-color), var(--v-border-opacity));
-  --header-background-color: rgb(var(--v-theme-secondary-lighten-2));
+  --border-color: var(--v-application-background-darken2);
+  --header-background-color: var(--v-application-background-darken1);
+  --header-background-color-success: var(--v-success-background-base);
+  --header-background-color-warning: var(--v-warning-background-base);
+  --header-background-color-error: var(--v-error-background-base);
 
   &__header {
     background-color: var(--header-background-color);
     border: 1px solid var(--border-color);
 
     &--success {
-      background-color: rgb(var(--v-theme-success-background)) !important;
+      background-color: var(--header-background-color-success) !important;
     }
 
     &--warning {
-      background-color: rgb(var(--v-theme-warning-background)) !important;
+      background-color: var(--header-background-color-warning) !important;
     }
 
     &--error {
-      background-color: rgb(var(--v-theme-error-background)) !important;
+      background-color: var(--header-background-color-error) !important;
     }
 
     &-section {

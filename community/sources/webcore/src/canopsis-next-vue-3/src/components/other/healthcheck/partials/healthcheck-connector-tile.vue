@@ -1,8 +1,10 @@
 <template>
   <v-card
     :color="color"
+    :class="{ 'healthcheck-connector-tile--clickable': !isDisabled }"
     class="healthcheck-connector-tile pa-4 text-white"
     variant="flat"
+    v-on="cardListeners"
   >
     <h4 class="text-subtitle-1 font-weight-bold text-truncate">
       {{ connector.name }}
@@ -35,7 +37,7 @@
 </template>
 
 <script>
-import { ANOMALY_MONITORED_CONNECTOR_STATUSES } from '@/constants';
+import { ANOMALY_MONITORED_CONNECTOR_STATUSES, MODALS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 
@@ -68,11 +70,31 @@ export default {
     color() {
       return STATUS_COLORS[this.connector.status] ?? 'grey-darken-1';
     },
+
+    cardListeners() {
+      if (this.isDisabled) {
+        return {};
+      }
+
+      return {
+        click: this.showAnomalyMonitoredConnectorHistoryModal,
+      };
+    },
   },
 
   methods: {
     dateToString(value) {
       return convertDateToString(value);
+    },
+
+    showAnomalyMonitoredConnectorHistoryModal() {
+      this.$modals.show({
+        name: MODALS.anomalyMonitoredConnectorHistory,
+        config: {
+          connector: this.connector,
+          fetchList: () => this.$emit('refresh'),
+        },
+      });
     },
   },
 };
@@ -82,5 +104,9 @@ export default {
 .healthcheck-connector-tile {
   width: 340px;
   min-height: 120px;
+
+  &--clickable {
+    cursor: pointer;
+  }
 }
 </style>

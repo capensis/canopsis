@@ -43,7 +43,7 @@
       </c-textarea>
     </v-col>
     <v-col v-if="!validateOnBlur && !readonly" cols="12">
-      <c-layout>
+      <c-layout gap="2">
         <v-btn
           :disabled="!!errorMessage || !wasChanged"
           color="primary"
@@ -54,7 +54,6 @@
         </v-btn>
         <v-btn
           :disabled="!wasChanged"
-          class="ml-2"
           color="grey-darken-1"
           variant="outlined"
           @click="reset"

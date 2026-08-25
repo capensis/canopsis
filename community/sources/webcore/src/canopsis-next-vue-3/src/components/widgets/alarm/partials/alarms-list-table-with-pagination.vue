@@ -22,6 +22,8 @@
       :refresh-alarms-list="refreshAlarmsList"
       :selected-tags="selectedTags"
       :eager="eager"
+      :resizable-column="resizableColumn"
+      :draggable-column="draggableColumn"
       @update:query="updateQuery"
       @update:columns-settings="updateColumnsSettings"
       @update:dense="$emit('update:dense', $event)"
@@ -155,6 +157,14 @@ export default {
 
     paginationItems() {
       return [5, 10, 20, 50, 100, 200];
+    },
+
+    resizableColumn() {
+      return !!this.widget.parameters?.columns?.resizable;
+    },
+
+    draggableColumn() {
+      return !!this.widget.parameters?.columns?.draggable;
     },
   },
 

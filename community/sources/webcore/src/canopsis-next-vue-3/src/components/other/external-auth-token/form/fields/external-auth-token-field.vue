@@ -23,7 +23,7 @@ import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useWebhookTokenRule } from '@/hooks/store/modules/webhook-token-rule';
 
 export default {
-  emits: ['update:value'],
+  emits: ['update:value', 'update:selected-items'],
   props: {
     value: {
       type: String,

@@ -286,7 +286,7 @@ export default {
     },
 
     selectable() {
-      return !this.hideMassSelection && !this.preparedWidget.parameters.kiosk?.hideMassSelection;
+      return !this.hideMassSelection;
     },
 
     columnsSettings() {

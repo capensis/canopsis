@@ -315,6 +315,16 @@ export const validationProps = {
 export const validationEmits = ['update:modelValue', 'blur'];
 
 export function useVuetifyFieldValidation(props, emit, attrs = {}) {
+  const externalErrorMessages = computed(() => {
+    const messages = attrs.errorMessages ?? attrs['error-messages'];
+
+    if (!messages) {
+      return [];
+    }
+
+    return Array.isArray(messages) ? messages : [messages];
+  });
+
   const inputName = computed(() => props.name || attrs.name || undefined);
 
   const fieldName = computed(() => props.name || attrs.name || attrs.id || props.label || 'field');
@@ -367,7 +377,9 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
     },
   });
 
-  const errorMessages = computed(() => errors.value);
+  const errorMessages = computed(() => externalErrorMessages.value.length
+    ? externalErrorMessages.value
+    : errors.value);
 
   const onBlur = (event, shouldValidate = props.validateOnBlur) => {
     if (shouldValidate) {

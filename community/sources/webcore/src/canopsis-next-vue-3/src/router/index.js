@@ -16,7 +16,6 @@ import { useAuthStore } from '@/stores/modules/auth';
 
 import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
-const PlaceholderPage = () => import('@/views/placeholder-page.vue');
 const AdminRights = () => import('@/views/admin/rights-page.vue');
 const AdminUsers = () => import('@/views/admin/users-page.vue');
 const AdminRoles = () => import('@/views/admin/roles-page.vue');
@@ -59,7 +58,10 @@ const SnmpRulesPage = () => import('@/views/exploitation/snmp-rules-page.vue');
 const ProfilePatternsPage = () => import('@/views/profile/patterns-page.vue');
 const ProfileThemesPage = () => import('@/views/profile/themes-page.vue');
 const NotificationsPage = () => import('@/views/notification/notifications-page.vue');
+const AlarmPage = () => import('@/views/alarm-page.vue');
+const PlaylistPage = () => import('@/views/playlist-page.vue');
 const ViewPage = () => import('@/views/view-page.vue');
+const ViewKioskPage = () => import('@/views/view-kiosk-page.vue');
 
 const protectedRoute = (meta = {}) => ({
   requiresLogin: true,
@@ -98,7 +100,7 @@ const routes = [
         id: route => route.params.id,
       },
     }),
-    component: PlaceholderPage,
+    component: ViewKioskPage,
     props: route => ({ id: route.params.id, tabId: route.params.tabId }),
   },
   {
@@ -109,7 +111,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.view,
       },
     }),
-    component: PlaceholderPage,
+    component: AlarmPage,
     props: route => ({ id: route.params.id }),
   },
   {
@@ -498,7 +500,7 @@ const routes = [
         id: route => route.params.id,
       },
     }),
-    component: PlaceholderPage,
+    component: PlaylistPage,
     props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {

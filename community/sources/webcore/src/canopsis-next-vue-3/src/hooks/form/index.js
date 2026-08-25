@@ -1,11 +1,14 @@
 import { get, isString, set } from 'lodash';
 import {
+  FormContextKey as VEE_FORM_CONTEXT_KEY,
   useField as useVeeField,
   useForm as useVeeForm,
   useFormErrors as veeUseFormErrors,
   useFieldError as veeUseFieldError,
 } from 'vee-validate';
 import { computed, inject, nextTick, onBeforeUnmount, provide, ref, unref, watch } from 'vue';
+
+import { FORM_CONTEXT_KEY } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -32,8 +35,6 @@ export {
   getServerFieldErrors,
   toLiteralVeeFieldPath,
 } from './server-errors';
-
-export const FORM_CONTEXT_KEY = Symbol('formContext');
 
 const fallbackFormContexts = new WeakMap();
 
@@ -63,6 +64,7 @@ export const useForm = ({
   const afterSubmitObserver = new Observer();
 
   const veeForm = useVeeForm(veeOptions);
+  const veeFormContext = instance?.provides?.[VEE_FORM_CONTEXT_KEY] ?? null;
   const { pending: submitting, handler: runSubmit } = usePendingHandler(callback => callback());
   const isSubmitting = computed(() => veeForm.isSubmitting.value || submitting.value);
 
@@ -357,6 +359,7 @@ export const useForm = ({
     submitCount: veeForm.submitCount,
     submitting,
     isSubmitting,
+    veeFormContext,
   };
 
   /**
@@ -503,6 +506,52 @@ export const useFormModels = (fields = []) => {
 export const useFormArray = path => useFormContext().array(path);
 
 export const useFormErrors = veeUseFormErrors;
+
+/**
+ * Returns current form errors with helpers compatible with old errors.has/collect usage.
+ *
+ * @returns {{
+ *   errors: import('vue').ComputedRef<Object<string, string>>,
+ *   getError: function(string|import('vue').Ref<string>|import('vue').ComputedRef<string>): string|undefined,
+ *   hasError: function(string|import('vue').Ref<string>|import('vue').ComputedRef<string>): boolean,
+ *   collectErrors: function(string|import('vue').Ref<string>|import('vue').ComputedRef<string>): string[],
+ * }}
+ */
+export const useFormErrorsMap = () => {
+  useFormContext();
+
+  const errors = useFormErrors();
+  const getErrorCandidates = (path) => {
+    const field = unref(path);
+    const unwrapped = unwrapFieldPath(field);
+
+    return [
+      field,
+      toLiteralVeeFieldPath(field),
+      unwrapped,
+      `[${unwrapped}]`,
+      toVeeFormPath(field),
+    ].filter(Boolean);
+  };
+  const getError = (path) => {
+    const candidates = getErrorCandidates(path);
+
+    return candidates.map(candidate => errors.value[candidate]).find(Boolean);
+  };
+  const collectErrors = (path) => {
+    const error = getError(path);
+
+    return Array.isArray(error) ? error : [error].filter(Boolean);
+  };
+  const hasError = path => !!getError(path);
+
+  return {
+    errors,
+    getError,
+    hasError,
+    collectErrors,
+  };
+};
 
 /**
  * Returns the error message for a field path from the current form errors.

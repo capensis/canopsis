@@ -293,7 +293,6 @@ kbd {
       display: flex;
       align-items: center;
       height: 100%;
-      padding: 0 16px;
     }
   }
 }
@@ -467,7 +466,7 @@ kbd {
 }
 
 .table {
-  &__grid .v-table__wrapper > table,
+  &__grid > .v-table__wrapper > table,
   &__grid > .v-data-table__wrapper > table {
     & > tbody > tr > td,
     & > thead > tr > th {

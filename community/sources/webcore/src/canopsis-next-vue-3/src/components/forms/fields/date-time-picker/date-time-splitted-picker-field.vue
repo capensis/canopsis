@@ -34,12 +34,14 @@
 </template>
 
 <script>
+import { computed, watch } from 'vue';
+
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
 import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
 
-import { formBaseMixin } from '@/mixins/form';
+import { useField } from '@/hooks/form';
 
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 
@@ -48,7 +50,6 @@ import { createDateTimeValidationRules } from './validation-rules';
 export default {
   emits: ['update:value'],
   components: { TimePickerField },
-  mixins: [formBaseMixin],
   props: {
     value: {
       type: Date,
@@ -95,54 +96,72 @@ export default {
       default: undefined,
     },
   },
-  computed: {
-    dateValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.vuetifyDatePicker, null);
-    },
+  setup(props, { emit }) {
+    const fieldName = computed(() => props.name);
+    const getValidatedValue = (value) => {
+      if (!value) {
+        return value;
+      }
 
-    timeValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.timePicker, null);
-    },
+      return convertDateToString(
+        convertDateToStartOfUnitDateObject(value, TIME_UNITS.minute),
+        DATETIME_FORMATS.dateTimePicker,
+      );
+    };
 
-    errorMessage() {
-      if (this.rules.required && !this.value) {
+    const validateValue = (value) => {
+      if (props.rules.required && !value) {
         return 'Field is required';
       }
 
-      const rule = createDateTimeValidationRules(this.rules).find((validationRule) => {
-        const result = validationRule(this.validatedValue);
+      const validatedValue = getValidatedValue(value);
+      const validationRules = createDateTimeValidationRules(props.rules);
+      const failedRule = validationRules.find((validationRule) => {
+        const result = validationRule(validatedValue);
 
         return result !== true;
       });
 
-      return rule ? rule(this.validatedValue) : '';
-    },
+      return failedRule ? failedRule(validatedValue) : true;
+    };
 
-    rowStyle() {
-      return {
-        flexDirection: this.reverse ? 'row-reverse' : undefined,
-      };
-    },
+    const { errorMessage, setValue } = useField(fieldName, validateValue, {
+      initialValue: props.value,
+      validateOnMount: false,
+      validateOnValueUpdate: true,
+    });
 
-    validatedValue() {
-      if (!this.value) {
-        return this.value;
-      }
+    const dateValue = computed(() =>
+      convertDateToString(props.value, DATETIME_FORMATS.vuetifyDatePicker, null),
+    );
+    const timeValue = computed(() =>
+      convertDateToString(props.value, DATETIME_FORMATS.timePicker, null),
+    );
+    const rowStyle = computed(() => ({
+      flexDirection: props.reverse ? 'row-reverse' : undefined,
+    }));
 
-      return convertDateToString(
-        convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute),
-        DATETIME_FORMATS.dateTimePicker,
-      );
-    },
-  },
-  methods: {
-    updateTime(time) {
-      this.updateModel(getDateObjectByTime(this.value, time));
-    },
+    const updateModel = (value) => {
+      setValue(value);
+      emit('update:value', value);
+    };
 
-    updateDate(date) {
-      this.updateModel(getDateObjectByDate(this.value, date));
-    },
+    const updateTime = time => updateModel(getDateObjectByTime(props.value, time));
+    const updateDate = date => updateModel(getDateObjectByDate(props.value, date));
+
+    watch(
+      () => props.value,
+      value => setValue(value, false),
+    );
+
+    return {
+      dateValue,
+      timeValue,
+      errorMessage,
+      rowStyle,
+      updateTime,
+      updateDate,
+    };
   },
 };
 </script>
