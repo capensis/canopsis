@@ -87,7 +87,7 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userID, userna
 
 	if r.AckResources && alarm.Entity.Type == types.EntityTypeComponent {
 		go func() {
-			err = s.ackResources(context.Background(), alarm.Entity.ID, r.Comment, userID, username)
+			err = s.ackResources(context.WithoutCancel(ctx), alarm.Entity.ID, r.Comment, userID, username)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot ack resources")
 			}
@@ -206,7 +206,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 
 	if r.TicketResources && alarm.Entity.Type == types.EntityTypeComponent {
 		go func() {
-			err = s.ticketResources(context.Background(), alarm.Entity.ID, ticketInfo, userID, username)
+			err = s.ticketResources(context.WithoutCancel(ctx), alarm.Entity.ID, ticketInfo, userID, username)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot ticket resources")
 			}
