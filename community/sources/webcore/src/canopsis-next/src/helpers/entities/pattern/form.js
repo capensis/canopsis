@@ -580,6 +580,10 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
   ENTITY_PATTERN_FIELDS.name,
 
   EVENT_FILTER_PATTERN_FIELDS.author,
+  EVENT_FILTER_PATTERN_FIELDS.output,
+  EVENT_FILTER_PATTERN_FIELDS.longOutput,
+  EVENT_FILTER_PATTERN_FIELDS.longOutput,
+  EVENT_FILTER_PATTERN_FIELDS.extraInfos,
 ].includes(field);
 
 /**
