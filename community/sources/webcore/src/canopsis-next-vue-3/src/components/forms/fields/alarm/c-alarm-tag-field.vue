@@ -12,6 +12,7 @@
     :autocomplete="!combobox"
     :hide-details="!required"
     :hide-selected="hideSelected"
+    :hide-no-data="false"
     :item-text="itemText"
     :item-value="itemValue"
     :density="density"
@@ -41,11 +42,15 @@
       </span>
       <span v-else />
     </template>
-    <template #item="{ props: itemProps }">
+    <template #item="{ item, props: itemProps }">
       <v-list-item class="c-alarm-tag-field__list-item text-break" v-bind="itemProps">
         <template v-if="multiple" #prepend="{ isSelected }">
           <v-checkbox-btn :model-value="isSelected" color="primary" />
         </template>
+
+        <v-list-item-title class="c-word-break-all">
+          {{ getSelectionText(item) }}
+        </v-list-item-title>
       </v-list-item>
     </template>
     <template v-if="$slots['no-data']" #no-data="">

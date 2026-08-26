@@ -1,12 +1,12 @@
 <template>
   <c-lazy-search-field
-    :value="value"
+    :value="fieldValue"
     v-bind="$attrs"
     :label="selectLabel"
-    :loading="pending"
-    :items="entities"
+    :loading="wholePending"
+    :items="items"
     :name="name"
-    :has-more="hasMoreEntities"
+    :has-more="hasMoreItems"
     :item-text="itemText"
     :item-value="itemValue"
     :item-disabled="itemDisabled"
@@ -16,9 +16,9 @@
     :autocomplete="autocomplete"
     :return-object="returnObject"
     with-type
-    @update:value="updateValue"
-    @fetch="fetchEntities"
-    @fetch:more="fetchMoreEntities"
+    @update:value="changeSelectedItems"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   >
     <template v-if="$slots.selection" #selection="slotProps">
@@ -27,178 +27,151 @@
     <template v-if="$slots.item" #item="slotProps">
       <slot name="item" v-bind="slotProps" />
     </template>
+    <template v-if="$slots.icon" #icon="slotProps">
+      <slot name="icon" v-bind="slotProps" />
+    </template>
   </c-lazy-search-field>
 </template>
 
-<script>
-import { isArray, isEqual, isString, keyBy, pick } from 'lodash';
+<script setup>
+import { isArray } from 'lodash';
+import { computed, toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
+import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
 import { useEntity } from '@/hooks/store/modules/entity';
 
-export default {
-  inheritAttrs: false,
-  emits: ['input', 'update:value', 'update:modelValue'],
-  props: {
-    value: {
-      type: [Array, String, Object],
-      default: '',
-    },
-    name: {
-      type: String,
-      default: 'entities',
-    },
-    label: {
-      type: String,
-      required: false,
-    },
-    itemText: {
-      type: [String, Function],
-      default: '_id',
-    },
-    itemValue: {
-      type: String,
-      default: '_id',
-    },
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
-    },
-    entityTypes: {
-      type: Array,
-      default: () => Object.values(BASIC_ENTITY_TYPES),
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    returnObject: {
-      type: Boolean,
-      default: false,
-    },
-    clearable: {
-      type: Boolean,
-      default: false,
-    },
-    autocomplete: {
-      type: Boolean,
-      default: false,
-    },
-    itemDisabled: {
-      type: [String, Array, Function],
-      required: false,
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
+defineOptions({ inheritAttrs: false });
+
+const props = defineProps({
+  value: {
+    type: [Array, String, Object],
+    default: '',
   },
-  data() {
-    return {
-      entitiesById: {},
-      pending: false,
-      pageCount: 1,
-      query: {
-        page: 1,
-        search: null,
-      },
-    };
+  name: {
+    type: String,
+    default: 'entities',
   },
-  computed: {
-    entities() {
-      return Object.values(this.entitiesById);
-    },
-
-    hasMoreEntities() {
-      return this.pageCount > this.query.page;
-    },
-
-    selectLabel() {
-      if (this.label) {
-        return this.label;
-      }
-
-      if (isArray(this.value)) {
-        return this.$t('common.entity', this.value.length);
-      }
-
-      return this.$t('common.entity');
-    },
+  label: {
+    type: String,
+    required: false,
   },
-  watch: {
-    entityTypes(entityTypes, oldEntityTypes) {
-      if (!isEqual(entityTypes, oldEntityTypes)) {
-        this.query.page = 1;
-
-        this.updateValue(isArray(this.value) ? [] : '');
-        this.fetchEntities();
-      }
-    },
+  itemText: {
+    type: [String, Function],
+    default: '_id',
   },
-  methods: {
-    updateValue(value) {
-      this.$emit('input', value);
-      this.$emit('update:value', value);
-      this.$emit('update:modelValue', value);
-    },
-
-    getQuery() {
-      return {
-        limit: this.limit,
-        page: this.query.page,
-        search: this.query.search,
-        type: this.entityTypes,
-      };
-    },
-
-    async fetchEntities() {
-      const { fetchContextEntitiesListWithoutStore } = useEntity();
-
-      try {
-        this.pending = true;
-
-        const { data: entities, meta } = await fetchContextEntitiesListWithoutStore({
-          params: this.getQuery(),
-        });
-
-        this.pageCount = meta.page_count;
-
-        const currentEntities = this.getCurrentEntities();
-
-        this.entitiesById = {
-          ...(this.query.page !== 1 ? this.entitiesById : {}),
-          ...keyBy(entities, '_id'),
-          ...currentEntities,
-        };
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.pending = false;
-      }
-    },
-
-    fetchMoreEntities() {
-      this.query.page += 1;
-
-      this.fetchEntities();
-    },
-
-    updateSearch(search) {
-      this.query.search = search;
-      this.query.page = 1;
-
-      this.fetchEntities();
-    },
-
-    getCurrentEntities() {
-      if (!this.returnObject || isString(this.value)) {
-        return pick(this.entitiesById, isArray(this.value) ? this.value : [this.value]);
-      }
-
-      return keyBy(this.value, '_id');
-    },
+  itemValue: {
+    type: String,
+    default: '_id',
   },
+  limit: {
+    type: Number,
+    default: PAGINATION_LIMIT,
+  },
+  entityTypes: {
+    type: Array,
+    default: () => Object.values(BASIC_ENTITY_TYPES),
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  returnObject: {
+    type: Boolean,
+    default: false,
+  },
+  clearable: {
+    type: Boolean,
+    default: false,
+  },
+  autocomplete: {
+    type: Boolean,
+    default: false,
+  },
+  itemDisabled: {
+    type: [String, Array, Function],
+    required: false,
+  },
+  required: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(['input', 'update:value', 'update:modelValue', 'update:selected-items']);
+
+const { t } = useI18n();
+const { fetchContextEntitiesListWithoutStore } = useEntity();
+
+const multiple = computed(() => isArray(props.value));
+const selectLabel = computed(() => {
+  if (props.label) {
+    return props.label;
+  }
+
+  if (multiple.value) {
+    return t('common.entity', props.value.length);
+  }
+
+  return t('common.entity');
+});
+
+const emitModel = (event, value) => {
+  emit(event, value);
+
+  if (event === 'update:value') {
+    emit('input', value);
+    emit('update:modelValue', value);
+  }
 };
+
+const fetchHandler = ({ params }) =>
+  fetchContextEntitiesListWithoutStore({
+    params: {
+      ...params,
+      type: props.entityTypes,
+    },
+  });
+
+const {
+  selectedItem,
+  selectedItems,
+  items,
+  wholePending,
+  hasMoreItems,
+  fetchItems,
+  fetchMoreItems,
+  changeSelectedItems,
+  updateSearch,
+} = useLazySearch(
+  {
+    fetchHandler,
+    idKey: toRef(props, 'itemValue'),
+    idParamsKey: '_id',
+    value: toRef(props, 'value'),
+    multiple,
+    returnObject: toRef(props, 'returnObject'),
+    attachValue: true,
+    initialQuery: {
+      page: 1,
+      limit: props.limit,
+      search: '',
+    },
+  },
+  emitModel,
+);
+
+const fieldValue = computed(() => (multiple.value ? selectedItems.value : selectedItem.value));
+
+watch(
+  () => props.entityTypes,
+  () => {
+    changeSelectedItems(multiple.value ? [] : '');
+    fetchItems();
+  },
+  { deep: true },
+);
 </script>

@@ -7,24 +7,24 @@
       <template #text="">
         <event-filter-form
           :rule-id="ruleId"
-          :is-disabled-id-field="config.submittingIdField"
+          :is-disabled-id-field="isDisabledIdField"
           :event-attributes="eventAttributes"
           :attributes-pending="pending"
         />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" v-on="chatOptions.on" />
       </template>
       <template #actions="">
         <v-btn
           :disabled="submitting"
-          depressed
-          text
+          variant="text"
           @click="closeModal"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="submitting"
+          :disabled="submitDisabled"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
@@ -35,12 +35,13 @@
 </template>
 
 <script>
-import { computed, inject, watch } from 'vue';
+import { computed, inject, toRef, watch } from 'vue';
 
-import { MODALS } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
@@ -51,10 +52,12 @@ import {
 } from '@/hooks/store/modules/patterns-fields';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createEventFilter,
   components: {
+    AiChatSidebar,
     EventFilterForm,
   },
   props: {
@@ -83,6 +86,17 @@ export default {
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
     const isNew = computed(() => !config.value.rule?._id || config.value.duplicating);
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const isDisabledIdField = computed(
+      () => config.value.isDisabledIdField || config.value.submittingIdField,
+    );
+
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
+      modal: toRef(props, 'modal'),
+      ruleId: ruleId.value,
+      context: LLM_SOCKET_CONTEXTS.eventFilter,
+    });
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.bind.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 
@@ -114,6 +128,10 @@ export default {
       pending,
       eventAttributes,
       submitting,
+      submitDisabled,
+      isDisabledIdField,
+      chatShown,
+      chatOptions,
       submitLabel,
       submit,
       closeModal,

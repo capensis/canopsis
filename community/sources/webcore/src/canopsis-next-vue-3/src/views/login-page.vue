@@ -11,6 +11,7 @@ import LoginFooter from '@/components/other/login/login-footer.vue';
 const {
   maintenance,
   description,
+  isBasicAuthEnabled,
   isCASAuthEnabled,
   isSAMLAuthEnabled,
   isOauthAuthEnabled,
@@ -21,18 +22,15 @@ let timeoutId = null;
 
 const stopAppInfoPolling = () => {
   if (timeoutId) {
-    clearTimeout(timeoutId);
+    clearInterval(timeoutId);
+    timeoutId = null;
   }
 };
 
 const startAppInfoPolling = () => {
   stopAppInfoPolling();
 
-  timeoutId = setTimeout(async () => {
-    await fetchAppInfo();
-
-    startAppInfoPolling();
-  }, LOGIN_APP_INFO_POLLING_DELAY);
+  timeoutId = setInterval(fetchAppInfo, LOGIN_APP_INFO_POLLING_DELAY);
 };
 
 onMounted(startAppInfoPolling);
@@ -50,7 +48,7 @@ onBeforeUnmount(stopAppInfoPolling);
       <c-compiled-template :template="description" />
     </div>
     <login-card
-      :basic="true"
+      :basic="isBasicAuthEnabled"
       :cas="isCASAuthEnabled"
       :saml="isSAMLAuthEnabled"
       :oauth="isOauthAuthEnabled"

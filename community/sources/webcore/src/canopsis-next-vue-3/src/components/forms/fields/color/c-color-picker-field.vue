@@ -18,7 +18,7 @@
       <v-menu v-model="shown" :close-on-content-click="false" location="bottom">
         <template #activator="{ props: activatorProps }">
           <v-btn v-bind="activatorProps" :style="style" :disabled="disabled">
-            {{ displayLabel }}
+            <span v-if="!hideLabel">{{ displayLabel }}</span>
           </v-btn>
         </template>
 
@@ -75,6 +75,10 @@ export default {
       default: false,
     },
     justifyEnd: {
+      type: Boolean,
+      default: false,
+    },
+    hideLabel: {
       type: Boolean,
       default: false,
     },

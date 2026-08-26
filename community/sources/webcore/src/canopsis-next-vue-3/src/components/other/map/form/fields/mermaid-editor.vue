@@ -1,42 +1,56 @@
 <template>
-  <c-layout column>
-    <c-layout :style="editorStyles" class="mermaid-editor mb-2">
-      <v-col class="mermaid-editor__sidebar pa-0">
-        <mermaid-code-editor
-          :value="form.code"
-          class="fill-height"
-          @input="updateField('code', $event)"
-        />
-      </v-col>
-      <v-col class="mermaid-editor__content pa-0">
-        <c-layout class="mermaid-editor__toolbar px-2" align="center" justify="end">
-          <add-location-btn :value="addOnClick" class="mr-2" @input="addOnClick = $event" />
-          <mermaid-theme-field
-            :value="form.theme"
-            class="mermaid-editor__theme-picker"
-            @input="updateField('theme', $event)"
+  <map-editor-required-field
+    v-slot="{ hasError, messages }"
+    :name="name"
+    :valid="!!form.code && !!form.points.length"
+    :message="$t('mermaid.errors.emptyMermaid')"
+  >
+    <c-layout column>
+      <c-layout
+        :style="[editorStyles, { borderColor: hasError ? errorColor : undefined }]"
+        class="mermaid-editor mb-2"
+      >
+        <v-col class="mermaid-editor__sidebar pa-0">
+          <mermaid-code-editor
+            :value="form.code"
+            class="fill-height"
+            @input="updateField('code', $event)"
           />
-        </c-layout>
-        <div class="mermaid-editor__preview">
-          <mermaid-code-preview :value="form.code" :theme="form.theme" />
-          <mermaid-points-editor
-            :value="form.points"
-            :add-on-click="addOnClick"
-            class="mermaid-editor__points"
-            @input="updateField('points', $event)"
-          />
-        </div>
-      </v-col>
+        </v-col>
+        <v-col class="mermaid-editor__content pa-0">
+          <c-layout class="mermaid-editor__toolbar px-2" align="center" justify="end">
+            <add-location-btn :value="addOnClick" class="mr-2" @input="addOnClick = $event" />
+            <mermaid-theme-field
+              :value="form.theme"
+              class="mermaid-editor__theme-picker"
+              @input="updateField('theme', $event)"
+            />
+          </c-layout>
+          <div class="mermaid-editor__preview">
+            <mermaid-code-preview :value="form.code" :theme="form.theme" />
+            <mermaid-points-editor
+              :value="form.points"
+              :add-on-click="addOnClick"
+              class="mermaid-editor__points"
+              @input="updateField('points', $event)"
+            />
+          </div>
+        </v-col>
+      </c-layout>
+      <v-messages v-if="hasError" :messages="messages" color="error" />
     </c-layout>
-  </c-layout>
+  </map-editor-required-field>
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 import { formMixin } from '@/mixins/form';
 
 import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
 import AddLocationBtn from './add-location-btn.vue';
+import MapEditorRequiredField from './map-editor-required-field.vue';
 import MermaidCodeEditor from './mermaid-code-editor.vue';
 import MermaidPointsEditor from './mermaid-points-editor.vue';
 import MermaidThemeField from './mermaid-theme-field.vue';
@@ -48,6 +62,7 @@ export default {
     MermaidThemeField,
     MermaidCodePreview,
     MermaidPointsEditor,
+    MapEditorRequiredField,
   },
   mixins: [formMixin],
   props: {
@@ -71,6 +86,10 @@ export default {
     };
   },
   computed: {
+    errorColor() {
+      return COLORS.error;
+    },
+
     editorStyles() {
       const minHeight = Math.max(...this.form.points.map(({ y }) => y), this.minHeight);
 

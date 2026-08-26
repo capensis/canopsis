@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="flowchart-color-field" justify-space-between align-center>
+  <c-layout class="flowchart-color-field" justify="space-between" align="center">
     <v-checkbox
       v-if="!hideCheckbox"
       :model-value="isFilled"
@@ -12,13 +12,11 @@
     <span v-else class="v-label">
       {{ label }}
     </span>
-    <v-col v-show="isFilled || hideCheckbox" cols="3">
-      <v-btn
-        :style="style"
-        class="flowchart-color-field__button ma-0 pa-0"
-        size="small"
-        block
-        @click="showColorPickerModal"
+    <v-col v-show="isFilled || hideCheckbox" class="flowchart-color-field__picker" cols="3">
+      <c-color-picker-field
+        :model-value="value"
+        hide-label
+        @update:model-value="updateModel"
       />
     </v-col>
   </c-layout>
@@ -26,7 +24,6 @@
 
 <script>
 import { COLORS } from '@/config';
-import { MODALS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -60,26 +57,10 @@ export default {
       return this.value !== 'transparent';
     },
 
-    style() {
-      return {
-        backgroundColor: this.value,
-      };
-    },
   },
   methods: {
     updateIsFilled(checked) {
       this.updateModel(checked ? this.palette[0] : 'transparent');
-    },
-
-    showColorPickerModal() {
-      this.$modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          color: this.value,
-          palette: this.palette,
-          action: color => this.updateModel(color),
-        },
-      });
     },
   },
 };
@@ -87,8 +68,8 @@ export default {
 
 <style lang="scss">
 .flowchart-color-field {
-  &__button {
-    min-width: unset;
+  &__picker {
+    flex: 0 0 auto;
   }
 }
 </style>

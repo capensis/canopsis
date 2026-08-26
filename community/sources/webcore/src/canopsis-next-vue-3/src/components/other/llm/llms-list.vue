@@ -6,6 +6,7 @@
     :total-items="totalItems"
     :options="options"
     :select-all="removable"
+    expand
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
@@ -56,6 +57,10 @@
         <c-action-btn v-if="removable" type="delete" @click.stop="$emit('remove', item)" />
       </c-layout>
     </template>
+
+    <template #expand="{ item }">
+      <llms-list-expand-panel :llm="item" />
+    </template>
   </c-advanced-data-table>
 </template>
 
@@ -66,7 +71,13 @@ import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
+import LlmsListExpandPanel from './partials/llms-list-expand-panel.vue';
+
 export default {
+  components: {
+    LlmsListExpandPanel,
+  },
+
   props: {
     llms: {
       type: Array,

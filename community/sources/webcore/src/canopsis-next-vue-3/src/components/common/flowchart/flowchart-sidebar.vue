@@ -4,6 +4,7 @@
     width="100%"
     permanent
     touchless
+    absolute
   >
     <c-layout column>
       <slot name="prepend" />
@@ -16,7 +17,7 @@
       />
     </c-layout>
     <v-divider />
-    <v-expansion-panels color="grey" variant="accordion" multiple>
+    <v-expansion-panels variant="accordion" multiple>
       <v-expansion-panel>
         <v-expansion-panel-title>
           <span class="v-label">

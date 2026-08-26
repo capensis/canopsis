@@ -1,5 +1,11 @@
 <template>
-  <c-layout :column="column" :gap="column ? '2' : undefined" align-center>
+  <c-layout
+    :class="{ 'c-enabled-color-picker-field--column': column }"
+    :column="column"
+    :gap="column ? '2' : undefined"
+    class="c-enabled-color-picker-field"
+    align="center"
+  >
     <div :class="{ 'w-100': column }" class="c-enabled-color-picker-field__switch">
       <c-enabled-field
         v-model="enabled"
@@ -18,6 +24,7 @@
         :required="enabled"
         :name="name"
         :justify-end="justifyEnd"
+        class="c-enabled-color-picker-field__picker"
         @update:model-value="$emit('update:modelValue', $event)"
       />
     </v-fade-transition>
@@ -72,3 +79,26 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-enabled-color-picker-field {
+  &__switch {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  &__picker {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &--column {
+    .c-enabled-color-picker-field__switch,
+    .c-enabled-color-picker-field__picker {
+      flex: 0 1 auto;
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+}
+</style>
