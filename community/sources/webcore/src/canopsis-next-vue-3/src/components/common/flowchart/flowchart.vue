@@ -110,7 +110,13 @@ $sidebarWidth: 320px;
   background: white;
 
   &__sidebar {
-    width: $sidebarWidth !important;
+    position: absolute;
+    top: 0 !important;
+    bottom: 0;
+    left: 0;
+    width: $sidebarWidth;
+    height: 100%;
+    max-height: 100%;
   }
 
   &__editor {

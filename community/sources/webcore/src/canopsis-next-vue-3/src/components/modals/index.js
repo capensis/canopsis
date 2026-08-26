@@ -40,6 +40,9 @@ export default {
   [MODALS.createEventFilter]: defineAsyncComponent(
     () => import('./event-filter/create-event-filter.vue'),
   ),
+  [MODALS.createMetaAlarmRule]: defineAsyncComponent(
+    () => import('./meta-alarm-rule/create-meta-alarm-rule.vue'),
+  ),
   [MODALS.createDynamicInfoTemplate]: defineAsyncComponent(
     () => import('./dynamic-info/create-dynamic-info-template.vue'),
   ),
@@ -102,6 +105,15 @@ export default {
   ),
   [MODALS.createPbehaviorException]: defineAsyncComponent(
     () => import('./pbehavior/create-pbehavior-exception.vue'),
+  ),
+  [MODALS.createPbehavior]: defineAsyncComponent(
+    () => import('./pbehavior/create-pbehavior.vue'),
+  ),
+  [MODALS.createRecurrenceRule]: defineAsyncComponent(
+    () => import('./pbehavior/create-recurrence-rule.vue'),
+  ),
+  [MODALS.pbehaviorRecurrenceRule]: defineAsyncComponent(
+    () => import('./pbehavior/pbehavior-recurrence-rule.vue'),
   ),
   [MODALS.importPbehaviorException]: defineAsyncComponent(
     () => import('./pbehavior/import-pbehavior-exception.vue'),
@@ -226,6 +238,9 @@ export default {
   ),
   [MODALS.createRemediationJob]: defineAsyncComponent(
     () => import('./remediation/create-remediation-job.vue'),
+  ),
+  [MODALS.createTicketStatusJob]: defineAsyncComponent(
+    () => import('./ticket-status-job/create-ticket-status-job.vue'),
   ),
   [MODALS.testSuite]: defineAsyncComponent(() => import('./test-suite/test-suite.vue')),
 };

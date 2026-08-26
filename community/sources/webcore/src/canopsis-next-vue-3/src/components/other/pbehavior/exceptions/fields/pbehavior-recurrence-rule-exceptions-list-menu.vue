@@ -1,25 +1,24 @@
 <template>
-  <v-menu offset-y>
-    <template #activator="{ on }">
+  <v-menu>
+    <template #activator="{ props: activatorProps }">
       <v-btn
+        v-bind="activatorProps"
         :loading="pending"
         :disabled="!availableExceptions.length"
         color="primary"
-        outlined
-        v-on="on"
+        variant="outlined"
       >
         {{ $t('pbehavior.exceptions.choose') }}
       </v-btn>
     </template>
-    <v-list dense>
+
+    <v-list density="comfortable">
       <v-list-item
         v-for="exception in availableExceptions"
         :key="exception._id"
         @click="addItemIntoArray(exception)"
       >
-        <v-list-item-content>
-          <v-list-item-title>{{ exception.name }}</v-list-item-title>
-        </v-list-item-content>
+        <v-list-item-title>{{ exception.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>

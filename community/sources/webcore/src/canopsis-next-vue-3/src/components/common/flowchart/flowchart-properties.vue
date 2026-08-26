@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panels>
-    <v-expansion-panel color="grey">
+    <v-expansion-panel>
       <v-expansion-panel-title>
         <span>{{ $t('flowchart.properties') }}</span>
       </v-expansion-panel-title>

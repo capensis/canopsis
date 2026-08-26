@@ -1,6 +1,13 @@
 <template>
-  <c-layout v-if="!isStopped" gap="1">
-    <template v-if="isRunning">
+  <c-layout v-if="item || !isStopped" gap="1">
+    <c-action-btn
+      v-if="item"
+      :tooltip="t('jobs.actions.editJob')"
+      icon="edit"
+      @click="edit"
+    />
+
+    <template v-if="!isStopped && isRunning">
       <c-action-btn
         :tooltip="t('jobs.actions.pauseJob')"
         :disabled-button="pausePending"
@@ -17,7 +24,7 @@
       />
     </template>
     <c-action-btn
-      v-else
+      v-else-if="!isStopped"
       :tooltip="t('jobs.actions.startJob')"
       :disabled-button="playPending"
       :loading="playPending"
@@ -31,12 +38,14 @@
 import { keyBy } from 'lodash';
 import { computed } from 'vue';
 
-import { JOB_ACTION_REFETCH_DELAY, JOB_STATUS } from '@/constants';
+import { JOB_ACTION_REFETCH_DELAY, JOB_STATUS, MODALS } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
 import { promisedWait } from '@/helpers/async';
 
+import { useCallActionWithPopup } from '@/hooks/actions/call';
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
@@ -57,8 +66,11 @@ export default {
 
   setup(props, { emit }) {
     const { t } = useI18n();
+    const modals = useModals();
     const popups = usePopups();
+    const { callActionWithPopup } = useCallActionWithPopup(false, 'info');
     const {
+      updateTicketStatusJob,
       playTicketStatusJobs,
       pauseTicketStatusJobs,
       fetchTicketStatusJobsListWithPreviousParams,
@@ -142,6 +154,24 @@ export default {
         errorTextKey: 'jobs.popups.pauseFailed',
       }),
     );
+    const edit = () => {
+      modals.show({
+        name: MODALS.createTicketStatusJob,
+        config: {
+          ticketStatusJob: props.item,
+          action: ticketStatusJob =>
+            callActionWithPopup(
+              () =>
+                updateTicketStatusJob({
+                  id: props.item._id,
+                  data: ticketStatusJob,
+                }),
+              fetchTicketStatusJobsListWithPreviousParams,
+              t('jobs.popups.updated'),
+            ),
+        },
+      });
+    };
 
     return {
       t,
@@ -153,6 +183,7 @@ export default {
       play,
       repeat,
       pause,
+      edit,
     };
   },
 };

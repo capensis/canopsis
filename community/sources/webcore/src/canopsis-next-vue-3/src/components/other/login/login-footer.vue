@@ -50,6 +50,7 @@ const canopsisForum = computed(() => CANOPSIS_FORUM);
   align-items: center;
 
   a {
+    color: inherit;
     text-decoration: none;
     padding: 0 2em;
   }

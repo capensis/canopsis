@@ -202,8 +202,11 @@ export default {
 
     clearPointDialog() {
       this.addingPoint = undefined;
-      this.editingPoint = undefined;
       this.shapeId = undefined;
+    },
+
+    clearEditingPointDialog() {
+      this.editingPoint = undefined;
     },
 
     async cancelPointDialog() {
@@ -235,6 +238,8 @@ export default {
         return;
       }
 
+      this.clearEditingPointDialog();
+
       if (shape) {
         const editingPoint = this.points.find(point => point.shape === shape._id);
 
@@ -264,6 +269,8 @@ export default {
     },
 
     openAddPointDialog() {
+      this.clearEditingPointDialog();
+
       this.addingPoint = flowchartPointToForm(
         this.shapeId ? { shape: this.shapeId } : { x: this.pointX, y: this.pointY },
       );
@@ -328,6 +335,7 @@ export default {
     submitPointDialog(data) {
       if (this.editingPoint) {
         this.updatePointInModel(data);
+        this.editingPoint = data;
       } else {
         this.addPointToModel(data);
       }
@@ -347,6 +355,7 @@ export default {
 
             this.closePointDialog();
             this.clearPointDialog();
+            this.clearEditingPointDialog();
           },
         },
       });

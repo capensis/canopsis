@@ -1,26 +1,26 @@
 <template>
-  <c-layout gap="3">
+  <c-layout class="event-filter-drop-intervals-field" gap="3">
     <date-time-picker-text-field
-      v-validate="startRules"
       :value="startString"
       :label="$t('common.start')"
-      :error-message="validator.errors.collect('start')"
+      :rules="startRules"
       name="start"
+      class="event-filter-drop-intervals-field__date"
       @update:value="updateStartDate"
     />
     <date-time-picker-text-field
-      v-validate="stopRules"
       :value="stopString"
       :label="$t('common.stop')"
-      :error-message="validator.errors.collect('stop')"
+      :rules="stopRules"
       name="stop"
+      class="event-filter-drop-intervals-field__date"
       @update:value="updateStopDate"
     />
   </c-layout>
 </template>
 
 <script>
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 
 import { DATETIME_FORMATS } from '@/constants';
 
@@ -29,8 +29,6 @@ import {
   convertDateToString,
   convertDateToTimestamp,
 } from '@/helpers/date/date';
-
-import { useValidator } from '@/hooks/validator/validator';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
@@ -56,8 +54,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = useValidator();
-
     const startString = computed(
       () => props.start && convertDateToString(props.start, DATETIME_FORMATS.dateTimePicker),
     );
@@ -102,16 +98,7 @@ export default {
      */
     const updateStopDate = value => emit('update:stop', prepareDate(value));
 
-    watch(
-      () => props.rrule,
-      () => {
-        validator.errors.remove('start');
-        validator.errors.remove('stop');
-      },
-    );
-
     return {
-      validator,
       startString,
       stopString,
       startRules,
@@ -122,3 +109,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.event-filter-drop-intervals-field {
+  &__date {
+    flex: 0 1 30ch;
+    max-width: 100%;
+
+    :deep(.v-input) {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+}
+</style>

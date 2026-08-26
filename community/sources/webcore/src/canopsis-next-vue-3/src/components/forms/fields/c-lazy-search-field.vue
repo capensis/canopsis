@@ -38,6 +38,9 @@
           <template v-if="$slots.icon" #prepend>
             <slot :item="getSlotItem(slotProps.item)" name="icon" />
           </template>
+          <v-list-item-title>
+            {{ getItemText(getSlotItem(slotProps.item)) }}
+          </v-list-item-title>
           <template v-if="withType" #append>
             <span class="ml-4 text-medium-emphasis">
               {{ getSlotItem(slotProps.item).type }}

@@ -6,7 +6,7 @@
       </template>
 
       <template #text>
-        <external-auth-token-form />
+        <external-auth-token-form :rule-id="externalAuthToken?._id" />
       </template>
 
       <template #actions>
@@ -93,6 +93,7 @@ export default {
       submitting,
       closeModal,
       submit,
+      externalAuthToken,
     };
   },
 };

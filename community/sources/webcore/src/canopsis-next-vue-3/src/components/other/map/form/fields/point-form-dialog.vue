@@ -19,7 +19,7 @@
           </v-btn>
         </c-layout>
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="pt-4">
         <point-form
           :form="form"
           :coordinates="coordinates"
@@ -45,7 +45,9 @@
           :disabled="isDisabled"
           :loading="isSubmitting"
           color="primary"
-          type="submit"
+          variant="elevated"
+          type="button"
+          @click.stop="submit"
         >
           {{ t('common.submit') }}
         </v-btn>
@@ -92,24 +94,26 @@ export default {
     const modals = useModals();
     const {
       values: form,
-      handleSubmit,
+      validate,
       isSubmitting,
       reset,
     } = useForm({
       initialValues: { ...props.point },
     });
 
-    const isDisabled = computed(() => !form.value.entity);
+    const isDisabled = computed(() => !form.value.entity && !form.value.map);
     const title = computed(() => (props.editing ? t('map.editPoint') : t('map.addPoint')));
 
     const close = () => emit('cancel');
     const updateForm = value => (form.value = value);
 
-    const submit = handleSubmit(() => {
-      if (!isDisabled.value) {
-        emit('submit', form.value);
+    const submit = async () => {
+      const { valid } = await validate();
+
+      if (valid && !isDisabled.value) {
+        emit('submit', { ...form.value });
       }
-    });
+    };
 
     const showConfirmationModal = () => {
       if (!isEqual(props.point, form.value)) {

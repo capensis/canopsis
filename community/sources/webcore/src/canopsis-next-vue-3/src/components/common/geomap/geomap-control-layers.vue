@@ -7,7 +7,7 @@
       @mousemove.stop=""
     >
       <v-expansion-panels>
-        <v-expansion-panel class="geomap-layers-control" color="grey">
+        <v-expansion-panel class="geomap-layers-control">
           <v-expansion-panel-title class="geomap-layers-control__title">
             <span class="v-label">
               {{ $t('geomap.layers') }}
@@ -191,13 +191,8 @@ export default {
 .geomap-layers-control {
   min-width: 200px;
 
-  &__title {
-    color: white;
-
-    .v-label {
-      color: inherit;
-      opacity: 1;
-    }
+  &__title .v-label {
+    opacity: 1;
   }
 }
 </style>

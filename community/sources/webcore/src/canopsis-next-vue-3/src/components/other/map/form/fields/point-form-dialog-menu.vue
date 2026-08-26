@@ -5,9 +5,12 @@
     :content-props="contentProps"
     location-strategy="static"
     scroll-strategy="none"
+    persistent
+    eager
   >
     <point-form-dialog
-      v-if="value && point"
+      v-if="point"
+      v-show="value"
       :point="point"
       :editing="editing"
       :exists-entities="existsEntities"

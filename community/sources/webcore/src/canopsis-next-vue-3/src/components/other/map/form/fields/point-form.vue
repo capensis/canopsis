@@ -8,6 +8,7 @@
       :entity-types="entityTypes"
       :item-disabled="isEntityExist"
       :item-text="getItemText"
+      name="entity"
       return-object
       autocomplete
       @input="updateEntity"
@@ -87,14 +88,14 @@ export default {
   methods: {
     updateEntity(entity) {
       if (!this.coordinates) {
-        this.updateField('entity', entity ?? '');
+        this.updateField('entity', entity?._id ?? '');
         return;
       }
 
       if (entity) {
         this.updateModel({
           ...this.form,
-          entity,
+          entity: entity._id,
           is_entity_coordinates: !!entity.coordinates,
           coordinates: entity.coordinates ?? this.form.coordinates,
         });
@@ -108,6 +109,10 @@ export default {
     },
 
     isEntityExist(entity) {
+      if (!entity?._id) {
+        return false;
+      }
+
       return this.existsEntities.some(id => id === entity._id);
     },
   },

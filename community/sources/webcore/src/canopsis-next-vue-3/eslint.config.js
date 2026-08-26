@@ -247,6 +247,7 @@ export default defineConfigWithVueTs(
           ],
         },
       ],
+      'vue/block-order': ['error', { order: ['template', 'script', 'style'] }],
       'vue/no-v-text-v-html-on-component': 'off',
       'vue/require-component-is': 'off',
       'vue/max-attributes-per-line': [
