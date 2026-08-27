@@ -130,7 +130,7 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime
 		return nil, fmt.Errorf("failed to connect to postgres: %w", err)
 	}
 
-	var t time.Time
+	var t *time.Time
 	err = pgPool.QueryRow(ctx, "SELECT min(time) FROM "+metrics.MessageRateHourly).Scan(&t)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -140,7 +140,11 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime
 		return nil, fmt.Errorf("failed to find min stats date: %w", err)
 	}
 
-	return &datetime.CpsTime{Time: t}, nil
+	if t == nil {
+		return nil, nil
+	}
+
+	return &datetime.CpsTime{Time: *t}, nil
 }
 
 func (s *store) getSearchQuery(r ListRequest) (string, pgx.NamedArgs) {
