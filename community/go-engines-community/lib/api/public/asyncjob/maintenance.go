@@ -31,7 +31,7 @@ type Maintainer interface {
 	Clean(ctx context.Context, t datetime.CpsTime) error
 }
 
-func NewMaintainer[T any](
+func NewMaintainer[T Job](
 	store *Store[T],
 	jobType string,
 	publisher Publisher,
@@ -45,7 +45,7 @@ func NewMaintainer[T any](
 	}
 }
 
-type maintainer[T any] struct {
+type maintainer[T Job] struct {
 	store     *Store[T]
 	jobType   string
 	publisher Publisher
@@ -97,18 +97,21 @@ func (m *maintainer[T]) signalClaimed(ctx context.Context, claim func() (string,
 }
 
 func (m *maintainer[T]) Clean(ctx context.Context, t datetime.CpsTime) error {
-	jobs, err := m.store.DeleteCompletedBefore(ctx, t)
+	jobs, err := m.store.FindCompletedBefore(ctx, t)
 	if err != nil {
 		return err
 	}
 
-	if len(jobs) == 0 || m.filepath == nil {
-		return nil
-	}
-
 	for _, job := range jobs {
-		err = os.Remove(m.filepath(job))
-		if err != nil && !errors.Is(err, os.ErrNotExist) {
+		if m.filepath != nil {
+			err = os.Remove(m.filepath(job))
+			if err != nil && !errors.Is(err, os.ErrNotExist) {
+				return err
+			}
+		}
+
+		_, err = m.store.DeleteCompleted(ctx, job.JobID(), t)
+		if err != nil {
 			return err
 		}
 	}
