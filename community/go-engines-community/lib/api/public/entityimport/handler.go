@@ -69,7 +69,7 @@ func (h *handler) handleNext(ctx context.Context) (string, error) {
 		return "", nil
 	}
 
-	ok, err := h.store.SetOngoing(ctx, job.ID)
+	job, ok, err := h.store.Claim(ctx, job.ID)
 	if err != nil {
 		return job.ID, err
 	}
@@ -84,24 +84,42 @@ func (h *handler) handleNext(ctx context.Context) (string, error) {
 	start := time.Now()
 	stats, err := h.do(ctx, job)
 	if err != nil {
+		if errors.Is(err, asyncjob.ErrLeaseLost) {
+			h.logger.Warn().Str("job_id", job.ID).Msg("import job lease lost")
+
+			return job.ID, nil
+		}
+
 		if ctx.Err() != nil {
 			return job.ID, err
 		}
 
-		if updErr := h.store.SetFailed(ctx, job.ID, err.Error(), time.Since(start)); updErr != nil {
+		if updErr := h.store.SetFailed(ctx, job.ID, job.LeaseGeneration, err.Error(), time.Since(start)); updErr != nil {
+			if errors.Is(updErr, asyncjob.ErrLeaseLost) {
+				h.logger.Warn().Str("job_id", job.ID).Msg("import job lease lost")
+
+				return job.ID, nil
+			}
+
 			h.logger.Err(updErr).Str("job_id", job.ID).Msg("cannot mark import job as failed")
 		}
 
 		return job.ID, err
 	}
 
-	err = h.store.SetDone(ctx, job.ID, time.Since(start), bson.M{
+	err = h.store.SetDone(ctx, job.ID, job.LeaseGeneration, time.Since(start), bson.M{
 		"stats": Stats{
 			Updated: stats.Updated,
 			Deleted: stats.Deleted,
 		},
 	})
 	if err != nil {
+		if errors.Is(err, asyncjob.ErrLeaseLost) {
+			h.logger.Warn().Str("job_id", job.ID).Msg("import job lease lost")
+
+			return job.ID, nil
+		}
+
 		return job.ID, err
 	}
 
@@ -113,7 +131,7 @@ func (h *handler) do(ctx context.Context, job Job) (stats importcontextgraph.Sta
 	err = asyncjob.RunWithPing(
 		ctx,
 		func(ctx context.Context) error {
-			return h.store.Ping(ctx, job.ID)
+			return h.store.Ping(ctx, job.ID, job.LeaseGeneration)
 		},
 		func(ctx context.Context) error {
 			var err error
