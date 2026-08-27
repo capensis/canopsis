@@ -235,15 +235,15 @@ func (mr *MockSenderMockRecorder) SendInstructionExecutionForInstruction(instruc
 }
 
 // SendLLMTokenUsage mocks base method.
-func (m *MockSender) SendLLMTokenUsage(timestamp time.Time, model string, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries int64) {
+func (m *MockSender) SendLLMTokenUsage(timestamp time.Time, configID, model string, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries int64) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendLLMTokenUsage", timestamp, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries)
+	m.ctrl.Call(m, "SendLLMTokenUsage", timestamp, configID, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries)
 }
 
 // SendLLMTokenUsage indicates an expected call of SendLLMTokenUsage.
-func (mr *MockSenderMockRecorder) SendLLMTokenUsage(timestamp, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries any) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendLLMTokenUsage(timestamp, configID, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendLLMTokenUsage", reflect.TypeOf((*MockSender)(nil).SendLLMTokenUsage), timestamp, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendLLMTokenUsage", reflect.TypeOf((*MockSender)(nil).SendLLMTokenUsage), timestamp, configID, model, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries)
 }
 
 // SendMessageRate mocks base method.
