@@ -406,6 +406,14 @@ html {
   }
 }
 
+.v-autocomplete.v-select input {
+  min-width: 64px;
+}
+
+.v-select.v-select--chips.v-select--chips--small .v-select__selections {
+  min-height: 32px;
+}
+
 *[aria-required="true"] label:before {
   content: '*' !important;
   padding-right: 4px !important;
