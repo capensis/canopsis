@@ -345,6 +345,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ticketInitiator,
   ALARM_PATTERN_FIELDS.ticketData,
   ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.snoozeInitiator,
   ALARM_PATTERN_FIELDS.ackBy,
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
@@ -581,7 +582,6 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
   EVENT_FILTER_PATTERN_FIELDS.author,
   EVENT_FILTER_PATTERN_FIELDS.output,
   EVENT_FILTER_PATTERN_FIELDS.longOutput,
-  EVENT_FILTER_PATTERN_FIELDS.longOutput,
   EVENT_FILTER_PATTERN_FIELDS.extraInfos,
 ].includes(field);
 
@@ -591,7 +591,14 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidPatternRule = rule => !!(rule?.field || rule?.alias)
+export const isValidPatternRule = rule => console.log(
+  !!(rule?.field || rule?.alias),
+  !isNil(rule.cond?.value),
+  !isNil(rule.cond?.type)
+  , (!rule.field_type || isValidRuleFieldType(rule.field_type)),
+  isValidPatternCondition(rule.cond.type),
+  isValidRuleValue(rule),
+) || !!(rule?.field || rule?.alias)
   && !isNil(rule.cond?.value)
   && !isNil(rule.cond?.type)
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
