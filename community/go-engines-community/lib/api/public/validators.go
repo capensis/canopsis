@@ -3,6 +3,7 @@ package api
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -55,6 +56,8 @@ func registerStructValidations(
 	v *validator.Validate,
 ) {
 	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
+
+	v.RegisterStructValidation(alarm.ValidateStepRequest, alarm.StepRequest{})
 
 	v.RegisterStructValidation(exdate.ValidateExdateRequest, exdate.Request{})
 

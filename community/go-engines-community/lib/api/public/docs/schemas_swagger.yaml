@@ -1,4 +1,214 @@
 definitions:
+  alarm.Response:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/alarm.Step'
+      activation_date:
+        type: integer
+      active_duration:
+        type: integer
+      canceled:
+        $ref: '#/definitions/alarm.Step'
+      change_state:
+        $ref: '#/definitions/alarm.Step'
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      creation_date:
+        type: integer
+      current_state_duration:
+        type: integer
+      display_name:
+        type: string
+      duration:
+        type: integer
+      entity:
+        $ref: '#/definitions/entity.Response'
+      infos:
+        type: object
+      initial_long_output:
+        type: string
+      initial_output:
+        type: string
+      initial_state:
+        type: integer
+      last_comment:
+        $ref: '#/definitions/alarm.Step'
+      last_event_date:
+        type: integer
+      last_st_upd_dt:
+        type: integer
+      last_update_date:
+        type: integer
+      long_output:
+        type: string
+      max_state:
+        type: integer
+      meta_alarm_rule:
+        $ref: '#/definitions/response.Reference'
+      output:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      resolved:
+        type: integer
+      resource:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.Step'
+      state:
+        $ref: '#/definitions/alarm.Step'
+      state_changes_since_status_update:
+        type: integer
+      status:
+        $ref: '#/definitions/alarm.Step'
+      tags:
+        items:
+          type: string
+        type: array
+      ticket:
+        $ref: '#/definitions/alarm.Step'
+      total_state_changes:
+        type: integer
+      type:
+        type: string
+    type: object
+  alarm.SearchRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      meta_alarm:
+        items:
+          type: string
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      resolution:
+        enum:
+        - open
+        - resolved
+        type: string
+      sort:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+        uniqueItems: true
+    required:
+    - resolution
+    type: object
+  alarm.Step:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      initiator:
+        type: string
+      m:
+        type: string
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
+        type: array
+      t:
+        type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_source_status:
+        type: string
+      ticket_status:
+        type: integer
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
+  alarmexport.Request:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      delimiter:
+        description: csv
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      fields:
+        items:
+          $ref: '#/definitions/dataexport.Field'
+        type: array
+      format:
+        enum:
+        - csv
+        - json
+        type: string
+      meta_alarm:
+        items:
+          type: string
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      resolution:
+        enum:
+        - open
+        - resolved
+        type: string
+      sort:
+        type: string
+      time_format:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+        uniqueItems: true
+    required:
+    - fields
+    - format
+    - resolution
+    type: object
   asyncjob.Response:
     properties:
       _id:
@@ -642,6 +852,13 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.StructuredMessage:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
     type: object
 info:
   contact: {}

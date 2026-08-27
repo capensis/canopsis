@@ -5,6 +5,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarmexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataimport"
@@ -20,15 +21,17 @@ import (
 // AsyncJobs returns the handler and the maintainer of every job type:
 // the handler runs a job, the maintainer recovers the ones a dead worker left behind and deletes the ones which expired.
 func AsyncJobs(s Services) (map[string]asyncjob.Handler, []asyncjob.Maintainer) {
-	importStore := asyncjob.NewStore[entityimport.Job](s.PrimaryDbClient, mongo.EntityImportPublicCollection)
-	importDir := filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityImportPublic)
-	exportStore := asyncjob.NewStore[entityexport.Job](s.PrimaryDbClient, mongo.EntityExportPublicCollection)
-	exportDir := filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityExportPublic)
+	entityImportStore := asyncjob.NewStore[entityimport.Job](s.PrimaryDbClient, mongo.EntityImportPublicCollection)
+	entityImportDir := filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityImportPublic)
+	entityExportStore := asyncjob.NewStore[entityexport.Job](s.PrimaryDbClient, mongo.EntityExportPublicCollection)
+	entityExportDir := filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityExportPublic)
+	alarmExportStore := asyncjob.NewStore[alarmexport.Job](s.PrimaryDbClient, mongo.AlarmExportPublicCollection)
+	alarmExportDir := filepath.Join(s.Config.File.Dir, canopsis.SubDirAlarmExportPublic)
 
 	handlers := map[string]asyncjob.Handler{
 		asyncjob.TypeEntityImport: entityimport.NewHandler(
-			importStore,
-			importDir,
+			entityImportStore,
+			entityImportDir,
 			importcontextgraph.NewWorker(
 				s.PrimaryDbClient,
 				importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, libamqp.NewPooledPublisher(s.AMQPPubChPool)),
@@ -40,20 +43,30 @@ func AsyncJobs(s Services) (map[string]asyncjob.Handler, []asyncjob.Maintainer) 
 			s.Logger,
 		),
 		asyncjob.TypeEntityExport: entityexport.NewHandler(
-			exportStore,
+			entityExportStore,
 			s.SecondaryDbClient,
-			exportDir,
+			entityExportDir,
+			s.TimezoneConfigProvider,
+			s.Logger,
+		),
+		asyncjob.TypeAlarmExport: alarmexport.NewHandler(
+			alarmExportStore,
+			s.SecondaryDbClient,
+			alarmExportDir,
 			s.TimezoneConfigProvider,
 			s.Logger,
 		),
 	}
 
 	maintainers := []asyncjob.Maintainer{
-		asyncjob.NewMaintainer(importStore, asyncjob.TypeEntityImport, s.JobPublisher, func(job entityimport.Job) string {
-			return dataimport.Filepath(importDir, job.ID)
+		asyncjob.NewMaintainer(entityImportStore, asyncjob.TypeEntityImport, s.JobPublisher, func(job entityimport.Job) string {
+			return dataimport.Filepath(entityImportDir, job.ID)
 		}),
-		asyncjob.NewMaintainer(exportStore, asyncjob.TypeEntityExport, s.JobPublisher, func(job entityexport.Job) string {
-			return dataexport.Filepath(exportDir, job.ID, job.Params.Format)
+		asyncjob.NewMaintainer(entityExportStore, asyncjob.TypeEntityExport, s.JobPublisher, func(job entityexport.Job) string {
+			return dataexport.Filepath(entityExportDir, job.ID, job.Params.Format)
+		}),
+		asyncjob.NewMaintainer(alarmExportStore, asyncjob.TypeAlarmExport, s.JobPublisher, func(job alarmexport.Job) string {
+			return dataexport.Filepath(alarmExportDir, job.ID, job.Params.Format)
 		}),
 	}
 

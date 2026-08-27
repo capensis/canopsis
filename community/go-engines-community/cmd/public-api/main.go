@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -43,7 +44,7 @@ const JwtSecretEnv = "CPS_JWT_SECRET" //nolint:gosec
 
 func main() {
 	// Graceful shutdown.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	ctx, cancel := context.WithCancel(ctx)

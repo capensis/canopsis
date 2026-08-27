@@ -1,6 +1,7 @@
 package pbehaviortype
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"slices"
@@ -47,7 +48,7 @@ func NewStore(db mongo.DbClient) Store {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListResponse[Response], err error) {
-	sort, err := sortparam.Validate(r.Sort, []string{"_id", "name", "priority", "created", "updated"}, "name")
+	sort, err := sortparam.Validate(cmp.Or(r.Sort, "name"), []string{"_id", "name", "priority", "created", "updated"})
 	if err != nil {
 		return res, err
 	}
