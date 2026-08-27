@@ -6,13 +6,16 @@ db.permission.updateOne({_id: "listalarm_pbehavior"}, {
     }
 });
 
-db.role.updateMany({"permissions.listalarm_pbehavior": 1}, {
-    $bit: {
-        "permissions.api_pbehaviortype": {or: 4},
-        "permissions.api_pbehaviorreason": {or: 4},
-        "permissions.api_pbehaviorexception": {or: 4},
+db.role.updateMany({"permissions.listalarm_pbehavior": 1}, [
+    {
+        $set: {
+            "permissions.api_pbehaviortype": {$bitOr: [4, {$toInt: {$ifNull: ["$permissions.api_pbehaviortype", 0]}}]},
+            "permissions.api_pbehaviorreason": {$bitOr: [4, {$toInt: {$ifNull: ["$permissions.api_pbehaviorreason", 0]}}]},
+            "permissions.api_pbehaviorexception": {$bitOr: [4, {$toInt: {$ifNull: ["$permissions.api_pbehaviorexception", 0]}}]},
+
+        }
     }
-});
+]);
 
 db.permission.updateOne({_id: "listalarm_fastPbehavior"}, {
     $set: {
@@ -22,10 +25,13 @@ db.permission.updateOne({_id: "listalarm_fastPbehavior"}, {
     }
 });
 
-db.role.updateMany({"permissions.listalarm_fastPbehavior": 1}, {
-    $bit: {
-        "permissions.api_pbehavior": {or: 9},
-        "permissions.api_pbehaviortype": {or: 4},
-        "permissions.api_pbehaviorreason": {or: 4},
+db.role.updateMany({"permissions.listalarm_fastPbehavior": 1}, [
+    {
+        $set: {
+            "permissions.api_pbehavior": {$bitOr: [9, {$toInt: {$ifNull: ["$permissions.api_pbehavior", 0]}}]},
+            "permissions.api_pbehaviortype": {$bitOr: [4, {$toInt: {$ifNull: ["$permissions.api_pbehaviortype", 0]}}]},
+            "permissions.api_pbehaviorreason": {$bitOr: [4, {$toInt: {$ifNull: ["$permissions.api_pbehaviorreason", 0]}}]},
+
+        }
     }
-});
+]);
