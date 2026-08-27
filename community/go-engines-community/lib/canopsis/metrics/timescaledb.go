@@ -185,7 +185,7 @@ func (s *timescaleDBSender) SendMessageRate(timestamp time.Time, eventType, conn
 	})
 }
 
-func (s *timescaleDBSender) SendLLMTokenUsage(_ time.Time, _ string, _, _, _, _, _, _ int64) {
+func (s *timescaleDBSender) SendLLMTokenUsage(_ time.Time, _, _ string, _, _, _, _, _, _ int64) {
 }
 
 func (s *timescaleDBSender) SendEntityInfosUpdate(_ time.Time, _, _, _ string, _ any) {

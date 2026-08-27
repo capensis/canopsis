@@ -54,7 +54,7 @@ type Sender interface {
 
 	SendMessageRate(timestamp time.Time, eventType, connectorName string)
 
-	SendLLMTokenUsage(timestamp time.Time, model string, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries int64)
+	SendLLMTokenUsage(timestamp time.Time, configID, model string, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries int64)
 }
 
 type EntityInfosUpdateSender interface {

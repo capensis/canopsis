@@ -3,6 +3,7 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS llm_token_usage
 (
     time               TIMESTAMP    NOT NULL,
+    config_id          VARCHAR(255) NOT NULL,
     model              VARCHAR(255) NOT NULL,
     input_tokens       INT          NOT NULL DEFAULT 0,
     output_tokens      INT          NOT NULL DEFAULT 0,
@@ -16,6 +17,7 @@ SELECT create_hypertable('llm_token_usage', 'time', if_not_exists => TRUE);
 CREATE MATERIALIZED VIEW IF NOT EXISTS llm_token_usage_hourly
             (
              time,
+             config_id,
              model,
              input_tokens,
              output_tokens,
@@ -28,6 +30,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS llm_token_usage_hourly
             WITH (timescaledb.continuous)
 AS
 SELECT time_bucket('1 hour', time),
+       config_id,
        model,
        sum(input_tokens),
        sum(output_tokens),
@@ -37,7 +40,7 @@ SELECT time_bucket('1 hour', time),
        sum(retries),
        count(*)
 FROM llm_token_usage
-GROUP BY time_bucket('1 hour', time), model
+GROUP BY time_bucket('1 hour', time), config_id, model
     WITH NO DATA;
 
 SELECT add_continuous_aggregate_policy(
@@ -48,9 +51,9 @@ SELECT add_continuous_aggregate_policy(
            if_not_exists => TRUE
        );
 SELECT add_retention_policy('llm_token_usage', drop_after => INTERVAL '24 hours', if_not_exists => TRUE);
+SELECT add_retention_policy('llm_token_usage_hourly', drop_after => INTERVAL '90 days', if_not_exists => TRUE);
 
 ALTER MATERIALIZED VIEW llm_token_usage_hourly SET (timescaledb.compress = true);
 SELECT add_compression_policy('llm_token_usage_hourly', compress_after => '1 day'::interval, if_not_exists => TRUE);
-SELECT add_retention_policy('llm_token_usage_hourly', drop_after => INTERVAL '14 days', if_not_exists => TRUE);
 
 END;

@@ -124,6 +124,10 @@ func getTranslations() map[string]map[string]string {
 			types.LocaleEn: "{0} '{1}' ({2}) doesn't exist.",
 			types.LocaleFr: "{0} '{1}' ({2}) n'existe pas.",
 		},
+		"llm_retry_budget_exhausted": {
+			types.LocaleEn: "LLM did not return a valid response within the retry budget",
+			types.LocaleFr: "Le LLM n'a pas renvoyé de réponse valide dans la limite de tentatives autorisées",
+		},
 	}
 }
 
