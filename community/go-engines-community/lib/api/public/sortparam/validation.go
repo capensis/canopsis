@@ -16,11 +16,7 @@ const (
 
 const idField = "_id"
 
-func Validate(sort string, allowedFields []string, defaultSort string) (bson.M, error) {
-	if sort == "" {
-		return defaultQuery(defaultSort), nil
-	}
-
+func Validate(sort string, allowedFields []string) (bson.M, error) {
 	sortable := make(map[string]bool, len(allowedFields))
 	for _, field := range allowedFields {
 		sortable[field] = true
@@ -31,17 +27,24 @@ func Validate(sort string, allowedFields []string, defaultSort string) (bson.M, 
 			return sortable[f]
 		},
 		strings.Join(allowedFields, " "),
-		defaultSort,
 	)
 }
 
 // ValidateFunc works as Validate but resolves sortable fields with isSortable instead of a fixed list.
 // errParam is used in validation errors to describe the expected values.
-func ValidateFunc(sort string, isSortable func(string) bool, errParam, defaultSort string) (bson.M, error) {
-	if sort == "" {
-		return defaultQuery(defaultSort), nil
-	}
+func ValidateFunc(sort string, isSortable func(string) bool, errParam string) (bson.M, error) {
+	return ValidateResolveFunc(sort,
+		func(f string) (string, bool) {
+			return f, isSortable(f)
+		},
+		errParam,
+	)
+}
 
+// ValidateResolveFunc works as ValidateFunc but resolveField also maps a requested field
+// to the field which is used in the sort query. It returns false if the field is not sortable.
+// errParam is used in validation errors to describe the expected values.
+func ValidateResolveFunc(sort string, resolveField func(string) (string, bool), errParam string) (bson.M, error) {
 	parts := strings.Split(sort, ",")
 	q := make(bson.D, 0, len(parts))
 	errs := validator.ValidationErrors{}
@@ -52,20 +55,21 @@ func ValidateFunc(sort string, isSortable func(string) bool, errParam, defaultSo
 			d = Asc
 		}
 
-		if !isSortable(f) {
+		resolved, ok := resolveField(f)
+		if !ok {
 			errs = append(errs, validation.NewFieldErrorWithParam("oneof", strconv.Itoa(i), "sort."+strconv.Itoa(i), errParam))
 			continue
 		}
 
-		if f == idField {
+		if resolved == idField {
 			hasID = true
 		}
 
 		switch d {
 		case Asc:
-			q = append(q, bson.E{Key: f, Value: 1})
+			q = append(q, bson.E{Key: resolved, Value: 1})
 		case Desc:
-			q = append(q, bson.E{Key: f, Value: -1})
+			q = append(q, bson.E{Key: resolved, Value: -1})
 		default:
 			errs = append(errs, validation.NewFieldErrorWithParam("oneof", strconv.Itoa(i), "sort."+strconv.Itoa(i), Asc+" "+Desc))
 			continue
@@ -81,13 +85,4 @@ func ValidateFunc(sort string, isSortable func(string) bool, errParam, defaultSo
 	}
 
 	return bson.M{"$sort": q}, nil
-}
-
-func defaultQuery(defaultSort string) bson.M {
-	q := bson.D{{Key: defaultSort, Value: 1}}
-	if defaultSort != idField {
-		q = append(q, bson.E{Key: idField, Value: 1})
-	}
-
-	return bson.M{"$sort": q}
 }

@@ -5,8 +5,11 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"reflect"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
@@ -27,6 +30,14 @@ func NewBinder(decoder encoding.Decoder, validator *validator.Validate) Binder {
 		urlDecoder: schema.NewDecoder(),
 	}
 	b.urlDecoder.SetAliasTag("form")
+	b.urlDecoder.RegisterConverter(datetime.CpsTime{}, func(s string) reflect.Value {
+		i, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return reflect.Value{}
+		}
+
+		return reflect.ValueOf(datetime.NewCpsTime(i))
+	})
 
 	return b
 }

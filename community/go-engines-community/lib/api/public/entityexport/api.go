@@ -44,7 +44,7 @@ func NewAPI(
 
 func (a *api) prepare(ctx context.Context, r *Request) error {
 	if r.Sort != "" {
-		_, err := sortparam.ValidateFunc(r.Sort, entity.IsSortableField, entity.SortErrParam(), entity.DefaultSortField)
+		_, err := sortparam.ValidateFunc(r.Sort, entity.IsSortableField, entity.SortErrParam())
 		if err != nil {
 			return err
 		}
