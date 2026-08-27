@@ -223,8 +223,15 @@ export default {
         ],
         valueField: {
           is: 'c-select-field',
-          props: {
-            items: Object.values(ALARM_EVENT_INITIATORS),
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+              items: Object.values(ALARM_EVENT_INITIATORS),
+            };
           },
         },
       };
