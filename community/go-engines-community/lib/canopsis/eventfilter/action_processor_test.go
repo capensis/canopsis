@@ -1512,7 +1512,6 @@ func TestActionProcessor(t *testing.T) {
 							Value:       bson.A{"test3", "test1", "test2"},
 						},
 					},
-					IsUpdated: false,
 				},
 			},
 			expectedError: false,

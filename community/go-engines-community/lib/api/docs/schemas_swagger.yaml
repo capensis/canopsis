@@ -4807,6 +4807,10 @@ definitions:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
         type: array
+      inherited_entity_pattern:
+        items:
+          $ref: '#/definitions/patternfields.EntityFieldResponse'
+        type: array
       pbehavior_pattern:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
@@ -6049,9 +6053,6 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
-        description: |-
-          Whether to emit a `declareticketwebhookfail` trigger when the action
-          fails. Only set for webhook actions that declare a ticket.
         type: boolean
       emit_trigger_success:
         type: boolean
@@ -6083,10 +6084,6 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
-        description: |-
-          Whether to emit a `declareticketwebhookfail` trigger when the action
-          fails. Required when `type` is `webhook` and `parameters.declare_ticket`
-          is set; must be omitted otherwise.
         type: boolean
       emit_trigger_success:
         type: boolean
@@ -6439,6 +6436,8 @@ definitions:
             * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
             * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
             * `eventscount` - Alarm check events count
+            * `changedoutput` - Alarm output is changed
+            * `changedlongoutput` - Alarm long output is changed
         enum:
         - create
         - statedec
@@ -6468,6 +6467,8 @@ definitions:
         - autoinstructionresultok
         - autoinstructionresultfail
         - eventscount
+        - changedoutput
+        - changedlongoutput
         type: string
     required:
     - type
