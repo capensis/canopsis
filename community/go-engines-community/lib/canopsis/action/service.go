@@ -236,7 +236,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		Entity:   entity,
 		Start:    start,
 		AdditionalData: types.AdditionalData{
-			AlarmChangeType: string(event.AlarmChange.Type),
+			AlarmChangeType: string(event.AlarmChange.Type), //nolint:staticcheck
 			Author:          event.Author,
 			User:            event.UserID,
 			Initiator:       event.Initiator,
