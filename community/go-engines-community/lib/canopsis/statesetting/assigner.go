@@ -196,10 +196,10 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 			continue
 		}
 
-		// for service, save only rule's id, there is no need to save inherited pattern,
-		// because resources are matched to a service with service's pattern and inherited pattern
-		// will be used in axe for state calculation.
-		entity.StateInfo = &types.StateInfo{ID: a.serviceRules[idx].ID}
+		entity.StateInfo = &types.StateInfo{
+			ID:               a.serviceRules[idx].ID,
+			InheritedPattern: a.serviceRules[idx].InheritedEntityPattern,
+		}
 
 		// save rule to a corresponding state counter document to get it in the engine-axe on state calculation.
 		_, err = a.entityCountersCollection.UpdateOne(

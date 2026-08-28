@@ -15627,13 +15627,31 @@ paths:
 
         -  PERMISSIONS: `api_state_settings:read`
       operationId: state-settings-pattern-fields
+      parameters:
+        - name: type
+          in: query
+          description: |-
+            State settings rule type. When `service` or `component`, the response also includes
+            `inherited_entity_pattern` with fields enabled/disabled for that type.
+          required: false
+          schema:
+            type: string
+            enum:
+              - service
+              - component
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/patternfields.FieldsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /tech-metrics-export:
     post:
       tags:

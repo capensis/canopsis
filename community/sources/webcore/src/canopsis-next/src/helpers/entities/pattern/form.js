@@ -384,6 +384,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ticketInitiator,
   ALARM_PATTERN_FIELDS.ticketData,
   ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.snoozeInitiator,
   ALARM_PATTERN_FIELDS.ackBy,
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
@@ -630,6 +631,9 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
   ENTITY_PATTERN_FIELDS.name,
 
   EVENT_FILTER_PATTERN_FIELDS.author,
+  EVENT_FILTER_PATTERN_FIELDS.output,
+  EVENT_FILTER_PATTERN_FIELDS.longOutput,
+  EVENT_FILTER_PATTERN_FIELDS.extraInfos,
 ].includes(field);
 
 /**

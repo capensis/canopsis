@@ -218,6 +218,14 @@ noWait = false
   # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_che_webhook_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_fifo"
 durable = true
 autoDelete = false
@@ -232,6 +240,14 @@ noWait = false
 
 [[RabbitMQ.queues]]
 name = "FIFO_ack"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_fifo_webhook_rpc_client"
 durable = true
 autoDelete = false
 exclusive = false
@@ -505,6 +521,10 @@ AuthorScheme = ["$username"]
 MetricsCacheExpiration = "24h"
 WebsocketPingInterval = "5s"
 NotificationDisplayCount = 3
+
+# It's required to restart api after canopsis-reconfigure updates mongodb to catch up following parameters.
+[Canopsis.api.action_logger]
+Enabled = true
 
 [Canopsis.api.llm]
 # off_topic_errors defines error messages returned by the LLM when the user's prompt

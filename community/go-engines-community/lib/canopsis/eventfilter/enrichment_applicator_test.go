@@ -6,14 +6,9 @@ import (
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
-	mock_externaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/externaldata"
-	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
 
@@ -47,7 +42,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		return false, nil
 	})
 
-	applicator := eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), mockActionProcessor, mockFailureService)
+	applicator := eventfilter.NewEnrichmentApplicator(mockActionProcessor, mockFailureService)
 
 	event := types.Event{}
 	res, resError := applicator.Apply(
@@ -55,7 +50,9 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}},
 		&event,
 		nil,
-		eventfilter.RegexMatch{})
+		eventfilter.RegexMatch{},
+		nil,
+	)
 	if resError != nil {
 		t.Errorf("expected not error but got %v", resError)
 	}
@@ -99,76 +96,14 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 	})
 
 	event := types.Event{}
-	applicator := eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), mockActionProcessor, mockFailureService)
-	res, resError := applicator.Apply(t.Context(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, nil, eventfilter.RegexMatch{})
+	applicator := eventfilter.NewEnrichmentApplicator(mockActionProcessor, mockFailureService)
+	res, resError := applicator.Apply(t.Context(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, nil, eventfilter.RegexMatch{}, nil)
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
 
 	if res.Outcome != expectedOutcome {
 		t.Errorf("expected outcome %s, but got %s", expectedOutcome, res.Outcome)
-	}
-
-	if !reflect.DeepEqual(expectedEvent, event) {
-		t.Errorf("expected event %v, but got %v", expectedEvent, event)
-	}
-}
-
-func TestApplyWithExternalData(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockGetter := mock_externaldata.NewMockGetter(ctrl)
-	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(map[string]any{"ID": "test_value"}, nil)
-
-	externalDataContainer := externaldata.NewGetterContainer()
-	externalDataContainer.Set("test", mockGetter)
-	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockFailureService, tplExecutor)
-
-	externalData := []externaldata.ParsedRefParameters{
-		{
-			Reference: "test",
-			Type:      "test",
-		},
-	}
-
-	event := types.Event{
-		Resource:      "resource",
-		Component:     "component",
-		Connector:     "connector",
-		ConnectorName: "connector name",
-	}
-
-	expectedEvent := types.Event{
-		Resource:      "test_value",
-		Component:     "component",
-		Connector:     "connector",
-		ConnectorName: "connector name",
-	}
-
-	res, err := applicator.Apply(
-		t.Context(),
-		eventfilter.ParsedRule{
-			ExternalData: externalData,
-			Config: eventfilter.ParsedRuleConfig{
-				Resource: tplExecutor.Parse("{{.ExternalData.test.ID}}"),
-			},
-		},
-		&event,
-		nil,
-		eventfilter.RegexMatch{},
-	)
-
-	if err != nil {
-		t.Errorf("expected not error but got %v", err)
-	}
-
-	if res.Outcome != eventfilter.OutcomePass {
-		t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, res.Outcome)
 	}
 
 	if !reflect.DeepEqual(expectedEvent, event) {
