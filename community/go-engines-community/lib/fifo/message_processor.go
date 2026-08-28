@@ -33,6 +33,8 @@ type messageProcessor struct {
 	EventFilterService eventfilter.Service
 	Scheduler          scheduler.Scheduler
 	MetricsSender      metrics.Sender
+	ExternalData       ExternalDataCoordinator
+	Encoder            encoding.Encoder
 	Decoder            encoding.Decoder
 	Logger             zerolog.Logger
 
@@ -49,21 +51,23 @@ func NewMessageProcessor(
 	eventFilterService eventfilter.Service,
 	scheduler scheduler.Scheduler,
 	metricsSender metrics.Sender,
+	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 	logger zerolog.Logger,
 	techMetricsSender techmetrics.Sender,
 	prometheusMetrics *prometheus.Metrics,
-	featurePrintEvenotOnError bool,
+	featurePrintEventOnError bool,
 ) *messageProcessor {
 	return &messageProcessor{
 		EventFilterService:       eventFilterService,
 		Scheduler:                scheduler,
 		MetricsSender:            metricsSender,
+		Encoder:                  encoder,
 		Decoder:                  decoder,
 		Logger:                   logger,
 		TechMetricsSender:        techMetricsSender,
 		prometheusMetrics:        prometheusMetrics,
-		FeaturePrintEventOnError: featurePrintEvenotOnError,
+		FeaturePrintEventOnError: featurePrintEventOnError,
 	}
 }
 
@@ -99,10 +103,13 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
+	isSuspended := false
+	eventMetric.EventType = event.EventType
 	defer func() {
-		eventMetric.EventType = event.EventType
-		eventMetric.Interval = time.Since(eventMetric.Timestamp)
-		p.TechMetricsSender.SendFifoEvent(eventMetric)
+		if !isSuspended {
+			eventMetric.Interval = time.Since(eventMetric.Timestamp)
+			p.TechMetricsSender.SendFifoEvent(eventMetric)
+		}
 	}()
 
 	event.Format()
@@ -120,7 +127,20 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	if !event.Healthcheck {
-		_, _, eventMetric.ExternalRequests, err = p.EventFilterService.ProcessEvent(ctx, &event)
+		b, err := p.Encoder.Encode(event)
+		if err != nil {
+			p.logError(err, "cannot encode event", msg)
+			return nil, nil
+		}
+
+		var preFilterEvent types.Event
+		err = p.Decoder.Decode(b, &preFilterEvent)
+		if err != nil {
+			p.logError(err, "cannot decode event", msg)
+			return nil, nil
+		}
+
+		efr, err := p.EventFilterService.ProcessEvent(ctx, &event, eventfilter.ServiceResult{})
 		if err != nil {
 			if errors.Is(err, eventfilter.ErrDropOutcome) {
 				return nil, nil
@@ -129,6 +149,27 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			p.logError(err, "cannot process event by eventfilter service", msg)
 			return nil, nil
 		}
+
+		if efr.ExternalDataRequest != nil {
+			// It parks the partially processed event until the webhook RPC answers.
+			// Processing continues when the RPC response is consumed and the event resumed.
+			err = p.ExternalData.Dispatch(ctx, event, efr, preFilterEvent, eventMetric, 1)
+			if err != nil {
+				if engine.IsConnectionError(err) {
+					return nil, err
+				}
+
+				p.logError(err, "cannot suspend event for external data", d.Body)
+
+				return nil, nil
+			}
+
+			isSuspended = true
+
+			return nil, engine.ErrAckWithoutForward
+		}
+
+		eventMetric.ExternalRequests = efr.ExternalRequestCount
 	}
 
 	p.Logger.Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")

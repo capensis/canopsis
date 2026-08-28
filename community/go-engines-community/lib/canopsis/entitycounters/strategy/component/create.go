@@ -13,12 +13,12 @@ func (s CreateStrategy) CanSkip(_ entitycounters.ComponentCountersCalcData) bool
 
 func (s CreateStrategy) Calculate(calcData entitycounters.ComponentCountersCalcData) entitycounters.EntityCounters {
 	if calcData.Info.ComponentStateSettingsToRemove {
-		calcData.Counters.DecrementState(types.AlarmStateOK, false)
+		calcData.Counters.DecrementState(types.AlarmStateOK, entitycounters.InheritedNone)
 	} else if calcData.Info.ComponentStateSettingsToAdd {
-		calcData.Counters.IncrementState(calcData.CurState, false)
+		calcData.Counters.IncrementState(calcData.CurState, entitycounters.InheritedNone)
 	} else {
-		calcData.Counters.DecrementState(types.AlarmStateOK, false)
-		calcData.Counters.IncrementState(calcData.CurState, false)
+		calcData.Counters.DecrementState(types.AlarmStateOK, entitycounters.InheritedNone)
+		calcData.Counters.IncrementState(calcData.CurState, entitycounters.InheritedNone)
 	}
 
 	return calcData.Counters

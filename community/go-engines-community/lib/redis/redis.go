@@ -24,7 +24,7 @@ const (
 	LockStorage
 	QueueStorage
 	ApiCacheQueue
-	AxePeriodicalLockStorage
+	CheSuspendedEventStorage
 	RuleTotalEntitiesStorage
 	AlarmGroupStorage
 	CorrelationLockStorage

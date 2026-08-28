@@ -45,18 +45,13 @@ func (m *EntityRegexMatches) SetComponentInfoRegexMatches(fieldName string, matc
 	m.ComponentInfos[fieldName] = matches
 }
 
-func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
-	return len(EntityPatternErrors(p, forbiddenFields)) == 0
+func ValidateEntityPattern(p pattern.Entity, forbiddenFieldsMap map[string]bool) bool {
+	return len(EntityPatternErrors(p, forbiddenFieldsMap)) == 0
 }
 
-func EntityPatternErrors(p pattern.Entity, forbiddenFields []string) []ConditionError {
+func EntityPatternErrors(p pattern.Entity, forbiddenFieldsMap map[string]bool) []ConditionError {
 	emptyEntity := types.Entity{}
 	now := time.Now() // to compute relative time values
-
-	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
-	for _, field := range forbiddenFields {
-		forbiddenFieldsMap[field] = true
-	}
 
 	var errs []ConditionError
 	for gidx := range p {
