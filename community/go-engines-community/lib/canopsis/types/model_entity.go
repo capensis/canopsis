@@ -55,7 +55,8 @@ type Entity struct {
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
 	Upstream  string `bson:"upstream,omitempty" json:"upstream,omitempty"`
 
-	Services []string `bson:"services" json:"services,omitempty"`
+	Services          []string `bson:"services" json:"services,omitempty"`
+	InheritedServices []string `bson:"inherited_services,omitempty" json:"inherited_services,omitempty"`
 	// ServicesToAdd and ServicesToRemove are used to recompute dependencies counters.
 	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
 	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
@@ -89,10 +90,6 @@ type Entity struct {
 
 	PerfData        []string          `bson:"perf_data,omitempty" json:"-"`
 	PerfDataUpdated *datetime.CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
-
-	// IsNew and IsUpdated used in engine che in entity creation and eventfilter
-	IsNew     bool `bson:"-" json:"-"`
-	IsUpdated bool `bson:"-" json:"-"`
 
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
 
