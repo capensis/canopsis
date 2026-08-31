@@ -45,6 +45,7 @@
       <c-form-block-row
         v-if="withPayload"
         :label="$t('common.payload')"
+        :align-center="!form.payload"
       >
         <v-btn
           v-if="!form.payload"

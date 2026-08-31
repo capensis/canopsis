@@ -356,12 +356,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -434,12 +434,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -510,12 +510,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -588,12 +588,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -664,12 +664,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -742,12 +742,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -818,12 +818,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -896,12 +896,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -972,12 +972,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1050,12 +1050,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   declare-ticket=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>

@@ -289,7 +289,7 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.pbehavior]: 'Pbehaviors',
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Resolve rules',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
-    [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
+    [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'SNMP rules',
 
     /**
     * Technical Admin Notification

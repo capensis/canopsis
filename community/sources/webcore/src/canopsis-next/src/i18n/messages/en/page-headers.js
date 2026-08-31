@@ -13,7 +13,7 @@ export default {
   },
 
   [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: {
-    title: 'Dynamic informations',
+    title: 'Dynamic Information',
     message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
   },
 
@@ -127,6 +127,9 @@ export default {
   [USER_PERMISSIONS.technical.map]: {
     title: 'Maps',
     message: 'Module to define and display maps (geographic, logical, mermaid, etc.) via the "Map" widget.',
+  },
+  [USER_PERMISSIONS.technical.icon]: {
+    title: 'Icons',
   },
   [USER_PERMISSIONS.technical.commentTemplate]: {
     title: 'Comment templates',
