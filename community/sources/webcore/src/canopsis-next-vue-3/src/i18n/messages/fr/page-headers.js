@@ -13,7 +13,7 @@ export default {
   },
 
   [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: {
-    title: 'Informations dynamiques',
+    title: 'Information dynamique',
     message: 'Centre d\'enrichissement des alarmes',
   },
 
@@ -124,6 +124,9 @@ export default {
   [USER_PERMISSIONS.technical.commentTemplate]: {
     title: 'Modèles de commentaires',
     topbarTitle: 'Modèles de commentaires',
+  },
+  [USER_PERMISSIONS.technical.icon]: {
+    title: 'Icônes',
   },
 
   /**
