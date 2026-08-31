@@ -61,7 +61,8 @@ import { uid } from '@/helpers/uid';
  * @param {string} metric
  * @returns {boolean}
  */
-export const isTimeMetric = metric => [
+export const isTimeMetric = metric =>
+  [
     USER_METRIC_PARAMETERS.totalUserActivity,
     USER_METRIC_PARAMETERS.minUserSession,
     USER_METRIC_PARAMETERS.maxUserSession,
@@ -82,7 +83,8 @@ export const isTimeMetric = metric => [
  * @param {string} metric
  * @returns {boolean}
  */
-export const isRatioMetric = metric => [
+export const isRatioMetric = metric =>
+  [
     ALARM_METRIC_PARAMETERS.ratioCorrelation,
     ALARM_METRIC_PARAMETERS.ratioInstructions,
     ALARM_METRIC_PARAMETERS.ratioTickets,
@@ -104,7 +106,8 @@ export const isExternalPercentMetricUnit = unit => unit === EXTERNAL_METRIC_UNIT
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
  */
-export const isExternalTimeMetricUnit = unit => [
+export const isExternalTimeMetricUnit = unit =>
+  [
     EXTERNAL_METRIC_UNITS.microsecond,
     EXTERNAL_METRIC_UNITS.millisecond,
     EXTERNAL_METRIC_UNITS.second,
@@ -116,7 +119,8 @@ export const isExternalTimeMetricUnit = unit => [
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
  */
-export const isExternalDataSizeMetricUnit = unit => [
+export const isExternalDataSizeMetricUnit = unit =>
+  [
     EXTERNAL_METRIC_UNITS.continuousCounter,
     EXTERNAL_METRIC_UNITS.byte,
     EXTERNAL_METRIC_UNITS.kilobyte,

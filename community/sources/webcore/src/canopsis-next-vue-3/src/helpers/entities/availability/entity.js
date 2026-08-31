@@ -37,6 +37,7 @@ export const getAvailabilityFieldByDisplayParameterAndShowType = (displayParamet
  * @param {number} displayParameter
  * @returns {string}
  */
-export const getAvailabilityTrendFieldByDisplayParameter = displayParameter => displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime
+export const getAvailabilityTrendFieldByDisplayParameter = displayParameter =>
+  displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime
     ? AVAILABILITY_FIELDS.uptimeShareHistory
     : AVAILABILITY_FIELDS.downtimeShareHistory;

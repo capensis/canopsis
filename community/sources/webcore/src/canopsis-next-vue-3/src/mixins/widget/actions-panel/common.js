@@ -33,7 +33,8 @@ export const widgetActionsPanelCommonMixin = {
     async createDowntimePbehavior(entities, payload) {
       const response = await this.bulkCreateEntityPbehaviors({
         data: entities.map(
-          entity => createDowntimePbehavior({
+          entity =>
+            createDowntimePbehavior({
               entity,
               ...pick(payload, ['comment', 'reason', 'type', 'prefix', 'origin']),
             }),

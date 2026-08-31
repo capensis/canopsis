@@ -91,7 +91,8 @@ export default {
     );
     const isExecutionSucceeded = computed(() => isWebhookExecutionSucceeded(props.executionStatus));
     const isExecutionFailed = computed(() => isWebhookExecutionFailed(props.executionStatus));
-    const isSomeOneWebhookStarted = computed(() => props.executionStatus?.webhooks.some(webhook => !isWebhookExecutionWaiting(webhook)),
+    const isSomeOneWebhookStarted = computed(
+      () => props.executionStatus?.webhooks.some(webhook => !isWebhookExecutionWaiting(webhook)),
     );
 
     const runTestExecution = () => emit('run:execution');

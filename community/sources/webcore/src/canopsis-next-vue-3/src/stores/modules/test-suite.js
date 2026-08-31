@@ -12,7 +12,8 @@ export const useTestSuiteStore = defineStore('testSuite', () => {
 
   const getItem = computed(() => id => itemsById.value[id]);
   const getListByWidgetId = computed(
-    () => widgetId => (widgets.value[widgetId]?.allIds ?? []).map(id => itemsById.value[id]).filter(Boolean),
+    () => widgetId =>
+      (widgets.value[widgetId]?.allIds ?? []).map(id => itemsById.value[id]).filter(Boolean),
   );
   const getPendingByWidgetId = computed(
     () => widgetId => widgets.value[widgetId]?.pending ?? false,
@@ -72,10 +73,14 @@ export const useTestSuiteStore = defineStore('testSuite', () => {
     return response;
   };
 
-  const fetchSummaryWithoutStore = ({ id } = {}) => request.get(`${API_ROUTES.junit.testSuites}/${id}/summary`);
-  const fetchItemGanttIntervalsWithoutStore = ({ id, params } = {}) => request.get(`${API_ROUTES.junit.testSuites}/${id}/gantt`, { params });
-  const fetchItemDetailsWithoutStore = ({ id, params } = {}) => request.get(`${API_ROUTES.junit.testSuites}/${id}/details`, { params });
-  const fetchEntityGanttIntervalsWithoutStore = ({ id, params } = {}) => request.get(API_ROUTES.junit.entityGantt, {
+  const fetchSummaryWithoutStore = ({ id } = {}) =>
+    request.get(`${API_ROUTES.junit.testSuites}/${id}/summary`);
+  const fetchItemGanttIntervalsWithoutStore = ({ id, params } = {}) =>
+    request.get(`${API_ROUTES.junit.testSuites}/${id}/gantt`, { params });
+  const fetchItemDetailsWithoutStore = ({ id, params } = {}) =>
+    request.get(`${API_ROUTES.junit.testSuites}/${id}/details`, { params });
+  const fetchEntityGanttIntervalsWithoutStore = ({ id, params } = {}) =>
+    request.get(API_ROUTES.junit.entityGantt, {
       params: { ...params, _id: id },
     });
 

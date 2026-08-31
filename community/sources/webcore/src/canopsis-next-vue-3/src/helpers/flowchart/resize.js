@@ -17,7 +17,8 @@ import { DIRECTIONS } from '@/constants';
  * @param {string} direction
  * @returns {Rect}
  */
-export const resizeRectangleShapeWithoutAspectRatio = ({ rect, cursorX, cursorY, direction }) => direction.split('').reduce(
+export const resizeRectangleShapeWithoutAspectRatio = ({ rect, cursorX, cursorY, direction }) =>
+  direction.split('').reduce(
     (acc, singleDirection) => {
       switch (singleDirection) {
         case DIRECTIONS.south:

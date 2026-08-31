@@ -32,7 +32,8 @@ export const widgetAdvancedSearchSavedItemsMixin = {
 
   computed: {
     searches() {
-      return (this.userPreference?.content?.searches ?? []).map(search => search?._id
+      return (this.userPreference?.content?.searches ?? []).map(search =>
+        search?._id
           ? search
           : {
               ...search,
@@ -76,7 +77,8 @@ export const widgetAdvancedSearchSavedItemsMixin = {
     },
 
     togglePinSearch(id) {
-      const searches = this.searches.map(search => search._id === id ? { ...search, pinned: !search.pinned } : search,
+      const searches = this.searches.map(search =>
+        search._id === id ? { ...search, pinned: !search.pinned } : search,
       );
 
       this.updateContentInUserPreference({

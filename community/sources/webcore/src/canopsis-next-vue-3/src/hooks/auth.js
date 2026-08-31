@@ -92,15 +92,20 @@ export const useCurrentUserPermissions = () => {
   const authStore = useAuthStore();
   const { currentUserPermissionsById } = storeToRefs(authStore);
 
-  const checkAccess = (permissionId, action = CRUD_ACTIONS.can) => checkUserAccess(currentUserPermissionsById.value[permissionId], action);
+  const checkAccess = (permissionId, action = CRUD_ACTIONS.can) =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], action);
 
-  const checkCreateAccess = permissionId => checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create);
+  const checkCreateAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create);
 
-  const checkReadAccess = permissionId => checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read);
+  const checkReadAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read);
 
-  const checkUpdateAccess = permissionId => checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update);
+  const checkUpdateAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update);
 
-  const checkDeleteAccess = permissionId => checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete);
+  const checkDeleteAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete);
 
   return {
     currentUserPermissionsById,

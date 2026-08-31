@@ -37,7 +37,8 @@ import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/
  * @param {Object[]} treeViews
  * @returns {string[]}
  */
-const flattenTreeValues = (treeViews = []) => treeViews.flatMap(({ value, children }) => [
+const flattenTreeValues = (treeViews = []) =>
+  treeViews.flatMap(({ value, children }) => [
     value,
     ...(children ? flattenTreeValues(children) : []),
   ]);
@@ -144,7 +145,9 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
  * @param {Object} treeItems
  * @returns {string[]}
  */
-export const viewsFormToMessage = (viewsForm = {}, treeItems = {}) => Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).flatMap(block => viewsFormToViews(keyBy(viewsForm[block] || []), treeItems[block] || []),
+export const viewsFormToMessage = (viewsForm = {}, treeItems = {}) =>
+  Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).flatMap(block =>
+    viewsFormToViews(keyBy(viewsForm[block] || []), treeItems[block] || []),
   );
 
 /**
@@ -192,7 +195,8 @@ export const getViewsWithChildren = (viewsMap = {}, treeViews = []) => {
  * @param {Object} treeItems
  * @return {BroadcastMessageViewsForm}
  */
-export const prepareMessageViews = (viewsForm = {}, treeItems = {}) => Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).reduce((acc, block) => {
+export const prepareMessageViews = (viewsForm = {}, treeItems = {}) =>
+  Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).reduce((acc, block) => {
     acc[block] = getViewsWithChildren(keyBy(viewsForm[block] || []), treeItems[block] || []);
 
     return acc;

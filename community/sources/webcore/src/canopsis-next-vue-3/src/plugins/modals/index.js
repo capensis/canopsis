@@ -20,12 +20,14 @@ export const createModalsApi = ({ store, dialogPropsMap = {} }) => ({
 
   hide: (payload = {}) => store.hide({ id: payload.id }),
 
-  updateDialogProps: (payload = {}) => store.updateDialogProps({
+  updateDialogProps: (payload = {}) =>
+    store.updateDialogProps({
       id: payload.id,
       dialogProps: payload.dialogProps,
     }),
 
-  updateModalConfig: (payload = {}) => store.updateModalConfig({
+  updateModalConfig: (payload = {}) =>
+    store.updateModalConfig({
       id: payload.id,
       config: payload.config,
     }),

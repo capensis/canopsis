@@ -81,7 +81,8 @@ export const convertHeadersToTemplateTestingTestValidateForm = ({
   prefix = '',
   resultPrefix = prefix,
   templateVarsKey = '',
-}) => headers.map((header, index) => ({
+}) =>
+  headers.map((header, index) => ({
     key: `${prefix}.headers.${index}.value`,
     resultKey: `${resultPrefix}.headers.${header.text}`,
     textKey: 'templateTesting.webhookHeader',
@@ -568,7 +569,8 @@ export const convertMetaAlarmRuleToTemplateTestingTestValidateForm = (form = {})
  * @param {ExternalAuthTokenRuleForm} [form={}] - External auth token rule configuration form
  * @returns {TemplateTestingTestValidateForm} Array of validation form items for external auth token rule
  */
-export const convertExternalAuthTokenRuleToTemplateTestingTestValidateForm = (form = {}) => form.allow_variables
+export const convertExternalAuthTokenRuleToTemplateTestingTestValidateForm = (form = {}) =>
+  form.allow_variables
     ? [
         {
           key: 'template',

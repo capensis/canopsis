@@ -26,7 +26,8 @@ export const widgetQuickAlarmActionToForm = (quickAction = '') => ({
  * @param {WidgetQuickAction[]} [quickActions=[]]
  * @returns {WidgetQuickActionForm[]}
  */
-export const widgetQuickActionsToForm = (quickActions = []) => quickActions.map(widgetQuickAlarmActionToForm);
+export const widgetQuickActionsToForm = (quickActions = []) =>
+  quickActions.map(widgetQuickAlarmActionToForm);
 
 /**
  * Converts editable quick action items back to widget values.

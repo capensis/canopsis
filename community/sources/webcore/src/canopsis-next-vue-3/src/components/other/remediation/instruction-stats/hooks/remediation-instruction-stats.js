@@ -20,7 +20,8 @@ export const useRemediationInstructionStatsRate = (refresh = () => {}) => {
    *
    * @param {Object} [instruction = {}] - The remediation instruction object.
    */
-  const showRateInstructionModal = (instruction = {}) => modals.show({
+  const showRateInstructionModal = (instruction = {}) =>
+    modals.show({
       name: MODALS.rate,
       config: {
         title: t('modals.rateInstruction.title', { name: instruction.name }),

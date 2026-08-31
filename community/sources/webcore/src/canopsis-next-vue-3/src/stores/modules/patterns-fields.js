@@ -6,7 +6,9 @@ import request from '@/services/request';
 
 export const usePatternsFieldsStore = defineStore('patterns-fields', () => {
   const fetchByRoute =
-    route => ({ params } = {}) => request.get(route, { params });
+    route =>
+    ({ params } = {}) =>
+      request.get(route, { params });
 
   return {
     fetchFlappingRulePatternFields: fetchByRoute(API_ROUTES.patternFields.flappingRule),

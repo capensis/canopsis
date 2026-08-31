@@ -44,7 +44,8 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionRunning = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
+export const isJobExecutionRunning = job =>
+  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
 
 /**
  * Check job status is succeeded
@@ -52,7 +53,8 @@ export const isJobExecutionRunning = job => job.status === REMEDIATION_JOB_EXECU
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionSucceeded = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.succeeded;
+export const isJobExecutionSucceeded = job =>
+  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.succeeded;
 
 /**
  * Check job status is failed
@@ -68,7 +70,8 @@ export const isJobExecutionFailed = job => job.status === REMEDIATION_JOB_EXECUT
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionCancelled = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
+export const isJobExecutionCancelled = job =>
+  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
 
 /**
  * Check job is finished
@@ -76,7 +79,8 @@ export const isJobExecutionCancelled = job => job.status === REMEDIATION_JOB_EXE
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobFinished = job => [
+export const isJobFinished = job =>
+  [
     REMEDIATION_JOB_EXECUTION_STATUSES.canceled,
     REMEDIATION_JOB_EXECUTION_STATUSES.failed,
     REMEDIATION_JOB_EXECUTION_STATUSES.succeeded,

@@ -191,15 +191,18 @@ export const formToServiceWeatherWidgetParameters = form => ({
  * @param {Object} widget
  * @returns {Object}
  */
-export const prepareServiceWeatherWidget = (widget = {}) => setSeveralFields(widget, {
-    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) => columns.map(column => ({
+export const prepareServiceWeatherWidget = (widget = {}) =>
+  setSeveralFields(widget, {
+    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) =>
+      columns.map(column => ({
         ...column,
 
         sortable: false,
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.alarmsList.widgetColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => columns.map(column => ({
+    'parameters.alarmsList.widgetColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
+      columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),

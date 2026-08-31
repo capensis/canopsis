@@ -21,8 +21,10 @@ export const useDateRangeAllowedDates = (value) => {
     return unwrappedValue?.to ? convertDateToTimestamp(unwrappedValue.to) : null;
   });
 
-  const isAllowedFromDate = date => !toTimestamp.value || convertDateToTimestamp(date) < toTimestamp.value;
-  const isAllowedToDate = date => !fromTimestamp.value || convertDateToTimestamp(date) > fromTimestamp.value;
+  const isAllowedFromDate = date =>
+    !toTimestamp.value || convertDateToTimestamp(date) < toTimestamp.value;
+  const isAllowedToDate = date =>
+    !fromTimestamp.value || convertDateToTimestamp(date) > fromTimestamp.value;
 
   return {
     isAllowedFromDate,

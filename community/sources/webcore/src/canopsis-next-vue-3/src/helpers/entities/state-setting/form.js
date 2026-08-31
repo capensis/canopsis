@@ -110,7 +110,9 @@ const stateSettingThresholdToForm = (threshold = {}) => ({
  * @param {StateSettingThresholds} [thresholds = {}]
  * @return {StateSettingThresholdsForm}
  */
-const stateSettingThresholdsToForm = (thresholds = {}) => mapValues(ALARM_STATES, (stateValue, stateKey) => stateSettingThresholdToForm(thresholds[stateKey]),
+const stateSettingThresholdsToForm = (thresholds = {}) =>
+  mapValues(ALARM_STATES, (stateValue, stateKey) =>
+    stateSettingThresholdToForm(thresholds[stateKey]),
   );
 
 /**
@@ -119,7 +121,8 @@ const stateSettingThresholdsToForm = (thresholds = {}) => mapValues(ALARM_STATES
  * @param {PatternGroups} pattern
  * @return {FilterPatterns}
  */
-export const stateSettingPatternToForm = patterns => filterPatternsToForm(patterns, [PATTERNS_FIELDS.entity]);
+export const stateSettingPatternToForm = patterns =>
+  filterPatternsToForm(patterns, [PATTERNS_FIELDS.entity]);
 
 /**
  * Convert state setting to form
@@ -158,7 +161,8 @@ export const formToStateSettingThreshold = form => omit(form, ['enabled']);
  * @param {StateSettingThresholdsForm} form
  * @return {StateSettingThresholds}
  */
-export const formToStateSettingThresholds = form => mapValues(
+export const formToStateSettingThresholds = form =>
+  mapValues(
     pickBy(form, ({ enabled }) => enabled),
     formToStateSettingThreshold,
   );

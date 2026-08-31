@@ -151,7 +151,9 @@ export default {
 
         return params;
       },
-      fetchListHandler: async ({ params }) => (groupByChat.value ? fetchLlmChatsWithoutStore : fetchLlmHistoryWithoutStore)({
+      fetchListHandler: async ({ params }) => (
+        groupByChat.value ? fetchLlmChatsWithoutStore : fetchLlmHistoryWithoutStore
+      )({
           id: props.llmId,
           params,
         }),

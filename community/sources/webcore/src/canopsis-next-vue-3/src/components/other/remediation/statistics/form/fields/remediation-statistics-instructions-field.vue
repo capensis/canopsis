@@ -66,7 +66,8 @@ const statisticInstructionItems = computed(() => [
   },
 ]);
 
-const isStatisticInstructionItem = instruction => statisticInstructionItems.value.some(({ _id }) => _id === instruction);
+const isStatisticInstructionItem = instruction =>
+  statisticInstructionItems.value.some(({ _id }) => _id === instruction);
 
 const selectedInstructionIds = computed(() => {
   if (!props.modelValue || isStatisticInstructionItem(props.modelValue)) {

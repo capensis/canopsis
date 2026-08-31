@@ -19,7 +19,8 @@ const createCommonVariables = t => ({
   stepAuthorVariable: createStepVariable(t, 'common.author', VARIABLES_STEP_FIELDS.author),
 });
 
-export const prepareAlarmTemplateVariables = t => [
+export const prepareAlarmTemplateVariables = t =>
+  [
     { value: ENTITY_TEMPLATE_FIELDS.id },
     { value: ALARM_TEMPLATE_FIELDS.ack },
     { value: ALARM_TEMPLATE_FIELDS.state },

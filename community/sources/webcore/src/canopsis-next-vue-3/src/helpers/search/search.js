@@ -11,7 +11,8 @@ import { replaceTextNotInQuotes } from './quotes';
  *                                         each column object. Defaults to 'items'.
  * @returns {WidgetColumn[]} A flattened array of column objects.
  */
-export const flattenSearchColumns = (columns = [], childrenKey = 'items') => columns.reduce((acc, column) => {
+export const flattenSearchColumns = (columns = [], childrenKey = 'items') =>
+  columns.reduce((acc, column) => {
     acc.push(column);
 
     if (column[childrenKey]?.length) {
@@ -43,7 +44,8 @@ export const prepareSearchForSubmit = (search = '', columns = []) => {
   );
 
   return orderedColumns.reduce(
-    (acc, { selectorText, text, value }) => replaceTextNotInQuotes(acc, selectorText || text, value),
+    (acc, { selectorText, text, value }) =>
+      replaceTextNotInQuotes(acc, selectorText || text, value),
     search.replace(/^-(\s*)/, ''),
   );
 };

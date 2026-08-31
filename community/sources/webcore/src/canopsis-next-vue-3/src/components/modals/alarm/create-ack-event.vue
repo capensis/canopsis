@@ -96,7 +96,8 @@ export default {
       ),
     );
 
-    const isAllComponentAlarms = computed(() => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    const isAllComponentAlarms = computed(
+      () => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
     );
 
     const actionTypes = computed(() => {

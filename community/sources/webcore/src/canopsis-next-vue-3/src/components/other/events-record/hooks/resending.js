@@ -43,7 +43,8 @@ export const useEventsRecordResending = () => {
     });
   };
 
-  const stopResending = eventsRecordId => modals.show({
+  const stopResending = eventsRecordId =>
+    modals.show({
       name: MODALS.confirmation,
       config: {
         action: async () => {

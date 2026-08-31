@@ -12,6 +12,7 @@ export { registerTemplate, unregisterTemplate, runTemplate, hasTemplate } from '
  *
  * @returns {Handlebars} A Handlebars instance with all registered custom helpers
  */
-export const createHandlebarsInstanceWithHelpers = () => registerAllHelpers(createPromisedHandlebarsInstance());
+export const createHandlebarsInstanceWithHelpers = () =>
+  registerAllHelpers(createPromisedHandlebarsInstance());
 
 export const ServiceWeatherHandlebars = createHandlebarsInstanceWithHelpers();

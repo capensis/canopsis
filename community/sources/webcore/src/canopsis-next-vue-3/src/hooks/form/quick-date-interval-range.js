@@ -44,7 +44,8 @@ export const useQuickDateIntervalRange = ({ fromRanges, toRanges, value = {} } =
     }));
   });
 
-  const allQuickRangesIntervals = computed(() => [...fromQuickRanges.value, ...toQuickRanges.value].reduce((acc, range) => {
+  const allQuickRangesIntervals = computed(() =>
+    [...fromQuickRanges.value, ...toQuickRanges.value].reduce((acc, range) => {
       acc[range.value] = {
         start: convertStartDateIntervalToTimestamp(range.start),
         stop: convertStopDateIntervalToTimestamp(range.stop),

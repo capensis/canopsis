@@ -31,7 +31,8 @@ import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/const
  * @param {RemediationConfigurationFormType} [type]
  * @returns {boolean}
  */
-export const isJobTypeIncludesUserName = (type = {}) => REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME.includes(type.auth_type);
+export const isJobTypeIncludesUserName = (type = {}) =>
+  REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME.includes(type.auth_type);
 
 /**
  * Convert remediation configuration entity to form object

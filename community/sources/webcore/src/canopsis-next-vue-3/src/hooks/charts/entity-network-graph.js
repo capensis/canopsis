@@ -273,7 +273,8 @@ export const useEntityNetworkGraph = ({
    *
    * @param {object} newEntity - New root entity object
    */
-  const resetEntities = newEntity => (entitiesById.value = normalizeTreeOfDependenciesMapEntities([
+  const resetEntities = newEntity =>
+    (entitiesById.value = normalizeTreeOfDependenciesMapEntities([
       { entity: newEntity, pinned_entities: [] },
     ]));
 

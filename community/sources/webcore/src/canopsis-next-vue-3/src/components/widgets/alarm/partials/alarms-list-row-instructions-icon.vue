@@ -43,13 +43,16 @@ export default {
       () => props.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable,
     );
 
-    const hasRunningInstruction = computed(() => isInstructionExecutionIconInProgress(alarmInstructionExecutionIcon.value),
+    const hasRunningInstruction = computed(
+      () => isInstructionExecutionIconInProgress(alarmInstructionExecutionIcon.value),
     );
 
-    const someOneInstructionIsFailed = computed(() => isInstructionExecutionIconFailed(alarmInstructionExecutionIcon.value),
+    const someOneInstructionIsFailed = computed(
+      () => isInstructionExecutionIconFailed(alarmInstructionExecutionIcon.value),
     );
 
-    const someOneInstructionIsSuccessful = computed(() => isInstructionExecutionIconSuccess(alarmInstructionExecutionIcon.value),
+    const someOneInstructionIsSuccessful = computed(
+      () => isInstructionExecutionIconSuccess(alarmInstructionExecutionIcon.value),
     );
 
     const isManualInstructionIcon = computed(() => isInstructionExecutionManual(alarmInstructionExecutionIcon.value),

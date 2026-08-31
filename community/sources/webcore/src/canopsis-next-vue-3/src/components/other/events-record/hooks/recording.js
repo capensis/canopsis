@@ -10,7 +10,8 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
 
   const { startCurrentEventsRecord, stopCurrentEventsRecord } = useEventsRecord();
 
-  const startRecording = () => modals.show({
+  const startRecording = () =>
+    modals.show({
       name: MODALS.applyEventFilter,
       config: {
         title: t('eventsRecord.launchEventRecording'),
@@ -20,7 +21,8 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
       },
     });
 
-  const stopRecording = recordingId => modals.show({
+  const stopRecording = recordingId =>
+    modals.show({
       name: MODALS.confirmation,
       config: {
         action: async () => {

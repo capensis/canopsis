@@ -129,7 +129,8 @@ export const isPausedPbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_
  * @param {string} type
  * @returns {boolean}
  */
-export const isNotActivePbehaviorType = type => [
+export const isNotActivePbehaviorType = type =>
+  [
     PBEHAVIOR_TYPE_TYPES.pause,
     PBEHAVIOR_TYPE_TYPES.inactive,
     PBEHAVIOR_TYPE_TYPES.maintenance,
@@ -171,7 +172,8 @@ export const pbehaviorExdateItemToForm = () => ({
  * @param {PbehaviorExdate[]} [exdates = []]
  * @return {PbehaviorExdateRequest[]}
  */
-export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
+export const exdatesToRequest = (exdates = []) =>
+  exdates.map(({ type, begin, end }) => ({
     type: getIdFromEntity(type),
     begin,
     end,
@@ -201,7 +203,8 @@ export const exdateToForm = (exdate, timezone = getLocalTimezone()) => ({
  * @param {string} timezone
  * @returns {PbehaviorExdateForm[]}
  */
-export const exdatesToForm = (exdates, timezone) => exdates ? exdates.map(exdate => exdateToForm(exdate, timezone)) : [];
+export const exdatesToForm = (exdates, timezone) =>
+  exdates ? exdates.map(exdate => exdateToForm(exdate, timezone)) : [];
 
 /**
  * Convert exdate form to exdate
@@ -222,7 +225,8 @@ export const formToExdate = (formExdate, timezone = getLocalTimezone()) => ({
  * @param {PbehaviorException[]} exceptions
  * @return {string[]}
  */
-export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
+export const exceptionsToRequest = (exceptions = []) =>
+  exceptions.map(exception => getIdFromEntity(exception));
 
 /**
  * Convert exceptions array to exceptions form array
@@ -301,7 +305,8 @@ export const formExceptionsToExceptions = exceptions => removeKeyFromEntities(ex
  * @param {string} timezone
  * @returns {PbehaviorExdate[]}
  */
-export const formExdatesToExdates = (exdates = [], timezone) => exdates.map(exdateForm => formToExdate(exdateForm, timezone));
+export const formExdatesToExdates = (exdates = [], timezone) =>
+  exdates.map(exdateForm => formToExdate(exdateForm, timezone));
 
 /**
  * Convert form to pbehavior entity.
@@ -459,7 +464,8 @@ export const createDowntimePbehavior = ({
   type,
   origin = PBEHAVIOR_ORIGINS.serviceWeather,
   prefix = WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
-}) => pbehaviorToRequest(
+}) =>
+  pbehaviorToRequest(
     formToPbehavior({
       reason,
       type,
@@ -478,7 +484,8 @@ export const createDowntimePbehavior = ({
  * @param {Object} [type=pbehavior.type]
  * @returns {string}
  */
-export const getPbehaviorColor = (pbehavior = {}, type = pbehavior.type) => pbehavior.color || type?.color || pbehavior.type?.color || getColorByHash(pbehavior._id);
+export const getPbehaviorColor = (pbehavior = {}, type = pbehavior.type) =>
+  pbehavior.color || type?.color || pbehavior.type?.color || getColorByHash(pbehavior._id);
 
 /**
  * Generates a default name for a pbehavior based on the provided entities.

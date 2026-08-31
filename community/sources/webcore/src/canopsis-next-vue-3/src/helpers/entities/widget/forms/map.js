@@ -84,15 +84,18 @@ export const formToMapWidgetParameters = form => ({
  * @param {Object} [widget={}]
  * @returns {Object}
  */
-export const prepareMapWidget = (widget = {}) => setSeveralFields(widget, {
-    'parameters.alarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => columns.map(column => ({
+export const prepareMapWidget = (widget = {}) =>
+  setSeveralFields(widget, {
+    'parameters.alarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
+      columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.entitiesColumns': (columns = DEFAULT_CONTEXT_WIDGET_COLUMNS) => columns.map(column => ({
+    'parameters.entitiesColumns': (columns = DEFAULT_CONTEXT_WIDGET_COLUMNS) =>
+      columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),

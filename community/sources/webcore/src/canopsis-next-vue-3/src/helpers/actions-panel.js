@@ -10,7 +10,8 @@ import { ALARM_LIST_ACTIONS_TYPES, ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP } from '@
  * @param {boolean} [action.link] - Whether the action is a link type
  * @returns {number} The index of the action in quickActions array, or -1 if not found
  */
-export const findQuickActionIndex = (quickActions = [], action) => quickActions.findIndex((quickAction) => {
+export const findQuickActionIndex = (quickActions = [], action) =>
+  quickActions.findIndex((quickAction) => {
     if (quickAction === ALARM_LIST_ACTIONS_TYPES.links) {
       return action.link;
     }
@@ -29,7 +30,8 @@ export const findQuickActionIndex = (quickActions = [], action) => quickActions.
  * @param {Array<string>} [quickActions=[]] - Array of quick actions that defines the sort order
  * @returns {Array<Object>} A new sorted array
  */
-export const sortActionsByQuickActions = (actions = [], quickActions = []) => [...actions].sort((a, b) => {
+export const sortActionsByQuickActions = (actions = [], quickActions = []) =>
+  [...actions].sort((a, b) => {
     const aIndex = findQuickActionIndex(quickActions, a);
     const bIndex = findQuickActionIndex(quickActions, b);
 

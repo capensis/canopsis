@@ -76,7 +76,8 @@ export const useAiChatJsonString = ({ jsonString, ask } = {}) => {
 
   watch(
     jsonString,
-    newJsonString => newJsonString &&
+    newJsonString =>
+      newJsonString &&
       ask({
         prompt: t('llm.chat.fixPatternPrompt', { jsonString: newJsonString }),
         withoutPatterns: true,
@@ -102,7 +103,8 @@ export const useAiChatVersions = () => {
   const lastLlmVersion = ref(null);
 
   const activeVersion = computed(() => versions.value.length - 1);
-  const lastLlmPatterns = computed(() => isNil(lastLlmVersion.value) ? null : versions.value[lastLlmVersion.value],
+  const lastLlmPatterns = computed(() =>
+    isNil(lastLlmVersion.value) ? null : versions.value[lastLlmVersion.value],
   );
 
   /**
@@ -176,10 +178,12 @@ export const useAiChatMessages = ({ currentFormPatterns, updateFormPatterns } = 
   const { versions, lastLlmVersion, activeVersion, addVersion, removeLastVersion, resetVersions } =
     useAiChatVersions();
 
-  const lastLlmPatterns = computed(() => isNil(lastLlmVersion.value) ? null : versions.value[lastLlmVersion.value],
+  const lastLlmPatterns = computed(() =>
+    isNil(lastLlmVersion.value) ? null : versions.value[lastLlmVersion.value],
   );
 
-  const changedPatternsFields = computed(() => getChangedPatternsFields(unref(currentFormPatterns), unref(lastLlmPatterns)),
+  const changedPatternsFields = computed(() =>
+    getChangedPatternsFields(unref(currentFormPatterns), unref(lastLlmPatterns)),
   );
 
   const emptyCurrentFormPatterns = computed(() => isEmpty(unref(currentFormPatterns)));
@@ -197,7 +201,8 @@ export const useAiChatMessages = ({ currentFormPatterns, updateFormPatterns } = 
    * @param {string} [payload.role] - One of `LLM_AI_CHAT_MESSAGE_ROLES` when set.
    * @returns {number} New `messages.length` after `Array.prototype.push`.
    */
-  const addMessage = ({ prompt, role, ...rest }) => messages.value.push({
+  const addMessage = ({ prompt, role, ...rest }) =>
+    messages.value.push({
       prompt,
       role,
 
@@ -368,12 +373,14 @@ export const useAiChatPattern = ({ patterns, patternItem, updateFormPatterns } =
     emptyCurrentFormPatterns,
   } = useAiChatMessages({ currentFormPatterns, updateFormPatterns });
 
-  const lastLlmMessageIndex = computed(() => messages.value.findLastIndex(
+  const lastLlmMessageIndex = computed(() =>
+    messages.value.findLastIndex(
       message => message.role === LLM_AI_CHAT_MESSAGE_ROLES.model && !message.local,
     ),
   );
 
-  const lastChangedPatternsFieldsMessageIndex = computed(() => messages.value.findLastIndex(message => message.prompt && message.local),
+  const lastChangedPatternsFieldsMessageIndex = computed(() =>
+    messages.value.findLastIndex(message => message.prompt && message.local),
   );
 
   watch(currentFormPatterns, async () => {
@@ -486,7 +493,8 @@ export const useAiChatErrors = () => {
 export const useAiChatThinking = () => {
   const thinking = ref(false);
 
-  const thinkingMessage = computed(() => thinking.value
+  const thinkingMessage = computed(() =>
+    thinking.value
       ? {
           _id: uid(),
           role: LLM_AI_CHAT_MESSAGE_ROLES.model,
@@ -891,7 +899,9 @@ export const useAiChatScroll = ({ messages, thinking } = {}) => {
    *
    * No-op when `bodyElement` is not mounted.
    */
-  const scrollChatBodyToBottom = () => nextTick(() => requestAnimationFrame(() => {
+  const scrollChatBodyToBottom = () =>
+    nextTick(() =>
+      requestAnimationFrame(() => {
         const el = bodyElement.value;
 
         if (!el) {
@@ -959,7 +969,8 @@ export const useAiChatPatternItem = ({ context } = {}) => {
 
   const patternItem = ref(null);
 
-  const hasPatternItem = computed(() => [LLM_SOCKET_CONTEXTS.scenario, LLM_SOCKET_CONTEXTS.stateSettings].includes(context.value),
+  const hasPatternItem = computed(() =>
+    [LLM_SOCKET_CONTEXTS.scenario, LLM_SOCKET_CONTEXTS.stateSettings].includes(context.value),
   );
 
   const patternsItemsLabel = computed(() => {
@@ -1036,7 +1047,8 @@ export const useAiChat = (
   const { patternItem, hasPatternItem, patternsItemsLabel, resetPatternItem } =
     useAiChatPatternItem({ context });
 
-  const updateFormPatterns = newPatterns => emit('update:patterns', newPatterns, patternItem.value?.value);
+  const updateFormPatterns = newPatterns =>
+    emit('update:patterns', newPatterns, patternItem.value?.value);
 
   const {
     currentFormPatterns,
@@ -1151,7 +1163,8 @@ export const useAiChat = (
   /**
    * Leaves the LLM socket room then runs `resetChat` (full session reset from the UI).
    */
-  const restart = () => modals.show({
+  const restart = () =>
+    modals.show({
       name: MODALS.confirmation,
       config: {
         text: t('llm.chat.restartConfirmation'),
@@ -1167,7 +1180,8 @@ export const useAiChat = (
     ask,
   });
 
-  watch(thinking, newThinking => emit('update:pending', newThinking, emptyCurrentFormPatterns.value),
+  watch(thinking, newThinking =>
+    emit('update:pending', newThinking, emptyCurrentFormPatterns.value),
   );
 
   watch(patternsItems, (items) => {

@@ -122,7 +122,8 @@ export default {
     const nameField = createFieldModel('name');
     const stopOnFailField = createFieldModel('stop_on_fail');
     const endpointField = createFieldModel('endpoint');
-    const formattedTimeToComplete = computed(() => convertDurationToString(timeToComplete.value, DATETIME_FORMATS.refreshFieldFormat),
+    const formattedTimeToComplete = computed(
+      () => convertDurationToString(timeToComplete.value, DATETIME_FORMATS.refreshFieldFormat),
     );
 
     const { confirmAction: remove } = useConfirmableForm({

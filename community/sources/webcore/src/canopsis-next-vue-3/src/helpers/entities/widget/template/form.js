@@ -101,4 +101,5 @@ export const widgetTemplateValueToForm = template => template || CUSTOM_WIDGET_T
  * @param {string} [template]
  * @returns {string}
  */
-export const formToWidgetTemplateValue = template => template === CUSTOM_WIDGET_TEMPLATE ? '' : template;
+export const formToWidgetTemplateValue = template =>
+  template === CUSTOM_WIDGET_TEMPLATE ? '' : template;

@@ -13,7 +13,8 @@ import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/s
  * @returns {Object<string, string|string[]>} Form object with column names as keys and form values as values.
  *                                           String arrays are cloned for stringArray type columns.
  */
-export const externalDataTableRecordToForm = (externalDataTableRecord = {}, columnConfigs = []) => columnConfigs.reduce((acc, column) => {
+export const externalDataTableRecordToForm = (externalDataTableRecord = {}, columnConfigs = []) =>
+  columnConfigs.reduce((acc, column) => {
     acc[column.name] = externalDataTableRecord[column.name] ?? '';
 
     if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {
@@ -46,7 +47,8 @@ export const externalDataTableRecordToForm = (externalDataTableRecord = {}, colu
  * @returns {Object<string, *>} External data table record object with column names as keys.
  *                              Timestamp and datetime values are converted to Unix timestamps.
  */
-export const formToExternalDataTableRecord = (form = {}, columnConfigs = []) => columnConfigs.reduce((acc, column) => {
+export const formToExternalDataTableRecord = (form = {}, columnConfigs = []) =>
+  columnConfigs.reduce((acc, column) => {
     let value = form[column.name];
 
     if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray) {

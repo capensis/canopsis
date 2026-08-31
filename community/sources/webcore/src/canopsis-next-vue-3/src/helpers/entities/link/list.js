@@ -21,7 +21,8 @@ export const harmonizeCategoryLinks = (links = {}, category) => {
  * @param {AlarmLinks} [links = {}]
  * @returns {Object<string, AlarmLink[]>}
  */
-export const harmonizeCategoriesLinks = (links = {}) => Object.keys(links ?? {}).reduce((acc, category) => {
+export const harmonizeCategoriesLinks = (links = {}) =>
+  Object.keys(links ?? {}).reduce((acc, category) => {
     acc[category] = harmonizeCategoryLinks(links, category);
 
     return acc;
@@ -33,7 +34,8 @@ export const harmonizeCategoriesLinks = (links = {}) => Object.keys(links ?? {})
  * @param {LinkRuleLink} link
  * @returns {string}
  */
-export const getLinkRuleLinkActionType = (link = {}) => [link.rule_id, link.icon_name, link.label].join('.');
+export const getLinkRuleLinkActionType = (link = {}) =>
+  [link.rule_id, link.icon_name, link.label].join('.');
 
 /**
  * Get flatten alarm links
@@ -50,7 +52,8 @@ export const harmonizeLinks = (links = {}) => sortBy(Object.values(links || {}).
  * @returns {AlarmLink[]}
  */
 export const harmonizeAlarmsLinks = (alarms = []) => {
-  const links = alarms.map(alarm => harmonizeLinks(alarm.links).filter(link => !!link.rule_id && !link.single),
+  const links = alarms.map(alarm =>
+    harmonizeLinks(alarm.links).filter(link => !!link.rule_id && !link.single),
   );
 
   if (links.length === 0) {

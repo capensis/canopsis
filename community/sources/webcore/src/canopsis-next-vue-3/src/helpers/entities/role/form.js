@@ -61,7 +61,8 @@ export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api;
  * @param {Array} [permissions=[]]
  * @returns {Object}
  */
-export const rolePermissionsToForm = (permissions = []) => permissions.reduce((acc, { _id: id, actions }) => {
+export const rolePermissionsToForm = (permissions = []) =>
+  permissions.reduce((acc, { _id: id, actions }) => {
     if (actions.length === 0) {
       acc[id] = [CRUD_ACTIONS.can];
     } else {
@@ -111,7 +112,8 @@ export const roleToPermissionForm = (role = {}) => ({
   permissions: rolePermissionsToForm(role.permissions),
 });
 
-const permissionsFormToRolePermissions = (form = {}, isApi = false) => Object.entries(form ?? {}).reduce((acc, [id, actions]) => {
+const permissionsFormToRolePermissions = (form = {}, isApi = false) =>
+  Object.entries(form ?? {}).reduce((acc, [id, actions]) => {
     if (isApiPermission(id) !== isApi) {
       return acc;
     }

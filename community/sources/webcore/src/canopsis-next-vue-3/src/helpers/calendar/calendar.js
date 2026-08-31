@@ -23,7 +23,8 @@ export function convertAlarmsToEvents({
   filter = {},
   getColor = () => '#fff',
 }) {
-  const groupedAlarms = groupBy(alarms, alarm => convertDateToStartOfUnitString(alarm.t, groupByValue, null),
+  const groupedAlarms = groupBy(alarms, alarm =>
+    convertDateToStartOfUnitString(alarm.t, groupByValue, null),
   );
 
   return Object.entries(groupedAlarms).map(([dateString, alarmsGroup]) => {
@@ -60,7 +61,8 @@ export function convertEventsToGroupedEvents({
   groupByValue = 'hour',
   getColor = () => '#fff',
 }) {
-  const groupedEvents = groupBy(events, event => convertDateToMoment(event.start).startOf(groupByValue).format(),
+  const groupedEvents = groupBy(events, event =>
+    convertDateToMoment(event.start).startOf(groupByValue).format(),
   );
 
   return Object.keys(groupedEvents).map((dateString) => {

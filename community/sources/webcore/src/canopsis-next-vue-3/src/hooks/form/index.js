@@ -92,7 +92,8 @@ export const useForm = ({
    *
    * @returns {Array<Object>} Path states with an `instance` property.
    */
-  const getAllPathStatesWithInstances = () => veeForm.getAllPathStates().map((state) => {
+  const getAllPathStatesWithInstances = () =>
+    veeForm.getAllPathStates().map((state) => {
       const path = unref(state.path);
 
       return {
@@ -127,7 +128,8 @@ export const useForm = ({
    * @param {string|import('vue').Ref<string>} path Value path.
    * @returns {import('vue').WritableComputedRef<*>} Writable model.
    */
-  const model = path => computed({
+  const model = path =>
+    computed({
       get: () => getValue(path),
       set: value => setValue(path, value),
     });
@@ -200,7 +202,8 @@ export const useForm = ({
    * @param {string|import('vue').Ref<string>} path Array path.
    * @returns {import('vue').WritableComputedRef<Array>} Writable array model.
    */
-  const array = path => computed({
+  const array = path =>
+    computed({
       get: () => {
         const current = getValue(path);
 
@@ -375,7 +378,8 @@ export const useForm = ({
    * @param {Function} [invalidCallback] Invalid submit callback.
    * @returns {Function} Submit handler.
    */
-  const handleSubmit = (callback, invalidCallback) => veeForm.handleSubmit(
+  const handleSubmit = (callback, invalidCallback) =>
+    veeForm.handleSubmit(
       async (...args) => {
         try {
           const data = await runSubmit(() => callback(...args));

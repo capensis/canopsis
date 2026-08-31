@@ -32,7 +32,8 @@ const hasOwnProperty = (object, property) => Object.prototype.hasOwnProperty.cal
  * @param {Object} parent
  * @returns {boolean}
  */
-const isOriginalChild = (child, parent) => hasOwnProperty(child, '_original') && child._original === parent;
+const isOriginalChild = (child, parent) =>
+  hasOwnProperty(child, '_original') && child._original === parent;
 
 /**
  * Check if child component has parent component in the $parent chain.

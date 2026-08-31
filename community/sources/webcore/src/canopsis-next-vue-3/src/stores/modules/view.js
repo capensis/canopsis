@@ -114,19 +114,23 @@ export const useViewStore = defineStore('view', () => {
     }
   };
 
-  const fetchListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.view.groups, { params });
+  const fetchListWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.view.groups, { params });
 
   const create = ({ data } = {}) => request.post(API_ROUTES.view.groups, data);
   const update = ({ id, data } = {}) => request.put(`${API_ROUTES.view.groups}/${id}`, data);
   const remove = ({ id } = {}) => request.delete(`${API_ROUTES.view.groups}/${id}`);
 
   const createPrivateGroup = ({ data } = {}) => request.post(API_ROUTES.privateView.groups, data);
-  const updatePrivateGroup = ({ id, data } = {}) => request.put(`${API_ROUTES.privateView.groups}/${id}`, data);
-  const removePrivateGroup = ({ id } = {}) => request.delete(`${API_ROUTES.privateView.groups}/${id}`);
+  const updatePrivateGroup = ({ id, data } = {}) =>
+    request.put(`${API_ROUTES.privateView.groups}/${id}`, data);
+  const removePrivateGroup = ({ id } = {}) =>
+    request.delete(`${API_ROUTES.privateView.groups}/${id}`);
 
   const createView = ({ data } = {}) => request.post(API_ROUTES.view.list, data);
   const updateView = ({ id, data } = {}) => request.put(`${API_ROUTES.view.list}/${id}`, data);
-  const updateWithoutStoreView = ({ id, data } = {}) => request.put(`${API_ROUTES.view.list}/${id}`, data);
+  const updateWithoutStoreView = ({ id, data } = {}) =>
+    request.put(`${API_ROUTES.view.list}/${id}`, data);
   const updateViewPositions = ({ data } = {}) => request.put(API_ROUTES.view.positions, data);
   const removeView = ({ id } = {}) => request.delete(`${API_ROUTES.view.list}/${id}`);
   const copyView = ({ id, data } = {}) => request.post(`${API_ROUTES.view.copy}/${id}`, data);
@@ -145,7 +149,8 @@ export const useViewStore = defineStore('view', () => {
     return viewTab;
   };
 
-  const fetchView = ({ id }) => useRequestCancelling(async (source) => {
+  const fetchView = ({ id }) =>
+    useRequestCancelling(async (source) => {
       const view = await request.get(`${API_ROUTES.view.list}/${id}`, {
         cancelToken: source.token,
       });

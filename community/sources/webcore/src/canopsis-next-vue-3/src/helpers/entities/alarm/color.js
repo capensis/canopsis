@@ -13,7 +13,8 @@ export const getAlarmImpactStateGroupedColorIndex = (impactState) => {
  * @param {number} impactState
  * @returns {string}
  */
-export const getAlarmImpactStateColor = impactState => COLORS.impactStateGrouped[getAlarmImpactStateGroupedColorIndex(impactState)];
+export const getAlarmImpactStateColor = impactState =>
+  COLORS.impactStateGrouped[getAlarmImpactStateGroupedColorIndex(impactState)];
 
 /**
  * Get color by entity impact state
@@ -21,7 +22,8 @@ export const getAlarmImpactStateColor = impactState => COLORS.impactStateGrouped
  * @param {number} state
  * @returns {string}
  */
-export const getAlarmStateColor = state => ({
+export const getAlarmStateColor = state =>
+  ({
     [ALARM_STATES.ok]: CSS_COLORS_VARS.state.ok,
     [ALARM_STATES.minor]: CSS_COLORS_VARS.state.minor,
     [ALARM_STATES.major]: CSS_COLORS_VARS.state.major,
@@ -34,7 +36,8 @@ export const getAlarmStateColor = state => ({
  * @param {number} value
  * @returns {string}
  */
-export const getAlarmStatusColor = value => ({
+export const getAlarmStatusColor = value =>
+  ({
     [ALARM_STATUSES.closed]: CSS_COLORS_VARS.status.closed,
     [ALARM_STATUSES.ongoing]: CSS_COLORS_VARS.status.ongoing,
     [ALARM_STATUSES.stealthy]: CSS_COLORS_VARS.status.stealthy,

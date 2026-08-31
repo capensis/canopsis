@@ -15,7 +15,8 @@ export const variableTemplatePreparer = value => `{{ ${value} }}`;
  * @param {Function} [valuePreparer=variableTemplatePreparer] - Value preparing function.
  * @returns {Array<{text: string, value: string, variables?: Array}>}
  */
-export const objectToVariables = (obj = {}, valuePreparer = variableTemplatePreparer) => Object.entries(obj).map(([text, value]) => {
+export const objectToVariables = (obj = {}, valuePreparer = variableTemplatePreparer) =>
+  Object.entries(obj).map(([text, value]) => {
     const preparedValue = valuePreparer ? valuePreparer(text) : text;
 
     return isPlainObject(value)
@@ -36,7 +37,9 @@ export const objectToVariables = (obj = {}, valuePreparer = variableTemplatePrep
  * @param {Array<{name: string, value: string|Array}>} [children=[]]
  * @returns {Array<{text: string, value?: string, variables?: Array}>}
  */
-export const varsChildrenToVariablesProcess = (children = []) => children.map(({ alias, name, value }) => Array.isArray(value)
+export const varsChildrenToVariablesProcess = (children = []) =>
+  children.map(({ alias, name, value }) =>
+    Array.isArray(value)
       ? { alias, text: name, variables: varsChildrenToVariablesProcess(value) }
       : { alias, text: name, value },
   );
@@ -47,7 +50,8 @@ export const varsChildrenToVariablesProcess = (children = []) => children.map(({
  * @param {Object} [templateVars={}] - Object containing variable groups.
  * @returns {Object}
  */
-export const varsToVariables = (templateVars = {}) => mapValues(templateVars, varsChildrenToVariablesProcess);
+export const varsToVariables = (templateVars = {}) =>
+  mapValues(templateVars, varsChildrenToVariablesProcess);
 
 /**
  * Checks if a variables list has at least one variable.
@@ -55,7 +59,9 @@ export const varsToVariables = (templateVars = {}) => mapValues(templateVars, va
  * @param {Array} [variables=[]] - Array of variable objects to check.
  * @returns {boolean}
  */
-export const hasAtLeastOneVariable = (variables = []) => !variables.length
+export const hasAtLeastOneVariable = (variables = []) =>
+  !variables.length
     ? false
-    : variables.some((variable = {}) => variable.variables ? hasAtLeastOneVariable(variable.variables) : true,
+    : variables.some((variable = {}) =>
+        variable.variables ? hasAtLeastOneVariable(variable.variables) : true,
       );

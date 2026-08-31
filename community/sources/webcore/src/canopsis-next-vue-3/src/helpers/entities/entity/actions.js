@@ -115,7 +115,8 @@ const convertEntityActionTypeToAction = (type) => {
  * @param {Entity} entity
  * @returns {Object[]}
  */
-export const getAvailableActionsByEntity = entity => getAvailableEntityActionsTypes(entity).map(convertEntityActionTypeToAction);
+export const getAvailableActionsByEntity = entity =>
+  getAvailableEntityActionsTypes(entity).map(convertEntityActionTypeToAction);
 
 /**
  * Get all available actions for entities
@@ -168,7 +169,8 @@ export const isDisabledActionForEntityByActionsRequests = (
       return false;
     default:
       return actionsRequests.some(
-        ({ actionType: requestActionType, entitiesIds: requestEntitiesIds }) => requestActionType === actionType && requestEntitiesIds.includes(entityId),
+        ({ actionType: requestActionType, entitiesIds: requestEntitiesIds }) =>
+          requestActionType === actionType && requestEntitiesIds.includes(entityId),
       );
   }
 };

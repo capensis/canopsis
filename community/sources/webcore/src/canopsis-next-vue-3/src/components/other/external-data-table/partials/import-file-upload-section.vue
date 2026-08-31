@@ -107,10 +107,12 @@ export default {
     const { fileImportMaxSize } = useInfo();
     const { fetchExternalDataTableSchema } = useExternalDataTable();
 
-    const fileImportMaxSizeInKb = computed(() => convertFileSizeToUnit(fileImportMaxSize.value, EXTERNAL_METRIC_UNITS.kilobyte),
+    const fileImportMaxSizeInKb = computed(
+      () => convertFileSizeToUnit(fileImportMaxSize.value, EXTERNAL_METRIC_UNITS.kilobyte),
     );
 
-    const fileImportMaxSizeInMb = computed(() => convertFileSizeToUnit(fileImportMaxSize.value, EXTERNAL_METRIC_UNITS.megabyte),
+    const fileImportMaxSizeInMb = computed(
+      () => convertFileSizeToUnit(fileImportMaxSize.value, EXTERNAL_METRIC_UNITS.megabyte),
     );
 
     const hasStructure = computed(() => !!props.config?.externalDataTable?.columns?.length);

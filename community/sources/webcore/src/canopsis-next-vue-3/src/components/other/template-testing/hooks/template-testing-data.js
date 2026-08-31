@@ -18,7 +18,8 @@ export const useTemplateDataModals = ({ type, refresh } = {}) => {
   const { createTemplateTestingData, updateTemplateTestingData, removeTemplateTestingData } =
     useTemplateTesting();
 
-  const showCreateTemplateTestingDataModal = () => modals.show({
+  const showCreateTemplateTestingDataModal = () =>
+    modals.show({
       name: MODALS.createTemplateTestingData,
       config: {
         templateTestingData: { type },
@@ -31,7 +32,8 @@ export const useTemplateDataModals = ({ type, refresh } = {}) => {
       },
     });
 
-  const showEditTemplateTestingDataModal = (templateTestingData = {}) => modals.show({
+  const showEditTemplateTestingDataModal = (templateTestingData = {}) =>
+    modals.show({
       name: MODALS.createTemplateTestingData,
       config: {
         templateTestingData,
@@ -47,7 +49,8 @@ export const useTemplateDataModals = ({ type, refresh } = {}) => {
       },
     });
 
-  const showRemoveTemplateTestingDataModal = (templateTestingData = {}) => modals.show({
+  const showRemoveTemplateTestingDataModal = (templateTestingData = {}) =>
+    modals.show({
       name: MODALS.confirmationPhrase,
       config: {
         phrase: templateTestingData.name,

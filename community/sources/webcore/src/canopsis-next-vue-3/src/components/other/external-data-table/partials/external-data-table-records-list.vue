@@ -382,7 +382,8 @@ export default {
 
     const columnsForTableDisplaying = computed(() => props.originalColumns || props.columns);
 
-    const preparedRecords = computed(() => props.records.map(record => Object.entries(record).reduce((acc, [key, value]) => {
+    const preparedRecords = computed(() => props.records.map(
+      record => Object.entries(record).reduce((acc, [key, value]) => {
           const filter =
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[
               columnsForTableDisplaying.value?.[key]?.type

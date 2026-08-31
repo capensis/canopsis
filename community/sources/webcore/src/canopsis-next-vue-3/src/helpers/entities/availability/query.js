@@ -52,7 +52,8 @@ export const convertAvailabilityUserPreferenceToQuery = (userPreference) => {
  * @param {string} value
  * @returns {string}
  */
-export const prepareAvailabilityWidgetColumnValue = value => getInfosWidgetColumn(value) ? value.replace(/.value$/, '') : value;
+export const prepareAvailabilityWidgetColumnValue = value =>
+  getInfosWidgetColumn(value) ? value.replace(/.value$/, '') : value;
 
 /**
  * Convert availability widget default parameters to query object.

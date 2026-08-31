@@ -6,4 +6,5 @@ import { ENTITY_TYPES } from '@/constants';
  * @param {Entity} entity
  * @returns {boolean}
  */
-export const hasStateSetting = entity => [ENTITY_TYPES.component, ENTITY_TYPES.service].includes(entity?.type);
+export const hasStateSetting = entity =>
+  [ENTITY_TYPES.component, ENTITY_TYPES.service].includes(entity?.type);

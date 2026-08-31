@@ -286,7 +286,8 @@ export default {
 
     fetchExecutionsStatuses() {
       return Promise.all(
-        this.successExecutions.map(({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId }).then(
+        this.successExecutions.map(
+          ({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId }).then(
             this.setExecutionStatus,
           ),
         ),

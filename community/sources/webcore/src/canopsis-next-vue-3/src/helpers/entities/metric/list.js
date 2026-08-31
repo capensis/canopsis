@@ -32,7 +32,8 @@ import {
  * @param {string} timezone
  * @returns {Array}
  */
-export const convertMetricsToTimezone = (metrics, timezone) => metrics.map(metric => ({
+export const convertMetricsToTimezone = (metrics, timezone) =>
+  metrics.map(metric => ({
     ...metric,
     timestamp: convertDateToTimestampByTimezone(metric.timestamp, timezone),
   }));
@@ -66,7 +67,8 @@ export const getDateLabelBySampling = (value, sampling) => {
  * @param {string} criteria
  * @returns {string[]}
  */
-export const getAvailableMetricsByCriteria = criteria => isUserCriteria(criteria) ? KPI_RATING_USER_METRICS : KPI_RATING_ENTITY_METRICS;
+export const getAvailableMetricsByCriteria = criteria =>
+  isUserCriteria(criteria) ? KPI_RATING_USER_METRICS : KPI_RATING_ENTITY_METRICS;
 
 /**
  * Return selected metric if it is available for criteria, otherwise first available metric.

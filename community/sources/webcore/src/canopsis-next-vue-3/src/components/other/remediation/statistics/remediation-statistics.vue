@@ -94,7 +94,8 @@ const metrics = computed(() => convertMetricsToTimezone(
   ),
 );
 
-const isInstructionType = instruction => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
+const isInstructionType = instruction =>
+  [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
 
 const getQuery = () => {
   const { instruction } = query.value;

@@ -27,7 +27,8 @@ export const getPermissionActions = (permission) => {
  * @param {Array} [permissions=[]]
  * @returns {Object}
  */
-export const permissionsToTreeview = (permissions = []) => permissions.reduce((acc, permission) => {
+export const permissionsToTreeview = (permissions = []) =>
+  permissions.reduce((acc, permission) => {
     let activeGroup = acc;
 
     permission.groups.forEach((group) => {
@@ -134,7 +135,8 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
  * @param {string} [permissionId='']
  * @returns {boolean}
  */
-export const isApiPermission = (permissionId = '') => permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);
+export const isApiPermission = (permissionId = '') =>
+  permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);
 
 /**
  * Filters treeview permissions by search term recursively.
@@ -169,7 +171,8 @@ export const filterTreeviewPermissions = (items, search = '', searchDepth) => {
     return ids;
   };
 
-  const filterNodesArray = (nodes, filterFn) => nodes.reduce((acc, node) => {
+  const filterNodesArray = (nodes, filterFn) =>
+    nodes.reduce((acc, node) => {
       const filteredNode = filterFn(node);
 
       if (filteredNode) {
@@ -184,7 +187,8 @@ export const filterTreeviewPermissions = (items, search = '', searchDepth) => {
       return matchesSearch(node) ? node : null;
     }
 
-    const filteredChildren = filterNodesArray(node.children, childNode => filterNode(childNode, currentDepth + 1),
+    const filteredChildren = filterNodesArray(node.children, childNode =>
+      filterNode(childNode, currentDepth + 1),
     );
 
     if (!filteredChildren.length) {

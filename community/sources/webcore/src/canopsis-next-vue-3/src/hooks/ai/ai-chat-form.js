@@ -45,7 +45,8 @@ const THROTTLE_WAIT_MS = 1000;
  * @param {Object<string, Object>} patterns - Pattern fields keyed by name (API or form shape).
  * @returns {Object<string, PatternGroupsForm>} Same keys with form-ready pattern values.
  */
-const normalizePatternsToForm = patterns => Object.entries(patterns).reduce((acc, [field, pattern]) => {
+const normalizePatternsToForm = patterns =>
+  Object.entries(patterns).reduce((acc, [field, pattern]) => {
     acc[field] = pattern?.groups
       ? pattern
       : filterPatternsToForm({ [field]: pattern }, [field])[field];
@@ -86,7 +87,8 @@ const clearFormFieldError = (form, field) => form?.setFieldError?.(`${field}.jso
  * @param {{ key?: string, fields?: string[] }} callExpandOptions - Scenario action `key` and pattern field names.
  * @returns {Promise<void>}
  */
-const expandPatterns = (callExpand, callExpandOptions) => nextTick(() => callExpand(callExpandOptions)).catch(console.error);
+const expandPatterns = (callExpand, callExpandOptions) =>
+  nextTick(() => callExpand(callExpandOptions)).catch(console.error);
 
 /**
  * Registers AI chat expand handler: switches to the `neededTab` when the chat expands.
@@ -138,11 +140,13 @@ export const useAiChatPatternsItems = ({ form, context } = {}) => {
   const { t } = useI18n();
 
   const contextToPatternsItems = {
-    [LLM_SOCKET_CONTEXTS.scenario]: () => getFormValue(form)?.map?.((formItem, index) => ({
+    [LLM_SOCKET_CONTEXTS.scenario]: () =>
+      getFormValue(form)?.map?.((formItem, index) => ({
         text: `${index + 1} - ${t(`scenario.actions.${formItem.type}`)}`,
         value: formItem.key,
       })),
-    [LLM_SOCKET_CONTEXTS.stateSettings]: () => [
+    [LLM_SOCKET_CONTEXTS.stateSettings]: () =>
+      [
         { text: t('common.entityPatterns'), value: PATTERNS_FIELDS.entity },
         getFormValue(form)?.method === STATE_SETTING_METHODS.inherited && {
           text: t('stateSetting.dependenciesEntityPattern'),
@@ -225,7 +229,8 @@ export const useAiChatPending = () => {
   const pending = ref(false);
   const creation = ref(false);
 
-  const pendingTexts = computed(() => creation.value
+  const pendingTexts = computed(() =>
+    creation.value
       ? {
           inProgress: t('pattern.patternsCreationInProgress'),
           cancel: t('pattern.cancelPatternsCreation'),
@@ -326,12 +331,14 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
 
         set(formItem, 'patterns', newPatternsForm);
 
-        Object.keys(newPatterns).forEach(patternField => clearFormFieldError(formRef, `actions.${formItem.key}.${patternField}`),
+        Object.keys(newPatterns).forEach(patternField =>
+          clearFormFieldError(formRef, `actions.${formItem.key}.${patternField}`),
         );
       } else {
         setFormValue(formRef, key, newPatternsForm);
 
-        Object.keys(newPatterns).forEach(patternField => clearFormFieldError(formRef, `${key}.${patternField}`),
+        Object.keys(newPatterns).forEach(patternField =>
+          clearFormFieldError(formRef, `${key}.${patternField}`),
         );
       }
 

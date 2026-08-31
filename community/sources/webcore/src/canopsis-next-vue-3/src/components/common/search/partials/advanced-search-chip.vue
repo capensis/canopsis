@@ -412,7 +412,9 @@ export default {
      *
      * @param {number} index - The index of the chip to be removed from the selected items.
      */
-    const closeChildChip = index => changeSelectedItems(selectedItems.value.filter((_, itemIndex) => itemIndex !== index));
+    const closeChildChip = index => changeSelectedItems(
+      selectedItems.value.filter((_, itemIndex) => itemIndex !== index),
+    );
 
     /**
      * Emits a 'close' event to signal that the chip should be closed.

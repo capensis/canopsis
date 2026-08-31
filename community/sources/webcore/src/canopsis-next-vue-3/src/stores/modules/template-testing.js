@@ -7,20 +7,27 @@ import request from '@/services/request';
 const requestList = (route, { params } = {}) => request.get(route, { params });
 const requestItem = (route, { id } = {}) => request.get(`${route}/${encodeURIComponent(id)}`);
 const createItem = (route, { data } = {}) => request.post(route, data);
-const updateItem = (route, { id, data } = {}) => request.put(`${route}/${encodeURIComponent(id)}`, data);
+const updateItem = (route, { id, data } = {}) =>
+  request.put(`${route}/${encodeURIComponent(id)}`, data);
 const removeItem = (route, { id } = {}) => request.delete(`${route}/${encodeURIComponent(id)}`);
 const validateTemplate =
-  route => ({ data } = {}) => request.post(route, data);
+  route =>
+  ({ data } = {}) =>
+    request.post(route, data);
 
 export const useTemplateTestingStore = defineStore('templateTesting', () => {
-  const fetchTemplateTestingDataListWithoutStore = payload => requestList(API_ROUTES.templateData, payload);
-  const fetchTemplateTestingDataItemWithoutStore = payload => requestItem(API_ROUTES.templateData, payload);
+  const fetchTemplateTestingDataListWithoutStore = payload =>
+    requestList(API_ROUTES.templateData, payload);
+  const fetchTemplateTestingDataItemWithoutStore = payload =>
+    requestItem(API_ROUTES.templateData, payload);
   const createTemplateTestingData = payload => createItem(API_ROUTES.templateData, payload);
   const updateTemplateTestingData = payload => updateItem(API_ROUTES.templateData, payload);
   const removeTemplateTestingData = payload => removeItem(API_ROUTES.templateData, payload);
 
-  const fetchTemplateTestingTestsListWithoutStore = payload => requestList(API_ROUTES.templateTests, payload);
-  const fetchTemplateTestingTestWithoutStore = payload => requestItem(API_ROUTES.templateTests, payload);
+  const fetchTemplateTestingTestsListWithoutStore = payload =>
+    requestList(API_ROUTES.templateTests, payload);
+  const fetchTemplateTestingTestWithoutStore = payload =>
+    requestItem(API_ROUTES.templateTests, payload);
   const createTemplateTestingTest = payload => createItem(API_ROUTES.templateTests, payload);
   const updateTemplateTestingTest = payload => updateItem(API_ROUTES.templateTests, payload);
   const removeTemplateTestingTest = payload => removeItem(API_ROUTES.templateTests, payload);
@@ -51,10 +58,12 @@ export const useTemplateTestingStore = defineStore('templateTesting', () => {
     API_ROUTES.templateValidationCat.webhookTokenRules,
   );
 
-  const fetchEventFiltersVarsWithoutStore = ({ params } = {}) => request.get(API_ROUTES.copyVars.eventFilters, {
+  const fetchEventFiltersVarsWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.copyVars.eventFilters, {
       params,
     });
-  const fetchDynamicInfosVarsWithoutStore = ({ params } = {}) => request.get(API_ROUTES.copyVarsCat.dynamicInfos, {
+  const fetchDynamicInfosVarsWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.copyVarsCat.dynamicInfos, {
       params,
     });
 

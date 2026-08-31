@@ -22,7 +22,8 @@ import { isNumber, uniq } from 'lodash';
  * @param {GridLayout} [layout = []]
  * @returns {number}
  */
-export const calculateLayoutBottom = (layout = []) => layout.reduce((acc, item) => Math.max(acc, item.y + item.h), 0);
+export const calculateLayoutBottom = (layout = []) =>
+  layout.reduce((acc, item) => Math.max(acc, item.y + item.h), 0);
 
 /**
  * Calculate count of the unique rows with content
@@ -39,7 +40,8 @@ export const calculateLayoutRowsCount = (layout = []) => uniq(layout.map(({ y })
  * @param {GridLayoutItem} second
  * @returns {boolean}
  */
-const collides = (first, second) => !(
+const collides = (first, second) =>
+  !(
     first.i === second.i ||
     first.x + first.w <= second.x ||
     first.x >= second.x + second.w ||
@@ -71,7 +73,8 @@ const getFirstCollision = (layout, layoutItem) => layout.find(item => collides(i
  * @param {GridLayout} layout
  * @returns {GridLayout}
  */
-const getSortedLayout = (layout = []) => [...layout].sort((a, b) => Number(a.y > b.y || (a.y === b.y && a.x > b.x)) || -1);
+const getSortedLayout = (layout = []) =>
+  [...layout].sort((a, b) => Number(a.y > b.y || (a.y === b.y && a.x > b.x)) || -1);
 
 /**
  * Replace the layout item in the layout
@@ -80,7 +83,8 @@ const getSortedLayout = (layout = []) => [...layout].sort((a, b) => Number(a.y >
  * @param {GridLayoutItem} layoutItem
  * @returns {GridLayout}
  */
-export const replaceLayoutItemInLayout = (layout = [], layoutItem) => layout.map(item => (item.i === layoutItem?.i ? layoutItem : item));
+export const replaceLayoutItemInLayout = (layout = [], layoutItem) =>
+  layout.map(item => (item.i === layoutItem?.i ? layoutItem : item));
 
 /**
  * Immutable move item in the layout
@@ -236,7 +240,8 @@ export const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
  * @param {number} y
  * @returns {{ deltaX: number, deltaY: number }}
  */
-export const getItemDelta = (prevX, prevY, x, y) => !isNumber(prevX) ? { deltaX: 0, deltaY: 0 } : { deltaX: x - prevX, deltaY: y - prevY };
+export const getItemDelta = (prevX, prevY, x, y) =>
+  !isNumber(prevX) ? { deltaX: 0, deltaY: 0 } : { deltaX: x - prevX, deltaY: y - prevY };
 
 /**
  * Get control position by event and layout HTML element

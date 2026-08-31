@@ -10,7 +10,8 @@ export const useRemediationJobExecutionStore = defineStore('remediationJobExecut
   const getOutputById = computed(() => id => outputs.value[id] ?? '');
 
   const create = ({ data } = {}) => request.post(API_ROUTES.remediation.jobExecutions, data);
-  const cancel = ({ id } = {}) => request.put(`${API_ROUTES.remediation.jobExecutions}/${id}/cancel`);
+  const cancel = ({ id } = {}) =>
+    request.put(`${API_ROUTES.remediation.jobExecutions}/${id}/cancel`);
 
   const fetchOutput = async ({ id } = {}) => {
     const output = await request.get(`${API_ROUTES.remediation.jobExecutions}/${id}/output`);
