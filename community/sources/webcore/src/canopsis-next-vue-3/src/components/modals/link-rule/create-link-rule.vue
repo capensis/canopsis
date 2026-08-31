@@ -7,7 +7,7 @@
 
       <template #text>
         <link-rule-form :rule-id="config.linkRule?._id" />
-        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
       <template #actions>
@@ -16,7 +16,7 @@
         </v-btn>
 
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.attrs.pending"
           :loading="submitting"
           color="primary"
           type="submit"

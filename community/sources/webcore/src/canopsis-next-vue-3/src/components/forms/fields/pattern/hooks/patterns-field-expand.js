@@ -53,6 +53,10 @@ const waitCollapsePanelTransitionEnd = (parentElement) => {
  * @param {HTMLElement} element - Target node (e.g. a `.c-collapse-panel` root)
  */
 const scrollToElement = async (element) => {
+  if (!element) {
+    return;
+  }
+
   await waitCollapsePanelTransitionEnd(element);
 
   element.scrollIntoView({ behavior: 'smooth' });
@@ -87,9 +91,7 @@ export const usePatternsFieldExpand = ({ wrapperElement, expanded }) => {
       }
     });
 
-    scrollToElement(
-      wrapperElement.value.querySelector(`.${firstClass}`).closest('.c-collapse-panel'),
-    );
+    scrollToElement(wrapperElement.value?.querySelector(`.${firstClass}`)?.closest('.c-collapse-panel'));
   };
 
   aiChat?.registerExpandFunction?.(expandPatternsByFields);

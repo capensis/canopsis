@@ -51,6 +51,7 @@ top-down without reading the full inventory.
 - `/exploitation/event-filters` - list, search/pagination, expand tabs, summary/patterns/external data/failures, create/edit/duplicate modal form, delete/export and bulk actions.
 - `/exploitation/scenarios` - list, read-only expand content, create/edit/duplicate modal, test-query execution UI and DB export.
 - `/exploitation/meta-alarm-rule` - list, expand patterns, bulk/delete/export actions and create/edit/duplicate modal form stack.
+- `/exploitation/idle-rules` - list, expand, delete/bulk actions and create/edit/duplicate form with pbehavior action parameters.
 - `/exploitation/flapping-rules` - list, expand content, delete/bulk actions and create/edit/duplicate alarm-status-rule modal.
 - `/exploitation/resolve-rules` - list, expand content, delete/bulk actions and create/edit/duplicate alarm-status-rule modal.
 - `/exploitation/link-rules` - list, mass actions, DB export, create/edit/duplicate modal, link rule form and Monaco advanced editor.
@@ -91,6 +92,12 @@ inside migrated views:
 - `Availability`
 - `ExternalDataTable`
 
+### Shared Features
+
+- AI chat sidebar/form integration, pattern generation/update flow, model
+  selector, suggestions, restart/cancel states and `/admin/llms` chat history
+  replay modal.
+
 ## Immediate Tasks
 
 - `[x]` Keep `normalizr` out of the target migration path. The Vue 3 project does not depend on `normalizr`; use plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of restoring the old Vuex/normalizr shape.
@@ -118,23 +125,18 @@ inside migrated views:
 - `[x]` Removed `c-select-field` compat wrapper; bind `c-select` directly with `:model-value` / `@update:model-value` and `item-title` / `item-value`.
 - `[x]` Merge project-component listener objects into a single `v-bind` object; rename `update:<prop>` listeners to `onUpdate:<prop>` instead of using paired `v-bind` + `v-on`; details: `docs/ai/coding-standards.md` (`v-bind` And Listener Objects For Project Components`).
 
-## Deferred AI Chat Migration
+## AI Chat Migration
 
-The AI chat stack is intentionally excluded from ordinary page/form migration
-percentages. Current consumers use the compatibility placeholder from
-`hooks/ai/ai-chat-form.js` and `components/other/llm/chat/ai-chat-sidebar.vue`.
-Do not mark otherwise migrated pages or forms as partial only because their old
-AI chat sidebar is still deferred.
+- `[x]` AI chat stack is migrated and wired into existing consumers:
+  `hooks/ai/ai-chat.js`, `hooks/ai/ai-chat-form.js`,
+  `helpers/entities/llm/chat/**`, `components/other/llm/chat/**` and
+  `components/modals/llm/ai-chat-history.vue`.
+- `[x]` Existing AI chat consumers pass sidebar bindings and events, generated
+  patterns update scoped form fields, modal submit flows keep chat-history link
+  behavior, and `/admin/llms` prompt history can open the chat history modal.
+- `[x]` Targeted eslint and `npm run build` pass for the migrated stack.
 
-Forms/pages that still need the full AI chat stack after the final AI chat port:
-
-- `src/components/modals/remediation/create-remediation-instruction.vue`
-- `src/components/modals/link-rule/create-link-rule.vue`
-- `src/components/modals/pattern/create-pattern.vue`
-- `src/components/modals/declare-ticket/create-declare-ticket-rule.vue`
-- `src/components/modals/state-setting/create-state-setting.vue`
-- `src/components/other/pbehavior/calendar/partials/pbehavior-create-event.vue`
-- `/admin/llms` AI chat history replay modal/session behavior
+Detailed plan: `docs/ai/ai-chat-migration-plan.md`.
 
 ## Shared Components
 
@@ -145,46 +147,22 @@ Forms/pages that still need the full AI chat stack after the final AI chat port:
 - `[x]` User interface settings modal: settings menu action, modal registration, general/notifications/advanced/login tabs, app-info save flow, notification-settings save flow, rich text variables, logo upload and app title refresh are migrated and checked.
 - `[x]` `c-duration-field`: full old duration value/unit field is migrated in the compat field barrel, with `long`, `medium`, `sameWidth`, custom `units`, clearable unit handling and pluralized unit labels adapted to Vue I18n `t`.
 - `[x]` `c-payload-textarea-field` parity audit: old usage inventory is recorded in `docs/ai/coding-standards.md`; migrated uses are aligned, including meta alarm rule output template, and `MODALS.payloadTextareaEditor` is restored for simple template editors.
-- `[~]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals and sidebar text-editor fields are migrated. Remaining: connect full vee-validate form validation inside editor modals when related pages/widgets start using complex rules.
+- `[x]` Text editor stack: `text-editor`, `text-editor-field`, `text-editor-with-template`, `c-widget-template-field`, variables menu/list, upload hook, template-vars hook, image/images viewer modals, sidebar text-editor fields and editor modal vee-validate form scopes are migrated.
 - `[x]` `c-draggable-list-field`: migrated with Vue 3 `vuedraggable` API; emits `update:value` / `update:model-value` matching its `value` / `modelValue` props.
 - `[x]` `c-treeview`: migrated as a Vuetify 4 `VTreeview` compatibility wrapper with legacy `item-key` / `item-text` / `open` / `active` / `value` aliases and old `label` slot `leaf` support. `variables-help` now uses this wrapper instead of a local recursive tree.
-- `[~]` `c-advanced-data-table` migration plan:
-  - `[x]` Inventory old dependencies and current target gaps.
-  - `[x]` Leaf table placeholder: `c-empty-data-table-columns`.
-  - `[~]` Table-focused completion plan, excluding CRUD page migration:
-    - `[~]` Freeze supported Vue 3 API/compat surface: props, events and slots for `headers.text/value`, `headers.title/key`, `options`, `sortBy/sortDesc`, `item.<field>`, `header.*`, `toolbar`, `expand` and `mass-actions`.
-    - `[~]` Verify and harden core `v-data-table-server` behavior: server-side pagination, sorting, loading/no-data/footer states and whether local item slicing is still needed. Local item slicing is removed; Vuetify 4 sort updates are converted back to canonical `sortBy/sortDesc` before emitting `update:options`.
-    - `[ ]` Verify and harden selection behavior: disabled rows, select all, selected objects/keys, clear on options/data changes and mass-actions slot contract.
-    - `[ ]` Verify and harden expand rows: expandable predicate, transition cleanup, colspan with select/expand columns and expanded state reset.
-    - `[~]` Verify slot compatibility: `item`, `item.<field>`, `header`, `header.<field>`, `body.prepend`, `progress`, `toolbar`, `expand`, `mass-actions`. `item.<field>` now accepts both legacy `header.value` and Vuetify 4 `header.key`.
-    - `[ ]` Verify table-owned search integration: simple search and advanced-search submit/reset/loading event flow. Deep advanced-search editors remain tracked under the search stack.
-    - `[ ]` Verify pagination components: empty totals, last page after deletions, page reset when `itemsPerPage` grows and no-options mode.
-    - `[ ]` Keep `c-table-mass-actions-panel` outside the core table scope. It is a consumer of the `mass-actions` slot with domain actions, not an internal dependency of `c-advanced-data-table`.
-    - `[ ]` Consumer integration checklist: users, roles, broadcast messages, template-testing, dynamic-info, event-filter, idle-rules, scenarios.
-  - `[~]` Direct helper components used by `c-advanced-data-table`:
-    - `[x]` Foundation helpers: `c-layout` and `c-icon` are migrated enough for table usage.
-    - `[~]` Simple search: `c-search` and `c-search-field` are migrated; table now passes `options.search` into `c-search`, local search value syncs with external reset, submit/clear emit `update:modelValue`, and combobox history remove/pin controls are restored.
-    - `[~]` Advanced search shell: `c-advanced-search` and `c-advanced-search-field` are migrated.
-    - `[~]` Advanced search internals: `advanced-search-rules`, `advanced-search-rule`, chips, duration/range chips and history button are migrated; remaining work is store-backed attribute value fetching.
-    - `[~]` Pagination helpers: `c-table-pagination` and `c-pagination` are migrated.
-    - `[x]` `c-empty-data-table-columns` exists as a leaf placeholder; it is not part of ordinary `c-advanced-data-table` lists.
-  - `[~]` Pagination base: `c-pagination`, `c-table-pagination`, `c-items-per-page-field`, `helpers/pagination`.
-  - `[~]` Search base: `c-search`, `c-search-field`, advanced-search public wrappers, rule/chip/history components and query helpers are migrated; remaining work is deep old parity for date/duration-specific editors and store-backed attribute value fetching.
-  - `[~]` Vuetify table compatibility: initial mapping for old Vuetify 2 `headers.text/value`, `server-items-length`, `options`, `sortDesc`, `show-select`, `show-expand`, expanded slot and selectable API onto Vuetify 4 `v-data-table-server` is in place; verify against first real consumer.
-  - `[~]` Main component: `components/common/table/c-advanced-data-table.vue` is ported without changing Options API; remaining work is consumer-specific slot fixes.
-  - `[~]` First real consumer: `users-list` is switched to `c-advanced-data-table`; remaining users-table work is `c-table-mass-actions-panel` and bulk user actions UI.
-- `[~]` `c-patterns-field` migration strategy:
+- `[x]` `c-advanced-data-table`: migrated on top of Vuetify 4 `v-data-table-server` with legacy-compatible `headers.text/value`, `headers.title/key`, `server-items-length` through `totalItems`, `options`, `sortBy/sortDesc`, `show-select`, `show-expand`, `item`, `item.<field>`, `header`, `header.<field>`, `body.prepend`, `progress`, `toolbar`, `expand` and `mass-actions` behavior. Selection filters disabled rows, keeps selected objects/keys, clears or preserves selected rows through mass-action controls, and resets stale selected/expanded rows when items/options change. Expand rows keep the old custom expand slot, expandable predicate, colspan, transition cleanup and reset behavior. Search and pagination are wired through `c-search`, `c-advanced-search`, `c-table-pagination`, `c-pagination`, `c-items-per-page-field` and shared query helpers. The component is in active use by migrated consumers including users, roles, broadcast messages, template-testing, dynamic-info, event-filter, idle-rules and scenarios. Deep advanced-search editor parity, if needed later, is tracked by the search stack rather than by `c-advanced-data-table`.
+- `[x]` `c-patterns-field` migration strategy:
   - `[x]` Scope rule: old component tree is ported without rewriting the main logic; Options API components stay Options API and Composition API hooks stay hooks.
   - `[x]` Phase 1, shared model/helpers: `helpers/entities/pattern/form.js`, `helpers/entities/filter/form.js`, `helpers/entities/pattern/fields/form.js` and required constants are available.
   - `[x]` Phase 2, Pinia stores/hooks: migrated `pattern`, `pbehavior-patterns`, `patterns-fields`, `pattern-entities-optimize`, entity-category and pbehavior dictionary facades. Hooks wrap stores; components do not call request directly.
   - `[x]` Phase 3, base rule editor leaves: migrated `pattern-attribute-field`, `pattern-operator-field`, `pattern-rule-field-date-value`, `pattern-rule-field`, `pattern-group-field`, `pattern-groups-field`, `pattern-editor-field`, `pattern-advanced-editor-field`, `c-pattern-field`, `c-filter-field`.
   - `[x]` Phase 4, domain pattern fields: migrated `c-alarm-patterns-field`, `c-entity-patterns-field`, `c-pbehavior-patterns-field`, `c-event-filter-patterns-field`, `c-service-weather-patterns-field`; added lightweight compatibility fields needed by their dynamic `valueField` configs.
-  - `[~]` Phase 5, counters and preview modals: migrated `pattern-counters`, `pattern-count-message`, `pattern-count-alarms-modal`, `pattern-count-entities-modal`. Alarm-list modal body is available through the migrated AlarmsList stack. Remaining: real `entities-list` and `entities-comparison` modal bodies still depend on porting the entity list stack.
+  - `[x]` Phase 5, counters and preview modals: migrated `pattern-counters`, `pattern-count-message`, `pattern-count-alarms-modal`, `pattern-count-entities-modal`. Alarm-list modal body is available through the migrated AlarmsList stack; entities-list and entities-comparison modal bodies are migrated through the Context entities table.
   - `[x]` Phase 6, optimization/suggestions: migrated `pattern-optimization`, `pattern-progress`, `pattern-try-optimization`, `pattern-field-suggestions-wrapper`, `pattern-suggestions`, `pattern-suggestions-list`, `pattern-suggestions-header`, `pattern-suggestion-tab`, `pattern-suggestion-content`, `pattern-fix-with-ai-btn`; API calls go through pattern-entities-optimize store/hook.
   - `[x]` Phase 7, `c-patterns-field` wrapper: migrated `c-patterns-field.vue`; old `v-field` usage is replaced with explicit `:value` / `@update:value` bindings.
-  - `[ ]` Phase 8, consumers: integrate first in read-only scenario action pattern tab, then in forms that already depend on patterns: scenario modal, event-filter, dynamic-info, meta-alarm-rule, declare-ticket-rule, pbehavior/remediation/storage settings as they are migrated.
+  - `[x]` Phase 8, consumers: integrated in migrated pattern consumers, including scenario modal/action patterns, event-filter, dynamic-info, meta-alarm-rule, declare-ticket-rule, pbehavior, remediation, storage/state settings, tags, filters, KPI filters, link rules and alarm-status rules.
   - `[x]` Verification checklist: build and lint pass. Functional QA is tracked through `Ready For Testing`.
-- `[~]` Remaining common button components from old `components/common/buttons`: `c-expand-btn` is migrated for scenarios expand cards, `c-btn-with-error`, `c-db-export-btn` and `c-copy-btn` are migrated for current consumers. Pending: `c-action-fab-btn`, `c-fab-expand-btn`, `c-download-btn`, `c-speed-dial`, `c-grid-btns`, density toggle dependencies.
+- `[x]` Common button components from old `components/common/buttons`: `c-action-btn`, `c-action-fab-btn`, `c-fab-expand-btn`, `c-fab-btn`, `c-refresh-btn`, `c-expand-btn`, `c-btn-with-error`, `c-db-export-btn`, `c-copy-btn`, `c-download-btn`, `c-speed-dial`, `c-grid-btns` and `c-density-btn-toggle` are migrated, exported from the common buttons barrel and used by migrated pages/widgets where needed. Density field integration is migrated through `src/components/sidebars/form/fields/density.vue`.
 
 ## Shared Hooks And Mixins
 
@@ -193,7 +171,7 @@ Forms/pages that still need the full AI chat stack after the final AI chat port:
 - `[x]` Query mixins: `mixins/query/query.js`, `mixins/query/interval.js`.
 - `[x]` Query helper dependencies: `helpers/query.js`, `helpers/entities/shared/query.js`, `helpers/collection.js`, `helpers/date/date-intervals.js`.
 - `[x]` Groups side bar stack: `groups-side-bar`, nested group/view/playlists/draggable components, navigation editing mode, view/group/playlist/active-view Pinia stores, related mixins and create/edit group/view modal entry points are migrated.
-- `[ ]` Remaining query-related entity helpers from old `helpers/entities/*/query.js`: migrate when corresponding pages/widgets need them.
+- `[x]` Query-related entity helpers from old `helpers/entities/*/query.js`: migrated with parity for `alarm`, `availability`, `counter`, `entity`, `external-data-table`, `map`, `metric`, `service-weather`, `shared`, `stats` and `widget` query helpers. `Map` widget query conversion is registered in the shared widget query dispatcher.
 
 ## Pages
 
@@ -237,7 +215,7 @@ Pages are taken from `src/router.js` in the source project.
 | `[x]`  | `exploitation-dynamic-infos`                   | `/exploitation/dynamic-infos`         | `src/views/exploitation/dynamic-infos.vue`                   | `src/views/exploitation/dynamic-infos-page.vue`                   | Page shell, dynamic infos list with advanced search, expand item, dynamic info templates list, create/edit modals, add-from-template modal, route/store wiring, i18n and dynamic-info/template mass actions are migrated.                                                                                                                                                    |
 | `[x]`  | `exploitation-meta-alarm-rules`                | `/exploitation/meta-alarm-rule`       | `src/views/exploitation/meta-alarm-rules.vue`                | `src/views/exploitation/meta-alarm-rules-page.vue`                | Main list, read-only expand patterns, route, helper, bulk/delete/export actions and create/edit/duplicate modal form stack are migrated.                                                                                                                                                                                                                                      |
 | `[x]`  | `exploitation-scenarios`                       | `/exploitation/scenarios`             | `src/views/exploitation/scenarios.vue`                       | `src/views/exploitation/scenarios-page.vue`                       | Main list/read-only expand content, scenario store, create/edit/duplicate modal, test-query execution UI and row DB export button are migrated.                                                                                                                                                                                                                              |
-| `[~]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`                      | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated; pbehavior action parameters depend on future pbehavior stack migration.                                                                                                                                                                                                                  |
+| `[x]`  | `exploitation-idle-rules`                      | `/exploitation/idle-rules`            | `src/views/exploitation/idle-rules.vue`                      | `src/views/exploitation/idle-rules-page.vue`                      | Main list, expand, delete/bulk actions and create/edit/duplicate form are migrated, including pbehavior action parameters.                                                                                                                                                                                                                                                   |
 | `[x]`  | `exploitation-flapping-rules`                  | `/exploitation/flapping-rules`        | `src/views/exploitation/flapping-rules.vue`                  | `src/views/exploitation/flapping-rules-page.vue`                  | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated.                                                                                                                                                                                                                                                                                |
 | `[x]`  | `exploitation-resolve-rules`                   | `/exploitation/resolve-rules`         | `src/views/exploitation/resolve-rules.vue`                   | `src/views/exploitation/resolve-rules-page.vue`                   | Main list, read-only expand, delete/bulk actions and create/edit/duplicate form are migrated.                                                                                                                                                                                                                                                                                |
 | `[x]`  | `exploitation-declare-ticket-rules`            | `/exploitation/declare-ticket-rules`  | `src/views/exploitation/declare-ticket-rules.vue`            | `src/views/exploitation/declare-ticket-rules-page.vue`            | Page, list, CRUD actions, mass actions, create/edit/duplicate rule modal, test-query preview, declare/associate/execute ticket modals, alarm-widget flows and required helpers are migrated.                                                                                                                                                                                  |
@@ -369,9 +347,9 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 ### `admin-kpi`
 
 - `[x]` Main content: `src/views/admin/kpi-page.vue` is wired; Graphs tab has SLI, alarm metrics and rating metrics fetch/render/export paths; KPI filters, rating settings and collection settings tabs are migrated.
-- `[~]` Modal windows: `create-kpi-filter` is migrated; rating/collection related modals are not migrated.
+- `[x]` Modal windows: `create-kpi-filter` is migrated. The old KPI page has no separate rating/collection modals; rating settings and collection settings are inline tab forms.
 - `[x]` Sidebars/drawers: not used by this page.
-- `[~]` State/API/socket: filter/rating/metrics stores already exist; page healthcheck socket and KPI graph metric fetch/export paths are wired.
+- `[x]` State/API/socket: filter CRUD, rating settings list/bulk update, metrics settings fetch/update, healthcheck socket availability, KPI graph metric fetch and CSV/PNG export paths are wired.
 - `[x]` Routing/access: `/admin/kpi`, KPI `can` access.
 - `[x]` Messages/i18n: KPI messages already exist.
 
@@ -588,9 +566,9 @@ Each page is tracked by functional blocks. Add concrete component/file names ins
 
 ### `exploitation-idle-rules`
 
-- `[~]` Main content: `src/views/exploitation/idle-rules.vue` -> `src/views/exploitation/idle-rules-page.vue`; list, search, pagination, summary/patterns expand, delete/bulk actions and create/edit/duplicate entry points are migrated.
-- `[~]` Modal windows: `create-idle-rule` form is migrated; pbehavior action parameters still require pbehavior stack migration.
-- `[ ]` Sidebars/drawers: not migrated.
+- `[x]` Main content: `src/views/exploitation/idle-rules.vue` -> `src/views/exploitation/idle-rules-page.vue`; list, search, pagination, summary/patterns expand, delete/bulk actions and create/edit/duplicate entry points are migrated.
+- `[x]` Modal windows: `create-idle-rule` form is migrated, including pbehavior action parameters.
+- `[x]` Sidebars/drawers: none in the old page.
 - `[x]` State/API/socket: idle rules Pinia store/hook are migrated for list/create/update/delete/bulk actions.
 - `[x]` Routing/access: `/exploitation/idle-rules`, idle rules access.
 - `[x]` Messages/i18n: existing `idle-rules` messages are wired.
@@ -710,15 +688,15 @@ Router rules are taken from `src/router.js`, `src/constants/common.js`, `src/con
 
 - `[x]` App-info access guard: `checkAppInfoAccessForRoute(to)` checks edition-based page availability through `USER_PERMISSIONS_TO_PAGES_RULES`; on failure shows `common.notFound` and redirects to `home`.
 - `[x]` User access guard: `checkUserAccessForRoute(to)` checks `requiresPermission` with default action `read`; supports permission id functions and grouped permission arrays.
-- `[~]` Permission waiting: current implementation fetches current user when needed; `info/popupTimeout` waiting is not required yet because popup defaults already exist.
+- `[x]` Permission waiting: current implementation fetches current user when needed. App-info loading sets popup default close times from `popup_timeout` both from app bootstrap and from route access guard fallback.
 - `[x]` Permission algorithm: target uses `checkUserAnyAccess`, grouped permissions and CRUD action behavior.
 - `[x]` Guard failure redirect: source redirects failed `beforeResolve` checks to `home`.
 
 ### Post-navigation Rules
 
-- `[~]` Entity sweep: after route change hook exists; actual `entities/sweep` call will be wired when entity store is migrated.
+- `[x]` Entity sweep: old `entities/sweep` belonged to the Vuex/normalizr embedded-entity mark-and-sweep plugin and is intentionally not ported. Pinia stores keep explicit local list/detail state and refresh migrated consumers directly after mutations.
 - `[x]` Initial error popup: on router ready, if initial route has `errorMessage`, show persistent error popup.
-- `[ ]` Scroll/restoration behavior: not explicit in source router; verify if any page-level logic depends on old Vue Router behavior.
+- `[x]` Scroll/restoration behavior: source router did not define `scrollBehavior`; target intentionally keeps Vue Router default behavior and page-level scroll helpers handle local scroll cases.
 
 ## Legacy Redirects
 
@@ -761,7 +739,7 @@ Each widget is tracked by main rendering logic and settings/sidebar logic. Sourc
 ### `AlarmsList`
 
 - `[x]` Main content: `src/components/widgets/alarm/alarms-list.vue`; runtime foundation is registered in `widget-wrapper.vue`, renders prepared columns, uses shared widget query state through the Pinia `query` store, includes the migrated toolbar controls, and delegates the table to the legacy-style component chain `partials/alarms-list-table-with-pagination.vue`, `partials/alarms-list-table.vue` and `partials/alarms-list-row.vue`. Base row rendering, mass action panels, column drag/resize/reset, sticky header, sticky top toolbar, sticky horizontal scrollbar and pagination live in that table chain. Alarm event, ticket, comment, snooze, change-state, history, meta-alarm, remediation execute, remediation execution popups and alarm-list handoff modals are registered. PDF export is wired. Row actions now keep the shared action panel close contract used by legacy `afterSubmit()` and use the migrated `c-booted-placeholder-loader`/`AsyncBooting` path. Expand panel now has row state, details fetching through Pinia, expand button, all legacy tabs, local details query lifecycle, Pbehaviors calendar modal, Children tab backed by `alarms-list-table-with-pagination`, remediation executions, service dependency tree, availability, Entity gantt and enrichments data loading. Children/consequences rows keep the parent alarm context for templates/actions/instruction icons, and tab visibility follows `opened_children`/`closed_children` for the current widget mode. Periodic refresh, live watching, alarm/details socket rooms, pause-on-expand, delayed row booting, virtual scroll, empty-column UI, Ctrl-drag selection, backend column filters, entity info property aliases, sticky header, sticky horizontal scroll and toolbar are wired.
-- `[x]` Expand panel tab switching is complete for migration scope. The only remaining note was a cosmetic TODO to restore a safe tab-switch animation later; the current non-animated switch is intentional because the Vuetify `v-window` horizontal transition leaves the previous tab visually hanging inside the table expand row.
+- `[x]` Expand panel tab switching is complete for migration scope. The current non-animated switch is intentional because the Vuetify `v-window` horizontal transition leaves the previous tab visually hanging inside the table expand row.
 - `[x]` Entity gantt in the alarms list table expand panel is migrated and checked: intervals, pagination, tooltips and layout inside the expanded row.
 - `[x]` Settings: `alarm-settings`; widget parameters form, columns, filters, actions, quick actions, fast pbehavior, Export PDF, Export CSV, Charts and expand panel settings are migrated and checked.
 - `[x]` Store/API/socket: alarm list query/pagination/user-preference foundation is migrated through the Pinia alarm/query stores. Periodic refresh, live watching, alarm/alarm-details socket rooms and opened-details refresh on list fetch are migrated. When migrating the alarm expand pbehavior tab, do not rely on old embedded entity cleanup; `pbehaviors-simple-list` should refresh its own list after pbehavior delete.

@@ -25,7 +25,7 @@
       />
     </div>
 
-    <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" />
+    <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
 
     <c-layout class="pbehavior-form__actions" column>
       <v-divider />
@@ -39,7 +39,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="errors.any() || chatOptions.bind.pending" color="primary" type="submit">
+        <v-btn :disabled="errors.any() || chatOptions.attrs.pending" color="primary" type="submit">
           {{ $t('common.submit') }}
         </v-btn>
       </c-layout>

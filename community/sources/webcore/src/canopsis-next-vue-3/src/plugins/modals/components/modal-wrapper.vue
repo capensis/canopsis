@@ -1,3 +1,9 @@
+<template>
+  <v-dialog v-model="isOpen" v-bind="dialogProps" @click:outside="handleClickOutside">
+    <slot />
+  </v-dialog>
+</template>
+
 <script setup>
 import { computed, inject, onMounted, ref } from 'vue';
 
@@ -43,9 +49,33 @@ const dialogProps = computed(() => {
     ...modalDialogPropsFromMap,
     ...modalDialogProps,
   };
+  const {
+    contentWrapperStyle,
+    contentProps = {},
+    ...dialogPropsWithoutContent
+  } = merged;
+  const preparedContentProps = contentProps ?? {};
+  const rightOffset = contentWrapperStyle?.paddingRight;
+  const hasContentRightOffset = rightOffset !== undefined && rightOffset !== null;
+  const contentStyle = {
+    ...preparedContentProps.style,
+    ...contentWrapperStyle,
+  };
+  contentStyle.transition = [
+    contentStyle.transition,
+    'width 0.2s ease-in-out, margin-right 0.2s ease-in-out, max-width 0.2s ease-in-out',
+  ].filter(Boolean).join(', ');
+
+  if (hasContentRightOffset) {
+    const normalizedRightOffset = rightOffset || 0;
+
+    contentStyle.paddingRight = undefined;
+    contentStyle.marginRight = `calc(${normalizedRightOffset} + 24px)`;
+    contentStyle.width = `calc(100% - ${normalizedRightOffset} - 48px)`;
+  }
 
   const contentClass = [
-    merged.contentClass,
+    dialogPropsWithoutContent.contentClass,
     autoHeight && 'v-dialog__content--auto-height',
     minimized && 'v-dialog__content--minimized',
   ]
@@ -53,13 +83,17 @@ const dialogProps = computed(() => {
     .join(' ');
 
   return {
-    ...merged,
+    ...dialogPropsWithoutContent,
 
     contentClass,
-    scrim: minimized ? false : merged.scrim,
-    persistent: minimized || merged.persistent || hasClickOutsideHandlers.value,
-    noClickAnimation: hasClickOutsideHandlers.value || merged.noClickAnimation,
-    closeOnBack: !minimized && merged.closeOnBack,
+    contentProps: {
+      ...preparedContentProps,
+      style: contentStyle,
+    },
+    scrim: minimized ? false : dialogPropsWithoutContent.scrim,
+    persistent: minimized || dialogPropsWithoutContent.persistent || hasClickOutsideHandlers.value,
+    noClickAnimation: hasClickOutsideHandlers.value || dialogPropsWithoutContent.noClickAnimation,
+    closeOnBack: !minimized && dialogPropsWithoutContent.closeOnBack,
   };
 });
 
@@ -82,12 +116,6 @@ const handleClickOutside = (event) => {
 
 onMounted(() => (ready.value = true));
 </script>
-
-<template>
-  <v-dialog v-model="isOpen" v-bind="dialogProps" @click:outside="handleClickOutside">
-    <slot />
-  </v-dialog>
-</template>
 
 <style lang="scss">
 .modals-wrapper .v-dialog {

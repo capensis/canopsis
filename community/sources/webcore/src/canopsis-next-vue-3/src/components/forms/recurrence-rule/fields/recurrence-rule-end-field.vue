@@ -38,7 +38,7 @@
           />
 
           <span class="text-lowercase">
-            {{ tc('recurrenceRule.occurrence', modelValue.count || 1) }}
+            {{ t('recurrenceRule.occurrence', modelValue.count || 1) }}
           </span>
         </c-layout>
       </template>
@@ -69,7 +69,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const { t, tc } = useI18n();
+const { t } = useI18n();
 
 const type = ref(
   props.modelValue.until

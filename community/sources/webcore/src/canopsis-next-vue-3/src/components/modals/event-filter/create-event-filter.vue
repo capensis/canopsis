@@ -11,7 +11,7 @@
           :event-attributes="eventAttributes"
           :attributes-pending="pending"
         />
-        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" v-on="chatOptions.on" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
       <template #actions="">
         <v-btn
@@ -96,7 +96,7 @@ export default {
       ruleId: ruleId.value,
       context: LLM_SOCKET_CONTEXTS.eventFilter,
     });
-    const submitDisabled = computed(() => submitting.value || chatOptions.value.bind.pending);
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.attrs.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 

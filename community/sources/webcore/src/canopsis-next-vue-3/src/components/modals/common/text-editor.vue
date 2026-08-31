@@ -33,8 +33,8 @@
         </v-btn>
 
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
           color="primary"
           type="submit"
         >
@@ -46,7 +46,14 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
+
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
@@ -60,69 +67,47 @@ export default {
     },
   },
 
-  data() {
-    const text = this.modal.config?.text ?? '';
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const title = computed(() => config.value.title ?? t('modals.textEditor.title'));
+    const variables = computed(() => config.value.variables);
+    const textarea = computed(() => config.value.textarea);
+    const required = computed(() => (
+      config.value.rules?.required ||
+      config.value.rules?.includes?.('required') ||
+      config.value.required
+    ));
+
+    const form = useForm({
+      initialValues: {
+        text: config.value.text ?? '',
+      },
+    });
+    const { values, isSubmitting } = form;
+    const text = form.model('text');
+    const close = () => modals.hide({ id: props.modal.id });
+    const submit = form.handleSubmit(async () => {
+      await config.value.action?.(normalizeHandlebarsNbsp(values.value.text));
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({ form: values, submit, close });
 
     return {
-      submitting: false,
-      form: {
-        text,
-      },
+      config,
+      title,
+      variables,
+      textarea,
+      required,
+      form: values,
+      text,
+      isSubmitting,
+      close,
+      submit,
     };
-  },
-
-  computed: {
-    config() {
-      return this.modal.config ?? {};
-    },
-
-    title() {
-      return this.config.title ?? this.$t('modals.textEditor.title');
-    },
-
-    variables() {
-      return this.config.variables;
-    },
-
-    textarea() {
-      return this.config.textarea;
-    },
-
-    required() {
-      return (
-        this.config.rules?.required ||
-        this.config.rules?.includes?.('required') ||
-        this.config.required
-      );
-    },
-
-    isDisabled() {
-      return this.required && !this.form.text;
-    },
-  },
-
-  methods: {
-    close() {
-      this.$modals.hide({ id: this.modal.id });
-    },
-
-    async submit() {
-      if (this.isDisabled) {
-        return;
-      }
-
-      this.submitting = true;
-
-      try {
-        if (this.config.action) {
-          await this.config.action(normalizeHandlebarsNbsp(this.form.text));
-        }
-
-        this.close();
-      } finally {
-        this.submitting = false;
-      }
-    },
   },
 };
 </script>

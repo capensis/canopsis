@@ -203,6 +203,7 @@ export default {
   ),
   [MODALS.createEntity]: defineAsyncComponent(() => import('./entity/create-entity.vue')),
   [MODALS.createEntityInfo]: defineAsyncComponent(() => import('./entity/create-entity-info.vue')),
+  [MODALS.entitiesComparison]: defineAsyncComponent(() => import('./entity/entities-comparison.vue')),
   [MODALS.entitiesList]: defineAsyncComponent(() => import('./entity/entities-list.vue')),
   [MODALS.entitiesRootCauseDiagram]: defineAsyncComponent(
     () => import('./entity/entities-root-cause-diagram.vue'),
@@ -218,6 +219,8 @@ export default {
   ),
   [MODALS.createTag]: defineAsyncComponent(() => import('./tag/create-tag.vue')),
   [MODALS.createLlm]: defineAsyncComponent(() => import('./llm/create-llm.vue')),
+  [MODALS.llmPromptsHistory]: defineAsyncComponent(() => import('./llm/llm-prompts-history.vue')),
+  [MODALS.aiChatHistory]: defineAsyncComponent(() => import('./llm/ai-chat-history.vue')),
   [MODALS.importExportViews]: defineAsyncComponent(
     () => import('./view/import-groups-and-views.vue'),
   ),

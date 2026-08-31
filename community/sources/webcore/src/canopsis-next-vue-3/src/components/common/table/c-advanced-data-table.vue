@@ -272,7 +272,7 @@ export default {
     },
     expandContentClass: {
       type: [String, Array, Object],
-      default: 'secondary lighten-2 pa-4',
+      default: 'secondary lighten-2',
     },
     advancedSearchAttributes: {
       type: Array,

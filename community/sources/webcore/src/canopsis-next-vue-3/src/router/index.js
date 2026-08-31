@@ -607,14 +607,6 @@ router.beforeResolve(async (to) => {
   }
 });
 
-router.afterEach((to, from) => {
-  if (to.path === from.path) {
-    return;
-  }
-
-  // Entities sweep will be wired when the entity store is migrated.
-});
-
 router.isReady().then(() => {
   const { errorMessage } = router.currentRoute.value.query;
 

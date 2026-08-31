@@ -19,14 +19,14 @@
           :required-approve="requiredInstructionApprove"
           :rule-id="config.remediationInstruction?._id"
         />
-        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" v-on="chatOptions.on" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
       <template #actions>
         <v-btn :disabled="submitting" variant="text" @click="close">
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.attrs.pending"
           :loading="submitting"
           color="primary"
           type="submit"

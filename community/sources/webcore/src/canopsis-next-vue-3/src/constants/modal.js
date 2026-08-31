@@ -102,6 +102,7 @@ export const MODALS = {
   createLinkRule: 'create-link-rule',
 
   createLlm: 'create-llm',
+  llmPromptsHistory: 'llm-prompts-history',
   aiChatHistory: 'ai-chat-history',
 
   createMaintenance: 'create-maintenance',

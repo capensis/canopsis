@@ -7,6 +7,7 @@
 
       <template #text>
         <scenario-form :rule-id="scenarioId" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
       <template #actions>
@@ -15,7 +16,7 @@
         </v-btn>
 
         <v-btn
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || chatPending"
           :loading="isSubmitting"
           color="primary"
           type="submit"
@@ -28,7 +29,9 @@
 </template>
 
 <script>
-import { computed, inject } from 'vue';
+import { computed, inject, toRef } from 'vue';
+
+import { LLM_SOCKET_CONTEXTS } from '@/constants';
 
 import {
   formToScenario,
@@ -36,16 +39,19 @@ import {
   scenarioToForm,
 } from '@/helpers/entities/scenario/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
 
 export default {
   components: {
+    AiChatSidebar,
     ScenarioForm,
   },
 
@@ -74,6 +80,10 @@ export default {
       errorsToValidation: errors => scenarioErrorToForm(errors, form.values.value),
     });
     const { values, handleSubmit, isSubmitting } = form;
+    const actions = computed({
+      get: () => values.value.actions,
+      set: newActions => (values.value.actions = newActions),
+    });
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 
@@ -92,7 +102,15 @@ export default {
       submit,
       close: closeModal,
     });
-    
+
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: actions,
+      modal: toRef(props, 'modal'),
+      ruleId: scenarioId,
+      context: LLM_SOCKET_CONTEXTS.scenario,
+    });
+    const chatPending = computed(() => chatOptions.value.attrs.pending);
+
     useEntityInfoPropertyFetching();
 
     return {
@@ -101,6 +119,9 @@ export default {
       scenarioId,
       submitLabel,
       isSubmitting,
+      chatShown,
+      chatOptions,
+      chatPending,
       submit,
       closeModal,
     };

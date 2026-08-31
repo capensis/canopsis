@@ -31,7 +31,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const { te, tc, t } = useI18n();
+const { te, t } = useI18n();
 
 const intervalTimeString = computed(() => {
   const timeMessageKey = {
@@ -46,7 +46,7 @@ const intervalTimeString = computed(() => {
     return '';
   }
 
-  return tc(timeMessageKey, props.modelValue.interval || 1);
+  return t(timeMessageKey, props.modelValue.interval || 1);
 });
 
 const updateInterval = value =>

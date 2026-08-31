@@ -390,6 +390,7 @@ export const isArrayPatternRuleField = value =>
     ALARM_PATTERN_FIELDS.ticketValue,
     ALARM_PATTERN_FIELDS.ticketInitiator,
     ALARM_PATTERN_FIELDS.ticketData,
+    ALARM_PATTERN_FIELDS.snoozeInitiator,
     ALARM_PATTERN_FIELDS.ackBy,
     ALARM_PATTERN_FIELDS.ackMessage,
     ALARM_PATTERN_FIELDS.ackInitiator,
@@ -645,7 +646,10 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field =>
   field !== EVENT_FILTER_PATTERN_FIELDS.connectorName &&
   field !== EVENT_FILTER_PATTERN_FIELDS.resource &&
   field !== EVENT_FILTER_PATTERN_FIELDS.initiator &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.author;
+  field !== EVENT_FILTER_PATTERN_FIELDS.author &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.output &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.longOutput &&
+  field !== EVENT_FILTER_PATTERN_FIELDS.extraInfos;
 
 /**
  * Check pattern rule is valid

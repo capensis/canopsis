@@ -4,6 +4,8 @@ import { computed, ref } from 'vue';
 import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
+import { usePopupsStore } from '@/plugins/popups/stores';
+
 import request from '@/services/request';
 
 import { getLocalTimezone } from '@/helpers/date/date';
@@ -63,7 +65,7 @@ export const useAppInfoStore = defineStore('appInfo', () => {
   const versionDescription = computed(() => appInfo.value.version_description ?? '');
   const notificationDisplayCount = computed(() => appInfo.value.notification_display_count ?? 0);
 
-  const fetchAppInfo = async ({ setGlobalLocale, setDefaultCloseTime } = {}) => {
+  const fetchAppInfo = async ({ setGlobalLocale } = {}) => {
     try {
       pending.value = true;
 
@@ -79,7 +81,6 @@ export const useAppInfoStore = defineStore('appInfo', () => {
       if (nextAppInfo.popup_timeout) {
         setPopupTimeouts({
           popupTimeout: nextAppInfo.popup_timeout,
-          setDefaultCloseTime,
         });
       }
     } catch (err) {
@@ -93,14 +94,15 @@ export const useAppInfoStore = defineStore('appInfo', () => {
 
   const updateMaintenanceMode = ({ data } = {}) => request.put(API_ROUTES.maintenance, data);
 
-  const setPopupTimeouts = ({ popupTimeout: nextPopupTimeout = {}, setDefaultCloseTime } = {}) => {
+  const setPopupTimeouts = ({ popupTimeout: nextPopupTimeout = {} } = {}) => {
+    const popupsStore = usePopupsStore();
     const timeInfo = durationToSeconds(nextPopupTimeout.info) * 1000;
     const timeError = durationToSeconds(nextPopupTimeout.error) * 1000;
 
-    setDefaultCloseTime?.({ type: POPUP_TYPES.success, time: timeInfo });
-    setDefaultCloseTime?.({ type: POPUP_TYPES.info, time: timeInfo });
-    setDefaultCloseTime?.({ type: POPUP_TYPES.warning, time: timeError });
-    setDefaultCloseTime?.({ type: POPUP_TYPES.error, time: timeError });
+    popupsStore.setDefaultCloseTime({ type: POPUP_TYPES.success, time: timeInfo });
+    popupsStore.setDefaultCloseTime({ type: POPUP_TYPES.info, time: timeInfo });
+    popupsStore.setDefaultCloseTime({ type: POPUP_TYPES.warning, time: timeError });
+    popupsStore.setDefaultCloseTime({ type: POPUP_TYPES.error, time: timeError });
   };
 
   return {

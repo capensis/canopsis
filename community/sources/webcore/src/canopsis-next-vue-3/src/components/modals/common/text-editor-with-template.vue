@@ -23,8 +23,8 @@
         </v-btn>
 
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
           color="primary"
           type="submit"
         >
@@ -36,9 +36,16 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
 import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
+
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import TextEditorWithTemplateField from '@/components/common/text-editor/text-editor-with-template.vue';
 
@@ -52,66 +59,46 @@ export default {
     },
   },
 
-  data() {
-    const { text = '', template = CUSTOM_WIDGET_TEMPLATE } = this.modal.config ?? {};
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const title = computed(() => config.value.title ?? t('modals.textEditor.title'));
+    const required = computed(() => (
+      config.value.rules?.required ||
+      config.value.rules?.includes?.('required') ||
+      config.value.required
+    ));
+
+    const formContext = useForm({
+      initialValues: {
+        text: config.value.text ?? '',
+        template: config.value.template ?? CUSTOM_WIDGET_TEMPLATE,
+      },
+    });
+    const { values: form, isSubmitting } = formContext;
+    const close = () => modals.hide({ id: props.modal.id });
+    const submit = formContext.handleSubmit(async () => {
+      await config.value.action?.({
+        ...form.value,
+
+        text: normalizeHandlebarsNbsp(form.value.text),
+      });
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      submitting: false,
-      form: {
-        text,
-        template,
-      },
+      config,
+      title,
+      required,
+      form,
+      isSubmitting,
+      close,
+      submit,
     };
-  },
-
-  computed: {
-    config() {
-      return this.modal.config ?? {};
-    },
-
-    title() {
-      return this.config.title ?? this.$t('modals.textEditor.title');
-    },
-
-    required() {
-      return (
-        this.config.rules?.required ||
-        this.config.rules?.includes?.('required') ||
-        this.config.required
-      );
-    },
-
-    isDisabled() {
-      return this.required && !this.form.text;
-    },
-  },
-
-  methods: {
-    close() {
-      this.$modals.hide({ id: this.modal.id });
-    },
-
-    async submit() {
-      if (this.isDisabled) {
-        return;
-      }
-
-      this.submitting = true;
-
-      try {
-        if (this.config.action) {
-          await this.config.action({
-            ...this.form,
-
-            text: normalizeHandlebarsNbsp(this.form.text),
-          });
-        }
-
-        this.close();
-      } finally {
-        this.submitting = false;
-      }
-    },
   },
 };
 </script>
