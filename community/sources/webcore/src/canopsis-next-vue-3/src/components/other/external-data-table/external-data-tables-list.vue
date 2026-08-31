@@ -55,8 +55,7 @@ import { useLinkedRulesTooltips } from '@/hooks/table/linked-rules-tooltips';
 
 import ExternalDataTablesListExpandPanel from './partials/external-data-tables-list-expand-panel.vue';
 
-const htmlToTooltipText = (html = '') =>
-  html
+const htmlToTooltipText = (html = '') => html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/(li|ul)>/gi, '\n')
     .replace(/<[^>]+>/g, '')
@@ -121,8 +120,7 @@ export default {
       },
     ]);
 
-    const preparedExternalDataTables = computed(() =>
-      props.externalDataTables.map((table) => {
+    const preparedExternalDataTables = computed(() => props.externalDataTables.map((table) => {
         const linkedRulesTooltip = getLinkedRulesMessage(table.linked_rules);
 
         let deleteTooltip = '';

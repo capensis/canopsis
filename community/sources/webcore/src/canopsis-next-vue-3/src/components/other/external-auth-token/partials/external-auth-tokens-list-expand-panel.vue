@@ -34,8 +34,7 @@ export default {
       { text: t('common.requestDate'), value: 'failed', width: 200, sortable: false },
       { text: t('common.output'), value: 'fail_reason', sortable: false },
     ]);
-    const preparedHeaders = computed(() =>
-      headers.value.map(header => ({
+    const preparedHeaders = computed(() => headers.value.map(header => ({
         ...header,
         title: header.text,
         key: header.value,

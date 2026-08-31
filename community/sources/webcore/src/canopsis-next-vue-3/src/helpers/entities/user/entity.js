@@ -9,8 +9,7 @@ import { ROLE_TYPES } from '@/constants';
  * @param {Role} [role = {}]
  * @return {boolean}
  */
-export const isUserHasRole = (user = {}, role = {}) =>
-  user.roles?.some?.(({ _id: id }) => id === role._id);
+export const isUserHasRole = (user = {}, role = {}) => user.roles?.some?.(({ _id: id }) => id === role._id);
 
 /**
  * Check if user has special role
@@ -18,8 +17,7 @@ export const isUserHasRole = (user = {}, role = {}) =>
  * @param {User} [user = {}]
  * @return {boolean}
  */
-export const isUserHasOnlyApiRole = (user = {}) =>
-  user.roles?.every?.(({ type }) => type === ROLE_TYPES.api);
+export const isUserHasOnlyApiRole = (user = {}) => user.roles?.every?.(({ type }) => type === ROLE_TYPES.api);
 
 /**
  * Get first role with non empty default view
@@ -27,8 +25,7 @@ export const isUserHasOnlyApiRole = (user = {}) =>
  * @param {User} user
  * @return {Role | undefined}
  */
-export const getFirstRoleWithDefaultView = (user = {}) =>
-  user.roles?.find(role => !!role.defaultview || !!role.default_view);
+export const getFirstRoleWithDefaultView = (user = {}) => user.roles?.find(role => !!role.defaultview || !!role.default_view);
 
 /**
  * Get default view id from default view entity or id.
@@ -36,8 +33,7 @@ export const getFirstRoleWithDefaultView = (user = {}) =>
  * @param {DefaultView|string} defaultView
  * @return {string|undefined}
  */
-export const getDefaultViewId = defaultView =>
-  (isString(defaultView) ? defaultView : defaultView?._id);
+export const getDefaultViewId = defaultView => isString(defaultView) ? defaultView : defaultView?._id;
 
 /**
  * Gets user or role default view from legacy and API naming variants.

@@ -119,11 +119,9 @@ export default {
     const { hasChildrenError } = useValidationChildren();
 
     const fieldName = computed(() => (props.operation.key ? props.operation.key : ''));
-    const createFieldModel = field =>
-      computed({
+    const createFieldModel = field => computed({
         get: () => props.operation[field],
-        set: value =>
-          emit('update:operation', {
+        set: value => emit('update:operation', {
             ...props.operation,
             [field]: value,
           }),

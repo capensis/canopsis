@@ -88,8 +88,7 @@ export default {
       density: attrs.density ?? (props.inline ? 'compact' : undefined),
     }));
 
-    const wrapperClass = computed(() =>
-      ({
+    const wrapperClass = computed(() => ({
         'c-enabled-field--with-background': props.withBackground,
         'c-enabled-field--with-background--disabled': props.withBackground && !currentValue.value,
       }),

@@ -33,8 +33,7 @@ export default {
   },
 
   setup(props) {
-    const textColor = computed(() =>
-      getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
+    const textColor = computed(() => getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
     );
 
     return {

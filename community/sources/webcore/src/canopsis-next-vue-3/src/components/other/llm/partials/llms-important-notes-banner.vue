@@ -20,8 +20,7 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const sanitizedImportantNotesMessage = computed(() =>
-      sanitizeHtml(
+    const sanitizedImportantNotesMessage = computed(() => sanitizeHtml(
         t('llm.importantNotesMessage', { geminiConsoleUrl: GEMINI_AI_CONSOLE_BILLING_URL }),
       ),
     );

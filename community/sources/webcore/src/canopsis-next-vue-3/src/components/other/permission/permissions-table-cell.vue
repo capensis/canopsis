@@ -53,8 +53,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const checkboxes = computed(() =>
-      props.permission.actions.map((action) => {
+    const checkboxes = computed(() => props.permission.actions.map((action) => {
         const checkboxProps = getPermissionCheckboxProps(props.role, props.permission, action);
 
         return {
@@ -63,8 +62,7 @@ export default {
           indeterminate: checkboxProps.indeterminate,
           disabled: checkboxProps.disabled,
           tooltip: checkboxProps.tooltipKey ? t(checkboxProps.tooltipKey) : undefined,
-          onChange: value =>
-            emit('update:permission', value, props.role, props.permission, action),
+          onChange: value => emit('update:permission', value, props.role, props.permission, action),
         };
       }),
     );

@@ -97,8 +97,7 @@ export const isTicketRemoveStepType = type => type === ALARM_LIST_STEPS.ticketRe
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is either `ack` or `ackremove`, otherwise returns `false`.
  */
-export const isAckStepType = type =>
-  [ALARM_LIST_STEPS.ack, ALARM_LIST_STEPS.ackRemove].includes(type);
+export const isAckStepType = type => [ALARM_LIST_STEPS.ack, ALARM_LIST_STEPS.ackRemove].includes(type);
 
 /**
  * Checks if the provided type is related to a snooze operation.
@@ -109,8 +108,7 @@ export const isAckStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is either `snooze` or `unsnooze`, otherwise returns `false`.
  */
-export const isSnoozeStepType = type =>
-  [ALARM_LIST_STEPS.snooze, ALARM_LIST_STEPS.unsnooze].includes(type);
+export const isSnoozeStepType = type => [ALARM_LIST_STEPS.snooze, ALARM_LIST_STEPS.unsnooze].includes(type);
 
 /**
  * Checks if the provided type is a status step type.
@@ -121,8 +119,7 @@ export const isSnoozeStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @return {boolean} Returns `true` if the type is either `statusinc` or `statusdec`, otherwise returns `false`.
  */
-export const isChangeStatusStepType = type =>
-  [ALARM_LIST_STEPS.statusinc, ALARM_LIST_STEPS.statusdec].includes(type);
+export const isChangeStatusStepType = type => [ALARM_LIST_STEPS.statusinc, ALARM_LIST_STEPS.statusdec].includes(type);
 
 /**
  * Checks if the provided type is one of the state step types.
@@ -131,8 +128,7 @@ export const isChangeStatusStepType = type =>
  * @returns {boolean} Returns `true` if the type is either `changestate`, `stateinc`, or `statedec`,
  * otherwise, returns `false`.
  */
-export const isStateStepType = type =>
-  [ALARM_LIST_STEPS.changeState, ALARM_LIST_STEPS.stateinc, ALARM_LIST_STEPS.statedec].includes(
+export const isStateStepType = type => [ALARM_LIST_STEPS.changeState, ALARM_LIST_STEPS.stateinc, ALARM_LIST_STEPS.statedec].includes(
     type,
   );
 
@@ -145,8 +141,7 @@ export const isStateStepType = type =>
  * @returns {boolean} Returns `true` if the type is either `junittestsuiteupdate` or `junittestcaseupdate`,
  * otherwise returns `false`.
  */
-export const isJunitStepType = type =>
-  [ALARM_LIST_STEPS.junitTestSuiteUpdate, ALARM_LIST_STEPS.junitTestCaseUpdate].includes(type);
+export const isJunitStepType = type => [ALARM_LIST_STEPS.junitTestSuiteUpdate, ALARM_LIST_STEPS.junitTestCaseUpdate].includes(type);
 
 /**
  * Checks if the provided type is a Pbehavior step type.
@@ -157,8 +152,7 @@ export const isJunitStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the `type` is either `pbhenter` or `pbhleave`, otherwise returns `false`.
  */
-export const isPbehaviorStepType = type =>
-  [ALARM_LIST_STEPS.pbhenter, ALARM_LIST_STEPS.pbhleave].includes(type);
+export const isPbehaviorStepType = type => [ALARM_LIST_STEPS.pbhenter, ALARM_LIST_STEPS.pbhleave].includes(type);
 
 /**
  * Checks if the given type is one of the instruction step types.
@@ -166,8 +160,7 @@ export const isPbehaviorStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is an instruction step type, otherwise `false`.
  */
-export const isInstructionStepType = type =>
-  [
+export const isInstructionStepType = type => [
     ALARM_LIST_STEPS.instructionStart,
     ALARM_LIST_STEPS.instructionPause,
     ALARM_LIST_STEPS.instructionResume,
@@ -182,8 +175,7 @@ export const isInstructionStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is an auto instruction step type, otherwise `false`.
  */
-export const isAutoInstructionStepType = type =>
-  [
+export const isAutoInstructionStepType = type => [
     ALARM_LIST_STEPS.autoInstructionStart,
     ALARM_LIST_STEPS.autoInstructionComplete,
     ALARM_LIST_STEPS.autoInstructionFail,
@@ -195,8 +187,7 @@ export const isAutoInstructionStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is one of the declare ticket step types, otherwise `false`.
  */
-export const isDeclareTicketStepType = type =>
-  [
+export const isDeclareTicketStepType = type => [
     ALARM_LIST_STEPS.declareTicket,
     ALARM_LIST_STEPS.declareTicketFail,
     ALARM_LIST_STEPS.declareTicketRuleInProgress,
@@ -211,8 +202,7 @@ export const isDeclareTicketStepType = type =>
  * @returns {boolean} Returns `true` if the type is a declare ticket rule ticket change status step type,
  *                    otherwise `false`.
  */
-export const isDeclareTicketChangeTicketStatusStepType = type =>
-  type === ALARM_LIST_STEPS.changeTicketStatus;
+export const isDeclareTicketChangeTicketStatusStepType = type => type === ALARM_LIST_STEPS.changeTicketStatus;
 
 /**
  * Checks if the provided type is a webhook step type.
@@ -220,8 +210,7 @@ export const isDeclareTicketChangeTicketStatusStepType = type =>
  * @param {AlarmStepType} type - The step type to check.
  * @returns {boolean} Returns `true` if the type is one of the webhook step types, otherwise `false`.
  */
-export const isWebhookStepType = type =>
-  [
+export const isWebhookStepType = type => [
     ALARM_LIST_STEPS.webhookStart,
     ALARM_LIST_STEPS.webhookInProgress,
     ALARM_LIST_STEPS.webhookComplete,
@@ -239,8 +228,7 @@ export const isWebhookStepType = type =>
  * @returns {boolean} Returns `true` if the `type` is either `metaalarmattach` or `metaalarmdetach`,
  * otherwise returns `false`.
  */
-export const isMetaAlarmStepType = type =>
-  [ALARM_LIST_STEPS.metaalarmattach, ALARM_LIST_STEPS.metaalarmdetach].includes(type);
+export const isMetaAlarmStepType = type => [ALARM_LIST_STEPS.metaalarmattach, ALARM_LIST_STEPS.metaalarmdetach].includes(type);
 
 /**
  * Determines if the provided type corresponds to a failure step.
@@ -248,8 +236,7 @@ export const isMetaAlarmStepType = type =>
  * @param {string} type - The step type to check.
  * @returns {boolean} Returns true if the type is a failure step, otherwise false.
  */
-export const isFailStepType = type =>
-  [
+export const isFailStepType = type => [
     ALARM_LIST_STEPS.autoInstructionFail,
     ALARM_LIST_STEPS.webhookFail,
     ALARM_LIST_STEPS.instructionFail,
@@ -263,5 +250,4 @@ export const isFailStepType = type =>
  * @param {string} type - The step type to check.
  * @returns {boolean} Returns true if the type is a success ticket step, otherwise false.
  */
-export const isSuccessStepTicketType = type =>
-  [ALARM_LIST_STEPS.declareTicket, ALARM_LIST_STEPS.assocTicket].includes(type);
+export const isSuccessStepTicketType = type => [ALARM_LIST_STEPS.declareTicket, ALARM_LIST_STEPS.assocTicket].includes(type);

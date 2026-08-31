@@ -1,3 +1,9 @@
+<template>
+  <v-icon v-bind="iconAttrs" :class="iconClass">
+    <slot />
+  </v-icon>
+</template>
+
 <script setup>
 import { computed, useAttrs } from 'vue';
 
@@ -35,8 +41,7 @@ const props = defineProps({
 const attrs = useAttrs();
 
 const legacySize = computed(
-  () =>
-    ({
+  () => ({
       [props.xSmall]: 'x-small',
       [props.small]: 'small',
       [props.large]: 'large',
@@ -53,9 +58,3 @@ const iconClass = computed(() => ({
   'v-icon--no-fill': props.noFill,
 }));
 </script>
-
-<template>
-  <v-icon v-bind="iconAttrs" :class="iconClass">
-    <slot />
-  </v-icon>
-</template>

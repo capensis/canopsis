@@ -41,8 +41,7 @@ const pending = ref(false);
 const events = ref([]);
 const timezone = ref(getLocalTimezone());
 
-const convertPbehaviorsCalendarToEvents = (pbehaviors = []) =>
-  pbehaviors.map((pbehavior, index) => {
+const convertPbehaviorsCalendarToEvents = (pbehaviors = []) => pbehaviors.map((pbehavior, index) => {
     const start = convertDateToDateObjectByTimezone(pbehavior.from, pbehavior.timezone);
     const end =
       pbehavior.to && convertDateToDateObjectByTimezone(pbehavior.to, pbehavior.timezone);

@@ -230,8 +230,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
  *
  * @return {WidgetForm}
  */
-export const generateDefaultAlarmListWidgetForm = () =>
-  widgetToForm({ type: WIDGET_TYPES.alarmList });
+export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
 
 /**
  * Generate alarm list widget with default parameters.
@@ -249,8 +248,7 @@ export const generateDefaultAlarmListWidget = () => ({
  *
  * @returns {Widget}
  */
-export const generatePreparedDefaultAlarmListWidget = () =>
-  prepareAlarmListWidget(generateDefaultAlarmListWidget());
+export const generatePreparedDefaultAlarmListWidget = () => prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
 /**
  * Generate context widget form with default parameters.
@@ -275,16 +273,14 @@ export const generateDefaultContextWidget = () => ({
  *
  * @returns {Widget}
  */
-export const generatePreparedDefaultContextWidget = () =>
-  prepareContextWidget(generateDefaultContextWidget());
+export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
 
 /**
  * Get default widget grid parameters.
  *
  * @return {WidgetGridParameters}
  */
-export const getDefaultGridParameters = () =>
-  Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+export const getDefaultGridParameters = () => Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
     acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
 
     return acc;

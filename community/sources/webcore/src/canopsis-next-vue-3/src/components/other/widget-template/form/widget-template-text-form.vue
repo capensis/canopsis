@@ -41,8 +41,7 @@ export default {
 
     const alarmVariables = computed(() => prepareAlarmTemplateVariables(t));
     const entityVariables = computed(() => prepareEntityTemplateVariables(t, props.entityInfos));
-    const variables = computed(() =>
-      type.value === WIDGET_TEMPLATES_TYPES.alarmMoreInfos
+    const variables = computed(() => type.value === WIDGET_TEMPLATES_TYPES.alarmMoreInfos
         ? alarmVariables.value
         : entityVariables.value,
     );

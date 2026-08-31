@@ -182,8 +182,7 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) =>
-  webhooks.map(declareTicketRuleWebhookToForm);
+export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) => webhooks.map(declareTicketRuleWebhookToForm);
 
 /**
  * Convert declare ticket rule object to form compatible object
@@ -291,8 +290,7 @@ export const formToDeclareTicketRuleWebhook = webhook => ({
  * @param {DeclareTicketRuleWebhooksForm} webhooks
  * @returns {DeclareTicketRuleWebhooks}
  */
-export const formToDeclareTicketRuleWebhooks = (webhooks = []) =>
-  removeKeyFromEntities(webhooks.map(formToDeclareTicketRuleWebhook));
+export const formToDeclareTicketRuleWebhooks = (webhooks = []) => removeKeyFromEntities(webhooks.map(formToDeclareTicketRuleWebhook));
 
 /**
  * Convert form object to declare ticket API compatible object

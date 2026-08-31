@@ -121,11 +121,9 @@ export default {
       },
     ]);
 
-    const isDuplicable = item =>
-      ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
+    const isDuplicable = item => ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
 
-    const getMethodLabel = method =>
-      te(`stateSetting.methods.${method}.label`)
+    const getMethodLabel = method => te(`stateSetting.methods.${method}.label`)
         ? t(`stateSetting.methods.${method}.label`)
         : t(`stateSetting.junit.methods.${method}`);
 

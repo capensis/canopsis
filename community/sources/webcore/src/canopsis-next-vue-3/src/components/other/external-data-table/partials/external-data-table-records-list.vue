@@ -382,9 +382,7 @@ export default {
 
     const columnsForTableDisplaying = computed(() => props.originalColumns || props.columns);
 
-    const preparedRecords = computed(() =>
-      props.records.map(record =>
-        Object.entries(record).reduce((acc, [key, value]) => {
+    const preparedRecords = computed(() => props.records.map(record => Object.entries(record).reduce((acc, [key, value]) => {
           const filter =
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[
               columnsForTableDisplaying.value?.[key]?.type
@@ -402,8 +400,7 @@ export default {
      */
     const isEmptyColumns = computed(() => isEmpty(props.columns));
 
-    const errorsMessages = computed(() =>
-      Object.values(props.columns).reduce((acc, column) => {
+    const errorsMessages = computed(() => Object.values(props.columns).reduce((acc, column) => {
         if (column.messages?.length) {
           acc.push({
             name: column.name,
@@ -441,14 +438,12 @@ export default {
 
     const updatePage = page => emit('update:options', { ...props.options, page });
 
-    const updateColumn = (name, value) =>
-      emit('update:columns', {
+    const updateColumn = (name, value) => emit('update:columns', {
         ...props.columns,
         [name]: value,
       });
 
-    const updateColumnField = (name, field, value) =>
-      updateColumn(name, {
+    const updateColumnField = (name, field, value) => updateColumn(name, {
         ...props.columns[name],
         [field]: value,
       });

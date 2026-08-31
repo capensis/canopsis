@@ -16,8 +16,7 @@ import { MAX_SAVED_ADVANCED_SEARCHES } from '@/constants';
  * @param {string} [key = 'search']
  * @returns {Search[]}
  */
-export const sortPinnedSearches = (searches, activeSearch, key = 'search') =>
-  uniq(searches).sort((a, b) => {
+export const sortPinnedSearches = (searches, activeSearch, key = 'search') => uniq(searches).sort((a, b) => {
     const aFactor = Number(a[key] === activeSearch) + (a.pinned ? 2 : 0);
     const bFactor = Number(b[key] === activeSearch) + (b.pinned ? 2 : 0);
 

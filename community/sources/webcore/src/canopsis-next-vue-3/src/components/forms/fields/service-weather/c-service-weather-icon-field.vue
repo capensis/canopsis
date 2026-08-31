@@ -90,8 +90,7 @@ export default {
       },
     ]);
 
-    const pbehaviorTypeIcons = computed(() =>
-      pbehaviorTypes.value.map(pbehaviorType => ({
+    const pbehaviorTypeIcons = computed(() => pbehaviorTypes.value.map(pbehaviorType => ({
         icon: pbehaviorType.icon_name,
         text: pbehaviorType.name,
       })),

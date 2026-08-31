@@ -39,8 +39,7 @@ export const usePatternCountAlarmsModal = (props) => {
       config: {
         widget,
         title: t('pattern.patternAlarms'),
-        fetchList: params =>
-          fetchAlarmsListWithoutStore({
+        fetchList: params => fetchAlarmsListWithoutStore({
             params: {
               ...params,
               ...patterns,

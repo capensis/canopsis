@@ -36,8 +36,7 @@ export const useAvailableColumns = ({
    * @param {Object<string, string>} [keys={}]
    * @returns {Array<{header: string} | {value: string, text: string}>}
    */
-  const groupedColumnsToColumns = (groupedColumns = {}, keys = {}) =>
-    Object.entries(groupedColumns).reduce((acc, [group, groupItems]) => {
+  const groupedColumnsToColumns = (groupedColumns = {}, keys = {}) => Object.entries(groupedColumns).reduce((acc, [group, groupItems]) => {
       const preparedItems = groupItems.map(value => ({
         value,
         text: t(keys[value], 2),
@@ -65,8 +64,7 @@ export const useAvailableColumns = ({
       : columns;
   });
 
-  const contextAvailableColumns = computed(() =>
-    groupedColumnsToColumns(CONTEXT_WIDGET_GROUPED_COLUMNS, ENTITY_FIELDS_TO_LABELS_KEYS),
+  const contextAvailableColumns = computed(() => groupedColumnsToColumns(CONTEXT_WIDGET_GROUPED_COLUMNS, ENTITY_FIELDS_TO_LABELS_KEYS),
   );
 
   const availableColumns = computed(() => {

@@ -87,8 +87,7 @@ export default {
     const { viewGroups, fetchViewGroupsList } = useView();
     const { playlists, fetchPlaylistsList } = usePlaylist();
 
-    const viewGroupsTree = computed(() =>
-      (viewGroups.value || []).map((group = {}) => ({
+    const viewGroupsTree = computed(() => (viewGroups.value || []).map((group = {}) => ({
         value: group._id,
         name: group.title || group.name,
         children: (group.views || []).map(view => ({
@@ -98,8 +97,7 @@ export default {
       })),
     );
 
-    const playlistsTree = computed(() =>
-      (playlists.value || []).map(playlist => ({
+    const playlistsTree = computed(() => (playlists.value || []).map(playlist => ({
         value: playlist.name,
         name: playlist.name,
       })),
@@ -149,8 +147,7 @@ export default {
     );
     const color = computed(() => values.value.color);
 
-    const hasSelectedViews = () =>
-      Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).some(
+    const hasSelectedViews = () => Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).some(
         block => values.value.views?.[block]?.length > 0,
       );
 
@@ -186,8 +183,7 @@ export default {
       { immediate: true },
     );
 
-    onMounted(() =>
-      Promise.all([
+    onMounted(() => Promise.all([
         fetchViewGroupsList({
           params: {
             limit: MAX_LIMIT,

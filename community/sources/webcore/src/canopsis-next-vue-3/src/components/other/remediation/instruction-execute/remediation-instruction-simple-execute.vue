@@ -65,8 +65,7 @@ export default {
     const { t } = useI18n();
 
     const isFinished = computed(() => isInstructionExecutionFinished(props.instructionExecution));
-    const isInstructionExecutionSucceeded = computed(() =>
-      isInstructionExecutionCompleted(props.instructionExecution),
+    const isInstructionExecutionSucceeded = computed(() => isInstructionExecutionCompleted(props.instructionExecution),
     );
     const statusIcon = computed(() => {
       if (isInstructionExecutionSucceeded.value) {

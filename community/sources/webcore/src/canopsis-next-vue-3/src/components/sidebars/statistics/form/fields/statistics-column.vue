@@ -96,8 +96,7 @@ export default {
     const hasColumnSelected = computed(() => !!props.modelValue?.metric);
 
     const hasPossibilityToSplit = computed(
-      () =>
-        hasColumnSelected.value &&
+      () => hasColumnSelected.value &&
         STATISTICS_WIDGETS_USER_METRICS_WITH_ENTITY_TYPE.includes(props.modelValue?.metric),
     );
 

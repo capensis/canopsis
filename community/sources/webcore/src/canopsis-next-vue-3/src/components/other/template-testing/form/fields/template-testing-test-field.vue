@@ -56,8 +56,7 @@ export default {
     const { t } = useI18n();
     const { fetchTemplateTestingTestsListWithoutStore } = useTemplateTesting();
 
-    const fetchHandler = ({ params }) =>
-      fetchTemplateTestingTestsListWithoutStore({
+    const fetchHandler = ({ params }) => fetchTemplateTestingTestsListWithoutStore({
         params: merge(params, { rule: props.ruleId }),
       });
 

@@ -77,8 +77,7 @@ export default {
     /**
      * Displays a modal for creating a new entity info.
      */
-    const showCreateEntityInfoPropertyModal = () =>
-      modals.show({
+    const showCreateEntityInfoPropertyModal = () => modals.show({
         name: MODALS.createEntityInfoProperty,
         config: {
           action: async (data) => {
@@ -94,8 +93,7 @@ export default {
      *
      * @param {Object} entityInfoProperty - The entity info to be edited.
      */
-    const showEditEntityInfoPropertyModal = entityInfoProperty =>
-      modals.show({
+    const showEditEntityInfoPropertyModal = entityInfoProperty => modals.show({
         name: MODALS.createEntityInfoProperty,
         config: {
           entityInfoProperty,
@@ -113,8 +111,7 @@ export default {
      *
      * @param {Object} entityInfoProperty - The entity info to be duplicated.
      */
-    const showDuplicateEntityInfoPropertyModal = entityInfoProperty =>
-      modals.show({
+    const showDuplicateEntityInfoPropertyModal = entityInfoProperty => modals.show({
         name: MODALS.createEntityInfoProperty,
         config: {
           entityInfoProperty: { ...entityInfoProperty, _id: undefined },
@@ -132,8 +129,7 @@ export default {
      *
      * @param {Object} entityInfoProperty - The entity info to be removed.
      */
-    const showRemoveEntityInfoPropertyModal = entityInfoProperty =>
-      modals.show({
+    const showRemoveEntityInfoPropertyModal = entityInfoProperty => modals.show({
         name: MODALS.confirmation,
         config: {
           title: t('modals.confirmationRemoveEntityInfoProperty.title'),
@@ -155,8 +151,7 @@ export default {
      * @param {Object[]} selected - The entity infos to be removed.
      * @param {Function} clearSelected - The selected rows reset handler.
      */
-    const showRemoveSelectedEntityInfoPropertyModal = (selected, clearSelected) =>
-      modals.show({
+    const showRemoveSelectedEntityInfoPropertyModal = (selected, clearSelected) => modals.show({
         name: MODALS.confirmation,
         config: {
           text: t('modals.confirmationRemoveEntityInfoProperty.text', { name: selected.length }),

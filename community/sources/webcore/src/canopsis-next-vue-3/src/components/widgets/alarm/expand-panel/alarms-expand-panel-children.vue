@@ -64,8 +64,7 @@ export default {
   emits: ['update:query', 'select:tag', 'remove:tag'],
 
   setup(props) {
-    const alarms = computed(() =>
-      (Array.isArray(props.children) ? props.children : (props.children?.data ?? [])),
+    const alarms = computed(() => (Array.isArray(props.children) ? props.children : (props.children?.data ?? [])),
     );
     const meta = computed(() => (Array.isArray(props.children) ? {} : (props.children?.meta ?? {})));
 

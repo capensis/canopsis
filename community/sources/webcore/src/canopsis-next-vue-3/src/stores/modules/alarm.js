@@ -24,8 +24,7 @@ export const useAlarmStore = defineStore('alarm', () => {
   );
   const getDetailsByWidgetId = computed(() => widgetId => detailsByWidget.value[widgetId] ?? {});
   const getQueriesByWidgetId = computed(
-    () => widgetId =>
-      Object.values(detailsByWidget.value[widgetId] ?? {}).map(({ query }) => query),
+    () => widgetId => Object.values(detailsByWidget.value[widgetId] ?? {}).map(({ query }) => query),
   );
   const getFetchingParamsByWidgetId = computed(
     () => widgetId => widgets.value[widgetId]?.fetchingParams,
@@ -55,21 +54,16 @@ export const useAlarmStore = defineStore('alarm', () => {
     );
   };
 
-  const fetchComponentAlarmsListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.componentAlarms, {
+  const fetchComponentAlarmsListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.componentAlarms, {
       params,
     });
-  const fetchResolvedAlarmsListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.resolvedAlarms, {
+  const fetchResolvedAlarmsListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.resolvedAlarms, {
       params,
     });
-  const fetchOpenAlarmsListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.openAlarms, { params });
-  const fetchListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.alarms.list, { params });
+  const fetchOpenAlarmsListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.openAlarms, { params });
+  const fetchListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.alarms.list, { params });
 
-  const fetchList = ({ widgetId, params, withoutPending } = {}) =>
-    useRequestCancelling(async (source) => {
+  const fetchList = ({ widgetId, params, withoutPending } = {}) => useRequestCancelling(async (source) => {
       try {
         if (!withoutPending) {
           setWidgetState(widgetId, { pending: true, fetchingParams: params });
@@ -104,39 +98,29 @@ export const useAlarmStore = defineStore('alarm', () => {
   };
 
   const fetchItemWithoutStore = ({ id } = {}) => request.get(`${API_ROUTES.alarms.list}/${id}`);
-  const fetchAlarmsListExport = ({ params, id } = {}) =>
-    request.get(`${API_ROUTES.alarmListExport}/${id}`, {
+  const fetchAlarmsListExport = ({ params, id } = {}) => request.get(`${API_ROUTES.alarmListExport}/${id}`, {
       params,
     });
-  const createAlarmsListExport = ({ data = {} } = {}) =>
-    request.post(API_ROUTES.alarmListExport, data);
+  const createAlarmsListExport = ({ data = {} } = {}) => request.post(API_ROUTES.alarmListExport, data);
 
-  const createAlarmEvent = (event, { id, data } = {}) =>
-    request.put(`${API_ROUTES.alarms.list}/${id}/${event}`, data);
-  const bulkCreateAlarmEvent = (event, { data } = {}) =>
-    request.put(`${API_ROUTES.alarms.bulkList}/${event}`, data);
+  const createAlarmEvent = (event, { id, data } = {}) => request.put(`${API_ROUTES.alarms.list}/${id}/${event}`, data);
+  const bulkCreateAlarmEvent = (event, { data } = {}) => request.put(`${API_ROUTES.alarms.bulkList}/${event}`, data);
 
-  const addBookmarkToAlarm = ({ id } = {}) =>
-    request.put(`${API_ROUTES.alarms.list}/${id}/bookmark`);
-  const removeBookmarkFromAlarm = ({ id } = {}) =>
-    request.delete(`${API_ROUTES.alarms.list}/${id}/bookmark`);
-  const fetchDisplayNamesWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.alarmDisplayNames, { params });
-  const fetchExecutionsWithoutStore = ({ id, params } = {}) =>
-    request.get(`${API_ROUTES.alarmExecutions}/${id}`, { params });
+  const addBookmarkToAlarm = ({ id } = {}) => request.put(`${API_ROUTES.alarms.list}/${id}/bookmark`);
+  const removeBookmarkFromAlarm = ({ id } = {}) => request.delete(`${API_ROUTES.alarms.list}/${id}/bookmark`);
+  const fetchDisplayNamesWithoutStore = ({ params } = {}) => request.get(API_ROUTES.alarmDisplayNames, { params });
+  const fetchExecutionsWithoutStore = ({ id, params } = {}) => request.get(`${API_ROUTES.alarmExecutions}/${id}`, { params });
   const updateItemInStore = (alarm) => {
     setAlarms([alarm]);
 
     return alarm;
   };
 
-  const fetchAlarmLinksWithoutStore = ({ params, id } = {}) =>
-    request.get(`${API_ROUTES.alarmLinks}/${id}`, {
+  const fetchAlarmLinksWithoutStore = ({ params, id } = {}) => request.get(`${API_ROUTES.alarmLinks}/${id}`, {
       params,
     });
 
-  const fetchAlarmDetailsListWithoutStore = ({ params } = {}) =>
-    request.post(API_ROUTES.alarmDetails, params);
+  const fetchAlarmDetailsListWithoutStore = ({ params } = {}) => request.post(API_ROUTES.alarmDetails, params);
 
   const getAlarmDetailsFromResponse = (response) => {
     const responseData = Array.isArray(response) ? response : response?.data;

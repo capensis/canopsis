@@ -95,8 +95,7 @@ export default {
 
       validateLimit('queue', values.value.queue);
       validateLimit('messages', values.value.messages);
-      engineNames.value.forEach(engineName =>
-        validateEngine(engineName, values.value[engineName]),
+      engineNames.value.forEach(engineName => validateEngine(engineName, values.value[engineName]),
       );
 
       return !Object.keys(errors.value).length;

@@ -41,8 +41,7 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const hasDayUnit = computed(() =>
-      props.maxValue ? fromSeconds(props.maxValue, TIME_UNITS.day) > 1 : true,
+    const hasDayUnit = computed(() => props.maxValue ? fromSeconds(props.maxValue, TIME_UNITS.day) > 1 : true,
     );
 
     const availableItems = computed(() => {

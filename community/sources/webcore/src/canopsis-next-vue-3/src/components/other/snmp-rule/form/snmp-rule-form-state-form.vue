@@ -111,8 +111,7 @@ export default {
 
     const isTemplate = computed(() => props.form.type === SNMP_STATE_TYPES.template);
 
-    const availableStates = computed(() =>
-      Object.entries(props.stateValues).map(([key, state]) => ({
+    const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
         key,
         text: t(`snmpRule.states.${key}`),
         value: state,

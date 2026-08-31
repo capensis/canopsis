@@ -16,8 +16,7 @@ export const usePbehavior = () => {
   const pbehaviorCommentModule = usePbehaviorComment();
   const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorStore);
 
-  const removePbehaviors = (pbehaviors = []) =>
-    pbehaviorStore.bulkRemove({ data: pickIds(pbehaviors) });
+  const removePbehaviors = (pbehaviors = []) => pbehaviorStore.bulkRemove({ data: pickIds(pbehaviors) });
 
   return {
     pbehaviors: items,

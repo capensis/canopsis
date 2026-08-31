@@ -114,8 +114,7 @@ export default {
 
     const hasChanges = computed(() => !isEqual(form.values.value, originalForm.value));
 
-    const getConfirmationPhraseMessages = key =>
-      ['title', 'text', 'phraseText', 'phrase'].reduce((acc, field) => {
+    const getConfirmationPhraseMessages = key => ['title', 'text', 'phraseText', 'phrase'].reduce((acc, field) => {
         const messageKey = `${key}.${field}`;
 
         if (te(messageKey)) {
@@ -141,8 +140,7 @@ export default {
      * @param {Function} params.action - The action to execute after confirmation
      * @param {Object} params.config - Additional modal configuration
      */
-    const showConfirmationPhraseModal = ({ action, ...config }) =>
-      modals.show({
+    const showConfirmationPhraseModal = ({ action, ...config }) => modals.show({
         name: MODALS.confirmationPhrase,
         config: {
           ...config,
@@ -159,8 +157,7 @@ export default {
     /**
      * Initiates the archiving process for disabled entities
      */
-    const archiveDisabledEntities = () =>
-      showConfirmationPhraseModal({
+    const archiveDisabledEntities = () => showConfirmationPhraseModal({
         ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveUnlinkedEntities'),
         ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveDisabledEntities'),
 
@@ -174,8 +171,7 @@ export default {
     /**
      * Initiates the archiving process for unlinked entities with duration configuration
      */
-    const archiveUnlinkedEntities = () =>
-      showConfirmationPhraseModal({
+    const archiveUnlinkedEntities = () => showConfirmationPhraseModal({
         ...getConfirmationPhraseMessages('modals.confirmationPhrase.archiveUnlinkedEntities'),
 
         additionalForm: {
@@ -188,8 +184,7 @@ export default {
     /**
      * Initiates the cleaning process for archived entities
      */
-    const cleanArchivedEntities = () =>
-      showConfirmationPhraseModal({
+    const cleanArchivedEntities = () => showConfirmationPhraseModal({
         ...getConfirmationPhraseMessages('modals.confirmationPhrase.cleanStorage'),
 
         action: () => cleanArchivedEntitiesData(),
@@ -212,16 +207,14 @@ export default {
     /**
      * Shows a confirmation modal before canceling changes and resetting the form
      */
-    const cancel = () =>
-      modals.show({
+    const cancel = () => modals.show({
         name: MODALS.confirmation,
         config: {
           action: resetForm,
         },
       });
 
-    const submit = handleSubmit(() =>
-      modals.show({
+    const submit = handleSubmit(() => modals.show({
         name: MODALS.confirmationPhrase,
         config: {
           ...getConfirmationPhraseMessages('modals.confirmationPhrase.updateStorageSettings'),

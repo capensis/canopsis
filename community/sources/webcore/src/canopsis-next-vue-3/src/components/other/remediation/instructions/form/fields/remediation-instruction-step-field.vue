@@ -104,8 +104,7 @@ export default {
     const nameFieldName = computed(() => `name${fieldSuffix.value}`);
     const endpointFieldName = computed(() => `endpoint${fieldSuffix.value}`);
     const operationFieldName = computed(() => `operations${fieldSuffix.value}`);
-    const timeToComplete = computed(() =>
-      props.step.operations.reduce((acc, operation) => {
+    const timeToComplete = computed(() => props.step.operations.reduce((acc, operation) => {
         const {
           time_to_complete: { value, unit },
         } = operation;
@@ -113,11 +112,9 @@ export default {
         return acc + toSeconds(value, unit);
       }, 0),
     );
-    const createFieldModel = field =>
-      computed({
+    const createFieldModel = field => computed({
         get: () => props.step[field],
-        set: value =>
-          emit('update:step', {
+        set: value => emit('update:step', {
             ...props.step,
             [field]: value,
           }),
@@ -125,8 +122,7 @@ export default {
     const nameField = createFieldModel('name');
     const stopOnFailField = createFieldModel('stop_on_fail');
     const endpointField = createFieldModel('endpoint');
-    const formattedTimeToComplete = computed(() =>
-      convertDurationToString(timeToComplete.value, DATETIME_FORMATS.refreshFieldFormat),
+    const formattedTimeToComplete = computed(() => convertDurationToString(timeToComplete.value, DATETIME_FORMATS.refreshFieldFormat),
     );
 
     const { confirmAction: remove } = useConfirmableForm({
@@ -140,8 +136,7 @@ export default {
       },
     });
 
-    const updateStepOperations = operations =>
-      emit('update:step', {
+    const updateStepOperations = operations => emit('update:step', {
         ...props.step,
         operations,
       });

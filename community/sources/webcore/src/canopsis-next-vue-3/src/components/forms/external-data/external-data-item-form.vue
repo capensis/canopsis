@@ -116,8 +116,7 @@ export default {
     const validator = useValidator();
     const { updateField, updateModel } = useModelField(props, emit);
 
-    const availableTypes = computed(() =>
-      props.types.length
+    const availableTypes = computed(() => props.types.length
         ? props.types
         : Object.values(EXTERNAL_DATA_TYPES).map(type => ({
             text: t(`externalData.types.${type}`),

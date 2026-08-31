@@ -120,12 +120,10 @@ export default {
     const tableElement = ref(null);
     const firstSelectedStatus = computed(() => tableElement.value?.selectedItems?.[0]?.status);
 
-    const isDisabledItem = item =>
-      item.status === JOB_STATUS.stopped ||
+    const isDisabledItem = item => item.status === JOB_STATUS.stopped ||
       (!isUndefined(firstSelectedStatus.value) && item.status !== firstSelectedStatus.value);
     const updateOptions = newOptions => emit('update:options', newOptions);
-    const formatDate = (date, defaultValue = '') =>
-      convertDateToString(date, undefined, defaultValue);
+    const formatDate = (date, defaultValue = '') => convertDateToString(date, undefined, defaultValue);
 
     return {
       t,

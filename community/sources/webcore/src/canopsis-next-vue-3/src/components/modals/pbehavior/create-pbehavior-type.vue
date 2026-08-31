@@ -63,8 +63,7 @@ export default {
     const isNew = computed(() => !pbehaviorType.value?._id);
     const onlyColor = computed(() => !!pbehaviorType.value?.default);
     const title = computed(
-      () =>
-        config.value.title ||
+      () => config.value.title ||
         t(`modals.createPbehaviorType.${isNew.value ? 'create' : 'edit'}.title`),
     );
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));

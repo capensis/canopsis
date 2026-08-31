@@ -167,22 +167,19 @@ export default {
     const nameFieldName = computed(() => `${props.name}.name`);
     const valueFieldName = computed(() => `${props.name}.value`);
 
-    const eventFilterActionTypes = computed(() =>
-      Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
+    const eventFilterActionTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
         value,
         text: t(`eventFilter.actionsTypes.${value}.text`),
       })),
     );
 
-    const isStringCopyValueType = computed(() =>
-      [
+    const isStringCopyValueType = computed(() => [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
       ].includes(props.action.type),
     );
 
-    const isStringTemplateValueType = computed(() =>
-      [
+    const isStringTemplateValueType = computed(() => [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,

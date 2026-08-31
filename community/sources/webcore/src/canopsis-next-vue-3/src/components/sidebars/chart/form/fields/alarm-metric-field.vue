@@ -105,8 +105,7 @@ export default {
         return false;
       }
 
-      return this.availableItems.some(({ text }) =>
-        text?.trim().toLowerCase().includes(this.normalizedSearch),
+      return this.availableItems.some(({ text }) => text?.trim().toLowerCase().includes(this.normalizedSearch),
       );
     },
 

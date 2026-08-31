@@ -71,8 +71,7 @@ export default {
     const { t } = useI18n();
     const search = ref('');
 
-    const getTranslatedAndSortedItems = (items = {}) =>
-      sortBy(
+    const getTranslatedAndSortedItems = (items = {}) => sortBy(
         Object.values(items).map((item) => {
           const newItem = { ...item };
           const { title, name, children, _id: id } = item;
@@ -90,18 +89,14 @@ export default {
         ['position', 'title'],
       );
 
-    const itemsWithTranslations = computed(() =>
-      getTranslatedAndSortedItems(props.treeviewPermissions),
+    const itemsWithTranslations = computed(() => getTranslatedAndSortedItems(props.treeviewPermissions),
     );
-    const filteredItems = computed(() =>
-      filterTreeviewPermissions(itemsWithTranslations.value, search.value, props.searchDepth),
+    const filteredItems = computed(() => filterTreeviewPermissions(itemsWithTranslations.value, search.value, props.searchDepth),
     );
     const allExpandedCounter = ref(0);
 
-    const expandAll = () =>
-      (allExpandedCounter.value = allExpandedCounter.value > 0 ? allExpandedCounter.value + 1 : 1);
-    const collapseAll = () =>
-      (allExpandedCounter.value = allExpandedCounter.value > 0 ? 0 : allExpandedCounter.value - 1);
+    const expandAll = () => (allExpandedCounter.value = allExpandedCounter.value > 0 ? allExpandedCounter.value + 1 : 1);
+    const collapseAll = () => (allExpandedCounter.value = allExpandedCounter.value > 0 ? 0 : allExpandedCounter.value - 1);
     const submitSearch = (value = '') => (search.value = value);
     const updateTreeviewPermissions = (...args) => emit('update:permission', ...args);
 

@@ -80,8 +80,7 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params }) =>
-        fetchRemediationInstructionStatsChangesWithoutStore({
+      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsChangesWithoutStore({
           id: props.remediationInstruction._id,
           params,
         }),

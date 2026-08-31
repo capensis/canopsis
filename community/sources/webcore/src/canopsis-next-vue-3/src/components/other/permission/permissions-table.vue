@@ -99,8 +99,7 @@ export default {
   emits: ['update:permission'],
 
   setup(props, { emit }) {
-    const preparedItems = computed(() =>
-      props.items.map(item => ({
+    const preparedItems = computed(() => props.items.map(item => ({
         ...item,
 
         hasMask:

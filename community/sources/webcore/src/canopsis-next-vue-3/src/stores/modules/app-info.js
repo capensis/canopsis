@@ -55,8 +55,7 @@ export const useAppInfoStore = defineStore('appInfo', () => {
   const userTimezones = computed(() => appInfo.value.user_timezones ?? []);
 
   const shownUserTimezone = computed(
-    () =>
-      userTimezones.value.length > 1 ||
+    () => userTimezones.value.length > 1 ||
       (userTimezones.value.length && !userTimezones.value.includes(getLocalTimezone())),
   );
 

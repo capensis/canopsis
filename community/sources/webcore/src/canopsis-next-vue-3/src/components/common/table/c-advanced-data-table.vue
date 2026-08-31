@@ -328,8 +328,7 @@ export default {
       const sortBy = this.vDataTableOptions.sortBy ?? [];
       const sortDesc = this.vDataTableOptions.sortDesc ?? [];
 
-      return sortBy.map((item, index) =>
-        item.key
+      return sortBy.map((item, index) => item.key
           ? item
           : {
               key: item,

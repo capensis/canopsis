@@ -71,8 +71,7 @@ export default {
     const title = computed(
       () => config.value.title || t('modals.createCommentTemplate.create.title'),
     );
-    const submitLabel = computed(() =>
-      t(config.value.template?._id ? 'common.save' : 'common.create'),
+    const submitLabel = computed(() => t(config.value.template?._id ? 'common.save' : 'common.create'),
     );
 
     const submit = handleSubmit(async () => {

@@ -1,3 +1,54 @@
+<template>
+  <c-layout v-if="replaceable" class="c-password-field--replaceable" column>
+    <v-label class="c-password-field__label">
+      <span v-if="required && fieldLabel" class="text-error"> * </span>
+      {{ fieldLabel }}
+    </v-label>
+
+    <c-layout v-if="shownField" align="center" gap="3">
+      <c-text-field
+        v-bind="$attrs"
+        :model-value="modelValue"
+        :placeholder="fieldPlaceholder"
+        :name="name"
+        :type="inputType"
+        :append-inner-icon="appendInnerIcon"
+        :clearable="false"
+        :required="required"
+        @update:model-value="updateModel"
+        @click:append-inner="toggleShownPassword"
+      />
+
+      <v-btn
+        icon="delete"
+        size="small"
+        variant="text"
+        @click="toggleShownField"
+      />
+    </c-layout>
+
+    <div v-else>
+      <v-btn color="primary" variant="outlined" @click="toggleShownField">
+        {{ buttonLabel || `${t('common.replace')} ${fieldLabel}` }}
+      </v-btn>
+    </div>
+  </c-layout>
+
+  <c-text-field
+    v-else
+    v-bind="$attrs"
+    :model-value="modelValue"
+    :label="fieldLabel"
+    :name="name"
+    :type="inputType"
+    :append-inner-icon="appendInnerIcon"
+    :clearable="false"
+    :required="required"
+    @update:model-value="updateModel"
+    @click:append-inner="toggleShownPassword"
+  />
+</template>
+
 <script setup>
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -67,57 +118,6 @@ const toggleShownField = () => {
   }
 };
 </script>
-
-<template>
-  <c-layout v-if="replaceable" class="c-password-field--replaceable" column>
-    <v-label class="c-password-field__label">
-      <span v-if="required && fieldLabel" class="text-error"> * </span>
-      {{ fieldLabel }}
-    </v-label>
-
-    <c-layout v-if="shownField" align="center" gap="3">
-      <c-text-field
-        v-bind="$attrs"
-        :model-value="modelValue"
-        :placeholder="fieldPlaceholder"
-        :name="name"
-        :type="inputType"
-        :append-inner-icon="appendInnerIcon"
-        :clearable="false"
-        :required="required"
-        @update:model-value="updateModel"
-        @click:append-inner="toggleShownPassword"
-      />
-
-      <v-btn
-        icon="delete"
-        size="small"
-        variant="text"
-        @click="toggleShownField"
-      />
-    </c-layout>
-
-    <div v-else>
-      <v-btn color="primary" variant="outlined" @click="toggleShownField">
-        {{ buttonLabel || `${t('common.replace')} ${fieldLabel}` }}
-      </v-btn>
-    </div>
-  </c-layout>
-
-  <c-text-field
-    v-else
-    v-bind="$attrs"
-    :model-value="modelValue"
-    :label="fieldLabel"
-    :name="name"
-    :type="inputType"
-    :append-inner-icon="appendInnerIcon"
-    :clearable="false"
-    :required="required"
-    @update:model-value="updateModel"
-    @click:append-inner="toggleShownPassword"
-  />
-</template>
 
 <style lang="scss" scoped>
 .c-password-field__label {

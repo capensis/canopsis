@@ -142,8 +142,7 @@ export default {
     const { fetchPlaylistWithoutStore } = usePlaylist();
     const { fetchViewTab } = useView();
 
-    const additionalTopBarItemsTarget = computed(() =>
-      document.querySelector(`[data-teleport-target="${TELEPORTS_NAMES.additionalTopBarItems}"]`)
+    const additionalTopBarItemsTarget = computed(() => document.querySelector(`[data-teleport-target="${TELEPORTS_NAMES.additionalTopBarItems}"]`)
         ? `[data-teleport-target="${TELEPORTS_NAMES.additionalTopBarItems}"]`
         : '',
     );

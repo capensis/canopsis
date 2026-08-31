@@ -62,8 +62,7 @@ export default {
     const validator = useValidator();
     const { updateModel, addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-    const canopsisValueItems = computed(() =>
-      Object.values(DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN).map(value => ({
+    const canopsisValueItems = computed(() => Object.values(DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN).map(value => ({
         value,
         text: t(`declareTicket.status.${value}`),
       })),
@@ -79,8 +78,7 @@ export default {
      *
      * @returns {boolean}
      */
-    const hasClosedItem = () =>
-      props.value.some(
+    const hasClosedItem = () => props.value.some(
         item => item.value === DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN.closed,
       );
 

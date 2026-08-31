@@ -69,8 +69,7 @@ export default {
     const isNew = computed(() => !llm.value?._id);
 
     const title = computed(
-      () =>
-        config.value.title ||
+      () => config.value.title ||
         t(isNew.value ? 'modals.createLlm.create.title' : 'modals.createLlm.edit.title'),
     );
     const submitLabel = computed(() => t(isNew.value ? 'common.add' : 'common.submit'));

@@ -81,8 +81,7 @@ export default {
       sortDesc: [],
     };
 
-    const fetchList = (fetchQuery = initialQuery) =>
-      fetchTicketStatusJobsList({
+    const fetchList = (fetchQuery = initialQuery) => fetchTicketStatusJobsList({
         params: convertQueryToRequest(fetchQuery),
       });
 

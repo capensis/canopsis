@@ -65,8 +65,7 @@ export default {
       handler: fetchList,
       updateOptions,
     } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery =>
-        fetchPbehaviorReasonsList({
+      onUpdate: fetchQuery => fetchPbehaviorReasonsList({
           params: {
             ...convertQueryToRequest(fetchQuery),
             with_flags: true,
@@ -83,8 +82,7 @@ export default {
       }
     };
 
-    const showRemovePbehaviorReasonModal = id =>
-      modals.show({
+    const showRemovePbehaviorReasonModal = id => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -94,8 +92,7 @@ export default {
         },
       });
 
-    const showEditPbehaviorReasonModal = pbehaviorReason =>
-      modals.show({
+    const showEditPbehaviorReasonModal = pbehaviorReason => modals.show({
         name: MODALS.createPbehaviorReason,
         config: {
           pbehaviorReason,

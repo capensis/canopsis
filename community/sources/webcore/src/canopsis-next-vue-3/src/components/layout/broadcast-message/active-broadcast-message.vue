@@ -94,9 +94,7 @@ export default {
       const { id: routeId } = route.params;
       const currentView = getViewById(routeId);
 
-      return activeMessages.value.filter(({ views: messageViews }) =>
-        (messageViews || []).some(messageView =>
-          isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
+      return activeMessages.value.filter(({ views: messageViews }) => (messageViews || []).some(messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
         ),
       );
     });
@@ -151,8 +149,7 @@ export default {
       });
     };
 
-    const showConfirmationMarkAsRead = (broadcastMessage = {}) =>
-      modals.show({
+    const showConfirmationMarkAsRead = (broadcastMessage = {}) => modals.show({
         name: MODALS.confirmation,
         config: {
           title: t('modals.confirmationMarkAsRead.title'),

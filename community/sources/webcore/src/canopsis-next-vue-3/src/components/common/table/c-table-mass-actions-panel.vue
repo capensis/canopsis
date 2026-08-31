@@ -539,8 +539,7 @@ export default {
       });
     };
 
-    const showEnableModal = () =>
-      modals.show({
+    const showEnableModal = () => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -551,8 +550,7 @@ export default {
         },
       });
 
-    const showDisableModal = () =>
-      modals.show({
+    const showDisableModal = () => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -567,8 +565,7 @@ export default {
         },
       });
 
-    const showUnhideModal = () =>
-      modals.show({
+    const showUnhideModal = () => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -579,8 +576,7 @@ export default {
         },
       });
 
-    const showHideModal = () =>
-      modals.show({
+    const showHideModal = () => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {

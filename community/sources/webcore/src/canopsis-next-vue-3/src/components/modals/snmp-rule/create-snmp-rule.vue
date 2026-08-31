@@ -68,8 +68,7 @@ export default {
     const { handleSubmit, isSubmitting: submitting } = form;
 
     const title = computed(() => config.value.title || t('modals.createSnmpRule.create.title'));
-    const submitLabel = computed(() =>
-      t(config.value.snmpRule?._id ? 'common.save' : 'common.create'),
+    const submitLabel = computed(() => t(config.value.snmpRule?._id ? 'common.save' : 'common.create'),
     );
 
     const submit = handleSubmit(async () => {

@@ -1,3 +1,23 @@
+<template>
+  <div :class="{ 'login--maintenance': maintenance }" class="login">
+    <div v-if="maintenance" class="login__image">
+      <v-icon size="120" color="white">
+        manufacturing
+      </v-icon>
+    </div>
+    <div class="login__description">
+      <c-compiled-template :template="description" />
+    </div>
+    <login-card
+      :basic="isBasicAuthEnabled"
+      :cas="isCASAuthEnabled"
+      :saml="isSAMLAuthEnabled"
+      :oauth="isOauthAuthEnabled"
+    />
+    <login-footer />
+  </div>
+</template>
+
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue';
 
@@ -36,26 +56,6 @@ const startAppInfoPolling = () => {
 onMounted(startAppInfoPolling);
 onBeforeUnmount(stopAppInfoPolling);
 </script>
-
-<template>
-  <div :class="{ 'login--maintenance': maintenance }" class="login">
-    <div v-if="maintenance" class="login__image">
-      <v-icon size="120" color="white">
-        manufacturing
-      </v-icon>
-    </div>
-    <div class="login__description">
-      <c-compiled-template :template="description" />
-    </div>
-    <login-card
-      :basic="isBasicAuthEnabled"
-      :cas="isCASAuthEnabled"
-      :saml="isSAMLAuthEnabled"
-      :oauth="isOauthAuthEnabled"
-    />
-    <login-footer />
-  </div>
-</template>
 
 <style lang="scss" scoped>
 .login {

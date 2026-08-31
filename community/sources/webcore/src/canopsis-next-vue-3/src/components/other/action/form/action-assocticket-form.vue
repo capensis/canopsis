@@ -60,11 +60,9 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const model = field =>
-      computed({
+    const model = field => computed({
         get: () => props.modelValue[field] ?? '',
-        set: value =>
-          emit('update:modelValue', {
+        set: value => emit('update:modelValue', {
             ...props.modelValue,
             [field]: value,
           }),

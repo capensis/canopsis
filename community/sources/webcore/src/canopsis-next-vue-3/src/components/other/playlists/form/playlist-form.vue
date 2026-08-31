@@ -88,8 +88,7 @@ export default {
       }
     };
 
-    const showManageTabsModal = () =>
-      modals.show({
+    const showManageTabsModal = () => modals.show({
         name: MODALS.managePlaylistTabs,
         config: {
           groups: props.groups,

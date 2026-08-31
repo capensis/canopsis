@@ -74,8 +74,7 @@ export default {
         config: {
           icon,
           title: t('modals.createIcon.create.title'),
-          action: newIcon =>
-            callActionWithPopup(
+          action: newIcon => callActionWithPopup(
               () => updateIcon({ data: newIcon, id: icon._id }),
               fetchList,
               t('modals.createIcon.create.success'),
@@ -88,8 +87,7 @@ export default {
       modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () =>
-            callActionWithPopup(
+          action: () => callActionWithPopup(
               async () => {
                 await removeIcon({ id: icon._id });
                 unregisterCustomIcon(icon.title);

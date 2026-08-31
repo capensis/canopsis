@@ -104,8 +104,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const headers = computed(() =>
-      [
+    const headers = computed(() => [
         { text: t('common.id'), value: '_id' },
         { text: t('common.name'), value: 'name' },
         { text: t('common.duration'), value: 'duration', sortable: false },

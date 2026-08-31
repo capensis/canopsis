@@ -22,8 +22,7 @@ export const widgetsToLayoutBySize = (
   widgets = [],
   oldLayout = [],
   size = WIDGET_GRID_SIZES_KEYS.desktop,
-) =>
-  widgets.map((widget) => {
+) => widgets.map((widget) => {
     const oldLayoutItem = oldLayout.find(({ i }) => i === widget._id);
     const newLayoutItem = oldLayoutItem
       ? omit(oldLayoutItem, ['i', 'widget'])
@@ -42,8 +41,7 @@ export const widgetsToLayoutBySize = (
  * @param {Widget[]} [widgets = []]
  * @returns {{ mobile: number, tablet: number, desktop: number }}
  */
-export const calculateNewWidgetGridParametersY = (widgets = []) =>
-  widgets.reduce(
+export const calculateNewWidgetGridParametersY = (widgets = []) => widgets.reduce(
     (acc, { grid_parameters: gridParameters }) => {
       const newMobileYPosition = gridParameters.mobile.y + gridParameters.mobile.h;
       const newTabletYPosition = gridParameters.tablet.y + gridParameters.tablet.h;
@@ -78,8 +76,7 @@ export const widgetsToLayoutsWithCompact = (
   widgets = [],
   layouts = [],
   sizes = Object.values(WIDGET_GRID_SIZES_KEYS),
-) =>
-  sizes.reduce((acc, size) => {
+) => sizes.reduce((acc, size) => {
     const oldLayout = get(layouts, size, []);
 
     acc[size] = compactLayout(widgetsToLayoutBySize(widgets, oldLayout, size));

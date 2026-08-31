@@ -97,8 +97,7 @@ export default {
     const status = computed(() => formatAlarmStatus(statusValue.value, resolved.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
     const statusColor = computed(
-      () =>
-        ({
+      () => ({
           [COLOR_INDICATOR_TYPES_WITH_STATUS.state]: state.value.color,
           [COLOR_INDICATOR_TYPES_WITH_STATUS.status]: status.value.color,
         })[getColorIndicatorByStatusAndState(statusValue.value)],
@@ -106,8 +105,7 @@ export default {
     const iconSize = computed(() => (props.small ? 24 : undefined));
     const iconStyle = computed(() => ({ color: statusColor.value, caretColor: statusColor.value }));
     const chipStyle = computed(() => ({ backgroundColor: iconStyle.value.color }));
-    const tooltipContent = computed(() =>
-      resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
+    const tooltipContent = computed(() => resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
         ? t(`common.statusResolvedTypes.${statusValue.value}`)
         : t(`common.statusTypes.${statusValue.value}`),
     );

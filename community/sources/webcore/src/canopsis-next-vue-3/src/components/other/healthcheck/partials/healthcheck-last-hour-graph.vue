@@ -92,8 +92,7 @@ export default {
         plugins: {
           tooltip: {
             callbacks: {
-              label: tooltip =>
-                `${tooltip.formattedValue} ${this.$t('healthcheck.messagesPerMinute')}`,
+              label: tooltip => `${tooltip.formattedValue} ${this.$t('healthcheck.messagesPerMinute')}`,
             },
           },
           limit: {

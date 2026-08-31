@@ -88,8 +88,7 @@ export default {
 
       updateModel(rules);
     };
-    const removeItemsFromArray = indexes =>
-      updateModel(props.rules.filter((rule, index) => !indexes.includes(index)));
+    const removeItemsFromArray = indexes => updateModel(props.rules.filter((rule, index) => !indexes.includes(index)));
 
     /**
      * Adds a new item into the array using a form item.

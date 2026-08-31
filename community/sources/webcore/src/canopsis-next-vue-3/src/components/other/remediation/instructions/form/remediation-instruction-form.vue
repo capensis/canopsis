@@ -113,8 +113,7 @@ export default {
       set: value => updateField('enabled', value),
     });
 
-    const additionalLabel = computed(() =>
-      isManualType.value ? t('common.step', 2) : t('remediation.tabs.jobs'),
+    const additionalLabel = computed(() => isManualType.value ? t('common.step', 2) : t('remediation.tabs.jobs'),
     );
 
     return {

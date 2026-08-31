@@ -22,8 +22,7 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
  * @param {WidgetSortColumn} [sortColumn={}]
  * @returns {WidgetSortColumnForm}
  */
-export const widgetSortColumnToForm = (sortColumn = {}) =>
-  addKeyInEntity({
+export const widgetSortColumnToForm = (sortColumn = {}) => addKeyInEntity({
     sort_by: sortColumn.sort_by ?? '',
     sort: (sortColumn.sort ?? SORT_ORDERS.asc).toUpperCase(),
   });
@@ -52,8 +51,7 @@ export const widgetSortColumnsToForm = (sortColumns = []) => {
  * @param {WidgetSortColumnForm[]} [sortColumns=[]]
  * @returns {WidgetSortColumn[]}
  */
-export const formToWidgetSortColumns = (sortColumns = []) =>
-  sortColumns.map(sortColumn => ({
+export const formToWidgetSortColumns = (sortColumns = []) => sortColumns.map(sortColumn => ({
     ...removeKeyFromEntity(sortColumn),
     sort: sortColumn.sort.toLowerCase(),
   }));

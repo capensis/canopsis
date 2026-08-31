@@ -1,19 +1,3 @@
-<script setup>
-import { useAttrs } from 'vue';
-
-import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
-
-const props = defineProps(validationProps);
-const emit = defineEmits(validationEmits);
-const attrs = useAttrs();
-
-const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
-  props,
-  emit,
-  attrs,
-);
-</script>
-
 <template>
   <v-textarea
     v-bind="$attrs"
@@ -33,3 +17,19 @@ const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidati
     </template>
   </v-textarea>
 </template>
+
+<script setup>
+import { useAttrs } from 'vue';
+
+import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
+
+const props = defineProps(validationProps);
+const emit = defineEmits(validationEmits);
+const attrs = useAttrs();
+
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
+  props,
+  emit,
+  attrs,
+);
+</script>

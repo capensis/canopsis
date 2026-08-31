@@ -61,11 +61,9 @@ export default {
     const modals = useModals();
     const entity = computed(() => props.alarm.entity);
     const hasUpstream = computed(() => entity.value.upstream !== undefined);
-    const title = computed(() =>
-      hasUpstream.value ? t('modals.entityUpstream.topLevelEntities') : t('modals.entityUpstream.entities'),
+    const title = computed(() => hasUpstream.value ? t('modals.entityUpstream.topLevelEntities') : t('modals.entityUpstream.entities'),
     );
-    const tooltipText = computed(() =>
-      hasUpstream.value ? t('modals.entityUpstream.seeTopEntities') : t('modals.entityUpstream.seeEntities'),
+    const tooltipText = computed(() => hasUpstream.value ? t('modals.entityUpstream.seeTopEntities') : t('modals.entityUpstream.seeEntities'),
     );
 
     /**

@@ -195,8 +195,7 @@ export default {
       this.validator.attach({
         name: this.declareTicketFieldName,
         rules: 'min_value:1',
-        getter: () =>
-          Object.values(this.form.alarms_by_tickets).filter(alarms => alarms.length).length,
+        getter: () => Object.values(this.form.alarms_by_tickets).filter(alarms => alarms.length).length,
         vm: this,
       });
     },

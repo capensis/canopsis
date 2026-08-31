@@ -49,11 +49,9 @@ export default {
 
   setup(props) {
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
-    const valueField = computed(() =>
-      getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
+    const valueField = computed(() => getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
     );
-    const trendValueField = computed(() =>
-      getAvailabilityTrendFieldByDisplayParameter(props.displayParameter),
+    const trendValueField = computed(() => getAvailabilityTrendFieldByDisplayParameter(props.displayParameter),
     );
 
     const targetValue = computed(() => props.availability[valueField.value]);
@@ -61,15 +59,13 @@ export default {
 
     const trendUp = computed(() => targetValue.value > targetTrendValue.value);
     const isTrendEnabled = computed(
-      () =>
-        props.showTrend &&
+      () => props.showTrend &&
         isPercentType.value &&
         targetTrendValue.value &&
         targetValue.value !== targetTrendValue.value,
     );
 
-    const value = computed(() =>
-      isPercentType.value ? `${targetValue.value}%` : convertDurationToString(targetValue.value),
+    const value = computed(() => isPercentType.value ? `${targetValue.value}%` : convertDurationToString(targetValue.value),
     );
 
     return {

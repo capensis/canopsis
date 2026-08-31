@@ -57,8 +57,7 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
 export const filterPatternsToForm = (
   filter = {},
   fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
-) =>
-  fields.reduce((acc, field) => {
+) => fields.reduce((acc, field) => {
     const { [`corporate_${field}`]: id, [field]: pattern } = filter;
 
     acc[field] = patternToForm({
@@ -95,8 +94,7 @@ export const formFilterToPatterns = (
   form = {},
   fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
   corporate = false,
-) =>
-  fields.reduce((acc, field) => {
+) => fields.reduce((acc, field) => {
     const patterns = form[field];
 
     if (!patterns) {

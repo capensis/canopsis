@@ -42,8 +42,7 @@ export const removeKeyFromEntities = (entities = []) => entities.map(removeKeyFr
  * @param {string} idField
  * @return {string}
  */
-export const getIdFromEntity = (entity, idField = '_id') =>
-  typeof entity === 'object' && entity !== null ? entity[idField] : entity;
+export const getIdFromEntity = (entity, idField = '_id') => typeof entity === 'object' && entity !== null ? entity[idField] : entity;
 
 /**
  * Return entities ids
@@ -61,8 +60,7 @@ export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
  * @param {string} idKey
  * @returns {PartialObject<U>[]}
  */
-export const pickIds = (entities = [], idKey = '_id') =>
-  entities.map(entity => pick(entity, [idKey]));
+export const pickIds = (entities = [], idKey = '_id') => entities.map(entity => pick(entity, [idKey]));
 
 /**
  * Filter entities by ids
@@ -71,8 +69,7 @@ export const pickIds = (entities = [], idKey = '_id') =>
  * @param {Object} item
  * @param {string} [idKey = '_id']
  */
-export const filterById = (items, item, idKey = '_id') =>
-  items.filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
+export const filterById = (items, item, idKey = '_id') => items.filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
 
 /**
  * Filter entities by value
@@ -89,8 +86,7 @@ export const filterValue = (items, removingValue) => items.filter(item => item !
  * @param {number} [start = 0]
  * @return {number[]}
  */
-export const createRangeArray = (length, start = 0) =>
-  Array.from({ length }, (_, index) => start + index);
+export const createRangeArray = (length, start = 0) => Array.from({ length }, (_, index) => start + index);
 
 /**
  * Recursively transforms an array into an object keyed by a specified property.
@@ -101,8 +97,7 @@ export const createRangeArray = (length, start = 0) =>
  * @param {string} [prefix = ''] - Prefix for the key correctness
  * @returns {Object} An object keyed by the specified idKey.
  */
-export const deepKeyBy = (array, idKey = '_id', childrenKey = 'items', prefix = '') =>
-  array.reduce((acc, item) => {
+export const deepKeyBy = (array, idKey = '_id', childrenKey = 'items', prefix = '') => array.reduce((acc, item) => {
     const key =
       prefix && !String(item[idKey]).startsWith(prefix) ? `${prefix}${item[idKey]}` : item[idKey];
 
@@ -122,8 +117,7 @@ export const deepKeyBy = (array, idKey = '_id', childrenKey = 'items', prefix = 
  * @param {string} [key = 'value']
  * @returns {Object}
  */
-export const indexesByKey = (items = [], key = 'value') =>
-  items.reduce((acc, item, index) => {
+export const indexesByKey = (items = [], key = 'value') => items.reduce((acc, item, index) => {
     acc[item[key]] = index;
 
     return acc;

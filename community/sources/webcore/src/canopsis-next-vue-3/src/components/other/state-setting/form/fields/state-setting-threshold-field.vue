@@ -120,15 +120,13 @@ export default {
     const valueName = computed(() => `${props.name}.value`);
     const disabled = computed(() => !props.condition.enabled);
 
-    const states = computed(() =>
-      Object.entries(ALARM_STATES).map(([key, value]) => ({
+    const states = computed(() => Object.entries(ALARM_STATES).map(([key, value]) => ({
         text: t(`common.stateTypes.${value}`),
         value: key,
       })),
     );
 
-    const conditions = computed(() =>
-      Object.values(STATE_SETTING_THRESHOLDS_CONDITIONS).map(condition => ({
+    const conditions = computed(() => Object.values(STATE_SETTING_THRESHOLDS_CONDITIONS).map(condition => ({
         value: condition,
         text: t(`stateSetting.thresholdConditions.${condition}`),
       })),

@@ -80,15 +80,13 @@ const minDate = computed(() => {
   return value ? convertDateToStartOfDayTimestampByTimezone(value, timezone.value) : null;
 });
 
-const interval = computed(() =>
-  convertMetricIntervalToTimestamp({
+const interval = computed(() => convertMetricIntervalToTimestamp({
     interval: query.value.interval,
     timezone: timezone.value,
   }),
 );
 
-const metrics = computed(() =>
-  convertMetricsToTimezone(
+const metrics = computed(() => convertMetricsToTimezone(
     remediationStatisticMetrics.value.filter(
       ({ timestamp }) => !minDate.value || timestamp >= minDate.value,
     ),
@@ -96,8 +94,7 @@ const metrics = computed(() =>
   ),
 );
 
-const isInstructionType = instruction =>
-  [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
+const isInstructionType = instruction => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
 
 const getQuery = () => {
   const { instruction } = query.value;
@@ -143,8 +140,7 @@ const getFileName = () => {
   ].join('-');
 };
 
-const waitGeneratingFile = id =>
-  new Promise((resolve, reject) => {
+const waitGeneratingFile = id => new Promise((resolve, reject) => {
     setTimeout(async () => {
       try {
         const exportData = await fetchMetricExport({ id });

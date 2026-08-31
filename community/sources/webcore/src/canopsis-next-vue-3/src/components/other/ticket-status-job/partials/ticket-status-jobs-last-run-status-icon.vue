@@ -26,16 +26,14 @@ export default {
     const { t } = useI18n();
     const label = computed(() => t(`jobs.lastRunStatus.${props.status}`));
     const statusColor = computed(
-      () =>
-        ({
+      () => ({
           [JOB_LAST_RUN_STATUS.succeed]: 'success',
           [JOB_LAST_RUN_STATUS.failed]: 'error',
           [JOB_LAST_RUN_STATUS.aborted]: 'grey',
         })[props.status] ?? 'grey',
     );
     const statusIcon = computed(
-      () =>
-        ({
+      () => ({
           [JOB_LAST_RUN_STATUS.succeed]: 'check_circle',
           [JOB_LAST_RUN_STATUS.failed]: 'cancel',
           [JOB_LAST_RUN_STATUS.aborted]: 'cancel',

@@ -51,5 +51,4 @@ export const formToTemplate = (form = {}) => ({
  * @param {Object} [template={}] - Dynamic info template entity.
  * @returns {Array<{ name: string, value: string }>}
  */
-export const templateToDynamicInfoInfos = (template = {}) =>
-  (template.names ?? []).map(name => ({ name, value: '' }));
+export const templateToDynamicInfoInfos = (template = {}) => (template.names ?? []).map(name => ({ name, value: '' }));

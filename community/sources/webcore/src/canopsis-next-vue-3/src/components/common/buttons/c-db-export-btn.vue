@@ -96,8 +96,7 @@ export default {
     } = useDbExport();
 
     const action = computed(
-      () =>
-        ({
+      () => ({
           [props.pbehavior]: exportPbehaviorsDb,
           [props.eventFilter]: exportEventFiltersDb,
           [props.linkRule]: exportLinkRulesDb,

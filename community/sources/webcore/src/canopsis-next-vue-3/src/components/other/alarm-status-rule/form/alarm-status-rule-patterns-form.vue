@@ -44,8 +44,7 @@ export default {
 
     const { fetchFlappingRulePatternFields, fetchResolveRulePatternFields } = usePatternsFields();
 
-    const fetchAction = computed(() =>
-      props.flapping ? fetchFlappingRulePatternFields : fetchResolveRulePatternFields,
+    const fetchAction = computed(() => props.flapping ? fetchFlappingRulePatternFields : fetchResolveRulePatternFields,
     );
 
     const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(

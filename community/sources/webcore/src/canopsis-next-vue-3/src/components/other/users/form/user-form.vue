@@ -167,15 +167,13 @@ export default {
       defaultviewField: 'defaultview',
     });
 
-    const groupsNavigationItems = computed(() =>
-      Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
+    const groupsNavigationItems = computed(() => Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
         text: t(`user.navigationTypes.${type}`),
         value: type,
       })),
     );
 
-    const idpFieldsMap = computed(() =>
-      (props.user?.idp_fields ?? []).reduce((acc, field) => {
+    const idpFieldsMap = computed(() => (props.user?.idp_fields ?? []).reduce((acc, field) => {
         acc[field] = true;
 
         return acc;

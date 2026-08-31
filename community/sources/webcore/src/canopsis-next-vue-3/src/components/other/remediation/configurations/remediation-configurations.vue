@@ -55,8 +55,7 @@ export default {
       updateOptions,
       handler: fetchList,
     } = useFetchListWithOptions({
-      fetchListHandler: ({ params }) =>
-        fetchRemediationConfigurationsList({
+      fetchListHandler: ({ params }) => fetchRemediationConfigurationsList({
           params: {
             ...params,
             with_flags: true,

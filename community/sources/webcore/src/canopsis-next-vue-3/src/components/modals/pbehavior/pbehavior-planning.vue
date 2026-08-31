@@ -180,8 +180,7 @@ export default {
       const response = await this.bulkUpdatePbehaviors({ data: pbehaviors });
 
       await Promise.all(
-        pbehaviors.map(pbehavior =>
-          this.updateSeveralPbehaviorComments({
+        pbehaviors.map(pbehavior => this.updateSeveralPbehaviorComments({
             pbehavior: originalPbehaviors.find(({ _id }) => _id === pbehavior._id),
             comments: pbehavior.comments,
           }),
@@ -196,8 +195,7 @@ export default {
 
       try {
         const { pbehaviors: originalPbehaviors = [] } = this.config;
-        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById).map(pbehavior =>
-          pbehaviorToRequest(omit(pbehavior, ['_id'])),
+        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById).map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])),
         );
         const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(
           pbehaviorToRequest,

@@ -38,8 +38,7 @@ export default {
 
     const statusKey = computed(() => STATUS_VALUE_TO_KEY[props.value] ?? 'unknown');
     const statusColor = computed(
-      () =>
-        COLORS.declareTicketRuleTicketStatusChip?.[statusKey.value] ??
+      () => COLORS.declareTicketRuleTicketStatusChip?.[statusKey.value] ??
         COLORS.declareTicketRuleTicketStatusChip?.unknown,
     );
     const statusText = computed(() => t(`declareTicket.status.${props.value}`));

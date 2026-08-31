@@ -34,18 +34,21 @@ export const convertExternalDataToTemplateTestingTestValidateForm = (externalDat
 
   externalData.forEach((externalDataItem, index) => {
     if (externalDataItem.type === EXTERNAL_DATA_TYPES.api) {
-      result.push({
-        key: `external_data.${index}.request.url`,
-        textKey: 'templateTesting.requestUrl',
-        textArgs: { number: index + 1 },
-        templateVarsKey: 'external_data',
-      }, {
-        key: `external_data.${index}.request.payload`,
-        textKey: 'templateTesting.requestPayload',
-        textArgs: { number: index + 1 },
-        textarea: true,
-        templateVarsKey: 'external_data',
-      });
+      result.push(
+        {
+          key: `external_data.${index}.request.url`,
+          textKey: 'templateTesting.requestUrl',
+          textArgs: { number: index + 1 },
+          templateVarsKey: 'external_data',
+        },
+        {
+          key: `external_data.${index}.request.payload`,
+          textKey: 'templateTesting.requestPayload',
+          textArgs: { number: index + 1 },
+          textarea: true,
+          templateVarsKey: 'external_data',
+        },
+      );
 
       return;
     }
@@ -78,15 +81,13 @@ export const convertHeadersToTemplateTestingTestValidateForm = ({
   prefix = '',
   resultPrefix = prefix,
   templateVarsKey = '',
-}) => (
-  headers.map((header, index) => ({
+}) => headers.map((header, index) => ({
     key: `${prefix}.headers.${index}.value`,
     resultKey: `${resultPrefix}.headers.${header.text}`,
     textKey: 'templateTesting.webhookHeader',
     textArgs: { number: index + 1, header: header.text },
     templateVarsKey,
-  }))
-);
+  }));
 
 /**
  * Converts webhook action parameters to template testing validation form items
@@ -160,29 +161,30 @@ const convertWebhookActionToTemplateTestingTestValidateForm = ({
     });
   }
 
-  if (
-    checkTicketStatus.enabled
-    && checkTicketStatus.ticket_status.template
-  ) {
-    result.push({
-      key: `${prefix}.declare_ticket.check_ticket_status.request.url`,
-      resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.request.url`,
-      textKey: 'templateTesting.ticketStatusWebhookUrl',
-      textArgs: { number: index + 1 },
-      templateVarsKey: 'ticket',
-    }, {
-      key: `${prefix}.declare_ticket.check_ticket_status.request.payload`,
-      resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.request.payload`,
-      textKey: 'templateTesting.ticketStatusWebhookPayload',
-      textArgs: { number: index + 1 },
-      templateVarsKey: 'ticket',
-    }, {
-      key: `${prefix}.declare_ticket.check_ticket_status.ticket_status.value`,
-      resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.ticket_status_tpl`,
-      textKey: 'declareTicket.ticketStatusSourceField',
-      textArgs: { number: index + 1 },
-      templateVarsKey: 'ticket',
-    });
+  if (checkTicketStatus.enabled && checkTicketStatus.ticket_status.template) {
+    result.push(
+      {
+        key: `${prefix}.declare_ticket.check_ticket_status.request.url`,
+        resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.request.url`,
+        textKey: 'templateTesting.ticketStatusWebhookUrl',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'ticket',
+      },
+      {
+        key: `${prefix}.declare_ticket.check_ticket_status.request.payload`,
+        resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.request.payload`,
+        textKey: 'templateTesting.ticketStatusWebhookPayload',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'ticket',
+      },
+      {
+        key: `${prefix}.declare_ticket.check_ticket_status.ticket_status.value`,
+        resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.ticket_status_tpl`,
+        textKey: 'declareTicket.ticketStatusSourceField',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'ticket',
+      },
+    );
   }
 
   return result;
@@ -204,23 +206,28 @@ export const convertEventFilterToTemplateTestingTestValidateForm = (form = {}) =
   }
 
   if (isChangeEntity) {
-    result.push({
-      key: 'config.resource',
-      textKey: 'common.resource',
-      templateVarsKey: 'config',
-    }, {
-      key: 'config.component',
-      textKey: 'common.component',
-      templateVarsKey: 'config',
-    }, {
-      key: 'config.connector',
-      textKey: 'common.connector',
-      templateVarsKey: 'config',
-    }, {
-      key: 'config.connector_name',
-      textKey: 'common.connectorName',
-      templateVarsKey: 'config',
-    });
+    result.push(
+      {
+        key: 'config.resource',
+        textKey: 'common.resource',
+        templateVarsKey: 'config',
+      },
+      {
+        key: 'config.component',
+        textKey: 'common.component',
+        templateVarsKey: 'config',
+      },
+      {
+        key: 'config.connector',
+        textKey: 'common.connector',
+        templateVarsKey: 'config',
+      },
+      {
+        key: 'config.connector_name',
+        textKey: 'common.connectorName',
+        templateVarsKey: 'config',
+      },
+    );
   }
 
   if (isEnrichment) {
@@ -257,17 +264,20 @@ export const convertLinkRuleToTemplateTestingTestValidateForm = (form = {}) => {
   const result = [];
 
   form.links.forEach((_, index) => {
-    result.push({
-      key: `links.${index}.label`,
-      textKey: 'templateTesting.linkRuleLabel',
-      textArgs: { number: index + 1 },
-      templateVarsKey: 'label',
-    }, {
-      key: `links.${index}.url`,
-      textKey: 'templateTesting.linkRuleUrl',
-      textArgs: { number: index + 1 },
-      templateVarsKey: 'url',
-    });
+    result.push(
+      {
+        key: `links.${index}.label`,
+        textKey: 'templateTesting.linkRuleLabel',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'label',
+      },
+      {
+        key: `links.${index}.url`,
+        textKey: 'templateTesting.linkRuleUrl',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'url',
+      },
+    );
   });
 
   result.push(...convertExternalDataToTemplateTestingTestValidateForm(form.external_data));
@@ -317,7 +327,11 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
       return;
     }
 
-    if (![ACTION_TYPES.pbehavior, ACTION_TYPES.pbehaviorRemove, ACTION_TYPES.assocticket].includes(action.type)) {
+    if (
+      ![ACTION_TYPES.pbehavior, ACTION_TYPES.pbehaviorRemove, ACTION_TYPES.assocticket].includes(
+        action.type,
+      )
+    ) {
       result.push({
         key: `actions.${index}.parameters.${action.type}.output`,
         resultKey: `actions.${index}.parameters.output`,
@@ -514,28 +528,35 @@ export const convertJobToTemplateTestingTestValidateForm = (form = {}) => {
  * @returns {TemplateTestingTestValidateForm} Array of validation form items for meta alarm rule
  */
 export const convertMetaAlarmRuleToTemplateTestingTestValidateForm = (form = {}) => {
-  const result = [{
-    key: 'output_template',
-    textKey: 'templateTesting.metaAlarmOutputTemplate',
-    textarea: true,
-    templateVarsKey: 'output',
-  }];
+  const result = [
+    {
+      key: 'output_template',
+      textKey: 'templateTesting.metaAlarmOutputTemplate',
+      textarea: true,
+      templateVarsKey: 'output',
+    },
+  ];
 
-  if ([
-    META_ALARMS_RULE_TYPES.timebased,
-    META_ALARMS_RULE_TYPES.attribute,
-    META_ALARMS_RULE_TYPES.complex,
-    META_ALARMS_RULE_TYPES.valuegroup,
-  ].includes(form.type)) {
-    result.push({
-      key: 'config.component_template',
-      textKey: 'templateTesting.metaAlarmComponentTemplate',
-      templateVarsKey: 'entity',
-    }, {
-      key: 'config.resource_template',
-      textKey: 'templateTesting.metaAlarmResourceTemplate',
-      templateVarsKey: 'entity',
-    });
+  if (
+    [
+      META_ALARMS_RULE_TYPES.timebased,
+      META_ALARMS_RULE_TYPES.attribute,
+      META_ALARMS_RULE_TYPES.complex,
+      META_ALARMS_RULE_TYPES.valuegroup,
+    ].includes(form.type)
+  ) {
+    result.push(
+      {
+        key: 'config.component_template',
+        textKey: 'templateTesting.metaAlarmComponentTemplate',
+        templateVarsKey: 'entity',
+      },
+      {
+        key: 'config.resource_template',
+        textKey: 'templateTesting.metaAlarmResourceTemplate',
+        templateVarsKey: 'entity',
+      },
+    );
   }
 
   return result;
@@ -547,15 +568,15 @@ export const convertMetaAlarmRuleToTemplateTestingTestValidateForm = (form = {})
  * @param {ExternalAuthTokenRuleForm} [form={}] - External auth token rule configuration form
  * @returns {TemplateTestingTestValidateForm} Array of validation form items for external auth token rule
  */
-export const convertExternalAuthTokenRuleToTemplateTestingTestValidateForm = (form = {}) => (
-  form.allow_variables
-    ? [{
-      key: 'template',
-      textKey: 'common.token',
-      templateVarsKey: 'template',
-    }]
-    : []
-);
+export const convertExternalAuthTokenRuleToTemplateTestingTestValidateForm = (form = {}) => form.allow_variables
+    ? [
+        {
+          key: 'template',
+          textKey: 'common.token',
+          templateVarsKey: 'template',
+        },
+      ]
+    : [];
 
 /**
  * Converts rule form to template testing validation form items based on rule type
@@ -570,12 +591,15 @@ export const convertRuleToTemplateTestingTestValidateForm = (form = {}, type) =>
     [TEMPLATE_TESTING_TEST_TYPES.linkRule]: convertLinkRuleToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.scenario]: convertScenarioToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.widget]: convertWidgetToTemplateTestingTestValidateForm,
-    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: convertDeclareTicketRuleToTemplateTestingTestValidateForm,
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]:
+      convertDeclareTicketRuleToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: convertDynamicInfoToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: convertInstructionToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.job]: convertJobToTemplateTestingTestValidateForm,
-    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: convertMetaAlarmRuleToTemplateTestingTestValidateForm,
-    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: convertExternalAuthTokenRuleToTemplateTestingTestValidateForm,
+    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]:
+      convertMetaAlarmRuleToTemplateTestingTestValidateForm,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]:
+      convertExternalAuthTokenRuleToTemplateTestingTestValidateForm,
   }[type];
 
   return converter ? converter(form) : [];

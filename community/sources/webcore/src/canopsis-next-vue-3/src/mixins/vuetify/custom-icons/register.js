@@ -57,8 +57,7 @@ export const vuetifyCustomIconsRegisterMixin = {
         const response = await this.fetchListWithoutStore({ params: { limit: MAX_LIMIT } });
         const icons = Array.isArray(response?.data) ? response.data : (response?.data?.data ?? []);
 
-        icons.forEach(({ title, content, fill_border: fillBorder }) =>
-          this.registerIconInVuetify(title, content, { fillBorder }),
+        icons.forEach(({ title, content, fill_border: fillBorder }) => this.registerIconInVuetify(title, content, { fillBorder }),
         );
 
         this.setRegisteredIcons({ icons });

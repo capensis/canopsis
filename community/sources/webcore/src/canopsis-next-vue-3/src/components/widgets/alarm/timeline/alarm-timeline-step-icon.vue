@@ -86,13 +86,11 @@ export default {
     const isChangeStatus = computed(() => isChangeStatusStepType(props.step._t));
     const isJunit = computed(() => isJunitStepType(props.step._t));
     const isPbehavior = computed(() => isPbehaviorStepType(props.step._t));
-    const isDeclareTicketChangeStatus = computed(() =>
-      isDeclareTicketChangeTicketStatusStepType(props.step._t),
+    const isDeclareTicketChangeStatus = computed(() => isDeclareTicketChangeTicketStatusStepType(props.step._t),
     );
 
     const isDefaultStepIcon = computed(
-      () =>
-        isResolveStepType(props.step._t) ||
+      () => isResolveStepType(props.step._t) ||
         isActivateStepType(props.step._t) ||
         isAckStepType(props.step._t) ||
         isSnoozeStepType(props.step._t) ||

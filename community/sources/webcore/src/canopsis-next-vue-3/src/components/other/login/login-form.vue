@@ -1,15 +1,3 @@
-<script setup>
-import { useI18n } from 'vue-i18n';
-
-import { useFormModels } from '@/hooks/form';
-
-const { t } = useI18n();
-const { usernameField, passwordField } = useFormModels({
-  usernameField: 'username',
-  passwordField: 'password',
-});
-</script>
-
 <template>
   <c-layout column>
     <c-text-field
@@ -35,3 +23,15 @@ const { usernameField, passwordField } = useFormModels({
     />
   </c-layout>
 </template>
+
+<script setup>
+import { useI18n } from 'vue-i18n';
+
+import { useFormModels } from '@/hooks/form';
+
+const { t } = useI18n();
+const { usernameField, passwordField } = useFormModels({
+  usernameField: 'username',
+  passwordField: 'password',
+});
+</script>

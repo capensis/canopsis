@@ -1,3 +1,7 @@
+<template>
+  <third-party-login :title="t('login.loginWithOauth')" :links="links" />
+</template>
+
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -17,8 +21,7 @@ const { oauthConfig } = useInfo();
 
 const redirect = computed(() => route.query.redirect ?? '');
 
-const links = computed(() =>
-  (oauthConfig.value?.providers ?? []).map((provider) => {
+const links = computed(() => (oauthConfig.value?.providers ?? []).map((provider) => {
     const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.oauth.login}${provider}/login`);
     const query = new URLSearchParams({
       redirect: removeTrailingSlashes(`${APP_HOST}${redirect.value}`),
@@ -31,7 +34,3 @@ const links = computed(() =>
   }),
 );
 </script>
-
-<template>
-  <third-party-login :title="t('login.loginWithOauth')" :links="links" />
-</template>

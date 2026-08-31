@@ -51,8 +51,7 @@ export default {
     });
 
     const color = computed(
-      () =>
-        ({
+      () => ({
           [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]:
             COLORS.remediation.executionStatus.running,
           [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]:

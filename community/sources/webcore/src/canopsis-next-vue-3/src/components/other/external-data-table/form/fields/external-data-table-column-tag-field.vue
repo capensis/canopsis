@@ -39,8 +39,7 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const items = computed(() =>
-      Object.values(EXTERNAL_DATA_TABLE_COLUMN_TAGS).map(value => ({
+    const items = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_TAGS).map(value => ({
         value,
         text: t(`externalData.tableColumnTypes.${value}`),
         color: EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS[value],

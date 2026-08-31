@@ -70,8 +70,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const activeTab = ref('description');
-    const patterns = computed(() =>
-      filterPatternsToForm(props.rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+    const patterns = computed(() => filterPatternsToForm(props.rule, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
     );
 
     return {

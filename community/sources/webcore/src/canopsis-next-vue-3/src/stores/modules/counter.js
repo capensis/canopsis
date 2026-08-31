@@ -28,8 +28,7 @@ export const useCounterStore = defineStore('counterWidget', () => {
       setWidgetState(widgetId, { pending: true });
 
       const counters = await Promise.all(
-        filters.map(filter =>
-          request.get(API_ROUTES.counter, {
+        filters.map(filter => request.get(API_ROUTES.counter, {
             params: {
               ...params,
               filters: [filter],

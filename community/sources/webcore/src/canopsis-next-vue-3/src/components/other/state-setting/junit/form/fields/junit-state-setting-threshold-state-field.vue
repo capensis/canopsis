@@ -44,8 +44,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup(props) {
-    const max = computed(() =>
-      props.type === JUNIT_STATE_SETTING_THRESHOLDS_TYPES.percent ? 100 : undefined,
+    const max = computed(() => props.type === JUNIT_STATE_SETTING_THRESHOLDS_TYPES.percent ? 100 : undefined,
     );
 
     return { max };

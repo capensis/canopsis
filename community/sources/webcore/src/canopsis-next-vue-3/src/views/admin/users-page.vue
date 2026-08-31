@@ -68,8 +68,7 @@ export default {
     );
 
     const hasCreateAccess = computed(
-      () =>
-        ({
+      () => ({
           [USERS_TABS.users]: hasCreateAnyUserAccess.value,
           [USERS_TABS.shareTokens]: false,
         })[activeTab.value],

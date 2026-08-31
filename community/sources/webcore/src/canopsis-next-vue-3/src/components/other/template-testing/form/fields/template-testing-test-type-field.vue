@@ -62,8 +62,7 @@ export default {
     const { t } = useI18n();
     const { checkReadAccess } = useCurrentUserPermissions();
 
-    const items = computed(() =>
-      Object.values(TEMPLATE_TESTING_TEST_TYPES)
+    const items = computed(() => Object.values(TEMPLATE_TESTING_TEST_TYPES)
         .filter(type => checkReadAccess(TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS[type]))
         .map(type => ({
           value: type,

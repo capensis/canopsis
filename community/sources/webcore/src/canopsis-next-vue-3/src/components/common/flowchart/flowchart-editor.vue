@@ -285,8 +285,7 @@ export default {
     },
 
     callHandlers(event, data) {
-      this.handlers[event.type]?.forEach(func =>
-        func({
+      this.handlers[event.type]?.forEach(func => func({
           event,
           cursor: this.cursor,
           ...data,
@@ -398,8 +397,7 @@ export default {
       const connectingShape = this.data[shape._id];
 
       connectingShape.connections = connectingShape.connections.filter(
-        connection =>
-          connection.shapeId !== this.editingShape._id ||
+        connection => connection.shapeId !== this.editingShape._id ||
           connection.pointId !== this.editingLinePoint._id,
       );
 

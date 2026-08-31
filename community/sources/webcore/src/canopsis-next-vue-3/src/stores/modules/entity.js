@@ -47,23 +47,16 @@ export const useEntityStore = defineStore('entity', () => {
     );
   };
 
-  const fetchContextEntitiesListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.entity, { params });
+  const fetchContextEntitiesListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.entity, { params });
   const fetchListWithoutStore = fetchContextEntitiesListWithoutStore;
-  const fetchEntityInfosLogsListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.entityInfosLog, { params });
-  const archiveDisabledEntitiesData = ({ data } = {}) =>
-    request.post(`${API_ROUTES.entity}/archive-disabled`, data);
-  const archiveUnlinkedEntitiesData = ({ data } = {}) =>
-    request.post(`${API_ROUTES.entity}/archive-unlinked`, data);
+  const fetchEntityInfosLogsListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.entityInfosLog, { params });
+  const archiveDisabledEntitiesData = ({ data } = {}) => request.post(`${API_ROUTES.entity}/archive-disabled`, data);
+  const archiveUnlinkedEntitiesData = ({ data } = {}) => request.post(`${API_ROUTES.entity}/archive-unlinked`, data);
   const cleanArchivedEntitiesData = () => request.post(`${API_ROUTES.entity}/clean-archived`);
-  const checkStateSetting = ({ data } = {}) =>
-    request.post(API_ROUTES.entityCheckStateSetting, data);
-  const fetchStateSettingWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.entityStateSetting, { params });
+  const checkStateSetting = ({ data } = {}) => request.post(API_ROUTES.entityCheckStateSetting, data);
+  const fetchStateSettingWithoutStore = ({ params } = {}) => request.get(API_ROUTES.entityStateSetting, { params });
 
-  const fetchList = ({ widgetId, params } = {}) =>
-    useRequestCancelling(async (source) => {
+  const fetchList = ({ widgetId, params } = {}) => useRequestCancelling(async (source) => {
       try {
         setWidgetState(widgetId, { pending: true, fetchingParams: params });
 
@@ -91,8 +84,7 @@ export const useEntityStore = defineStore('entity', () => {
     const widgetsIds = Object.keys(widgets.value);
 
     return Promise.all(
-      widgetsIds.map(widgetId =>
-        fetchList({
+      widgetsIds.map(widgetId => fetchList({
           widgetId,
           params: getFetchingParamsByWidgetId.value(widgetId),
         }),
@@ -100,31 +92,25 @@ export const useEntityStore = defineStore('entity', () => {
     );
   };
 
-  const create = ({ data, id } = {}) =>
-    request.post(API_ROUTES.entityBasics, data, {
+  const create = ({ data, id } = {}) => request.post(API_ROUTES.entityBasics, data, {
       params: { _id: id },
     });
-  const update = ({ data, id } = {}) =>
-    request.put(API_ROUTES.entityBasics, data, {
+  const update = ({ data, id } = {}) => request.put(API_ROUTES.entityBasics, data, {
       params: { _id: id },
     });
-  const remove = ({ id } = {}) =>
-    request.delete(API_ROUTES.entityBasics, {
+  const remove = ({ id } = {}) => request.delete(API_ROUTES.entityBasics, {
       params: { _id: id },
     });
 
-  const fetchBasicEntityWithoutStore = ({ id } = {}) =>
-    request.get(API_ROUTES.entityBasics, {
+  const fetchBasicEntityWithoutStore = ({ id } = {}) => request.get(API_ROUTES.entityBasics, {
       params: { _id: id },
     });
-  const fetchContextGraphWithoutStore = ({ id } = {}) =>
-    request.get(API_ROUTES.entityContextGraph, {
+  const fetchContextGraphWithoutStore = ({ id } = {}) => request.get(API_ROUTES.entityContextGraph, {
       params: { _id: id },
     });
 
   const createContextExport = ({ data = {} } = {}) => request.post(API_ROUTES.contextExport, data);
-  const fetchContextExport = ({ params, id } = {}) =>
-    request.get(`${API_ROUTES.contextExport}/${id}`, { params });
+  const fetchContextExport = ({ params, id } = {}) => request.get(`${API_ROUTES.contextExport}/${id}`, { params });
 
   const bulkEnable = ({ data } = {}) => request.put(API_ROUTES.bulkEntitiesEnable, data);
   const bulkDisable = ({ data } = {}) => request.put(API_ROUTES.bulkEntitiesDisable, data);

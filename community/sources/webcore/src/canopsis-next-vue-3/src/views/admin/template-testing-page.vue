@@ -73,8 +73,7 @@ export default {
       () => activeTab.value === TEMPLATE_TESTING_TABS.data && hasCreateAccessForTemplateData.value,
     );
 
-    const refresh = () =>
-      ({
+    const refresh = () => ({
         [TEMPLATE_TESTING_TABS.data]: templateTestingDataElement.value?.fetchList,
         [TEMPLATE_TESTING_TABS.tests]: templateTestingTestsElement.value?.fetchList,
       })[activeTab.value]?.();

@@ -39,8 +39,7 @@ export const getGeomapMarkerIconOptions = (point, size) => {
  * @param {Object} entity
  * @returns {string}
  */
-export const getMapEntityText = entity =>
-  entity?.type === ENTITY_TYPES.resource ? entity._id : entity?.name;
+export const getMapEntityText = entity => entity?.type === ENTITY_TYPES.resource ? entity._id : entity?.name;
 
 /**
  *
@@ -50,8 +49,7 @@ export const getMapEntityText = entity =>
 export const normalizeTreeOfDependenciesMapEntities = (
   entities = [],
   childrenKey = 'dependencies',
-) =>
-  entities.reduce((acc, { entity, pinned_entities: pinnedEntities }) => {
+) => entities.reduce((acc, { entity, pinned_entities: pinnedEntities }) => {
     const newEntity = {
       entity: cloneDeep(entity),
       [childrenKey]: [],

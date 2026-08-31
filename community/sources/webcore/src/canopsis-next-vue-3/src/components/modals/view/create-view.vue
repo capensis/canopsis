@@ -219,8 +219,7 @@ export default {
       form.value = nextForm;
     };
 
-    const fetchAllGroupsListWithWidgets = () =>
-      fetchViewGroupsList({
+    const fetchAllGroupsListWithWidgets = () => fetchViewGroupsList({
         params: {
           limit: MAX_LIMIT,
           page: 1,

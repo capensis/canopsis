@@ -98,8 +98,7 @@ export const convertUnit = (value, fromUnit = TIME_UNITS.second, toUnit = TIME_U
  * @param {DurationUnit} [unit = TIME_UNITS.second]
  * @returns {number}
  */
-export const toSeconds = (value, unit = TIME_UNITS.second) =>
-  convertUnit(value, unit, TIME_UNITS.second);
+export const toSeconds = (value, unit = TIME_UNITS.second) => convertUnit(value, unit, TIME_UNITS.second);
 
 /**
  * Convert duration from "seconds" to unit
@@ -108,8 +107,7 @@ export const toSeconds = (value, unit = TIME_UNITS.second) =>
  * @param {DurationUnit} [unit = TIME_UNITS.second]
  * @returns {number}
  */
-export const fromSeconds = (value, unit = TIME_UNITS.second) =>
-  convertUnit(value, TIME_UNITS.second, unit);
+export const fromSeconds = (value, unit = TIME_UNITS.second) => convertUnit(value, TIME_UNITS.second, unit);
 
 /**
  * Convert duration to seconds
@@ -125,8 +123,7 @@ export const durationToSeconds = ({ value, unit } = {}) => toSeconds(value, unit
  * @param {Duration} [duration = { value: 1, unit: TIME_UNITS.second }]
  * @returns {Duration}
  */
-export const durationToForm = duration =>
-  duration ? { ...duration } : { value: 1, unit: TIME_UNITS.second };
+export const durationToForm = duration => duration ? { ...duration } : { value: 1, unit: TIME_UNITS.second };
 
 /**
  * Convert DurationWithEnabled object to form
@@ -218,8 +215,7 @@ export const convertDurationToString = (
  * @param {Duration | *} duration
  * @return {boolean}
  */
-export const isValidDuration = duration =>
-  isNumber(duration?.value) && isValidTimeUnit(duration.unit);
+export const isValidDuration = duration => isNumber(duration?.value) && isValidTimeUnit(duration.unit);
 
 /**
  * Check duration is valid
@@ -227,8 +223,7 @@ export const isValidDuration = duration =>
  * @param {Duration | *} duration
  * @return {boolean}
  */
-export const isValidRangeDuration = duration =>
-  isValidDuration(duration) ||
+export const isValidRangeDuration = duration => isValidDuration(duration) ||
   (isValidDuration(duration.to) && !duration.from) ||
   (isValidDuration(duration.from) &&
     isValidDuration(duration.to) &&

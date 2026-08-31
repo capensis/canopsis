@@ -33,8 +33,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
    * @param {Object} [remediationInstruction={}] - The remediation instruction to duplicate.
    * @returns {Promise<void>} Promise resolving when the modal action completes.
    */
-  const showDuplicateRemediationInstructionModal = (remediationInstruction = {}) =>
-    modals.show({
+  const showDuplicateRemediationInstructionModal = (remediationInstruction = {}) => modals.show({
       name: MODALS.createRemediationInstruction,
       config: {
         remediationInstruction: omit(remediationInstruction, ['_id']),
@@ -98,8 +97,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
    * @param {Object} [remediationInstruction={}] - The remediation instruction to approve.
    * @returns {Promise<void>} Promise resolving when the modal action completes.
    */
-  const showApproveRemediationInstructionModal = (remediationInstruction = {}) =>
-    modals.show({
+  const showApproveRemediationInstructionModal = (remediationInstruction = {}) => modals.show({
       name: MODALS.remediationInstructionApproval,
       config: {
         remediationInstructionId: remediationInstruction._id,
@@ -113,8 +111,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
    * @param {Object} [remediationInstruction={}] - The remediation instruction to remove.
    * @returns {Promise<void>} Promise resolving when the modal action completes.
    */
-  const showRemoveRemediationInstructionModal = (remediationInstruction = {}) =>
-    modals.show({
+  const showRemoveRemediationInstructionModal = (remediationInstruction = {}) => modals.show({
       name: MODALS.confirmation,
       config: {
         action: async () => {
@@ -131,8 +128,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
    * @param {Array<Object>} [selected=[]] - The selected remediation instructions to remove.
    * @returns {Promise<void>} Promise resolving when the modal action completes.
    */
-  const showRemoveSelectedRemediationInstructionModal = (selected = []) =>
-    modals.show({
+  const showRemoveSelectedRemediationInstructionModal = (selected = []) => modals.show({
       name: MODALS.confirmation,
       config: {
         action: async () => {

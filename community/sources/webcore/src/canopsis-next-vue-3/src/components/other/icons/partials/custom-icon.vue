@@ -27,8 +27,7 @@ export default {
   },
 
   setup(props) {
-    const sanitizedContent = computed(() =>
-      sanitizeHtml(props.content, CUSTOM_ICON_SANITIZE_OPTIONS),
+    const sanitizedContent = computed(() => sanitizeHtml(props.content, CUSTOM_ICON_SANITIZE_OPTIONS),
     );
 
     return {

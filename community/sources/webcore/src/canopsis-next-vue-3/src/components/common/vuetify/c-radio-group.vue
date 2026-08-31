@@ -1,19 +1,3 @@
-<script setup>
-import { useAttrs } from 'vue';
-
-import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
-
-const props = defineProps(validationProps);
-const emit = defineEmits(validationEmits);
-const attrs = useAttrs();
-
-const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
-  props,
-  emit,
-  attrs,
-);
-</script>
-
 <template>
   <v-radio-group
     v-bind="$attrs"
@@ -35,6 +19,22 @@ const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidati
     </template>
   </v-radio-group>
 </template>
+
+<script setup>
+import { useAttrs } from 'vue';
+
+import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
+
+const props = defineProps(validationProps);
+const emit = defineEmits(validationEmits);
+const attrs = useAttrs();
+
+const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
+  props,
+  emit,
+  attrs,
+);
+</script>
 
 <style scoped>
 .c-radio-group :deep(> .v-input__control > .v-label) {

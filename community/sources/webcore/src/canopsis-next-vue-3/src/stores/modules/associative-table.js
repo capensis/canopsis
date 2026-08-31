@@ -52,8 +52,7 @@ export const useAssociativeTableStore = defineStore('associativeTable', () => {
    * @param {string} [params.name] - Associative table name.
    * @returns {Promise<Object>}
    */
-  const remove = ({ name } = {}) =>
-    request.delete(API_ROUTES.associativeTable, {
+  const remove = ({ name } = {}) => request.delete(API_ROUTES.associativeTable, {
       params: { name },
     });
 

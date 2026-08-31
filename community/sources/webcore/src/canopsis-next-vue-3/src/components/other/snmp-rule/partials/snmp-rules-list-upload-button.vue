@@ -49,8 +49,7 @@ export default {
     const popups = usePopups();
     const { uploadSnmpMib } = useSnmpMib();
 
-    const sortFiles = files =>
-      [...files].sort((a, b) => {
+    const sortFiles = files => [...files].sort((a, b) => {
         const matchesA = a.name.match(/^(\d+)/) || ['0'];
         const matchesB = b.name.match(/^(\d+)/) || ['0'];
 

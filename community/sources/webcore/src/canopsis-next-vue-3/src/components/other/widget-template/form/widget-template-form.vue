@@ -61,8 +61,7 @@ export default {
     const type = form.model('type');
 
     const isColumnsType = computed(() => COLUMNS_WIDGET_TEMPLATES_TYPES.includes(type.value));
-    const isAlarmQuickActionsType = computed(() =>
-      ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES.includes(type.value),
+    const isAlarmQuickActionsType = computed(() => ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES.includes(type.value),
     );
     const isMassiveQuickActionsType = computed(
       () => type.value === WIDGET_TEMPLATES_TYPES.alarmMassQuickActions,

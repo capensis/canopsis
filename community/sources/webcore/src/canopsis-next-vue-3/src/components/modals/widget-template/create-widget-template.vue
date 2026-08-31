@@ -75,8 +75,7 @@ export default {
         isEdit: !!config.value.widgetTemplate?._id,
       });
     });
-    const submitLabel = computed(() =>
-      t(config.value.widgetTemplate?._id ? 'common.save' : 'common.create'),
+    const submitLabel = computed(() => t(config.value.widgetTemplate?._id ? 'common.save' : 'common.create'),
     );
     const closeModal = () => modals.hide({ id: props.modal.id });
 

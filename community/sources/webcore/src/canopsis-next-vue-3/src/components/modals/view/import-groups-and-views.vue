@@ -139,11 +139,9 @@ export default {
       });
     };
 
-    const changeImportedGroupHandler = (groupIndex, group) =>
-      importedGroups.value.splice(groupIndex, 1, group);
+    const changeImportedGroupHandler = (groupIndex, group) => importedGroups.value.splice(groupIndex, 1, group);
 
-    const changeCurrentGroupHandler = (groupIndex, group) =>
-      currentGroups.value.splice(groupIndex, 1, group);
+    const changeCurrentGroupHandler = (groupIndex, group) => currentGroups.value.splice(groupIndex, 1, group);
 
     const submit = async () => {
       try {

@@ -37,13 +37,11 @@ export const useRoleStore = defineStore('role', () => {
 
   const fetchListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.roles.list, { params });
 
-  const fetchTemplatesListWithoutStore = ({ params } = {}) =>
-    request.get(API_ROUTES.roles.templates, { params });
+  const fetchTemplatesListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.roles.templates, { params });
 
   const bulkRemove = ({ data } = {}) => request.delete(API_ROUTES.roles.bulk, { data });
 
-  const bulkUpdatePermissions = ({ data } = {}) =>
-    request.put(API_ROUTES.roles.bulkPermissions, data);
+  const bulkUpdatePermissions = ({ data } = {}) => request.put(API_ROUTES.roles.bulkPermissions, data);
 
   return {
     items,

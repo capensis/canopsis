@@ -90,8 +90,7 @@ export default {
     });
 
     const isCustomSeparatorSelected = computed(
-      () =>
-        form.value.selectedSeparator ===
+      () => form.value.selectedSeparator ===
         EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR,
     );
 

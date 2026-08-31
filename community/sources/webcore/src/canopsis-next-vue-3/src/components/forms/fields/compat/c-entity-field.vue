@@ -128,8 +128,7 @@ const emitModel = (event, value) => {
   }
 };
 
-const fetchHandler = ({ params }) =>
-  fetchContextEntitiesListWithoutStore({
+const fetchHandler = ({ params }) => fetchContextEntitiesListWithoutStore({
     params: {
       ...params,
       type: props.entityTypes,

@@ -42,8 +42,7 @@ export default {
       updateOptions,
       handler: fetchList,
     } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery =>
-        fetchCorporatePatternsList({
+      onUpdate: fetchQuery => fetchCorporatePatternsList({
           params: convertQueryToRequest(fetchQuery),
         }),
     });

@@ -87,8 +87,7 @@ export default {
       modals.show({
         name: MODALS.selectWidgetTemplateType,
         config: {
-          action: newWidgetTemplate =>
-            callActionWithPopup(
+          action: newWidgetTemplate => callActionWithPopup(
               () => createWidgetTemplate({ data: newWidgetTemplate }),
               fetchList,
             ),
@@ -101,8 +100,7 @@ export default {
         name: MODALS.createWidgetTemplate,
         config: {
           widgetTemplate,
-          action: newWidgetTemplate =>
-            callActionWithPopup(
+          action: newWidgetTemplate => callActionWithPopup(
               () => updateWidgetTemplate({ id: widgetTemplate._id, data: newWidgetTemplate }),
               fetchList,
             ),

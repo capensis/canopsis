@@ -117,29 +117,24 @@ export default {
       () => !isCorporatePatternsTab.value || hasCreateAnyCorporatePatternAccess.value,
     );
 
-    const createAlarmTitle = computed(() =>
-      isCorporatePatternsTab.value
+    const createAlarmTitle = computed(() => isCorporatePatternsTab.value
         ? t('modals.createCorporateAlarmPattern.create.title')
         : t('modals.createAlarmPattern.create.title'),
     );
-    const createEntityTitle = computed(() =>
-      isCorporatePatternsTab.value
+    const createEntityTitle = computed(() => isCorporatePatternsTab.value
         ? t('modals.createCorporateEntityPattern.create.title')
         : t('modals.createEntityPattern.create.title'),
     );
-    const createPbehaviorTitle = computed(() =>
-      isCorporatePatternsTab.value
+    const createPbehaviorTitle = computed(() => isCorporatePatternsTab.value
         ? t('modals.createCorporatePbehaviorPattern.create.title')
         : t('modals.createPbehaviorPattern.create.title'),
     );
-    const createServiceWeatherTitle = computed(() =>
-      isCorporatePatternsTab.value
+    const createServiceWeatherTitle = computed(() => isCorporatePatternsTab.value
         ? t('modals.createCorporateServiceWeatherPattern.create.title')
         : t('modals.createServiceWeatherPattern.create.title'),
     );
 
-    const refresh = () =>
-      isCorporatePatternsTab.value
+    const refresh = () => isCorporatePatternsTab.value
         ? fetchCorporatePatternsListWithPreviousParams()
         : fetchPatternsListWithPreviousParams();
 
@@ -161,23 +156,19 @@ export default {
       });
     };
 
-    const showCreateAlarmPatternModal = () =>
-      showCreatePatternModal({
+    const showCreateAlarmPatternModal = () => showCreatePatternModal({
         title: createAlarmTitle.value,
         type: PATTERN_TYPES.alarm,
       });
-    const showCreateEntityPatternModal = () =>
-      showCreatePatternModal({
+    const showCreateEntityPatternModal = () => showCreatePatternModal({
         title: createEntityTitle.value,
         type: PATTERN_TYPES.entity,
       });
-    const showCreatePbehaviorPatternModal = () =>
-      showCreatePatternModal({
+    const showCreatePbehaviorPatternModal = () => showCreatePatternModal({
         title: createPbehaviorTitle.value,
         type: PATTERN_TYPES.pbehavior,
       });
-    const showCreateServiceWeatherPatternModal = () =>
-      showCreatePatternModal({
+    const showCreateServiceWeatherPatternModal = () => showCreatePatternModal({
         title: createServiceWeatherTitle.value,
         type: PATTERN_TYPES.serviceWeather,
       });

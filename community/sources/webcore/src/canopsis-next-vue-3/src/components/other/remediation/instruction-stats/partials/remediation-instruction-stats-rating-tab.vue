@@ -56,8 +56,7 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params }) =>
-        fetchRemediationInstructionStatsCommentsWithoutStore({
+      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsCommentsWithoutStore({
           id: props.remediationInstruction._id,
           params: {
             ...params,

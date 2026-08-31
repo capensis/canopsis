@@ -10,8 +10,7 @@ import { useModals } from '@/hooks/modals';
 export const useUserInterfaceActions = () => {
   const modals = useModals();
 
-  const showUserInterfaceModal = () =>
-    modals.show({
+  const showUserInterfaceModal = () => modals.show({
       name: MODALS.userInterface,
     });
 

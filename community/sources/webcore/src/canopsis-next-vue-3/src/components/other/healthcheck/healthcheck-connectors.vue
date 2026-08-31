@@ -63,8 +63,7 @@ export default {
 
     const manageConnectorsRoute = { name: ROUTES_NAMES.adminAnomalyMonitoredConnectors };
 
-    const filteredConnectors = computed(() =>
-      connectors.value.reduce(
+    const filteredConnectors = computed(() => connectors.value.reduce(
         (acc, connector) => {
           if (connector.status === ANOMALY_MONITORED_CONNECTOR_STATUSES.disabled) {
             acc.disabled.push(connector);
@@ -82,8 +81,7 @@ export default {
 
     const updateItemsPerPage = itemsPerPage => updateOptions({ ...options.value, itemsPerPage });
 
-    const updatePaginationOptions = ({ page, itemsPerPage }) =>
-      updateOptions({
+    const updatePaginationOptions = ({ page, itemsPerPage }) => updateOptions({
         ...options.value,
         page,
         itemsPerPage,

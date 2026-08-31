@@ -14,8 +14,7 @@ const toNumber = (value) => {
   return Number(value);
 };
 
-const formatMessage = (message, params) =>
-  message.replace(/\{(\w+)}/g, (_, key) => params[key] ?? '');
+const formatMessage = (message, params) => message.replace(/\{(\w+)}/g, (_, key) => params[key] ?? '');
 
 const getFieldLabel = props => props.validationLabel || props.label || props.name || 'Field';
 
@@ -377,9 +376,8 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
     },
   });
 
-  const errorMessages = computed(() => externalErrorMessages.value.length
-    ? externalErrorMessages.value
-    : errors.value);
+  const errorMessages = computed(() => externalErrorMessages.value.length ? externalErrorMessages.value : errors.value,
+  );
 
   const onBlur = (event, shouldValidate = props.validateOnBlur) => {
     if (shouldValidate) {

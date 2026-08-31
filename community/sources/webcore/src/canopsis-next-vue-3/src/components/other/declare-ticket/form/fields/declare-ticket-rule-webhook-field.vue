@@ -110,8 +110,7 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
     const requestFormName = computed(() => `${props.name}.request`);
-    const webhookTemplateVarsKey = computed(() =>
-      props.hasPrevious ? 'webhook' : 'first_webhook',
+    const webhookTemplateVarsKey = computed(() => props.hasPrevious ? 'webhook' : 'first_webhook',
     );
 
     const { confirmAction: removeWebhook } = useConfirmableForm({

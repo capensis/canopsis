@@ -62,8 +62,7 @@ export default {
 
     const title = computed(() => config.value.title ?? t('common.duration'));
     const label = computed(() => config.value.label ?? t('common.duration'));
-    const units = computed(() =>
-      config.value.units?.map(unit => ({ ...unit, text: t(unit.text, form.value.value) })),
+    const units = computed(() => config.value.units?.map(unit => ({ ...unit, text: t(unit.text, form.value.value) })),
     );
 
     const closeModal = () => modals.hide({ id: props.modal.id });

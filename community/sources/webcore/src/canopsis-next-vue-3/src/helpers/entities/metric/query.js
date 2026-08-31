@@ -49,8 +49,7 @@ export function convertWidgetChartsToPerfDataQuery(charts = []) {
  * @param {string} timezone
  * @returns {{ from: number, to: number }}
  */
-export const convertMetricsIntervalToTimestamp = (interval, timezone) =>
-  convertMetricIntervalToTimestamp({ interval, timezone });
+export const convertMetricsIntervalToTimestamp = (interval, timezone) => convertMetricIntervalToTimestamp({ interval, timezone });
 
 /**
  * Convert user preference of a chart widget to query.

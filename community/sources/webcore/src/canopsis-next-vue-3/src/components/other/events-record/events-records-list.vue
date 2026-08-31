@@ -122,8 +122,7 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const formatDate = (date, defaultValue = '') =>
-      convertDateToString(date, undefined, defaultValue);
+    const formatDate = (date, defaultValue = '') => convertDateToString(date, undefined, defaultValue);
     const formatDuration = duration => convertDurationToString(duration);
 
     return {

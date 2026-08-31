@@ -33,8 +33,7 @@ export const useTemplateVarsList = ({ type, form = {} } = {}) => {
   } = useTemplateVars();
 
   const fetchHandler = computed(
-    () =>
-      ({
+    () => ({
         [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: fetchEventFiltersTemplateVarsWithoutStore,
         [TEMPLATE_TESTING_TEST_TYPES.linkRule]: async () => {
           const { alarm: alarmData, entity: entityData } =

@@ -81,11 +81,9 @@ export default {
 
     const jobFieldName = computed(() => `${props.name}.job`);
     // TODO: fix that
-    const createFieldModel = field =>
-      computed({
+    const createFieldModel = field => computed({
         get: () => props.job[field],
-        set: value =>
-          emit('update:job', {
+        set: value => emit('update:job', {
             ...props.job,
             [field]: value,
           }),

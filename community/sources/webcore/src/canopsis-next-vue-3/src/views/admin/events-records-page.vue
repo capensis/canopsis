@@ -101,8 +101,7 @@ export default {
 
     watch([eventsRecordRecordingsById, eventsRecordResendingsById], prepareEventsRecords);
 
-    const showRemoveEventsRecordModal = id =>
-      modals.show({
+    const showRemoveEventsRecordModal = id => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -113,8 +112,7 @@ export default {
         },
       });
 
-    const showEventsRecordModal = eventsRecord =>
-      modals.show({
+    const showEventsRecordModal = eventsRecord => modals.show({
         name: MODALS.eventsRecord,
         config: {
           eventsRecord,

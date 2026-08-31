@@ -69,8 +69,7 @@ const invalidMessage = computed(() => {
   return t('recurrenceRule.errors.invalidRangeNegative', { min: props.min, max: props.max });
 });
 
-const isValueValid = (value = '') =>
-  !value.length ||
+const isValueValid = (value = '') => !value.length ||
   value.split(',').every((item) => {
     const preparedValue = props.negative ? Math.abs(+item) : +item;
 

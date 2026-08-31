@@ -84,8 +84,7 @@ export default {
   },
   setup(props) {
     const fieldName = computed(() => props.name);
-    const enabledRulesCount = () =>
-      props.rules.filter((rule) => {
+    const enabledRulesCount = () => props.rules.filter((rule) => {
         const attribute = props.attributes.find(({ value }) => value === rule.attribute);
 
         return !attribute?.options?.disabled;

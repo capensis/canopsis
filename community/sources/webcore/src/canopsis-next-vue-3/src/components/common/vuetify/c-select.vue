@@ -1,3 +1,28 @@
+<template>
+  <v-select
+    v-bind="$attrs"
+    v-model="selectValue"
+    :items="selectItems"
+    :item-props="itemProps ? getItemProps : undefined"
+    :menu-props="selectMenuProps"
+    :name="inputName"
+    :error-messages="errorMessages"
+    class="c-field c-select"
+    @blur="onSelectBlur"
+    @update:menu="onMenuUpdate"
+  >
+    <template v-if="label" #label>
+      <span v-if="required && label" class="text-error"> * </span>
+
+      {{ label }}
+    </template>
+
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
+    </template>
+  </v-select>
+</template>
+
 <script setup>
 import { isString } from 'lodash';
 import { computed, nextTick, ref, useAttrs } from 'vue';
@@ -62,8 +87,7 @@ const normalizeLegacyListItem = (item, index) => {
   return item;
 };
 
-const hasLegacyHeaders = computed(() =>
-  props.items.some(item => !!item?.header),
+const hasLegacyHeaders = computed(() => props.items.some(item => !!item?.header),
 );
 const selectItems = computed(() => props.items.map(normalizeLegacyListItem));
 const selectMenuProps = computed(() => {
@@ -132,31 +156,6 @@ const getItemProps = (item) => {
   return props.itemProps;
 };
 </script>
-
-<template>
-  <v-select
-    v-bind="$attrs"
-    v-model="selectValue"
-    :items="selectItems"
-    :item-props="itemProps ? getItemProps : undefined"
-    :menu-props="selectMenuProps"
-    :name="inputName"
-    :error-messages="errorMessages"
-    class="c-field c-select"
-    @blur="onSelectBlur"
-    @update:menu="onMenuUpdate"
-  >
-    <template v-if="label" #label>
-      <span v-if="required && label" class="text-error"> * </span>
-
-      {{ label }}
-    </template>
-
-    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
-    </template>
-  </v-select>
-</template>
 
 <style lang="scss">
 .c-select-menu--with-headers {

@@ -1,3 +1,38 @@
+<template>
+  <v-expansion-panels
+    v-model="localExpanded"
+    :style="panelStyle"
+    :disabled="disabled"
+    class="c-collapse-panel"
+  >
+    <v-expansion-panel class="c-collapse-panel__panel">
+      <v-expansion-panel-title :style="headerStyle" class="c-collapse-panel__title">
+        <div class="c-collapse-panel__header">
+          <slot name="header">
+            <span class="c-collapse-panel__header-text">
+              {{ title }}
+            </span>
+          </slot>
+        </div>
+
+        <template #actions>
+          <slot name="actions">
+            <v-icon :icon="icon" />
+          </slot>
+        </template>
+      </v-expansion-panel-title>
+
+      <v-expansion-panel-text eager>
+        <v-card class="c-collapse-panel__card" elevation="0">
+          <v-card-text>
+            <slot />
+          </v-card-text>
+        </v-card>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+  </v-expansion-panels>
+</template>
+
 <script setup>
 import { computed, ref, watch } from 'vue';
 
@@ -57,41 +92,6 @@ watch(
   },
 );
 </script>
-
-<template>
-  <v-expansion-panels
-    v-model="localExpanded"
-    :style="panelStyle"
-    :disabled="disabled"
-    class="c-collapse-panel"
-  >
-    <v-expansion-panel class="c-collapse-panel__panel">
-      <v-expansion-panel-title :style="headerStyle" class="c-collapse-panel__title">
-        <div class="c-collapse-panel__header">
-          <slot name="header">
-            <span class="c-collapse-panel__header-text">
-              {{ title }}
-            </span>
-          </slot>
-        </div>
-
-        <template #actions>
-          <slot name="actions">
-            <v-icon :icon="icon" />
-          </slot>
-        </template>
-      </v-expansion-panel-title>
-
-      <v-expansion-panel-text eager>
-        <v-card class="c-collapse-panel__card" elevation="0">
-          <v-card-text>
-            <slot />
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
-</template>
 
 <style lang="scss">
 .c-collapse-panel {

@@ -79,8 +79,7 @@ export default {
           chart: { type },
           title: this.$t(`modals.createAlarmChart.${type}.create.title`),
           onlyExternal: true,
-          action: chart =>
-            this.$emit('update:modelValue', [...this.modelValue, addKeyInEntity(chart)]),
+          action: chart => this.$emit('update:modelValue', [...this.modelValue, addKeyInEntity(chart)]),
         },
       });
     },
@@ -103,8 +102,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () =>
-            this.$emit(
+          action: () => this.$emit(
               'update:modelValue',
               this.modelValue.filter((_, i) => i !== index),
             ),

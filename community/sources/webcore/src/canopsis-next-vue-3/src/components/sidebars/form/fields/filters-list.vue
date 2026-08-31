@@ -112,8 +112,7 @@ export default {
           ...this.modalConfig,
 
           title: this.$t('modals.createFilter.create.title'),
-          action: newFilter =>
-            this.updateFilters([
+          action: newFilter => this.updateFilters([
               ...this.filters,
               {
                 ...newFilter,
@@ -153,8 +152,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () =>
-            this.updateFilters(this.filters.filter((_, filterIndex) => filterIndex !== index)),
+          action: () => this.updateFilters(this.filters.filter((_, filterIndex) => filterIndex !== index)),
         },
       });
     },

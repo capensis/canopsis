@@ -23,8 +23,7 @@ export const ADVANCED_SEARCH_HISTORY_ITEM_MIN_HEIGHT = 48;
  * }}
  */
 export const useAdvancedSearchHistory = (searches) => {
-  const preparedSearches = computed(() =>
-    (unref(searches) ?? []).map(search => ({
+  const preparedSearches = computed(() => (unref(searches) ?? []).map(search => ({
       _id: search._id,
       pinned: search.pinned,
       rules: advancedSearchToForm(search),

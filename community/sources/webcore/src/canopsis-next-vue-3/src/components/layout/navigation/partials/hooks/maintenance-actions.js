@@ -41,8 +41,7 @@ export const useMaintenanceActions = () => {
   /**
    * Show modal to create maintenance mode.
    */
-  const showCreateMaintenanceModeModal = () =>
-    modals.show({
+  const showCreateMaintenanceModeModal = () => modals.show({
       name: MODALS.createMaintenance,
       config: {
         action: enableMaintenanceMode,
@@ -53,8 +52,7 @@ export const useMaintenanceActions = () => {
   /**
    * Show confirmation modal to leave maintenance mode.
    */
-  const showConfirmationLeaveMaintenanceMode = () =>
-    modals.show({
+  const showConfirmationLeaveMaintenanceMode = () => modals.show({
       name: MODALS.confirmation,
       config: {
         title: t('modals.confirmationLeaveMaintenance.title'),
@@ -66,8 +64,7 @@ export const useMaintenanceActions = () => {
   /**
    * Toggle maintenance mode.
    */
-  const showToggleMaintenanceModeModal = () =>
-    maintenance.value ? showConfirmationLeaveMaintenanceMode() : showCreateMaintenanceModeModal();
+  const showToggleMaintenanceModeModal = () => maintenance.value ? showConfirmationLeaveMaintenanceMode() : showCreateMaintenanceModeModal();
 
   return {
     maintenance,

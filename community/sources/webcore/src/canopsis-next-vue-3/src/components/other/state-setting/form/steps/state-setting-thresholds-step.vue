@@ -50,8 +50,7 @@ export default {
 
     const getLabel = key => t(`common.stateTypes.${ALARM_STATES[key]}`);
 
-    const requiredRuleGetter = () =>
-      Object.values(thresholds.value ?? {}).some(({ enabled }) => enabled);
+    const requiredRuleGetter = () => Object.values(thresholds.value ?? {}).some(({ enabled }) => enabled);
 
     const updateThreshold = (key, value) => {
       thresholds.value = {

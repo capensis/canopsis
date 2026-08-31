@@ -69,8 +69,7 @@ export default {
     /**
      * Opens the create LLM modal and refreshes the list after a successful create.
      */
-    const showCreateLlmModal = () =>
-      modals.show({
+    const showCreateLlmModal = () => modals.show({
         name: MODALS.createLlm,
         config: {
           action: async (data) => {
@@ -86,8 +85,7 @@ export default {
      *
      * @param {Object} llm - LLM entity from the table (must include `_id`).
      */
-    const showEditLlmModal = llm =>
-      modals.show({
+    const showEditLlmModal = llm => modals.show({
         name: MODALS.createLlm,
         config: {
           llm,

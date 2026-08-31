@@ -25,23 +25,17 @@ const AdminPlanning = () => import('@/views/admin/planning-page.vue');
 const AdminHealthcheck = () => import('@/views/admin/healthcheck-page.vue');
 const AdminKPI = () => import('@/views/admin/kpi-page.vue');
 const AdminEventsRecords = () => import('@/views/admin/events-records-page.vue');
-const AdminAnomalyMonitoredConnectors = () =>
-  import('@/views/admin/anomaly-monitored-connectors-page.vue');
-const AdminEntityInfosProperties = () =>
-  import('@/views/admin/custom-objects/entity-infos-properties-page.vue');
+const AdminAnomalyMonitoredConnectors = () => import('@/views/admin/anomaly-monitored-connectors-page.vue');
+const AdminEntityInfosProperties = () => import('@/views/admin/custom-objects/entity-infos-properties-page.vue');
 const AdminIcons = () => import('@/views/admin/custom-objects/icons-page.vue');
 const AdminMaps = () => import('@/views/admin/custom-objects/maps-page.vue');
 const AdminTags = () => import('@/views/admin/custom-objects/tags-page.vue');
 const AdminLlms = () => import('@/views/admin/custom-objects/llms-page.vue');
 const AdminViewsImportExport = () => import('@/views/admin/settings/views-import-export-page.vue');
-const AdminSettingsNotifications = () =>
-  import('@/views/admin/settings/notifications-settings-page.vue');
-const AdminSettingsCommentTemplates = () =>
-  import('@/views/admin/settings/comment-templates-page.vue');
-const AdminSettingsWidgetTemplates = () =>
-  import('@/views/admin/settings/widget-templates-page.vue');
-const AdminSettingsStorageSettings = () =>
-  import('@/views/admin/settings/storage-settings-page.vue');
+const AdminSettingsNotifications = () => import('@/views/admin/settings/notifications-settings-page.vue');
+const AdminSettingsCommentTemplates = () => import('@/views/admin/settings/comment-templates-page.vue');
+const AdminSettingsWidgetTemplates = () => import('@/views/admin/settings/widget-templates-page.vue');
+const AdminSettingsStorageSettings = () => import('@/views/admin/settings/storage-settings-page.vue');
 const AdminSettingsStateSettings = () => import('@/views/admin/settings/state-settings-page.vue');
 const DynamicInfosPage = () => import('@/views/exploitation/dynamic-infos-page.vue');
 const DeclareTicketRulesPage = () => import('@/views/exploitation/declare-ticket-rules-page.vue');

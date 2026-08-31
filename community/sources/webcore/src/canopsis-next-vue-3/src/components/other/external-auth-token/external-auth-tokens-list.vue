@@ -59,8 +59,7 @@ import { useLinkedRulesTooltips } from '@/hooks/table/linked-rules-tooltips';
 
 import ExternalAuthTokensListExpandPanel from './partials/external-auth-tokens-list-expand-panel.vue';
 
-const htmlToTooltipText = (html = '') =>
-  html
+const htmlToTooltipText = (html = '') => html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/(li|ul)>/gi, '\n')
     .replace(/<[^>]+>/g, '')
@@ -135,8 +134,7 @@ export default {
       },
     ]);
 
-    const preparedTokens = computed(() =>
-      props.tokens.map((token) => {
+    const preparedTokens = computed(() => props.tokens.map((token) => {
         const linkedRulesTooltip = getLinkedRulesMessage(token.linked_rules);
 
         if (!linkedRulesTooltip.trim()) {

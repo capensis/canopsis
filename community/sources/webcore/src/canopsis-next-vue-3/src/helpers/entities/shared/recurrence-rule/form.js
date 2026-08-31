@@ -129,8 +129,7 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
 /**
  * @return {RecurrenceRuleFormOptions}
  */
-export const emptyRecurrenceRuleFormOptions = () =>
-  recurrenceRuleToFormOptions(new RRule().origOptions);
+export const emptyRecurrenceRuleFormOptions = () => recurrenceRuleToFormOptions(new RRule().origOptions);
 
 /**
  * @param {RecurrenceRuleFormOptions} options

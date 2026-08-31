@@ -156,8 +156,7 @@ import { uid } from '@/helpers/uid';
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isApproveRequested = instruction =>
-  [
+export const isApproveRequested = instruction => [
     REMEDIATION_INSTRUCTION_STATUSES.createdAndApproveRequested,
     REMEDIATION_INSTRUCTION_STATUSES.updatedAndApproveRequested,
   ].includes(instruction.status);
@@ -168,8 +167,7 @@ export const isApproveRequested = instruction =>
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isInstructionApproved = instruction =>
-  instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
+export const isInstructionApproved = instruction => instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
 
 /**
  * Check instruction status is dismissed
@@ -177,8 +175,7 @@ export const isInstructionApproved = instruction =>
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isInstructionDismissed = instruction =>
-  [
+export const isInstructionDismissed = instruction => [
     REMEDIATION_INSTRUCTION_STATUSES.createdAndDismissed,
     REMEDIATION_INSTRUCTION_STATUSES.updatedAndDismissed,
   ].includes(instruction.status);
@@ -205,8 +202,7 @@ export const isInstructionTypeManual = type => type === REMEDIATION_INSTRUCTION_
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeSimpleManual = type =>
-  type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
+export const isInstructionTypeSimpleManual = type => type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
  * Check instruction type is any manual
@@ -214,8 +210,7 @@ export const isInstructionTypeSimpleManual = type =>
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeAnySimpleManual = type =>
-  isInstructionTypeManual(type) || isInstructionTypeSimpleManual(type);
+export const isInstructionTypeAnySimpleManual = type => isInstructionTypeManual(type) || isInstructionTypeSimpleManual(type);
 
 /**
  * Convert a remediation instruction step operation to form
@@ -239,8 +234,7 @@ export const remediationInstructionStepOperationToForm = (operation = {}) => ({
  * @param {RemediationInstructionStepOperation[]} [operations = [undefined]]
  * @returns {Array}
  */
-const remediationInstructionStepOperationsToForm = (operations = [undefined]) =>
-  operations.map(remediationInstructionStepOperationToForm);
+const remediationInstructionStepOperationsToForm = (operations = [undefined]) => operations.map(remediationInstructionStepOperationToForm);
 
 /**
  * Convert a remediation instruction step to form
@@ -262,8 +256,7 @@ export const remediationInstructionStepToForm = (step = {}) => ({
  * @param {RemediationInstructionStep[]} [steps = [undefined]]
  * @returns {RemediationInstructionStepForm[]}
  */
-const remediationInstructionStepsToForm = (steps = [undefined]) =>
-  steps.map(remediationInstructionStepToForm);
+const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(remediationInstructionStepToForm);
 
 /**
  * Convert a remediation instruction approval to form
@@ -298,8 +291,7 @@ export const remediationInstructionJobToForm = (job = {}) => ({
  * @param {RemediationInstructionJob[]} [jobs = [undefined]]
  * @returns {RemediationInstructionJobForm[]}
  */
-const remediationInstructionJobsToForm = (jobs = [undefined]) =>
-  jobs.map(remediationInstructionJobToForm);
+const remediationInstructionJobsToForm = (jobs = [undefined]) => jobs.map(remediationInstructionJobToForm);
 
 /**
  * Convert a remediation instruction object to form object
@@ -369,8 +361,7 @@ export const remediationInstructionToFullForm = (remediationInstruction = {}) =>
  * @param {RemediationInstructionJobForm[]} jobs
  * @returns {RemediationInstructionJob[]}
  */
-const formJobsToRemediationInstructionJobs = (jobs = []) =>
-  jobs.map(job => ({
+const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
     ...omit(job, ['key']),
 
     job: job.job._id,
@@ -382,8 +373,7 @@ const formJobsToRemediationInstructionJobs = (jobs = []) =>
  * @param {RemediationInstructionStepOperationForm[]} operations
  * @returns {RemediationInstructionStepOperation[]}
  */
-const formOperationsToRemediationInstructionOperations = operations =>
-  operations.map(operation => ({
+const formOperationsToRemediationInstructionOperations = operations => operations.map(operation => ({
     ...omit(operation, ['key']),
 
     jobs: operation.jobs.map(({ _id }) => _id),
@@ -395,8 +385,7 @@ const formOperationsToRemediationInstructionOperations = operations =>
  * @param {RemediationInstructionStepForm[]} steps
  * @returns {RemediationInstructionStep[]}
  */
-const formStepsToRemediationInstructionSteps = steps =>
-  steps.map(step => ({
+const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
     ...omit(step, ['key']),
 
     operations: formOperationsToRemediationInstructionOperations(step.operations),
@@ -480,8 +469,7 @@ export const formToRemediationInstruction = (form) => {
  * @param {RemediationInstructionForm} form
  * @return {FlattenErrors}
  */
-export const remediationInstructionErrorsToForm = (errors, form) =>
-  flattenErrorMap(errors, (errorsObject) => {
+export const remediationInstructionErrorsToForm = (errors, form) => flattenErrorMap(errors, (errorsObject) => {
     const { jobs, ...errorMessages } = errorsObject;
 
     if (jobs) {

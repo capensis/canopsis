@@ -1,3 +1,9 @@
+<template>
+  <component :is="tag" v-bind="layoutAttrs" :class="layoutClasses">
+    <slot />
+  </component>
+</template>
+
 <script setup>
 import { computed, useAttrs } from 'vue';
 
@@ -100,12 +106,6 @@ const layoutAttrs = computed(() => {
   return rest;
 });
 </script>
-
-<template>
-  <component :is="tag" v-bind="layoutAttrs" :class="layoutClasses">
-    <slot />
-  </component>
-</template>
 
 <style lang="scss" scoped>
 .c-layout--fill {

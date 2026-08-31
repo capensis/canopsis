@@ -88,8 +88,7 @@ const { pending: submitting, handler: submit } = usePendingHandler(async (data) 
 });
 
 const approve = () => submit({ approve: true });
-const dismiss = comment =>
-  submit({
+const dismiss = comment => submit({
     approve: false,
     comment,
   });

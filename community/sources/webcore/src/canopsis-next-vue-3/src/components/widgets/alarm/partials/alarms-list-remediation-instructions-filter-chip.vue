@@ -60,8 +60,7 @@ export default {
     /**
      * Clears instruction_type, instruction_statuses, and instruction_ids from the filter.
      */
-    const clearType = () =>
-      updateModel(omit(props.modelValue, ['instruction_type', 'instruction_statuses', 'instruction_ids']));
+    const clearType = () => updateModel(omit(props.modelValue, ['instruction_type', 'instruction_statuses', 'instruction_ids']));
 
     /**
      * Clears instruction_statuses from the filter.

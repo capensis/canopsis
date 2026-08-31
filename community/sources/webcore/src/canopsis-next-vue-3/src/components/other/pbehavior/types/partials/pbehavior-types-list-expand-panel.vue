@@ -68,11 +68,9 @@ export default {
     const { t } = useI18n();
 
     const activeTab = ref(TABS.description);
-    const iconColor = computed(() =>
-      getMostReadableTextColor(props.pbehaviorType.color, { level: 'AA', size: 'large' }),
+    const iconColor = computed(() => getMostReadableTextColor(props.pbehaviorType.color, { level: 'AA', size: 'large' }),
     );
-    const typeLabel = computed(() =>
-      props.pbehaviorType.type ? t(`pbehavior.types.types.${props.pbehaviorType.type}`) : '-',
+    const typeLabel = computed(() => props.pbehaviorType.type ? t(`pbehavior.types.types.${props.pbehaviorType.type}`) : '-',
     );
 
     return {

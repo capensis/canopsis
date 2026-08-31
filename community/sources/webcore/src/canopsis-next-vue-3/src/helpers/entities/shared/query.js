@@ -78,8 +78,7 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
 
   return {
     multi_sort: sortBy.map(
-      (property, index) =>
-        `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`,
+      (property, index) => `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`,
     ),
   };
 };
@@ -91,8 +90,7 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
  * @param {boolean[]} [sortDesc=[]]
  * @returns {{ key: string, order: string }[]}
  */
-export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
-  sortBy.map((key, index) => ({
+export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) => sortBy.map((key, index) => ({
     key,
     order: sortDesc?.[index] ? SORT_ORDERS.desc.toLowerCase() : SORT_ORDERS.asc.toLowerCase(),
   }));

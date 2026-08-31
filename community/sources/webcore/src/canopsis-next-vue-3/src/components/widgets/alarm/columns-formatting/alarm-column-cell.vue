@@ -170,8 +170,7 @@ export default {
 
       return result;
     });
-    const popupTemplateId = computed(() =>
-      getAlarmWidgetColumnPopupTemplateId(props.widget._id, props.column.value),
+    const popupTemplateId = computed(() => getAlarmWidgetColumnPopupTemplateId(props.widget._id, props.column.value),
     );
     const textClass = computed(() => {
       let result = {

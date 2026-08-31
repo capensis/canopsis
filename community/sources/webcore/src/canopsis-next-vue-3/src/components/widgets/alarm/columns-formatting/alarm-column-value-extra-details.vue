@@ -82,8 +82,7 @@ export default {
 
   setup(props) {
     const hasTickets = computed(() => !!props.alarm.v.tickets?.length);
-    const hasInactivePbehavior = computed(() =>
-      isNotActivePbehaviorType(props.alarm.v.pbehavior_info?.canonical_type),
+    const hasInactivePbehavior = computed(() => isNotActivePbehaviorType(props.alarm.v.pbehavior_info?.canonical_type),
     );
 
     return {

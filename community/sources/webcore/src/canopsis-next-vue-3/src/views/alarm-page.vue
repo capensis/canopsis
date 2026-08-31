@@ -68,8 +68,7 @@ export default {
       total_count: alarmItems.value.length,
     }));
 
-    const columns = computed(() =>
-      widget.value.parameters.widgetColumns.map(column => ({
+    const columns = computed(() => widget.value.parameters.widgetColumns.map(column => ({
         ...column,
         sortable: false,
       })),

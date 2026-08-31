@@ -66,8 +66,7 @@ export default {
     const { updateModel, addItemIntoArray, removeItemFromArray, updateItemInArray } =
       useArrayModelField(props, emit, 'webhooks');
 
-    const isSomeOneDeclareTicketEnabled = computed(() =>
-      props.webhooks.some(webhook => webhook.declare_ticket.enabled),
+    const isSomeOneDeclareTicketEnabled = computed(() => props.webhooks.some(webhook => webhook.declare_ticket.enabled),
     );
 
     const draggableGroup = computed(() => ({

@@ -44,8 +44,7 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const types = computed(() =>
-      Object.values(ENTITY_INFO_PROPERTY_TYPES).map(value => ({
+    const types = computed(() => Object.values(ENTITY_INFO_PROPERTY_TYPES).map(value => ({
         text: t(ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS[value]),
         value,
       })),

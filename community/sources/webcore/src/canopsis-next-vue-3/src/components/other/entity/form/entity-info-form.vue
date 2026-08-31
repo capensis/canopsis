@@ -51,8 +51,7 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
 
-    const uniqueNames = computed(() =>
-      props.infos
+    const uniqueNames = computed(() => props.infos
         .map(({ name }) => name)
         .filter(name => name !== props.entityInfo?.name),
     );

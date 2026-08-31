@@ -133,8 +133,7 @@ export default {
       USER_PERMISSIONS.technical.exploitation.remediationInstruction,
     );
 
-    const headers = computed(() =>
-      [
+    const headers = computed(() => [
         { text: t('common.name'), value: 'name', width: 150 },
         hasCreateAccess.value && { text: t('common.type'), value: 'type', width: 100 },
         {
@@ -184,8 +183,7 @@ export default {
       ].filter(Boolean),
     );
 
-    const updateInterval = interval =>
-      emit('update:options', {
+    const updateInterval = interval => emit('update:options', {
         ...props.options,
         interval,
       });

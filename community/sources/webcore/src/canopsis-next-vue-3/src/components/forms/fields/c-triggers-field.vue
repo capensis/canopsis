@@ -146,8 +146,7 @@ export default {
 
     const preparedTriggersByTypes = ref({});
 
-    const deprecatedValues = computed(() =>
-      props.modelValue.filter(({ type }) => isDeprecatedTrigger(type)),
+    const deprecatedValues = computed(() => props.modelValue.filter(({ type }) => isDeprecatedTrigger(type)),
     );
 
     const validateTriggers = (value = []) => {
@@ -198,8 +197,7 @@ export default {
       };
     };
 
-    const preparedTriggers = computed(() =>
-      props.types.reduce((acc, type) => {
+    const preparedTriggers = computed(() => props.types.reduce((acc, type) => {
         if (!PRO_TRIGGERS.includes(type) || isProVersion.value) {
           acc.push(triggerToPreparedTrigger({
             ...preparedTriggersByTypes.value[type],
@@ -210,8 +208,7 @@ export default {
         return acc;
       }, []),
     );
-    const selectedTriggers = computed(() =>
-      props.modelValue.map((trigger) => {
+    const selectedTriggers = computed(() => props.modelValue.map((trigger) => {
         const preparedTrigger = preparedTriggers.value.find(({ type }) => type === trigger.type);
 
         return preparedTrigger
@@ -253,8 +250,7 @@ export default {
      * @param {Trigger} trigger
      * @return {boolean}
      */
-    const isTriggerSelected = trigger =>
-      props.modelValue.some(({ type }) => type === trigger.type);
+    const isTriggerSelected = trigger => props.modelValue.some(({ type }) => type === trigger.type);
 
     /**
      * Get CSS class for selected item
@@ -345,8 +341,7 @@ export default {
       preparedTriggersByTypes.value[type][additionalValuesKeysByTriggers[type]] = additionalValue;
 
       updateModel(
-        props.modelValue.map(trigger =>
-          trigger.type === type ? preparedTriggersByTypes.value[type] : trigger,
+        props.modelValue.map(trigger => trigger.type === type ? preparedTriggersByTypes.value[type] : trigger,
         ),
       );
     };

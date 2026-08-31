@@ -79,8 +79,7 @@ export const useWidgetSettings = ({ sidebar, localWidget = false } = {}) => {
     });
   };
 
-  const fetchWidgetUserPreference = data =>
-    unref(localWidget) ? Promise.resolve() : fetchUserPreference(data);
+  const fetchWidgetUserPreference = data => unref(localWidget) ? Promise.resolve() : fetchUserPreference(data);
 
   /**
    * Submit settings form.

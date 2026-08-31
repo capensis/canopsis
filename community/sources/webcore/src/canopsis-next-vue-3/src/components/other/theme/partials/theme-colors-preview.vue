@@ -45,8 +45,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const isTableColorReadable = computed(() =>
-      isReadableColor(props.backgroundColor, props.color),
+    const isTableColorReadable = computed(() => isReadableColor(props.backgroundColor, props.color),
     );
     const preparedText = computed(() => props.text || t('theme.exampleText'));
     const cardStyle = computed(() => ({

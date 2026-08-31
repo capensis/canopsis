@@ -78,8 +78,7 @@ export default {
 
       return {
         ...response,
-        data: response.data.map(metric =>
-          isString(metric) ? { value: metric } : metric,
+        data: response.data.map(metric => isString(metric) ? { value: metric } : metric,
         ),
       };
     };
@@ -144,8 +143,7 @@ export default {
       emit('update:modelValue', matchedMetric?.value ?? enteredValue.trim());
       closeMenuAndBlur();
     };
-    const preparedItems = computed(() =>
-      lazySearch.items.value.map(({ value }) => ({ value, text: value })),
+    const preparedItems = computed(() => lazySearch.items.value.map(({ value }) => ({ value, text: value })),
     );
 
     return {

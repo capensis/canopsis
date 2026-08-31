@@ -117,8 +117,7 @@ export const snoozeToForm = (snooze = {}) => ({
  * @param {Array<Object>} alarms - Alarm objects.
  * @returns {Array<Object>} Unique entity objects extracted from alarms.
  */
-export const mapAlarmsEntities = (alarms = []) =>
-  Object.values(
+export const mapAlarmsEntities = (alarms = []) => Object.values(
     alarms.reduce((acc, alarm) => {
       acc[alarm?.entity?._id] = alarm?.entity;
 

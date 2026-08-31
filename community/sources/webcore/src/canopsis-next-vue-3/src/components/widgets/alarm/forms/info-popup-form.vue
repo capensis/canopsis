@@ -55,8 +55,7 @@ export default {
 
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
-    const preparedColumns = computed(() =>
-      formToWidgetColumns(props.columns).map(column => ({
+    const preparedColumns = computed(() => formToWidgetColumns(props.columns).map(column => ({
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
         value: column.value,
       })),

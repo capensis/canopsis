@@ -109,8 +109,7 @@ export default {
 
     const isEmpty = computed(() => !props.value?.length);
     const hasErrors = computed(() => validator?.errors?.has(fieldName.value) ?? false);
-    const requiredAddButtonError = computed(() =>
-      props.required && hasErrors.value
+    const requiredAddButtonError = computed(() => props.required && hasErrors.value
         ? props.requiredErrorMessage || fieldError.value || t('common.addAtLeastOneItem')
         : '',
     );

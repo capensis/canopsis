@@ -190,8 +190,7 @@ export default {
       return {
         ...this.getIntervalQuery(),
         ...pick(this.query, ['sampling', 'with_history']),
-        parameters: (this.query.parameters ?? []).filter(({ metric }) =>
-          this.availableMetrics.includes(metric),
+        parameters: (this.query.parameters ?? []).filter(({ metric }) => this.availableMetrics.includes(metric),
         ),
         entity: this.entity._id,
       };

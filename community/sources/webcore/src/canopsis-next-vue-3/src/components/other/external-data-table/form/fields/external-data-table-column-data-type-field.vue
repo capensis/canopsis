@@ -108,8 +108,7 @@ export default {
     const validator = useValidator();
     const { updateField, updateModel } = useModelField(props, emit);
 
-    const typesMap = computed(() =>
-      mapValues(EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, (type) => {
+    const typesMap = computed(() => mapValues(EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, (type) => {
         const key = `externalData.tableColumnDataTypes.${type}`;
         const item = {
           value: type,
@@ -133,8 +132,7 @@ export default {
     );
 
     const isCustomValueTypeSelected = computed(
-      () =>
-        props.value.string_array_type ===
+      () => props.value.string_array_type ===
         EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom,
     );
 
@@ -167,8 +165,7 @@ export default {
       props.value.name,
     );
 
-    onBeforeMount(() =>
-      attachRequiredRule(() => !isStringArray.value || !!props.value.string_array_type),
+    onBeforeMount(() => attachRequiredRule(() => !isStringArray.value || !!props.value.string_array_type),
     );
     onBeforeUnmount(detachRequiredRule);
 

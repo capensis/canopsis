@@ -151,16 +151,14 @@ export default {
 
         return params;
       },
-      fetchListHandler: async ({ params }) =>
-        (groupByChat.value ? fetchLlmChatsWithoutStore : fetchLlmHistoryWithoutStore)({
+      fetchListHandler: async ({ params }) => (groupByChat.value ? fetchLlmChatsWithoutStore : fetchLlmHistoryWithoutStore)({
           id: props.llmId,
           params,
         }),
     });
 
     const totalItems = computed(() => meta.value?.total_count ?? 0);
-    const headers = computed(() =>
-      [
+    const headers = computed(() => [
         !props.userId && {
           text: t('llm.promptsHistory.columns.userName'),
           value: 'user.display_name',
@@ -195,8 +193,7 @@ export default {
         },
       ].filter(Boolean),
     );
-    const preparedItems = computed(() =>
-      items.value.map((item) => {
+    const preparedItems = computed(() => items.value.map((item) => {
         const context = item.context?.replace(`${LLM_SOCKET_CONTEXTS.widgetFilter}_`, '');
         const widgetMessageKey = `modals.createWidget.types.${context}.title`;
 
@@ -210,8 +207,7 @@ export default {
     );
 
     const formatDate = value => convertDateToString(value, 'long', '-');
-    const onlyOffTopicChange = value =>
-      updateOptions({
+    const onlyOffTopicChange = value => updateOptions({
         ...options.value,
         only_off_topic: value,
         page: 1,

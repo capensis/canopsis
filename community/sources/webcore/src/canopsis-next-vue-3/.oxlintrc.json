@@ -9,6 +9,7 @@
     "correctness": "error"
   },
   "rules": {
+    "eslint/arrow-body-style": ["error", "as-needed"],
     "eslint/no-unused-vars": [
       "warn",
       {

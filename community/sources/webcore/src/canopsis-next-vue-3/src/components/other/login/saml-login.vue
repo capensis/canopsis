@@ -1,3 +1,7 @@
+<template>
+  <third-party-login :title="t('login.loginWithSAML')" :links="links" />
+</template>
+
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -35,7 +39,3 @@ const links = computed(() => [
   },
 ]);
 </script>
-
-<template>
-  <third-party-login :title="t('login.loginWithSAML')" :links="links" />
-</template>

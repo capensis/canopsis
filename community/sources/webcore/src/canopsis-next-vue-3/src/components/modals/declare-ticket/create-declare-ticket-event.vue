@@ -90,20 +90,17 @@ export default {
       values.value = nextForm;
     };
 
-    const isAllComponentAlarms = computed(() =>
-      (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    const isAllComponentAlarms = computed(() => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
     );
 
     const isSomeOneSuccessTicketExist = () => {
       const alarmsById = keyBy(config.value.items, '_id');
 
-      return Object.entries(values.value.alarms_by_tickets).some(([ticketRuleId, alarmIds]) =>
-        alarmIds.some((alarmId) => {
+      return Object.entries(values.value.alarms_by_tickets).some(([ticketRuleId, alarmIds]) => alarmIds.some((alarmId) => {
           const alarm = alarmsById[alarmId];
 
           return alarm.v.tickets?.some(
-            ticket =>
-              ticketRuleId === ticket.ticket_rule_id && isSuccessStepTicketType(ticket._t),
+            ticket => ticketRuleId === ticket.ticket_rule_id && isSuccessStepTicketType(ticket._t),
           );
         }),
       );

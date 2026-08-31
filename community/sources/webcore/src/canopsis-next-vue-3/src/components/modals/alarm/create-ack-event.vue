@@ -91,15 +91,12 @@ export default {
       },
     });
 
-    const isAlarmsHasDeclareTicketRules = computed(() =>
-      (config.value.items ?? []).some(
-        ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) =>
-          assignedDeclareTicketRules?.length,
+    const isAlarmsHasDeclareTicketRules = computed(() => (config.value.items ?? []).some(
+        ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
       ),
     );
 
-    const isAllComponentAlarms = computed(() =>
-      (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    const isAllComponentAlarms = computed(() => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
     );
 
     const actionTypes = computed(() => {

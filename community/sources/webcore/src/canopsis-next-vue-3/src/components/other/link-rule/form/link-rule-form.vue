@@ -153,8 +153,7 @@ export default {
     const isAlarmType = computed(() => typeField.value === LINK_RULE_TYPES.alarm);
     const hasLinksError = computed(() => errors.has?.('links') || !!form.errors.value?.links);
 
-    const linksErrorMessages = computed(() =>
-      hasLinksError.value ? [t('linkRule.linksEmptyError')] : [],
+    const linksErrorMessages = computed(() => hasLinksError.value ? [t('linkRule.linksEmptyError')] : [],
     );
 
     const { attachRequiredRule, detachRequiredRule, resetRequiredRule } =
@@ -195,8 +194,7 @@ export default {
      *
      * @returns {boolean} True if links field should be considered valid (has links or custom source code)
      */
-    const requiredRuleGetter = () =>
-      !!linksField.value.length || !isDefaultSourceCode(sourceCodeField.value);
+    const requiredRuleGetter = () => !!linksField.value.length || !isDefaultSourceCode(sourceCodeField.value);
 
     watch(
       () => generalElement.value?.hasAnyError,

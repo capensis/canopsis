@@ -1,3 +1,36 @@
+<template>
+  <v-form @submit.prevent.stop="submit">
+    <c-layout column>
+      <div>
+        <ldap-login-information v-if="isLDAPAuthEnabled" />
+      </div>
+      <login-form />
+
+      <div>
+        <div class="d-flex justify-space-between align-center">
+          <v-btn :loading="isSubmitting" type="submit" color="primary">
+            {{ t('common.connect') }}
+          </v-btn>
+
+          <div class="flex-grow-1 ml-4">
+            <c-alert v-if="serverErrorMessage" class="py-1 my-0 font-weight-bold" type="error">
+              {{ serverErrorMessage }}
+            </c-alert>
+          </div>
+        </div>
+
+        <template v-if="footer">
+          <v-divider class="my-2" />
+
+          <div>
+            <c-compiled-template :template="footer" />
+          </div>
+        </template>
+      </div>
+    </c-layout>
+  </v-form>
+</template>
+
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -65,36 +98,3 @@ const submit = handleSubmit(async () => {
   }
 });
 </script>
-
-<template>
-  <v-form @submit.prevent.stop="submit">
-    <c-layout column>
-      <div>
-        <ldap-login-information v-if="isLDAPAuthEnabled" />
-      </div>
-      <login-form />
-
-      <div>
-        <div class="d-flex justify-space-between align-center">
-          <v-btn :loading="isSubmitting" type="submit" color="primary">
-            {{ t('common.connect') }}
-          </v-btn>
-
-          <div class="flex-grow-1 ml-4">
-            <c-alert v-if="serverErrorMessage" class="py-1 my-0 font-weight-bold" type="error">
-              {{ serverErrorMessage }}
-            </c-alert>
-          </div>
-        </div>
-
-        <template v-if="footer">
-          <v-divider class="my-2" />
-
-          <div>
-            <c-compiled-template :template="footer" />
-          </div>
-        </template>
-      </div>
-    </c-layout>
-  </v-form>
-</template>

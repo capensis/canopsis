@@ -1,6 +1,12 @@
 import { isEmpty, omit } from 'lodash';
 
-import { ACTION_TYPES, ALARM_STATES, PATTERNS_FIELDS, TIME_UNITS, WORKFLOW_TYPES } from '@/constants';
+import {
+  ACTION_TYPES,
+  ALARM_STATES,
+  PATTERNS_FIELDS,
+  TIME_UNITS,
+  WORKFLOW_TYPES,
+} from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
 import {
@@ -8,7 +14,11 @@ import {
   formToDeclareTicketRuleWebhookDeclareTicket,
 } from '@/helpers/entities/declare-ticket/rule/form';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
+import {
+  formToPbehavior,
+  pbehaviorToForm,
+  pbehaviorToRequest,
+} from '@/helpers/entities/pbehavior/form';
 import {
   formToRequest,
   formToRequestAuthToken,
@@ -202,10 +212,10 @@ const webhookActionParametersToForm = (parameters = {}) => {
     skip_for_instruction: parameters.skip_for_instruction ?? false,
     stop_on_fail: emptyParameters
       ? WORKFLOW_TYPES.stop
-      : parameters.stop_on_fail ?? WORKFLOW_TYPES.continue,
+      : (parameters.stop_on_fail ?? WORKFLOW_TYPES.continue),
     stop_on_success: emptyParameters
       ? WORKFLOW_TYPES.stop
-      : parameters.stop_on_success ?? WORKFLOW_TYPES.continue,
+      : (parameters.stop_on_success ?? WORKFLOW_TYPES.continue),
     ticket_system_name: parameters.ticket_system_name ?? '',
   };
 };

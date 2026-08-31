@@ -161,8 +161,7 @@ export default {
     });
 
     const fontSize = computed(() => THEME_FONT_PIXEL_SIZES[fontSizeField.value]);
-    const attachFontSizeAndActiveColor = items =>
-      items.map(item => ({
+    const attachFontSizeAndActiveColor = items => items.map(item => ({
         color: activeColorField.value,
         fontSize: fontSize.value,
         ...item,
@@ -197,8 +196,7 @@ export default {
       return attachFontSizeAndActiveColor(result);
     });
 
-    const stateColors = computed(() =>
-      attachFontSizeAndActiveColor([
+    const stateColors = computed(() => attachFontSizeAndActiveColor([
         {
           backgroundColor: stateOkField.value,
           text: t('theme.state.ok'),

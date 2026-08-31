@@ -57,8 +57,7 @@ export const toLiteralVeeFieldPath = (name) => {
  * @param {string} [path=''] Field path.
  * @returns {string}
  */
-export const toVeeFormPath = (path = '') =>
-  unwrapFieldPath(path).replace(/\.(\d+)(?=\.|$)/g, '[$1]');
+export const toVeeFormPath = (path = '') => unwrapFieldPath(path).replace(/\.(\d+)(?=\.|$)/g, '[$1]');
 
 /**
  * Collects registered vee-validate field paths from a form context.

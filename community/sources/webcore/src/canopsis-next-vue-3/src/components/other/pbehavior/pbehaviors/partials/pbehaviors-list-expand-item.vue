@@ -85,8 +85,7 @@ export default {
     const { t } = useI18n();
     const activeTab = ref('patterns');
 
-    const patterns = computed(() =>
-      filterPatternsToForm(props.pbehavior, [PATTERNS_FIELDS.entity]),
+    const patterns = computed(() => filterPatternsToForm(props.pbehavior, [PATTERNS_FIELDS.entity]),
     );
 
     return {

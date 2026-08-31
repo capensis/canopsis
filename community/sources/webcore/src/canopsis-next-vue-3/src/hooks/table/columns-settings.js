@@ -97,8 +97,7 @@ export const useTableColumnsSettings = (
    */
   const isColumnsEditing = computed(() => draggingMode.value || resizingMode.value);
 
-  const tableStyle = computed(() =>
-    unref(resizable)
+  const tableStyle = computed(() => unref(resizable)
       ? {
           [widthCssVariable]: sumOfColumnsWidth.value ? `${sumOfColumnsWidth.value}px` : '100%',
         }

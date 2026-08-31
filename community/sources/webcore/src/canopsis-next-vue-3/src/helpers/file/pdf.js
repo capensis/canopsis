@@ -73,8 +73,7 @@ class AlarmExportToPdfVisitor extends Visitor {
  * @param {number} state
  * @returns {string}
  */
-export const prepareAlarmStateForExport = state =>
-  ({
+export const prepareAlarmStateForExport = state => ({
     [ALARM_STATES.ok]: '0 - OK',
     [ALARM_STATES.minor]: '1 - Minor',
     [ALARM_STATES.major]: '2 - Major',
@@ -87,8 +86,7 @@ export const prepareAlarmStateForExport = state =>
  * @param {number} status
  * @returns {string}
  */
-const prepareAlarmStatusForExport = status =>
-  ({
+const prepareAlarmStatusForExport = status => ({
     [ALARM_STATUSES.closed]: 'Closed',
     [ALARM_STATUSES.ongoing]: 'Ongoing',
     [ALARM_STATUSES.flapping]: 'Flapping',

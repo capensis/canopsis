@@ -158,8 +158,7 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
  * @param {Object<string, ExternalDataTableColumnConfig>} form
  * @returns {ExternalDataTableColumnConfig[]}
  */
-export const formToExternalDataTableColumnConfigs = (form = {}) =>
-  Object.values(form).reduce((acc, columnConfig) => {
+export const formToExternalDataTableColumnConfigs = (form = {}) => Object.values(form).reduce((acc, columnConfig) => {
     if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
       return acc;
     }
@@ -179,8 +178,7 @@ export const formToExternalDataTableColumnConfigs = (form = {}) =>
  * @param {Object<string, ExternalDataTableColumnConfig>} form
  * @returns {number[]}
  */
-export const formToExternalDataTableColumnTags = (form = {}) =>
-  Object.values(form).reduce((acc, columnConfig) => {
+export const formToExternalDataTableColumnTags = (form = {}) => Object.values(form).reduce((acc, columnConfig) => {
     if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
       return acc;
     }
@@ -195,8 +193,7 @@ export const formToExternalDataTableColumnTags = (form = {}) =>
  * @param {string} separator - The separator to check
  * @returns {boolean} True if the separator is predefined, false otherwise
  */
-const isStandardSeparator = separator =>
-  Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS).includes(separator);
+const isStandardSeparator = separator => Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS).includes(separator);
 
 /**
  * Gets the fallback separator when no separator is defined

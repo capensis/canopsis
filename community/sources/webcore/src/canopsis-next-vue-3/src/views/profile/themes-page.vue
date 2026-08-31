@@ -61,8 +61,7 @@ export default {
       USER_PERMISSIONS.technical.profile.theme,
     );
 
-    const fetchList = query =>
-      fetchThemesList({
+    const fetchList = query => fetchThemesList({
         params: convertQueryToRequest(query ?? options.value),
       });
     const { options, updateOptions } = useLocalQueryWithOptions({

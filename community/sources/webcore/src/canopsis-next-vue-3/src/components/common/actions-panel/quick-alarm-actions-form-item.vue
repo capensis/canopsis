@@ -100,8 +100,7 @@ export default {
       }
 
       return preparedActions.filter(
-        preparedAction =>
-          preparedAction.value === props.modelValue ||
+        preparedAction => preparedAction.value === props.modelValue ||
           !props.selectedActions.some(action => action.value === preparedAction.value),
       );
     });

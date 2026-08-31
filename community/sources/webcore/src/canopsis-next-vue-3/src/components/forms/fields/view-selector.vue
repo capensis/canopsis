@@ -54,8 +54,7 @@ export default {
       contentClass: 'view-selector-menu',
     };
 
-    const viewItems = computed(() =>
-      (viewGroups.value ?? []).reduce((acc, group) => {
+    const viewItems = computed(() => (viewGroups.value ?? []).reduce((acc, group) => {
         const views = group.views ?? [];
         const groupTitle = group.title || group.name;
 
@@ -79,8 +78,7 @@ export default {
       emit('update:modelValue', value);
     };
 
-    onMounted(() =>
-      fetchViewGroupsList({
+    onMounted(() => fetchViewGroupsList({
         params: {
           limit: MAX_LIMIT,
           page: 1,

@@ -87,8 +87,7 @@ export default {
 
       return selectedTemplate.value.sort_columns
         .filter(
-          sortColumn =>
-            sortColumn.sort_by && !currentColumnValues.value.includes(sortColumn.sort_by),
+          sortColumn => sortColumn.sort_by && !currentColumnValues.value.includes(sortColumn.sort_by),
         )
         .map(sortColumn => ({
           ...sortColumn,

@@ -127,8 +127,7 @@ export default {
     const totalItems = ref(0);
     const showFailed = ref(true);
 
-    const preparedRemediationInstructionExecutions = computed(() =>
-      remediationInstructionExecutions.value.map((execution = {}) => {
+    const preparedRemediationInstructionExecutions = computed(() => remediationInstructionExecutions.value.map((execution = {}) => {
         if (!execution.alarm_id) {
           return execution;
         }

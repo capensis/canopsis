@@ -59,8 +59,7 @@ export default {
     const externalAuthToken = computed(() => config.value.externalAuthToken);
     const isNew = computed(() => !externalAuthToken.value?._id);
     const title = computed(
-      () =>
-        config.value.title ||
+      () => config.value.title ||
         t(`modals.createExternalAuthToken.${isNew.value ? 'create' : 'edit'}.title`),
     );
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));

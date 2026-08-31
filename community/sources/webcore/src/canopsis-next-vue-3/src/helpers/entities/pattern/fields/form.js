@@ -49,9 +49,7 @@ import { indexesByKey } from '@/helpers/array';
  * @param {PatternFields | {}} [patternsFields = {}]
  * @return {PatternFieldsForm}
  */
-export const patternsFieldsToForm = (patternsFields = {}) =>
-  mapValues(patternsFields, fields =>
-    fields.map((field) => {
+export const patternsFieldsToForm = (patternsFields = {}) => mapValues(patternsFields, fields => fields.map((field) => {
       const formField = {
         value: field.name,
         alias: field.alias,
@@ -94,8 +92,7 @@ export const mergePatternAttributes = (defaultAttributes = [], externalAttribute
       return;
     }
 
-    mergedAttributes[index] = mergeWith({}, mergedAttributes[index], attribute, (a, b) =>
-      isArray(b) ? b : undefined,
+    mergedAttributes[index] = mergeWith({}, mergedAttributes[index], attribute, (a, b) => isArray(b) ? b : undefined,
     );
   });
 

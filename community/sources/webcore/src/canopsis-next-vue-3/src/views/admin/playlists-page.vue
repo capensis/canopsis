@@ -79,14 +79,12 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery =>
-        fetchPlaylistsList({
+      onUpdate: fetchQuery => fetchPlaylistsList({
           params: convertQueryToRequest(fetchQuery),
         }),
     });
 
-    const showRemovePlaylistModal = id =>
-      modals.show({
+    const showRemovePlaylistModal = id => modals.show({
         name: MODALS.confirmation,
         config: {
           text: t('modals.confirmation.text'),
@@ -102,8 +100,7 @@ export default {
       await Promise.all([fetchCurrentUser(), fetchList()]);
     };
 
-    const showCreatePlaylistModal = () =>
-      modals.show({
+    const showCreatePlaylistModal = () => modals.show({
         name: MODALS.createPlaylist,
         config: {
           action: async (data) => {
@@ -113,8 +110,7 @@ export default {
         },
       });
 
-    const showEditPlaylistModal = playlist =>
-      modals.show({
+    const showEditPlaylistModal = playlist => modals.show({
         name: MODALS.createPlaylist,
         config: {
           playlist,
@@ -125,8 +121,7 @@ export default {
         },
       });
 
-    const showDuplicatePlaylistModal = playlist =>
-      modals.show({
+    const showDuplicatePlaylistModal = playlist => modals.show({
         name: MODALS.createPlaylist,
         config: {
           playlist,

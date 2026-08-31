@@ -240,8 +240,7 @@ export default {
     const inputElement = ref(null);
     const inputValue = ref('');
     const opened = ref(false);
-    const chipValue = computed(() =>
-      props.modelValue === undefined ? props.value : props.modelValue,
+    const chipValue = computed(() => props.modelValue === undefined ? props.value : props.modelValue,
     );
 
     /**
@@ -260,8 +259,7 @@ export default {
       if (params?.search) {
         const lowerSearch = String(params.search).toLowerCase();
 
-        data = filterAdvancedSearchItems(data, item =>
-          item[props.itemText]?.toLowerCase().includes(lowerSearch),
+        data = filterAdvancedSearchItems(data, item => item[props.itemText]?.toLowerCase().includes(lowerSearch),
         );
       }
 
@@ -312,8 +310,7 @@ export default {
 
     const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
 
-    const inputPlaceholder = computed(() =>
-      props.first ? t('advancedSearch.inputPlaceholder') : '',
+    const inputPlaceholder = computed(() => props.first ? t('advancedSearch.inputPlaceholder') : '',
     );
 
     const noDataText = computed(() => {
@@ -326,14 +323,12 @@ export default {
       return t(messageKey);
     });
 
-    const chipText = computed(() =>
-      selectedItems.value
+    const chipText = computed(() => selectedItems.value
         .map(item => item.chipText ?? item[props.itemText] ?? item[props.itemValue])
         .join(','),
     );
 
-    const hasNoDataFlagInSelectedItems = computed(() =>
-      selectedItems.value.some(({ noData }) => noData),
+    const hasNoDataFlagInSelectedItems = computed(() => selectedItems.value.some(({ noData }) => noData),
     );
 
     const icon = computed(() => {
@@ -373,8 +368,7 @@ export default {
      *
      * @param {Event} event - The input event triggered by the user.
      */
-    const updateInputValue = event =>
-      setInputValue(
+    const updateInputValue = event => setInputValue(
         props.inputPreparer ? props.inputPreparer(event.target.value) : event.target.value,
       );
 
@@ -418,8 +412,7 @@ export default {
      *
      * @param {number} index - The index of the chip to be removed from the selected items.
      */
-    const closeChildChip = index =>
-      changeSelectedItems(selectedItems.value.filter((_, itemIndex) => itemIndex !== index));
+    const closeChildChip = index => changeSelectedItems(selectedItems.value.filter((_, itemIndex) => itemIndex !== index));
 
     /**
      * Emits a 'close' event to signal that the chip should be closed.
@@ -470,8 +463,7 @@ export default {
       if (props.multiple) {
         const prevValue = isArray(chipValue.value) ? chipValue.value : [chipValue.value];
         const index = prevValue.findIndex(
-          item =>
-            (item?.[props.itemValue] &&
+          item => (item?.[props.itemValue] &&
               value?.[props.itemValue] &&
               item?.[props.itemValue] === value?.[props.itemValue]) ||
             (item?.[props.itemValue] && item?.[props.itemValue] === value) ||
@@ -520,8 +512,7 @@ export default {
         }
 
         const lowerInputValue = inputValue.value.toLowerCase();
-        const selectedItem = props.items.find(item =>
-          item[props.itemText]?.toLowerCase().startsWith(lowerInputValue),
+        const selectedItem = props.items.find(item => item[props.itemText]?.toLowerCase().startsWith(lowerInputValue),
         );
 
         if (selectedItem) {
@@ -548,8 +539,7 @@ export default {
      *
      * @todo Analise the solution with setTimeout in the future
      */
-    const callFocus = () =>
-      setTimeout(() => (props.active || props.alwaysActive) && focusInput(), 100);
+    const callFocus = () => setTimeout(() => (props.active || props.alwaysActive) && focusInput(), 100);
 
     watch(
       () => props.active,

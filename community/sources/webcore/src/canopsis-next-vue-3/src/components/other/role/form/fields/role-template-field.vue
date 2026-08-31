@@ -61,8 +61,7 @@ export default {
     const pending = ref(false);
     const selectedTemplate = ref(null);
 
-    const preparedItems = computed(() =>
-      items.value.map(template => ({
+    const preparedItems = computed(() => items.value.map(template => ({
         ...template,
         permissions: rolePermissionsToForm(template.permissions),
       })),

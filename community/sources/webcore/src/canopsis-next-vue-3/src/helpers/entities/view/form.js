@@ -112,8 +112,7 @@ export const viewToRequest = view => ({
  * @param {ViewGroup} group
  * @returns {ViewGroupRequest}
  */
-export const groupToRequest = group =>
-  omit(group, ['_id', 'views', 'created', 'deletable', 'updated']);
+export const groupToRequest = group => omit(group, ['_id', 'views', 'created', 'deletable', 'updated']);
 
 /**
  * Convert view groups with views to view group with view positions
@@ -181,8 +180,7 @@ export const exportedGroupsAndViewsToRequest = ({ groups, views }) => {
  * @param {ViewGroupWithViews[]} groups
  * @return {View[]}
  */
-export const getAllViewsFromGroups = (groups = []) =>
-  groups.reduce((acc, { views = [] }) => {
+export const getAllViewsFromGroups = (groups = []) => groups.reduce((acc, { views = [] }) => {
     acc.push(...views);
 
     return acc;
@@ -194,8 +192,7 @@ export const getAllViewsFromGroups = (groups = []) =>
  * @param {ViewGroupWithViews[]} groups
  * @return {ViewGroupWithViews[]}
  */
-export const prepareCurrentGroupsForImporting = groups =>
-  groups.map(group => ({ ...group, views: [...(group.views ?? [])] }));
+export const prepareCurrentGroupsForImporting = groups => groups.map(group => ({ ...group, views: [...(group.views ?? [])] }));
 
 /**
  * Prepare imported views
@@ -203,8 +200,7 @@ export const prepareCurrentGroupsForImporting = groups =>
  * @param {View[]} views
  * @return {ImportedView[]}
  */
-export const prepareImportedViews = views =>
-  views.map(view => ({
+export const prepareImportedViews = views => views.map(view => ({
     ...view,
 
     imported: true,
@@ -217,8 +213,7 @@ export const prepareImportedViews = views =>
  * @param {ViewGroupWithViews[]} groups
  * @return {ImportedViewGroupWithViews[]}
  */
-export const prepareImportedGroups = groups =>
-  groups.map(({ views, ...group }) => ({
+export const prepareImportedGroups = groups => groups.map(({ views, ...group }) => ({
     ...group,
 
     imported: true,
@@ -226,8 +221,7 @@ export const prepareImportedGroups = groups =>
     views: prepareImportedViews(views),
   }));
 
-export const prepareViewsForImportRequest = views =>
-  views.map(view => (view.imported ? omit(view, ['_id', 'imported']) : view));
+export const prepareViewsForImportRequest = views => views.map(view => (view.imported ? omit(view, ['_id', 'imported']) : view));
 
 /**
  * Prepare imported groups
@@ -235,8 +229,7 @@ export const prepareViewsForImportRequest = views =>
  * @param {ImportedViewGroupWithViews[] | ViewGroupWithViews[]} groups
  * @return {ViewGroupWithViews[]}
  */
-export const prepareViewGroupsForImportRequest = groups =>
-  groups.map((group) => {
+export const prepareViewGroupsForImportRequest = groups => groups.map((group) => {
     let preparedGroup = group;
 
     if (group.imported) {

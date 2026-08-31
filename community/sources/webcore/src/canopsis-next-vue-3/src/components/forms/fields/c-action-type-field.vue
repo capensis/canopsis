@@ -51,8 +51,7 @@ export default {
 
     const currentValue = computed(() => props.modelValue ?? props.value);
 
-    const items = computed(() =>
-      props.types.map(type => ({
+    const items = computed(() => props.types.map(type => ({
         value: type,
         text: t(`scenario.actions.${type}`),
       })),

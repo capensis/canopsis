@@ -94,8 +94,7 @@ export default {
     });
 
     const someRequired = computed(
-      () =>
-        !(
+      () => !(
           configField.value?.resource ||
           configField.value?.component ||
           configField.value?.connector ||

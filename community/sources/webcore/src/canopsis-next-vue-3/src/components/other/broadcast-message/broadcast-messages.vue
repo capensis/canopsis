@@ -62,14 +62,12 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery =>
-        fetchBroadcastMessagesList({
+      onUpdate: fetchQuery => fetchBroadcastMessagesList({
           params: getQueryForList(fetchQuery),
         }),
     });
 
-    const showEditBroadcastMessageModal = message =>
-      modals.show({
+    const showEditBroadcastMessageModal = message => modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
           message,
@@ -83,8 +81,7 @@ export default {
         },
       });
 
-    const showRemoveBroadcastMessageModal = id =>
-      modals.show({
+    const showRemoveBroadcastMessageModal = id => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {

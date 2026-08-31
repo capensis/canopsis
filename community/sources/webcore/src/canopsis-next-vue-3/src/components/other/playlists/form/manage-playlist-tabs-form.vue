@@ -133,8 +133,7 @@ export default {
     const getPanelValueFromArray = values => createRangeArray(values?.length ?? 0);
     const isDisabledView = view => !view.tabs?.length;
     const isDisabledGroup = group => !group.views?.length || group.views.every(isDisabledView);
-    const isViewSelected = view =>
-      !!view.tabs?.length && view.tabs.every(({ _id }) => selectedTabsIds.value.includes(_id));
+    const isViewSelected = view => !!view.tabs?.length && view.tabs.every(({ _id }) => selectedTabsIds.value.includes(_id));
     const isGroupSelected = group => !!group.views?.length && group.views.every(isViewSelected);
 
     const updateSelectedTabs = (tabs, checked) => {

@@ -1,3 +1,15 @@
+<template>
+  <v-alert
+    v-bind="$attrs"
+    :type="type"
+    :color="computedColor"
+    :class="alertClasses"
+    :style="alertStyles"
+  >
+    <slot />
+  </v-alert>
+</template>
+
 <script setup>
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
@@ -62,18 +74,6 @@ const alertClasses = computed(() => ({
 
 const alertStyles = computed(() => (iconColor.value ? { '--alert-icon-color': iconColor.value } : undefined));
 </script>
-
-<template>
-  <v-alert
-    v-bind="$attrs"
-    :type="type"
-    :color="computedColor"
-    :class="alertClasses"
-    :style="alertStyles"
-  >
-    <slot />
-  </v-alert>
-</template>
 
 <style lang="scss">
 .c-alert.v-alert {

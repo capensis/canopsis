@@ -66,8 +66,7 @@ const statisticInstructionItems = computed(() => [
   },
 ]);
 
-const isStatisticInstructionItem = instruction =>
-  statisticInstructionItems.value.some(({ _id }) => _id === instruction);
+const isStatisticInstructionItem = instruction => statisticInstructionItems.value.some(({ _id }) => _id === instruction);
 
 const selectedInstructionIds = computed(() => {
   if (!props.modelValue || isStatisticInstructionItem(props.modelValue)) {
@@ -77,8 +76,7 @@ const selectedInstructionIds = computed(() => {
   return [props.modelValue];
 });
 
-const instructions = computed(() =>
-  instructionIds.value.map(id => instructionsById.value[id]).filter(Boolean),
+const instructions = computed(() => instructionIds.value.map(id => instructionsById.value[id]).filter(Boolean),
 );
 
 const fetchSelectedInstructions = async () => {
@@ -154,8 +152,7 @@ const fetchMoreInstructions = () => {
   return undefined;
 };
 
-const updateInstructionsSearch = nextSearch =>
-  fetchInstructionsList({
+const updateInstructionsSearch = nextSearch => fetchInstructionsList({
     nextPage: 1,
     search: nextSearch ?? '',
   });

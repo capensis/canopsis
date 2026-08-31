@@ -73,15 +73,13 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const types = computed(() =>
-      Object.values(REQUEST_AUTH_TOKEN_TYPES).map(type => ({
+    const types = computed(() => Object.values(REQUEST_AUTH_TOKEN_TYPES).map(type => ({
         value: type,
         text: t(`request.authTokenTypes.${type}`),
       })),
     );
 
-    const isAnyHeaderAuthorizationType = computed(() =>
-      [
+    const isAnyHeaderAuthorizationType = computed(() => [
         REQUEST_AUTH_TOKEN_TYPES.headerAuthorization,
         REQUEST_AUTH_TOKEN_TYPES.headerAuthorizationBearer,
       ].includes(props.value.type),

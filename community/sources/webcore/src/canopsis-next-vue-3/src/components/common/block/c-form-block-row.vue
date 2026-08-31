@@ -73,8 +73,7 @@ export default {
       'c-form-block-row__field--align-center': props.alignCenter,
     }));
 
-    const labelWidth = computed(() =>
-      Number.isFinite(props.width) ? `${props.width}px` : props.width,
+    const labelWidth = computed(() => Number.isFinite(props.width) ? `${props.width}px` : props.width,
     );
 
     const labelStyle = computed(() => ({

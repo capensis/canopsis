@@ -19,12 +19,10 @@ import { useCurrentUserPermissions } from '@/hooks/auth';
 const useStatisticsWidgetFiltersPermissions = (permissionKey) => {
   const { checkAccess } = useCurrentUserPermissions();
 
-  const hasAccessToFilter = computed(() =>
-    checkAccess(USER_PERMISSIONS.business[permissionKey].actions.filter),
+  const hasAccessToFilter = computed(() => checkAccess(USER_PERMISSIONS.business[permissionKey].actions.filter),
   );
 
-  const hasAccessToUserFilter = computed(() =>
-    checkAccess(USER_PERMISSIONS.business[permissionKey].actions.userFilter),
+  const hasAccessToUserFilter = computed(() => checkAccess(USER_PERMISSIONS.business[permissionKey].actions.userFilter),
   );
 
   return {
@@ -46,8 +44,7 @@ const useStatisticsWidgetFiltersPermissions = (permissionKey) => {
 const useStatisticsWidgetIntervalPermissions = (permissionKey) => {
   const { checkAccess } = useCurrentUserPermissions();
 
-  const hasAccessToInterval = computed(() =>
-    checkAccess(USER_PERMISSIONS.business[permissionKey].actions.interval),
+  const hasAccessToInterval = computed(() => checkAccess(USER_PERMISSIONS.business[permissionKey].actions.interval),
   );
 
   return {
@@ -56,17 +53,13 @@ const useStatisticsWidgetIntervalPermissions = (permissionKey) => {
 };
 
 /** @returns {ReturnType<typeof useStatisticsWidgetFiltersPermissions>} User statistics filter permissions. */
-export const useUserStatisticsFiltersPermissions = () =>
-  useStatisticsWidgetFiltersPermissions('userStatistics');
+export const useUserStatisticsFiltersPermissions = () => useStatisticsWidgetFiltersPermissions('userStatistics');
 
 /** @returns {ReturnType<typeof useStatisticsWidgetIntervalPermissions>} User statistics interval permissions. */
-export const useUserStatisticsIntervalPermissions = () =>
-  useStatisticsWidgetIntervalPermissions('userStatistics');
+export const useUserStatisticsIntervalPermissions = () => useStatisticsWidgetIntervalPermissions('userStatistics');
 
 /** @returns {ReturnType<typeof useStatisticsWidgetFiltersPermissions>} Alarm statistics filter permissions. */
-export const useAlarmStatisticsFiltersPermissions = () =>
-  useStatisticsWidgetFiltersPermissions('alarmStatistics');
+export const useAlarmStatisticsFiltersPermissions = () => useStatisticsWidgetFiltersPermissions('alarmStatistics');
 
 /** @returns {ReturnType<typeof useStatisticsWidgetIntervalPermissions>} Alarm statistics interval permissions. */
-export const useAlarmStatisticsIntervalPermissions = () =>
-  useStatisticsWidgetIntervalPermissions('alarmStatistics');
+export const useAlarmStatisticsIntervalPermissions = () => useStatisticsWidgetIntervalPermissions('alarmStatistics');

@@ -39,8 +39,7 @@ export default {
         x: point.time * 1000,
         y: point.count,
       }));
-      const pointBackgroundColors = data.map(point =>
-        (point.anomaly ? ANOMALY_COLOR : MAIN_COLOR),
+      const pointBackgroundColors = data.map(point => (point.anomaly ? ANOMALY_COLOR : MAIN_COLOR),
       );
       const averagePoints = data.map(point => ({
         x: point.time * 1000,

@@ -23,8 +23,7 @@ const getParentComponent = component => component?.$parent ?? component?.$.paren
  * @param {string} property
  * @returns {boolean}
  */
-const hasOwnProperty = (object, property) =>
-  Object.prototype.hasOwnProperty.call(object, property);
+const hasOwnProperty = (object, property) => Object.prototype.hasOwnProperty.call(object, property);
 
 /**
  * Check whether a child component is a wrapper whose `_original` reference points to the parent.
@@ -33,8 +32,7 @@ const hasOwnProperty = (object, property) =>
  * @param {Object} parent
  * @returns {boolean}
  */
-const isOriginalChild = (child, parent) =>
-  hasOwnProperty(child, '_original') && child._original === parent;
+const isOriginalChild = (child, parent) => hasOwnProperty(child, '_original') && child._original === parent;
 
 /**
  * Check if child component has parent component in the $parent chain.

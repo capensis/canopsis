@@ -66,8 +66,7 @@ export default {
       $system?.setTheme(defaultColorTheme.value);
     };
 
-    const links = computed(() =>
-      filterLinks([
+    const links = computed(() => filterLinks([
         {
           icon: 'person',
           title: t('user.seeProfile'),

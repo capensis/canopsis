@@ -1,3 +1,14 @@
+<template>
+  <c-calendar
+    ref="calendar"
+    :events="events"
+    :loading="pending"
+    readonly
+    hide-details-menu
+    @change:pagination="fetchTimespans"
+  />
+</template>
+
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue';
 
@@ -29,16 +40,14 @@ const calendar = ref(null);
 const pending = ref(false);
 const timespans = ref([]);
 
-const isTimed = computed(() =>
-  !isFullDayEvent(
+const isTimed = computed(() => !isFullDayEvent(
     convertDateToDateObjectByTimezone(props.pbehavior.tstart, timezone.value),
     props.pbehavior.tstop &&
       convertDateToDateObjectByTimezone(props.pbehavior.tstop, timezone.value),
   ),
 );
 
-const events = computed(() =>
-  timespans.value.map((timespan, index) => {
+const events = computed(() => timespans.value.map((timespan, index) => {
     const fromString = convertDateToString(timespan.from, DATETIME_FORMATS.medium);
     const toString = convertDateToString(timespan.to, DATETIME_FORMATS.medium);
 
@@ -83,14 +92,3 @@ onMounted(async () => {
   fetchTimespans();
 });
 </script>
-
-<template>
-  <c-calendar
-    ref="calendar"
-    :events="events"
-    :loading="pending"
-    readonly
-    hide-details-menu
-    @change:pagination="fetchTimespans"
-  />
-</template>

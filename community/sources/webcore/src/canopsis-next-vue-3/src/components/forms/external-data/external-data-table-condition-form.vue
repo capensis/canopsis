@@ -91,15 +91,13 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const conditionTypes = computed(() =>
-      Object.values(EXTERNAL_DATA_CONDITION_TYPES).map(type => ({
+    const conditionTypes = computed(() => Object.values(EXTERNAL_DATA_CONDITION_TYPES).map(type => ({
         text: t(`externalData.conditionTypes.${type}`),
         value: type,
       })),
     );
 
-    const columnsForSelectedConditionType = computed(() =>
-      props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
+    const columnsForSelectedConditionType = computed(() => props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
         ? props.columns.filter(
             column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
           )

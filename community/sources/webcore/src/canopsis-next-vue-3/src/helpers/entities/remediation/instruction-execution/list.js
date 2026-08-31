@@ -8,8 +8,7 @@ import { uid } from '@/helpers/uid';
  * @param {Object[]} executions
  * @returns {Object[]}
  */
-export const prepareRemediationInstructionExecutionsForAlarmTimeline = executions =>
-  executions.reduce((acc, execution, index) => {
+export const prepareRemediationInstructionExecutionsForAlarmTimeline = executions => executions.reduce((acc, execution, index) => {
     const prevExecution = executions[index - 1];
 
     if (index > 0 && prevExecution.instruction_modified_on !== execution.instruction_modified_on) {
@@ -27,5 +26,4 @@ export const prepareRemediationInstructionExecutionsForAlarmTimeline = execution
  * @param {Object} execution
  * @returns {boolean}
  */
-export const remediationInstructionExecutionIsRunning = execution =>
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;
+export const remediationInstructionExecutionIsRunning = execution => execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;

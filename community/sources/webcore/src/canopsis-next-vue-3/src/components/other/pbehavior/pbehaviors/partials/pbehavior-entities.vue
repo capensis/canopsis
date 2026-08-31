@@ -37,8 +37,7 @@ export default {
       options,
       updateOptions,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params }) =>
-        fetchPbehaviorEntitiesListWithoutStore({
+      fetchListHandler: ({ params }) => fetchPbehaviorEntitiesListWithoutStore({
           id: props.pbehavior._id,
           params,
         }),

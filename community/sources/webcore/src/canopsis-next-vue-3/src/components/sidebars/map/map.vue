@@ -123,11 +123,9 @@ const { form, widget, hasChanges, submitting, close, submit } = useWidgetSetting
   sidebar,
 });
 
-const alarmColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
+const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
 );
-const entityColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
+const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
 );
 const colorIndicatorTitle = computed(() => t('settings.colorIndicator.title'));
 
@@ -142,8 +140,7 @@ const infosSubVariables = computed(() => [
   },
 ]);
 
-const infosVariables = computed(() =>
-  entityInfos.value.map(({ value }) => ({
+const infosVariables = computed(() => entityInfos.value.map(({ value }) => ({
     text: value,
     value,
     variables: infosSubVariables.value,

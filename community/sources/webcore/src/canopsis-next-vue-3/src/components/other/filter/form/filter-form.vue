@@ -93,8 +93,7 @@ export default {
 
     const { pending, alarmAttributes, entityAttributes, eventAttributes, pbehaviorAttributes } =
       usePatternsFieldsFetching(
-        () =>
-          fetchWidgetFilterPatternFields({
+        () => fetchWidgetFilterPatternFields({
             params: pick(props, ['entityTypes', 'entityCountersType']),
           }),
         props.readonly,

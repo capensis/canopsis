@@ -104,8 +104,7 @@ const { pending, columns, fetchColumns } = useExternalDataTableColumns();
 
 const getTableId = value => (isObject(value) ? value._id : value);
 
-const preparedColumns = computed(() =>
-  addPriorityColumnToColumnsArray(columns.value).map(column => ({
+const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value).map(column => ({
     ...column,
 
     text: column.name,
