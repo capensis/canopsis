@@ -228,6 +228,7 @@ app.use(modalsPlugin, {
     [MODALS.createKpiFilter]: { maxWidth: 1280, autoHeight: true },
     [MODALS.createLinkRule]: { maxWidth: 1000 },
     [MODALS.createLlm]: { maxWidth: 920, autoHeight: true },
+    [MODALS.llmPromptsHistory]: { maxWidth: 1200 },
     [MODALS.createMaintenance]: { autoHeight: true },
     [MODALS.createMap]: { maxWidth: 500, autoHeight: true },
     [MODALS.createMermaidMap]: { maxWidth: 1600, autoHeight: true },

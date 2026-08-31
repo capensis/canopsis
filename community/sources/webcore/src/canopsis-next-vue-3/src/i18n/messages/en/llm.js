@@ -25,6 +25,7 @@ export default {
     search: 'Search by user, modal or name',
     searchByUserName: 'Search by user name',
     searchByModalOrName: 'Search by modal or name',
+    showHistory: 'Show history',
     userHistoryTitle: 'User history',
     userHistoryEmpty: 'No users yet for this configuration.',
     ruleNotSaved: 'Not saved',

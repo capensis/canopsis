@@ -724,8 +724,8 @@ export const COLORS = {
     closed: '#4CAF50',
   },
   aiChat: {
-    chipBackground: 'grey lighten-2',
-    chipText: 'grey darken-2',
+    chipBackground: '#E0E0E0',
+    chipText: '#616161',
   },
   impactState: [
     '#2FAB63',

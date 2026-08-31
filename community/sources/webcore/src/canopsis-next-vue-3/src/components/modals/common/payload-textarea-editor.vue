@@ -23,8 +23,8 @@
         </v-btn>
 
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
           color="primary"
           type="submit"
         >
@@ -36,10 +36,12 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
 
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 
@@ -53,9 +55,6 @@ const props = defineProps({
 const { t } = useI18n();
 const modals = useModals();
 
-const submitting = ref(false);
-const text = ref(props.modal.config?.text ?? '');
-
 const config = computed(() => props.modal.config ?? {});
 const title = computed(() => config.value.title ?? t('modals.textEditor.title'));
 const required = computed(() => (
@@ -63,25 +62,23 @@ const required = computed(() => (
   config.value.rules?.includes?.('required') ||
   config.value.required
 ));
-const isDisabled = computed(() => required.value && !text.value);
+const form = useForm({
+  initialValues: {
+    text: props.modal.config?.text ?? '',
+  },
+});
+const { values, isSubmitting } = form;
+const text = form.model('text');
 
 const close = () => {
   modals.hide({ id: props.modal.id });
 };
 
-const submit = async () => {
-  if (isDisabled.value) {
-    return;
-  }
+const submit = form.handleSubmit(async () => {
+  await config.value.action?.(normalizeHandlebarsNbsp(values.value.text));
 
-  submitting.value = true;
+  close();
+});
 
-  try {
-    await config.value.action?.(normalizeHandlebarsNbsp(text.value));
-
-    close();
-  } finally {
-    submitting.value = false;
-  }
-};
+useFormConfirmableCloseModal({ form: values, submit, close });
 </script>

@@ -70,19 +70,30 @@
         {{ item.prompt }}
       </span>
     </template>
+
+    <template #actions="{ item }">
+      <c-action-btn
+        :tooltip="t('common.seeChat')"
+        :aria-label="t('common.seeChat')"
+        icon="chat"
+        @click="seeChat(item)"
+      />
+    </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 import { convertQueryToRequest } from '@/helpers/query';
 
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 import { useChildObserver } from '@/hooks/observer';
+import { usePopups } from '@/hooks/popups';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useLlm } from '@/hooks/store/modules/llm';
 
@@ -104,6 +115,8 @@ export default {
 
   setup(props) {
     const { t, te } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
     const { fetchLlmHistoryWithoutStore, fetchLlmChatsWithoutStore } = useLlm();
     const groupByChat = ref(false);
 
@@ -174,6 +187,12 @@ export default {
           value: 'prompt',
           sortable: false,
         },
+        {
+          text: t('common.seeChat'),
+          value: 'actions',
+          sortable: false,
+          width: '88px',
+        },
       ].filter(Boolean),
     );
     const preparedItems = computed(() =>
@@ -197,6 +216,23 @@ export default {
         only_off_topic: value,
         page: 1,
       });
+    const seeChat = (item) => {
+      const chatId = item.chat ?? item._id;
+
+      if (!chatId) {
+        popups.error({ text: t('errors.default') });
+
+        return;
+      }
+
+      modals.show({
+        name: MODALS.aiChatHistory,
+        config: {
+          llmId: props.llmId,
+          chat: item,
+        },
+      });
+    };
 
     watch(groupByChat, () => {
       if (options.value.page > 1) {
@@ -227,6 +263,7 @@ export default {
       updateOptions,
       onlyOffTopicChange,
       formatDate,
+      seeChat,
     };
   },
 };

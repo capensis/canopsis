@@ -23,6 +23,10 @@ import {
   convertExternalDataTableWidgetToQuery,
 } from '@/helpers/entities/external-data-table/query';
 import {
+  convertMapUserPreferenceToQuery,
+  convertMapWidgetToQuery,
+} from '@/helpers/entities/map/query';
+import {
   convertChartUserPreferenceToQuery,
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
@@ -55,6 +59,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
     [WIDGET_TYPES.availability]: convertAvailabilityUserPreferenceToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
@@ -85,6 +90,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
     [WIDGET_TYPES.availability]: convertAvailabilityWidgetParametersToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
+    [WIDGET_TYPES.map]: convertMapWidgetToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),

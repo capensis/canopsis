@@ -7,6 +7,7 @@
 
       <template #text>
         <filter-form v-bind="patternsProps" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
       <template #actions>
@@ -15,7 +16,7 @@
         </v-btn>
 
         <v-btn
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || chatPending"
           :loading="isSubmitting"
           color="primary"
           type="submit"
@@ -29,23 +30,28 @@
 
 <script>
 import { omit } from 'lodash';
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 
 import FilterForm from '@/components/other/filter/form/filter-form.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createFilter,
 
-  components: { FilterForm },
+  components: {
+    AiChatSidebar,
+    FilterForm,
+  },
 
   props: {
     modal: {
@@ -79,6 +85,16 @@ export default {
       initialValues: filterToForm(filter.value, patternsFields.value),
     });
     const { handleSubmit, isSubmitting, values } = form;
+    const chatContext = computed(() => `${LLM_SOCKET_CONTEXTS.widgetFilter}_${config.value.widgetType}`);
+
+    const { chatIds, shown: chatShown, options: chatOptions } = useAiChatForm({
+      form,
+      modal: toRef(props, 'modal'),
+      ruleId: filter.value._id,
+      context: chatContext,
+      withoutLink: config.value.withoutLink,
+    });
+    const chatPending = computed(() => chatOptions.value.attrs.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
     const patternsProps = computed(() =>
@@ -90,12 +106,16 @@ export default {
         'corporate',
         'widgetType',
         'withoutLink',
-        'withTitle',
       ]),
     );
 
     const submit = handleSubmit(async () => {
       const newFilter = formToFilter(values.value, patternsFields.value, config.value.corporate);
+
+      if (config.value.withoutLink && chatIds.value.length) {
+        newFilter.llm_chat = chatIds.value[chatIds.value.length - 1];
+      }
+
       const result = await config.value.action?.(newFilter);
 
       await config.value.afterSubmit?.(result);
@@ -112,6 +132,9 @@ export default {
       title,
       patternsProps,
       isSubmitting,
+      chatShown,
+      chatOptions,
+      chatPending,
       submitLabel,
       submit,
       closeModal,

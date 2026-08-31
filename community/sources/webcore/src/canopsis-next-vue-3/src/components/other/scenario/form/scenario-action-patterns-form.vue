@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    v-model:value="patternsField"
+    :value="modelValue"
     :name="name"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
@@ -8,12 +8,11 @@
     some-required
     with-alarm
     with-entity
+    @update:value="updateModel"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { useModelField } from '@/hooks/form/model-field';
 import {
   usePatternsFields,
@@ -39,10 +38,6 @@ export default {
     const { fetchScenarioPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
     const { updateModel } = useModelField(props, emit);
-    const patternsField = computed({
-      get: () => props.modelValue,
-      set: value => updateModel(value),
-    });
 
     const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
       fetchScenarioPatternFields,
@@ -53,7 +48,7 @@ export default {
        * It's using in the parent component to display the validation header color for tabs.
        */
       hasAnyError,
-      patternsField,
+      updateModel,
       pending,
       alarmAttributes,
       entityAttributes,

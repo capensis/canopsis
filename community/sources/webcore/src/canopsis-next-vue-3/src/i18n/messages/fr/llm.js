@@ -25,6 +25,7 @@ export default {
     search: 'Rechercher par utilisateur, modal ou nom',
     searchByUserName: 'Rechercher par nom d\'utilisateur',
     searchByModalOrName: 'Rechercher par modal ou nom',
+    showHistory: 'Afficher l\'historique',
     userHistoryTitle: 'Historique utilisateur',
     userHistoryEmpty: 'Aucun utilisateur pour cette configuration.',
     ruleNotSaved: 'Non enregistré',

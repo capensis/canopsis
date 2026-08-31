@@ -26,8 +26,7 @@
 
         <ai-chat-sidebar
           v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
+          v-bind="chatOptions.attrs"
         />
       </template>
 
@@ -37,7 +36,7 @@
         </v-btn>
 
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.attrs.pending"
           :loading="submitting"
           color="primary"
           type="submit"

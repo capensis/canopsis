@@ -1,22 +1,3 @@
-<script setup>
-defineOptions({
-  inheritAttrs: false,
-});
-
-defineProps({
-  icon: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    default: '',
-  },
-});
-
-const emit = defineEmits(['click']);
-</script>
-
 <template>
   <div class="c-action-fab-btn">
     <c-action-btn v-bind="$attrs">
@@ -35,6 +16,25 @@ const emit = defineEmits(['click']);
     </c-action-btn>
   </div>
 </template>
+
+<script setup>
+defineOptions({
+  inheritAttrs: false,
+});
+
+defineProps({
+  icon: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String,
+    default: '',
+  },
+});
+
+const emit = defineEmits(['click']);
+</script>
 
 <style lang="scss" scoped>
 .c-action-fab-btn {

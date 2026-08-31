@@ -1,18 +1,3 @@
-<script setup>
-const emit = defineEmits(['refresh']);
-
-defineProps({
-  transition: {
-    type: String,
-    default: 'slide-y-reverse-transition',
-  },
-  hasAccess: {
-    type: Boolean,
-    default: true,
-  },
-});
-</script>
-
 <template>
   <div class="fab ma-2">
     <c-layout column>
@@ -48,6 +33,21 @@ defineProps({
     </c-layout>
   </div>
 </template>
+
+<script setup>
+const emit = defineEmits(['refresh']);
+
+defineProps({
+  transition: {
+    type: String,
+    default: 'slide-y-reverse-transition',
+  },
+  hasAccess: {
+    type: Boolean,
+    default: true,
+  },
+});
+</script>
 
 <style lang="scss" scoped>
 .c-fab {

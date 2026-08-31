@@ -7,7 +7,7 @@
 
       <template #text>
         <declare-ticket-rule-form :rule-id="config.declareTicketRule?._id" />
-        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" v-on="chatOptions.on" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
       <template #actions>
@@ -96,7 +96,7 @@ export default {
 
       return result;
     });
-    const submitDisabled = computed(() => submitting.value || chatOptions.value.bind.pending);
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.attrs.pending);
 
     useFormConfirmableCloseModal({ form: values, submit, close });
 

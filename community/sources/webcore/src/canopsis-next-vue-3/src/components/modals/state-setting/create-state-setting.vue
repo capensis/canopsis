@@ -7,7 +7,7 @@
 
       <template #text>
         <state-setting-form />
-        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.bind" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
       <template #actions>
@@ -76,7 +76,7 @@ export default {
       ruleId: stateSetting.value?._id,
       context: LLM_SOCKET_CONTEXTS.stateSettings,
     });
-    const chatPending = computed(() => chatOptions.value.bind.pending);
+    const chatPending = computed(() => chatOptions.value.attrs.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
     const submitLabel = computed(() => t(stateSetting.value?._id ? 'common.save' : 'common.create'));
