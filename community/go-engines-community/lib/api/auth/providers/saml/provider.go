@@ -38,6 +38,9 @@ import (
 
 const MetadataReqTimeout = time.Second * 15
 
+// maxDecompressedSamlResponse mirrors the default limit gosaml2 applies to deflated responses.
+const maxDecompressedSamlResponse = 5 * 1024 * 1024
+
 const (
 	BindingRedirect = "redirect"
 	BindingPOST     = "post"
@@ -61,6 +64,7 @@ type provider struct {
 	errorResponder     httperror.Responder
 	logger             zerolog.Logger
 	keyStore           dsig.X509KeyStore
+	cert               tls.Certificate
 	acsUrl             string
 	sloUrl             string
 	metadataUrl        string
@@ -116,6 +120,7 @@ func NewProvider(
 		errorResponder:     errorResponder,
 		logger:             logger,
 		keyStore:           dsig.TLSCertKeyStore(keyPair),
+		cert:               keyPair,
 		acsUrl:             parsedSamlURL.JoinPath("acs").String(),
 		sloUrl:             parsedSamlURL.JoinPath("slo").String(),
 		metadataUrl:        parsedSamlURL.JoinPath("metadata").String(),
@@ -440,7 +445,7 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 			return
 		}
 
-		assertionInfo, err := p.samlSP.RetrieveAssertionInfo(samlResponse)
+		assertionInfo, err := p.retrieveAssertionInfo(samlResponse)
 		if err != nil {
 			p.logger.Err(err).Msg("assertion is not valid")
 			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
@@ -531,6 +536,72 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		c.Redirect(http.StatusSeeOther, relayUrl.String())
 	}
+}
+
+func (p *provider) retrieveAssertionInfo(samlResponse string) (*saml2.AssertionInfo, error) {
+	if p.samlSP.SkipSignatureValidation {
+		var err error
+		samlResponse, err = p.decryptSAMLResponse(samlResponse)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decrypt SAML response: %w", err)
+		}
+	}
+
+	return p.samlSP.RetrieveAssertionInfo(samlResponse)
+}
+
+// decryptSAMLResponse replaces the encrypted assertions of the response with their
+// decrypted counterparts. gosaml2 decrypts assertions itself, but not when
+// SkipSignatureValidation is set: in that case it unmarshals the response as is, so an
+// encrypted assertion is reported as a missing one.
+func (p *provider) decryptSAMLResponse(encodedResponse string) (string, error) {
+	rawResponse, err := base64.StdEncoding.DecodeString(encodedResponse)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode SAML response: %w", err)
+	}
+
+	response := samltypes.Response{}
+	if err := xml.Unmarshal(rawResponse, &response); err != nil {
+		// gosaml2 also accepts deflated responses, so retry on the inflated bytes.
+		decompressor := flate.NewReader(bytes.NewReader(rawResponse))
+		defer decompressor.Close()
+
+		inflated, inflateErr := io.ReadAll(io.LimitReader(decompressor, maxDecompressedSamlResponse+1))
+		if inflateErr != nil {
+			return "", fmt.Errorf("failed to parse SAML response as XML (%w) or inflate it: %w", err, inflateErr)
+		}
+
+		if len(inflated) > maxDecompressedSamlResponse {
+			return "", fmt.Errorf("inflated SAML response exceeds %d bytes", maxDecompressedSamlResponse)
+		}
+
+		response = samltypes.Response{}
+		if err := xml.Unmarshal(inflated, &response); err != nil {
+			return "", fmt.Errorf("failed to unmarshal SAML response: %w", err)
+		}
+	}
+
+	if len(response.EncryptedAssertions) == 0 {
+		return encodedResponse, nil
+	}
+
+	for i := range response.EncryptedAssertions {
+		assertion, err := response.EncryptedAssertions[i].Decrypt(&p.cert)
+		if err != nil {
+			return "", fmt.Errorf("failed to decrypt assertion: %w", err)
+		}
+
+		response.Assertions = append(response.Assertions, *assertion)
+	}
+
+	response.EncryptedAssertions = nil
+
+	rawResponse, err = xml.Marshal(&response)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal decrypted SAML response: %w", err)
+	}
+
+	return base64.StdEncoding.EncodeToString(rawResponse), nil
 }
 
 func (p *provider) getAssocAttribute(attrs saml2.Values, canopsisName, defaultValue string) string {
