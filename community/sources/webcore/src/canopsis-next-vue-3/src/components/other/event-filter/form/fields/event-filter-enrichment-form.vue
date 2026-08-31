@@ -69,8 +69,7 @@ export default {
       patternsField: 'patterns',
     });
 
-    const setTagsItems = computed(() =>
-      getSetTagsItemsFromPattern(patternsField.value?.event_pattern),
+    const setTagsItems = computed(() => getSetTagsItemsFromPattern(patternsField.value?.event_pattern),
     );
 
     return {

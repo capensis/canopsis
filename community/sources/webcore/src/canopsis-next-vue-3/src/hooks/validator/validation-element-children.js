@@ -32,8 +32,7 @@ export const useValidationElementChildren = (parent) => {
     return childrenFields.value.some(({ errors } = {}) => errors?.length > 0);
   });
 
-  const validateChildren = () =>
-    childrenFields.value.forEach(({ path } = {}) => formContext.validateField(path));
+  const validateChildren = () => childrenFields.value.forEach(({ path } = {}) => formContext.validateField(path));
 
   return {
     childrenFields,

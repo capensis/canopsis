@@ -49,8 +49,7 @@ const intervalTimeString = computed(() => {
   return t(timeMessageKey, props.modelValue.interval || 1);
 });
 
-const updateInterval = value =>
-  emit('update:modelValue', {
+const updateInterval = value => emit('update:modelValue', {
     ...props.modelValue,
     interval: value,
   });

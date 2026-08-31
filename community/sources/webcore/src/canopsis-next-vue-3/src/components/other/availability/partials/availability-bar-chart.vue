@@ -72,17 +72,13 @@ export default {
     const downtimePercent = computed(() => `${props.availability.downtime_share}%`);
     const uptimeDuration = computed(() => convertDurationToString(props.availability.uptime_duration));
     const downtimeDuration = computed(() => convertDurationToString(props.availability.downtime_duration));
-    const totalActiveTimeDuration = computed(() =>
-      convertDurationToString(props.availability.total_active_time),
+    const totalActiveTimeDuration = computed(() => convertDurationToString(props.availability.total_active_time),
     );
-    const inactiveTimeDuration = computed(() =>
-      convertDurationToString(props.availability.total_inactive_time),
+    const inactiveTimeDuration = computed(() => convertDurationToString(props.availability.total_inactive_time),
     );
-    const uptimeValue = computed(() =>
-      isPercentType.value ? `${uptimePercent.value}%` : uptimeDuration.value,
+    const uptimeValue = computed(() => isPercentType.value ? `${uptimePercent.value}%` : uptimeDuration.value,
     );
-    const downtimeValue = computed(() =>
-      isPercentType.value ? downtimePercent.value : downtimeDuration.value,
+    const downtimeValue = computed(() => isPercentType.value ? downtimePercent.value : downtimeDuration.value,
     );
 
     return {

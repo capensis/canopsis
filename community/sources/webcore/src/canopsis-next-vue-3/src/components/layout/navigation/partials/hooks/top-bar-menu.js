@@ -38,8 +38,7 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = t
     return checkPermissionAccess(permission);
   };
 
-  const filterLinks = (links = []) =>
-    links.filter(({ permission }) => {
+  const filterLinks = (links = []) => links.filter(({ permission }) => {
       if (!permission) {
         return true;
       }

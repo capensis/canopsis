@@ -58,8 +58,7 @@ export default {
   setup(props, { emit }) {
     const applySuggestion = index => emit('apply:suggestion', index);
     const rejectAllSuggestions = () => emit('reject:all');
-    const showEntitiesComparisonModal = suggestion =>
-      emit('show:entities-comparison', suggestion);
+    const showEntitiesComparisonModal = suggestion => emit('show:entities-comparison', suggestion);
 
     return {
       applySuggestion,

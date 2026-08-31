@@ -87,8 +87,7 @@ export default {
     };
 
     const updateField = (index, field, value) => {
-      fields.value = fields.value.map((item, itemIndex) =>
-        itemIndex === index ? { ...item, [field]: value } : item,
+      fields.value = fields.value.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item,
       );
     };
 

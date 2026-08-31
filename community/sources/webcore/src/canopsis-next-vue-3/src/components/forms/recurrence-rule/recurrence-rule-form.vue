@@ -231,18 +231,15 @@ const hasChangedAdvancedFields = () => {
 };
 
 const enabledAdvancedFields = ref(hasChangedAdvancedFields());
-const rruleBodyForInformation = computed(() =>
-  recurrenceRuleFormOptionsToRruleBodyString(props.form.rrule),
+const rruleBodyForInformation = computed(() => recurrenceRuleFormOptionsToRruleBodyString(props.form.rrule),
 );
 
-const updateFormField = (field, value) =>
-  emit('update:form', {
+const updateFormField = (field, value) => emit('update:form', {
     ...props.form,
     [field]: value,
   });
 
-const updateRruleField = (field, value) =>
-  updateFormField('rrule', {
+const updateRruleField = (field, value) => updateFormField('rrule', {
     ...props.form.rrule,
     [field]: value,
   });

@@ -1,3 +1,15 @@
+<template>
+  <div
+    :class="{ 'modals-wrapper--active': modals.length > 0 }"
+    :style="{ zIndex }"
+    class="modals-wrapper"
+  >
+    <modal-base v-for="modal in modals" :key="modal.id" :modal="modal" />
+
+    <div class="pbehavior-calendar-event-menu" />
+  </div>
+</template>
+
 <script setup>
 import { storeToRefs } from 'pinia';
 import { computed, watch } from 'vue';
@@ -34,18 +46,6 @@ watch(
   },
 );
 </script>
-
-<template>
-  <div
-    :class="{ 'modals-wrapper--active': modals.length > 0 }"
-    :style="{ zIndex }"
-    class="modals-wrapper"
-  >
-    <modal-base v-for="modal in modals" :key="modal.id" :modal="modal" />
-
-    <div class="pbehavior-calendar-event-menu" />
-  </div>
-</template>
 
 <style lang="scss" scoped>
 $minimizedDialogMaxWidth: 360px;

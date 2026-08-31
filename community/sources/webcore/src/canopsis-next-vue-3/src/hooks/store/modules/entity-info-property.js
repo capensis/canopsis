@@ -30,8 +30,7 @@ export const useEntityInfoProperty = () => {
     removeEntityInfoProperty: entityInfoPropertyStore.remove,
     bulkRemoveEntityInfoProperties: entityInfoPropertyStore.bulkRemove,
 
-    fetchAllEntityInfoPropertiesList: () =>
-      entityInfoPropertyStore.fetchList({ params: { paginate: false } }),
+    fetchAllEntityInfoPropertiesList: () => entityInfoPropertyStore.fetchList({ params: { paginate: false } }),
   };
 };
 

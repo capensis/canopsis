@@ -117,8 +117,7 @@ export default {
       () => currentCondition.value?.method === STATE_SETTING_THRESHOLDS_METHODS.share,
     );
 
-    const conditionMethodSummary = computed(() =>
-      t(`stateSetting.thresholdConditions.${currentCondition.value.cond}`).toLowerCase(),
+    const conditionMethodSummary = computed(() => t(`stateSetting.thresholdConditions.${currentCondition.value.cond}`).toLowerCase(),
     );
 
     const conditionValue = computed(

@@ -38,8 +38,7 @@ export const getAlarmIdFromDetailsId = (detailsId, widgetId) => {
  * @param {string} widgetId
  * @returns {Function}
  */
-export const getAlarmDetailsDataPreparer = widgetId => data =>
-  data.map(item => ({
+export const getAlarmDetailsDataPreparer = widgetId => data => data.map(item => ({
     ...item,
 
     /**
@@ -56,8 +55,7 @@ export const getAlarmDetailsDataPreparer = widgetId => data =>
  * @param {number} linksInRowCount
  * @returns {`${number}px`}
  */
-export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) =>
-  `${
+export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) => `${
     ALARM_LINK_ICON_CHIP_WIDTH * linksInRowCount +
     ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1) +
     ALARM_LINK_TD_PADDINGS[dense] * 2
@@ -78,8 +76,7 @@ export const getAlarmWidgetMoreInfoTemplateId = (widgetId = '') => `${widgetId}-
  * @param {string} value - The value for the column.
  * @returns {string} The column template ID.
  */
-export const getAlarmWidgetColumnTemplateId = (widgetId = '', value = '') =>
-  `${widgetId}-widgetColumns-${value}-template`;
+export const getAlarmWidgetColumnTemplateId = (widgetId = '', value = '') => `${widgetId}-widgetColumns-${value}-template`;
 
 /**
  * Get the ID for the group column template of an alarm widget.
@@ -88,8 +85,7 @@ export const getAlarmWidgetColumnTemplateId = (widgetId = '', value = '') =>
  * @param {string} value - The value for the column.
  * @returns {string} The column template ID.
  */
-export const getAlarmWidgetGroupColumnTemplateId = (widgetId = '', value = '') =>
-  `${widgetId}-widgetGroupColumns-${value}-template`;
+export const getAlarmWidgetGroupColumnTemplateId = (widgetId = '', value = '') => `${widgetId}-widgetGroupColumns-${value}-template`;
 
 /**
  * Get the ID for the popup template of a column in an alarm widget.
@@ -98,5 +94,4 @@ export const getAlarmWidgetGroupColumnTemplateId = (widgetId = '', value = '') =
  * @param {string} value - The value for the column.
  * @returns {string} The column popup template ID.
  */
-export const getAlarmWidgetColumnPopupTemplateId = (widgetId = '', value = '') =>
-  `${widgetId}-widgetColumns-${value}-popupTemplate`;
+export const getAlarmWidgetColumnPopupTemplateId = (widgetId = '', value = '') => `${widgetId}-widgetColumns-${value}-popupTemplate`;

@@ -135,8 +135,7 @@ export default {
     /**
      * Adds a new condition to the external data table form.
      */
-    const addCondition = () =>
-      updateField('conditions', [
+    const addCondition = () => updateField('conditions', [
         ...props.form.conditions,
 
         externalDataItemConditionAttributeToForm(),
@@ -147,8 +146,7 @@ export default {
      *
      * @param {number} index - The index of the condition to remove from the conditions array
      */
-    const removeCondition = index =>
-      updateField(
+    const removeCondition = index => updateField(
         'conditions',
         props.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
       );
@@ -162,8 +160,7 @@ export default {
      * @param {string} tables[0].column_configs[].type - Column data type
      * @param {string} tables[0].column_configs[].name - Column name identifier
      */
-    const updateSelectedItems = ([table = {}] = []) =>
-      (columns.value = table?.column_configs ?? []);
+    const updateSelectedItems = ([table = {}] = []) => (columns.value = table?.column_configs ?? []);
 
     return {
       columns,

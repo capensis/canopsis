@@ -208,8 +208,7 @@ export default {
 
     hasSNMPEdge() {
       return this.enginesGraphEdges.some(
-        ({ from, to }) =>
-          from === HEALTHCHECK_ENGINES_NAMES.snmp && to === HEALTHCHECK_ENGINES_NAMES.fifo,
+        ({ from, to }) => from === HEALTHCHECK_ENGINES_NAMES.snmp && to === HEALTHCHECK_ENGINES_NAMES.fifo,
       );
     },
 

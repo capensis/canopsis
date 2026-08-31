@@ -102,8 +102,7 @@ export default {
       [KPI_RATING_CRITERIA.category]: t('common.category'),
       [KPI_RATING_CRITERIA.impactLevel]: t('common.impactLevel'),
     }));
-    const mainRatingSettingsWithCustom = computed(() =>
-      isEntityType.value && !pending.value
+    const mainRatingSettingsWithCustom = computed(() => isEntityType.value && !pending.value
         ? [
             ...mainRatingSettings.value,
             {

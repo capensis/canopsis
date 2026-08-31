@@ -44,8 +44,7 @@ export const useTemplateTestingValidationForm = (props, formContext) => {
 
   const hasSelectedTest = computed(() => !isEmpty(selectedTest.value));
   const isEmptyValidationForm = computed(() => validationForm.value.every(item => !item.value));
-  const isEqualValidationForm = computed(() =>
-    isEqual(originalValidationForm.value, validationForm.value),
+  const isEqualValidationForm = computed(() => isEqual(originalValidationForm.value, validationForm.value),
   );
 
   const { setFormErrors } = useValidationFormErrors(validationForm, formContext);
@@ -329,15 +328,13 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
   const { validateJobsVariables } = useTemplateTesting();
 
   const validateHandler = computed(
-    () =>
-      ({
+    () => ({
         [TEMPLATE_TESTING_TEST_TYPES.job]: validateJobsVariables,
       })[props.type],
   );
 
   const formToRequest = computed(
-    () =>
-      ({
+    () => ({
         [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
       })[props.type],
   );

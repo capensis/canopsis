@@ -61,8 +61,7 @@ export default {
     const form = useFormContext();
     const infosField = form.array('infos');
 
-    const typeItems = computed(() =>
-      Object.values(DYNAMIC_INFO_INFORMATION_TYPES).map(type => ({
+    const typeItems = computed(() => Object.values(DYNAMIC_INFO_INFORMATION_TYPES).map(type => ({
         title: t(`dynamicInfo.informationTypes.${type}`),
         value: type,
       })),
@@ -70,13 +69,10 @@ export default {
 
     const addItem = () => infosField.value.push(dynamicInfoInformationToForm());
     const remove = index => infosField.value.splice(index, 1);
-    const showAddInfosFromTemplateModal = () =>
-      modals.show({
+    const showAddInfosFromTemplateModal = () => modals.show({
         name: MODALS.addDynamicInfoInfosFromTemplate,
         config: {
-          action: template =>
-            template.names.forEach(name =>
-              infosField.value.push(dynamicInfoInformationToForm({ name })),
+          action: template => template.names.forEach(name => infosField.value.push(dynamicInfoInformationToForm({ name })),
             ),
         },
       });

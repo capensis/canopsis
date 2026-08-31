@@ -62,8 +62,7 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery =>
-        fetchRolesList({
+      onUpdate: fetchQuery => fetchRolesList({
           params: {
             ...getQueryForList(fetchQuery),
             with_flags: true,
@@ -71,8 +70,7 @@ export default {
         }),
     });
 
-    const showRemoveRoleModal = role =>
-      modals.show({
+    const showRemoveRoleModal = role => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -85,8 +83,7 @@ export default {
         },
       });
 
-    const showEditRoleModal = role =>
-      modals.show({
+    const showEditRoleModal = role => modals.show({
         name: MODALS.createRole,
         config: {
           title: t('modals.createRole.edit.title'),
@@ -108,8 +105,7 @@ export default {
         },
       });
 
-    const showDuplicateRoleModal = role =>
-      modals.show({
+    const showDuplicateRoleModal = role => modals.show({
         name: MODALS.createRole,
         config: {
           title: t('modals.createRole.duplicate.title'),

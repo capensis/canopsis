@@ -33,14 +33,12 @@ export default {
     const { pending: alarmFilteringPending, runAlarmFiltering: runAlarmFilteringAction } =
       useAlarmFiltering(refresh);
 
-    const label = computed(() =>
-      alarmFilteringPending.value
+    const label = computed(() => alarmFilteringPending.value
         ? t('pbehavior.alarmFilteringInProgress')
         : t('pbehavior.runAlarmFiltering'),
     );
 
-    const runAlarmFiltering = () =>
-      modals.show({
+    const runAlarmFiltering = () => modals.show({
         name: MODALS.confirmation,
         config: {
           title: t('modals.confirmationRunAlarmFiltering.title'),

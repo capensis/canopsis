@@ -50,8 +50,7 @@ export default {
 
   setup(props) {
     const { t } = useI18n();
-    const disableDuringPeriods = computed(() =>
-      props.idleRule.disable_during_periods ? props.idleRule.disable_during_periods.join(', ') : '',
+    const disableDuringPeriods = computed(() => props.idleRule.disable_during_periods ? props.idleRule.disable_during_periods.join(', ') : '',
     );
 
     return {

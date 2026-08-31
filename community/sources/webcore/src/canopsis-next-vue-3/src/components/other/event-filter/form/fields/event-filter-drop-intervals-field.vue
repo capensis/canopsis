@@ -79,8 +79,7 @@ export default {
      * @param {string|null|undefined} date - Raw value from the date-time picker
      * @returns {number|null}
      */
-    const prepareDate = date =>
-      date
+    const prepareDate = date => date
         ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker))
         : null;
 

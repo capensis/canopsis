@@ -48,14 +48,11 @@ export const useExternalDataTableRecordsModals = ({
   /**
    * Shows the modal for importing external data table records.
    */
-  const showImportExternalDataTablesModal = () =>
-    modals.show({
+  const showImportExternalDataTablesModal = () => modals.show({
       name: MODALS.importExternalDataTableRecords,
       config: {
         externalDataTable: unref(externalDataTable),
-        afterSubmit: () =>
-          callActionWithPopup(() =>
-            refreshObserver?.notify ? refreshObserver.notify() : fetchList(),
+        afterSubmit: () => callActionWithPopup(() => refreshObserver?.notify ? refreshObserver.notify() : fetchList(),
           ),
       },
     });
@@ -63,15 +60,12 @@ export const useExternalDataTableRecordsModals = ({
   /**
    * Shows the modal for creating a new external data table record.
    */
-  const showCreateExternalDataTableRecordModal = () =>
-    modals.show({
+  const showCreateExternalDataTableRecordModal = () => modals.show({
       name: MODALS.createExternalDataTableRecord,
       config: {
         externalDataTable: unref(externalDataTable),
-        action: newExternalDataTableRecord =>
-          callActionWithPopup(
-            () =>
-              createExternalDataTableRecord({
+        action: newExternalDataTableRecord => callActionWithPopup(
+            () => createExternalDataTableRecord({
                 table: unref(externalDataTable)?._id,
                 data: newExternalDataTableRecord,
               }),
@@ -85,17 +79,14 @@ export const useExternalDataTableRecordsModals = ({
    *
    * @param {Object} externalDataTableRecord - The record to be edited.
    */
-  const showEditExternalDataTableRecordModal = externalDataTableRecord =>
-    modals.show({
+  const showEditExternalDataTableRecordModal = externalDataTableRecord => modals.show({
       name: MODALS.createExternalDataTableRecord,
       config: {
         externalDataTableRecord,
         externalDataTable: unref(externalDataTable),
         title: t('modals.createExternalDataTableRecord.edit.title'),
-        action: newExternalDataTableRecord =>
-          callActionWithPopup(
-            () =>
-              updateExternalDataTableRecord({
+        action: newExternalDataTableRecord => callActionWithPopup(
+            () => updateExternalDataTableRecord({
                 id: externalDataTableRecord._id,
                 table: unref(externalDataTable)?._id,
                 data: newExternalDataTableRecord,
@@ -110,17 +101,14 @@ export const useExternalDataTableRecordsModals = ({
    *
    * @param {Object} externalDataTableRecord - The record to be duplicated.
    */
-  const showDuplicateExternalDataTableRecordModal = externalDataTableRecord =>
-    modals.show({
+  const showDuplicateExternalDataTableRecordModal = externalDataTableRecord => modals.show({
       name: MODALS.createExternalDataTableRecord,
       config: {
         externalDataTableRecord: omit(externalDataTableRecord, ['_id']),
         externalDataTable: unref(externalDataTable),
         title: t('modals.createExternalDataTableRecord.duplicate.title'),
-        action: newExternalDataTableRecord =>
-          callActionWithPopup(
-            () =>
-              createExternalDataTableRecord({
+        action: newExternalDataTableRecord => callActionWithPopup(
+            () => createExternalDataTableRecord({
                 table: unref(externalDataTable)?._id,
                 data: newExternalDataTableRecord,
               }),
@@ -134,14 +122,11 @@ export const useExternalDataTableRecordsModals = ({
    *
    * @param {string} id - The ID of the record to be removed.
    */
-  const showRemoveExternalDataTableRecordModal = id =>
-    modals.show({
+  const showRemoveExternalDataTableRecordModal = id => modals.show({
       name: MODALS.confirmation,
       config: {
-        action: () =>
-          callActionWithPopup(
-            () =>
-              removeExternalDataTableRecord({
+        action: () => callActionWithPopup(
+            () => removeExternalDataTableRecord({
                 id,
                 table: unref(externalDataTable)?._id,
               }),
@@ -155,14 +140,11 @@ export const useExternalDataTableRecordsModals = ({
    *
    * @param {Object[]} externalDataTableRecords - The external data table records to be removed.
    */
-  const showRemoveSelectedExternalDataTableRecordsModal = (externalDataTableRecords = []) =>
-    modals.show({
+  const showRemoveSelectedExternalDataTableRecordsModal = (externalDataTableRecords = []) => modals.show({
       name: MODALS.confirmation,
       config: {
-        action: () =>
-          callActionWithPopup(
-            () =>
-              bulkRemoveExternalDataTableRecord({
+        action: () => callActionWithPopup(
+            () => bulkRemoveExternalDataTableRecord({
                 data: pickIds(externalDataTableRecords),
                 table: unref(externalDataTable)?._id,
               }),
@@ -222,8 +204,7 @@ export const useExternalDataTableRecordsList = ({
     fetchList,
   } = useFetchListWithoutStoreWithOptions({
     initialQuery,
-    fetchListHandler: rest =>
-      fetchExternalDataTableRecordsListWithoutStore({
+    fetchListHandler: rest => fetchExternalDataTableRecordsListWithoutStore({
         ...rest,
         id: unref(externalDataTable)._id,
       }),

@@ -137,8 +137,7 @@ export default {
      * @param {Array} [item.exceptions] - Array of exception dates
      * @return {boolean} True if item has any calendar-related properties configured
      */
-    const isCalendarRule = item =>
-      item.start || item.rrule || item.exdates?.length || item.exceptions?.length;
+    const isCalendarRule = item => item.start || item.rrule || item.exdates?.length || item.exceptions?.length;
     const dateToString = value => convertDateToString(value);
 
     return {

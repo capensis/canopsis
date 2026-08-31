@@ -83,8 +83,7 @@ const isDateType = computed(() => type.value === props.types.date);
 const isAfterType = computed(() => type.value === props.types.after);
 const dateTimeSplittedRules = computed(() => ({ required: isDateType.value }));
 
-const updateModelField = (field, value) =>
-  emit('update:modelValue', {
+const updateModelField = (field, value) => emit('update:modelValue', {
     ...props.modelValue,
     [field]: value,
   });

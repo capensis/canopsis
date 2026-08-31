@@ -150,8 +150,7 @@ export default {
 
     const ticketUrlFieldName = computed(() => `${props.name}.ticket_url`);
 
-    const ticketUrlHelpText = computed(() =>
-      [
+    const ticketUrlHelpText = computed(() => [
         t('declareTicket.ticketUrlAndIdHelpText'),
         props.onlyOneTicketId && t('declareTicket.dataFromOneStepAttention'),
       ]

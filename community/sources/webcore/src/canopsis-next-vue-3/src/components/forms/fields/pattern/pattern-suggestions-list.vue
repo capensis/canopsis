@@ -68,8 +68,7 @@ export default {
     );
 
     const apply = index => emit('apply', index);
-    const showEntitiesComparisonModal = suggestion =>
-      emit('show:entities-comparison', suggestion);
+    const showEntitiesComparisonModal = suggestion => emit('show:entities-comparison', suggestion);
 
     return {
       activeSuggestionIndex,

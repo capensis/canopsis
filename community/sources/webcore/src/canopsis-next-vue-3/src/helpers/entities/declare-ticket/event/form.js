@@ -56,8 +56,7 @@ export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => {
  * @param {boolean} singleMode
  * @return {DeclareTicketEvent[]}
  */
-export const formToDeclareTicketEvents = (form, singleMode) =>
-  Object.entries(form.alarms_by_tickets).reduce((acc, [ticketId, alarms]) => {
+export const formToDeclareTicketEvents = (form, singleMode) => Object.entries(form.alarms_by_tickets).reduce((acc, [ticketId, alarms]) => {
     if (alarms.length) {
       const event = {
         _id: ticketId,

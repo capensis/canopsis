@@ -29,12 +29,10 @@ export default {
 
       return te(statusTooltipKey) ? t(statusTooltipKey) : t(`jobs.status.${props.status}`);
     });
-    const statusColor = computed(() =>
-      props.status === JOB_STATUS.running ? 'success' : 'grey-darken-1',
+    const statusColor = computed(() => props.status === JOB_STATUS.running ? 'success' : 'grey-darken-1',
     );
     const statusIcon = computed(
-      () =>
-        ({
+      () => ({
           [JOB_STATUS.running]: 'play_circle',
           [JOB_STATUS.paused]: 'pause_circle',
           [JOB_STATUS.stopped]: 'stop_circle',

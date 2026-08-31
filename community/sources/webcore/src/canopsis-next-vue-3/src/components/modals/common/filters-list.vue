@@ -123,8 +123,7 @@ export default {
     /**
      * Shows modal for creating a new filter.
      */
-    const showCreateFilterModal = () =>
-      modals.show({
+    const showCreateFilterModal = () => modals.show({
         name: MODALS.createFilter,
         config: {
           ...modalConfig.value,
@@ -153,8 +152,7 @@ export default {
      *
      * @param {Object} filter - Filter object to edit.
      */
-    const showEditFilterModal = filter =>
-      modals.show({
+    const showEditFilterModal = filter => modals.show({
         name: MODALS.createFilter,
         config: {
           ...modalConfig.value,
@@ -184,8 +182,7 @@ export default {
      *
      * @param {Object} filter - Filter object to delete.
      */
-    const showDeleteFilterModal = filter =>
-      modals.show({
+    const showDeleteFilterModal = filter => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {

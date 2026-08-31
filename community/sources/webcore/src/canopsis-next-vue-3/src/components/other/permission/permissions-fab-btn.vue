@@ -45,16 +45,14 @@ const { hasCreateAccess: hasCreateAnyRoleAccess } = useCRUDPermissions(
 
 const refresh = () => emit('refresh');
 
-const showCreateUserModal = () =>
-  modals.show({
+const showCreateUserModal = () => modals.show({
     name: MODALS.createUser,
     config: {
       action: data => createUserWithPopup({ data }),
     },
   });
 
-const showCreateRoleModal = () =>
-  modals.show({
+const showCreateRoleModal = () => modals.show({
     name: MODALS.createRole,
     config: {
       withTemplate: true,

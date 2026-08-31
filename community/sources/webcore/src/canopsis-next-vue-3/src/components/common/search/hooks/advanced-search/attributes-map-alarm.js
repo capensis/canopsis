@@ -63,18 +63,13 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
   /**
    * HAS FLAGS
    */
-  const hasOr = computed(() =>
-    unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or),
+  const hasOr = computed(() => unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or),
   );
-  const hasAlarmField = computed(() =>
-    unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)),
+  const hasAlarmField = computed(() => unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)),
   );
-  const hasEntityField = computed(() =>
-    unref(rules).some(({ attribute }) => isAlarmEntityPatternField(attribute)),
+  const hasEntityField = computed(() => unref(rules).some(({ attribute }) => isAlarmEntityPatternField(attribute)),
   );
-  const hasPbehaviorField = computed(() =>
-    unref(rules).some(({ attribute }) =>
-      isPbehaviorPatternField(attribute, ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX),
+  const hasPbehaviorField = computed(() => unref(rules).some(({ attribute }) => isPbehaviorPatternField(attribute, ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX),
     ),
   );
 
@@ -82,8 +77,7 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
    * ALLOW FLAGS
    */
   const allowOr = computed(
-    () =>
-      [hasEntityField.value, hasPbehaviorField.value, hasAlarmField.value].filter(Boolean).length <=
+    () => [hasEntityField.value, hasPbehaviorField.value, hasAlarmField.value].filter(Boolean).length <=
       1,
   );
 

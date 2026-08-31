@@ -49,8 +49,7 @@ export default {
     });
 
     const hasAnyErrors = computed(() => Boolean(form.errors.value.views));
-    const errorMessages = computed(() =>
-      hasAnyErrors.value ? [t('broadcastMessage.errors.viewsRequired')] : [],
+    const errorMessages = computed(() => hasAnyErrors.value ? [t('broadcastMessage.errors.viewsRequired')] : [],
     );
 
     return {

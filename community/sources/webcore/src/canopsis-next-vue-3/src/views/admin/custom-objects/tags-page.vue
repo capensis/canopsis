@@ -77,8 +77,7 @@ export default {
       },
     });
 
-    const showCreateTagModal = () =>
-      modals.show({
+    const showCreateTagModal = () => modals.show({
         name: MODALS.createTag,
         config: {
           action: async (newTag) => {
@@ -91,8 +90,7 @@ export default {
         },
       });
 
-    const showEditTagModal = tag =>
-      modals.show({
+    const showEditTagModal = tag => modals.show({
         name: MODALS.createTag,
         config: {
           title: t('modals.createTag.edit.title'),
@@ -108,8 +106,7 @@ export default {
         },
       });
 
-    const showDuplicateTagModal = tag =>
-      modals.show({
+    const showDuplicateTagModal = tag => modals.show({
         name: MODALS.createTag,
         config: {
           title: t('modals.createTag.duplicate.title'),
@@ -124,8 +121,7 @@ export default {
         },
       });
 
-    const showRemoveTagModal = id =>
-      modals.show({
+    const showRemoveTagModal = id => modals.show({
         name: MODALS.confirmation,
         config: {
           text: t('tag.deleteConfirmation'),
@@ -137,8 +133,7 @@ export default {
         },
       });
 
-    const showRemoveSelectedTagsModal = (selected = [], clearSelected) =>
-      modals.show({
+    const showRemoveSelectedTagsModal = (selected = [], clearSelected) => modals.show({
         name: MODALS.confirmation,
         config: {
           text: t('tag.deleteConfirmation', selected.length),

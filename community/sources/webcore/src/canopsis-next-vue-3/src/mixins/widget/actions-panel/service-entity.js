@@ -160,8 +160,7 @@ export const widgetActionPanelServiceEntityMixin = {
         comment: WEATHER_ACK_EVENT_OUTPUT.ack,
       }));
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityAck, entities, () =>
-        this.bulkCreateAlarmAckEvent({ data: preparedRequestData }),
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityAck, entities, () => this.bulkCreateAlarmAckEvent({ data: preparedRequestData }),
       );
 
       this.refreshEntities();
@@ -190,8 +189,7 @@ export const widgetActionPanelServiceEntityMixin = {
               comment,
             }));
 
-            await this.runAction(WEATHER_ACTIONS_TYPES.entityAckRemove, entities, () =>
-              this.bulkCreateAlarmAckremoveEvent({ data: preparedRequestData }),
+            await this.runAction(WEATHER_ACTIONS_TYPES.entityAckRemove, entities, () => this.bulkCreateAlarmAckremoveEvent({ data: preparedRequestData }),
             );
 
             this.refreshEntities();
@@ -216,8 +214,7 @@ export const widgetActionPanelServiceEntityMixin = {
                 entities,
               );
 
-              await this.runAction(WEATHER_ACTIONS_TYPES.entityAssocTicket, availableEntities, () =>
-                this.bulkCreateAlarmAckEvent({
+              await this.runAction(WEATHER_ACTIONS_TYPES.entityAssocTicket, availableEntities, () => this.bulkCreateAlarmAckEvent({
                   data: availableEntities.map(({ alarm_id: alarmId }) => ({
                     _id: alarmId,
                     comment: WEATHER_ACK_EVENT_OUTPUT.ack,
@@ -225,8 +222,7 @@ export const widgetActionPanelServiceEntityMixin = {
                 }),
               );
 
-              await this.runAction(WEATHER_ACTIONS_TYPES.entityAssocTicket, availableEntities, () =>
-                this.bulkCreateAlarmAssocticketEvent({
+              await this.runAction(WEATHER_ACTIONS_TYPES.entityAssocTicket, availableEntities, () => this.bulkCreateAlarmAssocticketEvent({
                   data: availableEntities.map(({ alarm_id: alarmId }) => ({
                     _id: alarmId,
                     ...event,
@@ -303,8 +299,7 @@ export const widgetActionPanelServiceEntityMixin = {
               comment,
             }));
 
-            await this.runAction(WEATHER_ACTIONS_TYPES.entityComment, availableEntities, () =>
-              this.bulkCreateAlarmCommentEvent({ data: preparedRequestData }),
+            await this.runAction(WEATHER_ACTIONS_TYPES.entityComment, availableEntities, () => this.bulkCreateAlarmCommentEvent({ data: preparedRequestData }),
             );
 
             this.refreshEntities();
@@ -321,8 +316,7 @@ export const widgetActionPanelServiceEntityMixin = {
         entities,
       );
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityValidate, availableEntities, () =>
-        this.bulkCreateAlarmAckEvent({
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityValidate, availableEntities, () => this.bulkCreateAlarmAckEvent({
           data: availableEntities.map(({ alarm_id: alarmId }) => ({
             _id: alarmId,
             comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
@@ -330,8 +324,7 @@ export const widgetActionPanelServiceEntityMixin = {
         }),
       );
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityValidate, availableEntities, () =>
-        this.bulkCreateAlarmChangestateEvent({
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityValidate, availableEntities, () => this.bulkCreateAlarmChangestateEvent({
           data: availableEntities.map(({ alarm_id: alarmId }) => ({
             _id: alarmId,
             state: ALARM_STATES.critical,
@@ -353,8 +346,7 @@ export const widgetActionPanelServiceEntityMixin = {
         entities,
       );
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityInvalidate, availableEntities, () =>
-        this.bulkCreateAlarmAckEvent({
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityInvalidate, availableEntities, () => this.bulkCreateAlarmAckEvent({
           data: availableEntities.map(({ alarm_id: alarmId }) => ({
             _id: alarmId,
             comment: WEATHER_ACK_EVENT_OUTPUT.ack,
@@ -362,8 +354,7 @@ export const widgetActionPanelServiceEntityMixin = {
         }),
       );
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityInvalidate, availableEntities, () =>
-        this.bulkCreateAlarmCancelEvent({
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityInvalidate, availableEntities, () => this.bulkCreateAlarmCancelEvent({
           data: availableEntities.map(({ alarm_id: alarmId }) => ({
             _id: alarmId,
             comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
@@ -387,8 +378,7 @@ export const widgetActionPanelServiceEntityMixin = {
               ({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause,
             );
 
-            await this.runAction(WEATHER_ACTIONS_TYPES.entityPause, entities, () =>
-              this.createDowntimePbehavior(entities, {
+            await this.runAction(WEATHER_ACTIONS_TYPES.entityPause, entities, () => this.createDowntimePbehavior(entities, {
                 comment: pause.comment,
                 reason: pause.reason,
                 type: pauseType,
@@ -404,8 +394,7 @@ export const widgetActionPanelServiceEntityMixin = {
     async applyPlayAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
 
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityPlay, entities, () =>
-        this.removeDowntimePbehavior(entities),
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityPlay, entities, () => this.removeDowntimePbehavior(entities),
       );
 
       this.refreshEntities();
@@ -429,8 +418,7 @@ export const widgetActionPanelServiceEntityMixin = {
               comment,
             }));
 
-            await this.runAction(WEATHER_ACTIONS_TYPES.entityCancel, entities, () =>
-              this.bulkCreateAlarmCancelEvent({ data: preparedRequestData }),
+            await this.runAction(WEATHER_ACTIONS_TYPES.entityCancel, entities, () => this.bulkCreateAlarmCancelEvent({ data: preparedRequestData }),
             );
 
             this.refreshEntities();

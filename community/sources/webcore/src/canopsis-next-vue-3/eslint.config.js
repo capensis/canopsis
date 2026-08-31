@@ -53,6 +53,8 @@ export default defineConfigWithVueTs(
     rules: {
       'object-curly-newline': 'off',
       'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
+      'arrow-body-style': ['error', 'as-needed'],
+      'implicit-arrow-linebreak': ['error', 'beside'],
       'brace-style': ['error', '1tbs', { allowSingleLine: false }],
       curly: ['error', 'all'],
       semi: ['error', 'always'],

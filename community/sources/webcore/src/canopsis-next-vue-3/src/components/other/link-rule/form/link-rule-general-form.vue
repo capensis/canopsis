@@ -68,8 +68,7 @@ export default {
 
     const isAlarmType = computed(() => typeField.value === LINK_RULE_TYPES.alarm);
 
-    const types = computed(() =>
-      Object.values(LINK_RULE_TYPES).map(type => ({
+    const types = computed(() => Object.values(LINK_RULE_TYPES).map(type => ({
         value: type,
         label: t(`linkRule.types.${type}`),
       })),

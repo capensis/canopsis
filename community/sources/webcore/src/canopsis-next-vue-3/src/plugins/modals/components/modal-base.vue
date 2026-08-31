@@ -1,3 +1,9 @@
+<template>
+  <modal-wrapper :modal="modal">
+    <component :is="modalComponent" :modal="modal" />
+  </modal-wrapper>
+</template>
+
 <script setup>
 import { computed, inject, provide } from 'vue';
 
@@ -19,9 +25,3 @@ const modalComponent = computed(() => modalComponents[props.modal.name]);
 provide('$clickOutside', new ClickOutside());
 provide('$modal', props.modal);
 </script>
-
-<template>
-  <modal-wrapper :modal="modal">
-    <component :is="modalComponent" :modal="modal" />
-  </modal-wrapper>
-</template>

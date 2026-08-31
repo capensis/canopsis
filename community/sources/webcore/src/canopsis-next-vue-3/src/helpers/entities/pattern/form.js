@@ -167,8 +167,7 @@ export const isOperatorForString = operator => PATTERN_STRING_OPERATORS.includes
  * @param {string} operator
  * @return {boolean}
  */
-export const isIntervalDateOperator = operator =>
-  [PATTERN_OPERATORS.within, PATTERN_OPERATORS.olderThan].includes(operator);
+export const isIntervalDateOperator = operator => [PATTERN_OPERATORS.within, PATTERN_OPERATORS.olderThan].includes(operator);
 
 /**
  * Check is operator for number
@@ -264,8 +263,7 @@ export const isValidRuleFieldType = value => Object.values(PATTERN_FIELD_TYPES).
  * @param {string} condition
  * @return {boolean}
  */
-export const isBooleanCondition = condition =>
-  [
+export const isBooleanCondition = condition => [
     PATTERN_CONDITIONS.equal,
     PATTERN_CONDITIONS.notEqual,
     PATTERN_CONDITIONS.exist,
@@ -280,8 +278,7 @@ export const isBooleanCondition = condition =>
  * @param {string} condition
  * @return {boolean}
  */
-export const isArrayCondition = condition =>
-  [
+export const isArrayCondition = condition => [
     PATTERN_CONDITIONS.isEmpty,
     PATTERN_CONDITIONS.hasNot,
     PATTERN_CONDITIONS.hasOneOf,
@@ -306,8 +303,7 @@ export const isArrayOperator = operator => PATTERN_ARRAY_OPERATORS.includes(oper
  * @param {string} condition
  * @return {boolean}
  */
-export const isValidPatternCondition = condition =>
-  Object.values(PATTERN_CONDITIONS).includes(condition);
+export const isValidPatternCondition = condition => Object.values(PATTERN_CONDITIONS).includes(condition);
 
 /**
  * Check pattern field is date
@@ -315,8 +311,7 @@ export const isValidPatternCondition = condition =>
  * @param {string} value
  * @return {boolean}
  */
-export const isDatePatternRuleField = value =>
-  [
+export const isDatePatternRuleField = value => [
     ALARM_PATTERN_FIELDS.creationDate,
     ALARM_PATTERN_FIELDS.lastEventDate,
     ALARM_PATTERN_FIELDS.lastUpdateDate,
@@ -350,8 +345,7 @@ export const isDatePatternRuleField = value =>
  * @param {string} value
  * @return {boolean}
  */
-export const isNumberPatternRuleField = value =>
-  [
+export const isNumberPatternRuleField = value => [
     ALARM_PATTERN_FIELDS.state,
     ALARM_PATTERN_FIELDS.status,
     ALARM_PATTERN_FIELDS.totalStateChanges,
@@ -371,8 +365,7 @@ export const isNumberPatternRuleField = value =>
  * @param {string} value
  * @return {boolean}
  */
-export const isArrayPatternRuleField = value =>
-  [
+export const isArrayPatternRuleField = value => [
     ALARM_PATTERN_FIELDS.displayName,
     ALARM_PATTERN_FIELDS.output,
     ALARM_PATTERN_FIELDS.longOutput,
@@ -438,8 +431,7 @@ export const isArrayPatternRuleField = value =>
  * @param {string} value
  * @return {boolean}
  */
-export const isInfosPatternRuleField = value =>
-  [
+export const isInfosPatternRuleField = value => [
     ALARM_PATTERN_FIELDS.infos,
     ALARM_PATTERN_FIELDS.entityInfos,
     ALARM_PATTERN_FIELDS.entityComponentInfos,
@@ -460,8 +452,7 @@ export const isInfosPatternRuleField = value =>
  * @param {string} [value = '']
  * @return {boolean}
  */
-export const isValueInfosPatternRuleField = value =>
-  isInfosPatternRuleField(value) && value?.endsWith?.('.value');
+export const isValueInfosPatternRuleField = value => isInfosPatternRuleField(value) && value?.endsWith?.('.value');
 
 /**
  * Check pattern field is duration
@@ -492,8 +483,7 @@ export const isExtraInfosPatternRuleField = (value) => {
  * @param {string} value
  * @return {string}
  */
-export const getObjectPatternRuleField = value =>
-  [ALARM_PATTERN_FIELDS.ticketData].find((field) => {
+export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData].find((field) => {
     /**
      * @TODO: update babel-eslint for resolving problem with templates inside optional chaining function call
      */
@@ -611,8 +601,7 @@ export const isValidRuleValueWithFieldType = (rule) => {
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidRuleValue = rule =>
-  rule.field_type ? isValidRuleValueWithFieldType(rule) : isValidRuleValueWithoutFieldType(rule);
+export const isValidRuleValue = rule => rule.field_type ? isValidRuleValueWithFieldType(rule) : isValidRuleValueWithoutFieldType(rule);
 
 /**
  * Whether a pattern rule field uses a generic string-array editor, as opposed to fields that bind
@@ -621,8 +610,7 @@ export const isValidRuleValue = rule =>
  * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
  * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
  */
-export const isArrayPatternRuleFieldWithoutPrimitive = field =>
-  field !== ALARM_PATTERN_FIELDS.tags &&
+export const isArrayPatternRuleFieldWithoutPrimitive = field => field !== ALARM_PATTERN_FIELDS.tags &&
   field !== ALARM_PATTERN_FIELDS.component &&
   field !== ALARM_PATTERN_FIELDS.connector &&
   field !== ALARM_PATTERN_FIELDS.connectorName &&
@@ -657,8 +645,7 @@ export const isArrayPatternRuleFieldWithoutPrimitive = field =>
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidPatternRule = rule =>
-  !!(rule?.field || rule?.alias) &&
+export const isValidPatternRule = rule => !!(rule?.field || rule?.alias) &&
   !isNil(rule.cond?.value) &&
   !isNil(rule.cond?.type) &&
   (!rule.field_type || isValidRuleFieldType(rule.field_type)) &&
@@ -1493,8 +1480,7 @@ export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternR
  * @param {PatternGroupsForm} [groups = []]
  * @return {string}
  */
-export const formGroupsToPatternRulesQuery = (groups = []) =>
-  JSON.stringify(formGroupsToPatternRules(groups));
+export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(formGroupsToPatternRules(groups));
 
 /**
  * Convert pattern form to pattern

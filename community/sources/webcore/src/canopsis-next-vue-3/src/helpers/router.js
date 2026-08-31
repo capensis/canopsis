@@ -27,8 +27,7 @@ import { useInfo } from '@/hooks/store/modules/info';
  * @param {import('vue-router').RouteLocationNormalized} route - Target route from the navigation guard.
  * @returns {string|string[]} Permission id or grouped ids.
  */
-const resolvePermissionId = (requiresPermission, route) =>
-  isFunction(requiresPermission.id) ? requiresPermission.id(route) : requiresPermission.id;
+const resolvePermissionId = (requiresPermission, route) => isFunction(requiresPermission.id) ? requiresPermission.id(route) : requiresPermission.id;
 
 /**
  * Guards a route by app edition: fetches app info when missing, then checks

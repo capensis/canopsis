@@ -97,8 +97,7 @@ export default {
     const chatPending = computed(() => chatOptions.value.attrs.pending);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
-    const patternsProps = computed(() =>
-      omit(config.value, [
+    const patternsProps = computed(() => omit(config.value, [
         'title',
         'action',
         'afterSubmit',

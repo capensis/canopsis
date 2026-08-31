@@ -98,12 +98,10 @@ export default {
 
     const availableGroups = computed(() => viewGroups.value.filter(group => !group.is_private));
     const groupIds = computed(() => availableGroups.value.map(({ _id }) => _id));
-    const viewIds = computed(() =>
-      getAllViewsFromGroups(availableGroups.value).map(({ _id }) => _id),
+    const viewIds = computed(() => getAllViewsFromGroups(availableGroups.value).map(({ _id }) => _id),
     );
     const isAllSelected = computed(
-      () =>
-        groupIds.value.every(id => selected.value.groups.includes(id)) &&
+      () => groupIds.value.every(id => selected.value.groups.includes(id)) &&
         viewIds.value.every(id => selected.value.views.includes(id)),
     );
 
@@ -189,8 +187,7 @@ export default {
       resetSelected();
     };
 
-    onMounted(() =>
-      fetchViewGroupsList({
+    onMounted(() => fetchViewGroupsList({
         params: {
           limit: MAX_LIMIT,
           page: 1,

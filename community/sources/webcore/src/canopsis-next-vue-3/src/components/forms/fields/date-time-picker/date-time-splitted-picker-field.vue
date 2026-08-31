@@ -131,11 +131,9 @@ export default {
       validateOnValueUpdate: true,
     });
 
-    const dateValue = computed(() =>
-      convertDateToString(props.value, DATETIME_FORMATS.vuetifyDatePicker, null),
+    const dateValue = computed(() => convertDateToString(props.value, DATETIME_FORMATS.vuetifyDatePicker, null),
     );
-    const timeValue = computed(() =>
-      convertDateToString(props.value, DATETIME_FORMATS.timePicker, null),
+    const timeValue = computed(() => convertDateToString(props.value, DATETIME_FORMATS.timePicker, null),
     );
     const rowStyle = computed(() => ({
       flexDirection: props.reverse ? 'row-reverse' : undefined,

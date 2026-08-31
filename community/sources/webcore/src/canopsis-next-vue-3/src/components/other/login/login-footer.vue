@@ -1,3 +1,20 @@
+<template>
+  <div class="footer">
+    <a :href="canopsisDocumentation" target="_blank">
+      {{ $t('login.documentation') }}
+    </a>
+    <a :href="canopsisWebsite" target="_blank">
+      {{ $t('login.website') }}
+    </a>
+    <a :href="canopsisForum" target="_blank">
+      {{ $t('login.forum') }}
+    </a>
+    <a :href="changeLogHref" class="version" target="_blank">
+      {{ version }}
+    </a>
+  </div>
+</template>
+
 <script setup>
 import { computed } from 'vue';
 
@@ -19,23 +36,6 @@ const canopsisDocumentation = computed(() => CANOPSIS_DOCUMENTATION);
 const canopsisWebsite = computed(() => CANOPSIS_WEBSITE);
 const canopsisForum = computed(() => CANOPSIS_FORUM);
 </script>
-
-<template>
-  <div class="footer">
-    <a :href="canopsisDocumentation" target="_blank">
-      {{ $t('login.documentation') }}
-    </a>
-    <a :href="canopsisWebsite" target="_blank">
-      {{ $t('login.website') }}
-    </a>
-    <a :href="canopsisForum" target="_blank">
-      {{ $t('login.forum') }}
-    </a>
-    <a :href="changeLogHref" class="version" target="_blank">
-      {{ version }}
-    </a>
-  </div>
-</template>
 
 <style lang="scss">
 .footer {

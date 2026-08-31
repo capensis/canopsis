@@ -62,8 +62,7 @@ export default {
   },
   setup(props, { emit }) {
     const hasDifference = computed(() => !!props.suggestion.difference);
-    const suggestionPatternsForm = computed(() =>
-      patternToForm({
+    const suggestionPatternsForm = computed(() => patternToForm({
         type: PATTERN_TYPES.entity,
         [PATTERNS_FIELDS.entity]: props.suggestion[PATTERNS_FIELDS.entity],
       }),

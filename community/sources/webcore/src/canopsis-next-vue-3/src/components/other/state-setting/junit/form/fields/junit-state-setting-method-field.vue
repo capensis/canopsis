@@ -40,8 +40,7 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const methodTypes = computed(() =>
-      Object.values(JUNIT_STATE_SETTING_METHODS).map(method => ({
+    const methodTypes = computed(() => Object.values(JUNIT_STATE_SETTING_METHODS).map(method => ({
         value: method,
         text: t(`stateSetting.junit.methods.${method}`),
       })),

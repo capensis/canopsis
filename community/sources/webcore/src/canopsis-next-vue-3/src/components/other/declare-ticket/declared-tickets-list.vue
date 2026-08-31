@@ -62,8 +62,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const headers = computed(() =>
-      [
+    const headers = computed(() => [
         { text: t('declareTicket.ticketURL'), value: 'ticket_url' },
         { text: t('declareTicket.ticketID'), value: 'ticket' },
         { text: t('common.systemName'), value: 'ticket_system_name' },

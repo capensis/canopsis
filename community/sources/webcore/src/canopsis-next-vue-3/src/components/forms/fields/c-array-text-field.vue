@@ -81,13 +81,11 @@ export default {
       emit('change', values);
     };
 
-    const updateItemValue = (index, value) =>
-      updateValues(
+    const updateItemValue = (index, value) => updateValues(
         props.values.map((item, itemIndex) => (itemIndex === index ? { ...item, value } : item)),
       );
 
-    const removeItemFromArray = index =>
-      updateValues(props.values.filter((item, itemIndex) => itemIndex !== index));
+    const removeItemFromArray = index => updateValues(props.values.filter((item, itemIndex) => itemIndex !== index));
 
     /**
      * Adds an empty object item with key and value to the array

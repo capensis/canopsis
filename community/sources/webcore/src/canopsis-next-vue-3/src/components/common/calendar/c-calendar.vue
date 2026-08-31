@@ -277,8 +277,7 @@ export default {
 
     availableEvents() {
       if (this.editEvent) {
-        return this.events.map(event =>
-          event.id === this.editEvent.id ? this.editEvent : event,
+        return this.events.map(event => event.id === this.editEvent.id ? this.editEvent : event,
         );
       }
 

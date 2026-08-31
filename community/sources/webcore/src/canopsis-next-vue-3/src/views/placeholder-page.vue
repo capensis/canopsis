@@ -1,12 +1,3 @@
-<script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-
-const title = computed(() => route.meta.title || route.name);
-</script>
-
 <template>
   <c-layout gap="2" class="pa-4" column>
     <c-page-header :title="title" />
@@ -16,3 +7,12 @@ const title = computed(() => route.meta.title || route.name);
     </div>
   </c-layout>
 </template>
+
+<script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+const title = computed(() => route.meta.title || route.name);
+</script>

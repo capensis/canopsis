@@ -131,8 +131,7 @@ export default {
     const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'));
     const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'));
     const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'));
-    const fetchHandler = computed(() =>
-      props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore,
+    const fetchHandler = computed(() => props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore,
     );
 
     const {
@@ -158,9 +157,7 @@ export default {
       emit,
     );
 
-    const getSelectionText = (item) => {
-      return item?.[itemText.value] ?? item;
-    };
+    const getSelectionText = item => item?.[itemText.value] ?? item;
 
     const getSelectionColor = item => item?.color;
 

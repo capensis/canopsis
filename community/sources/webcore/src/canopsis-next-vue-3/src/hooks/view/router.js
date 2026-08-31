@@ -52,8 +52,7 @@ export const useViewRouter = ({ view, tab } = {}) => {
    *
    * @returns {Promise<unknown>}
    */
-  const redirectToViewRoot = () =>
-    router.replace({
+  const redirectToViewRoot = () => router.replace({
       query: omit(route.query, 'tabId'),
     });
 

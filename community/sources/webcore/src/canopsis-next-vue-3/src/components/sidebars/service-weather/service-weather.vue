@@ -224,8 +224,7 @@ const infosSubVariables = computed(() => [
   },
 ]);
 
-const infosVariables = computed(() =>
-  entityInfos.value.map(({ value }) => ({
+const infosVariables = computed(() => entityInfos.value.map(({ value }) => ({
     text: value,
     value,
     variables: infosSubVariables.value,
@@ -285,17 +284,13 @@ const entityTemplateVariables = computed(() => [
 
 const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
-const weatherItemWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherItem),
+const weatherItemWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherItem),
 );
-const weatherModalWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherModal),
+const weatherModalWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherModal),
 );
-const weatherEntityWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherEntity),
+const weatherEntityWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherEntity),
 );
-const entityColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
+const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
 );
 
 const updateServiceDependenciesColumnsTemplate = (template, columns) => {

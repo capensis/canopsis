@@ -58,8 +58,7 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery =>
-        fetchRatingSettingsList({
+      onUpdate: fetchQuery => fetchRatingSettingsList({
           params: getQueryForList(fetchQuery),
         }),
     });

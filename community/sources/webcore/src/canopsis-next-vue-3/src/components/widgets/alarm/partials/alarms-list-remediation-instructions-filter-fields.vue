@@ -112,36 +112,31 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const instructionFilterTypes = computed(() =>
-      Object.values(REMEDIATION_INSTRUCTION_FILTER_TYPES).map(type => ({
+    const instructionFilterTypes = computed(() => Object.values(REMEDIATION_INSTRUCTION_FILTER_TYPES).map(type => ({
         value: type,
         text: t(`alarm.instructionsFilter.filters.${type}`),
       })),
     );
 
-    const instructionTypes = computed(() =>
-      [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].map(type => ({
+    const instructionTypes = computed(() => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].map(type => ({
         value: type,
         text: t(`remediation.instruction.types.${type}`),
       })),
     );
 
-    const manualInstructionStatuses = computed(() =>
-      REMEDIATION_INSTRUCTION_FILTER_MANUAL_STATUSES.map(status => ({
+    const manualInstructionStatuses = computed(() => REMEDIATION_INSTRUCTION_FILTER_MANUAL_STATUSES.map(status => ({
         value: status,
         text: t(`alarm.instructionsFilter.statuses.${status}`),
       })),
     );
 
-    const autoInstructionStatuses = computed(() =>
-      REMEDIATION_INSTRUCTION_FILTER_AUTO_STATUSES.map(status => ({
+    const autoInstructionStatuses = computed(() => REMEDIATION_INSTRUCTION_FILTER_AUTO_STATUSES.map(status => ({
         value: status,
         text: t(`alarm.instructionsFilter.statuses.${status}`),
       })),
     );
 
-    const instructionStatuses = computed(() =>
-      props.modelValue.instruction_type === REMEDIATION_INSTRUCTION_TYPES.manual
+    const instructionStatuses = computed(() => props.modelValue.instruction_type === REMEDIATION_INSTRUCTION_TYPES.manual
         ? manualInstructionStatuses.value
         : autoInstructionStatuses.value,
     );
@@ -152,16 +147,14 @@ export default {
      * @param {string|Object} instruction - The instruction ID or object to look up.
      * @returns {string} The name of the instruction, or an empty string if not found.
      */
-    const getInstructionNameById = instruction =>
-      getSelectionText(props.instructions, instruction, '_id', 'name');
+    const getInstructionNameById = instruction => getSelectionText(props.instructions, instruction, '_id', 'name');
 
     /**
      * Updates the filter with the selected instruction filter type. Clears dependent fields if filter type is unset.
      *
      * @param {string|null} instructionFilterType - The selected instruction filter type, or null to clear.
      */
-    const updateInstructionFilterType = instructionFilterType =>
-      updateModel(
+    const updateInstructionFilterType = instructionFilterType => updateModel(
         isNil(instructionFilterType)
           ? {}
           : {
@@ -175,8 +168,7 @@ export default {
      *
      * @param {string|null} instructionType - The selected instruction type, or null to clear.
      */
-    const updateInstructionType = instructionType =>
-      updateModel(
+    const updateInstructionType = instructionType => updateModel(
         isNil(instructionType)
           ? omit(props.modelValue, ['instruction_type', 'instruction_statuses', 'instruction_ids'])
           : {
@@ -185,14 +177,12 @@ export default {
           },
       );
 
-    const updateInstructionStatuses = instructionStatusesValue =>
-      updateModel({
+    const updateInstructionStatuses = instructionStatusesValue => updateModel({
         ...props.modelValue,
         instruction_statuses: instructionStatusesValue ?? [],
       });
 
-    const updateInstructionIds = instructionIds =>
-      updateModel({
+    const updateInstructionIds = instructionIds => updateModel({
         ...props.modelValue,
         instruction_ids: instructionIds ?? [],
       });

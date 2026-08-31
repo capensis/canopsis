@@ -149,42 +149,36 @@ export const formToContextWidgetParameters = form => ({
  * @param {Object} widget
  * @returns {Object}
  */
-export const prepareContextWidget = (widget = {}) =>
-  setSeveralFields(widget, {
-    'parameters.widgetColumns': (columns = []) =>
-      columns.map(column => ({
+export const prepareContextWidget = (widget = {}) => setSeveralFields(widget, {
+    'parameters.widgetColumns': (columns = []) => columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) =>
-      columns.map(column => ({
+    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) => columns.map(column => ({
         ...column,
 
         sortable: false,
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.activeAlarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
-      columns.map(column => ({
+    'parameters.activeAlarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.resolvedAlarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
-      columns.map(column => ({
+    'parameters.resolvedAlarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.widgetExportColumns': (columns = []) =>
-      columns.map(column => ({
+    'parameters.widgetExportColumns': (columns = []) => columns.map(column => ({
         ...column,
 
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),

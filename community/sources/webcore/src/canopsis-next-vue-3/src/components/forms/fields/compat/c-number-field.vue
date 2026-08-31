@@ -1,3 +1,7 @@
+<template>
+  <c-text-field v-bind="$attrs" v-model="model" type="number" />
+</template>
+
 <script setup>
 import { computed } from 'vue';
 
@@ -15,7 +19,3 @@ const model = computed({
   set: value => emit('update:value', value === '' || value === null ? value : Number(value)),
 });
 </script>
-
-<template>
-  <c-text-field v-bind="$attrs" v-model="model" type="number" />
-</template>

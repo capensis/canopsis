@@ -71,8 +71,7 @@ export default {
       },
     ]);
 
-    const getThresholdName = type =>
-      type === META_ALARMS_THRESHOLD_TYPES.thresholdRate ? 'threshold_rate' : 'threshold_count';
+    const getThresholdName = type => type === META_ALARMS_THRESHOLD_TYPES.thresholdRate ? 'threshold_rate' : 'threshold_count';
 
     const getThresholdValue = type => props.config[getThresholdName(type)];
     const updateThreshold = (type, value) => updateField(getThresholdName(type), value);

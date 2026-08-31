@@ -66,8 +66,7 @@ export default {
       updateOptions,
       handler: fetchList,
     } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery =>
-        fetchStateSettingsList({
+      onUpdate: fetchQuery => fetchStateSettingsList({
           params: convertQueryToRequest(fetchQuery),
         }),
     });

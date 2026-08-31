@@ -1,3 +1,25 @@
+<template>
+  <v-autocomplete
+    v-bind="$attrs"
+    v-model="autocompleteValue"
+    :item-props="itemProps ? getItemProps : undefined"
+    :name="inputName"
+    :error-messages="errorMessages"
+    class="c-field c-autocomplete"
+    @blur="onBlur"
+  >
+    <template v-if="label" #label>
+      <span v-if="required && label" class="text-error"> * </span>
+
+      {{ label }}
+    </template>
+
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
+    </template>
+  </v-autocomplete>
+</template>
+
 <script setup>
 import { computed, useAttrs } from 'vue';
 
@@ -46,25 +68,3 @@ const getItemProps = (item) => {
   return props.itemProps;
 };
 </script>
-
-<template>
-  <v-autocomplete
-    v-bind="$attrs"
-    v-model="autocompleteValue"
-    :item-props="itemProps ? getItemProps : undefined"
-    :name="inputName"
-    :error-messages="errorMessages"
-    class="c-field c-autocomplete"
-    @blur="onBlur"
-  >
-    <template v-if="label" #label>
-      <span v-if="required && label" class="text-error"> * </span>
-
-      {{ label }}
-    </template>
-
-    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
-    </template>
-  </v-autocomplete>
-</template>

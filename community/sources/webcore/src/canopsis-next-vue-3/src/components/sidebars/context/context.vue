@@ -156,24 +156,19 @@ const { form, widget, hasChanges, submitting, close, submit } = useWidgetSetting
 
 const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
-const alarmColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
+const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
 );
-const entityColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
+const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
 );
 
-const preparedWidgetColumns = computed(() =>
-  formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
+const preparedWidgetColumns = computed(() => formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
     ...column,
 
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   })),
 );
 
-const sortablePreparedWidgetColumns = computed(() =>
-  preparedWidgetColumns.value.filter(column =>
-    getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
+const sortablePreparedWidgetColumns = computed(() => preparedWidgetColumns.value.filter(column => getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
   ),
 );
 

@@ -12,8 +12,7 @@ export class TableIntersectionObserver {
 
   connect(options = DEFAULT_TABLE_INTERSECTION_OBSERVER_OPTIONS) {
     this.observer = new IntersectionObserver(
-      entries =>
-        entries.forEach((entry) => {
+      entries => entries.forEach((entry) => {
           const { id } = entry.target.dataset;
 
           this.targets[id].callback?.(entry);

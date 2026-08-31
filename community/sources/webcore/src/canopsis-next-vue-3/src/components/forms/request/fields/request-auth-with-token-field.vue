@@ -77,8 +77,7 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const types = computed(() =>
-      Object.values(REQUEST_AUTH_TYPES).reduce((acc, type) => {
+    const types = computed(() => Object.values(REQUEST_AUTH_TYPES).reduce((acc, type) => {
         if (props.onlyCredentials && type === REQUEST_AUTH_TYPES.token) {
           return acc;
         }

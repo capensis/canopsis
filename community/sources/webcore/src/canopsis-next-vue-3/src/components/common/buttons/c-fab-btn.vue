@@ -48,8 +48,7 @@ export default {
       updateTick.value += 1;
     });
 
-    const hasCreateListener = computed(() =>
-      Boolean(updateTick.value >= 0 && instance?.vnode.props?.onCreate),
+    const hasCreateListener = computed(() => Boolean(updateTick.value >= 0 && instance?.vnode.props?.onCreate),
     );
 
     return {

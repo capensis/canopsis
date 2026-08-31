@@ -79,8 +79,7 @@ export default {
         sortBy: [],
         sortDesc: [],
       },
-      fetchListHandler: async ({ params }) =>
-        fetchLlmUsersWithoutStore({
+      fetchListHandler: async ({ params }) => fetchLlmUsersWithoutStore({
           id: props.llmId,
           params,
         }),

@@ -15,8 +15,7 @@ export const useActiveViewStore = defineStore('activeView', () => {
   const editingOffHandlers = ref([]);
   const periodicRefreshPaused = ref(false);
 
-  const isKioskScreenMode = computed(() =>
-    [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(screenMode.value),
+  const isKioskScreenMode = computed(() => [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(screenMode.value),
   );
 
   const registerEditingOffHandler = (handler) => {

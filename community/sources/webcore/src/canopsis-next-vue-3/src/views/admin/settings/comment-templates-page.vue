@@ -96,8 +96,7 @@ export default {
       modals.show({
         name: MODALS.createCommentTemplate,
         config: {
-          action: newTemplate =>
-            callActionWithPopup(() => createCommentTemplate({ data: newTemplate }), fetchList),
+          action: newTemplate => callActionWithPopup(() => createCommentTemplate({ data: newTemplate }), fetchList),
         },
       });
     };
@@ -114,8 +113,7 @@ export default {
           template,
           title: t('modals.createCommentTemplate.edit.title'),
 
-          action: newTemplate =>
-            callActionWithPopup(
+          action: newTemplate => callActionWithPopup(
               () => updateCommentTemplate({ id: template._id, data: newTemplate }),
               fetchList,
             ),

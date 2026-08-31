@@ -1,3 +1,26 @@
+<template>
+  <v-card class="login-card">
+    <v-card-title class="bg-primary text-white">
+      <div class="d-flex justify-space-between align-center w-100">
+        <h3>{{ $t('common.login') }}</h3>
+
+        <img :src="logo" class="login-card__logo" alt="Canopsis logo" />
+      </div>
+    </v-card-title>
+
+    <v-card-text>
+      <c-layout column>
+        <component
+          v-for="{ key, component } in components"
+          :is="component"
+          :key="key"
+          class="login-card__item py-4"
+        />
+      </c-layout>
+    </v-card-text>
+  </v-card>
+</template>
+
 <script setup>
 import { computed } from 'vue';
 
@@ -34,8 +57,7 @@ const loginComponents = {
   oauth: OauthLogin,
 };
 
-const components = computed(() =>
-  Object.entries(loginComponents).reduce((acc, [key, component]) => {
+const components = computed(() => Object.entries(loginComponents).reduce((acc, [key, component]) => {
     if (props[key]) {
       acc.push({ key, component });
     }
@@ -44,29 +66,6 @@ const components = computed(() =>
   }, []),
 );
 </script>
-
-<template>
-  <v-card class="login-card">
-    <v-card-title class="bg-primary text-white">
-      <div class="d-flex justify-space-between align-center w-100">
-        <h3>{{ $t('common.login') }}</h3>
-
-        <img :src="logo" class="login-card__logo" alt="Canopsis logo" />
-      </div>
-    </v-card-title>
-
-    <v-card-text>
-      <c-layout column>
-        <component
-          v-for="{ key, component } in components"
-          :is="component"
-          :key="key"
-          class="login-card__item py-4"
-        />
-      </c-layout>
-    </v-card-text>
-  </v-card>
-</template>
 
 <style lang="scss" scoped>
 .login-card {

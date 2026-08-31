@@ -51,8 +51,7 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const timeUnits = computed(() =>
-      [
+    const timeUnits = computed(() => [
         AVAILABLE_TIME_UNITS.day,
         AVAILABLE_TIME_UNITS.week,
         AVAILABLE_TIME_UNITS.month,

@@ -48,8 +48,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const items = computed(() =>
-      PERIOD_TYPES.map(value => ({
+    const items = computed(() => PERIOD_TYPES.map(value => ({
         value,
         text: t(`pbehavior.types.types.${value}`),
       })),

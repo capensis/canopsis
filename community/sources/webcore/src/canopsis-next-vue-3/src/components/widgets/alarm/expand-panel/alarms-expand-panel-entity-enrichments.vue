@@ -40,8 +40,7 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: rest =>
-        fetchEntityInfosLogsListWithoutStore({
+      fetchListHandler: rest => fetchEntityInfosLogsListWithoutStore({
           ...rest,
           params: {
             ...rest.params,

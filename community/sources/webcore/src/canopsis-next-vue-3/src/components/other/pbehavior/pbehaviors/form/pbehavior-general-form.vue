@@ -291,8 +291,7 @@ export default {
       );
     });
 
-    const tstopMax = computed(() =>
-      convertDateToString(
+    const tstopMax = computed(() => convertDateToString(
         addUnitToDate(props.form.tstart, MAX_PBEHAVIOR_DATES_DIFF_YEARS, TIME_UNITS.year),
         DATETIME_FORMATS.vuetifyDatePicker,
       ),

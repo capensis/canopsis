@@ -147,8 +147,7 @@ export default {
       }),
     });
 
-    const instructionsRateQueryInterval = computed(() =>
-      convertMetricIntervalToTimestamp({ interval: instructionsToRateOptions.value.interval }),
+    const instructionsRateQueryInterval = computed(() => convertMetricIntervalToTimestamp({ interval: instructionsToRateOptions.value.interval }),
     );
 
     const { fetchEventFiltersListWithoutStore } = useEventFilter();

@@ -35,8 +35,7 @@ export default {
     },
   },
   setup() {
-    const eventFilterAfterTypes = computed(() =>
-      Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES),
+    const eventFilterAfterTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES),
     );
 
     return {

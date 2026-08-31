@@ -77,8 +77,7 @@ export default {
       actionsField.value = [...actionsField.value, action];
     };
 
-    const hasPreviousWebhook = index =>
-      actionsField.value
+    const hasPreviousWebhook = index => actionsField.value
         .slice(0, index)
         .some(action => isWebhookActionType(action.type));
 

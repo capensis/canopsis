@@ -38,8 +38,7 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params }) =>
-        fetchExecutionsWithoutStore({
+      fetchListHandler: ({ params }) => fetchExecutionsWithoutStore({
           id: props.alarm._id,
           params,
         }),

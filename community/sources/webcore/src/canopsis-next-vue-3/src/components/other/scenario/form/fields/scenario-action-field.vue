@@ -199,8 +199,7 @@ export default {
       set: value => updateField(`parameters.${props.modelValue.type}`, value),
     });
     const isWebhookAction = computed(() => isWebhookActionType(props.modelValue.type));
-    const isPbehaviorRemoveAction = computed(() =>
-      isPbehaviorRemoveActionType(props.modelValue.type),
+    const isPbehaviorRemoveAction = computed(() => isPbehaviorRemoveActionType(props.modelValue.type),
     );
 
     const updateParametersField = (field, value) => {

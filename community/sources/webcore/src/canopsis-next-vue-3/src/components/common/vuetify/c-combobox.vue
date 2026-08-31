@@ -1,3 +1,25 @@
+<template>
+  <v-combobox
+    v-bind="$attrs"
+    v-model="comboboxValue"
+    :name="inputName"
+    :error-messages="errorMessages"
+    class="c-field c-combobox"
+    @blur="handleBlur"
+    @update:menu="handleMenuUpdate"
+  >
+    <template v-if="label" #label>
+      <span v-if="required && label" class="text-error"> * </span>
+
+      {{ label }}
+    </template>
+
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
+    </template>
+  </v-combobox>
+</template>
+
 <script setup>
 import { computed, ref, useAttrs } from 'vue';
 
@@ -53,28 +75,6 @@ const getLegacySlotProps = slotProps => ({
   vuetifyItem: slotProps?.item,
 });
 </script>
-
-<template>
-  <v-combobox
-    v-bind="$attrs"
-    v-model="comboboxValue"
-    :name="inputName"
-    :error-messages="errorMessages"
-    class="c-field c-combobox"
-    @blur="handleBlur"
-    @update:menu="handleMenuUpdate"
-  >
-    <template v-if="label" #label>
-      <span v-if="required && label" class="text-error"> * </span>
-
-      {{ label }}
-    </template>
-
-    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
-      <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
-    </template>
-  </v-combobox>
-</template>
 
 <style lang="scss" scoped>
 .c-combobox {

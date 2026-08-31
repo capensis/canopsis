@@ -59,5 +59,4 @@ const getTranslatedColumnLabel = (key, fallback = '') => {
  * @param {string[]} [unsortableFields=[]]
  * @returns {boolean}
  */
-export const getWidgetColumnSortable = (column = {}, unsortableFields = []) =>
-  !unsortableFields.some(field => (column.value ?? '').startsWith(field));
+export const getWidgetColumnSortable = (column = {}, unsortableFields = []) => !unsortableFields.some(field => (column.value ?? '').startsWith(field));

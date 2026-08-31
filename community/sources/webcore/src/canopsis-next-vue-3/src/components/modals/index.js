@@ -106,9 +106,7 @@ export default {
   [MODALS.createPbehaviorException]: defineAsyncComponent(
     () => import('./pbehavior/create-pbehavior-exception.vue'),
   ),
-  [MODALS.createPbehavior]: defineAsyncComponent(
-    () => import('./pbehavior/create-pbehavior.vue'),
-  ),
+  [MODALS.createPbehavior]: defineAsyncComponent(() => import('./pbehavior/create-pbehavior.vue')),
   [MODALS.createRecurrenceRule]: defineAsyncComponent(
     () => import('./pbehavior/create-recurrence-rule.vue'),
   ),
@@ -203,7 +201,9 @@ export default {
   ),
   [MODALS.createEntity]: defineAsyncComponent(() => import('./entity/create-entity.vue')),
   [MODALS.createEntityInfo]: defineAsyncComponent(() => import('./entity/create-entity-info.vue')),
-  [MODALS.entitiesComparison]: defineAsyncComponent(() => import('./entity/entities-comparison.vue')),
+  [MODALS.entitiesComparison]: defineAsyncComponent(
+    () => import('./entity/entities-comparison.vue'),
+  ),
   [MODALS.entitiesList]: defineAsyncComponent(() => import('./entity/entities-list.vue')),
   [MODALS.entitiesRootCauseDiagram]: defineAsyncComponent(
     () => import('./entity/entities-root-cause-diagram.vue'),

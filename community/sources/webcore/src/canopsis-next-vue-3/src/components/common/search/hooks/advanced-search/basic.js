@@ -66,8 +66,7 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The translated text for the item.
    *   - {string} chipText: The complete chip text including the prefix.
    */
-  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) =>
-    [PATTERN_RULE_INFOS_FIELDS.name, PATTERN_RULE_INFOS_FIELDS.value].map((value) => {
+  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) => [PATTERN_RULE_INFOS_FIELDS.name, PATTERN_RULE_INFOS_FIELDS.value].map((value) => {
       const text = t(`common.${value}`);
       const result = { value, text };
 
@@ -96,8 +95,7 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The text for the item.
    *   - {Array<Object>} items: The default child items for the chip text.
    */
-  const getItems = (chipTextPrefix, keys, fieldTypes) =>
-    keys.map(({ value, type }) => {
+  const getItems = (chipTextPrefix, keys, fieldTypes) => keys.map(({ value, type }) => {
       const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
       const definedType = ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
 
@@ -110,16 +108,14 @@ export const useEntityInfosKeys = () => {
       };
     });
 
-  const alarmItems = computed(() =>
-    getItems(
+  const alarmItems = computed(() => getItems(
       t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.infos]),
       dynamicInfosKeys.value,
       DEFAULT_PATTERN_FIELD_TYPES,
     ),
   );
 
-  const entityItems = computed(() =>
-    getItems(
+  const entityItems = computed(() => getItems(
       t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.entityInfos]),
       entityInfosKeys.value,
       ENTITY_PATTERN_FIELD_TYPES,
@@ -151,8 +147,7 @@ export const useGetEntityOptions = () => {
 
   const getEntityOptions = (type = Object.values(BASIC_ENTITY_TYPES)) => ({
     operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
-    fetchValues: ({ params }) =>
-      fetchContextEntitiesListWithoutStore({
+    fetchValues: ({ params }) => fetchContextEntitiesListWithoutStore({
         params: { ...params, type },
       }),
     itemText: '_id',
@@ -412,8 +407,7 @@ export const useAdvancedSearchRuleActiveItems = ({
     return result;
   });
 
-  const preparedOperators = computed(() =>
-    (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
+  const preparedOperators = computed(() => (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
       text: t(`common.operators.${operator}`),
       value: operator,
     })),
@@ -422,8 +416,7 @@ export const useAdvancedSearchRuleActiveItems = ({
   /**
    * INTERVAL ITEMS
    */
-  const preparedIntervalRanges = computed(() =>
-    unref(intervalRanges).map(range => ({
+  const preparedIntervalRanges = computed(() => unref(intervalRanges).map(range => ({
       ...range,
       text: t(`quickRanges.types.${range.value}`),
     })),
@@ -445,8 +438,7 @@ export const useAdvancedSearchRuleActiveItems = ({
   /**
    * UNION ITEMS
    */
-  const preparedUnionItems = computed(() =>
-    Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
+  const preparedUnionItems = computed(() => Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
       value,
       text: value,
       disabled: value === ADVANCED_SEARCH_UNION_CONDITIONS.or && !unref(allowOr),
@@ -465,8 +457,7 @@ export const useAdvancedSearchRuleActiveItems = ({
    * VALUE ITEMS
    */
   const preparedValueItems = computed(
-    () =>
-      currentAttribute.value?.values ??
+    () => currentAttribute.value?.values ??
       { [isBooleanFieldType.value]: preparedBooleanItems.value }.true ??
       [],
   );

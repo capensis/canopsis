@@ -57,8 +57,7 @@ export default {
 
     const currentValue = computed(() => props.modelValue ?? props.value);
 
-    const eventFilterTypes = computed(() =>
-      Object.values(EVENT_FILTER_TYPES).map(type => ({
+    const eventFilterTypes = computed(() => Object.values(EVENT_FILTER_TYPES).map(type => ({
         value: type,
         text: t(`eventFilter.types.${type}`),
       })),

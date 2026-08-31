@@ -128,8 +128,7 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const hasDeprecatedTrigger = item =>
-      item.triggers.some(({ type }) => isDeprecatedTrigger(type));
+    const hasDeprecatedTrigger = item => item.triggers.some(({ type }) => isDeprecatedTrigger(type));
 
     return {
       headers,

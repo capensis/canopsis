@@ -83,8 +83,7 @@ const config = computed(() => props.modal.config ?? {});
 const pbehavior = computed(() => config.value.pbehavior);
 const isNew = computed(() => !pbehavior.value?._id);
 const title = computed(
-  () =>
-    config.value.title ||
+  () => config.value.title ||
     t(`modals.createPbehavior.${isNew.value ? 'create' : 'edit'}.title`),
 );
 const noPattern = computed(() => !!config.value.noPattern);

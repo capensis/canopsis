@@ -96,8 +96,7 @@ export default {
       }
     };
 
-    const getAvailableTemplates = currentTemplate =>
-      availableTemplates.value.map(template => ({
+    const getAvailableTemplates = currentTemplate => availableTemplates.value.map(template => ({
         ...template,
         disabled: props.modelValue.some(
           item => item.template === template._id && item.template !== currentTemplate,

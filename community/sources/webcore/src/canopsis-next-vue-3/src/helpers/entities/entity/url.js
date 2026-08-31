@@ -6,5 +6,4 @@ import { API_HOST, API_ROUTES } from '@/config';
  * @param {string} id
  * @return {string}
  */
-export const getContextExportDownloadFileUrl = id =>
-  `${API_HOST}${API_ROUTES.contextExport}/${id}/download`;
+export const getContextExportDownloadFileUrl = id => `${API_HOST}${API_ROUTES.contextExport}/${id}/download`;

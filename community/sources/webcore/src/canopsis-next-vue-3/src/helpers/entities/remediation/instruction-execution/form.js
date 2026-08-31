@@ -9,8 +9,7 @@ import {
  * @param {number} icon
  * @returns {boolean}
  */
-export const hasInstructionWithoutAnyExecution = icon =>
-  icon === INSTRUCTION_EXECUTION_ICONS.withoutAnyExecution;
+export const hasInstructionWithoutAnyExecution = icon => icon === INSTRUCTION_EXECUTION_ICONS.withoutAnyExecution;
 
 /**
  * Check type is manual in progress.
@@ -18,8 +17,7 @@ export const hasInstructionWithoutAnyExecution = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconManualInProgress = icon =>
-  [
+export const isInstructionExecutionIconManualInProgress = icon => [
     INSTRUCTION_EXECUTION_ICONS.manualInProgress,
     INSTRUCTION_EXECUTION_ICONS.manualFailedWithInProgress,
     INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithInProgress,
@@ -31,8 +29,7 @@ export const isInstructionExecutionIconManualInProgress = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconAutoInProgress = icon =>
-  [
+export const isInstructionExecutionIconAutoInProgress = icon => [
     INSTRUCTION_EXECUTION_ICONS.autoInProgress,
     INSTRUCTION_EXECUTION_ICONS.autoFailedWithInProgress,
     INSTRUCTION_EXECUTION_ICONS.autoSuccessfulWithInProgress,
@@ -44,8 +41,7 @@ export const isInstructionExecutionIconAutoInProgress = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconInProgress = icon =>
-  isInstructionExecutionIconManualInProgress(icon) ||
+export const isInstructionExecutionIconInProgress = icon => isInstructionExecutionIconManualInProgress(icon) ||
   isInstructionExecutionIconAutoInProgress(icon);
 
 /**
@@ -54,8 +50,7 @@ export const isInstructionExecutionIconInProgress = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconFailed = icon =>
-  [
+export const isInstructionExecutionIconFailed = icon => [
     INSTRUCTION_EXECUTION_ICONS.autoFailed,
     INSTRUCTION_EXECUTION_ICONS.manualFailed,
     INSTRUCTION_EXECUTION_ICONS.manualFailedWithInProgress,
@@ -70,8 +65,7 @@ export const isInstructionExecutionIconFailed = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionIconSuccess = icon =>
-  [
+export const isInstructionExecutionIconSuccess = icon => [
     INSTRUCTION_EXECUTION_ICONS.autoSuccessful,
     INSTRUCTION_EXECUTION_ICONS.manualSuccessful,
     INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithInProgress,
@@ -86,8 +80,7 @@ export const isInstructionExecutionIconSuccess = icon =>
  * @param {number} icon
  * @returns {boolean}
  */
-export const isInstructionExecutionManual = icon =>
-  [
+export const isInstructionExecutionManual = icon => [
     INSTRUCTION_EXECUTION_ICONS.manualInProgress,
     INSTRUCTION_EXECUTION_ICONS.manualFailed,
     INSTRUCTION_EXECUTION_ICONS.manualFailedWithInProgress,
@@ -104,8 +97,7 @@ export const isInstructionExecutionManual = icon =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionCompleted = (execution = {}) =>
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed;
+export const isInstructionExecutionCompleted = (execution = {}) => execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed;
 
 /**
  * Check instruction execution status is failed.
@@ -113,8 +105,7 @@ export const isInstructionExecutionCompleted = (execution = {}) =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionFailed = (execution = {}) =>
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed;
+export const isInstructionExecutionFailed = (execution = {}) => execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed;
 
 /**
  * Check instruction execution status is aborted.
@@ -122,8 +113,7 @@ export const isInstructionExecutionFailed = (execution = {}) =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionAborted = (execution = {}) =>
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted;
+export const isInstructionExecutionAborted = (execution = {}) => execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted;
 
 /**
  * Check instruction execution status is paused.
@@ -131,8 +121,7 @@ export const isInstructionExecutionAborted = (execution = {}) =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionPaused = (execution = {}) =>
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused;
+export const isInstructionExecutionPaused = (execution = {}) => execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused;
 
 /**
  * Check instruction execution status is running.
@@ -140,8 +129,7 @@ export const isInstructionExecutionPaused = (execution = {}) =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionRunning = (execution = {}) =>
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;
+export const isInstructionExecutionRunning = (execution = {}) => execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;
 
 /**
  * Check instruction execution status is finished.
@@ -149,7 +137,6 @@ export const isInstructionExecutionRunning = (execution = {}) =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionFinished = execution =>
-  isInstructionExecutionCompleted(execution) ||
+export const isInstructionExecutionFinished = execution => isInstructionExecutionCompleted(execution) ||
   isInstructionExecutionFailed(execution) ||
   isInstructionExecutionAborted(execution);

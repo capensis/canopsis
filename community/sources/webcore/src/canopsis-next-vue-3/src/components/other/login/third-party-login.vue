@@ -1,16 +1,3 @@
-<script setup>
-defineProps({
-  title: {
-    type: String,
-    default: '',
-  },
-  links: {
-    type: Array,
-    default: () => [],
-  },
-});
-</script>
-
 <template>
   <c-layout gap="3" column>
     <div v-if="title" class="text-body-2">
@@ -27,3 +14,16 @@ defineProps({
     </v-btn>
   </c-layout>
 </template>
+
+<script setup>
+defineProps({
+  title: {
+    type: String,
+    default: '',
+  },
+  links: {
+    type: Array,
+    default: () => [],
+  },
+});
+</script>

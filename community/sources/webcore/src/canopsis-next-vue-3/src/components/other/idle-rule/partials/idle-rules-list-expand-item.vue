@@ -63,8 +63,7 @@ export default {
     const activeTab = ref('summary');
 
     const isEntityType = computed(() => isIdleRuleEntityType(props.idleRule.type));
-    const patterns = computed(() =>
-      filterPatternsToForm(props.idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
+    const patterns = computed(() => filterPatternsToForm(props.idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
     );
 
     return {

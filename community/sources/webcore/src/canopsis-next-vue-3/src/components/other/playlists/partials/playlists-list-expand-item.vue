@@ -54,8 +54,7 @@ export default {
     const groups = ref([]);
     const pending = ref(false);
 
-    const availableTabs = computed(() =>
-      getTabsFromGroupsByIds(groups.value, props.playlist.tabs_list ?? []),
+    const availableTabs = computed(() => getTabsFromGroupsByIds(groups.value, props.playlist.tabs_list ?? []),
     );
 
     const fetchGroups = async () => {

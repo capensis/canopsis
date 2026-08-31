@@ -99,8 +99,7 @@ export const linkRuleToForm = (linkRule = {}) => ({
  * @param {string} [code = '']
  * @returns {boolean}
  */
-export const isDefaultSourceCode = (code = '') =>
-  !code ||
+export const isDefaultSourceCode = (code = '') => !code ||
   [LINK_RULE_DEFAULT_ALARM_SOURCE_CODE, LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE].includes(code);
 
 /**
@@ -111,8 +110,7 @@ export const isDefaultSourceCode = (code = '') =>
  * @param {LinkRuleType} type
  * @returns {LinkRuleLink}
  */
-export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) =>
-  type === LINK_RULE_TYPES.entity ? omit(form, ['single', 'hide_in_menu']) : form;
+export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) => type === LINK_RULE_TYPES.entity ? omit(form, ['single', 'hide_in_menu']) : form;
 
 /**
  * Convert form to link rule

@@ -80,8 +80,7 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const items = computed(() =>
-      materialIcons.map(icon => ({
+    const items = computed(() => materialIcons.map(icon => ({
         text: icon,
         value: icon,
       })),

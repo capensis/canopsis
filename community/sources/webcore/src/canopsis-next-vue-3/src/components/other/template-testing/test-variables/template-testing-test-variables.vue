@@ -158,14 +158,12 @@ export default {
       () => !hasSelectedTest.value || isEmptyValidationForm.value || isEqualValidationForm.value,
     );
 
-    const saveButtonTooltip = computed(() =>
-      hasSelectedTest.value && isEqualValidationForm.value ? t('templateTesting.testSaved') : '',
+    const saveButtonTooltip = computed(() => hasSelectedTest.value && isEqualValidationForm.value ? t('templateTesting.testSaved') : '',
     );
 
     const save = () => saveAction(selectedTest.value, getValidationFormData);
 
-    const saveAsNew = () =>
-      saveAsNewAction(getValidationFormData, (newTest) => {
+    const saveAsNew = () => saveAsNewAction(getValidationFormData, (newTest) => {
         selectedTest.value = newTest;
       });
 

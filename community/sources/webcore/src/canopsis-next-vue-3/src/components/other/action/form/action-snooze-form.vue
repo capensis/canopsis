@@ -57,8 +57,7 @@ export default {
 
     const duration = computed({
       get: () => props.modelValue.duration ?? { value: 1, unit: TIME_UNITS.hour },
-      set: value =>
-        emit('update:modelValue', {
+      set: value => emit('update:modelValue', {
           ...props.modelValue,
           duration: value,
         }),

@@ -119,8 +119,7 @@ export default {
      * The old Vuetify 2 wrapper default used `>*`, which would become
      * `[data-draggable]>*` and make Sortable drag child DOM nodes instead of items.
      */
-    const sortableDraggable = computed(() =>
-      props.draggable === '>*' ? undefined : props.draggable,
+    const sortableDraggable = computed(() => props.draggable === '>*' ? undefined : props.draggable,
     );
 
     /**

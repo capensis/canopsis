@@ -131,14 +131,11 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
         PATTERN_OPERATORS.withLabel,
         PATTERN_OPERATORS.withoutLabel,
       ],
-      fetchValues: ({ params }, { operator } = {}) =>
-        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
+      fetchValues: ({ params }, { operator } = {}) => PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
           ? fetchAlarmTagsLabelsListWithoutStore({ params })
           : fetchAlarmTagsListWithoutStore({ params }),
-      itemText: ({ operator } = {}) =>
-        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator) ? '_id' : 'value',
-      itemValue: ({ operator } = {}) =>
-        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator) ? '_id' : 'value',
+      itemText: ({ operator } = {}) => PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator) ? '_id' : 'value',
+      itemValue: ({ operator } = {}) => PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator) ? '_id' : 'value',
     },
     [ALARM_PATTERN_FIELDS.infos]: {
       items: unref(infosItems),

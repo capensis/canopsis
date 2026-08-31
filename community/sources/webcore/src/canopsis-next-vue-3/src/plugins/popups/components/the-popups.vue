@@ -1,3 +1,11 @@
+<template>
+  <teleport to="body">
+    <div v-if="popups.length" class="popups">
+      <popup-item v-for="popup in popups" v-bind="popup" :key="popup.id" />
+    </div>
+  </teleport>
+</template>
+
 <script setup>
 import { storeToRefs } from 'pinia';
 
@@ -9,14 +17,6 @@ const popupsStore = usePopupsStore();
 
 const { popups } = storeToRefs(popupsStore);
 </script>
-
-<template>
-  <teleport to="body">
-    <div v-if="popups.length" class="popups">
-      <popup-item v-for="popup in popups" v-bind="popup" :key="popup.id" />
-    </div>
-  </teleport>
-</template>
 
 <style lang="scss">
 .popups {

@@ -50,8 +50,7 @@ export default {
           to: QUICK_RANGES.last7Days.stop,
         },
       },
-      fetchListHandler: ({ params }) =>
-        fetchRemediationInstructionStatsList({
+      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsList({
           params: {
             ...params,
             with_flags: true,
@@ -59,8 +58,7 @@ export default {
         }),
     });
 
-    const queryInterval = computed(() =>
-      convertMetricIntervalToTimestamp({ interval: options.value.interval }),
+    const queryInterval = computed(() => convertMetricIntervalToTimestamp({ interval: options.value.interval }),
     );
 
     const { showRateInstructionModal } = useRemediationInstructionStatsRate(fetchList);

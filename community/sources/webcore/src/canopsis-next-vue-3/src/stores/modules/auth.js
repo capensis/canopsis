@@ -30,8 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const currentUserPermissionsById = computed(() => keyBy(currentUser.value.permissions, '_id'));
 
-  const currentUserViewPermissionsByViewId = computed(() =>
-    viewPermissionsGroupedPermissions(currentUser.value.permissions),
+  const currentUserViewPermissionsByViewId = computed(() => viewPermissionsGroupedPermissions(currentUser.value.permissions),
   );
 
   const localLogout = () => {

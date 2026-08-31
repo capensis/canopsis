@@ -87,8 +87,7 @@ export default {
     const { updateField } = useModelField(props, emit);
 
     const isCustomTypeSelected = computed(
-      () =>
-        props.form.selectedType === EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom,
+      () => props.form.selectedType === EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom,
     );
 
     const isCustomSeparatorSelected = computed(
@@ -101,14 +100,12 @@ export default {
       }
 
       return [
-        value =>
-          value !== CSV_SEPARATORS_TO_SYMBOLS[props.tableSeparator] ||
+        value => value !== CSV_SEPARATORS_TO_SYMBOLS[props.tableSeparator] ||
           t('externalData.tableColumnDataTypesAdditionalChips.forbiddenSeparator'),
       ];
     });
 
-    const types = computed(() =>
-      Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES).map(type => ({
+    const types = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES).map(type => ({
         value: type,
         text: t(`externalData.tableColumnDataTypesAdditionalChips.stringArray.types.${type}.text`),
         description: t(

@@ -41,13 +41,11 @@ export default {
 
     const refresh = () => iconsElement.value?.fetchList?.();
 
-    const showCreateIconModal = () =>
-      modals.show({
+    const showCreateIconModal = () => modals.show({
         name: MODALS.createIcon,
         config: {
           title: t('modals.createIcon.create.title'),
-          action: newIcon =>
-            callActionWithPopup(
+          action: newIcon => callActionWithPopup(
               () => createIcon({ data: newIcon }),
               refresh,
               t('modals.createIcon.create.success'),

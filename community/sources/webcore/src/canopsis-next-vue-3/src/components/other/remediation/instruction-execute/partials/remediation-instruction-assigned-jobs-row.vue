@@ -147,14 +147,12 @@ export default {
     const isLaunchedJob = computed(() => !!props.job.launched_at);
     const isCompletedJob = computed(() => !!props.job.completed_at);
     const isFailedJob = computed(() => !!props.job.fail_reason);
-    const shownLaunchedPendingJob = computed(() =>
-      !isCancelledJob.value
+    const shownLaunchedPendingJob = computed(() => !isCancelledJob.value
       && !isFailedJob.value
       && !isLaunchedJob.value
       && isStartedJob.value,
     );
-    const shownCompletedPendingJob = computed(() =>
-      !isCancelledJob.value
+    const shownCompletedPendingJob = computed(() => !isCancelledJob.value
       && !isFailedJob.value
       && !isCompletedJob.value
       && isStartedJob.value

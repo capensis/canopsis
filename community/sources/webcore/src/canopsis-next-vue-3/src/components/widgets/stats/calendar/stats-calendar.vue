@@ -292,8 +292,7 @@ export default {
           return;
         }
 
-        const results = await Promise.all(this.query.filters.map(({ _id: id }) =>
-          this.fetchAlarmsListWithoutStore({
+        const results = await Promise.all(this.query.filters.map(({ _id: id }) => this.fetchAlarmsListWithoutStore({
             params: {
               ...commonQuery,
 

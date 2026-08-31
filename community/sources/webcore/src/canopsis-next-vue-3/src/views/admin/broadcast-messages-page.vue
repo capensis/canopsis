@@ -35,8 +35,7 @@ export default {
 
     const refresh = () => fetchBroadcastMessagesListWithPreviousParams();
 
-    const create = () =>
-      modals.show({
+    const create = () => modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
           action: async (data) => {

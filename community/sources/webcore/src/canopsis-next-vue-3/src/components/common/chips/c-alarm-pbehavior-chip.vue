@@ -31,8 +31,7 @@ export default {
   setup(props) {
     const preparedIcon = computed(() => props.icon || 'pause');
     const preparedColor = computed(() => props.color || COLORS.secondary);
-    const iconColor = computed(() =>
-      getMostReadableTextColor(preparedColor.value, { level: 'AA', size: 'large' }),
+    const iconColor = computed(() => getMostReadableTextColor(preparedColor.value, { level: 'AA', size: 'large' }),
     );
 
     return {

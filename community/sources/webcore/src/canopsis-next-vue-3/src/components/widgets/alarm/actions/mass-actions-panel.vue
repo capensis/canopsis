@@ -102,8 +102,7 @@ export default {
 
     alarmsForActions() {
       return this.localItems.filter(
-        item =>
-          (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item)) ||
+        item => (this.widget.parameters.isActionsAllowWithOkState && isAlarmStateOk(item)) ||
           (!isAlarmStatusCancelled(item) && !isAlarmStatusClosed(item)),
       );
     },
@@ -747,8 +746,7 @@ export default {
         }
 
         await this.bulkCreateEntityPbehaviors({
-          data: mapAlarmsEntities(this.alarmsWithoutFastPbehavior).map(entity =>
-            createDowntimePbehavior({
+          data: mapAlarmsEntities(this.alarmsWithoutFastPbehavior).map(entity => createDowntimePbehavior({
               entity,
               prefix: namePrefix,
               type,
@@ -809,8 +807,7 @@ export default {
         });
 
         const summaryLink = links.find(
-          ({ icon_name: iconName, label = '' } = {}) =>
-            iconName === link.icon_name && label.includes(link.label),
+          ({ icon_name: iconName, label = '' } = {}) => iconName === link.icon_name && label.includes(link.label),
         );
 
         if (!summaryLink) {

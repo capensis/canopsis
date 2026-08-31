@@ -97,16 +97,14 @@ export default {
     const ticketResources = form.model('ticket_resources');
     const comment = form.model('comment');
 
-    const itemsWithoutAck = computed(() =>
-      config.value.ignoreAck ? [] : (config.value.items ?? []).filter(item => !item.v.ack),
+    const itemsWithoutAck = computed(() => config.value.ignoreAck ? [] : (config.value.items ?? []).filter(item => !item.v.ack),
     );
     const alertMessage = computed(() => {
       const { length: count } = itemsWithoutAck.value;
 
       return t('declareTicket.noAckItems', count, { count });
     });
-    const isAllComponentAlarms = computed(() =>
-      (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    const isAllComponentAlarms = computed(() => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
     );
 
     const submit = handleSubmit(async () => {

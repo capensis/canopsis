@@ -92,8 +92,7 @@ export default {
       }
     });
 
-    const sanitizedStepMessage = computed(() =>
-      sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))),
+    const sanitizedStepMessage = computed(() => sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))),
     );
 
     watch(expanded, value => emit('expand', value));

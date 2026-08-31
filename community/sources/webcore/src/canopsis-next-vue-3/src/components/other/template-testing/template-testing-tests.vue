@@ -46,8 +46,7 @@ export default {
       fetchListHandler: fetchTemplateTestingTestsListWithoutStore,
     });
 
-    const showEditTemplateTestingTestModal = (templateTestingTest = {}) =>
-      modals.show({
+    const showEditTemplateTestingTestModal = (templateTestingTest = {}) => modals.show({
         name: MODALS.createTemplateTestingTest,
         config: {
           templateTestingTest,
@@ -63,8 +62,7 @@ export default {
         },
       });
 
-    const showRemoveTemplateTestingTestModal = (templateTestingTest = {}) =>
-      modals.show({
+    const showRemoveTemplateTestingTestModal = (templateTestingTest = {}) => modals.show({
         name: MODALS.confirmationPhrase,
         config: {
           phrase: templateTestingTest.name,

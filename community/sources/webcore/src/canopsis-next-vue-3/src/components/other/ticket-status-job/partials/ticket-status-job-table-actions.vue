@@ -77,11 +77,9 @@ export default {
     } = useTicketStatusJob();
     const preparedItems = computed(() => (props.item ? [props.item] : props.items));
     const preparedItemsById = computed(() => keyBy(preparedItems.value, '_id'));
-    const isRunning = computed(() =>
-      preparedItems.value.some(item => item.status === JOB_STATUS.running),
+    const isRunning = computed(() => preparedItems.value.some(item => item.status === JOB_STATUS.running),
     );
-    const isStopped = computed(() =>
-      preparedItems.value.every(item => item.status === JOB_STATUS.stopped),
+    const isStopped = computed(() => preparedItems.value.every(item => item.status === JOB_STATUS.stopped),
     );
 
     const showTicketStatusJobActionPopup = (items = [], textKey, popupType = 'info') => {
@@ -133,22 +131,19 @@ export default {
       }
     };
 
-    const { pending: playPending, handler: play } = usePendingHandler(() =>
-      callTicketStatusJobActionWithPopups({
+    const { pending: playPending, handler: play } = usePendingHandler(() => callTicketStatusJobActionWithPopups({
         action: () => playTicketStatusJobs({ data: pickIds(preparedItems.value) }),
         successTextKey: 'jobs.popups.restarted',
         errorTextKey: 'jobs.popups.restartFailed',
       }),
     );
-    const { pending: repeatPending, handler: repeat } = usePendingHandler(() =>
-      callTicketStatusJobActionWithPopups({
+    const { pending: repeatPending, handler: repeat } = usePendingHandler(() => callTicketStatusJobActionWithPopups({
         action: () => playTicketStatusJobs({ data: pickIds(preparedItems.value) }),
         successTextKey: 'jobs.popups.repeated',
         errorTextKey: 'jobs.popups.repeatFailed',
       }),
     );
-    const { pending: pausePending, handler: pause } = usePendingHandler(() =>
-      callTicketStatusJobActionWithPopups({
+    const { pending: pausePending, handler: pause } = usePendingHandler(() => callTicketStatusJobActionWithPopups({
         action: () => pauseTicketStatusJobs({ data: pickIds(preparedItems.value) }),
         successTextKey: 'jobs.popups.paused',
         errorTextKey: 'jobs.popups.pauseFailed',
@@ -159,10 +154,8 @@ export default {
         name: MODALS.createTicketStatusJob,
         config: {
           ticketStatusJob: props.item,
-          action: ticketStatusJob =>
-            callActionWithPopup(
-              () =>
-                updateTicketStatusJob({
+          action: ticketStatusJob => callActionWithPopup(
+              () => updateTicketStatusJob({
                   id: props.item._id,
                   data: ticketStatusJob,
                 }),

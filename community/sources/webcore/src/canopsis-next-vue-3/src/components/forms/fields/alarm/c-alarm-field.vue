@@ -72,8 +72,7 @@ export default {
     const { t } = useI18n();
     const { fetchDisplayNamesWithoutStore } = useAlarm();
 
-    const fetchHandler = ({ params }) =>
-      fetchDisplayNamesWithoutStore({
+    const fetchHandler = ({ params }) => fetchDisplayNamesWithoutStore({
         params: merge(params, props.params),
       });
 

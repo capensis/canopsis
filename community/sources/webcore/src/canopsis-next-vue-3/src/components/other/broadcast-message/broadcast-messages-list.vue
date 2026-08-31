@@ -119,8 +119,7 @@ export default {
       },
     ]);
 
-    const preparedBroadcastMessages = computed(() =>
-      props.broadcastMessages.map((message) => {
+    const preparedBroadcastMessages = computed(() => props.broadcastMessages.map((message) => {
         const now = getNowTimestamp();
         let status = BROADCAST_MESSAGES_STATUSES.pending;
 

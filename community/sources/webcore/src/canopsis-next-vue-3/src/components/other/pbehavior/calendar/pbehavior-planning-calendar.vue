@@ -196,8 +196,7 @@ export default {
     async fetchEvents() {
       this.pending = true;
 
-      const promises = this.allPbehaviorsAvailable.map(pbehavior =>
-        this.fetchEventsForPbehavior(pbehavior),
+      const promises = this.allPbehaviorsAvailable.map(pbehavior => this.fetchEventsForPbehavior(pbehavior),
       );
 
       await Promise.all(promises);

@@ -65,8 +65,7 @@ export default {
       handler: fetchList,
       updateOptions,
     } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery =>
-        fetchPbehaviorTypesList({
+      onUpdate: fetchQuery => fetchPbehaviorTypesList({
           params: {
             ...convertQueryToRequest(fetchQuery),
             with_flags: true,
@@ -83,8 +82,7 @@ export default {
       }
     };
 
-    const showRemovePbehaviorTypeModal = id =>
-      modals.show({
+    const showRemovePbehaviorTypeModal = id => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -94,8 +92,7 @@ export default {
         },
       });
 
-    const showEditPbehaviorTypeModal = pbehaviorType =>
-      modals.show({
+    const showEditPbehaviorTypeModal = pbehaviorType => modals.show({
         name: MODALS.createPbehaviorType,
         config: {
           pbehaviorType,

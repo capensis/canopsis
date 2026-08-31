@@ -59,8 +59,7 @@ export default {
     const exception = computed(() => config.value.pbehaviorException ?? config.value.exception);
     const isNew = computed(() => !exception.value?._id);
     const title = computed(
-      () =>
-        config.value.title ||
+      () => config.value.title ||
         t(`modals.createPbehaviorException.${isNew.value ? 'create' : 'edit'}.title`),
     );
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));

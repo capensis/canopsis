@@ -58,8 +58,7 @@ export default {
 
     const selectedValue = computed(() => props.modelValue ?? props.value);
 
-    const availableStates = computed(() =>
-      Object.entries(props.stateValues).map(([key, state]) => ({
+    const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
         text: t(`modals.createChangeStateEvent.states.${key}`),
         state,
         color: getAlarmStateColor(state),

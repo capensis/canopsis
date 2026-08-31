@@ -26,8 +26,7 @@ export const usePolling = ({
   let finished = false;
   let cancelled = false;
 
-  const wait = (options, cancelToken) =>
-    new Promise((resolve, reject) => {
+  const wait = (options, cancelToken) => new Promise((resolve, reject) => {
       const customResolve = (...args) => {
         finished = true;
 

@@ -69,8 +69,7 @@ export default {
     ]);
 
     const selected = computed(
-      () =>
-        templatesWithCustom.value.find(template => template.value === currentValue.value) ??
+      () => templatesWithCustom.value.find(template => template.value === currentValue.value) ??
         templatesWithCustom.value[0],
     );
 

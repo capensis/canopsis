@@ -177,8 +177,7 @@ export default {
      * @param {Object} [item={}] - The item to check for activity status. Defaults to an empty object.
      * @returns {boolean} - Returns `true` if the item is active, otherwise `false`.
      */
-    const isActiveItem = (item = {}) =>
-      props.value === item[props.itemValue] ||
+    const isActiveItem = (item = {}) => props.value === item[props.itemValue] ||
       (isArray(props.value) &&
         props.value.find?.((selectedItem) => {
           const selectedValue = String(getValue(selectedItem) ?? '');

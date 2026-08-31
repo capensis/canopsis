@@ -119,15 +119,13 @@ export default {
     );
     const isCorelFormShown = computed(() => isCorelType.value);
     const isFormBlockShown = computed(
-      () =>
-        isThresholdFormShown.value ||
+      () => isThresholdFormShown.value ||
         isTimeBasedFormShown.value ||
         isChildInactiveDelayFormShown.value ||
         isValuePathsFormShown.value ||
         isCorelFormShown.value,
     );
-    const withTotalEntityPattern = computed(() =>
-      isMetaAlarmRuleTypeHasTotalEntityPatterns(typeField.value),
+    const withTotalEntityPattern = computed(() => isMetaAlarmRuleTypeHasTotalEntityPatterns(typeField.value),
     );
 
     return {

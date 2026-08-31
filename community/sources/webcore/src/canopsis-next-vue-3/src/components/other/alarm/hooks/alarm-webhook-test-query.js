@@ -56,15 +56,11 @@ export const useAlarmWebhookTestQuery = ({
   const executionStatus = ref(undefined);
 
   const hasErrors = computed(() => validator.errors.any());
-  const alarmsPatternsParams = computed(() =>
-    Object.entries(formFilterToPatterns(unref(form).patterns)).reduce(
-      (acc, [key, value]) => {
-        acc[key] = JSON.stringify(value);
+  const alarmsPatternsParams = computed(() => Object.entries(formFilterToPatterns(unref(form).patterns)).reduce((acc, [key, value]) => {
+      acc[key] = JSON.stringify(value);
 
-        return acc;
-      },
-      {},
-    ),
+      return acc;
+    }, {}),
   );
 
   const getSocketRoomName = id => `${socketRoom}/${id}`;

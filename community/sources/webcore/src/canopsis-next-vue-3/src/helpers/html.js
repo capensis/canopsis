@@ -15,8 +15,7 @@ import { uid } from '@/helpers/uid';
  * @param {string} [html = ''] - HTML string that may contain Vue bindings.
  * @returns {string} HTML with Vue attributes encoded as data attributes.
  */
-export const encodeVueAttributes = (html = '') =>
-  html
+export const encodeVueAttributes = (html = '') => html
     .replace(/(\s):([^\s=>/]+)(?=\s*=)/g, '$1data-v-bind-$2')
     .replace(/(\s)@([^\s=>/]+)(?=\s*=)/g, '$1data-v-on-$2');
 
@@ -29,8 +28,7 @@ export const encodeVueAttributes = (html = '') =>
  * @param {string} [html = ''] - HTML string with encoded Vue attributes.
  * @returns {string} HTML with Vue attributes restored.
  */
-export const decodeVueAttributes = (html = '') =>
-  html
+export const decodeVueAttributes = (html = '') => html
     .replace(/(\s)data-v-bind-([^\s=>/]+)(?=\s*=)/g, '$1:$2')
     .replace(/(\s)data-v-on-([^\s=>/]+)(?=\s*=)/g, '$1@$2');
 
@@ -47,8 +45,7 @@ const COMMENT_DIV_REGEX = /<div class="html-comment"[^>]*data-c="([^"]+)"[^>]*><
  * @param {string} [html = ''] - HTML string that may contain comments.
  * @returns {string} HTML with comments replaced by placeholder divs.
  */
-export const replaceHtmlComments = (html = '') =>
-  html.replace(COMMENT_REGEX, (_, content) => {
+export const replaceHtmlComments = (html = '') => html.replace(COMMENT_REGEX, (_, content) => {
     const encoded = btoa(content);
     const safe = escape(encoded);
     const id = uid('cmt_');
@@ -62,8 +59,7 @@ export const replaceHtmlComments = (html = '') =>
  * @param {string} [html = ''] - HTML string with comment placeholder divs.
  * @returns {string} HTML with original comments restored.
  */
-export const restoreHtmlComments = (html = '') =>
-  html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
+export const restoreHtmlComments = (html = '') => html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
     const encoded = unescape(encodedEscaped);
     const content = atob(encoded);
 
@@ -79,8 +75,7 @@ export const restoreHtmlComments = (html = '') =>
  * @param {import('dompurify').Config} [options = DEFAULT_SANITIZE_OPTIONS] - DOMPurify configuration.
  * @returns {string} Sanitized HTML safe for rendering.
  */
-export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) =>
-  decodeVueAttributes(
+export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => decodeVueAttributes(
     restoreHtmlComments(
       DOMPurify.sanitize(replaceHtmlComments(encodeVueAttributes(html)), options),
     ),
@@ -95,8 +90,7 @@ export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) =>
  * @param {Object} [options = DEFAULT_LINKIFY_OPTIONS] - linkify-html options.
  * @returns {string} HTML with detected URLs wrapped in anchor tags.
  */
-export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) =>
-  linkifyHtmlLib(html, options);
+export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) => linkifyHtmlLib(html, options);
 
 /**
  * Normalizes HTML by parsing and re-serializing it through the browser DOM.

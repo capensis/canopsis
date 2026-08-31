@@ -153,8 +153,7 @@ export default {
      * @param {string} value - The value to be checked.
      * @returns {boolean} - Returns true if the value is considered text, false otherwise.
      */
-    const isText = value =>
-      !props.union && !currentAttribute.value && !attributesMap.value[value];
+    const isText = value => !props.union && !currentAttribute.value && !attributesMap.value[value];
 
     /**
      * Handles the click event on a chip and sets the active type.
@@ -403,8 +402,7 @@ export default {
         bind.multiple = multiple;
 
         on = {
-          'update:modelValue': newValue =>
-            updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
+          'update:modelValue': newValue => updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
           click: () => clickChip(type),
           focusout: () => focusOutChip(type),
           close: remove,
@@ -433,8 +431,7 @@ export default {
 
     const chips = computed(() => {
       const filled = props.rule.filled ?? [];
-      const result = filled.map((type, index) =>
-        getChipAttributes({
+      const result = filled.map((type, index) => getChipAttributes({
           type,
           first: props.first && index === 0,
           closable: index === filled.length - 1,
@@ -450,8 +447,7 @@ export default {
 
     watch(
       () => props.union,
-      union =>
-        (inputType.value = union
+      union => (inputType.value = union
           ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union
           : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute),
     );

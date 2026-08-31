@@ -53,8 +53,7 @@ export default {
       },
     });
 
-    const items = computed(() =>
-      Object.values(IDLE_RULE_ALARM_CONDITIONS).map(value => ({
+    const items = computed(() => Object.values(IDLE_RULE_ALARM_CONDITIONS).map(value => ({
         value,
         label: t(`idleRules.alarmConditions.${value}`),
       })),

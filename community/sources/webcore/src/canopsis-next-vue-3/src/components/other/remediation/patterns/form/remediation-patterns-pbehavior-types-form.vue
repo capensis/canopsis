@@ -36,11 +36,9 @@ export default {
   emits: ['update:form'],
   setup(props, { emit }) {
     const { t } = useI18n();
-    const createFieldModel = field =>
-      computed({
+    const createFieldModel = field => computed({
         get: () => props.form[field],
-        set: value =>
-          emit('update:form', {
+        set: value => emit('update:form', {
             ...props.form,
             [field]: value,
           }),

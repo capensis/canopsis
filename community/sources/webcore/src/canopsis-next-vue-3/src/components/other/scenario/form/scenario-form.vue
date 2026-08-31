@@ -57,11 +57,9 @@ export default {
     const { t } = useI18n();
     const form = useFormContext();
     const enabledField = form.model('enabled');
-    const hasWebhookAction = computed(() =>
-      form.values.value.actions?.some(action => isWebhookActionType(action.type)),
+    const hasWebhookAction = computed(() => form.values.value.actions?.some(action => isWebhookActionType(action.type)),
     );
-    const disabledTestQueryTooltip = computed(() =>
-      hasWebhookAction.value ? '' : t('scenario.errors.testQueryRequireSteps'),
+    const disabledTestQueryTooltip = computed(() => hasWebhookAction.value ? '' : t('scenario.errors.testQueryRequireSteps'),
     );
 
     return {

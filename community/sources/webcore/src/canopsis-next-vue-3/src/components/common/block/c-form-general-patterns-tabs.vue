@@ -278,14 +278,12 @@ export default {
     });
     const visibleTabsKey = computed(() => visibleTabs.value.map(tab => tab.id).join('|'));
 
-    const patternsTabIndex = computed(() =>
-      visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
+    const patternsTabIndex = computed(() => visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
         ? FORM_GENERAL_PATTERNS_TABS.patterns
         : FORM_GENERAL_PATTERNS_TABS.general,
     );
 
-    const testingTabIndex = computed(() =>
-      visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
+    const testingTabIndex = computed(() => visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
         ? FORM_GENERAL_PATTERNS_TABS.testing
         : null,
     );
@@ -294,8 +292,7 @@ export default {
       () => testingTabIndex.value !== null && activeTab.value === testingTabIndex.value,
     );
 
-    const tabHasError = tab =>
-      (tab.general && hasGeneralError.value) ||
+    const tabHasError = tab => (tab.general && hasGeneralError.value) ||
       (tab.patterns && hasPatternsError.value) ||
       (tab.additional && hasAdditionalError.value) ||
       (tab['test-query'] && hasTestQueryError.value) ||

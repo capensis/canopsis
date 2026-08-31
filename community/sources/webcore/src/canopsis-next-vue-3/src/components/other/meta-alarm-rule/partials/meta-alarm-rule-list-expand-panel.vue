@@ -56,8 +56,7 @@ export default {
     const activeTab = ref('patterns');
 
     const patterns = computed(() => metaAlarmFilterPatternsToForm(props.metaAlarmRule));
-    const withTotalEntityPattern = computed(() =>
-      isMetaAlarmRuleTypeHasTotalEntityPatterns(props.metaAlarmRule.type),
+    const withTotalEntityPattern = computed(() => isMetaAlarmRuleTypeHasTotalEntityPatterns(props.metaAlarmRule.type),
     );
 
     return {

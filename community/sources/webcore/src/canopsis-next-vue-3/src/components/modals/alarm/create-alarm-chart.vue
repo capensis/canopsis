@@ -55,8 +55,7 @@ export default {
     const form = useForm({ initialValues: alarmListChartToForm(config.value.chart) });
     const { values, handleSubmit, isSubmitting } = form;
     const formComponent = computed(
-      () =>
-        ({
+      () => ({
           [WIDGET_TYPES.barChart]: BarChartWidgetForm,
           [WIDGET_TYPES.lineChart]: LineChartWidgetForm,
           [WIDGET_TYPES.numbers]: NumbersWidgetForm,

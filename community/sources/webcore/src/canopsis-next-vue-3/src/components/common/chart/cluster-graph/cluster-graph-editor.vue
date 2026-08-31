@@ -166,8 +166,7 @@ export default {
     },
 
     nodeHtmlLabelsOptions() {
-      const tpl = ({ entity }) =>
-        `<div>${entity.type === ENTITY_TYPES.service ? entity.name : entity._id}</div>`;
+      const tpl = ({ entity }) => `<div>${entity.type === ENTITY_TYPES.service ? entity.name : entity._id}</div>`;
 
       return [
         {

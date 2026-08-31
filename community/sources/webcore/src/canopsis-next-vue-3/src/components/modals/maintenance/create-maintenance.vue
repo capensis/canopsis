@@ -64,8 +64,7 @@ const form = useForm({
 
 const title = computed(() => config.value.title ?? t('modals.createMaintenance.setup.title'));
 
-const submitLabel = computed(() =>
-  config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance'),
+const submitLabel = computed(() => config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance'),
 );
 
 const close = () => modals.hide({ id: modalContext.id });

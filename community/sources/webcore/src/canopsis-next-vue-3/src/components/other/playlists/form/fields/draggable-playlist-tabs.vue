@@ -67,8 +67,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const tabsDetailsById = computed(() =>
-      props.groups.reduce((acc, group) => {
+    const tabsDetailsById = computed(() => props.groups.reduce((acc, group) => {
         group.views?.forEach((view) => {
           view.tabs?.forEach((tab) => {
             acc[tab._id] = { tab, group, view };

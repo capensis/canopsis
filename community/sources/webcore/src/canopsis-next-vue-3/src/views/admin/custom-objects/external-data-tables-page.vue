@@ -66,8 +66,7 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params } = {}) =>
-        fetchExternalDataTablesListWithoutStore({
+      fetchListHandler: ({ params } = {}) => fetchExternalDataTablesListWithoutStore({
           params: {
             ...params,
             with_flags: true,
@@ -78,8 +77,7 @@ export default {
     /**
      * Displays a modal for creating a new external data table.
      */
-    const showCreateExternalDataTableModal = () =>
-      modals.show({
+    const showCreateExternalDataTableModal = () => modals.show({
         name: MODALS.createExternalDataTable,
         config: {
           action: async (data) => {
@@ -95,8 +93,7 @@ export default {
      *
      * @param {Object} externalDataTable - The external data table to be edited.
      */
-    const showEditExternalDataTableModal = externalDataTable =>
-      modals.show({
+    const showEditExternalDataTableModal = externalDataTable => modals.show({
         name: MODALS.createExternalDataTable,
         config: {
           externalDataTable,
@@ -113,8 +110,7 @@ export default {
      *
      * @param {Object} externalDataTable - The external data table to be removed.
      */
-    const showRemoveExternalDataTableModal = externalDataTable =>
-      modals.show({
+    const showRemoveExternalDataTableModal = externalDataTable => modals.show({
         name: MODALS.confirmationPhrase,
         config: {
           title: t('modals.confirmationPhrase.deleteExternalDataTable.title'),

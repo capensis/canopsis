@@ -165,8 +165,7 @@ export default {
     const sanitized = ref(false);
 
     const currentValue = computed(() => props.modelValue ?? props.value ?? '');
-    const sanitizedValue = computed(() =>
-      sanitizeHtml(currentValue.value, props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS),
+    const sanitizedValue = computed(() => sanitizeHtml(currentValue.value, props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS),
     );
     const hasError = computed(() => props.errorMessages.length > 0);
 

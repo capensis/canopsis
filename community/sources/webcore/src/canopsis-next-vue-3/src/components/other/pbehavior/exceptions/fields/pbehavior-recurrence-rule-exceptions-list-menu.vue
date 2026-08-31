@@ -51,8 +51,7 @@ export default {
 
     const selectedExceptionsIds = computed(() => mapIds(props.value));
 
-    const availableExceptions = computed(() =>
-      exceptions.value.filter(({ _id: id }) => !selectedExceptionsIds.value.includes(id)),
+    const availableExceptions = computed(() => exceptions.value.filter(({ _id: id }) => !selectedExceptionsIds.value.includes(id)),
     );
 
     const { pending, handler: fetchList } = usePendingHandler(async () => {

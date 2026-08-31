@@ -99,8 +99,7 @@ export const useExtraDetailsLastCommentTooltip = (props) => {
   const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.lastComment.t));
-  const sanitizedLastComment = computed(() =>
-    sanitizeHtml(linkifyHtml(String(props.lastComment?.m ?? ''))),
+  const sanitizedLastComment = computed(() => sanitizeHtml(linkifyHtml(String(props.lastComment?.m ?? ''))),
   );
 
   const tooltipContent = computed(
@@ -237,14 +236,12 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
 export const useExtraDetailsTicketTooltip = (props) => {
   const { t } = useI18n();
 
-  const getTicketStatusText = ticket =>
-    t(
+  const getTicketStatusText = ticket => t(
       `declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`,
     );
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
-  const shownTickets = computed(() =>
-    props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit),
+  const shownTickets = computed(() => props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit),
   );
 
   const tooltipContent = computed(() => {

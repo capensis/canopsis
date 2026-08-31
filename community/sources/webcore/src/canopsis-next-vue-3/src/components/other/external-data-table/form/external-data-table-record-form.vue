@@ -53,8 +53,7 @@ export default {
       return message ? [message] : [];
     };
 
-    const components = computed(() =>
-      props.externalDataTable.column_configs.map((column) => {
+    const components = computed(() => props.externalDataTable.column_configs.map((column) => {
         const is = componentsMap[column.type];
         const defaultBind = {
           name: column.name,

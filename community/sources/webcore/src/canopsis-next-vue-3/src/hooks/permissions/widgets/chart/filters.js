@@ -19,12 +19,10 @@ import { useCurrentUserPermissions } from '@/hooks/auth';
 const useChartWidgetFiltersPermissions = (permissionKey) => {
   const { checkAccess } = useCurrentUserPermissions();
 
-  const hasAccessToFilter = computed(() =>
-    checkAccess(USER_PERMISSIONS.business[permissionKey].actions.filter),
+  const hasAccessToFilter = computed(() => checkAccess(USER_PERMISSIONS.business[permissionKey].actions.filter),
   );
 
-  const hasAccessToUserFilter = computed(() =>
-    checkAccess(USER_PERMISSIONS.business[permissionKey].actions.userFilter),
+  const hasAccessToUserFilter = computed(() => checkAccess(USER_PERMISSIONS.business[permissionKey].actions.userFilter),
   );
 
   return {

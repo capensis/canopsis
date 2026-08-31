@@ -84,8 +84,7 @@ export default {
           exceptions: props.form.exceptions,
           start: props.form.tstart,
           withExdateType: props.withExdateType,
-          action: ({ rrule, exdates, exceptions }) =>
-            emit('update:form', {
+          action: ({ rrule, exdates, exceptions }) => emit('update:form', {
               ...props.form,
               rrule,
               exdates,

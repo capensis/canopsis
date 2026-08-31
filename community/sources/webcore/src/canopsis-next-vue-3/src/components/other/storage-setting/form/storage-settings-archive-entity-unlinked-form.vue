@@ -40,8 +40,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
-    const timeUnits = computed(() =>
-      [
+    const timeUnits = computed(() => [
         AVAILABLE_TIME_UNITS.day,
         AVAILABLE_TIME_UNITS.week,
         AVAILABLE_TIME_UNITS.month,

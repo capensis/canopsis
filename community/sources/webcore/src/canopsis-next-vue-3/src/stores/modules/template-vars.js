@@ -22,28 +22,17 @@ export const useTemplateVarsStore = defineStore('templateVars', () => {
   };
 
   const fetchTemplateVarsList = fetchList;
-  const fetchEntityServicesTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecific.entityServices, { params: payload?.params });
-  const fetchEventFiltersTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecific.eventFilters, { params: payload?.params });
-  const fetchScenariosTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecific.scenarios, { params: payload?.params });
-  const fetchLinkRulesTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecific.linkRules, { params: payload?.params });
-  const fetchWidgetsTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecific.widgets, { params: payload?.params });
-  const fetchDeclareTicketRulesTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecificCat.declareTicketRules, { params: payload?.params });
-  const fetchDynamicInfosTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecificCat.dynamicInfos, { params: payload?.params });
-  const fetchInstructionsTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecificCat.instructions, { params: payload?.params });
-  const fetchJobsTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecificCat.jobs, { params: payload?.params });
-  const fetchMetaAlarmRulesTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecificCat.metaAlarmRules, { params: payload?.params });
-  const fetchWebhookTokenRulesTemplateVarsWithoutStore = payload =>
-    request.get(API_ROUTES.templateVarsSpecificCat.webhookTokenRules, { params: payload?.params });
+  const fetchEntityServicesTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecific.entityServices, { params: payload?.params });
+  const fetchEventFiltersTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecific.eventFilters, { params: payload?.params });
+  const fetchScenariosTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecific.scenarios, { params: payload?.params });
+  const fetchLinkRulesTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecific.linkRules, { params: payload?.params });
+  const fetchWidgetsTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecific.widgets, { params: payload?.params });
+  const fetchDeclareTicketRulesTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecificCat.declareTicketRules, { params: payload?.params });
+  const fetchDynamicInfosTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecificCat.dynamicInfos, { params: payload?.params });
+  const fetchInstructionsTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecificCat.instructions, { params: payload?.params });
+  const fetchJobsTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecificCat.jobs, { params: payload?.params });
+  const fetchMetaAlarmRulesTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecificCat.metaAlarmRules, { params: payload?.params });
+  const fetchWebhookTokenRulesTemplateVarsWithoutStore = payload => request.get(API_ROUTES.templateVarsSpecificCat.webhookTokenRules, { params: payload?.params });
 
   return {
     items,

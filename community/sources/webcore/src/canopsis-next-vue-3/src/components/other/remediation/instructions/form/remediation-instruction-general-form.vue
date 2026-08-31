@@ -151,11 +151,9 @@ export default {
 
     const { updateModel } = useModelField(props, emit);
     // TODO: fix that
-    const createFieldModel = field =>
-      computed({
+    const createFieldModel = field => computed({
         get: () => props.form[field],
-        set: value =>
-          updateModel({
+        set: value => updateModel({
             ...props.form,
             [field]: value,
           }),

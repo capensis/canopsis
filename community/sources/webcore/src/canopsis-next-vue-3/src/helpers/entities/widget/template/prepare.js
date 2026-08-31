@@ -14,8 +14,7 @@ import { widgetSortColumnsToForm } from '../sort-column/form';
  * @param {WidgetTemplate[]} [templates=[]]
  * @returns {WidgetTemplateForm[]}
  */
-export const prepareWidgetTemplates = (templates = []) =>
-  templates.map((template) => {
+export const prepareWidgetTemplates = (templates = []) => templates.map((template) => {
     if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
       return { ...template, columns: widgetColumnsToForm(template.columns) };
     }

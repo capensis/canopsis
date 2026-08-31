@@ -58,8 +58,7 @@ export default {
   setup(props) {
     const isChangeState = computed(() => isStateStepType(props.step._t));
     const style = computed(() => formatNotificationAlarmStep(props.step));
-    const sanitizedStepMessage = computed(() =>
-      sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))),
+    const sanitizedStepMessage = computed(() => sanitizeHtml(linkifyHtml(String(props.step?.m ?? ''))),
     );
     const time = computed(() => convertDateToString(props.step.t, DATETIME_FORMATS.time));
 

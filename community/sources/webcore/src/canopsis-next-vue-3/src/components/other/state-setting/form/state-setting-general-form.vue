@@ -54,8 +54,7 @@ export default {
       'method',
     ]);
 
-    const entityTypeItems = computed(() =>
-      STATE_SETTING_ENTITY_TYPES.map(value => ({
+    const entityTypeItems = computed(() => STATE_SETTING_ENTITY_TYPES.map(value => ({
         value,
         text: te(`common.${value}`) ? t(`common.${value}`) : value,
       })),

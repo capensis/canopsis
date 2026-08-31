@@ -817,8 +817,7 @@ export default {
 
         if (!type) {
           const { data: defaultPbehaviorTypes = [] } = await this.fetchDefaultPbehaviorTypes();
-          const pauseType = defaultPbehaviorTypes.find(({ type: pbehaviorType }) =>
-            pbehaviorType === PBEHAVIOR_TYPE_TYPES.pause,
+          const pauseType = defaultPbehaviorTypes.find(({ type: pbehaviorType }) => pbehaviorType === PBEHAVIOR_TYPE_TYPES.pause,
           );
 
           type = pauseType?._id;
@@ -831,8 +830,7 @@ export default {
         }
 
         await this.bulkCreateEntityPbehaviors({
-          data: mapAlarmsEntities([this.item]).map(entity =>
-            createDowntimePbehavior({
+          data: mapAlarmsEntities([this.item]).map(entity => createDowntimePbehavior({
               entity,
               prefix: namePrefix,
               type,
@@ -883,8 +881,7 @@ export default {
         config: {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
-          fetchList: params =>
-            this.fetchResolvedAlarmsListWithoutStore({
+          fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
               params: { ...params, _id: this.item.entity._id },
             }),
         },
@@ -931,8 +928,7 @@ export default {
           params: { ids: mapIds([this.item]) },
         });
 
-        const summaryLink = links.find(({ icon_name: iconName, label = '' } = {}) =>
-          iconName === link.icon_name && label.includes(link.label),
+        const summaryLink = links.find(({ icon_name: iconName, label = '' } = {}) => iconName === link.icon_name && label.includes(link.label),
         );
 
         if (!summaryLink) {

@@ -39,8 +39,7 @@ export default {
       },
     );
 
-    const entityType = computed(() =>
-      type.value === WIDGET_TEMPLATES_TYPES.alarmColumns
+    const entityType = computed(() => type.value === WIDGET_TEMPLATES_TYPES.alarmColumns
         ? ENTITIES_TYPES.alarm
         : ENTITIES_TYPES.entity,
     );

@@ -140,8 +140,7 @@ export default {
   setup(props, { emit }) {
     const wrapperKey = ref(uid());
 
-    const sortedItems = computed(() =>
-      [...props.items].sort((first, second) => {
+    const sortedItems = computed(() => [...props.items].sort((first, second) => {
         if (first[props.itemValue] === props.activeItem || props.activeItems.includes(first[props.itemValue])) {
           return -1;
         }

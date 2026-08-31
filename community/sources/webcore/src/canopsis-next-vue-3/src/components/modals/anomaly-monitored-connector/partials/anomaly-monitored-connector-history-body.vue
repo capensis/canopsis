@@ -69,8 +69,7 @@ export default {
     const updateInterval = value => emit('update:interval', value);
     const updateEnabled = value => emit('update:enabled', value);
 
-    const confirmDisable = () =>
-      new Promise((resolve) => {
+    const confirmDisable = () => new Promise((resolve) => {
         modals.show({
           name: MODALS.confirmation,
           config: {

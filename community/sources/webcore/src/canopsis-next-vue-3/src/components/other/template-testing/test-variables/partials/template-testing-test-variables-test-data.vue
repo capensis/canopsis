@@ -104,12 +104,10 @@ export default {
       return t(`templateTesting.testDataResponseLabels.${props.type}`, { index: item.index + 1 });
     };
 
-    const hasFilledSomeRequiredField = computed(() =>
-      props.form.some(item => item.someRequired && item.value),
+    const hasFilledSomeRequiredField = computed(() => props.form.some(item => item.someRequired && item.value),
     );
 
-    const fields = computed(() =>
-      props.form.map((item, index) => ({
+    const fields = computed(() => props.form.map((item, index) => ({
         is: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COMPONENTS[item.type],
         key: item.key,
         bind: {

@@ -85,12 +85,10 @@ export default {
       () => `${TELEPORTS_NAMES.massActionsPanel}${modal?.id ? `-${modal.id}` : ''}`,
     );
     const targetSelector = computed(() => `[data-teleport-target="${targetName.value}"]`);
-    const targetElement = computed(() =>
-      mounted.value ? document.querySelector(targetSelector.value) : null,
+    const targetElement = computed(() => mounted.value ? document.querySelector(targetSelector.value) : null,
     );
 
-    const message = computed(() =>
-      t('common.massActionsPanel.recordsSelected', props.selected.length, {
+    const message = computed(() => t('common.massActionsPanel.recordsSelected', props.selected.length, {
         count: props.selected.length,
       }),
     );

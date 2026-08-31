@@ -53,8 +53,7 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery =>
-        fetchShareTokensList({
+      onUpdate: fetchQuery => fetchShareTokensList({
           params: getQueryForList(fetchQuery),
         }),
     });

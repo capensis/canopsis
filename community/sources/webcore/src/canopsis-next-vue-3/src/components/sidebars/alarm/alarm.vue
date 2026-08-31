@@ -340,51 +340,40 @@ const { form, widget, hasChanges, submitting, close, submit } = useWidgetSetting
 
 const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
-const alarmSortColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(
+const alarmSortColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmSortColumns,
   ),
 );
-const alarmColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
+const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
 );
-const entityColumnsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
+const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
 );
-const alarmMoreInfosWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(
+const alarmMoreInfosWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmMoreInfos,
   ),
 );
-const alarmExportToPdfWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(
+const alarmExportToPdfWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmExportToPdf,
   ),
 );
-const alarmQuickActionsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(
+const alarmQuickActionsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmQuickActions,
   ),
 );
-const alarmMassQuickActionsWidgetTemplates = computed(() =>
-  preparedWidgetTemplates.value.filter(
+const alarmMassQuickActionsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmMassQuickActions,
   ),
 );
 const defaultExportPdfTemplateValue = ALARM_EXPORT_PDF_TEMPLATE;
-const preparedWidgetColumns = computed(() =>
-  formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
+const preparedWidgetColumns = computed(() => formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
     ...column,
     text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
   })),
 );
-const sortablePreparedWidgetColumns = computed(() =>
-  preparedWidgetColumns.value.filter(column =>
-    getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+const sortablePreparedWidgetColumns = computed(() => preparedWidgetColumns.value.filter(column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
   ),
 );
-const alarmVariables = computed(() =>
-  [
+const alarmVariables = computed(() => [
     { value: ENTITY_TEMPLATE_FIELDS.id },
     { value: ALARM_TEMPLATE_FIELDS.ack },
     { value: ALARM_TEMPLATE_FIELDS.state },
@@ -407,8 +396,7 @@ const alarmVariables = computed(() =>
     text: t(ALARM_FIELDS_TO_LABELS_KEYS[variable.value.replace('alarm.', '')], 2),
   })),
 );
-const exportPdfAlarmVariables = computed(() =>
-  [
+const exportPdfAlarmVariables = computed(() => [
     {
       value: ALARM_EXPORT_PDF_FIELDS.currentDate,
       text: t('common.currentDate'),

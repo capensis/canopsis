@@ -22,8 +22,7 @@ import {
  * @param {boolean} isGrey - The is_grey property from the entity.
  * @returns {boolean} True if the entity is in a pause state, otherwise false.
  */
-const isEntityPauseState = (pbehaviorInfo, isGrey) =>
-  isGrey ||
+const isEntityPauseState = (pbehaviorInfo, isGrey) => isGrey ||
   (pbehaviorInfo?.canonical_type &&
     pbehaviorInfo?.canonical_type !== PBEHAVIOR_CANONICAL_TYPES.active);
 

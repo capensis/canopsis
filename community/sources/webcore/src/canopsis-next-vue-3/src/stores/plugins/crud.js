@@ -45,8 +45,7 @@ export const createCRUDStore = ({
   bulkRoute,
   setup: additionalSetup,
   actions: additionalActions = {},
-} = {}) =>
-  defineStore(id, () => {
+} = {}) => defineStore(id, () => {
     const items = ref([]);
     const meta = ref({});
     const pending = ref(false);

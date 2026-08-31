@@ -42,16 +42,14 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const icon = computed(() =>
-      props.step.type === REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual
+    const icon = computed(() => props.step.type === REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual
         ? '$vuetify.icons.manual_instruction'
         : 'assignment',
     );
     const greyText = computed(
       () => props.step.status === REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped,
     );
-    const completedAt = computed(() =>
-      convertDateToString(props.step.completed_at, DATETIME_FORMATS.long, '-'),
+    const completedAt = computed(() => convertDateToString(props.step.completed_at, DATETIME_FORMATS.long, '-'),
     );
     const resultIcon = computed(() => {
       switch (props.step.status) {

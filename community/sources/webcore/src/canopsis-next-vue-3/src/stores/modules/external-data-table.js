@@ -4,8 +4,7 @@ import request from '@/services/request';
 
 import { createCRUDStore } from '@/stores/plugins/crud';
 
-const convertObjectToFormData = (data = {}) =>
-  Object.entries(data).reduce((formData, [key, value]) => {
+const convertObjectToFormData = (data = {}) => Object.entries(data).reduce((formData, [key, value]) => {
     formData.append(key, value);
 
     return formData;

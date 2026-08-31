@@ -1,3 +1,28 @@
+<template>
+  <v-fade-transition>
+    <c-alert
+      v-if="visible"
+      :type="type"
+      class="alert-without-border"
+      closable
+      @click:close="visible = false"
+      @mouseenter="pauseProgress"
+      @mouseleave="playProgress"
+    >
+      <div v-if="hasAutoClose" class="progress">
+        <div :style="progressLineStyle" :class="progressLineClass" class="progress-line" />
+      </div>
+
+      <c-compiled-template
+        :template="text"
+        :context="context"
+        :template-props="context"
+        class="pre-line"
+      />
+    </c-alert>
+  </v-fade-transition>
+</template>
+
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
@@ -122,31 +147,6 @@ onBeforeUnmount(() => {
   clearTimeout(animationTimeout.value);
 });
 </script>
-
-<template>
-  <v-fade-transition>
-    <c-alert
-      v-if="visible"
-      :type="type"
-      class="alert-without-border"
-      closable
-      @click:close="visible = false"
-      @mouseenter="pauseProgress"
-      @mouseleave="playProgress"
-    >
-      <div v-if="hasAutoClose" class="progress">
-        <div :style="progressLineStyle" :class="progressLineClass" class="progress-line" />
-      </div>
-
-      <c-compiled-template
-        :template="text"
-        :context="context"
-        :template-props="context"
-        class="pre-line"
-      />
-    </c-alert>
-  </v-fade-transition>
-</template>
 
 <style lang="scss" scoped>
 @keyframes progress {

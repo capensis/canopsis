@@ -105,8 +105,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const valueField = computed(() =>
-      getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
+    const valueField = computed(() => getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
     );
     const isUptimeParameter = computed(
       () => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime,

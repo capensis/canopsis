@@ -128,8 +128,7 @@ export default {
       set: value => form.setValue(`operation.parameters.${operationTypeField.value}`, value),
     });
 
-    const isAssociateTicketAction = computed(() =>
-      isAssociateTicketActionType(operationTypeField.value),
+    const isAssociateTicketAction = computed(() => isAssociateTicketActionType(operationTypeField.value),
     );
 
     return {

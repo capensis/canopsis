@@ -49,8 +49,7 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const types = computed(() =>
-      Object.values(TREE_OF_DEPENDENCIES_SHOW_TYPES).map(value => ({
+    const types = computed(() => Object.values(TREE_OF_DEPENDENCIES_SHOW_TYPES).map(value => ({
         value,
         label: t(`entity.treeOfDependenciesShowTypes.${value}`),
       })),

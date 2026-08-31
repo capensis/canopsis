@@ -38,8 +38,7 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const databases = computed(() =>
-      Object.values(EXTERNAL_DATA_TABLES_TYPES).map(value => ({
+    const databases = computed(() => Object.values(EXTERNAL_DATA_TABLES_TYPES).map(value => ({
         value,
         text: t(`externalData.tableTypes.${value}`),
       })),

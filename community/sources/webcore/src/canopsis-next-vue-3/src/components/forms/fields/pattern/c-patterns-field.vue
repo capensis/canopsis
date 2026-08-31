@@ -226,8 +226,7 @@ import PatternTryOptimization from './pattern-try-optimization.vue';
  * @param {string} fieldName - The field name
  * @returns {string} Combined field pattern name
  */
-const getFieldPatternName = (componentName, fieldName) =>
-  [componentName, fieldName].filter(Boolean).join('.');
+const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
 
 export { PATTERNS_FIELDS_TO_EXPANDED_KEYS } from './hooks/patterns-field-expand';
 
@@ -422,16 +421,13 @@ export default {
     );
 
     const preparedServiceWeatherName = computed(
-      () =>
-        props.serviceWeatherName || getFieldPatternName(props.name, PATTERNS_FIELDS.serviceWeather),
+      () => props.serviceWeatherName || getFieldPatternName(props.name, PATTERNS_FIELDS.serviceWeather),
     );
 
-    const hasPatterns = computed(() =>
-      Object.values(PATTERNS_FIELDS).some(key => props.value[key]?.groups?.length),
+    const hasPatterns = computed(() => Object.values(PATTERNS_FIELDS).some(key => props.value[key]?.groups?.length),
     );
 
-    const isPatternRequired = computed(() =>
-      props.someRequired ? !hasPatterns.value : props.required,
+    const isPatternRequired = computed(() => props.someRequired ? !hasPatterns.value : props.required,
     );
 
     const patternNamesToFields = computed(() => ({
@@ -487,14 +483,12 @@ export default {
       patterns,
     });
 
-    const alarmPatternCounter = computed(() =>
-      props.entityCountersType
+    const alarmPatternCounter = computed(() => props.entityCountersType
         ? counters.value?.alarm_pattern
         : counters.value?.alarms?.alarm_pattern,
     );
 
-    const entityPatternEntitiesCounter = computed(() =>
-      props.entityCountersType
+    const entityPatternEntitiesCounter = computed(() => props.entityCountersType
         ? counters.value?.entity_pattern
         : counters.value?.entities?.entity_pattern,
     );
@@ -524,10 +518,8 @@ export default {
      * @param {Array} rules - Array of pattern rule groups
      * @returns {boolean} True if all rules are valid
      */
-    const isValidPatternRules = rules =>
-      !!rules.length &&
-      rules.every(group =>
-        group.every((rule) => {
+    const isValidPatternRules = rules => !!rules.length &&
+      rules.every(group => group.every((rule) => {
           if (!isValidPatternRule(rule)) {
             return false;
           }
@@ -543,8 +535,7 @@ export default {
     /**
      * Shows alarms modal filtered by current patterns
      */
-    const showPatternAlarms = () =>
-      showPatternAlarmsModal({
+    const showPatternAlarms = () => showPatternAlarmsModal({
         alarm_pattern: formGroupsToPatternRulesQuery(props.value.alarm_pattern?.groups),
         entity_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern?.groups),
         pbehavior_pattern: formGroupsToPatternRulesQuery(props.value.pbehavior_pattern?.groups),
@@ -553,8 +544,7 @@ export default {
     /**
      * Shows entities modal filtered by current patterns
      */
-    const showPatternEntities = () =>
-      showPatternEntitiesModal({
+    const showPatternEntities = () => showPatternEntitiesModal({
         search_pattern: formGroupsToPatternRulesQuery(props.value.entity_pattern.groups),
       });
 
@@ -578,8 +568,7 @@ export default {
       emit,
     );
 
-    const updatePattern = (field, pattern) =>
-      emit('update:value', {
+    const updatePattern = (field, pattern) => emit('update:value', {
         ...props.value,
         [field]: pattern,
       });

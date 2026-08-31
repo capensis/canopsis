@@ -166,5 +166,4 @@ export const widgetToExportQueryColumns = ({ parameters } = {}) => {
  * @param {string} [search=''] - A search string to return if no items are selected.
  * @returns {string} A query string constructed from selected items or the provided search string.
  */
-export const selectedToQuery = (selected = [], search = '') =>
-  selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : search;
+export const selectedToQuery = (selected = [], search = '') => selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : search;

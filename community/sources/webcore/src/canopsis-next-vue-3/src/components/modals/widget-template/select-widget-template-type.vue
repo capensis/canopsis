@@ -51,8 +51,7 @@ export default {
     const { t } = useI18n();
     const { config, modals, close } = useInnerModal(props);
 
-    const availableTypes = computed(() =>
-      Object.values(WIDGET_TEMPLATES_TYPES).map(type => ({
+    const availableTypes = computed(() => Object.values(WIDGET_TEMPLATES_TYPES).map(type => ({
         value: type,
         icon: WIDGET_TEMPLATE_TYPES_TO_ICONS[type] ?? 'description',
         text: t(`widgetTemplate.types.${type}`),
@@ -67,7 +66,7 @@ export default {
       };
       const widgetTemplate = {
         type,
-        ...(defaultDataByType[type] ?? {}),
+        ...defaultDataByType[type],
       };
 
       modals.show({

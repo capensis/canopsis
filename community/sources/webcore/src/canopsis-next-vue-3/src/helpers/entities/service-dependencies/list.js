@@ -75,8 +75,7 @@ export const dependencyToTreeviewDependency = (dependency = {}, impact = false) 
  * @param {boolean} [impact = false]
  * @returns {{result: string[], dependencies: Object}}
  */
-export const normalizeDependencies = (dependencies = [], impact = false) =>
-  dependencies.reduce(
+export const normalizeDependencies = (dependencies = [], impact = false) => dependencies.reduce(
     (acc, dependency) => {
       const preparedDependency = dependencyToTreeviewDependency(dependency, impact);
 
@@ -128,8 +127,7 @@ export const dependenciesDenormalize = ({
   metaByIds = {},
   parent,
   parentIds = [],
-}) =>
-  ids.map((id) => {
+}) => ids.map((id) => {
     const meta = metaByIds[id] || {};
     const dependency = dependenciesByIds[id] || {};
     const { children, ...denormalizedDependency } = dependency;

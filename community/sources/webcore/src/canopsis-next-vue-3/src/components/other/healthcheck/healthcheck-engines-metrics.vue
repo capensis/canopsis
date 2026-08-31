@@ -103,8 +103,7 @@ export default {
       updateTechMetricsSettings,
     } = useTechMetrics();
 
-    const metrics = computed(() =>
-      (metric.value ? [metric.value] : []).map(item => ({
+    const metrics = computed(() => (metric.value ? [metric.value] : []).map(item => ({
         ...item,
         disabled: item.status === TECH_METRICS_EXPORT_STATUSES.disabled,
         readyToDownload: item.status === TECH_METRICS_EXPORT_STATUSES.success,

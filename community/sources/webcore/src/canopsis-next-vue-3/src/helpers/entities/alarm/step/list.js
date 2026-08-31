@@ -10,5 +10,4 @@ import { convertDateToString } from '@/helpers/date/date';
  * @param {AlarmStep[]} steps
  * @return {Object.<string, AlarmStep[]>}
  */
-export const groupAlarmSteps = steps =>
-  groupBy(steps, step => convertDateToString(step.t, DATETIME_FORMATS.short));
+export const groupAlarmSteps = steps => groupBy(steps, step => convertDateToString(step.t, DATETIME_FORMATS.short));

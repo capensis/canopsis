@@ -40,8 +40,7 @@ export default {
 
     const refresh = () => fetchRolesListWithPreviousParams();
 
-    const create = () =>
-      modals.show({
+    const create = () => modals.show({
         name: MODALS.createRole,
         config: {
           withTemplate: true,

@@ -37,8 +37,7 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * @param {Function} showProgress - Callback function that updates upload progress.
    * @returns {Promise<Object>}
    */
-  const customUploadFunction = (request, showProgress) =>
-    new Promise((resolve) => {
+  const customUploadFunction = (request, showProgress) => new Promise((resolve) => {
       const { uploader } = unref(editor);
       const { fileValidator: uploaderFileValidator } = uploader.options ?? {};
       const formData = request instanceof FormData ? request : new FormData();
@@ -95,8 +94,7 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * @param {Object|Array} response - Upload response object or array.
    * @returns {string}
    */
-  const getMessage = response =>
-    response?.error || response?.filter?.(file => file.error).join(' ');
+  const getMessage = response => response?.error || response?.filter?.(file => file.error).join(' ');
 
   /**
    * Processes upload response and formats it for the editor.
@@ -311,8 +309,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
    * @param {string} variableString - Variable string in format "{{ value }}".
    * @returns {string}
    */
-  const extractVariableValue = variableString =>
-    variableString.replace('{{ ', '').replace(' }}', '');
+  const extractVariableValue = variableString => variableString.replace('{{ ', '').replace(' }}', '');
 
   /**
    * Wraps bare variable values into template syntax.
@@ -401,8 +398,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
       '<i class="material-icons v-icon v-icon--small" style="width: 14px; height: 14px;">data_object</i>',
   }));
 
-  onBeforeUnmount(() =>
-    document.removeEventListener('selectionchange', selectVariableValueByCursor),
+  onBeforeUnmount(() => document.removeEventListener('selectionchange', selectVariableValueByCursor),
   );
 
   return {

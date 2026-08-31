@@ -57,7 +57,7 @@ export default {
     },
 
     bars() {
-      return new Array(this.barCount)
+      return Array.from({ length: this.barCount })
         .fill(null)
         .map((item, index) => {
           const historyValue = this.history[index];

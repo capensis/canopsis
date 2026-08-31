@@ -91,7 +91,9 @@ export const usePatternsFieldExpand = ({ wrapperElement, expanded }) => {
       }
     });
 
-    scrollToElement(wrapperElement.value?.querySelector(`.${firstClass}`)?.closest('.c-collapse-panel'));
+    scrollToElement(
+      wrapperElement.value?.querySelector(`.${firstClass}`)?.closest('.c-collapse-panel'),
+    );
   };
 
   aiChat?.registerExpandFunction?.(expandPatternsByFields);

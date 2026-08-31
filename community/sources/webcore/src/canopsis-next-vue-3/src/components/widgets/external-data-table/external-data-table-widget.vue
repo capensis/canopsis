@@ -142,8 +142,7 @@ export default {
       pending: downloading,
       poll: exportRecords,
     } = useFilePollingWithPending({
-      createHandler: selected =>
-        createExternalDataTableExport({
+      createHandler: selected => createExternalDataTableExport({
           id: externalDataTable.value._id,
           data: {
             search: selectedToQuery(selected, query.value.search),

@@ -157,8 +157,7 @@ export default {
     },
 
     sortablePreparedWidgetColumns() {
-      return this.preparedWidgetColumns.filter(column =>
-        getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+      return this.preparedWidgetColumns.filter(column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
       );
     },
 

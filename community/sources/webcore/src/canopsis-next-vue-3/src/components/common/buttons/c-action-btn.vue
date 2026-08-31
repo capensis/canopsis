@@ -115,8 +115,7 @@ export default {
     const { t } = useI18n();
 
     const location = computed(
-      () =>
-        ({
+      () => ({
           [props.top]: 'top',
           [props.right]: 'right',
           [props.left]: 'left',

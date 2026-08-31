@@ -69,8 +69,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
-    const types = computed(() =>
-      Object.values(RESIZING_CELLS_CONTENTS_BEHAVIORS).map(value => ({
+    const types = computed(() => Object.values(RESIZING_CELLS_CONTENTS_BEHAVIORS).map(value => ({
         value,
         label: t(`settings.columnsSettings.cellsContentBehaviors.${value}`),
       })),

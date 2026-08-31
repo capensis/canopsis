@@ -56,8 +56,7 @@ export default {
         sortDesc: [],
         search: '',
       },
-      onUpdate: fetchQuery =>
-        fetchUsersList({
+      onUpdate: fetchQuery => fetchUsersList({
           params: {
             ...getQueryForList(fetchQuery),
             with_flags: true,
@@ -80,8 +79,7 @@ export default {
       });
     };
 
-    const showEditUserModal = user =>
-      modals.show({
+    const showEditUserModal = user => modals.show({
         name: MODALS.createUser,
         config: {
           title: t('modals.createUser.edit.title'),

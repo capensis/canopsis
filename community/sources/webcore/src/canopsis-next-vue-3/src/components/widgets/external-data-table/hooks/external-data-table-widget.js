@@ -100,8 +100,7 @@ export const useExternalDataTableWidgetColumnsSettings = ({
   );
   const columnsSettings = computed(() => unref(userPreference).content.columns_settings ?? {});
 
-  const updateColumnsSettings = newColumnsSettings =>
-    updateContentInUserPreference({ columns_settings: newColumnsSettings });
+  const updateColumnsSettings = newColumnsSettings => updateContentInUserPreference({ columns_settings: newColumnsSettings });
 
   return {
     draggableColumn,

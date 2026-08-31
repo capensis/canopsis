@@ -142,11 +142,9 @@ export default {
     const isRecording = computed(() => !!recording.value);
     const isResending = computed(() => !!eventsRecordResendingsById.value[eventsRecordId.value]);
     const resendingDisabled = computed(() => isRecording.value || isResending.value);
-    const patternForm = computed(() =>
-      patternToForm({ event_pattern: eventsRecord.value.pattern }),
+    const patternForm = computed(() => patternToForm({ event_pattern: eventsRecord.value.pattern }),
     );
-    const title = computed(() =>
-      t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) }),
+    const title = computed(() => t('modals.eventsRecord.title', { date: convertDateToString(eventsRecord.value.t) }),
     );
 
     const {
@@ -177,8 +175,7 @@ export default {
     const closeModal = () => modals.hide({ id: props.modal.id });
     const resetFilter = () => removeQueryField('event_pattern');
 
-    const remove = () =>
-      modals.show({
+    const remove = () => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -190,8 +187,7 @@ export default {
         },
       });
 
-    const removeEvent = event =>
-      modals.show({
+    const removeEvent = event => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -202,8 +198,7 @@ export default {
         },
       });
 
-    const removeEvents = eventsForRemove =>
-      modals.show({
+    const removeEvents = eventsForRemove => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -214,8 +209,7 @@ export default {
         },
       });
 
-    const applyEventFilter = () =>
-      modals.show({
+    const applyEventFilter = () => modals.show({
         name: MODALS.applyEventFilter,
         config: {
           title: t('eventsRecord.applyEventFilter'),

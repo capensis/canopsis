@@ -109,8 +109,7 @@ export default {
       importPbehaviorException,
     } = usePbehaviorException();
 
-    const availableTabs = computed(() =>
-      [
+    const availableTabs = computed(() => [
         hasReadAnyPbehaviorTypeAccess.value && PLANNING_TABS.types,
         hasReadAnyPbehaviorReasonAccess.value && PLANNING_TABS.reasons,
         hasReadAnyPbehaviorExceptionAccess.value && PLANNING_TABS.exceptions,
@@ -119,16 +118,14 @@ export default {
 
     const activeTab = ref(availableTabs.value[0] || PLANNING_TABS.types);
     const tooltipText = computed(
-      () =>
-        ({
+      () => ({
           [PLANNING_TABS.types]: t('modals.createPbehaviorType.create.title'),
           [PLANNING_TABS.reasons]: t('modals.createPbehaviorReason.create.title'),
           [PLANNING_TABS.exceptions]: t('modals.createPbehaviorException.create.title'),
         })[activeTab.value],
     );
     const hasCreateAccess = computed(
-      () =>
-        ({
+      () => ({
           [PLANNING_TABS.types]: hasCreateAnyPbehaviorTypeAccess.value,
           [PLANNING_TABS.reasons]: hasCreateAnyPbehaviorReasonAccess.value,
           [PLANNING_TABS.exceptions]: hasCreateAnyPbehaviorExceptionAccess.value,
@@ -156,8 +153,7 @@ export default {
       }
     };
 
-    const showCreateTypeModal = () =>
-      modals.show({
+    const showCreateTypeModal = () => modals.show({
         name: MODALS.createPbehaviorType,
         config: {
           action: async (data) => {
@@ -167,8 +163,7 @@ export default {
         },
       });
 
-    const showCreateReasonModal = () =>
-      modals.show({
+    const showCreateReasonModal = () => modals.show({
         name: MODALS.createPbehaviorReason,
         config: {
           action: async (data) => {
@@ -178,8 +173,7 @@ export default {
         },
       });
 
-    const showCreateExceptionModal = () =>
-      modals.show({
+    const showCreateExceptionModal = () => modals.show({
         name: MODALS.createPbehaviorException,
         config: {
           action: async (data) => {
@@ -189,8 +183,7 @@ export default {
         },
       });
 
-    const showImportExceptionsModal = () =>
-      modals.show({
+    const showImportExceptionsModal = () => modals.show({
         name: MODALS.importPbehaviorException,
         config: {
           action: async (data) => {

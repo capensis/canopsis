@@ -1,3 +1,9 @@
+<template>
+  <div v-bind="attrs" :class="widthClass" class="v-flex-compat">
+    <slot />
+  </div>
+</template>
+
 <script setup>
 import { computed, useAttrs } from 'vue';
 
@@ -77,12 +83,6 @@ const widthClass = computed(() => {
   return size ? `v-flex-compat--xs${size}` : '';
 });
 </script>
-
-<template>
-  <div v-bind="attrs" :class="widthClass" class="v-flex-compat">
-    <slot />
-  </div>
-</template>
 
 <style lang="scss" scoped>
 .v-flex-compat {
