@@ -222,9 +222,8 @@ const advancedFields = computed(() => {
 const hasChangedAdvancedFields = () => {
   const { rrule } = props.form;
 
-  return ![
+  return isNumber(rrule.wkst) || ![
     ...advancedFields.value.map(field => rrule[field.name]),
-    rrule.wkst,
     rrule.byweekday,
     rrule.bymonth,
   ].every(isEmpty);
@@ -273,5 +272,11 @@ const validateRecurrenceRrule = () => {
   }
 };
 
-watch(() => props.form.rrule, validateRecurrenceRrule, { deep: true, immediate: true });
+watch(() => props.form.rrule, () => {
+  validateRecurrenceRrule();
+
+  if (hasChangedAdvancedFields()) {
+    enabledAdvancedFields.value = true;
+  }
+}, { deep: true, immediate: true });
 </script>

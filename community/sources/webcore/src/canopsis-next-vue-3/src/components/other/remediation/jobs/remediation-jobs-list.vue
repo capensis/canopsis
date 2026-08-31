@@ -26,6 +26,7 @@
       <c-layout>
         <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
         <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-db-export-btn :id="item._id" job />
         <c-action-btn
           v-if="removable"
           :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')"
@@ -33,7 +34,6 @@
           type="delete"
           @click="$emit('remove', item)"
         />
-        <c-db-export-btn :id="item._id" job />
       </c-layout>
     </template>
   </c-advanced-data-table>
