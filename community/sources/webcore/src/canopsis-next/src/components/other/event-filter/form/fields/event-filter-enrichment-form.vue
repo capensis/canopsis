@@ -14,7 +14,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.actionsLabel')" indented>
-        <c-label :label="$t('common.actionsLabel')" class="mb-3" />
+        <c-label :label="$t('common.actionsLabel')" class="mb-3" required />
         <event-filter-enrichment-actions-form
           v-field="form.config.actions"
           :variables="templateVars.config"

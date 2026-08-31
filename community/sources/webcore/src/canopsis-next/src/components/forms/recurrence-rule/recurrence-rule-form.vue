@@ -220,10 +220,8 @@ export default {
     const hasChangedAdvancedFields = () => {
       const { rrule } = props.form;
 
-      return ![
-
+      return isNumber(rrule.wkst) || ![
         ...advancedFields.value.map(field => rrule[field.name]),
-        rrule.wkst,
         rrule.byweekday,
         rrule.bymonth,
       ].every(isEmpty);
@@ -266,7 +264,10 @@ export default {
 
     watch(() => props.form.rrule, () => {
       validateRecurrenceRrule();
-      enabledAdvancedFields.value = hasChangedAdvancedFields();
+
+      if (hasChangedAdvancedFields()) {
+        enabledAdvancedFields.value = true;
+      }
     }, { deep: true });
 
     onMounted(() => {
