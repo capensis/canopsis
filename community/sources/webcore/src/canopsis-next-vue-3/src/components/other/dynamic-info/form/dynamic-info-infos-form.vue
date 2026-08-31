@@ -72,8 +72,9 @@ export default {
     const showAddInfosFromTemplateModal = () => modals.show({
         name: MODALS.addDynamicInfoInfosFromTemplate,
         config: {
-          action: template => template.names.forEach(name => infosField.value.push(dynamicInfoInformationToForm({ name })),
-            ),
+          action: template => template.names.forEach(
+            name => infosField.value.push(dynamicInfoInformationToForm({ name })),
+          ),
         },
       });
 

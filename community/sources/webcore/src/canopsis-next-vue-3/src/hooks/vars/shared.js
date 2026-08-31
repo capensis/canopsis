@@ -20,7 +20,8 @@ export const useVarsPrepare = (prefix) => {
    * @param {Array} items - Array of template variable items.
    * @returns {Array} Array of items with translated text.
    */
-  const addTranslationToTemplateVars = (items = []) => items.map((item) => {
+  const addTranslationToTemplateVars = (items = []) =>
+    items.map((item) => {
       const result = {
         ...item,
 
@@ -40,7 +41,8 @@ export const useVarsPrepare = (prefix) => {
    * @param {Array} items - Array of template variable items to prepare.
    * @returns {Object} Object with variable groups mapped to translated variables.
    */
-  const prepare = (items = []) => mapValues(varsToVariables(unref(items)), addTranslationToTemplateVars);
+  const prepare = (items = []) =>
+    mapValues(varsToVariables(unref(items)), addTranslationToTemplateVars);
 
   return {
     prepare,

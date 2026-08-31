@@ -33,7 +33,8 @@ export const getSetTagsItemsFromPattern = (pattern = {}) => {
   return groups.reduce((acc, group) => {
     const rules = group.rules
       .filter(
-        ({ attribute, operator }) => operator === PATTERN_OPERATORS.regexp && EVENT_FILTER_SET_TAGS_FIELDS.includes(attribute),
+        ({ attribute, operator }) =>
+          operator === PATTERN_OPERATORS.regexp && EVENT_FILTER_SET_TAGS_FIELDS.includes(attribute),
       )
       .map(({ attribute, dictionary, value }) => ({
         text: dictionary || attribute,

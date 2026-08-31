@@ -11,7 +11,8 @@ import {
  * @param {string} field - API pattern field name (e.g. `PATTERNS_FIELDS.alarm`).
  * @returns {Object<string, Object>} Map with at most one entry, or `{}` if there are no groups.
  */
-export const aiChatFormToPatternsField = (form = {}, field) => form.groups.length ? { [field]: form } : {};
+export const aiChatFormToPatternsField = (form = {}, field) =>
+  form.groups.length ? { [field]: form } : {};
 
 /**
  * Collects every pattern block on a filter-style form that uses `PATTERNS_FIELDS` keys and non-empty `groups`.
@@ -37,7 +38,8 @@ export const aiChatFormToPatternsDefault = (form = {}) => {
  * @param {Object[]} [form=[]] - Array of form fragments, each passed through `aiChatFormToPatternsDefault`.
  * @returns {Object} Same length as `form`; each element is a `patterns`-shaped object.
  */
-export const aiChatFormToPatternsItems = (form = []) => form.reduce((acc, item) => {
+export const aiChatFormToPatternsItems = (form = []) =>
+  form.reduce((acc, item) => {
     acc[item.key] = aiChatFormToPatternsDefault(item);
 
     return acc;
@@ -79,7 +81,8 @@ export const aiChatFormToPatterns = ({ form, field, context } = {}) => {
     [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: () => aiChatFormToPatternsField(form, field),
     [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: () => aiChatFormToPatternsField(form, field),
     [LLM_SOCKET_CONTEXTS.corporatePbehaviorPattern]: () => aiChatFormToPatternsField(form, field),
-    [LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern]: () => aiChatFormToPatternsField(form, field),
+    [LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern]: () =>
+      aiChatFormToPatternsField(form, field),
   }[context];
 
   return (method ?? (() => aiChatFormToPatternsDefault(form)))();

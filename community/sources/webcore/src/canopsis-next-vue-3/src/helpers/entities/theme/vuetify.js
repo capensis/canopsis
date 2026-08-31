@@ -36,7 +36,8 @@ const getThemeForm = (theme = {}) => {
   });
 };
 
-const createStateTextColors = state => Object.entries(state).reduce((acc, [key, color]) => {
+const createStateTextColors = state =>
+  Object.entries(state).reduce((acc, [key, color]) => {
     acc[`${key}-text`] = getMostReadableTextColor(color);
 
     return acc;

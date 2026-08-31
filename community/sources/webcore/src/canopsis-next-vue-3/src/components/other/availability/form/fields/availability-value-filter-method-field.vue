@@ -30,7 +30,8 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const valueFilterMethods = computed(() => Object.values(AVAILABILITY_VALUE_FILTER_METHODS).map(valueFilterMethod => ({
+    const valueFilterMethods = computed(() => Object.values(AVAILABILITY_VALUE_FILTER_METHODS)
+      .map(valueFilterMethod => ({
         value: valueFilterMethod,
         text: t(`availability.valueFilterMethods.${valueFilterMethod}`),
       })),

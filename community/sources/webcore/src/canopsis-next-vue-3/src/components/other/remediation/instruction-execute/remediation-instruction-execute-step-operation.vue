@@ -126,7 +126,8 @@ export default {
     const isStartedOperation = computed(() => !!props.operation.started_at);
     const isCompletedOperation = computed(() => !!props.operation.completed_at);
     const isFailedOperation = computed(() => !!props.operation.failed_at);
-    const isShownDetails = computed(() => !isCompletedOperation.value && !isFailedOperation.value && isStartedOperation.value,
+    const isShownDetails = computed(
+      () => !isCompletedOperation.value && !isFailedOperation.value && isStartedOperation.value,
     );
 
     const executeJob = (job) => {

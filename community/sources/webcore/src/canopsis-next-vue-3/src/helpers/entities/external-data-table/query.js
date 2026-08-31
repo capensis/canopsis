@@ -31,4 +31,5 @@ export const convertExternalDataTableWidgetToQuery = (widget = {}) => {
  * @param {Object} [userPreference]
  * @returns {{}}
  */
-export const convertExternalDataTableUserPreferenceToQuery = ({ content } = {}) => content.itemsPerPage ? { itemsPerPage: content.itemsPerPage } : {};
+export const convertExternalDataTableUserPreferenceToQuery = ({ content } = {}) =>
+  content.itemsPerPage ? { itemsPerPage: content.itemsPerPage } : {};

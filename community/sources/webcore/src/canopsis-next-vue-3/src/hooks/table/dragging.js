@@ -28,7 +28,8 @@ export const useTableDragging = ({
   /**
    * HEADERS SORTED BY DRAGGING POSITIONS
    */
-  const sortedHeaders = computed(() => unref(draggableColumn)
+  const sortedHeaders = computed(() =>
+    unref(draggableColumn)
       ? [...unref(headers)].sort(
           (a, b) => columnsPositionByFields.value[a.value] - columnsPositionByFields.value[b.value],
         )
@@ -40,14 +41,16 @@ export const useTableDragging = ({
    *
    * @param {Object} columnsPosition - The columns position object.
    */
-  const setColumnsPosition = columnsPosition => (columnsPositionByFields.value = { ...columnsPosition });
+  const setColumnsPosition = columnsPosition =>
+    (columnsPositionByFields.value = { ...columnsPosition });
 
   /**
    * Calculate the sorting order of columns based on the provided headers for calculation.
    *
    * @param {Object[]} headersForCalculation - The array of headers to calculate the sorting order.
    */
-  const calculateColumnsSortingOrderByHeaders = headersForCalculation => setColumnsPosition(
+  const calculateColumnsSortingOrderByHeaders = headersForCalculation =>
+    setColumnsPosition(
       headersForCalculation.reduce((acc, { value }, index) => {
         acc[value] = index;
 
@@ -78,7 +81,8 @@ export const useTableDragging = ({
    * @param {HTMLElement} element
    * @returns {string|null}
    */
-  const getColumnValueFromElement = element => element?.dataset?.value ??
+  const getColumnValueFromElement = element =>
+    element?.dataset?.value ??
     element?.closest?.('th')?.dataset?.value ??
     element?.querySelector?.('[data-value]')?.dataset?.value ??
     element?.closest?.('th')?.querySelector?.('[data-value]')?.dataset?.value ??
@@ -202,7 +206,8 @@ export const useTableDragging = ({
   /**
    * Toggle dragging mode for table columns.
    */
-  const toggleDraggingMode = () => draggingMode.value ? disableDraggingMode() : enableDraggingMode();
+  const toggleDraggingMode = () =>
+    draggingMode.value ? disableDraggingMode() : enableDraggingMode();
 
   /**
    * Cleanup function to destroy sortable instance on component unmount.

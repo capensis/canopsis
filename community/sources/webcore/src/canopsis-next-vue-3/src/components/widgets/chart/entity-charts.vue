@@ -33,8 +33,9 @@ export default {
 
   computed: {
     filteredCharts() {
-      return this.charts.filter(({ parameters }) => parameters.metrics?.some(({ metric }) => this.availableMetrics.includes(metric)),
-      );
+      return this.charts.filter(({ parameters }) =>
+        parameters.metrics?.some(({ metric }) => this.availableMetrics.includes(metric)
+      ));
     },
   },
 };

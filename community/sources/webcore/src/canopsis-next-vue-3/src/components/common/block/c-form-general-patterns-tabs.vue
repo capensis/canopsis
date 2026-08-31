@@ -278,7 +278,8 @@ export default {
     });
     const visibleTabsKey = computed(() => visibleTabs.value.map(tab => tab.id).join('|'));
 
-    const patternsTabIndex = computed(() => visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
+    const patternsTabIndex = computed(
+      () => visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
         ? FORM_GENERAL_PATTERNS_TABS.patterns
         : FORM_GENERAL_PATTERNS_TABS.general,
     );

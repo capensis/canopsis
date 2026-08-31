@@ -817,7 +817,8 @@ export default {
 
         if (!type) {
           const { data: defaultPbehaviorTypes = [] } = await this.fetchDefaultPbehaviorTypes();
-          const pauseType = defaultPbehaviorTypes.find(({ type: pbehaviorType }) => pbehaviorType === PBEHAVIOR_TYPE_TYPES.pause,
+          const pauseType = defaultPbehaviorTypes.find(
+            ({ type: pbehaviorType }) => pbehaviorType === PBEHAVIOR_TYPE_TYPES.pause,
           );
 
           type = pauseType?._id;

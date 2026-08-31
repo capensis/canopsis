@@ -34,7 +34,8 @@ export const useI18nStore = defineStore('i18n', () => {
    *
    * @param {string} [locale]
    */
-  const setDefaultLocale = (locale = DEFAULT_LOCALE) => setLocale({
+  const setDefaultLocale = (locale = DEFAULT_LOCALE) =>
+    setLocale({
       locale,
       priority: LOCALE_PRIORITIES.default,
     });
@@ -44,7 +45,8 @@ export const useI18nStore = defineStore('i18n', () => {
    *
    * @param {string} locale
    */
-  const setGlobalLocale = locale => setLocale({
+  const setGlobalLocale = locale =>
+    setLocale({
       locale,
       priority: LOCALE_PRIORITIES.global,
     });
@@ -54,7 +56,8 @@ export const useI18nStore = defineStore('i18n', () => {
    *
    * @param {string} locale
    */
-  const setPersonalLocale = locale => setLocale({
+  const setPersonalLocale = locale =>
+    setLocale({
       locale,
       priority: LOCALE_PRIORITIES.personal,
     });

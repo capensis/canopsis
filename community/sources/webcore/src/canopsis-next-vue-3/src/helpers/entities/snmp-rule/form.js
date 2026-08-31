@@ -160,7 +160,8 @@ export const snmpRuleTagsToForm = (tags = []) => (tags ?? []).map(snmpRuleTagToF
  * @param {SnmpRuleModuleExtra} [extraItem={}] - The list of SNMP rule extra data.
  * @returns {SnmpRuleModuleExtraForm}
  */
-export const snmpRuleExtraItemToForm = (extraItem = {}) => addKeyInEntity({
+export const snmpRuleExtraItemToForm = (extraItem = {}) =>
+  addKeyInEntity({
     name: extraItem.name ?? '',
     value: snmpRuleModuleMibToForm(extraItem.value),
   });

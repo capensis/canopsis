@@ -21,7 +21,8 @@ export const useCopyVarsList = ({ type } = {}) => {
     useCopyVars();
 
   const fetchHandler = computed(
-    () => ({
+    () =>
+      ({
         [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: fetchEventFiltersCopyVarsWithoutStore,
         [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: fetchDynamicInfosCopyVarsWithoutStore,
       })[unref(type)],

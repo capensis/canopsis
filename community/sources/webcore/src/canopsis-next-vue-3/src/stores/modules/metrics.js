@@ -73,7 +73,8 @@ export const useMetricsStore = defineStore('metrics', () => {
     availabilityMetrics.value = patchWidgetBucket(availabilityMetrics.value, widgetId, patch);
   };
 
-  const createBucketSetter = bucketName => ({
+  const createBucketSetter = bucketName =>
+    ({
       group: setGroupMetrics,
       vector: setVectorMetrics,
       availability: setAvailabilityMetrics,
@@ -85,7 +86,8 @@ export const useMetricsStore = defineStore('metrics', () => {
     setBucket(widgetId, patch);
   };
 
-  const prepareAvailabilityInfos = infos => infos
+  const prepareAvailabilityInfos = infos =>
+    infos
       ? Object.entries(infos).reduce((acc, [name, value]) => {
           acc[name] = { value, name };
 
@@ -93,7 +95,8 @@ export const useMetricsStore = defineStore('metrics', () => {
         }, {})
       : {};
 
-  const prepareAvailabilitiesResponse = response => response?.data?.map(availability => ({
+  const prepareAvailabilitiesResponse = response =>
+    response?.data?.map(availability => ({
       ...availability,
       entity: {
         ...availability.entity,
@@ -133,22 +136,34 @@ export const useMetricsStore = defineStore('metrics', () => {
     }
   };
 
-  const fetchSliMetricsWithoutStore = ({ params } = {}) => request.get(API_ROUTES.metrics.sli, { params });
-  const fetchRatingMetricsWithoutStore = ({ params } = {}) => request.get(API_ROUTES.metrics.rating, { params });
-  const fetchAlarmsMetricsWithoutStore = ({ params } = {}) => request.post(API_ROUTES.metrics.alarm, params);
-  const createKpiAlarmExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportAlarm, data);
-  const createKpiAlarmAggregateExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportAggregate, data);
-  const createRemediationExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportRemediation, null, { params: data });
-  const createKpiRatingExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportRating, null, {
+  const fetchSliMetricsWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.metrics.sli, { params });
+  const fetchRatingMetricsWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.metrics.rating, { params });
+  const fetchAlarmsMetricsWithoutStore = ({ params } = {}) =>
+    request.post(API_ROUTES.metrics.alarm, params);
+  const createKpiAlarmExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportAlarm, data);
+  const createKpiAlarmAggregateExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportAggregate, data);
+  const createRemediationExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportRemediation, null, { params: data });
+  const createKpiRatingExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportRating, null, {
       params: data,
     });
-  const createKpiSliExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportSli, null, { params: data });
-  const fetchMetricExport = ({ id } = {}) => request.get(`${API_ROUTES.metrics.exportMetric}/${id}`);
-  const fetchExternalMetricsWithoutStore = ({ params } = {}) => request.get(API_ROUTES.metrics.perfDataMetrics, {
+  const createKpiSliExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportSli, null, { params: data });
+  const fetchMetricExport = ({ id } = {}) =>
+    request.get(`${API_ROUTES.metrics.exportMetric}/${id}`);
+  const fetchExternalMetricsWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.metrics.perfDataMetrics, {
       params,
     });
-  const fetchEntityAlarmsMetricsWithoutStore = ({ params } = {}) => request.post(API_ROUTES.metrics.entityAlarmMetrics, params);
-  const fetchEntityAggregateMetricsWithoutStore = ({ params } = {}) => request.post(API_ROUTES.metrics.entityAggregateMetrics, params);
+  const fetchEntityAlarmsMetricsWithoutStore = ({ params } = {}) =>
+    request.post(API_ROUTES.metrics.entityAlarmMetrics, params);
+  const fetchEntityAggregateMetricsWithoutStore = ({ params } = {}) =>
+    request.post(API_ROUTES.metrics.entityAggregateMetrics, params);
 
   const fetchAggregatedMetricsWithoutStore = async ({
     params: { with_history: withHistory, prev_from: prevFrom, prev_to: prevTo, ...params } = {},
@@ -193,26 +208,35 @@ export const useMetricsStore = defineStore('metrics', () => {
     return data;
   };
 
-  const fetchGroupMetricsList = payload => fetchWidgetList('group', payload, {
+  const fetchGroupMetricsList = payload =>
+    fetchWidgetList('group', payload, {
       route: API_ROUTES.metrics.group,
     });
   const fetchGroupMetrics = fetchGroupMetricsList;
-  const createGroupMetricsExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportGroup, data);
-  const fetchVectorMetricsList = payload => fetchWidgetList('vector', payload, {
+  const createGroupMetricsExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportGroup, data);
+  const fetchVectorMetricsList = payload =>
+    fetchWidgetList('vector', payload, {
       route: API_ROUTES.metrics.alarm,
     });
   const fetchVectorMetrics = fetchVectorMetricsList;
-  const fetchAvailabilityList = payload => fetchWidgetList('availability', payload, {
+  const fetchAvailabilityList = payload =>
+    fetchWidgetList('availability', payload, {
       route: API_ROUTES.metrics.availability,
       method: 'get',
       dataPreparer: prepareAvailabilitiesResponse,
     });
   const fetchAvailability = fetchAvailabilityList;
-  const fetchAvailabilityWithoutStore = ({ params } = {}) => request.get(API_ROUTES.metrics.entityAggregateAvailability, { params });
-  const fetchAvailabilityHistoryWithoutStore = ({ params } = {}) => request.get(API_ROUTES.metrics.entityAvailability, { params });
-  const fetchAvailabilityHistoryExport = ({ params } = {}) => request.get(API_ROUTES.metrics.exportAvailabilityByEntity, { params });
-  const createAvailabilityExport = ({ data } = {}) => request.post(API_ROUTES.metrics.exportAvailability, data);
-  const fetchAvailabilityExport = ({ id, params } = {}) => request.get(`${API_ROUTES.metrics.exportMetric}/${id}`, { params });
+  const fetchAvailabilityWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.metrics.entityAggregateAvailability, { params });
+  const fetchAvailabilityHistoryWithoutStore = ({ params } = {}) =>
+    request.get(API_ROUTES.metrics.entityAvailability, { params });
+  const fetchAvailabilityHistoryExport = ({ params } = {}) =>
+    request.get(API_ROUTES.metrics.exportAvailabilityByEntity, { params });
+  const createAvailabilityExport = ({ data } = {}) =>
+    request.post(API_ROUTES.metrics.exportAvailability, data);
+  const fetchAvailabilityExport = ({ id, params } = {}) =>
+    request.get(`${API_ROUTES.metrics.exportMetric}/${id}`, { params });
 
   return {
     widgetMetrics,

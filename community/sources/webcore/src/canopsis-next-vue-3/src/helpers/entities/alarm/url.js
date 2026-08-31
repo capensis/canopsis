@@ -6,4 +6,5 @@ import { API_HOST, API_ROUTES } from '@/config';
  * @param {string} id
  * @returns {string}
  */
-export const getAlarmListExportDownloadFileUrl = id => `${API_HOST}${API_ROUTES.alarmListExport}/${id}/download`;
+export const getAlarmListExportDownloadFileUrl = id =>
+  `${API_HOST}${API_ROUTES.alarmListExport}/${id}/download`;

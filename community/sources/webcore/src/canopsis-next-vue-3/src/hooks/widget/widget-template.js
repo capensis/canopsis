@@ -24,21 +24,24 @@ export const useWidgetTemplateField = (props, valueKey, emit) => {
    * @param {string|Symbol} newTemplate
    * @param {*} newValue
    */
-  const emitUpdateTemplate = (newTemplate, newValue) => emit('update:template', newTemplate, newValue);
+  const emitUpdateTemplate = (newTemplate, newValue) =>
+    emit('update:template', newTemplate, newValue);
 
   /**
    * Updates both template and value from selected widget template.
    *
    * @param {Object} newTemplate
    */
-  const updateTemplate = newTemplate => emitUpdateTemplate(newTemplate?.value, newTemplate?.[unref(valueKey)]);
+  const updateTemplate = newTemplate =>
+    emitUpdateTemplate(newTemplate?.value, newTemplate?.[unref(valueKey)]);
 
   /**
    * Updates model value and switches to custom template when needed.
    *
    * @param {*} newValue
    */
-  const updateValue = newValue => props.template === CUSTOM_WIDGET_TEMPLATE
+  const updateValue = newValue =>
+    props.template === CUSTOM_WIDGET_TEMPLATE
       ? updateModel(newValue)
       : emitUpdateTemplate(CUSTOM_WIDGET_TEMPLATE, newValue);
 

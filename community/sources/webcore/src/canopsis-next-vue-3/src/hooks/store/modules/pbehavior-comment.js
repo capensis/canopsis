@@ -10,16 +10,21 @@ import { usePbehaviorCommentStore } from '@/stores/modules/pbehavior-comment';
 export const usePbehaviorComment = () => {
   const pbehaviorCommentStore = usePbehaviorCommentStore();
 
-  const createComments = ({ comments = [], pbehaviorId } = {}) => comments.map(comment => pbehaviorCommentStore.create({ data: comment, pbehaviorId }));
+  const createComments = ({ comments = [], pbehaviorId } = {}) =>
+    comments.map(comment => pbehaviorCommentStore.create({ data: comment, pbehaviorId }));
 
-  const updateComments = ({ comments = [], pbehaviorId } = {}) => comments.map(comment => pbehaviorCommentStore.update({
+  const updateComments = ({ comments = [], pbehaviorId } = {}) =>
+    comments.map(comment =>
+      pbehaviorCommentStore.update({
         data: comment,
         pbehaviorId,
         commentId: comment._id,
       }),
     );
 
-  const removeComments = ({ comments = [] } = {}) => comments.map(comment => pbehaviorCommentStore.remove({
+  const removeComments = ({ comments = [] } = {}) =>
+    comments.map(comment =>
+      pbehaviorCommentStore.remove({
         id: comment._id,
       }),
     );

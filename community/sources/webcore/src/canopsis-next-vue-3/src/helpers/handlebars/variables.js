@@ -77,6 +77,7 @@ const getVariablesFromNode = (node) => {
  * @param {string} template
  * @returns {string[]}
  */
-export const getTemplateVariables = template => getVariablesFromNode(Handlebars.parseWithoutProcessing(normalizeHandlebarsNbsp(template))).filter(
+export const getTemplateVariables = template =>
+  getVariablesFromNode(Handlebars.parseWithoutProcessing(normalizeHandlebarsNbsp(template))).filter(
     variable => !Handlebars.helpers[variable],
   );

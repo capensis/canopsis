@@ -207,7 +207,8 @@ export const isAutoMetaAlarmRuleType = type => type && type !== META_ALARMS_RULE
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isMetaAlarmRuleTypeHasPatterns = type => isAttributeMetaAlarmRuleType(type) ||
+export const isMetaAlarmRuleTypeHasPatterns = type =>
+  isAttributeMetaAlarmRuleType(type) ||
   isComplexMetaAlarmRuleType(type) ||
   isValueGroupMetaAlarmRuleType(type) ||
   isCorelMetaAlarmRuleType(type);
@@ -218,7 +219,8 @@ export const isMetaAlarmRuleTypeHasPatterns = type => isAttributeMetaAlarmRuleTy
  * @param {MetaAlarmRuleType} type
  * @return {boolean}
  */
-export const isMetaAlarmRuleTypeHasTotalEntityPatterns = type => isComplexMetaAlarmRuleType(type) || isValueGroupMetaAlarmRuleType(type);
+export const isMetaAlarmRuleTypeHasTotalEntityPatterns = type =>
+  isComplexMetaAlarmRuleType(type) || isValueGroupMetaAlarmRuleType(type);
 
 /**
  * Convert meta alarm rule to patterns
@@ -226,7 +228,8 @@ export const isMetaAlarmRuleTypeHasTotalEntityPatterns = type => isComplexMetaAl
  * @param {MetaAlarmRule} rule
  * @return {FilterPatterns}
  */
-export const metaAlarmFilterPatternsToForm = rule => filterPatternsToForm(rule, [
+export const metaAlarmFilterPatternsToForm = rule =>
+  filterPatternsToForm(rule, [
     PATTERNS_FIELDS.alarm,
     PATTERNS_FIELDS.event,
     PATTERNS_FIELDS.entity,
@@ -307,7 +310,8 @@ export const metaAlarmRuleToForm = (rule = {}) => {
  * @param {string} type - The type of the alarm rule to check.
  * @returns {boolean} Returns `true` if the `type` has template configuration fields, otherwise `false`.
  */
-export const hasTemplateConfigFields = type => [
+export const hasTemplateConfigFields = type =>
+  [
     META_ALARMS_RULE_TYPES.timebased,
     META_ALARMS_RULE_TYPES.attribute,
     META_ALARMS_RULE_TYPES.complex,

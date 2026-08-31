@@ -41,7 +41,8 @@ export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
 
   const { fetchRemediationInstructionsListWithoutStore } = useRemediationInstruction();
 
-  const allInstructions = computed(() => instructionsIds.value.map(id => instructionsById.value[id]).filter(Boolean),
+  const allInstructions = computed(() =>
+    instructionsIds.value.map(id => instructionsById.value[id]).filter(Boolean),
   );
 
   const getSelectedInstructionIds = () => unref(filter).instruction_ids ?? [];
@@ -127,7 +128,8 @@ export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
     return undefined;
   };
 
-  const updateInstructionsSearch = nextSearch => fetchInstructionsList({
+  const updateInstructionsSearch = nextSearch =>
+    fetchInstructionsList({
       nextPage: 1,
       search: nextSearch ?? '',
     });
@@ -141,7 +143,8 @@ export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
     const isAutoInstructionSelectedType = isAutoInstructionType(unwrappedFilter.instruction_type);
 
     return allInstructions.value.filter(
-      instruction => (isManualInstructionSelectedType && isAnyManualInstructionType(instruction.type)) ||
+      instruction =>
+        (isManualInstructionSelectedType && isAnyManualInstructionType(instruction.type)) ||
         (isAutoInstructionSelectedType && isAutoInstructionType(instruction.type)),
     );
   });

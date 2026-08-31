@@ -16,7 +16,8 @@ import { BACKGROUND_AND_ICONS_COLORS_DIFF } from '@/constants';
  * @param {ReadableColorOptions} [options = {}]
  * @return {boolean}
  */
-export const isReadableColor = (firstColor, secondColor, options = {}) => tinycolor.isReadable(firstColor, secondColor, options);
+export const isReadableColor = (firstColor, secondColor, options = {}) =>
+  tinycolor.isReadable(firstColor, secondColor, options);
 
 /**
  * Get most readable text color ('white' or 'black')
@@ -119,7 +120,8 @@ export const getLightenColor = (color, amount) => tinycolor(color).lighten(amoun
  * @param {number} [amount=BACKGROUND_AND_ICONS_COLORS_DIFF] - The amount by which to lighten or darken the color.
  * @returns {string} - The adjusted color as a string.
  */
-export const getLightenOrDarkenColor = (color, amount = BACKGROUND_AND_ICONS_COLORS_DIFF) => isDarkColor(color) ? getLightenColor(color, amount) : getDarkenColor(color, amount);
+export const getLightenOrDarkenColor = (color, amount = BACKGROUND_AND_ICONS_COLORS_DIFF) =>
+  isDarkColor(color) ? getLightenColor(color, amount) : getDarkenColor(color, amount);
 
 /**
  * Check property is css variable
@@ -143,4 +145,5 @@ export const getCSSVariableName = property => property.match(/^var\((.+)\)$/)[1]
  * @param {Element} element
  * @param {string} property
  */
-export const getCSSVariableColor = (element, property) => getComputedStyle(element).getPropertyValue(property);
+export const getCSSVariableColor = (element, property) =>
+  getComputedStyle(element).getPropertyValue(property);

@@ -62,7 +62,8 @@ export default {
       skip_verify: skipVerify,
     } = useFormModels(['name', 'type', 'host', 'auth_token', 'auth_username', 'skip_verify']);
 
-    const typeObject = computed(() => remediationJobConfigTypes.value.find(({ name: typeName }) => typeName === type.value),
+    const typeObject = computed(
+      () => remediationJobConfigTypes.value.find(({ name: typeName }) => typeName === type.value),
     );
     const isShownUserNameField = computed(() => isJobTypeIncludesUserName(typeObject.value));
 

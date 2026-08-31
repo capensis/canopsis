@@ -62,7 +62,8 @@ export const getCompletionType = (monaco, completion, isMember) => {
  * It navigates through the `completions` object hierarchy to find the relevant completions.
  * It also filters out properties that start with '__' and handles errors when accessing prototypes.
  */
-export const registerJavaScriptCompletion = (monaco, completions) => monaco &&
+export const registerJavaScriptCompletion = (monaco, completions) =>
+  monaco &&
   monaco.languages.registerCompletionItemProvider('javascript', {
     triggerCharacters: ['.'],
 

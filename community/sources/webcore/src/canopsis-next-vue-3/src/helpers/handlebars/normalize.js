@@ -9,6 +9,7 @@ import { isString } from 'lodash';
  * @param {string} [html = '']
  * @returns {string}
  */
-export const normalizeHandlebarsNbsp = (html = '') => isString(html)
+export const normalizeHandlebarsNbsp = (html = '') =>
+  isString(html)
     ? html.replace(/{{{[\s\S]*?}}}|{{[\s\S]*?}}/g, block => block.replace(/&nbsp;|\u00A0/g, ' '))
     : html;

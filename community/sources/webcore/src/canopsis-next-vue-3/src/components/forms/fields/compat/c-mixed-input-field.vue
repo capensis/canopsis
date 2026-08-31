@@ -65,7 +65,8 @@ export default {
     const { updateModel } = useModelField(props, emit);
 
     const switchLabel = computed(() => String(props.value));
-    const isInputTypeText = computed(() => [PATTERN_FIELD_TYPES.number, PATTERN_FIELD_TYPES.string].includes(props.inputType),
+    const isInputTypeText = computed(
+      () => [PATTERN_FIELD_TYPES.number, PATTERN_FIELD_TYPES.string].includes(props.inputType),
     );
 
     const updateTextFieldValue = (value) => {

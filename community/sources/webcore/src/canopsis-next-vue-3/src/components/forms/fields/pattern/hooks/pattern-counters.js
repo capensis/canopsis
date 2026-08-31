@@ -41,7 +41,8 @@ export const usePatternCounters = ({ counterMethod, entityCountersType, hasError
     }
   });
 
-  const combinedCounter = computed(() => unref(entityCountersType) ? counters.value?.combined : counters.value?.alarms?.combined,
+  const combinedCounter = computed(() =>
+    unref(entityCountersType) ? counters.value?.combined : counters.value?.alarms?.combined,
   );
 
   const hasAllInCounter = computed(() => combinedCounter.value?.count > 0);

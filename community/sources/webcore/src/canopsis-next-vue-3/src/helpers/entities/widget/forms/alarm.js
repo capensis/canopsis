@@ -94,7 +94,8 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  * @param {boolean | null} [opened]
  * @returns {boolean | null}
  */
-export const openedToForm = opened => typeof opened === 'boolean' || opened === null ? opened : true;
+export const openedToForm = opened =>
+  typeof opened === 'boolean' || opened === null ? opened : true;
 
 export const alarmListChartToForm = (chart = {}) => {
   const chartParametersToForm = {
@@ -139,7 +140,8 @@ export const columnsParametersToForm = (columns = {}) => ({
  * @param {WidgetInfoPopup[]} [infoPopups=[]]
  * @return {WidgetInfoPopup[]}
  */
-export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({ ...infoPopup }));
+export const infoPopupsToForm = (infoPopups = []) =>
+  infoPopups.map(infoPopup => ({ ...infoPopup }));
 
 /**
  * Convert alarm list base parameters to form.
@@ -201,7 +203,8 @@ export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC
  * @param {Object} [fastPbehavior={}]
  * @returns {Object}
  */
-export const alarmListFastPbehaviorParametersItemToForm = (fastPbehavior = {}) => addKeyInEntity({
+export const alarmListFastPbehaviorParametersItemToForm = (fastPbehavior = {}) =>
+  addKeyInEntity({
     name_prefix: fastPbehavior.name_prefix ?? '',
     type: fastPbehavior.type ?? '',
     reason: fastPbehavior.reason ?? '',
@@ -213,7 +216,8 @@ export const alarmListFastPbehaviorParametersItemToForm = (fastPbehavior = {}) =
  * @param {Object[]} [fastPbehavior=[]]
  * @returns {Object[]}
  */
-export const alarmListFastPbehaviorParametersToForm = (fastPbehavior = []) => fastPbehavior.map(alarmListFastPbehaviorParametersItemToForm);
+export const alarmListFastPbehaviorParametersToForm = (fastPbehavior = []) =>
+  fastPbehavior.map(alarmListFastPbehaviorParametersItemToForm);
 
 /**
  * Convert alarm list widget parameters to form values.
@@ -347,29 +351,34 @@ export const formToAlarmListWidgetParameters = (form = {}) => {
  * @param {Object} widget
  * @returns {Object}
  */
-export const prepareAlarmListWidget = (widget = {}) => setSeveralFields(widget, {
-    'parameters.widgetColumns': (columns = []) => columns.map(column => ({
+export const prepareAlarmListWidget = (widget = {}) =>
+  setSeveralFields(widget, {
+    'parameters.widgetColumns': (columns = []) =>
+      columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.widgetGroupColumns': (columns = DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS) => columns.map(column => ({
+    'parameters.widgetGroupColumns': (columns = DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS) =>
+      columns.map(column => ({
         ...column,
 
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) => columns.map(column => ({
+    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) =>
+      columns.map(column => ({
         ...column,
 
         sortable: false,
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
       })),
 
-    'parameters.widgetExportColumns': (columns = []) => columns.map(column => ({
+    'parameters.widgetExportColumns': (columns = []) =>
+      columns.map(column => ({
         ...column,
 
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),

@@ -17,7 +17,8 @@ import { uid } from '@/helpers/uid';
 function prepareAttributes(attributes) {
   return Object.entries(attributes)
     .map(
-      ([key, value]) => `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`,
+      ([key, value]) =>
+        `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`,
     )
     .join(' ');
 }

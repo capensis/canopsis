@@ -101,7 +101,8 @@ import {
  * @param {Object|Array} [templateTestingData={}]
  * @returns {Object|Array|string}
  */
-export const templateTestingDataToForm = (templateTestingData = {}) => mapValues(templateTestingData, (dataItem) => {
+export const templateTestingDataToForm = (templateTestingData = {}) =>
+  mapValues(templateTestingData, (dataItem) => {
     if (isArray(dataItem)) {
       return dataItem.map(item => item?._id || item);
     }
@@ -281,7 +282,8 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  * @param {TemplateTestingTestValidateFormItem[]} [form] - Array of form items
  * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
  */
-export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
+export const formToTemplateTestingTestValidate = (form = []) =>
+  form.reduce((acc, item) => {
     const isResponse = [
       TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
       TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,

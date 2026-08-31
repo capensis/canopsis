@@ -46,7 +46,9 @@ import { uid } from '@/helpers/uid';
  * @param {string} [value='']
  * @returns {string|undefined}
  */
-export const getInfosWidgetColumn = (value = '') => [...ALARM_INFOS_FIELDS, ...ENTITY_INFOS_FIELDS].find(constantField => value.startsWith(constantField),
+export const getInfosWidgetColumn = (value = '') =>
+  [...ALARM_INFOS_FIELDS, ...ENTITY_INFOS_FIELDS].find(constantField =>
+    value.startsWith(constantField),
   );
 
 /**
@@ -55,7 +57,8 @@ export const getInfosWidgetColumn = (value = '') => [...ALARM_INFOS_FIELDS, ...E
  * @param {string} [value='']
  * @returns {boolean}
  */
-export const isAlarmTicketDataWidgetColumn = (value = '') => value.startsWith(ALARM_FIELDS.ticketData);
+export const isAlarmTicketDataWidgetColumn = (value = '') =>
+  value.startsWith(ALARM_FIELDS.ticketData);
 
 /**
  * Check if column is links.
@@ -63,7 +66,8 @@ export const isAlarmTicketDataWidgetColumn = (value = '') => value.startsWith(AL
  * @param {string} [value='']
  * @returns {boolean}
  */
-export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
+export const isLinksWidgetColumn = (value = '') =>
+  value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
  * Convert widget column value to form.

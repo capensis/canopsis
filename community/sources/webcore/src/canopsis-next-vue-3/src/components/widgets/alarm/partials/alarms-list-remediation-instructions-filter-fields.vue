@@ -118,7 +118,8 @@ export default {
       })),
     );
 
-    const instructionTypes = computed(() => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].map(type => ({
+    const instructionTypes = computed(() => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto]
+      .map(type => ({
         value: type,
         text: t(`remediation.instruction.types.${type}`),
       })),
@@ -136,7 +137,8 @@ export default {
       })),
     );
 
-    const instructionStatuses = computed(() => props.modelValue.instruction_type === REMEDIATION_INSTRUCTION_TYPES.manual
+    const instructionStatuses = computed(
+      () => props.modelValue.instruction_type === REMEDIATION_INSTRUCTION_TYPES.manual
         ? manualInstructionStatuses.value
         : autoInstructionStatuses.value,
     );

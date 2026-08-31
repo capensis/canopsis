@@ -18,9 +18,11 @@ export const useEventsRecordStore = defineStore('eventsRecord', () => {
   const recordings = computed(() => currentStatus.value?.recording ?? []);
   const resendings = computed(() => currentStatus.value?.resending ?? []);
   const limit = computed(() => currentStatus.value?.limit ?? 1);
-  const recordingsById = computed(() => Object.fromEntries(recordings.value.map(item => [item._id, item])),
+  const recordingsById = computed(() =>
+    Object.fromEntries(recordings.value.map(item => [item._id, item])),
   );
-  const resendingsById = computed(() => Object.fromEntries(resendings.value.map(item => [item._id, item])),
+  const resendingsById = computed(() =>
+    Object.fromEntries(resendings.value.map(item => [item._id, item])),
   );
 
   const setCurrentStatus = (status) => {
@@ -35,21 +37,27 @@ export const useEventsRecordStore = defineStore('eventsRecord', () => {
     return response;
   };
 
-  const fetchEventsListWithoutStore = ({ id, params } = {}) => request.get(`${API_ROUTES.eventsRecord.list}/${id}`, { params });
+  const fetchEventsListWithoutStore = ({ id, params } = {}) =>
+    request.get(`${API_ROUTES.eventsRecord.list}/${id}`, { params });
 
-  const createExport = ({ id, eventIds = [], eventPattern } = {}) => request.post(`${API_ROUTES.eventsRecord.list}/${id}/exports`, {
+  const createExport = ({ id, eventIds = [], eventPattern } = {}) =>
+    request.post(`${API_ROUTES.eventsRecord.list}/${id}/exports`, {
       event_ids: eventIds,
       event_pattern: eventPattern,
     });
 
   const fetchExport = ({ id } = {}) => request.get(`${API_ROUTES.eventsRecord.export}/${id}`);
-  const playback = ({ id, data } = {}) => request.post(`${API_ROUTES.eventsRecord.list}/${id}/playback`, data);
-  const stopPlayback = ({ id } = {}) => request.delete(`${API_ROUTES.eventsRecord.list}/${id}/playback`);
+  const playback = ({ id, data } = {}) =>
+    request.post(`${API_ROUTES.eventsRecord.list}/${id}/playback`, data);
+  const stopPlayback = ({ id } = {}) =>
+    request.delete(`${API_ROUTES.eventsRecord.list}/${id}/playback`);
   const remove = ({ id } = {}) => request.delete(`${API_ROUTES.eventsRecord.list}/${id}`);
   const removeEvent = ({ id } = {}) => request.delete(`${API_ROUTES.eventsRecord.event}/${id}`);
-  const bulkRemoveEvent = ({ data } = {}) => request.delete(API_ROUTES.eventsRecord.bulkEvent, { data });
+  const bulkRemoveEvent = ({ data } = {}) =>
+    request.delete(API_ROUTES.eventsRecord.bulkEvent, { data });
 
-  const fetchCurrent = () => useRequestCancelling(async (source) => {
+  const fetchCurrent = () =>
+    useRequestCancelling(async (source) => {
       try {
         currentPending.value = true;
 

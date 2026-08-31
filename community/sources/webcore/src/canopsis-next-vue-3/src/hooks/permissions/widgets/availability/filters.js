@@ -16,10 +16,12 @@ import { useCurrentUserPermissions } from '@/hooks/auth';
 export const useAvailabilityFiltersPermissions = () => {
   const { checkAccess } = useCurrentUserPermissions();
 
-  const hasAccessToFilter = computed(() => checkAccess(USER_PERMISSIONS.business.availability.actions.filter),
+  const hasAccessToFilter = computed(() =>
+    checkAccess(USER_PERMISSIONS.business.availability.actions.filter),
   );
 
-  const hasAccessToUserFilter = computed(() => checkAccess(USER_PERMISSIONS.business.availability.actions.userFilter),
+  const hasAccessToUserFilter = computed(() =>
+    checkAccess(USER_PERMISSIONS.business.availability.actions.userFilter),
   );
 
   return {
@@ -38,7 +40,8 @@ export const useAvailabilityFiltersPermissions = () => {
 export const useAvailabilityIntervalPermissions = () => {
   const { checkAccess } = useCurrentUserPermissions();
 
-  const hasAccessToInterval = computed(() => checkAccess(USER_PERMISSIONS.business.availability.actions.interval),
+  const hasAccessToInterval = computed(() =>
+    checkAccess(USER_PERMISSIONS.business.availability.actions.interval),
   );
 
   return {
@@ -56,7 +59,8 @@ export const useAvailabilityIntervalPermissions = () => {
 export const useAvailabilityExportPermissions = () => {
   const { checkAccess } = useCurrentUserPermissions();
 
-  const hasAccessToExportAsCsv = computed(() => checkAccess(USER_PERMISSIONS.business.availability.actions.exportAsCsv),
+  const hasAccessToExportAsCsv = computed(() =>
+    checkAccess(USER_PERMISSIONS.business.availability.actions.exportAsCsv),
   );
 
   return {

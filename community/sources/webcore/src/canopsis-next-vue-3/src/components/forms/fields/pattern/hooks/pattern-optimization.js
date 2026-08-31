@@ -77,10 +77,12 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
     () => optimization.value?.status === PATTERN_OPTIMIZATION_STATUSES.success,
   );
   const suggestions = computed(() => optimization.value?.suggestions ?? []);
-  const currentPattern = computed(() => formFilterToPatterns(unref(value), [PATTERNS_FIELDS.entity], false),
+  const currentPattern = computed(() =>
+    formFilterToPatterns(unref(value), [PATTERNS_FIELDS.entity], false),
   );
   const optimizedFieldsRegexps = computed(() => optimization.value?.optimized_field_regexps ?? []);
-  const originalCounter = computed(() => optimization.value
+  const originalCounter = computed(() =>
+    optimization.value
       ? {
           ms: optimization.value.original_pattern_ms ?? 0,
           count: optimization.value.original_pattern_count ?? 0,
@@ -103,8 +105,10 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
   const hasRegexpInfos = computed(() => {
     const { [PATTERNS_FIELDS.entity]: entityPattern } = unref(value);
 
-    return entityPattern?.groups?.some?.(group => group.rules.some(
-        rule => rule.operator === PATTERN_OPERATORS.regexp &&
+    return entityPattern?.groups?.some?.(group =>
+      group.rules.some(
+        rule =>
+          rule.operator === PATTERN_OPERATORS.regexp &&
           rule.attribute === ENTITY_PATTERN_FIELDS.infos,
       ),
     );
@@ -240,7 +244,8 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
    *
    * @param {Object} suggestion - The suggestion object containing pattern groups
    */
-  const showEntitiesComparisonModal = suggestion => modals.show({
+  const showEntitiesComparisonModal = suggestion =>
+    modals.show({
       name: MODALS.entitiesComparison,
       config: {
         currentPattern: currentPattern.value[PATTERNS_FIELDS.entity],
@@ -256,7 +261,8 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
    */
   const afterSubmit = () => {
     if (appliedOptimizations.value?.length) {
-      appliedOptimizations.value.forEach(({ id, index }) => updateOptimization({
+      appliedOptimizations.value.forEach(({ id, index }) =>
+        updateOptimization({
           id,
           data: {
             accept: true,

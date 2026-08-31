@@ -39,7 +39,8 @@ export const useTableResizing = ({
   /**
    * HEADERS WITH ACTUAL WIDTHS
    */
-  const headersWithWidth = computed(() => !unref(resizableColumn)
+  const headersWithWidth = computed(() =>
+    !unref(resizableColumn)
       ? unref(headers)
       : unref(headers).map((header) => {
           const width = columnsWidthByFields.value[header.value];
@@ -93,7 +94,8 @@ export const useTableResizing = ({
   /**
    * Function to calculate all table columns widths
    */
-  const calculateColumnsWidths = () => setColumnsWidth(
+  const calculateColumnsWidths = () =>
+    setColumnsWidth(
       [...tableHeaderCells.value].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
@@ -130,7 +132,8 @@ export const useTableResizing = ({
   /**
    * Function to toggle resizing mode
    */
-  const toggleResizingMode = () => resizingMode.value ? disableResizingMode() : enableResizingMode();
+  const toggleResizingMode = () =>
+    resizingMode.value ? disableResizingMode() : enableResizingMode();
 
   /**
    * Function to resize column by difference

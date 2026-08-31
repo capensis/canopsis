@@ -21,27 +21,32 @@ export const useModals = () => {
 
     show: modal => store.show(modal),
 
-    hide: (payload = {}) => store.hide({
+    hide: (payload = {}) =>
+      store.hide({
         ...payload,
         id: getCurrentModalId(payload),
       }),
 
-    updateDialogProps: (payload = {}) => store.updateDialogProps({
+    updateDialogProps: (payload = {}) =>
+      store.updateDialogProps({
         ...payload,
         id: getCurrentModalId(payload),
       }),
 
-    updateModalConfig: (payload = {}) => store.updateModalConfig({
+    updateModalConfig: (payload = {}) =>
+      store.updateModalConfig({
         ...payload,
         id: getCurrentModalId(payload),
       }),
 
-    minimize: (payload = {}) => store.minimize({
+    minimize: (payload = {}) =>
+      store.minimize({
         ...payload,
         id: getCurrentModalId(payload),
       }),
 
-    maximize: (payload = {}) => store.maximize({
+    maximize: (payload = {}) =>
+      store.maximize({
         ...payload,
         id: getCurrentModalId(payload),
       }),

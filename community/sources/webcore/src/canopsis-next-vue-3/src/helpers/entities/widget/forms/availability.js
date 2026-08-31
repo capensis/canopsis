@@ -112,24 +112,29 @@ export const formToAvailabilityWidgetParameters = (form = {}) => ({
  * @param {Object} widget
  * @returns {Object}
  */
-export const prepareAvailabilityWidget = (widget = {}) => setSeveralFields(widget, {
-    'parameters.widget_columns': (columns = []) => columns.map(column => ({
+export const prepareAvailabilityWidget = (widget = {}) =>
+  setSeveralFields(widget, {
+    'parameters.widget_columns': (columns = []) =>
+      columns.map(column => ({
         ...column,
         value: column.value === ENTITY_FIELDS.categoryName ? ENTITY_FIELDS.category : column.value,
         sortable: getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
       })),
-    'parameters.active_alarms_columns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => columns.map(column => ({
+    'parameters.active_alarms_columns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
+      columns.map(column => ({
         ...column,
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
-    'parameters.resolved_alarms_columns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => columns.map(column => ({
+    'parameters.resolved_alarms_columns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
+      columns.map(column => ({
         ...column,
         sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
         text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       })),
-    'parameters.export_settings.widget_export_columns': (columns = []) => columns.map(column => ({
+    'parameters.export_settings.widget_export_columns': (columns = []) =>
+      columns.map(column => ({
         ...column,
         text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
       })),

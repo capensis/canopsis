@@ -7,7 +7,8 @@ import { get, flow, uniq, isArray, isFunction, isObject, isUndefined, merge } fr
  * @param {string} key
  * @returns {*}
  */
-const getValue = (features, key) => features.reduce((acc, feature) => {
+const getValue = (features, key) =>
+  features.reduce((acc, feature) => {
     const value = get(feature, key);
 
     if (isUndefined(value)) {

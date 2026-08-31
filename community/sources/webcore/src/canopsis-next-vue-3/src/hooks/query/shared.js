@@ -38,7 +38,8 @@ export const usePendingWithLocalQuery = ({
     onUpdate: fetchHandlerWithPending,
   });
 
-  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) => fetchHandlerWithPending(requestQuery);
+  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) =>
+    fetchHandlerWithPending(requestQuery);
 
   return {
     ...queryData,
@@ -85,7 +86,8 @@ export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate })
  * @param {Object} [options.initialQuery] - The initial state of the query object.
  * @returns {Object} An object containing query state, options, and update functions.
  */
-export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) => useLocalQueryWithOptions({
+export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) =>
+  useLocalQueryWithOptions({
     initialQuery,
     onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
   });

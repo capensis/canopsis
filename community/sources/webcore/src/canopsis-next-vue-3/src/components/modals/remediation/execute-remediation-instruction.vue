@@ -112,7 +112,8 @@ export default {
       return execution?._id ?? instructionExecution.value?._id;
     });
     const socketRoomName = computed(() => `${SOCKET_ROOMS.execution}/${instructionExecutionId.value}`);
-    const hasActions = computed(() => instructionExecution.value && isInstructionExecutionRunning(instructionExecution.value),
+    const hasActions = computed(
+      () => instructionExecution.value && isInstructionExecutionRunning(instructionExecution.value),
     );
 
     const closeModal = () => {

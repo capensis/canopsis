@@ -49,7 +49,8 @@ export default {
 
   setup(props) {
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
-    const valueField = computed(() => getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
+    const valueField = computed(
+      () => getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
     );
     const trendValueField = computed(() => getAvailabilityTrendFieldByDisplayParameter(props.displayParameter),
     );

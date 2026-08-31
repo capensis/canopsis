@@ -104,7 +104,8 @@ import { uid } from '@/helpers/uid';
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') => String(eventFilterActionValue || '').replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
+export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') =>
+  String(eventFilterActionValue || '').replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
 
 /**
  * Convert event filter action to form
@@ -209,7 +210,8 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = '') => `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionValue}`;
+export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = '') =>
+  `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionValue}`;
 
 /**
  * Convert from to event filter action fields

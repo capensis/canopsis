@@ -11,7 +11,8 @@ export const useUserPreferenceStore = defineStore('userPreference', () => {
 
   const items = computed(() => Object.values(itemsByWidget.value));
   const getItemByWidgetId = computed(
-    () => widgetId => itemsByWidget.value[widgetId] ?? {
+    () => widgetId =>
+      itemsByWidget.value[widgetId] ?? {
         widget: widgetId,
         content: {},
       },

@@ -59,7 +59,8 @@ export class AsyncBooting {
       return;
     }
 
-    const rAFId = window.requestAnimationFrame(() => this.recursiveRAF(bootCallback, depth - 1, key),
+    const rAFId = window.requestAnimationFrame(() =>
+      this.recursiveRAF(bootCallback, depth - 1, key),
     );
 
     if (key) {

@@ -10,7 +10,8 @@ import { useLlmStore } from '@/stores/modules/llm';
 export const useLlm = () => {
   const llmStore = useLlmStore();
   const { items, meta, pending, fetchingParams } = storeToRefs(llmStore);
-  const fetchDefaultLlmWithoutStore = () => llmStore.fetchListWithoutStore({
+  const fetchDefaultLlmWithoutStore = () =>
+    llmStore.fetchListWithoutStore({
       params: { only_default: true, enabled: true },
     });
 

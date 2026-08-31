@@ -78,7 +78,8 @@ export const useLazySearch = (
    * Computed property to get the list of items from the itemsByValue map.
    * @type {ComputedRef<Array>}
    */
-  const items = computed(() => itemsValues.value.map(itemValue => itemsByValue.value[itemValue]).filter(Boolean),
+  const items = computed(() =>
+    itemsValues.value.map(itemValue => itemsByValue.value[itemValue]).filter(Boolean),
   );
 
   /**
@@ -131,7 +132,8 @@ export const useLazySearch = (
       const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
       selectedItems.value = arrayValue.value.map(
-        item => dataById[item[unwrappedIdKey] ?? item] ??
+        item =>
+          dataById[item[unwrappedIdKey] ?? item] ??
           (isObject(item) ? item : { [unwrappedIdKey]: item, noData: true }),
       );
 
@@ -252,7 +254,8 @@ export const useLazySearch = (
       (unwrappedAddable
         ? preparedNewSelectedItems
         : preparedNewSelectedItems.filter(item => !(isString(item) && !itemsByValue.value[item]))
-      ).map(item => isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item, noData: true } : item,
+      ).map(item =>
+        isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item, noData: true } : item,
       ),
       unwrappedIdKey,
     );
@@ -279,7 +282,8 @@ export const useLazySearch = (
    *
    * @param {number} index - The index of the item to be removed from the `selectedItems` array.
    */
-  const removeItemFromSelectedItemsByIndex = index => changeSelectedItems(selectedItems.value.filter((item, itemIndex) => itemIndex !== index));
+  const removeItemFromSelectedItemsByIndex = index =>
+    changeSelectedItems(selectedItems.value.filter((item, itemIndex) => itemIndex !== index));
 
   watch(value, () => initializeSelectedItems());
   watch(selectedItems, newSelectedItems => emit('update:selected-items', newSelectedItems));

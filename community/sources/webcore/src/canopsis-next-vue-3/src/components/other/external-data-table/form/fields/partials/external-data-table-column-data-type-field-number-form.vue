@@ -67,7 +67,8 @@ export default {
       return null;
     };
 
-    const decimalSeparators = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_DECIMAL_SEPARATOR).map(
+    const decimalSeparators = computed(
+      () => Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_DECIMAL_SEPARATOR).map(
         (separator) => {
           const disabledMessage = getDisabledMessage(
             separator,
@@ -85,7 +86,8 @@ export default {
       ),
     );
 
-    const thousandsSeparators = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_THOUSANDS_SEPARATOR).map(
+    const thousandsSeparators = computed(
+      () => Object.values(EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_THOUSANDS_SEPARATOR).map(
         (separator) => {
           const disabledMessage = getDisabledMessage(
             separator,

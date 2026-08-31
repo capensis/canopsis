@@ -275,7 +275,8 @@ export const mapMermaidParametersToForm = (parameters = {}) => ({
  * @param {MapTreeOfDependenciesEntity[] | [{}]} entities
  * @returns {MapTreeOfDependenciesEntityForm[]}
  */
-export const mapTreeOfDependenciesParametersEntitiesToForm = (entities = [{}]) => addKeyInEntities(
+export const mapTreeOfDependenciesParametersEntitiesToForm = (entities = [{}]) =>
+  addKeyInEntities(
     entities.map(({ entity, pinned_entities: pinned = [] }) => ({
       entity,
       pinned,
@@ -324,7 +325,8 @@ export const mapToForm = (map = {}) => {
  * @param {MapTreeOfDependenciesEntityForm[]} entities
  * @returns {MapTreeOfDependenciesEntityRequest[]}
  */
-export const formToMapTreeOfDependenciesParametersEntities = (entities = []) => removeKeyFromEntities(entities).map(({ entity, pinned }) => ({
+export const formToMapTreeOfDependenciesParametersEntities = (entities = []) =>
+  removeKeyFromEntities(entities).map(({ entity, pinned }) => ({
     entity: entity._id,
     pinned_entities: mapIds(pinned),
   }));
@@ -351,7 +353,8 @@ export const formToMapTreeOfDependenciesParameters = ({ impact, ...form }) => ({
  * @param {MapFlowchartPointForm[]} points
  * @returns {MapFlowchartPoint[]}
  */
-export const formPointsToMapFlowchartPoints = points => points.map(point => ({
+export const formPointsToMapFlowchartPoints = points =>
+  points.map(point => ({
     ...omit(point, point.shape ? ['x', 'y'] : ['shape']),
     entity: point.entity?._id ?? point.entity,
   }));

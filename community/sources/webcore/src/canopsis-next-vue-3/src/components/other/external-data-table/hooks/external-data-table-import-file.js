@@ -25,7 +25,8 @@ const useExternalDataTableImportForm = (formContext) => {
   const originalForm = ref({});
   const needPreview = ref(true);
 
-  const hasErrors = computed(() => Object.values(form.value).some(value => value?.messages?.length),
+  const hasErrors = computed(() =>
+    Object.values(form.value).some(value => value?.messages?.length),
   );
 
   const toggleOnNeedPreview = () => (needPreview.value = true);
@@ -139,7 +140,8 @@ const useExternalDataTableImportPreview = ({
     useExternalDataTableImport();
 
   const { poll: pollPreview } = usePolling({
-    startHandler: () => previewExternalDataTableImport({
+    startHandler: () =>
+      previewExternalDataTableImport({
         id: activeImportFileId.value,
         data: {
           column_configs: formToExternalDataTableColumnConfigs(form.value),
@@ -172,7 +174,8 @@ const useExternalDataTableImportPreview = ({
       const { error_info: errorInfo = {} } = await pollPreview();
 
       Object.entries(errorInfo).forEach(
-        ([key, value]) => (newForm[key] = {
+        ([key, value]) =>
+          (newForm[key] = {
             ...newForm[key],
             ...value,
           }),
@@ -260,7 +263,8 @@ export const useExternalDataTableImportFile = ({ config }) => {
     updateOptions,
     fetchList,
   } = useFetchListWithoutStoreWithOptions({
-    fetchListHandler: rest => fetchExternalDataTableImportData({
+    fetchListHandler: rest =>
+      fetchExternalDataTableImportData({
         ...rest,
         id: activeImportFileId.value,
       }),

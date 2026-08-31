@@ -94,7 +94,8 @@ export default {
     const { values, handleSubmit, isSubmitting } = form;
 
     const remediationJobId = computed(() => remediationJob.value?._id);
-    const remediationJobConfigType = computed(() => remediationJobConfigTypes.value.find(({ name }) => name === values.value.config.type),
+    const remediationJobConfigType = computed(
+      () => remediationJobConfigTypes.value.find(({ name }) => name === values.value.config.type),
     );
 
     const withPayload = computed(() => remediationJobConfigType.value?.with_body);

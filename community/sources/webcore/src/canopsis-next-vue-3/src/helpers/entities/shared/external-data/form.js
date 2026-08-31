@@ -75,7 +75,9 @@ export const externalDataItemConditionAttributeToForm = (
  * @param {ExternalDataCondition} condition
  * @returns {ExternalDataConditionForm[]}
  */
-export const externalDataItemConditionToForm = (conditionType, condition) => Object.entries(condition).map(([attribute, value]) => externalDataItemConditionAttributeToForm(conditionType, attribute, value),
+export const externalDataItemConditionToForm = (conditionType, condition) =>
+  Object.entries(condition).map(([attribute, value]) =>
+    externalDataItemConditionAttributeToForm(conditionType, attribute, value),
   );
 
 /**
@@ -126,7 +128,8 @@ export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table 
  * @param {ExternalData} [externalData]
  * @returns {ExternalDataForm}
  */
-export const externalDataToForm = externalData => externalData ? externalData.map(externalDataItemToForm) : [];
+export const externalDataToForm = externalData =>
+  externalData ? externalData.map(externalDataItemToForm) : [];
 
 /**
  * Convert form to external data conditions
@@ -134,7 +137,8 @@ export const externalDataToForm = externalData => externalData ? externalData.ma
  * @param {ExternalDataConditionForm[]} form
  * @returns {ExternalDataCondition}
  */
-export const formToExternalDataConditions = (form = []) => form.reduce((acc, { type, attribute, value }) => {
+export const formToExternalDataConditions = (form = []) =>
+  form.reduce((acc, { type, attribute, value }) => {
     if (!acc[type]) {
       acc[type] = {};
     }
@@ -150,7 +154,8 @@ export const formToExternalDataConditions = (form = []) => form.reduce((acc, { t
  * @param {ExternalDataForm} form
  * @returns {ExternalData}
  */
-export const formToExternalData = (form = []) => form.map((externalData) => {
+export const formToExternalData = (form = []) =>
+  form.map((externalData) => {
     const { type, reference } = externalData;
 
     return isApiExternalDataType(type)
@@ -185,7 +190,8 @@ export const externalDataConditionTemplateVariablesErrorsToForm = (errorsObject)
  * @param {ExternalDataConditionForm[]} conditions
  * @return {FlattenErrors}
  */
-export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray, conditions) => errorsArray.reduce((acc, errors, index) => {
+export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray, conditions) =>
+  errorsArray.reduce((acc, errors, index) => {
     const condition = conditions[index];
 
     acc[condition.key] = externalDataConditionTemplateVariablesErrorsToForm(errors);

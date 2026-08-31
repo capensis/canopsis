@@ -52,14 +52,18 @@ export const useRolePermissionFetching = () => {
     resetRolesById();
   });
 
-  const treeviewPermissions = computed(() => sortBy(Object.values(permissionsToTreeview(permissions.value)), 'position'),
+  const treeviewPermissions = computed(() =>
+    sortBy(Object.values(permissionsToTreeview(permissions.value)), 'position'),
   );
 
   const uiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.ui]));
   const apiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.api]));
 
-  const hasChanges = computed(() => Object.entries(changedRoles.value).some(([roleId, rolePermissions]) => Object.keys(rolePermissions).some(
-        permissionId => !isEqual(
+  const hasChanges = computed(() =>
+    Object.entries(changedRoles.value).some(([roleId, rolePermissions]) =>
+      Object.keys(rolePermissions).some(
+        permissionId =>
+          !isEqual(
             rolesById.value[roleId].permissions[permissionId],
             originalRolesById.value[roleId].permissions[permissionId],
           ),
@@ -176,14 +180,16 @@ export const useRolePermissionFetching = () => {
 export const useRolePermissionActions = ({ updateRoles, resetRolesById } = {}) => {
   const modals = useModals();
 
-  const submit = () => modals.show({
+  const submit = () =>
+    modals.show({
       name: MODALS.confirmation,
       config: {
         action: updateRoles,
       },
     });
 
-  const cancel = () => modals.show({
+  const cancel = () =>
+    modals.show({
       name: MODALS.confirmation,
       config: {
         action: resetRolesById,

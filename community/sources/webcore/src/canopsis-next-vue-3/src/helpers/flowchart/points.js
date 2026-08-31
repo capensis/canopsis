@@ -42,7 +42,8 @@ export const calculateCenterBetweenPoint = (firstPoint, secondPoint) => ({
  * @param {Point} point
  * @returns {boolean}
  */
-export const isAreaIncludePoint = (start, end, point) => point.x > start.x && point.x < end.x && point.y > start.y && point.y < end.y;
+export const isAreaIncludePoint = (start, end, point) =>
+  point.x > start.x && point.x < end.x && point.y > start.y && point.y < end.y;
 
 /**
  * Check is area include point

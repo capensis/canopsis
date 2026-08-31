@@ -53,5 +53,7 @@ export const llmChatHistoryServerMessageToMessage = (message, prevMessage) => {
  * @param {Object[]} [serverMessages=[]]
  * @returns {Object[]}
  */
-export const llmChatHistoryServerMessagesToMessages = (serverMessages = []) => serverMessages.map((serverMessage, index) => llmChatHistoryServerMessageToMessage(serverMessage, serverMessages?.[index - 1]),
+export const llmChatHistoryServerMessagesToMessages = (serverMessages = []) =>
+  serverMessages.map((serverMessage, index) =>
+    llmChatHistoryServerMessageToMessage(serverMessage, serverMessages?.[index - 1]),
   );

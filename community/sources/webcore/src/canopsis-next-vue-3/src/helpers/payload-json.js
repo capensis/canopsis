@@ -54,7 +54,8 @@ export const matchPayloadVariables = (text) => {
   const match = text?.matchAll(/({{([^{}]*)}})/g);
 
   return (match ? Array.from(match) : []).filter(
-    ([, , variable]) => !PAYLOAD_OPERATORS.some(operator => String(variable).trim().startsWith(operator)),
+    ([, , variable]) =>
+      !PAYLOAD_OPERATORS.some(operator => String(variable).trim().startsWith(operator)),
   );
 };
 
@@ -102,7 +103,8 @@ export const isSelectionIntersectWithVariable = (group, selectionStart, selectio
  * @param {Number} selectionEnd
  * @returns {RegExpMatchArray | undefined}
  */
-export const findSelectedVariable = (variables = [], selectionStart, selectionEnd) => variables.find(group => isSelectionIntersectWithVariable(group, selectionStart, selectionEnd));
+export const findSelectedVariable = (variables = [], selectionStart, selectionEnd) =>
+  variables.find(group => isSelectionIntersectWithVariable(group, selectionStart, selectionEnd));
 
 /**
  * Match variable by selection.
@@ -112,4 +114,5 @@ export const findSelectedVariable = (variables = [], selectionStart, selectionEn
  * @param {number} selectionEnd
  * @returns {Object}
  */
-export const matchPayloadVariableBySelection = (text, selectionStart, selectionEnd) => findSelectedVariable(matchPayloadVariables(text), selectionStart, selectionEnd);
+export const matchPayloadVariableBySelection = (text, selectionStart, selectionEnd) =>
+  findSelectedVariable(matchPayloadVariables(text), selectionStart, selectionEnd);

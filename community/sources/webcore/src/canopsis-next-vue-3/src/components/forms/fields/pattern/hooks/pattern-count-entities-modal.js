@@ -67,7 +67,8 @@ export const usePatternCountEntitiesModal = (props) => {
       config: {
         widget,
         title: t('pattern.patternEntities'),
-        fetchList: params => fetchContextEntitiesListWithoutStore({
+        fetchList: params =>
+          fetchContextEntitiesListWithoutStore({
             params: {
               ...params,
               ...patterns,

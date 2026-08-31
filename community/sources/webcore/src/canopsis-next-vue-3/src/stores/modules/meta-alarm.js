@@ -8,7 +8,8 @@ export const useMetaAlarmStore = defineStore('metaAlarm', () => {
   const fetchListWithoutStore = ({ params } = {}) => request.get(API_ROUTES.metaAlarm, { params });
   const create = ({ data } = {}) => request.post(API_ROUTES.metaAlarm, data);
   const addAlarms = ({ id, data } = {}) => request.put(`${API_ROUTES.metaAlarm}/${id}/add`, data);
-  const removeAlarms = ({ id, data } = {}) => request.put(`${API_ROUTES.metaAlarm}/${id}/remove`, data);
+  const removeAlarms = ({ id, data } = {}) =>
+    request.put(`${API_ROUTES.metaAlarm}/${id}/remove`, data);
 
   return {
     fetchListWithoutStore,

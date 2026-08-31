@@ -33,7 +33,8 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
  * @param {number} factor
  * @returns {number}
  */
-export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) => HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace *
+export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) =>
+  HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace *
   HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor *
   factor;
 
@@ -44,4 +45,5 @@ export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) => HEALTHCHEC
  * @param {boolean} [hasError=false]
  * @returns {string}
  */
-export const getHealthcheckInfoDiv = (message, hasError = false) => `<div class="text-body-1 text-medium-emphasis pre-wrap ${hasError ? 'text-error' : ''}">${message}</div>`;
+export const getHealthcheckInfoDiv = (message, hasError = false) =>
+  `<div class="text-body-1 text-medium-emphasis pre-wrap ${hasError ? 'text-error' : ''}">${message}</div>`;

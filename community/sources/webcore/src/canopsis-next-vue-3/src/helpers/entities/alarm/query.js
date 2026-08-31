@@ -38,7 +38,8 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
  * @param {string} template
  * @returns {string[]}
  */
-export const getAlarmVariablesByTemplate = template => getTemplateVariables(sanitizeHtml(template)).reduce((acc, variable) => {
+export const getAlarmVariablesByTemplate = template =>
+  getTemplateVariables(sanitizeHtml(template)).reduce((acc, variable) => {
     if (variable.startsWith('alarm.') || variable.startsWith('entity.')) {
       acc.push(variable.replace(/^(alarm)\./, ''));
     }

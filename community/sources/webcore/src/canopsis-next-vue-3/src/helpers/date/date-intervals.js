@@ -126,7 +126,8 @@ export const convertStartDateIntervalToMoment = (
  * @param {string} [unit]
  * @returns {Moment}
  */
-export const convertStopDateIntervalToMoment = (date, format = DATETIME_FORMATS.datePicker, unit) => convertDateIntervalToMoment(date, DATETIME_INTERVAL_TYPES.stop, format, unit);
+export const convertStopDateIntervalToMoment = (date, format = DATETIME_FORMATS.datePicker, unit) =>
+  convertDateIntervalToMoment(date, DATETIME_INTERVAL_TYPES.stop, format, unit);
 
 /**
  * Parse date in every format to moment object by timezone.
@@ -144,7 +145,8 @@ export const convertDateIntervalToMomentByTimezone = (
   format = DATETIME_FORMATS.datePicker,
   unit = SAMPLINGS.hour,
   timezone = getLocalTimezone(),
-) => convertDateToMomentByTimezone(
+) =>
+  convertDateToMomentByTimezone(
     convertDateIntervalToMoment(date, type, format, unit),
     getLocalTimezone(),
     timezone,
@@ -159,7 +161,8 @@ export const convertDateIntervalToMomentByTimezone = (
  * @param {string} unit
  * @returns {number}
  */
-export const convertDateIntervalToTimestamp = (date, type, format, unit) => convertDateIntervalToMoment(date, type, format, unit).unix();
+export const convertDateIntervalToTimestamp = (date, type, format, unit) =>
+  convertDateIntervalToMoment(date, type, format, unit).unix();
 
 /**
  * Prepare a date interval value for a date-time picker.
@@ -230,7 +233,8 @@ export const convertStopDateIntervalToTimestamp = (
  * @param {string} [roundUnit]
  * @returns {string}
  */
-export const getNowIntervalValueForHours = (hours, roundUnit) => `now${hours ? `-${hours}h` : ''}${roundUnit ? `/${roundUnit}` : ''}`;
+export const getNowIntervalValueForHours = (hours, roundUnit) =>
+  `now${hours ? `-${hours}h` : ''}${roundUnit ? `/${roundUnit}` : ''}`;
 
 /**
  * Convert metric interval form to timestamp interval.
@@ -271,7 +275,8 @@ export const findQuickRangeValue = (
   stop,
   ranges = QUICK_RANGES,
   defaultValue = QUICK_RANGES.custom,
-) => Object.values(ranges).find(range => start === range.start && stop === range.stop) ?? defaultValue;
+) =>
+  Object.values(ranges).find(range => start === range.start && stop === range.stop) ?? defaultValue;
 
 /**
  * Find quick range by interval form.
@@ -280,7 +285,8 @@ export const findQuickRangeValue = (
  * @param {Array} [ranges=Object.values(QUICK_RANGES)]
  * @returns {Object}
  */
-export const findQuickRangeByInterval = (interval, ranges = Object.values(QUICK_RANGES)) => ranges.find(range => range.start === interval.from && range.stop === interval.to) ||
+export const findQuickRangeByInterval = (interval, ranges = Object.values(QUICK_RANGES)) =>
+  ranges.find(range => range.start === interval.from && range.stop === interval.to) ||
   QUICK_RANGES.custom;
 
 /**

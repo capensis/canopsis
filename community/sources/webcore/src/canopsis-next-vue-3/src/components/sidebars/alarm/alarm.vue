@@ -344,9 +344,13 @@ const alarmSortColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.v
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmSortColumns,
   ),
 );
-const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns),
+const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns,
+  ),
 );
-const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns),
+const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns,
+  ),
 );
 const alarmMoreInfosWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmMoreInfos,
@@ -370,7 +374,8 @@ const preparedWidgetColumns = computed(() => formToWidgetColumns(form.value.para
     text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
   })),
 );
-const sortablePreparedWidgetColumns = computed(() => preparedWidgetColumns.value.filter(column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+const sortablePreparedWidgetColumns = computed(() => preparedWidgetColumns.value.filter(
+    column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
   ),
 );
 const alarmVariables = computed(() => [
