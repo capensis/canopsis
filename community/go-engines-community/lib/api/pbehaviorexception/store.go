@@ -20,7 +20,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	ics "github.com/apognu/gocal"
@@ -305,11 +304,9 @@ func (s *store) importJson(
 		}
 
 		exdates = append(exdates, pbehavior.Exdate{
-			Exdate: types.Exdate{
-				Begin: datetime.CpsTime{Time: start},
-				End:   datetime.CpsTime{Time: end},
-			},
-			Type: pbhType,
+			Begin: datetime.CpsTime{Time: start},
+			End:   datetime.CpsTime{Time: end},
+			Type:  pbhType,
 		})
 	}
 
@@ -371,11 +368,9 @@ func (s *store) importICS(
 		}
 
 		exdates = append(exdates, pbehavior.Exdate{
-			Exdate: types.Exdate{
-				Begin: datetime.CpsTime{Time: start},
-				End:   datetime.CpsTime{Time: end},
-			},
-			Type: pbhType,
+			Begin: datetime.CpsTime{Time: start},
+			End:   datetime.CpsTime{Time: end},
+			Type:  pbhType,
 		})
 	}
 
@@ -535,11 +530,9 @@ func (s *store) transformExdatesRequestToModel(ctx context.Context, r EditReques
 		}
 
 		exdates[i] = pbehavior.Exdate{
-			Exdate: types.Exdate{
-				Begin: r.Exdates[i].Begin,
-				End:   r.Exdates[i].End,
-			},
-			Type: t.ID,
+			Begin: r.Exdates[i].Begin,
+			End:   r.Exdates[i].End,
+			Type:  t.ID,
 		}
 	}
 

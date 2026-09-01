@@ -765,15 +765,13 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		Color:    r.Color,
 		Origin:   r.Origin,
 		Entity:   r.Entity,
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field: "_id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: r.Entity,
-						},
+					Field: "_id",
+					Condition: pattern.Condition{
+						Type:  pattern.ConditionEqual,
+						Value: r.Entity,
 					},
 				},
 			},
@@ -893,15 +891,13 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		Color:    r.Color,
 		Origin:   r.Origin,
 		Entities: entities,
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field: "_id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionIsOneOf,
-							Value: entities,
-						},
+					Field: "_id",
+					Condition: pattern.Condition{
+						Type:  pattern.ConditionIsOneOf,
+						Value: entities,
 					},
 				},
 			},

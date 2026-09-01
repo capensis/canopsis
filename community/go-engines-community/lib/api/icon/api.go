@@ -118,8 +118,9 @@ func (a *api) Get(c *gin.Context) {
 // List
 // @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	query := pagination.FilteredQuery{}
-	query.Query = pagination.GetDefaultQuery()
+	query := pagination.FilteredQuery{
+		Query: pagination.GetDefaultQuery(),
+	}
 	if err := validation.Bind(c, &query); err != nil {
 		a.errorResponder.Respond(c, err)
 
