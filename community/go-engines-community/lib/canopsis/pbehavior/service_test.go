@@ -7,7 +7,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -144,13 +143,12 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during behavior and time before behavior
@@ -207,13 +205,12 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  nil,
-				Type:  pauseType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          nil,
+				Type:          pauseType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during behavior and time before behavior
@@ -246,14 +243,13 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				RRule: "FREQ=DAILY;COUNT=7",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;COUNT=7",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during behavior and time before behavior
@@ -302,14 +298,13 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				RRule: "FREQ=DAILY;INTERVAL=7;COUNT=4",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;INTERVAL=7;COUNT=4",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during activity of behavior
@@ -350,13 +345,12 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
-				Type:  activeType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
+				Type:          activeType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during behavior and time before behavior
@@ -477,14 +471,13 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:       "pbh1",
-				Timezone: customTZName,
-				Start:    &datetime.CpsTime{Time: genTime("01-06-2020 10:00", customTZ).UTC()},
-				Stop:     &datetime.CpsTime{Time: genTime("02-06-2020 12:00", customTZ).UTC()},
-				Type:     activeType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00", customTZ).UTC()},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Timezone:      customTZName,
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00", customTZ).UTC()},
+				Stop:          &datetime.CpsTime{Time: genTime("02-06-2020 12:00", customTZ).UTC()},
+				Type:          activeType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00", customTZ).UTC()},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during behavior and time before behavior
@@ -605,14 +598,13 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				RRule: "FREQ=DAILY;COUNT=7",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  activeType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;COUNT=7",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          activeType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during behavior and time before behavior
@@ -661,14 +653,13 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				RRule: "FREQ=DAILY;INTERVAL=7;COUNT=4",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
-				Type:  activeType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;INTERVAL=7;COUNT=4",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("02-06-2020 12:00")},
+				Type:          activeType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during activity of behavior
@@ -709,24 +700,22 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				RRule: "FREQ=DAILY;INTERVAL=2",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  mostPriorityActiveType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;INTERVAL=2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          mostPriorityActiveType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				RRule: "FREQ=DAILY",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 09:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				RRule:         "FREQ=DAILY",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 09:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// time in pbh1 and in pbh2
@@ -766,26 +755,22 @@ func TestService(t *testing.T) {
 				Type:  activeType.ID,
 				Exdates: []pbehavior.Exdate{
 					{
-						Exdate: types.Exdate{
-							Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
-						},
-						Type: mostPriorityMaintenanceType.ID,
+						Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
+						End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
+						Type:  mostPriorityMaintenanceType.ID,
 					},
 				},
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				RRule: "FREQ=DAILY",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				RRule:         "FREQ=DAILY",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// time in pbh1 and in pbh2
@@ -826,25 +811,23 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:         "pbh1",
-				RRule:      "FREQ=DAILY;INTERVAL=2",
-				Start:      &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:       &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:       activeType.ID,
-				Exceptions: []string{"exception1"},
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;INTERVAL=2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          activeType.ID,
+				Exceptions:    []string{"exception1"},
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				RRule: "FREQ=DAILY",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				RRule:         "FREQ=DAILY",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		exceptions := []pbehavior.Exception{
@@ -852,11 +835,9 @@ func TestService(t *testing.T) {
 				ID: "exception1",
 				Exdates: []pbehavior.Exdate{
 					{
-						Exdate: types.Exdate{
-							Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
-						},
-						Type: mostPriorityMaintenanceType.ID,
+						Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
+						End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
+						Type:  mostPriorityMaintenanceType.ID,
 					},
 				},
 			},
@@ -906,26 +887,22 @@ func TestService(t *testing.T) {
 				Type:  mostPriorityActiveType.ID,
 				Exdates: []pbehavior.Exdate{
 					{
-						Exdate: types.Exdate{
-							Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
-						},
-						Type: defaultInactiveType.ID,
+						Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
+						End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
+						Type:  defaultInactiveType.ID,
 					},
 				},
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				RRule: "FREQ=DAILY",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				RRule:         "FREQ=DAILY",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// time in pbh1 and in pbh2
@@ -966,25 +943,23 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:         "pbh1",
-				RRule:      "FREQ=DAILY;INTERVAL=2",
-				Start:      &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:       &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:       mostPriorityActiveType.ID,
-				Exceptions: []string{"exception1"},
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY;INTERVAL=2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          mostPriorityActiveType.ID,
+				Exceptions:    []string{"exception1"},
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				RRule: "FREQ=DAILY",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				RRule:         "FREQ=DAILY",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		exceptions := []pbehavior.Exception{
@@ -992,11 +967,9 @@ func TestService(t *testing.T) {
 				ID: "exception1",
 				Exdates: []pbehavior.Exdate{
 					{
-						Exdate: types.Exdate{
-							Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
-						},
-						Type: defaultInactiveType.ID,
+						Begin: datetime.CpsTime{Time: genTime("02-06-2020 00:00")},
+						End:   datetime.CpsTime{Time: genTime("04-06-2020 00:00")},
+						Type:  defaultInactiveType.ID,
 					},
 				},
 			},
@@ -1039,22 +1012,20 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  anotherMaintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 12:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          anotherMaintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 12:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// should return the newest pbh's type
@@ -1071,22 +1042,20 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 12:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 12:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  anotherMaintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          anotherMaintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// should return the newest pbh's type
@@ -1103,22 +1072,20 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh2",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  anotherMaintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          anotherMaintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// should return pbehavior type by greatest pbehavior id
@@ -1135,22 +1102,20 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:    "pbh2",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
-				Type:  maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh2",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:00")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 12:00")},
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 			{
-				ID:    "pbh1",
-				Start: &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
-				Stop:  &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
-				Type:  anotherMaintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				Start:         &datetime.CpsTime{Time: genTime("01-06-2020 10:55")},
+				Stop:          &datetime.CpsTime{Time: genTime("01-06-2020 11:00")},
+				Type:          anotherMaintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 10:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// should return pbehavior type by greatest pbehavior id
@@ -1167,15 +1132,14 @@ func TestService(t *testing.T) {
 	{
 		pbehaviors := []pbehavior.PBehavior{
 			{
-				ID:       "pbh1",
-				RRule:    "FREQ=DAILY",
-				Start:    &datetime.CpsTime{Time: genTime("01-01-2020 10:00", customTZ).UTC()},
-				Stop:     &datetime.CpsTime{Time: genTime("01-01-2020 11:00", customTZ).UTC()},
-				Timezone: customTZName,
-				Type:     maintenanceType.ID,
-
-				Created:             &datetime.CpsTime{Time: genTime("01-01-2020 00:00")},
-				EntityPatternFields: savedpattern.EntityPatternFields{EntityPattern: entityPattern},
+				ID:            "pbh1",
+				RRule:         "FREQ=DAILY",
+				Start:         &datetime.CpsTime{Time: genTime("01-01-2020 10:00", customTZ).UTC()},
+				Stop:          &datetime.CpsTime{Time: genTime("01-01-2020 11:00", customTZ).UTC()},
+				Timezone:      customTZName,
+				Type:          maintenanceType.ID,
+				Created:       &datetime.CpsTime{Time: genTime("01-01-2020 00:00")},
+				EntityPattern: entityPattern,
 			},
 		}
 		// span during summer change

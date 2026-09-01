@@ -200,11 +200,9 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r
 
 	q.handleOpened(r.GetOpenedFilter())
 	err := q.handlePatterns(ctx, FilterRequest{
-		BaseFilterRequest: BaseFilterRequest{
-			AlarmPattern:     r.AlarmPattern,
-			EntityPattern:    r.EntityPattern,
-			PbehaviorPattern: r.PbehaviorPattern,
-		},
+		AlarmPattern:     r.AlarmPattern,
+		EntityPattern:    r.EntityPattern,
+		PbehaviorPattern: r.PbehaviorPattern,
 	})
 	if err != nil {
 		return nil, err

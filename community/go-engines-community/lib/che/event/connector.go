@@ -46,9 +46,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event) (
 	error,
 ) {
 	eventMetric := techmetrics.CheEventMetric{
-		EventMetric: techmetrics.EventMetric{
-			EventType: event.EventType,
-		},
+		EventType: event.EventType,
 	}
 
 	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)

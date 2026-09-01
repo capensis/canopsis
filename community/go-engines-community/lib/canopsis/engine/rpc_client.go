@@ -21,19 +21,17 @@ func NewRPCClient(
 	logger zerolog.Logger,
 ) RPCClient {
 	return &rpcClient{
-		defaultConsumer: defaultConsumer{
-			name:                 name,
-			queue:                clientQueueName,
-			consumePrefetchCount: consumePrefetchCount,
-			consumePrefetchSize:  consumePrefetchSize,
-			processor:            &rpcClientMessageProcessorWrapper{processor: processor},
-			connection:           connection,
-			logger:               logger,
-		},
-		serverExchangeName: serverExchangeName,
-		serverRoutingKey:   serverRoutingKey,
-		publishCh:          publishCh,
-		workers:            workers,
+		name:                 name,
+		queue:                clientQueueName,
+		consumePrefetchCount: consumePrefetchCount,
+		consumePrefetchSize:  consumePrefetchSize,
+		processor:            &rpcClientMessageProcessorWrapper{processor: processor},
+		connection:           connection,
+		logger:               logger,
+		serverExchangeName:   serverExchangeName,
+		serverRoutingKey:     serverRoutingKey,
+		publishCh:            publishCh,
+		workers:              workers,
 	}
 }
 

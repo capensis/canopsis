@@ -19,16 +19,14 @@ func NewRPCServer(
 	logger zerolog.Logger,
 ) Consumer {
 	return &rpcServer{
-		defaultConsumer: defaultConsumer{
-			name:                 name,
-			queue:                queue,
-			consumePrefetchCount: consumePrefetchCount,
-			consumePrefetchSize:  consumePrefetchSize,
-			connection:           connection,
-			processor:            processor,
-			logger:               logger,
-		},
-		workers: workers,
+		name:                 name,
+		queue:                queue,
+		consumePrefetchCount: consumePrefetchCount,
+		consumePrefetchSize:  consumePrefetchSize,
+		connection:           connection,
+		processor:            processor,
+		logger:               logger,
+		workers:              workers,
 	}
 }
 
