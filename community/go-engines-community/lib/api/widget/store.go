@@ -675,14 +675,12 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string, 
 		}
 
 		_, err = s.copy(ctx, w.ID, isPrivate, CreateRequest{
-			Tab: newTabID,
-			EditRequest: EditRequest{
-				Title:          w.Title,
-				Type:           w.Type,
-				GridParameters: w.GridParameters,
-				Parameters:     w.Parameters,
-				Author:         author,
-			},
+			Tab:            newTabID,
+			Title:          w.Title,
+			Type:           w.Type,
+			GridParameters: w.GridParameters,
+			Parameters:     w.Parameters,
+			Author:         author,
 		})
 		if err != nil {
 			return err

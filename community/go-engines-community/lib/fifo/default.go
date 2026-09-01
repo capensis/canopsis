@@ -83,9 +83,9 @@ func ParseOptions() (Options, []string) {
 
 func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, options Options, logger zerolog.Logger) (libengine.Engine, Services) {
 	var m depmake.DependencyMaker
-	s := Services{}
-
-	s.DbClient = m.DepMongoClient(ctx, mongo.ClientOptions{})
+	s := Services{
+		DbClient: m.DepMongoClient(ctx, mongo.ClientOptions{}),
+	}
 
 	s.Cfg = m.DepConfig(ctx, s.DbClient)
 	config.SetDbClientRetry(s.DbClient, s.Cfg)

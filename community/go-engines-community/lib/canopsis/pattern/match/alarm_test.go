@@ -432,9 +432,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
 					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							Ticket: "test",
-						},
+						Ticket: "test",
 					},
 				},
 			},
@@ -452,9 +450,7 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
 					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							Ticket: "test 2",
-						},
+						Ticket: "test 2",
 					},
 				},
 			},
@@ -472,11 +468,9 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
 					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							TicketData: map[string]string{
-								"data_1": "test_1",
-								"data_2": "test_2",
-							},
+						TicketData: map[string]string{
+							"data_1": "test_1",
+							"data_2": "test_2",
 						},
 					},
 				},
@@ -495,11 +489,9 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
 					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							TicketData: map[string]string{
-								"data_1": "test_1",
-								"data_2": "test_2",
-							},
+						TicketData: map[string]string{
+							"data_1": "test_1",
+							"data_2": "test_2",
 						},
 					},
 				},
@@ -550,11 +542,9 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
 					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							TicketData: map[string]string{
-								"data_1": "test_1",
-								"data_2": "test_2",
-							},
+						TicketData: map[string]string{
+							"data_1": "test_1",
+							"data_2": "test_2",
 						},
 					},
 				},

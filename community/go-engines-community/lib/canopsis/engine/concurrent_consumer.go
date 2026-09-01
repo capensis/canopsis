@@ -21,22 +21,20 @@ func NewConcurrentConsumer(
 	logger zerolog.Logger,
 ) Consumer {
 	return &concurrentConsumer{
-		defaultConsumer: defaultConsumer{
-			name:                 name,
-			queue:                queue,
-			consumePrefetchCount: consumePrefetchCount,
-			consumePrefetchSize:  consumePrefetchSize,
-			purgeQueue:           purgeQueue,
-			nextExchange:         nextExchange,
-			nextQueue:            nextQueue,
-			fifoExchange:         fifoExchange,
-			fifoQueue:            fifoQueue,
-			exclusive:            exclusive,
-			processor:            processor,
-			connection:           connection,
-			logger:               logger,
-		},
-		workers: workers,
+		name:                 name,
+		queue:                queue,
+		consumePrefetchCount: consumePrefetchCount,
+		consumePrefetchSize:  consumePrefetchSize,
+		purgeQueue:           purgeQueue,
+		nextExchange:         nextExchange,
+		nextQueue:            nextQueue,
+		fifoExchange:         fifoExchange,
+		fifoQueue:            fifoQueue,
+		exclusive:            exclusive,
+		processor:            processor,
+		connection:           connection,
+		logger:               logger,
+		workers:              workers,
 	}
 }
 

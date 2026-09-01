@@ -369,11 +369,9 @@ func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author strin
 		}
 
 		_, err = s.copy(ctx, t.ID, isPrivate, CreateRequest{
-			EditRequest: EditRequest{
-				Title:  t.Title,
-				Author: author,
-			},
-			View: newViewID,
+			Title:  t.Title,
+			Author: author,
+			View:   newViewID,
 		})
 		if err != nil {
 			return err

@@ -715,12 +715,13 @@ func (s *store) getDefaultStateSettingForService(ctx context.Context) (StateSett
 }
 
 func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettingResponse {
-	response := StateSettingResponse{}
-	response.ID = stateSetting.ID
-	response.Title = stateSetting.Title
-	response.Type = stateSetting.Type
-	response.Method = stateSetting.Method
-	response.InheritedEntityPattern = stateSetting.InheritedEntityPattern
+	response := StateSettingResponse{
+		ID:                     stateSetting.ID,
+		Title:                  stateSetting.Title,
+		Type:                   stateSetting.Type,
+		Method:                 stateSetting.Method,
+		InheritedEntityPattern: stateSetting.InheritedEntityPattern,
+	}
 	if stateSetting.StateThresholds != nil {
 		response.StateThresholds = &statesettings.StateThresholds{}
 		response.StateThresholds.Critical = convertStateThreshold(stateSetting.StateThresholds.Critical)
