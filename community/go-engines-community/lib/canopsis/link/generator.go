@@ -636,16 +636,14 @@ func (g *generator) getLinksWithCategoryByTpl(
 		}
 
 		res[i] = linkWithCategory{
-			Category: linkTpl.Category,
-			Link: Link{
-				RuleID:     id,
-				Label:      label,
-				IconName:   linkTpl.IconName,
-				Url:        url,
-				Action:     linkTpl.Action,
-				Single:     linkTpl.Single,
-				HideInMenu: linkTpl.HideInMenu,
-			},
+			Category:   linkTpl.Category,
+			RuleID:     id,
+			Label:      label,
+			IconName:   linkTpl.IconName,
+			Url:        url,
+			Action:     linkTpl.Action,
+			Single:     linkTpl.Single,
+			HideInMenu: linkTpl.HideInMenu,
 		}
 	}
 
@@ -720,13 +718,11 @@ func (g *generator) getLinksWithCategoryByCode(
 
 		res[i] = linkWithCategory{
 			Category: category,
-			Link: Link{
-				RuleID:   id,
-				Label:    label,
-				IconName: iconName,
-				Url:      url,
-				Action:   action,
-			},
+			RuleID:   id,
+			Label:    label,
+			IconName: iconName,
+			Url:      url,
+			Action:   action,
 		}
 		if single, ok := item["single"].(bool); ok {
 			res[i].Link.Single = single
