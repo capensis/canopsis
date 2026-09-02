@@ -24,6 +24,8 @@ const (
 type Responder interface {
 	// Respond writes response code and body.
 	Respond(w http.ResponseWriter, r *http.Request, code int, b any)
+	// RespondRaw writes response code and already encoded body.
+	RespondRaw(w http.ResponseWriter, r *http.Request, code int, b []byte)
 	// RespondError writes response code and body based on error.
 	RespondError(w http.ResponseWriter, r *http.Request, err error)
 	// ErrorResponse returns response code and body based on error.
@@ -57,11 +59,20 @@ func (r *responder) Respond(w http.ResponseWriter, req *http.Request, code int, 
 		}
 	}
 
+	r.write(w, code, b)
+}
+
+// RespondRaw writes response code and already encoded body.
+func (r *responder) RespondRaw(w http.ResponseWriter, _ *http.Request, code int, body []byte) {
+	r.write(w, code, body)
+}
+
+func (r *responder) write(w http.ResponseWriter, code int, b []byte) {
 	w.Header().Set("Content-Type", MIMEJSON)
 	w.WriteHeader(code)
 	if len(b) > 0 {
 		// Response is always JSON with Content-Type: application/json, so it cannot be interpreted as HTML by browsers.
-		_, err = w.Write(b) //nolint:gosec
+		_, err := w.Write(b) //nolint:gosec
 
 		if err != nil {
 			r.logger.Err(err).Msg("failed to write response")

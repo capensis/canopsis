@@ -5,7 +5,6 @@ import (
 	"errors"
 	"slices"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -32,20 +31,16 @@ type store struct {
 	dbPbhCollection          mongo.DbCollection
 	dbPbhExceptionCollection mongo.DbCollection
 	dbScenarioCollection     mongo.DbCollection
-	authorProvider           author.Provider
-	defaultSearchByFields    []string
 	dupErrorParser           validation.DuplicateErrorParser
 }
 
-func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
+func NewStore(db mongo.DbClient) Store {
 	return &store{
 		dbClient:                 db,
 		dbCollection:             db.Collection(mongo.PbehaviorTypeMongoCollection),
 		dbPbhCollection:          db.Collection(mongo.PbehaviorMongoCollection),
 		dbPbhExceptionCollection: db.Collection(mongo.PbehaviorExceptionMongoCollection),
 		dbScenarioCollection:     db.Collection(mongo.ScenarioCollection),
-		authorProvider:           authorProvider,
-		defaultSearchByFields:    []string{"_id", "name", "description", "type"},
 		dupErrorParser:           validation.NewDuplicateErrorParser(),
 	}
 }
@@ -60,8 +55,12 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListRespons
 	match := bson.M{
 		"hidden": bson.M{"$in": bson.A{false, nil}},
 	}
-	if r.OnlyDefault {
-		match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
+	if r.Default != nil {
+		if *r.Default {
+			match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
+		} else {
+			match["priority"] = bson.M{"$nin": prioritiesOfDefaultTypes}
+		}
 	}
 
 	if len(r.Types) > 0 {
@@ -73,9 +72,8 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListRespons
 		beforeLimit = append(beforeLimit, bson.M{"$match": match})
 	}
 
-	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
-	if len(filter) > 0 {
-		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
+	if r.Author != "" {
+		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"author": r.Author}})
 	}
 
 	afterLimit := []bson.M{
@@ -83,11 +81,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListRespons
 			"default": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}},
 		}},
 	}
-	afterLimit = append(afterLimit, s.authorProvider.Pipeline()...)
+	afterLimit = append(afterLimit, mongoquery.AuthorPipeline()...)
 	pipeline := pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		mongoquery.GetSortQuery(r.SortBy, r.Sort),
+		mongoquery.SortQuery(r.SortBy, r.Sort),
 		afterLimit,
 	)
 	opts := options.Aggregate().SetCollation(&options.Collation{Locale: "en"})
@@ -116,7 +114,7 @@ func (s *store) GetByID(ctx context.Context, id string) (Response, error) {
 			"default": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}},
 		}},
 	}
-	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, mongoquery.AuthorPipeline()...)
 
 	return db.AggregateOne[Response](ctx, s.dbCollection, pipeline)
 }

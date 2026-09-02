@@ -79,3 +79,15 @@ func (mr *MockResponderMockRecorder) RespondError(w, r, err any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RespondError", reflect.TypeOf((*MockResponder)(nil).RespondError), w, r, err)
 }
+
+// RespondRaw mocks base method.
+func (m *MockResponder) RespondRaw(w http.ResponseWriter, r *http.Request, code int, b []byte) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "RespondRaw", w, r, code, b)
+}
+
+// RespondRaw indicates an expected call of RespondRaw.
+func (mr *MockResponderMockRecorder) RespondRaw(w, r, code, b any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RespondRaw", reflect.TypeOf((*MockResponder)(nil).RespondRaw), w, r, code, b)
+}
