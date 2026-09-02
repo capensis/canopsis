@@ -17,7 +17,6 @@ import (
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/contextgraph"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/export"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/healthcheck"
@@ -83,9 +82,6 @@ const (
 	jobKeyPbhPatterns     = "pbhpatterns"
 	jobKeyPatternOptimize = "patternoptimize"
 )
-
-//go:embed swaggerui/*
-var docsUiFile embed.FS
 
 //go:embed docs/*.yaml
 var docsFile embed.FS
@@ -543,33 +539,25 @@ func Default(
 			logger,
 		)
 	})
-	if flags.EnableDocs {
+	if flags.EnableDocs && !overrideDocs {
+		content, err := docsFile.ReadFile("docs/swagger.yaml")
+		if err != nil {
+			return nil, services, fmt.Errorf("cannot read swagger: %w", err)
+		}
+		schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
+		if err != nil {
+			return nil, services, fmt.Errorf("cannot read swagger: %w", err)
+		}
 		api.AddRouter(func(router *gin.Engine) error {
-			router.GET("/swagger/*filepath", func(c *gin.Context) {
-				c.FileFromFS("swaggerui/"+c.Param("filepath"), http.FS(docsUiFile))
-			})
+			RegisterDocsRoutes(
+				router,
+				services.ErrorResponder,
+				[][]byte{schemasContent},
+				[][]byte{content},
+			)
 
 			return nil
 		})
-		if !overrideDocs {
-			content, err := docsFile.ReadFile("docs/swagger.yaml")
-			if err != nil {
-				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
-			}
-			schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
-			if err != nil {
-				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
-			}
-			api.AddRouter(func(router *gin.Engine) error {
-				router.GET("/swagger.yaml", docs.GetHandler(
-					services.ErrorResponder,
-					[][]byte{schemasContent},
-					[][]byte{content},
-				))
-
-				return nil
-			})
-		}
 	}
 
 	api.AddNoRoute(func(c *gin.Context) {

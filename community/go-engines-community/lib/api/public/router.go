@@ -1,13 +1,17 @@
 package api
 
 import (
+	"embed"
+	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/crud"
+	publicdocs "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviorreason"
@@ -24,6 +28,9 @@ import (
 
 const Version = "v5"
 const Prefix = "/api/" + Version
+
+//go:embed docs/*.yaml
+var docsFile embed.FS
 
 type Services struct {
 	Logger                 zerolog.Logger
@@ -46,6 +53,17 @@ func (s *Services) authorize(obj, act string) func(next http.Handler) http.Handl
 
 func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 	r := chi.NewRouter()
+
+	if opts.Debug {
+		defer func() {
+			_ = chi.Walk(r, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
+				s.Logger.Debug().Str("method", method).Str("route", route).Send()
+
+				return nil
+			})
+		}()
+	}
+
 	r.Use(middleware.Logger(s.Responder, s.Logger, opts.LogBody, opts.LogBodyOnError))
 	r.Use(middleware.Recovery(s.Logger))
 	r.Use(middleware.CacheControl())
@@ -85,6 +103,13 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 		})
 	})
 
+	if opts.EnableDocs {
+		err := registerDocs(r, s)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return r, nil
 }
 
@@ -104,4 +129,41 @@ func registerCRUDRoutes(r chi.Router, pattern, permObj string, a crud.API, s Ser
 		r.With(authorize(permObj, model.PermissionDelete)).
 			Delete("/{id}", a.Delete)
 	})
+}
+
+func registerDocs(r chi.Router, s Services) error {
+	content, err := docsFile.ReadFile("docs/swagger.yaml")
+	if err != nil {
+		return fmt.Errorf("cannot read swagger: %w", err)
+	}
+
+	schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
+	if err != nil {
+		return fmt.Errorf("cannot read swagger: %w", err)
+	}
+
+	r.Get(Prefix+"/docs/*", func(w http.ResponseWriter, r *http.Request) {
+		path := chi.URLParam(r, "*")
+		if path == "swagger.yaml" {
+			publicdocs.GetHandler(
+				s.Responder,
+				s.Logger,
+				[][]byte{schemasContent},
+				[][]byte{content},
+			)(w, r)
+
+			return
+		}
+
+		backup := r.URL.Path
+		defer func() {
+			r.URL.Path = backup
+		}()
+
+		r.URL.Path = "static/" + path
+
+		http.FileServer(http.FS(docs.UIFiles)).ServeHTTP(w, r)
+	})
+
+	return nil
 }
