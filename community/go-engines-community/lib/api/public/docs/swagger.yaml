@@ -184,11 +184,708 @@ paths:
               schema:
                 $ref: '#/components/schemas/event.Response'
         '400':
-          description: Bad Request
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /pbehaviors:
+    get:
+      tags:
+        - pbehaviors
+      summary: Find all pbehaviors
+      description: |
+        Get paginated list of pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/author'
+        - name: enabled
+          in: query
+          description: filter by enabled state
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by pbehavior type ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: reason
+          in: query
+          style: form
+          explode: true
+          description: filter by pbehavior reason ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: inherited
+          in: query
+          description: filter by inherited pbehaviors
+          schema:
+            type: boolean
+        - name: origin
+          in: query
+          style: form
+          explode: true
+          description: filter by origin
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - pbehaviors
+      summary: Create pbehavior
+      description: |
+        Create pbehavior.
+
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: pbehaviors-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.EditRequest'
+            examples:
+              maintenance:
+                summary: Maintenance period
+                description: Create a pbehavior with one maintenance period
+                value: {
+                  "name": "Maintenance period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": 1591536400,
+                  "rrule": "",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              pause:
+                summary: Pause period
+                description: Create a pbehavior with endless pause period
+                value: {
+                  "name": "Pause period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": null,
+                  "rrule": "",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              inactive:
+                summary: Inactive period
+                description: Create a pbehavior with weekend inactive periods
+                value: {
+                  "name": "Inactive period",
+                  "enabled": true,
+                  "tstart": 1651269600,
+                  "tstop": 1651442400,
+                  "rrule": "FREQ=WEEKLY",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              active:
+                summary: Active period
+                description: Create a pbehavior with daily active periods except some days
+                value: {
+                  "name": "Active period",
+                  "enabled": true,
+                  "tstart": 1650855600,
+                  "tstop": 1650891600,
+                  "rrule": "FREQ=DAILY",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "exdates": [
+                    {
+                      "begin": 1651460400,
+                      "end": 1651496400,
+                      "type": "3b46e648-f7c0-4c94-8167-30e78728706e"
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /pbehaviors/{id}:
+    get:
+      tags:
+        - pbehaviors
+      summary: Get pbehavior by id
+      description: |
+        Get pbehavior by id.
+
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - pbehaviors
+      summary: Update behavior by id
+      description: |
+        Update behavior by id.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a pbehavior
+                value: {
+                  "name": "Active period",
+                  "enabled": true,
+                  "tstart": 1650855600,
+                  "tstop": 1650891600,
+                  "rrule": "FREQ=DAILY",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "exdates": [
+                    {
+                      "begin": 1651460400,
+                      "end": 1651496400,
+                      "type": "3b46e648-f7c0-4c94-8167-30e78728706e"
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Delete pbehavior by id
+      description: |
+        Delete pbehavior by id.
+
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: pbehaviors-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/schemas/NoContent'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - pbehaviors
+      summary: Patch partial set of behavior attributes by id
+      description: |
+        Patch partial set of behavior attributes by id.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-patch-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.PatchRequest'
+            examples:
+              update:
+                summary: Update interval
+                description: Update only a pbehavior interval
+                value: {
+                  "tstart": 1650855600,
+                  "tstop": 1650891600
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /bulk/pbehaviors:
+    put:
+      tags:
+        - pbehaviors
+      summary: Bulk update pbehaviors
+      description: |
+        Bulk update pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-bulk-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "Active period",
+                    "enabled": true,
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "rrule": "FREQ=DAILY",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
+                        }
+                      ]
+                    ],
+                    "exdates": [
+                      {
+                        "begin": 1651460400,
+                        "end": 1651496400,
+                        "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
+                      }
+                    ]
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - pbehaviors
+      summary: Bulk create pbehaviors
+      description: |
+        Bulk create pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: pbehaviors-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create pbehaviors
+                value: [
+                  {
+                    "name": "Active period",
+                    "enabled": true,
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "rrule": "FREQ=DAILY",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
+                        }
+                      ]
+                    ],
+                    "exdates": [
+                      {
+                        "begin": 1651460400,
+                        "end": 1651496400,
+                        "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
+                      }
+                    ]
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Bulk delete pbehaviors
+      description: |
+        Bulk delete pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: pbehaviors-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/bulk.DeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /bulk/connector-pbehaviors:
+    post:
+      tags:
+        - pbehaviors
+      summary: Bulk create connector pbehaviors
+      description: |
+        Bulk create connector pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: connector-pbehaviors-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorCreateRequestItem'
+            examples:
+              create:
+                summary: Create
+                description: Create connector pbehaviors
+                value: [
+                  {
+                    "entities": [ "cps_resource/cps_component" ],
+                    "origin": "centreon",
+                    "name": "Downtime",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Bulk delete connector pbehaviors
+      description: |
+        Bulk delete connector pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: connector-pbehaviors-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete entity pbehaviors
+                value: [
+                  {
+                    "entities": [ "cps_resource/cps_component" ],
+                    "origin": "centreon",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - pbehaviors
+      summary: Bulk create and delete connector pbehaviors
+      description: |
+        Bulk create and delete connector pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:create`, `api_pbehavior:delete`
+      operationId: connector-pbehaviors-bulk-edit
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorEditRequestItem'
+            examples:
+              create:
+                summary: Create and delete
+                description: Create and delete connector pbehaviors
+                value: [
+                  {
+                    "action": "create",
+                    "entities": [ "cps_resource1/cps_component1" ],
+                    "origin": "centreon",
+                    "name": "Downtime",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "comment": "Downtime by centreon"
+                  },
+                  {
+                    "action": "delete",
+                    "entities": [ "cps_resource2/cps_component2" ],
+                    "origin": "centreon",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
 
   /pbehavior-reasons:
     get:
@@ -203,9 +900,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/author'
       responses:
         '200':
           description: OK
@@ -221,11 +918,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
     post:
       tags:
         - pbehavior-reasons
@@ -258,11 +955,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
   /pbehavior-reasons/{id}:
     get:
       tags:
@@ -283,11 +980,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
     put:
       tags:
         - pbehavior-reasons
@@ -322,17 +1019,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
     delete:
       tags:
         - pbehavior-reasons
@@ -346,19 +1039,15 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/NoContent'
+        '409':
+          $ref: '#/components/schemas/Conflict'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
 
   /pbehavior-types:
     get:
@@ -371,23 +1060,25 @@ paths:
         -  PERMISSIONS: `api_pbehaviortype:read`
       operationId: pbehavior-types-find-all
       parameters:
-        - name: types[]
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/author'
+        - name: type
           in: query
           style: form
           explode: true
+          description: filter by canonical type
           schema:
             type: array
             items:
               type: string
         - name: default
           in: query
+          description: filter by default types
           schema:
             type: boolean
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/search'
-        - $ref: '#/components/parameters/sort'
-        - $ref: '#/components/parameters/sort_by'
       responses:
         '200':
           description: OK
@@ -403,11 +1094,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
     post:
       tags:
         - pbehavior-types
@@ -443,11 +1134,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
   /pbehavior-types/{id}:
     get:
       tags:
@@ -468,11 +1159,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
     put:
       tags:
         - pbehavior-types
@@ -510,17 +1201,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/BadRequest'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
     delete:
       tags:
         - pbehavior-types
@@ -534,33 +1221,29 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+          $ref: '#/components/schemas/NoContent'
+        '409':
+          $ref: '#/components/schemas/Conflict'
         '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
 
 components:
   parameters:
     id:
       name: id
       in: path
-      description: id
+      description: resource id
       required: true
       schema:
         type: string
     page:
       name: page
       in: query
-      description: current page
+      description: current page number
       required: false
       schema:
         type: integer
@@ -568,21 +1251,15 @@ components:
     limit:
       name: limit
       in: query
-      description: items per page
+      description: number of items per page
       required: false
       schema:
         type: integer
         minimum: 1
-    search:
-      name: search
-      in: query
-      description: search query
-      schema:
-        type: string
     sort:
       name: sort
       in: query
-      description: sort query
+      description: sort direction
       schema:
         type: string
         enum:
@@ -591,7 +1268,13 @@ components:
     sort_by:
       name: sort_by
       in: query
-      description: sort by field
+      description: field to sort by
+      schema:
+        type: string
+    author:
+      name: author
+      in: query
+      description: filter by author
       schema:
         type: string
 
@@ -692,8 +1375,6 @@ components:
           type: string
         status:
           type: integer
-        item:
-          type: object
         error:
           type: string
         errors:
@@ -707,13 +1388,58 @@ components:
         message:
           type: string
       type: object
-    ValidationErrorResponse:
-      properties:
-        errors:
-          additionalProperties:
-            type: string
-          type: object
-      type: object
+
+    NoContent:
+      description: No Content
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Not Found"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Unauthorized"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Forbidden"
+            message: "The admin role cannot be deleted."
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Conflict"
+            message: "The type cannot be deleted because it is referenced by a pbehavior."
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            properties:
+              errors:
+                additionalProperties:
+                  type: string
+                type: object
+            type: object
+          example:
+            errors:
+              name: "The field already exists"
+              enabled: "The field is a required field"
 
   securitySchemes:
     BasicAuth:
