@@ -2,8 +2,8 @@ package statesettings
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -181,10 +181,10 @@ func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName strin
 		}
 	}
 
-	forbiddenFields := patternfields.GetForbiddenFieldsInEntityPattern(collectionName)
+	disabledFields := patternfields.GetDisabledFieldsInEntityPattern()[collectionName]
 
 	return statesetting.InheritedEntityPatternFields{
-		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
+		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(disabledFields),
 		CorporateInheritedEntityPattern:      r.CorporatePattern.ID,
 		CorporateInheritedEntityPatternTitle: r.CorporatePattern.Title,
 	}

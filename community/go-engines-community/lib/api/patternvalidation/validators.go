@@ -1,4 +1,4 @@
-package patternfields
+package patternvalidation
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"

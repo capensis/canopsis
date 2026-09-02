@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -24,8 +24,8 @@ type baseValidator struct {
 
 func NewValidator() Validator {
 	return &baseValidator{
-		invalidRulesPatternFields:           patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
-		invalidInheritedEntityPatternFields: append(patternfields.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
+		invalidRulesPatternFields:           patternfields.GetDisabledFieldsInEntityPattern()[mongo.StateSettingsMongoCollection],
+		invalidInheritedEntityPatternFields: append(patternfields.GetDisabledFieldsInEntityPattern()[mongo.StateSettingsMongoCollection], "connector"),
 	}
 }
 

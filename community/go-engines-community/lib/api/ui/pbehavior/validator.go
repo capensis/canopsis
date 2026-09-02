@@ -3,9 +3,8 @@ package pbehavior
 import (
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
@@ -46,7 +45,7 @@ func (v *Validator) ValidateEditRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		!patternfields.ValidateEntityPattern(r.EntityPattern, mongo.PbehaviorMongoCollection) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
@@ -79,7 +78,7 @@ func (v *Validator) ValidatePatchRequest(sl validator.StructLevel) {
 	if r.CorporateEntityPattern == nil && r.EntityPattern != nil {
 		if len(r.EntityPattern) == 0 {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
-		} else if !match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		} else if !patternfields.ValidateEntityPattern(r.EntityPattern, mongo.PbehaviorMongoCollection) {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 		}
 	}

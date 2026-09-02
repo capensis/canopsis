@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
@@ -47,7 +48,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/notification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	uipatternfields "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehaviorexception"
@@ -166,7 +167,7 @@ func RegisterRoutes(
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(primaryDbClient)
-	patternFieldGetter := patternfields.NewFieldGetter(secondaryDbClient)
+	patternFieldGetter := uipatternfields.NewFieldGetter(secondaryDbClient)
 
 	authApi := auth.NewApi(
 		security.GetTokenService(),

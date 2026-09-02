@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
@@ -12,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/idlerule"
@@ -20,7 +21,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehaviortimespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/resolverule"
@@ -79,11 +79,11 @@ func registerTagValidations(v *validator.Validate, tplExecutor libtemplate.Execu
 		"time_format":             uivalidation.ValidateTimeFormat,
 		"info_value":              uivalidation.ValidateInfoValue,
 		"table_name":              uivalidation.ValidateTableName,
-		"event_pattern":           patternfields.ValidateEventPattern,
-		"alarm_pattern":           patternfields.ValidateAlarmPattern,
-		"entity_pattern":          patternfields.ValidateEntityPattern,
-		"pbehavior_pattern":       patternfields.ValidatePbehaviorPattern,
-		"weather_service_pattern": patternfields.ValidateWeatherServicePattern,
+		"event_pattern":           patternvalidation.ValidateEventPattern,
+		"alarm_pattern":           patternvalidation.ValidateAlarmPattern,
+		"entity_pattern":          patternvalidation.ValidateEntityPattern,
+		"pbehavior_pattern":       patternvalidation.ValidatePbehaviorPattern,
+		"weather_service_pattern": patternvalidation.ValidateWeatherServicePattern,
 		"template":                uivalidation.ValidateTemplate(tplExecutor),
 	}
 	for tag, f := range tagValidations {
