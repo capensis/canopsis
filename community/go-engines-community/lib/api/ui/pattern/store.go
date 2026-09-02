@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -391,7 +391,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 							"$$this",
 							bson.M{
 								"entity_pattern": pattern.EntityPattern.RemoveFields(
-									patternfields.GetForbiddenFieldsInEntityPattern(collection),
+									patternfields.GetDisabledFieldsInEntityPattern()[collection],
 								),
 								"corporate_entity_pattern_title": pattern.Title,
 							},
@@ -427,7 +427,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 				filter := bson.M{"corporate_" + f: pattern.ID}
 				set := bson.M{
 					f: pattern.EntityPattern.RemoveFields(
-						patternfields.GetForbiddenFieldsInEntityPattern(collection),
+						patternfields.GetDisabledFieldsInEntityPattern()[collection],
 					),
 					"corporate_" + f + "_title": pattern.Title,
 					"updated":                   datetime.NewCpsTime(),
@@ -450,7 +450,7 @@ func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Re
 			filter := bson.M{"corporate_entity_pattern": pattern.ID}
 			update := bson.M{"$set": bson.M{
 				"entity_pattern": pattern.EntityPattern.RemoveFields(
-					patternfields.GetForbiddenFieldsInEntityPattern(collection),
+					patternfields.GetDisabledFieldsInEntityPattern()[collection],
 				),
 				"corporate_entity_pattern_title": pattern.Title,
 				"aliases":                        newAliases, // can set newAliases because a document contains only one entity pattern
@@ -478,8 +478,8 @@ func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Res
 			}
 			update = bson.M{"$set": bson.M{
 				"actions.$[action].alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					patternfields.GetForbiddenFieldsInAlarmPattern(collection),
-					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+					patternfields.GetDisabledFieldsInAlarmPattern()[collection],
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern()[collection],
 				),
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
 				"updated": datetime.NewCpsTime(),
@@ -494,8 +494,8 @@ func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Res
 			}
 			update = bson.M{"$set": bson.M{
 				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					patternfields.GetForbiddenFieldsInAlarmPattern(collection),
-					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+					patternfields.GetDisabledFieldsInAlarmPattern()[collection],
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern()[collection],
 				),
 				"corporate_alarm_pattern_title": pattern.Title,
 				"updated":                       datetime.NewCpsTime(),

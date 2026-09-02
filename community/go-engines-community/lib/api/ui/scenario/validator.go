@@ -5,9 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -41,15 +40,12 @@ func (v *Validator) ValidateActionRequest(sl validator.StructLevel) {
 	}
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection)) {
+		!patternfields.ValidateEntityPattern(r.EntityPattern, mongo.ScenarioCollection) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
 	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
-		!match.ValidateAlarmPattern(r.AlarmPattern,
-			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
-			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
-		) {
+		!patternfields.ValidateAlarmPattern(r.AlarmPattern, mongo.ScenarioCollection) {
 		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
 	}
 
