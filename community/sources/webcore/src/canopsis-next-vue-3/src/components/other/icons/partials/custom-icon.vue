@@ -41,6 +41,9 @@ export default {
 .custom-icon {
   display: inline-flex;
   align-items: center;
+  max-width: 24px;
+  max-height: 24px;
+  overflow: hidden;
 
   svg {
     width: 24px;

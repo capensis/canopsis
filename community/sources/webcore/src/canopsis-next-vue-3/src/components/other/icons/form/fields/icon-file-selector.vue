@@ -3,7 +3,7 @@
     :file-type-label="$t('common.fileSelector.fileTypes.svg')"
     :model-value="file"
     :max-file-size="maxFileSize"
-    accept=".svg,.svg+xml"
+    accept=".svg,image/svg+xml"
     required
     @change="chooseIcon"
   >

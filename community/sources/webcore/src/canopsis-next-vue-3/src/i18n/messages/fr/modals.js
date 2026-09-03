@@ -1216,6 +1216,9 @@ export default {
       title: 'Icône de téléchargement',
       success: 'L\'icône a été téléchargée',
     },
+    edit: {
+      title: 'Modifier l\'icône',
+    },
     remove: {
       success: 'L\'icône a été supprimée',
     },

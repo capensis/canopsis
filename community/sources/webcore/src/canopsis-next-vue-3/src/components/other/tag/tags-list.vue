@@ -23,13 +23,13 @@
     </template>
 
     <template #value="{ item }">
-      <c-chip :color="item.color" class="px-2">
+      <c-chip :color="item.color" :text-color="getTagTextColor(item.color)" class="px-2">
         {{ item.value }}
       </c-chip>
     </template>
 
     <template #type="{ item }">
-      <span>{{ $t(`tag.types.${item.type}`) }}</span>
+      <span>{{ t(`tag.types.${item.type}`) }}</span>
     </template>
 
     <template #created="{ item }">
@@ -46,7 +46,7 @@
         <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
         <c-action-btn
           v-if="removable"
-          :tooltip="item.deletable ? $t('common.delete') : $t('tag.importedTag')"
+          :tooltip="item.deletable ? t('common.delete') : t('tag.importedTag')"
           :disabled="!item.deletable"
           type="delete"
           @click.stop="$emit('remove', item._id)"
@@ -61,8 +61,13 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { getMostReadableTextColor } from '@/helpers/color';
 import { convertDateToString } from '@/helpers/date/date';
 import { isCreatedTag } from '@/helpers/entities/tag/entity';
+
+import { useI18n } from '@/hooks/i18n';
 
 import TagsListExpandPanel from './partials/tags-list-expand-panel.vue';
 
@@ -104,54 +109,52 @@ export default {
 
   emits: ['edit', 'duplicate', 'remove', 'remove-selected', 'update:options'],
 
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'value',
-        },
-        {
-          text: this.$t('common.type'),
-          value: 'type',
-        },
-        {
-          text: this.$t('common.created'),
-          value: 'created',
-        },
-        {
-          text: this.$t('common.lastModifiedOn'),
-          value: 'updated',
-        },
-        {
-          text: this.$t('common.lastModifiedBy'),
-          value: 'author.display_name',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
+  setup(props) {
+    const { t } = useI18n();
 
-    hasAnyDeletableTag() {
-      return this.tags.some(({ deletable }) => deletable);
-    },
-  },
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'value',
+      },
+      {
+        text: t('common.type'),
+        value: 'type',
+      },
+      {
+        text: t('common.created'),
+        value: 'created',
+      },
+      {
+        text: t('common.lastModifiedOn'),
+        value: 'updated',
+      },
+      {
+        text: t('common.lastModifiedBy'),
+        value: 'author.display_name',
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
 
-  methods: {
-    isDisabledTag({ deletable }) {
-      return !deletable;
-    },
+    const hasAnyDeletableTag = computed(() => props.tags.some(({ deletable }) => deletable));
 
-    isCreatedTag(tag) {
-      return isCreatedTag(tag);
-    },
+    const isDisabledTag = ({ deletable }) => !deletable;
+    const getTagTextColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+    const formatDate = value => convertDateToString(value);
 
-    formatDate(value) {
-      return convertDateToString(value);
-    },
+    return {
+      t,
+      headers,
+      hasAnyDeletableTag,
+      isDisabledTag,
+      isCreatedTag,
+      getTagTextColor,
+      formatDate,
+    };
   },
 };
 </script>

@@ -1212,6 +1212,9 @@ export default {
       title: 'Upload icon',
       success: 'Icon was uploaded',
     },
+    edit: {
+      title: 'Edit icon',
+    },
     remove: {
       success: 'Icon was removed',
     },

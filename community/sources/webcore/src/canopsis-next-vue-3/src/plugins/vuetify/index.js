@@ -5,7 +5,7 @@ import { DEFAULT_THEME_COLORS } from '@/config';
 
 import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
 
-import { customIconAliases, iconSets } from './icons';
+import { customIconAliases, iconSets, bindIconAliases } from './icons';
 
 const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
 
@@ -73,6 +73,8 @@ export const vuetify = createVuetify({
     },
   },
 });
+
+bindIconAliases(vuetify.icons.aliases);
 
 /**
  * Kebab-case aliases for Vuetify components used as dynamic tags in vuedraggable.

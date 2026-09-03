@@ -15,8 +15,12 @@
       <v-list-subheader v-bind="subheaderProps" class="view-selector-menu__subheader" />
     </template>
 
-    <template #item="{ props: itemProps }">
-      <v-list-item v-bind="itemProps" class="view-selector-menu__item" />
+    <template #item="{ props: itemProps, item }">
+      <v-list-item v-bind="itemProps" class="view-selector-menu__item">
+        <template #title>
+          {{ item?.title }}
+        </template>
+      </v-list-item>
     </template>
   </c-select>
 </template>
