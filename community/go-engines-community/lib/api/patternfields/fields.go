@@ -1,6 +1,9 @@
 package patternfields
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+)
 
 var disabledFieldsInAlarmPattern = map[string]map[string]bool{
 	mongo.IdleRuleMongoCollection:          {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
@@ -68,26 +71,30 @@ var disabledFieldsInWeatherServicePattern = map[string]map[string]bool{
 	mongo.WidgetFiltersMongoCollection: {},
 }
 
-func GetDisabledFieldsInAlarmPattern() map[string][]string {
+func GetDisabledFieldsInAlarmPattern() map[string]map[string]bool {
 	return disabledFieldsInAlarmPattern
 }
 
-func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern() map[string][]string {
+func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern() map[string]map[string]bool {
 	return onlyAbsoluteTimeCondFieldsInAlarmPattern
 }
 
-func GetDisabledFieldsInEntityPattern() map[string][]string {
+func GetDisabledFieldsInEntityPattern() map[string]map[string]bool {
 	return disabledFieldsInEntityPattern
 }
 
-func GetDisabledFieldsInEventPattern() map[string][]string {
+func GetDisabledFieldsInInheritedEntityPattern() map[string]map[string]map[string]bool {
+	return disabledFieldsInInheritedEntityPattern
+}
+
+func GetDisabledFieldsInEventPattern() map[string]map[string]bool {
 	return disabledFieldsInEventPattern
 }
 
-func GetDisabledFieldsInPbehaviorPattern() map[string][]string {
+func GetDisabledFieldsInPbehaviorPattern() map[string]map[string]bool {
 	return disabledFieldsInPbehaviorPattern
 }
 
-func GetDisabledFieldsInWeatherServicePattern() map[string][]string {
+func GetDisabledFieldsInWeatherServicePattern() map[string]map[string]bool {
 	return disabledFieldsInWeatherServicePattern
 }

@@ -25,9 +25,9 @@ type baseValidator struct {
 
 func NewValidator() Validator {
 	return &baseValidator{
-		invalidRulesPatternFields:              patternfields.GetDisabledFieldsInEntityPattern()[mongo.StateSettingsMongoCollection],
-		invalidInheritedEntityPatternFields:    append(patternfields.GetDisabledFieldsInEntityPattern()[mongo.StateSettingsMongoCollection], statesetting.RuleTypeService),
-		invalidComponentInheritedPatternFields: append(patternfields.GetDisabledFieldsInEntityPattern()[mongo.StateSettingsMongoCollection], statesetting.RuleTypeComponent),
+		invalidEntityPatternFields:             patternfields.GetDisabledFieldsInEntityPattern()[mongo.StateSettingsMongoCollection],
+		invalidServiceInheritedPatternFields:   patternfields.GetDisabledFieldsInInheritedEntityPattern()[mongo.StateSettingsMongoCollection][statesetting.RuleTypeService],
+		invalidComponentInheritedPatternFields: patternfields.GetDisabledFieldsInInheritedEntityPattern()[mongo.StateSettingsMongoCollection][statesetting.RuleTypeComponent],
 	}
 }
 
