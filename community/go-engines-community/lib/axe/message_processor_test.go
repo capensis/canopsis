@@ -335,7 +335,7 @@ func benchmarkMessageProcessor(
 			alarmStatusService,
 			pbehavior.NewEntityTypeResolver(pbhStore, logger),
 			event.NewNullAutoInstructionMatcher(),
-			calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, tzConfigProvider), eventsSender),
+			calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, tzConfigProvider), eventsSender, logger),
 			calculator.NewComponentCountersCalculator(dbClient, eventsSender),
 			eventsSender,
 			metaAlarmPostProcessor,

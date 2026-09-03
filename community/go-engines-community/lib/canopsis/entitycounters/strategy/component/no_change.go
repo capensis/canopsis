@@ -12,9 +12,9 @@ func (s NoChangeStrategy) CanSkip(calcData entitycounters.ComponentCountersCalcD
 
 func (s NoChangeStrategy) Calculate(calcData entitycounters.ComponentCountersCalcData) entitycounters.EntityCounters {
 	if calcData.Info.ComponentStateSettingsToRemove {
-		calcData.Counters.DecrementState(calcData.CurState, false)
+		calcData.Counters.DecrementState(calcData.CurState, entitycounters.InheritedNone)
 	} else if calcData.Info.ComponentStateSettingsToAdd {
-		calcData.Counters.IncrementState(calcData.CurState, false)
+		calcData.Counters.IncrementState(calcData.CurState, entitycounters.InheritedNone)
 	}
 
 	return calcData.Counters

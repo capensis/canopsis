@@ -471,10 +471,18 @@ func (a *api) OptimizeCancel(c *gin.Context) {
 }
 
 // GetPatternFieldsHandler
-// @Success 200 {array} patternfields.FieldsResponse
-func GetPatternFieldsHandler(patternFieldGetter uipatternfields.FieldGetter, errorResponder response.ErrorResponder, collection string) func(c *gin.Context) {
+// @Success 200 {object} patternfields.FieldsResponse
+func GetPatternFieldsHandler(patternFieldGetter uipatternfields.FieldGetter, errorResponder httperror.Responder, collection string) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		res, err := patternFieldGetter.Get(c, collection)
+		var r patternfields.FieldsRequest
+
+		if err := validation.BindQuery(c, &r); err != nil {
+			errorResponder.Respond(c, err)
+
+			return
+		}
+
+		res, err := patternFieldGetter.Get(c, collection, r)
 		if err != nil {
 			errorResponder.Respond(c, err)
 
