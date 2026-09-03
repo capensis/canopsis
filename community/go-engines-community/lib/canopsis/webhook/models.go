@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
+	"reflect"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
@@ -24,6 +27,7 @@ const (
 const (
 	RuleTypeScenario RuleType = iota
 	RuleTypeDeclareTicket
+	RuleTypeEventFilter
 )
 
 const MultipleURLsDelimiter = ","
@@ -36,6 +40,8 @@ func (rk RuleType) String() string {
 		return "scenario"
 	case RuleTypeDeclareTicket:
 		return "declare_ticket_rule"
+	case RuleTypeEventFilter:
+		return "event_filter"
 	default:
 		return "unknown"
 	}
@@ -49,6 +55,11 @@ type History struct {
 	Rule      string   `bson:"rule" json:"rule"`
 	RuleType  RuleType `bson:"rule_type" json:"rule_type"`
 	Name      string   `bson:"name" json:"name"`
+	// ReplyTo is the name of the engine that emitted this webhook execution.
+	// It is recorded when the execution is created and used to
+	// route the result back to the emitting engine - including for chained and
+	// abandoned executions, which are re-issued without an AMQP reply-to.
+	ReplyTo string `bson:"reply_to,omitempty" json:"reply_to,omitempty"`
 
 	Index              int64  `bson:"index" json:"index"`
 	NextExec           string `bson:"next_exec,omitempty" json:"next_exec,omitempty"`
@@ -73,7 +84,7 @@ type History struct {
 
 	ResponseCode   int64             `bson:"response_code,omitempty" json:"response_code,omitempty"`
 	ResponseHeader map[string]string `bson:"response_header,omitempty" json:"response_header,omitempty"`
-	ResponseBody   map[string]any    `bson:"response_body,omitempty" json:"response_body,omitempty"`
+	ResponseBody   any               `bson:"response_body,omitempty" json:"response_body,omitempty"`
 
 	TicketID   string            `bson:"ticket_id,omitempty" json:"ticket_id,omitempty"`
 	TicketURL  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
@@ -404,7 +415,32 @@ type CheckTicketStatusJob struct {
 }
 
 type ResponseTplVars struct {
-	Header      map[string]string
-	Response    map[string]any
-	ResponseMap map[string]any
+	Header       map[string]string
+	Response     map[string]any
+	ResponseMap  map[string]any
+	LastResponse map[string]any
+}
+
+// AddResponse adds the response headers and string-keyed response fields from h to the template variables.
+// Non-map response bodies and maps with non-string keys are ignored.
+// Header, Response, and ResponseMap must be initialized before calling AddResponse.
+// LastResponse is replaced on each call.
+func (tv *ResponseTplVars) AddResponse(idx int, h *History) {
+	maps.Copy(tv.Header, h.ResponseHeader)
+
+	tv.LastResponse = make(map[string]any)
+
+	responseCountStr := strconv.Itoa(idx)
+	rv := reflect.ValueOf(h.ResponseBody)
+	if !rv.IsValid() || rv.Kind() != reflect.Map || rv.Type().Key().Kind() != reflect.String {
+		return
+	}
+
+	for mi := rv.MapRange(); mi.Next(); {
+		key := mi.Key().String()
+		val := mi.Value().Interface()
+		tv.Response[key] = val
+		tv.ResponseMap[responseCountStr+"."+key] = val
+		tv.LastResponse[key] = val
+	}
 }

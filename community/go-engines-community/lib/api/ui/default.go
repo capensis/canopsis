@@ -96,12 +96,9 @@ type Services struct {
 	WebsocketRoomRegistry       websocket.RoomRegistry
 	WebsocketAuthorize          func(perms ...string) websocket.Authorize
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
-	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
+	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
 	AlarmConfigProvider         *config.BaseAlarmConfigProvider
-	TemplateConfigProvider      *config.BaseTemplateConfigProvider
-	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
-	ExternalDataContainer       *externaldata.GetterContainer
 	NotificationStore           usernotification.Store
 	ErrorResponder              response.ErrorResponder
 	Translator                  *ut.UniversalTranslator
@@ -115,6 +112,7 @@ func Default(
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	tplTestTypePermMapping map[int][]any,
+	externalDataGetter externaldata.Getter,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, Services, error) {
@@ -162,9 +160,9 @@ func Default(
 		return nil, services, fmt.Errorf("cannot create security enforcer: %w", err)
 	}
 
-	services.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
-	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	// Connect to rmq.
 	amqpPubConn, err := libamqp.New(-1, cfg.Global.GetReconnectTimeout(), logger)
 	if err != nil {
@@ -203,7 +201,7 @@ func Default(
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	services.AlarmConfigProvider = config.NewAlarmConfigProvider(cfg, logger)
-	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
+	tplExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	services.Translator, err = RegisterValidators(securityConfig, tplExecutor)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
@@ -254,7 +252,7 @@ func Default(
 	workersRunner := workers.NewRunner(amqpConsumePool, cfg.Global.PrefetchCount, cfg.Global.PrefetchSize, logger)
 	// Create csv exporter.
 	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
-		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+		timezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
 		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
 	})
@@ -303,11 +301,10 @@ func Default(
 	services.WebsocketHub = websocket.NewHub(websocketUpgrader, services.WebsocketRoomRegistry, wsRoomAuthenticate,
 		services.ApiConfigProvider, flags.IntegrationPeriodicalWaitTime, validation.NewErrorTranslator(services.Translator, logger),
 		json.NewEncoder(), json.NewDecoder(), logger)
-	services.ExternalDataContainer = externaldata.NewGetterContainer()
-	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
+	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, externalDataGetter, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
 	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, patternfields.NewTransformer(primaryDbClient),
-		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
+		timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, services.WebsocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(services.WebsocketHub, messageratestats.NewStore(pgPoolProvider),
@@ -373,7 +370,7 @@ func Default(
 	})
 	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
 		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
-		services.TimezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
+		timezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient),
 		services.WebsocketHub, services.UserInterfaceConfigProvider)
 	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
 		return apiPbhStore.ExecPatternsAndUpdate(ctx)
@@ -510,8 +507,8 @@ func Default(
 			amqpPublisher,
 			lockRedisSession,
 			services.ApiConfigProvider,
-			services.TimezoneConfigProvider,
-			services.TemplateConfigProvider,
+			timezoneConfigProvider,
+			templateConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
@@ -534,7 +531,7 @@ func Default(
 			exdataImportWorker,
 			patternOptimizeWorker,
 			services.NotificationStore,
-			services.ExternalDataContainer,
+			externalDataGetter,
 			tplTestTypePermMapping,
 			logger,
 		)
@@ -636,8 +633,8 @@ func Default(
 
 		return nil
 	})
-	api.AddWorker("config_reload", updateConfig(services.TimezoneConfigProvider, services.DataStorageConfigProvider,
-		services.ApiConfigProvider, services.TemplateConfigProvider, techMetricsConfigProvider, services.AlarmConfigProvider,
+	api.AddWorker("config_reload", updateConfig(timezoneConfigProvider, services.DataStorageConfigProvider,
+		services.ApiConfigProvider, templateConfigProvider, techMetricsConfigProvider, services.AlarmConfigProvider,
 		configAdapter, services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
 	api.AddWorker("data_export_abandoned", func(ctx context.Context) error {
 		services.ExportTaskExecutor.ProcessAbandonedTasks(ctx)
