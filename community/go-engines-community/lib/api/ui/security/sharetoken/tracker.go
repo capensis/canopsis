@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -11,19 +12,19 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func NewMongoStore(client mongo.DbClient, logger zerolog.Logger) *MongoStore {
-	return &MongoStore{
+func NewTracker(client mongo.DbClient, logger zerolog.Logger) token.UsageTracker {
+	return &tracker{
 		collection: client.Collection(mongo.ShareTokenMongoCollection),
 		logger:     logger,
 	}
 }
 
-type MongoStore struct {
+type tracker struct {
 	collection mongo.DbCollection
 	logger     zerolog.Logger
 }
 
-func (s *MongoStore) Exists(ctx context.Context, v string) (bool, error) {
+func (s *tracker) Exists(ctx context.Context, v string) (bool, error) {
 	err := s.collection.FindOne(ctx, bson.M{"value": v}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -36,25 +37,9 @@ func (s *MongoStore) Exists(ctx context.Context, v string) (bool, error) {
 	return true, nil
 }
 
-func (s *MongoStore) Access(ctx context.Context, v string) error {
+func (s *tracker) Access(ctx context.Context, v string) error {
 	now := datetime.NewCpsTime()
 	_, err := s.collection.UpdateOne(ctx, bson.M{"value": v}, bson.M{"$set": bson.M{"accessed": now}})
-	return err
-}
 
-func (s *MongoStore) DeleteExpired(ctx context.Context) error {
-	now := datetime.NewCpsTime()
-	deleted, err := s.collection.DeleteMany(ctx, bson.M{
-		"expired": bson.M{
-			"$ne": nil,
-			"$lt": now,
-		},
-	})
-	if err != nil {
-		return err
-	}
-	if deleted > 0 {
-		s.logger.Debug().Int64("deleted", deleted).Msg("deleted expired tokens")
-	}
-	return nil
+	return err
 }

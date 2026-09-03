@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -42,7 +43,7 @@ type provider struct {
 	client             *http.Client
 	roleProvider       security.RoleProvider
 	userProvider       security.UserProvider
-	tokenService       apisecurity.TokenService
+	tokenService       token.Service
 	oauth2Config       oauth2.Config
 	config             security.OAuth2ProviderConfig
 	store              sessions.Store
@@ -71,7 +72,7 @@ func NewProvider(
 	userProvider security.UserProvider,
 	maintenanceAdapter config.MaintenanceAdapter,
 	enforcer security.Enforcer,
-	tokenService apisecurity.TokenService,
+	tokenService token.Service,
 	logger zerolog.Logger,
 	maxResponseSize int64,
 	errorResponder response.ErrorResponder,

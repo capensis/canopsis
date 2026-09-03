@@ -1401,6 +1401,106 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/appinfo.AppInfoResponse'
       security:
         - { }
+  /api-tokens:
+    get:
+      tags:
+        - api-tokens
+      summary: Find api tokens
+      description: |
+        Get paginated list of api tokens.
+        
+        -  PERMISSIONS: `none`
+      operationId: api-tokens-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/apitoken.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+    post:
+      tags:
+        - api-tokens
+      summary: Create api token
+      description: |
+        Create api token.
+        
+        -  PERMISSIONS: `none`
+      operationId: api-tokens-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/apitoken.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a api token.
+                value: {
+                  "name": "API token",
+                  "duration": {
+                    "value": 1,
+                    "unit": "d"
+                  }
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/apitoken.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /api-tokens/{id}:
+    delete:
+      tags:
+        - api-tokens
+      summary: Delete api token by id
+      description: |
+        Delete api token by id.
+        
+        -  PERMISSIONS: `none`
+      operationId: api-tokens-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: OK
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /associativetable:
     get:
       tags:

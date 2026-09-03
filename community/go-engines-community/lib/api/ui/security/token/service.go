@@ -1,4 +1,4 @@
-package security
+package token
 
 import (
 	"context"
@@ -12,14 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-type TokenStore interface {
-	Save(ctx context.Context, token token.Token) error
-	Delete(ctx context.Context, id string) (bool, error)
-	DeleteBy(ctx context.Context, user, provider string) error
-	DeleteByUserIDs(ctx context.Context, ids []string) error
-}
-
-type TokenService interface {
+type Service interface {
 	Create(ctx context.Context, user security.User, provider string) (string, error)
 	CreateWithExpiration(ctx context.Context, user security.User, provider string, expiredAt time.Time) (string, error)
 	Delete(ctx context.Context, token string) (bool, error)
@@ -32,12 +25,12 @@ type AuthMethodConf struct {
 	InactivityInterval *datetime.DurationWithUnit `bson:"inactivity_interval" json:"inactivity_interval"`
 }
 
-func NewTokenService(
+func NewService(
 	config security.Config,
 	client mongo.DbClient,
 	generator token.Generator,
-	store TokenStore,
-) TokenService {
+	store Store,
+) Service {
 	return &tokenService{
 		config:           config,
 		dbRoleCollection: client.Collection(mongo.RoleCollection),
@@ -52,7 +45,7 @@ type tokenService struct {
 	dbRoleCollection mongo.DbCollection
 
 	tokenGenerator token.Generator
-	tokenStore     TokenStore
+	tokenStore     Store
 }
 
 func (s *tokenService) Create(ctx context.Context, user security.User, provider string) (string, error) {
@@ -71,7 +64,7 @@ func (s *tokenService) Create(ctx context.Context, user security.User, provider 
 		return "", err
 	}
 
-	t := token.Token{
+	t := Token{
 		ID:       accessToken,
 		User:     user.ID,
 		Provider: provider,
@@ -103,7 +96,7 @@ func (s *tokenService) CreateWithExpiration(ctx context.Context, user security.U
 	}
 
 	expired := datetime.NewCpsTime(expiredAt.Unix())
-	t := token.Token{
+	t := Token{
 		ID:       accessToken,
 		User:     user.ID,
 		Provider: provider,
