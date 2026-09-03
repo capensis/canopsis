@@ -79,6 +79,9 @@ export default {
         text: t('common.icon', 1),
         value: 'icon',
         sortable: false,
+        cellProps: {
+          class: 'icons-list__icon-cell',
+        },
       },
       {
         text: t('common.title'),
@@ -102,3 +105,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.icons-list__icon-cell {
+  max-width: 24px;
+  max-height: 24px;
+  overflow: hidden;
+}
+</style>

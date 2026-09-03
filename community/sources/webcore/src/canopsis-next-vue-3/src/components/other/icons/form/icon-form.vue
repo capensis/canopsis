@@ -10,6 +10,7 @@
         :label="$t('common.title')"
         :regex="titleRegex"
         :regex-message="titleRegexMessage"
+        :max-length="255"
         name="title"
         required
         autofocus

@@ -14,7 +14,7 @@
       :small="small"
       :closable="isClosableItem(item)"
       :outlined="outlined"
-      :text-color="textColor"
+      :text-color="getItemTextColor(item)"
       @click="selectItem(item)"
       @close="closeItem(item)"
     >
@@ -57,7 +57,7 @@
               :class="itemClass"
               :color="item.color"
               :closable="isClosableItem(item)"
-              :text-color="textColor"
+              :text-color="getItemTextColor(item)"
               :outlined="outlined"
               class="mx-0"
               @click="selectItem(item)"
@@ -77,6 +77,7 @@
 <script>
 import { computed, ref, watch } from 'vue';
 
+import { getMostReadableTextColor } from '@/helpers/color';
 import { uid } from '@/helpers/uid';
 
 export default {
@@ -133,7 +134,7 @@ export default {
     },
     textColor: {
       type: String,
-      default: 'white',
+      required: false,
     },
   },
 
@@ -187,6 +188,14 @@ export default {
      */
     const closeItem = item => emit('close', props.returnObject ? item : item[props.itemValue]);
 
+    const getItemTextColor = (item) => {
+      if (props.textColor != null) {
+        return props.textColor;
+      }
+
+      return getMostReadableTextColor(item.color, { level: 'AA', size: 'large' });
+    };
+
     /**
      * Whether the chip should show a close control: when `closable`, or when `closableActive` and the item is active.
      *
@@ -204,6 +213,7 @@ export default {
     return {
       closeItem,
       dropDownItems,
+      getItemTextColor,
       inlineItems,
       isClosableItem,
       selectItem,

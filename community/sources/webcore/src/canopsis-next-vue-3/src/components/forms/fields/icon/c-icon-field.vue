@@ -14,18 +14,26 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #selection="{ item }">
-      <v-icon v-if="getItemValue(item)" class="mr-2" size="18">
-        {{ getItemValue(item) }}
-      </v-icon>
+      <span v-if="getItemIcon(item)" class="c-icon-field__icon mr-2">
+        <v-icon size="18">
+          {{ getItemIcon(item) }}
+        </v-icon>
+      </span>
       <span>{{ getItemText(item) }}</span>
     </template>
 
     <template #item="{ props: itemProps, item }">
-      <v-list-item v-bind="itemProps">
+      <v-divider v-if="isDividerItem(item)" />
+      <v-list-item v-else v-bind="itemProps">
         <template #prepend>
-          <v-icon size="18">
-            {{ getItemValue(item) }}
-          </v-icon>
+          <span class="c-icon-field__icon">
+            <v-icon size="18">
+              {{ getItemIcon(item) }}
+            </v-icon>
+          </span>
+        </template>
+        <template #title>
+          {{ getItemText(item) }}
         </template>
       </v-list-item>
     </template>
@@ -44,6 +52,7 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
+import { useIcon } from '@/hooks/store/modules/icon';
 
 import materialIcons from '@/assets/material-icons/MaterialIcons.json';
 
@@ -79,22 +88,64 @@ export default {
 
   setup() {
     const { t } = useI18n();
+    const { registeredIconsById } = useIcon();
 
-    const items = computed(() => materialIcons.map(icon => ({
+    const registeredIconsItems = computed(() => Object.values(registeredIconsById.value ?? {}).map(({ title }) => ({
+        text: title,
+        value: `$vuetify.icon.${title}`,
+      })),
+    );
+    const materialIconsItems = computed(() => materialIcons.map(icon => ({
         text: icon,
         value: icon,
       })),
     );
+    const items = computed(() => {
+      if (!registeredIconsItems.value.length) {
+        return materialIconsItems.value;
+      }
 
-    const getItemValue = item => item?.value ?? '';
-    const getItemText = item => item?.text ?? getItemValue(item);
+      return [
+        ...registeredIconsItems.value,
+        { type: 'divider', divider: true, text: '', value: '__icon-divider__' },
+        ...materialIconsItems.value,
+      ];
+    });
+
+    const isDividerItem = item => item?.divider || item?.type === 'divider';
+    const getItemValue = item => item?.value ?? item?.raw?.value ?? '';
+    const getItemText = item => item?.text ?? item?.title ?? item?.raw?.text ?? getItemValue(item);
+    const getItemIcon = (item) => {
+      const value = getItemValue(item);
+
+      if (!value || isDividerItem(item)) {
+        return '';
+      }
+
+      if (value.startsWith('$vuetify.icon.')) {
+        return `canopsis:${value.slice('$vuetify.icon.'.length)}`;
+      }
+
+      return value;
+    };
 
     return {
       t,
       items,
+      isDividerItem,
       getItemValue,
       getItemText,
+      getItemIcon,
     };
   },
 };
 </script>
+
+<style lang="scss">
+.c-icon-field__icon {
+  display: inline-flex;
+  max-width: 24px;
+  max-height: 24px;
+  overflow: hidden;
+}
+</style>

@@ -30,6 +30,7 @@
       <c-chip
         v-if="!showCount || index < showCount"
         :color="getSelectionColor(item)"
+        :text-color="getSelectionTextColor(item)"
         :title="getSelectionText(item)"
         class="c-alarm-tag-field__tag px-2"
         closable
@@ -63,6 +64,8 @@
 import { computed, toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
+
+import { getMostReadableTextColor } from '@/helpers/color';
 
 import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
@@ -159,8 +162,8 @@ export default {
     );
 
     const getSelectionText = item => item?.[itemText.value] ?? item;
-
     const getSelectionColor = item => item?.color;
+    const getSelectionTextColor = item => getMostReadableTextColor(item?.color, { level: 'AA', size: 'large' });
 
     watch(() => props.onlyLabels, fetchItems);
 
@@ -177,6 +180,7 @@ export default {
       updateSearch,
       getSelectionText,
       getSelectionColor,
+      getSelectionTextColor,
       removeItemFromSelectedItemsByIndex,
     };
   },

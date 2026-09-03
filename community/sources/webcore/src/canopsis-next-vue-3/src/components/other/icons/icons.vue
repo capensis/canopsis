@@ -73,7 +73,7 @@ export default {
         name: MODALS.createIcon,
         config: {
           icon,
-          title: t('modals.createIcon.create.title'),
+          title: t('modals.createIcon.edit.title'),
           action: newIcon => callActionWithPopup(
               () => updateIcon({ data: newIcon, id: icon._id }),
               fetchList,
