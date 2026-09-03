@@ -19,6 +19,7 @@ import (
 const (
 	MIMEJSON = "application/json"
 	MIMEYAML = "application/yaml"
+	MIMECSV  = "text/csv"
 )
 
 type Responder interface {

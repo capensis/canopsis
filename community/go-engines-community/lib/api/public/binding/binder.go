@@ -54,7 +54,7 @@ func (b *binder) Bind(r *http.Request, v any) error {
 
 	err = b.decoder.Decode(buf, v)
 	if err != nil {
-		return err
+		return validation.NewInvalidRequestBodyError(err)
 	}
 
 	err = b.validator.StructCtx(r.Context(), v)

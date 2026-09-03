@@ -4,15 +4,24 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-const (
-	SortAsc  = "asc"
-	SortDesc = "desc"
-)
-
 // Query is base request for pagination.
 type Query struct {
 	Page  int64 `form:"page,default:1" json:"page" binding:"numeric,gt=0"`
 	Limit int64 `form:"limit,default:10" json:"limit" binding:"numeric,gt=0,lt=10000"`
+}
+
+func (q *Query) SetDefaults() {
+	if q == nil {
+		return
+	}
+
+	if q.Page == 0 {
+		q.Page = 1
+	}
+
+	if q.Limit == 0 {
+		q.Limit = 10
+	}
 }
 
 func CreateAggregationPipeline(

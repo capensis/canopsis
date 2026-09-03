@@ -6,6 +6,8 @@ const (
 	ObjPbehaviorType   = "api_pbehaviortype"
 	ObjPbehaviorReason = "api_pbehaviorreason"
 
+	ObjEntity = "api_entity"
+
 	PermEvent = "api_event"
 
 	PermMaintenance = "api_maintenance"

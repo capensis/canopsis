@@ -17,8 +17,7 @@ const (
 
 type ListRequest struct {
 	pagination.Query
-	Sort      string   `form:"sort" binding:"oneoforempty=asc desc"`
-	SortBy    string   `form:"sort_by,default:name" binding:"oneoforempty=name tstart tstop rrule created updated"`
+	Sort      string   `form:"sort"`
 	Enabled   *bool    `form:"enabled"`
 	Types     []string `form:"type"`
 	Reasons   []string `form:"reason"`
