@@ -174,14 +174,14 @@ type InheritedEntityPatternRequest struct {
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
 }
 
-func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName string) statesetting.InheritedEntityPatternFields {
+func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName, t string) statesetting.InheritedEntityPatternFields {
 	if r.CorporatePattern.ID == "" {
 		return statesetting.InheritedEntityPatternFields{
 			InheritedEntityPattern: r.InheritedEntityPattern,
 		}
 	}
 
-	disabledFields := patternfields.GetDisabledFieldsInEntityPattern()[collectionName]
+	disabledFields := patternfields.GetDisabledFieldsInInheritedEntityPattern()[collectionName][t]
 
 	return statesetting.InheritedEntityPatternFields{
 		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(disabledFields),

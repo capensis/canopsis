@@ -15,7 +15,7 @@ toolchain go1.26.3
 
 require (
 	github.com/apognu/gocal v0.9.1
-	github.com/beevik/etree v1.6.0
+	github.com/beevik/etree v1.7.0
 	github.com/brianvoe/gofakeit/v7 v7.14.1
 	github.com/bsm/redislock v0.9.4
 	github.com/casbin/casbin/v3 v3.10.0
@@ -47,8 +47,8 @@ require (
 	github.com/rabbitmq/amqp091-go v1.11.0
 	github.com/redis/go-redis/v9 v9.19.0
 	github.com/rs/zerolog v1.35.1
-	github.com/russellhaering/gosaml2 v0.9.1 // do not upgrade! v0.10.0 contains a dirty code, which breakes an assertion decryption.
-	github.com/russellhaering/goxmldsig v1.6.0
+	github.com/russellhaering/gosaml2 v0.12.0 // since v0.10.0 assertions are not decrypted when SkipSignatureValidation is set, see decryptSAMLResponse in lib/api/auth/providers/saml.
+	github.com/russellhaering/goxmldsig v1.6.1
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.10
