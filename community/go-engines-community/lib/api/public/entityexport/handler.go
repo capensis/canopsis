@@ -74,7 +74,7 @@ func (h *handler) Handle(ctx context.Context, jobID string) error {
 		return nil
 	}
 
-	ok, err := h.store.SetOngoing(ctx, job.ID)
+	job, ok, err := h.store.Claim(ctx, job.ID)
 	if err != nil {
 		return err
 	}
@@ -89,19 +89,37 @@ func (h *handler) Handle(ctx context.Context, jobID string) error {
 	start := time.Now()
 	err = h.do(ctx, job)
 	if err != nil {
+		if errors.Is(err, asyncjob.ErrLeaseLost) {
+			h.logger.Warn().Str("job_id", job.ID).Msg("export job lease lost")
+
+			return nil
+		}
+
 		if ctx.Err() != nil {
 			return err
 		}
 
-		if updErr := h.store.SetFailed(ctx, job.ID, err.Error(), time.Since(start)); updErr != nil {
+		if updErr := h.store.SetFailed(ctx, job.ID, job.LeaseGeneration, err.Error(), time.Since(start)); updErr != nil {
+			if errors.Is(updErr, asyncjob.ErrLeaseLost) {
+				h.logger.Warn().Str("job_id", job.ID).Msg("export job lease lost")
+
+				return nil
+			}
+
 			h.logger.Err(updErr).Str("job_id", job.ID).Msg("cannot mark export job as failed")
 		}
 
 		return err
 	}
 
-	err = h.store.SetDone(ctx, job.ID, time.Since(start), nil)
+	err = h.store.SetDone(ctx, job.ID, job.LeaseGeneration, time.Since(start), nil)
 	if err != nil {
+		if errors.Is(err, asyncjob.ErrLeaseLost) {
+			h.logger.Warn().Str("job_id", job.ID).Msg("export job lease lost")
+
+			return nil
+		}
+
 		return err
 	}
 
@@ -115,7 +133,7 @@ func (h *handler) do(ctx context.Context, job Job) error {
 	err := asyncjob.RunWithPing(
 		ctx,
 		func(ctx context.Context) error {
-			return h.store.Ping(ctx, job.ID)
+			return h.store.Ping(ctx, job.ID, job.LeaseGeneration)
 		},
 		func(ctx context.Context) error {
 			beforeLimit, afterLimit, sort, err := entity.SearchPipeline(job.Params.SearchRequest)

@@ -126,10 +126,10 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbeh
 	}
 
 	if len(orStmt) > 0 {
-		orStmt = append(orStmt, bson.M{"pbehavior_info.id": bson.M{"$ne": nil}})
+		orStmt = append(orStmt, bson.M{"pbehavior_info.canonical_type": bson.M{"$ne": nil}})
 		filter["$or"] = orStmt
 	} else {
-		filter["pbehavior_info.id"] = bson.M{"$ne": nil}
+		filter["pbehavior_info.canonical_type"] = bson.M{"$ne": nil}
 	}
 
 	return a.dbCollection.Find(ctx, filter)

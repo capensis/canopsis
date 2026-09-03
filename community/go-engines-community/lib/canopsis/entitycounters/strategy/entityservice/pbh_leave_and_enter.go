@@ -12,8 +12,13 @@ func (s PbhLeaveAndEnterStrategy) CanSkip(calcData entitycounters.EntityServiceC
 
 func (s PbhLeaveAndEnterStrategy) Calculate(calcData entitycounters.EntityServiceCountersCalcData) entitycounters.EntityCounters {
 	if calcData.ServicesToRemove[calcData.Counters.ID] {
+		inheritedMode := entitycounters.InheritedNone
+		if calcData.PrevInherited {
+			inheritedMode = entitycounters.InheritedWith
+		}
+
 		calcData.Counters.Depends--
-		calcData.Counters.DecrementState(calcData.PrevState, calcData.Inherited)
+		calcData.Counters.DecrementState(calcData.PrevState, inheritedMode)
 
 		if calcData.AlarmExists {
 			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.PrevActive)
@@ -23,8 +28,13 @@ func (s PbhLeaveAndEnterStrategy) Calculate(calcData entitycounters.EntityServic
 			calcData.Counters.DecrementPbhCounters(calcData.PrevPbhTypeID)
 		}
 	} else if calcData.ServicesToAdd[calcData.Counters.ID] {
+		inheritedMode := entitycounters.InheritedNone
+		if calcData.CurInherited {
+			inheritedMode = entitycounters.InheritedWith
+		}
+
 		calcData.Counters.Depends++
-		calcData.Counters.IncrementState(calcData.CurState, calcData.Inherited)
+		calcData.Counters.IncrementState(calcData.CurState, inheritedMode)
 
 		if calcData.AlarmExists {
 			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, calcData.CurActive)
@@ -34,8 +44,17 @@ func (s PbhLeaveAndEnterStrategy) Calculate(calcData entitycounters.EntityServic
 			calcData.Counters.IncrementPbhCounters(calcData.CurPbhTypeID)
 		}
 	} else {
-		calcData.Counters.DecrementState(calcData.PrevState, calcData.Inherited)
-		calcData.Counters.IncrementState(calcData.CurState, calcData.Inherited)
+		prevInheritedMode := entitycounters.InheritedNone
+		if calcData.PrevInherited {
+			prevInheritedMode = entitycounters.InheritedWith
+		}
+		curInheritedMode := entitycounters.InheritedNone
+		if calcData.CurInherited {
+			curInheritedMode = entitycounters.InheritedWith
+		}
+
+		calcData.Counters.DecrementState(calcData.PrevState, prevInheritedMode)
+		calcData.Counters.IncrementState(calcData.CurState, curInheritedMode)
 
 		if calcData.AlarmExists {
 			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.PrevActive)
