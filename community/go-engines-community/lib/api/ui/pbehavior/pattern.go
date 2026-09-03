@@ -10,14 +10,16 @@ import (
 type searchPattern [][]pattern.FieldCondition
 
 func (p searchPattern) ToMongoQuery() (bson.M, error) {
+	return p.toMongoQuery(time.Now())
+}
+
+func (p searchPattern) toMongoQuery(now time.Time) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
 
 	groupQueries := make([]bson.M, len(p))
 	var err error
-
-	now := time.Now()
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
@@ -55,7 +54,7 @@ func benchmarkGeneratorGenerateForAlarms(
 
 	cfg := config.CanopsisConf{}
 	generator := link.NewGenerator(dbClient, template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()),
-		config.NewTimezoneConfigProvider(cfg, zerolog.Nop())), externaldata.NewGetterContainer(), zerolog.Nop())
+		config.NewTimezoneConfigProvider(cfg, zerolog.Nop())), nil, zerolog.Nop())
 	user := link.User{}
 	ids := make([]string, 100)
 	for i := 0; i < len(ids); i++ {
