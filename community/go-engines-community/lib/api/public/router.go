@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarmexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataexport"
@@ -27,16 +26,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviorreason"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviortype"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-chi/chi/v5"
-	"github.com/rs/zerolog"
 )
 
 const (
@@ -48,30 +44,16 @@ const (
 //go:embed docs/*.yaml
 var docsFile embed.FS
 
-type Services struct {
-	Logger                 zerolog.Logger
-	Binder                 binding.Binder
-	Responder              response.Responder
-	PrimaryDbClient        mongo.DbClient
-	SecondaryDbClient      mongo.DbClient
-	AMQPPubChPool          amqp.ChannelPool
-	Config                 config.CanopsisConf
-	SecurityConfig         security.Config
-	Enforcer               security.Enforcer
-	AuthProviders          []security.HttpProvider
-	APIConfigProvider      config.ApiConfigProvider
-	TimezoneConfigProvider config.TimezoneConfigProvider
-	JobPublisher           asyncjob.Publisher
-}
-
 func (s *Services) authorize(obj, act string) func(next http.Handler) http.Handler {
 	return middleware.Authorize(obj, act, s.Enforcer, s.Responder)
 }
 
-func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
+// RegisterRoutes registers the API routes. The extra functions are called with the
+// authenticated router of the API prefix, they allow to register additional routes.
+func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi.Mux, error) {
 	r := chi.NewRouter()
 
-	if opts.Debug {
+	if opts.LogOptions.Debug {
 		defer func() {
 			_ = chi.Walk(r, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
 				s.Logger.Debug().Str("method", method).Str("route", route).Send()
@@ -107,7 +89,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Binder,
 					s.Responder,
 				)
-				registerCRUDRoutes(r, "/pbehavior-types", apisecurity.ObjPbehaviorType, pbhTypeAPI, s)
+				RegisterCRUDRoutes(r, "/pbehavior-types", apisecurity.ObjPbehaviorType, pbhTypeAPI, s)
 			}
 			{
 				pbhReasonAPI := pbehaviorreason.NewAPI(
@@ -115,7 +97,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Binder,
 					s.Responder,
 				)
-				registerCRUDRoutes(r, "/pbehavior-reasons", apisecurity.ObjPbehaviorReason, pbhReasonAPI, s)
+				RegisterCRUDRoutes(r, "/pbehavior-reasons", apisecurity.ObjPbehaviorReason, pbhReasonAPI, s)
 			}
 			{
 				pbhAPI := pbehavior.NewAPI(
@@ -129,7 +111,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 				)
 				permObj := apisecurity.ObjPbehavior
 
-				registerBulkRoutes(r, "/pbehaviors", permObj, pbhAPI, s)
+				RegisterBulkRoutes(r, "/pbehaviors", permObj, pbhAPI, s)
 
 				r.With(authorize(permObj, model.PermissionUpdate)).
 					With(middleware.SetAuthor(s.Responder)).
@@ -170,7 +152,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Responder,
 					s.Logger,
 				)
-				registerDataImportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionCreate, entityImportAPI, s)
+				RegisterDataImportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionCreate, entityImportAPI, s)
 			}
 			{
 				entityExportAPI := entityexport.NewAPI(
@@ -182,7 +164,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Responder,
 					s.Logger,
 				)
-				registerDataExportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionRead, entityExportAPI, s)
+				RegisterDataExportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionRead, entityExportAPI, s)
 			}
 			{
 				alarmAPI := alarm.NewAPI(alarm.NewStore(s.PrimaryDbClient, patternfields.NewTransformer(s.PrimaryDbClient)), s.Binder, s.Responder)
@@ -207,13 +189,17 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Responder,
 					s.Logger,
 				)
-				registerDataExportRoutes(r, "/alarm", apisecurity.PermAlarmRead, model.PermissionCan, alarmExportAPI, s)
+				RegisterDataExportRoutes(r, "/alarm", apisecurity.PermAlarmRead, model.PermissionCan, alarmExportAPI, s)
+			}
+
+			for _, f := range extra {
+				f(r)
 			}
 		})
 	})
 
 	if opts.EnableDocs {
-		err := registerDocs(r, s)
+		err := RegisterDocs(r, s)
 		if err != nil {
 			return nil, err
 		}
@@ -222,8 +208,8 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 	return r, nil
 }
 
-// registerCRUDRoutes registers CRUD routes for the pattern.
-func registerCRUDRoutes(
+// RegisterCRUDRoutes registers CRUD routes for the pattern.
+func RegisterCRUDRoutes(
 	r chi.Router,
 	pattern, permObj string,
 	a crud.API,
@@ -250,14 +236,14 @@ func registerCRUDRoutes(
 	})
 }
 
-// registerBulkRoutes registers bulk routes for the pattern.
-func registerBulkRoutes(
+// RegisterBulkRoutes registers bulk routes for the pattern.
+func RegisterBulkRoutes(
 	r chi.Router,
 	pattern, permObj string,
 	a bulk.API,
 	s Services,
 ) {
-	registerCRUDRoutes(r, pattern, permObj, a, s)
+	RegisterCRUDRoutes(r, pattern, permObj, a, s)
 
 	authorize := s.authorize
 	pattern = bulkPrefix + pattern
@@ -276,7 +262,7 @@ func registerBulkRoutes(
 	})
 }
 
-func registerDataExportRoutes(
+func RegisterDataExportRoutes(
 	r chi.Router,
 	pattern, permObj, permAct string,
 	a dataexport.API,
@@ -293,7 +279,7 @@ func registerDataExportRoutes(
 	})
 }
 
-func registerDataImportRoutes(
+func RegisterDataImportRoutes(
 	r chi.Router,
 	pattern, permObj, permAct string,
 	a dataimport.API,
@@ -308,7 +294,7 @@ func registerDataImportRoutes(
 	})
 }
 
-func registerDocs(r chi.Router, s Services) error {
+func RegisterDocs(r chi.Router, s Services) error {
 	content, err := docsFile.ReadFile("docs/swagger.yaml")
 	if err != nil {
 		return fmt.Errorf("cannot read swagger: %w", err)
