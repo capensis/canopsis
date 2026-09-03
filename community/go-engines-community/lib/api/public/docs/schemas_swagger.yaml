@@ -1,10 +1,207 @@
 definitions:
+  asyncjob.Response:
+    properties:
+      _id:
+        type: string
+      error_message:
+        type: string
+      status:
+        type: string
+    type: object
   bulk.DeleteRequestItem:
     properties:
       _id:
         type: string
     required:
     - _id
+    type: object
+  dataexport.Field:
+    properties:
+      label:
+        maxLength: 10000
+        type: string
+      name:
+        maxLength: 10000
+        type: string
+    required:
+    - label
+    - name
+    type: object
+  entity.Info:
+    properties:
+      description:
+        type: string
+      value: {}
+    type: object
+  entity.PbehaviorInfo:
+    properties:
+      reason:
+        $ref: '#/definitions/response.Reference'
+      rule:
+        $ref: '#/definitions/response.Reference'
+      timestamp:
+        type: integer
+      type:
+        properties:
+          _id:
+            type: string
+          canonical_type:
+            type: string
+          name:
+            type: string
+        type: object
+    type: object
+  entity.Response:
+    properties:
+      _id:
+        type: string
+      category:
+        $ref: '#/definitions/response.Reference'
+      component:
+        type: string
+      component_infos:
+        additionalProperties:
+          $ref: '#/definitions/entity.Info'
+        type: object
+      connector:
+        type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/entity.Info'
+        type: object
+      last_event_date:
+        type: integer
+      name:
+        type: string
+      output_template:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      type:
+        type: string
+      updated:
+        type: integer
+      upstream:
+        type: string
+    type: object
+  entity.SearchRequest:
+    properties:
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      import_source:
+        maxLength: 10000
+        type: string
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      sort:
+        type: string
+    type: object
+  entityexport.Request:
+    properties:
+      delimiter:
+        description: csv
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      fields:
+        items:
+          $ref: '#/definitions/dataexport.Field'
+        type: array
+      format:
+        enum:
+        - csv
+        - json
+        type: string
+      import_source:
+        maxLength: 10000
+        type: string
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      sort:
+        type: string
+      time_format:
+        type: string
+    required:
+    - fields
+    - format
+    type: object
+  entityimport.RequestItem:
+    properties:
+      action:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      name:
+        type: string
+      output_template:
+        type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
+      type:
+        type: string
+      upstream:
+        type: string
+    required:
+    - name
+    - type
     type: object
   pattern.Condition:
     properties:
@@ -347,6 +544,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        maximum: 100000
         minimum: 1
         type: integer
       type:
@@ -403,6 +601,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        maximum: 100000
         minimum: 1
         type: integer
       type:
@@ -425,6 +624,24 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  types.Coordinates:
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+    - lat
+    - lng
+    type: object
+  types.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value: {}
     type: object
 info:
   contact: {}

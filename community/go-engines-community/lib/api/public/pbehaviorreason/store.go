@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/sortparam"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -40,7 +41,12 @@ type store struct {
 	dupErrorParser       validation.DuplicateErrorParser
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListResponse[Response], error) {
+func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListResponse[Response], err error) {
+	sort, err := sortparam.Validate(r.Sort, []string{"_id", "name", "created", "updated"}, "name")
+	if err != nil {
+		return res, err
+	}
+
 	beforeLimit := []bson.M{
 		{"$match": bson.M{"hidden": bson.M{"$in": bson.A{false, nil}}}},
 	}
@@ -53,11 +59,10 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pagination.ListRespons
 	pipeline := pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		mongoquery.SortQuery(r.SortBy, r.Sort),
+		sort,
 		afterLimit,
 	)
 	opts := options.Aggregate().SetCollation(&options.Collation{Locale: "en"})
-	var res pagination.ListResponse[Response]
 	ar, err := db.AggregateOne[pagination.Data[Response]](ctx, s.dbCollection, pipeline, opts)
 	if err != nil {
 		return res, err

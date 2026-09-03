@@ -8,9 +8,8 @@ import (
 
 type ListRequest struct {
 	pagination.Query
-	Sort   string `form:"sort" binding:"oneoforempty=asc desc"`
-	SortBy string `form:"sort_by,default:name" binding:"oneoforempty=_id name created updated"`
-	Author string `form:"author"`
+	Sort   string `form:"sort"`
+	Author string `form:"author" binding:"max=50"`
 }
 
 type EditRequest struct {

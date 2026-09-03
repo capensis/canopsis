@@ -2,6 +2,7 @@ package api
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -31,9 +32,14 @@ func RegisterValidators() (*validator.Validate, *ut.UniversalTranslator, error) 
 
 func registerTagValidations(v *validator.Validate) error {
 	var tagValidations = map[string]validator.Func{
-		"notblank":       validators.NotBlank,
-		"oneoforempty":   validation.ValidateOneOfOrEmpty,
-		"iscolororempty": validation.ValidateColorOrEmpty,
+		"notblank":          validators.NotBlank,
+		"oneoforempty":      validation.ValidateOneOfOrEmpty,
+		"iscolororempty":    validation.ValidateColorOrEmpty,
+		"time_format":       validation.ValidateTimeFormat,
+		"event_pattern":     patternvalidation.ValidateEventPattern,
+		"alarm_pattern":     patternvalidation.ValidateAlarmPattern,
+		"entity_pattern":    patternvalidation.ValidateEntityPattern,
+		"pbehavior_pattern": patternvalidation.ValidatePbehaviorPattern,
 	}
 	for tag, f := range tagValidations {
 		err := v.RegisterValidation(tag, f)

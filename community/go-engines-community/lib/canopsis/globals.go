@@ -101,6 +101,8 @@ const (
 	WebhookRPCQueueServerName = "Engine_webhook_rpc_server"
 
 	ApiWorkersQueueName = "api_workers"
+
+	PublicApiJobQueueName = "public_api_jobs"
 )
 
 // Consumers
@@ -143,6 +145,8 @@ const (
 	RemediationRPCConsumerName = "remediation_rpc"
 
 	WebhookRPCConsumerName = "webhook_rpc"
+
+	PublicApiJobConsumerName = "public_api_jobs"
 )
 
 // Other
@@ -169,4 +173,7 @@ const (
 	SubDirJunit        = "junit-files"
 	SubDirJunitAPI     = "junit-api-files"
 	SubDirExDataImport = "exdataimport"
+
+	SubDirEntityImportPublic = "entity-import-public"
+	SubDirEntityExportPublic = "entity-export-public"
 )
