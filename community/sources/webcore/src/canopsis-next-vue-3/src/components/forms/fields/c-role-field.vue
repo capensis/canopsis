@@ -15,7 +15,24 @@
     item-value="_id"
     return-object
     @update:model-value="updateModel"
-  />
+  >
+    <template v-if="multiple && chips" #chip="{ item, index, props: chipProps }">
+      <v-chip
+        v-if="index < showCount"
+        v-bind="chipProps"
+        size="small"
+        closable
+      >
+        <span class="text-truncate">
+          {{ getRoleName(item) }}
+        </span>
+      </v-chip>
+      <span v-else-if="index === showCount">
+        +{{ selectedRolesCount - showCount }} {{ t('common.more') }}
+      </span>
+      <span v-else />
+    </template>
+  </c-select>
 </template>
 
 <script>
@@ -66,6 +83,10 @@ export default {
       type: Function,
       required: false,
     },
+    showCount: {
+      type: Number,
+      default: 2,
+    },
   },
 
   emits: ['update:modelValue'],
@@ -85,6 +106,9 @@ export default {
         ? props.modelValue
         : [props.modelValue].filter(Boolean);
     });
+    const selectedRolesCount = computed(() => (
+      Array.isArray(props.modelValue) ? props.modelValue.length : 0
+    ));
 
     const fetchList = async () => {
       try {
@@ -107,6 +131,8 @@ export default {
     const getItemProps = item => ({
       disabled: props.isDisabledItems?.(item),
     });
+
+    const getRoleName = item => item?.name ?? item;
 
     const updateModel = (value) => {
       emit('update:modelValue', value);
@@ -132,7 +158,9 @@ export default {
       menuProps,
       pending,
       availableRoles,
+      selectedRolesCount,
       getItemProps,
+      getRoleName,
       updateModel,
     };
   },

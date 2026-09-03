@@ -5,6 +5,7 @@
     :color="$attrs.color || 'primary'"
     :name="inputName"
     :error-messages="errorMessages"
+    :density="density"
     class="c-radio-group"
     @blur="onBlur"
   >

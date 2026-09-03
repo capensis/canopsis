@@ -100,13 +100,21 @@ export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
 /**
  * Convert Vuetify 4 data table sort options to canonical query sort.
  *
- * @param {{ key: string, order: string }[]} [sortBy=[]]
+ * @param {{ sortBy?: string[], sortDesc?: boolean[] } | { key: string, order: string }[]} [options=[]]
  * @returns {{ sortBy: string[], sortDesc: boolean[] }}
  */
-export const convertDataTableSortToQuery = (sortBy = []) => ({
-  sortBy: sortBy.map(sortItem => sortItem.key ?? sortItem),
-  sortDesc: sortBy.map(sortItem => sortItem.order === SORT_ORDERS.desc.toLowerCase()),
-});
+export const convertDataTableSortToQuery = (options = []) => {
+  const sortBy = isArray(options) ? options : options.sortBy ?? [];
+
+  return {
+    sortBy: sortBy.map(sortItem => sortItem.key ?? sortItem),
+    sortDesc: sortBy.map((sortItem, index) =>
+      sortItem.order
+        ? sortItem.order === SORT_ORDERS.desc.toLowerCase()
+        : (options.sortDesc?.[index] ?? false),
+    ),
+  };
+};
 
 /**
  * Convert filter to query filters.

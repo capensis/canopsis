@@ -1,15 +1,15 @@
 <template>
   <c-layout class="py-2" gap="3" column>
     <c-form-block>
-      <c-form-block-row :label="t('common.pages')" :error="hasAnyErrors" indented>
+      <c-form-block-row :label="t('common.pages')" :error="hasAnyErrors">
         <broadcast-message-views-treeview-field v-model="pages" :items="treeItems.pages" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.views')" :error="hasAnyErrors" indented>
+      <c-form-block-row :label="t('common.views')" :error="hasAnyErrors">
         <broadcast-message-views-treeview-field v-model="views" :items="treeItems.views" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.playlists')" :error="hasAnyErrors" indented>
+      <c-form-block-row :label="t('common.playlists')" :error="hasAnyErrors">
         <broadcast-message-views-treeview-field v-model="playlists" :items="treeItems.playlists" />
       </c-form-block-row>
     </c-form-block>

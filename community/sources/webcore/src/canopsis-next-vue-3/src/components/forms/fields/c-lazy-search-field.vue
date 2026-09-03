@@ -20,7 +20,6 @@
     :clearable="clearable"
     :return-object="returnObject"
     :no-data-text="noDataText"
-    :density="density"
     class="c-lazy-search-field"
     no-filter
     @focus="onFocus"
@@ -167,10 +166,6 @@ export default {
     menuProps: {
       type: Object,
       default: () => ({}),
-    },
-    density: {
-      type: String,
-      required: false,
     },
   },
   emits: ['update:value', 'update:modelValue', 'update:search', 'fetch', 'fetch:more'],

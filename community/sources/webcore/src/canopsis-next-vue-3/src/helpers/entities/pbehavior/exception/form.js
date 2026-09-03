@@ -53,6 +53,18 @@ export const pbehaviorExceptionImportToForm = (exceptionImport = {}) => ({
 });
 
 /**
+ * Convert pbehavior exception import form to request data.
+ *
+ * @param {Object} [exceptionImportForm = {}]
+ * @return {Object}
+ */
+export const formToPbehaviorExceptionImport = (exceptionImportForm = {}) => ({
+  name: exceptionImportForm.name,
+  type: exceptionImportForm.type?._id ?? exceptionImportForm.type,
+  file: exceptionImportForm.file,
+});
+
+/**
  * Convert exception form to pbehavior exception data
  *
  * @param {PbehaviorExceptionForm} [exceptionForm = {}]

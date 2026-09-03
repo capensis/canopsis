@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <c-layout gap="3" column>
     <external-data-table-general-info-form v-if="!values._id" :form="externalDataTable" />
     <c-id-field v-else :value="values._id" disabled />
 
@@ -55,14 +55,13 @@ export default {
 
     const components = computed(() => props.externalDataTable.column_configs.map((column) => {
         const is = componentsMap[column.type];
+        const rules = {
+          required: true,
+        };
         const defaultBind = {
           name: column.name,
           label: column.name,
           errorMessages: getErrorMessages(column.name),
-          required: true,
-        };
-
-        const rules = {
           required: true,
         };
 
@@ -74,7 +73,6 @@ export default {
               ...defaultBind,
               maxLength: 255,
               values: values.value[column.name],
-              class: 'mt-3',
               'onUpdate:values': value => setValue(column.name, value),
             },
           };
@@ -86,10 +84,10 @@ export default {
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
           ].includes(column.type)
         ) {
-          rules.max = 255;
+          defaultBind.maxLength = 255;
         }
 
-        if (EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
+        if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
           defaultBind.inputmode = 'decimal';
         }
 
@@ -109,7 +107,6 @@ export default {
           [
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime,
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp,
-            EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number,
           ].includes(column.type)
         ) {
           return {
@@ -124,12 +121,23 @@ export default {
           };
         }
 
+        if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
+          return {
+            is,
+            key: column.name,
+            bind: {
+              ...defaultBind,
+              value: values.value[column.name],
+              'onUpdate:value': value => setValue(column.name, value),
+            },
+          };
+        }
+
         return {
           is,
           key: column.name,
           bind: {
             ...defaultBind,
-            validationRules: rules,
             modelValue: values.value[column.name],
             'onUpdate:modelValue': value => setValue(column.name, value),
           },

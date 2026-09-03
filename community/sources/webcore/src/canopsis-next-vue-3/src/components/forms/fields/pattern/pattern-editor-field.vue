@@ -28,7 +28,11 @@
       </v-tab>
     </v-tabs>
 
-    <v-window v-if="!withType || patterns.id" v-model="activeTab">
+    <v-window
+      v-if="!withType || patterns.id"
+      v-model="activeTab"
+      class="pattern-editor-field__window"
+    >
       <v-window-item :value="$constants.PATTERN_EDITOR_TABS.simple">
         <pattern-groups-field
           :groups="patterns.groups"
@@ -265,3 +269,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pattern-editor-field {
+  &__window {
+    padding-top: 8px;
+  }
+}
+</style>

@@ -139,6 +139,8 @@ export default {
 
 <style lang="scss">
 .entity-infos-properties-list__type-filter {
+  display: flex;
+  align-items: center;
   width: 180px;
 }
 </style>

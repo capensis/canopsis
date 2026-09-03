@@ -22,7 +22,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.recurrence')" indented>
+      <c-form-block-row :label="$t('common.recurrence')">
         <pbehavior-recurrence-rule-field
           v-model:rrule="rruleField"
           v-model:exdates="exdatesField"

@@ -49,7 +49,7 @@ import { useI18n } from '@/hooks/i18n';
 import RequestAuthTokenField from '@/components/forms/request/fields/request-auth-token-field.vue';
 
 export default {
-  emits: ['update:value'],
+  emits: ['update:value', 'update:auth-token'],
   components: { RequestAuthTokenField },
   props: {
     value: {

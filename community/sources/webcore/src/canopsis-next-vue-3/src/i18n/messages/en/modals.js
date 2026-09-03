@@ -1233,7 +1233,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Import records',
+      title: 'Add record',
     },
     edit: {
       title: 'Edit record',
@@ -1241,6 +1241,9 @@ export default {
     duplicate: {
       title: 'Duplicate record',
     },
+  },
+  importExternalDataTableRecords: {
+    title: 'Import records',
   },
   createExternalAuthToken: {
     create: {

@@ -8,6 +8,7 @@
     item-text="name"
     item-value="name"
     class="healthcheck-connector-names-field"
+    density="compact"
     multiple
     clearable
     autocomplete
@@ -32,7 +33,7 @@
         closable
       >
         <span class="text-truncate">
-          {{ item }}
+          {{ getItemName(item) }}
         </span>
       </v-chip>
       <span v-else-if="index === showCount">
@@ -67,6 +68,10 @@ export default {
   },
 
   methods: {
+    getItemName(item) {
+      return item?.name ?? item;
+    },
+
     getItemProps(props) {
       const { title, ...listItemProps } = props;
 
@@ -81,11 +86,6 @@ export default {
   & ::placeholder {
     color: currentColor !important;
     opacity: 1;
-  }
-
-  &.v-autocomplete input,
-  &.v-combobox input {
-    padding: 8px 0 !important;
   }
 }
 </style>

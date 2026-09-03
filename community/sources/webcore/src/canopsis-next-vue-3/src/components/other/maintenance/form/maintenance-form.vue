@@ -1,6 +1,6 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="$t('maintenance.message')" indented>
+    <c-form-block-row :label="$t('maintenance.message')">
       <text-editor-field
         v-model="messageField"
         :label="$t('maintenance.message')"

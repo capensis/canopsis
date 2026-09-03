@@ -28,7 +28,7 @@
       </c-layout>
     </template>
     <c-form-block>
-      <c-form-block-row :label="$t('common.workflow')" indented>
+      <c-form-block-row :label="$t('common.workflow')">
         <c-workflow-field
           v-model="stopOnFailField"
           :label="$t('remediation.instruction.workflow')"

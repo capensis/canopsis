@@ -68,7 +68,7 @@ export const useQueryOptions = (query, updateQuery) => {
     }
 
     const oldItemsPerPage = unwrappedQuery.itemsPerPage ?? PAGINATION_LIMIT;
-    const sort = convertDataTableSortToQuery(value.sortBy);
+    const sort = convertDataTableSortToQuery(value);
 
     updateQuery({
       ...pick(unwrappedQuery, Object.keys(value)),

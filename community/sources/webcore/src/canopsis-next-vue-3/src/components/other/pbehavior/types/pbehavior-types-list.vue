@@ -27,7 +27,7 @@
     </template>
 
     <template #icon_name="{ item }">
-      <v-chip :color="item.color" class="pbehavior-type-icon">
+      <v-chip :style="getIconStyle(item.color)" class="pbehavior-type-icon">
         <v-icon :color="getIconColor(item.color)" :icon="item.icon_name" size="18" />
       </v-chip>
     </template>
@@ -118,11 +118,15 @@ export default {
     ]);
 
     const isDisabledType = ({ deletable }) => !deletable;
+    const getIconStyle = color => ({
+      backgroundColor: color,
+    });
     const getIconColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
     return {
       headers,
       isDisabledType,
+      getIconStyle,
       getIconColor,
       t,
     };

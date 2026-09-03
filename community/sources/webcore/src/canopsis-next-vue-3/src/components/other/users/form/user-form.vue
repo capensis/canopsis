@@ -37,6 +37,26 @@
         />
       </c-form-block-row>
 
+      <c-form-block-row :label="t('user.firstName')">
+        <c-text-field
+          v-model="firstNameField"
+          :label="t('user.firstName')"
+          :disabled="onlyUserPrefs || idpFieldsMap.firstname"
+          name="firstname"
+          autocomplete="new-password"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="t('user.lastName')">
+        <c-text-field
+          v-model="lastNameField"
+          :label="t('user.lastName')"
+          :disabled="onlyUserPrefs || idpFieldsMap.lastname"
+          name="lastname"
+          autocomplete="new-password"
+        />
+      </c-form-block-row>
+
       <c-form-block-row :label="t('common.password')">
         <c-password-field
           v-model="passwordField"
@@ -148,6 +168,8 @@ export default {
       idField,
       nameField,
       emailField,
+      firstNameField,
+      lastNameField,
       passwordField,
       rolesField,
       uiLanguageField,
@@ -159,6 +181,8 @@ export default {
       idField: '_id',
       nameField: 'name',
       emailField: 'email',
+      firstNameField: 'firstname',
+      lastNameField: 'lastname',
       passwordField: 'password',
       rolesField: 'roles',
       uiLanguageField: 'ui_language',
@@ -191,6 +215,8 @@ export default {
       idField,
       nameField,
       emailField,
+      firstNameField,
+      lastNameField,
       passwordField,
       rolesField,
       uiLanguageField,

@@ -89,7 +89,7 @@
 
 <script>
 import { find } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 
 import { TRIGGERS_TYPES, PRO_TRIGGERS } from '@/constants';
 
@@ -163,7 +163,7 @@ export default {
       return true;
     };
     const { setValue: setTriggersFieldValue } = useField(
-      computed(() => props.name),
+      toRef(props, 'name'),
       validateTriggers,
       {
         initialValue: props.modelValue,

@@ -162,7 +162,7 @@ export default {
     });
 
     useWidgetPeriodicRefresh({
-      options: computed(() => props.widget.parameters.periodic_refresh),
+      options: toRef(props.widget.parameters, 'periodic_refresh'),
       handler: fetchItemWithRecords,
     });
 

@@ -242,6 +242,10 @@ $v2-spacer: 4px;
     .v-field__input {
       align-items: center;
     }
+
+    .v-label.v-field-label--floating {
+      top: 16px;
+    }
   }
 }
 

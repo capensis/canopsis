@@ -9,7 +9,7 @@
     />
 
     <c-form-block>
-      <c-form-block-row :label="$t('modals.createDynamicInfoTemplate.fields.names')" indented>
+      <c-form-block-row :label="$t('modals.createDynamicInfoTemplate.fields.names')">
         <dynamic-info-template-names-field>
           <template #no-data>
             <v-alert type="info">

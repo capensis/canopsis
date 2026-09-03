@@ -1,8 +1,30 @@
-import { computed } from 'vue';
+import { computed, unref } from 'vue';
 
-import { useFormContext, useFormErrors } from '@/hooks/form';
+import { useFormContext } from '@/hooks/form';
 
 import { useValidationElementChildrenFields } from './validation-element-children-fields';
+
+/**
+ * Checks whether a registered form field currently shows a visible validation error.
+ *
+ * Prefers `errorMessages` from the Vue component instance (including `exposed` from `setup`)
+ * because that is what the field actually renders. Falls back to the vee-validate `errors`
+ * array when the instance does not expose `errorMessages`.
+ *
+ * @param {Object} [field={}] - Validator field state with its bound component instance.
+ * @param {string[]} [field.errors] - Validation error messages from the form context.
+ * @param {Object} [field.instance] - Vue component instance of the field.
+ * @returns {boolean} `true` if the field has at least one visible error message.
+ */
+const hasVisibleFieldError = ({ errors, instance } = {}) => {
+  const errorMessages = unref(instance?.errorMessages ?? instance?.$?.exposed?.errorMessages);
+
+  if (Array.isArray(errorMessages)) {
+    return errorMessages.length > 0;
+  }
+
+  return errors?.length > 0;
+};
 
 /**
  * Provides validation functionalities for the children of a given parent component.
@@ -21,16 +43,9 @@ import { useValidationElementChildrenFields } from './validation-element-childre
 export const useValidationElementChildren = (parent) => {
   const formContext = useFormContext();
 
-  const formErrors = useFormErrors();
   const childrenFields = useValidationElementChildrenFields(parent);
 
-  const hasChildrenError = computed(() => {
-    if (!Object.values(formErrors.value).length) {
-      return false;
-    }
-
-    return childrenFields.value.some(({ errors } = {}) => errors?.length > 0);
-  });
+  const hasChildrenError = computed(() => childrenFields.value.some(hasVisibleFieldError));
 
   const validateChildren = () =>
     childrenFields.value.forEach(({ path } = {}) => formContext.validateField(path));

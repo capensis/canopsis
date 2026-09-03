@@ -28,21 +28,22 @@
       </v-expand-transition>
     </template>
 
-    <template #mass-actions="{ selected, selectedKeys, count }">
+    <template #mass-actions="{ selected, selectedKeys, count, clearSelected }">
       <c-layout align="center">
         <c-action-btn
           :tooltip="t('eventsRecord.resendEvents', count)"
           :disabled="resendingDisabled || resending"
           icon="play_arrow"
           color="primary"
-          @click="$emit('start:resending', selectedKeys)"
+          @click="startSelectedResending(selectedKeys, clearSelected)"
         />
         <events-record-download-btn
           :events-record-id="eventsRecordId"
           :event-ids="selectedKeys"
           icon
+          @exported="clearSelected"
         />
-        <c-action-btn type="delete" @click="$emit('remove:selected', selected)" />
+        <c-action-btn type="delete" @click="removeSelected(selected, clearSelected)" />
       </c-layout>
     </template>
 
@@ -126,7 +127,7 @@ export default {
 
   emits: ['update:options', 'remove', 'remove:selected', 'start:resending', 'stop:resending'],
 
-  setup() {
+  setup(_, { emit }) {
     const { t } = useI18n();
     const popups = usePopups();
 
@@ -145,6 +146,13 @@ export default {
     const stringify = item => JSON.stringify(item);
     const showCopySuccessPopup = () => popups.success({ text: t('eventsRecord.eventCopied') });
     const showCopyErrorPopup = () => popups.error({ text: t('errors.default') });
+    const startSelectedResending = (selectedKeys, clearSelected) => {
+      emit('start:resending', selectedKeys);
+      clearSelected();
+    };
+    const removeSelected = (selected, clearSelected) => {
+      emit('remove:selected', selected, clearSelected);
+    };
 
     return {
       t,
@@ -153,6 +161,8 @@ export default {
       stringify,
       showCopySuccessPopup,
       showCopyErrorPopup,
+      startSelectedResending,
+      removeSelected,
     };
   },
 };
@@ -162,6 +172,10 @@ export default {
 .events-record-events-list {
   table {
     table-layout: fixed;
+  }
+
+  .v-data-table__expand-icon {
+    margin-left: 8px;
   }
 }
 </style>

@@ -15,7 +15,24 @@
     closable-chips
     hide-details
     @update:model-value="$emit('input', $event)"
-  />
+  >
+    <template #chip="{ item, index, props }">
+      <v-chip
+        v-if="index < showCount"
+        v-bind="props"
+        size="small"
+        closable
+      >
+        <span class="text-truncate">
+          {{ getItemText(item) }}
+        </span>
+      </v-chip>
+      <span v-else-if="index === showCount">
+        +{{ value.length - showCount }} {{ $t('common.more') }}
+      </span>
+      <span v-else />
+    </template>
+  </c-autocomplete>
 </template>
 
 <script>
@@ -27,6 +44,10 @@ export default {
       type: Array,
       required: true,
     },
+    showCount: {
+      type: Number,
+      default: 2,
+    },
   },
 
   emits: ['input'],
@@ -37,6 +58,12 @@ export default {
         value,
         text: value,
       }));
+    },
+  },
+
+  methods: {
+    getItemText(item) {
+      return item?.text ?? item;
     },
   },
 };

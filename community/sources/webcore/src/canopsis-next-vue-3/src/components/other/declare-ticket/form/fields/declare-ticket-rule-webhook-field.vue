@@ -43,7 +43,7 @@
         @update:form="updateField('declare_ticket.check_ticket_status', $event)"
       />
 
-      <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" indented top-border>
+      <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" top-border>
         <c-workflow-field
           :model-value="form.stop_on_fail"
           :disabled="disabled"

@@ -37,7 +37,7 @@
     </template>
 
     <template #roles="{ item }">
-      <c-layout wrap>
+      <c-layout gap="1" wrap>
         <v-chip v-for="role in item.roles" :key="role._id">
           {{ role.name }}
         </v-chip>

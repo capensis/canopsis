@@ -40,6 +40,7 @@
             <c-duration-field
               v-model:duration="inactivityIntervalField"
               :label="t('role.inactivityInterval')"
+              name="auth_config.inactivity_interval"
               long
             >
               <template #append>
@@ -52,6 +53,7 @@
             <c-duration-field
               v-model:duration="expirationIntervalField"
               :label="t('role.expirationInterval')"
+              name="auth_config.expiration_interval"
               long
             >
               <template #append>

@@ -5,6 +5,15 @@
     <c-name-field v-model="name" autofocus required />
 
     <c-form-block>
+      <c-form-block-row :label="t('common.duration')">
+        <c-duration-field
+          v-model:duration="interval"
+          :label="t('common.duration')"
+          name="interval"
+          required
+        />
+      </c-form-block-row>
+
       <c-form-block-row :label="t('common.fullscreen')" align-center>
         <c-enabled-field
           v-model="fullscreen"
@@ -15,15 +24,15 @@
       </c-form-block-row>
 
       <c-form-block-row :label="t('modals.createPlaylist.manageTabs')" align-center>
-        <v-btn
+        <c-btn-with-error
+          :error="tabsErrorMessage"
           :aria-label="t('modals.createPlaylist.manageTabs')"
-          color="primary"
           variant="outlined"
           @click="showManageTabsModal"
           @keydown.enter="showManageTabsModal"
         >
           {{ t('modals.createPlaylist.manageTabs') }}
-        </v-btn>
+        </c-btn-with-error>
       </c-form-block-row>
     </c-form-block>
 
@@ -35,21 +44,18 @@
         <draggable-playlist-tabs :tabs="tabsList" :groups="groups" @update:tabs="updateTabsList" />
       </div>
     </c-layout>
-
-    <c-alert v-if="hasTabsError" type="error">
-      {{ t('modals.createPlaylist.errors.emptyTabs') }}
-    </c-alert>
   </c-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { useFormContext, useFormModels } from '@/hooks/form';
+import { useFieldError, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useValidationAttachRequiredForField } from '@/hooks/validator/validation-attach-required';
 
 import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
@@ -70,23 +76,29 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const modals = useModals();
-    const form = useFormContext();
-    const { name, enabled, fullscreen, tabsList } = useFormModels({
+    const { name, enabled, fullscreen, interval, tabsList } = useFormModels({
       name: 'name',
       enabled: 'enabled',
       fullscreen: 'fullscreen',
+      interval: 'interval',
       tabsList: 'tabs_list',
     });
 
-    const hasTabsError = computed(() => !!form.errors.value.tabs);
+    const tabsError = useFieldError('tabs_list');
+    const tabsErrorMessage = computed(() =>
+      tabsError.value ? t('modals.createPlaylist.errors.emptyTabs') : '',
+    );
+    const { asyncValidateRequiredRule } = useValidationAttachRequiredForField(
+      'tabs_list',
+      () => tabsList.value,
+      false,
+    );
 
     const updateTabsList = (tabs) => {
-      form.setValue('tabs_list', tabs);
-
-      if (tabs.length) {
-        form.setFieldError('tabs', undefined);
-      }
+      tabsList.value = tabs;
     };
+
+    watch(tabsList, asyncValidateRequiredRule);
 
     const showManageTabsModal = () => modals.show({
         name: MODALS.managePlaylistTabs,
@@ -102,8 +114,9 @@ export default {
       name,
       enabled,
       fullscreen,
+      interval,
       tabsList,
-      hasTabsError,
+      tabsErrorMessage,
       updateTabsList,
       showManageTabsModal,
     };

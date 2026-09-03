@@ -4,14 +4,14 @@
     :tooltip="t('eventsRecord.export')"
     :loading="downloading"
     icon="file_download"
-    @click="exportJson"
+    @click="download"
   />
   <v-btn
     v-else
     :loading="downloading"
     color="primary"
     variant="outlined"
-    @click="exportJson"
+    @click="download"
   >
     <v-icon class="mr-2">
       file_download
@@ -28,6 +28,8 @@ import { useI18n } from '@/hooks/i18n';
 import { useEventsRecordExportJson } from '../hooks/export-json';
 
 export default {
+  emits: ['exported'],
+
   props: {
     eventsRecordId: {
       type: String,
@@ -51,7 +53,7 @@ export default {
     },
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const eventIds = computed(() => (props.eventId ? [props.eventId] : props.eventIds));
 
@@ -60,11 +62,15 @@ export default {
       eventPattern: toRef(props, 'eventPattern'),
       eventsRecordId: toRef(props, 'eventsRecordId'),
     });
+    const download = async () => {
+      await exportJson();
+      emit('exported');
+    };
 
     return {
       t,
       downloading,
-      exportJson,
+      download,
     };
   },
 };

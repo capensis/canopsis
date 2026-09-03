@@ -1,6 +1,6 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="t('userInterface.footer')" indented>
+    <c-form-block-row :label="t('userInterface.footer')">
       <text-editor-field
         v-model="footerField"
         :label="t('userInterface.footer')"
@@ -11,7 +11,7 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.description')" indented>
+    <c-form-block-row :label="t('userInterface.description')">
       <text-editor-field
         v-model="loginPageDescriptionField"
         :label="t('userInterface.description')"

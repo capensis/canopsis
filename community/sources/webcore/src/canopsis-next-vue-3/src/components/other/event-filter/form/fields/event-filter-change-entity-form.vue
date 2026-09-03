@@ -5,7 +5,7 @@
     </span>
 
     <c-form-block>
-      <c-form-block-row :label="$t('externalData.title')" indented>
+      <c-form-block-row :label="$t('externalData.title')">
         <external-data-field
           v-model:external-data="externalDataField"
           :variables="templateVars.external_data"

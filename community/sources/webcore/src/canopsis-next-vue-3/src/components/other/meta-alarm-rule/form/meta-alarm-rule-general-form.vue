@@ -50,7 +50,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('metaAlarmRule.grouping')" indented>
+      <c-form-block-row :label="t('metaAlarmRule.grouping')">
         <meta-alarm-rule-type-field v-model="typeField" />
       </c-form-block-row>
 

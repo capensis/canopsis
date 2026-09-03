@@ -7,8 +7,6 @@
       :add-button-label="addButtonLabel || $t('modals.createPbehaviorException.addDate')"
       :disabled="disabled"
       :required="required"
-      :error-messages="errors.collect(name)"
-      :required-error-message="resolvedRequiredErrorMessage"
       @update:form="updateModel"
     >
       <template #item="{ index, remove }">
@@ -19,6 +17,16 @@
           @update:value="updateItemInArray(index, $event)"
           @delete="remove"
         />
+      </template>
+
+      <template #add-button="{ add }">
+        <c-btn-with-error
+          :error="addButtonError"
+          variant="outlined"
+          @click="add"
+        >
+          {{ addButtonLabel || $t('modals.createPbehaviorException.addDate') }}
+        </c-btn-with-error>
       </template>
     </c-form-block-array-field>
   </c-layout>
@@ -80,6 +88,12 @@ export default {
     const resolvedRequiredErrorMessage = computed(
       () => props.requiredErrorMessage || t('common.addAtLeastOneItem'),
     );
+    const errorMessages = computed(() => validator.errors.collect(props.name));
+    const addButtonError = computed(() => (
+      props.required && errorMessages.value.length
+        ? resolvedRequiredErrorMessage.value
+        : errorMessages.value[0] ?? ''
+    ));
 
     /**
      * Returns the current number of exception dates for min_value validation.
@@ -115,9 +129,8 @@ export default {
     onBeforeUnmount(detachMinValueRule);
 
     return {
-      errors: validator.errors,
       pbehaviorExdateItemToForm,
-      resolvedRequiredErrorMessage,
+      addButtonError,
       updateModel,
       updateItemInArray,
     };

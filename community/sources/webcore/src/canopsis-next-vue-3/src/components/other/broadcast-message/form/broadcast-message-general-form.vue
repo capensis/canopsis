@@ -1,6 +1,6 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="t('common.message')" indented>
+    <c-form-block-row :label="t('common.message')">
       <text-editor-field
         v-model="messageField"
         :label="t('common.message')"

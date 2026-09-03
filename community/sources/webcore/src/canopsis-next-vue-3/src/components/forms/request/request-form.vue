@@ -1,6 +1,11 @@
 <template>
   <div>
-    <c-form-block-row v-if="!hideUrl" :label="urlLabel || $t('common.url')" :depth="depth">
+    <c-form-block-row
+      v-if="!hideUrl"
+      :label="urlLabel || $t('common.url')"
+      :depth="depth"
+      :indented="indentedRows"
+    >
       <request-url-field
         :method="form.method"
         :url="form.url"
@@ -35,11 +40,16 @@
       </c-enabled-field>
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.request.timeoutSettings')" :depth="depth">
+    <c-form-block-row
+      :label="$t('common.request.timeoutSettings')"
+      :depth="depth"
+      :indented="indentedRows"
+    >
       <c-duration-field
         v-model:duration="timeout"
         :disabled="disabled"
         :units-label="$t('common.unit')"
+        :name="`${name}.timeout`"
         clearable
       />
     </c-form-block-row>
@@ -47,6 +57,7 @@
     <c-form-block-row
       :label="$t('common.request.repeatRequest')"
       :depth="depth"
+      :indented="indentedRows"
       :align-center="hideRepeat"
     >
       <span v-if="hideRepeat" class="font-italic">
@@ -60,7 +71,11 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.request.skipVerify')" :depth="depth">
+    <c-form-block-row
+      :label="$t('common.request.skipVerify')"
+      :depth="depth"
+      :align-center="alignSkipVerify"
+    >
       <c-enabled-field
         :model-value="form.skip_verify"
         :label="$t('common.request.skipVerify')"
@@ -99,7 +114,11 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.payload')" :depth="depth">
+    <c-form-block-row
+      :label="$t('common.payload')"
+      :depth="depth"
+      :indented="indentedRows"
+    >
       <c-payload-textarea-field
         :value="form.payload"
         :label="$t('common.payload')"
@@ -197,6 +216,14 @@ export default {
     depth: {
       type: [Number, String],
       default: 0,
+    },
+    indentedRows: {
+      type: Boolean,
+      default: false,
+    },
+    alignSkipVerify: {
+      type: Boolean,
+      default: false,
     },
   },
 

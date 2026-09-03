@@ -74,18 +74,11 @@ export default {
     const form = useForm({
       initialValues: playlistToForm(playlist.value),
     });
-    const { values, handleSubmit, submitting, reset, setFieldError, setFieldTouched } = form;
+    const { values, handleSubmit, submitting, reset } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      if (!values.value.tabs_list.length) {
-        setFieldTouched('tabs', true);
-        setFieldError('tabs', t('modals.createPlaylist.errors.emptyTabs'));
-
-        return;
-      }
-
       const result = await config.value.action?.(formToPlaylist(values.value));
 
       await config.value.afterSubmit?.(result);

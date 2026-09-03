@@ -130,6 +130,7 @@ export default {
       hasCreateAccess,
       hasUpdateAccess,
       hasDeleteAccess,
+      fetchList,
       updateOptions,
       showEditRoleModal,
       showDuplicateRoleModal,

@@ -13,7 +13,7 @@
       :disabled="fromConfig"
       required
     />
-    <c-text-field v-model="description" :label="t('common.description')" />
+    <c-text-field v-model="description" :label="t('common.description')" :max-length="500" />
   </c-layout>
 </template>
 
