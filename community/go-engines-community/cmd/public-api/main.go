@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
+	libtoken "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -27,8 +28,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -202,10 +201,9 @@ func newServices(ctx context.Context, opts api.Options, logger zerolog.Logger) (
 		return s, cleanup, fmt.Errorf("cannot create enforcer: %w", err)
 	}
 
-	tokenGenerator := token.NewJwtGenerator([]byte(os.Getenv(JwtSecretEnv)), canopsis.AppName, s.APIConfigProvider)
 	s.AuthProviders = []libsecurity.HttpProvider{
 		httpprovider.NewBearerProvider([]libsecurity.TokenProvider{
-			tokenprovider.NewTokenProvider(tokenGenerator, token.NewMongoStore(s.PrimaryDbClient, logger), userprovider.NewMongoProvider(s.PrimaryDbClient, s.APIConfigProvider), logger),
+			libtoken.NewProvider(s.PrimaryDbClient, userprovider.NewMongoProvider(s.PrimaryDbClient, s.APIConfigProvider)),
 		}),
 	}
 

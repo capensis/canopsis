@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/apitoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/associativetable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/auth"
@@ -329,6 +330,24 @@ func RegisterRoutes(
 			sharetokenRouter.DELETE("/:id",
 				middleware.Authorize(apisecurity.PermShareToken, model.PermissionDelete, enforcer, errorResponder),
 				sharetokenApi.Delete,
+			)
+		}
+
+		apiTokenAPI := apitoken.NewAPI(apitoken.NewStore(primaryDbClient, authorProvider), errorResponder)
+		apiTokenRouter := protected.Group("/api-tokens")
+		{
+			apiTokenRouter.POST("",
+				middleware.OnlyAuth(errorResponder),
+				middleware.SetAuthor(errorResponder),
+				apiTokenAPI.Create,
+			)
+			apiTokenRouter.GET("",
+				middleware.OnlyAuth(errorResponder),
+				apiTokenAPI.List,
+			)
+			apiTokenRouter.DELETE("/:id",
+				middleware.OnlyAuth(errorResponder),
+				apiTokenAPI.Delete,
 			)
 		}
 
