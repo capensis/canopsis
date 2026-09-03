@@ -26,14 +26,17 @@ type Response struct {
 
 // Base holds the lifecycle fields shared by every job type.
 type Base struct {
-	ID           string            `bson:"_id" json:"_id"`
-	Created      datetime.CpsTime  `bson:"created" json:"created"`
-	LastPing     datetime.CpsTime  `bson:"last_ping" json:"last_ping"`
-	Completed    *datetime.CpsTime `bson:"completed,omitempty" json:"completed"`
-	Status       string            `bson:"status" json:"status"`
-	Attempts     int64             `bson:"attempts" json:"attempts"`
-	DurationMS   int64             `bson:"duration_ms,omitempty" json:"duration_ms"`
-	ErrorMessage string            `bson:"error_message,omitempty"`
+	ID        string            `bson:"_id" json:"_id"`
+	Created   datetime.CpsTime  `bson:"created" json:"created"`
+	LastPing  datetime.CpsTime  `bson:"last_ping" json:"last_ping"`
+	Completed *datetime.CpsTime `bson:"completed,omitempty" json:"completed"`
+	Status    string            `bson:"status" json:"status"`
+	Attempts  int64             `bson:"attempts" json:"attempts"`
+	// LeaseGeneration is incremented every time a worker claims the job. It fences a
+	// worker which outlived its lease from updating the job after another worker claimed it.
+	LeaseGeneration int64  `bson:"lease_generation" json:"-"`
+	DurationMS      int64  `bson:"duration_ms,omitempty" json:"duration_ms"`
+	ErrorMessage    string `bson:"error_message,omitempty"`
 }
 
 func NewBase(id string) Base {

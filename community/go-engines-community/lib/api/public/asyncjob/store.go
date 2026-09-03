@@ -13,13 +13,16 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+// ErrLeaseLost reports that another worker owns the job's current lease.
+var ErrLeaseLost = errors.New("async job lease lost")
+
 // Store creates and updates the jobs of a single type in their own collection.
 // T is the job document, which is expected to embed Base inline.
-type Store[T any] struct {
+type Store[T Job] struct {
 	collection libmongo.DbCollection
 }
 
-func NewStore[T any](client libmongo.DbClient, collection string) *Store[T] {
+func NewStore[T Job](client libmongo.DbClient, collection string) *Store[T] {
 	return &Store[T]{
 		collection: client.Collection(collection),
 	}
@@ -65,48 +68,59 @@ func (s *Store[T]) GetUncompleted(ctx context.Context) (T, error) {
 	return job, nil
 }
 
-// SetOngoing moves a pending job to ongoing and reports whether it was still pending.
+// Claim moves a pending job to ongoing and returns its post-update document.
 // A false return means another worker already took the job - on a redelivery,
 // for instance - and the caller must not process it.
-func (s *Store[T]) SetOngoing(ctx context.Context, id string) (bool, error) {
-	res, err := s.collection.UpdateOne(ctx,
+//
+// LeaseGeneration is incremented atomically, so it can be used to fence workers
+// which lost their lease and were superseded by another worker.
+func (s *Store[T]) Claim(ctx context.Context, id string) (T, bool, error) {
+	var job T
+	err := s.collection.FindOneAndUpdate(ctx,
 		bson.M{"_id": id, "status": StatusPending},
 		bson.M{"$set": bson.M{
 			"status":    StatusOngoing,
 			"last_ping": datetime.NewCpsTime(),
+		}, "$inc": bson.M{
+			"lease_generation": 1,
 		}},
-	)
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&job)
 	if err != nil {
-		return false, err
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return job, false, nil
+		}
+
+		return job, false, err
 	}
 
-	return res.MatchedCount > 0, nil
+	return job, true, nil
 }
 
 // Ping refreshes last_ping, so a long running job can be told apart from a job left ongoing by a
-// worker which died. Handlers are expected to call it periodically.
-func (s *Store[T]) Ping(ctx context.Context, id string) error {
-	_, err := s.collection.UpdateOne(ctx,
-		bson.M{"_id": id},
-		bson.M{"$set": bson.M{"last_ping": datetime.NewCpsTime()}},
-	)
-
-	return err
+// worker which died. Handlers are expected to call it periodically. generation
+// must be the one returned by Claim.
+func (s *Store[T]) Ping(ctx context.Context, id string, generation int64) error {
+	return s.updateClaimed(ctx, id, generation, bson.M{
+		"$set": bson.M{"last_ping": datetime.NewCpsTime()},
+	})
 }
 
 // SetDone marks the job as successfully processed. set holds the type-specific result fields, it may be nil.
-func (s *Store[T]) SetDone(ctx context.Context, id string, d time.Duration, set bson.M) error {
-	return s.complete(ctx, id, StatusDone, "", d, set)
+func (s *Store[T]) SetDone(ctx context.Context, id string, generation int64, d time.Duration, set bson.M) error {
+	return s.complete(ctx, id, generation, StatusDone, "", d, set)
 }
 
 // SetFailed marks the job as failed, errorMessage being the reason reported to the user.
-func (s *Store[T]) SetFailed(ctx context.Context, id, errorMessage string, d time.Duration) error {
-	return s.complete(ctx, id, StatusFailed, errorMessage, d, nil)
+func (s *Store[T]) SetFailed(ctx context.Context, id string, generation int64, errorMessage string, d time.Duration) error {
+	return s.complete(ctx, id, generation, StatusFailed, errorMessage, d, nil)
 }
 
 func (s *Store[T]) complete(
 	ctx context.Context,
-	id, status, errorMessage string,
+	id string,
+	generation int64,
+	status, errorMessage string,
 	d time.Duration,
 	set bson.M,
 ) error {
@@ -124,14 +138,41 @@ func (s *Store[T]) complete(
 		update[k] = v
 	}
 
-	_, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": update})
-
-	return err
+	return s.updateClaimed(ctx, id, generation, bson.M{"$set": update})
 }
 
-// DeleteCompletedBefore deletes the jobs which completed before t and returns them,
-// so the files they own can be removed too.
-func (s *Store[T]) DeleteCompletedBefore(ctx context.Context, t datetime.CpsTime) ([]T, error) {
+func (s *Store[T]) updateClaimed(ctx context.Context, id string, generation int64, update bson.M) error {
+	res, err := s.collection.UpdateOne(ctx,
+		bson.M{
+			"_id":              id,
+			"status":           StatusOngoing,
+			"lease_generation": generation,
+		},
+		update,
+	)
+	if err != nil {
+		return err
+	}
+
+	if res.MatchedCount == 0 {
+		return ErrLeaseLost
+	}
+
+	return nil
+}
+
+// DeleteCompleted deletes one job only if it is still eligible for cleanup.
+func (s *Store[T]) DeleteCompleted(ctx context.Context, id string, t datetime.CpsTime) (bool, error) {
+	count, err := s.collection.DeleteOne(ctx, bson.M{
+		"_id":       id,
+		"status":    bson.M{"$in": bson.A{StatusDone, StatusFailed}},
+		"completed": bson.M{"$lt": t},
+	})
+	return count > 0, err
+}
+
+// FindCompletedBefore returns completed jobs eligible for cleanup.
+func (s *Store[T]) FindCompletedBefore(ctx context.Context, t datetime.CpsTime) ([]T, error) {
 	filter := bson.M{
 		"status":    bson.M{"$in": bson.A{StatusDone, StatusFailed}},
 		"completed": bson.M{"$lt": t},
@@ -144,15 +185,6 @@ func (s *Store[T]) DeleteCompletedBefore(ctx context.Context, t datetime.CpsTime
 
 	var jobs []T
 	err = cursor.All(ctx, &jobs)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(jobs) == 0 {
-		return nil, nil
-	}
-
-	_, err = s.collection.DeleteMany(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

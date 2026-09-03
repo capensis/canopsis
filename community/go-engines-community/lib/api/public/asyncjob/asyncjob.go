@@ -22,3 +22,9 @@ type Message struct {
 type Handler interface {
 	Handle(ctx context.Context, jobID string) error
 }
+
+// Job is a persisted async-job document.
+// Embedding Base provides this method.
+type Job interface {
+	JobID() string
+}
