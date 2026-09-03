@@ -7,7 +7,7 @@
       location="top"
     >
       <template #activator="{ props: activatorProps }">
-        <span v-bind="activatorProps">
+        <span v-bind="activatorProps" class="permissions-table-cell__checkbox">
           <c-light-checkbox
             :disabled="disabled || !role.editable || checkbox.disabled"
             :indeterminate="checkbox.indeterminate"
@@ -78,8 +78,12 @@ export default {
 .permissions-table-cell {
   white-space: nowrap;
 
-  .c-light-checkbox + .c-light-checkbox {
-    margin-left: 8px;
+  &__checkbox {
+    display: block;
+
+    & + & {
+      margin-top: 4px;
+    }
   }
 }
 </style>

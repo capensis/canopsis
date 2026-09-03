@@ -8,7 +8,7 @@
         :name="countFieldName"
         :required="isRequired"
         :disabled="disabled"
-        @update:value="updateField('retry_count', $event)"
+        @update:value="updateCount"
       />
     </div>
 
@@ -60,7 +60,7 @@ export default {
     },
 
     isDurationDisabled() {
-      return this.disabled || this.value.retry_count === 0;
+      return this.disabled || !isNumber(this.value.retry_count) || this.value.retry_count === 0;
     },
 
     isRequired() {
@@ -76,16 +76,25 @@ export default {
   },
 
   methods: {
-    updateDelay(duration) {
-      if (duration.unit || duration.value) {
-        this.updateField('retry_delay', duration);
-      } else {
-        this.updateModel({
-          ...this.value,
-          retry_delay: duration,
-          retry_count: undefined,
-        });
+    updateCount(retryCount) {
+      if (isNumber(retryCount) && retryCount > 0) {
+        this.updateField('retry_count', retryCount);
+
+        return;
       }
+
+      this.updateModel({
+        ...this.value,
+        retry_count: retryCount || undefined,
+        retry_delay: {
+          value: undefined,
+          unit: undefined,
+        },
+      });
+    },
+
+    updateDelay(duration) {
+      this.updateField('retry_delay', duration);
     },
   },
 };

@@ -167,7 +167,7 @@ export default {
       withInstructions: toRef(props, 'withInstructions'),
     });
 
-    const column = computed(() => props.modelValue);
+    const column = toRef(props, 'modelValue');
     const columnLabelFieldName = computed(() => `${props.name}.label`);
 
     const changeColumn = (columnValue) => {

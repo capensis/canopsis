@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, nextTick, toRef, watch } from 'vue';
 
 import {
   patternRuleToForm,
@@ -52,14 +52,13 @@ import {
 } from '@/helpers/entities/pattern/form';
 
 import { useField } from '@/hooks/form';
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import PatternRuleField from './pattern-rule-field.vue';
 
 export default {
   emits: ['update:rules'],
   components: { PatternRuleField },
-  mixins: [formArrayMixin],
   props: {
     rules: {
       type: Array,
@@ -82,13 +81,17 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const fieldName = computed(() => props.name);
+  setup(props, { emit }) {
+    const { addItemIntoArray, updateItemInArray, removeItemFromArray } = useArrayModelField(
+      props,
+      emit,
+    );
+    const fieldName = toRef(props, 'name');
     const enabledRulesCount = () => props.rules.filter((rule) => {
-        const attribute = props.attributes.find(({ value }) => value === rule.attribute);
+      const attribute = props.attributes.find(({ value }) => value === rule.attribute);
 
-        return !attribute?.options?.disabled;
-      }).length;
+      return !attribute?.options?.disabled;
+    }).length;
     const { errorMessage, validate } = useField(
       fieldName,
       () => (enabledRulesCount() ? true : 'Required'),
@@ -98,47 +101,35 @@ export default {
       },
     );
 
-    return {
-      rulesErrorMessage: errorMessage,
-      validateRulesField: validate,
-    };
-  },
-  computed: {
-    rulesMap() {
-      return this.attributes.reduce((acc, { value, options = {} }) => {
+    const rulesMap = computed(() =>
+      props.attributes.reduce((acc, { value, options = {} }) => {
         acc[value] = options;
 
         return acc;
-      }, {});
-    },
+      }, {}));
 
-    hasRulesErrors() {
-      return !!this.rulesErrorMessage;
-    },
-  },
-  watch: {
-    rules() {
-      this.$nextTick(this.validateRulesField);
-    },
-  },
-  methods: {
-    getOptionsByRule(rule) {
-      return this.rulesMap[rule.attribute] ?? {};
-    },
+    const hasRulesErrors = computed(() => !!errorMessage.value);
 
-    getRuleProps(rule) {
-      const { operators, type, disabled, ...props } = this.getOptionsByRule(rule);
+    const getOptionsByRule = rule => rulesMap.value[rule.attribute] ?? {};
+
+    const getRuleProps = (rule) => {
+      const {
+        operators,
+        type,
+        disabled,
+        ...ruleProps
+      } = getOptionsByRule(rule);
 
       return {
-        ...props,
-        disabled: disabled || this.readonly || this.disabled,
+        ...ruleProps,
+        disabled: disabled || props.readonly || props.disabled,
         type,
         operators: operators ?? getOperatorsByRule(rule, type),
       };
-    },
+    };
 
-    getUpdatedRule(rule, newRule) {
-      const { defaultValue, operators } = this.getRuleProps(newRule);
+    const getUpdatedRule = (rule, newRule) => {
+      const { defaultValue, operators } = getRuleProps(newRule);
 
       const updatedRule = { ...newRule };
 
@@ -164,19 +155,32 @@ export default {
       }
 
       return updatedRule;
-    },
+    };
 
-    updateRule(index, newRule) {
-      const rule = this.rules[index];
+    const updateRule = (index, newRule) => {
+      const rule = props.rules[index];
 
-      this.updateItemInArray(index, this.getUpdatedRule(rule, newRule));
-    },
+      updateItemInArray(index, getUpdatedRule(rule, newRule));
+    };
 
-    addFilterRule() {
-      const [firstAttribute] = this.attributes;
+    const addFilterRule = () => {
+      const [firstAttribute] = props.attributes;
 
-      this.addItemIntoArray(patternRuleToForm({ field: firstAttribute?.value }));
-    },
+      addItemIntoArray(patternRuleToForm({ field: firstAttribute?.value }));
+    };
+
+    watch(
+      () => props.rules,
+      () => nextTick(validate),
+    );
+
+    return {
+      hasRulesErrors,
+      getRuleProps,
+      updateRule,
+      addFilterRule,
+      removeItemFromArray,
+    };
   },
 };
 </script>

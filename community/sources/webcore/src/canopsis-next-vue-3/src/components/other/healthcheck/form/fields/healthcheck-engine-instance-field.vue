@@ -24,10 +24,9 @@
           :label="$t('common.minimal')"
           :disabled="!value.enabled"
           :required="value.enabled"
-          :max="+value.optimal"
+          :max="getNumberRuleValue(value.optimal)"
           :min="0"
           :error-messages="minimalErrors"
-          hide-details="auto"
           @update:value="updateField('minimal', $event)"
         />
       </c-layout>
@@ -45,9 +44,8 @@
           :label="$t('common.optimal')"
           :disabled="!value.enabled"
           :required="value.enabled"
-          :min="+value.minimal"
+          :min="getNumberRuleValue(value.minimal)"
           :error-messages="optimalErrors"
-          hide-details="auto"
           @update:value="updateField('optimal', $event)"
         />
       </c-layout>
@@ -101,6 +99,10 @@ export default {
   },
 
   methods: {
+    getNumberRuleValue(value) {
+      return value === null || value === undefined || value === '' ? undefined : Number(value);
+    },
+
     updateField(field, value) {
       this.$emit('input', {
         ...this.value,

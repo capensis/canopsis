@@ -63,17 +63,19 @@ export default {
       eventsRecords.value = eventsRecords.value.map((eventsRecord) => {
         const recording = eventsRecordRecordingsById.value[eventsRecord._id];
         const resending = eventsRecordResendingsById.value[eventsRecord._id];
+        const liveCount = recording?.n;
 
         return {
           ...eventsRecord,
+          count: liveCount ?? eventsRecord.count ?? 0,
           is_recording: !!recording,
           is_resending: !!resending,
-          progress: recording
-            ? `${recording.n ?? 0}${recording.n && eventsRecord.count ? `/${eventsRecord.count}` : ''}`
-            : undefined,
+          progress: recording ? String(liveCount ?? 0) : undefined,
         };
       });
     };
+
+    const { fetchCurrentEventsRecord } = useEventRecordCurrentPolling();
 
     const {
       pending,
@@ -89,6 +91,8 @@ export default {
           },
         });
 
+        await fetchCurrentEventsRecord();
+
         eventsRecords.value = response.data;
         meta.value = response.meta;
         prepareEventsRecords();
@@ -97,7 +101,6 @@ export default {
 
     const { options, updateOptions } = useQueryOptions(query, updateQuery);
     const { startRecording, stopRecording } = useEventsRecordRecording(fetchList);
-    useEventRecordCurrentPolling();
 
     watch([eventsRecordRecordingsById, eventsRecordResendingsById], prepareEventsRecords);
 

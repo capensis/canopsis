@@ -67,8 +67,13 @@ export default {
         return;
       }
 
-      name.value = selectedItems[0].value;
-      type.value = selectedItems[0].type;
+      const [selectedItem] = selectedItems;
+
+      name.value = selectedItem.value;
+
+      if (selectedItem.type !== undefined) {
+        type.value = selectedItem.type;
+      }
     };
 
     return {

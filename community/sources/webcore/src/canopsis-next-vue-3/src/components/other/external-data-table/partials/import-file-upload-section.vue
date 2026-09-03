@@ -150,6 +150,7 @@ export default {
 
 <style lang="scss" scoped>
 .filename {
+  width: 100%;
   padding: 12px;
   border: 2px solid;
   border-radius: 15px;

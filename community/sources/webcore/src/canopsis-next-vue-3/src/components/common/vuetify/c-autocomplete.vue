@@ -5,6 +5,7 @@
     :item-props="itemProps ? getItemProps : undefined"
     :name="inputName"
     :error-messages="errorMessages"
+    :density="density"
     class="c-field c-autocomplete"
     @blur="onBlur"
   >
@@ -68,3 +69,47 @@ const getItemProps = (item) => {
   return props.itemProps;
 };
 </script>
+
+<style lang="scss">
+.c-autocomplete {
+  &.v-autocomplete--chips .v-field.v-field,
+  .v-field.v-field:has(.v-autocomplete__selection .v-chip) {
+    height: auto;
+    min-height: 48px;
+  }
+
+  &.v-autocomplete--chips .v-field,
+  .v-field:has(.v-autocomplete__selection .v-chip) {
+    .v-field__field,
+    .v-field__input,
+    .v-field__append-inner,
+    .v-field__prepend-inner {
+      height: auto;
+      min-height: 48px;
+    }
+
+    .v-field__input {
+      align-items: flex-start;
+      flex-wrap: wrap;
+      padding-top: 18px;
+      padding-bottom: 4px;
+    }
+  }
+
+  .v-autocomplete__selection {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .v-chip {
+    max-width: 100%;
+  }
+
+  .v-chip__content {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+</style>

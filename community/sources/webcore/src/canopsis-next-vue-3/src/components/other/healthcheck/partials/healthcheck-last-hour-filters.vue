@@ -41,6 +41,7 @@ export default {
 .healthcheck-last-hour-filters {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
 
   & > * {
     flex-grow: 0;

@@ -180,7 +180,7 @@
         />
       </template>
 
-      <template v-for="header in sortedHeaders" :key="header.value" #[header.value]="{ item }">
+      <template v-for="header in dataHeaders" :key="header.value" #[header.value]="{ item }">
         <span
           :title="item[header.value]?.initial_value ?? item[header.value]"
           :class="{ 'table-cell__content--error': item[header.value]?.transform_error }"
@@ -473,6 +473,9 @@ export default {
       },
       emit,
     );
+    const dataHeaders = computed(() => sortedHeaders.value.filter(
+      header => header.value !== 'actions',
+    ));
 
     return {
       t,
@@ -498,6 +501,7 @@ export default {
       resizingMode,
       sortedHeaders,
       sortedHeadersWithWidth,
+      dataHeaders,
 
       startColumnResize,
       toggleColumnEditingMode,

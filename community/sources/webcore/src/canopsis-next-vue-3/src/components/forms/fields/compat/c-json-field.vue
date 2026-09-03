@@ -78,7 +78,7 @@
 
 <script setup>
 import { isString } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 
 import { stringifyJson } from '@/helpers/json';
 import { convertPayloadToJson } from '@/helpers/payload-json';
@@ -145,9 +145,7 @@ const props = defineProps({
 const emit = defineEmits(['update:value']);
 
 const { t } = useI18n();
-
-const fieldName = computed(() => props.name);
-const { errorMessage, setErrors } = useField(fieldName, undefined, {
+const { errorMessage, setErrors } = useField(toRef(props, 'name'), undefined, {
   validateOnValueUpdate: false,
 });
 

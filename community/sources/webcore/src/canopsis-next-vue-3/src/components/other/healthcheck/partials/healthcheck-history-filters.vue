@@ -65,6 +65,7 @@ export default {
 .healthcheck-history-filters {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
 
   & > * {
     flex-grow: 0;

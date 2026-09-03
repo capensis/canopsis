@@ -15,10 +15,12 @@ export const vuetify = createVuetify({
   defaults: {
     VAutocomplete: {
       color: 'primary',
+      density: 'compact',
       variant: 'underlined',
     },
     VCombobox: {
       color: 'primary',
+      density: 'compact',
       variant: 'underlined',
     },
     VField: {
@@ -29,15 +31,18 @@ export const vuetify = createVuetify({
     },
     VSelect: {
       color: 'primary',
+      density: 'compact',
       variant: 'underlined',
       transition: 'fade-transition',
     },
     VTextarea: {
       color: 'primary',
+      density: 'compact',
       variant: 'underlined',
     },
     VTextField: {
       color: 'primary',
+      density: 'compact',
       variant: 'underlined',
     },
     VTooltip: {

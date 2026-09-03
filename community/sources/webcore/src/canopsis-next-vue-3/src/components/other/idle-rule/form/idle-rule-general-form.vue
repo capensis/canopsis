@@ -12,7 +12,7 @@
         <c-priority-field v-model="priorityField" />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isEntityType" :label="t('common.type')" indented>
+      <c-form-block-row v-if="!isEntityType" :label="t('common.type')">
         <idle-rule-alarm-type-field v-model="alarmConditionField" :label="t('common.type')" />
       </c-form-block-row>
 

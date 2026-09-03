@@ -1,6 +1,6 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="t('userInterface.appTitle')" indented>
+    <c-form-block-row :label="t('userInterface.appTitle')">
       <text-editor-field
         v-model="appTitleField"
         :disabled="disabled"
@@ -30,7 +30,7 @@
       <c-timezone-field v-model="timezoneField" disabled />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.logo')" indented align-center>
+    <c-form-block-row :label="t('userInterface.logo')" align-center>
       <file-selector
         v-model="logoField"
         ref="fileSelectorElement"
@@ -53,7 +53,7 @@
       </file-selector>
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.versionDescriptionTooltip')" indented>
+    <c-form-block-row :label="t('userInterface.versionDescriptionTooltip')">
       <text-editor-field
         v-model="versionDescriptionField"
         :label="t('userInterface.versionDescriptionTooltip')"

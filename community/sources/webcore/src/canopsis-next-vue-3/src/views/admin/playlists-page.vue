@@ -23,7 +23,9 @@
       :has-access="hasCreateAccess"
       @create="showCreatePlaylistModal"
       @refresh="fetchList"
-    />
+    >
+      <span>{{ t('modals.createPlaylist.create.title') }}</span>
+    </c-fab-btn>
   </div>
 </template>
 
@@ -143,6 +145,7 @@ export default {
       hasCreateAccess,
       hasUpdateAccess,
       hasDeleteAccess,
+      t,
       fetchList,
       updateOptions,
       showRemovePlaylistModal,

@@ -1,40 +1,39 @@
 <template>
-  <c-layout class="date-time-splitted-field" column>
-    <c-layout :style="rowStyle" gap="2">
-      <div class="date-time-splitted-field__date">
-        <c-date-picker-field
-          :value="dateValue"
-          :label="!reverse || fullDay ? label : ''"
-          :placeholder="placeholder"
+  <v-input :error-messages="errorMessage ? [errorMessage] : []">
+    <c-layout class="date-time-splitted-field" column>
+      <c-layout :style="rowStyle" gap="2">
+        <div class="date-time-splitted-field__date">
+          <c-date-picker-field
+            :value="dateValue"
+            :label="!reverse || fullDay ? label : ''"
+            :placeholder="placeholder"
+            :error="!!errorMessage"
+            :disabled="disabled"
+            :control-variant="controlVariant"
+            :min="min"
+            :max="max"
+            header-color="primary"
+            hide-details
+            @update:value="updateDate"
+          />
+        </div>
+        <time-picker-field
+          v-if="!fullDay"
+          :value="timeValue"
+          :label="reverse ? label : ''"
           :error="!!errorMessage"
           :disabled="disabled"
-          :control-variant="controlVariant"
-          :min="min"
-          :max="max"
-          header-color="primary"
+          class="date-time-splitted-field__time"
           hide-details
-          @update:value="updateDate"
+          @update:value="updateTime"
         />
-      </div>
-      <time-picker-field
-        v-if="!fullDay"
-        :value="timeValue"
-        :label="reverse ? label : ''"
-        :error="!!errorMessage"
-        :disabled="disabled"
-        class="date-time-splitted-field__time"
-        hide-details
-        @update:value="updateTime"
-      />
+      </c-layout>
     </c-layout>
-    <div v-if="errorMessage" class="v-text-field__details mt-2">
-      <v-messages :messages="[errorMessage]" color="error" active />
-    </div>
-  </c-layout>
+  </v-input>
 </template>
 
 <script>
-import { computed, watch } from 'vue';
+import { computed, toRef, watch } from 'vue';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
@@ -97,7 +96,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const fieldName = computed(() => props.name);
+    const fieldName = toRef(props, 'name');
     const getValidatedValue = (value) => {
       if (!value) {
         return value;

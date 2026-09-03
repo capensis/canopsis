@@ -159,7 +159,13 @@ export default {
 <style lang="scss">
 .date-time-picker {
   &__sheet {
+    width: 360px;
+    max-width: 360px;
     overflow-x: hidden;
+
+    .v-field__input {
+      padding: 0;
+    }
   }
 
   .v-date-picker {

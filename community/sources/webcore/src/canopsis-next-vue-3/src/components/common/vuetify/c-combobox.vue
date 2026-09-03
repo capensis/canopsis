@@ -4,6 +4,7 @@
     v-model="comboboxValue"
     :name="inputName"
     :error-messages="errorMessages"
+    :density="density"
     class="c-field c-combobox"
     @blur="handleBlur"
     @update:menu="handleMenuUpdate"

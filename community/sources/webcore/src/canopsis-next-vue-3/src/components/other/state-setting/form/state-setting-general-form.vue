@@ -25,7 +25,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('stateSetting.computeMethod')" indented>
+      <c-form-block-row :label="t('stateSetting.computeMethod')">
         <state-setting-method-field v-model="method" />
       </c-form-block-row>
     </c-form-block>

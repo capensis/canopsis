@@ -51,11 +51,11 @@
         <snmp-rule-form-state-form v-model:form="state" :items="selectedModuleMibObjects" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.tag', 2)" indented>
+      <c-form-block-row :label="t('common.tag', 2)">
         <snmp-rule-form-tags-field v-model:form="tags" :items="selectedModuleMibObjects" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.customField', 2)" indented>
+      <c-form-block-row :label="t('common.customField', 2)">
         <snmp-rule-form-extra-field v-model:form="extra" :items="selectedModuleMibObjects" />
       </c-form-block-row>
     </c-form-block>

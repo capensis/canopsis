@@ -13,6 +13,10 @@
   >
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
+        <v-list-item-title>
+          {{ item?.text }}
+        </v-list-item-title>
+
         <template v-if="item?.alias" #append>
           <c-simple-tooltip :content="`infos.${item.originalValue}.value`" top>
             <template #activator="{ props: activatorProps }">
@@ -106,7 +110,7 @@ export default {
     },
 
     selectionTitle(item) {
-      return item?.title ?? this.selectedItem?.text ?? '';
+      return item?.text ?? item?.title ?? this.selectedItem?.text ?? '';
     },
 
     updateValue(value) {

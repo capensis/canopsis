@@ -1,35 +1,40 @@
 <template>
-  <c-layout :justify="justifyEnd ? 'end' : 'center'" column>
-    <c-layout v-if="splitted" align="center" justify="space-between">
-      <v-btn :disabled="disabled" class="mr-3" @click="shown = true">
-        {{ displayLabel }}
-      </v-btn>
+  <v-input>
+    <c-layout :justify="justifyEnd ? 'end' : 'center'" column>
+      <c-layout v-if="splitted" align="center" justify="space-between">
+        <v-btn :disabled="disabled" class="mr-3" @click="shown = true">
+          {{ displayLabel }}
+        </v-btn>
 
-      <div :style="style" class="pa-1 text-center">
-        {{ colorValue }}
-      </div>
+        <div :style="style" class="pa-1 text-center">
+          {{ colorValue }}
+        </div>
+      </c-layout>
+
+      <c-layout
+        :justify="justifyEnd ? 'end' : 'center'"
+        class="color-picker__button__wrapper"
+        align="center"
+      >
+        <v-menu v-model="shown" :close-on-content-click="false" location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <c-btn-with-error
+              v-bind="activatorProps"
+              :error="buttonError"
+              :style="style"
+              :disabled="disabled"
+            >
+              <span v-if="!hideLabel">{{ displayLabel }}</span>
+            </c-btn-with-error>
+          </template>
+
+          <v-card>
+            <v-color-picker v-model="colorValue" :mode="type" show-swatches />
+          </v-card>
+        </v-menu>
+      </c-layout>
     </c-layout>
-
-    <c-layout
-      :justify="justifyEnd ? 'end' : 'center'"
-      class="color-picker__button__wrapper"
-      align="center"
-    >
-      <v-menu v-model="shown" :close-on-content-click="false" location="bottom">
-        <template #activator="{ props: activatorProps }">
-          <v-btn v-bind="activatorProps" :style="style" :disabled="disabled">
-            <span v-if="!hideLabel">{{ displayLabel }}</span>
-          </v-btn>
-        </template>
-
-        <v-card>
-          <v-color-picker v-model="colorValue" :mode="type" hide-inputs />
-        </v-card>
-      </v-menu>
-    </c-layout>
-
-    <v-messages v-if="errorMessages.length" :messages="errorMessages" color="error" />
-  </c-layout>
+  </v-input>
 </template>
 
 <script>
@@ -109,6 +114,7 @@ export default {
     });
 
     const displayLabel = computed(() => props.label ?? t('common.selectColor'));
+    const buttonError = computed(() => errors.value[0] ?? '');
 
     const style = computed(() => ({
       backgroundColor: colorValue.value,
@@ -138,7 +144,7 @@ export default {
       colorValue,
       displayLabel,
       style,
-      errorMessages: errors,
+      buttonError,
       validate,
     };
   },

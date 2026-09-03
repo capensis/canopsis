@@ -1,4 +1,4 @@
-import { computed, inject, unref } from 'vue';
+import { computed, inject, toRef, unref } from 'vue';
 
 import { useModalsStore } from '@/plugins/modals/stores';
 
@@ -62,7 +62,7 @@ export const useModals = () => {
 export const useInnerModal = (props) => {
   const modals = useModals();
 
-  const modal = computed(() => props.modal);
+  const modal = toRef(props, 'modal');
   const config = computed(() => modal.value?.config ?? {});
 
   const close = () => modals.hide({ id: props.modal?.id });

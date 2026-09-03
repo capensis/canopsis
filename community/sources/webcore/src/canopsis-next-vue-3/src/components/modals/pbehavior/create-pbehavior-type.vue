@@ -1,6 +1,8 @@
 <template>
   <v-form @submit.prevent="submit">
     <c-modal-wrapper text-class="position-relative" close>
+      <c-progress-overlay :pending="pendingPriority" />
+
       <template #title>
         <span>{{ title }}</span>
       </template>
@@ -19,7 +21,7 @@
         </v-btn>
 
         <v-btn
-          :disabled="submitting"
+          :disabled="submitting || pendingPriority"
           :loading="submitting"
           color="primary"
           type="submit"
@@ -100,12 +102,12 @@ export default {
       try {
         pendingPriority.value = true;
 
-        const { data } = await fetchNextPbehaviorTypePriority();
+        const { priority } = await fetchNextPbehaviorTypePriority();
 
         reset({
           ...values.value,
 
-          priority: data,
+          priority,
         });
         updateOriginalForm();
       } finally {

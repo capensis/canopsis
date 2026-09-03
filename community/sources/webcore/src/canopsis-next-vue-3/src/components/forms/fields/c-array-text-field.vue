@@ -1,12 +1,14 @@
 <template>
   <c-layout column>
-    <v-label v-if="label" :class="{ 'text-error': errorMessages.length > 0 }" class="mb-2">
+    <v-label v-if="label" :class="{ 'text-error': preparedErrorMessages.length > 0 }" class="mb-2">
+      <span v-if="required" class="text-error"> * </span>
       {{ label }}
     </v-label>
     <c-layout v-for="(item, index) in values" :key="item.key" align="center">
       <c-text-field
         :model-value="values[index].value"
-        :validation-rules="rules"
+        :required="required"
+        :max-length="maxLength"
         :disabled="disabled"
         :label="$t('common.value')"
         :name="`${name}.${item.key}.value`"
@@ -15,29 +17,25 @@
       />
       <c-action-btn v-if="!disabled" type="delete" @click="removeItemFromArray(index)" />
     </c-layout>
-    <v-messages
-      v-if="errorMessages.length > 0"
-      :messages="errorMessages"
-      color="error"
-      class="mb-2"
-    />
     <div>
-      <v-btn
+      <c-btn-with-error
         :disabled="disabled"
-        :color="errorMessages.length ? 'error' : 'primary'"
+        :error="errorMessage"
         variant="outlined"
         @click="addItem"
       >
         {{ $t('common.add') }}
-      </v-btn>
+      </c-btn-with-error>
     </div>
   </c-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, toRef, watch } from 'vue';
 
 import { uid } from '@/helpers/uid';
+
+import { useField } from '@/hooks/form';
 
 export default {
   props: {
@@ -74,11 +72,31 @@ export default {
   emits: ['change', 'update:values'],
 
   setup(props, { emit }) {
-    const rules = computed(() => (props.maxLength ? { max: props.maxLength } : null));
+    const fieldName = computed(() => props.name || props.label || 'values');
+    const rules = computed(() => (props.required ? { required: true } : null));
+    const { errorMessage, setValue, validate } = useField(fieldName, rules, {
+      initialValue: props.values,
+      label: toRef(() => props.label || props.name),
+      validateOnValueUpdate: false,
+    });
+
+    const preparedErrorMessages = computed(() => {
+      if (props.errorMessages.length) {
+        return props.errorMessages;
+      }
+
+      return errorMessage.value ? [errorMessage.value] : [];
+    });
+    const errorMessageText = computed(() => preparedErrorMessages.value.join(', '));
 
     const updateValues = (values) => {
       emit('update:values', values);
       emit('change', values);
+      setValue(values, false);
+
+      if (errorMessage.value) {
+        validate();
+      }
     };
 
     const updateItemValue = (index, value) => updateValues(
@@ -92,8 +110,14 @@ export default {
      */
     const addItem = () => updateValues([...props.values, { key: uid(), value: '' }]);
 
+    watch(
+      () => props.values,
+      value => setValue(value, false),
+    );
+
     return {
-      rules,
+      preparedErrorMessages,
+      errorMessage: errorMessageText,
 
       addItem,
       updateItemValue,
@@ -102,3 +126,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-label.text-error {
+  opacity: 1;
+}
+</style>

@@ -17,10 +17,12 @@
         :payload-variables="templateVars.request"
         :url-help-text="t('externalAuthToken.urlHelp')"
         name="request"
+        indented-rows
+        align-skip-verify
         @update:form="request = $event"
       />
 
-      <c-form-block-row :label="t('common.token')" top-border>
+      <c-form-block-row :label="t('common.token')" top-border indented>
         <c-payload-text-field
           v-if="allowVariables"
           :value="template"
@@ -61,7 +63,12 @@
       </c-form-block-row>
 
       <c-form-block-row :label="t('externalAuthToken.tokenExpirationTime')">
-        <c-duration-field v-model:duration="expirationDuration" required same-width />
+        <c-duration-field
+          v-model:duration="expirationDuration"
+          name="expiration_duration"
+          required
+          same-width
+        />
       </c-form-block-row>
     </c-form-block>
   </c-layout>

@@ -10,6 +10,7 @@
     :name="name"
     item-text="value"
     item-value="value"
+    class="c-entity-info-property-key-field"
     return-object
     @update:value="changeSelectedItems"
     @fetch="fetchItems"
@@ -86,3 +87,21 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-entity-info-property-key-field {
+  :deep(.v-field__input) {
+    min-width: 0;
+  }
+
+  :deep(.v-select__selection),
+  :deep(.v-select__selection-text) {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+</style>

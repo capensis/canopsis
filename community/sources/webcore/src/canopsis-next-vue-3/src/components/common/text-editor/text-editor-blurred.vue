@@ -1,27 +1,24 @@
 <template>
   <div class="text-editor-blurred" @click="$emit('click', $event)">
-    <v-field
-      :label="label"
-      :dirty="Boolean(value)"
-      :disabled="disabled"
-      variant="filled"
-      active
-    >
-      <template #default="{ props: fieldProps }">
-        <div v-bind="fieldProps" @click="wrapperClickHandler">
-          <c-compiled-template
-            :template="value"
-            :class="{ 'text-editor-blurred__disabled': disabled }"
-          />
-        </div>
-      </template>
-    </v-field>
-
-    <v-messages
-      v-if="!hideDetails"
-      :messages="errorMessages"
-      color="error"
-    />
+    <v-input :error-messages="errorMessages" :hide-details="hideDetails">
+      <v-field
+        :label="label"
+        :dirty="Boolean(value)"
+        :disabled="disabled"
+        :error="errorMessages.length > 0"
+        variant="filled"
+        active
+      >
+        <template #default="{ props: fieldProps }">
+          <div v-bind="fieldProps" @click="wrapperClickHandler">
+            <c-compiled-template
+              :template="value"
+              :class="{ 'text-editor-blurred__disabled': disabled }"
+            />
+          </div>
+        </template>
+      </v-field>
+    </v-input>
   </div>
 </template>
 

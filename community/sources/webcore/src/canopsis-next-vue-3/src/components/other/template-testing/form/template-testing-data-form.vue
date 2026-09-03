@@ -28,7 +28,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('templateTesting.testData')" indented>
+      <c-form-block-row :label="t('templateTesting.testData')">
         <c-json-field
           ref="jsonFieldElement"
           :value="bodyField"
@@ -48,7 +48,7 @@
         </c-json-field>
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isEventType" :label="t('common.header', 2)" indented>
+      <c-form-block-row v-if="!isEventType" :label="t('common.header', 2)">
         <request-headers-field
           :headers="headersField"
           name="headers"

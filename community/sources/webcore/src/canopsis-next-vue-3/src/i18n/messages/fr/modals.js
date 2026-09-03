@@ -1237,7 +1237,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Importer des enregistrements',
+      title: 'Ajouter un enregistrement',
     },
     edit: {
       title: 'Modifier l\'enregistrement',
@@ -1245,6 +1245,9 @@ export default {
     duplicate: {
       title: 'Dupliquer',
     },
+  },
+  importExternalDataTableRecords: {
+    title: 'Importer des enregistrements',
   },
   createExternalAuthToken: {
     create: {

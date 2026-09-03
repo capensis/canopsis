@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { computed, nextTick, ref } from 'vue';
+import { nextTick, ref, toRef } from 'vue';
 
 import { useAdvancedSearchHistory } from '../hooks/advanced-search-history';
 
@@ -82,7 +82,7 @@ export default {
       getItemPlaceholderStyle,
       listMinWidth,
       updateListWidth,
-    } = useAdvancedSearchHistory(computed(() => props.searches));
+    } = useAdvancedSearchHistory(toRef(props, 'searches'));
 
     /**
      * Recalculates list width after the menu content is mounted.

@@ -35,17 +35,12 @@
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="!activeImportFileId || submitButton.loading || submitting"
+          :disabled="!activeImportFileId || submitButton.disabled || submitButton.loading || submitting"
+          :loading="submitButton.loading"
           color="primary"
           type="submit"
         >
           {{ submitButton.text }}
-          <v-progress-circular
-            v-if="submitButton.loading"
-            class="ml-2"
-            size="24"
-            indeterminate
-          />
         </v-btn>
       </template>
     </c-modal-wrapper>
@@ -124,7 +119,7 @@ export default {
     };
 
     const title = computed(
-      () => config.value.title || t('modals.createExternalDataTableRecord.create.title'),
+      () => config.value.title || t('modals.importExternalDataTableRecords.title'),
     );
 
     const submitButton = computed(() => {

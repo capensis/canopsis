@@ -1,12 +1,12 @@
 <template>
   <widget-settings-item :title="$t('settings.exportCsv.title')">
     <c-csv-separator-field
-      :value="form.exportCsvSeparator"
+      :value="modelValue.exportCsvSeparator"
       @update:value="updateField('exportCsvSeparator', $event)"
     />
     <c-select
       v-if="datetimeFormat"
-      :model-value="form.exportCsvDatetimeFormat"
+      :model-value="modelValue.exportCsvDatetimeFormat"
       :items="formats"
       :label="$t('settings.exportCsv.fields.datetimeFormat')"
       item-title="text"
@@ -18,7 +18,7 @@
     </h4>
     <c-columns-field
       v-if="withoutTemplate"
-      :model-value="form.widgetExportColumns"
+      :model-value="modelValue.widgetExportColumns"
       :items="items"
       :label="$t('settings.exportColumnNames')"
       :type="type"
@@ -35,8 +35,8 @@
     />
     <c-columns-with-template-field
       v-else
-      :model-value="form.widgetExportColumns"
-      :template="form.widgetExportColumnsTemplate"
+      :model-value="modelValue.widgetExportColumns"
+      :template="modelValue.widgetExportColumnsTemplate"
       :templates="templates"
       :templates-pending="templatesPending"
       :type="type"
@@ -134,7 +134,6 @@ export default {
   emits: ['update:modelValue'],
 
   setup(props, { emit }) {
-    const form = computed(() => props.modelValue);
     const formats = computed(() => Object.values(EXPORT_CSV_DATETIME_FORMATS));
 
     const updateField = (field, value) => {
@@ -150,7 +149,6 @@ export default {
     };
 
     return {
-      form,
       formats,
       updateField,
       updateTemplate,

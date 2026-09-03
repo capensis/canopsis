@@ -198,11 +198,12 @@ export default {
         },
       });
 
-    const removeEvents = eventsForRemove => modals.show({
+    const removeEvents = (eventsForRemove, clearSelected) => modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
             await bulkRemoveEventsRecordEvents({ data: pickIds(eventsForRemove) });
+            clearSelected?.();
 
             return fetchList();
           },

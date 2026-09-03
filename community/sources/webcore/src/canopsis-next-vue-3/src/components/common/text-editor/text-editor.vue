@@ -25,7 +25,7 @@
       />
 
       <div class="text-editor__details">
-        <v-messages :messages="errorMessages" color="error" />
+        <v-messages :active="hasError" :messages="errorMessages" color="error" />
       </div>
     </div>
   </div>
@@ -33,7 +33,7 @@
 
 <script>
 import { Jodit } from 'jodit';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 import 'jodit/esm/plugins/all';
 import 'jodit/es2021/jodit.min.css';
 
@@ -172,8 +172,8 @@ export default {
 
     const { controlsOptions, uploaderOptions } = useTextEditorUpload({
       editor,
-      isPublic: computed(() => props.public),
-      maxFileSize: computed(() => props.maxFileSize),
+      isPublic: toRef(props, 'public'),
+      maxFileSize: toRef(props, 'maxFileSize'),
     });
 
     const {
@@ -187,7 +187,7 @@ export default {
       closeVariablesMenu,
     } = useTextEditorVariables({
       editor,
-      variables: computed(() => props.variables),
+      variables: toRef(props, 'variables'),
     });
 
     const options = computed(() => {
@@ -323,6 +323,10 @@ export default {
     flex: 1 0 auto;
     max-width: 100%;
     overflow: hidden;
+
+    .v-messages {
+      opacity: 1;
+    }
   }
 
   &.error--text {

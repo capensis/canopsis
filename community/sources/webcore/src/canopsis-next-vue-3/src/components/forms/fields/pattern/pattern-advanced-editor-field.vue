@@ -18,7 +18,7 @@
 
 <script setup>
 import { isArray } from 'lodash';
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 
 import {
   isExtraInfosRuleType,
@@ -56,7 +56,7 @@ const emit = defineEmits(['update:value']);
 const { t } = useI18n();
 const formContext = useFormContext();
 
-const fieldName = computed(() => props.name);
+const fieldName = toRef(props, 'name');
 const errorMessage = useFieldError(fieldName);
 
 const disabledAttributes = computed(() => props.attributes.reduce((acc, { value, options }) => {

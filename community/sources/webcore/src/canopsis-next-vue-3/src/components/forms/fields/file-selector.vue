@@ -1,52 +1,50 @@
 <template>
-  <div>
-    <div v-if="withFilesList">
-      <div v-for="file in selectedFiles" :key="file.name" class="ml-2 font-italic">
-        {{ file.name }}
-        <v-btn
-          icon="close"
-          variant="text"
-          size="small"
-          @click="removeFileFromSelections(file.name)"
-        />
+  <v-input
+    :error-messages="errorMessages"
+    :hide-details="hideDetails"
+    class="file-selector w-100"
+  >
+    <div class="file-selector__content w-100">
+      <div v-if="withFilesList">
+        <div v-for="file in selectedFiles" :key="file.name" class="ml-2 font-italic">
+          {{ file.name }}
+          <v-btn
+            icon="close"
+            variant="text"
+            size="small"
+            @click="removeFileFromSelections(file.name)"
+          />
+        </div>
       </div>
+
+      <slot
+        :on="{ click: selectFile }"
+        :attrs="{ disabled: fullDisabled }"
+        :disabled="fullDisabled"
+        :loading="loading"
+        :files="selectedFiles"
+        :errors="errorMessages"
+        :clear="clear"
+        :drop="dropFiles"
+        name="activator"
+      >
+        <v-btn :disabled="fullDisabled" :loading="loading" @click="selectFile">
+          {{ label || t('common.import') }}
+        </v-btn>
+      </slot>
+
+      <input
+        ref="inputElement"
+        :accept="accept"
+        :multiple="multiple"
+        :disabled="fullDisabled"
+        class="d-none"
+        type="file"
+        @change="change"
+        @click.stop
+      />
     </div>
-
-    <slot
-      :on="{ click: selectFile }"
-      :attrs="{ disabled: fullDisabled }"
-      :disabled="fullDisabled"
-      :loading="loading"
-      :files="selectedFiles"
-      :errors="errorMessages"
-      :clear="clear"
-      :drop="dropFiles"
-      name="activator"
-    >
-      <v-btn :disabled="fullDisabled" :loading="loading" @click="selectFile">
-        {{ label || t('common.import') }}
-      </v-btn>
-    </slot>
-
-    <input
-      ref="inputElement"
-      :accept="accept"
-      :multiple="multiple"
-      :disabled="fullDisabled"
-      class="d-none"
-      type="file"
-      @change="change"
-      @click.stop
-    />
-
-    <v-messages
-      v-if="!hideDetails"
-      :active="errorMessages.length > 0"
-      :messages="errorMessages"
-      class="mt-2"
-      color="error"
-    />
-  </div>
+  </v-input>
 </template>
 
 <script>
@@ -142,13 +140,13 @@ export default {
       }
     };
 
-    const updateFiles = async (files) => {
+    const updateFiles = async (files, { updateInvalidEmpty = false } = {}) => {
       const value = props.multiple ? files : files[0];
 
       setValue(value, false);
       const { valid } = await validate();
 
-      if (!valid) {
+      if (!valid && !(updateInvalidEmpty && !files.length)) {
         return;
       }
 
@@ -184,7 +182,9 @@ export default {
     };
 
     const removeFileFromSelections = (fileName) => {
-      updateFiles(selectedFiles.value.filter(file => file.name !== fileName));
+      updateFiles(selectedFiles.value.filter(file => file.name !== fileName), {
+        updateInvalidEmpty: true,
+      });
     };
 
     watch(
@@ -210,3 +210,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.file-selector {
+  :deep(.v-input__control) {
+    width: 100%;
+  }
+}
+</style>

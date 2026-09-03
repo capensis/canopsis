@@ -1,25 +1,18 @@
 <template>
-  <v-list class="broadcast-message-views-treeview-field pa-0" density="compact">
-    <template v-for="item in items" :key="item.value">
-      <c-layout class="broadcast-message-views-treeview-field__item" align="center">
-        <v-checkbox-btn
-          :model-value="isSelected(item.value)"
-          color="primary"
-          density="compact"
-          @update:model-value="toggleItem(item.value)"
-        />
-        <span>{{ item.name }}</span>
-      </c-layout>
-
-      <broadcast-message-views-treeview-field
-        v-if="item.children?.length"
-        :model-value="model"
-        :items="item.children"
-        class="ml-6"
-        @update:model-value="updateModel"
-      />
-    </template>
-  </v-list>
+  <c-treeview
+    :model-value="model"
+    :items="items"
+    class="broadcast-message-views-treeview-field"
+    item-key="value"
+    item-title="name"
+    item-children="children"
+    items-registration="props"
+    density="compact"
+    select-strategy="classic"
+    selected-color="primary"
+    selectable
+    @update:model-value="updateModel"
+  />
 </template>
 
 <script>
@@ -52,28 +45,18 @@ export default {
       emit('update:modelValue', nextValue);
     };
 
-    const isSelected = value => model.value.includes(value);
-
-    const toggleItem = (value) => {
-      const nextValue = model.value.includes(value)
-        ? model.value.filter(item => item !== value)
-        : [...model.value, value];
-
-      updateModel(nextValue);
-    };
-
     return {
       model,
-      isSelected,
       updateModel,
-      toggleItem,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.broadcast-message-views-treeview-field__item {
-  min-height: 32px;
+.broadcast-message-views-treeview-field {
+  :deep(.v-list-item__overlay) {
+    display: none;
+  }
 }
 </style>

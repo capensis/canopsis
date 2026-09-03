@@ -4,6 +4,7 @@
     v-model="inputValue"
     :name="inputName"
     :error-messages="errorMessages"
+    :density="density"
     class="c-field c-text-field"
     @blur="onBlur"
   >
@@ -28,9 +29,17 @@ const props = defineProps(validationProps);
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidation(
   props,
   emit,
   attrs,
 );
+
+defineExpose({
+  errorMessages,
+});
 </script>

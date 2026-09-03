@@ -18,10 +18,11 @@
 </template>
 
 <script>
-import { computed, watch } from 'vue';
+import { computed, toRef, watch } from 'vue';
 import { useTheme } from 'vuetify';
 
 import { useField } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
 
 import TextEditor from '@/components/common/text-editor/text-editor.vue';
@@ -94,18 +95,19 @@ export default {
 
   setup(props, { emit }) {
     const theme = useTheme();
+    const { t } = useI18n();
     const { fileUploadMaxSize } = useInfo();
 
     const validateValue = (value) => {
       if (props.required && !value) {
-        return `${props.label || props.name} is required`;
+        return t('validation.messages.required');
       }
 
       return true;
     };
 
     const { value, errorMessage, handleBlur, setValue, validate } = useField(
-      computed(() => props.name),
+      toRef(props, 'name'),
       validateValue,
       {
         initialValue: props.modelValue ?? props.value ?? '',
@@ -122,7 +124,10 @@ export default {
       },
     });
 
-    const isPublic = computed(() => props.public);
+    /**
+     * Use toRef instead of public property directly because public is reserved word
+     */
+    const isPublic = toRef(props, 'public');
     const dark = computed(() => theme.current.value.dark);
     const preparedMaxFileSize = computed(() => props.maxFileSize || fileUploadMaxSize.value);
     const fieldErrorMessages = computed(() => [

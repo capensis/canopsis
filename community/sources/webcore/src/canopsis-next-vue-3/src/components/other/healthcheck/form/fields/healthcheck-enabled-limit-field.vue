@@ -4,6 +4,7 @@
       :model-value="value.enabled"
       :label="label"
       :error-messages="enabledErrors"
+      class="healthcheck-enabled-limit-field__enabled"
       color="primary"
       hide-details="auto"
       @update:model-value="updateField('enabled', $event)"
@@ -68,6 +69,11 @@ export default {
 <style lang="scss" scoped>
 .healthcheck-enabled-limit-field {
   gap: 24px;
+
+  &__enabled {
+    flex: 0 0 260px;
+    max-width: 260px;
+  }
 
   &__limit {
     max-width: 360px;

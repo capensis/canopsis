@@ -7,6 +7,7 @@
     :menu-props="selectMenuProps"
     :name="inputName"
     :error-messages="errorMessages"
+    :density="density"
     class="c-field c-select"
     @blur="onSelectBlur"
     @update:menu="onMenuUpdate"
@@ -158,6 +159,48 @@ const getItemProps = (item) => {
 </script>
 
 <style lang="scss">
+.c-select {
+  &.v-select--chips .v-field.v-field,
+  .v-field.v-field:has(.v-select__selection .v-chip) {
+    height: auto;
+    min-height: 48px;
+  }
+
+  &.v-select--chips .v-field,
+  .v-field:has(.v-select__selection .v-chip) {
+    .v-field__field,
+    .v-field__input,
+    .v-field__append-inner,
+    .v-field__prepend-inner {
+      height: auto;
+      min-height: 48px;
+    }
+
+    .v-field__input {
+      align-items: flex-start;
+      flex-wrap: wrap;
+      padding-top: 18px;
+      padding-bottom: 4px;
+    }
+  }
+
+  .v-select__selection {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .v-chip {
+    max-width: 100%;
+  }
+
+  .v-chip__content {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .c-select-menu--with-headers {
   .v-list-subheader {
     font-weight: 700;

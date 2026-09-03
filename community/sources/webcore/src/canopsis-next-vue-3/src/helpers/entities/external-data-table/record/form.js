@@ -3,7 +3,11 @@ import { isArray } from 'lodash';
 import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
 
 import { convertDateToTimestamp } from '@/helpers/date/date';
-import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
+import {
+  primitiveArrayToForm,
+  formToPrimitiveArray,
+  defaultPrimitiveArrayItemCreator,
+} from '@/helpers/entities/shared/form';
 
 /**
  * Converts an external data table record to a form representation.
@@ -21,7 +25,8 @@ export const externalDataTableRecordToForm = (externalDataTableRecord = {}, colu
       const stringArray = acc[column.name];
 
       acc[column.name] =
-        (isArray(stringArray) ? primitiveArrayToForm(stringArray) : stringArray) || [];
+        (isArray(stringArray) ? primitiveArrayToForm(stringArray) : stringArray) ||
+        [defaultPrimitiveArrayItemCreator()];
     } else if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean) {
       acc[column.name] = !!acc[column.name];
     }

@@ -4,6 +4,7 @@
     v-model="inputValue"
     :name="inputName"
     :error-messages="errorMessages"
+    :density="density"
     @blur="onBlur"
   >
     <template v-if="label" #label>

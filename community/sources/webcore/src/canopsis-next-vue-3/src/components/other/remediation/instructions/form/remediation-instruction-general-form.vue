@@ -8,7 +8,7 @@
     />
 
     <c-form-block>
-      <c-form-block-row :label="$t('remediation.instruction.type')" indented>
+      <c-form-block-row :label="$t('remediation.instruction.type')">
         <c-instruction-type-field v-model="typeField" :disabled="disabled || !isNew" />
       </c-form-block-row>
 

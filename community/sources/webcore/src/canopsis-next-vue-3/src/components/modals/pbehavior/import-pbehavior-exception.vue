@@ -30,7 +30,10 @@
 <script>
 import { computed } from 'vue';
 
-import { pbehaviorExceptionImportToForm } from '@/helpers/entities/pbehavior/exception/form';
+import {
+  formToPbehaviorExceptionImport,
+  pbehaviorExceptionImportToForm,
+} from '@/helpers/entities/pbehavior/exception/form';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
@@ -62,7 +65,7 @@ export default {
     const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(values.value);
+      const result = await config.value.action?.(formToPbehaviorExceptionImport(values.value));
 
       await config.value.afterSubmit?.(result);
 

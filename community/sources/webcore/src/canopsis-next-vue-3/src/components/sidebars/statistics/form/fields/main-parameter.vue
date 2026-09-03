@@ -3,7 +3,6 @@
     <c-progress-overlay :pending="pending" transition />
     <c-radio-group
       :model-value="modelValue.criteria"
-      :validation-label="t('settings.mainParameter.title')"
       name="mainParameter"
       required
       @update:model-value="updateField('criteria', $event)"
