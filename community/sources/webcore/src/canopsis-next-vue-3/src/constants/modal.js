@@ -25,6 +25,7 @@ export const MODALS = {
   createAlarmChart: 'create-alarm-chart',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
+  textEditorPaste: 'text-editor-paste',
   textEditorWithTemplate: 'text-editor-with-template',
   textFieldEditor: 'text-field-editor',
   payloadTextareaEditor: 'payload-textarea-editor',

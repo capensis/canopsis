@@ -19,6 +19,7 @@
         :required="instructionRateField"
         :min="1"
         name="instruction.rate_frequency"
+        long
       />
     </c-form-block-row>
   </c-form-block>

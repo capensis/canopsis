@@ -52,6 +52,7 @@ export default {
   [MODALS.imageViewer]: defineAsyncComponent(() => import('./common/image-viewer.vue')),
   [MODALS.imagesViewer]: defineAsyncComponent(() => import('./common/images-viewer.vue')),
   [MODALS.textEditor]: defineAsyncComponent(() => import('./common/text-editor.vue')),
+  [MODALS.textEditorPaste]: defineAsyncComponent(() => import('./common/text-editor-paste.vue')),
   [MODALS.payloadTextareaEditor]: defineAsyncComponent(
     () => import('./common/payload-textarea-editor.vue'),
   ),

@@ -96,7 +96,7 @@ export default {
       default: false,
     },
     hideDetails: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false,
     },
     name: {
@@ -118,6 +118,10 @@ export default {
 
       if (props.required) {
         rules.required = true;
+      }
+
+      if (props.accept) {
+        rules.mimes = props.accept.split(',').map(type => type.trim()).filter(Boolean);
       }
 
       if (props.maxFileSize) {
