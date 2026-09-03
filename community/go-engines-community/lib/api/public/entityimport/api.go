@@ -21,7 +21,7 @@ func NewAPI(
 	responder response.Responder,
 	logger zerolog.Logger,
 ) dataimport.API {
-	return dataimport.NewAPI[Job](
+	return dataimport.NewAPI(
 		asyncjob.TypeEntityImport,
 		store,
 		newJob,

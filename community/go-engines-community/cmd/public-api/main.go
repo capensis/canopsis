@@ -38,18 +38,14 @@ const (
 	shutdownTimeout   = 5 * time.Second
 	readHeaderTimeout = 30 * time.Second
 	jobWorkers        = 5
+
+	okExitCode  = 0
+	errExitCode = 1
 )
 
 const JwtSecretEnv = "CPS_JWT_SECRET" //nolint:gosec
 
 func main() {
-	// Graceful shutdown.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	var opts api.Options
 	api.BindCmdFlags(&opts)
 	flag.Parse()
@@ -59,37 +55,58 @@ func main() {
 		return
 	}
 
+	exitCode := run(opts)
+	os.Exit(exitCode)
+}
+
+func run(opts api.Options) int {
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	logger := log.NewLogger(ctx, opts.Options)
 	s, cleanup, err := newServices(ctx, opts, logger)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("cannot create services")
-	}
-
 	defer cleanup()
+	if err != nil {
+		logger.Err(err).Msg("cannot create services")
+
+		return errExitCode
+	}
 
 	r, err := api.RegisterRoutes(s.Services, opts)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to register routes")
+		logger.Err(err).Msg("failed to register routes")
+
+		return errExitCode
 	}
 
-	wg := runBackground(ctx, s, cancel)
-	hs := serve(r, opts.Port, s)
+	g := runBackground(ctx, s, cancel)
+	hs := serve(r, opts.Port, s, cancel)
 
 	<-ctx.Done()
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer shutdownCancel()
 	err = hs.Shutdown(shutdownCtx)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to shutdown http server")
+		logger.Err(err).Msg("failed to shutdown http server")
+
+		return errExitCode
 	}
 
 	logger.Info().Msg("http server stopped")
 
 	// Let the worker finish the running jobs before connections are closed.
-	err = wg.Wait()
+	err = g.Wait()
 	if err != nil {
-		logger.Fatal().Err(err).Msg("workers stopped with error")
+		logger.Err(err).Msg("workers stopped with error")
+
+		return errExitCode
 	}
+
+	return okExitCode
 }
 
 type services struct {
@@ -198,7 +215,7 @@ func newServices(ctx context.Context, opts api.Options, logger zerolog.Logger) (
 }
 
 // serve starts the http server and returns it, so it can be shut down gracefully.
-func serve(r http.Handler, port int, s services) *http.Server {
+func serve(r http.Handler, port int, s services, cancel context.CancelFunc) *http.Server {
 	hs := &http.Server{
 		Addr:              ":" + strconv.Itoa(port),
 		Handler:           r,
@@ -209,7 +226,8 @@ func serve(r http.Handler, port int, s services) *http.Server {
 		s.Logger.Info().Msg("http server started")
 		err := hs.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.Logger.Fatal().Err(err).Msg("failed to run http server")
+			s.Logger.Err(err).Msg("failed to run http server")
+			cancel()
 		}
 	}()
 

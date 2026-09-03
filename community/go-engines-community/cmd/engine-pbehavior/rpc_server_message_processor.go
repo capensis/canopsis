@@ -318,6 +318,10 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 			oldPbhIds = append(oldPbhIds, pbh.ID)
 		}
 
+		if err = cursor.Err(); err != nil {
+			return fmt.Errorf("cannot iterate old pbehavior: %w", err)
+		}
+
 		_, err = collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": oldPbhIds}})
 		if err != nil {
 			return fmt.Errorf("cannot delete old pbehavior: %w", err)

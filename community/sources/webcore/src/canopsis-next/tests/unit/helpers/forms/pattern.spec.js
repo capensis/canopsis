@@ -3,15 +3,19 @@ import Faker from 'faker';
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
+  EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
+  PATTERN_RULE_TYPES,
+  PBEHAVIOR_FIELDS,
+  PBEHAVIOR_PATTERN_FIELDS,
   QUICK_RANGES,
   TIME_UNITS,
 } from '@/constants';
 
-import { formRuleToPatternRule, patternRuleToForm } from '@/helpers/entities/pattern/form';
+import { formRuleToPatternRule, getOperatorsByRule, patternRuleToForm } from '@/helpers/entities/pattern/form';
 import { durationToForm } from '@/helpers/date/duration';
 
 describe('pattern form converters', () => {
@@ -30,6 +34,84 @@ describe('pattern form converters', () => {
       to: 0,
     },
     duration: durationToForm(),
+  };
+
+  const expectOperatorsToIncludeOneOf = operators => expect(operators).toEqual(expect.arrayContaining([
+    PATTERN_OPERATORS.isOneOf,
+    PATTERN_OPERATORS.isNotOneOf,
+  ]));
+
+  const expectOperatorsNotToIncludeOneOf = (operators) => {
+    expect(operators).not.toContain(PATTERN_OPERATORS.isOneOf);
+    expect(operators).not.toContain(PATTERN_OPERATORS.isNotOneOf);
+  };
+
+  const stringPatternFieldsWithOneOfOperators = [
+    ALARM_PATTERN_FIELDS.displayName,
+    ALARM_PATTERN_FIELDS.output,
+    ALARM_PATTERN_FIELDS.longOutput,
+    ALARM_PATTERN_FIELDS.initialOutput,
+    ALARM_PATTERN_FIELDS.initialLongOutput,
+    ALARM_PATTERN_FIELDS.component,
+    ALARM_PATTERN_FIELDS.connector,
+    ALARM_PATTERN_FIELDS.connectorName,
+    ALARM_PATTERN_FIELDS.resource,
+    ALARM_PATTERN_FIELDS.tags,
+    ALARM_PATTERN_FIELDS.lastComment,
+    ALARM_PATTERN_FIELDS.lastCommentInitiator,
+    ALARM_PATTERN_FIELDS.lastCommentAuthor,
+    ALARM_PATTERN_FIELDS.ticketMessage,
+    ALARM_PATTERN_FIELDS.ticketValue,
+    ALARM_PATTERN_FIELDS.ticketInitiator,
+    ALARM_PATTERN_FIELDS.snoozeAuthor,
+    ALARM_PATTERN_FIELDS.snoozeInitiator,
+    ALARM_PATTERN_FIELDS.ackBy,
+    ALARM_PATTERN_FIELDS.ackMessage,
+    ALARM_PATTERN_FIELDS.ackInitiator,
+    ALARM_PATTERN_FIELDS.canceledInitiator,
+    ALARM_PATTERN_FIELDS.stateInitiator,
+    ENTITY_PATTERN_FIELDS.id,
+    ENTITY_PATTERN_FIELDS.name,
+    ENTITY_PATTERN_FIELDS.category,
+    ENTITY_PATTERN_FIELDS.type,
+    ENTITY_PATTERN_FIELDS.connector,
+    ENTITY_PATTERN_FIELDS.component,
+    EVENT_FILTER_PATTERN_FIELDS.component,
+    EVENT_FILTER_PATTERN_FIELDS.connector,
+    EVENT_FILTER_PATTERN_FIELDS.connectorName,
+    EVENT_FILTER_PATTERN_FIELDS.resource,
+    EVENT_FILTER_PATTERN_FIELDS.output,
+    EVENT_FILTER_PATTERN_FIELDS.longOutput,
+    EVENT_FILTER_PATTERN_FIELDS.eventType,
+    EVENT_FILTER_PATTERN_FIELDS.sourceType,
+    EVENT_FILTER_PATTERN_FIELDS.initiator,
+    EVENT_FILTER_PATTERN_FIELDS.author,
+    PBEHAVIOR_PATTERN_FIELDS.name,
+    PBEHAVIOR_FIELDS.name,
+    PBEHAVIOR_FIELDS.author,
+    PBEHAVIOR_FIELDS.rrule,
+    PBEHAVIOR_FIELDS.reason,
+    PBEHAVIOR_FIELDS.type,
+    PBEHAVIOR_FIELDS.canonicalType,
+  ];
+
+  const oneOfOperatorCases = [
+    [PATTERN_CONDITIONS.isOneOf, PATTERN_OPERATORS.isOneOf],
+    [PATTERN_CONDITIONS.isNotOneOf, PATTERN_OPERATORS.isNotOneOf],
+  ];
+
+  const stringPatternFieldOneOfCases = stringPatternFieldsWithOneOfOperators.reduce(
+    (acc, field) => [
+      ...acc,
+      ...oneOfOperatorCases.map(([condition, operator]) => [field, condition, operator]),
+    ],
+    [],
+  );
+
+  const expectFormValueToContainPrimitiveValues = (formValue, value) => {
+    const primitiveFormValue = formValue.map(item => item?.value ?? item);
+
+    expect(primitiveFormValue).toEqual(value);
   };
 
   it('should be converted to form and back to pattern with `equal` operator', () => {
@@ -440,6 +522,155 @@ describe('pattern form converters', () => {
     });
     expect(form.value).toEqual(value);
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it.each(stringPatternFieldOneOfCases)(
+    'should keep correct value after converting `%s` field with `%s` condition to form and back',
+    (field, condition, operator) => {
+      const value = [Faker.lorem.word(), Faker.lorem.word()];
+      const patternRule = {
+        field,
+        cond: { type: condition, value },
+      };
+
+      const form = patternRuleToForm(patternRule);
+
+      const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+      expect(form).toMatchObject({
+        ...defaultFormWithoutValue,
+        attribute: field,
+        operator,
+      });
+      expect(form.value).not.toEqual([]);
+      expectFormValueToContainPrimitiveValues(form.value, value);
+      expect(formRuleToPatternRule(form)).toEqual(patternRule);
+    },
+  );
+
+  it.each(oneOfOperatorCases)('should keep correct value after converting `%s` condition for an infos value field to form and back', (condition, operator) => {
+    const value = [Faker.lorem.word(), Faker.lorem.word()];
+    const dictionary = Faker.lorem.word();
+    const patternRule = {
+      field: `${ENTITY_PATTERN_FIELDS.infos}.${dictionary}`,
+      field_type: PATTERN_FIELD_TYPES.string,
+      cond: { type: condition, value },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
+      attribute: ENTITY_PATTERN_FIELDS.infos,
+      field: PATTERN_RULE_INFOS_FIELDS.value,
+      dictionary,
+      operator,
+    });
+    expect(form.value).toEqual(value.map(item => ({ key: expect.any(String), value: item })));
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it.each(oneOfOperatorCases)('should keep correct value after converting `%s` condition for an extra infos value field to form and back', (condition, operator) => {
+    const value = [Faker.lorem.word(), Faker.lorem.word()];
+    const dictionary = Faker.lorem.word();
+    const patternRule = {
+      field: `${EVENT_FILTER_PATTERN_FIELDS.extraInfos}.${dictionary}`,
+      field_type: PATTERN_FIELD_TYPES.string,
+      cond: { type: condition, value },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
+      attribute: EVENT_FILTER_PATTERN_FIELDS.extraInfos,
+      field: PATTERN_RULE_INFOS_FIELDS.value,
+      dictionary,
+      operator,
+    });
+    expect(form.value).toEqual(value.map(item => ({ key: expect.any(String), value: item })));
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it.each(oneOfOperatorCases)('should keep correct value after converting `%s` condition for an object field to form and back', (condition, operator) => {
+    const value = [Faker.lorem.word(), Faker.lorem.word()];
+    const dictionary = Faker.lorem.word();
+    const patternRule = {
+      field: `${ALARM_PATTERN_FIELDS.ticketData}.${dictionary}`,
+      cond: { type: condition, value },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    const { value: defaultValue, ...defaultFormWithoutValue } = defaultForm;
+    expect(form).toMatchObject({
+      ...defaultFormWithoutValue,
+      attribute: ALARM_PATTERN_FIELDS.ticketData,
+      dictionary,
+      operator,
+    });
+    expect(form.value).toEqual(value.map(item => ({ key: expect.any(String), value: item })));
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it.each(stringPatternFieldsWithOneOfOperators)(
+    'should include one-of operators for string pattern field `%s`',
+    (field) => {
+      const operators = getOperatorsByRule({
+        attribute: field,
+        fieldType: PATTERN_FIELD_TYPES.string,
+      }, PATTERN_RULE_TYPES.string);
+
+      expectOperatorsToIncludeOneOf(operators);
+    },
+  );
+
+  it.each([
+    PATTERN_RULE_TYPES.infos,
+    PATTERN_RULE_TYPES.extraInfos,
+    PATTERN_RULE_TYPES.object,
+  ])('should include one-of operators for %s value fields', (ruleType) => {
+    const operators = getOperatorsByRule({
+      field: PATTERN_RULE_INFOS_FIELDS.value,
+      fieldType: PATTERN_FIELD_TYPES.string,
+    }, ruleType);
+
+    expectOperatorsToIncludeOneOf(operators);
+  });
+
+  it.each([
+    [
+      'infos name field',
+      { field: PATTERN_RULE_INFOS_FIELDS.name, fieldType: PATTERN_FIELD_TYPES.string },
+      PATTERN_RULE_TYPES.infos,
+    ],
+    [
+      'number field',
+      { attribute: ENTITY_PATTERN_FIELDS.impactLevel, fieldType: PATTERN_FIELD_TYPES.number },
+      PATTERN_RULE_TYPES.number,
+    ],
+    [
+      'date field',
+      { attribute: ALARM_PATTERN_FIELDS.creationDate, fieldType: PATTERN_FIELD_TYPES.string },
+      PATTERN_RULE_TYPES.date,
+    ],
+    [
+      'duration field',
+      { attribute: ALARM_PATTERN_FIELDS.duration, fieldType: PATTERN_FIELD_TYPES.string },
+      PATTERN_RULE_TYPES.duration,
+    ],
+    [
+      'string array field type',
+      { attribute: ALARM_PATTERN_FIELDS.tags, fieldType: PATTERN_FIELD_TYPES.stringArray },
+      PATTERN_RULE_TYPES.string,
+    ],
+  ])('should not include one-of operators for %s', (caseName, rule, ruleType) => {
+    const operators = getOperatorsByRule({
+      ...rule,
+    }, ruleType);
+
+    expectOperatorsNotToIncludeOneOf(operators);
   });
 
   it('should be converted to form and back to pattern with `has not` operator', () => {
