@@ -181,7 +181,7 @@ func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName, t st
 		}
 	}
 
-	disabledFields := patternfields.GetDisabledFieldsInEntityPattern(t)[collectionName]
+	disabledFields := patternfields.GetDisabledFieldsInInheritedEntityPattern()[collectionName][t]
 
 	return statesetting.InheritedEntityPatternFields{
 		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(disabledFields),
