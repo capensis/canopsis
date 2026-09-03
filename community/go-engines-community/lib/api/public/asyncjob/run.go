@@ -18,10 +18,9 @@ func RunWithPing(
 	defer cancel()
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
-		err := f(ctx)
-		cancel()
+		defer cancel()
 
-		return err
+		return f(ctx)
 	})
 
 	g.Go(func() error {

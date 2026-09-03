@@ -115,8 +115,7 @@ func (h *handler) do(ctx context.Context, job Job) (stats importcontextgraph.Sta
 		func(ctx context.Context) error {
 			return h.store.Ping(ctx, job.ID)
 		},
-		func(ctx context.Context) error {
-			var err error
+		func(ctx context.Context) (err error) {
 			stats, err = h.worker.WorkPartial(ctx, path, job.Source)
 
 			return err

@@ -1,6 +1,7 @@
 package dataexport
 
 import (
+	"cmp"
 	"context"
 	"time"
 
@@ -56,7 +57,7 @@ func WalkObjects(transform Transform) Transform {
 func NewDateTransform(isDate IsDate, location *time.Location, layout string) Transform {
 	t := dateTransform{
 		isDate:     isDate,
-		location:   location,
+		location:   cmp.Or(location, time.UTC),
 		layout:     layout,
 		dateFields: map[string]bool{},
 	}
