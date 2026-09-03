@@ -20,7 +20,7 @@ func RunReload(ctx context.Context, adapter Adapter, interval time.Duration, log
 		case <-ticker.C:
 			cfg, err := adapter.GetConfig(ctx)
 			if err != nil {
-				logger.Err(err).Msg("cannot load config")
+				logger.Warn().Err(err).Msg("cannot load config")
 
 				continue
 			}
