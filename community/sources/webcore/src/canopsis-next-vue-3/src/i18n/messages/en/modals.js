@@ -244,6 +244,12 @@ export default {
   textEditor: {
     title: 'Text editor',
   },
+  textEditorPaste: {
+    title: 'Paste as HTML',
+    text: 'The pasted content looks like HTML. How do you want to insert it?',
+    pasteAsHtml: 'Paste as HTML',
+    pasteAsPlainText: 'Paste as plain text',
+  },
   createWidget: {
     title: 'Select a widget',
     types: {

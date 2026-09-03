@@ -229,6 +229,12 @@ export default {
   textEditor: {
     title: 'Éditeur de texte',
   },
+  textEditorPaste: {
+    title: 'Coller en HTML',
+    text: 'Le contenu collé semble être du HTML. Comment souhaitez-vous l\'insérer ?',
+    pasteAsHtml: 'Coller en HTML',
+    pasteAsPlainText: 'Coller en texte brut',
+  },
   createWidget: {
     title: 'Sélectionnez un widget',
     types: {

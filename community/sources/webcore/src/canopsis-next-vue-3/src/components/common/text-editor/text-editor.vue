@@ -44,6 +44,7 @@ import { sanitizeHtml } from '@/helpers/html';
 import { useI18n } from '@/hooks/i18n';
 
 import { useTextEditorUpload, useTextEditorVariables } from './hooks/text-editor';
+import { useTextEditorPaste } from './hooks/text-editor-paste';
 import VariablesMenu from './variables-menu.vue';
 
 const JODIT_TO_MATERIAL_ICONS_MAP = {
@@ -190,6 +191,10 @@ export default {
       variables: toRef(props, 'variables'),
     });
 
+    const { pasteOptions, handleProcessHTML } = useTextEditorPaste({
+      editor,
+    });
+
     const options = computed(() => {
       const config = {
         language: locale.value,
@@ -217,6 +222,7 @@ export default {
         },
         sourceEditorCDNUrlsJS: [`${BASE_URL}scripts/libs/ace/1.43.3/ace.js`],
         ...props.config,
+        ...pasteOptions,
       };
 
       if (props.buttons.length) {
@@ -257,11 +263,13 @@ export default {
       editor.value.value = currentValue.value;
       editor.value.options.popupRoot = editor.value.container;
       editor.value.events.on('change', changeValue);
+      editor.value.e.on('processHTML', handleProcessHTML, { top: true });
     };
 
     const destructEditor = () => {
       if (editor.value) {
         editor.value.events.off('change', changeValue);
+        editor.value.e.off('processHTML', handleProcessHTML);
         editor.value.destruct();
         editor.value = null;
       }

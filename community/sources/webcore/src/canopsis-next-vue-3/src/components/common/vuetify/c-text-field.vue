@@ -5,6 +5,8 @@
     :name="inputName"
     :error-messages="errorMessages"
     :density="density"
+    :min="min"
+    :max="max"
     class="c-field c-text-field"
     @blur="onBlur"
   >

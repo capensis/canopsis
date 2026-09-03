@@ -312,6 +312,7 @@ app.use(modalsPlugin, {
     [MODALS.stateSettingInheritedEntityPattern]: { maxWidth: 960, autoHeight: true },
     [MODALS.testSuite]: { maxWidth: 920 },
     [MODALS.textEditor]: { maxWidth: 900, persistent: true, autoHeight: true },
+    [MODALS.textEditorPaste]: { autoHeight: true },
     [MODALS.textEditorWithTemplate]: { maxWidth: 900, persistent: true, autoHeight: true },
     [MODALS.textFieldEditor]: { autoHeight: true },
     [MODALS.userInterface]: { maxWidth: 1000 },

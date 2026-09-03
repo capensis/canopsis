@@ -38,6 +38,7 @@
         :disabled="disabled"
         accept="image/*"
         name="logo"
+        hide-details="auto"
         with-files-list
       >
         <template #activator="{ disabled: activatorDisabled, loading, on }">
