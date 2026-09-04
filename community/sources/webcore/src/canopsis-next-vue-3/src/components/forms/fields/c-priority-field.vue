@@ -4,6 +4,7 @@
     :value="modelValue"
     :label="label || t('common.priority')"
     :name="name"
+    :min="min"
     :disabled="disabled"
     @update:value="updateModel"
   />
@@ -27,6 +28,10 @@ export default {
     name: {
       type: String,
       default: 'priority',
+    },
+    min: {
+      type: Number,
+      default: 0,
     },
     disabled: {
       type: Boolean,

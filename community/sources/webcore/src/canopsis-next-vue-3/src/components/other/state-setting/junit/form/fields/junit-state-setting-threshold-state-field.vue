@@ -1,19 +1,21 @@
 <template>
-  <v-row class="junit-state-setting-threshold-state-field align-center">
-    <v-col cols="4" class="d-flex align-center">
+  <c-layout class="junit-state-setting-threshold-state-field" align="center" gap="2">
+    <span class="junit-state-setting-threshold-state-field__label mt-4">
+      <span class="text-error">*</span>
       {{ label }}
-    </v-col>
-    <v-col cols="4" class="d-flex align-center">
-      <c-number-field
-        :value="modelValue"
-        :name="name"
-        :min="0"
-        :max="max"
-        class="junit-state-setting-threshold-state-field__input"
-        @update:value="$emit('update:modelValue', $event)"
-      />
-    </v-col>
-  </v-row>
+    </span>
+    <c-number-field
+      :value="modelValue"
+      :name="name"
+      :min="0"
+      :max="max"
+      :suffix="suffix"
+      class="junit-state-setting-threshold-state-field__input"
+      hide-details="auto"
+      required
+      @update:value="$emit('update:modelValue', $event)"
+    />
+  </c-layout>
 </template>
 
 <script>
@@ -44,20 +46,33 @@ export default {
   emits: ['update:modelValue'],
 
   setup(props) {
-    const max = computed(() => props.type === JUNIT_STATE_SETTING_THRESHOLDS_TYPES.percent ? 100 : undefined,
+    const isPercentType = computed(
+      () => props.type === JUNIT_STATE_SETTING_THRESHOLDS_TYPES.percent,
     );
+    const max = computed(() => (isPercentType.value ? 100 : undefined));
+    const suffix = computed(() => (isPercentType.value ? '%' : undefined));
 
-    return { max };
+    return {
+      max,
+      suffix,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .junit-state-setting-threshold-state-field {
-  min-height: 48px;
+  &__label {
+    display: flex;
+    align-items: center;
+    min-width: 88px;
+    white-space: nowrap;
+    line-height: 1;
+  }
 
   &__input {
-    width: 100%;
+    width: 140px;
+    flex: 0 0 auto;
   }
 }
 </style>

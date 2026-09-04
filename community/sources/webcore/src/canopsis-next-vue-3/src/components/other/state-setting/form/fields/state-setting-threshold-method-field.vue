@@ -2,7 +2,9 @@
   <c-radio-group
     :model-value="modelValue"
     :label="label"
+    :name="name"
     :disabled="disabled"
+    :standalone="standalone"
     hide-details
     inline
     mandatory
@@ -33,7 +35,15 @@ export default {
       type: String,
       default: '',
     },
+    name: {
+      type: String,
+      default: '',
+    },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    standalone: {
       type: Boolean,
       default: false,
     },

@@ -1,6 +1,7 @@
 <template>
   <c-patterns-field
     :value="patterns"
+    :name="name"
     :entity-attributes="entityAttributes"
     :entity-types="entityTypes"
     :entity-title="t('stateSetting.dependenciesEntityPattern')"

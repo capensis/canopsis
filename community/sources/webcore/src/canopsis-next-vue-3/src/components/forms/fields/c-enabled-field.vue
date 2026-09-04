@@ -3,7 +3,7 @@
     <v-switch
       :model-value="currentValue"
       :class="{ 'ma-0': withBackground || noMargin || inline, 'pa-0': noMargin || inline }"
-      :label="label || t('common.enabled')"
+      :label="switchLabel"
       :color="color"
       :disabled="disabled"
       :readonly="readonly"
@@ -71,6 +71,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideLabel: {
+      type: Boolean,
+      default: false,
+    },
     confirmDisable: {
       type: Function,
       default: undefined,
@@ -83,6 +87,7 @@ export default {
     const { t } = useI18n();
 
     const currentValue = computed(() => props.modelValue ?? props.value);
+    const switchLabel = computed(() => (props.hideLabel ? undefined : (props.label || t('common.enabled'))));
     const switchAttrs = computed(() => ({
       ...attrs,
       density: attrs.density ?? (props.inline ? 'compact' : undefined),
@@ -109,6 +114,7 @@ export default {
     return {
       t,
       currentValue,
+      switchLabel,
       switchAttrs,
       wrapperClass,
       updateModel,

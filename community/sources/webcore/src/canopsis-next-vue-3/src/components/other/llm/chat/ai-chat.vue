@@ -54,6 +54,7 @@
 import { toRefs } from 'vue';
 
 import { useAiChat } from '@/hooks/ai/ai-chat';
+import { useForm } from '@/hooks/form';
 
 import AiChatGreeting from '@/components/other/llm/chat/ai-chat-greeting.vue';
 import AiChatInfoAlert from '@/components/other/llm/chat/ai-chat-info-alert.vue';
@@ -101,6 +102,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    useForm();
+
     return useAiChat(toRefs(props), emit);
   },
 };

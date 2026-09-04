@@ -270,22 +270,6 @@ export const useForm = ({
   };
 
   /**
-   * Resets local form state and vee-validate validation state.
-   *
-   * @param {Object} [nextValues=initialValues] Next form values.
-   */
-  const reset = (nextValues = initialValues) => {
-    values.value = nextValues;
-
-    veeForm.resetForm();
-  };
-
-  /**
-   * Scrolls to the first invalid field visible in the current tab.
-   */
-  const scrollToFirstError = () => nextTick(() => scrollToFirstFormError(instance?.$el));
-
-  /**
    * Clears all field errors without resetting form values.
    */
   const resetErrors = () => {
@@ -294,6 +278,26 @@ export const useForm = ({
       .forEach(state => veeForm.setFieldError(unref(state.path), undefined));
     Object.keys(veeForm.errors.value).forEach(path => veeForm.setFieldError(path, undefined));
   };
+
+  /**
+   * Resets local form state and vee-validate validation state.
+   *
+   * Values stay in the local ref. vee-validate `resetForm({ values })` merges into its own
+   * reactive object and can re-render children with missing nested models.
+   *
+   * @param {Object} [nextValues=initialValues] Next form values.
+   */
+  const reset = (nextValues = initialValues) => {
+    values.value = nextValues;
+    resetErrors();
+    veeForm.setTouched(false);
+    veeForm.submitCount.value = 0;
+  };
+
+  /**
+   * Scrolls to the first invalid field visible in the current tab.
+   */
+  const scrollToFirstError = () => nextTick(() => scrollToFirstFormError(instance?.$el));
 
   /**
    * Sets a vee-validate error on a field and marks it as touched.

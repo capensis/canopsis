@@ -1,18 +1,18 @@
 <template>
-  <v-row>
-    <v-col cols="4">
+  <c-layout class="junit-state-setting-thresholds-field" gap="6">
+    <c-layout class="junit-state-setting-thresholds-field__criterion" column>
       <h5 class="junit-state-setting-thresholds-field__title text-subtitle-1">
         {{ t('stateSetting.junit.criterion') }}: {{ label }}
       </h5>
       <junit-state-setting-thresholds-type-field
         :model-value="value.type"
         :name="`${name}.type`"
-        class="mt-3"
+        class="mt-2"
         @update:model-value="updateValueField('type', $event)"
       />
-    </v-col>
+    </c-layout>
 
-    <v-col>
+    <c-layout class="junit-state-setting-thresholds-field__states" column gap="1">
       <junit-state-setting-threshold-state-field
         :model-value="value.minor"
         :type="value.type"
@@ -34,8 +34,8 @@
         :label="t('common.stateTypes.critical')"
         @update:model-value="updateValueField('critical', $event)"
       />
-    </v-col>
-  </v-row>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -86,7 +86,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.junit-state-setting-thresholds-field__title {
-  font-weight: 700;
+.junit-state-setting-thresholds-field {
+  width: 100%;
+
+  &__criterion,
+  &__states {
+    flex: 1 1 0;
+    min-width: 0;
+    align-self: start;
+  }
+
+  &__title {
+    font-weight: 700;
+  }
 }
 </style>
