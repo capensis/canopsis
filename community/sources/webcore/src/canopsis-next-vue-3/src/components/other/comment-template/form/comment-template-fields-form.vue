@@ -10,6 +10,7 @@
       :empty-message="t('commentTemplate.errors.fieldsRequired')"
       item-key="key"
       name="fields"
+      add-button-justify="end"
       required
       @update:value="fields = $event"
       @add="addField"
@@ -18,6 +19,7 @@
         <c-card-iterator-item
           :item-number="index + 1"
           :drag-handle-class="dragItemHandleClass"
+          :removable="canRemoveField"
           small
           @remove="removeField(index)"
         >
@@ -26,7 +28,7 @@
               <c-name-field
                 :model-value="fields[index].name"
                 :label="t('common.fieldName')"
-                :name="`fields[${index}].name`"
+                :name="`fields[${fields[index].key}].name`"
                 :max-length="255"
                 required
                 @update:model-value="updateField(index, 'name', $event)"
@@ -48,7 +50,7 @@
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { uid } from '@/helpers/uid';
 
@@ -62,6 +64,7 @@ export default {
     const fields = form.model('fields');
 
     const dragItemHandleClass = 'field-drag-handler';
+    const canRemoveField = computed(() => fields.value.length > 1);
 
     /**
      * Add new field to the fields array
@@ -83,6 +86,10 @@ export default {
      * @param {number} index - Index of the field to remove
      */
     const removeField = (index) => {
+      if (!canRemoveField.value) {
+        return;
+      }
+
       fields.value = fields.value.filter((field, fieldIndex) => fieldIndex !== index);
     };
 
@@ -101,6 +108,7 @@ export default {
       t,
       fields,
       dragItemHandleClass,
+      canRemoveField,
       addField,
       removeField,
       updateField,

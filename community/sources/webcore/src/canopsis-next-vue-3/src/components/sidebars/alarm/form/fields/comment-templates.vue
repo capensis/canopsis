@@ -23,7 +23,7 @@
                   :model-value="modelValue[index].template"
                   :items="getAvailableTemplates(modelValue[index].template)"
                   :label="t('common.template', 1)"
-                  :name="`commentTemplates[${index}].template`"
+                  :name="`commentTemplates[${modelValue[index].key}].template`"
                   :loading="pending"
                   item-title="name"
                   item-value="_id"

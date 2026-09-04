@@ -68,11 +68,12 @@
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 
 import { CSS_COLORS_VARS } from '@/config';
 import { LLM_AI_CHAT_WIDTH } from '@/constants';
 
+import { recursiveRaf } from '@/helpers/render';
 import { getMaxZIndex } from '@/helpers/vuetify';
 
 export default {
@@ -88,7 +89,10 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const modal = inject('$modal', null);
     const minimized = ref(props.initialMinimized);
+    const entered = ref(false);
+    const leaving = ref(false);
     const zIndex = getMaxZIndex();
 
     const minimizedHeaderStyle = computed(() => ({
@@ -102,6 +106,8 @@ export default {
 
     const wrapperClasses = computed(() => ({
       'ai-chat-sidebar-wrapper--minimized': minimized.value,
+      'ai-chat-sidebar-wrapper--opened': entered.value && !minimized.value && !leaving.value,
+      'ai-chat-sidebar-wrapper--leaving': leaving.value,
     }));
 
     /**
@@ -130,7 +136,28 @@ export default {
      */
     const restart = () => emit('restart');
 
-    onMounted(updateMinimized);
+    /**
+     * Starts off-screen (`translateX(100%)`), then opens after paint so the CSS transform transition
+     * slides the sidebar from right to left. Skips the delayed open when already minimized.
+     */
+    const playEnterTransition = () =>
+      recursiveRaf(() => {
+        entered.value = true;
+      }, minimized.value ? 0 : 2);
+
+    watch(
+      () => modal?.hidden,
+      (hidden) => {
+        if (hidden) {
+          leaving.value = true;
+        }
+      },
+    );
+
+    onMounted(() => {
+      updateMinimized();
+      playEnterTransition();
+    });
 
     return {
       minimized,
@@ -158,8 +185,12 @@ export default {
   overflow: visible;
   background: rgb(var(--v-theme-surface));
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
-  transform: translateX(0);
+  transform: translateX(100%);
   transition: transform 0.2s ease-in-out;
+
+  &--opened {
+    transform: translateX(0);
+  }
 
   &__title {
     font-size: 22px;
@@ -234,6 +265,10 @@ export default {
       line-height: 1.5;
       text-align: center;
     }
+  }
+
+  &--leaving {
+    transform: translateX(calc(100% + 58px));
   }
 }
 </style>

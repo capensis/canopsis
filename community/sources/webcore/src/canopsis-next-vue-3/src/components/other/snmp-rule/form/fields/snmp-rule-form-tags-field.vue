@@ -6,12 +6,12 @@
     :add-button-label="t('common.addTag')"
     @update:form="updateModel"
   >
-    <template #item="{ index, remove }">
+    <template #item="{ item, index, remove }">
       <c-layout align="center">
         <snmp-rule-form-module-mib-objects-form
           :form="form[index]"
           :items="items"
-          :name="`tags.${index}`"
+          :name="`tags.${item.key}`"
           large
           @update:form="updateItemInArray(index, $event)"
         />

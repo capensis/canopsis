@@ -39,6 +39,7 @@ const dialogProps = computed(() => {
     absolute: true,
     retainFocus: false,
     scrollable: true,
+    transition: 'scale-transition',
   };
 
   const { name, dialogProps: modalDialogProps = {}, minimized } = props.modal;
@@ -63,6 +64,7 @@ const dialogProps = computed(() => {
   };
   contentStyle.transition = [
     contentStyle.transition,
+    'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     'width 0.2s ease-in-out, margin-right 0.2s ease-in-out, max-width 0.2s ease-in-out',
   ].filter(Boolean).join(', ');
 

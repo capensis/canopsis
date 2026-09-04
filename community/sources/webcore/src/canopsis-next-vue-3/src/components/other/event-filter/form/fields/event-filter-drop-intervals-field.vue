@@ -48,10 +48,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    rrule: {
-      type: Object,
-      default: null,
-    },
   },
   setup(props, { emit }) {
     const startString = computed(
