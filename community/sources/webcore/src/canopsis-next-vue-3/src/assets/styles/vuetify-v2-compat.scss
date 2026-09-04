@@ -229,6 +229,7 @@ $v2-spacer: 4px;
 .c-field {
   .v-field--variant-underlined,
   .v-field--variant-plain {
+    --v-field-padding-top: 8px;
     min-height: 48px;
     height: 48px;
 

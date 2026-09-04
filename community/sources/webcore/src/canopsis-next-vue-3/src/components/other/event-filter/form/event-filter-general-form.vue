@@ -18,7 +18,6 @@
           v-model:start="startField"
           v-model:stop="stopField"
           :required="hasRRule"
-          :rrule="rruleField"
         />
       </c-form-block-row>
 

@@ -8,7 +8,7 @@
       align="center"
       gap="2"
     >
-      <c-name-field v-model="name.value" :name="`names[${index}].value`" required />
+      <c-name-field v-model="name.value" :name="`names[${name.key}].value`" required />
 
       <c-action-btn type="delete" @click="remove(index)" />
     </c-layout>

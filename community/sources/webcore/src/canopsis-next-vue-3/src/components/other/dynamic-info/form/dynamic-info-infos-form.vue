@@ -7,7 +7,7 @@
             <c-name-field
               v-model="field.name"
               :label="$t('common.name')"
-              :name="`infos[${index}].name`"
+              :name="`infos[${field.key}].name`"
               required
             />
             <c-action-btn v-if="infosField.length > 1" type="delete" @click="remove(index)" />
@@ -17,14 +17,14 @@
             v-model="field.type"
             :items="typeItems"
             :label="$t('common.type')"
-            :name="`infos[${index}].type`"
+            :name="`infos[${field.key}].type`"
             required
           />
 
           <c-text-field
             v-model="field.value"
             :label="$t('common.value')"
-            :name="`infos[${index}].value`"
+            :name="`infos[${field.key}].value`"
             required
           />
         </c-layout>

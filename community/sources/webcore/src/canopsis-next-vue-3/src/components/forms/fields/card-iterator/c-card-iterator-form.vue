@@ -19,7 +19,7 @@
         />
       </template>
     </c-card-iterator-field>
-    <c-layout>
+    <c-layout :justify="addButtonJustify">
       <v-tooltip v-if="!addButtonLabel && !addButtonError" location="left">
         <template #activator="{ props: tooltipProps }">
           <c-btn-with-error
@@ -97,6 +97,10 @@ export default {
     addButtonLabel: {
       type: String,
       required: false,
+    },
+    addButtonJustify: {
+      type: String,
+      default: '',
     },
   },
   setup(props) {
