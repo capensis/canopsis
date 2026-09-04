@@ -1,6 +1,6 @@
 <template>
   <v-combobox
-    v-bind="$attrs"
+    v-bind="comboboxAttrs"
     v-model="comboboxValue"
     :name="inputName"
     :error-messages="errorMessages"
@@ -15,6 +15,18 @@
       {{ label }}
     </template>
 
+    <template v-if="childrenKey" #prepend-item>
+      <variables-list
+        :value="comboboxValue"
+        :items="attrs.items"
+        :children-key="childrenKey"
+        :return-object="Boolean(attrs.returnObject)"
+        @update:value="selectChildrenValue"
+      />
+    </template>
+
+    <template v-if="childrenKey" #no-data />
+
     <template v-for="(_, slot) in $slots" #[slot]="slotProps">
       <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
     </template>
@@ -24,9 +36,21 @@
 <script setup>
 import { computed, ref, useAttrs } from 'vue';
 
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
+
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
-const props = defineProps(validationProps);
+defineOptions({
+  inheritAttrs: false,
+});
+
+const props = defineProps({
+  ...validationProps,
+  childrenKey: {
+    type: String,
+    default: '',
+  },
+});
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
@@ -43,6 +67,25 @@ const comboboxValue = computed({
   set: (value) => {
     inputValue.value = value ?? '';
   },
+});
+
+const comboboxAttrs = computed(() => {
+  if (!props.childrenKey) {
+    return attrs;
+  }
+
+  return {
+    ...attrs,
+    items: [],
+    hideNoData: false,
+    noFilter: true,
+    menu: menuOpened.value,
+    menuProps: {
+      minWidth: 200,
+      closeOnContentClick: false,
+      ...attrs.menuProps,
+    },
+  };
 });
 
 const handleBlur = (event) => {
@@ -62,6 +105,11 @@ const handleMenuUpdate = (opened) => {
     onBlur(pendingBlurEvent.value);
     pendingBlurEvent.value = null;
   }
+};
+
+const selectChildrenValue = (value) => {
+  comboboxValue.value = value;
+  menuOpened.value = false;
 };
 
 const getLegacySlotProps = slotProps => ({

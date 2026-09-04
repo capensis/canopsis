@@ -1,9 +1,10 @@
-import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
+import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import {
   dynamicInfoInformationToForm,
   formToDynamicInfoInformation,
 } from '@/helpers/entities/dynamic-info/information/form';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 /**
  * @typedef { 'maintenance' | 'pause' } DisableDuringPeriods
@@ -27,8 +28,8 @@ import {
 /**
  * Convert a dynamic information's object to a dynamic information's form object
  *
- * @param {Object} [dynamicInfo={}]
- * @returns {Object}
+ * @param {DynamicInfo} [dynamicInfo={}]
+ * @returns {DynamicInfoForm}
  */
 export const dynamicInfoToForm = (dynamicInfo = {}) => {
   const infos = (
@@ -45,18 +46,22 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => {
     enabled: dynamicInfo.enabled ?? true,
     description: dynamicInfo.description ?? '',
     disable_during_periods: dynamicInfo.disable_during_periods ?? [],
-    alarm_pattern: dynamicInfo.alarm_pattern ?? [],
-    entity_pattern: dynamicInfo.entity_pattern ?? [],
+    patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 };
 
 /**
  * Convert a dynamic information's form object to a API compatible dynamic info object
  *
- * @param {Object} form
- * @returns {Object}
+ * @param {DynamicInfoForm} form
+ * @returns {DynamicInfo}
  */
-export const formToDynamicInfo = (form = {}) => ({
-  ...form,
-  infos: (form.infos ?? []).map(formToDynamicInfoInformation),
-});
+export const formToDynamicInfo = (form) => {
+  const { patterns, infos = [], ...dynamicInfo } = form;
+
+  return {
+    ...dynamicInfo,
+    infos: infos.map(formToDynamicInfoInformation),
+    ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+  };
+};
