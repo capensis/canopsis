@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
+import { computed } from 'vue';
 
 import StorageSettingsAlarmExternalTagForm from './storage-settings-alarm-external-tag-form.vue';
 import StorageSettingsAlarmForm from './storage-settings-alarm-form.vue';
@@ -72,66 +72,46 @@ export default {
     StorageSettingsConnectorAnomaliesForm,
   },
 
+  inheritAttrs: false,
+
   props: {
+    modelValue: {
+      type: Object,
+      required: true,
+    },
     history: {
       type: Object,
       required: true,
     },
   },
 
-  emits: ['archive:disabled', 'archive:unlinked', 'clean:archive'],
+  emits: ['update:modelValue', 'archive:disabled', 'archive:unlinked', 'clean:archive'],
 
-  setup() {
-    const {
-      alarm,
-      entity,
-      remediation,
-      pbehavior,
-      junit,
-      healthCheck,
-      webhook,
-      metrics,
-      perfDataMetrics,
-      eventFilterFailure,
-      entityInfosLog,
-      alarmExternalTag,
-      eventRecords,
-      llmChat,
-      connectorAnomalies,
-    } = useFormModels({
-      alarm: 'alarm',
-      entity: 'entity',
-      remediation: 'remediation',
-      pbehavior: 'pbehavior',
-      junit: 'junit',
-      healthCheck: 'health_check',
-      webhook: 'webhook',
-      metrics: 'metrics',
-      perfDataMetrics: 'perf_data_metrics',
-      eventFilterFailure: 'event_filter_failure',
-      entityInfosLog: 'entity_infos_log',
-      alarmExternalTag: 'alarm_external_tag',
-      eventRecords: 'event_records',
-      llmChat: 'llm_chat',
-      connectorAnomalies: 'connector_anomalies',
+  setup(props, { emit }) {
+    const section = path => computed({
+      get: () => props.modelValue?.[path],
+      set: value => emit('update:modelValue', {
+        ...props.modelValue,
+        [path]: value,
+      }),
     });
 
     return {
-      alarm,
-      entity,
-      remediation,
-      pbehavior,
-      junit,
-      healthCheck,
-      webhook,
-      metrics,
-      perfDataMetrics,
-      eventFilterFailure,
-      entityInfosLog,
-      alarmExternalTag,
-      eventRecords,
-      llmChat,
-      connectorAnomalies,
+      alarm: section('alarm'),
+      entity: section('entity'),
+      remediation: section('remediation'),
+      pbehavior: section('pbehavior'),
+      junit: section('junit'),
+      healthCheck: section('health_check'),
+      webhook: section('webhook'),
+      metrics: section('metrics'),
+      perfDataMetrics: section('perf_data_metrics'),
+      eventFilterFailure: section('event_filter_failure'),
+      entityInfosLog: section('entity_infos_log'),
+      alarmExternalTag: section('alarm_external_tag'),
+      eventRecords: section('event_records'),
+      llmChat: section('llm_chat'),
+      connectorAnomalies: section('connector_anomalies'),
     };
   },
 };

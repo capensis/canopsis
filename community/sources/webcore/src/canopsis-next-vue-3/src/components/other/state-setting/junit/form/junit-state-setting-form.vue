@@ -19,27 +19,26 @@
         />
       </c-layout>
 
-      <junit-state-setting-thresholds-field
-        :value="junitThresholds.skipped"
-        :label="t('common.skipped')"
-        class="pl-4 pt-2"
-        name="junit_thresholds.skipped"
-        @update:value="updateThreshold('skipped', $event)"
-      />
-      <junit-state-setting-thresholds-field
-        :value="junitThresholds.errors"
-        :label="t('common.error', 2)"
-        class="pl-4 pt-2"
-        name="junit_thresholds.errors"
-        @update:value="updateThreshold('errors', $event)"
-      />
-      <junit-state-setting-thresholds-field
-        :value="junitThresholds.failures"
-        :label="t('common.failures')"
-        class="pl-4 pt-2"
-        name="junit_thresholds.failures"
-        @update:value="updateThreshold('failures', $event)"
-      />
+      <c-layout class="pl-4" column gap="4">
+        <junit-state-setting-thresholds-field
+          :value="junitThresholds.skipped"
+          :label="t('common.skipped')"
+          name="junit_thresholds.skipped"
+          @update:value="updateThreshold('skipped', $event)"
+        />
+        <junit-state-setting-thresholds-field
+          :value="junitThresholds.errors"
+          :label="t('common.error', 2)"
+          name="junit_thresholds.errors"
+          @update:value="updateThreshold('errors', $event)"
+        />
+        <junit-state-setting-thresholds-field
+          :value="junitThresholds.failures"
+          :label="t('common.failures')"
+          name="junit_thresholds.failures"
+          @update:value="updateThreshold('failures', $event)"
+        />
+      </c-layout>
     </c-layout>
   </c-layout>
 </template>
@@ -89,7 +88,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.junit-state-setting-form__worst-title {
-  font-weight: 700;
+.junit-state-setting-form {
+  &__worst-title {
+    font-weight: 700;
+  }
 }
 </style>

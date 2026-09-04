@@ -36,6 +36,7 @@
       <v-col md="10" cols="12">
         <v-form @submit.prevent="submit">
           <storage-settings-form
+            v-model="formValues"
             :history="history"
             @archive:disabled="archiveDisabledEntities"
             @archive:unlinked="archiveUnlinkedEntities"
@@ -96,7 +97,9 @@ export default {
   setup() {
     let dataStorageSettings = null;
 
-    const form = useForm();
+    const form = useForm({
+      initialValues: dataStorageSettingsToForm(),
+    });
     const { handleSubmit, isSubmitting: submitting } = form;
     const originalForm = ref(null);
     const history = ref({});
@@ -244,6 +247,7 @@ export default {
     return {
       loaded,
       history,
+      formValues: form.values,
       hasChanges,
       submitting,
       archiveDisabledEntities,

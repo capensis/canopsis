@@ -577,6 +577,12 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
 
   const fieldRules = computed(() => createValidationRulesPipeline(props));
 
+  const fieldDisabled = computed(() => {
+    const disabled = props.disabled ?? attrs.disabled;
+
+    return disabled === '' || disabled === true || disabled === 'true';
+  });
+
   const {
     value,
     errors,
@@ -591,6 +597,7 @@ export function useVuetifyFieldValidation(props, emit, attrs = {}) {
     validateOnValueUpdate: false,
     bails: props.bails,
     standalone: props.standalone,
+    disabled: fieldDisabled,
   });
 
   const debouncedValidate = debounce(validateField, props.validationDelay);

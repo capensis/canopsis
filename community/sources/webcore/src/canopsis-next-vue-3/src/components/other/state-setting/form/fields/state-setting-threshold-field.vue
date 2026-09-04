@@ -4,64 +4,67 @@
       {{ t('stateSetting.targetEntityState') }} - {{ label }}
     </h5>
 
-    <v-row class="target-entity-state-row align-center" dense>
-      <v-col cols="1">
+    <c-layout class="target-entity-state-row" align="center" gap="3">
+      <div class="target-entity-state-row__toggle">
         <c-enabled-field
           :model-value="condition.enabled"
           no-margin
           hide-details
+          hide-label
           @update:model-value="updateConditionField('enabled', $event)"
         />
-      </v-col>
+      </div>
 
-      <v-col cols="3">
-        <state-setting-threshold-method-field
-          :model-value="condition.method"
-          :disabled="disabled"
-          @update:model-value="updateConditionField('method', $event)"
-        />
-      </v-col>
+      <state-setting-threshold-method-field
+        :model-value="condition.method"
+        :name="methodName"
+        :disabled="disabled"
+        class="target-entity-state-row__method"
+        standalone
+        @update:model-value="updateConditionField('method', $event)"
+      />
 
-      <v-col cols="3">
-        <c-select
-          :model-value="condition.state"
-          :label="t('stateSetting.entitiesStates')"
-          :items="states"
-          :disabled="disabled"
-          :required="!disabled"
-          :name="stateName"
-          item-title="text"
-          item-value="value"
-          @update:model-value="updateConditionField('state', $event)"
-        />
-      </v-col>
+      <c-select
+        :model-value="condition.state"
+        :label="t('stateSetting.entitiesStates')"
+        :items="states"
+        :disabled="disabled"
+        :required="!disabled"
+        :name="stateName"
+        :standalone="disabled"
+        class="target-entity-state-row__field"
+        item-title="text"
+        item-value="value"
+        @update:model-value="updateConditionField('state', $event)"
+      />
 
-      <v-col cols="3">
-        <c-select
-          :model-value="condition.cond"
-          :label="t('common.condition', 1)"
-          :items="conditions"
-          :disabled="disabled"
-          :required="!disabled"
-          :name="conditionName"
-          item-title="text"
-          item-value="value"
-          @update:model-value="updateConditionField('cond', $event)"
-        />
-      </v-col>
+      <c-select
+        :model-value="condition.cond"
+        :label="t('common.condition', 1)"
+        :items="conditions"
+        :disabled="disabled"
+        :required="!disabled"
+        :name="conditionName"
+        :standalone="disabled"
+        item-title="text"
+        item-value="value"
+        class="target-entity-state-row__field"
+        @update:model-value="updateConditionField('cond', $event)"
+      />
 
-      <v-col cols="2">
-        <c-number-field
-          :value="condition.value"
-          :label="t('common.value')"
-          :disabled="disabled"
-          :required="!disabled"
-          :name="valueName"
-          :min="0"
-          @update:value="updateConditionField('value', $event)"
-        />
-      </v-col>
-    </v-row>
+      <c-number-field
+        :value="condition.value"
+        :label="t('common.value')"
+        :disabled="disabled"
+        :required="!disabled"
+        :name="valueName"
+        :min="0"
+        :max="maxValue"
+        :standalone="disabled"
+        class="target-entity-state-row__value"
+        @update:value="updateConditionField('value', $event)"
+      />
+    </c-layout>
 
     <v-expand-transition>
       <span v-if="summaryMessage">
@@ -115,6 +118,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
+    const methodName = computed(() => `${props.name}.method`);
     const stateName = computed(() => `${props.name}.state`);
     const conditionName = computed(() => `${props.name}.condition`);
     const valueName = computed(() => `${props.name}.value`);
@@ -135,6 +139,7 @@ export default {
     const isShareMethod = computed(
       () => props.condition.method === STATE_SETTING_THRESHOLDS_METHODS.share,
     );
+    const maxValue = computed(() => (isShareMethod.value ? 100 : undefined));
 
     const summaryMessage = computed(() => {
       const fieldsForSummary = pick(props.condition, ['cond', 'state', 'value']);
@@ -152,20 +157,32 @@ export default {
     });
 
     const updateConditionField = (field, value) => {
-      emit('update:condition', {
+      const nextCondition = {
         ...props.condition,
         [field]: value,
-      });
+      };
+
+      if (
+        field === 'method' &&
+        value === STATE_SETTING_THRESHOLDS_METHODS.share &&
+        Number(nextCondition.value) > 100
+      ) {
+        nextCondition.value = 100;
+      }
+
+      emit('update:condition', nextCondition);
     };
 
     return {
       t,
+      methodName,
       stateName,
       conditionName,
       valueName,
       disabled,
       states,
       conditions,
+      maxValue,
       summaryMessage,
       updateConditionField,
     };
@@ -173,8 +190,25 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .target-entity-state-row {
-  gap: 12px;
+  &__toggle {
+    flex: 0 0 auto;
+  }
+
+  &__method {
+    flex: 3 1 0;
+    min-width: 0;
+  }
+
+  &__field {
+    flex: 3 1 0;
+    min-width: 0;
+  }
+
+  &__value {
+    flex: 2 1 0;
+    min-width: 0;
+  }
 }
 </style>
