@@ -26,9 +26,7 @@
         <v-container>
           <v-card>
             <v-card-text>
-              <v-list density="compact">
-                <v-list-item v-for="name in item.names" :key="name" :title="name" />
-              </v-list>
+              <dynamic-info-template-names-expand :names="item.names" />
             </v-card-text>
           </v-card>
         </v-container>
@@ -59,7 +57,12 @@ import { getMaxPageForItemsCount } from '@/helpers/pagination';
 import { useI18n } from '@/hooks/i18n';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 
+import DynamicInfoTemplateNamesExpand from './partials/dynamic-info-template-names-expand.vue';
+
 export default {
+  components: {
+    DynamicInfoTemplateNamesExpand,
+  },
   props: {
     templates: {
       type: Array,

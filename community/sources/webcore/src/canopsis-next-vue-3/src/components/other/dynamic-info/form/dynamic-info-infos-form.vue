@@ -2,32 +2,16 @@
   <c-layout class="py-3" gap="3" column>
     <v-card v-for="(field, index) in infosField" :key="field.key">
       <v-card-text>
-        <c-layout gap="2" column>
-          <c-layout align="center" gap="2">
-            <c-name-field
-              v-model="field.name"
-              :label="$t('common.name')"
-              :name="`infos[${field.key}].name`"
-              required
-            />
-            <c-action-btn v-if="infosField.length > 1" type="delete" @click="remove(index)" />
-          </c-layout>
-
-          <c-select
-            v-model="field.type"
-            :items="typeItems"
-            :label="$t('common.type')"
-            :name="`infos[${field.key}].type`"
-            required
-          />
-
-          <c-text-field
-            v-model="field.value"
-            :label="$t('common.value')"
-            :name="`infos[${field.key}].value`"
-            required
-          />
-        </c-layout>
+        <dynamic-info-infos-item-form
+          :form="field"
+          :name="`infos.${index}`"
+          :unique-names="uniqueNames(index)"
+          :variables="variables"
+          :copy-variables="copyVariables"
+          :removable="infosField.length > 1"
+          @update:form="updateItem(index, $event)"
+          @remove="remove(index)"
+        />
       </v-card-text>
     </v-card>
 
@@ -44,31 +28,44 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { DYNAMIC_INFO_INFORMATION_TYPES, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/information/form';
 
 import { useFormContext } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 
+import DynamicInfoInfosItemForm from './fields/dynamic-info-infos-item-form.vue';
+
 export default {
+  components: {
+    DynamicInfoInfosItemForm,
+  },
+
+  props: {
+    variables: {
+      type: Array,
+      default: () => [],
+    },
+    copyVariables: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
   setup() {
-    const { t } = useI18n();
     const modals = useModals();
     const form = useFormContext();
     const infosField = form.array('infos');
 
-    const typeItems = computed(() => Object.values(DYNAMIC_INFO_INFORMATION_TYPES).map(type => ({
-        title: t(`dynamicInfo.informationTypes.${type}`),
-        value: type,
-      })),
-    );
+    const uniqueNames = index => infosField.value
+      .filter((_, itemIndex) => itemIndex !== index)
+      .map(({ name }) => name)
+      .filter(Boolean);
 
     const addItem = () => infosField.value.push(dynamicInfoInformationToForm());
-    const remove = index => infosField.value.splice(index, 1);
+    const remove = index => form.remove('infos', index);
+    const updateItem = (index, value) => form.replace('infos', index, value);
     const showAddInfosFromTemplateModal = () => modals.show({
         name: MODALS.addDynamicInfoInfosFromTemplate,
         config: {
@@ -80,9 +77,10 @@ export default {
 
     return {
       infosField,
-      typeItems,
+      uniqueNames,
       addItem,
       showAddInfosFromTemplateModal,
+      updateItem,
       remove,
     };
   },
