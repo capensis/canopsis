@@ -75,10 +75,10 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES,
 } from '@/constants';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-import { useValidator } from '@/hooks/validator/validator';
 
 import ExternalDataTableColumnDataTypeFieldNumberForm from './partials/external-data-table-column-data-type-field-number-form.vue';
 import ExternalDataTableColumnDataTypeFieldStringArrayMenu from './partials/external-data-table-column-data-type-field-string-array-menu.vue';
@@ -105,7 +105,7 @@ export default {
   },
   setup(props, { emit }) {
     const { t, te } = useI18n();
-    const validator = useValidator();
+    const { hasError } = useFormErrorsMap();
     const { updateField, updateModel } = useModelField(props, emit);
 
     const typesMap = computed(() => mapValues(EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, (type) => {
@@ -152,7 +152,7 @@ export default {
         );
       }
 
-      if (validator.errors.has(props.value.name)) {
+      if (hasError(props.value.name)) {
         result.color = 'error';
         result.textColor = 'error';
         result.prefixColorClass = 'error--text';

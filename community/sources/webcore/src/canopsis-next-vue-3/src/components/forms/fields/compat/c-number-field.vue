@@ -4,6 +4,7 @@
     v-model="model"
     :min="min"
     :max="max"
+    :required="required"
     type="number"
   />
 </template>
@@ -23,6 +24,10 @@ const props = defineProps({
   max: {
     type: Number,
     default: undefined,
+  },
+  required: {
+    type: Boolean,
+    default: false,
   },
 });
 

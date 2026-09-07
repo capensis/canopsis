@@ -5,12 +5,12 @@ import Socket from '@/plugins/socket/services/socket';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { isWebhookExecutionFinished } from '@/helpers/entities/webhook-execution/entity';
 
+import { useFormContext, useFormErrors } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useSocket } from '@/hooks/socket';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useValidator } from '@/hooks/validator/validator';
 
 /**
  * Handles shared test execution flow for webhook-based rule forms.
@@ -48,14 +48,15 @@ export const useAlarmWebhookTestQuery = ({
   const popups = usePopups();
   const modals = useModals();
   const socket = useSocket();
-  const validator = useValidator();
+  const formContext = useFormContext();
+  const formErrors = useFormErrors();
   const { setFormErrors } = useValidationFormErrors(unref(form));
 
   const alarm = ref('');
   const pending = ref(false);
   const executionStatus = ref(undefined);
 
-  const hasErrors = computed(() => validator.errors.any());
+  const hasErrors = computed(() => Object.keys(formErrors.value).length > 0);
   const alarmsPatternsParams = computed(() =>
     Object.entries(formFilterToPatterns(unref(form).patterns)).reduce((acc, [key, value]) => {
       acc[key] = JSON.stringify(value);
@@ -113,7 +114,7 @@ export const useAlarmWebhookTestQuery = ({
   };
 
   const runTestExecution = async () => {
-    const isFormValid = await validator.validateAll();
+    const { valid: isFormValid } = await formContext.validate();
 
     if (!isFormValid) {
       return;

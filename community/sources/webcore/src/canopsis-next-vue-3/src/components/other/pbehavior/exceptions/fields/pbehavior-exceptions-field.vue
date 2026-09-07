@@ -82,13 +82,13 @@ export default {
     const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+    const { collectErrors, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
       useValidationAttachMinValue(props.name);
 
     const resolvedRequiredErrorMessage = computed(
       () => props.requiredErrorMessage || t('common.addAtLeastOneItem'),
     );
-    const errorMessages = computed(() => validator.errors.collect(props.name));
+    const errorMessages = computed(() => collectErrors(props.name));
     const addButtonError = computed(() => (
       props.required && errorMessages.value.length
         ? resolvedRequiredErrorMessage.value

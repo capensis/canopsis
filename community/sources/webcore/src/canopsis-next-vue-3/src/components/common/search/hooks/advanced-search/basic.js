@@ -492,20 +492,15 @@ export const useAdvancedSearchRuleActiveItems = ({
 
 /**
  * A Vue composition function that manages the attachment and detachment of validation rules
- * for an advanced search rule. It uses the injected `$validator` from `vee-validate` to
- * dynamically attach or detach validation rules based on the `disabled` state.
+ * for an advanced search rule.
  *
- * @returns {Object} - An object containing the `validator` instance.
+ * @returns {Object} - An object containing validation error helpers.
  */
 export const useAttachAdvancedSearchRuleValidator = () => {
   const context = inject(ADVANCED_SEARCH_VALIDATION_CONTEXT, null);
 
   return {
-    validator: {
-      errors: {
-        has: key => context?.errors.has(key),
-      },
-      ruleName: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
-    },
+    hasError: key => context?.errors.has(key),
+    ruleName: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
   };
 };

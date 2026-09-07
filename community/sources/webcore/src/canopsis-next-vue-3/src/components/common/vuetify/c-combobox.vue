@@ -120,7 +120,7 @@ const menuOpened = ref(false);
 const pendingBlurEvent = ref(null);
 
 const comboboxValue = computed({
-  get: () => (inputValue.value === '' ? null : inputValue.value),
+  get: () => (inputValue.value === '' ? (attrs.multiple ? [] : null) : inputValue.value),
   set: (value) => {
     inputValue.value = value ?? '';
   },

@@ -82,10 +82,9 @@ import { TEMPLATE_TESTING_TEST_TYPES, LINK_RULE_TYPES } from '@/constants';
 import { isDefaultSourceCode } from '@/helpers/entities/link/form';
 
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
-import { useFormContext, useFormModels } from '@/hooks/form';
+import { useFormContext, useFormErrorsMap, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-import { useValidator } from '@/hooks/validator/validator';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
@@ -125,7 +124,7 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const { errors } = useValidator();
+    const { hasError } = useFormErrorsMap();
     const form = useFormContext();
 
     const activeTab = ref(LINK_RULE_FORM_TABS.general);
@@ -151,7 +150,7 @@ export default {
 
     const isActiveTestingTab = computed(() => activeTab.value === LINK_RULE_FORM_TABS.testing);
     const isAlarmType = computed(() => typeField.value === LINK_RULE_TYPES.alarm);
-    const hasLinksError = computed(() => errors.has?.('links') || !!form.errors.value?.links);
+    const hasLinksError = computed(() => hasError('links') || !!form.errors.value?.links);
 
     const linksErrorMessages = computed(() => hasLinksError.value ? [t('linkRule.linksEmptyError')] : [],
     );

@@ -6,7 +6,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.priority')">
-        <c-priority-field v-model="priorityField" />
+        <c-priority-field v-model="priorityField" required />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.description')">

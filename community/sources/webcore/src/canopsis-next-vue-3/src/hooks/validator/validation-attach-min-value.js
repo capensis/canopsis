@@ -17,6 +17,9 @@ export const useValidationAttachMinValue = (name) => {
 
   return {
     validator,
+    hasError: validator.errors.has,
+    collectErrors: validator.errors.collect,
+    clearError: validator.errors.clear,
     attachMinValueRule: attachRule,
     detachMinValueRule: detachRule,
     validateMinValueRule: validateRule,
@@ -41,6 +44,9 @@ export const useValidationAttachMinValueForField = (name, getValue) => {
 
   return {
     validator,
+    hasError: validator.errors.has,
+    collectErrors: validator.errors.collect,
+    clearError: validator.errors.clear,
     asyncValidateMinValueRule: validateRule,
   };
 };

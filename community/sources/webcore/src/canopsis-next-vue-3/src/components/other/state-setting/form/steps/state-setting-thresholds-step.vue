@@ -42,11 +42,11 @@ export default {
     const { t } = useI18n();
     const thresholds = useFormModel(props.name);
     const { hasAnyError } = useValidationHeader();
-    const { validator, attachRequiredRule, detachRequiredRule, validateRequiredRule } =
+    const { hasError: hasFieldError, clearError, attachRequiredRule, detachRequiredRule, validateRequiredRule } =
       useValidationAttachRequired(props.name);
 
     const sortedThresholdsKeys = computed(() => Object.keys(thresholds.value ?? {}).reverse());
-    const hasError = computed(() => validator?.errors?.has(props.name) ?? false);
+    const hasError = computed(() => hasFieldError(props.name));
 
     const getLabel = key => t(`common.stateTypes.${ALARM_STATES[key]}`);
 
@@ -58,7 +58,7 @@ export default {
         [key]: value,
       };
 
-      validator?.errors?.clear(props.name);
+      clearError(props.name);
     };
 
     watch(thresholds, () => validateRequiredRule(), { deep: true });

@@ -64,15 +64,16 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted } from 'vue';
 
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
+import { useFormContext, useFormErrorsMap } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
-import { useValidator } from '@/hooks/validator/validator';
+import { useComponentInstance } from '@/hooks/vue';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 
@@ -113,7 +114,9 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const validator = useValidator();
+    const formContext = useFormContext();
+    const instance = useComponentInstance();
+    const { collectErrors } = useFormErrorsMap();
     const { updateField, updateModel } = useModelField(props, emit);
 
     const availableTypes = computed(() => props.types.length
@@ -126,12 +129,18 @@ export default {
 
     const isTableType = computed(() => isTableExternalDataType(props.form.type));
     const referenceFieldName = computed(() => `${props.name}.reference`);
-    const serverErrorMessages = computed(() => validator.errors.collect(props.serverErrorName));
+    const serverErrorMessages = computed(() => collectErrors(props.serverErrorName));
     const remove = () => emit('remove', props.form);
 
     onMounted(() => {
       if (props.serverErrorName) {
-        validator.attach({ name: props.serverErrorName });
+        formContext.addFieldInstance(props.serverErrorName, instance);
+      }
+    });
+
+    onBeforeUnmount(() => {
+      if (props.serverErrorName) {
+        formContext.removeFieldInstance(props.serverErrorName);
       }
     });
 

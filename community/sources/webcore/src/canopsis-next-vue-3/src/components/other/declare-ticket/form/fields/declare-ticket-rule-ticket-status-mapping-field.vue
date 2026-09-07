@@ -4,7 +4,7 @@
       <c-label
         :label="$t('declareTicket.ticketStatusMapping')"
         :help-text="$t('declareTicket.ticketStatusMappingHelpText')"
-        :error="errors.has(name)"
+        :error="hasError(name)"
         required
       />
 
@@ -36,10 +36,10 @@ import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN } from '@/con
 
 import { textPairToForm } from '@/helpers/text-pairs';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachRequiredForField } from '@/hooks/validator/validation-attach-required';
-import { useValidator } from '@/hooks/validator/validator';
 
 export default {
   emits: ['update:value'],
@@ -59,7 +59,7 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const validator = useValidator();
+    const { hasError } = useFormErrorsMap();
     const { updateModel, addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
     const canopsisValueItems = computed(() => Object.values(DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN)
@@ -101,7 +101,7 @@ export default {
     );
 
     return {
-      errors: validator.errors,
+      hasError,
       canopsisValueItems,
       updateModel,
       addMappingPair,

@@ -118,8 +118,8 @@ export default {
       allowOr: toRef(props, 'allowOr'),
     });
 
-    const { validator } = useAttachAdvancedSearchRuleValidator();
-    const hasRuleError = computed(() => validator.errors.has(props.rule.key));
+    const { hasError } = useAttachAdvancedSearchRuleValidator();
+    const hasRuleError = computed(() => hasError(props.rule.key));
 
     /**
      * Navigates to the next form item type, optionally skipping the current type.

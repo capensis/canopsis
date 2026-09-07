@@ -108,11 +108,11 @@ export default {
     const fieldName = toRef(props, 'name');
     useFormContext();
     const fieldError = useFieldError(fieldName);
-    const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+    const { hasError, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
       useValidationAttachMinValue(fieldName);
 
     const isEmpty = computed(() => !props.value?.length);
-    const hasErrors = computed(() => validator?.errors?.has(fieldName.value) ?? false);
+    const hasErrors = computed(() => hasError(fieldName.value));
     const requiredAddButtonError = computed(() => props.required && hasErrors.value
         ? props.requiredErrorMessage || fieldError.value || t('common.addAtLeastOneItem')
         : '',

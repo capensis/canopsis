@@ -76,10 +76,10 @@ export default {
       emit,
     );
     const fieldName = toRef(props, 'name');
-    const { validator, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+    const { hasError, clearError, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
       useValidationAttachMinValue(fieldName);
 
-    const hasGroupsErrors = computed(() => validator.errors.has(fieldName.value));
+    const hasGroupsErrors = computed(() => hasError(fieldName.value));
     const groupsLengthGetter = () => props.groups?.length ?? 0;
 
     /**
@@ -89,7 +89,7 @@ export default {
 
     const validateGroupsField = async () => {
       if (!props.required) {
-        validator.errors.clear(fieldName.value);
+        clearError(fieldName.value);
 
         return true;
       }

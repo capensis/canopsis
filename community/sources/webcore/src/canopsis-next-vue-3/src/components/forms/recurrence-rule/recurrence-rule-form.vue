@@ -114,8 +114,8 @@
       </template>
     </c-form-block>
 
-    <c-alert :value="validator.errors.has('recurrenceRule')" type="error">
-      {{ validator.errors.collect('recurrenceRule')[0] }}
+    <c-alert v-if="recurrenceRuleError" type="error">
+      {{ recurrenceRuleError }}
     </c-alert>
   </div>
 </template>
@@ -131,8 +131,8 @@ import {
   recurrenceRuleFormOptionsToRruleBodyString,
 } from '@/helpers/entities/shared/recurrence-rule/form';
 
+import { useFormContext, useFormErrorsMap } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useValidator } from '@/hooks/validator/validator';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
 import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
@@ -164,12 +164,14 @@ const props = defineProps({
 const emit = defineEmits(['update:form']);
 
 const { t } = useI18n();
-const validator = useValidator();
+const formContext = useFormContext();
+const { collectErrors } = useFormErrorsMap();
 
 const isFrequencyEnabled = computed(() => isNumber(props.form.rrule.freq));
 const isHourlyFrequency = computed(() => props.form.rrule.freq === RRule.HOURLY);
 const isMonthlyFrequency = computed(() => props.form.rrule.freq === RRule.MONTHLY);
 const isYearlyFrequency = computed(() => props.form.rrule.freq === RRule.YEARLY);
+const recurrenceRuleError = computed(() => collectErrors('recurrenceRule')[0]);
 
 const advancedFields = computed(() => {
   const fields = [
@@ -245,7 +247,7 @@ const updateRruleField = (field, value) => updateFormField('rrule', {
 
 const validateRecurrenceRrule = () => {
   if (props.form.rrule.freq == null) {
-    validator.errors.remove('recurrenceRule');
+    formContext.setFieldError('recurrenceRule', undefined);
 
     return;
   }
@@ -255,20 +257,14 @@ const validateRecurrenceRrule = () => {
     const rrule = new RRule(formOptionsToRecurrenceRuleOptions(props.form.rrule, names));
 
     if (!rrule.isFullyConvertibleToText()) {
-      validator.errors.add({
-        field: 'recurrenceRule',
-        msg: t('recurrenceRule.errors.main'),
-      });
+      formContext.addError('recurrenceRule', t('recurrenceRule.errors.main'));
 
       return;
     }
 
-    validator.errors.remove('recurrenceRule');
+    formContext.setFieldError('recurrenceRule', undefined);
   } catch {
-    validator.errors.add({
-      field: 'recurrenceRule',
-      msg: t('recurrenceRule.errors.main'),
-    });
+    formContext.addError('recurrenceRule', t('recurrenceRule.errors.main'));
   }
 };
 

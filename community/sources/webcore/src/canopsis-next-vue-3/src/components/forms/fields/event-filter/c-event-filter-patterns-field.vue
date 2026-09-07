@@ -163,10 +163,16 @@ export default {
         valueField: {
           is: 'c-event-type-field',
           props: (rule) => {
-            const isMultiple = isArray(rule?.value);
+            const hasChips = [
+              PATTERN_OPERATORS.isOneOf,
+              PATTERN_OPERATORS.isNotOneOf,
+            ].includes(rule?.operator);
+            const isMultiple = hasChips || isArray(rule?.value);
 
             return {
               multiple: isMultiple,
+              chips: hasChips,
+              closableChips: hasChips,
               deletableChips: isMultiple,
               smallChips: isMultiple,
             };
