@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"

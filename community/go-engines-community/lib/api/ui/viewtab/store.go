@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
