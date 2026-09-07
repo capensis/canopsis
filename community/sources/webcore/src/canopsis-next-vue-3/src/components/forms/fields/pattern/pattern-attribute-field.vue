@@ -33,11 +33,10 @@
         </template>
       </v-list-item>
     </template>
-    <template #selection="{ item }">
-      <v-icon v-if="selectionItem(item)?.alias" class="mr-1" size="small">
+    <template v-if="selectedItem?.alias" #prepend-inner>
+      <v-icon class="mt-1" color="primary" size="small">
         alternate_email
       </v-icon>
-      <span class="text-truncate">{{ selectionTitle(item) }}</span>
     </template>
   </c-autocomplete>
 </template>
@@ -103,14 +102,6 @@ export default {
       return {
         disabled: item?.options?.disabled,
       };
-    },
-
-    selectionItem(item) {
-      return item ?? this.selectedItem;
-    },
-
-    selectionTitle(item) {
-      return item?.text ?? item?.title ?? this.selectedItem?.text ?? '';
     },
 
     updateValue(value) {

@@ -6,6 +6,7 @@ import {
   isNaN,
   isNull,
   isNumber,
+  isPlainObject,
   isString,
   isUndefined,
   isEqual,
@@ -21,6 +22,7 @@ import {
   PATTERN_NULL_OPERATORS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS_WITHOUT_VALUE,
+  PATTERN_ALARM_TAG_LABEL_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
@@ -615,41 +617,34 @@ export const isValidRuleValue = rule =>
   rule.field_type ? isValidRuleValueWithFieldType(rule) : isValidRuleValueWithoutFieldType(rule);
 
 /**
- * Whether a pattern rule field uses a generic string-array editor, as opposed to fields that bind
- * primitives or dedicated pickers (tags, context entities, event filter entities, user/initiator fields, etc.).
+ * Whether a pattern rule field binds primitive values or a dedicated picker
+ * instead of the generic `{ key, value }` string-array editor.
  *
  * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
- * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
+ * @return {boolean} True when the field should keep primitive array values.
  */
 export const isArrayPatternRuleFieldWithoutPrimitive = field =>
-  field !== ALARM_PATTERN_FIELDS.tags &&
-  field !== ALARM_PATTERN_FIELDS.component &&
-  field !== ALARM_PATTERN_FIELDS.connector &&
-  field !== ALARM_PATTERN_FIELDS.connectorName &&
-  field !== ALARM_PATTERN_FIELDS.resource &&
-  field !== ALARM_PATTERN_FIELDS.ackBy &&
-  field !== ALARM_PATTERN_FIELDS.ackInitiator &&
-  field !== ALARM_PATTERN_FIELDS.ticketInitiator &&
-  field !== ALARM_PATTERN_FIELDS.snoozeAuthor &&
-  field !== ALARM_PATTERN_FIELDS.snoozeInitiator &&
-  field !== ALARM_PATTERN_FIELDS.canceledInitiator &&
-  field !== ALARM_PATTERN_FIELDS.lastCommentAuthor &&
-  field !== ALARM_PATTERN_FIELDS.lastCommentInitiator &&
-  field !== ALARM_PATTERN_FIELDS.stateInitiator &&
-  field !== ENTITY_PATTERN_FIELDS.id &&
-  field !== ENTITY_PATTERN_FIELDS.component &&
-  field !== ENTITY_PATTERN_FIELDS.connector &&
-  field !== ENTITY_PATTERN_FIELDS.category &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.eventType &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.component &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.connector &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.connectorName &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.resource &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.initiator &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.author &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.output &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.longOutput &&
-  field !== EVENT_FILTER_PATTERN_FIELDS.extraInfos;
+  ![
+    ALARM_PATTERN_FIELDS.lastCommentAuthor,
+    ALARM_PATTERN_FIELDS.displayName,
+    ALARM_PATTERN_FIELDS.output,
+    ALARM_PATTERN_FIELDS.ackMessage,
+    ALARM_PATTERN_FIELDS.ticketValue,
+    ALARM_PATTERN_FIELDS.ticketMessage,
+    ALARM_PATTERN_FIELDS.ticketData,
+    ALARM_PATTERN_FIELDS.snoozeAuthor,
+    ALARM_PATTERN_FIELDS.lastComment,
+    ALARM_PATTERN_FIELDS.longOutput,
+    ALARM_PATTERN_FIELDS.initialOutput,
+    ALARM_PATTERN_FIELDS.initialLongOutput,
+
+    ENTITY_PATTERN_FIELDS.name,
+
+    EVENT_FILTER_PATTERN_FIELDS.author,
+    EVENT_FILTER_PATTERN_FIELDS.output,
+    EVENT_FILTER_PATTERN_FIELDS.longOutput,
+    EVENT_FILTER_PATTERN_FIELDS.extraInfos,
+  ].includes(field);
 
 /**
  * Check pattern rule is valid
@@ -666,6 +661,58 @@ export const isValidPatternRule = rule =>
   isValidRuleValue(rule);
 
 /**
+ * Unwrap a pattern form item `{ key, value }` (or a one-item array of those) to a scalar.
+ *
+ * @param {*} value
+ * @return {*}
+ */
+const getPatternFormScalarValue = (value) => {
+  const preparedValue = isArray(value) ? value[0] : value;
+
+  if (isPlainObject(preparedValue) && preparedValue.key) {
+    return preparedValue.value;
+  }
+
+  return preparedValue;
+};
+
+/**
+ * Convert a scalar or array value to a list of items.
+ *
+ * @param {*} value
+ * @return {Array}
+ */
+const toPatternArrayValue = (value) => {
+  if (isArray(value)) {
+    return value;
+  }
+
+  if (isNil(value) || value === '') {
+    return [];
+  }
+
+  return [value];
+};
+
+/**
+ * Whether a rule should use `{ key, value }` items in the generic string-array editor.
+ *
+ * @param {PatternRuleForm} [rule={}]
+ * @return {boolean}
+ */
+const shouldUsePrimitiveArrayForm = (rule = {}) => {
+  if (!rule.attribute) {
+    return true;
+  }
+
+  return (
+    !isArrayPatternRuleFieldWithoutPrimitive(rule.attribute) ||
+    rule.field === PATTERN_RULE_INFOS_FIELDS.value ||
+    rule.alias
+  );
+};
+
+/**
  * Convert any value to type value
  *
  * @param {PatternFieldType} type
@@ -678,7 +725,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     return defaultValue;
   }
 
-  const preparedValue = isArray(value) ? value[0] : value;
+  const preparedValue = getPatternFormScalarValue(value);
 
   switch (type) {
     case PATTERN_FIELD_TYPES.number:
@@ -686,13 +733,26 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.boolean:
       return Boolean(preparedValue);
     case PATTERN_FIELD_TYPES.string:
+      if (isPlainObject(preparedValue)) {
+        return preparedValue;
+      }
+
       return isNaN(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue)
         ? ''
         : String(preparedValue);
     case PATTERN_FIELD_TYPES.null:
       return null;
-    case PATTERN_FIELD_TYPES.stringArray:
-      return preparedValue ? primitiveArrayToForm([String(preparedValue)]) : [];
+    case PATTERN_FIELD_TYPES.stringArray: {
+      if (isNil(preparedValue) || preparedValue === '') {
+        return [];
+      }
+
+      const scalar = isPlainObject(preparedValue)
+        ? (preparedValue._id ?? preparedValue.name ?? preparedValue.text ?? '')
+        : preparedValue;
+
+      return scalar === '' ? [] : primitiveArrayToForm([String(scalar)]);
+    }
     default:
       return undefined;
   }
@@ -797,18 +857,45 @@ export const getValueTypesByOperator = (operator) => {
  *
  * @param {PatternValue} value
  * @param {string} operator
+ * @param {PatternRuleForm} [rule={}]
+ * @param {PatternRuleForm} [oldRule={}]
  * @return {PatternValue|undefined|*}
  */
-export const convertValueByOperator = (value, operator) => {
+export const convertValueByOperator = (value, operator, rule = {}, oldRule = {}) => {
   const fieldType = getFieldType(value);
 
   const operatorsValueType = getValueTypesByOperator(operator);
+  const { operator: oldOperator } = oldRule ?? {};
+
+  if (
+    PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(oldOperator) !== PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
+  ) {
+    return [];
+  }
 
   if (operatorsValueType.includes(fieldType)) {
     return value;
   }
 
-  return convertValueByType(value, operatorsValueType[0]);
+  const targetType = operatorsValueType[0];
+
+  if (targetType === PATTERN_FIELD_TYPES.stringArray) {
+    const items = toPatternArrayValue(value)
+      .map(getPatternFormScalarValue)
+      .filter(item => !isNil(item) && item !== '');
+
+    if (shouldUsePrimitiveArrayForm(rule)) {
+      return primitiveArrayToForm(
+        items
+          .map(item => (isPlainObject(item) ? (item._id ?? item.name ?? item.text ?? '') : String(item)))
+          .filter(item => item !== ''),
+      );
+    }
+
+    return items;
+  }
+
+  return convertValueByType(value, targetType);
 };
 
 /**
@@ -834,13 +921,13 @@ export const createEntityIdPatternByValue = value => [
  *
  * @return {Object} Default range object with type, from, and to properties
  * @return {string} type - Quick range type (default: last1Hour.value)
- * @return {number} from - Start timestamp (default: 0)
- * @return {number} to - End timestamp (default: 0)
+ * @return {string} from - Start value (empty until selected)
+ * @return {string} to - End value (empty until selected)
  */
 export const getDefaultDateFormRange = () => ({
   type: QUICK_RANGES.last1Hour.value,
-  from: 0,
-  to: 0,
+  from: '',
+  to: '',
 });
 
 /**
@@ -955,11 +1042,7 @@ export const patternRuleToForm = (rule = {}) => {
     dictionary: '',
     value: '',
     alias: !!rule.alias,
-    range: {
-      type: QUICK_RANGES.last1Hour.value,
-      from: 0,
-      to: 0,
-    },
+    range: getDefaultDateFormRange(),
     duration: durationToForm(),
   };
 
@@ -1156,7 +1239,8 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator)) &&
     isArray(form.value) &&
     (!form.value.length || !form.value[0]?.key) &&
-    !isArrayPatternRuleFieldWithoutPrimitive(form.field)
+    rule.field !== ALARM_PATTERN_FIELDS.tags &&
+    (!isArrayPatternRuleFieldWithoutPrimitive(form.attribute) || isInfos)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
@@ -1342,7 +1426,10 @@ export const formRuleToPatternRule = (rule) => {
     (rule.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(rule.operator)) &&
     isArray(pattern.cond.value)
   ) {
-    pattern.cond.value = formToPrimitiveArray(pattern.cond.value);
+    pattern.cond.value = formToPrimitiveArray(
+      pattern.cond.value,
+      PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(rule.operator) ? '_id' : 'value',
+    );
   }
 
   switch (rule.operator) {

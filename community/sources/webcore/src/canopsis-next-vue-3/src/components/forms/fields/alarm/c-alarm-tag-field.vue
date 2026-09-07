@@ -15,8 +15,8 @@
     :hide-no-data="false"
     :item-text="itemText"
     :item-value="itemValue"
-    :density="density"
     :multiple="multiple"
+    :show-count="showCount"
     class="c-alarm-tag-field"
     chips
     clearable
@@ -28,7 +28,6 @@
   >
     <template #selection="{ item, index }">
       <c-chip
-        v-if="!showCount || index < showCount"
         :color="getSelectionColor(item)"
         :text-color="getSelectionTextColor(item)"
         :title="getSelectionText(item)"
@@ -38,19 +37,15 @@
       >
         {{ getSelectionText(item) }}
       </c-chip>
-      <span v-else-if="index === showCount">
-        +{{ selectedItems.length - showCount }} {{ $t('common.more') }}
-      </span>
-      <span v-else />
     </template>
-    <template #item="{ item, props: itemProps }">
+    <template #item="{ item, props: itemProps, search }">
       <v-list-item class="c-alarm-tag-field__list-item text-break" v-bind="itemProps">
         <template v-if="multiple" #prepend="{ isSelected }">
           <v-checkbox-btn :model-value="isSelected" color="primary" />
         </template>
 
         <v-list-item-title class="c-word-break-all">
-          {{ getSelectionText(item) }}
+          <v-list-item-mask :text="String(getSelectionText(item) ?? '')" :mask="search" />
         </v-list-item-title>
       </v-list-item>
     </template>
@@ -122,10 +117,6 @@ export default {
       type: Boolean,
       required: false,
     },
-    density: {
-      type: String,
-      default: 'default',
-    },
   },
   setup(props, { emit }) {
     const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
@@ -163,9 +154,10 @@ export default {
 
     const getSelectionText = item => item?.[itemText.value] ?? item;
     const getSelectionColor = item => item?.color;
-    const getSelectionTextColor = item => getMostReadableTextColor(item?.color, { level: 'AA', size: 'large' });
+    const getSelectionTextColor = item =>
+      getMostReadableTextColor(getSelectionColor(item), { level: 'AA', size: 'large' });
 
-    watch(() => props.onlyLabels, fetchItems);
+    watch(() => props.onlyLabels, () => fetchItems());
 
     return {
       selectedItems,
@@ -189,12 +181,45 @@ export default {
 
 <style lang="scss">
 .c-alarm-tag-field {
-  .v-select__selection {
-    width: calc(100% - 56px);
+  &.v-autocomplete--chips .v-field.v-field,
+  .v-field.v-field:has(.v-autocomplete__selection .v-chip) {
+    .v-field__input {
+      align-items: center;
+      padding-top: 8px;
+      padding-bottom: 0;
+    }
   }
 
-  &__tag {
+  .v-select__selection,
+  .v-autocomplete__selection {
+    width: auto;
+    max-width: calc(100% - 56px);
+    height: 24px;
+    margin: 0;
+  }
+
+  &__tag.c-chip.v-chip {
+    display: inline-flex;
+    align-items: center;
     max-width: 100%;
+    height: 24px !important;
+    min-height: 24px !important;
+    margin: 0;
+
+    .c-chip__text {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .v-chip__content {
+      display: flex !important;
+      align-items: center;
+      height: 100% !important;
+    }
   }
 
   &__list {

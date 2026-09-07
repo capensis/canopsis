@@ -22,13 +22,6 @@
     @fetch:more="fetchMoreItems"
     @update:search="handleSearchUpdate"
   >
-    <template v-if="!addable" #selection="{ item }">
-      <v-icon class="mr-2">
-        language
-      </v-icon>
-      <span>{{ item?.value ?? item }}</span>
-    </template>
-
     <template v-if="!addable" #icon>
       <v-icon class="mr-2">
         language

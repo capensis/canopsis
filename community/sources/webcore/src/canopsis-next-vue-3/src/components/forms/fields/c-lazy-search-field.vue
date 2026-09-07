@@ -31,6 +31,7 @@
       <slot
         v-bind="getLegacySlotProps(slotProps)"
         :attrs="slotProps.props"
+        :search="internalSearch"
         name="item"
       >
         <v-list-item class="c-lazy-search-field--tile" v-bind="slotProps.props">
@@ -38,7 +39,10 @@
             <slot :item="getSlotItem(slotProps.item)" name="icon" />
           </template>
           <v-list-item-title>
-            {{ getItemText(getSlotItem(slotProps.item)) }}
+            <v-list-item-mask
+              :text="String(getItemText(getSlotItem(slotProps.item)) ?? '')"
+              :mask="internalSearch"
+            />
           </v-list-item-title>
           <template v-if="withType" #append>
             <span class="ml-4 text-medium-emphasis">
@@ -48,13 +52,13 @@
         </v-list-item>
       </slot>
     </template>
+    <template v-if="$slots.icon && !isMultiple && hasSelectedValue" #prepend-inner>
+      <slot :item="selectedFieldItem" name="icon" />
+    </template>
     <template #append-item="">
       <div ref="appendElement" class="c-lazy-search-field__append" />
     </template>
     <template v-if="$slots.selection && isMultiple" #chip="slotProps">
-      <slot name="selection" v-bind="getLegacySlotProps(slotProps)" />
-    </template>
-    <template v-else-if="$slots.selection" #selection="slotProps">
       <slot name="selection" v-bind="getLegacySlotProps(slotProps)" />
     </template>
     <template v-else-if="isMultiple" #chip="{ item, props: selectionProps }">
@@ -68,11 +72,6 @@
           {{ getItemText(getSelectionItem(item)) }}
         </span>
       </v-chip>
-    </template>
-    <template v-else #selection="{ item }">
-      <span class="v-select__selection-text">
-        {{ getItemText(getSelectionItem(item)) }}
-      </span>
     </template>
     <template v-if="$slots['no-data']" #no-data="">
       <slot name="no-data" />
@@ -176,6 +175,13 @@ export default {
 
     const fieldComponent = computed(() => (props.autocomplete ? 'c-autocomplete' : 'c-combobox'));
     const isMultiple = computed(() => isArray(props.value));
+    const hasSelectedValue = computed(() => {
+      if (isMultiple.value) {
+        return false;
+      }
+
+      return props.value != null && props.value !== '';
+    });
     const preparedMenuProps = computed(() => ({
       ...props.menuProps,
       contentClass: 'c-lazy-search-field__list',
@@ -207,17 +213,29 @@ export default {
 
     const getSlotItem = item => item?.raw ?? item;
 
-    const getLegacySlotProps = slotProps => ({
-      ...slotProps,
-      item: getSlotItem(slotProps?.item),
-      vuetifyItem: slotProps?.item,
-    });
-
     const getSelectionItem = (item) => {
       const rawItem = getSlotItem(item);
       const value = getItemValue(rawItem);
 
       return props.items.find(entity => getItemValue(entity) === value) ?? rawItem;
+    };
+
+    const selectedFieldItem = computed(() => {
+      if (!hasSelectedValue.value) {
+        return null;
+      }
+
+      return getSelectionItem(props.value);
+    });
+
+    const getLegacySlotProps = (slotProps) => {
+      const item = getSlotItem(slotProps?.item);
+
+      return {
+        ...slotProps,
+        item: slotProps?.name === 'item' ? item : getSelectionItem(item),
+        vuetifyItem: slotProps?.item,
+      };
     };
 
     const getItemProps = (item) => {
@@ -299,6 +317,8 @@ export default {
       fieldAttrs,
       preparedMenuProps,
       isMultiple,
+      hasSelectedValue,
+      selectedFieldItem,
       getItemValue,
       getItemText,
       getLegacySlotProps,

@@ -100,8 +100,12 @@ watch(
   outline: 3px solid transparent;
   border-radius: var(--c-collapse-panel-border-radius) !important;
 
-  &__panel .v-expansion-panel__shadow {
+  &__panel {
     overflow: hidden;
+
+    .v-expansion-panel__shadow {
+      overflow: hidden;
+    }
   }
 
   &__card.v-card {

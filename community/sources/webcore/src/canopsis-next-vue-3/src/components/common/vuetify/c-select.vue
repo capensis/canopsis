@@ -18,7 +18,33 @@
       {{ label }}
     </template>
 
-    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+    <template v-if="hasLimitedSelection" #chip="slotProps">
+      <limited-field-selection
+        :index="slotProps.index"
+        :show-count="showCount"
+        :total="selectedCount"
+      >
+        <slot name="chip" v-bind="getLegacySlotProps({ name: 'chip', ...slotProps })">
+          <v-chip v-bind="slotProps.props" size="small">
+            {{ getSelectionTitle(slotProps) }}
+          </v-chip>
+        </slot>
+      </limited-field-selection>
+    </template>
+
+    <template v-if="hasLimitedSelection" #selection="slotProps">
+      <limited-field-selection
+        :index="slotProps.index"
+        :show-count="showCount"
+        :total="selectedCount"
+      >
+        <slot name="selection" v-bind="getLegacySlotProps({ name: 'selection', ...slotProps })">
+          <span>{{ getSelectionTitle(slotProps) }}</span>
+        </slot>
+      </limited-field-selection>
+    </template>
+
+    <template v-for="slot in getForwardedSlotNames()" #[slot]="slotProps">
       <slot :name="slot" v-bind="getLegacySlotProps({ name: slot, ...(slotProps || {}) })" />
     </template>
   </v-select>
@@ -28,10 +54,13 @@
 import { isString } from 'lodash';
 import { computed, nextTick, ref, useAttrs } from 'vue';
 
+import LimitedFieldSelection from './limited-field-selection.vue';
+import { limitedSelectionProps, useLimitedSelection } from './limited-selection';
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
 const props = defineProps({
   ...validationProps,
+  ...limitedSelectionProps,
   items: {
     type: Array,
     default: () => [],
@@ -52,6 +81,10 @@ const { inputName, inputValue, errorMessages, onBlur } = useVuetifyFieldValidati
   props,
   emit,
   attrs,
+);
+const { hasLimitedSelection, selectedCount, getForwardedSlotNames, getSelectionTitle } = useLimitedSelection(
+  props,
+  inputValue,
 );
 const menuShown = ref(false);
 const pendingBlurEvent = ref(null);

@@ -226,6 +226,14 @@ $v2-spacer: 4px;
   --v-field-label-scale: 0.75rem;
 }
 
+.v-autocomplete--single,
+.v-combobox--single,
+.v-select--single {
+  .v-field__input {
+    flex-wrap: nowrap;
+  }
+}
+
 .c-field {
   .v-field--variant-underlined,
   .v-field--variant-plain {
@@ -246,6 +254,18 @@ $v2-spacer: 4px;
 
     .v-label.v-field-label--floating {
       top: 16px;
+    }
+  }
+
+  .v-autocomplete__selection,
+  .v-combobox__selection,
+  .v-select__selection {
+    min-width: 0;
+  }
+
+  &:is(.v-autocomplete, .v-combobox):not(.v-autocomplete--chips):not(.v-combobox--chips) {
+    .v-field__input > input {
+      min-width: 0;
     }
   }
 }

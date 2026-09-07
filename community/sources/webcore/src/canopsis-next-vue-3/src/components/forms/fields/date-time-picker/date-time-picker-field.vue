@@ -9,7 +9,11 @@
     location="bottom end"
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps" :aria-required="fieldRequired">
+      <div
+        v-bind="activatorProps"
+        :aria-required="fieldRequired"
+        class="date-time-picker-field"
+      >
         <c-text-field
           :label="label"
           :name="name"
@@ -137,3 +141,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.date-time-picker-field {
+  width: 100%;
+}
+</style>
