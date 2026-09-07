@@ -14,7 +14,7 @@
     :required="required"
     :clearable="clearable"
     :autocomplete="autocomplete"
-    :return-object="returnObject"
+    return-object
     with-type
     @update:value="changeSelectedItems"
     @fetch="fetchItems"
@@ -152,6 +152,7 @@ const {
     idParamsKey: '_id',
     value: toRef(props, 'value'),
     multiple,
+    addable: computed(() => !props.autocomplete),
     returnObject: toRef(props, 'returnObject'),
     attachValue: true,
     initialQuery: {

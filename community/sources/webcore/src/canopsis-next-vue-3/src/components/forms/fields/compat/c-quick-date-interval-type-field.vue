@@ -7,6 +7,7 @@
     :hide-details="hideDetails"
     :disabled="disabled"
     :return-object="returnObject"
+    :item-props="itemDisabled ? getItemProps : undefined"
     item-title="text"
     item-value="value"
     @update:model-value="updateModel"
@@ -14,11 +15,14 @@
 </template>
 
 <script>
-import { isObject } from 'lodash';
+import { isFunction, isObject } from 'lodash';
+import { computed } from 'vue';
 
 import { QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   inheritAttrs: false,
@@ -48,32 +52,54 @@ export default {
       type: Boolean,
       required: false,
     },
+    itemDisabled: {
+      type: Function,
+      required: false,
+    },
   },
-  computed: {
-    quickRanges() {
-      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const quickRanges = computed(() => {
+      const ranges = props.ranges ?? Object.values(QUICK_RANGES);
 
       return ranges.map(range => ({
         ...range,
-        text: range.text ?? this.$t(`quickRanges.types.${range.value}`),
+        text: range.text ?? t(`quickRanges.types.${range.value}`),
       }));
-    },
+    });
 
-    range() {
-      if (!isObject(this.value)) {
-        return this.value;
+    const range = computed(() => {
+      if (!isObject(props.value)) {
+        return props.value || null;
       }
 
-      const localRange = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
+      const localRange = findQuickRangeValue(props.value.start, props.value.stop, props.ranges);
 
-      return this.quickRanges.find(({ value }) => value === localRange.value);
-    },
-  },
-  methods: {
-    updateModel(value) {
-      this.$emit('input', value);
-      this.$emit('update:value', value);
-    },
+      return quickRanges.value.find(({ value }) => value === localRange.value);
+    });
+
+    const getItemProps = (item) => {
+      const rawItem = item?.raw ?? item;
+
+      if (!isFunction(props.itemDisabled)) {
+        return {};
+      }
+
+      return { disabled: props.itemDisabled(rawItem) };
+    };
+
+    const updateModel = (value) => {
+      emit('input', value);
+      emit('update:value', value);
+    };
+
+    return {
+      quickRanges,
+      range,
+      getItemProps,
+      updateModel,
+    };
   },
 };
 </script>

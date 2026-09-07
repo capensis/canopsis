@@ -13,13 +13,12 @@
     clearable
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #selection="{ item }">
-      <span v-if="getItemIcon(item)" class="c-icon-field__icon mr-2">
+    <template v-if="modelValue" #prepend-inner>
+      <span class="c-icon-field__icon">
         <v-icon size="18">
-          {{ getItemIcon(item) }}
+          {{ getItemIcon({ value: modelValue }) }}
         </v-icon>
       </span>
-      <span>{{ getItemText(item) }}</span>
     </template>
 
     <template #item="{ props: itemProps, item }">

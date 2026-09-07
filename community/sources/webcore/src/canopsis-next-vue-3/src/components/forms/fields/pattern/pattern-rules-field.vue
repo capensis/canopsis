@@ -139,7 +139,12 @@ export default {
         updatedRule.dictionary = '';
         updatedRule.value = defaultValue;
       } else if (updatedRule.operator !== rule.operator) {
-        updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
+        updatedRule.value = convertValueByOperator(
+          updatedRule.value,
+          updatedRule.operator,
+          updatedRule,
+          rule,
+        );
       }
 
       if (rule.fieldType !== updatedRule.fieldType) {

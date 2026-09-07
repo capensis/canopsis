@@ -5,6 +5,7 @@
     :label="$t('common.connectorName')"
     :placeholder="!value.length ? $t('common.all') : ''"
     :persistent-placeholder="!value.length"
+    :show-count="showCount"
     item-text="name"
     item-value="name"
     class="healthcheck-connector-names-field"
@@ -15,31 +16,15 @@
     hide-details
     @input="$emit('input', $event)"
   >
-    <template #item="{ item, props }">
+    <template #item="{ item, props, search }">
       <v-list-item v-bind="getItemProps(props)">
         <template #prepend="{ isSelected }">
           <v-checkbox-btn :model-value="isSelected || value.includes(item.name)" color="primary" />
         </template>
         <v-list-item-title>
-          {{ item.name }}
+          <v-list-item-mask :text="item.name" :mask="search" />
         </v-list-item-title>
       </v-list-item>
-    </template>
-    <template #selection="{ item, index, props }">
-      <v-chip
-        v-if="index < showCount"
-        v-bind="props"
-        size="small"
-        closable
-      >
-        <span class="text-truncate">
-          {{ getItemName(item) }}
-        </span>
-      </v-chip>
-      <span v-else-if="index === showCount">
-        +{{ value.length - showCount }} {{ $t('common.more') }}
-      </span>
-      <span v-else />
     </template>
   </c-entity-field>
 </template>
@@ -61,22 +46,19 @@ export default {
 
   emits: ['input'],
 
-  data() {
-    return {
-      entityTypes: [BASIC_ENTITY_TYPES.connector],
-    };
-  },
+  setup() {
+    const entityTypes = [BASIC_ENTITY_TYPES.connector];
 
-  methods: {
-    getItemName(item) {
-      return item?.name ?? item;
-    },
-
-    getItemProps(props) {
-      const { title, ...listItemProps } = props;
+    const getItemProps = (itemProps) => {
+      const { title, ...listItemProps } = itemProps;
 
       return listItemProps;
-    },
+    };
+
+    return {
+      entityTypes,
+      getItemProps,
+    };
   },
 };
 </script>

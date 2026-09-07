@@ -1,52 +1,52 @@
 <template>
-  <div
-    :class="[
-      'c-date-time-interval-field',
-      'col-gap-3',
-      { 'c-date-time-interval-field--column': column },
-    ]"
-  >
-    <date-time-picker-field
-      :value="value.from"
-      :label="$t('common.from')"
-      :disabled="disabled"
-      :name="fromFieldName"
-      :hide-details="hideDetails"
-      :allowed-dates="isAllowedFromDate"
-      :round-hours="roundHours"
-      :rules="rules"
-      :required="required"
-      @update:value="updateField('from', $event)"
-    >
-      <template v-if="withIcon" #append-inner>
-        <v-icon size="18">
-          calendar_today
-        </v-icon>
-      </template>
-    </date-time-picker-field>
-    <date-time-picker-field
-      :value="value.to"
-      :label="$t('common.to')"
-      :disabled="disabled"
-      :name="toFieldName"
-      :hide-details="hideDetails"
-      :allowed-dates="isAllowedToDate"
-      :round-hours="roundHours"
-      :rules="rules"
-      :required="required"
-      @update:value="updateField('to', $event)"
-    >
-      <template v-if="withIcon" #append-inner>
-        <v-icon size="18">
-          calendar_today
-        </v-icon>
-      </template>
-    </date-time-picker-field>
-  </div>
+  <v-row class="c-date-time-interval-field" density="compact">
+    <v-col :cols="columnCols">
+      <date-time-picker-field
+        :value="value.from"
+        :label="$t('common.from')"
+        :disabled="disabled"
+        :name="fromFieldName"
+        :hide-details="hideDetails"
+        :allowed-dates="isAllowedFromDate"
+        :round-hours="roundHours"
+        :rules="rules"
+        :required="required"
+        @update:value="updateField('from', $event)"
+      >
+        <template v-if="withIcon" #append-inner>
+          <v-icon size="18">
+            calendar_today
+          </v-icon>
+        </template>
+      </date-time-picker-field>
+    </v-col>
+    <v-col :cols="columnCols">
+      <date-time-picker-field
+        :value="value.to"
+        :label="$t('common.to')"
+        :disabled="disabled"
+        :name="toFieldName"
+        :hide-details="hideDetails"
+        :allowed-dates="isAllowedToDate"
+        :round-hours="roundHours"
+        :rules="rules"
+        :required="required"
+        @update:value="updateField('to', $event)"
+      >
+        <template v-if="withIcon" #append-inner>
+          <v-icon size="18">
+            calendar_today
+          </v-icon>
+        </template>
+      </date-time-picker-field>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
+import { computed } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
 
 import DateTimePickerField from './date-time-picker-field.vue';
 
@@ -55,7 +55,6 @@ export default {
     DateTimePickerField,
   },
   emits: ['update:value'],
-  mixins: [formMixin],
   props: {
     value: {
       type: Object,
@@ -98,30 +97,23 @@ export default {
       default: false,
     },
   },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
 
-    fromFieldName() {
-      return `${this.name}.from`;
-    },
+    const rules = computed(() => ({
+      required: props.required,
+    }));
+    const columnCols = computed(() => (props.column ? 12 : 6));
+    const fromFieldName = computed(() => `${props.name}.from`);
+    const toFieldName = computed(() => `${props.name}.to`);
 
-    toFieldName() {
-      return `${this.name}.to`;
-    },
+    return {
+      rules,
+      columnCols,
+      fromFieldName,
+      toFieldName,
+      updateField,
+    };
   },
 };
 </script>
-
-<style lang="scss">
-.c-date-time-interval-field {
-  display: inline-flex;
-
-  &--column {
-    flex-direction: column;
-  }
-}
-</style>

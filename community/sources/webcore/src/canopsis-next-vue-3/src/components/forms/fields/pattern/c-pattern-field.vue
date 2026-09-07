@@ -1,20 +1,20 @@
 <template>
   <c-select
-    :model-value="value"
+    :model-value="selectValue"
     :items="itemsWithCustom"
     :label="label || $t('common.pattern')"
     :loading="pending"
     :disabled="disabled"
     :name="name"
     :required="required"
-    :return-object="returnObject"
     item-title="title"
     item-value="_id"
     hide-details
-    @update:model-value="$emit('update:value', $event)"
+    @update:model-value="updateValue"
   >
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
         <template v-if="item.is_corporate" #append>
           <v-icon size="20">
             share
@@ -79,11 +79,28 @@ export default {
         },
       ];
     },
+
+    selectValue() {
+      return this.value?._id ?? this.value;
+    },
   },
   mounted() {
     this.fetchList();
   },
   methods: {
+    updateValue(id) {
+      if (!this.returnObject) {
+        this.$emit('update:value', id);
+
+        return;
+      }
+
+      this.$emit(
+        'update:value',
+        this.itemsWithCustom.find(({ _id }) => _id === id) ?? id,
+      );
+    },
+
     getQuery() {
       const params = { limit: MAX_LIMIT };
 

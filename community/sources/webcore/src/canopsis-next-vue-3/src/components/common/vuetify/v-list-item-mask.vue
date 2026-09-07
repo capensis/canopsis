@@ -21,30 +21,33 @@ export default {
 
   setup(props) {
     const texts = computed(() => {
-      if (!props.mask) {
+      const text = String(props.text ?? '');
+      const mask = String(props.mask ?? '');
+
+      if (!mask) {
         return {
-          start: props.text,
+          start: text,
           middle: '',
           end: '',
         };
       }
 
-      const index = props.text.toLocaleLowerCase().indexOf(props.mask.toLowerCase());
+      const index = text.toLocaleLowerCase().indexOf(mask.toLowerCase());
 
       if (index < 0) {
         return {
-          start: props.text,
+          start: text,
           middle: '',
           end: '',
         };
       }
 
-      const middleEndIndex = index + props.mask.length;
+      const middleEndIndex = index + mask.length;
 
       return {
-        start: props.text.slice(0, index),
-        middle: props.text.slice(index, middleEndIndex),
-        end: props.text.slice(middleEndIndex),
+        start: text.slice(0, index),
+        middle: text.slice(index, middleEndIndex),
+        end: text.slice(middleEndIndex),
       };
     });
 

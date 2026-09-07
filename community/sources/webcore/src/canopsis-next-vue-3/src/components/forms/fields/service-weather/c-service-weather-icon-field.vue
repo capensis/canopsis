@@ -12,17 +12,20 @@
   >
     <template #selection="{ item }">
       <v-icon :class="disabled ? 'text-disabled' : ''">
-        {{ item.raw.icon }}
+        {{ item.icon }}
       </v-icon>
       <span class="ml-2">
-        {{ item.raw.text }}
+        {{ item.text }}
       </span>
     </template>
 
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
         <template #prepend>
-          <v-icon>{{ item.raw.icon }}</v-icon>
+          <v-icon>{{ item.icon }}</v-icon>
+        </template>
+        <template #title>
+          {{ item.text }}
         </template>
       </v-list-item>
     </template>
@@ -30,6 +33,7 @@
 </template>
 
 <script>
+import { uniqBy } from 'lodash';
 import { computed, onMounted, ref } from 'vue';
 
 import {
@@ -90,11 +94,16 @@ export default {
       },
     ]);
 
-    const pbehaviorTypeIcons = computed(() => pbehaviorTypes.value.map(pbehaviorType => ({
-        icon: pbehaviorType.icon_name,
-        text: pbehaviorType.name,
-      })),
-    );
+    const pbehaviorTypeIcons = computed(() => {
+      const serviceWeatherIconSet = new Set(serviceWeatherIcons.value.map(({ icon }) => icon));
+
+      return uniqBy(
+        pbehaviorTypes.value
+          .filter(({ icon_name: icon }) => icon && !serviceWeatherIconSet.has(icon))
+          .map(({ icon_name: icon, name: text }) => ({ icon, text })),
+        'icon',
+      );
+    });
 
     const availableIcons = computed(() => [
       ...serviceWeatherIcons.value,

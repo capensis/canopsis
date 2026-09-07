@@ -8,7 +8,6 @@ import {
   isEmpty,
   isObject,
   debounce,
-  set,
   uniq,
   uniqBy,
 } from 'lodash';
@@ -101,6 +100,52 @@ export const useLazySearch = (
   });
 
   /**
+   * Resolve an item identifier from a primitive value or an object.
+   *
+   * @param {*} item
+   * @returns {*}
+   */
+  const getValueId = (item) => {
+    const unwrappedIdKey = unref(idKey);
+
+    if (isObject(item) && !isArray(item)) {
+      return item[unwrappedIdKey] ?? item;
+    }
+
+    return item;
+  };
+
+  /**
+   * Keep selected items inside `items` so chips can reuse fetched fields (e.g. tag colors).
+   *
+   * @param {Array} itemsToAttach
+   */
+  const attachSelectedItems = (itemsToAttach = []) => {
+    if (!attachValue) {
+      return;
+    }
+
+    const unwrappedIdKey = unref(idKey);
+
+    itemsToAttach.forEach((item) => {
+      const id = item?.[unwrappedIdKey];
+
+      if (!id || item.noData) {
+        return;
+      }
+
+      if (!itemsByValue.value[id] || itemsByValue.value[id].noData) {
+        itemsByValue.value[id] = item;
+      }
+    });
+
+    itemsValues.value = uniq([
+      ...itemsValues.value,
+      ...itemsToAttach.map(item => item?.[unwrappedIdKey]).filter(Boolean),
+    ]);
+  };
+
+  /**
    * FETCH VALUE ITEMS
    */
   const { pending: valuesPending, handler: initializeSelectedItems } = usePendingHandler(
@@ -110,12 +155,14 @@ export const useLazySearch = (
         return;
       }
 
-      const selectedItemsFromItemsByValue = arrayValue.value
-        .map(item => itemsByValue.value[item])
-        .filter(Boolean);
+      const arrayValueIds = arrayValue.value.map(getValueId);
+      const selectedItemsFromItemsByValue = arrayValueIds
+        .map(id => itemsByValue.value[id])
+        .filter(item => item && !item.noData);
 
       if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
         selectedItems.value = selectedItemsFromItemsByValue;
+        attachSelectedItems(selectedItems.value);
 
         return;
       }
@@ -123,7 +170,7 @@ export const useLazySearch = (
       const { data } = await unref(fetchHandler)({
         params: {
           limit: arrayValue.value.length,
-          [unref(idParamsKey)]: arrayValue.value,
+          [unref(idParamsKey)]: arrayValueIds,
         },
       });
       const unwrappedIdKey = unref(idKey);
@@ -133,19 +180,11 @@ export const useLazySearch = (
 
       selectedItems.value = arrayValue.value.map(
         item =>
-          dataById[item[unwrappedIdKey] ?? item] ??
-          (isObject(item) ? item : { [unwrappedIdKey]: item, noData: true }),
+          dataById[getValueId(item)] ??
+          (isObject(item) && !isArray(item) ? item : { [unwrappedIdKey]: item, noData: true }),
       );
 
-      if (attachValue) {
-        selectedItems.value.forEach((item) => {
-          const id = item[unwrappedIdKey];
-
-          if (id && !itemsByValue.value[id]) {
-            set(itemsByValue.value, id, item);
-          }
-        });
-      }
+      attachSelectedItems(selectedItems.value);
     },
     true,
   );
@@ -182,7 +221,7 @@ export const useLazySearch = (
       itemsByValue.value = {
         ...(params.page && params.page !== 1 ? itemsByValue.value : {}),
         ...keyBy(data, unwrappedIdKey),
-        ...pick(itemsByValue.value, arrayValue.value),
+        ...pick(itemsByValue.value, arrayValue.value.map(getValueId)),
       };
     },
   });
@@ -259,6 +298,8 @@ export const useLazySearch = (
       ),
       unwrappedIdKey,
     );
+
+    attachSelectedItems(selectedItems.value);
 
     if (unwrappedReturnObject) {
       updateModel(unwrappedMultiple ? selectedItems.value : selectedItems.value[0]);

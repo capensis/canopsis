@@ -235,6 +235,16 @@ onMounted(() => (ready.value = true));
     flex-direction: column;
     min-height: 0;
 
+    &.scale-transition-leave-to {
+      opacity: 0;
+      transform: scale(0);
+    }
+
+    &.scale-transition-leave-active {
+      transition-duration: 0.3s;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     > .v-form {
       display: flex;
       flex-direction: column;

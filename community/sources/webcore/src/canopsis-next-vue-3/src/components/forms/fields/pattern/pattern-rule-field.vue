@@ -38,7 +38,7 @@
         </v-row>
       </v-col>
       <v-col v-if="rule.attribute" :cols="secondColumnCols" class="pattern-rule-field__col">
-        <v-row class="pattern-rule-field__row" density="compact">
+        <v-row class="pattern-rule-field__row flex-nowrap" density="compact">
           <v-col v-if="isInfosValueField" class="pattern-rule-field__input-type-col">
             <c-input-type-field
               :value="rule.fieldType"
@@ -213,7 +213,11 @@ export default {
     },
 
     isNumberRule() {
-      return isNumberRuleType(this.type);
+      return isNumberRuleType(this.type) || this.rule.fieldType === PATTERN_FIELD_TYPES.number;
+    },
+
+    isBooleanRule() {
+      return this.rule.fieldType === PATTERN_FIELD_TYPES.boolean;
     },
 
     inputTypesWithDefinedType() {
@@ -293,6 +297,16 @@ export default {
         return {
           is: 'c-number-field',
           props: valueProps,
+        };
+      }
+
+      if (this.isBooleanRule) {
+        return {
+          is: 'c-enabled-field',
+          props: {
+            ...valueProps,
+            hideLabel: true,
+          },
         };
       }
 
@@ -380,7 +394,10 @@ export default {
 
     notDefinedType() {
       return (
-        this.rule.fieldType && this.definedType && this.definedType.value !== this.rule.fieldType
+        this.isInfosValueField &&
+        this.rule.fieldType &&
+        this.definedType &&
+        this.definedType.value !== this.rule.fieldType
       );
     },
   },

@@ -74,6 +74,7 @@
           :disabled="onlyUserPrefs || idpFieldsMap.roles"
           :label="t('common.role', 2)"
           :is-disabled-items="isDisabledRoleItem"
+          :show-count="3"
           name="roles"
           required
           multiple
