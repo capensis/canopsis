@@ -524,6 +524,44 @@ definitions:
     - tstart
     - tstop
     type: object
+  pbehavior.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
       _id:
@@ -650,6 +688,7 @@ definitions:
       inherited:
         type: boolean
       name:
+        maxLength: 255
         type: string
       reason:
         type: string
@@ -859,6 +898,165 @@ definitions:
         type: string
       message:
         type: string
+    type: object
+  user.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    type: object
+  user.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    - email
+    - enabled
+    - name
+    - roles
+    type: object
+  user.CreateRequest:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      external_id:
+        maxLength: 10000
+        type: string
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      source:
+        maxLength: 10000
+        type: string
+    required:
+    - email
+    - enabled
+    - external_id
+    - name
+    - roles
+    - source
+    type: object
+  user.EditRequest:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - email
+    - enabled
+    - name
+    - roles
+    type: object
+  user.PatchRequest:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  user.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/response.Reference'
+      created:
+        type: integer
+      email:
+        type: string
+      enabled:
+        type: boolean
+      external_id:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/response.Reference'
+        type: array
+      source:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}

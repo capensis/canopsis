@@ -1691,6 +1691,56 @@ paths:
           $ref: '#/components/schemas/Unauthorized'
         '403':
           $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - pbehaviors
+      summary: Bulk patch pbehaviors
+      description: |
+        Patch a partial set of attributes of several pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-bulk-patch
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkPatchRequestItem'
+            examples:
+              update:
+                summary: Update intervals
+                description: Update only the interval of several pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600
+                  },
+                  {
+                    "_id": "9e1f1cf5-1a0e-4a3e-9b8f-6c9a1e0d2f47",
+                    "tstop": null
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
 
   /bulk/connector-pbehaviors:
     post:
@@ -2190,6 +2240,448 @@ paths:
           $ref: '#/components/schemas/Conflict'
         '404':
           $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /users:
+    get:
+      tags:
+        - users
+      summary: Find all users
+      description: |
+        Get paginated list of users.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: users-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/author'
+        - name: enabled
+          in: query
+          description: filter by enabled state
+          schema:
+            type: boolean
+        - name: source
+          in: query
+          style: form
+          explode: true
+          description: filter by authentication source
+          schema:
+            type: array
+            items:
+              type: string
+        - name: role
+          in: query
+          style: form
+          explode: true
+          description: filter by role ids
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: |
+        Create user.
+
+        -  PERMISSIONS: `api_acl:create`
+      operationId: users-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
+            examples:
+              saml:
+                summary: SAML user
+                description: Create a user authenticated by an external identity provider
+                value: {
+                  "name": "jdoe",
+                  "firstname": "John",
+                  "lastname": "Doe",
+                  "email": "jdoe@example.com",
+                  "roles": [
+                    "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                  ],
+                  "enabled": true,
+                  "source": "saml",
+                  "external_id": "jdoe@example.com"
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by id
+      description: |
+        Get user by id.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: users-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - users
+      summary: Update user by id
+      description: |
+        Update user by id.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a user
+                value: {
+                  "name": "jdoe",
+                  "firstname": "John",
+                  "lastname": "Doe",
+                  "email": "jdoe@example.com",
+                  "roles": [
+                    "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                  ],
+                  "enabled": true
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - users
+      summary: Patch partial set of user attributes by id
+      description: |
+        Patch partial set of user attributes by id.
+
+        Omitted attributes are left unchanged. The same restrictions as for the update apply.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-patch-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.PatchRequest'
+            examples:
+              disable:
+                summary: Disable
+                description: Disable a user without changing its other attributes
+                value: {
+                  "enabled": false
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - users
+      summary: Delete user by id
+      description: |
+        Delete user by id.
+
+        Only a user with the `admin` role can delete a user with the `admin` role, and you cannot
+        delete your own account.
+
+        -  PERMISSIONS: `api_acl:delete`
+      operationId: users-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/schemas/NoContent'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /bulk/users:
+    post:
+      tags:
+        - users
+      summary: Bulk create users
+      description: |
+        Bulk create users.
+
+        -  PERMISSIONS: `api_acl:create`
+      operationId: users-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create users
+                value: [
+                  {
+                    "name": "jdoe",
+                    "firstname": "John",
+                    "lastname": "Doe",
+                    "email": "jdoe@example.com",
+                    "roles": [
+                      "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                    ],
+                    "enabled": true,
+                    "source": "saml",
+                    "external_id": "jdoe@example.com"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - users
+      summary: Bulk update users
+      description: |
+        Bulk update users.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update users
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "jdoe",
+                    "firstname": "John",
+                    "lastname": "Doe",
+                    "email": "jdoe@example.com",
+                    "roles": [
+                      "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                    ],
+                    "enabled": true
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - users
+      summary: Bulk patch users
+      description: |
+        Patch a partial set of attributes of several users.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-patch
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkPatchRequestItem'
+            examples:
+              disable:
+                summary: Disable
+                description: Disable several users without changing their other attributes
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "enabled": false
+                  },
+                  {
+                    "_id": "9e1f1cf5-1a0e-4a3e-9b8f-6c9a1e0d2f47",
+                    "enabled": false
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - users
+      summary: Bulk delete users
+      description: |
+        Bulk delete users.
+
+        -  PERMISSIONS: `api_acl:delete`
+      operationId: users-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/bulk.DeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete users
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
         '401':
           $ref: '#/components/schemas/Unauthorized'
         '403':

@@ -22,6 +22,7 @@ import (
 type API interface {
 	bulk.API
 	Patch(w http.ResponseWriter, r *http.Request)
+	BulkPatch(w http.ResponseWriter, r *http.Request)
 	BulkConnectorCreate(w http.ResponseWriter, r *http.Request)
 	BulkConnectorDelete(w http.ResponseWriter, r *http.Request)
 	BulkConnectorEdit(w http.ResponseWriter, r *http.Request)
@@ -230,22 +231,48 @@ func (a *api) BulkUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// BulkPatch
+// @Param body body []BulkPatchRequestItem true "body"
+func (a *api) BulkPatch(w http.ResponseWriter, r *http.Request) {
+	ids := make([]string, 0)
+	recomputeInherited := false
+	processed := make(map[string]bool)
+	bulk.Handler(w, r, func(ctx context.Context, d BulkPatchRequestItem) (string, error) {
+		res, current, err := a.store.UpdateByPatch(ctx, d.ID, d.PatchRequest)
+		if err != nil {
+			return "", err
+		}
+
+		if !processed[res.ID] {
+			ids = append(ids, res.ID)
+			processed[res.ID] = true
+		}
+
+		recomputeInherited = recomputeInherited || current
+
+		return res.ID, nil
+	}, a.responder, a.binder, a.decoder)
+
+	if len(ids) > 0 {
+		a.sendRecomputeEvent(r.Context(), rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
+	}
+}
+
 // BulkDelete
 // @Param body body []bulk.DeleteRequestItem true "body"
 func (a *api) BulkDelete(w http.ResponseWriter, r *http.Request) {
-	userID, err := authctx.GetUserKey(r.Context())
-	if err != nil {
-		a.responder.RespondError(w, r, err)
-
-		return
-	}
-
 	ids := make([]string, 0)
 	recomputeInherited := false
+	processed := make(map[string]bool)
 	bulk.Handler(w, r, func(ctx context.Context, d bulk.DeleteRequestItem) (string, error) {
-		current, err := a.store.Delete(ctx, d.ID, userID)
+		current, err := a.store.Delete(ctx, d.ID, d.Author)
 		if err != nil {
 			return "", err
+		}
+
+		if !processed[d.ID] {
+			ids = append(ids, d.ID)
+			processed[d.ID] = true
 		}
 
 		recomputeInherited = recomputeInherited || current

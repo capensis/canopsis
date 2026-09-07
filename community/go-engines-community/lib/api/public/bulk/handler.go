@@ -76,13 +76,13 @@ func Handler[T any](
 	for idx, item := range items {
 		req, err := validateItem[T](r.Context(), item, binder, decoder)
 		if err != nil {
-			res.SetArrayItem(idx, getErrResponseItem(r, err, responder, &ar))
+			res.SetArrayItem(idx, getErrResponseItem(r, err, "", responder, &ar))
 			continue
 		}
 
 		id, err := f(r.Context(), req)
 		if err != nil {
-			res.SetArrayItem(idx, getErrResponseItem(r, err, responder, &ar))
+			res.SetArrayItem(idx, getErrResponseItem(r, err, id, responder, &ar))
 			continue
 		}
 
@@ -170,7 +170,7 @@ func HandlerWithGrouping[T any](
 	for idx, item := range items {
 		req, err := validateItem[T](r.Context(), item, binder, decoder)
 		if err != nil {
-			res.SetArrayItem(idx, getErrResponseItem(r, err, responder, &ar))
+			res.SetArrayItem(idx, getErrResponseItem(r, err, "", responder, &ar))
 			continue
 		}
 
@@ -189,7 +189,7 @@ func HandlerWithGrouping[T any](
 		id, err := procReq(r.Context(), req)
 		if err != nil {
 			for idx := range g.Items {
-				res.SetArrayItem(idx, getErrResponseItem(r, err, responder, &ar))
+				res.SetArrayItem(idx, getErrResponseItem(r, err, id, responder, &ar))
 			}
 
 			continue
@@ -228,9 +228,12 @@ func getResponseItem(statusCode int, id string, ar *fastjson.Arena) *fastjson.Va
 	return res
 }
 
-func getErrResponseItem(r *http.Request, err error, responder response.Responder, ar *fastjson.Arena) *fastjson.Value {
+func getErrResponseItem(r *http.Request, err error, id string, responder response.Responder, ar *fastjson.Arena) *fastjson.Value {
 	code, res := responder.ErrorResponse(r, err)
 	res.Set("status", ar.NewNumberInt(code))
+	if id != "" {
+		res.Set("id", ar.NewString(id))
+	}
 
 	return res
 }

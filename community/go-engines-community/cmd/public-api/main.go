@@ -15,6 +15,7 @@ import (
 	api "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
@@ -61,7 +62,8 @@ func run(opts api.Options) int {
 	}
 
 	jobHandlers, jobMaintainers := api.AsyncJobs(s)
-	g := api.RunBackground(ctx, s, jobHandlers, jobMaintainers, cancel)
+	g, gctx := errgroup.WithContext(ctx)
+	api.AddBackground(gctx, g, s, jobHandlers, jobMaintainers, cancel)
 	hs := serve(r, opts.Port, s, cancel)
 
 	<-ctx.Done()
