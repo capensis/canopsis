@@ -5,6 +5,7 @@
     :label="label || t('common.priority')"
     :name="name"
     :min="min"
+    :required="required"
     :disabled="disabled"
     @update:value="updateModel"
   />
@@ -32,6 +33,10 @@ export default {
     min: {
       type: Number,
       default: 0,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
     disabled: {
       type: Boolean,

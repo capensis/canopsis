@@ -17,6 +17,7 @@ import { isOmitEqual } from '@/helpers/collection';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { patternToForm } from '@/helpers/entities/pattern/form';
 
+import { useFormContext } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
 import { unwrapFieldPath } from '@/hooks/form/server-errors';
 import { useI18n } from '@/hooks/i18n';
@@ -25,7 +26,6 @@ import { usePollingWithPending } from '@/hooks/polling';
 import { usePopups } from '@/hooks/popups';
 import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entities-optimize';
 import { useValidationElementChildrenFields } from '@/hooks/validator/validation-element-children-fields';
-import { useValidator } from '@/hooks/validator/validator';
 
 /**
  * Composable hook for managing pattern optimization functionality
@@ -58,7 +58,7 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
   const { t } = useI18n();
   const modals = useModals();
   const popups = usePopups();
-  const validator = useValidator();
+  const formContext = useFormContext();
   const { updateModel } = useModelField({ value }, emit);
   const childrenFields = useValidationElementChildrenFields(wrapperElement);
 
@@ -170,7 +170,11 @@ export const usePatternOptimization = ({ value, wrapperElement }, emit) => {
         ({ path } = {}) => unwrapFieldPath(unref(path)) !== 'title',
       );
       const results = await Promise.all(
-        fieldsWithoutTitle.map(({ path } = {}) => validator.validate(unref(path))),
+        fieldsWithoutTitle.map(async ({ path } = {}) => {
+          const { valid } = await formContext.validateField(unref(path));
+
+          return valid;
+        }),
       );
 
       if (results.some(valid => !valid)) {

@@ -32,8 +32,7 @@
 <script>
 import { nextTick } from 'vue';
 
-import { useModelField } from '@/hooks/form';
-import { useValidator } from '@/hooks/validator/validator';
+import { useFormContext, useModelField } from '@/hooks/form';
 
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
@@ -54,10 +53,10 @@ export default {
   emits: ['update:form'],
 
   setup(props, { emit }) {
-    const validator = useValidator();
+    const formContext = useFormContext();
     const { updateField } = useModelField(props, emit);
 
-    const validateDeleteAfter = () => nextTick(() => validator.validate('alarm.delete_after'));
+    const validateDeleteAfter = () => nextTick(() => formContext.validateField('alarm.delete_after'));
     const updateDeleteAfter = (duration) => {
       updateField('delete_after', duration);
       validateDeleteAfter();

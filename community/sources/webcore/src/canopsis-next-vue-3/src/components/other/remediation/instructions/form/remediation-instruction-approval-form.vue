@@ -41,7 +41,7 @@
         v-model="commentField"
         v-validate="'required'"
         :label="$t('common.comment')"
-        :error-messages="errors.collect('comment')"
+        :error-messages="collectErrors('comment')"
         :disabled="disabled"
         name="comment"
       />
@@ -54,13 +54,12 @@ import { ref, computed } from 'vue';
 
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
+import { useFormContext, useFormErrorsMap } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { RemediationInstructionApprovalTypeField },
   props: {
     approval: {
@@ -83,7 +82,8 @@ export default {
   emits: ['update:approval'],
   setup(props, { emit }) {
     const { t } = useI18n();
-    const validator = useValidator();
+    const form = useFormContext();
+    const { collectErrors } = useFormErrorsMap();
     // TODO: fix that
     const createFieldModel = field => computed({
         get: () => props.approval[field],
@@ -135,9 +135,7 @@ export default {
           ? userFieldName.value
           : roleFieldName.value;
 
-      if (validator.errors && typeof validator.errors.remove === 'function') {
-        validator.errors.remove(removingField);
-      }
+      form.setFieldError(removingField, undefined);
     };
 
     return {
@@ -152,6 +150,7 @@ export default {
       userFieldName,
       assignLabel,
       assignValue,
+      collectErrors,
       resetErrors,
     };
   },

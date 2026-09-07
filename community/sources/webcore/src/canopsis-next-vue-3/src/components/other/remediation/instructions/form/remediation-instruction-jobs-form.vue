@@ -43,11 +43,11 @@ import { MAX_LIMIT } from '@/constants';
 
 import { remediationInstructionJobToForm } from '@/helpers/entities/remediation/instruction/form';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
-import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionJobField from './fields/remediation-instruction-job-field.vue';
 
@@ -75,14 +75,14 @@ export default {
       name: 'remediation-instruction-jobs',
     };
 
-    const validator = useValidator();
+    const { hasError } = useFormErrorsMap();
     const { updateModel, addItemIntoArray, updateItemInArray, removeItemFromArray } =
       useArrayModelField(props, emit);
     const { fetchRemediationJobsListWithoutStore } = useRemediationJob();
 
     const jobsItems = ref([]);
 
-    const hasJobsErrors = computed(() => validator?.errors?.has(props.name) ?? false);
+    const hasJobsErrors = computed(() => hasError(props.name));
 
     const { pending, handler: fetchList } = usePendingHandler(async () => {
       const { data: jobs } = await fetchRemediationJobsListWithoutStore({

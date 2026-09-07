@@ -39,7 +39,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="errors.any() || chatOptions.attrs.pending" color="primary" type="submit">
+        <v-btn :disabled="hasErrors || chatOptions.attrs.pending" color="primary" type="submit">
           {{ $t('common.submit') }}
         </v-btn>
       </c-layout>
@@ -62,10 +62,9 @@ import {
 } from '@/helpers/entities/pbehavior/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
-import { useForm } from '@/hooks/form';
+import { useForm, useFormErrors } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useValidator } from '@/hooks/validator/validator';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
@@ -111,10 +110,10 @@ export default {
       props.timezone,
     );
 
-    useForm({ initialValues });
+    const formContext = useForm({ initialValues });
 
     const modals = useModals();
-    const validator = useValidator();
+    const formErrors = useFormErrors();
     const { t } = useI18n();
 
     const manualClose = ref(false);
@@ -195,7 +194,7 @@ export default {
     };
 
     const submitHandler = async (event) => {
-      const isValid = await validator.validateAll();
+      const { valid: isValid } = await formContext.validate();
 
       if (isValid) {
         const calendarEvent = formToCalendarEvent(form.value, props.event);
@@ -206,10 +205,12 @@ export default {
       }
     };
 
+    const hasErrors = computed(() => Object.keys(formErrors.value).length > 0);
+
     return {
       form,
       pbehavior,
-      errors: validator.errors,
+      hasErrors,
       clickOutsideDirective,
       chatShown,
       chatOptions,

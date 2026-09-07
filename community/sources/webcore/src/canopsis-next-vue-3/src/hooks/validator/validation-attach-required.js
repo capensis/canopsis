@@ -16,10 +16,13 @@ export const useValidationAttachRequired = (name) => {
     REQUIRED_RULE,
   );
 
-  const resetRequiredRule = () => validator?.reset?.({ name: unref(name) });
+  const resetRequiredRule = () => validator.errors.clear(unref(name));
 
   return {
     validator,
+    hasError: validator.errors.has,
+    collectErrors: validator.errors.collect,
+    clearError: validator.errors.clear,
     attachRequiredRule: attachRule,
     validateRequiredRule: validateRule,
     resetRequiredRule,

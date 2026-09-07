@@ -1,8 +1,6 @@
 import { computed, ref, unref, watch } from 'vue';
 
-import { useField } from '@/hooks/form';
-
-import { useValidator } from './validator';
+import { useField, useFormContext, useFormErrorsMap } from '@/hooks/form';
 
 /**
  * Compatibility helper for old dynamic `validator.attach` calls.
@@ -16,7 +14,8 @@ import { useValidator } from './validator';
  * @returns {Object}
  */
 export const useValidationAttachRule = (name, rules, defaultGetter = () => undefined) => {
-  const validator = useValidator();
+  const form = useFormContext();
+  const { hasError, collectErrors } = useFormErrorsMap();
   const attached = ref(false);
   const getter = ref(defaultGetter);
 
@@ -27,6 +26,22 @@ export const useValidationAttachRule = (name, rules, defaultGetter = () => undef
     initialValue: defaultGetter(),
     validateOnValueUpdate: false,
   });
+
+  const clearFieldError = field => form.setFieldError(field, undefined);
+  const validator = {
+    errors: {
+      has: hasError,
+      collect: collectErrors,
+      clear: clearFieldError,
+      remove: clearFieldError,
+    },
+    reset: ({ name: field } = {}) => clearFieldError(field),
+    validate: async (field) => {
+      const { valid } = await form.validateField(field);
+
+      return valid;
+    },
+  };
 
   /**
    * Updates the internal field value from the legacy getter.
@@ -51,7 +66,7 @@ export const useValidationAttachRule = (name, rules, defaultGetter = () => undef
    */
   const detachRule = () => {
     attached.value = false;
-    validator.errors.clear(fieldName.value);
+    clearFieldError(fieldName.value);
   };
 
   /**
@@ -69,6 +84,9 @@ export const useValidationAttachRule = (name, rules, defaultGetter = () => undef
 
   return {
     validator,
+    hasError,
+    collectErrors,
+    clearError: clearFieldError,
     attachRule,
     detachRule,
     validateRule,

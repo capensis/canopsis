@@ -3,18 +3,18 @@
     :model-value="itemValue"
     :items="items"
     :disabled="disabled"
-    :label="label || $t('common.searchBy')"
+    :label="label || t('common.searchBy')"
     :name="name"
     :required="required"
     :item-props="getItemProps"
-    item-title="text"
+    :item-title="getItemTitle"
     item-value="value"
     @update:model-value="updateValue"
   >
     <template #item="{ props: itemProps, item }">
       <v-list-item v-bind="itemProps">
         <v-list-item-title>
-          {{ item?.text }}
+          {{ getItemTitle(item) }}
         </v-list-item-title>
 
         <template v-if="item?.alias" #append>
@@ -42,6 +42,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   emits: ['update:value'],
   props: {
@@ -74,47 +78,55 @@ export default {
       default: false,
     },
   },
-  computed: {
-    itemsByValue() {
-      return Object.fromEntries(this.items.map(item => [item.value, item]));
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-    itemValue() {
-      const value = this.value?.value ?? this.value;
+    const itemsByValue = computed(() => Object.fromEntries(props.items.map(item => [item.value, item])));
+
+    const itemValue = computed(() => {
+      const value = props.value?.value ?? props.value;
 
       if (value == null || value === '') {
         return null;
       }
 
-      return this.itemsByValue[value]?.value ?? value;
-    },
+      return itemsByValue.value[value]?.value ?? value;
+    });
 
-    selectedItem() {
-      if (this.itemValue == null || this.itemValue === '') {
+    const selectedItem = computed(() => {
+      if (itemValue.value == null || itemValue.value === '') {
         return null;
       }
 
-      return this.itemsByValue[this.itemValue] ?? null;
-    },
-  },
-  methods: {
-    getItemProps(item) {
-      return {
-        disabled: item?.options?.disabled,
-      };
-    },
+      return itemsByValue.value[itemValue.value] ?? null;
+    });
 
-    updateValue(value) {
-      const selectedItem = this.itemsByValue[value?.value ?? value] ?? value;
+    const getItemTitle = item => item?.text ?? '';
 
-      if (!this.returnObject) {
-        this.$emit('update:value', selectedItem?.value ?? selectedItem);
+    const getItemProps = item => ({
+      disabled: item?.options?.disabled,
+    });
+
+    const updateValue = (value) => {
+      const selected = itemsByValue.value[value?.value ?? value] ?? value;
+
+      if (!props.returnObject) {
+        emit('update:value', selected?.value ?? selected);
 
         return;
       }
 
-      this.$emit('update:value', selectedItem);
-    },
+      emit('update:value', selected);
+    };
+
+    return {
+      t,
+      itemValue,
+      selectedItem,
+      getItemTitle,
+      getItemProps,
+      updateValue,
+    };
   },
 };
 </script>

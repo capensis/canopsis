@@ -260,6 +260,7 @@ $v2-spacer: 4px;
   .v-autocomplete__selection,
   .v-combobox__selection,
   .v-select__selection {
+    max-width: 100%;
     min-width: 0;
   }
 
@@ -267,6 +268,41 @@ $v2-spacer: 4px;
     .v-field__input > input {
       min-width: 0;
     }
+  }
+
+  &:is(.v-autocomplete--chips, .v-combobox--chips, .v-select--chips) .v-field.v-field,
+  .v-field.v-field:has(:is(.v-autocomplete__selection, .v-combobox__selection, .v-select__selection) .v-chip) {
+    height: auto;
+    min-height: 48px;
+  }
+
+  &:is(.v-autocomplete--chips, .v-combobox--chips, .v-select--chips) .v-field,
+  .v-field:has(:is(.v-autocomplete__selection, .v-combobox__selection, .v-select__selection) .v-chip) {
+    .v-field__field,
+    .v-field__input,
+    .v-field__append-inner,
+    .v-field__prepend-inner {
+      height: auto;
+      min-height: 48px;
+    }
+
+    .v-field__input {
+      align-items: flex-start;
+      flex-wrap: wrap;
+      padding-top: 18px;
+      padding-bottom: 4px;
+    }
+  }
+
+  .v-chip {
+    max-width: 100%;
+  }
+
+  .v-chip__content {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

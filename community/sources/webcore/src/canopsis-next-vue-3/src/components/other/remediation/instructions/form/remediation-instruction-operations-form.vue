@@ -42,9 +42,9 @@ import {
   getOperationNumber,
 } from '@/helpers/entities/remediation/instruction/form';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
-import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 
@@ -78,11 +78,11 @@ export default {
   setup(props, { emit }) {
     const isDragging = ref(false);
 
-    const validator = useValidator();
+    const { hasError } = useFormErrorsMap();
     const { updateModel, addItemIntoArray, updateItemInArray, removeItemFromArray } =
       useArrayModelField(props, emit);
 
-    const hasOperationsErrors = computed(() => validator?.errors?.has(props.name) ?? false);
+    const hasOperationsErrors = computed(() => hasError(props.name));
 
     const { asyncValidateMinValueRule } = useValidationAttachMinValueForField(
       props.name,
