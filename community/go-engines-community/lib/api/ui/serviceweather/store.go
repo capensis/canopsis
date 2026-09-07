@@ -6,8 +6,8 @@ import (
 	"sort"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
