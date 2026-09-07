@@ -5,15 +5,17 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators() (*validator.Validate, *ut.UniversalTranslator, error) {
+func RegisterValidators(secConfig security.Config) (*validator.Validate, *ut.UniversalTranslator, error) {
 	v := validator.New()
 	v.SetTagName("binding")
 	trans, err := libvalidator.NewTranslator(v, "")
@@ -26,7 +28,7 @@ func RegisterValidators() (*validator.Validate, *ut.UniversalTranslator, error) 
 		return v, nil, err
 	}
 
-	registerStructValidations(v)
+	registerStructValidations(v, secConfig)
 
 	return v, trans, nil
 }
@@ -52,9 +54,7 @@ func registerTagValidations(v *validator.Validate) error {
 	return nil
 }
 
-func registerStructValidations(
-	v *validator.Validate,
-) {
+func registerStructValidations(v *validator.Validate, secConfig security.Config) {
 	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
 
 	v.RegisterStructValidation(alarm.ValidateStepRequest, alarm.StepRequest{})
@@ -65,4 +65,6 @@ func registerStructValidations(
 	v.RegisterStructValidation(pbehavior.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbehavior.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
 	v.RegisterStructValidation(pbehavior.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
+
+	v.RegisterStructValidation(user.NewValidator(secConfig).ValidateCreateRequest, user.CreateRequest{})
 }

@@ -36,6 +36,11 @@ func AuthorPipeline() []bson.M {
 
 func ArrayReferencePipeline(field, collection string) []bson.M {
 	return []bson.M{
+		{"$unwind": bson.M{
+			"path":                       "$" + field,
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          field + "_index",
+		}},
 		{"$lookup": bson.M{
 			"from":         collection,
 			"localField":   field,
@@ -48,5 +53,22 @@ func ArrayReferencePipeline(field, collection string) []bson.M {
 				}},
 			},
 		}},
+		{"$unwind": bson.M{"path": "$" + field, "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{field + "_index": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			field: bson.M{"$push": bson.M{
+				"$cond": bson.M{
+					"if":   "$" + field + "._id",
+					"then": "$" + field,
+					"else": "$$REMOVE",
+				},
+			}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{field: "$" + field},
+		}}}},
 	}
 }
