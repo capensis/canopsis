@@ -4,6 +4,7 @@ export { default as CSelectField } from '@/components/forms/fields/c-select-fiel
 export { default as CSelectChip } from '@/components/forms/fields/c-select-chip.vue';
 export { default as CIdField } from '@/components/forms/fields/c-id-field.vue';
 export { default as CNameField } from '@/components/forms/fields/c-name-field.vue';
+export { default as CLabel } from '@/components/forms/fields/c-label.vue';
 export { default as CPasswordField } from '@/components/forms/fields/c-password-field.vue';
 export { default as CDescriptionField } from '@/components/forms/fields/c-description-field.vue';
 export { default as CIconField } from '@/components/forms/fields/icon/c-icon-field.vue';

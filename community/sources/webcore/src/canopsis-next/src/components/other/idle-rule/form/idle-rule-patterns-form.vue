@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import { useValidationHeader } from '@/hooks/validator/validation-header';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
@@ -38,7 +37,6 @@ export default {
   },
   setup(props) {
     const { fetchIdleRulePatternFields } = usePatternsFields();
-    const { hasAnyError } = useValidationHeader();
 
     const {
       pending,
@@ -47,10 +45,6 @@ export default {
     } = usePatternsFieldsFetching(fetchIdleRulePatternFields, props.readonly);
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
       pending,
       alarmAttributes,
       entityAttributes,

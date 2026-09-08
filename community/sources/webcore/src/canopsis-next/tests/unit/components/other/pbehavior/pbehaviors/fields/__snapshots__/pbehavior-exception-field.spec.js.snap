@@ -5,10 +5,10 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
   class="layout pbehavior-exception-field column"
 >
   <div
-    class="layout justify-space-between"
+    class="layout gap-2 justify-space-between"
   >
     <div
-      class="flex pbehavior-exception-field__interval xs6"
+      class="flex pbehavior-exception-field__interval xs7"
     >
       <date-time-splitted-range-picker-field-stub
         disabled="true"
@@ -22,7 +22,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       />
     </div>
     <div
-      class="flex pl-2"
+      class="flex xs5"
     >
       <c-pbehavior-type-field-stub
         disabled="true"
@@ -36,7 +36,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
   <div
     class="layout"
   >
-    <v-checkbox-stub
+    <v-switch-stub
       backgroundcolor=""
       class="mt-0"
       color="primary"
@@ -44,11 +44,8 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       errorcount="1"
       errormessages=""
       hidedetails="true"
-      indeterminateicon="$checkboxIndeterminate"
       label="Whole day"
       messages=""
-      officon="$checkboxOff"
-      onicon="$checkboxOn"
       ripple="true"
       rules=""
       successmessages=""
@@ -63,10 +60,10 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
   class="layout pbehavior-exception-field column"
 >
   <div
-    class="layout justify-space-between"
+    class="layout gap-2 justify-space-between"
   >
     <div
-      class="flex pbehavior-exception-field__interval xs6"
+      class="flex pbehavior-exception-field__interval xs7"
     >
       <date-time-splitted-range-picker-text-stub
         end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
@@ -76,7 +73,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       />
     </div>
     <div
-      class="flex pl-2"
+      class="flex xs5"
     >
       <c-pbehavior-type-text-stub
         value="type"
@@ -87,7 +84,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
   <div
     class="layout"
   >
-    <v-checkbox-stub
+    <v-switch-stub
       backgroundcolor=""
       class="mt-0"
       color="primary"
@@ -95,11 +92,8 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       errorcount="1"
       errormessages=""
       hidedetails="true"
-      indeterminateicon="$checkboxIndeterminate"
       label="Whole day"
       messages=""
-      officon="$checkboxOff"
-      onicon="$checkboxOn"
       ripple="true"
       rules=""
       successmessages=""
@@ -114,10 +108,10 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
   class="layout pbehavior-exception-field column"
 >
   <div
-    class="layout justify-space-between"
+    class="layout gap-2 justify-space-between"
   >
     <div
-      class="flex pbehavior-exception-field__interval xs6"
+      class="flex pbehavior-exception-field__interval xs7"
     >
       <date-time-splitted-range-picker-field-stub
         endlabel="End"
@@ -129,7 +123,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
     </div>
     <!---->
     <div
-      class="flex pbehavior-exception-field__actions"
+      class="flex pbehavior-exception-field__actions shrink"
     >
       <button
         class="btn--editing v-btn v-btn--active v-btn--fab v-btn--icon v-btn--round theme--light v-size--default"
@@ -166,18 +160,15 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
   <div
     class="layout"
   >
-    <v-checkbox-stub
+    <v-switch-stub
       backgroundcolor=""
       class="mt-0"
       color="primary"
       errorcount="1"
       errormessages=""
       hidedetails="true"
-      indeterminateicon="$checkboxIndeterminate"
       label="Whole day"
       messages=""
-      officon="$checkboxOff"
-      onicon="$checkboxOn"
       ripple="true"
       rules=""
       successmessages=""

@@ -67,7 +67,7 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
                       <span
                         class="text-truncate pl-3"
                       >
-                        playlist-1-name
+                    playlist-1-name
                       </span>
                     </div>
                   </div>
@@ -97,7 +97,7 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
                       <span
                         class="text-truncate pl-3"
                       >
-                        playlist-2-name
+                    playlist-2-name
                       </span>
                     </div>
                   </div>

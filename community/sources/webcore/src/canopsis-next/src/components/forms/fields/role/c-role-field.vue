@@ -13,6 +13,7 @@
     :multiple="multiple"
     :chips="chips"
     :small-chips="chips"
+    :menu-props="menuProps"
     item-text="name"
     item-value="_id"
     return-object
@@ -73,6 +74,8 @@ export default {
     },
   },
   setup(props) {
+    const menuProps = { offsetY: true };
+
     const items = ref([]);
 
     const rules = computed(() => ({
@@ -122,6 +125,8 @@ export default {
     });
 
     return {
+      menuProps,
+
       pending,
       items,
       component,

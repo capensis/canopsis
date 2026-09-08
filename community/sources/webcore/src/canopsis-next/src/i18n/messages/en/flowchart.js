@@ -2,7 +2,6 @@ export default {
   shape: 'Shape | Shapes',
   icons: 'Icons',
   properties: 'Properties',
-  color: 'Color',
   fill: 'Fill',
   stroke: 'Stroke',
   strokeWidth: 'Stroke width',

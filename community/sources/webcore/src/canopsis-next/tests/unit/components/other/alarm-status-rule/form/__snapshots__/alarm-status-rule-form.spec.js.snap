@@ -8,33 +8,17 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
     hide-details=""
     with-background=""
   />
-  <c-name-field-stub
-    autofocus=""
-    required=""
-    value="name"
-  />
-  <c-duration-field-stub
-    required=""
-    value="[object Object]"
-  />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-number-field-stub
-    label="Frequency limit"
-    min="1"
-    name="freq_limit"
-    value="3"
-  />
-  <c-description-field-stub
-    required=""
-    value="description"
-  />
-  <alarm-status-rule-patterns-form-stub
-    class="mt-2"
-    flapping="true"
-    form="[object Object]"
-  />
+  <div>
+    <alarm-status-rule-general-form-stub
+      flapping="true"
+      form="[object Object]"
+    />
+    <alarm-status-rule-patterns-form-stub
+      class="mt-2"
+      flapping="true"
+      form="[object Object]"
+    />
+  </div>
 </div>
 `;
 
@@ -46,21 +30,14 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
     hide-details=""
     with-background=""
   />
-  <c-name-field-stub
-    autofocus=""
-    required=""
-  />
-  <c-duration-field-stub
-    required=""
-  />
-  <c-priority-field-stub />
-  <!---->
-  <c-description-field-stub
-    required=""
-  />
-  <alarm-status-rule-patterns-form-stub
-    class="mt-2"
-    form="[object Object]"
-  />
+  <div>
+    <alarm-status-rule-general-form-stub
+      form="[object Object]"
+    />
+    <alarm-status-rule-patterns-form-stub
+      class="mt-2"
+      form="[object Object]"
+    />
+  </div>
 </div>
 `;

@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ $t('modals.createPbehaviorType.title') }}</span>
+        <span>{{ title }}</span>
       </template>
       <template #text="">
         <pbehavior-type-form
@@ -13,6 +13,7 @@
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
           @click="close"
@@ -20,11 +21,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
+          :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -38,6 +40,8 @@ import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/entities/pbehavior/type/form';
 
+import { useI18n } from '@/hooks/i18n';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -64,6 +68,7 @@ export default {
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const { close, config } = useInnerModal(props);
     const { fetchNextPbehaviorTypePriority } = usePbehaviorType();
 
@@ -72,6 +77,12 @@ export default {
     const pbehaviorType = computed(() => config.value.pbehaviorType);
     const onlyColor = computed(() => pbehaviorType.value?.default);
     const isNew = computed(() => !pbehaviorType.value?._id);
+
+    const title = computed(() => (
+      config.value.title || t(isNew.value
+        ? 'modals.createPbehaviorType.create.title'
+        : 'modals.createPbehaviorType.edit.title')
+    ));
 
     const {
       pending: pendingPriority,
@@ -82,8 +93,9 @@ export default {
       form.value.priority = priority;
     });
 
-    const { submit, isDisabled } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.pbehaviorType,
       method: async () => {
         if (config.value.action) {
           await config.value.action(formToPbehaviorType(form.value));
@@ -92,6 +104,8 @@ export default {
         close();
       },
     });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     onMounted(() => {
       if (isNew.value) {
@@ -102,9 +116,11 @@ export default {
     return {
       close,
       form,
+      title,
       pendingPriority,
       onlyColor,
-      isDisabled,
+      submitting,
+      submitLabel,
       submit,
     };
   },

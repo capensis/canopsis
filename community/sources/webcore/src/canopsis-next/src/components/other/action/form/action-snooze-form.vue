@@ -1,11 +1,14 @@
 <template>
   <div>
-    <action-note-form v-field="value" :template-vars="templateVars" />
-    <c-duration-field
-      v-field="value.duration"
-      :name="`${name}.duration`"
-      required
-    />
+    <action-note-form v-field="value" :template-vars="templateVars" :depth="depth" />
+
+    <c-form-block-row :label="$t('common.duration')" :depth="depth">
+      <c-duration-field
+        v-field="value.duration"
+        :name="`${name}.duration`"
+        required
+      />
+    </c-form-block-row>
   </div>
 </template>
 
@@ -30,6 +33,10 @@ export default {
     templateVars: {
       type: Object,
       default: () => ({}),
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
 };

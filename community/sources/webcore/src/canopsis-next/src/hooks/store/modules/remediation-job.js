@@ -1,5 +1,10 @@
 import { useStoreModuleHooks } from '@/hooks/store';
 
+/**
+ * Hook to use the Remediation Job Store Module.
+ *
+ * @returns {Object} An object containing getters and actions for the remediation job.
+ */
 const useRemediationJobStoreModule = () => useStoreModuleHooks('remediationJob');
 
 /**

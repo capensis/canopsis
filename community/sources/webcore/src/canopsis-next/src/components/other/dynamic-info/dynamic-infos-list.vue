@@ -46,12 +46,12 @@
           type="duplicate"
           @click="$emit('duplicate', item)"
         />
+        <c-db-export-btn :id="item._id" dynamic-info />
         <c-action-btn
           v-if="removable"
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <c-db-export-btn :id="item._id" dynamic-info />
       </v-layout>
     </template>
     <template #expand="{ item }">

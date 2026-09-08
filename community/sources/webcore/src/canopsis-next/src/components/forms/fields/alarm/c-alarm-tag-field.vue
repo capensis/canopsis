@@ -37,7 +37,9 @@
       >
         {{ item[itemText] }}
       </c-chip>
-      <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
+      <span v-else-if="index === showCount">
+        +{{ selectedItems.length - showCount }} {{ $t('common.more') }}
+      </span>
       <span v-else />
     </template>
     <template #item="{ item, attrs, on, parent }">
@@ -49,7 +51,7 @@
         <v-list-item-action v-if="multiple">
           <v-checkbox
             :input-value="attrs.inputValue"
-            :color="parent.color"
+            :color="parent?.color"
           />
         </v-list-item-action>
         <v-list-item-content class="c-word-break-all">

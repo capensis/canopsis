@@ -4,7 +4,6 @@
     :disabled="disabled"
     :draggable-group="draggableGroup"
     :required-error-message="$t('remediation.instruction.errors.stepRequired')"
-    :empty-message="$t('remediation.instruction.emptySteps')"
     :add-button-label="$t('remediation.instruction.addStep')"
     :name="name"
     item-key="key"
@@ -27,16 +26,14 @@
 <script>
 import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     RemediationInstructionStepField,
   },
-  mixins: [formArrayMixin],
   model: {
     prop: 'steps',
     event: 'input',
@@ -59,30 +56,20 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      isDragging: false,
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
+    const draggableGroup = {
+      name: 'remediation-instruction-steps',
     };
-  },
-  computed: {
-    hasStepsErrors() {
-      return this.errors.has(this.name);
-    },
 
-    draggableGroup() {
-      return {
-        name: 'remediation-instruction-steps',
-      };
-    },
-  },
-  methods: {
-    addStep() {
-      this.addItemIntoArray(remediationInstructionStepToForm());
-    },
+    const addStep = () => addItemIntoArray(remediationInstructionStepToForm());
 
-    removeStep(index) {
-      this.removeItemFromArray(index);
-    },
+    return {
+      draggableGroup,
+      addStep,
+      removeStep: removeItemFromArray,
+    };
   },
 };
 </script>

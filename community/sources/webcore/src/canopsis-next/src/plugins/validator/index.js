@@ -1,5 +1,5 @@
 import { isObject } from 'lodash';
-import VeeValidate, { Validator, Rules } from 'vee-validate';
+import VeeValidate, { Validator, Rules, ErrorBag } from 'vee-validate';
 
 import { isValidJson } from './helpers/is-valid-json';
 import { isValidUrl } from './helpers/is-valid-url';
@@ -8,6 +8,8 @@ import { debounce } from './helpers/debounce';
 import { isEvent } from './helpers/is-event';
 import { findField } from './helpers/find-field';
 import { isValidPicker } from './helpers/is-valid-picker';
+
+const REQUIRED_RULE = 'required';
 
 const getParentValidatorOptions = (vnode) => {
   const validateOptions = vnode.$options.$_veeValidate;
@@ -23,8 +25,57 @@ const getParentValidatorOptions = (vnode) => {
   return getParentValidatorOptions(vnode.$parent);
 };
 
+/**
+ * Required fields are marked by asterisk and error color only — hide the required rule message.
+ *
+ * @param {Object} error
+ * @returns {string}
+ */
+const getDisplayErrorMessage = error => (error.rule === REQUIRED_RULE ? '' : error.msg);
+
+/**
+ * Maps ErrorBag collect result to display messages, blanking required rule texts.
+ *
+ * @param {Array|Object} collected
+ * @returns {Array|Object}
+ */
+const collectedToDisplayMessages = (collected) => {
+  if (!Array.isArray(collected)) {
+    return Object.keys(collected).reduce((acc, key) => {
+      acc[key] = collectedToDisplayMessages(collected[key]);
+
+      return acc;
+    }, {});
+  }
+
+  return collected.map(getDisplayErrorMessage);
+};
+
 Validator.prototype.remove = (name) => {
   delete Rules[name];
+};
+
+const sourceErrorBagCollect = ErrorBag.prototype.collect;
+
+/**
+ * Keep required errors for state (`has`, border color), but do not expose their messages in UI.
+ */
+ErrorBag.prototype.collect = function collect(field, scope, map = true) {
+  const collected = sourceErrorBagCollect.call(this, field, scope, false);
+
+  if (!map) {
+    return collected;
+  }
+
+  return collectedToDisplayMessages(collected);
+};
+
+ErrorBag.prototype.has = function has(field, scope) {
+  return this.collect(field, scope, false).length > 0;
+};
+
+ErrorBag.prototype.first = function first(field, scope) {
+  return this.collect(field, scope)[0];
 };
 
 export default {

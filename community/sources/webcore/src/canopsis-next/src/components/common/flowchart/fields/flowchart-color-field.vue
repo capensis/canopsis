@@ -7,7 +7,7 @@
     <v-checkbox
       v-if="!hideCheckbox"
       :input-value="isFilled"
-      :label="label || $t('flowchart.color')"
+      :label="label || $t('common.color')"
       class="mt-0"
       color="primary"
       hide-details

@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <snmp-rule-form-field-title label="state" />
+  <v-layout class="gap-3" column>
     <v-layout wrap>
       <v-flex xs12>
         <v-switch
@@ -9,6 +8,8 @@
           :true-value="$constants.SNMP_STATE_TYPES.template"
           :label="$t('snmpRule.toCustom')"
           color="primary"
+          class="mt-0 pt-0"
+          hide-details
           @change="updateTypeField"
         />
       </v-flex>
@@ -23,17 +24,22 @@
       <v-layout wrap>
         <v-flex xs12>
           <v-layout
-            v-for="{ value, color, key, text } in availableStates"
+            v-for="{ value, color, whiteText, key, text } in availableStates"
             :key="value"
-            wrap
+            class="gap-4"
             align-center
+            justify-center
           >
             <v-flex xs2>
               <v-chip
                 :style="{ backgroundColor: color }"
+                :class="{ 'white--text': whiteText }"
+                class="snmp-rule-state-chip rounded-lg"
                 label
               >
-                <strong class="state-title">{{ text }}</strong>
+                <strong class="state-title">
+                  {{ text }}
+                </strong>
               </v-chip>
             </v-flex>
             <v-flex xs10>
@@ -46,38 +52,28 @@
         </v-flex>
       </v-layout>
     </template>
-    <template v-else>
-      <v-layout
-        class="mt-3"
-        wrap
-      >
-        <v-flex xs12>
-          <state-criticity-field v-field="form.state" />
-        </v-flex>
-      </v-layout>
-    </template>
-  </div>
+    <state-criticity-field v-else v-field="form.state" class="mt-1" />
+  </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
 import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
 
-import { formBaseMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
-import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
 import SnmpRuleFormModuleMibObjectsForm from './snmp-rule-form-module-mib-objects-form.vue';
 
 export default {
   components: {
     StateCriticityField,
-    SnmpRuleFormFieldTitle,
     SnmpRuleFormModuleMibObjectsForm,
   },
-  mixins: [formBaseMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -96,22 +92,20 @@ export default {
       default: () => SNMP_TEMPLATE_STATE_STATES,
     },
   },
-  computed: {
-    isTemplate() {
-      return this.form.type === SNMP_STATE_TYPES.template;
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-    availableStates() {
-      return Object.entries(this.stateValues).map(([key, state]) => ({
-        key,
-        text: this.$t(`snmpRule.states.${key}`),
-        value: state,
-        color: getSnmpRuleStateColor(state),
-      }));
-    },
-  },
-  methods: {
-    updateTypeField(type) {
+    const isTemplate = computed(() => props.form.type === SNMP_STATE_TYPES.template);
+
+    const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
+      key,
+      text: t(`snmpRule.states.${key}`),
+      value: state,
+      color: getSnmpRuleStateColor(state),
+      whiteText: [SNMP_TEMPLATE_STATE_STATES.info, SNMP_TEMPLATE_STATE_STATES.critical].includes(state),
+    })));
+
+    const updateTypeField = (type) => {
       const state = {
         type,
       };
@@ -120,14 +114,29 @@ export default {
         state.stateoid = {};
       }
 
-      this.updateModel(state);
-    },
+      emit('input', state);
+    };
+
+    return {
+      isTemplate,
+      availableStates,
+      updateTypeField,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .state-title {
-    text-transform: uppercase;
+  .snmp-rule-state-chip {
+    width: 100%;
+
+    ::v-deep .v-chip__content {
+      width: 100%;
+    }
+
+    .state-title {
+      text-transform: uppercase;
+      margin: auto;
+    }
   }
 </style>

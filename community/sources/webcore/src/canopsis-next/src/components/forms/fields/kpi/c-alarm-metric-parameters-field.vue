@@ -12,7 +12,9 @@
   >
     <template #selection="{ item, index }">
       <template v-if="isMultiple">
-        <span v-if="!index">{{ getSelectionLabel(item) }}</span>
+        <span v-if="!index">
+          {{ getSelectionLabel(item) }}
+        </span>
       </template>
       <template v-else>
         {{ item.text }}

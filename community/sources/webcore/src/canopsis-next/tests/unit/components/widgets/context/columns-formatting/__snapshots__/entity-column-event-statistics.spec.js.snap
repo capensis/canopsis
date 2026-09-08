@@ -11,7 +11,7 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
     <span
       class="mr-1 success--text font-weight-bold"
     >
-      15
+        15
     </span>
     <span>
       /
@@ -19,7 +19,7 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
     <span
       class="ml-1 error--text font-weight-bold"
     >
-      25
+        25
     </span>
   </div>
 </span>
@@ -50,7 +50,7 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
     <span
       class="mr-1 success--text font-weight-bold"
     >
-      30
+        30
     </span>
     <span>
       /
@@ -58,7 +58,7 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
     <span
       class="ml-1 error--text font-weight-bold"
     >
-      45
+        45
     </span>
   </div>
 </span>

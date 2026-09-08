@@ -11,16 +11,17 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
+          :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -28,13 +29,16 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { templateToForm, formToTemplate } from '@/helpers/entities/dynamic-info/template/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import DynamicInfoTemplateForm from '@/components/other/dynamic-info/form/dynamic-info-template-form.vue';
 
@@ -46,35 +50,44 @@ export default {
     validator: 'new',
   },
   components: { DynamicInfoTemplateForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { template = {} } = this.modal.config;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(templateToForm(config.value.template ?? {}));
+
+    const title = computed(() => (
+      config.value.title || t('modals.createDynamicInfoTemplate.create.title')
+    ));
+
+    const { submit, submitting, submitLabel } = useSubmittableForm({
+      form,
+      item: config.value.template,
+      method: async () => {
+        await config.value.action?.(formToTemplate(form.value));
+
+        close();
+
+        return form.value;
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form: templateToForm(template),
+      form,
+      title,
+      submitting,
+      submit,
+      submitLabel,
+      close,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createDynamicInfoTemplate.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToTemplate(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

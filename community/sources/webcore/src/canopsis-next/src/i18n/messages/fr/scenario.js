@@ -16,6 +16,7 @@ export default {
   emptyActions: 'Aucune action ajoutée pour le moment',
   output: 'Format d\'action de sortie',
   forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
+  skip: 'Sauter',
   skipForChild: 'Sauter pour les enfants de la méta-alarme',
   skipForInstruction: 'Ignorer si l\'événement a déclenché une instruction automatique',
   outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>'

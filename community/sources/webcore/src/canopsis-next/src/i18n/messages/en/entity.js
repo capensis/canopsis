@@ -5,9 +5,9 @@ export default {
   form: 'Form',
   impact: 'Impact',
   depends: 'Depends',
-  addInformation: 'Add Information',
+  addInfos: 'Add infos',
   emptyInfos: 'No information',
-  availabilityState: 'Hi availability state',
+  availabilityState: 'Availability state',
   types: {
     [ENTITY_TYPES.component]: 'Component',
     [ENTITY_TYPES.connector]: 'Connector',
