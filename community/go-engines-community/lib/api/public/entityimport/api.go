@@ -34,9 +34,9 @@ func NewAPI(
 	)
 }
 
-func newJob(id, source string) Job {
+func newJob(id, source, usedID string) Job {
 	return Job{
-		Base:   asyncjob.NewBase(id),
+		Base:   asyncjob.NewBase(id, usedID),
 		Source: source,
 	}
 }

@@ -7,10 +7,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/sortparam"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -18,8 +20,8 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, r PaginatedListRequest) (pagination.ListResponse[Response], error)
-	Search(ctx context.Context, r PaginatedSearchRequest) (pagination.ListResponse[Response], error)
+	Find(ctx context.Context, r PaginatedListRequest, userID string) (pagination.ListResponse[Response], error)
+	Search(ctx context.Context, r PaginatedSearchRequest, userID string) (pagination.ListResponse[Response], error)
 	FindSteps(ctx context.Context, id string, r StepRequest) (pagination.ListResponse[Step], error)
 }
 
@@ -28,18 +30,22 @@ type store struct {
 	dbCollection         mongo.DbCollection
 	dbResolvedCollection mongo.DbCollection
 	transformer          patternfields.Transformer
+	generator            link.Generator
+	userProvider         liblink.UserProvider
 }
 
-func NewStore(dbClient mongo.DbClient, transformer patternfields.Transformer) Store {
+func NewStore(dbClient mongo.DbClient, transformer patternfields.Transformer, generator link.Generator, userProvider liblink.UserProvider) Store {
 	return &store{
 		dbClient:             dbClient,
 		dbCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
 		dbResolvedCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		transformer:          transformer,
+		generator:            generator,
+		userProvider:         userProvider,
 	}
 }
 
-func (s *store) Find(ctx context.Context, r PaginatedListRequest) (res pagination.ListResponse[Response], err error) {
+func (s *store) Find(ctx context.Context, r PaginatedListRequest, userID string) (res pagination.ListResponse[Response], err error) {
 	r.MetaAlarms, err = ResolveMetaAlarms(ctx, r.MetaAlarms, s.dbCollection, s.dbResolvedCollection)
 	if err != nil {
 		return res, err
@@ -61,8 +67,15 @@ func (s *store) Find(ctx context.Context, r PaginatedListRequest) (res paginatio
 		return res, err
 	}
 
-	for i := range ar.Data {
+	user, err := s.userProvider.User(ctx, userID)
+	if err != nil {
+		return res, err
+	}
+
+	for i, item := range ar.Data {
 		ar.Data[i].setDefaults()
+		ar.Data[i].Entity.Links = s.generator.GenerateForEntity(ctx, item.RawEntity, user)
+		ar.Data[i].Links = s.generator.GenerateForAlarm(ctx, item.RawAlarm, item.RawEntity, user)
 	}
 
 	res = pagination.NewResponse[Response](r.Query, ar)
@@ -70,7 +83,7 @@ func (s *store) Find(ctx context.Context, r PaginatedListRequest) (res paginatio
 	return res, nil
 }
 
-func (s *store) Search(ctx context.Context, r PaginatedSearchRequest) (res pagination.ListResponse[Response], err error) {
+func (s *store) Search(ctx context.Context, r PaginatedSearchRequest, userID string) (res pagination.ListResponse[Response], err error) {
 	r.MetaAlarms, err = ResolveMetaAlarms(ctx, r.MetaAlarms, s.dbCollection, s.dbResolvedCollection)
 	if err != nil {
 		return res, err
@@ -108,8 +121,15 @@ func (s *store) Search(ctx context.Context, r PaginatedSearchRequest) (res pagin
 		return res, err
 	}
 
-	for i := range ar.Data {
+	user, err := s.userProvider.User(ctx, userID)
+	if err != nil {
+		return res, err
+	}
+
+	for i, item := range ar.Data {
 		ar.Data[i].setDefaults()
+		ar.Data[i].Entity.Links = s.generator.GenerateForEntity(ctx, item.RawEntity, user)
+		ar.Data[i].Links = s.generator.GenerateForAlarm(ctx, item.RawAlarm, item.RawEntity, user)
 	}
 
 	res = pagination.NewResponse[Response](r.Query, ar)

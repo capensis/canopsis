@@ -47,6 +47,8 @@ func AsyncJobs(s Services) (map[string]asyncjob.Handler, []asyncjob.Maintainer) 
 			s.SecondaryDbClient,
 			entityExportDir,
 			s.TimezoneConfigProvider,
+			s.LinkGenerator,
+			s.UserProvider,
 			s.Logger,
 		),
 		asyncjob.TypeAlarmExport: alarmexport.NewHandler(
@@ -54,6 +56,8 @@ func AsyncJobs(s Services) (map[string]asyncjob.Handler, []asyncjob.Maintainer) 
 			s.SecondaryDbClient,
 			alarmExportDir,
 			s.TimezoneConfigProvider,
+			s.LinkGenerator,
+			s.UserProvider,
 			s.Logger,
 		),
 	}

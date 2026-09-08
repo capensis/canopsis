@@ -12,6 +12,9 @@ import (
 // Transform converts a value before it's written, see Options.Transform.
 type Transform func(ctx context.Context, field string, v any) (any, error)
 
+// Enrich adds computed fields to a document before it's written, see Options.Enrich.
+type Enrich func(ctx context.Context, doc bson.M) error
+
 // IsDate reports whether the field holds a timestamp.
 type IsDate func(ctx context.Context, field string) (bool, error)
 

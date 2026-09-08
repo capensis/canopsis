@@ -34,6 +34,13 @@ func TestListPipeline_GiveOpenResolution_ShouldCheckFullPipeline(t *testing.T) {
 			{"$match": bson.M{"v.resolved": nil}},
 		},
 		AfterLimit: []bson.M{
+			{"$addFields": bson.M{
+				"raw_alarm":  "$$ROOT",
+				"raw_entity": "$e",
+			}},
+			{"$project": bson.M{
+				"raw_alarm.v.steps": 0,
+			}},
 			{"$lookup": bson.M{
 				"from":         mongo.EntityCategoryMongoCollection,
 				"localField":   "e.category",
@@ -174,6 +181,13 @@ func TestListPipeline_GiveResolvedResolution_ShouldCheckFullPipeline(t *testing.
 				"as":           "entity",
 			}},
 			{"$unwind": "$entity"},
+			{"$addFields": bson.M{
+				"raw_alarm":  "$$ROOT",
+				"raw_entity": "$entity",
+			}},
+			{"$project": bson.M{
+				"raw_alarm.v.steps": 0,
+			}},
 			{"$lookup": bson.M{
 				"from":         mongo.EntityCategoryMongoCollection,
 				"localField":   "entity.category",
@@ -744,7 +758,10 @@ func defaultSort() bson.M {
 func openAfterLimit(now datetime.CpsTime) []bson.M {
 	return append(
 		append(
-			append(nestedObjectsPipeline("e."), durationAddFields(ResolutionOpen, now), typeAddField()),
+			append(
+				append(addRawFields("e"), nestedObjectsPipeline("e.")...),
+				durationAddFields(ResolutionOpen, now), typeAddField(),
+			),
 			metaAlarmRuleLookup()...,
 		),
 		replaceRoot(), entityFieldAddField(), unusedFieldsProject(),
@@ -754,7 +771,10 @@ func openAfterLimit(now datetime.CpsTime) []bson.M {
 func resolvedAfterLimit(now datetime.CpsTime) []bson.M {
 	return append(
 		append(
-			append(nestedObjectsPipeline("entity."), durationAddFields(ResolutionResolved, now), typeAddField()),
+			append(
+				append(addRawFields("entity"), nestedObjectsPipeline("entity.")...),
+				durationAddFields(ResolutionResolved, now), typeAddField(),
+			),
 			metaAlarmRuleLookup()...,
 		),
 		replaceRoot(), unusedFieldsProject(),

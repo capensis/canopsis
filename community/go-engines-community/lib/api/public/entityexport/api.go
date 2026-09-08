@@ -71,7 +71,7 @@ func (a *api) prepare(ctx context.Context, r *Request) error {
 
 func (a *api) newJob(r Request) Job {
 	return Job{
-		Base:   asyncjob.NewBase(utils.NewID()),
+		Base:   asyncjob.NewBase(utils.NewID(), r.Author),
 		Params: r,
 	}
 }

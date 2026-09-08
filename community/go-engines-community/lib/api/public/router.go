@@ -138,7 +138,9 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 				})
 			}
 			{
-				entityAPI := entity.NewAPI(entity.NewStore(s.PrimaryDbClient, patternfields.NewTransformer(s.PrimaryDbClient)), s.Binder, s.Responder)
+				entityAPI := entity.NewAPI(
+					entity.NewStore(s.SecondaryDbClient, patternfields.NewTransformer(s.SecondaryDbClient), s.LinkGenerator, s.UserProvider),
+					s.Binder, s.Responder)
 				r.Route("/entities", func(r chi.Router) {
 					r.With(authorize(apisecurity.ObjEntity, model.PermissionRead)).
 						Get("/", entityAPI.List)
@@ -161,10 +163,10 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 			}
 			{
 				entityExportAPI := entityexport.NewAPI(
-					asyncjob.NewStore[entityexport.Job](s.PrimaryDbClient, mongo.EntityExportPublicCollection),
+					asyncjob.NewStore[entityexport.Job](s.SecondaryDbClient, mongo.EntityExportPublicCollection),
 					s.JobPublisher,
 					filepath.Join(s.Config.File.Dir, canopsis.SubDirEntityExportPublic),
-					patternfields.NewTransformer(s.PrimaryDbClient),
+					patternfields.NewTransformer(s.SecondaryDbClient),
 					s.Binder,
 					s.Responder,
 					s.Logger,
@@ -172,7 +174,9 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 				RegisterDataExportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionRead, entityExportAPI, s)
 			}
 			{
-				alarmAPI := alarm.NewAPI(alarm.NewStore(s.PrimaryDbClient, patternfields.NewTransformer(s.PrimaryDbClient)), s.Binder, s.Responder)
+				alarmAPI := alarm.NewAPI(
+					alarm.NewStore(s.SecondaryDbClient, patternfields.NewTransformer(s.SecondaryDbClient), s.LinkGenerator, s.UserProvider),
+					s.Binder, s.Responder)
 				r.Route("/alarms", func(r chi.Router) {
 					r.With(authorize(apisecurity.PermAlarmRead, model.PermissionCan)).
 						Get("/", alarmAPI.List)
@@ -186,10 +190,10 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 			}
 			{
 				alarmExportAPI := alarmexport.NewAPI(
-					asyncjob.NewStore[alarmexport.Job](s.PrimaryDbClient, mongo.AlarmExportPublicCollection),
+					asyncjob.NewStore[alarmexport.Job](s.SecondaryDbClient, mongo.AlarmExportPublicCollection),
 					s.JobPublisher,
 					filepath.Join(s.Config.File.Dir, canopsis.SubDirAlarmExportPublic),
-					patternfields.NewTransformer(s.PrimaryDbClient),
+					patternfields.NewTransformer(s.SecondaryDbClient),
 					s.Binder,
 					s.Responder,
 					s.Logger,
@@ -307,6 +311,7 @@ func RegisterDataExportRoutes(
 	authorize := s.authorize
 	r.Route(pattern+"-exports", func(r chi.Router) {
 		r.With(authorize(permObj, permAct)).
+			With(middleware.SetAuthor(s.Responder)).
 			Post("/", a.Start)
 		r.With(authorize(permObj, permAct)).
 			Get("/{id}", a.Status)
@@ -324,6 +329,7 @@ func RegisterDataImportRoutes(
 	authorize := s.authorize
 	r.Route(pattern+"-imports", func(r chi.Router) {
 		r.With(authorize(permObj, permAct)).
+			With(middleware.SetAuthor(s.Responder)).
 			Post("/", a.Start)
 		r.With(authorize(permObj, permAct)).
 			Get("/{id}", a.Status)

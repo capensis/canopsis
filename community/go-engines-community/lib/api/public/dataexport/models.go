@@ -21,6 +21,10 @@ type Options struct {
 	// Transform converts a value before it's written, eg. to format a timestamp.
 	// It's called with the field and the raw value, and may be nil.
 	Transform Transform
+	// Enrich adds to a document the fields which aren't fetched from the database, eg. the links
+	// of the resource. It's called with the decoded document, before its fields are selected,
+	// and may be nil.
+	Enrich Enrich
 }
 
 type Job interface {

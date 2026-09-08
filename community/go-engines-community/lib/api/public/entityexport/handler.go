@@ -13,8 +13,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -31,6 +33,9 @@ var dateFields = []string{
 	"pbehavior_info.timestamp",
 }
 
+// linksField is the exported field holding the links of the entity: it's generated, not fetched.
+const linksField = "links"
+
 type handler struct {
 	store                  *asyncjob.Store[Job]
 	dbClient               mongo.DbClient
@@ -38,6 +43,8 @@ type handler struct {
 	dbInfoPropCollection   mongo.DbCollection
 	dir                    string
 	timezoneConfigProvider config.TimezoneConfigProvider
+	generator              link.Generator
+	userProvider           liblink.UserProvider
 	logger                 zerolog.Logger
 }
 
@@ -47,6 +54,8 @@ func NewHandler(
 	dbClient mongo.DbClient,
 	dir string,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	generator link.Generator,
+	userProvider liblink.UserProvider,
 	logger zerolog.Logger,
 ) asyncjob.Handler {
 	return &handler{
@@ -56,6 +65,8 @@ func NewHandler(
 		dbInfoPropCollection:   dbClient.Collection(mongo.EntityInfosPropertyCollection),
 		dir:                    dir,
 		timezoneConfigProvider: timezoneConfigProvider,
+		generator:              generator,
+		userProvider:           userProvider,
 		logger:                 logger,
 	}
 }
@@ -130,7 +141,12 @@ func (h *handler) do(ctx context.Context, job Job) error {
 	location := h.timezoneConfigProvider.Get().Location
 	timeFormat := cmp.Or(validation.GetRealFormatTime(job.Params.TimeFormat), validation.DefaultTimeFormat)
 
-	err := asyncjob.RunWithPing(
+	enrich, err := h.linksEnrich(ctx, job)
+	if err != nil {
+		return err
+	}
+
+	err = asyncjob.RunWithPing(
 		ctx,
 		func(ctx context.Context) error {
 			return h.store.Ping(ctx, job.ID, job.LeaseGeneration)
@@ -154,6 +170,7 @@ func (h *handler) do(ctx context.Context, job Job) error {
 				Name:      job.ID,
 				Fields:    job.Params.Fields,
 				Transform: dataexport.WalkObjects(dataexport.NewDateTransform(h.isDateField, location, timeFormat)),
+				Enrich:    enrich,
 			}
 
 			switch job.Params.Format {
@@ -175,6 +192,40 @@ func (h *handler) do(ctx context.Context, job Job) error {
 	)
 
 	return err
+}
+
+// linksEnrich returns the dataexport.Enrich adding to every exported document the links
+// generated for its entity, as the list endpoints do.
+func (h *handler) linksEnrich(ctx context.Context, job Job) (dataexport.Enrich, error) {
+	exported := slices.ContainsFunc(job.Params.Fields, func(f dataexport.Field) bool {
+		return f.Name == linksField
+	})
+	if !exported {
+		return nil, nil
+	}
+
+	user, err := h.userProvider.User(ctx, job.Author)
+	if err != nil {
+		return nil, err
+	}
+
+	return func(ctx context.Context, doc bson.M) error {
+		var e entity.Response
+
+		b, err := bson.Marshal(doc)
+		if err != nil {
+			return err
+		}
+
+		err = bson.Unmarshal(b, &e)
+		if err != nil {
+			return err
+		}
+
+		doc[linksField] = h.generator.GenerateForEntity(ctx, e.Raw, user)
+
+		return nil
+	}, nil
 }
 
 // isDateField reports whether the entity field holds a timestamp:

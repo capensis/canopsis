@@ -20,6 +20,9 @@ func TestListPipeline_ShouldCheckFullPipeline(t *testing.T) {
 	expected := pipelineResult{
 		BeforeLimit: []bson.M{},
 		AfterLimit: []bson.M{
+			{"$addFields": bson.M{
+				"raw": "$$ROOT",
+			}},
 			{"$lookup": bson.M{
 				"from":         mongo.EntityCategoryMongoCollection,
 				"localField":   "category",
