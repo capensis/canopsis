@@ -20,7 +20,8 @@ type Adapter interface {
 }
 
 type DataStorage struct {
-	Config  Config                      `bson:"config" json:"config"`
+	Config Config `bson:"config" json:"config"`
+	// History stores cleaner history. For health_check, Time is the latest observed TimescaleDB retention-job start; a newer persisted value is retained when the live observation is absent or older.
 	History map[string]HistoryWithCount `bson:"history" json:"history"`
 }
 

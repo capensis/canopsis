@@ -5854,7 +5854,7 @@ paths:
         - datastorage
       summary: Update conf
       description: |
-        Update conf.
+        Update conf and preserve existing retention history.
         
         -  PERMISSIONS: `api_datastorage_update`
       operationId: datastorage-update
