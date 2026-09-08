@@ -12,6 +12,514 @@ servers:
   - url: /api/v5
 
 paths:
+  /alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find all alarms
+      description: |
+        Get paginated list of alarms.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/resolution'
+        - name: search
+          in: query
+          description: full text search
+          schema:
+            type: string
+            maxLength: 10000
+        - name: search_by
+          in: query
+          style: form
+          explode: true
+          description: restrict the full text search to these fields
+          schema:
+            type: array
+            items:
+              type: string
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by alarm types
+          schema:
+            type: array
+            uniqueItems: true
+            items:
+              type: string
+              enum:
+                - standalone
+                - meta
+                - grouped
+        - name: meta_alarm
+          in: query
+          style: form
+          explode: true
+          description: filter by ids of the meta alarms the returned ones are grouped into
+          schema:
+            type: array
+            items:
+              type: string
+        - name: tag
+          in: query
+          style: form
+          explode: true
+          description: filter by alarm tags
+          schema:
+            type: array
+            items:
+              type: string
+        - name: time_field
+          in: query
+          description: the date the `from` and `to` interval applies to, required with them
+          schema:
+            type: string
+            enum:
+              - creation_date
+              - resolved
+              - activation_date
+              - last_event_date
+              - last_update_date
+              - last_st_upd_dt
+        - name: from
+          in: query
+          description: filter by alarms whose `time_field` is after this timestamp
+          schema:
+            type: integer
+        - name: to
+          in: query
+          description: filter by alarms whose `time_field` is before this timestamp
+          schema:
+            type: integer
+        - name: entity_type
+          in: query
+          style: form
+          explode: true
+          description: filter by the types of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - connector
+                - component
+                - resource
+                - service
+        - name: entity_category
+          in: query
+          style: form
+          explode: true
+          description: filter by the category ids of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+        - name: entity_connector
+          in: query
+          style: form
+          explode: true
+          description: filter by the connector ids of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+        - name: entity_component
+          in: query
+          style: form
+          explode: true
+          description: filter by the component ids of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+        - name: entity_upstream
+          in: query
+          style: form
+          explode: true
+          description: filter by ids of the entities which depend on the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /alarms/search:
+    post:
+      tags:
+        - alarms
+      summary: Search alarms
+      description: |
+        Get paginated list of alarms matching a pattern.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-search
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarm.SearchRequest'
+            examples:
+              critical:
+                summary: Critical alarms of a component
+                description: Find the open critical alarms of one component
+                value: {
+                  "page": 1,
+                  "limit": 100,
+                  "resolution": "open",
+                  "sort": "creation_date:desc",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              paused:
+                summary: Paused alarms
+                description: Find the alarms which are under a pause pbehavior type
+                value: {
+                  "resolution": "open",
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "canonical_type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pause"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              resolved:
+                summary: Resolved alarms
+                description: Find the resolved alarms which have been acknowledged
+                value: {
+                  "resolution": "resolved",
+                  "types": [ "standalone" ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.ack",
+                        "cond": {
+                          "type": "exist",
+                          "value": true
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /alarms/{id}/steps:
+    get:
+      tags:
+        - alarms
+      summary: Find the steps of an alarm
+      description: |
+        Get paginated list of the steps of one alarm.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-find-steps
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by step types
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - stateinc
+                - statedec
+                - statusinc
+                - statusdec
+                - ack
+                - ackremove
+                - comment
+                - snooze
+                - unsnooze
+                - statecounter
+                - changestate
+                - pbhenter
+                - pbhleave
+                - metaalarmattach
+                - metaalarmdetach
+                - activate
+                - resolve
+                - assocticket
+                - ticketremove
+                - declareticket
+                - declareticketfail
+                - webhookstart
+                - webhookcomplete
+                - webhookfail
+                - instructionstart
+                - instructionpause
+                - instructionresume
+                - instructioncomplete
+                - instructionfail
+                - instructionabort
+                - autoinstructionstart
+                - autoinstructioncomplete
+                - autoinstructionfail
+                - junittestsuiteupdate
+                - junittestcaseupdate
+                - changeticketstatus
+        - name: initiator
+          in: query
+          style: form
+          explode: true
+          description: filter by step initiators
+          schema:
+            type: array
+            uniqueItems: true
+            items:
+              type: string
+              enum:
+                - user
+                - external
+                - system
+        - name: from
+          in: query
+          description: filter by steps which are after this timestamp
+          schema:
+            type: integer
+        - name: to
+          in: query
+          description: filter by steps which are before this timestamp
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Step'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /alarm-exports:
+    post:
+      tags:
+        - alarm-exports
+      summary: Start an alarm export
+      description: |
+        Start an export of the alarms matching a pattern.
+
+        The export runs in the background: this returns a job, whose progress is followed with
+        `GET /alarm-exports/{id}` and whose result is fetched with `GET /alarm-exports/{id}/download` once
+        its status is `done`.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-exports-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmexport.Request'
+            examples:
+              csv:
+                summary: CSV
+                description: Export to a semicolon separated csv
+                value: {
+                  "format": "csv",
+                  "delimiter": "semicolon",
+                  "time_format": "DD MMM YYYY hh:mm:ss ZZ",
+                  "resolution": "open",
+                  "sort": "creation_date:desc",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "display_name", "label": "Name" },
+                    { "name": "entity.name", "label": "Entity" },
+                    { "name": "state.val", "label": "State" },
+                    { "name": "creation_date", "label": "Created" }
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ]
+                }
+              json:
+                summary: JSON
+                description: Export the infos of every resolved alarm to json
+                value: {
+                  "format": "json",
+                  "resolution": "resolved",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "infos", "label": "Infos" },
+                    { "name": "entity.infos.my_info.value", "label": "My info" }
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /alarm-exports/{id}:
+    get:
+      tags:
+        - alarm-exports
+      summary: Get an alarm export by id
+      description: |
+        Get the status of an export job.
+
+        Poll it until the status is `done` or `failed`.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-exports-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /alarm-exports/{id}/download:
+    get:
+      tags:
+        - alarm-exports
+      summary: Download an alarm export by id
+      description: |
+        Download the file produced by an export job.
+
+        The job must be `done`: not found is returned while it's still running, or if it failed.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-exports-download
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Disposition:
+              description: attachment, with the generated file name
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
   /event:
     post:
       tags:
@@ -1729,6 +2237,16 @@ components:
       description: filter by author
       schema:
         type: string
+    resolution:
+      name: resolution
+      in: query
+      required: true
+      description: search the open alarms or the resolved ones
+      schema:
+        type: string
+        enum:
+          - open
+          - resolved
 
   schemas:
     event.Event:

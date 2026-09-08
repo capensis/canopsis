@@ -8,6 +8,37 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+func AggregateIDs(
+	ctx context.Context,
+	dbCollection mongo.DbCollection,
+	pipeline any,
+	opts ...options.Lister[options.AggregateOptions],
+) ([]string, error) {
+	cursor, err := dbCollection.Aggregate(ctx, pipeline, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	ids := make([]string, 0)
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return nil, err
+		}
+
+		ids = append(ids, doc.ID)
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}
+
 func AggregateOne[T any](
 	ctx context.Context,
 	dbCollection mongo.DbCollection,

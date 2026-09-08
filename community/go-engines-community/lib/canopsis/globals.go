@@ -176,4 +176,5 @@ const (
 
 	SubDirEntityImportPublic = "entity-import-public"
 	SubDirEntityExportPublic = "entity-export-public"
+	SubDirAlarmExportPublic  = "alarm-export-public"
 )

@@ -10,6 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarmexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/bulk"
@@ -168,7 +170,7 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Responder,
 					s.Logger,
 				)
-				registerDataImportRoutes(r, "/entity", apisecurity.ObjEntity, entityImportAPI, s)
+				registerDataImportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionCreate, entityImportAPI, s)
 			}
 			{
 				entityExportAPI := entityexport.NewAPI(
@@ -180,7 +182,32 @@ func RegisterRoutes(s Services, opts Options) (*chi.Mux, error) {
 					s.Responder,
 					s.Logger,
 				)
-				registerDataExportRoutes(r, "/entity", apisecurity.ObjEntity, entityExportAPI, s)
+				registerDataExportRoutes(r, "/entity", apisecurity.ObjEntity, model.PermissionRead, entityExportAPI, s)
+			}
+			{
+				alarmAPI := alarm.NewAPI(alarm.NewStore(s.PrimaryDbClient, patternfields.NewTransformer(s.PrimaryDbClient)), s.Binder, s.Responder)
+				r.Route("/alarms", func(r chi.Router) {
+					r.With(authorize(apisecurity.PermAlarmRead, model.PermissionCan)).
+						Get("/", alarmAPI.List)
+
+					r.With(authorize(apisecurity.PermAlarmRead, model.PermissionCan)).
+						Post("/search", alarmAPI.Search)
+
+					r.With(authorize(apisecurity.PermAlarmRead, model.PermissionCan)).
+						Get("/{id}/steps", alarmAPI.Steps)
+				})
+			}
+			{
+				alarmExportAPI := alarmexport.NewAPI(
+					asyncjob.NewStore[alarmexport.Job](s.PrimaryDbClient, mongo.AlarmExportPublicCollection),
+					s.JobPublisher,
+					filepath.Join(s.Config.File.Dir, canopsis.SubDirAlarmExportPublic),
+					patternfields.NewTransformer(s.PrimaryDbClient),
+					s.Binder,
+					s.Responder,
+					s.Logger,
+				)
+				registerDataExportRoutes(r, "/alarm", apisecurity.PermAlarmRead, model.PermissionCan, alarmExportAPI, s)
 			}
 		})
 	})
@@ -251,32 +278,32 @@ func registerBulkRoutes(
 
 func registerDataExportRoutes(
 	r chi.Router,
-	pattern, permObj string,
+	pattern, permObj, permAct string,
 	a dataexport.API,
 	s Services,
 ) {
 	authorize := s.authorize
 	r.Route(pattern+"-exports", func(r chi.Router) {
-		r.With(authorize(permObj, model.PermissionRead)).
+		r.With(authorize(permObj, permAct)).
 			Post("/", a.Start)
-		r.With(authorize(permObj, model.PermissionRead)).
+		r.With(authorize(permObj, permAct)).
 			Get("/{id}", a.Status)
-		r.With(authorize(permObj, model.PermissionRead)).
+		r.With(authorize(permObj, permAct)).
 			Get("/{id}/download", a.Download)
 	})
 }
 
 func registerDataImportRoutes(
 	r chi.Router,
-	pattern, permObj string,
+	pattern, permObj, permAct string,
 	a dataimport.API,
 	s Services,
 ) {
 	authorize := s.authorize
 	r.Route(pattern+"-imports", func(r chi.Router) {
-		r.With(authorize(permObj, model.PermissionCreate)).
+		r.With(authorize(permObj, permAct)).
 			Post("/", a.Start)
-		r.With(authorize(permObj, model.PermissionCreate)).
+		r.With(authorize(permObj, permAct)).
 			Get("/{id}", a.Status)
 	})
 }
