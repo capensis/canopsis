@@ -3,13 +3,13 @@
     :class="{ 'pattern-suggestions__tab--difference': hasDifference }"
     class="pattern-suggestions__tab"
   >
-    <c-layout class="fill-height" align-center>
-      <c-layout class="pattern-suggestions__tab__number" align-center>
+    <c-layout class="fill-height" align="center">
+      <c-layout class="pattern-suggestions__tab__number" align="center">
         {{ number }}
       </c-layout>
       <v-expand-x-transition>
         <div v-show="active" class="pattern-suggestions__tab__found">
-          <c-layout class="px-2" gap="2" align-center>
+          <c-layout class="px-2" gap="2" align="center">
             <span
               v-html="$t('pattern.foundEntities', { count: entitiesCount })"
               class="font-weight-regular"

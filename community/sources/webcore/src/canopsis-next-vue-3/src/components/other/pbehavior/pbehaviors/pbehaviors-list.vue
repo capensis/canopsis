@@ -13,7 +13,7 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #toolbar="">
-      <c-layout gap="3" justify-end align-center>
+      <c-layout gap="3" align="center" justify-end>
         <pbehaviors-list-alarm-filtering-btn class="ma-0" @refresh="$emit('refresh')" />
       </c-layout>
     </template>

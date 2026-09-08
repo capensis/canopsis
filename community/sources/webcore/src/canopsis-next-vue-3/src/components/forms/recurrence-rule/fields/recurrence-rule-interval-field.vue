@@ -1,5 +1,5 @@
 <template>
-  <c-layout align-center>
+  <c-layout align="center">
     <div class="recurrence-rule-interval-field__input">
       <c-number-field
         :value="modelValue.interval"

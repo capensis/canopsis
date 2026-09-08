@@ -53,7 +53,7 @@
         />
 
         <template v-else>
-          <c-layout class="mb-3" gap="2" align-center>
+          <c-layout class="mb-3" gap="2" align="center">
             <div class="pbehavior-general-form__half">
               <c-enabled-field
                 v-model="fullDay"
@@ -72,7 +72,7 @@
             </div>
           </c-layout>
 
-          <c-layout gap="2" align-center>
+          <c-layout gap="2" align="center">
             <div class="pbehavior-general-form__date-range">
               <date-time-splitted-range-picker-field
                 :start="form.tstart"

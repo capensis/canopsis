@@ -15,36 +15,7 @@
         </v-btn>
       </c-layout>
 
-      <c-treeview :items="config.variables" item-key="path" item-title="name">
-        <template #prepend="{ item }">
-          <div v-if="item.isArray" class="text-caption font-italic text-medium-emphasis">
-            {{ `(${t('common.variableTypes.array')})` }}
-          </div>
-        </template>
-
-        <template #label="{ item, leaf }">
-          <div>
-            {{ item.name }}
-            <span
-              v-if="leaf"
-              class="pl-1"
-            >:
-              <c-ellipsis
-                :text="String(item.value)"
-                class="pl-1 d-inline-block text-medium-emphasis text-body-1 pre-wrap variables-help__value"
-              />
-            </span>
-            <span
-              v-else-if="!leaf && !(item.children && item.children.length)"
-              class="pl-1"
-            >:
-              <div class="pl-1 d-inline-block text-medium-emphasis text-body-1 font-italic">
-                {{ t('common.emptyObject') }}
-              </div>
-            </span>
-          </div>
-        </template>
-
+      <c-object-treeview :items="config.variables" value-max-width="520px">
         <template #append="{ leaf, item }">
           <v-menu location="bottom end">
             <template #activator="{ props: menuProps }">
@@ -87,7 +58,7 @@
             </v-list>
           </v-menu>
         </template>
-      </c-treeview>
+      </c-object-treeview>
     </template>
   </c-modal-wrapper>
 </template>
@@ -156,10 +127,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.variables-help__value {
-  max-width: 520px;
-  vertical-align: bottom;
-}
-</style>

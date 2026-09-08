@@ -50,6 +50,7 @@
         :disabled="disabled"
         :units-label="$t('common.unit')"
         :name="`${name}.timeout`"
+        :min="1"
         clearable
       />
     </c-form-block-row>
@@ -58,7 +59,7 @@
       :label="$t('common.request.repeatRequest')"
       :depth="depth"
       :indented="indentedRows"
-      :align-center="hideRepeat"
+      :align="hideRepeat ? 'center' : undefined"
     >
       <span v-if="hideRepeat" class="font-italic">
         {{ $t('common.request.repeatRequestInTomlFile') }}
@@ -74,7 +75,7 @@
     <c-form-block-row
       :label="$t('common.request.skipVerify')"
       :depth="depth"
-      :align-center="alignSkipVerify"
+      :align="alignSkipVerify ? 'center' : undefined"
     >
       <c-enabled-field
         :model-value="form.skip_verify"

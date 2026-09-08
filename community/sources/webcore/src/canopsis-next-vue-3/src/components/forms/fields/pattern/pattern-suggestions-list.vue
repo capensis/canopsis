@@ -4,7 +4,7 @@
     :class="{ 'pattern-suggestions--active-difference': hasDifference }"
     class="pattern-suggestions"
   >
-    <c-layout align-center wrap>
+    <c-layout align="center" wrap>
       <v-tabs
         v-model="activeSuggestionIndex"
         align-tabs="center"

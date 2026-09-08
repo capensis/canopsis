@@ -5,8 +5,8 @@
         <v-icon class="draggable ml-0 mr-3 mt-3 action-drag-handler">
           drag_indicator
         </v-icon>
-        <c-layout column>
-          <c-layout>
+        <c-layout class="w-100" column>
+          <c-layout align="center" gap="2">
             <c-select
               :model-value="action.type"
               :items="eventFilterActionTypes"
@@ -14,8 +14,19 @@
               item-title="text"
               item-value="value"
               @update:model-value="changeActionType"
-            />
-            <v-btn class="mr-0" icon @click="remove">
+            >
+              <template #selection="{ item }">
+                {{ item.groupTitle }} {{ item.text }}
+              </template>
+            </c-select>
+            <v-btn
+              class="mr-0"
+              density="compact"
+              size="small"
+              variant="text"
+              icon
+              @click="remove"
+            >
               <v-icon color="error">
                 delete
               </v-icon>
@@ -44,7 +55,19 @@
           </c-layout>
           <v-row v-else>
             <v-col cols="5">
+              <c-combobox
+                v-if="isSetFieldValueType"
+                key="name-set-field"
+                :model-value="action.name"
+                :items="EVENT_FILTER_SET_FIELD_ITEMS"
+                :label="$t('common.name')"
+                :name="nameFieldName"
+                class="mr-2"
+                required
+                @update:model-value="updateField('name', $event)"
+              />
               <c-name-field
+                v-else
                 key="name"
                 :model-value="action.name"
                 :name="nameFieldName"
@@ -109,7 +132,9 @@ import { computed } from 'vue';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS,
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
+  EVENT_FILTER_SET_FIELD_ITEMS,
   PATTERN_FIELD_TYPES,
 } from '@/constants';
 
@@ -167,10 +192,25 @@ export default {
     const nameFieldName = computed(() => `${props.name}.name`);
     const valueFieldName = computed(() => `${props.name}.value`);
 
-    const eventFilterActionTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
-        value,
-        text: t(`eventFilter.actionsTypes.${value}.text`),
-      })),
+    const eventFilterActionTypes = computed(() =>
+      Object.entries(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS).reduce((acc, [group, groupItems]) => {
+        const groupTitle = t(`eventFilter.actionsTypesGroups.${group}`);
+
+        acc.push(
+          { header: groupTitle },
+          ...groupItems.map(value => ({
+            value,
+            text: t(`eventFilter.actionsTypes.${value}.text`),
+            groupTitle,
+          })),
+        );
+
+        return acc;
+      }, []),
+    );
+
+    const isSetFieldValueType = computed(
+      () => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField === props.action.type,
     );
 
     const isStringCopyValueType = computed(() => [
@@ -228,12 +268,15 @@ export default {
     const remove = () => emit('remove', props.action);
 
     return {
+      EVENT_FILTER_SET_FIELD_ITEMS,
+
       eventExtraPrefix,
       mixedFieldTypes,
 
       nameFieldName,
       valueFieldName,
       eventFilterActionTypes,
+      isSetFieldValueType,
       isStringCopyValueType,
       isStringTemplateValueType,
       isStringDictionaryValueType,

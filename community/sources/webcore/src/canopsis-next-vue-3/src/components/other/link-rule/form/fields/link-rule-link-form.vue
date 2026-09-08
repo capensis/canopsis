@@ -2,7 +2,7 @@
   <v-card>
     <v-card-text>
       <c-layout column>
-        <c-layout align-center>
+        <c-layout align="center">
           <c-payload-text-field
             :value="form.label"
             :label="$t('common.label')"

@@ -27,7 +27,7 @@ export const entitiesUserPreferenceMixin = {
     }),
 
     fetchUserPreference(data) {
-      if (this.localWidget) {
+      if (this.localWidget || this.config?.localWidget) {
         return Promise.resolve();
       }
 
@@ -35,7 +35,10 @@ export const entitiesUserPreferenceMixin = {
     },
 
     updateContentInUserPreference(content = {}) {
-      const method = this.localWidget ? this.updateLocalUserPreference : this.updateUserPreference;
+      const method =
+        this.localWidget || this.config?.localWidget
+          ? this.updateLocalUserPreference
+          : this.updateUserPreference;
 
       return method({
         data: {

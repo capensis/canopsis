@@ -1,5 +1,5 @@
 <template>
-  <c-layout justify-space-between align-center>
+  <c-layout align="center" justify-space-between>
     <v-label>{{ label }}</v-label>
     <v-col cols="3">
       <v-select

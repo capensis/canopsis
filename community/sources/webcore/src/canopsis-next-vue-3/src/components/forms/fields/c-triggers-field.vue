@@ -60,7 +60,7 @@
         </template>
 
         <v-list-item-title>
-          <c-layout align-center justify-space-between>
+          <c-layout align="center" justify-space-between>
             <span>{{ getPreparedTrigger(item).text }}</span>
             <component
               v-if="additionalValuesComponentsByTypes[getPreparedTrigger(item).type]"

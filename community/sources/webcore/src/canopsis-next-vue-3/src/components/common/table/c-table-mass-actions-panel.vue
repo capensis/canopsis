@@ -3,12 +3,14 @@
     <c-action-btn
       v-if="removable && someOneRemovable && activeConfig.remove"
       :tooltip="removeTooltip"
+      :small="small"
       type="delete"
       @click="showRemoveModal"
     />
     <c-action-btn
       v-if="enablable && someOneDisable && activeConfig.enable"
       :tooltip="t(`${activeConfig.tooltipPrefix}.massEnable`)"
+      :small="small"
       icon="check_circle"
       color="primary"
       @click="showEnableModal"
@@ -16,6 +18,7 @@
     <c-action-btn
       v-if="disablable && someOneEnable && activeConfig.disable"
       :tooltip="t(`${activeConfig.tooltipPrefix}.massDisable`)"
+      :small="small"
       icon="cancel"
       color="error"
       @click="showDisableModal"
@@ -23,6 +26,7 @@
     <c-action-btn
       v-if="unhideable && someOneHidden && activeConfig.unhide"
       :tooltip="t(`${activeConfig.tooltipPrefix}.massUnhide`)"
+      :small="small"
       icon="check_circle"
       color="primary"
       @click="showUnhideModal"
@@ -30,9 +34,17 @@
     <c-action-btn
       v-if="hideable && someOneVisible && activeConfig.hide"
       :tooltip="t(`${activeConfig.tooltipPrefix}.massHide`)"
+      :small="small"
       icon="cancel"
       color="error"
       @click="showHideModal"
+    />
+    <c-db-export-btn
+      v-if="activeConfig.exportProps"
+      :ids="itemsIds"
+      :small="small"
+      v-bind="activeConfig.exportProps"
+      @refresh="afterSubmit"
     />
   </c-layout>
 </template>
@@ -77,6 +89,10 @@ export default {
     items: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: true,
     },
     removable: {
       type: Boolean,
@@ -262,6 +278,7 @@ export default {
     const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
     const someOneVisible = computed(() => props.items.some(({ hidden }) => !hidden));
     const someOneHidden = computed(() => props.items.some(({ hidden }) => hidden));
+    const itemsIds = computed(() => pickIds(props.items, props.itemId));
 
     const activeConfig = computed(() => {
       if (props.dynamicInfo) {
@@ -270,6 +287,7 @@ export default {
           enable: bulkEnableDynamicInfos,
           disable: bulkDisableDynamicInfos,
           tooltipPrefix: 'dynamicInfo',
+          exportProps: { dynamicInfo: true },
         };
       }
 
@@ -286,6 +304,7 @@ export default {
           enable: bulkEnableScenarios,
           disable: bulkDisableScenarios,
           tooltipPrefix: 'scenario',
+          exportProps: { scenario: true },
         };
       }
 
@@ -295,6 +314,7 @@ export default {
           enable: bulkEnableEventFilters,
           disable: bulkDisableEventFilters,
           tooltipPrefix: 'eventFilter',
+          exportProps: { eventFilter: true },
         };
       }
 
@@ -304,6 +324,7 @@ export default {
           enable: bulkEnableFlappingRules,
           disable: bulkDisableFlappingRules,
           tooltipPrefix: 'flappingRule',
+          exportProps: { flappingRule: true },
         };
       }
 
@@ -313,6 +334,7 @@ export default {
           enable: bulkEnableResolveRules,
           disable: bulkDisableResolveRules,
           tooltipPrefix: 'resolveRule',
+          exportProps: { resolveRule: true },
         };
       }
 
@@ -322,6 +344,7 @@ export default {
           enable: bulkEnableIdleRules,
           disable: bulkDisableIdleRules,
           tooltipPrefix: 'idleRules',
+          exportProps: { idleRule: true },
         };
       }
 
@@ -331,6 +354,7 @@ export default {
           enable: bulkEnableLinkRules,
           disable: bulkDisableLinkRules,
           tooltipPrefix: 'linkRule',
+          exportProps: { linkRule: true },
         };
       }
 
@@ -340,6 +364,7 @@ export default {
           enable: bulkEnableDeclareTicketRules,
           disable: bulkDisableDeclareTicketRules,
           tooltipPrefix: 'declareTicket',
+          exportProps: { declareTicket: true },
         };
       }
 
@@ -366,6 +391,7 @@ export default {
           enable: bulkEnableMetaAlarmRules,
           disable: bulkDisableMetaAlarmRules,
           tooltipPrefix: 'metaAlarmRule',
+          exportProps: { metaAlarmRule: true },
         };
       }
 
@@ -375,6 +401,7 @@ export default {
           enable: bulkEnablePbehaviors,
           disable: bulkDisablePbehaviors,
           tooltipPrefix: 'pbehavior',
+          exportProps: { pbehavior: true },
         };
       }
 
@@ -436,6 +463,7 @@ export default {
           enable: bulkEnableRemediationInstructions,
           disable: bulkDisableRemediationInstructions,
           tooltipPrefix: 'remediation.instruction',
+          exportProps: { instruction: true },
         };
       }
 
@@ -443,6 +471,7 @@ export default {
         return {
           remove: bulkRemoveRemediationConfigurations,
           tooltipPrefix: 'remediation.configuration',
+          exportProps: { jobConfig: true },
         };
       }
 
@@ -450,6 +479,7 @@ export default {
         return {
           remove: bulkRemoveRemediationJobs,
           tooltipPrefix: 'remediation.job',
+          exportProps: { job: true },
         };
       }
 
@@ -600,6 +630,8 @@ export default {
       someOneRemovable,
       someOneVisible,
       someOneHidden,
+      itemsIds,
+      afterSubmit,
       showRemoveModal,
       showEnableModal,
       showDisableModal,

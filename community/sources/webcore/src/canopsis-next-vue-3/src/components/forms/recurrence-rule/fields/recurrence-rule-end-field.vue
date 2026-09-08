@@ -8,7 +8,7 @@
 
     <v-radio :value="types.date" class="mb-0" color="primary">
       <template #label>
-        <c-layout gap="2" align-center>
+        <c-layout gap="4" align="center">
           <span>{{ t('recurrenceRule.on') }}</span>
 
           <date-time-splitted-picker-field
@@ -25,7 +25,7 @@
 
     <v-radio :value="types.after" class="mb-0" color="primary">
       <template #label>
-        <c-layout gap="2" align-center>
+        <c-layout class="recurrence-rule-end-field__after" gap="4" align="center">
           <span>{{ t('recurrenceRule.after') }}</span>
 
           <c-number-field

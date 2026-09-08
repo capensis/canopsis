@@ -30,7 +30,7 @@ export const usePatternCounters = ({ counterMethod, entityCountersType, hasError
       {
         [true]: checkPatternsAlarmsCount,
         [unwrappedEntityCountersType]: checkPatternsEntitiesCount,
-      }.true;
+    }.true;
 
     try {
       counters.value = await method({ data: unwrappedPatterns });

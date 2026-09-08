@@ -1,5 +1,5 @@
 <template>
-  <c-layout gap="2" align-center>
+  <c-layout gap="2" align="center">
     <c-textarea
       :model-value="comment.message"
       :disabled="!!comment._id"

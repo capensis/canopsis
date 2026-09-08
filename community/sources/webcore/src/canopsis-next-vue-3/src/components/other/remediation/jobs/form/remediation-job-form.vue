@@ -26,7 +26,7 @@
       />
     </c-layout>
 
-    <c-layout v-if="withPayload" :align-center="!payload">
+    <c-layout v-if="withPayload" :align="!payload ? 'center' : undefined">
       <v-btn
         v-if="!payload"
         class="ml-0"

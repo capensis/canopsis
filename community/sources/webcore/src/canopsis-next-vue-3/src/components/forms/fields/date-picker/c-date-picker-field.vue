@@ -55,7 +55,7 @@ import { convertDateToDateObject, convertDateToString } from '@/helpers/date/dat
 import { formBaseMixin } from '@/mixins/form';
 
 export default {
-  emits: ['update:value'],
+  emits: ['update:value', 'change'],
   mixins: [formBaseMixin],
   props: {
     value: {

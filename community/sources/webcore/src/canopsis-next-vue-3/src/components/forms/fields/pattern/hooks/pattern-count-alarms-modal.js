@@ -5,6 +5,7 @@ import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widge
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useAlarm } from '@/hooks/store/modules/alarm';
 
 /**
  * Hook for managing pattern count alarms modal functionality.
@@ -16,7 +17,7 @@ import { useModals } from '@/hooks/modals';
 export const usePatternCountAlarmsModal = (props) => {
   const modals = useModals();
   const { t } = useI18n();
-  const fetchAlarmsListWithoutStore = () => Promise.resolve({ data: [] });
+  const { fetchListWithoutStore: fetchAlarmsListWithoutStore } = useAlarm();
 
   /**
    * Shows a modal with alarms filtered by the specified pattern names.
@@ -38,6 +39,7 @@ export const usePatternCountAlarmsModal = (props) => {
       name: MODALS.alarmsList,
       config: {
         widget,
+        localWidget: true,
         title: t('pattern.patternAlarms'),
         fetchList: params =>
           fetchAlarmsListWithoutStore({

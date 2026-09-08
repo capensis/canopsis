@@ -1,25 +1,32 @@
 <template>
   <c-layout column>
     <c-draggable-list-field
-      :value="actions"
+      :model-value="actions"
       handle=".action-drag-handler"
-      @update:value="updateModel"
+      @update:model-value="updateModel"
     >
-      <event-filter-enrichment-action-field
-        v-for="(action, index) in actions"
-        :key="action.key"
-        :action="action"
-        :name="`${name}.${action.key}`"
-        :variables="variables"
-        :copy-variables="copyVariables"
-        :set-tags-items="setTagsItems"
-        class="mb-3"
-        @update:action="updateItemInArray(index, $event)"
-        @remove="removeItemFromArray(index)"
-      />
-      <v-btn :color="hasError ? 'error' : 'primary'" outlined @click="addAction">
-        {{ $t('eventFilter.addAction') }}
-      </v-btn>
+      <template #item="{ element: action, index }">
+        <event-filter-enrichment-action-field
+          :action="action"
+          :name="`${name}.${action.key}`"
+          :variables="variables"
+          :copy-variables="copyVariables"
+          :set-tags-items="setTagsItems"
+          class="mb-3"
+          @update:action="updateItemInArray(index, $event)"
+          @remove="removeItemFromArray(index)"
+        />
+      </template>
+
+      <template #footer>
+        <v-btn
+          :color="hasError ? 'error' : 'primary'"
+          variant="outlined"
+          @click="addAction"
+        >
+          {{ $t('eventFilter.addAction') }}
+        </v-btn>
+      </template>
     </c-draggable-list-field>
   </c-layout>
 </template>

@@ -16,7 +16,7 @@
     <template #append-count="">
       <v-btn
         v-if="alarmCounter && alarmCounter.count"
-        text
+        variant="text"
         small
         @click="showPatternAlarmsModal()"
       >
@@ -24,7 +24,7 @@
       </v-btn>
       <v-btn
         v-if="entityCounter && entityCounter.count"
-        text
+        variant="text"
         small
         @click="showPatternEntitiesModal()"
       >

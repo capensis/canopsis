@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="pa-4" column align-center>
+  <c-layout class="pa-4" align="center" column>
     <div class="kpi-charts">
       <c-information-block :title="$t('kpi.alarmMetrics')" class="mb-5">
         <kpi-alarms :unavailable="unavailable" />

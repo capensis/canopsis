@@ -53,8 +53,8 @@
         </c-icon-field>
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.color')" align-center>
-        <c-layout gap="2" align-center justify-start>
+      <c-form-block-row :label="t('common.color')" align="center">
+        <c-layout gap="2" align="center" justify-start>
           <span v-if="onlyColor" class="text-medium-emphasis">
             {{ t('pbehavior.types.defaultType') }}
           </span>

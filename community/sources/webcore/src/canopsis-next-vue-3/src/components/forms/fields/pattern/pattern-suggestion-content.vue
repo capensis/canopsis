@@ -6,7 +6,7 @@
     column
   >
     <c-alert type="info">
-      <c-layout justify-space-between align-center>
+      <c-layout align="center" justify-space-between>
         <c-layout class="font-weight-regular" gap="2" column>
           <div v-html="$t('pattern.conditionsOptimized')" />
           <ul class="pl-4">

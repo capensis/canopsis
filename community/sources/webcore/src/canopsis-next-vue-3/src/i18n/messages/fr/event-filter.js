@@ -67,9 +67,14 @@ export default {
     incorrectRegexOnSetTagsValue:
       'Valeur non valide : la valeur de l\'action set_tags doit contenir une expression régulière pour extraire les groupes <name> et <value>',
   },
+  actionsTypesGroups: {
+    setEventField: 'Définir un champ d\'événement',
+    setTags: 'Définir les tags',
+    setEntityInfo: 'Définir une info d\'entité',
+  },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-      text: 'Copier une valeur d\'un champ d\'événement à un autre',
+      text: 'à l\'aide de la valeur d\'un autre champ d\'événement',
       message: 'Cette action est utilisée pour copier la valeur d\'un champ dans un événement.',
       description:
         '<h3 class="text-subtitle-1 font-weight-bold">Paramètres de l\'action</h3>' +
@@ -82,7 +87,7 @@ export default {
         '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-      text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
+      text: 'à l\'aide de la valeur d\'un champ d\'événement',
       message:
         'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité.',
       description:
@@ -96,7 +101,7 @@ export default {
         '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-      text: 'Définir une information d\'une entité sur une constante',
+      text: 'à une constante',
       message:
         'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement.',
       description:
@@ -110,7 +115,7 @@ export default {
         '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-      text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
+      text: 'à l\'aide d\'un modèle',
       message:
         'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement.',
       description:
@@ -122,10 +127,10 @@ export default {
         '<li><strong>value</strong> : le modèle utilisé pour déterminer la valeur de la donnée.</li>' +
         '</ul>' +
         '</p>' +
-        '<p>Les modèles <code>{\'{{.Event.Champ}}\'}</code>, les expressions régulières ou les données externes peuvent être utilisés</p>',
+        '<p>Les modèles <code>{{.Event.Champ}}</code>, les expressions régulières ou les données externes peuvent être utilisés</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-      text: 'Définir un champ d\'un événement sur une constante',
+      text: 'à une constante',
       message: 'Cette action peut être utilisée pour modifier un champ de l\'événement.',
       description:
         '<h3 class="text-subtitle-1 font-weight-bold">Paramètres de l\'action</h3>' +
@@ -138,7 +143,7 @@ export default {
         '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-      text: 'Définir un champ de chaîne d\'un événement à l\'aide d\'un modèle',
+      text: 'à l\'aide d\'un modèle',
       message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
       description:
         '<h3 class="text-subtitle-1 font-weight-bold">Paramètres de l\'action</h3>' +
@@ -149,10 +154,10 @@ export default {
         '<li><strong>value</strong> : le modèle utilisé pour déterminer la valeur du champ.</li>' +
         '</ul>' +
         '</p>' +
-        '<p>Les modèles <code>{\'{{.Event.Champ}}\'}</code>, les expressions régulières ou les données externes peuvent être utilisés</p>',
+        '<p>Les modèles <code>{{.Event.Champ}}</code>, les expressions régulières ou les données externes peuvent être utilisés</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
-      text: 'Définir plusieurs chaînes d\'informations sur une entité à partir d\'un dictionnaire',
+      text: 'à partir d\'un dictionnaire',
       message:
         'Cette action peut être utilisée pour définir plusieurs informations d\'entité à partir d\'un dictionnaire.',
       description:
@@ -167,7 +172,7 @@ export default {
         '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
-      text: 'Définir les balises d\'un champ à l\'aide d\'une correspondance d\'expression rationnelle',
+      text: 'à l\'aide d\'une correspondance d\'expression rationnelle',
       message:
         'Cette action peut être utilisée pour définir des balises provenant d\'autres événements filtrés à l\'aide d\'une correspondance d\'expression rationnelle.',
       description:
@@ -226,7 +231,7 @@ export default {
         '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
-      text: 'Définir les balises d\'un champ à l\'aide d\'un modèle',
+      text: 'à l\'aide d\'un modèle',
       message:
         'Cette action peut être utilisée pour définir des balises provenant d\'autres champs d\'événement à l\'aide d\'un modèle.',
       description:
@@ -239,7 +244,7 @@ export default {
         '</p>' +
         '<p>' +
         'Cette action est utile lorsque vous souhaitez définir un tag dont la <strong>valeur</strong> est calculée à partir ' +
-        'du contenu d\'un ou plusieurs champs de l\'événement, en utilisant la syntaxe de templating Go (<code>{\'{{.Event.Champ}}\'}</code>).' +
+        'du contenu d\'un ou plusieurs champs de l\'événement, en utilisant la syntaxe de templating Go (<code>{{.Event.Champ}}</code>).' +
         '</p>' +
         '<p>' +
         'Cette action permet uniquement la création d\'<strong>un seul tag à la fois</strong>.' +
@@ -252,7 +257,7 @@ export default {
         '<li><strong>value</strong> (obligatoire) : modèle utilisé pour générer la valeur du tag.' +
         '<br>Il peut contenir :' +
         '<ul>' +
-        '<li>des références aux champs de l\'événement (<code>{\'{{.Event.Champ}}\'}</code>).</li>' +
+        '<li>des références aux champs de l\'événement (<code>{{.Event.Champ}}</code>).</li>' +
         '<li>des expressions régulières si le champ a été filtré auparavant.</li>' +
         '<li>ou des données provenant d\'une source externe si elles ont été injectées dans le contexte.</li>' +
         '</ul>' +

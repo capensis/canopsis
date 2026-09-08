@@ -27,7 +27,7 @@
     </template>
 
     <template #enabled="{ item }">
-      <c-layout align-center>
+      <c-layout align="center">
         <v-checkbox-btn
           :model-value="isEnabledRatingSetting(item)"
           :disabled="!updatable"
