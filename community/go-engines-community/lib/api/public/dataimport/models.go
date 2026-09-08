@@ -19,4 +19,5 @@ type Job interface {
 
 type Query struct {
 	Source string `form:"source" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

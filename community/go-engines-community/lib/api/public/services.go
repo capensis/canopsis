@@ -7,13 +7,17 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	libtoken "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
@@ -35,12 +39,16 @@ type Services struct {
 	AuthProviders          []libsecurity.HttpProvider
 	APIConfigProvider      config.ApiConfigProvider
 	TimezoneConfigProvider config.TimezoneConfigProvider
+	TemplateConfigProvider config.TemplateConfigProvider
 	JobPublisher           asyncjob.Publisher
 	UserMetaUpdater        metrics.MetaUpdater
+	LinkGenerator          link.Generator
+	UserProvider           liblink.UserProvider
 
 	configAdapter          config.Adapter
 	apiConfigProvider      *config.BaseApiConfigProvider
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider
+	templateConfigProvider *config.BaseTemplateConfigProvider
 }
 
 func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Services, cleanup func(), err error) {
@@ -112,8 +120,10 @@ func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Se
 
 	s.apiConfigProvider = config.NewApiConfigProvider(s.Config, logger)
 	s.timezoneConfigProvider = config.NewTimezoneConfigProvider(s.Config, logger)
+	s.templateConfigProvider = config.NewTemplateConfigProvider(s.Config, logger)
 	s.APIConfigProvider = s.apiConfigProvider
 	s.TimezoneConfigProvider = s.timezoneConfigProvider
+	s.TemplateConfigProvider = s.templateConfigProvider
 
 	validator, uniTrans, err := RegisterValidators(s.SecurityConfig)
 	if err != nil {
@@ -136,6 +146,10 @@ func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Se
 	s.JobPublisher = asyncjob.NewPublisher(libamqp.NewPooledPublisher(s.AMQPPubChPool), json.NewEncoder())
 
 	s.UserMetaUpdater = metrics.NewNullMetaUpdater()
+
+	tplExecutor := template.NewExecutor(s.TemplateConfigProvider, s.TimezoneConfigProvider)
+	s.LinkGenerator = link.NewGenerator(s.SecondaryDbClient, externaldata.NewNullGetter(), tplExecutor, s.Logger)
+	s.UserProvider = liblink.NewUserProvider(s.SecondaryDbClient)
 
 	return s, cleanup, nil
 }

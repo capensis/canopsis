@@ -8,6 +8,7 @@ import (
 	"io"
 	"strconv"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -101,7 +102,8 @@ func csvValue(v any) (string, error) {
 
 	switch rv := v.(type) {
 	case bson.M,
-		bson.A:
+		bson.A,
+		[]link.Link:
 		b, err := json.Marshal(v)
 		if err != nil {
 			return "", err

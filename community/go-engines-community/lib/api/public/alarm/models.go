@@ -2,6 +2,7 @@ package alarm
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -117,6 +118,12 @@ type Response struct {
 
 	MetaAlarmRule *response.Reference `bson:"meta_alarm_rule" json:"meta_alarm_rule"`
 	Type          string              `bson:"type" json:"type"`
+
+	Links []link.Link `bson:"-" json:"links"`
+
+	// RawAlarm and RawEntity are used to generate links.
+	RawAlarm  types.Alarm  `bson:"raw_alarm" json:"-"`
+	RawEntity types.Entity `bson:"raw_entity" json:"-"`
 }
 
 func (r *Response) setDefaults() {
