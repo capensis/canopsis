@@ -192,6 +192,10 @@ func removeTokens(ctx context.Context, filter bson.M, collection mongo.DbCollect
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return 0, err
+	}
+
 	if len(ids) > 0 {
 		d, err := collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
 		if err != nil {
