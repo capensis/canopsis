@@ -7,32 +7,24 @@
       with-background
     />
 
-    <v-tabs v-model="activeTab" align-tabs="center" color="primary">
-      <v-tab value="general">
-        {{ t('common.general') }}
-      </v-tab>
-      <v-tab v-if="!defaultRule" value="patterns">
-        {{ t('common.pattern', 2) }}
-      </v-tab>
-    </v-tabs>
+    <c-form-general-patterns-tabs>
+      <template #general="{ setRef }">
+        <alarm-status-rule-general-form
+          :ref="setRef"
+          :flapping="flapping"
+          :default-rule="defaultRule"
+        />
+      </template>
 
-    <v-window v-model="activeTab">
-      <v-window-item value="general">
-        <alarm-status-rule-general-form :flapping="flapping" :default-rule="defaultRule" />
-      </v-window-item>
-
-      <v-window-item v-if="!defaultRule" value="patterns">
-        <alarm-status-rule-patterns-form :flapping="flapping" class="mt-2" />
-      </v-window-item>
-    </v-window>
+      <template v-if="!defaultRule" #patterns="{ setRef }">
+        <alarm-status-rule-patterns-form :ref="setRef" :flapping="flapping" />
+      </template>
+    </c-form-general-patterns-tabs>
   </c-layout>
 </template>
 
 <script>
-import { ref } from 'vue';
-
 import { useFormModel } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
 
 import AlarmStatusRuleGeneralForm from './alarm-status-rule-general-form.vue';
 import AlarmStatusRulePatternsForm from './alarm-status-rule-patterns-form.vue';
@@ -59,14 +51,9 @@ export default {
   },
 
   setup() {
-    const { t } = useI18n();
-    const activeTab = ref('general');
-
     const enabledField = useFormModel('enabled');
 
     return {
-      t,
-      activeTab,
       enabledField,
     };
   },

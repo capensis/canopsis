@@ -13,15 +13,15 @@
 
     <v-window v-model="activeTab" class="bg-secondary-lighten-2">
       <v-window-item :value="TABS.patterns">
-        <c-layout class="py-3" justify="center">
-          <div :style="gridFlexStyle(8)">
+        <v-row class="py-3" justify="center">
+          <v-col cols="8">
             <v-card>
               <v-card-text>
                 <tag-patterns-form :form="patterns" readonly />
               </v-card-text>
             </v-card>
-          </div>
-        </c-layout>
+          </v-col>
+        </v-row>
       </v-window-item>
     </v-window>
   </div>
@@ -31,7 +31,6 @@
 import { computed, ref } from 'vue';
 
 import { tagFilterPatternsToForm } from '@/helpers/entities/tag/form';
-import { gridFlexStyle } from '@/helpers/layout';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -65,7 +64,6 @@ export default {
       activeTab,
       patterns,
       t,
-      gridFlexStyle,
     };
   },
 };

@@ -10,9 +10,6 @@
     <c-progress-overlay :pending="pending" />
     <c-layout class="c-patterns-field" column>
       <c-label :label="$t('common.pattern', 2)" :required="someRequired || required" />
-      <c-alert v-if="errorMessage" type="error" density="compact">
-        {{ errorMessage }}
-      </c-alert>
       <c-collapse-panel
         v-if="withAlarm"
         :expanded="expanded.alarm"
@@ -162,6 +159,13 @@
       <c-alert v-if="allOverLimit" type="warning">
         <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
       </c-alert>
+
+      <v-messages
+        :active="!!patternsErrorMessages.length"
+        :messages="patternsErrorMessages"
+        color="error"
+      />
+
       <c-layout
         class="w-100"
         gap="2"
@@ -470,7 +474,10 @@ export default {
     const hasError = computed(() => isPatternRequired.value && !hasPatterns.value);
 
     const fieldName = computed(() => props.name || 'patterns');
-    const validatePatterns = () => (hasError.value ? t('pattern.errors.required') : true);
+    const patternsRequiredErrorMessage = computed(() =>
+      hasError.value ? t('pattern.errors.required') : '',
+    );
+    const validatePatterns = () => patternsRequiredErrorMessage.value || true;
     const { errorMessage, setValue, validate, setErrors, setTouched } = useField(
       fieldName,
       validatePatterns,
@@ -478,6 +485,10 @@ export default {
         validateOnValueUpdate: false,
       },
     );
+    const patternsErrorMessages = computed(() => [
+      errorMessage.value ||
+        (formContext.submitCount.value ? patternsRequiredErrorMessage.value : ''),
+    ].filter(Boolean));
 
     const {
       counters,
@@ -657,6 +668,7 @@ export default {
       patternNamesToFields,
       hasError,
       errorMessage,
+      patternsErrorMessages,
       hasAllInCounter,
       patternsCountMessageBind,
       patternsFields,

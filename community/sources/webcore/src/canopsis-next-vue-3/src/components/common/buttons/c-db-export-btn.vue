@@ -12,6 +12,7 @@
 <script>
 import { computed } from 'vue';
 
+import { getIdFromEntity } from '@/helpers/array';
 import { saveFile } from '@/helpers/file/files';
 
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -118,11 +119,14 @@ export default {
           [props.jobConfig]: exportJobConfigsDb,
         }).true,
     );
+    const normalizedIds = computed(() =>
+      (props.id ? [props.id] : props.ids).map(getIdFromEntity).filter(Boolean),
+    );
 
     const { pending, handler: download } = usePendingHandler(async () => {
       const { headers = {}, data } =
         (await action.value?.({
-          ids: props.id ? [props.id] : props.ids,
+          ids: normalizedIds.value,
         })) ?? {};
 
       const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');

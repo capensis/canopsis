@@ -127,7 +127,7 @@
         </c-layout>
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.color')" :depth="depth">
+      <c-form-block-row :label="$t('common.color')" :depth="depth" align-center>
         <c-enabled-color-picker-field
           :model-value="form.color"
           :label="$t('modals.createPbehavior.steps.color.label')"

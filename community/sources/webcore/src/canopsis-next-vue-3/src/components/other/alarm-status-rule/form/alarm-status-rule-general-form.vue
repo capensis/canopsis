@@ -9,18 +9,18 @@
 
     <c-form-block>
       <c-form-block-row :label="t('common.priority')">
-        <c-priority-field v-model="priorityField" :disabled="defaultRule" />
+        <c-priority-field v-model="priorityField" :disabled="defaultRule" :min="MIN_PRIORITY" />
       </c-form-block-row>
 
       <c-form-block-row :label="t('common.duration')">
-        <c-duration-field v-model:duration="durationField" required />
+        <c-duration-field v-model:duration="durationField" :min="MIN_DURATION_VALUE" required />
       </c-form-block-row>
 
       <c-form-block-row v-if="flapping" :label="t('common.frequencyLimit')">
         <c-number-field
           v-model:value="frequencyLimitField"
           :label="t('common.frequencyLimit')"
-          :min="1"
+          :min="MIN_FREQUENCY_LIMIT"
           name="freq_limit"
         />
       </c-form-block-row>
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import { MIN_DURATION_VALUE, MIN_FREQUENCY_LIMIT, MIN_PRIORITY } from '@/constants';
+
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -67,6 +69,9 @@ export default {
       durationField,
       frequencyLimitField,
       descriptionField,
+      MIN_DURATION_VALUE,
+      MIN_FREQUENCY_LIMIT,
+      MIN_PRIORITY,
     };
   },
 };

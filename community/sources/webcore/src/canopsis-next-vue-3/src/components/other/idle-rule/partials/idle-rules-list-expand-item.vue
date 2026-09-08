@@ -24,9 +24,11 @@
           </v-window-item>
 
           <v-window-item value="patterns">
-            <div class="idle-rules-list-expand-item__content">
-              <idle-rule-patterns-form :form="patterns" :is-entity-type="isEntityType" readonly />
-            </div>
+            <v-row justify="center">
+              <v-col cols="8">
+                <idle-rule-patterns-form :form="patterns" :is-entity-type="isEntityType" readonly />
+              </v-col>
+            </v-row>
           </v-window-item>
         </v-window>
       </v-card>
@@ -80,10 +82,5 @@ export default {
 <style lang="scss" scoped>
 .idle-rules-list-expand-item__card {
   width: 100%;
-}
-
-.idle-rules-list-expand-item__content {
-  width: min(100%, 900px);
-  margin: 0 auto;
 }
 </style>

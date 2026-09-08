@@ -15,13 +15,15 @@
       <v-card class="pa-3 meta-alarm-rule-list-expand-panel__card">
         <v-window v-model="activeTab" class="pt-2">
           <v-window-item value="patterns">
-            <div class="meta-alarm-rule-list-expand-panel__content">
-              <meta-alarm-rule-patterns-form
-                :form="patterns"
-                :with-total-entity="withTotalEntityPattern"
-                readonly
-              />
-            </div>
+            <v-row justify="center">
+              <v-col cols="8">
+                <meta-alarm-rule-patterns-form
+                  :form="patterns"
+                  :with-total-entity="withTotalEntityPattern"
+                  readonly
+                />
+              </v-col>
+            </v-row>
           </v-window-item>
         </v-window>
       </v-card>
@@ -72,10 +74,5 @@ export default {
 <style lang="scss" scoped>
 .meta-alarm-rule-list-expand-panel__card {
   width: 100%;
-}
-
-.meta-alarm-rule-list-expand-panel__content {
-  width: min(100%, 900px);
-  margin: 0 auto;
 }
 </style>

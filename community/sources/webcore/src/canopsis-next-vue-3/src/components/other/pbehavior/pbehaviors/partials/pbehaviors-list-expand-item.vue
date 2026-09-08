@@ -24,14 +24,16 @@
       <v-card class="pa-3 pbehaviors-list-expand-item__card">
         <v-window v-model="activeTab" class="pt-2">
           <v-window-item value="patterns">
-            <div class="pbehaviors-list-expand-item__content">
-              <pbehavior-patterns-form
-                :form="patterns"
-                :pbehavior-id="pbehavior._id"
-                pbehavior-counter-type
-                readonly
-              />
-            </div>
+            <v-row justify="center">
+              <v-col cols="8">
+                <pbehavior-patterns-form
+                  :form="patterns"
+                  :pbehavior-id="pbehavior._id"
+                  pbehavior-counter-type
+                  readonly
+                />
+              </v-col>
+            </v-row>
           </v-window-item>
 
           <v-window-item value="entities">
@@ -100,10 +102,5 @@ export default {
 <style lang="scss" scoped>
 .pbehaviors-list-expand-item__card {
   width: 100%;
-}
-
-.pbehaviors-list-expand-item__content {
-  width: min(100%, 900px);
-  margin: 0 auto;
 }
 </style>

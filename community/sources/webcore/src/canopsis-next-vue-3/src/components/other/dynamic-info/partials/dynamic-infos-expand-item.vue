@@ -34,17 +34,15 @@
       </v-window-item>
 
       <v-window-item value="patterns">
-        <c-layout class="py-3 secondary lighten-2">
-          <v-row class="dynamic-infos-expand-item__row">
-            <v-col cols="12" md="8" offset-md="2">
-              <v-card>
-                <v-card-text>
-                  <dynamic-info-patterns-form :form="patterns" readonly />
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </c-layout>
+        <v-row class="py-3 secondary lighten-2 dynamic-infos-expand-item__row" justify="center">
+          <v-col cols="8">
+            <v-card>
+              <v-card-text>
+                <dynamic-info-patterns-form :form="patterns" readonly />
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-window-item>
     </v-window>
   </div>

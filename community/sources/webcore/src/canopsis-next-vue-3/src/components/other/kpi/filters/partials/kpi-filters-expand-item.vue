@@ -14,8 +14,8 @@
     <v-card class="pa-3" color="secondary-lighten-2" flat>
       <v-window v-model="activeTab" class="pt-2">
         <v-window-item :value="0">
-          <v-row>
-            <v-col cols="12" lg="10" offset-lg="1">
+          <v-row justify="center">
+            <v-col cols="8">
               <v-card class="pa-3">
                 <kpi-filter-patterns-form :form="patterns" readonly />
               </v-card>

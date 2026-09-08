@@ -3,6 +3,7 @@ import { isEmpty, omit } from 'lodash';
 import {
   ACTION_TYPES,
   ALARM_STATES,
+  MIN_DURATION_VALUE,
   PATTERNS_FIELDS,
   TIME_UNITS,
   WORKFLOW_TYPES,
@@ -230,7 +231,7 @@ export const snoozeActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
   duration: parameters.duration
     ? durationToForm(parameters.duration)
-    : { value: 1, unit: TIME_UNITS.hour },
+    : { value: MIN_DURATION_VALUE, unit: TIME_UNITS.hour },
 });
 
 /**

@@ -37,10 +37,10 @@ export default {
     },
   },
 
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
-    const patternsField = useFormModel('patterns');
+  setup(props) {
+    const patternsField = props.readonly
+     ? computed(() => props.form)
+     : useFormModel('patterns');
 
     const { fetchFlappingRulePatternFields, fetchResolveRulePatternFields } = usePatternsFields();
 
@@ -52,14 +52,11 @@ export default {
       props.readonly,
     );
 
-    const updateForm = value => emit('update:form', value);
-
     return {
       patternsField,
       pending,
       alarmAttributes,
       entityAttributes,
-      updateForm,
     };
   },
 };

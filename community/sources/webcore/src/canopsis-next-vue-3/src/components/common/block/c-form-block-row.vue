@@ -57,9 +57,11 @@ export default {
   setup(props) {
     const theme = useTheme();
     const { hasChildrenError } = useValidationChildren();
+    const depth = computed(() => Number(props.depth) || 0);
 
     const layoutClasses = computed(() => ({
-      [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
+      [`c-form-block-row--depth-${props.depth}`]: !!depth.value,
+      'c-form-block-row--depth-more': depth.value > 2,
       'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--bottom-border': !!props.bottomBorder,
       'c-form-block-row--error': hasChildrenError.value || props.error,
@@ -94,12 +96,14 @@ export default {
 <style lang="scss">
 :root {
   --c-form-block-row-label-background-color-light: #eaeaea;
-  --c-form-block-row-label-background-color-light-depth-1: #f0f0f0;
-  --c-form-block-row-label-background-color-light-depth-2: #f5f5f5;
+  --c-form-block-row-label-background-color-light-depth-1: #f4f4f4;
+  --c-form-block-row-label-background-color-light-depth-2: #fafafa;
+  --c-form-block-row-label-background-color-light-depth-more: #ffffff;
 
   --c-form-block-row-label-background-color-dark: var(--v-application-background-lighten2);
-  --c-form-block-row-label-background-color-dark-depth-1: #3a3a3a;
-  --c-form-block-row-label-background-color-dark-depth-2: #474747;
+  --c-form-block-row-label-background-color-dark-depth-1: #404040;
+  --c-form-block-row-label-background-color-dark-depth-2: #505050;
+  --c-form-block-row-label-background-color-dark-depth-more: #606060;
 }
 
 .c-form-block-row {
@@ -125,6 +129,10 @@ export default {
 
   &--depth-2 .c-form-block-row__label {
     padding-left: 56px;
+  }
+
+  &--depth-more .c-form-block-row__label {
+    padding-left: 72px;
   }
 
   &__label {
@@ -171,14 +179,21 @@ export default {
   .c-form-block-row__label {
     background-color: var(--c-form-block-row-label-background-color-light);
   }
+}
 
-  &--depth-1 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light-depth-1);
-  }
+.theme--light .c-form-block-row--depth-1 .c-form-block-row__label,
+.c-form-block-row--light.c-form-block-row--depth-1 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-light-depth-1);
+}
 
-  &--depth-2 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light-depth-2);
-  }
+.theme--light .c-form-block-row--depth-2 .c-form-block-row__label,
+.c-form-block-row--light.c-form-block-row--depth-2 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-light-depth-2);
+}
+
+.theme--light .c-form-block-row--depth-more .c-form-block-row__label,
+.c-form-block-row--light.c-form-block-row--depth-more .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-light-depth-more);
 }
 
 .theme--dark .c-form-block-row,
@@ -195,13 +210,20 @@ export default {
   .c-form-block-row__title {
     color: var(--v-active-color-base);
   }
+}
 
-  &--depth-1 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-dark-depth-1);
-  }
+.theme--dark .c-form-block-row--depth-1 .c-form-block-row__label,
+.c-form-block-row--dark.c-form-block-row--depth-1 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-dark-depth-1);
+}
 
-  &--depth-2 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-dark-depth-2);
-  }
+.theme--dark .c-form-block-row--depth-2 .c-form-block-row__label,
+.c-form-block-row--dark.c-form-block-row--depth-2 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-dark-depth-2);
+}
+
+.theme--dark .c-form-block-row--depth-more .c-form-block-row__label,
+.c-form-block-row--dark.c-form-block-row--depth-more .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-dark-depth-more);
 }
 </style>

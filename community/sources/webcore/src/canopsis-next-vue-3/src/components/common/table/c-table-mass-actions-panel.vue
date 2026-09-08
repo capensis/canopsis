@@ -54,7 +54,7 @@ import { computed } from 'vue';
 
 import { MODALS, RESPONSE_STATUSES } from '@/constants';
 
-import { pickIds } from '@/helpers/array';
+import { mapIds, pickIds } from '@/helpers/array';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -278,7 +278,7 @@ export default {
     const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
     const someOneVisible = computed(() => props.items.some(({ hidden }) => !hidden));
     const someOneHidden = computed(() => props.items.some(({ hidden }) => hidden));
-    const itemsIds = computed(() => pickIds(props.items, props.itemId));
+    const itemsIds = computed(() => mapIds(props.items, props.itemId));
 
     const activeConfig = computed(() => {
       if (props.dynamicInfo) {

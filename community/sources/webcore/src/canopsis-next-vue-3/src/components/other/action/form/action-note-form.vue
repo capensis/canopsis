@@ -1,5 +1,5 @@
 <template>
-  <c-form-block-row :label="t('scenario.output')" :depth="depth">
+  <c-form-block-row :label="t('scenario.output')" :depth="depth" indented>
     <c-payload-textarea-field
       :value="output"
       :name="`${name}.output`"
