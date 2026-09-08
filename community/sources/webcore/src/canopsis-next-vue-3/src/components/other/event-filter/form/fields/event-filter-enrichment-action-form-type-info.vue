@@ -1,8 +1,15 @@
 <template>
-  <div>
+  <div class="w-100">
     <c-layout align="center">
       <span>{{ message }}</span>
-      <v-btn icon small @click="toggleDescriptionOpened">
+      <v-btn
+        class="ml-2"
+        density="compact"
+        size="small"
+        variant="text"
+        icon
+        @click="toggleDescriptionOpened"
+      >
         <v-icon>help</v-icon>
       </v-btn>
     </c-layout>
@@ -85,6 +92,7 @@ img {
 
   table {
     border-spacing: 0;
+    width: 100%;
 
     th {
       background-color: var(--v-background-darken2, #b1b1b1);

@@ -42,7 +42,6 @@
         <v-btn
           :input-value="editing"
           class="btn--editing"
-          size="x-small"
           variant="text"
           icon
           @click="toggleEditing"
@@ -57,7 +56,6 @@
         <v-btn
           class="v-btn-legacy-m--y"
           color="error"
-          size="x-small"
           variant="text"
           icon
           @click="$emit('delete')"

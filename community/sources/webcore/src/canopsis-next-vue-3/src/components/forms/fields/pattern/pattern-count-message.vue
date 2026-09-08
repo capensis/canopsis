@@ -1,5 +1,5 @@
 <template>
-  <span class="text-caption text--secondary">
+  <span class="pattern-count-message">
     <span v-html="errorMessage || message" />
   </span>
 </template>
@@ -66,3 +66,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pattern-count-message {
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+</style>

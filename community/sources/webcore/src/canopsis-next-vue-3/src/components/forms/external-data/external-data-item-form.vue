@@ -2,17 +2,16 @@
   <v-card>
     <v-card-text>
       <c-layout gap="2" column>
-        <c-layout align="center">
+        <c-layout align="center" gap="2">
           <c-text-field
             :model-value="form.reference"
             :label="$t('externalData.fields.reference')"
             :name="referenceFieldName"
             :disabled="disabled"
-            class="mr-2"
             required
             @update:model-value="updateField('reference', $event)"
           >
-            <template #append="">
+            <template #append-inner="">
               <c-help-icon :text="$t('externalData.tooltips.reference')" icon="help" left />
             </template>
           </c-text-field>
@@ -21,7 +20,6 @@
             :items="availableTypes"
             :label="$t('common.type')"
             :disabled="disabled"
-            class="ml-2"
             item-title="text"
             item-value="value"
             @update:model-value="updateField('type', $event)"
@@ -29,6 +27,9 @@
           <v-btn
             v-if="!disabled"
             class="mr-0"
+            density="compact"
+            size="small"
+            variant="text"
             icon
             @click="remove"
           >

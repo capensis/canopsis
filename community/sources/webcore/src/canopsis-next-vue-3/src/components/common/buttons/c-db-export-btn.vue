@@ -3,6 +3,7 @@
     :disabled="pending"
     :loading="pending"
     :tooltip="$t('common.download')"
+    :small="small"
     icon="file_download"
     @click="download"
   />
@@ -25,6 +26,10 @@ export default {
     ids: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     pbehavior: {
       type: Boolean,
@@ -79,7 +84,9 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  emits: ['refresh'],
+
+  setup(props, { emit }) {
     const {
       exportPbehaviorsDb,
       exportEventFiltersDb,
@@ -120,7 +127,11 @@ export default {
 
       const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');
 
-      return saveFile(data, filename);
+      const result = await saveFile(data, filename);
+
+      emit('refresh');
+
+      return result;
     });
 
     return {

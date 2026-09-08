@@ -6,7 +6,7 @@
       }"
       class="pattern-field-suggestions-wrapper__content"
     >
-      <c-layout v-if="suggestions.length" class="mb-3" align-center>
+      <c-layout v-if="suggestions.length" class="mb-3" align="center">
         <v-chip class="pattern-field-suggestions-wrapper__current" small>
           <strong>{{ $t('common.current') }}</strong>
         </v-chip>

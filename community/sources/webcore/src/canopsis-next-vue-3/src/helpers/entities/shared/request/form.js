@@ -8,6 +8,7 @@ import {
 } from '@/constants';
 
 import { durationToForm, isValidDuration } from '@/helpers/date/duration';
+import { normalizeNonNegativeNumber, normalizePositiveNumber } from '@/helpers/number';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 /**
@@ -169,6 +170,11 @@ export const formToRequestAuthToken = (form = {}, requestAuthType = REQUEST_AUTH
   return result;
 };
 
+const normalizePositiveDuration = duration => ({
+  ...duration,
+  value: normalizePositiveNumber(duration.value),
+});
+
 /**
  * Convert form object to request field
  *
@@ -178,8 +184,11 @@ export const formToRequestAuthToken = (form = {}, requestAuthType = REQUEST_AUTH
 export const formToRequest = form => ({
   ...form,
 
-  retry_delay: isValidDuration(form.retry_delay) ? form.retry_delay : undefined,
-  timeout: isNumber(form.timeout.value) ? form.timeout : null,
+  retry_count: normalizeNonNegativeNumber(form.retry_count),
+  retry_delay: isValidDuration(form.retry_delay)
+    ? normalizePositiveDuration(form.retry_delay)
+    : undefined,
+  timeout: isNumber(form.timeout.value) ? normalizePositiveDuration(form.timeout) : null,
   auth:
     form.auth.type === REQUEST_AUTH_TYPES.credentials && form.auth?.username
       ? pick(form.auth, ['username', 'password'])

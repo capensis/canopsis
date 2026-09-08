@@ -1,5 +1,5 @@
 <template>
-  <c-layout justify-space-between align-center>
+  <c-layout align="center" justify-space-between>
     <v-chip color="info darken-1" small>
       <strong>{{ $t('pattern.suggestions') }}</strong>
     </v-chip>

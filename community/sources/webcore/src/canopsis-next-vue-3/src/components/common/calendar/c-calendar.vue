@@ -1,7 +1,7 @@
 <template>
   <c-layout class="c-calendar" column>
     <c-layout class="c-calendar__toolbar py-3" justify-space-around>
-      <c-layout class="c-calendar__toolbar-column" gap="2" align-center>
+      <c-layout class="c-calendar__toolbar-column" gap="2" align="center">
         <calendar-today-btn class="c-calendar__today-btn" @click="setToday" />
 
         <c-timezone-field
@@ -98,7 +98,7 @@
             <c-layout
               :class="['c-calendar__event-content pl-1', getMenuClassByCalendarEvent(event.id)]"
               :style="getEventStyle(event)"
-              align-center
+              align="center"
             >
               <v-icon
                 v-if="event.icon"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-layout justify-space-between align-center>
+    <c-layout align="center" justify-space-between>
       <c-layout justify-center>
         <span class="text-h6">
           {{ t('common.periods') }}

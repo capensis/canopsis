@@ -171,6 +171,7 @@ export default {
   }
 
   &__time {
+    align-self: end;
     width: 50px;
     max-width: 50px;
   }

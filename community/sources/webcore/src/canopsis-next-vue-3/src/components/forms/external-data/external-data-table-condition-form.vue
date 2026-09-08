@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row align="center">
     <v-col class="pr-2" cols="3">
       <c-select
         :model-value="condition.type"
@@ -25,7 +25,7 @@
       />
     </v-col>
     <v-col class="pl-2" cols="5">
-      <c-layout align="center">
+      <c-layout align="center" gap="2">
         <c-payload-text-field
           :value="condition.value"
           :label="$t('common.value')"
@@ -38,8 +38,10 @@
         <v-btn
           v-if="!disabled"
           :disabled="disabledRemove"
+          density="compact"
+          size="small"
+          variant="text"
           icon
-          small
           @click="removeCondition"
         >
           <v-icon color="error" small>

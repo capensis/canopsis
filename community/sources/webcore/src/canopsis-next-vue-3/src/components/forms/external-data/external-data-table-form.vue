@@ -17,7 +17,7 @@
         @update:selected-items="updateSelectedItems"
       />
     </c-layout>
-    <v-row>
+    <v-row align="center">
       <v-col cols="6">
         <c-select
           :model-value="form.sort_by"
@@ -30,7 +30,7 @@
           @update:model-value="updateField('sort_by', $event)"
         />
       </v-col>
-      <v-col class="ml-3" cols="6">
+      <v-col cols="6">
         <c-select
           :model-value="form.sort"
           :items="sortOrders"
@@ -54,15 +54,15 @@
       @update:condition="updateCondition(index, $event)"
       @remove="removeCondition(index)"
     />
-    <v-btn
-      v-if="!disabled"
-      class="ml-0 mb-0"
-      color="primary"
-      outlined
-      @click="addCondition"
-    >
-      {{ $t('common.addMore') }}
-    </v-btn>
+    <div v-if="!disabled" class="align-self-start">
+      <v-btn
+        color="primary"
+        variant="outlined"
+        @click="addCondition"
+      >
+        {{ $t('common.addMore') }}
+      </v-btn>
+    </div>
   </c-layout>
 </template>
 

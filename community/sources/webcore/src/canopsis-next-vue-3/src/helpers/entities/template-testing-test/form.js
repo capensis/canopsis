@@ -1,11 +1,15 @@
-import { differenceBy, isArray, isNil, mapValues } from 'lodash';
+import { differenceBy, isArray, isNil, isObject, mapValues } from 'lodash';
 
 import {
   ACTION_TYPES,
+  EXTERNAL_DATA_TYPES,
   LINK_RULE_TYPES,
+  PATTERNS_FIELDS,
   TEMPLATE_TESTING_TEST_TYPES,
   TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES,
 } from '@/constants';
+
+import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 
 /**
  * @typedef {0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 } TemplateTestingTestType
@@ -107,7 +111,15 @@ export const templateTestingDataToForm = (templateTestingData = {}) =>
       return dataItem.map(item => item?._id || item);
     }
 
-    return dataItem?._id;
+    if (dataItem?._id) {
+      return dataItem._id;
+    }
+
+    if (isObject(dataItem)) {
+      return templateTestingDataToForm(dataItem);
+    }
+
+    return dataItem;
   });
 
 /**
@@ -167,6 +179,35 @@ export const getTemplateTestingTestValidateFormItem = ({
  * @returns {TemplateTestingTestValidateFormItem[]} Array of validate form items
  */
 export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
+  if (type === TEMPLATE_TESTING_TEST_TYPES.eventFilter) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        required: true,
+        params: {
+          [PATTERNS_FIELDS.event]: formGroupsToPatternRules(
+            form.patterns?.[PATTERNS_FIELDS.event]?.groups ?? [],
+          ),
+        },
+      }),
+
+      ...(form.external_data ?? []).reduce((acc, externalData, index) => {
+        if (externalData.type === EXTERNAL_DATA_TYPES.api) {
+          acc.push(
+            getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+              key: externalData.key,
+            }),
+          );
+        }
+
+        return acc;
+      }, []),
+    ];
+  }
+
   if (type === TEMPLATE_TESTING_TEST_TYPES.scenario) {
     return [
       getTemplateTestingTestValidateFormItem({

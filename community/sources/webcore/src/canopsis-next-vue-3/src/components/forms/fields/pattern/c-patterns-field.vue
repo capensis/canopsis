@@ -172,7 +172,7 @@
         <template v-if="hasAllInCounter">
           <v-btn
             v-if="entityCountersType"
-            text
+            variant="text"
             small
             @click="showPatternEntitiesModal()"
           >
@@ -180,7 +180,7 @@
           </v-btn>
           <v-btn
             v-else
-            text
+            variant="text"
             small
             @click="showPatternAlarmsModal()"
           >
@@ -192,6 +192,7 @@
           :loading="countersPending"
           class="mr-0 ml-4"
           color="primary"
+          type="button"
           @click="checkFilter"
         >
           {{ $t('common.checkFilter') }}

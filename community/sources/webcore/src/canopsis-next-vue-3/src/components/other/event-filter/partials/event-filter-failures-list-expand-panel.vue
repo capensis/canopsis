@@ -13,7 +13,11 @@
           @error="onErrorCopied"
         />
       </c-layout>
-      <c-json-treeview :json="eventString" />
+      <c-object-treeview
+        :root-name="$t('eventFilter.event')"
+        :value="failure.event"
+        value-max-width="520px"
+      />
     </v-card-text>
   </v-card>
 </template>

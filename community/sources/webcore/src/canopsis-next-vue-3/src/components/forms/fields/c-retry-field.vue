@@ -19,6 +19,7 @@
         :required="isRequired"
         :name="name"
         :disabled="isDurationDisabled"
+        :min="1"
         clearable
         @update:duration="updateDelay"
       />

@@ -65,7 +65,7 @@ export default {
     const { externalDataField, configField, actionsField, patternsField } = useFormModels({
       externalDataField: 'external_data',
       configField: 'config',
-      actionsField: 'actions',
+      actionsField: 'config.actions',
       patternsField: 'patterns',
     });
 
