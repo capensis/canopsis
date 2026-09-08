@@ -1,28 +1,32 @@
 <template>
-  <v-layout column>
-    <c-name-field
-      v-field="form.value"
-      :disabled="isImported || !isNew"
-      :max-length="maxTagNameLength"
-      name="value"
-      autofocus
-      required
-    />
-    <c-color-picker-field v-field="form.color" />
-    <tag-patterns-form
-      v-if="!isImported"
-      v-field="form.patterns"
-    />
-  </v-layout>
+  <c-form-general-patterns-tabs>
+    <template #general="{ setRef }">
+      <tag-general-form
+        v-field="form"
+        :ref="setRef"
+        :is-imported="isImported"
+        :is-new="isNew"
+        :max-tag-name-length="maxTagNameLength"
+      />
+    </template>
+
+    <template v-if="!isImported" #patterns="{ setRef }">
+      <tag-patterns-form
+        v-field="form.patterns"
+        :ref="setRef"
+      />
+    </template>
+  </c-form-general-patterns-tabs>
 </template>
 
 <script>
 import { MAX_TAG_NAME_LENGTH } from '@/constants';
 
+import TagGeneralForm from './tag-general-form.vue';
 import TagPatternsForm from './tag-patterns-form.vue';
 
 export default {
-  components: { TagPatternsForm },
+  components: { TagGeneralForm, TagPatternsForm },
   model: {
     prop: 'form',
     event: 'input',

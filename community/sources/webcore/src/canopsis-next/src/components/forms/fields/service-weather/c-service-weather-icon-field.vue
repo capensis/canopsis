@@ -13,11 +13,15 @@
       <v-icon :class="disabled ? 'text--disabled' : ''">
         {{ item.icon }}
       </v-icon>
-      <span class="ml-2">{{ item.text }}</span>
+      <span class="ml-2">
+        {{ item.text }}
+      </span>
     </template>
     <template #item="{ item }">
       <v-icon>{{ item.icon }}</v-icon>
-      <span class="ml-2">{{ item.text }}</span>
+      <span class="ml-2">
+        {{ item.text }}
+      </span>
     </template>
   </v-select>
 </template>

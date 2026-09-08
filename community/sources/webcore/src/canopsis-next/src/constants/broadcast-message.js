@@ -18,6 +18,26 @@ export const BROADCAST_MESSAGE_VIEWS = {
   allPlaylists: 'all-playlists',
 };
 
+export const BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS = {
+  pages: 'pages',
+  views: 'views',
+  playlists: 'playlists',
+};
+
+export const BROADCAST_MESSAGE_PAGES_VIEW_VALUES = [
+  BROADCAST_MESSAGE_VIEWS.login,
+  BROADCAST_MESSAGE_VIEWS.exploitation,
+  BROADCAST_MESSAGE_VIEWS.administration,
+  BROADCAST_MESSAGE_VIEWS.notifications,
+  BROADCAST_MESSAGE_VIEWS.profile,
+];
+
+export const DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM = {
+  pages: [...BROADCAST_MESSAGE_PAGES_VIEW_VALUES],
+  views: [BROADCAST_MESSAGE_VIEWS.allViews],
+  playlists: [BROADCAST_MESSAGE_VIEWS.allPlaylists],
+};
+
 export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.login]: BROADCAST_MESSAGE_VIEWS.login,
   [ROUTES_NAMES.home]: BROADCAST_MESSAGE_VIEWS.login,
@@ -43,7 +63,6 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminBroadcastMessages]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminPlaylists]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminPlanning]: BROADCAST_MESSAGE_VIEWS.administration,
-  [ROUTES_NAMES.adminRemediation]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminHealthcheck]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminKPI]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminEventsRecords]: BROADCAST_MESSAGE_VIEWS.administration,
@@ -57,7 +76,6 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminCustomObjectsMaps]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminCustomObjectsTags]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminCustomObjectsLlms]: BROADCAST_MESSAGE_VIEWS.administration,
-  [ROUTES_NAMES.adminSettingsUserInterface]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminSettingsViewsImportExport]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminSettingsNotifications]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminSettingsCommentTemplates]: BROADCAST_MESSAGE_VIEWS.administration,

@@ -61,10 +61,6 @@ export const CreateAlarmChart = () => ({
   loading: LoaderOverlay,
 });
 
-export const PbehaviorList = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-list.vue'),
-  loading: LoaderOverlay,
-});
 export const PbehaviorPlanning = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-planning.vue'),
   loading: LoaderOverlay,
@@ -245,6 +241,10 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: LoaderOverlay,
 });
+export const UserInterface = () => ({
+  component: import(/* webpackChunkName: "UserInterface" */ './admin/user-interface.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateCommentTemplate = () => ({
   component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
   loading: LoaderOverlay,
@@ -277,16 +277,12 @@ export const CreateDynamicInfo = () => ({
   component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info.vue'),
   loading: LoaderOverlay,
 });
-export const CreateDynamicInfoInformation = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info-information.vue'),
-  loading: LoaderOverlay,
-});
-export const DynamicInfoTemplatesList = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/dynamic-info-templates-list.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateDynamicInfoTemplate = () => ({
   component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info-template.vue'),
+  loading: LoaderOverlay,
+});
+export const AddDynamicInfoInfosFromTemplate = () => ({
+  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/add-dynamic-info-infos-from-template.vue'),
   loading: LoaderOverlay,
 });
 export const CreatePlaylist = () => ({

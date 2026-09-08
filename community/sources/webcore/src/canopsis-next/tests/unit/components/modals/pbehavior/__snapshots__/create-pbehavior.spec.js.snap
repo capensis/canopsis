@@ -46,7 +46,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -74,11 +74,18 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
     <div
       class="text"
     >
-      <pbehavior-form-stub
-        form="[object Object]"
-        nopattern="true"
-        pbehaviorcountertype="true"
-      />
+      <v-layout-stub
+        class="gap-2"
+        column=""
+        tag="div"
+      >
+        <pbehavior-general-form-stub
+          depth="0"
+          form="[object Object]"
+          name=""
+          withenabled="true"
+        />
+      </v-layout-stub>
       <!---->
     </div>
     <div
@@ -101,7 +108,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>

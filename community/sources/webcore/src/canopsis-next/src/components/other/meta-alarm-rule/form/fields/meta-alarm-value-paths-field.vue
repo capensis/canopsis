@@ -1,23 +1,35 @@
 <template>
-  <v-layout column>
-    <v-layout
-      v-for="(item, index) in items"
-      :key="item[itemKey]"
-      justify-space-between
-      align-center
-    >
-      <c-name-field
-        :value="item[itemValue]"
-        :label="label"
-        :name="getFieldName(item[itemKey])"
+  <c-form-block-row :label="$tc('metaAlarmRule.valuePath', 2)" indented>
+    <v-layout class="gap-3" column>
+      <c-label
+        :label="$tc('metaAlarmRule.valuePath', 2)"
+        :help-text="$t('metaAlarmRule.valuePathHelpText')"
         :required="required"
-        @input="updateFieldInArrayItem(index, itemValue, $event)"
       />
-      <c-action-btn type="delete" @click="removeItemFromArray(index)" />
-      <c-help-icon :text="$t('metaAlarmRule.valuePathHelpText')" icon="help" top />
+      <v-layout
+        v-for="(item, index) in items"
+        :key="item[itemKey]"
+        justify-space-between
+        align-center
+      >
+        <c-name-field
+          :value="item[itemValue]"
+          :label="label"
+          :name="getFieldName(item[itemKey])"
+          :required="required"
+          @input="updateFieldInArrayItem(index, itemValue, $event)"
+        />
+        <c-action-btn type="delete" @click="removeItemFromArray(index)" />
+      </v-layout>
+      <c-btn-with-error
+        :error="hasValuePathsErrors ? $t('metaAlarmRule.errors.noValuePaths'): ''"
+        outlined
+        @click="addNewItem"
+      >
+        {{ $t('metaAlarmRule.addValuePath') }}
+      </c-btn-with-error>
     </v-layout>
-    <c-btn-with-error :error="hasValuePathsErrors ? $t('metaAlarmRule.errors.noValuePaths'): ''" @click="addNewItem" />
-  </v-layout>
+  </c-form-block-row>
 </template>
 
 <script>
@@ -91,9 +103,7 @@ export default {
       { immediate: true },
     );
 
-    watch(() => props.items, () => {
-      nextTick(validateRequiredRule);
-    });
+    watch(() => props.items, () => nextTick(validateRequiredRule));
 
     onBeforeUnmount(detachRequiredRule);
 

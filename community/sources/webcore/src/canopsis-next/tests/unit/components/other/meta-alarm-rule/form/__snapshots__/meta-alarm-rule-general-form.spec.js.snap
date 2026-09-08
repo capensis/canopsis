@@ -2,73 +2,160 @@
 
 exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <c-id-field-stub
-    autofocus=""
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value=""
-  />
-  <c-name-field-stub
-    required=""
-    value=""
-  />
-  <c-payload-textarea-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    required=""
-    value="{{ .LastChild.Alarm.Value.State.Message }}"
-    variables=""
-  />
-  <meta-alarm-rule-tags-form-stub
-    class="mb-4"
-    form="[object Object]"
-    variables=""
-  />
-  <meta-alarm-rule-infos-form-stub
-    infos=""
-  />
   <div
-    class="layout"
+    class="layout gap-2"
   >
-    <c-enabled-field-stub
-      label="Auto resolve"
-    />
+    <div
+      class="flex xs6"
+    >
+      <c-id-field-stub
+        autofocus=""
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value=""
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-name-field-stub
+        required=""
+        value=""
+      />
+    </div>
   </div>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Output template"
+    >
+      <c-payload-textarea-field-stub
+        help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
+        label="Output template"
+        required=""
+        value="{{ .LastChild.Alarm.Value.State.Message }}"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Tags"
+    >
+      <meta-alarm-rule-tags-form-stub
+        class="mb-4"
+        form="[object Object]"
+        variables=""
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Infos"
+    >
+      <meta-alarm-rule-infos-form-stub
+        infos=""
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Auto resolve"
+    >
+      <c-enabled-field-stub
+        label="Auto resolve"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Grouping"
+    >
+      <meta-alarm-rule-type-field-stub
+        value="attribute"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Component template"
+    >
+      <c-payload-text-field-stub
+        label="Component template"
+        value=""
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Resource template"
+    >
+      <c-payload-text-field-stub
+        label="Resource template"
+        value=""
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
 </div>
 `;
 
 exports[`meta-alarm-rule-general-form Renders \`meta-alarm-rule-general-form\` with default props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <c-id-field-stub
-    autofocus=""
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-  />
-  <c-name-field-stub
-    required=""
-  />
-  <c-payload-textarea-field-stub
-    help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
-    label="Output template"
-    required=""
-    variables=""
-  />
-  <meta-alarm-rule-tags-form-stub
-    class="mb-4"
-    form="[object Object]"
-    variables=""
-  />
-  <meta-alarm-rule-infos-form-stub
-    infos=""
-  />
   <div
-    class="layout"
+    class="layout gap-2"
   >
-    <c-enabled-field-stub
-      label="Auto resolve"
-    />
+    <div
+      class="flex xs6"
+    >
+      <c-id-field-stub
+        autofocus=""
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-name-field-stub
+        required=""
+      />
+    </div>
   </div>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Output template"
+    >
+      <c-payload-textarea-field-stub
+        help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
+        label="Output template"
+        required=""
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Tags"
+    >
+      <meta-alarm-rule-tags-form-stub
+        class="mb-4"
+        form="[object Object]"
+        variables=""
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Infos"
+    >
+      <meta-alarm-rule-infos-form-stub
+        infos=""
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Auto resolve"
+    >
+      <c-enabled-field-stub
+        label="Auto resolve"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      indented=""
+      label="Grouping"
+    >
+      <meta-alarm-rule-type-field-stub
+        value="relation"
+      />
+    </c-form-block-row-stub>
+    <!---->
+  </c-form-block-stub>
 </div>
 `;

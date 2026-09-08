@@ -22,7 +22,7 @@
         <c-enabled-field
           v-field="form.copy_from_children"
           :label="$t('metaAlarmRule.copyFromLastChild')"
-          class="mr-4 pt-4"
+          hide-details
         >
           <template #append>
             <c-help-icon

@@ -8,10 +8,14 @@
     hide-details
   >
     <template #selection="{ item }">
-      <span class="text-capitalize">{{ item.text }}</span>
+      <span class="text-capitalize">
+        {{ item.text }}
+      </span>
     </template>
     <template #item="{ item }">
-      <span class="text-capitalize">{{ item.text }}</span>
+      <span class="text-capitalize">
+        {{ item.text }}
+      </span>
     </template>
   </v-select>
 </template>

@@ -28,7 +28,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -74,7 +74,7 @@ export default {
     const field = computed(() => config.value.field ?? { name: 'text', label: 'Text' });
     const fieldProps = computed(() => omit(field.value, ['validationRules', 'value']));
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, submit } = useSubmittableForm({
       form,
       method: async () => {
         await config.value?.action?.(text.value);
@@ -96,7 +96,6 @@ export default {
       submit,
       submitting,
       config,
-      isDisabled,
     };
   },
 };

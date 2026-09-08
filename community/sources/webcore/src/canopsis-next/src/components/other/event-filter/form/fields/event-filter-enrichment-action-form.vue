@@ -7,12 +7,16 @@
         </v-icon>
         <v-layout column>
           <v-layout>
-            <v-select
+            <c-select-field
               :value="form.type"
               :items="eventFilterActionTypes"
               :label="$t('common.type')"
               @change="changeActionType"
-            />
+            >
+              <template #selection="{ item }">
+                {{ item.groupTitle }} {{ item.text }}
+              </template>
+            </c-select-field>
             <v-btn
               class="mr-0"
               icon
@@ -123,6 +127,7 @@ import { computed } from 'vue';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS,
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
   EVENT_FILTER_SET_FIELD_ITEMS,
   PATTERN_FIELD_TYPES,
@@ -188,10 +193,22 @@ export default {
     const nameFieldName = computed(() => `${props.name}.name`);
     const valueFieldName = computed(() => `${props.name}.value`);
 
-    const eventFilterActionTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
-      value,
-      text: t(`eventFilter.actionsTypes.${value}.text`),
-    })));
+    const eventFilterActionTypes = computed(() => (
+      Object.entries(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS).reduce((acc, [group, groupItems]) => {
+        const groupTitle = t(`eventFilter.actionsTypesGroups.${group}`);
+
+        acc.push(
+          { header: groupTitle },
+          ...groupItems.map(value => ({
+            value,
+            text: t(`eventFilter.actionsTypes.${value}.text`),
+            groupTitle,
+          })),
+        );
+
+        return acc;
+      }, [])
+    ));
 
     const isSetFieldValueType = computed(() => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField === props.form.type);
 

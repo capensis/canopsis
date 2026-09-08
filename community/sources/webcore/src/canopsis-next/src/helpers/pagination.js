@@ -1,6 +1,20 @@
 import { PAGINATION_LIMIT } from '@/config';
 
 /**
+ * Returns the greatest valid 1-based page number when paginating `itemsCount` items with fixed page size.
+ *
+ * @param {number} itemsCount - Total number of rows in the dataset.
+ * @param {number} [itemsPerPage] - Rows per page; coerced via app default when missing or zero.
+ *
+ * @returns {number}
+ */
+export const getMaxPageForItemsCount = (itemsCount, itemsPerPage) => {
+  const perPage = itemsPerPage || PAGINATION_LIMIT || 10;
+
+  return Math.max(1, Math.ceil(itemsCount / perPage) || 1);
+};
+
+/**
  * Get page for updated itemsPerPage
  *
  * @param {number} newItemsPerPage

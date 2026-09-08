@@ -1,4 +1,4 @@
-import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -14,7 +14,7 @@ export default {
       title: 'Créer une entité',
     },
     edit: {
-      title: 'Éditer une entité',
+      title: 'Éditer l\'entité',
     },
     duplicate: {
       title: 'Dupliquer une entité',
@@ -43,7 +43,7 @@ export default {
   },
   createEntityInfo: {
     create: {
-      title: 'Ajouter une information',
+      title: 'Ajouter des infos',
     },
     edit: {
       title: 'Éditer une information',
@@ -97,7 +97,7 @@ export default {
   createChangeStateEvent: {
     title: 'Changer la сriticité',
     states: {
-      ok: 'Info',
+      ok: 'Ok',
       minor: 'Mineur',
       major: 'Majeur',
       critical: 'Critique',
@@ -131,6 +131,7 @@ export default {
           noEnding: 'Sans fin',
           startOnTrigger: 'Démarrer sur déclencheur',
           inherited: 'S\'applique à toutes les entités dépendantes',
+          reasonAndType: 'Raison et type',
         },
       },
       filter: {
@@ -432,6 +433,11 @@ export default {
     errors: {
       emptyInfos: 'Au moins une information doit être ajoutée.',
     },
+    infosSection: {
+      title: 'Information',
+      addInfos: 'Ajouter des informations',
+      addInfosFromTemplate: 'Ajouter des informations depuis un modèle',
+    },
     steps: {
       infos: {
         title: 'Informations',
@@ -444,31 +450,32 @@ export default {
       },
     },
   },
-  createDynamicInfoInformation: {
-    create: {
-      title: 'Ajouter une information à la règle d\'information dynamique',
-    },
-  },
-  dynamicInfoTemplatesList: {
-    title: 'Modèles d\'informations dynamiques',
-  },
   createDynamicInfoTemplate: {
     create: {
-      title: 'Créer un modèle d\'informations dynamiques',
+      title: 'Créer un modèle d\'information dynamique',
     },
     edit: {
-      title: 'Éditer un modèle d\'informations dynamiques',
+      title: 'Modifier un modèle d\'information dynamique',
     },
     fields: {
-      names: 'Attributs',
+      names: 'Noms',
     },
     buttons: {
-      addName: 'Ajouter un attribut',
+      addName: 'Ajouter un nom',
     },
     errors: {
-      noNames: 'Vous devez ajouter au moins 1 attribut',
+      noNames: 'Vous devez ajouter au moins un nom',
     },
     emptyNames: 'Aucun nom ajouté pour le moment',
+  },
+  addDynamicInfoInfosFromTemplate: {
+    title: 'Ajouter des informations depuis un modèle',
+    fields: {
+      template: 'Modèle',
+    },
+    actions: {
+      addInfos: 'Ajouter des informations',
+    },
   },
   importExportViews: {
     title: 'Vues d\'importation / exportation',
@@ -536,8 +543,13 @@ export default {
     title: 'Créer une règle de récurrence',
   },
   createPbehaviorType: {
-    title: 'Créer un type',
-    iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+    create: {
+      title: 'Créer un type',
+    },
+    edit: {
+      title: 'Modifier un type',
+    },
+    iconNamePlaceholder: 'Nom de l\'icône sur material.io',
     errors: {
       iconName: 'Le nom est invalide',
     },
@@ -563,20 +575,29 @@ export default {
     },
   },
   createPbehaviorReason: {
-    title: 'Créer une raison',
+    create: {
+      title: 'Créer une raison',
+    },
+    edit: {
+      title: 'Modifier une raison',
+    },
     fields: {
       name: 'Nom',
       description: 'Description',
     },
   },
   createPbehaviorException: {
-    title: 'Créer une liste d\'exceptions',
+    create: {
+      title: 'Créer des dates d\'exception',
+    },
+    edit: {
+      title: 'Modifier des dates d\'exception',
+    },
     addDate: 'Ajouter une date',
     fields: {
       name: 'Nom',
       description: 'Description',
     },
-    emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
   linkToMetaAlarm: {
     title: 'Lier à une méta-alarme',
@@ -1019,6 +1040,18 @@ export default {
     edit: {
       title: 'Modifier le modèle de widget',
     },
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Colonnes des alarmes',
+      [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Colonnes de tri par défaut des alarmes',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Colonnes des entités',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Plus d\'infos',
+      [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Actions rapides (alarme unitaire)',
+      [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Actions rapides (massive)',
+      [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export PDF',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Modèle de tuile',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modèle de modale',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Modèle d\'entité',
+    },
   },
   selectWidgetTemplateType: {
     title: 'Sélectionner le type de modèle de widget',
@@ -1181,7 +1214,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Ajouter un enregistrement',
+      title: 'Importer des enregistrements',
     },
     edit: {
       title: 'Modifier l\'enregistrement',

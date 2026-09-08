@@ -7,12 +7,18 @@
         justify-center
         v-on="on"
       >
-        <span class="mr-1 success--text font-weight-bold">{{ entity.ok_events }}</span>
+        <span class="mr-1 success--text font-weight-bold">
+          {{ entity.ok_events }}
+        </span>
         <span>/</span>
-        <span class="ml-1 error--text font-weight-bold">{{ entity.ko_events }}</span>
+        <span class="ml-1 error--text font-weight-bold">
+          {{ entity.ko_events }}
+        </span>
       </v-layout>
     </template>
-    <span class="pre-wrap">{{ statisticsMessage }}</span>
+    <span class="pre-wrap">
+      {{ statisticsMessage }}
+    </span>
   </v-tooltip>
 </template>
 

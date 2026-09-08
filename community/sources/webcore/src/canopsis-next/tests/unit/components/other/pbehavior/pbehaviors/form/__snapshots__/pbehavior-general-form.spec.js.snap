@@ -2,235 +2,235 @@
 
 exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout column gap-3"
 >
+  <!---->
   <div
-    class="layout"
+    depth="0"
   >
-    <div
-      class="flex xs6"
+    <c-name-field-stub
+      autofocus=""
+      name="name"
+      required=""
+      value="pbehavior"
+    />
+  </div>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Apply for all dependant entities"
     >
       <c-enabled-field-stub
         hide-details=""
         label="Apply for all dependant entities"
       />
-    </div>
-  </div>
-  <c-name-field-stub
-    autofocus=""
-    required=""
-    value="pbehavior"
-  />
-  <div
-    class="flex mt-3 xs12"
-  >
-    <c-enabled-field-stub
-      class="mt-0 mb-1"
-      hide-details=""
-      label="Start on trigger"
-      value="true"
-    />
-    <c-duration-field-stub
-      required=""
-      value="[object Object]"
-    />
-    <div
-      class="layout"
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Duration"
+    >
+      <c-enabled-field-stub
+        class="mt-0 mb-1"
+        hide-details=""
+        label="Start on trigger"
+        value="true"
+      />
+      <c-duration-field-stub
+        name="duration"
+        required=""
+        value="[object Object]"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Pbehavior reason and type"
     >
       <div
-        class="flex xs6"
+        class="layout"
       >
-        <c-pbehavior-reason-field-stub
-          class="mr-2"
-          required=""
-          return-object=""
-          value="[object Object]"
-        />
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-reason-field-stub
+            class="mr-2"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-type-field-stub
+            class="ml-2"
+            name="type"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
       </div>
-      <div
-        class="flex xs6"
-      >
-        <c-pbehavior-type-field-stub
-          class="ml-2"
-          required=""
-          return-object=""
-          value="[object Object]"
-        />
-      </div>
-    </div>
-  </div>
-  <c-enabled-color-picker-field-stub
-    label="Use special color for this event?"
-    row=""
-    value="#123123"
-  />
-  <c-collapse-panel-stub
-    class="mb-2"
-    title="Recurrence rule"
-  >
-    <recurrence-rule-form-stub
-      rrule=""
-    />
-    <pbehavior-recurrence-rule-exceptions-field-stub
-      class="mt-2"
-      exceptions=""
-      exdates=""
-      withexdatetype="true"
-    />
-  </c-collapse-panel-stub>
-  <c-collapse-panel-stub
-    class="mt-2"
-    title="Comments"
-  >
-    <pbehavior-comments-field-stub
-      comments=""
-    />
-  </c-collapse-panel-stub>
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Color"
+    >
+      <c-enabled-color-picker-field-stub
+        justify-end=""
+        label="Use special color for this event?"
+        row=""
+        value="#123123"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Recurrence rule"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+        withexdatetype="true"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Comments"
+    >
+      <pbehavior-comments-field-stub
+        comments=""
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
 </div>
 `;
 
 exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required props 1`] = `
 <div
-  class="layout column"
+  class="layout column gap-3"
 >
+  <!---->
   <div
-    class="layout"
+    depth="0"
   >
-    <!---->
+    <c-name-field-stub
+      autofocus=""
+      name="name"
+      required=""
+      value="pbehavior"
+    />
   </div>
-  <c-name-field-stub
-    autofocus=""
-    required=""
-    value="pbehavior"
-  />
-  <div
-    class="flex mt-3 xs12"
-  >
+  <c-form-block-stub>
     <!---->
-    <div
-      class="layout gap-2 align-center"
+    <c-form-block-row-stub
+      depth="0"
+      label="Duration"
     >
+      <!---->
       <div
-        class="flex xs2"
+        class="layout gap-2 mb-3 align-center"
       >
         <div
-          class="v-input mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--checkbox"
+          class="flex xs6"
         >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-input--selection-controls__input"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate material-icons theme--light"
-                >
-                  check_box_outline_blank
-                </i>
-                <input
-                  aria-checked="false"
-                  role="checkbox"
-                  type="checkbox"
-                  value=""
-                />
-                <div
-                  class="v-input--selection-controls__ripple"
-                />
-              </div>
-              <label
-                class="v-label theme--light"
-                style="left: 0px; position: relative;"
-              >
-                Whole day
-              </label>
-            </div>
-          </div>
+          <c-enabled-field-stub
+            hide-details=""
+            label="Whole day"
+          />
+        </div>
+        <div
+          class="flex xs6"
+        >
+          <!---->
         </div>
       </div>
       <div
-        class="flex xs2"
+        class="layout gap-2 align-center"
       >
-        <!---->
+        <div
+          class="flex"
+        >
+          <date-time-splitted-range-picker-field-stub
+            end="Thu Mar 04 2021 13:33:20 GMT+0100 (Central European Standard Time)"
+            endlabel="End"
+            endmax="2026-03-04"
+            endmin="2021-03-04"
+            endrules="[object Object]"
+            name="tstart"
+            start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
+            startlabel="Start"
+            startrules="[object Object]"
+          />
+        </div>
+        <div
+          class="flex"
+        >
+          <c-timezone-field-stub
+            server=""
+          />
+        </div>
       </div>
-      <div
-        class="flex xs5"
-      >
-        <date-time-splitted-range-picker-field-stub
-          end="Thu Mar 04 2021 13:33:20 GMT+0100 (Central European Standard Time)"
-          endlabel="End"
-          endmax="2026-03-04"
-          endmin="2021-03-04"
-          endrules="[object Object]"
-          name="date-range"
-          start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
-          startlabel="Start"
-          startrules="[object Object]"
-        />
-      </div>
-      <div
-        class="flex xs3"
-      >
-        <c-timezone-field-stub
-          server=""
-        />
-      </div>
-    </div>
-    <div
-      class="layout"
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Pbehavior reason and type"
     >
       <div
-        class="flex xs6"
+        class="layout"
       >
-        <c-pbehavior-reason-field-stub
-          class="mr-2"
-          required=""
-          return-object=""
-          value="[object Object]"
-        />
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-reason-field-stub
+            class="mr-2"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-type-field-stub
+            class="ml-2"
+            name="type"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
       </div>
-      <div
-        class="flex xs6"
-      >
-        <c-pbehavior-type-field-stub
-          class="ml-2"
-          required=""
-          return-object=""
-          value="[object Object]"
-        />
-      </div>
-    </div>
-  </div>
-  <c-enabled-color-picker-field-stub
-    label="Use special color for this event?"
-    row=""
-    value="#123123"
-  />
-  <c-collapse-panel-stub
-    class="mb-2"
-    title="Recurrence rule"
-  >
-    <recurrence-rule-form-stub
-      rrule=""
-      start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
-    />
-    <pbehavior-recurrence-rule-exceptions-field-stub
-      class="mt-2"
-      exceptions=""
-      exdates=""
-      withexdatetype="true"
-    />
-  </c-collapse-panel-stub>
-  <c-collapse-panel-stub
-    class="mt-2"
-    title="Comments"
-  >
-    <pbehavior-comments-field-stub
-      comments=""
-    />
-  </c-collapse-panel-stub>
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Color"
+    >
+      <c-enabled-color-picker-field-stub
+        justify-end=""
+        label="Use special color for this event?"
+        row=""
+        value="#123123"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Recurrence rule"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+        withexdatetype="true"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Comments"
+    >
+      <pbehavior-comments-field-stub
+        comments=""
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
 </div>
 `;

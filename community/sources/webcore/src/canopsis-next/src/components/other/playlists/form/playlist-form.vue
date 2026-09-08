@@ -1,26 +1,46 @@
 <template>
-  <v-layout column>
-    <c-enabled-field v-field="form.enabled" with-background />
+  <v-layout
+    class="gap-3"
+    column
+  >
+    <c-enabled-field
+      v-field="form.enabled"
+      with-background
+    />
 
     <c-name-field
       v-field="form.name"
       autofocus
       required
     />
-    <c-duration-field v-field="form.interval" />
+
+    <c-form-block>
+      <c-form-block-row :label="$t('common.fullscreen')" align-center>
+        <c-enabled-field
+          v-field="form.fullscreen"
+          :label="$t('common.fullscreen')"
+          no-margin
+          hide-details
+        />
+      </c-form-block-row>
+
+      <c-form-block-row
+        :label="$t('modals.createPlaylist.manageTabs')"
+        align-center
+      >
+        <v-btn
+          :aria-label="$t('modals.createPlaylist.manageTabs')"
+          color="primary"
+          outlined
+          @click="showManageTabsModal"
+          @keydown.enter="showManageTabsModal"
+        >
+          {{ $t('modals.createPlaylist.manageTabs') }}
+        </v-btn>
+      </c-form-block-row>
+    </c-form-block>
+
     <v-layout>
-      <c-enabled-field
-        v-field="form.fullscreen"
-        :label="$t('common.fullscreen')"
-      />
-    </v-layout>
-    <v-btn
-      class="secondary ml-0"
-      @click="showManageTabsModal"
-    >
-      {{ $t('modals.createPlaylist.manageTabs') }}
-    </v-btn>
-    <v-layout class="py-4">
       <v-layout
         v-if="tabsPending"
         justify-center
@@ -34,14 +54,11 @@
         v-else
         xs12
       >
-        <v-flex class="text-center mb-2">
-          {{ $t('common.result') }}
-        </v-flex>
         <draggable-playlist-tabs v-field="form.tabs_list" />
       </v-flex>
     </v-layout>
     <c-alert
-      :value="errors.has('tabs')"
+      :value="hasTabsError"
       type="error"
     >
       {{ $t('modals.createPlaylist.errors.emptyTabs') }}
@@ -50,16 +67,22 @@
 </template>
 
 <script>
+import { computed, watch } from 'vue';
+
 import { MODALS } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useModals } from '@/hooks/modals';
+import { useValidator } from '@/hooks/validator/validator';
+import { useValidationAttachRequiredForField } from '@/hooks/validator/validation-attach-required';
 
 import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
+
+const TABS_FIELD_NAME = 'tabs';
 
 export default {
   inject: ['$validator'],
   components: { DraggablePlaylistTabs },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -67,7 +90,7 @@ export default {
   props: {
     form: {
       type: Object,
-      required: false,
+      required: true,
     },
     groups: {
       type: Array,
@@ -78,32 +101,39 @@ export default {
       default: false,
     },
   },
-  created() {
-    this.$validator.attach({
-      name: 'tabs',
-      rules: 'required:true',
-      getter: () => this.form.tabs_list.length > 0,
-      vm: this,
-    });
-  },
-  methods: {
-    validateTabs() {
-      this.$nextTick(() => this.$validator.validate('tabs'));
-    },
+  setup(props, { emit }) {
+    const modals = useModals();
+    const { errors } = useValidator();
+    const { updateField } = useModelField(props, emit);
 
-    showManageTabsModal() {
-      this.$modals.show({
-        name: MODALS.managePlaylistTabs,
-        config: {
-          groups: this.groups,
-          selectedTabs: this.form.tabs_list,
-          action: (tabs) => {
-            this.updateField('tabs_list', tabs);
-            this.validateTabs();
-          },
+    const hasTabs = () => props.form.tabs_list.length > 0;
+
+    const { asyncValidateRequiredRule } = useValidationAttachRequiredForField(
+      TABS_FIELD_NAME,
+      hasTabs,
+      false,
+    );
+
+    const hasTabsError = computed(() => errors.has(TABS_FIELD_NAME));
+
+    watch(() => props.form.tabs_list.length, asyncValidateRequiredRule);
+
+    const showManageTabsModal = () => modals.show({
+      name: MODALS.managePlaylistTabs,
+      config: {
+        groups: props.groups,
+        selectedTabs: props.form.tabs_list,
+        action: (tabs) => {
+          updateField('tabs_list', tabs);
+          asyncValidateRequiredRule();
         },
-      });
-    },
+      },
+    });
+
+    return {
+      hasTabsError,
+      showManageTabsModal,
+    };
   },
 };
 </script>

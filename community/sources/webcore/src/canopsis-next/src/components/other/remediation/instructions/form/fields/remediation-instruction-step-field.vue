@@ -2,7 +2,6 @@
   <c-card-iterator-item
     :item-number="stepNumber"
     class="remediation-instruction-step-field"
-    offset-left
     @remove="remove"
   >
     <template #header="">
@@ -31,33 +30,45 @@
         </v-flex>
       </v-layout>
     </template>
-    <c-workflow-field
-      v-field="step.stop_on_fail"
-      :label="$t('remediation.instruction.workflow')"
-      :continue-label="$t('remediation.instruction.remainingStep')"
-      :disabled="disabled"
-    />
-    <remediation-instruction-step-endpoint-field
-      v-field="step.endpoint"
-      :disabled="disabled"
-    />
-    <remediation-instruction-operations-form
-      v-field="step.operations"
-      :name="operationFieldName"
-      :step-number="stepNumber"
-      :disabled="disabled"
-      :template-vars="templateVars"
-    />
+    <c-form-block>
+      <c-form-block-row :label="$t('common.workflow')" indented>
+        <c-workflow-field
+          v-field="step.stop_on_fail"
+          :label="$t('remediation.instruction.workflow')"
+          :continue-label="$t('remediation.instruction.remainingStep')"
+          :disabled="disabled"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('remediation.instruction.endpoint')">
+        <remediation-instruction-step-endpoint-field
+          v-field="step.endpoint"
+          :name="endpointFieldName"
+          :disabled="disabled"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('remediation.instruction.operations')" indented>
+        <remediation-instruction-operations-form
+          v-field="step.operations"
+          :name="operationFieldName"
+          :step-number="stepNumber"
+          :disabled="disabled"
+          :template-vars="templateVars"
+        />
+      </c-form-block-row>
+    </c-form-block>
   </c-card-iterator-item>
 </template>
 
 <script>
+import { computed, toRef } from 'vue';
+
 import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 import { isOmitEqual } from '@/helpers/collection';
 import { toSeconds } from '@/helpers/date/duration';
 
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
-import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
+import { useConfirmableForm } from '@/hooks/confirmable-form';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
 
@@ -69,23 +80,6 @@ export default {
     RemediationInstructionOperationsForm,
     RemediationInstructionStepEndpointField,
   },
-  mixins: [
-    formMixin,
-    validationChildrenMixin,
-    confirmableFormMixinCreator({
-      field: 'step',
-      method: 'remove',
-      comparator(step) {
-        const emptyStep = remediationInstructionStepToForm();
-        const paths = [
-          'key',
-          step.operations.length ? ['operations', 0, 'key'] : 'operations',
-        ];
-
-        return isOmitEqual(step, emptyStep, paths);
-      },
-    }),
-  ],
   model: {
     prop: 'step',
     event: 'input',
@@ -108,36 +102,38 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
+  setup(props, { emit }) {
+    const fieldSuffix = computed(() => (props.step.key ? `-${props.step.key}` : ''));
+    const nameFieldName = computed(() => `name${fieldSuffix.value}`);
+    const endpointFieldName = computed(() => `endpoint${fieldSuffix.value}`);
+    const operationFieldName = computed(() => `operations${fieldSuffix.value}`);
+    const timeToComplete = computed(() => props.step.operations.reduce((acc, operation) => {
+      const { time_to_complete: { value, unit } } = operation;
+
+      return acc + toSeconds(value, unit);
+    }, 0));
+
+    const { confirmAction: remove } = useConfirmableForm({
+      form: toRef(props, 'step'),
+      action: () => emit('remove'),
+      comparator: (step) => {
+        const emptyStep = remediationInstructionStepToForm();
+        const paths = [
+          'key',
+          step.operations.length ? ['operations', 0, 'key'] : 'operations',
+        ];
+
+        return isOmitEqual(step, emptyStep, paths);
+      },
+    });
+
     return {
-      expanded: true,
+      nameFieldName,
+      endpointFieldName,
+      operationFieldName,
+      timeToComplete,
+      remove,
     };
-  },
-  computed: {
-    fieldSuffix() {
-      return this.step.key ? `-${this.step.key}` : '';
-    },
-
-    nameFieldName() {
-      return `name${this.fieldSuffix}`;
-    },
-
-    operationFieldName() {
-      return `operations${this.fieldSuffix}`;
-    },
-
-    timeToComplete() {
-      return this.step.operations.reduce((acc, operation) => {
-        const { time_to_complete: { value, unit } } = operation;
-
-        return acc + toSeconds(value, unit);
-      }, 0);
-    },
-  },
-  methods: {
-    remove() {
-      this.$emit('remove');
-    },
   },
 };
 </script>

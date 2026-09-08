@@ -1,6 +1,8 @@
 <template>
   <v-layout column>
-    <span class="pl-4 text-subtitle-1">{{ $t('kpi.ratingSettings.helpInformation') }}</span>
+    <span class="pl-4 text-subtitle-1">
+      {{ $t('kpi.ratingSettings.helpInformation') }}
+    </span>
     <kpi-rating-settings-list
       :options.sync="options"
       :rating-settings="ratingSettings"

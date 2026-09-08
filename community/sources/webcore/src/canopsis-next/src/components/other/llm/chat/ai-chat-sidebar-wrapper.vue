@@ -13,7 +13,9 @@
               <v-icon color="white">
                 $vuetify.icons.ai
               </v-icon>
-              <span class="text-h6 white--text">{{ $t('llm.chat.title') }}</span>
+              <span class="text-h6 white--text">
+                {{ $t('llm.chat.title') }}
+              </span>
               <v-btn
                 v-if="restartable"
                 class="white--text"
@@ -54,7 +56,9 @@
             $vuetify.icons.show_sidebar
           </v-icon>
         </v-btn>
-        <span class="text-h6 white--text">AI</span>
+        <span class="text-h6 white--text">
+          AI
+        </span>
       </v-layout>
     </v-slide-x-transition>
     <slot />

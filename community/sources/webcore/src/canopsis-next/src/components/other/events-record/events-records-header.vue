@@ -7,7 +7,9 @@
       class="gap-4"
       align-center
     >
-      <span class="font-italic">{{ message }}</span>
+      <span class="font-italic">
+        {{ message }}
+      </span>
       <v-progress-circular
         color="primary"
         width="3"

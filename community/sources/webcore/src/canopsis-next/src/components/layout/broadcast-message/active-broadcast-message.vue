@@ -37,7 +37,6 @@
           </v-btn>
         </template>
         <v-btn
-          v-else
           class="my-0 ml-0 mr-2"
           color="white"
           outlined

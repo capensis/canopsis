@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import { ALARM_STATES, BASIC_ENTITY_TYPES, ENTITY_TYPES } from '@/constants';
 
@@ -10,26 +11,13 @@ import { entityToForm } from '@/helpers/entities/entity/form';
 import EntityForm from '@/components/other/entity/form/entity-form.vue';
 
 const stubs = {
-  'c-name-field': true,
-  'c-description-field': true,
-  'c-enabled-field': true,
-  'c-impact-level-field': true,
-  'c-alarm-state-field': true,
-  'c-entity-type-field': true,
-  'c-coordinates-field': true,
-  'entity-state-setting': true,
-  'manage-infos': true,
+  'entity-general-form': true,
+  'entity-manage-infos-form': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
 };
 
-const selectNameField = wrapper => wrapper.find('c-name-field-stub');
-const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
-const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
-const selectImpactLevelField = wrapper => wrapper.find('c-impact-level-field-stub');
-const selectAlarmStateField = wrapper => wrapper.find('c-alarm-state-field-stub');
-const selectEntityTypeField = wrapper => wrapper.find('c-entity-type-field-stub');
-const selectCoordinatesField = wrapper => wrapper.find('c-coordinates-field-stub');
-const selectEntityStateSettingField = wrapper => wrapper.find('entity-state-setting-stub');
-const selectManageInfosField = wrapper => wrapper.find('manage-infos-stub');
+const selectEntityGeneralForm = wrapper => wrapper.find('entity-general-form-stub');
+const selectEntityManageInfosForm = wrapper => wrapper.find('entity-manage-infos-form-stub');
 
 describe('entity-form', () => {
   const factory = generateShallowRenderer(EntityForm, { stubs });
@@ -37,7 +25,27 @@ describe('entity-form', () => {
 
   const defaultEntityForm = entityToForm();
 
-  test('Name changed after trigger name field', () => {
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: defaultEntityForm,
+      },
+    });
+
+    expect(selectEntityGeneralForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Manage infos form is rendered in additional tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: defaultEntityForm,
+      },
+    });
+
+    expect(selectEntityManageInfosForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Name changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -46,7 +54,10 @@ describe('entity-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectNameField(wrapper).triggerCustomEvent('input', newName);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      name: newName,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -54,7 +65,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Description changed after trigger description field', () => {
+  test('Description changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -63,7 +74,10 @@ describe('entity-form', () => {
 
     const newDescription = Faker.datatype.string();
 
-    selectDescriptionField(wrapper).triggerCustomEvent('input', newDescription);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      description: newDescription,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -71,7 +85,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Available state changed after trigger alarm state field', () => {
+  test('Available state changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -80,7 +94,10 @@ describe('entity-form', () => {
 
     const newState = ALARM_STATES.minor;
 
-    selectAlarmStateField(wrapper).triggerCustomEvent('input', newState);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      sli_avail_state: newState,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -88,7 +105,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Entity type changed after trigger entity type field', () => {
+  test('Entity type changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -97,7 +114,10 @@ describe('entity-form', () => {
 
     const newType = BASIC_ENTITY_TYPES.connector;
 
-    selectEntityTypeField(wrapper).triggerCustomEvent('input', newType);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      type: newType,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -105,7 +125,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Impact level changed after trigger impact level field', () => {
+  test('Impact level changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -114,7 +134,10 @@ describe('entity-form', () => {
 
     const newImpactLevel = ALARM_STATES.minor;
 
-    selectImpactLevelField(wrapper).triggerCustomEvent('input', newImpactLevel);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      impact_level: newImpactLevel,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -122,7 +145,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Coordinates changed after trigger coordinates field', () => {
+  test('Coordinates changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -134,7 +157,10 @@ describe('entity-form', () => {
       lng: Faker.datatype.number(),
     };
 
-    selectCoordinatesField(wrapper).triggerCustomEvent('input', newCoordinates);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      coordinates: newCoordinates,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -142,7 +168,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Enabled changed after trigger enabled field', () => {
+  test('Enabled changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -151,7 +177,10 @@ describe('entity-form', () => {
 
     const newEnabled = Faker.datatype.boolean();
 
-    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
+    selectEntityGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultEntityForm,
+      enabled: newEnabled,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,
@@ -159,7 +188,7 @@ describe('entity-form', () => {
     });
   });
 
-  test('Prepare function passed to state setting', () => {
+  test('Prepare function passed to general form', () => {
     const prepareStateSettingForm = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -171,12 +200,10 @@ describe('entity-form', () => {
       },
     });
 
-    expect(
-      selectEntityStateSettingField(wrapper).vm.preparer,
-    ).toBe(prepareStateSettingForm);
+    expect(selectEntityGeneralForm(wrapper).props('prepareStateSettingForm')).toBe(prepareStateSettingForm);
   });
 
-  test('Infos changed after trigger manage infos field', () => {
+  test('Infos changed after trigger manage infos form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultEntityForm,
@@ -190,7 +217,7 @@ describe('entity-form', () => {
       },
     });
 
-    selectManageInfosField(wrapper).triggerCustomEvent('input', newInfos);
+    selectEntityManageInfosForm(wrapper).triggerCustomEvent('input', newInfos);
 
     expect(wrapper).toEmitInput({
       ...defaultEntityForm,

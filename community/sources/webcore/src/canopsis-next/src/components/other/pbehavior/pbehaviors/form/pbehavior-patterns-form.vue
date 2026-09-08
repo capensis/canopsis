@@ -14,11 +14,8 @@
 <script>
 import { computed } from 'vue';
 
-import { useStoreModuleHooks } from '@/hooks/store';
-import { useValidationHeader } from '@/hooks/validator/validation-header';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
-
-const usePbehaviorPatternsStoreModule = () => useStoreModuleHooks('pbehaviorPatterns');
+import { usePbehaviorPatterns } from '@/hooks/store/modules/pbehavior-patterns';
 
 export default {
   inject: ['$validator'],
@@ -46,17 +43,13 @@ export default {
   },
   setup(props) {
     const { fetchPbehaviorPatternFields } = usePatternsFields();
-    const { hasAnyError } = useValidationHeader();
 
     const {
       pending,
       entityAttributes,
     } = usePatternsFieldsFetching(fetchPbehaviorPatternFields, props.readonly);
 
-    const { useActions: usePbehaviorPatternActions } = usePbehaviorPatternsStoreModule();
-    const { checkPatternsPbehaviorsCount } = usePbehaviorPatternActions({
-      checkPatternsPbehaviorsCount: 'checkPatternsPbehaviorsCount',
-    });
+    const { checkPatternsPbehaviorsCount } = usePbehaviorPatterns();
 
     const checkFilter = async ({ data } = {}) => {
       const counter = await checkPatternsPbehaviorsCount({
@@ -65,7 +58,7 @@ export default {
 
       return {
         entity_pattern: counter,
-        all: counter,
+        combined: counter,
       };
     };
 
@@ -76,10 +69,6 @@ export default {
     ));
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
       pending,
       entityAttributes,
       counterMethod,

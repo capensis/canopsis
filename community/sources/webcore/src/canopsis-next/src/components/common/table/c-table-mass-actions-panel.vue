@@ -60,6 +60,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
+import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-templates';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
 import { useResolveRules } from '@/hooks/store/modules/resolve-rules';
@@ -134,6 +135,10 @@ export default {
       default: false,
     },
     dynamicInfo: {
+      type: Boolean,
+      default: false,
+    },
+    dynamicInfoTemplate: {
       type: Boolean,
       default: false,
     },
@@ -220,6 +225,10 @@ export default {
       bulkDisableDynamicInfos,
       bulkRemoveDynamicInfos,
     } = useDynamicInfo();
+
+    const {
+      bulkRemoveDynamicInfoTemplates,
+    } = useDynamicInfoTemplates();
 
     const {
       bulkEnableEventFilters,
@@ -377,6 +386,10 @@ export default {
           disable: bulkDisableDynamicInfos,
           tooltipPrefix: 'dynamicInfo',
           exportProps: { dynamicInfo: true },
+        },
+        [props.dynamicInfoTemplate]: {
+          remove: bulkRemoveDynamicInfoTemplates,
+          tooltipPrefix: 'dynamicInfo.templatesList',
         },
         [props.eventFilter]: {
           remove: bulkRemoveEventFilters,

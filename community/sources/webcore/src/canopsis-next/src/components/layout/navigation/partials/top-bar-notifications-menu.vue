@@ -40,7 +40,9 @@
       <v-list-item v-if="!notifications.length">
         <v-list-item-content>
           <v-list-item-title class="text-center">
-            <strong class="font-italic grey--text">{{ $t('notifications.topBar.noNotifications') }}</strong>
+            <strong class="font-italic grey--text">
+              {{ $t('notifications.topBar.noNotifications') }}
+            </strong>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>

@@ -1,5 +1,8 @@
 <template>
-  <v-layout column>
+  <v-layout
+    class="gap-3"
+    column
+  >
     <c-enabled-field
       v-field="form.visible"
       :label="$t('pbehavior.visible')"
@@ -10,22 +13,21 @@
       autofocus
       required
     />
-    <v-text-field
-      v-field="form.description"
-      v-validate="'required'"
-      :label="$t('modals.createPbehaviorReason.fields.description')"
-      :error-messages="errors.collect('description')"
-      name="description"
-    />
+    <c-form-block>
+      <c-form-block-row :label="$t('modals.createPbehaviorReason.fields.description')">
+        <c-description-field
+          v-field="form.description"
+          name="description"
+          required
+        />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

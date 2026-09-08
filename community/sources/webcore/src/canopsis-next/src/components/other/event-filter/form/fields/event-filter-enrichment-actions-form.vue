@@ -17,8 +17,7 @@
       />
       <v-flex>
         <v-btn
-          class="ml-0 my-0"
-          color="primary"
+          :color="errors.has(name) ? 'error' : 'primary'"
           outlined
           @click="addAction"
         >
@@ -30,9 +29,12 @@
 </template>
 
 <script>
+import { watch, onBeforeUnmount } from 'vue';
+
 import { eventFilterActionToForm } from '@/helpers/entities/event-filter/rule/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 import EventFilterEnrichmentActionForm from './event-filter-enrichment-action-form.vue';
 
@@ -69,6 +71,18 @@ export default {
     const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
     const addAction = () => addItemIntoArray(eventFilterActionToForm());
+
+    const {
+      attachRequiredRule,
+      detachRequiredRule,
+      validateRequiredRule,
+    } = useValidationAttachRequired(props.name);
+
+    watch(() => props.actions, validateRequiredRule);
+
+    attachRequiredRule(() => props.actions);
+
+    onBeforeUnmount(detachRequiredRule);
 
     return {
       addAction,

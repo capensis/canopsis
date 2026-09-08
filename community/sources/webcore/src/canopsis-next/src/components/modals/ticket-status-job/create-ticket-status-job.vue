@@ -19,13 +19,13 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
           @click="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -68,10 +68,9 @@ export default {
 
     const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
-    const isNew = computed(() => !config.value.ticketStatusJob?._id);
-
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting, submitLabel, isNew } = useSubmittableForm({
       form,
+      item: config.value.ticketStatusJob,
       method: async () => {
         await config.value.action?.(formToTicketStatusJob(form.value));
 
@@ -84,8 +83,8 @@ export default {
     return {
       form,
       isNew,
-      isDisabled,
       submitting,
+      submitLabel,
       submit,
       close,
     };

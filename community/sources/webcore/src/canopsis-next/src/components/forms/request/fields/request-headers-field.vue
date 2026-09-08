@@ -1,11 +1,10 @@
 <template>
-  <v-layout class="gap-2" column>
-    <c-alert
-      v-if="!headers.length"
-      type="info"
-    >
-      {{ $t('common.request.emptyHeaders') }}
-    </c-alert>
+  <v-layout class="gap-3" column>
+    <c-label
+      :label="$tc('common.header', 2)"
+      :help-text="$t('common.request.headersHelpText')"
+    />
+
     <v-layout
       v-for="(item, index) in headers"
       :key="item.key"
@@ -25,37 +24,33 @@
         @click="removeItemFromArray(index)"
       />
     </v-layout>
-    <v-flex
-      v-if="!disabled"
-      xs12
-    >
-      <v-layout>
-        <v-btn
-          class="ml-0"
-          color="primary"
-          outlined
-          @click="addItem"
-        >
-          {{ $t('common.add') }}
-        </v-btn>
-      </v-layout>
-    </v-flex>
+
+    <div>
+      <v-btn
+        color="primary"
+        outlined
+        @click="addItem"
+      >
+        {{ $t('common.request.addHeader') }}
+      </v-btn>
+    </div>
   </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { CONTENT_TYPES, HEADERS } from '@/constants';
 
 import { textPairToForm } from '@/helpers/text-pairs';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import RequestHeaderField from './request-header-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { RequestHeaderField },
-  mixins: [formArrayMixin],
   model: {
     prop: 'headers',
     event: 'input',
@@ -82,23 +77,26 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    headersHints() {
-      return [
-        {
-          text: HEADERS.authorization,
-        },
-        {
-          text: HEADERS.contentType,
-          value: Object.values(CONTENT_TYPES),
-        },
-      ];
-    },
-  },
-  methods: {
-    addItem() {
-      this.addItemIntoArray(textPairToForm());
-    },
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
+    const headersHints = computed(() => [
+      {
+        text: HEADERS.authorization,
+      },
+      {
+        text: HEADERS.contentType,
+        value: Object.values(CONTENT_TYPES),
+      },
+    ]);
+
+    const addItem = () => addItemIntoArray(textPairToForm());
+
+    return {
+      headersHints,
+      removeItemFromArray,
+      addItem,
+    };
   },
 };
 </script>

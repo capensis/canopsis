@@ -10,6 +10,7 @@
     :error-messages="errors.collect(name)"
     :hide-details="hideDetails"
     :clearable="clearable"
+    :menu-props="menuProps"
     item-text="name"
     item-value="_id"
   />
@@ -56,6 +57,8 @@ export default {
     },
   },
   setup(props) {
+    const menuProps = { offsetY: true };
+
     const themes = ref([]);
 
     const { fetchThemesListWithoutStore } = useTheme();
@@ -79,6 +82,8 @@ export default {
     });
 
     return {
+      menuProps,
+
       pending,
       themes,
       rules,

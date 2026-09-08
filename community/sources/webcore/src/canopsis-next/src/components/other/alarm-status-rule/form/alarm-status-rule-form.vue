@@ -6,42 +6,37 @@
       hide-details
       with-background
     />
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
-    <c-duration-field
-      v-field="form.duration"
-      required
-    />
-    <c-priority-field v-field="form.priority" :disabled="defaultRule" />
-    <c-number-field
-      v-if="flapping"
-      v-field="form.freq_limit"
-      :label="$t('common.frequencyLimit')"
-      :min="1"
-      name="freq_limit"
-    />
-    <c-description-field
-      v-field="form.description"
-      required
-    />
-    <alarm-status-rule-patterns-form
-      v-if="!defaultRule"
-      v-field="form.patterns"
-      :flapping="flapping"
-      class="mt-2"
-    />
+    <c-form-general-patterns-tabs>
+      <template #general="{ setRef }">
+        <alarm-status-rule-general-form
+          v-field="form"
+          :ref="setRef"
+          :flapping="flapping"
+          :default-rule="defaultRule"
+        />
+      </template>
+      <template v-if="!defaultRule" #patterns="{ setRef }">
+        <alarm-status-rule-patterns-form
+          v-field="form.patterns"
+          :ref="setRef"
+          :flapping="flapping"
+          class="mt-2"
+        />
+      </template>
+    </c-form-general-patterns-tabs>
   </v-layout>
 </template>
 
 <script>
+import AlarmStatusRuleGeneralForm from './alarm-status-rule-general-form.vue';
 import AlarmStatusRulePatternsForm from './alarm-status-rule-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { AlarmStatusRulePatternsForm },
+  components: {
+    AlarmStatusRuleGeneralForm,
+    AlarmStatusRulePatternsForm,
+  },
   model: {
     prop: 'form',
     event: 'input',

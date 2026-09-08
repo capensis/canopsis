@@ -24,6 +24,8 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToTimestampByTimezone,
   convertDateToTimezoneDateString,
+  convertDateToEndOfDayDateObject,
+  convertDateToStartOfDayDateObject,
   getLocalTimezone,
   getNowTimestamp,
   isEndOfDay,
@@ -148,6 +150,28 @@ export const isNotActivePbehaviorType = type => [
 export const hasPausedPbehavior = pbehaviors => pbehaviors.some(isPausedPbehavior);
 
 /**
+ * Blank comment row for pbehavior creation forms (no `_id` until persisted).
+ *
+ * @returns {{ key: string, message: string }}
+ */
+export const pbehaviorCommentItemToForm = ({ message = '' } = {}) => ({
+  key: uid(),
+  message,
+});
+
+/**
+ * Blank exdate row for pbehavior exception forms.
+ *
+ * @returns {{ key: string, begin: Date, end: Date, type: string }}
+ */
+export const pbehaviorExdateItemToForm = () => ({
+  key: uid(),
+  begin: convertDateToStartOfDayDateObject(),
+  end: convertDateToEndOfDayDateObject(),
+  type: '',
+});
+
+/**
  * Clear exdate entity and convert to request.
  *
  * @param {PbehaviorExdate[]} [exdates = []]
@@ -226,7 +250,7 @@ export const pbehaviorToForm = (
   entityPattern,
   timezone = getLocalTimezone(),
 ) => {
-  let rrule = pbehavior.rrule ?? null;
+  let rrule = pbehavior.rrule ?? '';
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);
@@ -253,7 +277,7 @@ export const pbehaviorToForm = (
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, pbehaviorTimezone) : null,
     tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, pbehaviorTimezone) : null,
-    comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
+    comments: pbehavior.comments?.length ? pbehavior.comments.map(pbehaviorCommentItemToForm) : [],
     timezone: pbehaviorTimezone,
     exceptions: exceptionsToForm(pbehavior.exceptions),
     exdates: exdatesToForm(pbehavior.exdates, timezone),

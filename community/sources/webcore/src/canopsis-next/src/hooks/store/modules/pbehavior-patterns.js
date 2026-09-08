@@ -18,6 +18,7 @@ const usePbehaviorPatternsStoreModule = () => useStoreModuleHooks('pbehaviorPatt
  *
  * @returns {Object} An object containing pbehavior patterns actions:
  * @property {Function} runAlarmFiltering - Action to run alarm filtering process
+ * @property {Function} checkPatternsPbehaviorsCount - Action to check the count of pbehaviors matching patterns
  *
  * @example
  * // Usage in a component
@@ -29,6 +30,7 @@ export const usePbehaviorPatterns = () => {
 
   const actions = useActions({
     runAlarmFiltering: 'runAlarmFiltering',
+    checkPatternsPbehaviorsCount: 'checkPatternsPbehaviorsCount',
   });
 
   return {

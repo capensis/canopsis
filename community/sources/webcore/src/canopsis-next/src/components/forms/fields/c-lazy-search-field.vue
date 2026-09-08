@@ -49,7 +49,9 @@
           <v-list-item-content>
             <v-list-item-mask :text="getItemText(item)" :mask="internalSearch" />
           </v-list-item-content>
-          <span v-if="withType" class="ml-4 grey--text">{{ item.type }}</span>
+          <span v-if="withType" class="ml-4 grey--text">
+            {{ item.type }}
+          </span>
         </v-list-item>
       </slot>
     </template>
@@ -76,7 +78,9 @@
         close
         @click:close="parent.onChipInput(item)"
       >
-        <span class="text-truncate">{{ getItemText(item) }}</span>
+        <span class="text-truncate">
+          {{ getItemText(item) }}
+        </span>
       </v-chip>
     </template>
     <template v-if="$slots['no-data']" #no-data="">

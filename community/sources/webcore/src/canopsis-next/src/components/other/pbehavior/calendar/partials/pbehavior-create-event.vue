@@ -4,15 +4,24 @@
     class="pbehavior-form position-relative"
     @submit.prevent="submitHandler"
   >
-    <pbehavior-form
-      v-model="form"
-      :pbehavior-id="pbehavior?._id"
-      :no-pattern="!!entityPattern"
-      :with-inherited="withInherited"
-      :no-timezone="noTimezone"
-      class="py-3"
-      pbehavior-counter-type
-    />
+    <div class="pbehavior-form__body">
+      <pbehavior-general-form
+        v-if="entityPattern"
+        v-field="form"
+        :with-inherited="withInherited"
+        :no-timezone="noTimezone"
+        with-enabled
+      />
+
+      <pbehavior-form
+        v-else
+        v-model="form"
+        :pbehavior-id="pbehavior?._id"
+        :with-inherited="withInherited"
+        :no-timezone="noTimezone"
+        pbehavior-counter-type
+      />
+    </div>
     <ai-chat-sidebar
       v-if="chatShown"
       v-bind="chatOptions.bind"
@@ -20,30 +29,36 @@
     />
     <v-layout
       class="pbehavior-form__actions"
-      justify-end
+      column
     >
-      <v-btn
-        v-show="pbehavior"
-        :outlined="$system.dark"
-        class="error"
-        @click="remove"
+      <v-divider />
+      <v-layout
+        class="pa-3"
+        justify-end
       >
-        {{ $t('common.delete') }}
-      </v-btn>
-      <v-btn
-        depressed
-        text
-        @click="cancel"
-      >
-        {{ $t('common.cancel') }}
-      </v-btn>
-      <v-btn
-        :disabled="errors.any() || chatOptions.bind.pending"
-        color="primary"
-        type="submit"
-      >
-        {{ $t('common.submit') }}
-      </v-btn>
+        <v-btn
+          v-show="pbehavior"
+          :outlined="$system.dark"
+          class="error"
+          @click="remove"
+        >
+          {{ $t('common.delete') }}
+        </v-btn>
+        <v-btn
+          depressed
+          text
+          @click="cancel"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="errors.any() || chatOptions.bind.pending"
+          color="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </v-layout>
     </v-layout>
   </v-form>
 </template>
@@ -68,6 +83,7 @@ import { useComponentInstance } from '@/hooks/vue';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
+import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
   $_veeValidate: {
@@ -75,7 +91,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
-  components: { PbehaviorForm, AiChatSidebar },
+  components: { PbehaviorForm, PbehaviorGeneralForm, AiChatSidebar },
   mixins: [dependentMixin],
   props: {
     event: {
@@ -221,10 +237,27 @@ export default {
 
 <style lang="scss" scoped>
   .pbehavior-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
     width: 100%;
+    max-height: 100%;
+    min-height: 0;
+    overflow: hidden;
+
+    &__body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px;
+    }
 
     &__actions {
-      gap: 6px;
+      flex: 0 0 auto;
+
+      .layout {
+        gap: 6px;
+      }
     }
   }
 </style>

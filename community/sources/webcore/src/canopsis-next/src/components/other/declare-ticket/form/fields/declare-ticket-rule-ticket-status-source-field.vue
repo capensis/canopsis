@@ -1,31 +1,29 @@
 <template>
-  <c-information-block :title="$t('declareTicket.ticketStatusSourceField')">
-    <v-layout class="gap-3">
-      <v-flex xs6>
-        <c-payload-text-field
-          v-if="form.template"
-          v-field="form.value"
-          :label="$t('declareTicket.ticketStatusSourceField')"
-          :name="name"
-          :variables="variables"
-          :disabled="disabled"
-          required
-        />
-        <c-name-field
-          v-else
-          v-field="form.value"
-          :label="$t('declareTicket.ticketStatusSourceField')"
-          :name="name"
-          :disabled="disabled"
-          required
-        />
-      </v-flex>
-      <c-enabled-field
-        v-field="form.template"
-        :label="$t('declareTicket.allowTicketStatusSourceTemplate')"
+  <c-form-block-row :label="$t('declareTicket.ticketStatusSourceField')" :depth="1" top-border>
+    <v-flex xs6>
+      <c-payload-text-field
+        v-if="form.template"
+        v-field="form.value"
+        :label="$t('declareTicket.ticketStatusSourceField')"
+        :name="name"
+        :variables="variables"
+        :disabled="disabled"
+        required
       />
-    </v-layout>
-  </c-information-block>
+      <c-name-field
+        v-else
+        v-field="form.value"
+        :label="$t('declareTicket.ticketStatusSourceField')"
+        :name="name"
+        :disabled="disabled"
+        required
+      />
+    </v-flex>
+    <c-enabled-field
+      v-field="form.template"
+      :label="$t('declareTicket.allowTicketStatusSourceTemplate')"
+    />
+  </c-form-block-row>
 </template>
 
 <script>

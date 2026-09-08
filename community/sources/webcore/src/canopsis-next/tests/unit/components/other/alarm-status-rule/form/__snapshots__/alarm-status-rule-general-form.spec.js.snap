@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-status-rule-general-form Renders \`alarm-status-rule-general-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    autofocus=""
+    max-length="255"
+    required=""
+  />
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Priority"
+    >
+      <c-priority-field-stub />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Duration"
+    >
+      <c-duration-field-stub
+        required=""
+      />
+    </c-form-block-row-stub>
+    <!---->
+    <c-form-block-row-stub
+      label="Description"
+    >
+      <c-description-field-stub
+        required=""
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+</div>
+`;
+
+exports[`alarm-status-rule-general-form Renders \`alarm-status-rule-general-form\` with flapping prop 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    autofocus=""
+    max-length="255"
+    required=""
+    value="alarm-status-rule-name"
+  />
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      label="Priority"
+    >
+      <c-priority-field-stub
+        value="2"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Duration"
+    >
+      <c-duration-field-stub
+        required=""
+        value="[object Object]"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Frequency limit"
+    >
+      <c-number-field-stub
+        label="Frequency limit"
+        min="1"
+        name="freq_limit"
+        value="3"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      label="Description"
+    >
+      <c-description-field-stub
+        required=""
+        value="alarm-status-rule-description"
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+</div>
+`;

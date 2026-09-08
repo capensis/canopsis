@@ -30,7 +30,9 @@
                 :history="testSuite.mini_chart"
                 :unit="$constants.TIME_UNITS.second"
               />
-              <span class="pre-wrap">{{ testSuite.timestamp | date('testSuiteFormat') }}</span>
+              <span class="pre-wrap">
+                {{ testSuite.timestamp | date('testSuiteFormat') }}
+              </span>
             </v-layout>
           </v-flex>
           <v-flex xs6>

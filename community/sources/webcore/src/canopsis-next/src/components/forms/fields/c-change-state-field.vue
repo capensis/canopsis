@@ -1,13 +1,18 @@
 <template>
-  <div class="mt-3">
-    <v-layout>
+  <div>
+    <c-form-block-row
+      :label="$t('common.state')"
+      :depth="depth"
+      align-center
+    >
       <state-criticity-field
         v-field="value.state"
         :state-values="availableStateValues"
         mandatory
       />
-    </v-layout>
-    <v-layout class="mt-4">
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('common.note')" :depth="depth">
       <component
         :is="textareaComponent"
         v-field="value.output"
@@ -18,7 +23,7 @@
         :variables="variables"
         autofocus
       />
-    </v-layout>
+    </c-form-block-row>
   </div>
 </template>
 
@@ -55,6 +60,10 @@ export default {
     variables: {
       type: Array,
       default: () => [],
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props) {

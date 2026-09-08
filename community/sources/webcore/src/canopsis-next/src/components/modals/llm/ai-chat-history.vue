@@ -8,7 +8,9 @@
         <v-layout class="ai-chat-history-modal__info" column>
           <c-alert type="info" class="ma-0">
             <v-layout column>
-              <span class="font-weight-regular">{{ chatUserDisplayName }}</span>
+              <span class="font-weight-regular">
+                {{ chatUserDisplayName }}
+              </span>
               <span>{{ chatContext }}</span>
             </v-layout>
           </c-alert>

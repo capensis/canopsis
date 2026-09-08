@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createAuthModule, createTemplateVarsModule } from '@unit/utils/store';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import { USER_PERMISSIONS } from '@/constants';
 
@@ -7,6 +8,7 @@ import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declar
 
 const stubs = {
   'c-enabled-field': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
   'declare-ticket-rule-general-form': true,
   'declare-ticket-rule-patterns-form': true,
   'declare-ticket-rule-test-query': true,
@@ -14,8 +16,7 @@ const stubs = {
   'template-testing-test-variables': true,
 };
 
-const selectTabItems = wrapper => wrapper.findAll('.v-tab');
-const selectTestQueryTab = wrapper => selectTabItems(wrapper).at(2);
+const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectDeclareTicketRuleGeneralForm = wrapper => wrapper.find('declare-ticket-rule-general-form-stub');
 const selectDeclareTicketRulePatternsForm = wrapper => wrapper.find('declare-ticket-rule-patterns-form-stub');
 const selectDeclareTicketRuleTestQuery = wrapper => wrapper.find('declare-ticket-rule-test-query-stub');
@@ -37,6 +38,31 @@ describe('declare-ticket-rule-form', () => {
 
   const factory = generateShallowRenderer(DeclareTicketRuleForm, { stubs, store });
   const snapshotFactory = generateRenderer(DeclareTicketRuleForm, { stubs, store });
+
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    expect(selectDeclareTicketRuleGeneralForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Enabled changed after trigger enabled field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      enabled: false,
+    });
+  });
 
   test('Form fields changed after trigger input event on general form', () => {
     const wrapper = factory({
@@ -75,39 +101,35 @@ describe('declare-ticket-rule-form', () => {
     });
   });
 
-  test('Patterns fields changed after trigger input event on patterns form', () => {
+  test('Test query form receives form prop', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    expect(selectDeclareTicketRuleTestQuery(wrapper).vm.form).toEqual(form);
+    expect(selectDeclareTicketRuleTestQuery(wrapper).props('form')).toEqual(form);
   });
 
-  test('Renders `declare-ticket-rule-form` with default props', async () => {
+  test('Renders `declare-ticket-rule-form` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {},
     });
 
-    await selectTestQueryTab(wrapper).trigger('click');
-
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `declare-ticket-rule-form` with custom props', async () => {
+  test('Renders `declare-ticket-rule-form` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form,
       },
     });
 
-    await selectTestQueryTab(wrapper).trigger('click');
-
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `declare-ticket-rule-form` with errors', async () => {
+  test('Renders `declare-ticket-rule-form` with errors', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form: {
@@ -116,17 +138,10 @@ describe('declare-ticket-rule-form', () => {
       },
     });
 
-    await selectTestQueryTab(wrapper).trigger('click');
-
-    await wrapper.setData({
-      hasGeneralError: true,
-      hasPatternsError: true,
-    });
-
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `declare-ticket-rule-form` with template testing tab access', async () => {
+  test('Renders `declare-ticket-rule-form` with template testing tab access', () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USER_PERMISSIONS.technical.templateTesting]: { actions: [] },
     });

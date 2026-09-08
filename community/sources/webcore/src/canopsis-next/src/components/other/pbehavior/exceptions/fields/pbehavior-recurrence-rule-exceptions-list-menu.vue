@@ -4,8 +4,8 @@
       <v-btn
         :loading="pending"
         :disabled="!availableExceptions.length"
-        class="mr-0"
         color="primary"
+        outlined
         v-on="on"
       >
         {{ $t('pbehavior.exceptions.choose') }}
@@ -26,19 +26,17 @@
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue';
+
 import { MAX_LIMIT } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 
-import { formArrayMixin } from '@/mixins/form';
-import { entitiesPbehaviorExceptionMixin } from '@/mixins/entities/pbehavior/exceptions';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 
 export default {
-  inject: ['$validator'],
-  mixins: [
-    formArrayMixin,
-    entitiesPbehaviorExceptionMixin,
-  ],
   model: {
     prop: 'value',
     event: 'input',
@@ -49,38 +47,35 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      pending: false,
-      exceptions: [],
-    };
-  },
-  computed: {
-    selectedExceptionsIds() {
-      return mapIds(this.value);
-    },
+  setup(props, { emit }) {
+    const { addItemIntoArray } = useArrayModelField(props, emit);
+    const { fetchPbehaviorExceptionsListWithoutStore } = usePbehaviorException();
 
-    availableExceptions() {
-      return this.exceptions.filter(({ _id: id }) => !this.selectedExceptionsIds.includes(id));
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    async fetchList() {
-      this.pending = true;
+    const exceptions = ref([]);
 
+    const selectedExceptionsIds = computed(() => mapIds(props.value));
+
+    const availableExceptions = computed(() => exceptions.value.filter(
+      ({ _id: id }) => !selectedExceptionsIds.value.includes(id),
+    ));
+
+    const { pending, handler: fetchList } = usePendingHandler(async () => {
       try {
-        const { data } = await this.fetchPbehaviorExceptionsListWithoutStore({ params: { limit: MAX_LIMIT } });
+        const { data } = await fetchPbehaviorExceptionsListWithoutStore({ params: { limit: MAX_LIMIT } });
 
-        this.exceptions = data;
+        exceptions.value = data;
       } catch (err) {
         console.error(err);
-      } finally {
-        this.pending = false;
       }
-    },
+    });
+
+    onMounted(fetchList);
+
+    return {
+      pending,
+      availableExceptions,
+      addItemIntoArray,
+    };
   },
 };
 </script>

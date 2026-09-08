@@ -1,6 +1,8 @@
 <template>
   <v-layout column>
-    <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
+    <span class="text-body-2 my-2">
+      {{ $tc('common.column', 2) }}
+    </span>
     <v-flex xs12>
       <v-alert
         :value="errors.has(name)"

@@ -41,7 +41,9 @@
             {{ $t('common.fileSelector.fileTypes.csv') }}
             ({{ $t('common.fileSelector.fileSizeMb', { size: fileImportMaxSizeInMb }) }})
           </p>
-          <p class="text-subtitle-2">{{ $t('externalData.importFileDescription') }}</p>
+          <p class="text-subtitle-2">
+            {{ $t('externalData.importFileDescription') }}
+          </p>
         </span>
         <v-btn
           v-if="hasStructure"

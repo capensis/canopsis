@@ -5,11 +5,13 @@
     v-validate="rules"
     ref="select"
     :value="value"
+    :items="items"
     :class="{ 'c-select-field--ellipsis': ellipsis }"
     :item-text="itemText"
     :item-value="itemValue"
     :name="name"
     :error-messages="errors.collect(name)"
+    :menu-props="computedMenuProps"
     class="c-select-field"
     v-on="$listeners"
   >
@@ -21,17 +23,39 @@
         name="selection"
         v-bind="props"
       >
-        <span class="text-truncate">{{ getItemText(props.item) }}</span>
+        <span class="text-truncate">
+          {{ getItemText(props.item) }}
+        </span>
       </slot>
     </template>
     <template
-      v-if="$scopedSlots.item"
-      #item="props"
+      v-if="$scopedSlots.item || hasHeaders"
+      #item="{ item, attrs, on }"
     >
       <slot
+        :item="item"
+        :attrs="attrs"
+        :on="on"
         name="item"
-        v-bind="props"
-      />
+      >
+        <v-subheader
+          v-if="item.header"
+          :key="item.header"
+          class="c-select-field__header"
+        >
+          {{ item.header }}
+        </v-subheader>
+        <v-list-item
+          v-else
+          v-bind="attrs"
+          :class="{ 'c-select-field__item': hasHeaders }"
+          v-on="on"
+        >
+          <v-list-item-content>
+            <v-list-item-title>{{ getItemText(item) }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </slot>
     </template>
     <template
       v-if="$scopedSlots['append-item']"
@@ -46,8 +70,9 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
 import { Validator } from 'vee-validate';
-import { isArray, isFunction, isObject } from 'lodash';
+import { isFunction, isObject } from 'lodash';
 
 export default {
   inject: {
@@ -64,6 +89,10 @@ export default {
     value: {
       type: [Array, Object, String, Symbol, Number],
       default: '',
+    },
+    items: {
+      type: Array,
+      default: () => [],
     },
     required: {
       type: Boolean,
@@ -93,38 +122,62 @@ export default {
       type: String,
       default: 'value',
     },
-  },
-  computed: {
-    isArray() {
-      return isArray(this.value);
+    menuProps: {
+      type: Object,
+      default: () => ({}),
     },
+  },
+  setup(props) {
+    const select = ref(null);
 
-    component() {
-      if (this.combobox) {
+    const component = computed(() => {
+      if (props.combobox) {
         return 'v-combobox';
       }
 
-      return this.autocomplete ? 'v-autocomplete' : 'v-select';
-    },
+      return props.autocomplete ? 'v-autocomplete' : 'v-select';
+    });
 
-    content() {
-      return this.$refs.select.content;
-    },
+    const rules = computed(() => ({
+      required: props.required,
+    }));
 
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
-  methods: {
-    getItemText(item) {
-      if (isFunction(this.itemText)) {
-        return this.itemText(item);
+    const hasHeaders = computed(() => props.items.some(item => !!item?.header));
+
+    const computedMenuProps = computed(() => {
+      if (!hasHeaders.value) {
+        return props.menuProps;
       }
 
-      return isObject(item) ? item[this.itemText] : item;
-    },
+      const contentClass = [
+        props.menuProps.contentClass,
+        'c-select-field-menu--with-headers',
+      ].filter(Boolean).join(' ');
+
+      return {
+        ...props.menuProps,
+        contentClass,
+      };
+    });
+
+    const getItemText = (item) => {
+      if (isFunction(props.itemText)) {
+        return props.itemText(item);
+      }
+
+      return isObject(item) ? item[props.itemText] : item;
+    };
+
+    return {
+      select,
+
+      component,
+      rules,
+      hasHeaders,
+      computedMenuProps,
+
+      getItemText,
+    };
   },
 };
 </script>
@@ -138,6 +191,18 @@ $selectIconWidth: 24px;
       width: calc(100% - #{$selectIconWidth});
       flex-wrap: nowrap;
     }
+  }
+}
+
+.c-select-field-menu--with-headers {
+  .c-select-field__header {
+    font-weight: 700;
+    height: auto;
+    min-height: 32px;
+  }
+
+  .c-select-field__item {
+    padding-left: 32px !important;
   }
 }
 </style>

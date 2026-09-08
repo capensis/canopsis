@@ -45,28 +45,32 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
   <div
     class="flex xs12"
   >
-    <button
-      class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
-      disabled="disabled"
-      type="button"
+    <div
+      class="layout"
     >
-      <span
-        class="v-btn__content"
+      <button
+        class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-      Parse
-      </span>
-    </button>
-    <button
-      class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
-      disabled="disabled"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
+        <span
+          class="v-btn__content"
+        >
+        Parse
+        </span>
+      </button>
+      <button
+        class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-      Reset
-      </span>
-    </button>
+        <span
+          class="v-btn__content"
+        >
+        Reset
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 `;
@@ -192,28 +196,32 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
   <div
     class="flex xs12"
   >
-    <button
-      class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
-      disabled="disabled"
-      type="button"
+    <div
+      class="layout"
     >
-      <span
-        class="v-btn__content"
+      <button
+        class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-      Parse
-      </span>
-    </button>
-    <button
-      class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
-      disabled="disabled"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
+        <span
+          class="v-btn__content"
+        >
+        Parse
+        </span>
+      </button>
+      <button
+        class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
+        disabled="disabled"
+        type="button"
       >
-      Reset
-      </span>
-    </button>
+        <span
+          class="v-btn__content"
+        >
+        Reset
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 `;
@@ -263,26 +271,30 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
   <div
     class="flex xs12"
   >
-    <button
-      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
-      type="button"
+    <div
+      class="layout"
     >
-      <span
-        class="v-btn__content"
+      <button
+        class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+        type="button"
       >
-      Parse
-      </span>
-    </button>
-    <button
-      class="v-btn-legacy-m--x v-btn v-btn--outlined theme--light v-size--default grey--text text--darken-1"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
+        <span
+          class="v-btn__content"
+        >
+        Parse
+        </span>
+      </button>
+      <button
+        class="v-btn-legacy-m--x v-btn v-btn--outlined theme--light v-size--default grey--text text--darken-1"
+        type="button"
       >
-      Reset
-      </span>
-    </button>
+        <span
+          class="v-btn__content"
+        >
+        Reset
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 `;

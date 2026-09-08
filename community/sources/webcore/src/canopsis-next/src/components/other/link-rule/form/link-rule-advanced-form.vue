@@ -1,6 +1,6 @@
 <template>
-  <v-layout column>
-    <p class="font-italic grey--text my-3">
+  <v-layout class="gap-3" column>
+    <p class="font-italic grey--text">
       {{ $t('linkRule.sourceCodeAlert') }}
     </p>
     <java-script-code-editor
@@ -8,6 +8,11 @@
       :completions="completions"
       class="java-script-code-editor"
       resettable
+    />
+    <v-messages
+      v-if="!!errorMessages.length"
+      :value="errorMessages"
+      color="error"
     />
   </v-layout>
 </template>
@@ -40,6 +45,10 @@ export default {
     type: {
       type: String,
       default: LINK_RULE_TYPES.alarm,
+    },
+    errorMessages: {
+      type: Array,
+      default: () => [],
     },
   },
   setup(props) {

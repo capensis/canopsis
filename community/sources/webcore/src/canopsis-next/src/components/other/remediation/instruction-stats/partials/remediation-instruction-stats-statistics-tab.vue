@@ -8,18 +8,28 @@
     advanced-pagination
   >
     <template #headerCell="{ header }">
-      <span class="c-table-header__text--multiline">{{ header.text }}</span>
+      <span class="c-table-header__text--multiline">
+        {{ header.text }}
+      </span>
     </template>
     <template #modified_on="{ item }">
       <span>{{ item.modified_on | date }}</span>
     </template>
     <template #avg_complete_time="{ item }">
-      <span v-if="item.execution_count">{{ item.avg_complete_time | duration }}</span>
-      <span v-else>{{ $t('common.notAvailable') }}</span>
+      <span v-if="item.execution_count">
+        {{ item.avg_complete_time | duration }}
+      </span>
+      <span v-else>
+        {{ $t('common.notAvailable') }}
+      </span>
     </template>
     <template #avg_alarm_ok_timeout="{ item }">
-      <span v-if="item.avg_alarm_ok_timeout">{{ item.avg_alarm_ok_timeout | duration }}</span>
-      <span v-else>{{ $t('common.notAvailable') }}</span>
+      <span v-if="item.avg_alarm_ok_timeout">
+        {{ item.avg_alarm_ok_timeout | duration }}
+      </span>
+      <span v-else>
+        {{ $t('common.notAvailable') }}
+      </span>
     </template>
     <template #avg_successful="{ item }">
       <span>{{ item.avg_successful }}%</span>

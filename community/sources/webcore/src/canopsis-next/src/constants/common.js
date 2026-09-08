@@ -24,7 +24,6 @@ export const ROUTES_NAMES = {
   adminCustomObjectsLlms: 'admin-custom-objects-llms',
   adminTemplateTesting: 'admin-template-testing',
   adminJobsManagement: 'admin-jobs-management',
-  adminSettingsUserInterface: 'admin-settings-user-interface',
   adminSettingsViewsImportExport: 'admin-settings-views-import-export',
   adminSettingsNotifications: 'admin-settings-notifications',
   adminSettingsCommentTemplates: 'admin-settings-comment-templates',
@@ -56,7 +55,6 @@ export const OLD_ROUTES = {
   remediation: '/admin/remediation', // Is using for rederect to exploitationRemediation
   externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminCustomObjectsExternalDataTables
   entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminCustomObjectsEntityInfosProperties
-  parameters: '/admin/parameters', // Is using for redirect to adminSettingsUserInterface
 };
 
 export const ROUTES = {
@@ -85,7 +83,6 @@ export const ROUTES = {
   adminCustomObjectsMaps: '/admin/maps',
   adminCustomObjectsTags: '/admin/tags',
   adminCustomObjectsLlms: '/admin/llms',
-  adminSettingsUserInterface: '/admin/user-interface',
   adminSettingsViewsImportExport: '/admin/views-import-export',
   adminSettingsNotifications: '/admin/notifications',
   adminSettingsCommentTemplates: '/admin/comment-templates',
@@ -390,6 +387,7 @@ export const TRIGGERS_TYPES = {
   comment: 'comment',
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
+  declareticketwebhookfail: 'declareticketwebhookfail',
   assocticket: 'assocticket',
   ticketremove: 'ticketremove',
   snooze: 'snooze',
@@ -412,6 +410,7 @@ export const TRIGGERS_TYPES = {
 export const PRO_TRIGGERS = [
   TRIGGERS_TYPES.declareticket,
   TRIGGERS_TYPES.declareticketwebhook,
+  TRIGGERS_TYPES.declareticketwebhookfail,
   TRIGGERS_TYPES.instructionfail,
   TRIGGERS_TYPES.autoinstructionfail,
   TRIGGERS_TYPES.instructionjobcomplete,
@@ -547,3 +546,11 @@ export const LINKED_RULES_COUNT = 5;
 export const INFOS_NAME_VARIABLE = '%infos_name%';
 
 export const INFOS_VARIABLE_PREFIX = '(index ';
+
+export const FORM_GENERAL_PATTERNS_TABS = {
+  general: 'general',
+  patterns: 'patterns',
+  testQuery: 'test-query',
+  testing: 'testing',
+  additional: 'additional',
+};

@@ -2,11 +2,22 @@
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`attribute\` type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <!---->
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group by pattern only
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that have the attribute(s) defined by filter patterns are grouped
+    </div>
+  </div>
   <!---->
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
@@ -17,17 +28,31 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`complex\` type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <meta-alarm-rule-threshold-form-stub
-    threshold="[object Object]"
-  />
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group with trigger threshold or rate
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that have the attribute(s) defined by filter patterns, time interval, and a trigger threshold or rate are grouped
+    </div>
+  </div>
+  <c-form-block-stub>
+    <meta-alarm-rule-threshold-field-stub
+      value="[object Object]"
+    />
+    <meta-alarm-rule-time-based-field-stub />
+    <meta-alarm-rule-child-inactive-delay-field-stub />
+    <!---->
+    <!---->
+  </c-form-block-stub>
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     withtotalentity="true"
@@ -37,29 +62,32 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`corel\` type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <!---->
-  <!---->
-  <!---->
-  <meta-alarm-rule-corel-form-stub
-    config="[object Object]"
-    templatevars="[object Object]"
-  />
-  <meta-alarm-rule-patterns-form-stub
-    form="[object Object]"
-  />
-</div>
-`;
-
-exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`manualgroup\` type 1`] = `
-<div
-  class="layout column"
->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group under custom defined parent
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that have the attribute(s) defined by filter patterns, time interval, threshold count, and the correlation identifiers are grouped
+    </div>
+  </div>
+  <c-form-block-stub>
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <meta-alarm-rule-corel-form-stub
+      config="[object Object]"
+      templatevars="[object Object]"
+    />
+  </c-form-block-stub>
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />
@@ -68,11 +96,22 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`relation\` type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <!---->
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group under parent component
+    </div>
+    <div
+      class="text-body-2"
+    >
+      Define the patterns that should have all alarms raised on its dependencies grouped
+    </div>
+  </div>
   <!---->
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
@@ -82,14 +121,29 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`timebased\` type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <!---->
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-  />
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group by creation date interval
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that match the patterns and raised during a defined time interval are grouped
+    </div>
+  </div>
+  <c-form-block-stub>
+    <!---->
+    <meta-alarm-rule-time-based-field-stub />
+    <!---->
+    <!---->
+    <!---->
+  </c-form-block-stub>
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />
@@ -98,21 +152,38 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with \`valuegroup\` type 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <meta-alarm-rule-threshold-form-stub
-    threshold="[object Object]"
-  />
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <meta-alarm-rule-value-paths-form-stub
-    class="mb-3"
-    form="[object Object]"
-    name="value_paths"
-  />
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group by group of values
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that have the attribute(s) defined by filter patterns, time interval, trigger threshold or rate, and the value path are grouped
+    </div>
+  </div>
+  <c-form-block-stub>
+    <meta-alarm-rule-threshold-field-stub
+      value="[object Object]"
+    />
+    <meta-alarm-rule-time-based-field-stub />
+    <meta-alarm-rule-child-inactive-delay-field-stub />
+    <meta-alarm-rule-value-paths-field-stub
+      itemkey="key"
+      items=""
+      itemvalue="value"
+      label=""
+      name="item"
+      required="true"
+    />
+    <!---->
+  </c-form-block-stub>
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     withtotalentity="true"
@@ -122,17 +193,31 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <meta-alarm-rule-threshold-form-stub
-    threshold="[object Object]"
-  />
-  <meta-alarm-rule-time-based-form-stub
-    timebased="[object Object]"
-    withchildinactivedelay="true"
-  />
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group with trigger threshold or rate
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that have the attribute(s) defined by filter patterns, time interval, and a trigger threshold or rate are grouped
+    </div>
+  </div>
+  <c-form-block-stub>
+    <meta-alarm-rule-threshold-field-stub
+      value="[object Object]"
+    />
+    <meta-alarm-rule-time-based-field-stub />
+    <meta-alarm-rule-child-inactive-delay-field-stub />
+    <!---->
+    <!---->
+  </c-form-block-stub>
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     withtotalentity="true"
@@ -142,14 +227,34 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
 
 exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-form\` with default props 1`] = `
 <div
-  class="layout column"
+  class="layout gap-3 column"
 >
-  <!---->
-  <!---->
-  <!---->
-  <!---->
+  <div
+    class="mb-2"
+  >
+    <div
+      class="text-subtitle-2 mb-2"
+    >
+      Group with trigger threshold or rate
+    </div>
+    <div
+      class="text-body-2"
+    >
+      All alarms that have the attribute(s) defined by filter patterns, time interval, and a trigger threshold or rate are grouped
+    </div>
+  </div>
+  <c-form-block-stub>
+    <meta-alarm-rule-threshold-field-stub
+      value="[object Object]"
+    />
+    <meta-alarm-rule-time-based-field-stub />
+    <meta-alarm-rule-child-inactive-delay-field-stub />
+    <!---->
+    <!---->
+  </c-form-block-stub>
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
+    withtotalentity="true"
   />
 </div>
 `;

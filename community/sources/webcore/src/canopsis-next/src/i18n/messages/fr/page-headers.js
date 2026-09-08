@@ -13,7 +13,7 @@ export default {
   },
 
   [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: {
-    title: 'Informations dynamiques',
+    title: 'Information dynamique',
     message: 'Centre d\'enrichissement des alarmes',
   },
 
@@ -138,6 +138,9 @@ export default {
   [USER_PERMISSIONS.technical.map]: {
     title: 'Cartographie',
     message: 'Module permettant de définir et d\'afficher des cartes (géographiques, logiques, mermaid, etc.) via le widget "Map".',
+  },
+  [USER_PERMISSIONS.technical.icon]: {
+    title: 'Icônes',
   },
   [USER_PERMISSIONS.technical.maintenance]: {
     title: 'Mode de maintenance',

@@ -435,6 +435,7 @@ export const API_ROUTES = {
   bulkDynamicInfoDisable: '/api/v4/cat/bulk/dynamic-infos/disable',
   dynamicInfosDictionaryKeys: '/api/v4/cat/dynamic-infos-dictionary/keys',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
+  metaAlarmRuleAlarmCount: '/api/v4/cat/metaalarmrule-alarm-count',
   bulkMetaAlarmRule: '/api/v4/cat/bulk/metaalarmrules',
   bulkMetaAlarmRuleEnable: '/api/v4/cat/bulk/metaalarmrules/enable',
   bulkMetaAlarmRuleDisable: '/api/v4/cat/bulk/metaalarmrules/disable',

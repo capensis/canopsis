@@ -3,10 +3,16 @@
     <v-layout align-center>
       <v-layout class="gap-2" column>
         <v-layout column>
-          <span class="comment-author font-weight-bold">{{ comment.author.display_name }}</span>
-          <span class="text-subtitle-2 grey--text">{{ comment.t | date }}</span>
+          <span class="comment-author font-weight-bold">
+            {{ comment.author.display_name }}
+          </span>
+          <span class="text-subtitle-2 grey--text">
+            {{ comment.t | date }}
+          </span>
         </v-layout>
-        <span class="pre-wrap comment-message">{{ comment.message }}</span>
+        <span class="pre-wrap comment-message">
+          {{ comment.message }}
+        </span>
       </v-layout>
       <v-flex shrink>
         <v-layout class="gap-1" column>

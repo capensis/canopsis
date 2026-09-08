@@ -16,12 +16,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           type="submit"
           color="primary"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -34,6 +34,7 @@ import { ref, computed } from 'vue';
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/entities/widget/template/form';
+import { getWidgetTemplateModalTitle } from '@/helpers/entities/widget/template/modal-title';
 
 import { useInnerModal } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
@@ -62,14 +63,26 @@ export default {
   },
   setup(props) {
     const { config, close } = useInnerModal(props);
-    const { t } = useI18n();
+    const { t, te } = useI18n();
 
     const form = ref(widgetTemplateToForm(config.value.widgetTemplate));
 
-    const title = computed(() => config.value.title ?? t('modals.createWidgetTemplate.create.title'));
+    const title = computed(() => {
+      if (config.value.title) {
+        return config.value.title;
+      }
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+      return getWidgetTemplateModalTitle({
+        t,
+        te,
+        type: form.value.type ?? config.value.widgetTemplate?.type,
+        isEdit: !!config.value.widgetTemplate?._id,
+      });
+    });
+
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.widgetTemplate,
       method: async () => {
         await config.value.action?.(formToWidgetTemplate(form.value));
 
@@ -82,8 +95,8 @@ export default {
     return {
       form,
       title,
+      submitLabel,
       submit,
-      isDisabled,
       submitting,
     };
   },

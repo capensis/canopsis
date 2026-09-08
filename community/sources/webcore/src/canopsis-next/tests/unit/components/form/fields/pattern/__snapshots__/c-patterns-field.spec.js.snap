@@ -9,8 +9,11 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   <div
     class="layout c-patterns-field column"
   >
+    <c-label-stub
+      label="Patterns"
+      required="true"
+    />
     <c-collapse-panel-stub
-      outline-color="var(--v-error-base)"
       title="Alarm patterns"
     >
       <c-alarm-patterns-field-stub
@@ -23,7 +26,6 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       />
     </c-collapse-panel-stub>
     <c-collapse-panel-stub
-      outline-color="var(--v-error-base)"
       title="Entity patterns"
     >
       <pattern-field-suggestions-wrapper-stub
@@ -43,7 +45,6 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       </pattern-field-suggestions-wrapper-stub>
     </c-collapse-panel-stub>
     <c-collapse-panel-stub
-      outline-color="var(--v-error-base)"
       title="Pbehavior patterns"
     >
       <c-pbehavior-patterns-field-stub
@@ -56,7 +57,6 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       />
     </c-collapse-panel-stub>
     <c-collapse-panel-stub
-      outline-color="var(--v-error-base)"
       title="Event patterns"
     >
       <c-event-filter-patterns-field-stub
@@ -67,7 +67,6 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       />
     </c-collapse-panel-stub>
     <c-collapse-panel-stub
-      outline-color="var(--v-error-base)"
       title="Total entity patterns"
     >
       <c-entity-patterns-field-stub
@@ -79,7 +78,6 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       />
     </c-collapse-panel-stub>
     <c-collapse-panel-stub
-      outline-color="var(--v-error-base)"
       title="Service weather patterns"
     >
       <c-service-weather-patterns-field-stub
@@ -103,7 +101,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       class="layout gap-2 justify-end align-center"
     >
       <span
-        class="text-caption error--text"
+        class="text-caption text--secondary"
       >
         <span>
           At least one pattern has to be defined. Please define filter patterns for rule
@@ -135,6 +133,9 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   <div
     class="layout c-patterns-field column"
   >
+    <c-label-stub
+      label="Patterns"
+    />
     <!---->
     <!---->
     <!---->

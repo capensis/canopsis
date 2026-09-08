@@ -24,7 +24,9 @@
         </v-layout>
         <div v-if="step.m" class="grey--text mt-2 pre-wrap">
           <span v-if="isHtmlEnabled" v-html="sanitizedStepMessage" />
-          <span v-else>{{ step.m }}</span>
+          <span v-else>
+            {{ step.m }}
+          </span>
         </div>
       </v-layout>
     </v-flex>

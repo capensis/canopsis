@@ -5,7 +5,9 @@
       align-center
     >
       <slot name="title">
-        <span class="white--text">{{ tab.title }}</span>
+        <span class="white--text">
+          {{ tab.title }}
+        </span>
       </slot>
     </v-layout>
     <v-divider dark />

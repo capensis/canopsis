@@ -85,7 +85,6 @@ export default {
         name: MODALS.createWidgetTemplate,
         config: {
           widgetTemplate,
-          title: t('modals.createWidgetTemplate.create.title'),
           action: config.value.action,
         },
       });

@@ -2,8 +2,6 @@ import { EVENT_FILTER_TYPES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER
 
 export default {
   externalData: 'External data',
-  actionsRequired: 'Please add at least one action',
-  configRequired: 'No configuration defined. Please add at least one config parameter',
   idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   editPattern: 'Edit pattern',
   advanced: 'Advanced',
@@ -19,6 +17,7 @@ export default {
   actions: 'Actions',
   onSuccess: 'On success',
   onFailure: 'On failure',
+  onSuccessAndFailure: 'On success / failure',
   configuration: 'Configuration',
   resource: 'Resource ID or template',
   component: 'Component ID or template',
@@ -61,9 +60,14 @@ export default {
   validation: {
     incorrectRegexOnSetTagsValue: 'Invalid value: the value for the set_tags action must contain regex to extract groups <name> and <value>',
   },
+  actionsTypesGroups: {
+    setEventField: 'Set event field',
+    setTags: 'Set tags',
+    setEntityInfo: 'Set entity info',
+  },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-      text: 'Copy a value from a field of event to another',
+      text: 'using another event field value',
       message: 'This action is used to copy the value or a pair key+value of a control in an event.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<p>'
@@ -75,7 +79,7 @@ export default {
       + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-      text: 'Copy a value from a field of an event to an info of an entity',
+      text: 'using event field value',
       message: 'This action is used to copy the field value of an event to the field of an entity.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<p>'
@@ -87,7 +91,7 @@ export default {
       + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-      text: 'Set an info of an entity to a constant',
+      text: 'to constant',
       message: 'This action is used to set the dynamic information from an entity corresponding to the event.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<p>'
@@ -99,7 +103,7 @@ export default {
       + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-      text: 'Set a string info of an entity using a template',
+      text: 'using template',
       message: 'This action is used to modify the dynamic information from an entity corresponding to the event.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<p>'
@@ -112,7 +116,7 @@ export default {
       + '<p>Templates {{.Event.Field}}, regular expressions or external data can be used</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-      text: 'Set a field of an event to a constant',
+      text: 'to constant',
       message: 'This action can be used to modify a field of the event.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<p>'
@@ -124,7 +128,7 @@ export default {
       + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-      text: 'Set a string field of an event using a template',
+      text: 'using template',
       message: 'This action allows you to modify an event field from a template.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<p>'
@@ -137,7 +141,7 @@ export default {
       + '<p>Templates {{.Event.Field}}, regular expressions or external data can be used</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
-      text: 'Set entity info from a dictionary',
+      text: 'from dictionary',
       message: 'This action can be used for setting entity infos from event fields with a dictionary type node.',
       description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
       + '<ul>'
@@ -146,7 +150,7 @@ export default {
       + '</ul>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
-      text: 'Set tags from a field using regexp match',
+      text: 'using regexp match',
       message: 'This action can be used for setting tags from other filtered events using regexp match.',
       description: '<p>'
         + 'The <strong>set_tags</strong> action allows for the dynamic creation of tags in the format '
@@ -208,7 +212,7 @@ export default {
         + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
-      text: 'Set tags from a field using a template',
+      text: 'using template',
       message: 'This action can be used for setting tags from other event fields using a template.',
       description: '<p>'
         + 'This action can be used for setting tags from other event fields using a template.'
