@@ -9,10 +9,10 @@
 
     <c-form-block>
       <c-form-block-row :label="t('common.priority')">
-        <c-priority-field v-model="priorityField" />
+        <c-priority-field v-model="priorityField" :min="MIN_PRIORITY" />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isEntityType" :label="t('common.type')">
+      <c-form-block-row v-if="!isEntityType" :label="t('common.type')" indented>
         <idle-rule-alarm-type-field v-model="alarmConditionField" :label="t('common.type')" />
       </c-form-block-row>
 
@@ -24,6 +24,7 @@
         <c-duration-field
           v-model:duration="durationField"
           :label="t('idleRules.timeRangeAwaiting')"
+          :min="MIN_DURATION_VALUE"
           name="duration"
           required
         />
@@ -53,6 +54,7 @@
           v-if="isAssociateTicketAction"
           :label="t('common.comment')"
           :depth="1"
+          indented
           top-border
         >
           <c-description-field v-model="commentField" :label="t('common.comment')" name="comment" />
@@ -65,7 +67,7 @@
 <script>
 import { computed } from 'vue';
 
-import { ACTION_TYPES } from '@/constants';
+import { ACTION_TYPES, MIN_DURATION_VALUE, MIN_PRIORITY } from '@/constants';
 
 import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
@@ -144,6 +146,8 @@ export default {
       parameters,
       actionTypes: IDLE_RULE_ACTION_TYPES,
       isAssociateTicketAction,
+      MIN_DURATION_VALUE,
+      MIN_PRIORITY,
     };
   },
 };

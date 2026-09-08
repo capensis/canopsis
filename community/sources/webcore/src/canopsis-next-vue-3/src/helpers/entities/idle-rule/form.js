@@ -4,6 +4,8 @@ import {
   ACTION_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
   IDLE_RULE_TYPES,
+  MIN_DURATION_VALUE,
+  MIN_PRIORITY,
   PATTERNS_FIELDS,
   TIME_UNITS,
 } from '@/constants';
@@ -52,6 +54,117 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 export const isIdleRuleEntityType = type => type === IDLE_RULE_TYPES.entity;
 
+const DEFAULT_IDLE_RULE_PBEHAVIOR_DURATION = { value: MIN_DURATION_VALUE, unit: TIME_UNITS.hour };
+
+/**
+ * Prepare finite numeric form values with a minimum while preserving empty invalid form states.
+ *
+ * @param {*} value
+ * @param {number} min
+ * @returns {*}
+ */
+const prepareMinNumber = (value, min) => {
+  if (typeof value !== 'number') {
+    return value;
+  }
+
+  return Math.max(value, min);
+};
+
+/**
+ * Prepare duration fields and fill missing values from a default duration.
+ *
+ * @param {Duration} duration
+ * @param {Duration} defaultDuration
+ * @returns {Duration}
+ */
+const prepareDuration = (duration, defaultDuration) => ({
+  ...defaultDuration,
+  ...duration,
+  value: prepareMinNumber(duration?.value ?? defaultDuration.value, MIN_DURATION_VALUE),
+  unit: duration?.unit ?? defaultDuration.unit,
+});
+
+/**
+ * Convert idle rule operation parameters to form parameters with idle-rule specific defaults.
+ *
+ * @param {Action} operation
+ * @returns {Object}
+ */
+const idleRuleActionParametersToForm = (operation = {}) => {
+  const type = operation.type ?? ACTION_TYPES.snooze;
+  const parameters = actionParametersToForm({
+    type,
+    parameters: operation.parameters,
+  });
+  const hasExistingPbehaviorParameters = type === ACTION_TYPES.pbehavior && operation.parameters;
+
+  if (!hasExistingPbehaviorParameters) {
+    parameters[ACTION_TYPES.pbehavior] = {
+      ...parameters[ACTION_TYPES.pbehavior],
+      start_on_trigger: false,
+      duration: prepareDuration(null, DEFAULT_IDLE_RULE_PBEHAVIOR_DURATION),
+    };
+  }
+
+  return parameters;
+};
+
+/**
+ * Prepare numeric idle-rule fields with lower bounds before saving.
+ *
+ * @param {Object} form Idle rule form.
+ * @returns {Object}
+ */
+export const prepareIdleRuleNumbers = (form) => {
+  const preparedForm = {
+    ...form,
+    priority: prepareMinNumber(form.priority, MIN_PRIORITY),
+    duration: form.duration
+      ? {
+        ...form.duration,
+        value: prepareMinNumber(form.duration.value, MIN_DURATION_VALUE),
+      }
+      : form.duration,
+  };
+  const snoozeParameters = form.operation?.parameters?.[ACTION_TYPES.snooze];
+  const pbehaviorParameters = form.operation?.parameters?.[ACTION_TYPES.pbehavior];
+
+  if (snoozeParameters?.duration) {
+    preparedForm.operation = {
+      ...preparedForm.operation,
+      parameters: {
+        ...preparedForm.operation.parameters,
+        [ACTION_TYPES.snooze]: {
+          ...snoozeParameters,
+          duration: prepareDuration(snoozeParameters.duration, {
+            value: MIN_DURATION_VALUE,
+            unit: TIME_UNITS.hour,
+          }),
+        },
+      },
+    };
+  }
+
+  if (pbehaviorParameters && form.operation?.type === ACTION_TYPES.pbehavior) {
+    preparedForm.operation = {
+      ...preparedForm.operation,
+      parameters: {
+        ...preparedForm.operation.parameters,
+        [ACTION_TYPES.pbehavior]: {
+          ...pbehaviorParameters,
+          duration: prepareDuration(
+            pbehaviorParameters.duration,
+            DEFAULT_IDLE_RULE_PBEHAVIOR_DURATION,
+          ),
+        },
+      },
+    };
+  }
+
+  return preparedForm;
+};
+
 /**
  * Convert idle rule object to form compatible object.
  *
@@ -60,10 +173,7 @@ export const isIdleRuleEntityType = type => type === IDLE_RULE_TYPES.entity;
  */
 export const idleRuleToForm = (idleRule = {}) => {
   const type = idleRule.operation?.type ?? ACTION_TYPES.snooze;
-  const parameters = actionParametersToForm({
-    type,
-    parameters: idleRule.operation?.parameters,
-  });
+  const parameters = idleRuleActionParametersToForm(idleRule.operation);
 
   return {
     enabled: idleRule.enabled ?? true,
@@ -73,7 +183,7 @@ export const idleRuleToForm = (idleRule = {}) => {
     type: idleRule.type ?? IDLE_RULE_TYPES.alarm,
     duration: idleRule.duration
       ? durationToForm(idleRule.duration)
-      : { value: 1, unit: TIME_UNITS.minute },
+      : { value: MIN_DURATION_VALUE, unit: TIME_UNITS.minute },
     priority: idleRule.priority,
     disable_during_periods: idleRule.disable_during_periods ?? [],
     alarm_condition: idleRule.alarm_condition ?? IDLE_RULE_ALARM_CONDITIONS.lastEvent,
@@ -92,22 +202,23 @@ export const idleRuleToForm = (idleRule = {}) => {
  * @returns {Object} Idle rule entity.
  */
 export const formToIdleRule = (form) => {
+  const preparedForm = prepareIdleRuleNumbers(form);
   const isEntityType = form.type === IDLE_RULE_TYPES.entity;
-  const idleRule = omit(form, ['alarm_condition', 'operation', 'patterns', 'comment']);
+  const idleRule = omit(preparedForm, ['alarm_condition', 'operation', 'patterns', 'comment']);
 
   if (!isEntityType) {
-    idleRule.alarm_condition = form.alarm_condition;
-    idleRule.operation = pick(formToAction(form.operation), ['type', 'parameters']);
+    idleRule.alarm_condition = preparedForm.alarm_condition;
+    idleRule.operation = pick(formToAction(preparedForm.operation), ['type', 'parameters']);
 
     if (isAssociateTicketActionType(idleRule.operation.type)) {
-      idleRule.comment = form.comment;
+      idleRule.comment = preparedForm.comment;
     }
   }
 
   return {
     ...idleRule,
     ...formFilterToPatterns(
-      form.patterns,
+      preparedForm.patterns,
       isEntityType ? [PATTERNS_FIELDS.entity] : [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
     ),
   };

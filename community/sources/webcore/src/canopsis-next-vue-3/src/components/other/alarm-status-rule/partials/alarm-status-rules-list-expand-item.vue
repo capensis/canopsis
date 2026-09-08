@@ -28,13 +28,15 @@
       </v-window-item>
 
       <v-window-item value="patterns">
-        <c-layout class="py-3" justify="center">
-          <v-card class="alarm-status-rules-list-expand-item__patterns">
-            <v-card-text>
-              <alarm-status-rule-patterns-form :form="patterns" :flapping="flapping" readonly />
-            </v-card-text>
-          </v-card>
-        </c-layout>
+        <v-row class="py-3" justify="center">
+          <v-col cols="8">
+            <v-card>
+              <v-card-text>
+                <alarm-status-rule-patterns-form :form="patterns" :flapping="flapping" readonly />
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-window-item>
     </v-window>
   </div>
@@ -81,9 +83,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.alarm-status-rules-list-expand-item__patterns {
-  width: min(100%, 900px);
-}
-</style>

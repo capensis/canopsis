@@ -33,7 +33,7 @@
       </c-layout>
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.customField', 2)" :depth="depth">
+    <c-form-block-row :label="$t('common.customField', 2)" :depth="depth" indented>
       <declare-ticket-rule-ticket-custom-fields-field
         :value="form.mapping"
         :name="name"

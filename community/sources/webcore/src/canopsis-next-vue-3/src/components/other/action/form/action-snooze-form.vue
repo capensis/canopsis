@@ -13,6 +13,7 @@
         v-model:duration="duration"
         :name="`${name}.duration`"
         :label="t('common.duration')"
+        :min="MIN_DURATION_VALUE"
         required
       />
     </c-form-block-row>
@@ -22,7 +23,7 @@
 <script>
 import { computed } from 'vue';
 
-import { TIME_UNITS } from '@/constants';
+import { MIN_DURATION_VALUE, TIME_UNITS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -56,7 +57,7 @@ export default {
     const { t } = useI18n();
 
     const duration = computed({
-      get: () => props.modelValue.duration ?? { value: 1, unit: TIME_UNITS.hour },
+      get: () => props.modelValue.duration ?? { value: MIN_DURATION_VALUE, unit: TIME_UNITS.hour },
       set: value => emit('update:modelValue', {
           ...props.modelValue,
           duration: value,
@@ -66,6 +67,7 @@ export default {
     return {
       t,
       duration,
+      MIN_DURATION_VALUE,
     };
   },
 };

@@ -82,14 +82,27 @@ export default {
 
 <style lang="scss" scoped>
 .c-enabled-color-picker-field {
+  width: 100%;
+
   &__switch {
     flex: 0 0 50%;
     max-width: 50%;
   }
 
   &__picker {
-    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    flex: 0 0 50%;
+    max-width: 50%;
     min-width: 0;
+
+    :deep(.v-input) {
+      width: 100%;
+    }
+
+    :deep(.v-input__control) {
+      align-self: center;
+    }
   }
 
   &--column {

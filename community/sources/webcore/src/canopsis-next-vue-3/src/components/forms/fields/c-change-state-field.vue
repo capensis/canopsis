@@ -13,7 +13,7 @@
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('common.note')" :depth="depth">
+    <c-form-block-row :label="t('common.note')" :depth="depth" indented>
       <c-payload-textarea-field
         :value="selectedValue.output"
         :label="label || t('common.note')"

@@ -42,8 +42,8 @@
       </c-layout>
     </v-window-item>
     <v-window-item :value="tabs.pattern">
-      <c-layout class="pa-3 secondary lighten-2" justify="center">
-        <div :style="gridFlexStyle(10)">
+      <v-row class="pa-3 secondary lighten-2" justify="center">
+        <v-col cols="8">
           <v-card>
             <v-card-text>
               <c-patterns-field
@@ -54,8 +54,8 @@
               />
             </v-card-text>
           </v-card>
-        </div>
-      </c-layout>
+        </v-col>
+      </v-row>
     </v-window-item>
     <template v-if="isEnrichment">
       <v-window-item :value="tabs.action">

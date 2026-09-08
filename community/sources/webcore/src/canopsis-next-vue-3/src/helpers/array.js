@@ -1,5 +1,5 @@
 import { map, omit, pick } from 'lodash';
-import { isArray } from 'lodash';
+import { isArray, isObject } from 'lodash';
 
 import { uid } from './uid';
 
@@ -43,7 +43,7 @@ export const removeKeyFromEntities = (entities = []) => entities.map(removeKeyFr
  * @return {string}
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
-  typeof entity === 'object' && entity !== null ? entity[idField] : entity;
+  isObject(entity) ? entity[idField] : entity;
 
 /**
  * Return entities ids
