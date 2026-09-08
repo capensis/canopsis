@@ -9,6 +9,7 @@ import (
 const (
 	TypeEntityImport = "entity_import"
 	TypeEntityExport = "entity_export"
+	TypeAlarmExport  = "alarm_export"
 )
 
 // Message is the signal published on job creation.

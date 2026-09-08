@@ -75,9 +75,6 @@ type MongoQueryBuilder struct {
 	defaultSortBy                 string
 	defaultSort                   string
 
-	fieldsAliases        map[string]string
-	fieldsAliasesByRegex map[string]string
-
 	searchPipeline []bson.M
 	// alarmMatch is match before all lookups
 	alarmMatch []bson.M
@@ -140,28 +137,6 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider,
 		},
 		defaultSortBy: "t",
 		defaultSort:   pagination.SortDesc,
-
-		fieldsAliases: map[string]string{
-			"uid":            "_id",
-			"connector":      "v.connector",
-			"connector_name": "v.connector_name",
-			"component":      "v.component",
-			"resource":       "v.resource",
-			"entity_id":      "d",
-			"state":          "v.state.val",
-			"status":         "v.status.val",
-			"snooze":         "v.snooze",
-			"ack":            "v.ack",
-			"cancel":         "v.cancel",
-			"ticket":         "v.ticket.ticket",
-			"output":         "v.output",
-			"opened":         "t",
-			"resolved":       "v.resolved",
-		},
-		fieldsAliasesByRegex: map[string]string{
-			"^infos\\.(.+)":           entityDbPrefix + ".infos.$1",
-			"^v\\.infos\\.\\*\\.(.+)": "v.infos_array.v.$1",
-		},
 	}
 }
 

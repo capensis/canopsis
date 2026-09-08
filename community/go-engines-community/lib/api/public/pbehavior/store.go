@@ -1,6 +1,7 @@
 package pbehavior
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -71,7 +72,7 @@ func NewStore(
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListResponse[Response], err error) {
-	sort, err := sortparam.Validate(r.Sort, []string{"_id", "name", "tstart", "tstop", "rrule", "created", "updated"}, "name")
+	sort, err := sortparam.Validate(cmp.Or(r.Sort, "name"), []string{"_id", "name", "tstart", "tstop", "rrule", "created", "updated"})
 	if err != nil {
 		return res, err
 	}

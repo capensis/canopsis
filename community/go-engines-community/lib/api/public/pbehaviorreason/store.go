@@ -1,6 +1,7 @@
 package pbehaviorreason
 
 import (
+	"cmp"
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/db"
@@ -42,7 +43,7 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListResponse[Response], err error) {
-	sort, err := sortparam.Validate(r.Sort, []string{"_id", "name", "created", "updated"}, "name")
+	sort, err := sortparam.Validate(cmp.Or(r.Sort, "name"), []string{"_id", "name", "created", "updated"})
 	if err != nil {
 		return res, err
 	}

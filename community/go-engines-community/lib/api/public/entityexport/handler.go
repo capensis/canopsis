@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/sortparam"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -137,19 +136,14 @@ func (h *handler) do(ctx context.Context, job Job) error {
 			return h.store.Ping(ctx, job.ID, job.LeaseGeneration)
 		},
 		func(ctx context.Context) error {
-			sort, err := sortparam.ValidateFunc(job.Params.Sort, entity.IsSortableField, entity.SortErrParam(), entity.DefaultSortField)
-			if err != nil {
-				return err
-			}
-
-			beforeLimit, afterLimit, err := entity.SearchPipeline(job.Params.SearchRequest)
+			beforeLimit, afterLimit, sort, err := entity.SearchPipeline(job.Params.SearchRequest)
 			if err != nil {
 				return err
 			}
 
 			pipeline := beforeLimit
-			pipeline = append(pipeline, afterLimit...)
 			pipeline = append(pipeline, sort)
+			pipeline = append(pipeline, afterLimit...)
 			cursor, err := h.dbCollection.Aggregate(ctx, pipeline)
 			if err != nil {
 				return err

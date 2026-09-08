@@ -71,7 +71,7 @@ type Response struct {
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported" swaggertype:"integer"`
 }
 
-func (r *Response) setDefaults() {
+func (r *Response) SetDefaults() {
 	if r.Type == types.EntityTypeResource && r.ComponentInfos == nil {
 		r.ComponentInfos = new(map[string]Info{})
 	}
