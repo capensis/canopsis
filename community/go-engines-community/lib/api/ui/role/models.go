@@ -3,7 +3,7 @@ package role
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
@@ -27,8 +27,8 @@ type EditRequest struct {
 	DefaultView string              `json:"defaultview"`
 	Permissions map[string][]string `json:"permissions"`
 
-	AuthConfig security.AuthMethodConf `json:"auth_config"`
-	Author     string                  `json:"author" swaggerignore:"true"`
+	AuthConfig token.AuthMethodConf `json:"auth_config"`
+	Author     string               `json:"author" swaggerignore:"true"`
 
 	UITheme string `json:"ui_theme" binding:"max=255"`
 }
@@ -52,7 +52,7 @@ type Response struct {
 	Editable    *bool        `bson:"editable,omitempty" json:"editable,omitempty"`
 	Deletable   *bool        `bson:"deletable,omitempty" json:"deletable,omitempty"`
 
-	AuthConfig security.AuthMethodConf `bson:"auth_config" json:"auth_config"`
+	AuthConfig token.AuthMethodConf `bson:"auth_config" json:"auth_config"`
 
 	Author  *author.Author    `bson:"author,omitempty" json:"author,omitempty"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`

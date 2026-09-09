@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/wsconn"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -29,7 +30,7 @@ type API interface {
 }
 
 func NewApi(
-	tokenService apisecurity.TokenService,
+	tokenService token.Service,
 	tokenProviders []security.TokenProvider,
 	providers []security.Provider,
 	websocketStore wsconn.Store,
@@ -58,7 +59,7 @@ func NewApi(
 }
 
 type api struct {
-	tokenService       apisecurity.TokenService
+	tokenService       token.Service
 	tokenProviders     []security.TokenProvider
 	providers          []security.Provider
 	websocketStore     wsconn.Store

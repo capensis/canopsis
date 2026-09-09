@@ -13,20 +13,21 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/auth/providers/saml"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/jwttoken"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/sharetoken"
+	apitoken "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/jwt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	libsectls "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
+	libsectoken "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -51,8 +52,8 @@ type Security interface {
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
-	GetTokenService() apisecurity.TokenService
-	GetTokenGenerator() token.Generator
+	GetTokenService() apitoken.Service
+	GetTokenGenerator() libsectoken.Generator
 	GetTokenProviders() []libsecurity.TokenProvider
 	GetCookieOptions() CookieOptions
 }
@@ -248,14 +249,14 @@ func (s *security) GetPasswordEncoder() password.Encoder {
 	return password.NewBcryptEncoder()
 }
 
-func (s *security) GetTokenService() apisecurity.TokenService {
-	return apisecurity.NewTokenService(s.config, s.dbClient, s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger))
+func (s *security) GetTokenService() apitoken.Service {
+	return apitoken.NewService(s.config, s.dbClient, s.GetTokenGenerator(), jwttoken.NewStore(s.dbClient, s.logger))
 }
 
 func (s *security) GetTokenProviders() []libsecurity.TokenProvider {
 	return []libsecurity.TokenProvider{
-		tokenprovider.NewTokenProvider(s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
-		tokenprovider.NewTokenProvider(s.GetTokenGenerator(), sharetoken.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
+		apitoken.NewProvider(s.GetTokenGenerator(), jwttoken.NewStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
+		apitoken.NewProvider(s.GetTokenGenerator(), sharetoken.NewTracker(s.dbClient, s.logger), s.newUserProvider(), s.logger),
 	}
 }
 
@@ -263,9 +264,9 @@ func (s *security) GetCookieOptions() CookieOptions {
 	return s.cookieOptions
 }
 
-func (s *security) GetTokenGenerator() token.Generator {
+func (s *security) GetTokenGenerator() libsectoken.Generator {
 	secretKey := os.Getenv(JwtSecretEnv)
-	return token.NewJwtGenerator([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
+	return jwt.NewGenerator([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
 }
 
 func (s *security) newUserProvider() libsecurity.UserProvider {

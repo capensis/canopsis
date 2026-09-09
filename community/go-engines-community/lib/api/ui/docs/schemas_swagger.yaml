@@ -1092,6 +1092,37 @@ definitions:
     required:
     - color
     type: object
+  apitoken.EditRequest:
+    properties:
+      duration:
+        $ref: '#/definitions/datetime.DurationWithUnit'
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - name
+    type: object
+  apitoken.Response:
+    properties:
+      _id:
+        type: string
+      accessed:
+        type: integer
+      created:
+        type: integer
+      expired:
+        type: integer
+      name:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/author.Role'
+        type: array
+      user:
+        $ref: '#/definitions/author.Author'
+      value:
+        type: string
+    type: object
   appinfo.AppInfoResponse:
     properties:
       allow_change_severity_to_info:
@@ -5930,7 +5961,7 @@ definitions:
   role.EditRequest:
     properties:
       auth_config:
-        $ref: '#/definitions/security.AuthMethodConf'
+        $ref: '#/definitions/token.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -5977,7 +6008,7 @@ definitions:
       _id:
         type: string
       auth_config:
-        $ref: '#/definitions/security.AuthMethodConf'
+        $ref: '#/definitions/token.AuthMethodConf'
       author:
         $ref: '#/definitions/author.Author'
       created:
@@ -6472,13 +6503,6 @@ definitions:
         type: string
     required:
     - type
-    type: object
-  security.AuthMethodConf:
-    properties:
-      expiration_interval:
-        $ref: '#/definitions/datetime.DurationWithUnit'
-      inactivity_interval:
-        $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
   serviceweather.Counters:
     properties:
@@ -7205,6 +7229,13 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  token.AuthMethodConf:
+    properties:
+      expiration_interval:
+        $ref: '#/definitions/datetime.DurationWithUnit'
+      inactivity_interval:
+        $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
   types.Author:
     properties:
