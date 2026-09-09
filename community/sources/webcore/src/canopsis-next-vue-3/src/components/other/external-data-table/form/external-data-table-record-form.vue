@@ -16,7 +16,7 @@
 <script>
 import { computed } from 'vue';
 
-import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, FORM_MAX_STRING_LENGTH } from '@/constants';
 
 import { useFormContext } from '@/hooks/form';
 
@@ -71,7 +71,7 @@ export default {
             key: column.name,
             bind: {
               ...defaultBind,
-              maxLength: 255,
+              maxLength: FORM_MAX_STRING_LENGTH,
               values: values.value[column.name],
               'onUpdate:values': value => setValue(column.name, value),
             },
@@ -84,7 +84,7 @@ export default {
             EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
           ].includes(column.type)
         ) {
-          defaultBind.maxLength = 255;
+          defaultBind.maxLength = FORM_MAX_STRING_LENGTH;
         }
 
         if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {

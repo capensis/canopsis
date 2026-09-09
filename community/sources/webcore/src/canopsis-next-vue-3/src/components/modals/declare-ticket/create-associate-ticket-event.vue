@@ -19,7 +19,7 @@
           <c-description-field
             v-model="comment"
             :label="t('common.comment')"
-            :max-length="255"
+            :max-length="FORM_MAX_STRING_LENGTH"
             name="comment"
           />
           <c-alert v-if="itemsWithoutAck.length" type="info">
@@ -48,7 +48,7 @@
 <script>
 import { computed } from 'vue';
 
-import { MODALS } from '@/constants';
+import { FORM_MAX_STRING_LENGTH, MODALS } from '@/constants';
 
 import {
   eventToAssociateTicketForm,
@@ -123,6 +123,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       config,
       values,
       ticketResources,

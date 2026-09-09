@@ -375,6 +375,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    expandedAlarm: {
+      type: Boolean,
+      default: false,
+    },
+    expandedEntity: {
+      type: Boolean,
+      default: false,
+    },
+    expandedPbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    expandedTotalEntity: {
+      type: Boolean,
+      default: false,
+    },
+    expandedServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
     alarmName: {
       type: String,
       default: '',
@@ -408,12 +428,12 @@ export default {
 
     const wrapperElement = ref(null);
     const expanded = ref({
-      alarm: false,
-      entity: false,
-      pbehavior: false,
+      alarm: props.expandedAlarm,
+      entity: props.expandedEntity,
+      pbehavior: props.expandedPbehavior,
       event: props.expandedEvent,
-      totalEntity: false,
-      serviceWeather: false,
+      totalEntity: props.expandedTotalEntity,
+      serviceWeather: props.expandedServiceWeather,
     });
 
     const preparedAlarmName = computed(

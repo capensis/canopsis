@@ -172,9 +172,10 @@
             @remove:tag="$emit('remove:tag', $event)"
           />
 
-          <alarms-list-expand-row
+          <c-table-expand-row
             :expanded="isAlarmExpanded(getTableItem(item))"
             :colspan="headersColspan"
+            row-class="alarms-list-table__expand-row"
           >
             <alarms-expand-panel
               :alarm="getExpandedAlarm(getTableItem(item))"
@@ -185,7 +186,7 @@
               @select:tag="$emit('select:tag', $event)"
               @remove:tag="$emit('remove:tag', $event)"
             />
-          </alarms-list-expand-row>
+          </c-table-expand-row>
         </template>
       </template>
     </v-data-table-server>
@@ -242,7 +243,6 @@ import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 
-import AlarmsListExpandRow from './alarms-list-expand-row.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 export default {
@@ -256,7 +256,6 @@ export default {
   components: {
     AlarmHeaderCell,
     AlarmsExpandPanel,
-    AlarmsListExpandRow,
     AlarmsListRow,
     MassActionsPanel,
   },
@@ -1026,7 +1025,7 @@ export default {
         return;
       }
 
-      if (!expanded) {
+      if (!expanded && this.expandedAlarmIds.includes(alarm._id)) {
         this.expandedAlarmIds = this.expandedAlarmIds.filter(id => id !== alarm._id);
       }
     },

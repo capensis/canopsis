@@ -11,6 +11,7 @@
     :clearable="clearable"
     :name="name"
     :required="required"
+    :max-length="maxLength"
     class="c-payload-text-field"
     no-filter
     @blur="handleBlur"
@@ -69,6 +70,10 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    maxLength: {
+      type: Number,
+      required: false,
     },
   },
 

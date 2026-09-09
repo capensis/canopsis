@@ -11,11 +11,15 @@
 
     <c-form-block>
       <c-form-block-row :label="$t('common.description')">
-        <c-description-field v-model="description" :max-length="255" name="description" />
+        <c-description-field
+          v-model="description"
+          :max-length="FORM_MAX_STRING_LENGTH"
+          name="description"
+        />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.alias')">
-        <c-name-field v-model="alias" :max-length="255" name="alias" />
+        <c-name-field v-model="alias" :max-length="FORM_MAX_STRING_LENGTH" name="alias" />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.type')">
@@ -27,6 +31,8 @@
 
 <script>
 import { ref } from 'vue';
+
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
 
 import { useFormModels } from '@/hooks/form';
 
@@ -81,6 +87,7 @@ export default {
       description,
       alias,
       type,
+      FORM_MAX_STRING_LENGTH,
 
       updateSelectedItems,
     };

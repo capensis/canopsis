@@ -234,7 +234,11 @@ export default {
 
     ticketOptions() {
       return {
-        operators: [PATTERN_OPERATORS.ticketAssociated, PATTERN_OPERATORS.ticketNotAssociated],
+        operators: [
+          PATTERN_OPERATORS.ticketAssociated,
+          PATTERN_OPERATORS.ticketNotAssociated,
+          PATTERN_OPERATORS.ticketCreationFailed,
+        ],
       };
     },
 

@@ -1,5 +1,10 @@
 <template>
-  <v-tab :value="value" :disabled="disabled" class="v-tab--tooltip">
+  <v-tab
+    :value="value"
+    :disabled="disabled"
+    :class="{ 'text-error': error }"
+    class="v-tab--tooltip"
+  >
     <v-tooltip :disabled="!disabled" location="top">
       <template #activator="{ props: activatorProps }">
         <span v-bind="activatorProps" class="test-variables-tab__wrapper">
@@ -24,6 +29,10 @@ export default {
     value: {
       type: [Number, String],
       required: true,
+    },
+    error: {
+      type: Boolean,
+      default: false,
     },
   },
 

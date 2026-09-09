@@ -510,6 +510,7 @@ export default {
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Un ticket est associé',
     [PATTERN_OPERATORS.ticketNotAssociated]: 'Un ticket n\'est pas associé',
+    [PATTERN_OPERATORS.ticketCreationFailed]: 'Échec de la création du ticket',
 
     [PATTERN_OPERATORS.canceled]: 'Annulé',
     [PATTERN_OPERATORS.notCanceled]: 'Non annulé',

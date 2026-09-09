@@ -27,7 +27,7 @@
               <c-name-field
                 :model-value="modelValue[index].name_prefix"
                 :label="t('common.namePrefix')"
-                :max-length="255"
+                :max-length="FORM_MAX_STRING_LENGTH"
                 :name="getName(modelValue[index], 'name_prefix')"
                 required
                 @update:model-value="updateField(index, 'name_prefix', $event)"
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { FORM_MAX_STRING_LENGTH, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { alarmListFastPbehaviorParametersItemToForm } from '@/helpers/entities/widget/forms/alarm';
 
@@ -96,6 +96,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       types,
       dragHandleClass,
       add,

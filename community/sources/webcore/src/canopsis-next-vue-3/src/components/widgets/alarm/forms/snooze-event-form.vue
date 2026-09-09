@@ -9,13 +9,15 @@
       v-model="comment"
       :label="t('common.note')"
       :required="isNoteRequired"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="comment"
     />
   </c-layout>
 </template>
 
 <script>
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -36,6 +38,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       duration,
       comment,
     };

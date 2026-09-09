@@ -160,6 +160,11 @@ export default {
 
     const saveButtonTooltip = computed(() => hasSelectedTest.value && isEqualValidationForm.value ? t('templateTesting.testSaved') : '',
     );
+    const hasAnyError = computed(
+      () =>
+        !!Object.keys(testFormContext.errors.value).length ||
+        !!Object.keys(testDataFormContext.errors.value).length,
+    );
 
     const save = () => saveAction(selectedTest.value, getValidationFormData);
 
@@ -197,6 +202,7 @@ export default {
       saveButtonTooltip,
       testResult,
       lastRunVariables,
+      hasAnyError,
       running,
       saveAsNew,
       save,

@@ -29,7 +29,7 @@
                 :model-value="fields[index].name"
                 :label="t('common.fieldName')"
                 :name="`fields[${fields[index].key}].name`"
-                :max-length="255"
+                :max-length="FORM_MAX_STRING_LENGTH"
                 required
                 @update:model-value="updateField(index, 'name', $event)"
               />
@@ -51,6 +51,8 @@
 
 <script>
 import { computed, onMounted } from 'vue';
+
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
@@ -106,6 +108,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       fields,
       dragItemHandleClass,
       canRemoveField,

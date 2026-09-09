@@ -10,7 +10,7 @@
         :label="$t('common.title')"
         :regex="titleRegex"
         :regex-message="titleRegexMessage"
-        :max-length="255"
+        :max-length="FORM_MAX_STRING_LENGTH"
         name="title"
         required
         autofocus
@@ -31,7 +31,7 @@
 <script>
 import { ref } from 'vue';
 
-import { ICON_TITLE_REGEX, MAX_ICON_SIZE_IN_KB } from '@/constants';
+import { FORM_MAX_STRING_LENGTH, ICON_TITLE_REGEX, MAX_ICON_SIZE_IN_KB } from '@/constants';
 
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
@@ -65,6 +65,7 @@ export default {
       fillBorder,
       content,
       file,
+      FORM_MAX_STRING_LENGTH,
       iconOriginalTitle,
       titleRegex,
       titleRegexMessage,

@@ -97,27 +97,15 @@
       </template>
 
       <template v-if="hasExpandSlot" #expanded-row="props">
-        <tr>
-          <td
-            :colspan="preparedHeaders.length"
-            :class="{
-              'c-advanced-data-table__expand-cell--closing': isItemClosing(props.item),
-            }"
-            class="c-advanced-data-table__expand-cell"
-          >
-            <div
-              :ref="(el) => setExpandElementRef(el, props.item)"
-              :class="{
-                'c-advanced-data-table__expand--closing': isItemClosing(props.item),
-              }"
-              class="c-advanced-data-table__expand"
-            >
-              <div :class="expandContentClass">
-                <slot v-bind="getItemsProps(props)" name="expand" />
-              </div>
-            </div>
-          </td>
-        </tr>
+        <c-table-expand-row
+          :ref="(el) => setExpandRowRef(el, props.item)"
+          :colspan="preparedHeaders.length"
+          :content-class="expandContentClass"
+          expanded
+          @after-close="removeExpandedItem(props.item)"
+        >
+          <slot v-bind="getItemsProps(props)" name="expand" />
+        </c-table-expand-row>
       </template>
 
       <template v-if="hasHeaderSlot" #headers="props">
@@ -161,8 +149,6 @@ import {
   prepareQueryWithAdvancedSearch,
   prepareQueryWithoutAdvancedSearch,
 } from '@/helpers/search/advanced-search';
-
-const EXPAND_TRANSITION_DURATION = 260;
 
 export default {
   props: {
@@ -302,10 +288,7 @@ export default {
     return {
       selectedItems: [],
       expandedItems: [],
-      openingExpandedKeys: [],
-      closingExpandedKeys: [],
-      expandElements: {},
-      expandTimeouts: {},
+      expandRows: {},
       keepSelectedAfterAction: this.defaultKeepSelectedAfterAction ?? false,
     };
   },
@@ -439,8 +422,6 @@ export default {
 
   watch: {
     items(items) {
-      const itemKeys = new Set(items.map(item => this.getItemKey(item)));
-
       if (this.selectAll) {
         const selectedKeys = new Set(this.selectedItems.map(item => this.getItemKey(item)));
 
@@ -454,13 +435,7 @@ export default {
       this.expandedItems = items.filter(
         item => expandedKeys.has(this.getItemKey(item)) && this.checkIsExpandableItem(item),
       );
-      this.openingExpandedKeys = this.openingExpandedKeys.filter(key => itemKeys.has(key));
-      this.closingExpandedKeys = this.closingExpandedKeys.filter(key => itemKeys.has(key));
     },
-  },
-
-  beforeUnmount() {
-    Object.values(this.expandTimeouts).forEach(clearTimeout);
   },
 
   methods: {
@@ -476,7 +451,7 @@ export default {
       return this.isExpandableItem ? this.isExpandableItem(item) : true;
     },
 
-    setExpandElementRef(element, item) {
+    setExpandRowRef(element, item) {
       const key = this.getItemKey(item);
 
       if (!key) {
@@ -484,61 +459,18 @@ export default {
       }
 
       if (!element) {
-        delete this.expandElements[key];
+        delete this.expandRows[key];
 
         return;
       }
 
-      this.expandElements[key] = element;
-
-      if (this.openingExpandedKeys.includes(key)) {
-        this.$nextTick(() => this.openExpandElement(key));
-      }
-    },
-
-    openExpandElement(key) {
-      const element = this.expandElements[key];
-
-      if (!element) {
-        return;
-      }
-
-      element.style.height = '0px';
-
-      requestAnimationFrame(() => {
-        element.style.height = `${element.scrollHeight}px`;
-      });
-    },
-
-    closeExpandElement(key) {
-      const element = this.expandElements[key];
-
-      if (!element) {
-        return;
-      }
-
-      element.style.height = `${element.scrollHeight}px`;
-
-      requestAnimationFrame(() => {
-        element.style.height = '0px';
-      });
+      this.expandRows[key] = element;
     },
 
     isItemExpanded(item) {
       const key = this.getItemKey(item);
 
-      return (
-        this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key) &&
-        !this.closingExpandedKeys.includes(key)
-      );
-    },
-
-    isItemOpening(item) {
-      return this.openingExpandedKeys.includes(this.getItemKey(item));
-    },
-
-    isItemClosing(item) {
-      return this.closingExpandedKeys.includes(this.getItemKey(item));
+      return this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key);
     },
 
     toggleExpand(item) {
@@ -548,55 +480,23 @@ export default {
 
       const key = this.getItemKey(item);
 
-      if (this.expandTimeouts[key]) {
-        clearTimeout(this.expandTimeouts[key]);
-        delete this.expandTimeouts[key];
-      }
-
       if (this.isItemExpanded(item)) {
-        this.openingExpandedKeys = this.openingExpandedKeys.filter(
-          openingKey => openingKey !== key,
-        );
-        this.closingExpandedKeys = [...this.closingExpandedKeys, key];
-
-        this.$nextTick(() => this.closeExpandElement(key));
-
-        this.expandTimeouts[key] = window.setTimeout(() => {
-          this.expandedItems = this.expandedItems.filter(
-            expandedItem => this.getItemKey(expandedItem) !== key,
-          );
-          this.closingExpandedKeys = this.closingExpandedKeys.filter(
-            closingKey => closingKey !== key,
-          );
-
-          delete this.expandTimeouts[key];
-        }, EXPAND_TRANSITION_DURATION);
+        this.expandRows[key]?.hide();
 
         return;
       }
 
-      this.closingExpandedKeys = this.closingExpandedKeys.filter(
-        closingKey => closingKey !== key,
-      );
-      this.openingExpandedKeys = [...this.openingExpandedKeys, key];
-
       if (!this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key)) {
         this.expandedItems = [...this.expandedItems, item];
       }
+    },
 
-      this.expandTimeouts[key] = window.setTimeout(() => {
-        const element = this.expandElements[key];
+    removeExpandedItem(item) {
+      const key = this.getItemKey(item);
 
-        if (element) {
-          element.style.height = 'auto';
-        }
-
-        this.openingExpandedKeys = this.openingExpandedKeys.filter(
-          openingKey => openingKey !== key,
-        );
-
-        delete this.expandTimeouts[key];
-      }, EXPAND_TRANSITION_DURATION);
+      this.expandedItems = this.expandedItems.filter(
+        expandedItem => this.getItemKey(expandedItem) !== key,
+      );
     },
 
     updateOptions(options) {
@@ -606,11 +506,7 @@ export default {
 
       this.selected = [];
       this.expandedItems = [];
-      this.openingExpandedKeys = [];
-      this.closingExpandedKeys = [];
-
-      Object.values(this.expandTimeouts).forEach(clearTimeout);
-      this.expandTimeouts = {};
+      this.expandRows = {};
 
       this.$emit('update:options', options);
     },
@@ -707,13 +603,6 @@ export default {
     transform: rotate(-180deg);
   }
 
-  &__expand-cell {
-    height: 0;
-    padding: 0 !important;
-    border-bottom: 0 !important;
-    line-height: 0;
-  }
-
   &__search {
     display: flex;
     align-items: center;
@@ -723,34 +612,6 @@ export default {
     :deep(.c-action-btn) {
       align-self: center;
     }
-  }
-
-  &__expand {
-    height: auto;
-    overflow: hidden;
-    opacity: 1;
-    line-height: normal;
-    transition:
-      height 0.2s ease-out,
-      opacity 0.2s ease-out;
-  }
-
-  &__expand--opening,
-  &__expand--closing {
-    will-change: height, opacity;
-  }
-
-  &__expand--opening {
-    opacity: 1;
-  }
-
-  &__expand--closing {
-    opacity: 0;
-  }
-
-  &__expand-cell--closing {
-    padding: 0 !important;
-    border-bottom: 0 !important;
   }
 
   & .c-checkbox-wrapper {

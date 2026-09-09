@@ -3,13 +3,23 @@ import { computed, onBeforeUnmount, ref, unref, watch } from 'vue';
 
 import { MODALS, TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
+import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import { formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
+import { formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
+import { formToExternalAuthToken } from '@/helpers/entities/external-auth-token/form';
+import { formToLinkRule } from '@/helpers/entities/link/form';
+import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
+import { formToRemediationInstructionRequest } from '@/helpers/entities/remediation/instruction/form';
 import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
+import { formToScenario } from '@/helpers/entities/scenario/form';
+import { formToService } from '@/helpers/entities/service/form';
 import {
   formToTemplateTestingTestValidateForm,
   getChangesForValidateForm,
   formToTemplateTestingTestValidate,
   templateTestingTestValidateToForm,
 } from '@/helpers/entities/template-testing-test/form';
+import { formToWidget } from '@/helpers/entities/widget/form';
 import { uid } from '@/helpers/uid';
 
 import { useI18n } from '@/hooks/i18n';
@@ -326,20 +336,50 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
 export const useTemplateTestRunner = (props, { mainFormContext, testDataFormContext }) => {
   const testResult = ref({});
 
-  const { validateJobsVariables } = useTemplateTesting();
+  const {
+    validateEntityServicesVariables,
+    validateEventFilterRulesVariables,
+    validateLinkRulesVariables,
+    validateScenariosVariables,
+    validateWidgetsVariables,
+    validateDeclareTicketRulesVariables,
+    validateDynamicInfosVariables,
+    validateInstructionsVariables,
+    validateJobsVariables,
+    validateMetaAlarmRulesVariables,
+    validateWebhookTokenRulesVariables,
+  } = useTemplateTesting();
 
   const validateHandler = computed(
     () =>
       ({
+        [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: validateEventFilterRulesVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.linkRule]: validateLinkRulesVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.scenario]: validateScenariosVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.widget]: validateWidgetsVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: validateDeclareTicketRulesVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: validateDynamicInfosVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.instruction]: validateInstructionsVariables,
         [TEMPLATE_TESTING_TEST_TYPES.job]: validateJobsVariables,
-      })[props.type],
+        [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: validateMetaAlarmRulesVariables,
+        [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: validateWebhookTokenRulesVariables,
+      })[props.type] ?? validateEntityServicesVariables,
   );
 
   const formToRequest = computed(
     () =>
       ({
+        [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: formToEventFilter,
+        [TEMPLATE_TESTING_TEST_TYPES.linkRule]: formToLinkRule,
+        [TEMPLATE_TESTING_TEST_TYPES.scenario]: formToScenario,
+        [TEMPLATE_TESTING_TEST_TYPES.widget]: formToWidget,
+        [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: formToDeclareTicketRule,
+        [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: formToDynamicInfo,
+        [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstructionRequest,
         [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
-      })[props.type],
+        [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
+        [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: formToExternalAuthToken,
+      })[props.type] ?? formToService,
   );
 
   const createRunTestHandler = (

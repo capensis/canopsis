@@ -105,7 +105,6 @@
 
       <c-form-block-row :label="t('common.theme', 2)">
         <c-theme-field
-          v-if="hasReadThemeAccess"
           v-model="uiThemeField"
           name="ui_theme"
           clearable
@@ -126,9 +125,9 @@
 <script>
 import { computed } from 'vue';
 
-import { GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
+import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
-import { useAuth, useCRUDPermissions } from '@/hooks/auth';
+import { useAuth } from '@/hooks/auth';
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -160,9 +159,6 @@ export default {
     const menuProps = { offsetY: true };
     const { t } = useI18n();
     const { currentUser } = useAuth();
-    const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(
-      USER_PERMISSIONS.technical.profile.theme,
-    );
 
     const {
       enabledField,
@@ -225,7 +221,6 @@ export default {
       uiThemeField,
       defaultviewField,
       groupsNavigationItems,
-      hasReadThemeAccess,
       idpFieldsMap,
       isSelf,
       isDisabledRoleItem,

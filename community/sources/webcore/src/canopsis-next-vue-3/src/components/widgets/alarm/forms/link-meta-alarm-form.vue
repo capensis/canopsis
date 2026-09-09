@@ -18,7 +18,7 @@
     <c-name-field
       :model-value="form.comment"
       :label="t('common.note')"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="comment"
       @update:model-value="updateField('comment', $event)"
     />
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
@@ -73,6 +75,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       updateField,
     };
   },
