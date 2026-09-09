@@ -17,6 +17,8 @@
 <script setup>
 import { computed } from 'vue';
 
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 
 const props = defineProps({
@@ -26,7 +28,7 @@ const props = defineProps({
   },
   max: {
     type: Number,
-    default: 255,
+    default: FORM_MAX_STRING_LENGTH,
   },
 });
 

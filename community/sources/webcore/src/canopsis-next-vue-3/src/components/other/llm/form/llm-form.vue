@@ -10,7 +10,7 @@
     <c-name-field
       :model-value="form.name"
       :label="$t('llm.modelName')"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="llm_name"
       required
       @update:model-value="updateField('name', $event)"
@@ -85,6 +85,8 @@
 <script>
 import { computed } from 'vue';
 
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 
 import { useLlmModelsListForSelect } from '@/components/other/llm/hooks/llm-models-list';
@@ -142,6 +144,7 @@ export default {
     };
 
     return {
+      FORM_MAX_STRING_LENGTH,
       models,
       modelsPending,
       thinkingLevels,

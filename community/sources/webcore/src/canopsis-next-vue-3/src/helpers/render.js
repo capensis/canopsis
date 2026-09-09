@@ -49,9 +49,7 @@ export const getNearestViewportIndexesBound = ({
 
   const { top: wrapperTop } = wrapperEl.getBoundingClientRect();
 
-  wrapperEl
-    .querySelectorAll('.v-data-table__expanded__content, .alarms-list-table__expand-row-content')
-    .forEach((element) => {
+  wrapperEl.querySelectorAll('.v-data-table__expanded__content').forEach((element) => {
       const { height: expandPanelHeight, top: expandPanelTop } = element.getBoundingClientRect();
 
       if (expandPanelTop < originalMiddleOfVisible) {

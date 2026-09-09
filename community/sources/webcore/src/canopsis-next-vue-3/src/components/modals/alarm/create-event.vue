@@ -11,7 +11,7 @@
           v-model="comment"
           :label="t('common.note')"
           :required="isCommentRequired"
-          :max-length="255"
+          :max-length="FORM_MAX_STRING_LENGTH"
           name="comment"
           autofocus
         />
@@ -37,7 +37,7 @@
 <script>
 import { computed } from 'vue';
 
-import { MODALS } from '@/constants';
+import { FORM_MAX_STRING_LENGTH, MODALS } from '@/constants';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
@@ -89,6 +89,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       config,
       comment,
       isCommentRequired,

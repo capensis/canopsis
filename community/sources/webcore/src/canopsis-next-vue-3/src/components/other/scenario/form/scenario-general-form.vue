@@ -2,7 +2,7 @@
   <c-layout column>
     <c-name-field
       v-model="nameField"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       autofocus
       required
     />
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
@@ -59,6 +61,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       nameField,
       priorityField,
       triggersField,

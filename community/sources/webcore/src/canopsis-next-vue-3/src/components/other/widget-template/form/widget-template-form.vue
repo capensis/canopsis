@@ -3,7 +3,7 @@
     <c-name-field
       v-model="title"
       :label="t('common.name')"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="title"
       autofocus
       required
@@ -32,6 +32,7 @@ import { computed, onMounted } from 'vue';
 import {
   ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES,
   COLUMNS_WIDGET_TEMPLATES_TYPES,
+  FORM_MAX_STRING_LENGTH,
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
@@ -74,6 +75,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       title,
       sortColumns,
       entityInfos,

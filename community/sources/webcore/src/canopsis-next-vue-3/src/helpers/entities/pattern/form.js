@@ -14,6 +14,7 @@ import {
 } from 'lodash';
 
 import {
+  ALARM_FIELDS,
   PATTERN_FIELD_TYPES,
   PATTERN_ARRAY_OPERATORS,
   PATTERN_BOOLEAN_OPERATORS,
@@ -1100,6 +1101,7 @@ export const patternRuleToForm = (rule = {}) => {
           [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
           [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
           [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+          [ALARM_FIELDS.failedTicket]: PATTERN_OPERATORS.ticketCreationFailed,
           [ALARM_PATTERN_FIELDS.activationDate]: PATTERN_OPERATORS.activated,
           [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.isMetaAlarm,
         }[rule.field];
@@ -1121,6 +1123,10 @@ export const patternRuleToForm = (rule = {}) => {
 
       if (rule.field === ALARM_PATTERN_FIELDS.activationDate) {
         form.attribute = ALARM_PATTERN_FIELDS.activated;
+      }
+
+      if (rule.field === ALARM_FIELDS.failedTicket) {
+        form.attribute = ALARM_PATTERN_FIELDS.ticket;
       }
       break;
 
@@ -1388,11 +1394,16 @@ export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
  * @return {PatternRule}
  */
 export const formRuleToPatternRule = (rule) => {
+  let field = rule.attribute;
+
+  if (rule.attribute === ALARM_PATTERN_FIELDS.activated) {
+    field = ALARM_PATTERN_FIELDS.activationDate;
+  } else if (rule.operator === PATTERN_OPERATORS.ticketCreationFailed) {
+    field = ALARM_FIELDS.failedTicket;
+  }
+
   const pattern = {
-    [rule.alias ? 'alias' : 'field']:
-      rule.attribute === ALARM_PATTERN_FIELDS.activated
-        ? ALARM_PATTERN_FIELDS.activationDate
-        : rule.attribute,
+    [rule.alias ? 'alias' : 'field']: field,
     cond: {
       value: rule.value,
       type: PATTERN_CONDITIONS.equal,
@@ -1518,6 +1529,7 @@ export const formRuleToPatternRule = (rule) => {
 
     case PATTERN_OPERATORS.exist:
     case PATTERN_OPERATORS.ticketAssociated:
+    case PATTERN_OPERATORS.ticketCreationFailed:
     case PATTERN_OPERATORS.canceled:
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:

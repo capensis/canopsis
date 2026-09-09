@@ -2,7 +2,7 @@
   <c-layout gap="3" column>
     <c-name-field
       v-model="nameField"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       autofocus
       required
     />
@@ -36,6 +36,7 @@ import { computed } from 'vue';
 
 import {
   EXTERNAL_DATA_TYPES,
+  FORM_MAX_STRING_LENGTH,
   LINK_RULE_TYPES,
   LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES,
 } from '@/constants';
@@ -91,6 +92,7 @@ export default {
        * It's using in the parent component to display the validation header color for tabs
        */
       hasAnyError,
+      FORM_MAX_STRING_LENGTH,
       nameField,
       typeField,
       externalDataField,

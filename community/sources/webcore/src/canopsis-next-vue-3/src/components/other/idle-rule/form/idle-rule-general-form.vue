@@ -2,7 +2,7 @@
   <c-layout column>
     <c-name-field
       v-model="nameField"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       autofocus
       required
     />
@@ -67,7 +67,7 @@
 <script>
 import { computed } from 'vue';
 
-import { ACTION_TYPES, MIN_DURATION_VALUE, MIN_PRIORITY } from '@/constants';
+import { ACTION_TYPES, FORM_MAX_STRING_LENGTH, MIN_DURATION_VALUE, MIN_PRIORITY } from '@/constants';
 
 import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
@@ -146,6 +146,7 @@ export default {
       parameters,
       actionTypes: IDLE_RULE_ACTION_TYPES,
       isAssociateTicketAction,
+      FORM_MAX_STRING_LENGTH,
       MIN_DURATION_VALUE,
       MIN_PRIORITY,
     };

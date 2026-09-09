@@ -114,6 +114,22 @@ export default {
         );
       }
 
+      const triggerFields = [
+        {
+          icon: 'bolt',
+          label: this.$t('common.emitTriggerSuccess'),
+          flexClass: 'w-50',
+        },
+      ];
+
+      if (this.action.type === ACTION_TYPES.webhook && this.action.parameters?.declare_ticket) {
+        triggerFields.push({
+          icon: 'bolt',
+          label: this.$t('common.emitTriggerFail'),
+          flexClass: 'w-50',
+        });
+      }
+
       items.push(
         {
           icon: 'message',
@@ -123,11 +139,7 @@ export default {
             template: this.action.comment,
           },
         },
-        {
-          icon: 'bolt',
-          label: this.$t('common.emitTrigger'),
-          flexClass: 'w-50',
-        },
+        ...triggerFields,
         ...workflowFields,
       );
 

@@ -21,7 +21,7 @@
           :required="field.required"
           :label="field.label || field.name"
           :name="field.name"
-          :max-length="255"
+          :max-length="FORM_MAX_STRING_LENGTH"
           @update:model-value="updateField(field.name, $event)"
         />
       </c-layout>
@@ -31,6 +31,8 @@
 
 <script>
 import { computed } from 'vue';
+
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
@@ -59,6 +61,7 @@ export default {
 
     return {
       t,
+      FORM_MAX_STRING_LENGTH,
       fields,
       updateField,
     };

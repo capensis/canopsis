@@ -8,6 +8,7 @@
             :label="$t('common.label')"
             :variables="templateVars.label"
             :name="labelFieldName"
+            :max-length="FORM_MAX_STRING_LENGTH"
             class="mr-2"
             required
             @update:value="updateField('label', $event)"
@@ -19,6 +20,8 @@
             <c-text-field
               :model-value="form.category"
               :label="$t('common.category')"
+              :name="categoryFieldName"
+              :max-length="FORM_MAX_STRING_LENGTH"
               @update:model-value="updateField('category', $event)"
             />
           </c-form-block-row>
@@ -58,10 +61,11 @@
             />
           </c-form-block-row>
 
-          <c-form-block-row :label="$t('common.actionType')">
+          <c-form-block-row :label="$t('linkRule.type')" align-center>
             <c-radio-group
               :model-value="form.action"
-              :label="$t('common.actionType')"
+              :label="$t('linkRule.type')"
+              hide-details
               @update:model-value="updateField('action', $event)"
             >
               <v-radio
@@ -85,7 +89,7 @@
 <script>
 import { computed } from 'vue';
 
-import { LINK_RULE_TYPES } from '@/constants';
+import { FORM_MAX_STRING_LENGTH, LINK_RULE_TYPES } from '@/constants';
 
 export default {
   props: {
@@ -112,6 +116,7 @@ export default {
   setup(props, { emit }) {
     const isAlarmType = computed(() => props.type === LINK_RULE_TYPES.alarm);
     const labelFieldName = computed(() => `${props.name}.label`);
+    const categoryFieldName = computed(() => `${props.name}.category`);
     const iconFieldName = computed(() => `${props.name}.icon`);
 
     const updateField = (field, value) => {
@@ -125,7 +130,9 @@ export default {
 
     return {
       isAlarmType,
+      FORM_MAX_STRING_LENGTH,
       labelFieldName,
+      categoryFieldName,
       iconFieldName,
 
       updateField,

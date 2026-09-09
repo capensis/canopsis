@@ -3,6 +3,7 @@
     :data-id="alarm._id"
     class="alarms-list-row"
     @mousedown="mouseSelecting"
+    @dblclick="openExpandPanelByDoubleClick"
   >
     <td
       v-if="!preparedVisible"
@@ -38,6 +39,7 @@
 
           <alarms-expand-panel-btn
             v-if="expandable"
+            ref="expandPanelBtn"
             :expanded="expanded"
             :alarm="alarm"
             :widget="widget"
@@ -285,6 +287,21 @@ export default {
       event.preventDefault();
 
       this.$emit('update:selected', !this.selected);
+    },
+
+    openExpandPanelByDoubleClick() {
+      if (
+        !this.expandable ||
+        !this.widget.parameters?.openExpandPanelByDoubleClick
+      ) {
+        return;
+      }
+
+      const expandPanelBtn = Array.isArray(this.$refs.expandPanelBtn)
+        ? this.$refs.expandPanelBtn[0]
+        : this.$refs.expandPanelBtn;
+
+      expandPanelBtn?.showExpandPanel?.(!this.expanded);
     },
 
     getCellStyle(header) {

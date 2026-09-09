@@ -5,6 +5,8 @@
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :pending="pending"
+    :expanded-alarm="readonly"
+    :expanded-entity="readonly"
     name="patterns"
     with-alarm
     with-entity

@@ -7,3 +7,5 @@ export const MIN_PRIORITY = 0;
 export const MIN_DURATION_VALUE = 1;
 
 export const MIN_FREQUENCY_LIMIT = 1;
+
+export const FORM_MAX_STRING_LENGTH = 255;

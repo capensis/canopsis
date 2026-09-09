@@ -509,6 +509,7 @@ export default {
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Ticket is associated',
     [PATTERN_OPERATORS.ticketNotAssociated]: 'Ticket is not associated',
+    [PATTERN_OPERATORS.ticketCreationFailed]: 'Ticket creation failed',
 
     [PATTERN_OPERATORS.canceled]: 'Canceled',
     [PATTERN_OPERATORS.notCanceled]: 'Not canceled',
