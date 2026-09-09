@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	libapisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -47,7 +48,7 @@ func LoginHandler(config libsecurity.CasConfig, errorResponder response.ErrorRes
 func CallbackHandler(
 	p libsecurity.HttpProvider,
 	enforcer libsecurity.Enforcer,
-	tokenService libapisecurity.TokenService,
+	tokenService token.Service,
 	maintenanceAdapter config.MaintenanceAdapter,
 	errorResponder response.ErrorResponder,
 ) gin.HandlerFunc {

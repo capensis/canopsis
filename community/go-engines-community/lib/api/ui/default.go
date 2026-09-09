@@ -29,6 +29,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/jwttoken"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/sharetoken"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/techmetrics"
 	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/websocket"
@@ -59,8 +61,6 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
@@ -651,12 +651,11 @@ func Default(
 
 		return nil
 	})
-	tokenStore := token.NewMongoStore(primaryDbClient, logger)
-	shareTokenStore := sharetoken.NewMongoStore(primaryDbClient, logger)
+	tokenStore := jwttoken.NewStore(primaryDbClient, logger)
+	shareTokenStore := sharetoken.NewTracker(primaryDbClient, logger)
 	api.AddWorker("auth_token_activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
 		services.WebsocketHub, logger))
-	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
-		logger))
+	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, primaryDbClient, logger))
 	api.AddWorker("websocket", func(ctx context.Context) error {
 		services.WebsocketHub.Run(ctx)
 

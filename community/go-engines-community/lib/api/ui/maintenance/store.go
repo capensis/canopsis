@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/broadcastmessage"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -34,14 +35,14 @@ type store struct {
 	broadcastCollection mongo.DbCollection
 
 	userProvider security.UserProvider
-	tokenService apisecurity.TokenService
+	tokenService token.Service
 	sessionStore session.Store
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	userProvider security.UserProvider,
-	tokenService apisecurity.TokenService,
+	tokenService token.Service,
 	sessionStore session.Store,
 ) Store {
 	return &store{
