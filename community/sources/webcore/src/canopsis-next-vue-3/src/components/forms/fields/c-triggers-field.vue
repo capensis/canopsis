@@ -5,7 +5,9 @@
     :disabled="disabled"
     :label="label || $t('common.trigger', 2)"
     :name="name"
+    :required="required"
     :error-messages="errorMessages"
+    :item-props="getTriggerItemProps"
     item-value="type"
     item-title="text"
     multiple
@@ -54,6 +56,7 @@
         <template #prepend>
           <v-checkbox-btn
             :model-value="isTriggerSelected(getPreparedTrigger(item))"
+            :disabled="getPreparedTrigger(item).deprecated"
             color="primary"
             hide-details
           />
@@ -122,6 +125,10 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
       type: Boolean,
       default: false,
     },
@@ -296,6 +303,16 @@ export default {
     };
 
     /**
+     * Get select item props.
+     *
+     * @param {Trigger} trigger
+     * @return {{ disabled: boolean }}
+     */
+    const getTriggerItemProps = trigger => ({
+      disabled: !!trigger.deprecated,
+    });
+
+    /**
      * Set preparedTriggersByTypes by types array
      *
      * @param {string[]} [types = []]
@@ -325,7 +342,15 @@ export default {
      * @param {Trigger[]} value
      */
     const changeValue = (value = []) => {
-      const nextValue = value.map(({ type }) => preparedTriggersByTypes.value[type] ?? { type });
+      const nextValue = value.reduce((acc, { type }) => {
+        const preparedTrigger = preparedTriggersByTypes.value[type] ?? { type };
+
+        if (!isDeprecatedTrigger(type) || isTriggerSelected(preparedTrigger)) {
+          acc.push(preparedTrigger);
+        }
+
+        return acc;
+      }, []);
 
       updateModel(nextValue);
       setTriggersFieldValue(nextValue);
@@ -403,6 +428,7 @@ export default {
       hasError,
       getChipName,
       getAdditionalValueFieldName,
+      getTriggerItemProps,
       isTriggerSelected,
       getPreparedTrigger,
       getSelectedClass,

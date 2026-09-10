@@ -57,27 +57,29 @@ export default {
       });
 
     const changeFiles = async (files = []) => {
+      if (!files.length) {
+        return;
+      }
+
       try {
         pending.value = true;
 
-        if (files.length) {
-          const sortedFiles = sortFiles(files);
-          const results = await Promise.all(sortedFiles.map(file => getFileTextContent(file)));
+        const sortedFiles = sortFiles(files);
+        const results = await Promise.all(sortedFiles.map(file => getFileTextContent(file)));
 
-          const fileContent = results.map((content, index) => ({
-            filename: sortedFiles[index].name,
-            data: content,
-          }));
+        const fileContent = results.map((content, index) => ({
+          filename: sortedFiles[index].name,
+          data: content,
+        }));
 
-          const { counts } = await uploadSnmpMib({
-            data: { filecontent: fileContent },
-          });
+        const { counts } = await uploadSnmpMib({
+          data: { filecontent: fileContent },
+        });
 
-          popups.success({
-            text: t('snmpRule.uploadedMibPopup', sortedFiles.length, counts),
-            autoClose: 10000,
-          });
-        }
+        popups.success({
+          text: t('snmpRule.uploadedMibPopup', sortedFiles.length, { named: counts }),
+          autoClose: 10000,
+        });
       } catch (err) {
         console.warn(err);
 

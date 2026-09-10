@@ -114,7 +114,7 @@ export default {
   createChangeStateEvent: {
     title: 'Change severity',
     states: {
-      ok: 'Info',
+      ok: 'OK',
       minor: 'Minor',
       major: 'Major',
       critical: 'Critical',

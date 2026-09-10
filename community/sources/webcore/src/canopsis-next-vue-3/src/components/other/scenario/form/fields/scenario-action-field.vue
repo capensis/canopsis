@@ -1,5 +1,9 @@
 <template>
-  <c-card-iterator-item :item-number="actionNumber" :removable="false">
+  <c-card-iterator-item
+    :item-number="actionNumber"
+    :drag-handle-class="dragHandleClass"
+    :removable="false"
+  >
     <template #header>
       <c-layout gap="2" align="start">
         <c-action-type-field
@@ -122,6 +126,7 @@
               :ref="setRef"
               :type="modelValue.type"
               :name="parametersName"
+              :depth="actionParametersDepth"
               :has-previous-webhook="hasPreviousWebhook"
               :template-vars="templateVars"
             />
@@ -145,6 +150,7 @@
 import { computed, toRef } from 'vue';
 
 import {
+  isAssociateTicketActionType,
   isPbehaviorRemoveActionType,
   isWebhookActionType,
 } from '@/helpers/entities/action/form';
@@ -186,6 +192,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    dragHandleClass: {
+      type: String,
+      default: 'item-drag-handler',
+    },
   },
 
   emits: ['update:modelValue', 'remove', 'duplicate'],
@@ -201,6 +211,9 @@ export default {
     const isWebhookAction = computed(() => isWebhookActionType(props.modelValue.type));
     const isPbehaviorRemoveAction = computed(() => isPbehaviorRemoveActionType(props.modelValue.type),
     );
+    const actionParametersDepth = computed(() => (
+      isAssociateTicketActionType(props.modelValue.type) ? 1 : 0
+    ));
 
     const updateParametersField = (field, value) => {
       updateField(`parameters.${props.modelValue.type}.${field}`, value);
@@ -217,6 +230,7 @@ export default {
       t,
       parametersName,
       parameters,
+      actionParametersDepth,
       isWebhookAction,
       isPbehaviorRemoveAction,
       updateField,
