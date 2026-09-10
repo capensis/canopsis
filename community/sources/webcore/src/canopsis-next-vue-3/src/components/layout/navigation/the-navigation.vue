@@ -5,32 +5,42 @@
   </div>
 </template>
 
-<script>
-import { authMixin } from '@/mixins/auth';
+<script setup>
+import { computed, inject, ref } from 'vue';
+import { useDisplay } from 'vuetify';
+
+import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+import { GROUPS_NAVIGATION_TYPES } from '@/constants';
+
+import { useAuth } from '@/hooks/auth';
 
 import GroupsSideBar from './partials/groups-side-bar/groups-side-bar.vue';
 import TopBar from './partials/top-bar.vue';
 
-export default {
+const IGNORE_IS_RESIZING_DURATION = 300;
+const VuetifyLayoutKey = Symbol.for('vuetify:layout');
+
+defineOptions({
   name: 'TheNavigation',
+});
 
-  components: {
-    GroupsSideBar,
-    TopBar,
-  },
+const { currentUser, isShownGroupsTopBar } = useAuth();
+const { width } = useDisplay();
+const layout = inject(VuetifyLayoutKey, null);
 
-  mixins: [authMixin],
+const ignoreLayoutIsResizing = layout?.ignoreIsResizing ?? (() => {});
+const isOpen = ref(false);
 
-  data() {
-    return {
-      isOpen: false,
-    };
-  },
+const isShownGroupsSideBar = computed(() => {
+  const groupsNavigationType = currentUser.value?.ui_groups_navigation_type;
+  const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
+  const isMobileOrTablet = width.value < MEDIA_QUERIES_BREAKPOINTS.t;
 
-  methods: {
-    toggleSideBar() {
-      this.isOpen = !this.isOpen;
-    },
-  },
+  return isSelectedSideBar || isMobileOrTablet || !isShownGroupsTopBar.value;
+});
+
+const toggleSideBar = () => {
+  ignoreLayoutIsResizing(IGNORE_IS_RESIZING_DURATION);
+  isOpen.value = !isOpen.value;
 };
 </script>
