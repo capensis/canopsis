@@ -26,7 +26,6 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with default props 1`] 
 
 exports[`pie-chart Renders \`pie-chart\` widget settings with default props with changed title 1`] = `
 <widget-settings-stub
-  dirty="true"
   divider="true"
 >
   <pie-chart-widget-form-stub

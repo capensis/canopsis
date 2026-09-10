@@ -31,7 +31,6 @@ export const widgetSettingsMixin = {
   data() {
     return {
       form: widgetToForm(this.sidebar.config?.widget),
-      hasChanges: false,
     };
   },
   computed: {
@@ -47,18 +46,7 @@ export const widgetSettingsMixin = {
       return this.config.duplicate;
     },
   },
-  created() {
-    this.registerWatchOnceForForm();
-  },
   methods: {
-    registerWatchOnceForForm() {
-      const unwatch = this.$watch(() => this.form, () => {
-        this.hasChanges = true;
-
-        this.$nextTick(() => unwatch());
-      }, { deep: true });
-    },
-
     scrollToFirstError() {
       let el = this.$el.querySelector('.v-messages.error--text:first-of-type');
 
