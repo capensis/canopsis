@@ -116,7 +116,6 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
 
 exports[`map Renders \`map\` widget settings with default props with changed title 1`] = `
 <widget-settings-stub
-  dirty="true"
   divider="true"
 >
   <field-title-stub
