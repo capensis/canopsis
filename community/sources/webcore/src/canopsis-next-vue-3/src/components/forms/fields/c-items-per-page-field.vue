@@ -44,6 +44,6 @@ export default {
 
 <style scoped>
 .select {
-  max-width: 65px;
+  max-width: 70px;
 }
 </style>
