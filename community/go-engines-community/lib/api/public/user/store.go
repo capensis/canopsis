@@ -87,7 +87,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (res pagination.ListRes
 		afterLimit,
 	)
 	opts := options.Aggregate().SetCollation(&options.Collation{Locale: "en"})
-	ar, err := db.AggregateOne[pagination.Data[Response]](ctx, s.dbCollection, pipeline, opts)
+	ar, err := db.AggregateAll[Response](ctx, s.dbCollection, pipeline, opts)
 	if err != nil {
 		return res, err
 	}

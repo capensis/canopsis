@@ -48,7 +48,7 @@ func (s *store) Find(ctx context.Context, r PaginatedListRequest, userID string)
 		sort,
 		afterLimit,
 	)
-	ar, err := db.AggregateOne[pagination.Data[Response]](ctx, s.dbCollection, pipeline)
+	ar, err := db.AggregateAll[Response](ctx, s.dbCollection, pipeline)
 	if err != nil {
 		return res, err
 	}
@@ -58,9 +58,9 @@ func (s *store) Find(ctx context.Context, r PaginatedListRequest, userID string)
 		return res, err
 	}
 
-	for i, item := range ar.Data {
-		ar.Data[i].SetDefaults()
-		ar.Data[i].Links = s.generator.GenerateForEntity(ctx, item.Raw, user)
+	for i, item := range ar {
+		ar[i].SetDefaults()
+		ar[i].Links = s.generator.GenerateForEntity(ctx, item.Raw, user)
 	}
 
 	res = pagination.NewResponse[Response](r.Query, ar)
@@ -96,7 +96,7 @@ func (s *store) Search(ctx context.Context, r PaginatedSearchRequest, userID str
 		sort,
 		afterLimit,
 	)
-	ar, err := db.AggregateOne[pagination.Data[Response]](ctx, s.dbCollection, pipeline)
+	ar, err := db.AggregateAll[Response](ctx, s.dbCollection, pipeline)
 	if err != nil {
 		return res, err
 	}
@@ -106,9 +106,9 @@ func (s *store) Search(ctx context.Context, r PaginatedSearchRequest, userID str
 		return res, err
 	}
 
-	for i, item := range ar.Data {
-		ar.Data[i].SetDefaults()
-		ar.Data[i].Links = s.generator.GenerateForEntity(ctx, item.Raw, user)
+	for i, item := range ar {
+		ar[i].SetDefaults()
+		ar[i].Links = s.generator.GenerateForEntity(ctx, item.Raw, user)
 	}
 
 	res = pagination.NewResponse[Response](r.Query, ar)
