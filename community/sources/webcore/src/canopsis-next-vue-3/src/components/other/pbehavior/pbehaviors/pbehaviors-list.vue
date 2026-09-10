@@ -13,7 +13,12 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #toolbar="">
-      <c-layout gap="3" align="center" justify-end>
+      <c-layout
+        class="pbehaviors-list__toolbar-actions mt-3"
+        gap="3"
+        align="center"
+        justify="end"
+      >
         <pbehaviors-list-alarm-filtering-btn class="ma-0" @refresh="$emit('refresh')" />
       </c-layout>
     </template>
@@ -208,3 +213,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pbehaviors-list__toolbar-actions {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+</style>

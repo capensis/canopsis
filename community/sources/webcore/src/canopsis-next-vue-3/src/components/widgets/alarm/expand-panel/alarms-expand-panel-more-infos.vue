@@ -1,5 +1,5 @@
 <template>
-  <div class="alarms-expand-panel-more-infos">
+  <div>
     <c-compiled-template
       v-if="template"
       :template-id="templateId"
@@ -58,10 +58,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.alarms-expand-panel-more-infos {
-  width: 90%;
-  margin: 0 auto;
-}
-</style>

@@ -20,36 +20,32 @@
       </v-tab>
     </v-tabs>
 
-    <c-layout class="pa-3 secondary lighten-2">
-      <v-card class="pa-3 pbehaviors-list-expand-item__card">
-        <v-window v-model="activeTab" class="pt-2">
-          <v-window-item value="patterns">
-            <v-row justify="center">
-              <v-col cols="8">
-                <pbehavior-patterns-form
-                  :form="patterns"
-                  :pbehavior-id="pbehavior._id"
-                  pbehavior-counter-type
-                  readonly
-                />
-              </v-col>
-            </v-row>
-          </v-window-item>
+    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
+      <c-window-expand-item value="patterns" cols="8">
+        <pbehavior-patterns-form
+          :form="patterns"
+          :pbehavior-id="pbehavior._id"
+          pbehavior-counter-type
+          readonly
+        />
+      </c-window-expand-item>
 
-          <v-window-item value="entities">
-            <pbehavior-entities :pbehavior="pbehavior" />
-          </v-window-item>
+      <c-window-expand-item value="entities" cols="10">
+        <pbehavior-entities :pbehavior="pbehavior" />
+      </c-window-expand-item>
 
-          <v-window-item value="comments">
-            <pbehavior-comments :comments="pbehavior.comments" />
-          </v-window-item>
+      <c-window-expand-item value="comments" cols="10">
+        <pbehavior-comments :comments="pbehavior.comments" />
+      </c-window-expand-item>
 
-          <v-window-item v-if="pbehavior.rrule" value="recurrence">
-            <pbehavior-recurrence-rule :pbehavior="pbehavior" />
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </c-layout>
+      <c-window-expand-item
+        v-if="pbehavior.rrule"
+        value="recurrence"
+        cols="10"
+      >
+        <pbehavior-recurrence-rule :pbehavior="pbehavior" />
+      </c-window-expand-item>
+    </v-window>
   </div>
 </template>
 
@@ -87,8 +83,7 @@ export default {
     const { t } = useI18n();
     const activeTab = ref('patterns');
 
-    const patterns = computed(() => filterPatternsToForm(props.pbehavior, [PATTERNS_FIELDS.entity]),
-    );
+    const patterns = computed(() => filterPatternsToForm(props.pbehavior, [PATTERNS_FIELDS.entity]));
 
     return {
       t,
@@ -98,9 +93,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pbehaviors-list-expand-item__card {
-  width: 100%;
-}
-</style>

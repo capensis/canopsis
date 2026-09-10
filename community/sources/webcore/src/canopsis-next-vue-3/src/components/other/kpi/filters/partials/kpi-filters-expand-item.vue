@@ -11,19 +11,11 @@
       </v-tab>
     </v-tabs>
 
-    <v-card class="pa-3" color="secondary-lighten-2" flat>
-      <v-window v-model="activeTab" class="pt-2">
-        <v-window-item :value="0">
-          <v-row justify="center">
-            <v-col cols="8">
-              <v-card class="pa-3">
-                <kpi-filter-patterns-form :form="patterns" readonly />
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-window-item>
-      </v-window>
-    </v-card>
+    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
+      <c-window-expand-item :value="0" cols="8">
+        <kpi-filter-patterns-form :form="patterns" readonly />
+      </c-window-expand-item>
+    </v-window>
   </div>
 </template>
 

@@ -15,31 +15,22 @@
     </v-tabs>
 
     <v-window v-model="activeTab">
-      <v-window-item :value="TABS.description" class="planning-expand-panel__tab-item">
-        <v-card>
-          <v-card-text>
-            <pre class="planning-expand-panel__pre">{{ pbehaviorType.description || '-' }}
-</pre>
-          </v-card-text>
-        </v-card>
-      </v-window-item>
+      <c-window-expand-item :value="TABS.description">
+        <pre class="planning-expand-panel__pre">{{ pbehaviorType.description || '-' }}</pre>
+      </c-window-expand-item>
 
-      <v-window-item :value="TABS.type" class="planning-expand-panel__tab-item">
-        <v-card>
-          <v-card-text>
-            <c-layout gap="3" align="center">
-              <v-chip
-                v-if="pbehaviorType.icon_name"
-                :color="pbehaviorType.color"
-                class="planning-expand-panel__type-chip"
-              >
-                <v-icon :color="iconColor" :icon="pbehaviorType.icon_name" size="18" />
-              </v-chip>
-              <span>{{ typeLabel }}</span>
-            </c-layout>
-          </v-card-text>
-        </v-card>
-      </v-window-item>
+      <c-window-expand-item :value="TABS.type">
+        <c-layout gap="3" align="center">
+          <v-chip
+            v-if="pbehaviorType.icon_name"
+            :color="pbehaviorType.color"
+            class="planning-expand-panel__type-chip"
+          >
+            <v-icon :color="iconColor" :icon="pbehaviorType.icon_name" size="18" />
+          </v-chip>
+          <span>{{ typeLabel }}</span>
+        </c-layout>
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>
@@ -90,11 +81,6 @@ export default {
     margin: 0;
     white-space: pre-wrap;
   }
-
-  &__tab-item {
-    padding: 16px;
-  }
-
   &__type-chip {
     width: 42px;
     height: 24px;

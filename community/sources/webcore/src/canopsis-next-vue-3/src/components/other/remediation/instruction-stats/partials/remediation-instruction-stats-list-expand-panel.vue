@@ -14,45 +14,32 @@
       <v-tab value="rating">{{ t('common.rating') }}</v-tab>
     </v-tabs>
 
-    <c-layout class="pa-3 bg-secondary-lighten-2">
-      <v-card class="pa-3 w-100">
-        <v-window v-model="activeTab">
-          <v-window-item value="summary">
-            <v-row justify="center">
-              <v-col cols="8">
-                <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction"/>
-              </v-col>
-            </v-row>
-          </v-window-item>
-          <v-window-item value="statistics">
-            <v-row justify="center">
-              <v-col cols="8">
-                <remediation-instruction-stats-statistics-tab
-                  :remediation-instruction="remediationInstruction"
-                  :interval="interval"
-                />
-              </v-col>
-            </v-row>
-          </v-window-item>
-          <v-window-item v-if="remediationInstructionStatsItem.has_executions" value="alarmsTimeline">
-            <remediation-instruction-stats-alarms-timeline-tab
-              :remediation-instruction="remediationInstruction"
-              :interval="interval"
-            />
-          </v-window-item>
-          <v-window-item value="rating">
-            <v-row justify="center">
-              <v-col cols="8">
-                <remediation-instruction-stats-rating-tab
-                  :remediation-instruction="remediationInstruction"
-                  :interval="interval"
-                />
-              </v-col>
-            </v-row>
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </c-layout>
+    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
+      <c-window-expand-item value="summary" cols="8">
+        <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction" />
+      </c-window-expand-item>
+      <c-window-expand-item value="statistics" cols="8">
+        <remediation-instruction-stats-statistics-tab
+          :remediation-instruction="remediationInstruction"
+          :interval="interval"
+        />
+      </c-window-expand-item>
+      <c-window-expand-item
+        v-if="remediationInstructionStatsItem.has_executions"
+        value="alarmsTimeline"
+      >
+        <remediation-instruction-stats-alarms-timeline-tab
+          :remediation-instruction="remediationInstruction"
+          :interval="interval"
+        />
+      </c-window-expand-item>
+      <c-window-expand-item value="rating" cols="8">
+        <remediation-instruction-stats-rating-tab
+          :remediation-instruction="remediationInstruction"
+          :interval="interval"
+        />
+      </c-window-expand-item>
+    </v-window>
   </div>
 </template>
 

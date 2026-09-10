@@ -9,6 +9,7 @@
         :label="startLabel"
         :name="`${name}_start`"
         :rules="startRules"
+        :hide-details="hideDetails"
         @update:value="$emit('update:start', $event)"
       />
     </div>
@@ -27,6 +28,7 @@
           :min="endMin"
           :max="endMax"
           :rules="endRules"
+          :hide-details="hideDetails"
           reverse
           @update:value="$emit('update:end', $event)"
         />
@@ -94,6 +96,10 @@ export default {
     endMax: {
       type: String,
       required: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
   },
 };

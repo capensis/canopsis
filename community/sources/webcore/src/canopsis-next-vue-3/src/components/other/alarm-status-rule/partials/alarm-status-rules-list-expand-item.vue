@@ -15,29 +15,19 @@
     </v-tabs>
 
     <v-window v-model="activeTab">
-      <v-window-item value="description">
-        <c-layout class="py-3">
-          <c-textarea
-            :model-value="rule.description"
-            class="my-2 mx-4 pa-0"
-            readonly
-            auto-grow
-            hide-details
-          />
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item value="description">
+        <c-textarea
+          :model-value="rule.description"
+          class="my-2 mx-4 pa-0"
+          readonly
+          auto-grow
+          hide-details
+        />
+      </c-window-expand-item>
 
-      <v-window-item value="patterns">
-        <v-row class="py-3" justify="center">
-          <v-col cols="8">
-            <v-card>
-              <v-card-text>
-                <alarm-status-rule-patterns-form :form="patterns" :flapping="flapping" readonly />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-window-item>
+      <c-window-expand-item value="patterns" cols="8">
+        <alarm-status-rule-patterns-form :form="patterns" :flapping="flapping" readonly />
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>

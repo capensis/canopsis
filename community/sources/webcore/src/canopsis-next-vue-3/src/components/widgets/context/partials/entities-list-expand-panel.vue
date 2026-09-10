@@ -45,152 +45,119 @@
       :reverse-transition="false"
       class="entities-list-expand-panel__content"
     >
-      <v-window-item v-if="isAvailabilityEnabled" :value="tabs.availability">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <entity-availability
-                  :entity="item"
-                  :default-time-range="availability?.default_time_range"
-                  :default-show-type="availability?.default_show_type"
-                />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        v-if="isAvailabilityEnabled"
+        :value="tabs.availability"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <entity-availability
+          :entity="item"
+          :default-time-range="availability?.default_time_range"
+          :default-show-type="availability?.default_show_type"
+        />
+      </c-window-expand-item>
 
-      <v-window-item v-if="hasAccessToPbehavior" :value="tabs.pbehavior">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <pbehaviors-simple-list
-                  :entity="item"
-                  :removable="hasDeleteAnyPbehaviorAccess"
-                  :updatable="hasUpdateAnyPbehaviorAccess"
-                />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        v-if="hasAccessToPbehavior"
+        :value="tabs.pbehavior"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <pbehaviors-simple-list
+          :entity="item"
+          :removable="hasDeleteAnyPbehaviorAccess"
+          :updatable="hasUpdateAnyPbehaviorAccess"
+        />
+      </c-window-expand-item>
 
       <v-window-item v-if="isImpactDependsShown" :value="tabs.impactDepends">
-        <c-layout>
-          <v-col :class="cardFlexClass" class="pa-0">
+        <v-row>
+          <v-col :cols="expandPanelCols" :offset="expandPanelOffset" class="pa-0">
             <impact-depends-tab :entity="item" />
           </v-col>
-        </c-layout>
+        </v-row>
       </v-window-item>
 
-      <v-window-item :value="tabs.infos">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <infos-tab :infos="item.infos" :columns-filters="columnsFilters" />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        :value="tabs.infos"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <infos-tab :infos="item.infos" :columns-filters="columnsFilters" />
+      </c-window-expand-item>
 
-      <v-window-item v-if="hasWidgetCharts" :value="tabs.charts">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <entity-charts
-                  :charts="charts"
-                  :entity="item"
-                  :available-metrics="item.filtered_perf_data"
-                />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        v-if="hasWidgetCharts"
+        :value="tabs.charts"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <entity-charts
+          :charts="charts"
+          :entity="item"
+          :available-metrics="item.filtered_perf_data"
+        />
+      </c-window-expand-item>
 
-      <v-window-item v-if="isService" :value="tabs.treeOfDependencies">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <tree-of-dependencies-tab
-                  :item="item"
-                  :columns="serviceDependenciesColumns"
-                  :type="treeOfDependenciesShowType"
-                />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        v-if="isService"
+        :value="tabs.treeOfDependencies"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <tree-of-dependencies-tab
+          :item="item"
+          :columns="serviceDependenciesColumns"
+          :type="treeOfDependenciesShowType"
+        />
+      </c-window-expand-item>
 
-      <v-window-item :value="tabs.impactChain">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text class="pa-0">
-                <impact-chain-dependencies-tab
-                  :item="item"
-                  :columns="serviceDependenciesColumns"
-                />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        :value="tabs.impactChain"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <impact-chain-dependencies-tab
+          :item="item"
+          :columns="serviceDependenciesColumns"
+        />
+      </c-window-expand-item>
 
-      <v-window-item :value="tabs.activeAlarm">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <entity-alarms-list-table :entity="item" :columns="activeAlarmsColumns" />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        :value="tabs.activeAlarm"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <entity-alarms-list-table :entity="item" :columns="activeAlarmsColumns" />
+      </c-window-expand-item>
 
-      <v-window-item :value="tabs.resolvedAlarms">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <entity-alarms-list-table
-                  :entity="item"
-                  :columns="resolvedAlarmsColumns"
-                  resolved
-                />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        :value="tabs.resolvedAlarms"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <entity-alarms-list-table
+          :entity="item"
+          :columns="resolvedAlarmsColumns"
+          resolved
+        />
+      </c-window-expand-item>
 
-      <v-window-item v-if="commentsShown" :value="tabs.comments">
-        <c-layout class="pa-3">
-          <v-col :class="cardFlexClass" class="pa-0">
-            <v-card>
-              <v-card-text>
-                <entity-comments :entity="item" addable editable />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item
+        v-if="commentsShown"
+        :value="tabs.comments"
+        :cols="expandPanelCols"
+        :offset="expandPanelOffset"
+      >
+        <entity-comments :entity="item" addable editable />
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>
 
 <script>
 import { ENTITY_TYPES, GRID_SIZES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
-
-import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 
 import { authMixin } from '@/mixins/auth';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
@@ -296,8 +263,14 @@ export default {
       return this.item.type !== ENTITY_TYPES.service;
     },
 
-    cardFlexClass() {
-      return getFlexClassesForGridRangeSize(this.expandGridRangeSize);
+    expandPanelOffset() {
+      return this.expandGridRangeSize[0];
+    },
+
+    expandPanelCols() {
+      const [start, end] = this.expandGridRangeSize;
+
+      return end - start;
     },
 
     hasWidgetCharts() {

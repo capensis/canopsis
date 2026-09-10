@@ -107,6 +107,7 @@
           <div class="pbehavior-general-form__half">
             <c-pbehavior-reason-field
               :model-value="form.reason"
+              :name="pbehaviorReasonFieldName"
               class="mr-2"
               required
               return-object
@@ -254,6 +255,7 @@ export default {
 
     const nameFieldName = computed(() => getFieldName('name'));
     const durationFieldName = computed(() => getFieldName('duration'));
+    const pbehaviorReasonFieldName = computed(() => getFieldName('reason'));
     const pbehaviorTypeFieldName = computed(() => getFieldName('type'));
     const dateTimeSplittedRangePickerFieldName = computed(() => getFieldName('tstart'));
 
@@ -369,6 +371,7 @@ export default {
       hasPauseType,
       nameFieldName,
       durationFieldName,
+      pbehaviorReasonFieldName,
       pbehaviorTypeFieldName,
       dateTimeSplittedRangePickerFieldName,
       tstartRules,

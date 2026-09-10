@@ -1,5 +1,5 @@
 <template>
-  <div class="pbehavior-recurrence-rule">
+  <div>
     <recurrence-rule-information :rrule="pbehavior.rrule" />
 
     <pbehavior-recurrence-rule-periods :pbehavior="pbehavior" class="mt-2" />
@@ -22,10 +22,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pbehavior-recurrence-rule {
-  width: min(100%, 600px);
-  margin: 0 auto;
-}
-</style>

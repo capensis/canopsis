@@ -2,7 +2,7 @@
   <v-form
     v-click-outside.zIndex="clickOutsideDirective"
     class="pbehavior-form position-relative"
-    @submit.prevent="submitHandler"
+    @submit.prevent="submit"
   >
     <div class="pbehavior-form__body">
       <pbehavior-general-form
@@ -39,7 +39,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
 
-        <v-btn :disabled="hasErrors || chatOptions.attrs.pending" color="primary" type="submit">
+        <v-btn :disabled="chatOptions.attrs.pending" color="primary" type="submit">
           {{ $t('common.submit') }}
         </v-btn>
       </c-layout>
@@ -53,7 +53,6 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
-import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import { isOmitEqual } from '@/helpers/collection';
 import { getLocalTimezone } from '@/helpers/date/date';
 import {
@@ -62,7 +61,7 @@ import {
 } from '@/helpers/entities/pbehavior/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
-import { useForm, useFormErrors } from '@/hooks/form';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 
@@ -110,16 +109,18 @@ export default {
       props.timezone,
     );
 
-    const formContext = useForm({ initialValues });
+    const { handleSubmit } = useForm({ initialValues });
 
     const modals = useModals();
-    const formErrors = useFormErrors();
     const { t } = useI18n();
 
     const manualClose = ref(false);
     const form = ref(initialValues);
 
     const pbehavior = computed(() => props.event?.data?.pbehavior);
+    const closeConfirmationModalId = computed(
+      () => `pbehavior-close-confirmation-${props.event?.id ?? 'new'}`,
+    );
 
     const ruleId = computed(() => {
       const { _id: id = '' } = props.event?.data?.pbehavior ?? {};
@@ -162,7 +163,12 @@ export default {
         return close(event, true);
       }
 
+      if (modals.isModalOpenedById(closeConfirmationModalId.value)) {
+        return undefined;
+      }
+
       return modals.show({
+        id: closeConfirmationModalId.value,
         name: MODALS.confirmation,
         config: {
           text: t('modals.createPbehavior.cancelConfirmation'),
@@ -173,17 +179,16 @@ export default {
 
     const clickOutsideDirective = computed(() => {
       const selectorsForInclude = [
-        '.c-calendar__today-btn',
-        '.c-calendar__pagination',
-        '.c-calendar__menu-right',
-        '.v-event',
+        '.ai-chat-sidebar-wrapper',
+        '.ai-chat-sidebar__progress',
+        '.c-calendar__popover-wrapper',
         '.v-overlay__content',
-        `.${getMenuClassByCalendarEvent(props.event.id)}`,
       ];
 
       return {
         handler: cancel,
-        include: () => [...document.querySelectorAll(selectorsForInclude.join(','))],
+        include: () => [...document.querySelectorAll(selectorsForInclude.join(','))]
+          .filter(element => !element.querySelector('.c-calendar')),
         closeConditional: () => true,
       };
     });
@@ -193,30 +198,23 @@ export default {
       close(event);
     };
 
-    const submitHandler = async (event) => {
-      const { valid: isValid } = await formContext.validate();
+    const submit = handleSubmit(async () => {
+      const calendarEvent = formToCalendarEvent(form.value, props.event);
 
-      if (isValid) {
-        const calendarEvent = formToCalendarEvent(form.value, props.event);
+      manualClose.value = true;
 
-        manualClose.value = true;
-
-        emit('submit', calendarEvent, event);
-      }
-    };
-
-    const hasErrors = computed(() => Object.keys(formErrors.value).length > 0);
+      emit('submit', calendarEvent);
+    });
 
     return {
       form,
       pbehavior,
-      hasErrors,
       clickOutsideDirective,
       chatShown,
       chatOptions,
       cancel,
       remove,
-      submitHandler,
+      submit,
     };
   },
 };
@@ -226,14 +224,14 @@ export default {
 .pbehavior-form {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   width: 100%;
-  max-height: 100%;
+  max-height: 85vh;
   min-height: 0;
   overflow: hidden;
 
   &__body {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0;
     overflow-y: auto;
     padding: 16px;

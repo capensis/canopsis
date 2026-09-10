@@ -12,14 +12,9 @@
     </v-tabs>
 
     <v-window model-value="description">
-      <v-window-item value="description" class="planning-expand-panel__tab-item">
-        <v-card>
-          <v-card-text>
-            <pre class="planning-expand-panel__pre">{{ pbehaviorReason.description || '-' }}
-</pre>
-          </v-card-text>
-        </v-card>
-      </v-window-item>
+      <c-window-expand-item value="description">
+        <pre class="planning-expand-panel__pre">{{ pbehaviorReason.description || '-' }}</pre>
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>
@@ -48,10 +43,6 @@ export default {
   &__pre {
     margin: 0;
     white-space: pre-wrap;
-  }
-
-  &__tab-item {
-    padding: 16px;
   }
 }
 </style>

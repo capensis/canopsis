@@ -1,6 +1,6 @@
 <template>
   <c-layout class="c-calendar" column>
-    <c-layout class="c-calendar__toolbar py-3" justify-space-around>
+    <c-layout class="c-calendar__toolbar py-3" justify="space-between">
       <c-layout class="c-calendar__toolbar-column" gap="2" align="center">
         <calendar-today-btn class="c-calendar__today-btn" @click="setToday" />
 
@@ -14,7 +14,7 @@
         />
       </c-layout>
 
-      <c-layout class="c-calendar__toolbar-column" justify-center>
+      <c-layout class="c-calendar__toolbar-column" justify="center">
         <calendar-pagination
           :focus="focus"
           :type="internalType"
@@ -25,7 +25,7 @@
         />
       </c-layout>
 
-      <c-layout class="c-calendar__toolbar-column c-calendar__menu-right" justify-end>
+      <c-layout class="c-calendar__toolbar-column c-calendar__menu-right" justify="end">
         <calendar-view-mode v-model="internalType" />
 
         <slot name="menu-right" />
@@ -142,6 +142,7 @@
       attach=".pbehavior-calendar-event-menu"
       content-class="c-calendar__popover-wrapper"
       persistent
+      no-click-animation
     >
       <v-card v-if="popoverOpen" class="c-calendar__popover-card">
         <slot
@@ -824,6 +825,10 @@ export default {
     max-width: 33.3333%;
   }
 
+  &__menu-right {
+    margin-left: auto;
+  }
+
   .v-event {
     font-weight: 700;
 
@@ -933,7 +938,8 @@ export default {
   }
 
   &__popover-wrapper {
-    max-height: 95%;
+    height: fit-content !important;
+    max-height: 85vh;
     max-width: 95% !important;
     width: var(--c-calendar-popover-width) !important;
     top: unset !important;
@@ -944,19 +950,19 @@ export default {
     flex-direction: column;
     overflow: visible !important;
     border-radius: 4px;
-    box-shadow:
-      0 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
-      0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 
   &__popover-card {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0;
-    max-height: 100%;
+    max-height: 85vh;
     overflow: hidden;
+    box-shadow:
+      0 5px 5px -3px rgba(0, 0, 0, 0.2),
+      0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 
   &__week-day-label-btn {
