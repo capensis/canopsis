@@ -235,7 +235,7 @@ app.use(modalsPlugin, {
     [MODALS.createMetaAlarmRule]: { maxWidth: 1000 },
     [MODALS.createPattern]: { maxWidth: 1280 },
     [MODALS.createPbehaviorException]: { autoHeight: true },
-    [MODALS.createPbehavior]: { maxWidth: 1280 },
+    [MODALS.createPbehavior]: { maxWidth: 1280, autoHeight: true },
     [MODALS.createPbehaviorReason]: { autoHeight: true },
     [MODALS.createPbehaviorType]: { autoHeight: true },
     [MODALS.createPlaylist]: { maxWidth: 920, autoHeight: true },

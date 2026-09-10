@@ -12,17 +12,9 @@
     </v-tabs>
 
     <v-window v-model="activeTab" class="bg-secondary-lighten-2">
-      <v-window-item :value="TABS.patterns">
-        <v-row class="py-3" justify="center">
-          <v-col cols="8">
-            <v-card>
-              <v-card-text>
-                <tag-patterns-form :form="patterns" readonly />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-window-item>
+      <c-window-expand-item :value="TABS.patterns" cols="8">
+        <tag-patterns-form :form="patterns" readonly />
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>

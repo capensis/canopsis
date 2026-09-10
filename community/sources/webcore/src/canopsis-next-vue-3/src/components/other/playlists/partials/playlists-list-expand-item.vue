@@ -10,16 +10,10 @@
     </v-tabs>
 
     <v-window v-model="activeTab" mandatory>
-      <v-window-item>
-        <div class="pa-3">
-          <v-card>
-            <v-card-text>
-              <c-progress-overlay :pending="pending" />
-              <draggable-playlist-tabs :tabs="availableTabs" :groups="groups" disabled />
-            </v-card-text>
-          </v-card>
-        </div>
-      </v-window-item>
+      <c-window-expand-item>
+        <c-progress-overlay :pending="pending" />
+        <draggable-playlist-tabs :tabs="availableTabs" :groups="groups" disabled />
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>

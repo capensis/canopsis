@@ -12,15 +12,13 @@
     </v-tabs>
 
     <v-window :model-value="tab" class="bg-secondary-lighten-2">
-      <v-window-item :value="tab">
-        <c-layout class="pa-3">
-          <c-layout v-if="!mapDetails" justify="center">
-            <v-progress-circular class="pa-4" color="white" indeterminate />
-          </c-layout>
-          <component v-else-if="component" :is="component" :map="mapDetails" />
-          <span v-else />
+      <c-window-expand-item :value="tab">
+        <c-layout v-if="!mapDetails" justify="center">
+          <v-progress-circular class="pa-4" color="white" indeterminate />
         </c-layout>
-      </v-window-item>
+        <component v-else-if="component" :is="component" :map="mapDetails" />
+        <span v-else />
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>

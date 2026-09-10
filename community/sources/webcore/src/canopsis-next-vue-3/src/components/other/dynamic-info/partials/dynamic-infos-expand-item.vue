@@ -14,36 +14,18 @@
       </v-tab>
     </v-tabs>
 
-    <v-window v-model="activeTab">
-      <v-window-item value="information">
-        <c-layout class="py-3 secondary lighten-2">
-          <v-row class="dynamic-infos-expand-item__row">
-            <v-col cols="12" md="8" offset-md="2">
-              <v-card>
-                <v-card-text>
-                  <v-data-table
-                    :items="info.infos"
-                    :headers="infosTableHeaders"
-                    :no-data-text="$t('common.noData')"
-                  />
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </c-layout>
-      </v-window-item>
+    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
+      <c-window-expand-item value="information">
+        <v-data-table
+          :items="info.infos"
+          :headers="infosTableHeaders"
+          :no-data-text="$t('common.noData')"
+        />
+      </c-window-expand-item>
 
-      <v-window-item value="patterns">
-        <v-row class="py-3 secondary lighten-2 dynamic-infos-expand-item__row" justify="center">
-          <v-col cols="8">
-            <v-card>
-              <v-card-text>
-                <dynamic-info-patterns-form :form="patterns" readonly />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-window-item>
+      <c-window-expand-item value="patterns" cols="8">
+        <dynamic-info-patterns-form :form="patterns" readonly />
+      </c-window-expand-item>
     </v-window>
   </div>
 </template>
@@ -84,10 +66,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.dynamic-infos-expand-item__row {
-  width: 100%;
-  margin: 0;
-}
-</style>

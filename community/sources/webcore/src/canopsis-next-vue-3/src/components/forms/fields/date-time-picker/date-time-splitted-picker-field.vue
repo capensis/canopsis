@@ -1,5 +1,5 @@
 <template>
-  <v-input :error-messages="errorMessage ? [errorMessage] : []">
+  <v-input :error-messages="errorMessage ? [errorMessage] : []" :hide-details="hideDetails">
     <c-layout class="date-time-splitted-field" column>
       <c-layout :style="rowStyle" gap="2">
         <div class="date-time-splitted-field__date">
@@ -93,6 +93,10 @@ export default {
     controlVariant: {
       type: String,
       default: undefined,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

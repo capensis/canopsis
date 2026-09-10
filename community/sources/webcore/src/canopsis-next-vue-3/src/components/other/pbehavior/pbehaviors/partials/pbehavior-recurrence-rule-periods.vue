@@ -1,25 +1,27 @@
 <template>
   <div>
-    <c-layout align="center" justify-space-between>
-      <c-layout justify-center>
-        <span class="text-h6">
-          {{ t('common.periods') }}
-        </span>
-      </c-layout>
+    <c-layout class="pbehavior-recurrence-rule-periods__header" align="center" justify="center">
+      <span class="text-h6">
+        {{ t('common.periods') }}
+      </span>
 
-      <c-action-btn
-        :tooltip="t('pbehavior.periodsCalendar')"
-        icon="event_note"
-        @click="showPbehaviorRecurrenceRuleModal"
-      />
+      <div class="pbehavior-recurrence-rule-periods__actions">
+        <c-action-btn
+          :tooltip="t('pbehavior.periodsCalendar')"
+          icon="event_note"
+          @click="showPbehaviorRecurrenceRuleModal"
+        />
+      </div>
     </c-layout>
 
     <c-select
-      :value="selectedRange"
+      :model-value="selectedRange"
       :items="availableRanges"
       :label="t('common.range')"
       class="mt-2"
-      @update:value="updateSelectedRange"
+      item-title="text"
+      item-value="value"
+      @update:model-value="updateSelectedRange"
     />
 
     <v-progress-linear
@@ -30,21 +32,23 @@
       indeterminate
     />
 
-    <v-row class="mt-2">
-      <v-col v-for="timespan in timespans" :key="`${timespan.from}-${timespan.to}`" cols="12">
-        <v-card>
-          <v-card-title>
-            {{ dateToString(timespan.from) }} - {{ dateToString(timespan.to) }}
-          </v-card-title>
-        </v-card>
-      </v-col>
+    <v-data-table
+      :headers="headers"
+      :items="timespans"
+      :items-per-page="itemsPerPage"
+      :items-per-page-options="itemsPerPageOptions"
+      :loading="pending"
+      :no-data-text="t('common.noData')"
+      class="mt-2"
+    >
+      <template #item.from="{ item }">
+        {{ dateToString(item.from) }}
+      </template>
 
-      <v-col v-if="!pending && !timespans.length" cols="12">
-        <v-card>
-          <v-card-title>{{ t('common.noData') }}</v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
+      <template #item.to="{ item }">
+        {{ dateToString(item.to) }}
+      </template>
+    </v-data-table>
   </div>
 </template>
 
@@ -78,6 +82,8 @@ export default {
     return {
       pending: false,
       timespans: [],
+      itemsPerPage: 5,
+      itemsPerPageOptions: [5, 10, 25],
       selectedRange: PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek,
     };
   },
@@ -104,6 +110,13 @@ export default {
         value,
         text: this.t(`recurrenceRule.periodsRanges.${value}`),
       }));
+    },
+
+    headers() {
+      return [
+        { title: this.t('common.begin'), key: 'from', sortable: false },
+        { title: this.t('common.end'), key: 'to', sortable: false },
+      ];
     },
   },
 
@@ -226,3 +239,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pbehavior-recurrence-rule-periods {
+  &__header {
+    position: relative;
+  }
+
+  &__actions {
+    position: absolute;
+    right: 0;
+  }
+}
+</style>

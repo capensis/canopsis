@@ -2,7 +2,6 @@
   <v-app-bar
     :height="TOP_BAR_HEIGHT"
     :class="{ 'top-bar--with-extension': isShownGroupsTopBar }"
-    :style="topBarStyle"
     class="top-bar bg-primary"
     app
   >
@@ -53,10 +52,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-import { useDisplay } from 'vuetify';
-
-import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH, TOP_BAR_HEIGHT } from '@/config';
+import { TOP_BAR_HEIGHT } from '@/config';
 import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import { useAuth, useCanPermission } from '@/hooks/auth';
@@ -97,24 +93,12 @@ export default {
 
   emits: ['toggle:sideBar'],
 
-  setup(props) {
+  setup() {
     const { isShownGroupsTopBar, isShownGroupsSideBar } = useAuth();
     const { isProVersion, appTitle } = useInfo();
     const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(
       USER_PERMISSIONS.technical.healthcheckStatus,
     );
-    const { width } = useDisplay();
-
-    const topBarStyle = computed(() => {
-      if (!props.sideBarOpen || width.value < MEDIA_QUERIES_BREAKPOINTS.t) {
-        return undefined;
-      }
-
-      return {
-        left: `${SIDE_BAR_WIDTH}px`,
-        width: `calc(100% - ${SIDE_BAR_WIDTH}px)`,
-      };
-    });
 
     return {
       TOP_BAR_HEIGHT,
@@ -124,7 +108,6 @@ export default {
       isProVersion,
       isShownGroupsSideBar,
       isShownGroupsTopBar,
-      topBarStyle,
     };
   },
 };

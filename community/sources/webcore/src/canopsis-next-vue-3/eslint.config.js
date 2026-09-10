@@ -265,14 +265,7 @@ export default defineConfigWithVueTs(
           singleline: 'beside',
         },
       ],
-      'vue/singleline-html-element-content-newline': [
-        'warn',
-        {
-          ignoreWhenNoAttributes: true,
-          ignoreWhenEmpty: true,
-          ignores: ['c-label', 'v-label', 'span', 'v-tab'],
-        },
-      ],
+      'vue/singleline-html-element-content-newline': 'off',
       'vue/component-name-in-template-casing': [
         'warn',
         'kebab-case',

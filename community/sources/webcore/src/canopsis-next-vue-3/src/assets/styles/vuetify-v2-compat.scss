@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 :root {
   --app-font-size: 14px;
 }
@@ -9,6 +11,11 @@ body,
 }
 
 $v2-spacer: 4px;
+$v2-font-size-root: 14px;
+
+@function v2-rem($value) {
+  @return math.div($value, $v2-font-size-root) * 1rem;
+}
 
 @for $i from 0 through 12 {
   .pa-#{$i} {
@@ -340,6 +347,20 @@ $v2-spacer: 4px;
 .v-application .text-h4 {
   font-size: 2.4285714286rem !important;
   line-height: 2.8571428571rem;
+}
+
+.v-application .text-h5 {
+  font-size: v2-rem(24px) !important;
+  font-weight: 400;
+  line-height: v2-rem(32px);
+  letter-spacing: normal !important;
+}
+
+.v-application .text-h6 {
+  font-size: v2-rem(20px) !important;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.0125em !important;
 }
 
 .v-window {

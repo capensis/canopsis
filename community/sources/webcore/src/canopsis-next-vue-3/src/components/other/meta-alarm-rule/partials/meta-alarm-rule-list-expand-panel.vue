@@ -11,23 +11,15 @@
       </v-tab>
     </v-tabs>
 
-    <c-layout class="pa-3 secondary lighten-2">
-      <v-card class="pa-3 meta-alarm-rule-list-expand-panel__card">
-        <v-window v-model="activeTab" class="pt-2">
-          <v-window-item value="patterns">
-            <v-row justify="center">
-              <v-col cols="8">
-                <meta-alarm-rule-patterns-form
-                  :form="patterns"
-                  :with-total-entity="withTotalEntityPattern"
-                  readonly
-                />
-              </v-col>
-            </v-row>
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </c-layout>
+    <v-window v-model="activeTab" class="pa-3 bg-secondary-lighten-2">
+      <c-window-expand-item value="patterns" cols="8">
+        <meta-alarm-rule-patterns-form
+          :form="patterns"
+          :with-total-entity="withTotalEntityPattern"
+          readonly
+        />
+      </c-window-expand-item>
+    </v-window>
   </div>
 </template>
 
@@ -70,9 +62,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.meta-alarm-rule-list-expand-panel__card {
-  width: 100%;
-}
-</style>

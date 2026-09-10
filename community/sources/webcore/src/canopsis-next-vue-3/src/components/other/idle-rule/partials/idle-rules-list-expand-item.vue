@@ -14,25 +14,15 @@
       </v-tab>
     </v-tabs>
 
-    <c-layout class="pa-3 secondary lighten-2">
-      <v-card class="pa-3 idle-rules-list-expand-item__card">
-        <v-window v-model="activeTab" class="pt-2">
-          <v-window-item value="summary">
-            <div class="idle-rules-list-expand-item__content">
-              <idle-rules-summary-tab :idle-rule="idleRule" />
-            </div>
-          </v-window-item>
+    <v-window v-model="activeTab" class="pa-3 bg-secondary-lighten-2">
+      <c-window-expand-item value="summary">
+        <idle-rules-summary-tab :idle-rule="idleRule" />
+      </c-window-expand-item>
 
-          <v-window-item value="patterns">
-            <v-row justify="center">
-              <v-col cols="8">
-                <idle-rule-patterns-form :form="patterns" :is-entity-type="isEntityType" readonly />
-              </v-col>
-            </v-row>
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </c-layout>
+      <c-window-expand-item value="patterns" cols="8">
+        <idle-rule-patterns-form :form="patterns" :is-entity-type="isEntityType" readonly />
+      </c-window-expand-item>
+    </v-window>
   </div>
 </template>
 
@@ -78,9 +68,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.idle-rules-list-expand-item__card {
-  width: 100%;
-}
-</style>

@@ -101,10 +101,6 @@ export default {
 
 <style lang="scss">
 .instruction-stats-alarms-timeline-tab-expand-panel__wrapper {
-  --expand-panel-width: 94vw;
-
-  width: var(--expand-panel-width);
-
   table {
     table-layout: fixed;
     width: 100%;

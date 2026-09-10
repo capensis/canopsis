@@ -25,65 +25,37 @@
     </v-tab>
   </v-tabs>
 
-  <v-window v-model="activeTab" mandatory>
-    <v-window-item :value="tabs.summary">
-      <c-layout class="py-3 secondary lighten-2" justify="center">
-        <div :style="gridFlexStyle(11)">
-          <v-card>
-            <v-card-text>
-              <v-row justify="center">
-                <v-col cols="12" md="8" lg="6">
-                  <event-filters-rule-summary :event-filter="eventFilter" />
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </div>
-      </c-layout>
-    </v-window-item>
-    <v-window-item :value="tabs.pattern">
-      <v-row class="pa-3 secondary lighten-2" justify="center">
-        <v-col cols="8">
-          <v-card>
-            <v-card-text>
-              <c-patterns-field
-                :value="patterns"
-                readonly
-                with-entity
-                with-event
-              />
-            </v-card-text>
-          </v-card>
+  <v-window v-model="activeTab" class="bg-secondary-lighten-2" mandatory>
+    <c-window-expand-item :value="tabs.summary" cols="11">
+      <v-row justify="center">
+        <v-col cols="12" md="8" lg="6">
+          <event-filters-rule-summary :event-filter="eventFilter" />
         </v-col>
       </v-row>
-    </v-window-item>
+    </c-window-expand-item>
+    <c-window-expand-item :value="tabs.pattern" cols="8">
+      <c-patterns-field
+        :value="patterns"
+        readonly
+        with-entity
+        with-event
+      />
+    </c-window-expand-item>
     <template v-if="isEnrichment">
-      <v-window-item :value="tabs.action">
-        <c-layout class="py-3 secondary lighten-2" justify="center">
-          <div :style="gridFlexStyle(11)">
-            <v-data-table :items="eventFilter.config.actions" :headers="headers" />
-          </div>
-        </c-layout>
-      </v-window-item>
-      <v-window-item :value="tabs.externalData">
-        <c-layout class="py-3 secondary lighten-2" justify="center">
-          <div :style="gridFlexStyle(11)">
-            <external-data-field :external-data="externalDataForm" disabled optionally />
-          </div>
-        </c-layout>
-      </v-window-item>
+      <c-window-expand-item :value="tabs.action" cols="11">
+        <v-data-table :items="eventFilter.config.actions" :headers="headers" />
+      </c-window-expand-item>
+      <c-window-expand-item :value="tabs.externalData" cols="11">
+        <external-data-field :external-data="externalDataForm" disabled optionally />
+      </c-window-expand-item>
     </template>
-    <v-window-item v-if="eventFilter.failures_count" :value="tabs.errors">
-      <c-layout class="py-3 secondary lighten-2" justify="center">
-        <div :style="gridFlexStyle(11)">
-          <v-card>
-            <v-card-text>
-              <event-filter-failures :event-filter="eventFilter" @refresh="$emit('refresh')" />
-            </v-card-text>
-          </v-card>
-        </div>
-      </c-layout>
-    </v-window-item>
+    <c-window-expand-item
+      v-if="eventFilter.failures_count"
+      :value="tabs.errors"
+      cols="11"
+    >
+      <event-filter-failures :event-filter="eventFilter" @refresh="$emit('refresh')" />
+    </c-window-expand-item>
   </v-window>
 </template>
 
@@ -95,7 +67,6 @@ import { EVENT_FILTER_EXPAND_PANEL_TABS } from '@/constants';
 import { isEnrichmentEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/form';
 import { externalDataToForm } from '@/helpers/entities/shared/external-data/form';
-import { gridFlexStyle } from '@/helpers/layout';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -135,7 +106,6 @@ export default {
     const externalDataForm = computed(() => externalDataToForm(props.eventFilter.external_data));
 
     return {
-      gridFlexStyle,
       tabs,
       activeTab,
 
