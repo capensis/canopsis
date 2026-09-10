@@ -23,12 +23,13 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, toRef, watch } from 'vue';
 
 import { ALARM_STATES, ALARM_STATES_TEXTS } from '@/constants';
 
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
+import { useField } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -45,6 +46,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'state',
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     stateValues: {
       type: Object,
       default: () => ALARM_STATES,
@@ -55,6 +64,13 @@ export default {
 
   setup(props, { emit }) {
     const { t } = useI18n();
+
+    const fieldRules = computed(() => (props.required ? { required: true } : undefined));
+
+    const { setValue, validate } = useField(toRef(props, 'name'), fieldRules, {
+      initialValue: props.modelValue ?? props.value,
+      validateOnValueUpdate: false,
+    });
 
     const selectedValue = computed(() => props.modelValue ?? props.value);
 
@@ -67,9 +83,15 @@ export default {
     );
 
     const updateValue = (value) => {
+      setValue(value, false);
       emit('update:modelValue', value);
       emit('update:value', value);
+      validate();
     };
+
+    watch(selectedValue, (value) => {
+      setValue(value, false);
+    });
 
     const getButtonStyle = ({ color, state, textColor }) => ({
       backgroundColor: color,

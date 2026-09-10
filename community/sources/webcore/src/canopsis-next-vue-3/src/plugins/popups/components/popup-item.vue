@@ -13,12 +13,13 @@
         <div :style="progressLineStyle" :class="progressLineClass" class="progress-line" />
       </div>
 
-      <c-compiled-template
-        :template="text"
-        :context="context"
-        :template-props="context"
-        class="pre-line"
-      />
+      <div class="pre-line">
+        <c-compiled-template
+          :template="text"
+          :context="context"
+          :template-props="context"
+        />
+      </div>
     </c-alert>
   </v-fade-transition>
 </template>
@@ -163,6 +164,8 @@ onBeforeUnmount(() => {
   border: 0;
   margin-left: 0;
   margin-right: 0;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .progress {

@@ -11,6 +11,7 @@
     :chosen-class="chosenClass || dragClass"
     :component-data="componentData"
     :move="itemMove"
+    :draggable="sortableDraggable"
     :item-key="itemKey"
     :class="classes"
     @update:model-value="updateModel"

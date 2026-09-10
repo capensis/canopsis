@@ -59,12 +59,21 @@
       </v-row>
     </template>
 
-    <state-criticity-field
-      v-else
-      :value="form.state"
-      class="mt-1"
-      @update:value="updateField('state', $event)"
-    />
+    <template v-else>
+      <state-criticity-field
+        :value="form.state"
+        class="mt-1"
+        name="state.state"
+        required
+        @update:value="updateField('state', $event)"
+      />
+      <v-messages
+        v-if="stateErrorMessage"
+        :active="true"
+        :messages="stateErrorMessage ? [stateErrorMessage] : []"
+        color="error"
+      />
+    </template>
   </c-layout>
 </template>
 
@@ -75,6 +84,7 @@ import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
 import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
 
+import { useFieldError } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
@@ -110,6 +120,7 @@ export default {
     const { updateModel, updateField } = useModelField(props, emit);
 
     const isTemplate = computed(() => props.form.type === SNMP_STATE_TYPES.template);
+    const stateErrorMessage = useFieldError('state.state');
 
     const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
         key,
@@ -139,6 +150,7 @@ export default {
       SNMP_STATE_TYPES,
       isTemplate,
       availableStates,
+      stateErrorMessage,
       updateField,
       updateTypeField,
     };

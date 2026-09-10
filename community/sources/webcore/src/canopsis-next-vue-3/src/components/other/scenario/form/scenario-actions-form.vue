@@ -16,6 +16,7 @@
         :key="action.key"
         :model-value="actionsField[index]"
         :name="`actions.${action.key}`"
+        :drag-handle-class="dragItemHandleClass"
         :action-number="index + 1"
         :has-previous-webhook="hasPreviousWebhook(index)"
         :template-vars="templateVars"

@@ -27,5 +27,6 @@ const { popups } = storeToRefs(popupsStore);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  max-width: calc(100vw - 4rem);
 }
 </style>

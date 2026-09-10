@@ -15,6 +15,7 @@
       <c-form-block-row :label="t('common.trigger', 2)">
         <c-triggers-field
           v-model="triggersField"
+          required
           with-additional-values
         />
       </c-form-block-row>
