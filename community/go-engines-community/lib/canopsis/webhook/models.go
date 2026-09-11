@@ -248,6 +248,7 @@ type TokenHistory struct {
 	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration" json:"expiration_duration"`
 	Token              string                    `bson:"token,omitempty" json:"token,omitempty"`
 	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitzero"`
+	LastUsedAt         *datetime.MicroTime       `bson:"last_used_at,omitempty" json:"last_used_at,omitempty"`
 }
 
 type BaseHistory struct {
