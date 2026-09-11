@@ -12,8 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"unicode/utf8"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 const NamingCharacterSet = "abcdefghijklmnopqrstuvwxyz1234567890"
@@ -22,13 +21,7 @@ var NumberOfCharacter = int64(len(NamingCharacterSet))
 
 // NewID generate an uuid
 func NewID() string {
-	id, err := uuid.NewV7()
-	if err != nil {
-		// error is extremely rare so panic is ok
-		panic(fmt.Errorf("cannot generate new ID: %w", err))
-	}
-
-	return id.String()
+	return uuid.NewV7().String()
 }
 
 func MatchWithRegexExpression(re RegexExpression, s string) bool {

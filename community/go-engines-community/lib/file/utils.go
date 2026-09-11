@@ -46,17 +46,17 @@ func MoveFile(src, dest string) error {
 	err := os.Rename(src, dest)
 	if err == nil {
 		return nil
-	} else {
-		if linkError, ok := errors.AsType[*os.LinkError](err); ok {
-			srcStat, err := os.Stat(src)
-			if err != nil {
-				return fmt.Errorf("link error %s %w; %s",
-					linkError.Op, linkError.Err, dest)
-			}
+	}
 
-			return fmt.Errorf("link error %s %w; %s; %#v",
-				linkError.Op, linkError.Err, dest, srcStat)
+	if linkError, ok := errors.AsType[*os.LinkError](err); ok {
+		srcStat, err := os.Stat(src)
+		if err != nil {
+			return fmt.Errorf("link error %s %w; %s",
+				linkError.Op, linkError.Err, dest)
 		}
+
+		return fmt.Errorf("link error %s %w; %s; %#v",
+			linkError.Op, linkError.Err, dest, srcStat)
 	}
 
 	// Copy file content manually if rename operation fails.
