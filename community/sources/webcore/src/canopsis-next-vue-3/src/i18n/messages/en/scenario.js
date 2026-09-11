@@ -4,7 +4,7 @@ export default {
   withAuth: 'Do you need auth fields?',
   key: 'Key',
   declareTicket: 'Declare ticket',
-  workflow: 'Workflow if this action didn\'t match:',
+  workflow: 'Workflow if this action didn\'t match',
   workflowInCaseOfSuccess: 'Workflow in case of success',
   workflowInCaseOfFailure: 'Workflow in case of failure',
   caseFailure: 'In case of failure',

@@ -12,7 +12,7 @@
     </c-form-block-row>
 
     <c-form-block-row :label="$t('common.color')" align-center>
-      <c-color-picker-field v-model="colorField" />
+      <c-color-picker-field v-model="colorField" hide-details />
     </c-form-block-row>
   </c-form-block>
 </template>
