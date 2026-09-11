@@ -10,7 +10,7 @@ type ListRequest struct {
 	pagination.FilteredQuery
 	OnlyDefault bool     `form:"default"`
 	WithHidden  bool     `form:"with_hidden"`
-	SortBy      string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority"`
+	SortBy      string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority hidden"`
 	Types       []string `form:"types[]" json:"types"`
 	IDs         []string `form:"ids[]" json:"ids"`
 }

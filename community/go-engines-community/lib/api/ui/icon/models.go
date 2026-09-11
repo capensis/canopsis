@@ -3,6 +3,7 @@ package icon
 import (
 	"mime/multipart"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
@@ -39,6 +40,11 @@ type Response struct {
 	Content string `bson:"-" json:"content,omitempty"`
 
 	FillBorder bool `bson:"fill_border"  json:"fill_border"`
+}
+
+type ListRequest struct {
+	pagination.FilteredQuery
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=title updated"`
 }
 
 type AggregationResult struct {
