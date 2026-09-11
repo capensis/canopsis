@@ -47,7 +47,6 @@
           :required="!disabled"
           :name="valueName"
           :min="0"
-          :max="valueMax"
         />
       </v-flex>
     </v-layout>
@@ -63,12 +62,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { pick } from 'lodash';
 
 import { ALARM_STATES, STATE_SETTING_THRESHOLDS_CONDITIONS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 
 import StateSettingThresholdMethodField from './state-setting-threshold-method-field.vue';
 
@@ -97,53 +93,57 @@ export default {
       default: '',
     },
   },
-  setup(props) {
-    const { t } = useI18n();
+  computed: {
+    stateName() {
+      return `${this.name}.state`;
+    },
 
-    const stateName = computed(() => `${props.name}.state`);
-    const conditionName = computed(() => `${props.name}.condition`);
-    const valueName = computed(() => `${props.name}.value`);
-    const disabled = computed(() => !props.condition.enabled);
-    const isShareMethod = computed(() => props.condition.method === STATE_SETTING_THRESHOLDS_METHODS.share);
-    const valueMax = computed(() => (isShareMethod.value ? 99 : undefined));
+    conditionName() {
+      return `${this.name}.condition`;
+    },
 
-    const states = computed(() => Object.entries(ALARM_STATES)
-      .map(([key, value]) => ({
-        text: t(`common.stateTypes.${value}`),
-        value: key,
-      })));
+    valueName() {
+      return `${this.name}.value`;
+    },
 
-    const conditions = computed(() => Object.values(STATE_SETTING_THRESHOLDS_CONDITIONS)
-      .map(condition => ({
-        value: condition,
-        text: t(`stateSetting.thresholdConditions.${condition}`),
-      })));
+    disabled() {
+      return !this.condition.enabled;
+    },
 
-    const summaryMessage = computed(() => {
-      const fieldsForSummary = pick(props.condition, ['cond', 'state', 'value']);
+    states() {
+      return Object.entries(ALARM_STATES)
+        .map(([key, value]) => ({
+          text: this.$t(`common.stateTypes.${value}`),
+          value: key,
+        }));
+    },
+
+    conditions() {
+      return Object.values(STATE_SETTING_THRESHOLDS_CONDITIONS)
+        .map(condition => ({
+          value: condition,
+          text: this.$t(`stateSetting.thresholdConditions.${condition}`),
+        }));
+    },
+
+    isShareMethod() {
+      return this.condition.method === STATE_SETTING_THRESHOLDS_METHODS.share;
+    },
+
+    summaryMessage() {
+      const fieldsForSummary = pick(this.condition, ['cond', 'state', 'value']);
       const hasFieldsForSummary = Object.values(fieldsForSummary).every(value => !!String(value));
 
       return hasFieldsForSummary
-        ? t('stateSetting.targetEntityThresholdSummary', {
-          state: props.state,
-          method: props.condition.method,
-          condition: t(`stateSetting.thresholdConditions.${props.condition.cond}`).toLowerCase(),
-          dependenciesEntitiesState: props.condition.state,
-          value: `${props.condition.value}${isShareMethod.value ? '%' : ''}`,
+        ? this.$t('stateSetting.targetEntityThresholdSummary', {
+          state: this.state,
+          method: this.condition.method,
+          condition: this.$t(`stateSetting.thresholdConditions.${this.condition.cond}`).toLowerCase(),
+          dependenciesEntitiesState: this.condition.state,
+          value: `${this.condition.value}${this.isShareMethod ? '%' : ''}`,
         })
         : '';
-    });
-
-    return {
-      stateName,
-      conditionName,
-      valueName,
-      disabled,
-      valueMax,
-      states,
-      conditions,
-      summaryMessage,
-    };
+    },
   },
 };
 </script>
