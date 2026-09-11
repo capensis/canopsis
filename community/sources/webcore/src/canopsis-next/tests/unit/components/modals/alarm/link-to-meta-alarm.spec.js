@@ -1,6 +1,5 @@
 import { omit } from 'lodash';
 import Faker from 'faker';
-
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -152,7 +151,7 @@ describe('link-to-meta-alarm', () => {
     await flushPromises(true);
 
     expect(action).toHaveBeenCalledWith({
-      id: newData.metaAlarm._id,
+      name: newData.metaAlarm._id,
       alarms: [alarm._id],
 
       ...omit(newData, ['metaAlarm']),
