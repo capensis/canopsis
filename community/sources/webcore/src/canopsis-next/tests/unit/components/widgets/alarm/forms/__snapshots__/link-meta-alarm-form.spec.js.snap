@@ -10,6 +10,7 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default prop
     label="Select meta alarm or create a new one"
     name="metaAlarm"
     required=""
+    return-object=""
     value="metaAlarm"
   >
     <div
