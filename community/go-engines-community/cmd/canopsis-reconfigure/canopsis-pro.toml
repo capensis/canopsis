@@ -776,6 +776,13 @@ headers = { Accept = "text/plain" }
 response_err_msg_key = "detail"
 [Remediation.external_api.awx.auth]
 type = "bearer-token"
+[Remediation.external_api.awx.auth.refresh_endpoint]
+url_tpl = "{{ .host }}/api/o/token/"
+method = "POST"
+headers = { Content-Type = "application/x-www-form-urlencoded", Accept = "application/json" }
+body = "grant_type=refresh_token&refresh_token={{ .refreshToken }}"
+response_token_key = "access_token"
+response_refresh_token_key = "refresh_token"
 [Remediation.external_api.awx.launch_endpoint]
 url_tpl = "{{ .host }}/api/v2/job_templates/{{ .jobID }}/launch/"
 method = "POST"

@@ -80,5 +80,15 @@ type OutputEndpoint struct {
 type Auth struct {
 	Type string `toml:"type" bson:"type"`
 	// Header is only AuthTypeHeaderToken
-	Header string `toml:"header" bson:"header,omitempty"`
+	Header          string          `toml:"header" bson:"header,omitempty"`
+	RefreshEndpoint RefreshEndpoint `toml:"refresh_endpoint" bson:"refresh_endpoint"`
+}
+
+type RefreshEndpoint struct {
+	UrlTpl                  string            `toml:"url_tpl" bson:"url_tpl"`
+	Method                  string            `toml:"method" bson:"method"`
+	Headers                 map[string]string `toml:"headers" bson:"headers,omitempty"`
+	Body                    string            `toml:"body" bson:"body"`
+	ResponseTokenKey        string            `toml:"response_token_key" bson:"response_token_key"`
+	ResponseRefreshTokenKey string            `toml:"response_refresh_token_key" bson:"response_refresh_token_key"`
 }
