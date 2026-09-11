@@ -11,7 +11,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy     string   `form:"sort_by" binding:"oneoforempty=_id name display_name lastname firstname enable source"`
+	SortBy     string   `form:"sort_by" binding:"oneoforempty=_id name display_name lastname firstname enabled source"`
 	Permission string   `form:"permission"`
 	IDs        []string `form:"ids[]"`
 }
