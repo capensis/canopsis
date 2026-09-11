@@ -23,8 +23,9 @@ import { JUNIT_STATE_SETTING_METHODS, JUNIT_STATE_SETTING_THRESHOLDS_TYPES } fro
 
 /**
  * @typedef {Object} JunitStateSetting
- * @property {JunitStateSettingThresholds} junit_thresholds
- * @property {JunitStateSettingMethod} method
+ * @property {StateSettingThresholds} junit_thresholds
+ * @property {StateSettingMethod} method
+ * @property {string} type
  */
 
 /**
@@ -75,6 +76,7 @@ const junitStateSettingThresholdsToForm = (thresholds = {}) => ({
 export const junitStateSettingToForm = (stateSetting = {}) => ({
   junit_thresholds: junitStateSettingThresholdsToForm(stateSetting.junit_thresholds),
   method: stateSetting.method || JUNIT_STATE_SETTING_METHODS.worstOfShare,
+  type: stateSetting.type || '',
 });
 
 /**
@@ -84,6 +86,7 @@ export const junitStateSettingToForm = (stateSetting = {}) => ({
  * @return {JunitStateSetting}
  */
 export const formToJunitStateSetting = form => ({
-  method: form.method,
+  ...form,
+
   junit_thresholds: form.method === JUNIT_STATE_SETTING_METHODS.worstOfShare ? form.junit_thresholds : undefined,
 });
