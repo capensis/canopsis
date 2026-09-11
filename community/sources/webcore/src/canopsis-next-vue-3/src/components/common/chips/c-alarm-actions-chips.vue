@@ -32,13 +32,17 @@
       <template #activator="{ props: activatorProps }">
         <v-btn
           v-bind="activatorProps"
+          :class="{ 'c-alarm-actions-chips__more-btn--small': small }"
+          :size="small ? 'x-small' : 'small'"
           class="c-alarm-actions-chips__more-btn ma-0"
           color="grey"
-          size="small"
           icon
           @click="$emit('activate')"
         >
-          <v-icon color="white" size="20">
+          <v-icon
+            :size="small ? 16 : 20"
+            color="white"
+          >
             more_horiz
           </v-icon>
         </v-btn>
@@ -238,6 +242,11 @@ export default {
   & &__more-btn {
     width: 24px;
     height: 24px;
+    min-width: 24px;
+  }
+
+  & &__more-btn--small {
+    min-width: 20px;
   }
 }
 </style>

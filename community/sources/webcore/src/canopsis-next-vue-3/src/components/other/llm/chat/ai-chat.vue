@@ -111,9 +111,7 @@ export default {
 
 <style lang="scss" scoped>
 .ai-chat {
-  --header-height: 64px;
-
-  height: calc(100% - var(--header-height));
+  height: 100%;
   min-height: 0;
   overflow: hidden;
 

@@ -5,6 +5,7 @@
       :label="t('scenario.forwardAuthor')"
       :name="`${name}.forward_author`"
       class="mt-0"
+      hide-details
       @update:model-value="updateField('forward_author', $event)"
     />
 

@@ -2,12 +2,12 @@
   <c-alarm-actions-chips
     :items="filteredTags"
     :active-items="selectedTags"
-    :small="small"
     :inline-count="inlineCount"
     :closable-active="closableActive"
     item-class="c-alarm-tags-chips__chip"
     item-text="value"
     item-value="value"
+    small
     row
     @select="$emit('select', $event)"
     @close="$emit('close', $event)"

@@ -34,6 +34,7 @@
           </v-btn>
         </template>
         <v-btn
+          v-if="!activeMessage.maintenance"
           class="my-0 ml-0 mr-2"
           color="white"
           variant="outlined"
@@ -94,11 +95,11 @@ export default {
       const { id: routeId } = route.params;
       const currentView = getViewById(routeId);
 
-      return activeMessages.value.filter(({ views: messageViews }) =>
-        (messageViews || []).some(messageView =>
-          isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-        ),
+      const hasMatchingView = message => (message.views || []).some(
+        messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
       );
+
+      return activeMessages.value.filter(message => message.maintenance || hasMatchingView(message));
     });
 
     const setActiveMessages = (messages = []) => (activeMessages.value = messages);

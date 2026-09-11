@@ -27,6 +27,7 @@
             :model-value="modelValue.emit_trigger_success"
             :label="t('common.emitTriggerSuccess')"
             :name="`${name}.emit_trigger_success`"
+            hide-details
             @update:model-value="updateField('emit_trigger_success', $event)"
           />
         </v-col>
@@ -36,6 +37,7 @@
             :model-value="modelValue.emit_trigger_fail"
             :label="t('common.emitTriggerFail')"
             :name="`${name}.emit_trigger_fail`"
+            hide-details
             @update:model-value="updateField('emit_trigger_fail', $event)"
           />
         </v-col>
@@ -56,6 +58,7 @@
                 :model-value="parameters.skip_for_child"
                 :label="t('scenario.skipForChild')"
                 :name="`${parametersName}.skip_for_child`"
+                hide-details
                 @update:model-value="updateParametersField('skip_for_child', $event)"
               />
 
@@ -63,6 +66,7 @@
                 :model-value="parameters.skip_for_instruction"
                 :label="t('scenario.skipForInstruction')"
                 :name="`${parametersName}.skip_for_instruction`"
+                hide-details
                 @update:model-value="updateParametersField('skip_for_instruction', $event)"
               />
             </c-layout>
@@ -71,7 +75,7 @@
       </v-expand-transition>
 
       <c-form-block>
-        <c-form-block-row :label="t('scenario.workflow')">
+        <c-form-block-row :label="t('scenario.workflow')" align-center>
           <c-workflow-field
             :model-value="modelValue.drop_scenario_if_not_matched"
             :stop-label="t('common.stop')"
@@ -82,7 +86,7 @@
         </c-form-block-row>
 
         <template v-if="isWebhookAction">
-          <c-form-block-row :label="t('scenario.workflowInCaseOfFailure')">
+          <c-form-block-row :label="t('scenario.workflowInCaseOfFailure')" align-center>
             <c-workflow-field
               :model-value="parameters.stop_on_fail"
               :stop-label="t('common.stop')"
@@ -92,7 +96,7 @@
             />
           </c-form-block-row>
 
-          <c-form-block-row :label="t('scenario.workflowInCaseOfSuccess')">
+          <c-form-block-row :label="t('scenario.workflowInCaseOfSuccess')" align-center>
             <c-workflow-field
               :model-value="parameters.stop_on_success"
               :stop-label="t('common.stop')"
@@ -103,7 +107,7 @@
           </c-form-block-row>
         </template>
 
-        <c-form-block-row :label="t('common.comment')">
+        <c-form-block-row :label="t('common.comment')" indented>
           <c-textarea
             :model-value="modelValue.comment"
             :label="t('common.comment')"
