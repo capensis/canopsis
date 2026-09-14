@@ -172,9 +172,12 @@ export default {
           return;
         }
 
+        if (statusCode === RESPONSE_STATUSES.forbidden) {
+          return;
+        }
+
         const textKey = {
           [RESPONSE_STATUSES.notFound]: 'errors.socketConnectionRoomNotFound',
-          [RESPONSE_STATUSES.forbidden]: 'errors.socketConnectionRoomForbidden',
           [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
           [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
         }[statusCode];
