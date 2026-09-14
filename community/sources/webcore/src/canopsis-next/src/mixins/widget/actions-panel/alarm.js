@@ -18,7 +18,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 import { mapIds } from '@/helpers/array';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
-import { mapAlarmsEntities } from '@/helpers/entities/alarm/form';
+import { formToChangeStateEvent, mapAlarmsEntities } from '@/helpers/entities/alarm/form';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
@@ -83,8 +83,10 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           action: async (changeStateEvent) => {
+            const preparedChangeStateEvent = formToChangeStateEvent(changeStateEvent);
+
             await this.bulkCreateAlarmChangestateEvent({
-              data: alarms.map(alarm => ({ ...changeStateEvent, _id: alarm._id })),
+              data: alarms.map(alarm => ({ ...preparedChangeStateEvent, _id: alarm._id })),
             });
 
             await this.afterSubmit();
