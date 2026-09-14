@@ -314,11 +314,11 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		entityMatch,
 		r.Query,
 		r.SortRequest,
-		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		FilterRequest{
 			Opened:   &opened,
 			Category: r.Category,
 			Search:   r.Search,
-		}},
+		},
 		now,
 		userID,
 	)
@@ -364,9 +364,9 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 		bson.M{entityDbPrefix + ".component": component.ID},
 		r.Query,
 		r.SortRequest,
-		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		FilterRequest{
 			Opened: &opened,
-		}},
+		},
 		now,
 		userID,
 	)
@@ -411,11 +411,11 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userID 
 		nil,
 		r.Query,
 		r.SortRequest,
-		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		FilterRequest{
 			StartFrom: r.StartFrom,
 			StartTo:   r.StartTo,
 			Opened:    &opened,
-		}},
+		},
 		now,
 		userID,
 	)
@@ -675,10 +675,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 
 	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder(collectionName).CreateOnlyListAggregationPipeline(ctx, ListRequest{
-		FilterRequest: FilterRequest{
-			BaseFilterRequest: r.BaseFilterRequest,
-			SearchBy:          t.Fields.Fields(),
-		},
+		BaseFilterRequest: r.BaseFilterRequest,
+		SearchBy:          t.Fields.Fields(),
 	}, now, t.User)
 	if err != nil {
 		return nil, err

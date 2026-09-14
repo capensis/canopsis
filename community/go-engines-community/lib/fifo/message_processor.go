@@ -72,8 +72,9 @@ func NewMessageProcessor(
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	eventMetric := techmetrics.FifoEventMetric{}
-	eventMetric.Timestamp = time.Now()
+	eventMetric := techmetrics.FifoEventMetric{
+		Timestamp: time.Now(),
+	}
 
 	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
 	defer task.End()

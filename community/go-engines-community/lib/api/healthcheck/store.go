@@ -485,8 +485,9 @@ func (s *store) checkTimescaleDB(ctx context.Context) Service {
 }
 
 func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []string, parameters config.HealthCheckParameters) Engines {
-	graph := Graph{}
-	graph.Nodes = make([]string, len(order))
+	graph := Graph{
+		Nodes: make([]string, len(order)),
+	}
 	enginesParams := make(map[string]Engine, len(order))
 	for i, name := range order {
 		if info, ok := engines[name]; ok {

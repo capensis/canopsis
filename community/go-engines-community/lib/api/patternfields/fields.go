@@ -552,12 +552,10 @@ func (g *fieldGetter) getEntityFields(ctx context.Context, disabledFields map[st
 		}
 
 		fields = append(fields, EntityFieldResponse{
-			FieldResponse: FieldResponse{
-				Name:    alias.Alias,
-				Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
-				Enabled: true,
-			},
-			Alias: true,
+			Name:    alias.Alias,
+			Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
+			Enabled: true,
+			Alias:   true,
 		})
 	}
 

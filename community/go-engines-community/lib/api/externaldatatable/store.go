@@ -1530,9 +1530,7 @@ func (s *store) transformRawData(cfg externaldata.ColumnConfig, rawData any, val
 		}
 
 		transformedVal, err := s.parser.Parse(ColumnConfig{
-			BaseColumnConfig: BaseColumnConfig{
-				Type: externaldata.ColumnTypeRegexp,
-			},
+			Type: externaldata.ColumnTypeRegexp,
 		}, strVal)
 		if err != nil {
 			*valErrs = append(*valErrs, validation.NewFieldError("regexp", columnName, columnName))

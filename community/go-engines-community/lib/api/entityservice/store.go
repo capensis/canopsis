@@ -344,21 +344,19 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	}
 
 	service := entityservice.EntityService{
-		Entity: types.Entity{
-			ID:            utils.NewID(),
-			Name:          request.Name,
-			Author:        request.Author,
-			EnableHistory: []datetime.CpsTime{},
-			Enabled:       enabled,
-			Infos:         transformInfos(request.EditRequest),
-			Type:          types.EntityTypeService,
-			Services:      []string{},
-			Category:      request.Category,
-			ImpactLevel:   request.ImpactLevel,
-			SliAvailState: sliAvailState,
-			Created:       now,
-			Updated:       &now,
-		},
+		ID:             utils.NewID(),
+		Name:           request.Name,
+		Author:         request.Author,
+		EnableHistory:  []datetime.CpsTime{},
+		Enabled:        enabled,
+		Infos:          transformInfos(request.EditRequest),
+		Type:           types.EntityTypeService,
+		Services:       []string{},
+		Category:       request.Category,
+		ImpactLevel:    request.ImpactLevel,
+		SliAvailState:  sliAvailState,
+		Created:        now,
+		Updated:        &now,
 		OutputTemplate: request.OutputTemplate,
 	}
 	if request.Coordinates != nil {

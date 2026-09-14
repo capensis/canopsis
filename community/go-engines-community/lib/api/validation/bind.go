@@ -50,8 +50,7 @@ func ValidateStruct(v any) error {
 }
 
 func convertValErr(err error, v any) error {
-	var valErr validator.ValidationErrors
-	if errors.As(err, &valErr) {
+	if valErr, ok := errors.AsType[validator.ValidationErrors](err); ok {
 		return NewError(valErr, v)
 	}
 
