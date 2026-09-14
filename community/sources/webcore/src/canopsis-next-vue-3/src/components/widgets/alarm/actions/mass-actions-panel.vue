@@ -36,6 +36,7 @@ import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/acti
 import { mapIds } from '@/helpers/array';
 import { promisedWait } from '@/helpers/async';
 import {
+  formToChangeStateEvent,
   isAlarmStateOk,
   isAlarmStatusCancelled,
   isAlarmStatusClosed,
@@ -474,13 +475,17 @@ export default {
     },
 
     showEventModal(name, alarms, action, config = {}) {
+      const { prepareEvent = event => event, ...modalConfig } = config;
+
       this.$modals.show({
         name,
         config: {
           items: alarms,
-          ...config,
+          ...modalConfig,
           action: async (event) => {
-            await action({ data: alarms.map(alarm => ({ ...event, _id: alarm._id })) });
+            const preparedEvent = prepareEvent(event);
+
+            await action({ data: alarms.map(alarm => ({ ...preparedEvent, _id: alarm._id })) });
             await this.afterSubmit();
           },
         },
@@ -680,6 +685,7 @@ export default {
         MODALS.createChangeStateEvent,
         this.alarmsWithAck,
         this.bulkCreateAlarmChangestateEvent,
+        { prepareEvent: formToChangeStateEvent },
       );
     },
 

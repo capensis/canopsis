@@ -9,7 +9,6 @@ export default {
   socketConnectionProblem: 'Problème de connexion aux Websockets',
   socketConnectionRoomNotFound:
     'Canal Websocket introuvable. Veuillez recharger la page ou contacter l\'administrateur',
-  socketConnectionRoomForbidden: 'Ce canal Websocket est interdit',
   socketConnectionRoomBadRequest: 'Mauvaise demande d\'adhésion aux Websockets',
   socketConnectionRoomInternalServerError:
     'La connexion Websocket est interrompue. Veuillez recharger la page ou contacter l\'administrateur',
