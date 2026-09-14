@@ -30,8 +30,9 @@ type MessageProcessor struct {
 }
 
 func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	eventMetric := techmetrics.AxeEventMetric{}
-	eventMetric.Timestamp = time.Now()
+	eventMetric := techmetrics.AxeEventMetric{
+		Timestamp: time.Now(),
+	}
 
 	ctx, task := trace.NewTask(parentCtx, "axe.WorkerProcess")
 	defer task.End()

@@ -150,81 +150,79 @@ type DbCollectionsMetrics struct {
 
 func NewDbCollectionsMetrics() *DbCollectionsMetrics {
 	return &DbCollectionsMetrics{
-		Metrics: Metrics{
-			gauges: map[int]prometheus.Gauge{
-				EventfilterErrorsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "eventfilter_errors",
-					Help:      "Number of event filter errors",
-				}),
-				ResolvedAlarmsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "resolved_alarms",
-					Help:      "Number of resolved alarms",
-				}),
-				DisabledEntitiesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "disabled_entities",
-					Help:      "Number of disabled entities",
-				}),
-				UserConnectionsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "user_connections",
-					Help:      "Number of user connections",
-				}),
-				EnabledUsersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "enabled_users",
-					Help:      "Number of enabled users",
-				}),
-				EventFiltersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "event_filters",
-					Help:      "Number of event filters",
-				}),
-				ActivePBehaviorsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "active_pbehavior",
-					Help:      "Number of active pbehaviors",
-				}),
-				MetaAlarmsRulesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "meta_alarms_rules",
-					Help:      "Number of meta alarm rules",
-				}),
-				DynamicInfosRulesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "dynamic_infos_rules",
-					Help:      "Number of dynamic infos rules",
-				}),
-			},
-			gaugeVectors: map[int]*prometheus.GaugeVec{
-				EngineStatusGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "engine_status",
-					Help:      "Status of the engine (1 for running, 0 for stopped)",
-				}, []string{"engine_name"}),
-				LastExploitationModTimeGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "last_exploitation_mod_time",
-					Help:      "Last modification time of exploitation menu elements (Unix timestamp)",
-				}, []string{"type"}),
-				OpenedAlarmsGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "opened_alarms",
-					Help:      "Number of opened alarms",
-				}, []string{"active"}),
-				ActiveEntitiesGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "active_entities",
-					Help:      "Number of active entities",
-				}, []string{"type"}),
-				InstructionsGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-					Namespace: canopsisMetricsNamespace,
-					Name:      "instructions",
-					Help:      "Number of instructions",
-				}, []string{"type"}),
-			},
+		gauges: map[int]prometheus.Gauge{
+			EventfilterErrorsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "eventfilter_errors",
+				Help:      "Number of event filter errors",
+			}),
+			ResolvedAlarmsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "resolved_alarms",
+				Help:      "Number of resolved alarms",
+			}),
+			DisabledEntitiesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "disabled_entities",
+				Help:      "Number of disabled entities",
+			}),
+			UserConnectionsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "user_connections",
+				Help:      "Number of user connections",
+			}),
+			EnabledUsersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "enabled_users",
+				Help:      "Number of enabled users",
+			}),
+			EventFiltersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "event_filters",
+				Help:      "Number of event filters",
+			}),
+			ActivePBehaviorsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "active_pbehavior",
+				Help:      "Number of active pbehaviors",
+			}),
+			MetaAlarmsRulesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "meta_alarms_rules",
+				Help:      "Number of meta alarm rules",
+			}),
+			DynamicInfosRulesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "dynamic_infos_rules",
+				Help:      "Number of dynamic infos rules",
+			}),
+		},
+		gaugeVectors: map[int]*prometheus.GaugeVec{
+			EngineStatusGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "engine_status",
+				Help:      "Status of the engine (1 for running, 0 for stopped)",
+			}, []string{"engine_name"}),
+			LastExploitationModTimeGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "last_exploitation_mod_time",
+				Help:      "Last modification time of exploitation menu elements (Unix timestamp)",
+			}, []string{"type"}),
+			OpenedAlarmsGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "opened_alarms",
+				Help:      "Number of opened alarms",
+			}, []string{"active"}),
+			ActiveEntitiesGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "active_entities",
+				Help:      "Number of active entities",
+			}, []string{"type"}),
+			InstructionsGaugeVector: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: canopsisMetricsNamespace,
+				Name:      "instructions",
+				Help:      "Number of instructions",
+			}, []string{"type"}),
 		},
 		collUpdMx: sync.Mutex{},
 	}

@@ -131,13 +131,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -288,13 +286,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -391,14 +387,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -438,14 +432,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -483,14 +475,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 					Rule: &statesetting.StateSetting{
 						Type:   statesetting.RuleTypeService,
 						Method: statesetting.MethodInherited,
-						InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-							InheritedEntityPattern: pattern.Entity{
+						InheritedEntityPattern: pattern.Entity{
+							{
 								{
-									{
-										Field:     "component_infos.team",
-										FieldType: pattern.FieldTypeString,
-										Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-									},
+									Field:     "component_infos.team",
+									FieldType: pattern.FieldTypeString,
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 								},
 							},
 						},
@@ -507,14 +497,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 					Rule: &statesetting.StateSetting{
 						Type:   statesetting.RuleTypeService,
 						Method: statesetting.MethodInherited,
-						InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-							InheritedEntityPattern: pattern.Entity{
+						InheritedEntityPattern: pattern.Entity{
+							{
 								{
-									{
-										Field:     "component_infos.team",
-										FieldType: pattern.FieldTypeString,
-										Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
-									},
+									Field:     "component_infos.team",
+									FieldType: pattern.FieldTypeString,
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
 								},
 							},
 						},
@@ -651,13 +639,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -840,13 +826,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1055,13 +1039,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1100,13 +1082,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1243,13 +1223,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1339,13 +1317,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1474,13 +1450,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1579,13 +1553,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1713,13 +1685,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1783,13 +1753,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -1854,14 +1822,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -1904,14 +1870,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -2048,13 +2012,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2155,13 +2117,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2289,13 +2249,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2391,13 +2349,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2621,13 +2577,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2664,13 +2618,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2709,14 +2661,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -2759,14 +2709,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -2896,13 +2844,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -2966,13 +2912,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3042,13 +2986,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3221,13 +3163,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3268,13 +3208,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3315,14 +3253,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -3367,14 +3303,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -3515,13 +3449,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3590,13 +3522,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3664,13 +3594,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3738,13 +3666,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3814,13 +3740,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -3890,13 +3814,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -4083,13 +4005,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -4133,13 +4053,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -4184,14 +4102,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -4236,14 +4152,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -4469,13 +4383,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -4629,13 +4541,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -4719,14 +4629,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -4769,14 +4677,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -4939,13 +4845,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -5110,13 +5014,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -5284,13 +5186,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -5494,13 +5394,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -5546,13 +5444,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -5598,14 +5494,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -5653,14 +5547,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -5885,13 +5777,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6031,13 +5921,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6119,14 +6007,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -6169,14 +6055,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -6329,13 +6213,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6377,13 +6259,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6429,13 +6309,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6588,13 +6466,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6751,13 +6627,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6949,13 +6823,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -6999,13 +6871,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -7241,13 +7111,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -7406,13 +7274,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -7570,13 +7436,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -7740,13 +7604,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -7833,14 +7695,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -7884,14 +7744,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "component_infos.team",
-									FieldType: pattern.FieldTypeString,
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
-								},
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
 							},
 						},
 					},
@@ -8040,13 +7898,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8086,13 +7942,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8139,13 +7993,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8304,13 +8156,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8355,13 +8205,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8410,13 +8258,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8510,13 +8356,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8557,13 +8401,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8722,13 +8564,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -8895,13 +8735,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9055,13 +8893,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9218,13 +9054,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9591,13 +9425,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9644,13 +9476,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9700,13 +9530,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9753,13 +9581,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -9923,13 +9749,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10041,13 +9865,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10164,13 +9986,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10209,13 +10029,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10256,13 +10074,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10378,13 +10194,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10416,13 +10230,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10460,13 +10272,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10595,13 +10405,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10752,13 +10560,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -10968,13 +10774,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11015,13 +10819,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11131,13 +10933,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11205,13 +11005,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11296,13 +11094,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11339,13 +11135,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11385,13 +11179,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11456,13 +11248,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11500,13 +11290,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11545,13 +11333,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11620,13 +11406,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11826,13 +11610,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11871,13 +11653,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -11985,13 +11765,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12059,13 +11837,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12148,13 +11924,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12191,13 +11965,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12258,13 +12030,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12302,13 +12072,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12347,13 +12115,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12422,13 +12188,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12630,13 +12394,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12675,13 +12437,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -12861,13 +12621,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13018,13 +12776,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13116,13 +12872,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13157,13 +12911,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13198,13 +12950,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13241,13 +12991,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13375,13 +13123,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13564,13 +13310,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13779,13 +13523,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
@@ -13824,13 +13566,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
