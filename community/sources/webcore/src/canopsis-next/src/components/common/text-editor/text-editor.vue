@@ -34,6 +34,7 @@
 <script>
 import {
   ref,
+  toRef,
   computed,
   watch,
   onMounted,
@@ -162,7 +163,7 @@ export default {
       closeVariablesMenu,
     } = useTextEditorVariables({
       editor,
-      variables: props.variables,
+      variables: toRef(props, 'variables'),
     });
 
     const options = computed(() => {
