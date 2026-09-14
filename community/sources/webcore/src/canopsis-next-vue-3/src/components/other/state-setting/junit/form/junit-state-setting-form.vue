@@ -1,8 +1,11 @@
 <template>
   <c-layout column>
     <v-row>
-      <v-col cols="4">
+      <v-col cols="6">
         <junit-state-setting-method-field v-model="method" />
+      </v-col>
+      <v-col cols="6">
+        <state-setting-type-field v-model="type" />
       </v-col>
     </v-row>
 
@@ -19,7 +22,7 @@
         />
       </c-layout>
 
-      <c-layout class="pl-4" column gap="4">
+      <c-layout class="pl-4" gap="4" column>
         <junit-state-setting-thresholds-field
           :value="junitThresholds.skipped"
           :label="t('common.skipped')"
@@ -51,11 +54,14 @@ import { JUNIT_STATE_SETTING_METHODS } from '@/constants';
 import { useFormModel } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
+import StateSettingTypeField from '../../form/fields/state-setting-type-field.vue';
+
 import JunitStateSettingMethodField from './fields/junit-state-setting-method-field.vue';
 import JunitStateSettingThresholdsField from './fields/junit-state-setting-thresholds-field.vue';
 
 export default {
   components: {
+    StateSettingTypeField,
     JunitStateSettingMethodField,
     JunitStateSettingThresholdsField,
   },
@@ -63,6 +69,7 @@ export default {
   setup() {
     const { t } = useI18n();
     const method = useFormModel('method');
+    const type = useFormModel('type');
     const junitThresholds = useFormModel('junit_thresholds');
 
     const isWorstOfShareMethod = computed(
@@ -79,6 +86,7 @@ export default {
     return {
       t,
       method,
+      type,
       junitThresholds,
       isWorstOfShareMethod,
       updateThreshold,

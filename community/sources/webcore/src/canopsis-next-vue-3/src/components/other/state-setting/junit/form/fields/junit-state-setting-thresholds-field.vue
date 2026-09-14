@@ -12,10 +12,11 @@
       />
     </c-layout>
 
-    <c-layout class="junit-state-setting-thresholds-field__states" column gap="1">
+    <c-layout class="junit-state-setting-thresholds-field__states" gap="1" column>
       <junit-state-setting-threshold-state-field
         :model-value="value.minor"
         :type="value.type"
+        :max="value.major"
         :name="`${name}.minor`"
         :label="t('common.stateTypes.minor')"
         @update:model-value="updateValueField('minor', $event)"
@@ -23,6 +24,7 @@
       <junit-state-setting-threshold-state-field
         :model-value="value.major"
         :type="value.type"
+        :max="value.critical"
         :name="`${name}.major`"
         :label="t('common.stateTypes.major')"
         @update:model-value="updateValueField('major', $event)"

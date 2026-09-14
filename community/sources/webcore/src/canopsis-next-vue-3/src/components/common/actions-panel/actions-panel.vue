@@ -7,7 +7,12 @@
         :action="action"
         :small="small"
       />
-      <actions-panel-menu ref="menu" :actions="preparedActions.dropDown" :small="small" />
+      <actions-panel-menu
+        v-if="preparedActions.dropDown.length"
+        ref="menuElement"
+        :actions="preparedActions.dropDown"
+        :small="small"
+      />
     </c-layout>
   </div>
 </template>
@@ -48,7 +53,7 @@ export default {
 
   setup(props) {
     const { xl } = useDisplay();
-    const menu = ref(null);
+    const menuElement = ref(null);
 
     const preparedActions = computed(() => {
       if (!props.ignoreMediaQuery && !xl.value) {
@@ -73,11 +78,11 @@ export default {
       };
     });
 
-    const closeMenu = () => menu.value?.closeMenu?.();
+    const closeMenu = () => menuElement.value?.closeMenu?.();
 
     return {
       closeMenu,
-      menu,
+      menuElement,
       preparedActions,
     };
   },

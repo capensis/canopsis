@@ -14,15 +14,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="t('stateSetting.appliedForEntityType')">
-        <c-select
-          v-model="type"
-          :label="t('stateSetting.appliedForEntityType')"
-          :items="entityTypeItems"
-          item-title="text"
-          item-value="value"
-          name="type"
-          required
-        />
+        <state-setting-type-field v-model="type" />
       </c-form-block-row>
 
       <c-form-block-row :label="t('stateSetting.computeMethod')">
@@ -33,20 +25,17 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { STATE_SETTING_ENTITY_TYPES } from '@/constants';
-
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import StateSettingMethodField from './fields/state-setting-method-field.vue';
+import StateSettingTypeField from './fields/state-setting-type-field.vue';
 
 export default {
-  components: { StateSettingMethodField },
+  components: { StateSettingMethodField, StateSettingTypeField },
 
   setup() {
-    const { t, te } = useI18n();
+    const { t } = useI18n();
     const { title, priority, type, method } = useFormModels([
       'title',
       'priority',
@@ -54,19 +43,12 @@ export default {
       'method',
     ]);
 
-    const entityTypeItems = computed(() => STATE_SETTING_ENTITY_TYPES.map(value => ({
-        value,
-        text: te(`common.${value}`) ? t(`common.${value}`) : value,
-      })),
-    );
-
     return {
       t,
       title,
       priority,
       type,
       method,
-      entityTypeItems,
     };
   },
 };

@@ -8,7 +8,7 @@
       :value="modelValue"
       :name="name"
       :min="0"
-      :max="max"
+      :max="resolvedMax"
       :suffix="suffix"
       class="junit-state-setting-threshold-state-field__input"
       hide-details="auto"
@@ -37,6 +37,10 @@ export default {
       type: Number,
       default: JUNIT_STATE_SETTING_THRESHOLDS_TYPES.number,
     },
+    max: {
+      type: [Number, String],
+      default: undefined,
+    },
     name: {
       type: String,
       default: 'state',
@@ -49,11 +53,20 @@ export default {
     const isPercentType = computed(
       () => props.type === JUNIT_STATE_SETTING_THRESHOLDS_TYPES.percent,
     );
-    const max = computed(() => (isPercentType.value ? 100 : undefined));
     const suffix = computed(() => (isPercentType.value ? '%' : undefined));
+    const resolvedMax = computed(() => {
+      const maxValues = [
+        isPercentType.value ? 100 : undefined,
+        props.max,
+      ]
+        .map(Number)
+        .filter(Number.isFinite);
+
+      return maxValues.length ? Math.min(...maxValues) : undefined;
+    });
 
     return {
-      max,
+      resolvedMax,
       suffix,
     };
   },
