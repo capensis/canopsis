@@ -2,295 +2,52 @@
 
 exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props 1`] = `
 <div
-  class="v-stepper v-sheet theme--light"
+  class="layout gap-3 column"
 >
+  <c-enabled-field-stub
+    hide-details=""
+    value="true"
+    with-background=""
+  />
   <div
-    class="v-stepper__header"
+    patterns-label="Pattern and params"
+    type="8"
+    value="[object Object]"
   >
-    <div
-      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--complete"
-      tabindex="0"
-    >
-      <span
-        class="v-stepper__step__step primary"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          edit
-        </i>
-      </span>
-      <div
-        class="v-stepper__label"
-      >
-      Basics
-        <!---->
-      </div>
-    </div>
-    <hr
-      aria-orientation="horizontal"
-      class="v-divider theme--light"
-      role="separator"
+    <meta-alarm-rule-general-form-stub
+      disabledidfield="true"
+      form="[object Object]"
+      templatevars="[object Object]"
     />
-    <div
-      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--complete"
-      tabindex="0"
-    >
-      <span
-        class="v-stepper__step__step primary"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          edit
-        </i>
-      </span>
-      <div
-        class="v-stepper__label"
-      >
-      Define type
-        <!---->
-      </div>
-    </div>
-    <hr
-      aria-orientation="horizontal"
-      class="v-divider theme--light"
-      role="separator"
+    <meta-alarm-rule-parameters-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
     />
-    <div
-      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
-      tabindex="0"
-    >
-      <span
-        class="v-stepper__step__step"
-      >
-        3
-      </span>
-      <div
-        class="v-stepper__label"
-      >
-      Add parameters
-        <!---->
-      </div>
-    </div>
-  </div>
-  <div
-    class="v-stepper__items"
-  >
-    <transition-stub
-      class="pa-0"
-      name="tab-transition"
-    >
-      <div
-        class="v-stepper__content"
-        style="display: none;"
-      >
-        <div
-          class="v-stepper__wrapper"
-        >
-          <meta-alarm-rule-general-form-stub
-            class="pa-4"
-            disabledidfield="true"
-            form="[object Object]"
-            variables=""
-          />
-        </div>
-      </div>
-    </transition-stub>
-    <transition-stub
-      class="pa-0"
-      name="tab-transition"
-    >
-      <div
-        class="v-stepper__content"
-        style="display: none;"
-      >
-        <div
-          class="v-stepper__wrapper"
-        >
-          <div
-            class="pa-4"
-          >
-            <meta-alarm-rule-type-form-stub
-              form="[object Object]"
-              variables=""
-            />
-          </div>
-        </div>
-      </div>
-    </transition-stub>
-    <transition-stub
-      class="pa-0"
-      name="tab-transition"
-    >
-      <div
-        class="v-stepper__content"
-        style="display: none;"
-      >
-        <div
-          class="v-stepper__wrapper"
-        >
-          <c-information-block-stub
-            class="pa-4"
-            title="Attribute based relationship"
-          >
-            <span
-              class="text--secondary mb-2"
-            >
-              All alarms that have the attribute(s) defined by filter patterns are grouped
-            </span>
-            <meta-alarm-rule-parameters-form-stub
-              form="[object Object]"
-              templatevars="[object Object]"
-            />
-          </c-information-block-stub>
-        </div>
-      </div>
-    </transition-stub>
   </div>
 </div>
 `;
 
 exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default props 1`] = `
 <div
-  class="v-stepper v-sheet theme--light"
+  class="layout gap-3 column"
 >
+  <c-enabled-field-stub
+    hide-details=""
+    with-background=""
+  />
   <div
-    class="v-stepper__header"
+    patterns-label="Pattern and params"
+    type="8"
+    value="[object Object]"
   >
-    <div
-      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
-      tabindex="0"
-    >
-      <span
-        class="v-stepper__step__step"
-      >
-        1
-      </span>
-      <div
-        class="v-stepper__label"
-      >
-      Basics
-        <!---->
-      </div>
-    </div>
-    <hr
-      aria-orientation="horizontal"
-      class="v-divider theme--light"
-      role="separator"
+    <meta-alarm-rule-general-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
     />
-    <div
-      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
-      tabindex="0"
-    >
-      <span
-        class="v-stepper__step__step"
-      >
-        2
-      </span>
-      <div
-        class="v-stepper__label"
-      >
-      Define type
-        <!---->
-      </div>
-    </div>
-    <hr
-      aria-orientation="horizontal"
-      class="v-divider theme--light"
-      role="separator"
+    <meta-alarm-rule-parameters-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
     />
-    <div
-      class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
-      tabindex="0"
-    >
-      <span
-        class="v-stepper__step__step"
-      >
-        3
-      </span>
-      <div
-        class="v-stepper__label"
-      >
-      Add parameters
-        <!---->
-      </div>
-    </div>
-  </div>
-  <div
-    class="v-stepper__items"
-  >
-    <transition-stub
-      class="pa-0"
-      name="tab-transition"
-    >
-      <div
-        class="v-stepper__content"
-        style="display: none;"
-      >
-        <div
-          class="v-stepper__wrapper"
-        >
-          <meta-alarm-rule-general-form-stub
-            class="pa-4"
-            form="[object Object]"
-            variables=""
-          />
-        </div>
-      </div>
-    </transition-stub>
-    <transition-stub
-      class="pa-0"
-      name="tab-transition"
-    >
-      <div
-        class="v-stepper__content"
-        style="display: none;"
-      >
-        <div
-          class="v-stepper__wrapper"
-        >
-          <div
-            class="pa-4"
-          >
-            <meta-alarm-rule-type-form-stub
-              form="[object Object]"
-              variables=""
-            />
-          </div>
-        </div>
-      </div>
-    </transition-stub>
-    <transition-stub
-      class="pa-0"
-      name="tab-transition"
-    >
-      <div
-        class="v-stepper__content"
-        style="display: none;"
-      >
-        <div
-          class="v-stepper__wrapper"
-        >
-          <c-information-block-stub
-            class="pa-4"
-            title="Attribute based relationship"
-          >
-            <span
-              class="text--secondary mb-2"
-            >
-              All alarms that have the attribute(s) defined by filter patterns are grouped
-            </span>
-            <meta-alarm-rule-parameters-form-stub
-              form="[object Object]"
-              templatevars="[object Object]"
-            />
-          </c-information-block-stub>
-        </div>
-      </div>
-    </transition-stub>
   </div>
 </div>
 `;

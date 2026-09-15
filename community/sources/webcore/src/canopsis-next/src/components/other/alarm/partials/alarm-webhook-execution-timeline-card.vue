@@ -11,8 +11,12 @@
         color="grey"
         @expand="expandResponse"
       />
-      <span class="ml-2">{{ $t(`alarm.timeline.steps.${step._t}`) }}</span>
-      <span v-if="step.message">: {{ step.message }}</span>
+      <span class="ml-2">
+        {{ $t(`alarm.timeline.steps.${step._t}`) }}
+      </span>
+      <span v-if="step.message">
+        : {{ step.message }}
+      </span>
     </v-layout>
     <v-expand-transition>
       <v-card v-show="expanded">
@@ -21,7 +25,9 @@
             v-if="response"
             :value="response"
           />
-          <span v-else>{{ $t('common.noResponse') }}</span>
+          <span v-else>
+            {{ $t('common.noResponse') }}
+          </span>
         </v-card-text>
       </v-card>
     </v-expand-transition>

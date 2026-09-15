@@ -1,7 +1,9 @@
 <template>
   <c-collapse-panel class="c-alternative-bg-panel" expanded>
     <template #header>
-      <span class="font-weight-medium text-uppercase">{{ title }}</span>
+      <span class="font-weight-medium text-uppercase">
+        {{ title }}
+      </span>
     </template>
     <v-data-table
       :headers="headers"

@@ -28,7 +28,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 1`] = `
           <span
             class="text-capitalize"
           >
-            hours
+      hours
           </span>
           <input
             aria-readonly="false"
@@ -98,7 +98,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = 
           <span
             class="text-capitalize"
           >
-            days
+      days
           </span>
           <input
             aria-readonly="false"

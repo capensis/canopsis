@@ -1,20 +1,23 @@
 <template>
-  <v-layout column>
-    <v-layout>
+  <v-layout
+    class="draggable-playlist-tabs"
+    column
+  >
+    <v-layout class="draggable-playlist-tabs__header">
       <v-flex
-        class="text-center font-weight-bold"
+        class="draggable-playlist-tabs__header-cell"
         xs4
       >
         {{ $tc('common.group') }}
       </v-flex>
       <v-flex
-        class="text-center font-weight-bold"
+        class="draggable-playlist-tabs__header-cell"
         xs4
       >
         {{ $tc('common.view') }}
       </v-flex>
       <v-flex
-        class="text-center font-weight-bold"
+        class="draggable-playlist-tabs__header-cell"
         xs4
       >
         {{ $tc('common.tab') }}
@@ -25,7 +28,7 @@
         v-field="tabs"
         :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }"
         :disabled="disabled"
-        class="tabs-draggable-panel secondary lighten-1"
+        class="tabs-draggable-panel"
       >
         <tab-panel-content
           v-for="{ tab, view, group } in tabsWithDetails"
@@ -100,7 +103,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .draggable-playlist-tabs {
+    &__header {
+      min-height: 24px;
+    }
+
+    &__header-cell {
+      color: #000;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 16px;
+      text-align: center;
+    }
+  }
+
   .tabs-draggable-panel {
+    background: transparent !important;
+
     &:not(&--disabled) ::v-deep .tab-panel-item {
       cursor: move;
     }
@@ -110,10 +129,18 @@ export default {
         content: '';
         display: block;
         height: 48px;
-        border: 4px dashed #4f6479;
-        border-radius: 5px;
+        border: 1px dashed #4f6479;
+        border-radius: 0;
         position: relative;
       }
+    }
+
+    ::v-deep .tab-panel-item {
+      background: transparent !important;
+    }
+
+    ::v-deep .v-divider {
+      display: none;
     }
   }
 </style>

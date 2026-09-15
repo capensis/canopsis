@@ -135,3 +135,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-dialog__content--auto-height .v-dialog.v-dialog__pbehavior-planning {
+  height: 90% !important;
+  max-height: 90%;
+}
+</style>

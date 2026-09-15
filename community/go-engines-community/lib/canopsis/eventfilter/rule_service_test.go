@@ -35,15 +35,15 @@ func TestProcessEventSuccess(t *testing.T) {
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
+	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch, _ map[string]any) (eventfilter.RuleResult, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.RuleResult{Outcome: eventfilter.OutcomePass}, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
+	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch, _ map[string]any) (eventfilter.RuleResult, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.RuleResult{Outcome: eventfilter.OutcomePass}, nil
@@ -66,7 +66,7 @@ func TestProcessEventSuccess(t *testing.T) {
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	ruleService := eventfilter.NewRuleService(adapter, container, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
+	ruleService := eventfilter.NewRuleService(adapter, container, nil, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
@@ -82,7 +82,7 @@ func TestProcessEventSuccess(t *testing.T) {
 		Component: "test component",
 	}
 
-	_, _, _, err = ruleService.ProcessEvent(ctx, &event)
+	_, err = ruleService.ProcessEvent(ctx, &event, eventfilter.ServiceResult{})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -111,15 +111,15 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
+	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch, _ map[string]any) (string, bool, map[string]int64, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeBreak, false, nil, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch) (string, bool, map[string]int64, error) {
+	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch, _ map[string]any) (string, bool, map[string]int64, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, false, nil, nil
@@ -141,7 +141,7 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 	mockEventCounter.EXPECT().Add(gomock.Any(), gomock.Any())
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	ruleService := eventfilter.NewRuleService(adapter, container, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
+	ruleService := eventfilter.NewRuleService(adapter, container, nil, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
@@ -158,7 +158,7 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 		Component: "test component",
 	}
 
-	_, _, _, err = ruleService.ProcessEvent(ctx, &event)
+	_, err = ruleService.ProcessEvent(ctx, &event, eventfilter.ServiceResult{})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -187,15 +187,15 @@ func TestProcessEventDropOutcome(t *testing.T) {
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
+	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch, _ map[string]any) (eventfilter.RuleResult, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.RuleResult{Outcome: eventfilter.OutcomeDrop}, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
+	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event *types.Event, _ map[string]eventfilter.UpdatedValue, _ eventfilter.RegexMatch, _ map[string]any) (eventfilter.RuleResult, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.RuleResult{Outcome: eventfilter.OutcomePass}, nil
@@ -217,7 +217,7 @@ func TestProcessEventDropOutcome(t *testing.T) {
 	mockEventCounter.EXPECT().Add(gomock.Any(), gomock.Any())
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	ruleService := eventfilter.NewRuleService(adapter, container, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
+	ruleService := eventfilter.NewRuleService(adapter, container, nil, mockEventCounter, mockFailureService, tplExecutor, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
@@ -234,7 +234,7 @@ func TestProcessEventDropOutcome(t *testing.T) {
 		Component: "test component",
 	}
 
-	_, _, _, err = ruleService.ProcessEvent(ctx, &event)
+	_, err = ruleService.ProcessEvent(ctx, &event, eventfilter.ServiceResult{})
 	if !errors.Is(err, eventfilter.ErrDropOutcome) {
 		t.Errorf("expected error %v, but got %v", eventfilter.ErrDropOutcome, err)
 	}

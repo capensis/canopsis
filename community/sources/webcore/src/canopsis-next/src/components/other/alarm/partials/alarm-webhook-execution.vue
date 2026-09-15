@@ -35,7 +35,9 @@
           class="mb-4"
           align-center
         >
-          <span class="text-subtitle-1 mr-5">{{ $t('common.webhookStatus') }}:</span>
+          <span class="text-subtitle-1 mr-5">
+            {{ $t('common.webhookStatus') }}:
+          </span>
           <alarm-webhook-execution-status
             :running="isExecutionRunning"
             :success="isExecutionSucceeded"

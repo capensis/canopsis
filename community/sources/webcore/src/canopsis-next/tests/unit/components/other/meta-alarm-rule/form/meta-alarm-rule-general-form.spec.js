@@ -7,12 +7,16 @@ import { metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 
 const stubs = {
+  'c-form-block': true,
+  'c-form-block-row': true,
   'c-id-field': true,
   'c-name-field': true,
   'c-payload-textarea-field': true,
+  'c-payload-text-field': true,
   'c-enabled-field': true,
   'meta-alarm-rule-tags-form': true,
   'meta-alarm-rule-infos-form': true,
+  'meta-alarm-rule-type-field': true,
 };
 
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');

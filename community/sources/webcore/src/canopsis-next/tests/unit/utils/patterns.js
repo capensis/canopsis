@@ -1,5 +1,10 @@
 import { generateRenderer, generateShallowRenderer, flushPromises } from '@unit/utils/vue';
-import { createMockedStoreModules, createPatternsFieldsModule, createPbehaviorPatternsModule } from '@unit/utils/store';
+import {
+  createMockedStoreModules,
+  createMetaAlarmRuleModule,
+  createPatternsFieldsModule,
+  createPbehaviorPatternsModule,
+} from '@unit/utils/store';
 
 export const generateEntityPatternsTests = (Component, name, customProps = {}) => {
   const stubs = {
@@ -26,6 +31,8 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
     fetchDynamicInfosPatternFields,
     fetchEventRecordPatternFields,
   } = createPatternsFieldsModule();
+
+  const { metaAlarmRuleModule } = createMetaAlarmRuleModule();
 
   const mockPatternFieldsResponse = {
     entity_pattern: [
@@ -67,6 +74,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
   const store = createMockedStoreModules([
     patternsFieldsModule,
     pbehaviorPatternsModule,
+    metaAlarmRuleModule,
   ]);
 
   const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
@@ -96,7 +104,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
 
       await flushPromises();
 
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchCleanSnapshot();
     });
 
     test(`Renders \`${name}\` with custom props`, async () => {
@@ -112,7 +120,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
 
       await flushPromises();
 
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchCleanSnapshot();
     });
   });
 };

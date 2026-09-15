@@ -4,7 +4,9 @@
       v-for="(categoryLinks, categoryName) in preparedLinks"
       :key="categoryName"
     >
-      <span class="category mr-2">{{ categoryName }}</span>
+      <span class="category mr-2">
+        {{ categoryName }}
+      </span>
       <v-divider light />
       <div
         v-for="(link, index) in categoryLinks"

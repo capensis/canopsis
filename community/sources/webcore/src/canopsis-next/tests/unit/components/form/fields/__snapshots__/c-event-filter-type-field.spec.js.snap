@@ -218,13 +218,7 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with er
           class="v-messages__wrapper"
           name="message-transition"
           tag="div"
-        >
-          <div
-            class="v-messages__message"
-          >
-            The field is required
-          </div>
-        </transition-group-stub>
+        />
       </div>
     </div>
   </div>

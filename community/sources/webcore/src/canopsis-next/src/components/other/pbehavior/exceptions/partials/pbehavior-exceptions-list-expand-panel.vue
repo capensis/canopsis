@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { pbehaviorExceptionToForm } from '@/helpers/entities/pbehavior/exception/form';
 
 import PbehaviorExceptionsField from '../fields/pbehavior-exceptions-field.vue';
@@ -55,12 +57,16 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    preparedPbehaviorExceptionExdates() {
-      const { exdates } = pbehaviorExceptionToForm(this.pbehaviorException);
+  setup(props) {
+    const preparedPbehaviorExceptionExdates = computed(() => {
+      const { exdates } = pbehaviorExceptionToForm(props.pbehaviorException);
 
       return exdates;
-    },
+    });
+
+    return {
+      preparedPbehaviorExceptionExdates,
+    };
   },
 };
 </script>

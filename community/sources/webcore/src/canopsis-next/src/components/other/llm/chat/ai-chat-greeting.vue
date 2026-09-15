@@ -11,7 +11,9 @@
     >
       $vuetify.icons.robot
     </v-icon>
-    <span class="text-h5 font-weight-thin grey--text">{{ $t('llm.chat.howCanIHelp') }}</span>
+    <span class="text-h5 font-weight-thin grey--text">
+      {{ $t('llm.chat.howCanIHelp') }}
+    </span>
   </v-layout>
 </template>
 

@@ -1,6 +1,14 @@
 import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
 
 export default {
+  tabs: {
+    dynamicInfos: 'Informations dynamiques',
+    templates: 'Modèles',
+  },
+  createFromTemplateTooltip: 'Créer une information dynamique à partir du modèle',
+  templatesList: {
+    massRemove: 'Supprimer les modèles d\'informations dynamiques',
+  },
   massRemove: 'Supprimer les informations dynamiques',
   massEnable: 'Activer les informations dynamiques',
   massDisable: 'Désactiver les informations dynamiques',

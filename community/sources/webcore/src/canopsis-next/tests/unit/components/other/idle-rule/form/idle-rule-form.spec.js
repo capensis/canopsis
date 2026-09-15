@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import { IDLE_RULE_TYPES } from '@/constants';
 
@@ -8,6 +9,7 @@ import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
 
 const stubs = {
   'c-enabled-field': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
   'idle-rule-general-form': true,
   'idle-rule-patterns-form': true,
 };
@@ -19,6 +21,18 @@ const selectPatternsForm = wrapper => wrapper.find('idle-rule-patterns-form-stub
 describe('idle-rule-form', () => {
   const factory = generateShallowRenderer(IdleRuleForm, { stubs });
   const snapshotFactory = generateRenderer(IdleRuleForm, { stubs });
+
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          enabled: true,
+        },
+      },
+    });
+
+    expect(selectGeneralForm(wrapper).exists()).toBe(true);
+  });
 
   test('IDLE Rule enabled after trigger enabled field', () => {
     const enabled = Faker.datatype.boolean();
@@ -99,17 +113,6 @@ describe('idle-rule-form', () => {
           patterns: {},
         },
       },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('Renders `idle-rule-form` with errors', async () => {
-    const wrapper = snapshotFactory();
-
-    await wrapper.setData({
-      hasGeneralError: true,
-      hasPatternsError: true,
     });
 
     expect(wrapper).toMatchSnapshot();

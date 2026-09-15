@@ -17,7 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -271,15 +270,13 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		Updated:  &now,
 		Origin:   params.Origin,
 		Entity:   entity.ID,
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field: "_id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: entity.ID,
-						},
+					Field: "_id",
+					Condition: pattern.Condition{
+						Type:  pattern.ConditionEqual,
+						Value: entity.ID,
 					},
 				},
 			},
@@ -316,6 +313,10 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 			}
 
 			oldPbhIds = append(oldPbhIds, pbh.ID)
+		}
+
+		if err = cursor.Err(); err != nil {
+			return fmt.Errorf("cannot iterate old pbehavior: %w", err)
 		}
 
 		_, err = collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": oldPbhIds}})

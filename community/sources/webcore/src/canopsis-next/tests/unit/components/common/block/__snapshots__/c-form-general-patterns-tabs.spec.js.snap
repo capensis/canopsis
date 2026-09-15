@@ -1,0 +1,411 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-form-general-patterns-tabs Renders \`c-form-general-patterns-tabs\` with all optional slots 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+        General
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+        Custom additional
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+        Custom patterns
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab v-tab--tooltip"
+          role="tab"
+          tabindex="0"
+        >
+          <span>
+            Test query
+          </span>
+          <span
+            class="v-tooltip v-tooltip--top"
+          >
+            <!---->
+          </span>
+        </div>
+        <template-testing-test-variables-tab-stub
+          disabled="true"
+        />
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="general-slot"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          style=""
+        >
+          <div
+            class="additional-slot"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          style=""
+        >
+          <div
+            class="patterns-slot"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        class=""
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="test-query-slot"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        class=""
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <template-testing-test-variables-stub
+            generalform="[object Object]"
+            ruleid="rule-id"
+            templatevars="[object Object]"
+            type="4"
+            variablesfields=""
+          />
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-form-general-patterns-tabs Renders \`c-form-general-patterns-tabs\` with default slots 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+        General
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+        Pattern
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="general-slot"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          style=""
+        >
+          <div
+            class="patterns-slot"
+          />
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-form-general-patterns-tabs Renders \`c-form-general-patterns-tabs\` with hidden general tab 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+        Pattern
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="patterns-slot"
+          />
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-form-general-patterns-tabs Renders \`c-form-general-patterns-tabs\` with reverse prop 1`] = `
+<div
+  class="v-tabs v-tabs--centered theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="height: 2px; left: 0px; width: 0px;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+        Pattern
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+        General
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <div
+            class="patterns-slot"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        class="pt-4"
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          style=""
+        >
+          <div
+            class="general-slot"
+          />
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;

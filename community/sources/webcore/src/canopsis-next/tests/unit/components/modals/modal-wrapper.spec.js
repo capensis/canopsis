@@ -1,4 +1,5 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { mockModals } from '@unit/utils/mock-hooks';
 
 import ModalWrapper from '@/components/modals/modal-wrapper.vue';
 
@@ -19,8 +20,11 @@ const selectModalTitleButtons = wrapper => wrapper.find('modal-title-buttons-stu
 const selectModalMassActionsPanel = wrapper => wrapper.find('modal-mass-actions-panel-stub');
 
 describe('modal-wrapper', () => {
+  const $modals = mockModals();
+
   const factory = generateShallowRenderer(ModalWrapper, {
     stubs,
+    mocks: { $modals },
     parentComponent: {
       provide: defaultProvide,
     },
@@ -28,6 +32,7 @@ describe('modal-wrapper', () => {
   const snapshotFactory = generateRenderer(ModalWrapper, {
     stubs,
     attachTo: document.body,
+    mocks: { $modals },
     parentComponent: {
       provide: defaultProvide,
     },

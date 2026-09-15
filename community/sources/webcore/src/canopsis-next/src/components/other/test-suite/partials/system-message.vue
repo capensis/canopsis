@@ -2,7 +2,9 @@
   <div class="system-message">
     <v-layout align-center>
       <span class="mr-1">
-        <slot name="label">{{ label }}</slot>
+        <slot name="label">
+          {{ label }}
+        </slot>
       </span>
       <c-copy-btn
         :value="value"

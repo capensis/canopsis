@@ -30,6 +30,7 @@
 </template>
 
 <script>
+// TODO: remove this component
 export default {
   props: {
     title: {

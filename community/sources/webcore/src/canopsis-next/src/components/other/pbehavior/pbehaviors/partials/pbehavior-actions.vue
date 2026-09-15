@@ -13,12 +13,12 @@
       type="duplicate"
       @click="showDuplicatePbehaviorModal"
     />
+    <c-db-export-btn :id="pbehavior._id" pbehavior />
     <c-action-btn
       v-if="removable"
       type="delete"
       @click="showDeletePbehaviorModal"
     />
-    <c-db-export-btn :id="pbehavior._id" pbehavior />
   </v-layout>
 </template>
 

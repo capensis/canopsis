@@ -62,24 +62,26 @@
       v-if="!validateOnBlur && !readonly"
       xs12
     >
-      <v-btn
-        :disabled="errors.has(name) || !wasChanged"
-        color="primary"
-        outlined
-        @click="parse"
-      >
-        {{ $t('common.parse') }}
-      </v-btn>
-      <v-btn
-        :disabled="!wasChanged"
-        class="v-btn-legacy-m--x"
-        color="grey darken-1"
-        outlined
-        @click="reset"
-      >
-        {{ $t('common.reset') }}
-      </v-btn>
-      <slot :json-string="localValue" name="append" />
+      <v-layout>
+        <v-btn
+          :disabled="errors.has(name) || !wasChanged"
+          color="primary"
+          outlined
+          @click="parse"
+        >
+          {{ $t('common.parse') }}
+        </v-btn>
+        <v-btn
+          :disabled="!wasChanged"
+          class="v-btn-legacy-m--x"
+          color="grey darken-1"
+          outlined
+          @click="reset"
+        >
+          {{ $t('common.reset') }}
+        </v-btn>
+        <slot :json-string="localValue" name="append" />
+      </v-layout>
     </v-flex>
   </v-layout>
 </template>

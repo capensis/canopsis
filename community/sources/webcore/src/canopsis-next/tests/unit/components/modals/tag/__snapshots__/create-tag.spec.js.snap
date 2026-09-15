@@ -14,7 +14,7 @@ exports[`create-tag Renders \`create-tag\` with empty modal 1`] = `
       class="title"
     >
       <span>
-        Create a tag
+        Create tag
       </span>
     </div>
     <div
@@ -47,7 +47,7 @@ exports[`create-tag Renders \`create-tag\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -102,7 +102,7 @@ exports[`create-tag Renders \`create-tag\` with tag 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
