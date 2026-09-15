@@ -15,6 +15,7 @@ import (
 
 	pgx "github.com/jackc/pgx/v5"
 	pgconn "github.com/jackc/pgx/v5/pgconn"
+	pgtype "github.com/jackc/pgx/v5/pgtype"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -154,6 +155,20 @@ func (m *MockRows) Scan(dest ...any) error {
 func (mr *MockRowsMockRecorder) Scan(dest ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Scan", reflect.TypeOf((*MockRows)(nil).Scan), dest...)
+}
+
+// TypeMap mocks base method.
+func (m *MockRows) TypeMap() *pgtype.Map {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TypeMap")
+	ret0, _ := ret[0].(*pgtype.Map)
+	return ret0
+}
+
+// TypeMap indicates an expected call of TypeMap.
+func (mr *MockRowsMockRecorder) TypeMap() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TypeMap", reflect.TypeOf((*MockRows)(nil).TypeMap))
 }
 
 // Values mocks base method.

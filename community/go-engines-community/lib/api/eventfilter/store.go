@@ -70,7 +70,7 @@ type store struct {
 	tplValidator            tplvalidator.Validator
 	tplExecutor             libtemplate.Executor
 	tplConfigProvider       config.TemplateConfigProvider
-	externalDataContainer   *externaldata.GetterContainer
+	externalDataGetter      externaldata.Getter
 	encoder                 encoding.Encoder
 	decoder                 encoding.Decoder
 	defaultSearchByFields   []string
@@ -89,7 +89,7 @@ func NewStore(
 	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 ) Store {
@@ -121,7 +121,7 @@ func NewStore(
 		tplValidator:            tplValidator,
 		tplConfigProvider:       tplConfigProvider,
 		tplExecutor:             tplExecutor,
-		externalDataContainer:   externalDataContainer,
+		externalDataGetter:      externalDataGetter,
 		encoder:                 encoder,
 		decoder:                 decoder,
 		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
@@ -885,11 +885,6 @@ func (s *store) processTableExdata(
 	idx int,
 	r TemplateRequest,
 ) (any, error) {
-	getter, ok := s.externalDataContainer.Get(d.Type)
-	if !ok {
-		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)
-	}
-
 	refParam := externaldata.RefParameters{
 		Reference: d.Reference,
 		Type:      d.Type,
@@ -918,7 +913,9 @@ func (s *store) processTableExdata(
 		return nil, errors.New("expected not empty array")
 	}
 
-	res, err := getter.Get(ctx, parsedParams[0], tplData)
+	res, err := s.externalDataGetter.Get(ctx, externaldata.Rule{
+		ExternalData: parsedParams,
+	}, tplData)
 	if err != nil {
 		getterTplErr := &externaldata.GetterTplError{}
 		getterErr := &externaldata.GetterError{}
@@ -931,7 +928,7 @@ func (s *store) processTableExdata(
 		return nil, err
 	}
 
-	return res, nil
+	return res.ExternalData[d.Reference], nil
 }
 
 func (s *store) validateTpl(str string, data eventfilter.Template, r TemplateRequest) (template.ValidateResponse, error) {

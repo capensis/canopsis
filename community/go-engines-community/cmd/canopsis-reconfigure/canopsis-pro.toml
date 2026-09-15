@@ -218,6 +218,14 @@ noWait = false
   # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_che_webhook_rpc_client"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_fifo"
 durable = true
 autoDelete = false
@@ -232,6 +240,14 @@ noWait = false
 
 [[RabbitMQ.queues]]
 name = "FIFO_ack"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_fifo_webhook_rpc_client"
 durable = true
 autoDelete = false
 exclusive = false

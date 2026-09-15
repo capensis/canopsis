@@ -4,7 +4,9 @@
       v-if="label"
       class="v-picker__title primary text-center"
     >
-      <span class="text-h5">{{ label }}</span>
+      <span class="text-h5">
+        {{ label }}
+      </span>
     </div>
     <div class="date-time-picker__body">
       <v-layout

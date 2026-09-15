@@ -79,7 +79,7 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with inactive pbe
       <strong
         class="ml-2 white--text"
       >
-        !
+          !
       </strong>
     </c-alarm-extra-details-chip-stub>
   </c-simple-tooltip-stub>

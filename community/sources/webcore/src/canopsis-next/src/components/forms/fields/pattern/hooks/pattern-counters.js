@@ -44,28 +44,28 @@ export const usePatternCounters = ({
     }
   });
 
-  const hasAllInCounter = computed(() => (counters.value?.all?.count > 0));
-  const allOverLimit = computed(() => (counters.value?.all?.over_limit ?? false));
-  const allCount = computed(() => (counters.value?.all?.count ?? 0));
+  const combinedCounter = computed(() => (
+    unref(entityCountersType)
+      ? counters.value?.combined
+      : counters.value?.alarms?.combined
+  ));
+
+  const hasAllInCounter = computed(() => (combinedCounter.value?.count > 0));
+  const allOverLimit = computed(() => (combinedCounter.value?.over_limit ?? false));
+  const allCount = computed(() => (combinedCounter.value?.count ?? 0));
 
   const patternsCountMessageBind = computed(() => {
-    let entityCounter;
-    let alarmCounter;
-
     if (unref(hasError)) {
       return { errorMessage: t('pattern.errors.required') };
     }
 
     if (unref(entityCountersType)) {
-      entityCounter = counters.value?.all;
-    } else {
-      alarmCounter = counters.value?.all;
-      entityCounter = counters.value?.entities;
+      return { entityCounter: counters.value?.combined };
     }
 
     return {
-      alarmCounter,
-      entityCounter,
+      alarmCounter: counters.value?.alarms?.combined,
+      entityCounter: counters.value?.entities?.entity_pattern,
     };
   });
 

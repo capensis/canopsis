@@ -60,6 +60,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       title="Template - Weather item"
       value="<div>block-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_item"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -68,6 +69,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       title="Template - Modal"
       value="<div>modal-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_modal"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -76,6 +78,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       title="Template - Entities"
       value="<div>entity-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_entity"
     />
     <field-grid-size-stub
       mobile="true"
@@ -210,6 +213,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
 <p>{{ entity.output }}</p>
 <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_item"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -218,6 +222,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       title="Template - Modal"
       value="{{ entities name=\\"entity._id\\" }}"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_modal"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -228,6 +233,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_entity"
     />
     <field-grid-size-stub
       mobile="true"
@@ -363,6 +369,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
 <p>{{ entity.output }}</p>
 <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_item"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -371,6 +378,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       title="Template - Modal"
       value="{{ entities name=\\"entity._id\\" }}"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_modal"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -381,6 +389,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="weather_entity"
     />
     <field-grid-size-stub
       mobile="true"

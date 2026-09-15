@@ -21,18 +21,14 @@ import { computed } from 'vue';
 
 import { JOBS_TABS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
-
 import TicketStatusJobsTabItem from '@/components/other/ticket-status-job/ticket-status-jobs-tab-item.vue';
 
 export default {
   components: { TicketStatusJobsTabItem },
   setup() {
-    const { t } = useI18n();
-
     const tabs = computed(() => Object.values(JOBS_TABS).map(tab => ({
       id: tab,
-      label: t(`jobs.tabs.${tab}`),
+      label: `jobs.tabs.${tab}`,
     })));
 
     return {

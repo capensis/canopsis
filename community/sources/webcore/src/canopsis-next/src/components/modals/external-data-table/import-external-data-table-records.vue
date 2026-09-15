@@ -37,7 +37,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="!activeImportFileId || submitButton.loading || isDisabled"
+          :disabled="!activeImportFileId || submitButton.loading || submitting"
           class="primary"
           type="submit"
         >
@@ -116,7 +116,7 @@ export default {
       validate,
     } = useExternalDataTableImportFile({ config });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form: separator,
       method: async () => {
         const isValid = await validator.validateAll();
@@ -165,7 +165,6 @@ export default {
       form,
       originalForm,
       submit,
-      isDisabled,
       submitting,
       pending,
       meta,

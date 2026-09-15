@@ -11,7 +11,9 @@
         color="grey"
       >
         <v-expansion-panel-header>
-          <span class="v-label">{{ $t('geomap.layers') }}</span>
+          <span class="v-label">
+            {{ $t('geomap.layers') }}
+          </span>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-divider />

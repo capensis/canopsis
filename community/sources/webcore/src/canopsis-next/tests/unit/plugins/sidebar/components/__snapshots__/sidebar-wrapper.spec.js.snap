@@ -30,7 +30,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
               <span
                 class="text-h6 white--text"
               >
-                Alarm list settings
+              Alarm list settings
               </span>
             </div>
           </div>
@@ -97,7 +97,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
               <span
                 class="text-h6 white--text"
               >
-                Alarm list settings
+              Alarm list settings
               </span>
             </div>
           </div>
@@ -161,7 +161,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
               <span
                 class="text-h6 white--text"
               >
-                Alarm statistics settings
+              Alarm statistics settings
               </span>
             </div>
           </div>
@@ -225,7 +225,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: availability-set
               <span
                 class="text-h6 white--text"
               >
-                Availability settings
+              Availability settings
               </span>
             </div>
           </div>
@@ -289,7 +289,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
               <span
                 class="text-h6 white--text"
               >
-                Bar chart settings
+              Bar chart settings
               </span>
             </div>
           </div>
@@ -353,7 +353,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
               <span
                 class="text-h6 white--text"
               >
-                Context table settings
+              Context table settings
               </span>
             </div>
           </div>
@@ -417,7 +417,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
               <span
                 class="text-h6 white--text"
               >
-                Counter settings
+              Counter settings
               </span>
             </div>
           </div>
@@ -481,7 +481,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-ta
               <span
                 class="text-h6 white--text"
               >
-                External data settings
+              External data settings
               </span>
             </div>
           </div>
@@ -545,7 +545,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
               <span
                 class="text-h6 white--text"
               >
-                Line chart settings
+              Line chart settings
               </span>
             </div>
           </div>
@@ -609,7 +609,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
               <span
                 class="text-h6 white--text"
               >
-                Mapping widget settings
+              Mapping widget settings
               </span>
             </div>
           </div>
@@ -673,7 +673,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
               <span
                 class="text-h6 white--text"
               >
-                Numbers settings
+              Numbers settings
               </span>
             </div>
           </div>
@@ -737,7 +737,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
               <span
                 class="text-h6 white--text"
               >
-                Pie chart settings
+              Pie chart settings
               </span>
             </div>
           </div>
@@ -801,7 +801,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
               <span
                 class="text-h6 white--text"
               >
-                Service weather settings
+              Service weather settings
               </span>
             </div>
           </div>
@@ -865,7 +865,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
               <span
                 class="text-h6 white--text"
               >
-                Stats calendar settings
+              Stats calendar settings
               </span>
             </div>
           </div>
@@ -929,7 +929,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
               <span
                 class="text-h6 white--text"
               >
-                Testing weather
+              Testing weather
               </span>
             </div>
           </div>
@@ -993,7 +993,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
               <span
                 class="text-h6 white--text"
               >
-                Text settings
+              Text settings
               </span>
             </div>
           </div>
@@ -1057,7 +1057,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
               <span
                 class="text-h6 white--text"
               >
-                User statistics settings
+              User statistics settings
               </span>
             </div>
           </div>

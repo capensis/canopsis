@@ -1,6 +1,8 @@
 <template>
   <div class="impact-state-indicator">
-    <span class="impact-state-text white--text">{{ value }}</span>
+    <span class="impact-state-text white--text">
+      {{ value }}
+    </span>
     <div class="pointer-wrapper">
       <div
         :style="pointerStyle"

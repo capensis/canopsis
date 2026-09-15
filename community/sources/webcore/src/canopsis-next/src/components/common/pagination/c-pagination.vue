@@ -40,7 +40,9 @@
       align-center
       justify-center
     >
-      <span class="text--secondary">{{ $t('common.paginationItems', { first, last, total }) }}</span>
+      <span class="text--secondary">
+        {{ $t('common.paginationItems', { first, last, total }) }}
+      </span>
       <v-pagination
         :value="page"
         :total-visible="$config.PAGINATION_TOTAL_VISIBLE"

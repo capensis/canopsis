@@ -17,6 +17,7 @@
         <v-autocomplete
           v-field="job.job"
           v-validate="'required'"
+          :loading="loading"
           :items="jobs"
           :label="$tc('remediation.instruction.job')"
           :error-messages="errors.collect(jobFieldName)"
@@ -52,14 +53,12 @@
 </template>
 
 <script>
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { computed } from 'vue';
+
+import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 export default {
   inject: ['$validator'],
-  mixins: [
-    formMixin,
-    validationChildrenMixin,
-  ],
   model: {
     prop: 'job',
     event: 'input',
@@ -85,11 +84,20 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    jobFieldName() {
-      return `${this.name}.job`;
+    loading: {
+      type: Boolean,
+      default: false,
     },
+  },
+  setup(props) {
+    const { hasChildrenError } = useValidationChildren();
+
+    const jobFieldName = computed(() => `${props.name}.job`);
+
+    return {
+      hasChildrenError,
+      jobFieldName,
+    };
   },
 };
 </script>

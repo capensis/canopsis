@@ -154,8 +154,7 @@ func (a *api) LogoutHandler() gin.HandlerFunc {
 func (a *api) getSession(c *gin.Context) (*sessions.Session, error) {
 	session, err := a.sessionStore.Get(c.Request, security.SessionKey)
 	if err != nil {
-		var securecookieError securecookie.Error
-		if errors.As(err, &securecookieError) {
+		if _, ok := errors.AsType[securecookie.Error](err); ok {
 			// if securecookie decode failed (for example due changed key), then it's a new session
 			return a.sessionStore.New(c.Request, security.SessionKey)
 		}

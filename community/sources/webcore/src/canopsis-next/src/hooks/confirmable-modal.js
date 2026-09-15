@@ -88,6 +88,7 @@ export const useFormConfirmableCloseModal = ({
   };
 
   const updateOriginalForm = () => originalForm.value = cloneDeep(unref(form));
+  const updateOriginalFormField = (field, value) => originalForm.value[field] = value;
 
   provide('$closeModal', () => {
     if (clickOutsideHandlerMethod()) {
@@ -99,5 +100,6 @@ export const useFormConfirmableCloseModal = ({
 
   return {
     updateOriginalForm,
+    updateOriginalFormField,
   };
 };

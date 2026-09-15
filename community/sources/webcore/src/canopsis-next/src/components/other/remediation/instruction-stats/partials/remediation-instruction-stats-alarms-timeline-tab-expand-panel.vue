@@ -44,7 +44,7 @@ export default {
   setup(props) {
     const execution = ref({});
 
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
 
     const {
       fetchAlarmRemediationInstructionExecutionsWithoutStore,
@@ -68,7 +68,7 @@ export default {
 
     const headers = computed(() => [
       {
-        text: t('common.step'),
+        text: tc('common.step'),
         value: 'name',
         sortable: false,
         width: '300px',

@@ -18,7 +18,9 @@
               v-if="!pending"
               class="playlist__actions mr-2"
             >
-              <span class="playlist__timer white--text mr-2">{{ time | duration }}</span>
+              <span class="playlist__timer white--text mr-2">
+                {{ time | duration }}
+              </span>
               <v-btn
                 :disabled="!activeTab"
                 dark

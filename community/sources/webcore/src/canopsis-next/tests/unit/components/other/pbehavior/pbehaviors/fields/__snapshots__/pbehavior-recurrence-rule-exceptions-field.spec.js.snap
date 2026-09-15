@@ -1,72 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptions-field\` with custom props 1`] = `
-<div>
-  <h3
-    class="text--secondary"
-  >
-    Exception dates
-  </h3>
+<div
+  class="layout gap-3 column"
+>
   <pbehavior-exceptions-list-stub
+    disabled="true"
     exceptions="[object Object]"
   />
-  <div
-    disabled="disabled"
-    value="[object Object],[object Object]"
-    with-exdate-type="true"
-  >
-    <c-alert-stub
-      type="info"
-    >
-        No exceptions added yet
-    </c-alert-stub>
-    <button
-      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        Add an exception date
-      </span>
-    </button>
-    <pbehavior-recurrence-rule-exceptions-list-menu-stub
-      value="[object Object]"
-    />
-  </div>
+  <pbehavior-exceptions-field-stub
+    addbuttonlabel=""
+    disabled="true"
+    exdates="[object Object],[object Object]"
+    name="exdates"
+    requirederrormessage=""
+    withexdatetype="true"
+  />
 </div>
 `;
 
 exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptions-field\` with default props 1`] = `
-<div>
-  <h3
-    class="text--secondary"
-  >
-    Exception dates
-  </h3>
+<div
+  class="layout gap-3 column"
+>
   <!---->
-  <div
-    value=""
-  >
-    <c-alert-stub
-      type="info"
-      value="true"
-    >
-        No exceptions added yet
-    </c-alert-stub>
-    <button
-      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        Add an exception date
-      </span>
-    </button>
-    <pbehavior-recurrence-rule-exceptions-list-menu-stub
-      value=""
-    />
-  </div>
+  <pbehavior-exceptions-field-stub
+    addbuttonlabel=""
+    exdates=""
+    name="exdates"
+    requirederrormessage=""
+  />
 </div>
 `;

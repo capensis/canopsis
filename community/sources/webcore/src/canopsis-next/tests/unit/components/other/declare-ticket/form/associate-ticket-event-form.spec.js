@@ -5,6 +5,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
 
 const stubs = {
+  'c-form-block-row': true,
   'c-information-block': true,
   'c-name-field': true,
   'declare-ticket-rule-ticket-id-text-field': true,

@@ -1,24 +1,43 @@
 <template>
-  <v-layout column>
-    <meta-alarm-rule-threshold-form
-      v-if="isThresholdFormShown"
-      v-field="form.config"
-    />
-    <meta-alarm-rule-time-based-form
-      v-if="isTimeBasedFormShown"
-      v-field="form.config"
-      :with-child-inactive-delay="withChildInactiveDelay"
-    />
-    <meta-alarm-rule-value-paths-form
-      v-if="isValuePathsFormShown"
-      v-field="form.config"
-      class="mb-3"
-    />
-    <meta-alarm-rule-corel-form
-      v-if="isCorelFormShown"
-      v-field="form.config"
-      :template-vars="templateVars"
-    />
+  <v-layout class="gap-3" column>
+    <div class="mb-2">
+      <div class="text-subtitle-2 mb-2">
+        {{ $t(`metaAlarmRule.types.${form.type}.text`) }}
+      </div>
+      <div class="text-body-2">
+        {{ $t(`metaAlarmRule.types.${form.type}.helpText`) }}
+      </div>
+    </div>
+
+    <c-form-block v-if="isFormBlockShown">
+      <meta-alarm-rule-threshold-field
+        v-if="isThresholdFormShown"
+        v-field="form.config"
+      />
+
+      <meta-alarm-rule-time-based-field
+        v-if="isTimeBasedFormShown"
+        v-field="form.config.time_interval"
+      />
+
+      <meta-alarm-rule-child-inactive-delay-field
+        v-if="isChildInactiveDelayFormShown"
+        v-field="form.config.child_inactive_delay"
+      />
+
+      <meta-alarm-rule-value-paths-field
+        v-if="isValuePathsFormShown"
+        v-field="form.config.value_paths"
+        required
+      />
+
+      <meta-alarm-rule-corel-form
+        v-if="isCorelFormShown"
+        v-field="form.config"
+        :template-vars="templateVars"
+      />
+    </c-form-block>
+
     <meta-alarm-rule-patterns-form
       v-field="form.patterns"
       :with-total-entity="withTotalEntityPattern"
@@ -39,19 +58,21 @@ import {
   isValueGroupMetaAlarmRuleType,
 } from '@/helpers/entities/meta-alarm/rule/form';
 
-import MetaAlarmRuleThresholdForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-threshold-form.vue';
-import MetaAlarmRuleValuePathsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-value-paths-form.vue';
-import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
+import MetaAlarmRuleThresholdField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-threshold-field.vue';
+import MetaAlarmRuleValuePathsField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-value-paths-field.vue';
+import MetaAlarmRuleTimeBasedField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-time-based-field.vue';
+import MetaAlarmRuleChildInactiveDelayField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-child-inactive-delay-field.vue';
 import MetaAlarmRuleCorelForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-corel-form.vue';
-import MetaAlarmRuleTimeBasedForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-time-based-form.vue';
+import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 
 export default {
   components: {
-    MetaAlarmRuleTimeBasedForm,
+    MetaAlarmRuleTimeBasedField,
+    MetaAlarmRuleValuePathsField,
+    MetaAlarmRuleThresholdField,
+    MetaAlarmRuleChildInactiveDelayField,
     MetaAlarmRuleCorelForm,
     MetaAlarmRulePatternsForm,
-    MetaAlarmRuleValuePathsForm,
-    MetaAlarmRuleThresholdForm,
   },
   model: {
     prop: 'form',
@@ -85,9 +106,14 @@ export default {
     const isTimeBasedFormShown = computed(() => isComplexType.value
       || isValueGroupType.value
       || isTimeBasedType.value);
+    const isChildInactiveDelayFormShown = computed(() => isComplexType.value || isValueGroupType.value);
     const isCorelFormShown = computed(() => isCorelType.value);
+    const isFormBlockShown = computed(() => isThresholdFormShown.value
+      || isTimeBasedFormShown.value
+      || isChildInactiveDelayFormShown.value
+      || isValuePathsFormShown.value
+      || isCorelFormShown.value);
     const withTotalEntityPattern = computed(() => isMetaAlarmRuleTypeHasTotalEntityPatterns(props.form.type));
-    const withChildInactiveDelay = computed(() => isComplexType.value || isValueGroupType.value);
 
     return {
       isAttributeType,
@@ -95,9 +121,10 @@ export default {
       isThresholdFormShown,
       isValuePathsFormShown,
       isTimeBasedFormShown,
+      isChildInactiveDelayFormShown,
       isCorelFormShown,
+      isFormBlockShown,
       withTotalEntityPattern,
-      withChildInactiveDelay,
     };
   },
 };

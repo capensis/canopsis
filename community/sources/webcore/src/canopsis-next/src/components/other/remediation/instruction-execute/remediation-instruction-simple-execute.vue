@@ -4,7 +4,9 @@
       class="mb-4"
       align-center
     >
-      <span class="text-subtitle-1 mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
+      <span class="text-subtitle-1 mr-5">
+        {{ $t('remediation.instructionExecute.jobs.title') }}
+      </span>
       <v-btn
         v-if="!isInstructionExecutionFinished"
         :loading="executing"
@@ -20,7 +22,9 @@
         <v-icon :color="statusIcon.color">
           {{ statusIcon.name }}
         </v-icon>
-        <span class="ml-2">{{ statusIcon.text }}</span>
+        <span class="ml-2">
+          {{ statusIcon.text }}
+        </span>
       </template>
     </v-layout>
     <remediation-instruction-execute-jobs-table :jobs="jobs" />

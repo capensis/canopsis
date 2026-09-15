@@ -10,6 +10,9 @@
       <v-tab :class="{ 'error--text': hasGeneralError }">
         {{ $t('common.general') }}
       </v-tab>
+      <v-tab :class="{ 'error--text': hasPatternsError }">
+        {{ $tc('common.pattern') }}
+      </v-tab>
       <v-tab
         :class="{ 'error--text': hasSimpleError || errors.has('links') }"
         :disabled="sourceCodeWasChanged"
@@ -32,22 +35,28 @@
           class="mt-2"
         />
       </v-tab-item>
+
       <v-tab-item
         class="mt-3"
         eager
       >
-        <c-alert
-          :value="errors.has('links')"
-          transition="fade-transition"
-          type="error"
-        >
-          {{ $t('linkRule.linksEmptyError') }}
-        </c-alert>
+        <link-rule-patterns-form
+          v-field="form.patterns"
+          ref="patternsElement"
+          :is-alarm-type="isAlarmType"
+        />
+      </v-tab-item>
+
+      <v-tab-item
+        class="mt-3"
+        eager
+      >
         <link-rule-simple-form
           v-field="form.links"
           ref="simpleElement"
           :type="form.type"
           :template-vars="templateVars"
+          :error-messages="linksErrorMessages"
           @input="resetRequiredRule"
         />
       </v-tab-item>
@@ -55,17 +64,11 @@
         class="mt-3"
         eager
       >
-        <c-alert
-          :value="errors.has('links')"
-          transition="fade-transition"
-          type="error"
-        >
-          {{ $t('linkRule.linksEmptyError') }}
-        </c-alert>
         <link-rule-advanced-form
           v-field="form.source_code"
           ref="advancedElement"
           :type="form.type"
+          :error-messages="linksErrorMessages"
           @input="resetRequiredRule"
         />
       </v-tab-item>
@@ -94,10 +97,12 @@ import {
   onMounted,
 } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+import { TEMPLATE_TESTING_TEST_TYPES, LINK_RULE_TYPES } from '@/constants';
 
 import { isDefaultSourceCode } from '@/helpers/entities/link/form';
 
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
@@ -112,12 +117,14 @@ import TemplateTestingTestVariablesTab from '@/components/other/template-testing
 import LinkRuleGeneralForm from './link-rule-general-form.vue';
 import LinkRuleSimpleForm from './link-rule-simple-form.vue';
 import LinkRuleAdvancedForm from './link-rule-advanced-form.vue';
+import LinkRulePatternsForm from './link-rule-patterns-form.vue';
 
 const LINK_RULE_FORM_TABS = {
   general: 0,
-  simple: 1,
-  advanced: 2,
-  testing: 3,
+  patterns: 1,
+  simple: 2,
+  advanced: 3,
+  testing: 4,
 };
 
 export default {
@@ -127,6 +134,7 @@ export default {
     TemplateTestingTestVariablesTab,
 
     LinkRuleGeneralForm,
+    LinkRulePatternsForm,
     LinkRuleSimpleForm,
     LinkRuleAdvancedForm,
   },
@@ -145,19 +153,27 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const { t } = useI18n();
+    const { errors } = useValidator();
+
     const activeTab = ref(LINK_RULE_FORM_TABS.general);
 
     const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
 
     const hasGeneralError = ref(false);
+    const hasPatternsError = ref(false);
     const hasSimpleError = ref(false);
     const hasAdvancedError = ref(false);
 
     const generalElement = ref(null);
+    const patternsElement = ref(null);
     const simpleElement = ref(null);
     const advancedElement = ref(null);
 
     const isActiveTestingTab = computed(() => activeTab.value === LINK_RULE_FORM_TABS.testing);
+    const isAlarmType = computed(() => props.form.type === LINK_RULE_TYPES.alarm);
+
+    const linksErrorMessages = computed(() => (errors.has('links') ? [t('linkRule.linksEmptyError')] : []));
 
     const {
       attachRequiredRule,
@@ -192,6 +208,7 @@ export default {
     const requiredRuleGetter = () => !!props.form.links.length || !isDefaultSourceCode(props.form.source_code);
 
     watch(() => generalElement.value?.hasAnyError, value => hasGeneralError.value = value);
+    watch(() => patternsElement.value?.hasAnyError, value => hasPatternsError.value = value);
     watch(() => simpleElement.value?.hasAnyError, value => hasSimpleError.value = value);
     watch(() => advancedElement.value?.hasAnyError, value => hasAdvancedError.value = value);
 
@@ -209,14 +226,18 @@ export default {
 
       activeTab,
       isActiveTestingTab,
+      isAlarmType,
+      linksErrorMessages,
 
       type,
 
       hasGeneralError,
+      hasPatternsError,
       hasSimpleError,
       hasAdvancedError,
 
       generalElement,
+      patternsElement,
       simpleElement,
       advancedElement,
 

@@ -17,6 +17,7 @@ import { uid } from '@/helpers/uid';
 
 import { useI18n } from '@/hooks/i18n';
 
+import { useUserInterfaceActions } from './hooks/user-interface-actions';
 import { useMaintenanceActions } from './hooks/maintenance-actions';
 import TopBarMenu from './top-bar-menu.vue';
 
@@ -25,6 +26,7 @@ export default {
   setup() {
     const { t, tc } = useI18n();
     const { showToggleMaintenanceModeModal } = useMaintenanceActions();
+    const { showUserInterfaceModal } = useUserInterfaceActions();
 
     const permissionsWithDefaultType = [
       USER_PERMISSIONS.technical.engine,
@@ -156,9 +158,9 @@ export default {
 
     const settingsLinks = computed(() => [
       {
-        route: { name: ROUTES_NAMES.adminSettingsUserInterface },
         icon: 'computer',
         permission: USER_PERMISSIONS.technical.parameters,
+        handler: showUserInterfaceModal,
       },
       {
         route: { name: ROUTES_NAMES.adminSettingsViewsImportExport },

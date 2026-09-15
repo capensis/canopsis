@@ -2,6 +2,7 @@
   <c-action-btn
     v-bind="$attrs"
     :tooltip="tooltip"
+    :small="small"
   >
     <template #button="{ on: tooltipOn }">
       <div class="c-action-btn__button-wrapper" v-on="tooltipOn">
@@ -10,7 +11,6 @@
           v-clipboard:success="onSuccessCopied"
           v-clipboard:error="onErrorCopied"
           :small="small"
-          :fab="fab"
           class="mx-1 ma-0 c-action-btn__button"
           icon
         >

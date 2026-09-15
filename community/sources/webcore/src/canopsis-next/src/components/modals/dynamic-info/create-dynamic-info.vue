@@ -5,23 +5,11 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" with-background />
-          <template-testing-test-variables-wrapper
-            v-model="form"
-            :rule-id="dynamicInfoId"
-            :type="type"
-          >
-            <template #default="{ templateVars, copyVars }">
-              <dynamic-info-form
-                v-model="form"
-                :is-disabled-id-field="isDisabledIdField"
-                :template-vars="templateVars"
-                :copy-vars="copyVars"
-              />
-            </template>
-          </template-testing-test-variables-wrapper>
-        </v-layout>
+        <dynamic-info-form
+          v-model="form"
+          :rule-id="dynamicInfoId"
+          :is-disabled-id-field="submittingIdField"
+        />
         <ai-chat-sidebar
           v-if="chatShown"
           v-bind="chatOptions.bind"
@@ -38,12 +26,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -53,7 +41,7 @@
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 
@@ -65,7 +53,6 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -76,9 +63,8 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    DynamicInfoForm,
     AiChatSidebar,
-    TemplateTestingTestVariablesWrapper,
+    DynamicInfoForm,
     ModalWrapper,
   },
   props: {
@@ -88,8 +74,6 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
-
     const { config, close } = useInnerModal(props);
     const { t } = useI18n();
 
@@ -108,10 +92,11 @@ export default {
 
     const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
-    const isDisabledIdField = computed(() => config.value.isDisabledIdField);
+    const submittingIdField = computed(() => config.value.submittingIdField);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.dynamicInfo,
       method: async () => {
         const result = await config.value.action?.(formToDynamicInfo(form.value));
 
@@ -127,15 +112,13 @@ export default {
 
     return {
       form,
-      config,
       dynamicInfoId,
-      type,
       title,
-      isDisabledIdField,
-      isDisabled,
+      submittingIdField,
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

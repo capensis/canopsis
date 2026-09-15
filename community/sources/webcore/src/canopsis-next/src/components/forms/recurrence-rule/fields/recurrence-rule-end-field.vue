@@ -43,7 +43,9 @@
           class="mx-3"
           name="count"
         />
-        <span class="text-lowercase">{{ $tc('recurrenceRule.occurrence', value.count || 1) }}</span>
+        <span class="text-lowercase">
+          {{ $tc('recurrenceRule.occurrence', value.count || 1) }}
+        </span>
       </template>
     </v-radio>
   </v-radio-group>

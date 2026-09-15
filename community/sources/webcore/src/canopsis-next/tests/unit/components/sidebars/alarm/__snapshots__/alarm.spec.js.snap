@@ -593,6 +593,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
 </div>
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="alarm_export_to_pdf"
     />
     <widget-settings-group-stub
       title="Quick actions"
@@ -636,6 +637,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         title="Infos"
         value=""
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        widgettemplatetype="alarm_more_infos"
       />
       <field-grid-range-size-stub
         inline="true"
@@ -1265,6 +1267,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
 </div>
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="alarm_export_to_pdf"
     />
     <widget-settings-group-stub
       title="Quick actions"
@@ -1308,6 +1311,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         title="Infos"
         value="More info template"
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        widgettemplatetype="alarm_more_infos"
       />
       <field-grid-range-size-stub
         inline="true"
@@ -1933,6 +1937,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
 </div>
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="alarm_export_to_pdf"
     />
     <widget-settings-group-stub
       title="Quick actions"
@@ -1976,6 +1981,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         title="Infos"
         value=""
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        widgettemplatetype="alarm_more_infos"
       />
       <field-grid-range-size-stub
         inline="true"
@@ -2602,6 +2608,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
 </div>
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      widgettemplatetype="alarm_export_to_pdf"
     />
     <widget-settings-group-stub
       title="Quick actions"
@@ -2645,6 +2652,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
         title="Infos"
         value=""
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        widgettemplatetype="alarm_more_infos"
       />
       <field-grid-range-size-stub
         inline="true"

@@ -594,6 +594,30 @@ export const createViewModule = () => {
   };
 };
 
+export const createCopyVarsModule = () => {
+  const fetchEventFiltersVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchDynamicInfosVarsWithoutStore = jest.fn().mockResolvedValue([]);
+
+  const copyVarsModule = {
+    name: 'copy/vars',
+    actions: {
+      fetchEventFiltersVarsWithoutStore,
+      fetchDynamicInfosVarsWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchEventFiltersVarsWithoutStore.mockClear();
+    fetchDynamicInfosVarsWithoutStore.mockClear();
+  });
+
+  return {
+    copyVarsModule,
+    fetchEventFiltersVarsWithoutStore,
+    fetchDynamicInfosVarsWithoutStore,
+  };
+};
+
 export const createTemplateVarsModule = () => {
   const fetchEntityServicesVarsWithoutStore = jest.fn().mockResolvedValue([]);
   const fetchEventFiltersVarsWithoutStore = jest.fn().mockResolvedValue([]);
@@ -605,6 +629,7 @@ export const createTemplateVarsModule = () => {
   const fetchInstructionsVarsWithoutStore = jest.fn().mockResolvedValue([]);
   const fetchJobsVarsWithoutStore = jest.fn().mockResolvedValue([]);
   const fetchMetaAlarmRulesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchWebhookTokenRulesVarsWithoutStore = jest.fn().mockResolvedValue([]);
   const fetchList = jest.fn();
   const items = jest.fn().mockReturnValue([]);
   const pending = jest.fn().mockReturnValue(false);
@@ -627,8 +652,26 @@ export const createTemplateVarsModule = () => {
       fetchInstructionsVarsWithoutStore,
       fetchJobsVarsWithoutStore,
       fetchMetaAlarmRulesVarsWithoutStore,
+      fetchWebhookTokenRulesVarsWithoutStore,
     },
   };
+
+  afterEach(() => {
+    fetchEntityServicesVarsWithoutStore.mockClear();
+    fetchEventFiltersVarsWithoutStore.mockClear();
+    fetchLinkRulesVarsWithoutStore.mockClear();
+    fetchScenariosVarsWithoutStore.mockClear();
+    fetchWidgetsVarsWithoutStore.mockClear();
+    fetchDeclareTicketRulesVarsWithoutStore.mockClear();
+    fetchDynamicInfosVarsWithoutStore.mockClear();
+    fetchInstructionsVarsWithoutStore.mockClear();
+    fetchJobsVarsWithoutStore.mockClear();
+    fetchMetaAlarmRulesVarsWithoutStore.mockClear();
+    fetchWebhookTokenRulesVarsWithoutStore.mockClear();
+    fetchList.mockClear();
+    items.mockClear();
+    pending.mockClear();
+  });
 
   return {
     templateVarsModule,
@@ -642,6 +685,7 @@ export const createTemplateVarsModule = () => {
     fetchInstructionsVarsWithoutStore,
     fetchJobsVarsWithoutStore,
     fetchMetaAlarmRulesVarsWithoutStore,
+    fetchWebhookTokenRulesVarsWithoutStore,
     fetchList,
     items,
     pending,
@@ -1152,6 +1196,26 @@ export const createMetaAlarmModule = () => {
     addAlarmsIntoMetaAlarm,
     removeAlarmsFromMetaAlarm,
     metaAlarmModule,
+  };
+};
+
+export const createMetaAlarmRuleModule = () => {
+  const checkPatternsAlarmsCount = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    checkPatternsAlarmsCount.mockClear();
+  });
+
+  const metaAlarmRuleModule = {
+    name: 'metaAlarmRule',
+    actions: {
+      checkPatternsAlarmsCount,
+    },
+  };
+
+  return {
+    checkPatternsAlarmsCount,
+    metaAlarmRuleModule,
   };
 };
 

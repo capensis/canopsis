@@ -6,7 +6,9 @@
       </v-list-item-title>
       <v-list-item-title class="mb-2">
         <router-link :to="link">
-          <strong class="blue--text">{{ notification.rule?.name }}</strong>
+          <strong class="blue--text">
+            {{ notification.rule?.name }}
+          </strong>
         </router-link>
       </v-list-item-title>
       <v-list-item-subtitle v-if="notification.author?.display_name" class="mb-2">

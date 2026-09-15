@@ -5,7 +5,6 @@
       :disabled="!wasChanged"
       :tooltip="$t('common.reset')"
       icon="restart_alt"
-      color="white"
       btn-color="grey darken-1"
       left
       @click="reset"
@@ -166,10 +165,11 @@ export default {
   &__wrapper {
     position: relative;
 
-    ::v-deep .c-action-btn__button {
+    ::v-deep .c-action-btn__button-wrapper {
+      height: auto;
       position: absolute;
-      right: 18px;
-      top: 0;
+      right: 16px;
+      top: 6px;
       opacity: .6;
       z-index: 2;
 
