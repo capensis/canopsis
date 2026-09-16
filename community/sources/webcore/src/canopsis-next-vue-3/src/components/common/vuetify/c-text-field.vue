@@ -7,10 +7,11 @@
     :density="density"
     :min="min"
     :max="max"
+    :class="{ 'c-text-field--hide-label': hideLabel }"
     class="c-field c-text-field"
     @blur="onBlur"
   >
-    <template v-if="label" #label>
+    <template v-if="label && !hideLabel" #label>
       <span v-if="required && label" class="text-error"> * </span>
 
       {{ label }}
@@ -27,7 +28,13 @@ import { useAttrs } from 'vue';
 
 import { useVuetifyFieldValidation, validationEmits, validationProps } from './validation';
 
-const props = defineProps(validationProps);
+const props = defineProps({
+  ...validationProps,
+  hideLabel: {
+    type: Boolean,
+    default: false,
+  },
+});
 const emit = defineEmits(validationEmits);
 const attrs = useAttrs();
 
@@ -44,3 +51,15 @@ defineExpose({
   errorMessages,
 });
 </script>
+
+<style lang="scss" scoped>
+.c-text-field--hide-label {
+  :deep(.v-field-label) {
+    display: none;
+  }
+
+  :deep(.v-field) {
+    --v-field-padding-top: 0;
+  }
+}
+</style>

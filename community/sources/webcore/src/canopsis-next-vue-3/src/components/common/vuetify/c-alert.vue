@@ -80,7 +80,6 @@ const alertStyles = computed(() => (iconColor.value ? { '--alert-icon-color': ic
   --alert-color-dark: #212121;
   --alert-color-light: #d9d9d9;
 
-  width: 100%;
   font-weight: 700;
   font-size: 14px;
   line-height: 22px;

@@ -1,7 +1,7 @@
 <template>
   <c-form-block-row :label="t('metaAlarmRule.childInactiveDelay')">
     <c-layout gap="3" column>
-      <c-layout gap="2">
+      <c-layout gap="2" align="center">
         <c-enabled-field
           :model-value="enabled"
           :label="t('metaAlarmRule.childInactiveDelay')"

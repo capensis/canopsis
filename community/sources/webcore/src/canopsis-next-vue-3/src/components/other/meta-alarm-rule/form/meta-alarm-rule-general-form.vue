@@ -1,7 +1,7 @@
 <template>
   <c-layout gap="3" column>
     <c-layout gap="2">
-      <div class="flex-1-1-0">
+      <div class="flex-grow-1">
         <c-id-field
           v-model="idField"
           :disabled="disabledIdField"
@@ -10,7 +10,7 @@
         />
       </div>
 
-      <div class="flex-1-1-0">
+      <div class="flex-grow-1">
         <c-name-field
           v-model="nameField"
           :autofocus="disabledIdField"
@@ -20,7 +20,7 @@
     </c-layout>
 
     <c-form-block>
-      <c-form-block-row :label="t('metaAlarmRule.outputTemplate')">
+      <c-form-block-row :label="t('metaAlarmRule.outputTemplate')" indented>
         <c-payload-textarea-field
           v-model:value="outputTemplateField"
           :label="t('metaAlarmRule.outputTemplate')"
@@ -43,33 +43,36 @@
         <meta-alarm-rule-infos-form v-model:infos="infosField" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('metaAlarmRule.autoResolve')">
+      <c-form-block-row :label="t('metaAlarmRule.autoResolve')" align-center>
         <c-enabled-field
           v-model="autoResolveField"
           :label="t('metaAlarmRule.autoResolve')"
+          hide-details
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('metaAlarmRule.grouping')">
+      <c-form-block-row :label="t('metaAlarmRule.grouping')" indented>
         <meta-alarm-rule-type-field v-model="typeField" />
       </c-form-block-row>
 
       <template v-if="hasTemplateFields">
-        <c-form-block-row :label="t('metaAlarmRule.componentTemplate')">
+        <c-form-block-row :label="t('metaAlarmRule.componentTemplate')" align-center>
           <c-payload-text-field
             v-model:value="componentTemplateField"
             :label="t('metaAlarmRule.componentTemplate')"
             :variables="templateVars.entity"
             name="component_template"
+            hide-details
           />
         </c-form-block-row>
 
-        <c-form-block-row :label="t('metaAlarmRule.resourceTemplate')">
+        <c-form-block-row :label="t('metaAlarmRule.resourceTemplate')" align-center>
           <c-payload-text-field
             v-model:value="resourceTemplateField"
             :label="t('metaAlarmRule.resourceTemplate')"
             :variables="templateVars.entity"
             name="resource_template"
+            hide-details
           />
         </c-form-block-row>
       </template>

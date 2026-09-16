@@ -4,9 +4,11 @@
       :depth="depth"
       :label="$t('declareTicket.checkTicketStatus')"
       :top-border="topBorder"
+      align-center
     >
       <c-enabled-field
         :model-value="form.enabled"
+        hide-details
         @update:model-value="updateField('enabled', $event)"
       >
         <template #append>

@@ -1,0 +1,36 @@
+import { generateShallowRenderer } from '@unit/utils/vue';
+
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import AlarmColumnCellPopupBody from '@/components/widgets/alarm/columns-formatting/alarm-column-cell-popup-body.vue';
+
+const stubs = {
+  'c-compiled-template': CCompiledTemplate,
+  'c-runtime-template': CRuntimeTemplate,
+};
+
+const selectCloseButton = wrapper => wrapper.find('v-btn-stub');
+
+describe('alarm-column-cell-popup-body', () => {
+  const factory = generateShallowRenderer(AlarmColumnCellPopupBody, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+
+  it('Popup template closed after click on the button', async () => {
+    const wrapper = factory({
+      propsData: {
+        template: '',
+        alarm: {},
+      },
+    });
+
+    selectCloseButton(wrapper).triggerCustomEvent('click');
+
+    expect(wrapper).toHaveBeenEmit('close');
+  });
+});

@@ -162,7 +162,7 @@ const convertWebhookActionToTemplateTestingTestValidateForm = ({
     });
   }
 
-  if (checkTicketStatus.enabled && checkTicketStatus.ticket_status.template) {
+  if (checkTicketStatus.enabled) {
     result.push(
       {
         key: `${prefix}.declare_ticket.check_ticket_status.request.url`,
@@ -178,6 +178,11 @@ const convertWebhookActionToTemplateTestingTestValidateForm = ({
         textArgs: { number: index + 1 },
         templateVarsKey: 'ticket',
       },
+    );
+  }
+
+  if (checkTicketStatus.enabled && checkTicketStatus.ticket_status.template) {
+    result.push(
       {
         key: `${prefix}.declare_ticket.check_ticket_status.ticket_status.value`,
         resultKey: `${resultPrefix}.declare_ticket.check_ticket_status.ticket_status_tpl`,
@@ -433,7 +438,7 @@ export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form =
         prefix: `webhooks.${index}`,
         resultPrefix: `webhooks.${index}`,
         index,
-        templateVarsKey,
+        webhookTemplateVarsKey: templateVarsKey,
       }),
     );
   });

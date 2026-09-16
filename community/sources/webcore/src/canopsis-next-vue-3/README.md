@@ -340,42 +340,29 @@ export default {
   // ...another code
 };
 ```
-18. If we want we can define `vuex` store module and use it in the main widget component:
+18. If we want shared state or API actions, define a Pinia store/composition hook and use it in the main widget component:
 ```js
-// file store/icons.js
+// file stores/icons.js
 // ...another code
 
-export default {
-  modules: {
-    counterCustom: {
-      namespaced: true,
-      state: {
-        // ...another code
-      },
-      getters: {
-        // ...another code
-      },
-      mutations: {
-        // ...another code
-      },
-      actions: {
-        // ...another code
-      },
-    },
+export const useCounterCustomStore = defineStore('counterCustom', {
+  state: () => ({
+    // ...another code
+  }),
+  getters: {
+    // ...another code
   },
-};
+  actions: {
+    // ...another code
+  },
+});
 ```
-And include it in the `icons.js` file as we did for `i18n`:
+And use it from the widget component or from a composition hook:
 ```js
-// file icons.js
+// file counter-custom.vue
 // ...another code
-import store from './store';
+import { useCounterCustomStore } from './stores/icons';
 // ...another code
-export default {
-  // ...another code
-  store,
-  // ...another code
-};
 ```
 19. Profit!
 
@@ -576,8 +563,8 @@ export default {
 
 # How can I use data from API ?
 
-**!IMPORTANT! All requests sending to API should be placed in the store modules. (We don't use requests sending directly from components without vuex actions)**
-It means that if you need to make some request to the API you **must** create action in the special store module for that.
+**!IMPORTANT! All requests sending to API should be placed in Pinia stores or composition hooks.**
+It means that if you need to make some request to the API you **must** create an action/helper in the dedicated data layer for that.
 
 We have two types of store usage for the API fetching:
 1. Use `fetch<Something>WithoutStore` action
@@ -585,11 +572,17 @@ We have two types of store usage for the API fetching:
 
 We're using the **first type** when we need to fetch data in isolation (without updating application state). Example for `session-count`:
 ```js
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions } = createNamespacedHelpers('sessionsCount');
+import { useSessionsCountStore } from '@/stores/modules/sessions-count';
 
 export default {
+  setup() {
+    const sessionsCountStore = useSessionsCountStore();
+
+    return {
+      fetchSessionsCountWithoutStore: sessionsCountStore.fetchItemWithoutStore,
+    };
+  },
+
   data() {
     return {
       count: '',
@@ -604,10 +597,6 @@ export default {
   // ...another code
 
   methods: {
-    ...mapActions({
-      fetchSessionsCountWithoutStore: 'fetchItemWithoutStore',
-    }),
-
     async startFetchActiveSessionsCount() {
       this.pending = true; // if we need pending
 
@@ -625,29 +614,29 @@ export default {
 ```
 
 ## Storage data flow
-1. Create new store module for entity with `namespaced: true` flag (if we need to implement new entity else go to second step)
+1. Create new Pinia store for entity (if we need to implement new entity else go to second step)
 2. Put new fields into module state
 3. Put new actions which we need to call
-4. Put new mutations for our actions and state
-5. Put new getters for our state values
+4. Put new getters for our state values
 
-**!IMPORTANT! We don't use store directly in component! We are using `createNamespaceHelper` from `vuex` (for both types of store usage). Example:**
+**!IMPORTANT! Prefer a composition hook/facade between components and the store for reusable entity logic. Example:**
 ```js
-import { createNamespaceHelper } from 'vuex';
+import { storeToRefs } from 'pinia';
 
-const { mapActions, mapGetters } = createNamespaceHelper('someModule');
+import { useSomeModuleStore } from '@/stores/modules/some-module';
 
-export default {
-  computed: {
-    ...mapGetters(['someGetter']),
-  },
-  methods: {
-    ...mapActions(['fetchSomething']),
-  },
+export const useSomeModule = () => {
+  const store = useSomeModuleStore();
+  const { someGetter } = storeToRefs(store);
+
+  return {
+    someGetter,
+    fetchSomething: store.fetchSomething,
+  };
 };
 ```
 
-Also, if we need, we can create mixin for the store module in the `src/mixins/entities` folder.
+Also, if we need, we can create composition hook for the store module in the `src/hooks/store/modules` folder.
 
 # How can I create a custom feature ?
 We have possibility to integrate custom functionality into the application by `features` service.
@@ -771,46 +760,23 @@ export default {
     },
   },
 
-  store: { // Here we can define our custom store modules for a feature
-    modules: {
-      customModule: {
-        namespaced: true,
-        actions: {
-          // ...another code
-        }
-      }
-    }
-  }
+  stores: { // Here we can expose custom stores/hooks for a feature
+    // ...another code
+  },
 };
 ```
 
 ## Available places for customization
-### Store
-#### `store.modules`
+### Stores
+#### `stores`
 Type: `Object`<br>
-Allows us to add custom modules to application `Vuex` store.
+Allows us to expose custom Pinia stores or composition hooks for a feature.
 ```js
 // icons.js
 export default {
   // ...another code
-  store: {
-    modules: {
-      counterCustom: {
-        namespaced: true,
-        state: {
-          // ...another code
-        },
-        getters: {
-          // ...another code
-        },
-        mutations: {
-          // ...another code
-        },
-        actions: {
-          // ...another code
-        },
-      },
-    },
+  stores: {
+    counterCustom: useCounterCustomStore,
   },
   // ...another code
 };

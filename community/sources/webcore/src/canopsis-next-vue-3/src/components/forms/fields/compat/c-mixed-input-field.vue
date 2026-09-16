@@ -3,7 +3,6 @@
     :is="inputComponent.is"
     class="c-mixed-input-field"
     v-bind="inputComponent.bind"
-    v-on="inputComponent.on"
   />
 </template>
 
@@ -106,9 +105,7 @@ export default {
             class: 'c-mixed-input-field__text',
             type: props.inputType === PATTERN_FIELD_TYPES.number ? 'number' : 'text',
             required: props.required,
-          },
-          on: {
-            'update:modelValue': updateTextFieldValue,
+            'onUpdate:modelValue': updateTextFieldValue,
           },
         };
       }
@@ -117,7 +114,7 @@ export default {
         const name = `${props.name}.switch`;
 
         return {
-          is: 'v-switch',
+          is: 'c-enabled-field',
           bind: {
             class: 'ma-0 c-mixed-input-field__switch',
             name,
@@ -126,9 +123,7 @@ export default {
             disabled: props.disabled,
             color: 'primary',
             hideDetails: true,
-          },
-          on: {
-            'update:modelValue': updateModel,
+            'onUpdate:modelValue': updateModel,
           },
         };
       }
@@ -143,10 +138,7 @@ export default {
             values: props.value,
             disabled: props.disabled,
             required: props.required,
-          },
-          on: {
-            change: updateModel,
-            'update:values': updateModel,
+            'onUpdate:values': updateModel,
           },
         };
       }
@@ -173,8 +165,6 @@ export default {
 <style lang="scss">
 .c-mixed-input-field {
   &__switch {
-    padding: 18px 0;
-
     & .v-label {
       text-transform: capitalize;
     }

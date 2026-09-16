@@ -195,22 +195,22 @@ export const snmpRuleToForm = (snmpRule = {}) => ({
 /**
  * Convert oid form to snmp rule oid field
  *
- * @param {SnmpRuleOidForm} form
+ * @param {SnmpRuleOidForm} [form={}]
  * @returns {SnmpRuleOid}
  */
-export const snmpRuleFormToOid = form => ({
-  oid: form.mib.oid,
-  mibName: form.mib.name,
+export const snmpRuleFormToOid = (form = {}) => ({
+  oid: form.mib?.oid ?? '',
+  mibName: form.mib?.name ?? '',
   moduleName: form.moduleName,
 });
 
 /**
  * Convert form to snmp rule
  *
- * @param {SnmpRuleForm} form
+ * @param {SnmpRuleForm} [form={}]
  * @returns {SnmpRule}
  */
-export const formToSnmpRule = form => ({
+export const formToSnmpRule = (form = {}) => ({
   ...form,
 
   oid: snmpRuleFormToOid(form.oid),

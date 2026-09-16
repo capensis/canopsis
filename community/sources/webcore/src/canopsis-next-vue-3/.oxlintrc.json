@@ -15,6 +15,37 @@
       {
         "ignoreRestSiblings": true
       }
+    ],
+    "vitest/expect-expect": [
+      "error",
+      {
+        "assertFunctionNames": [
+          "expect",
+          "expectTypeOf",
+          "assert",
+          "assertType",
+          "expect*",
+          "submitWithExpects",
+          "check*"
+        ]
+      }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/__tests__/setup.js",
+        "src/__tests__/unit/utils/**",
+        "src/__tests__/unit/stubs/**",
+        "src/__tests__/unit/mocks/**",
+        "src/__tests__/unit/data/**"
+      ],
+      "rules": {
+        "jest/no-export": "off",
+        "jest/valid-title": "off",
+        "jest/no-conditional-expect": "off",
+        "vitest/no-conditional-tests": "off"
+      }
+    }
+  ]
 }

@@ -1,9 +1,13 @@
 <template>
   <c-layout gap="5" column>
-    <c-layout gap="4">
-      <c-name-field v-model="nameField" autofocus required />
-      <c-name-field v-model="systemNameField" :label="t('common.systemName')" name="system_name" />
-    </c-layout>
+    <v-row>
+      <v-col cols="6">
+        <c-name-field v-model="nameField" autofocus required />
+      </v-col>
+      <v-col cols="6">
+        <c-name-field v-model="systemNameField" :label="t('common.systemName')" name="system_name" />
+      </v-col>
+    </v-row>
 
     <c-enabled-field
       v-model="emitTriggerSuccessField"

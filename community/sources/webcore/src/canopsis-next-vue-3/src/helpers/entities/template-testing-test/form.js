@@ -262,9 +262,17 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     ];
   }
 
+  if (type === TEMPLATE_TESTING_TEST_TYPES.widget) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
+      }),
+    ];
+  }
+
   if (
     [
-      TEMPLATE_TESTING_TEST_TYPES.widget,
       TEMPLATE_TESTING_TEST_TYPES.instruction,
       TEMPLATE_TESTING_TEST_TYPES.job,
       TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule,
@@ -276,6 +284,40 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
         required: true,
         params: { opened: true },
       }),
+    ];
+  }
+
+  if (type === TEMPLATE_TESTING_TEST_TYPES.declareTicketRule) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
+        params: { opened: true },
+      }),
+
+      ...(form.webhooks ?? []).reduce((acc, webhook, index) => {
+        acc.push(
+          getTemplateTestingTestValidateFormItem({
+            index,
+            required: true,
+            key: webhook.key,
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+          }),
+        );
+
+        if (webhook.declare_ticket?.check_ticket_status?.enabled) {
+          acc.push(
+            getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              key: `${webhook.key}.check_ticket_status.ticket_status_tpl`,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+            }),
+          );
+        }
+
+        return acc;
+      }, []),
     ];
   }
 
