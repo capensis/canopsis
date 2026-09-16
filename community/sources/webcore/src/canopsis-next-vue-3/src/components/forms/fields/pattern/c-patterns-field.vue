@@ -734,6 +734,10 @@ export default {
 .c-patterns-field {
   gap: 16px;
 
+  > .v-messages {
+    opacity: 1;
+  }
+
   &__wrapper {
     position: relative;
   }

@@ -1,5 +1,5 @@
 <template>
-  <c-form-block-row :label="t('metaAlarmRule.threshold')" class="meta-alarm-rule-threshold-field">
+  <c-form-block-row :label="t('metaAlarmRule.threshold')" indented>
     <c-layout gap="2" column>
       <c-label
         :label="t('metaAlarmRule.threshold')"
@@ -28,6 +28,7 @@
                 :max="option.value === META_ALARMS_THRESHOLD_TYPES.thresholdRate ? 100 : undefined"
                 :name="getThresholdName(option.value)"
                 hide-details
+                hide-label
                 @update:value="updateThreshold(option.value, $event)"
               />
             </c-layout>
@@ -95,6 +96,10 @@ export default {
 
   :deep(.c-number-field) {
     max-width: 120px;
+  }
+
+  :deep(.v-text-field) {
+    margin-top: -6px;
   }
 }
 </style>

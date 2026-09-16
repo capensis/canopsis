@@ -64,7 +64,6 @@ export default {
     countOverLimit:
       'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
     existExcluded: 'Les règles incluent la règle exclue.',
-    required:
-      'Au moins un modèle doit être défini. Veuillez définir des modèles de filtre pour la règle',
+    required: 'Ajoutez au moins un modèle',
   },
 };

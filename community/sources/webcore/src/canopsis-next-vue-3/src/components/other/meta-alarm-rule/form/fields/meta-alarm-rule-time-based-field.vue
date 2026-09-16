@@ -1,6 +1,6 @@
 <template>
   <c-form-block-row :label="t('metaAlarmRule.timeInterval')">
-    <c-layout gap="2">
+    <c-layout gap="2" align="center">
       <c-duration-field
         :duration="modelValue"
         :label="t('metaAlarmRule.timeInterval')"

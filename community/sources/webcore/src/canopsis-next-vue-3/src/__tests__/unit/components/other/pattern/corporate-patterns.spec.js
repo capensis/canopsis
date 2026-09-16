@@ -1,0 +1,161 @@
+import { createMockedStoreModules } from '@unit/utils/store';
+import { generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises } from '@vue/test-utils';
+import Faker from 'faker';
+
+import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
+
+const stubs = {
+  'patterns-list': true,
+};
+
+const selectPattersListNode = wrapper => wrapper.vm.$children[0];
+
+describe('corporate-patterns', () => {
+  const fetchPatternsList = vi.fn();
+
+  const patternModule = {
+    name: 'pattern/corporate',
+    getters: {
+      pending: false,
+      items: [],
+      meta: {
+        total_count: 0,
+      },
+    },
+    actions: {
+      fetchList: fetchPatternsList,
+    },
+  };
+  const store = createMockedStoreModules([patternModule]);
+  const edit = vi.fn();
+  const remove = vi.fn();
+  const removeSelected = vi.fn();
+  const listeners = {
+    edit,
+    remove,
+    'remove-selected': removeSelected,
+  };
+
+  const factory = generateShallowRenderer(CorporatePatterns, { stubs });
+
+  afterEach(() => {
+    fetchPatternsList.mockClear();
+  });
+
+  it('Filters fetched after mount', async () => {
+    factory({ store, listeners });
+
+    await flushPromises();
+
+    expect(fetchPatternsList).toBeCalledTimes(1);
+    expect(fetchPatternsList).toHaveBeenCalledWith(expect.any(Object), {
+      params: {
+        limit: 10,
+        page: 1,
+      },
+    });
+  });
+
+  it('Filters fetched after change query', async () => {
+    const initialItemsPerPage = Faker.datatype.number();
+    const wrapper = factory({
+      data() {
+        return {
+          query: {
+            itemsPerPage: initialItemsPerPage,
+          },
+        };
+      },
+      store,
+      listeners,
+    });
+
+    await flushPromises();
+
+    fetchPatternsList.mockClear();
+
+    const patternsListNode = selectPattersListNode(wrapper);
+
+    const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
+    const page = Faker.datatype.number();
+
+    patternsListNode.$emit('update:options', {
+      itemsPerPage,
+      page,
+    });
+
+    await flushPromises();
+
+    expect(fetchPatternsList).toBeCalledTimes(1);
+    expect(fetchPatternsList).toHaveBeenCalledWith(expect.any(Object), {
+      params: {
+        limit: itemsPerPage,
+        page,
+      },
+    });
+  });
+
+  it('Edit event emitted after trigger edit event on patterns list', async () => {
+    const data = Faker.datatype.string();
+    const wrapper = factory({
+      store,
+      listeners,
+    });
+
+    await flushPromises();
+
+    fetchPatternsList.mockClear();
+
+    const patternsListNode = selectPattersListNode(wrapper);
+
+    patternsListNode.$emit('edit', data);
+
+    await flushPromises();
+
+    expect(edit).toBeCalledTimes(1);
+    expect(edit).toHaveBeenCalledWith(data);
+  });
+
+  it('Remove selected event emitted after trigger remove selected event on patterns list', async () => {
+    const data = [Faker.datatype.string()];
+    const wrapper = factory({
+      store,
+      listeners,
+    });
+
+    await flushPromises();
+
+    fetchPatternsList.mockClear();
+
+    const patternsListNode = selectPattersListNode(wrapper);
+
+    patternsListNode.$emit('remove-selected', data);
+
+    await flushPromises();
+
+    expect(removeSelected).toBeCalledTimes(1);
+    expect(removeSelected).toHaveBeenCalledWith(data);
+  });
+
+  it('Remove event emitted after trigger remove event on patterns list', async () => {
+    const data = Faker.datatype.string();
+    const wrapper = factory({
+      store,
+      listeners,
+    });
+
+    await flushPromises();
+
+    fetchPatternsList.mockClear();
+
+    const patternsListNode = selectPattersListNode(wrapper);
+
+    patternsListNode.$emit('remove', data);
+
+    await flushPromises();
+
+    expect(remove).toBeCalledTimes(1);
+    expect(remove).toHaveBeenCalledWith(data);
+  });
+});

@@ -9,35 +9,31 @@
     />
     <c-alarm-patterns-field
       v-if="isAlarmPattern"
-      :patterns="formModel"
+      v-model:patterns="formModel"
       :name="PATTERNS_FIELDS.alarm"
       :check-count-name="PATTERNS_FIELDS.alarm"
       required
-      @update:patterns="formModel = $event"
     />
     <c-entity-patterns-field
       v-else-if="isEntityPattern"
-      :patterns="formModel"
+      v-model:value="formModel"
       :name="PATTERNS_FIELDS.entity"
       :check-count-name="PATTERNS_FIELDS.entity"
       required
-      @update:patterns="formModel = $event"
     />
     <c-pbehavior-patterns-field
       v-else-if="isPbehaviorPattern"
-      :patterns="formModel"
+      v-model:value="formModel"
       :name="PATTERNS_FIELDS.pbehavior"
       :check-count-name="PATTERNS_FIELDS.pbehavior"
       required
-      @update:patterns="formModel = $event"
     />
     <c-service-weather-patterns-field
       v-else-if="isServiceWeatherPattern"
-      :patterns="formModel"
+      v-model:value="formModel"
       :name="PATTERNS_FIELDS.serviceWeather"
       :check-count-name="PATTERNS_FIELDS.serviceWeather"
       required
-      @update:patterns="formModel = $event"
     />
   </c-layout>
 </template>
@@ -53,7 +49,6 @@ export default {
   setup() {
     const form = useFormContext();
     const { title, type } = useFormModels(['title', 'type']);
-
     const formModel = computed({
       get: () => form.values.value,
       set: (value) => {

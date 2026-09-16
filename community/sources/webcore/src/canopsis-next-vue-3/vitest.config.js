@@ -10,7 +10,20 @@ export default mergeConfig(
     test: {
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/**'],
+      globals: true,
       root: fileURLToPath(new URL('./', import.meta.url)),
+      setupFiles: ['./src/__tests__/setup.js'],
+      deps: {
+        web: {
+          transformAssets: true,
+          transformCss: true,
+        },
+      },
+      server: {
+        deps: {
+          inline: ['vuetify'],
+        },
+      },
     },
   }),
 );

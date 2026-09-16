@@ -43,6 +43,7 @@
       v-model:form="patternsField"
       :with-total-entity="withTotalEntityPattern"
       :some-required="isAttributeType"
+      :with-threshold-summary="isThresholdFormShown"
     />
   </c-layout>
 </template>

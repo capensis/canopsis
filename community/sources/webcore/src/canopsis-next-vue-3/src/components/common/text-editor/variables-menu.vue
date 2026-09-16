@@ -3,8 +3,8 @@
     :model-value="visible"
     :target="[positionX, positionY]"
     :close-on-content-click="false"
+    :location="location"
     max-height="300"
-    location="bottom start"
     @update:model-value="$emit('close')"
   >
     <variables-list
@@ -75,6 +75,10 @@ export default {
     childrenKey: {
       type: String,
       default: 'variables',
+    },
+    location: {
+      type: String,
+      default: 'bottom start',
     },
   },
 

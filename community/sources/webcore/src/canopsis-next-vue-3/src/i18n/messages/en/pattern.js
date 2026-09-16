@@ -63,6 +63,6 @@ export default {
     countOverLimit:
       'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
     existExcluded: 'The rules include excluded rule.',
-    required: 'At least one pattern has to be defined. Please define filter patterns for rule',
+    required: 'Add at least one pattern',
   },
 };

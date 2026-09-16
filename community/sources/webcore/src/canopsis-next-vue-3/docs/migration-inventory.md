@@ -101,11 +101,11 @@ inside migrated views:
 
 ## Immediate Tasks
 
-- `[x]` Keep `normalizr` out of the target migration path. The Vue 3 project does not depend on `normalizr`; use plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of restoring the old Vuex/normalizr shape.
+- `[x]` Keep `normalizr` out of the target migration path. The Vue 3 project does not depend on `normalizr`; use plain normalized-by-id state, Pinia stores and explicit mapper helpers instead of restoring the old normalized store shape.
   - Do not port the old `entities/removeFromStore` cleanup mechanism. Embedded metadata was only used internally by the old normalizr plugin for mark-and-sweep and parent cleanup.
   - Single pbehavior delete paths now use API delete plus local list refresh. `AlarmsList`, `Context` and `ServiceWeather` pbehavior tabs refresh locally instead of restoring global embedded cleanup.
 - `[x]` Port remaining old entity store modules to Pinia facades.
-  - Simple list/detail/bulk modules are wrapped with `createCRUDStore` where the old Vuex module was only CRUD around an API route.
+  - Simple list/detail/bulk modules are wrapped with `createCRUDStore` where the old module was only CRUD around an API route.
   - Request-only or widget-scoped modules stay as explicit Pinia stores: `metrics` keeps per-widget buckets for aggregated/group/vector/availability data and meta, `template-testing` also covers old `copy/vars`, `snmp` is split into `snmp-rule` and `snmp-mib`, and `info` remains covered by `app-info` plus `infos`.
   - Empty old namespace folders `auth-token-job`, `instruction-job` and `webhook-job` do not require Pinia modules.
   - Consumers are validated through the page/widget entries that use those hooks.
@@ -695,7 +695,7 @@ Router rules are taken from `src/router.js`, `src/constants/common.js`, `src/con
 
 ### Post-navigation Rules
 
-- `[x]` Entity sweep: old `entities/sweep` belonged to the Vuex/normalizr embedded-entity mark-and-sweep plugin and is intentionally not ported. Pinia stores keep explicit local list/detail state and refresh migrated consumers directly after mutations.
+- `[x]` Entity sweep: old `entities/sweep` belonged to the embedded-entity mark-and-sweep plugin and is intentionally not ported. Pinia stores keep explicit local list/detail state and refresh migrated consumers directly after mutations.
 - `[x]` Initial error popup: on router ready, if initial route has `errorMessage`, show persistent error popup.
 - `[x]` Scroll/restoration behavior: source router did not define `scrollBehavior`; target intentionally keeps Vue Router default behavior and page-level scroll helpers handle local scroll cases.
 

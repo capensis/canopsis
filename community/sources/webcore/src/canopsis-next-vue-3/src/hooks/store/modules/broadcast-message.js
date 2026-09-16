@@ -5,8 +5,7 @@ import { useBroadcastMessageStore } from '@/stores/modules/broadcast-message';
 /**
  * Broadcast message store facade.
  *
- * Keeps direct Pinia usage out of components and exposes migrated Vuex-like
- * action names with entity-specific aliases.
+ * Keeps direct Pinia usage out of components and exposes entity-specific aliases.
  *
  * @returns {Object}
  */

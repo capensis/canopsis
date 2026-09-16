@@ -21,6 +21,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@unit': fileURLToPath(new URL('./src/__tests__/unit', import.meta.url)),
       'cytoscape/dist/cytoscape.umd.js': 'cytoscape/dist/cytoscape.esm.mjs',
       vue: 'vue/dist/vue.esm-bundler.js',
     },

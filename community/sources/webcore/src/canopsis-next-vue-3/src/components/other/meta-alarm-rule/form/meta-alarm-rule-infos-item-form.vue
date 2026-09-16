@@ -20,27 +20,30 @@
         :label="t('common.description')"
         @update:model-value="updateField('description', $event)"
       />
-      <c-layout gap="4">
-        <c-enabled-field
-          v-model="copyFromChildren"
-          :label="t('metaAlarmRule.copyFromLastChild')"
-          hide-details
-        >
-          <template #append>
-            <c-help-icon
-              :text="t('metaAlarmRule.copyFromLastChildTooltip')"
-              icon="help"
-              top
-            />
-          </template>
-        </c-enabled-field>
-        <c-mixed-input-field
-          v-if="!form.copy_from_children"
-          :value="form.value"
-          :label="t('common.value')"
-          @update:value="updateField('value', $event)"
-        />
-      </c-layout>
+      <v-row class="ga-4 flex-nowrap align-start ma-0" no-gutters>
+        <v-col cols="auto">
+          <c-enabled-field
+            v-model="copyFromChildren"
+            :label="t('metaAlarmRule.copyFromLastChild')"
+            hide-details
+          >
+            <template #append>
+              <c-help-icon
+                :text="t('metaAlarmRule.copyFromLastChildTooltip')"
+                icon="help"
+                top
+              />
+            </template>
+          </c-enabled-field>
+        </v-col>
+        <v-col v-if="!form.copy_from_children">
+          <c-mixed-field
+            :value="form.value"
+            :label="t('common.value')"
+            @update:value="updateField('value', $event)"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>

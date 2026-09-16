@@ -1,5 +1,9 @@
 <template>
-  <c-card-iterator-item :item-number="webhookNumber" @remove="removeWebhook">
+  <c-card-iterator-item
+    :item-number="webhookNumber"
+    class="declare-ticket-rule-webhook-field"
+    @remove="removeWebhook"
+  >
     <template #header="">
       <request-url-field
         :method="form.request.method"
@@ -43,11 +47,12 @@
         @update:form="updateField('declare_ticket.check_ticket_status', $event)"
       />
 
-      <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" top-border>
+      <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" top-border align-center>
         <c-workflow-field
           :model-value="form.stop_on_fail"
           :disabled="disabled"
           :continue-label="$t('declareTicket.continueWithNextStep')"
+          hide-details
           @update:model-value="updateField('stop_on_fail', $event)"
         />
       </c-form-block-row>
@@ -128,3 +133,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.declare-ticket-rule-webhook-field {
+  :deep(.c-card-iterator-item__row) {
+    align-items: center;
+  }
+
+  :deep(.c-card-iterator-item__row > .c-action-btn) {
+    position: static;
+  }
+}
+</style>

@@ -13,7 +13,7 @@
     @update:value="$emit('update:form', $event)"
   >
     <template #additional-counters="{ counters }">
-      <c-layout v-if="counters?.threshold_summary" gap="2">
+      <c-layout v-if="withThresholdSummary && counters?.threshold_summary" gap="2">
         <strong>{{ $t('common.summary') }}:</strong>
         <span class="pre-line">{{ counters.threshold_summary }}</span>
       </c-layout>
@@ -43,6 +43,10 @@ export default {
       default: false,
     },
     someRequired: {
+      type: Boolean,
+      default: false,
+    },
+    withThresholdSummary: {
       type: Boolean,
       default: false,
     },

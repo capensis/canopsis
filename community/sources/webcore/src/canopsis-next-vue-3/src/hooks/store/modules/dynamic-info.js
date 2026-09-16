@@ -16,7 +16,7 @@ import { useDynamicInfoStore } from '@/stores/modules/dynamic-info';
  * @property {Function} createDynamicInfo - Creates a new dynamic info
  * @property {Function} updateDynamicInfo - Updates a dynamic info
  * @property {Function} removeDynamicInfo - Removes a dynamic info
- * @property {Function} fetchDynamicInfosKeysWithoutStore - Fetches dictionary keys without storing in Vuex
+ * @property {Function} fetchDynamicInfosKeysWithoutStore - Fetches dictionary keys without storing them locally
  * @property {Function} bulkEnableDynamicInfos - Bulk enables dynamic infos
  * @property {Function} bulkDisableDynamicInfos - Bulk disables dynamic infos
  * @property {Function} bulkRemoveDynamicInfos - Bulk removes dynamic infos

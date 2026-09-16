@@ -107,6 +107,22 @@ export default {
     const hasFilledSomeRequiredField = computed(() => props.form.some(item => item.someRequired && item.value),
     );
 
+    const getFieldName = (item) => {
+      if (!isUndefined(item.index)) {
+        const indexedField = {
+          [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'responses',
+          [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]:
+            'ticket_status_responses',
+        }[item.type];
+
+        if (indexedField) {
+          return `${props.name}.${indexedField}.${item.index}`;
+        }
+      }
+
+      return `${props.name}.${item.type}`;
+    };
+
     const fields = computed(() => props.form.map((item, index) => ({
         is: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COMPONENTS[item.type],
         key: item.key,
@@ -114,7 +130,7 @@ export default {
           value: item.value,
           label: getLabel(item),
           params: item.params,
-          name: `${props.name}.${item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response ? `responses.${index}` : item.type}`,
+          name: getFieldName(item),
           required: item.required || (item.someRequired && !hasFilledSomeRequiredField.value),
           disabled:
             (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user &&

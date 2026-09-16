@@ -1,15 +1,16 @@
 <template>
   <widget-settings-group :title="$t(`settings.titles.${SIDE_BARS.alarmSettings}`)">
     <field-default-sort-columns-with-template
-      v-model="form.sort"
+      :model-value="form.sort"
       :columns="sortablePreparedWidgetColumns"
       :template="form.sortTemplate"
       :templates="alarmSortColumnsWidgetTemplates"
       :templates-pending="templatesPending"
+      @update:model-value="updateField('sort', $event)"
       @update:template="updateSortTemplate"
     />
     <field-columns
-      v-model="form.widgetColumns"
+      :model-value="form.widgetColumns"
       :template="form.widgetColumnsTemplate"
       :templates="alarmColumnsWidgetTemplates"
       :templates-pending="templatesPending"
@@ -18,11 +19,23 @@
       with-html
       with-template
       with-color-indicator
+      @update:model-value="updateField('widgetColumns', $event)"
       @update:template="updateColumnsTemplate"
     />
-    <field-resize-column-behavior v-model="form.columns" resizable />
-    <field-default-elements-per-page v-model="form.itemsPerPage" />
-    <field-info-popup v-model="form.infoPopups" :columns="form.widgetColumns" />
+    <field-resize-column-behavior
+      :model-value="form.columns"
+      resizable
+      @update:model-value="updateField('columns', $event)"
+    />
+    <field-default-elements-per-page
+      :model-value="form.itemsPerPage"
+      @update:model-value="updateField('itemsPerPage', $event)"
+    />
+    <field-info-popup
+      :model-value="form.infoPopups"
+      :columns="form.widgetColumns"
+      @update:model-value="updateField('infoPopups', $event)"
+    />
     <field-text-editor-with-template
       :model-value="form.moreInfoTemplate"
       :template="form.moreInfoTemplateTemplate"
@@ -47,7 +60,10 @@
       @update:model-value="updateExportPdf"
       @update:template="updateExportPdfTemplate"
     />
-    <field-root-cause-settings v-model="form" />
+    <field-root-cause-settings
+      :model-value="form"
+      @update:model-value="updateModel"
+    />
   </widget-settings-group>
 </template>
 
@@ -69,7 +85,7 @@ import {
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
 
-import { formBaseMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from '@/components/sidebars/alarm/form/fields/resize-column-behavior.vue';
@@ -93,7 +109,7 @@ export default {
     FieldTextEditorWithTemplate,
     FieldDefaultElementsPerPage,
   },
-  mixins: [formBaseMixin],
+  mixins: [formMixin],
 
   props: {
     value: {

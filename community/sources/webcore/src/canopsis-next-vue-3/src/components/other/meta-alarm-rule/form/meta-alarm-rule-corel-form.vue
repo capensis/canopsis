@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-form-block-row :label="t('metaAlarmRule.threshold')">
+    <c-form-block-row :label="t('metaAlarmRule.threshold')" indented>
       <c-number-field
         :value="config.threshold_count"
         :min="0"

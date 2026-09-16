@@ -1,6 +1,6 @@
 <template>
-  <c-layout gap="2">
-    <div :class="valueColumnClass">
+  <v-row class="ga-2 flex-nowrap" no-gutters>
+    <v-col :cols="sameWidth ? 6 : 7">
       <c-number-field
         :value="duration.value"
         :label="label || $t('common.duration')"
@@ -17,9 +17,9 @@
           <slot name="append" />
         </template>
       </c-number-field>
-    </div>
+    </v-col>
 
-    <div :class="unitColumnClass">
+    <v-col :cols="sameWidth ? 6 : 5">
       <c-select
         :model-value="duration.unit"
         :items="availableUnits"
@@ -33,8 +33,8 @@
         item-value="value"
         @update:model-value="updateUnit"
       />
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -144,14 +144,6 @@ export default {
     isRequired() {
       return this.required || isNumber(this.duration.value) || Boolean(this.duration.unit);
     },
-
-    valueColumnClass() {
-      return this.sameWidth ? 'flex-1-1-0' : 'flex-1-1-58';
-    },
-
-    unitColumnClass() {
-      return this.sameWidth ? 'flex-1-1-0' : 'flex-1-1-42';
-    },
   },
 
   methods: {
@@ -186,20 +178,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.flex-1-1-0 {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.flex-1-1-58 {
-  flex: 1 1 58%;
-  min-width: 0;
-}
-
-.flex-1-1-42 {
-  flex: 1 1 42%;
-  min-width: 0;
-}
-</style>
