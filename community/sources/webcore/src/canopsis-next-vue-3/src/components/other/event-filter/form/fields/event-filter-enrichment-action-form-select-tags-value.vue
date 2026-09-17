@@ -4,6 +4,8 @@
     :label="$t('common.value')"
     :items="items"
     :name="name"
+    item-title="text"
+    item-value="value"
     class="ml-2"
     required
     @update:model-value="updateValue"
