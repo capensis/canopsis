@@ -16,6 +16,7 @@
       :label="$t('common.user')"
       :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user"
       color="primary"
+      class="ml-2"
     />
   </c-radio-group>
 </template>

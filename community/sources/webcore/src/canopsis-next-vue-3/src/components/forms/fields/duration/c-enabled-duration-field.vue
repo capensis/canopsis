@@ -1,6 +1,6 @@
 <template>
-  <c-layout wrap>
-    <div class="c-enabled-duration-field__enabled">
+  <v-row density="comfortable">
+    <v-col cols="7">
       <component
         :is="component"
         :model-value="duration.enabled"
@@ -8,31 +8,36 @@
         :name="enabledFieldName"
         color="primary"
         class="pb-2"
+        hide-details
         @update:model-value="updateEnabled"
       >
         <template #label>
-          <c-layout class="full-width" align="center">
-            {{ label }}
-            <c-help-icon
-              v-if="helpText"
-              :text="helpText"
-              icon-class="ml-2"
-              color="info"
-              max-width="300"
-              top
-            />
-            <v-fade-transition>
-              <span v-if="suffix && !hideDuration" class="pr-2 pl-1 text-lowercase">
-                {{ suffix }}
-              </span>
-            </v-fade-transition>
-          </c-layout>
+          <v-row class="w-100" align="center" no-gutters>
+            <v-col>
+              {{ label }}
+              <c-help-icon
+                v-if="helpText"
+                :text="helpText"
+                icon-class="ml-2"
+                color="info"
+                max-width="300"
+                top
+              />
+            </v-col>
+            <v-col cols="auto">
+              <v-fade-transition>
+                <span v-if="suffix && !hideDuration" class="pr-2 pl-1 text-lowercase">
+                  {{ suffix }}
+                </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
         </template>
       </component>
-    </div>
+    </v-col>
 
     <v-fade-transition>
-      <div v-if="!hideDuration" class="c-enabled-duration-field__duration">
+      <v-col v-if="!hideDuration" cols="5">
         <c-duration-field
           :duration="duration"
           :units-label="$t('common.unit')"
@@ -43,9 +48,9 @@
           :min="min"
           @update:duration="updateModel"
         />
-      </div>
+      </v-col>
     </v-fade-transition>
-  </c-layout>
+  </v-row>
 </template>
 
 <script>
@@ -145,15 +150,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-enabled-duration-field__enabled {
-  flex: 1 1 58%;
-  min-width: 0;
-}
-
-.c-enabled-duration-field__duration {
-  flex: 1 1 42%;
-  min-width: 0;
-}
-</style>

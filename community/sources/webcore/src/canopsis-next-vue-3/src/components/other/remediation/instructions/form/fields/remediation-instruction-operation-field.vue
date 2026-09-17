@@ -5,6 +5,7 @@
     drag-handle-class="operation-drag-handler"
     class="remediation-instruction-operation-field"
     default-expanded
+    static-delete
     @remove="remove"
   >
     <template #header>
@@ -142,10 +143,6 @@ export default {
 .remediation-instruction-operation-field {
   :deep(.c-card-iterator-item__row) {
     align-items: center;
-  }
-
-  :deep(.c-card-iterator-item__row > .c-action-btn) {
-    position: static;
   }
 
   .theme--light & {

@@ -133,7 +133,7 @@ export default {
 
       return units.map(({ value, text }) => ({
         value,
-        text: this.$t(text, this.duration.value || 0),
+        text: this.$te(text) ? this.$t(text, this.duration.value || 0) : text,
       }));
     },
 

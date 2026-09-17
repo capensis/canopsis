@@ -16,7 +16,7 @@
     standalone
     @update:model-value="changeValue"
   >
-    <template #selection="{ item, index }">
+    <template #chip="{ item, index }">
       <v-tooltip
         :disabled="!getPreparedTrigger(item).deprecated || hasError(getChipName(index))"
         location="top"
@@ -62,11 +62,15 @@
           />
         </template>
 
-        <v-list-item-title>
-          <c-layout align="center" justify-space-between>
-            <span>{{ getPreparedTrigger(item).text }}</span>
+        <v-row class="w-100" align="center" justify="space-between">
+          <v-col cols="auto">
+            <v-list-item-title>{{ getPreparedTrigger(item).text }}</v-list-item-title>
+          </v-col>
+          <v-col
+            v-if="additionalValuesComponentsByTypes[getPreparedTrigger(item).type]"
+            cols="auto"
+          >
             <component
-              v-if="additionalValuesComponentsByTypes[getPreparedTrigger(item).type]"
               v-bind="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].bind"
               :is="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].is"
               :disabled="!isTriggerSelected(getPreparedTrigger(item))"
@@ -74,8 +78,8 @@
               v-on="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].on"
               @click.prevent.stop=""
             />
-          </c-layout>
-        </v-list-item-title>
+          </v-col>
+        </v-row>
 
         <template v-if="getPreparedTrigger(item).helpText" #append>
           <c-help-icon
@@ -274,17 +278,14 @@ export default {
     /**
      * Get text for selected item
      *
-     * @param {string} type
-     * @param {string} text
-     * @param {number | string | boolean} [additionalValue]
+     * @param {Trigger} [trigger={}]
      * @return {VueI18n.TranslateResult|*}
      */
-    const getSelectedText = ({
-      type,
-      text,
-      [additionalValuesKeysByTriggers[type]]: additionalValue,
-    } = {}) => {
-      const messageKey = `${props.translationKeyPrefix}.${type}.selectedText`;
+    const getSelectedText = (trigger = {}) => {
+      const { type, text } = trigger;
+      const additionalValueKey = additionalValuesKeysByTriggers[type];
+      const additionalValue = additionalValueKey ? trigger[additionalValueKey] : undefined;
+      const messageKey = `${getTriggerTranslationKey(type)}.selectedText`;
 
       return te(messageKey) ? t(messageKey, { additionalValue }) : text;
     };
@@ -296,10 +297,18 @@ export default {
      * @return {Trigger}
      */
     const getPreparedTrigger = (item = {}) => {
-      const type = item.type ?? item.value;
+      const raw = item.raw ?? item;
+      const type = raw.type ?? (typeof item.value === 'string' ? item.value : item.value?.type);
+      const preparedTrigger = preparedTriggers.value.find(triggerItem => triggerItem.type === type)
+        ?? triggerToPreparedTrigger(typeof raw === 'object' ? raw : { type });
 
-      return preparedTriggers.value.find(triggerItem => triggerItem.type === type)
-        ?? triggerToPreparedTrigger(item);
+      return {
+        ...preparedTrigger,
+        ...(typeof raw === 'object' ? raw : {}),
+        text: preparedTrigger.text,
+        helpText: preparedTrigger.helpText,
+        deprecated: preparedTrigger.deprecated,
+      };
     };
 
     /**

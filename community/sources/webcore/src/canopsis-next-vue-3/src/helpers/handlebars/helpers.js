@@ -165,13 +165,13 @@ export function compareHelper(a, operator, b, options = {}) {
 
     switch (operator) {
       case '==':
-        result = preparedA == preparedB;
+        result = preparedA == preparedB; // eslint-disable-line eqeqeq -- Handlebars `==` operator
         break;
       case '===':
         result = preparedA === preparedB;
         break;
       case '!=':
-        result = preparedA != preparedB;
+        result = preparedA != preparedB; // eslint-disable-line eqeqeq -- Handlebars `!=` operator
         break;
       case '!==':
         result = preparedA !== preparedB;

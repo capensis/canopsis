@@ -29,4 +29,7 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
+  worker: {
+    format: 'es',
+  },
 });

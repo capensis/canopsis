@@ -1,23 +1,25 @@
 <template>
-  <c-layout column>
-    <c-enabled-field
-      v-model="needApprove"
-      :label="t('remediation.instruction.requestApproval')"
-      :disabled="disabled || required"
-      hide-details
-    />
+  <v-row align="center">
+    <v-col cols="12">
+      <c-enabled-field
+        v-model="needApprove"
+        :label="t('remediation.instruction.requestApproval')"
+        :disabled="disabled || required"
+        hide-details
+      />
+    </v-col>
     <template v-if="needApprove">
-      <c-layout v-if="disabled">
+      <v-col v-if="disabled" cols="12">
         <span class="text-subtitle-1 text-grey my-4"> {{ assignLabel }}: {{ assignValue }} </span>
-      </c-layout>
-      <c-layout v-else gap="2" align="center">
-        <div class="flex-grow-1">
+      </v-col>
+      <template v-else>
+        <v-col>
           <remediation-instruction-approval-type-field
             v-model="typeField"
             @update:model-value="resetErrors"
           />
-        </div>
-        <div class="flex-grow-1">
+        </v-col>
+        <v-col>
           <c-role-field
             v-show="isRoleType"
             v-model="roleField"
@@ -35,17 +37,19 @@
             :permission="approvePermission"
             return-object
           />
-        </div>
-      </c-layout>
-      <c-textarea
-        v-model="commentField"
-        :label="t('common.comment')"
-        :disabled="disabled"
-        name="comment"
-        required
-      />
+        </v-col>
+      </template>
+      <v-col cols="12">
+        <c-textarea
+          v-model="commentField"
+          :label="t('common.comment')"
+          :disabled="disabled"
+          name="comment"
+          required
+        />
+      </v-col>
     </template>
-  </c-layout>
+  </v-row>
 </template>
 
 <script>

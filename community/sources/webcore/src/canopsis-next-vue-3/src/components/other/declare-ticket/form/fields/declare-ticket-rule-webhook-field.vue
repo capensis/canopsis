@@ -2,6 +2,7 @@
   <c-card-iterator-item
     :item-number="webhookNumber"
     class="declare-ticket-rule-webhook-field"
+    static-delete
     @remove="removeWebhook"
   >
     <template #header="">
@@ -138,10 +139,6 @@ export default {
 .declare-ticket-rule-webhook-field {
   :deep(.c-card-iterator-item__row) {
     align-items: center;
-  }
-
-  :deep(.c-card-iterator-item__row > .c-action-btn) {
-    position: static;
   }
 }
 </style>

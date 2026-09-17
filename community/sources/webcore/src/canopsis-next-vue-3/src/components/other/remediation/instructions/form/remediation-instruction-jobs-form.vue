@@ -1,56 +1,43 @@
 <template>
-  <c-layout gap="2" column>
-    <c-draggable-list-field
-      :model-value="jobsField"
-      :disabled="disabled"
-      :group="draggableGroup"
-      handle=".job-drag-handler"
-      ghost-class="grey"
-      class="flex-column gap-2"
-      item-key="key"
-      @update:model-value="jobsField = $event"
-    >
-      <template #item="{ element: job, index }">
-        <v-card>
-          <v-card-text>
-            <remediation-instruction-job-field
-              :job="job"
-              :jobs="jobsItems"
-              :name="job.key"
-              :job-number="index + 1"
-              :disabled="disabled"
-              :loading="pending"
-              @update:job="updateItemInArray(index, $event)"
-              @remove="removeJob(index)"
-            />
-          </v-card-text>
-        </v-card>
-      </template>
-    </c-draggable-list-field>
-
-    <c-btn-with-error
-      :error="hasJobsErrors ? t('remediation.instruction.errors.jobRequired') : ''"
-      :disabled="disabled"
-      outlined
-      @click="addJob"
-    >
-      {{ t('remediation.instruction.addJob') }}
-    </c-btn-with-error>
-  </c-layout>
+  <c-card-iterator-form
+    :value="jobsField"
+    :disabled="disabled"
+    :draggable-group="draggableGroup"
+    :required-error-message="t('remediation.instruction.errors.jobRequired')"
+    :add-button-label="t('remediation.instruction.addJob')"
+    :name="name"
+    item-key="key"
+    iterator-class="mb-2"
+    required
+    @add="addJob"
+    @update:value="jobsField = $event"
+  >
+    <template #item="{ index, item: job }">
+      <remediation-instruction-job-field
+        :job="jobsField[index]"
+        :jobs="jobsItems"
+        :name="job.key"
+        :job-number="index + 1"
+        :disabled="disabled"
+        :loading="pending"
+        @update:job="updateItemInArray(index, $event)"
+        @remove="removeJob(index)"
+      />
+    </template>
+  </c-card-iterator-form>
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
 import { remediationInstructionJobToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import { useFormArray, useFormErrorsMap } from '@/hooks/form';
+import { useFormArray } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
-import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
 
 import RemediationInstructionJobField from './fields/remediation-instruction-job-field.vue';
 
@@ -68,10 +55,9 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  setup() {
     const { t } = useI18n();
     const jobsField = useFormArray('jobs');
-    const { hasError } = useFormErrorsMap();
     const { fetchRemediationJobsListWithoutStore } = useRemediationJob();
 
     const draggableGroup = {
@@ -79,7 +65,6 @@ export default {
     };
 
     const jobsItems = ref([]);
-    const hasJobsErrors = computed(() => hasError(props.name));
 
     const { pending, handler: fetchList } = usePendingHandler(async () => {
       const { data: jobs } = await fetchRemediationJobsListWithoutStore({
@@ -90,11 +75,6 @@ export default {
 
       jobsItems.value = jobs;
     });
-
-    const { asyncValidateMinValueRule } = useValidationAttachMinValueForField(
-      props.name,
-      () => jobsField.value.length,
-    );
 
     const addJob = () => {
       jobsField.value = [...jobsField.value, remediationInstructionJobToForm()];
@@ -109,8 +89,6 @@ export default {
       jobsField.value = jobsField.value.filter((job, jobIndex) => jobIndex !== index);
     };
 
-    watch(jobsField, asyncValidateMinValueRule);
-
     onMounted(fetchList);
 
     return {
@@ -119,7 +97,6 @@ export default {
       jobsField,
       jobsItems,
       pending,
-      hasJobsErrors,
       updateItemInArray,
       addJob,
       removeJob,
