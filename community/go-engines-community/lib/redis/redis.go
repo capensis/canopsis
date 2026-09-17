@@ -90,10 +90,9 @@ func NewOptions(surl string, db int, logger zerolog.Logger,
 			logger.Debug().Str("Addr", redisURL.Host).Int("DB", redisDB).Msg("New connection is established")
 			return nil
 		},
+		MaxRetries:      reconnectCount,
+		MinRetryBackoff: minReconnectTimeout,
 	}
-
-	redisOptions.MaxRetries = reconnectCount
-	redisOptions.MinRetryBackoff = minReconnectTimeout
 	if redisOptions.MaxRetries > 0 && redisOptions.MinRetryBackoff > 0 {
 		redisOptions.MaxRetryBackoff = redisOptions.MinRetryBackoff << redisOptions.MaxRetries
 	}

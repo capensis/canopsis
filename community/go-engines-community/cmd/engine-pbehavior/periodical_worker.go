@@ -40,8 +40,7 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) {
-	metric := techmetrics.PbehaviorPeriodicalMetric{}
-	metric.Timestamp = time.Now()
+	metric := techmetrics.PbehaviorPeriodicalMetric{Timestamp: time.Now()}
 	eventsCount := 0
 	entitiesCount := 0
 	pbehaviorsCount := 0

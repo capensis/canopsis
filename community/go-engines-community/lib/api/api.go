@@ -207,8 +207,7 @@ func restartGoroutine(
 
 				logger.Err(err).Str("worker", key).Msgf("panic recovered\n%s\n", debug.Stack())
 
-				var fatalErr FatalWorkerError
-				if errors.As(err, &fatalErr) {
+				if fatalErr, ok := errors.AsType[FatalWorkerError](err); ok {
 					gErr = fatalErr
 					return
 				}
