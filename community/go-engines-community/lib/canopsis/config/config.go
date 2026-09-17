@@ -162,6 +162,18 @@ type CanopsisConf struct {
 	ExternalData    SectionExternalData    `bson:"external_data" toml:"external_data"`
 }
 
+// UserDefinedConfig is a part of global config, which is updated by user via API and is not controlled by toml file.
+type UserDefinedConfig struct {
+	Metrics struct {
+		EnabledInstructions    bool `bson:"enabledinstructions"`
+		EnabledNotAckedMetrics bool `bson:"enablednotackedmetrics"`
+		EnabledSliMetrics      bool `bson:"enabledslimetrics"`
+	} `bson:"metrics"`
+	TechMetrics struct {
+		Enabled bool `bson:"enabled"`
+	} `bson:"tech_metrics"`
+}
+
 // UserInterfaceConf represents a user interface configuration object.
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
