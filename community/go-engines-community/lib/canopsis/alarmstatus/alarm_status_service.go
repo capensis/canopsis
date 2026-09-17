@@ -5,6 +5,7 @@ package alarmstatus
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -148,9 +149,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) (bool, stri
 		if matched {
 			before := rule.Duration.SubFrom(now)
 
-			for i := len(alarm.Value.Steps) - 1; i >= 0; i-- {
-				step := alarm.Value.Steps[i]
-
+			for _, step := range slices.Backward(alarm.Value.Steps) {
 				if step.Timestamp.Before(before) {
 					break
 				}
@@ -178,8 +177,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) (bool, stri
 func (s *service) isStealthy(alarm types.Alarm) bool {
 	interval := s.configProvider.Get().StealthyInterval
 
-	for i := len(alarm.Value.Steps) - 1; i >= 0; i-- {
-		step := alarm.Value.Steps[i]
+	for _, step := range slices.Backward(alarm.Value.Steps) {
 		if time.Since(step.Timestamp.Time) >= interval {
 			break
 		}

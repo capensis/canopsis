@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
@@ -28,11 +27,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.Query{
-			Page:     2,
-			Limit:    10,
-			Paginate: true,
-		},
+		Page:     2,
+		Limit:    10,
+		Paginate: true,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -89,23 +86,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
-		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+		PbehaviorPattern: pattern.PbehaviorInfo{
+			{
 				{
-					{
-						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "pbehavior_info.canonical_type",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
@@ -113,14 +106,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-		},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -190,17 +177,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
-					{
-						Field:     "v.duration",
-						Condition: durationCond,
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
+				},
+				{
+					Field:     "v.duration",
+					Condition: durationCond,
 				},
 			},
 		},
@@ -208,14 +193,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-		},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -280,18 +259,16 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
-					{
-						Field:     "v.infos.info_name",
-						FieldType: pattern.FieldTypeInt,
-						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
+				},
+				{
+					Field:     "v.infos.info_name",
+					FieldType: pattern.FieldTypeInt,
+					Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 				},
 			},
 		},
@@ -299,14 +276,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-		},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -368,33 +339,27 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
-		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+		PbehaviorPattern: pattern.PbehaviorInfo{
+			{
 				{
-					{
-						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "pbehavior_info.canonical_type",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "category",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
-					},
+					Field:     "category",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
 				},
 			},
 		},
@@ -402,14 +367,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-		},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -479,14 +438,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Category: "test-category",
-				},
-			},
-		},
+		Query:    pagination.GetDefaultQuery(),
+		Category: "test-category",
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -547,14 +500,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Category: "test-category",
-				},
-			},
-		},
+		Query:    pagination.GetDefaultQuery(),
+		Category: "test-category",
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -634,28 +581,24 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		*instruction = Instruction{
 			ActiveOnPbh:   []string{"maintenance"},
 			DisabledOnPbh: []string{"pause"},
-			AlarmPatternFields: savedpattern.AlarmPatternFields{
-				AlarmPattern: pattern.Alarm{
+			AlarmPattern: pattern.Alarm{
+				{
 					{
-						{
-							Field:     "v.duration",
-							Condition: durationCond,
-						},
-						{
-							Field:     "v.infos.info_name",
-							FieldType: pattern.FieldTypeInt,
-							Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
-						},
+						Field:     "v.duration",
+						Condition: durationCond,
+					},
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 					},
 				},
 			},
-			EntityPatternFields: savedpattern.EntityPatternFields{
-				EntityPattern: pattern.Entity{
+			EntityPattern: pattern.Entity{
+				{
 					{
-						{
-							Field:     "category",
-							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
-						},
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
 					},
 				},
 			},
@@ -684,17 +627,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	instructionFilterType := instrFilterHasInstructions
 
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					InstructionFilterType: &instructionFilterType,
-					InstructionIDs:        []string{instructionId},
-					InstructionStatuses: []int{
-						instrFilterExecStatusNotInProgressAndNotCompleted,
-					},
-				},
-			},
+		Query:                 pagination.GetDefaultQuery(),
+		InstructionFilterType: &instructionFilterType,
+		InstructionIDs:        []string{instructionId},
+		InstructionStatuses: []int{
+			instrFilterExecStatusNotInProgressAndNotCompleted,
 		},
 	}
 	now := datetime.NewCpsTime()
@@ -793,28 +730,24 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		*instruction = Instruction{
 			ActiveOnPbh:   []string{"maintenance"},
 			DisabledOnPbh: []string{"pause"},
-			AlarmPatternFields: savedpattern.AlarmPatternFields{
-				AlarmPattern: pattern.Alarm{
+			AlarmPattern: pattern.Alarm{
+				{
 					{
-						{
-							Field:     "v.duration",
-							Condition: durationCond,
-						},
-						{
-							Field:     "v.infos.info_name",
-							FieldType: pattern.FieldTypeInt,
-							Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
-						},
+						Field:     "v.duration",
+						Condition: durationCond,
+					},
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 					},
 				},
 			},
-			EntityPatternFields: savedpattern.EntityPatternFields{
-				EntityPattern: pattern.Entity{
+			EntityPattern: pattern.Entity{
+				{
 					{
-						{
-							Field:     "category",
-							Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
-						},
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
 					},
 				},
 			},
@@ -843,17 +776,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	instructionFilterType := instrFilterHasInstructions
 
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					InstructionFilterType: &instructionFilterType,
-					InstructionIDs:        []string{instructionId},
-					InstructionStatuses: []int{
-						instrFilterExecStatusNotInProgressAndNotCompleted,
-					},
-				},
-			},
+		Query:                 pagination.GetDefaultQuery(),
+		InstructionFilterType: &instructionFilterType,
+		InstructionIDs:        []string{instructionId},
+		InstructionStatuses: []int{
+			instrFilterExecStatusNotInProgressAndNotCompleted,
 		},
 	}
 	now := datetime.NewCpsTime()
@@ -940,13 +867,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-entity"),
-					},
+					Field:     "name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-entity"),
 				},
 			},
 		},
@@ -954,19 +879,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-			SortRequest: SortRequest{
-				MultiSort: []string{
-					"entity._id,desc",
-					"entity.category.name,asc",
-				},
-			},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
+		MultiSort: []string{
+			"entity._id,desc",
+			"entity.category.name,asc",
 		},
 	}
 	now := datetime.NewCpsTime()
@@ -1037,13 +954,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipelineForResolvedAlarms_GivenR
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-entity"),
-					},
+					Field:     "name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-entity"),
 				},
 			},
 		},
@@ -1051,19 +966,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipelineForResolvedAlarms_GivenR
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-			SortRequest: SortRequest{
-				MultiSort: []string{
-					"entity._id,desc",
-					"entity.category.name,asc",
-				},
-			},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
+		MultiSort: []string{
+			"entity._id,desc",
+			"entity.category.name,asc",
 		},
 	}
 	now := datetime.NewCpsTime()
@@ -1142,13 +1049,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	}
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.duration",
-						Condition: durationCond,
-					},
+					Field:     "v.duration",
+					Condition: durationCond,
 				},
 			},
 		},
@@ -1156,19 +1061,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-			SortRequest: SortRequest{
-				MultiSort: []string{
-					"v.duration,desc",
-					"v.active_duration,desc",
-				},
-			},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter.ID},
+		MultiSort: []string{
+			"v.duration,desc",
+			"v.active_duration,desc",
 		},
 	}
 	now := datetime.NewCpsTime()
@@ -1250,14 +1147,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		Options: "i",
 	}
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Search: search,
-				},
-			},
-		},
+		Query:  pagination.GetDefaultQuery(),
+		Search: search,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1329,16 +1220,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	}
 	opened := true
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Opened:      &opened,
-					Search:      search,
-					OnlyParents: true,
-				},
-			},
-		},
+		Query:       pagination.GetDefaultQuery(),
+		Opened:      &opened,
+		Search:      search,
+		OnlyParents: true,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1423,18 +1308,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	opened := true
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				SearchBy: []string{
-					"entity.infos.info1.value",
-				},
-				BaseFilterRequest: BaseFilterRequest{
-					Opened:      &opened,
-					Search:      search,
-					OnlyParents: true,
-				},
-			},
+		SearchBy: []string{
+			"entity.infos.info1.value",
 		},
+		Opened:      &opened,
+		Search:      search,
+		OnlyParents: true,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1516,18 +1395,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	opened := true
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				SearchBy: []string{
-					"entity.infos.info1.value",
-				},
-				BaseFilterRequest: BaseFilterRequest{
-					Opened:      &opened,
-					Search:      search,
-					OnlyParents: true,
-				},
-			},
+		SearchBy: []string{
+			"entity.infos.info1.value",
 		},
+		Opened:      &opened,
+		Search:      search,
+		OnlyParents: true,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1604,16 +1477,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					AlarmPattern: `[[
+		AlarmPattern: `[[
 						{"field": "v.connector", "cond": {"type": "regexp", "value": "test name"}},
 						{"field": "v.state.val", "cond": {"type": "eq", "value": 3}}
 					]]`,
-				},
-			},
-		},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1682,18 +1549,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					EntityPattern: `[[
+		EntityPattern: `[[
 						{"field": "name", "cond": {"type": "regexp", "value": "test name"}}
 					]]`,
-					AlarmPattern: `[[
+		AlarmPattern: `[[
 						{"field": "v.duration", "cond": {"type": "gt", "value": {"value": 100, "unit": "s"}}}
 					]]`,
-				},
-			},
-		},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1772,18 +1633,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					EntityPattern: `[[
+		EntityPattern: `[[
 						{"field": "name", "cond": {"type": "regexp", "value": "test name"}}
 					]]`,
-					AlarmPattern: `[[
+		AlarmPattern: `[[
 						{"field": "v.duration", "cond": {"type": "gt", "value": {"value": 100, "unit": "s"}}}
 					]]`,
-				},
-			},
-		},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1864,14 +1719,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
-				},
-			},
-		},
+		Query:         pagination.GetDefaultQuery(),
+		EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -1935,14 +1784,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
-				},
-			},
-		},
+		Query:         pagination.GetDefaultQuery(),
+		EntityPattern: `[[{"field": "infos.test1", "field_type": "string", "cond": {"type": "regexp", "value": "test val"}}]]`,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -2008,66 +1851,54 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 
 	filter1 := view.WidgetFilter{
 		ID: "test-filter-1",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
-		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+		PbehaviorPattern: pattern.PbehaviorInfo{
+			{
 				{
-					{
-						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "pbehavior_info.canonical_type",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "category",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
-					},
+					Field:     "category",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
 				},
 			},
 		},
 	}
 	filter2 := view.WidgetFilter{
 		ID: "test-filter-2",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.component",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-component"),
-					},
+					Field:     "v.component",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-component"),
 				},
 			},
 		},
-		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+		PbehaviorPattern: pattern.PbehaviorInfo{
+			{
 				{
-					{
-						Field:     "pbehavior_info.id",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-pbehavior"),
-					},
+					Field:     "pbehavior_info.id",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-pbehavior"),
 				},
 			},
 		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "resource"),
-					},
+					Field:     "type",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "resource"),
 				},
 			},
 		},
@@ -2075,14 +1906,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter1, filter2})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter1.ID, filter2.ID},
-				},
-			},
-		},
+		Query:   pagination.GetDefaultQuery(),
+		Filters: []string{filter1.ID, filter2.ID},
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -2157,23 +1982,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
-		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+		PbehaviorPattern: pattern.PbehaviorInfo{
+			{
 				{
-					{
-						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "pbehavior_info.canonical_type",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
@@ -2181,15 +2002,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-			WithDependencies: true,
-		},
+		Query:            pagination.GetDefaultQuery(),
+		Filters:          []string{filter.ID},
+		WithDependencies: true,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
@@ -2255,23 +2070,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: pattern.Alarm{
+		AlarmPattern: pattern.Alarm{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
-		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+		PbehaviorPattern: pattern.PbehaviorInfo{
+			{
 				{
-					{
-						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "pbehavior_info.canonical_type",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
@@ -2279,15 +2090,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					Filters: []string{filter.ID},
-				},
-			},
-			WithDependencies: true,
-		},
+		Query:            pagination.GetDefaultQuery(),
+		Filters:          []string{filter.ID},
+		WithDependencies: true,
 	}
 	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{

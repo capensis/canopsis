@@ -546,12 +546,10 @@ func (g *fieldGetter) getEntityFields(ctx context.Context, collection string) ([
 		}
 
 		fields = append(fields, EntityFieldResponse{
-			FieldResponse: FieldResponse{
-				Name:    alias.Alias,
-				Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
-				Enabled: true,
-			},
-			Alias: true,
+			Name:    alias.Alias,
+			Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
+			Enabled: true,
+			Alias:   true,
 		})
 	}
 
