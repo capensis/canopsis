@@ -235,7 +235,7 @@ export default {
     );
 
     /**
-     * Changes the action type and handles value transformation for dictionary actions
+     * Changes the action type and handles value transformation for dictionary and select actions
      *
      * @param {string} type - The new action type from EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES
      */
@@ -245,7 +245,9 @@ export default {
         type,
       };
 
-      if (props.action.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+      if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags && props.action.type !== type) {
+        newAction.value = '';
+      } else if (props.action.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
         newAction.value = formToEventFilterDictionaryActionValue(props.action.value);
       } else if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
         newAction.value = eventFilterDictionaryActionValueToForm(props.action.value);
