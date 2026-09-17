@@ -1,43 +1,69 @@
 <template>
-  <c-layout gap="3" column>
-    <c-name-field v-model="name" autofocus required />
+  <v-row>
+    <v-col cols="12">
+      <c-name-field v-model="name" autofocus required />
+    </v-col>
 
-    <c-layout gap="3">
-      <c-select
-        v-model="type"
-        :items="remediationJobConfigTypes"
-        :label="t('common.type')"
-        name="type"
-        item-title="name"
-        item-value="name"
-        return-object
-        required
-        @update:model-value="updateType"
-      />
-      <c-text-field
-        v-model="host"
-        :label="t('modals.createRemediationConfiguration.fields.host')"
-        name="host"
-        rules="required|url"
-      />
-    </c-layout>
+    <v-col cols="12">
+      <c-form-block>
+        <c-form-block-row :label="t('common.type')">
+          <c-select
+            v-model="type"
+            :items="remediationJobConfigTypes"
+            :label="t('common.type')"
+            name="type"
+            item-title="name"
+            item-value="name"
+            return-object
+            required
+            @update:model-value="updateType"
+          />
+        </c-form-block-row>
 
-    <c-text-field
-      v-model="authToken"
-      :label="t('modals.createRemediationConfiguration.fields.token')"
-      name="token"
-      required
-    />
+        <c-form-block-row :label="t('modals.createRemediationConfiguration.fields.host')">
+          <c-text-field
+            v-model="host"
+            :label="t('modals.createRemediationConfiguration.fields.host')"
+            name="host"
+            required
+            url
+          />
+        </c-form-block-row>
 
-    <c-name-field
-      v-if="isShownUserNameField"
-      v-model="authUsername"
-      :label="t('common.username')"
-      name="username"
-    />
+        <c-form-block-row :label="t('modals.createRemediationConfiguration.fields.token')">
+          <c-text-field
+            v-model="authToken"
+            :label="t('modals.createRemediationConfiguration.fields.token')"
+            name="token"
+            required
+          />
+        </c-form-block-row>
 
-    <c-enabled-field v-model="skipVerify" :label="t('common.request.skipVerify')" />
-  </c-layout>
+        <c-form-block-row
+          v-if="isShownUserNameField"
+          :label="t('common.username')"
+        >
+          <c-name-field
+            v-model="authUsername"
+            :label="t('common.username')"
+            name="username"
+          />
+        </c-form-block-row>
+
+        <c-form-block-row
+          :label="t('common.request.skipVerify')"
+          align-center
+        >
+          <c-enabled-field
+            v-model="skipVerify"
+            :label="t('common.request.skipVerify')"
+            hide-details
+            no-margin
+          />
+        </c-form-block-row>
+      </c-form-block>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

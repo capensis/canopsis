@@ -53,6 +53,7 @@
         <c-triggers-field
           v-model="triggersField"
           :types="availableTriggers"
+          required
           with-additional-values
         />
 
@@ -78,6 +79,7 @@
             :label="t('remediation.instruction.repeatTriggers')"
             name="repeat_triggers"
             translation-key-prefix="common.repeatTriggers"
+            required
           />
         </v-expand-transition>
       </c-form-block-row>
@@ -85,6 +87,7 @@
       <c-form-block-row
         v-if="!disabledCommon"
         :label="t('remediation.instruction.requestApproval')"
+        align-center
       >
         <remediation-instruction-approval-form
           :disabled="disabled"

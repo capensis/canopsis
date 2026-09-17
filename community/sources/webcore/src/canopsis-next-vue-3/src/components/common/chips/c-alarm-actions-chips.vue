@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { isNil } from 'lodash';
 import { computed, ref, watch } from 'vue';
 
 import { getMostReadableTextColor } from '@/helpers/color';
@@ -193,7 +194,7 @@ export default {
     const closeItem = item => emit('close', props.returnObject ? item : item[props.itemValue]);
 
     const getItemTextColor = (item) => {
-      if (props.textColor != null) {
+      if (!isNil(props.textColor)) {
         return props.textColor;
       }
 

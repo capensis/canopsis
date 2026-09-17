@@ -57,6 +57,7 @@ export default defineConfigWithVueTs(
       'implicit-arrow-linebreak': 'off',
       'brace-style': ['error', '1tbs', { allowSingleLine: false }],
       curly: ['error', 'all'],
+      eqeqeq: ['error', 'always'],
       semi: ['error', 'always'],
       quotes: ['error', 'single', { avoidEscape: false }],
       'default-case': 'off',
@@ -283,6 +284,7 @@ export default defineConfigWithVueTs(
           registeredComponentsOnly: true,
         },
       ],
+      'vue/eqeqeq': ['error', 'always'],
       'vue/attributes-order': [
         'warn',
         {

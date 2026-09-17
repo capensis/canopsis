@@ -2,6 +2,7 @@
   <c-card-iterator-item
     :drag-handle-class="dragHandleClass"
     small
+    static-delete
     @remove="$emit('remove')"
   >
     <template #header>

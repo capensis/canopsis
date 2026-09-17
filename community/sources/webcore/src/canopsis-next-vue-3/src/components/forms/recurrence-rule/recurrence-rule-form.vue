@@ -121,7 +121,7 @@
 </template>
 
 <script setup>
-import { isEmpty, isNumber } from 'lodash';
+import { isEmpty, isNil, isNumber } from 'lodash';
 import { RRule } from 'rrule';
 import { computed, ref, watch } from 'vue';
 
@@ -246,7 +246,7 @@ const updateRruleField = (field, value) => updateFormField('rrule', {
   });
 
 const validateRecurrenceRrule = () => {
-  if (props.form.rrule.freq == null) {
+  if (isNil(props.form.rrule.freq)) {
     formContext.setFieldError('recurrenceRule', undefined);
 
     return;

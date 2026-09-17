@@ -1,29 +1,39 @@
 <template>
-  <div :class="{ 'c-card-iterator-item--small': small }" class="c-card-iterator-item">
-    <c-layout
+  <div
+    :class="{
+      'c-card-iterator-item--small': small,
+      'c-card-iterator-item--static-delete': staticDelete,
+    }"
+    class="c-card-iterator-item"
+  >
+    <v-row
       class="c-card-iterator-item__row"
-      gap="2"
       align="start"
       justify="space-between"
     >
-      <c-layout
-        :class="{ 'c-card-iterator-item__actions--draggable-only': !isExpandable }"
+      <v-col
         class="c-card-iterator-item__actions"
-        align="center"
+        cols="auto"
       >
-        <c-draggable-step-number
-          :color="hasChildrenError ? 'error' : 'primary'"
-          :hide-number="small"
-          :drag-class="dragHandleClass"
-          class="c-card-iterator-item__step-number"
-        >
-          {{ itemNumber }}
-        </c-draggable-step-number>
-        <c-expand-btn v-if="isExpandable" v-model="expanded" />
-      </c-layout>
-      <div class="c-card-iterator-item__header">
+        <v-row align="center">
+          <v-col cols="auto">
+            <c-draggable-step-number
+              :color="hasChildrenError ? 'error' : 'primary'"
+              :hide-number="small"
+              :drag-class="dragHandleClass"
+              class="c-card-iterator-item__step-number"
+            >
+              {{ itemNumber }}
+            </c-draggable-step-number>
+          </v-col>
+          <v-col v-if="isExpandable" cols="auto">
+            <c-expand-btn v-model="expanded" />
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col class="c-card-iterator-item__header">
         <slot name="header" />
-      </div>
+      </v-col>
       <c-action-btn
         v-if="removable"
         :icon="small ? 'close' : 'delete'"
@@ -32,16 +42,17 @@
         type="delete"
         @click="$emit('remove')"
       />
-    </c-layout>
+    </v-row>
     <v-expand-transition v-if="isExpandable" mode="out-in">
-      <c-layout
+      <v-row
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
         class="c-card-iterator-item__content mt-3"
-        column
       >
-        <slot />
-      </c-layout>
+        <v-col cols="12">
+          <slot />
+        </v-col>
+      </v-row>
     </v-expand-transition>
   </div>
 </template>
@@ -77,6 +88,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    staticDelete: {
+      type: Boolean,
+      default: false,
+    },
     expandable: {
       type: Boolean,
       default: true,
@@ -99,9 +114,6 @@ export default {
 
 <style lang="scss">
 .c-card-iterator-item {
-  --actions-max-width: 100px;
-  --actions-min-width: 60px;
-  --one-action-width: 26px;
   --first-field-height: 48px;
 
   &__row > .c-action-btn {
@@ -109,6 +121,12 @@ export default {
     top: 4px;
     right: 4px;
     z-index: 1;
+  }
+
+  &--static-delete {
+    .c-card-iterator-item__row > .c-action-btn {
+      position: static;
+    }
   }
 
   &--small {
@@ -142,26 +160,14 @@ export default {
     > * {
       flex: 1 1 auto;
       min-width: 0;
-      width: 100%;
     }
   }
 
   &__actions {
+    display: flex;
     align-self: flex-start;
     align-items: center;
-    gap: 8px;
     height: var(--first-field-height);
-    max-width: var(--actions-max-width);
-    min-width: var(--actions-min-width);
-
-    &--draggable-only {
-      min-width: var(--one-action-width);
-      max-width: var(--one-action-width);
-    }
-  }
-
-  &__step-number {
-    gap: 8px;
   }
 
   &__content {

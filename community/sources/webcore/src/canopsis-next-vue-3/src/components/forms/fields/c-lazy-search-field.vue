@@ -80,14 +80,14 @@
 </template>
 
 <script>
-import { debounce, isArray, isString, isNumber, isFunction, get } from 'lodash';
+import { debounce, isArray, isFunction, isNil, isNumber, isString, isSymbol, get } from 'lodash';
 import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   inheritAttrs: false,
   props: {
     value: {
-      type: [Array, String, Number, Object],
+      type: [Array, String, Number, Object, Symbol],
       default: '',
     },
     name: {
@@ -180,7 +180,7 @@ export default {
         return false;
       }
 
-      return props.value != null && props.value !== '';
+      return !isNil(props.value) && props.value !== '';
     });
     const preparedMenuProps = computed(() => ({
       ...props.menuProps,
@@ -192,7 +192,7 @@ export default {
     const resolvedItemTitle = computed(() => props.itemTitle || props.itemText);
 
     const getItemValue = (item) => {
-      if (isString(item) || isNumber(item)) {
+      if (isString(item) || isNumber(item) || isSymbol(item)) {
         return item;
       }
 
@@ -200,7 +200,7 @@ export default {
     };
 
     const getItemText = (item) => {
-      if (isString(item) || isNumber(item)) {
+      if (isString(item) || isNumber(item) || isSymbol(item)) {
         return item;
       }
 
@@ -281,9 +281,17 @@ export default {
     const intersectionHandler = (entries) => {
       const [entry] = entries;
 
-      if (entry.isIntersecting && props.hasMore) {
-        emit('fetch:more');
+      if (!entry.isIntersecting || !props.hasMore) {
+        return;
       }
+
+      const listEl = appendElement.value?.closest('.v-list');
+
+      if (listEl && listEl.scrollHeight > listEl.clientHeight && listEl.scrollTop <= 0) {
+        return;
+      }
+
+      emit('fetch:more');
     };
 
     const observer = new IntersectionObserver(intersectionHandler);
@@ -341,10 +349,10 @@ export default {
   }
 
   &__append {
-    position: absolute;
+    height: 30px;
+    margin-top: -30px;
     pointer-events: none;
     opacity: 0;
-    height: 30px;
   }
 
   .v-select__selection {

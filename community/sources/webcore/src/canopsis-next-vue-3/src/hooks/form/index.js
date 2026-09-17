@@ -1,4 +1,4 @@
-import { get, isString, set } from 'lodash';
+import { get, isNil, isString, set } from 'lodash';
 import {
   FormContextKey as VEE_FORM_CONTEXT_KEY,
   useField as useVeeField,
@@ -30,6 +30,7 @@ import {
 export { useModelField } from './model-field';
 export { useArrayModelField } from './array-model-field';
 export { useLazySearch } from './lazy-search';
+export { useLazySearchEmptyDefaultValue } from './lazy-search-empty-default-value';
 export {
   applyServerFormErrors,
   getServerFieldErrors,
@@ -566,7 +567,7 @@ export const useFormErrorsMap = () => {
 export const useFieldError = (path) => {
   useFormContext();
 
-  if (path == null) {
+  if (isNil(path)) {
     return veeUseFieldError(path);
   }
 

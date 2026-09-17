@@ -1,4 +1,4 @@
-import { isArray, isNumber, isString, mapValues, pick } from 'lodash';
+import { isArray, isNil, isNumber, isString, mapValues, pick } from 'lodash';
 import { RRule, rrulestr } from 'rrule';
 
 /**
@@ -139,7 +139,7 @@ export const emptyRecurrenceRuleFormOptions = () =>
 export const getRecurrenceAdvancedFieldNames = (options) => {
   const { freq } = options;
 
-  if (freq == null) {
+  if (isNil(freq)) {
     return [];
   }
 
@@ -187,7 +187,7 @@ export const rruleBodyStringToRecurrenceRuleFormOptions = (rruleBody) => {
  * @return {RecurrenceRuleFormOptions}
  */
 export const normalizeRruleFormFieldForForm = (value) => {
-  if (value == null || value === '') {
+  if (isNil(value) || value === '') {
     return emptyRecurrenceRuleFormOptions();
   }
 
@@ -207,7 +207,7 @@ export const normalizeRruleFormFieldForForm = (value) => {
  * @return {string}
  */
 export const recurrenceRuleFormOptionsToRruleBodyString = (options) => {
-  if (!options || options.freq == null) {
+  if (!options || isNil(options.freq)) {
     return '';
   }
 
@@ -240,7 +240,7 @@ export const rruleToForm = rrule => normalizeRruleFormFieldForForm(rrule);
  * @return {string}
  */
 export const formToRrule = (formRrule) => {
-  if (formRrule == null || formRrule === '') {
+  if (isNil(formRrule) || formRrule === '') {
     return '';
   }
 

@@ -311,7 +311,7 @@ const buildFieldRules = (props) => {
 
   const patternSource = props.regex ?? props.pattern;
   if (patternSource) {
-    const messageProp = props.regex == null ? 'patternMessage' : 'regexMessage';
+    const messageProp = isNil(props.regex) ? 'patternMessage' : 'regexMessage';
 
     rules.regex = withMessage({ regex: patternSource }, getFieldMessage(props, messageProp));
   }

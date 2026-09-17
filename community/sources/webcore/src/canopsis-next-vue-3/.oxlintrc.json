@@ -10,6 +10,7 @@
   },
   "rules": {
     "eslint/arrow-body-style": ["error", "as-needed"],
+    "eslint/eqeqeq": ["error", "always"],
     "eslint/no-unused-vars": [
       "warn",
       {

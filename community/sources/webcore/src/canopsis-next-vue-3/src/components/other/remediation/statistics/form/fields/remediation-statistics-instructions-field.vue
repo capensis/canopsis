@@ -1,6 +1,6 @@
 <template>
   <c-lazy-search-field
-    :value="modelValue"
+    :value="fieldValue"
     :items="items"
     :label="$t('common.instructions')"
     :loading="pending"
@@ -9,25 +9,33 @@
     item-value="_id"
     hide-details
     autocomplete
+    no-auto-scroll
     @fetch="fetchInstructionsList"
     @fetch:more="fetchMoreInstructions"
     @update:search="updateInstructionsSearch"
-    @update:value="$emit('update:modelValue', $event)"
+    @update:value="updateValue"
+    @keydown.capture="onStatisticInstructionBackspace"
+    @focusout="restoreEmptyDefault"
   >
-    <template #item="{ item, attrs }">
+    <template #item="{ item, attrs, search }">
       <v-divider v-if="item.divider" />
-      <v-list-item v-else v-bind="attrs" />
+      <v-list-item v-else class="c-lazy-search-field--tile" v-bind="attrs">
+        <v-list-item-title>
+          <v-list-item-mask :text="String(item.name ?? '')" :mask="search" />
+        </v-list-item-title>
+      </v-list-item>
     </template>
   </c-lazy-search-field>
 </template>
 
 <script setup>
 import { keyBy, pick, uniq } from 'lodash';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
+import { useLazySearchEmptyDefaultValue } from '@/hooks/form/lazy-search-empty-default-value';
 import { useI18n } from '@/hooks/i18n';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
@@ -38,10 +46,22 @@ const props = defineProps({
   },
 });
 
-defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue']);
 
 const { t } = useI18n();
 const { fetchRemediationInstructionsListWithoutStore } = useRemediationInstruction();
+const {
+  emptyValue,
+  fieldValue,
+  toFieldValue,
+  updateValue,
+  restoreEmptyDefault,
+} = useLazySearchEmptyDefaultValue(
+  {
+    value: toRef(props, 'modelValue'),
+  },
+  emit,
+);
 
 const instructionsById = ref({});
 const instructionIds = ref([]);
@@ -53,7 +73,7 @@ let fetchRequestNumber = 0;
 
 const statisticInstructionItems = computed(() => [
   {
-    _id: '',
+    _id: emptyValue,
     name: t('remediation.statistic.allInstructions'),
   },
   {
@@ -66,11 +86,49 @@ const statisticInstructionItems = computed(() => [
   },
 ]);
 
+/**
+ * Checks whether the value is one of the statistic options (all / manual / auto).
+ *
+ * @param {string|number|symbol|null|undefined} instruction - Selected instruction id or statistic value.
+ * @returns {boolean}
+ */
 const isStatisticInstructionItem = instruction =>
-  statisticInstructionItems.value.some(({ _id }) => _id === instruction);
+  statisticInstructionItems.value.some(({ _id }) => _id === toFieldValue(instruction));
+
+/**
+ * Checks whether the search text matches a statistic option label rather than a real query.
+ *
+ * @param {string} nextSearch - Current autocomplete search string.
+ * @returns {boolean}
+ */
+const isStatisticInstructionSearch = nextSearch =>
+  statisticInstructionItems.value.some(({ name }) => name === nextSearch);
+
+/**
+ * Clears the whole statistic option label on Backspace instead of deleting it character by character.
+ *
+ * @param {KeyboardEvent} event - Native keydown event from the autocomplete input.
+ */
+const onStatisticInstructionBackspace = (event) => {
+  if (event.key !== 'Backspace') {
+    return;
+  }
+
+  const { target } = event;
+
+  if (target?.tagName !== 'INPUT' || !isStatisticInstructionSearch(target.value)) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  target.value = '';
+  target.dispatchEvent(new Event('input', { bubbles: true }));
+};
 
 const selectedInstructionIds = computed(() => {
-  if (!props.modelValue || isStatisticInstructionItem(props.modelValue)) {
+  if (isStatisticInstructionItem(props.modelValue)) {
     return [];
   }
 
@@ -80,6 +138,11 @@ const selectedInstructionIds = computed(() => {
 const instructions = computed(() => instructionIds.value.map(id => instructionsById.value[id]).filter(Boolean),
 );
 
+/**
+ * Fetches the currently selected instruction when it is missing from the loaded list.
+ *
+ * @returns {Promise<void>}
+ */
 const fetchSelectedInstructions = async () => {
   const missingSelectedIds = selectedInstructionIds.value.filter(id => !instructionsById.value[id]);
 
@@ -101,6 +164,14 @@ const fetchSelectedInstructions = async () => {
   instructionIds.value = uniq([...instructionIds.value, ...selectedInstructionIds.value]);
 };
 
+/**
+ * Fetches a page of instructions. Statistic option labels are not sent as `search`.
+ *
+ * @param {Object} [options]
+ * @param {number} [options.nextPage=1] - Page number to request.
+ * @param {string} [options.search] - Search query. Ignored when it matches a statistic option label.
+ * @returns {Promise<void>}
+ */
 const fetchInstructionsList = async ({
   nextPage = 1,
   search: nextSearch = search.value,
@@ -110,13 +181,16 @@ const fetchInstructionsList = async ({
   try {
     pending.value = true;
 
-    const { data = [], meta = {} } = await fetchRemediationInstructionsListWithoutStore({
-      params: {
-        limit: PAGINATION_LIMIT,
-        page: nextPage,
-        search: nextSearch,
-      },
-    });
+    const params = {
+      limit: PAGINATION_LIMIT,
+      page: nextPage,
+    };
+
+    if (nextSearch && !isStatisticInstructionSearch(nextSearch)) {
+      params.search = nextSearch;
+    }
+
+    const { data = [], meta = {} } = await fetchRemediationInstructionsListWithoutStore({ params });
 
     if (requestNumber !== fetchRequestNumber) {
       return;
@@ -145,6 +219,11 @@ const fetchInstructionsList = async ({
   }
 };
 
+/**
+ * Loads the next page of instructions when more results are available.
+ *
+ * @returns {Promise<void>|undefined}
+ */
 const fetchMoreInstructions = () => {
   if (hasMoreInstructions.value) {
     return fetchInstructionsList({ nextPage: page.value + 1 });
@@ -153,10 +232,29 @@ const fetchMoreInstructions = () => {
   return undefined;
 };
 
-const updateInstructionsSearch = nextSearch => fetchInstructionsList({
+/**
+ * Reloads the first page of instructions for a new search. Statistic option labels are not queried.
+ *
+ * @param {string} nextSearch - Search string emitted by the autocomplete.
+ * @returns {Promise<void>|undefined}
+ */
+const updateInstructionsSearch = (nextSearch) => {
+  if (isStatisticInstructionSearch(nextSearch)) {
+    if (!search.value) {
+      return undefined;
+    }
+
+    return fetchInstructionsList({
+      nextPage: 1,
+      search: '',
+    });
+  }
+
+  return fetchInstructionsList({
     nextPage: 1,
     search: nextSearch ?? '',
   });
+};
 
 const hasMoreInstructions = computed(() => pageCount.value > page.value);
 

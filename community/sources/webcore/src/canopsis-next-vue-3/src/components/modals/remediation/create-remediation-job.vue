@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper text-class="pa-0" close>
+    <c-modal-wrapper close>
       <template #title>
         <span>{{ title }}</span>
       </template>
@@ -12,14 +12,13 @@
           :type="type"
           @update:form="updateValues"
         >
-          <template #default="{ templateVars }">
-            <div class="pa-3">
-              <remediation-job-form
-                :with-payload="withPayload"
-                :with-query="withQuery"
-                :template-vars="templateVars"
-              />
-            </div>
+          <template #default="{ templateVars, setRef }">
+            <remediation-job-form
+              :ref="setRef"
+              :with-payload="withPayload"
+              :with-query="withQuery"
+              :template-vars="templateVars"
+            />
           </template>
         </template-testing-test-variables-wrapper>
       </template>

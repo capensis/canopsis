@@ -1,3 +1,4 @@
+import { isNil } from 'lodash';
 import Sortable from 'sortablejs';
 
 const COLUMN_SWAP_REVERSE_THRESHOLD = 4;
@@ -88,7 +89,7 @@ export const widgetColumnDraggingAlarmMixin = {
 
       const clientX = event?.clientX;
 
-      if (clientX == null) {
+      if (isNil(clientX)) {
         return;
       }
 
@@ -123,7 +124,7 @@ export const widgetColumnDraggingAlarmMixin = {
 
       if (
         this.lastColumnSwapDirection &&
-        this.lastSwapClientX != null &&
+        !isNil(this.lastSwapClientX) &&
         direction === -this.lastColumnSwapDirection
       ) {
         const movedOpposite = (this.lastSwapClientX - clientX) * this.lastColumnSwapDirection;

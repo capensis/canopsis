@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { debounce, isEqual } from 'lodash';
+import { debounce, isEqual, isNil } from 'lodash';
 
 import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
 
@@ -97,9 +97,9 @@ export default {
 
         let diff;
 
-        if (event.deltaY != null) {
+        if (!isNil(event.deltaY)) {
           diff = event.deltaY / -250;
-        } else if (event.wheelDeltaY != null) {
+        } else if (!isNil(event.wheelDeltaY)) {
           diff = event.wheelDeltaY / 1000;
         } else {
           diff = event.wheelDelta / 1000;

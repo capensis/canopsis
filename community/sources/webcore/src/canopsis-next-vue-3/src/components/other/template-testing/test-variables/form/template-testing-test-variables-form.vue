@@ -27,7 +27,7 @@
           v-for="field in variablesFields"
           :key="field.key"
           :template="field.value"
-          :name="field.resultKey ?? field.key"
+          :name="`templateTesting.${field.resultKey ?? field.key}`"
           :title="t(field.textKey, field.textArgs)"
           :textarea="field.textarea"
           :json="field.json"

@@ -2,6 +2,7 @@
   <c-card-iterator-item
     :item-number="stepNumber"
     class="remediation-instruction-step-field"
+    static-delete
     @remove="remove"
   >
     <template #header>
@@ -150,10 +151,6 @@ export default {
 .remediation-instruction-step-field {
   :deep(.c-card-iterator-item__row) {
     align-items: center;
-  }
-
-  :deep(.c-card-iterator-item__row > .c-action-btn) {
-    position: static;
   }
 }
 </style>

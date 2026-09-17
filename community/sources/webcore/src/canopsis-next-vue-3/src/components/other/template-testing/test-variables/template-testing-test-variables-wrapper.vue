@@ -3,7 +3,10 @@
     <c-progress-overlay :pending="pending" />
 
     <v-tabs v-model="activeTab" fixed-tabs>
-      <v-tab :value="TEMPLATE_TESTING_TEST_VARIABLES_TABS.general">
+      <v-tab
+        :value="TEMPLATE_TESTING_TEST_VARIABLES_TABS.general"
+        :class="{ 'text-error': hasGeneralError }"
+      >
         {{ t('common.general') }}
       </v-tab>
 
@@ -11,12 +14,13 @@
         v-if="hasAccess"
         :value="TEMPLATE_TESTING_TEST_VARIABLES_TABS.testVariables"
         :disabled="isEmptyVariablesFields"
+        :error="hasTestingError"
       />
     </v-tabs>
 
     <v-window v-model="activeTab">
-      <v-window-item :value="TEMPLATE_TESTING_TEST_VARIABLES_TABS.general" class="pt-2">
-        <slot :template-vars="templateVars" :copy-vars="copyVars" />
+      <v-window-item :value="TEMPLATE_TESTING_TEST_VARIABLES_TABS.general" class="pt-2" eager>
+        <slot :template-vars="templateVars" :copy-vars="copyVars" :set-ref="setGeneralRef" />
       </v-window-item>
 
       <v-window-item
@@ -25,6 +29,7 @@
         :disabled="isEmptyVariablesFields"
       >
         <template-testing-test-variables
+          :ref="setTestingRef"
           :general-form="form"
           :variables-fields="variablesFields"
           :template-vars="templateVars"
@@ -43,6 +48,7 @@ import { computed, onMounted, ref, toRef } from 'vue';
 import { TEMPLATE_TESTING_TEST_VARIABLES_TABS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
@@ -74,6 +80,14 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
     const activeTab = ref(TEMPLATE_TESTING_TEST_VARIABLES_TABS.general);
+    const generalElement = ref(null);
+    const testingElement = ref(null);
+
+    const setGeneralRef = refElement => (generalElement.value = refElement);
+    const setTestingRef = refElement => (testingElement.value = refElement);
+
+    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
+    const { hasChildrenError: hasTestingError } = useValidationElementChildren(testingElement);
 
     const isActiveTestingTab = computed(
       () => activeTab.value === TEMPLATE_TESTING_TEST_VARIABLES_TABS.testVariables,
@@ -113,6 +127,10 @@ export default {
       t,
       activeTab,
       isActiveTestingTab,
+      setGeneralRef,
+      setTestingRef,
+      hasGeneralError,
+      hasTestingError,
       copyVars,
       templateVars,
       pending,

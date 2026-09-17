@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { isNil } from 'lodash';
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
@@ -86,7 +87,7 @@ export default {
     const itemValue = computed(() => {
       const value = props.value?.value ?? props.value;
 
-      if (value == null || value === '') {
+      if (isNil(value) || value === '') {
         return null;
       }
 
@@ -94,7 +95,7 @@ export default {
     });
 
     const selectedItem = computed(() => {
-      if (itemValue.value == null || itemValue.value === '') {
+      if (isNil(itemValue.value) || itemValue.value === '') {
         return null;
       }
 

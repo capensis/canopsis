@@ -14,11 +14,15 @@
 </template>
 
 <script>
-import * as monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import 'monaco-editor/esm/vs/basic-languages/html/html.contribution';
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import initEditor from 'monaco-mermaid';
 import iPlasticTheme from 'monaco-themes/themes/iPlastic.json';
 
 import { promisedWait } from '@/helpers/async';
+import { setupMonacoEnvironment } from '@/helpers/monaco-environment';
 
 export default {
   props: {
@@ -90,6 +94,8 @@ export default {
   },
 
   async mounted() {
+    setupMonacoEnvironment();
+
     try {
       this.$monaco = monaco;
     } catch {

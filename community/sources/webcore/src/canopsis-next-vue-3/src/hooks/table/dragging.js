@@ -1,3 +1,4 @@
+import { isNil } from 'lodash';
 import Sortable from 'sortablejs';
 import { computed, ref, unref, onBeforeUnmount } from 'vue';
 
@@ -101,8 +102,8 @@ export const useTableDragging = ({
   const handleColumnSort = (evt, originalEvent) => {
     const clientX = originalEvent?.clientX;
 
-    if (clientX != null) {
-      if (lastPointerX != null) {
+    if (!isNil(clientX)) {
+      if (!isNil(lastPointerX)) {
         const pointerDeltaX = clientX - lastPointerX;
 
         if (Math.abs(pointerDeltaX) > 1) {

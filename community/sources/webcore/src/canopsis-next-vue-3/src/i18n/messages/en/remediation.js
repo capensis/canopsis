@@ -214,7 +214,7 @@ export default {
     payloadHelp:
       '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
       '<i>For example:</i>' +
-      '<pre>{\n  resource: "{\'{{ .Alarm.Value.Resource }}\'}",\n  entity: "{\'{{ .Entity.ID }}\'}"\n}</pre>',
+      '<pre>{\'{\'}\n  resource: "{\'{{ .Alarm.Value.Resource }}\'}",\n  entity: "{\'{{ .Entity.ID }}\'}"\n{\'}\'}</pre>',
     errors: {
       invalidJSON: 'Invalid JSON',
     },
