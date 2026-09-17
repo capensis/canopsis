@@ -63,7 +63,7 @@ export const EVENT_FILTER_SET_TAGS_FIELDS = [
 
 export const EVENT_FILTER_SET_TAGS_VALUE_PREFIXES = {
   [EVENT_FILTER_PATTERN_FIELDS.output]: 'Event.Output',
-  [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Event.ExtraInfo.',
+  [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Event.ExtraInfos.',
 };
 
 export const EVENT_FILTER_SET_TAGS_REGEX = /<value>.*<name>|<name>.*<value>/;
