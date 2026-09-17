@@ -1294,12 +1294,16 @@ definitions:
     properties:
       _id:
         type: string
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1307,9 +1311,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   broadcastmessage.Response:
@@ -1318,6 +1324,8 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      closable:
+        type: boolean
       color:
         type: string
       created:
@@ -1328,6 +1336,8 @@ definitions:
         type: boolean
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       updated:
@@ -1339,12 +1349,16 @@ definitions:
     type: object
   broadcastmessage.UpdateRequest:
     properties:
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1352,9 +1366,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   colortheme.BulkDeleteRequestItem:
@@ -1472,6 +1488,23 @@ definitions:
         - hover_row
         - row_color
         - shift_row
+        type: object
+      widget:
+        properties:
+          border:
+            type: boolean
+          border_color:
+            type: string
+          border_radius:
+            type: integer
+          content_background:
+            type: string
+          title_background:
+            type: string
+        required:
+        - border
+        - content_background
+        - title_background
         type: object
     type: object
   colortheme.EditRequest:

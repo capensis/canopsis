@@ -7,11 +7,13 @@ import (
 )
 
 type EditRequest struct {
-	Color   string           `bson:"color" json:"color" binding:"required,iscolor"`
-	Message string           `bson:"message" json:"message" binding:"required"`
-	Start   datetime.CpsTime `bson:"start" json:"start" binding:"required" swaggertype:"integer"`
-	End     datetime.CpsTime `bson:"end" json:"end" binding:"required" swaggertype:"integer"`
-	Views   []string         `bson:"views" json:"views"`
+	Color    string           `bson:"color" json:"color" binding:"required,iscolor"`
+	Message  string           `bson:"message" json:"message" binding:"required"`
+	Priority int              `bson:"priority" json:"priority" binding:"required,gt=0"`
+	Closable *bool            `bson:"closable" json:"closable" binding:"required"`
+	Start    datetime.CpsTime `bson:"start" json:"start" binding:"required" swaggertype:"integer"`
+	End      datetime.CpsTime `bson:"end" json:"end" binding:"required" swaggertype:"integer"`
+	Views    []string         `bson:"views" json:"views"`
 
 	Author  string            `bson:"author,omitempty" json:"author,omitempty" swaggerignore:"true"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
@@ -34,12 +36,14 @@ type ListRequest struct {
 }
 
 type Response struct {
-	ID      string           `bson:"_id" json:"_id"`
-	Color   string           `bson:"color" json:"color"`
-	Message string           `bson:"message" json:"message"`
-	Start   datetime.CpsTime `bson:"start" json:"start" swaggertype:"integer"`
-	End     datetime.CpsTime `bson:"end" json:"end" swaggertype:"integer"`
-	Views   []string         `bson:"views" json:"views"`
+	ID       string           `bson:"_id" json:"_id"`
+	Color    string           `bson:"color" json:"color"`
+	Message  string           `bson:"message" json:"message"`
+	Priority int              `bson:"priority" json:"priority"`
+	Closable bool             `bson:"closable" json:"closable"`
+	Start    datetime.CpsTime `bson:"start" json:"start" swaggertype:"integer"`
+	End      datetime.CpsTime `bson:"end" json:"end" swaggertype:"integer"`
+	Views    []string         `bson:"views" json:"views"`
 
 	Author  *author.Author    `bson:"author,omitempty" json:"author,omitempty"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
