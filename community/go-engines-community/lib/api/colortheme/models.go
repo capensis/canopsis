@@ -53,6 +53,13 @@ type Colors struct {
 		HoverRow      *bool  `bson:"hover_row" json:"hover_row" binding:"required"`
 		HoverRowColor string `bson:"hover_row_color,omitempty" json:"hover_row_color,omitempty" binding:"required_if=HoverRow true,iscolororempty"`
 	} `bson:"table" json:"table"`
+	Widget struct {
+		TitleBackground   string `bson:"title_background" json:"title_background" binding:"required,iscolor"`
+		ContentBackground string `bson:"content_background" json:"content_background" binding:"required,iscolor"`
+		Border            *bool  `bson:"border" json:"border" binding:"required"`
+		BorderColor       string `bson:"border_color" json:"border_color" binding:"required_if=Border true,iscolororempty"`
+		BorderRadius      *int   `bson:"border_radius" json:"border_radius" binding:"required_if=Border true"`
+	} `bson:"widget" json:"widget"`
 	State struct {
 		OK       string `bson:"ok" json:"ok" binding:"required,iscolor"`
 		Minor    string `bson:"minor" json:"minor" binding:"required,iscolor"`
