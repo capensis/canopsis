@@ -10,6 +10,10 @@ body,
   font-size: var(--app-font-size);
 }
 
+p {
+  margin-top: 0;
+}
+
 $v2-spacer: 4px;
 $v2-font-size-root: 14px;
 
