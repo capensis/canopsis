@@ -3,7 +3,7 @@
     <c-enabled-field v-model="enabledField" with-background />
 
     <c-form-general-patterns-tabs
-      :form="values"
+      :form="formValues"
       :rule-id="ruleId"
       :type="testType"
       :patterns-label="t('common.actionsLabel')"
@@ -18,7 +18,7 @@
       </template>
 
       <template #test-query="{ setRef }">
-        <scenario-test-query :ref="setRef" :form="values" />
+        <scenario-test-query :ref="setRef" :form="formValues" />
       </template>
     </c-form-general-patterns-tabs>
   </c-layout>
@@ -64,7 +64,7 @@ export default {
 
     return {
       t,
-      values: form.values,
+      formValues: form.values,
       enabledField,
       testType: TEMPLATE_TESTING_TEST_TYPES.scenario,
       disabledTestQueryTooltip,

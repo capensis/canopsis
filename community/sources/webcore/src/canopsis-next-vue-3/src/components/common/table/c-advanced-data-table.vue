@@ -131,6 +131,7 @@
       :items-per-page="options.itemsPerPage"
       :items="itemsPerPageItems"
       :page="options.page"
+      :total-visible="paginationTotalVisible"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
       @update:pagination="updatePaginationOptions"
@@ -187,6 +188,10 @@ export default {
     advancedPagination: {
       type: Boolean,
       default: false,
+    },
+    paginationTotalVisible: {
+      type: Number,
+      required: false,
     },
     hideActions: {
       type: Boolean,

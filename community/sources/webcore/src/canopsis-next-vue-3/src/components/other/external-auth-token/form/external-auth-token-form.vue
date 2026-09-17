@@ -1,6 +1,6 @@
 <template>
   <c-form-general-patterns-tabs
-    :form="values"
+    :form="formValues"
     :rule-id="ruleId"
     :type="type"
     @update:form="updateForm"
@@ -37,7 +37,7 @@ export default {
     };
 
     return {
-      values: form.values,
+      formValues: form.values,
       type,
       updateForm,
     };

@@ -75,13 +75,17 @@ export default {
       validator: value => ['top', 'bottom'].indexOf(value) !== -1,
       default: 'bottom',
     },
+    totalVisible: {
+      type: Number,
+      required: false,
+    },
   },
 
   emits: ['update:page'],
 
   computed: {
     paginationTotalVisible() {
-      return PAGINATION_TOTAL_VISIBLE;
+      return this.totalVisible ?? PAGINATION_TOTAL_VISIBLE;
     },
 
     isTop() {

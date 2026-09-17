@@ -2,22 +2,22 @@
   <c-layout column>
     <c-enabled-field
       v-model="needApprove"
-      :label="$t('remediation.instruction.requestApproval')"
+      :label="t('remediation.instruction.requestApproval')"
       :disabled="disabled || required"
       hide-details
     />
     <template v-if="needApprove">
       <c-layout v-if="disabled">
-        <span class="text-subtitle-1 grey--text my-4"> {{ assignLabel }}: {{ assignValue }} </span>
+        <span class="text-subtitle-1 text-grey my-4"> {{ assignLabel }}: {{ assignValue }} </span>
       </c-layout>
-      <c-layout v-else align="center">
-        <v-flex xs6>
+      <c-layout v-else gap="2" align="center">
+        <div class="flex-grow-1">
           <remediation-instruction-approval-type-field
             v-model="typeField"
             @update:model-value="resetErrors"
           />
-        </v-flex>
-        <v-flex xs5>
+        </div>
+        <div class="flex-grow-1">
           <c-role-field
             v-show="isRoleType"
             v-model="roleField"
@@ -31,19 +31,18 @@
             v-model="userField"
             :required="!isRoleType"
             :name="userFieldName"
-            :label="$t('common.user')"
+            :label="t('common.user')"
             :permission="approvePermission"
             return-object
           />
-        </v-flex>
+        </div>
       </c-layout>
-      <v-textarea
+      <c-textarea
         v-model="commentField"
-        v-validate="'required'"
-        :label="$t('common.comment')"
-        :error-messages="collectErrors('comment')"
+        :label="t('common.comment')"
         :disabled="disabled"
         name="comment"
+        required
       />
     </template>
   </c-layout>
@@ -54,7 +53,7 @@ import { ref, computed } from 'vue';
 
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
-import { useFormContext, useFormErrorsMap } from '@/hooks/form';
+import { useFormContext, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
@@ -62,10 +61,6 @@ import RemediationInstructionApprovalTypeField from './fields/remediation-instru
 export default {
   components: { RemediationInstructionApprovalTypeField },
   props: {
-    approval: {
-      type: Object,
-      default: () => ({}),
-    },
     name: {
       type: String,
       default: 'approval',
@@ -79,32 +74,24 @@ export default {
       default: false,
     },
   },
-  emits: ['update:approval'],
-  setup(props, { emit }) {
+  setup(props) {
     const { t } = useI18n();
     const form = useFormContext();
-    const { collectErrors } = useFormErrorsMap();
-    // TODO: fix that
-    const createFieldModel = field => computed({
-        get: () => props.approval[field],
-        set: value => emit('update:approval', {
-            ...props.approval,
-            [field]: value,
-          }),
-      });
+    const { typeField, roleField, userField, commentField } = useFormModels({
+      typeField: 'approval.type',
+      roleField: 'approval.role',
+      userField: 'approval.user',
+      commentField: 'approval.comment',
+    });
 
-    const needApprove = ref(!!(props.approval && props.approval.comment) || props.required);
-    const typeField = createFieldModel('type');
-    const roleField = createFieldModel('role');
-    const userField = createFieldModel('user');
-    const commentField = createFieldModel('comment');
+    const needApprove = ref(!!commentField.value || props.required);
 
     const approvePermission = computed(
       () => USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove,
     );
 
     const isRoleType = computed(
-      () => props.approval && props.approval.type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
+      () => typeField.value === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
     );
 
     const roleFieldName = computed(() => `${props.name}.role`);
@@ -114,9 +101,10 @@ export default {
 
     const assignValue = computed(() => {
       if (isRoleType.value) {
-        return props.approval && props.approval.role ? props.approval.role.name : '';
+        return roleField.value?.name ?? '';
       }
-      return props.approval && props.approval.user ? props.approval.user.display_name : '';
+
+      return userField.value?.display_name ?? '';
     });
 
     /**
@@ -139,6 +127,7 @@ export default {
     };
 
     return {
+      t,
       needApprove,
       typeField,
       roleField,
@@ -150,7 +139,6 @@ export default {
       userFieldName,
       assignLabel,
       assignValue,
-      collectErrors,
       resetErrors,
     };
   },

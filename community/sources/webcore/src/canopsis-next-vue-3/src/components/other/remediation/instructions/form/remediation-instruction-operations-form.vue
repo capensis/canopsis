@@ -7,26 +7,26 @@
       class="flex-column gap-2"
       ghost-class="grey"
       handle=".operation-drag-handler"
+      item-key="key"
       @update:model-value="updateModel"
       @start="startDragging"
       @end="endDragging"
     >
-      <remediation-instruction-operation-field
-        v-for="(operation, index) in operations"
-        :key="operation.key"
-        :operation="operations[index]"
-        :index="index"
-        :operation-number="getOperationNumber(index)"
-        :disabled="disabled"
-        :template-vars="templateVars"
-        @update:operation="updateItemInArray(index, $event)"
-        @remove="removeOperation(index)"
-      />
+      <template #item="{ element: operation, index }">
+        <remediation-instruction-operation-field
+          :operation="operation"
+          :operation-number="getOperationNumber(index)"
+          :disabled="disabled"
+          :template-vars="templateVars"
+          @update:operation="updateItemInArray(index, $event)"
+          @remove="removeOperation(index)"
+        />
+      </template>
     </c-draggable-list-field>
     <c-btn-with-error
       :error="hasOperationsErrors ? $t('remediation.instruction.errors.operationRequired') : ''"
       :disabled="disabled"
-      outlined
+      variant="outlined"
       @click="addOperation"
     >
       {{ $t('remediation.instruction.addOperation') }}

@@ -1,37 +1,40 @@
 <template>
   <c-layout gap="2" column>
     <c-draggable-list-field
-      :model-value="jobs"
+      :model-value="jobsField"
       :disabled="disabled"
       :group="draggableGroup"
       handle=".job-drag-handler"
       ghost-class="grey"
       class="flex-column gap-2"
-      @update:model-value="updateModel"
+      item-key="key"
+      @update:model-value="jobsField = $event"
     >
-      <v-card v-for="(job, index) in jobs" :key="job.key">
-        <v-card-text>
-          <remediation-instruction-job-field
-            :job="jobs[index]"
-            :jobs="jobsItems"
-            :name="job.key"
-            :job-number="index + 1"
-            :disabled="disabled"
-            :loading="pending"
-            @update:job="updateItemInArray(index, $event)"
-            @remove="removeJob(index)"
-          />
-        </v-card-text>
-      </v-card>
+      <template #item="{ element: job, index }">
+        <v-card>
+          <v-card-text>
+            <remediation-instruction-job-field
+              :job="job"
+              :jobs="jobsItems"
+              :name="job.key"
+              :job-number="index + 1"
+              :disabled="disabled"
+              :loading="pending"
+              @update:job="updateItemInArray(index, $event)"
+              @remove="removeJob(index)"
+            />
+          </v-card-text>
+        </v-card>
+      </template>
     </c-draggable-list-field>
 
     <c-btn-with-error
-      :error="hasJobsErrors ? $t('remediation.instruction.errors.jobRequired') : ''"
+      :error="hasJobsErrors ? t('remediation.instruction.errors.jobRequired') : ''"
       :disabled="disabled"
       outlined
       @click="addJob"
     >
-      {{ $t('remediation.instruction.addJob') }}
+      {{ t('remediation.instruction.addJob') }}
     </c-btn-with-error>
   </c-layout>
 </template>
@@ -43,8 +46,8 @@ import { MAX_LIMIT } from '@/constants';
 
 import { remediationInstructionJobToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import { useFormErrorsMap } from '@/hooks/form';
-import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useFormArray, useFormErrorsMap } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
@@ -56,10 +59,6 @@ export default {
     RemediationInstructionJobField,
   },
   props: {
-    jobs: {
-      type: Array,
-      default: () => [],
-    },
     name: {
       type: String,
       default: 'jobs',
@@ -69,19 +68,17 @@ export default {
       default: false,
     },
   },
-  emits: ['update:jobs'],
-  setup(props, { emit }) {
+  setup(props) {
+    const { t } = useI18n();
+    const jobsField = useFormArray('jobs');
+    const { hasError } = useFormErrorsMap();
+    const { fetchRemediationJobsListWithoutStore } = useRemediationJob();
+
     const draggableGroup = {
       name: 'remediation-instruction-jobs',
     };
 
-    const { hasError } = useFormErrorsMap();
-    const { updateModel, addItemIntoArray, updateItemInArray, removeItemFromArray } =
-      useArrayModelField(props, emit);
-    const { fetchRemediationJobsListWithoutStore } = useRemediationJob();
-
     const jobsItems = ref([]);
-
     const hasJobsErrors = computed(() => hasError(props.name));
 
     const { pending, handler: fetchList } = usePendingHandler(async () => {
@@ -96,27 +93,36 @@ export default {
 
     const { asyncValidateMinValueRule } = useValidationAttachMinValueForField(
       props.name,
-      () => props.jobs.length,
+      () => jobsField.value.length,
     );
 
-    const addJob = () => addItemIntoArray(remediationInstructionJobToForm());
+    const addJob = () => {
+      jobsField.value = [...jobsField.value, remediationInstructionJobToForm()];
+    };
+    const updateItemInArray = (index, value) => {
+      const jobs = [...jobsField.value];
 
-    watch(() => props.jobs, asyncValidateMinValueRule);
+      jobs[index] = value;
+      jobsField.value = jobs;
+    };
+    const removeJob = (index) => {
+      jobsField.value = jobsField.value.filter((job, jobIndex) => jobIndex !== index);
+    };
+
+    watch(jobsField, asyncValidateMinValueRule);
 
     onMounted(fetchList);
 
     return {
+      t,
       draggableGroup,
-
+      jobsField,
       jobsItems,
       pending,
-
       hasJobsErrors,
-
-      updateModel,
       updateItemInArray,
       addJob,
-      removeJob: removeItemFromArray,
+      removeJob,
     };
   },
 };

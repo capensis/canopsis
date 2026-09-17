@@ -1,7 +1,7 @@
 <template>
   <div>
     <c-patterns-field
-      v-model="formModel"
+      v-model:value="patternsField"
       :alarm-attributes="alarmAttributes"
       :entity-attributes="entityAttributes"
       :pending="pending"
@@ -9,15 +9,15 @@
       with-entity
       some-required
     />
-    <c-collapse-panel :title="$t('remediation.pattern.tabs.pbehaviorTypes.title')" class="mt-3">
-      <remediation-patterns-pbehavior-types-form v-model:form="formModel" />
+    <c-collapse-panel :title="t('remediation.pattern.tabs.pbehaviorTypes.title')" class="mt-3">
+      <remediation-patterns-pbehavior-types-form v-model:form="patternsField" />
     </c-collapse-panel>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue';
-
+import { useFormModel } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 import {
   usePatternsFields,
   usePatternsFieldsFetching,
@@ -29,38 +29,32 @@ import RemediationPatternsPbehaviorTypesForm from '@/components/other/remediatio
 export default {
   components: { RemediationPatternsPbehaviorTypesForm },
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     readonly: {
       type: Boolean,
       default: false,
     },
   },
-  emits: ['update:form'],
-  setup(props, { emit }) {
+  setup(props) {
+    const { t } = useI18n();
     const { fetchInstructionPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
+    const patternsField = useFormModel('patterns');
 
     const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
       fetchInstructionPatternFields,
       props.readonly,
     );
-    const formModel = computed({
-      get: () => props.form,
-      set: value => emit('update:form', value),
-    });
 
     return {
       /**
        * It's using in the parent component to display the validation header color for tabs
        */
       hasAnyError,
+      t,
       pending,
       alarmAttributes,
       entityAttributes,
-      formModel,
+      patternsField,
     };
   },
 };

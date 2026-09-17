@@ -74,7 +74,7 @@
       >
         <template-testing-test-variables
           :ref="setTestingRef"
-          :general-form="values"
+          :general-form="formValues"
           :variables-fields="variablesFields"
           :template-vars="templateVars"
           :rule-id="ruleId"
@@ -245,7 +245,7 @@ export default {
       hasLinksError,
 
       type,
-      values: form.values,
+      formValues: form.values,
       enabledField,
       typeField,
 

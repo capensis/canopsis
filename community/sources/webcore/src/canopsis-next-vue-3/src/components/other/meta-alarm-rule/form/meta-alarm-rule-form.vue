@@ -3,7 +3,7 @@
     <c-enabled-field v-model="enabledField" hide-details with-background />
 
     <c-form-general-patterns-tabs
-      :form="values"
+      :form="formValues"
       :rule-id="ruleId"
       :type="type"
       :patterns-label="t('metaAlarmRule.patternsTabLabel')"
@@ -60,7 +60,7 @@ export default {
 
     return {
       t,
-      values: form.values,
+      formValues: form.values,
       enabledField,
       type,
     };

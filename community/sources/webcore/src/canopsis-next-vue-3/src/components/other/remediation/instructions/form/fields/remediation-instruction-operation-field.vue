@@ -1,96 +1,86 @@
 <template>
-  <c-form-block>
-    <c-layout class="remediation-instruction-operation-field pa-3" align="start">
-      <c-draggable-step-number
+  <c-card-iterator-item
+    :item-number="operationNumber"
+    :removable="!disabled"
+    drag-handle-class="operation-drag-handler"
+    class="remediation-instruction-operation-field"
+    default-expanded
+    @remove="remove"
+  >
+    <template #header>
+      <c-name-field
+        :model-value="operation.name"
+        :name="nameFieldName"
         :disabled="disabled"
-        :color="hasChildrenError ? 'error' : 'primary'"
-        class="operation-number mt-4"
-        drag-class="operation-drag-handler"
-      >
-        {{ operationNumber }}
-      </c-draggable-step-number>
-      <v-flex xs11>
-        <c-layout>
-          <c-expand-btn
-            v-if="!disabled"
-            v-model="expanded"
-            :color="!expanded && hasChildrenError ? 'error' : ''"
-            class="operation-expand"
-          />
-          <c-layout column>
-            <v-text-field
-              v-model="nameField"
-              v-validate="'required'"
-              :label="$t('common.name')"
-              :error-messages="errors.collect(nameFieldName)"
-              :name="nameFieldName"
-              :disabled="disabled"
-              filled
-            />
-            <v-expand-transition mode="out-in">
-              <c-layout v-if="expanded" column>
-                <remediation-instruction-time-to-complete-field
-                  v-model:duration="timeToCompleteField"
-                  :disabled="disabled"
-                  :name="timeToCompleteFieldName"
-                />
-                <text-editor-blurred
-                  v-if="disabled"
-                  :value="operation.description"
-                  :label="$t('common.description')"
-                  :disabled="disabled"
-                  hide-details
-                />
-                <text-editor-field
-                  v-else
-                  v-model="descriptionField"
-                  v-validate="'required'"
-                  :label="$t('common.description')"
-                  :error-messages="errors.collect(descriptionFieldName)"
-                  :name="descriptionFieldName"
-                  :variables="templateVars.operation"
-                />
-                <jobs-chips
-                  v-if="disabled && operation.jobs && operation.jobs.length"
-                  :jobs="operation.jobs"
-                />
-                <jobs-select v-if="!disabled" v-model:jobs="jobsField" />
-              </c-layout>
-            </v-expand-transition>
-          </c-layout>
-        </c-layout>
-      </v-flex>
-      <c-action-btn
-        v-if="!disabled"
-        class="mt-2"
-        type="delete"
-        @click="remove"
+        required
+        @update:model-value="updateField('name', $event)"
       />
-    </c-layout>
-  </c-form-block>
+    </template>
+
+    <v-row>
+      <v-col cols="12">
+        <c-duration-field
+          :duration="operation.time_to_complete"
+          :label="t('remediation.instruction.timeToComplete')"
+          :units-label="t('common.unit')"
+          :units="timeToCompleteUnits"
+          :disabled="disabled"
+          :name="timeToCompleteFieldName"
+          required
+          @update:duration="updateField('time_to_complete', $event)"
+        />
+      </v-col>
+      <v-col v-if="disabled" cols="12">
+        <text-editor-blurred
+          :value="operation.description"
+          :label="t('common.description')"
+          :disabled="disabled"
+          hide-details
+        />
+      </v-col>
+      <v-col v-else cols="12">
+        <text-editor-field
+          :model-value="operation.description"
+          :label="t('common.description')"
+          :name="descriptionFieldName"
+          :variables="templateVars.operation"
+          required
+          @update:model-value="updateField('description', $event)"
+        />
+      </v-col>
+      <v-col v-if="disabled && operation.jobs && operation.jobs.length" cols="12">
+        <jobs-chips :jobs="operation.jobs" />
+      </v-col>
+      <v-col v-if="!disabled" cols="12">
+        <jobs-select
+          :jobs="operation.jobs"
+          @update:jobs="updateField('jobs', $event)"
+        />
+      </v-col>
+    </v-row>
+  </c-card-iterator-item>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { computed, toRef } from 'vue';
+
+import { SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
 
 import { isOmitEqual } from '@/helpers/collection';
 import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import { useConfirmableForm } from '@/hooks/confirmable-form';
-import { useValidationChildren } from '@/hooks/validator/validation-children';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import JobsChips from '@/components/other/remediation/instructions/partials/jobs-chips.vue';
 import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
 
-import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
-
 export default {
-  inject: ['$validator'],
   components: {
     TextEditorBlurred,
-    RemediationInstructionTimeToCompleteField,
     TextEditorField,
     JobsChips,
     JobsSelect,
@@ -115,24 +105,14 @@ export default {
   },
   emits: ['update:operation', 'remove'],
   setup(props, { emit }) {
-    const expanded = ref(true);
-    const { hasChildrenError } = useValidationChildren();
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
 
     const fieldName = computed(() => (props.operation.key ? props.operation.key : ''));
-    const createFieldModel = field => computed({
-        get: () => props.operation[field],
-        set: value => emit('update:operation', {
-            ...props.operation,
-            [field]: value,
-          }),
-      });
     const nameFieldName = computed(() => `${fieldName.value}.name`);
     const timeToCompleteFieldName = computed(() => `${fieldName.value}.timeToComplete`);
     const descriptionFieldName = computed(() => `${fieldName.value}.description`);
-    const nameField = createFieldModel('name');
-    const timeToCompleteField = createFieldModel('time_to_complete');
-    const descriptionField = createFieldModel('description');
-    const jobsField = createFieldModel('jobs');
+    const timeToCompleteUnits = Object.values(SHORT_AVAILABLE_TIME_UNITS);
 
     const { confirmAction: remove } = useConfirmableForm({
       form: toRef(props, 'operation'),
@@ -146,15 +126,12 @@ export default {
     });
 
     return {
-      expanded,
-      hasChildrenError,
-      nameField,
-      timeToCompleteField,
-      descriptionField,
-      jobsField,
+      t,
+      timeToCompleteUnits,
       nameFieldName,
       timeToCompleteFieldName,
       descriptionFieldName,
+      updateField,
       remove,
     };
   },
@@ -163,21 +140,20 @@ export default {
 
 <style lang="scss" scoped>
 .remediation-instruction-operation-field {
+  :deep(.c-card-iterator-item__row) {
+    align-items: center;
+  }
+
+  :deep(.c-card-iterator-item__row > .c-action-btn) {
+    position: static;
+  }
+
   .theme--light & {
     background-color: #f9f9f9;
   }
+
   .theme--dark & {
     background-color: #2d2d2d;
   }
-}
-
-.operation-number {
-  min-width: 70px;
-}
-
-.operation-expand {
-  margin: 24px 8px 0 2px !important;
-  width: 20px;
-  height: 20px;
 }
 </style>

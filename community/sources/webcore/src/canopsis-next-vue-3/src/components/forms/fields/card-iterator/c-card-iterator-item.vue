@@ -12,7 +12,7 @@
         align="center"
       >
         <c-draggable-step-number
-          :color="!expanded && hasChildrenError ? 'error' : 'primary'"
+          :color="hasChildrenError ? 'error' : 'primary'"
           :hide-number="small"
           :drag-class="dragHandleClass"
           class="c-card-iterator-item__step-number"
@@ -37,7 +37,7 @@
       <c-layout
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
-        class="c-card-iterator-item__content"
+        class="c-card-iterator-item__content mt-3"
         column
       >
         <slot />

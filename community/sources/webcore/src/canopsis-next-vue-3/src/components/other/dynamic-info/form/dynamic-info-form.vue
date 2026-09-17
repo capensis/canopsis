@@ -3,7 +3,7 @@
     <c-enabled-field v-model="enabledField" :label="$t('common.enabled')" with-background />
 
     <c-form-general-patterns-tabs
-      :form="values"
+      :form="formValues"
       :rule-id="ruleId"
       :type="type"
     >
@@ -54,7 +54,7 @@ export default {
     const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
 
     return {
-      values: form.values,
+      formValues: form.values,
       enabledField,
       type,
     };

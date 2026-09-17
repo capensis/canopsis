@@ -57,6 +57,9 @@ export const vuetify = createVuetify({
     VExpansionPanels: {
       elevation: 2,
     },
+    VRow: {
+      density: 'compact',
+    },
     VTabs: {
       sliderColor: 'primary',
     },

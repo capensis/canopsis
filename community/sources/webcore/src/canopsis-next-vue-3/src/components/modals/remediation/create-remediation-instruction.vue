@@ -13,7 +13,6 @@
           class="mb-3"
         />
         <remediation-instruction-form
-          v-model:form="form"
           :disabled="disabled"
           :is-new="isNew"
           :required-approve="requiredInstructionApprove"

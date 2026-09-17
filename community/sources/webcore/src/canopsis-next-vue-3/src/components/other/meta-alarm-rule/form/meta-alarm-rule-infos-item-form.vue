@@ -20,7 +20,7 @@
         :label="t('common.description')"
         @update:model-value="updateField('description', $event)"
       />
-      <v-row class="ga-4 flex-nowrap align-start ma-0" no-gutters>
+      <v-row class="align-start" density="default">
         <v-col cols="auto">
           <c-enabled-field
             v-model="copyFromChildren"

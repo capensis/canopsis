@@ -5,6 +5,7 @@
         :page="page"
         :limit="itemsPerPage"
         :total="totalItems"
+        :total-visible="totalVisible"
         @update:page="updatePage"
       />
     </v-col>
@@ -45,6 +46,10 @@ export default {
     emitInput: {
       type: Boolean,
       default: false,
+    },
+    totalVisible: {
+      type: Number,
+      required: false,
     },
   },
 

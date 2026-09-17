@@ -5,6 +5,7 @@
         v-model="activeOnPbhField"
         :label="t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')"
         :is-item-disabled="isActiveItemDisabled"
+        name="active_on_pbh"
         chips
         multiple
       />
@@ -14,6 +15,7 @@
         v-model="disabledOnPbhField"
         :label="t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')"
         :is-item-disabled="isDisabledItemDisabled"
+        name="disabled_on_pbh"
         chips
         multiple
       />
