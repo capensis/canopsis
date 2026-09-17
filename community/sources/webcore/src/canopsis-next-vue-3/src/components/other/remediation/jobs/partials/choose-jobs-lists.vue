@@ -6,18 +6,18 @@
     :loading="pending"
     :total-items="totalItems"
     :is-disabled-item="isSelectedJob"
+    :pagination-total-visible="3"
     select-all
     advanced-pagination
   >
     <template #toolbar="{ updateSearch }">
-      <c-layout>
-        <c-search @submit="updateSearch" />
-      </c-layout>
+      <c-search @submit="updateSearch" />
     </template>
     <template #actions="{ disabled, item }">
       <v-btn
         :disabled="disabled"
         icon="add"
+        variant="text"
         size="small"
         @click="$emit('select', [item])"
       />

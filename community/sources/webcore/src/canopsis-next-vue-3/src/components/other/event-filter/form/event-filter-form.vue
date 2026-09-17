@@ -3,7 +3,7 @@
     <c-enabled-field v-model="enabledField" with-background />
 
     <c-form-general-patterns-tabs
-      :form="values"
+      :form="formValues"
       :rule-id="ruleId"
       :type="type"
       reverse
@@ -20,7 +20,7 @@
       <template #patterns="{ setRef }">
         <event-filter-patterns-form
           :ref="setRef"
-          :form="values"
+          :form="formValues"
           :event-attributes="eventAttributes"
           :attributes-pending="attributesPending"
         />
@@ -68,7 +68,7 @@ export default {
     const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
 
     return {
-      values: form.values,
+      formValues: form.values,
       enabledField,
       type,
     };

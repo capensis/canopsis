@@ -3,7 +3,7 @@
     <c-enabled-field v-model="enabled" with-background />
 
     <c-form-general-patterns-tabs
-      :form="values"
+      :form="formValues"
       :patterns-label="t('common.condition', 2)"
       :additional-label="t('stateSetting.steps.targetEntities')"
       :ai-chat-expand-tab-keys="aiChatExpandTabKeys"
@@ -78,7 +78,7 @@ export default {
 
     return {
       t,
-      values: form.values,
+      formValues: form.values,
       enabled,
       aiChatExpandTabKeys: AI_CHAT_EXPAND_TAB_KEYS,
       isInheritedMethod,

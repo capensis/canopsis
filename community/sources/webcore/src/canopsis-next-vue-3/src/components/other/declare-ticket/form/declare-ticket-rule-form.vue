@@ -2,7 +2,7 @@
   <c-layout class="position-relative" gap="3" column>
     <c-enabled-field v-model="enabledField" with-background />
 
-    <c-form-general-patterns-tabs :form="values" :rule-id="ruleId" :type="type">
+    <c-form-general-patterns-tabs :form="formValues" :rule-id="ruleId" :type="type">
       <template #general="{ setRef, templateVars }">
         <declare-ticket-rule-general-form :ref="setRef" :template-vars="templateVars" />
       </template>
@@ -10,7 +10,7 @@
         <declare-ticket-rule-patterns-form :ref="setRef" />
       </template>
       <template #test-query="{ setRef }">
-        <declare-ticket-rule-test-query :ref="setRef" :form="values" />
+        <declare-ticket-rule-test-query :ref="setRef" :form="formValues" />
       </template>
     </c-form-general-patterns-tabs>
   </c-layout>
@@ -39,12 +39,12 @@ export default {
     },
   },
   setup() {
-    const { values } = useFormContext();
+    const { values: formValues } = useFormContext();
     const enabledField = useFormModel('enabled');
     const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
 
     return {
-      values,
+      formValues,
       enabledField,
       type,
     };

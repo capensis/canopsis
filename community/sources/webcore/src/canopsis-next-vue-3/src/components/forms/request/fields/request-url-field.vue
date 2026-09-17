@@ -1,5 +1,5 @@
 <template>
-  <v-row class="request-url-field ga-2 flex-nowrap" align="start" no-gutters>
+  <v-row class="request-url-field" align="start">
     <v-col class="request-url-field__column" cols="6">
       <c-select
         :model-value="method"
@@ -89,13 +89,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.request-url-field {
-  &__column {
-    flex: 0 0 calc(50% - 4px);
-    max-width: calc(50% - 4px);
-    min-width: 0;
-  }
-}
-</style>

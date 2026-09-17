@@ -1,54 +1,50 @@
 <template>
   <c-layout column>
-    <c-layout align="center">
-      <v-flex class="pr-2" xs1>
-        <c-draggable-step-number
-          :disabled="disabled"
-          :color="hasChildrenError ? 'error' : 'primary'"
-          drag-class="job-drag-handler"
-        >
-          {{ jobNumber }}
-        </c-draggable-step-number>
-      </v-flex>
-      <v-flex xs10>
-        <v-autocomplete
-          v-model="jobField"
-          v-validate="'required'"
+    <c-layout gap="2" align="center">
+      <c-draggable-step-number
+        :disabled="disabled"
+        :color="hasChildrenError ? 'error' : 'primary'"
+        drag-class="job-drag-handler"
+      >
+        {{ jobNumber }}
+      </c-draggable-step-number>
+      <div class="flex-grow-1">
+        <c-autocomplete
+          :model-value="job.job"
           :loading="loading"
           :items="jobs"
-          :label="$t('remediation.instruction.job')"
-          :error-messages="errors.collect(jobFieldName)"
+          :label="t('remediation.instruction.job')"
           :name="jobFieldName"
           :disabled="disabled"
           item-title="name"
           item-value="_id"
           return-object
+          required
+          @update:model-value="updateField('job', $event)"
         />
-      </v-flex>
-      <v-flex xs1>
-        <c-layout justify="center">
-          <c-action-btn v-if="!disabled" type="delete" @click="$emit('remove')" />
-        </c-layout>
-      </v-flex>
+      </div>
+      <c-layout justify="center">
+        <c-action-btn v-if="!disabled" type="delete" @click="$emit('remove')" />
+      </c-layout>
     </c-layout>
-    <v-flex offset-xs1 xs11>
-      <c-workflow-field
-        v-model="stopOnFailField"
-        :disabled="disabled"
-        :label="$t('remediation.instruction.jobWorkflow')"
-        :continue-label="$t('remediation.instruction.remainingJob')"
-      />
-    </v-flex>
+    <c-workflow-field
+      :model-value="job.stop_on_fail"
+      :disabled="disabled"
+      :label="t('remediation.instruction.jobWorkflow')"
+      :continue-label="t('remediation.instruction.remainingJob')"
+      @update:model-value="updateField('stop_on_fail', $event)"
+    />
   </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
 export default {
-  inject: ['$validator'],
   props: {
     job: {
       type: Object,
@@ -77,25 +73,17 @@ export default {
   },
   emits: ['update:job', 'remove'],
   setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
     const { hasChildrenError } = useValidationChildren();
 
     const jobFieldName = computed(() => `${props.name}.job`);
-    // TODO: fix that
-    const createFieldModel = field => computed({
-        get: () => props.job[field],
-        set: value => emit('update:job', {
-            ...props.job,
-            [field]: value,
-          }),
-      });
-    const jobField = createFieldModel('job');
-    const stopOnFailField = createFieldModel('stop_on_fail');
 
     return {
+      t,
       hasChildrenError,
-      jobField,
-      stopOnFailField,
       jobFieldName,
+      updateField,
     };
   },
 };

@@ -16,7 +16,7 @@
         @update:url="updateField('request.url', $event)"
       />
     </template>
-    <c-form-block class="mt-3">
+    <c-form-block>
       <request-with-token-form
         :form="form"
         :name="requestFormName"

@@ -1,5 +1,5 @@
 <template>
-  <v-row class="ga-2 flex-nowrap" no-gutters>
+  <v-row>
     <v-col :cols="sameWidth ? 6 : 7">
       <c-number-field
         :value="duration.value"
@@ -125,17 +125,13 @@ export default {
     },
 
     availableUnits() {
-      if (this.units) {
-        return this.units;
-      }
-
-      const units = {
+      const units = this.units ?? Object.values({
         true: SHORT_AVAILABLE_TIME_UNITS,
         [this.long]: AVAILABLE_TIME_UNITS,
         [this.medium]: MEDIUM_AVAILABLE_TIME_UNITS,
-      }.true;
+      }.true);
 
-      return Object.values(units).map(({ value, text }) => ({
+      return units.map(({ value, text }) => ({
         value,
         text: this.$t(text, this.duration.value || 0),
       }));
