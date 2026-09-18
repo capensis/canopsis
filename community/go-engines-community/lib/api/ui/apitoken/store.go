@@ -84,6 +84,11 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (Response, error) {
 		doc.Expired = new(r.Duration.AddTo(now))
 	}
 
+	pipeline := append(
+		[]bson.M{{"$match": bson.M{"_id": doc.ID}}, {"$project": bson.M{"hash": 0}}},
+		s.userPipeline()...,
+	)
+
 	var res Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = Response{}
@@ -92,10 +97,6 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (Response, error) {
 			return err
 		}
 
-		pipeline := append(
-			[]bson.M{{"$match": bson.M{"_id": doc.ID}}, {"$project": bson.M{"hash": 0}}},
-			s.userPipeline()...,
-		)
 		res, err = db.AggregateOne[Response](ctx, s.dbCollection, pipeline)
 
 		return err
