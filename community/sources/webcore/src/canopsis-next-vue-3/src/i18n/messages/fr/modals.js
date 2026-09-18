@@ -661,6 +661,10 @@ export default {
     fields: {
       host: 'Hôte',
       token: 'Jeton d\'autorisation',
+      enableRefreshToken: 'Activer le jeton d\'actualisation',
+      refreshToken: 'Jeton d\'actualisation',
+      clientId: 'ID client',
+      clientSecret: 'Secret client',
     },
   },
   createRemediationJob: {
