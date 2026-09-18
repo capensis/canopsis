@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"flag"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,35 +13,18 @@ import (
 	"syscall"
 	"time"
 
-	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	api "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
-	libtoken "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security/token"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
-	"github.com/rs/zerolog"
-	"golang.org/x/sync/errgroup"
 )
 
 const (
 	shutdownTimeout   = 5 * time.Second
 	readHeaderTimeout = 30 * time.Second
-	jobWorkers        = 5
 
 	okExitCode  = 0
 	errExitCode = 1
 )
-
-const JwtSecretEnv = "CPS_JWT_SECRET" //nolint:gosec
 
 func main() {
 	var opts api.Options
@@ -66,8 +48,8 @@ func run(opts api.Options) int {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	logger := log.NewLogger(ctx, opts.Options)
-	s, cleanup, err := newServices(ctx, opts, logger)
+	logger := log.NewLogger(ctx, opts.LogOptions)
+	s, cleanup, err := api.NewServices(ctx, opts, logger)
 	defer cleanup()
 	if err != nil {
 		logger.Err(err).Msg("cannot create services")
@@ -75,14 +57,15 @@ func run(opts api.Options) int {
 		return errExitCode
 	}
 
-	r, err := api.RegisterRoutes(s.Services, opts)
+	r, err := api.RegisterRoutes(s, opts)
 	if err != nil {
 		logger.Err(err).Msg("failed to register routes")
 
 		return errExitCode
 	}
 
-	g := runBackground(ctx, s, cancel)
+	jobHandlers, jobMaintainers := api.AsyncJobs(s)
+	g := api.RunBackground(ctx, s, jobHandlers, jobMaintainers, cancel)
 	hs := serve(r, opts.Port, s, cancel)
 
 	<-ctx.Done()
@@ -108,112 +91,8 @@ func run(opts api.Options) int {
 	return okExitCode
 }
 
-type services struct {
-	api.Services
-
-	configAdapter          config.Adapter
-	apiConfigProvider      *config.BaseApiConfigProvider
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider
-	consumeChPool          libamqp.ChannelPool
-}
-
-func newServices(ctx context.Context, opts api.Options, logger zerolog.Logger) (s services, cleanup func(), err error) {
-	s.Logger = logger
-	var cleanups []func() error
-	cleanup = func() {
-		for i := len(cleanups) - 1; i >= 0; i-- {
-			err := cleanups[i]()
-			if err != nil {
-				logger.Err(err).Msg("cannot close connection")
-			}
-		}
-	}
-
-	s.PrimaryDbClient, err = mongo.NewClient(ctx)
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot connect to mongodb: %w", err)
-	}
-
-	cleanups = append(cleanups, func() error {
-		return s.PrimaryDbClient.Disconnect(context.WithoutCancel(ctx))
-	})
-
-	s.configAdapter = config.NewAdapter(s.PrimaryDbClient)
-	s.Config, err = s.configAdapter.GetConfig(ctx)
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot load config: %w", err)
-	}
-
-	config.SetDbClientRetry(s.PrimaryDbClient, s.Config)
-
-	s.SecondaryDbClient, err = mongo.NewClient(ctx, mongo.ClientOptions{
-		RetryCount:      s.Config.Global.ReconnectRetries,
-		MinRetryTimeout: s.Config.Global.GetReconnectTimeout(),
-		ReadPreference:  mongo.SecondaryPreferred(),
-	})
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot connect to mongodb: %w", err)
-	}
-
-	cleanups = append(cleanups, func() error {
-		return s.SecondaryDbClient.Disconnect(context.WithoutCancel(ctx))
-	})
-
-	amqpPubConn, err := libamqp.New(-1, s.Config.Global.GetReconnectTimeout(), logger)
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot connect to rabbitmq: %w", err)
-	}
-
-	cleanups = append(cleanups, amqpPubConn.Close)
-
-	amqpConsumeConn, err := libamqp.New(-1, s.Config.Global.GetReconnectTimeout(), logger)
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot connect to rabbitmq: %w", err)
-	}
-
-	cleanups = append(cleanups, amqpConsumeConn.Close)
-
-	s.AMQPPubChPool = libamqp.NewChannelPool(amqpPubConn, canopsis.DefaultAMQPPublishPoolSize)
-	cleanups = append(cleanups, s.AMQPPubChPool.Close)
-
-	s.consumeChPool = libamqp.NewChannelPool(amqpConsumeConn, canopsis.DefaultAMQPPublishPoolSize)
-	cleanups = append(cleanups, s.consumeChPool.Close)
-
-	s.SecurityConfig, err = libsecurity.LoadConfig(opts.ConfigDir, logger)
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot load security config: %w", err)
-	}
-
-	s.apiConfigProvider = config.NewApiConfigProvider(s.Config, logger)
-	s.timezoneConfigProvider = config.NewTimezoneConfigProvider(s.Config, logger)
-	s.APIConfigProvider = s.apiConfigProvider
-	s.TimezoneConfigProvider = s.timezoneConfigProvider
-
-	validator, uniTrans, err := api.RegisterValidators()
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot register validators: %w", err)
-	}
-
-	s.Binder = binding.NewBinder(json.NewDecoder(), validator)
-	s.Responder = response.NewResponder(json.NewEncoder(), validation.NewErrorTranslator(uniTrans, logger), logger)
-	s.Enforcer, err = libsecurity.NewEnforcer(opts.ConfigDir, s.PrimaryDbClient)
-	if err != nil {
-		return s, cleanup, fmt.Errorf("cannot create enforcer: %w", err)
-	}
-
-	s.AuthProviders = []libsecurity.HttpProvider{
-		httpprovider.NewBearerProvider([]libsecurity.TokenProvider{
-			libtoken.NewProvider(s.PrimaryDbClient, userprovider.NewMongoProvider(s.PrimaryDbClient, s.APIConfigProvider)),
-		}),
-	}
-
-	s.JobPublisher = asyncjob.NewPublisher(libamqp.NewPooledPublisher(s.AMQPPubChPool), json.NewEncoder())
-
-	return s, cleanup, nil
-}
-
 // serve starts the http server and returns it, so it can be shut down gracefully.
-func serve(r http.Handler, port int, s services, cancel context.CancelFunc) *http.Server {
+func serve(r http.Handler, port int, s api.Services, cancel context.CancelFunc) *http.Server {
 	hs := &http.Server{
 		Addr:              ":" + strconv.Itoa(port),
 		Handler:           r,
@@ -230,43 +109,4 @@ func serve(r http.Handler, port int, s services, cancel context.CancelFunc) *htt
 	}()
 
 	return hs
-}
-
-// runBackground starts background works and returns the group to wait on once the http server stopped.
-// cancel stops the whole api when the job worker fails.
-func runBackground(ctx context.Context, s services, cancel context.CancelFunc) *errgroup.Group {
-	jobHandlers, jobMaintainers := api.AsyncJobs(s.Services)
-	jobWorker := asyncjob.NewWorker(
-		s.consumeChPool,
-		json.NewDecoder(),
-		jobHandlers,
-		jobWorkers,
-		s.Logger,
-	)
-
-	wg, wctx := errgroup.WithContext(ctx)
-	wg.Go(func() error {
-		err := jobWorker.Run(wctx)
-		if err != nil {
-			cancel()
-
-			return fmt.Errorf("async job worker stopped with error: %w", err)
-		}
-
-		return nil
-	})
-
-	wg.Go(func() error {
-		asyncjob.RunMaintenance(wctx, jobMaintainers, s.Logger)
-
-		return nil
-	})
-
-	wg.Go(func() error {
-		config.RunReload(wctx, s.configAdapter, canopsis.PeriodicalWaitTime, s.Logger, s.apiConfigProvider, s.timezoneConfigProvider)
-
-		return nil
-	})
-
-	return wg
 }
