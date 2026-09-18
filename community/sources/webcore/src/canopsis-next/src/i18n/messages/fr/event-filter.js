@@ -150,8 +150,8 @@ export default {
       + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
-      text: 'Définir les balises d\'un champ à l\'aide d\'une correspondance d\'expression rationnelle',
-      message: 'Cette action peut être utilisée pour définir des balises provenant d\'autres événements filtrés à l\'aide d\'une correspondance d\'expression rationnelle.',
+      text: 'Définir les tags d\'un champ à l\'aide d\'une correspondance d\'expression rationnelle',
+      message: 'Cette action peut être utilisée pour définir des tags provenant d\'autres événements filtrés à l\'aide d\'une correspondance d\'expression rationnelle.',
       description: '<p>'
         + 'L\'action <strong>set_tags</strong> permet de créer dynamiquement des tags au format '
         + '<strong>« Nom: Valeur »</strong> à partir d\'un champ de <strong>l\'événement en cours de traitement</strong>, '
@@ -214,8 +214,8 @@ export default {
         + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
-      text: 'Définir les balises d\'un champ à l\'aide d\'un modèle',
-      message: 'Cette action peut être utilisée pour définir des balises provenant d\'autres champs d\'événement à l\'aide d\'un modèle.',
+      text: 'Définir les tags d\'un champ à l\'aide d\'un modèle',
+      message: 'Cette action peut être utilisée pour définir des tags provenant d\'autres champs d\'événement à l\'aide d\'un modèle.',
       description: '<p>'
         + 'Cette action peut être utilisée pour définir des tags à partir d\'autres champs d\'événement en utilisant un modèle.'
         + '</p>'
