@@ -7,19 +7,16 @@
     <template #activator="{ props: activatorProps, isActive }">
       <v-tooltip location="top">
         <template #activator="{ props: tooltipProps }">
-          <span class="d-inline-flex" v-bind="tooltipProps">
-            <v-btn
-              v-bind="activatorProps"
-              :class="{ 'c-speed-dial__btn--active': isActive }"
-              class="c-speed-dial__btn context-fab__btn"
-              color="primary"
-              size="small"
-              icon
-            >
-              <v-icon icon="add" />
-              <v-icon icon="close" />
-            </v-btn>
-          </span>
+          <v-btn
+            v-bind="{ ...tooltipProps, ...activatorProps }"
+            :class="{ 'c-speed-dial__btn--active': isActive }"
+            class="c-speed-dial__btn context-fab__btn"
+            color="primary"
+            size="x-small"
+          >
+            <v-icon icon="add" />
+            <v-icon icon="close" />
+          </v-btn>
         </template>
         <span>{{ $t('context.fab.common') }}</span>
       </v-tooltip>

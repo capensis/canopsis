@@ -75,6 +75,7 @@
                 :loading="downloading"
                 :tooltip="$t('settings.exportAsCsv')"
                 icon="cloud_download"
+                top
                 @click="exportContextList"
               />
             </div>
