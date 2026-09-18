@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	api "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -19,6 +20,9 @@ import (
 )
 
 const (
+	shutdownTimeout   = 5 * time.Second
+	readHeaderTimeout = 30 * time.Second
+
 	okExitCode  = 0
 	errExitCode = 1
 )
@@ -67,7 +71,7 @@ func run(opts api.Options) int {
 	hs := serve(r, opts.Port, s, cancel)
 
 	<-ctx.Done()
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), api.ShutdownTimeout)
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer shutdownCancel()
 	err = hs.Shutdown(shutdownCtx)
 	if err != nil {
@@ -94,7 +98,7 @@ func serve(r http.Handler, port int, s api.Services, cancel context.CancelFunc) 
 	hs := &http.Server{
 		Addr:              ":" + strconv.Itoa(port),
 		Handler:           r,
-		ReadHeaderTimeout: api.ReadHeaderTimeout,
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
 	go func() {
