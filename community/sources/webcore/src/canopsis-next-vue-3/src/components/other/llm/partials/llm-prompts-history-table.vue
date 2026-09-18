@@ -57,7 +57,7 @@
           top
           small
         />
-        {{ item.input_tokens }}
+        {{ item.inputTokensUsed }}
       </c-layout>
     </template>
 
@@ -213,16 +213,20 @@ export default {
     const preparedItems = computed(() => items.value.map((item) => {
         const context = item.context?.replace(`${LLM_SOCKET_CONTEXTS.widgetFilter}_`, '');
         const widgetMessageKey = `modals.createWidget.types.${context}.title`;
+        const inputTokens = item.input_tokens ?? 0;
+        const cacheWriteTokens = item.cache_write_tokens ?? 0;
+        const cacheReadTokens = item.cache_read_tokens ?? 0;
 
         return {
           ...item,
           context: te(widgetMessageKey)
             ? `${t(widgetMessageKey)} / ${t('common.filter')}`
             : t(`llm.promptsHistory.contextTitles.${context}`),
+          inputTokensUsed: inputTokens + cacheWriteTokens + cacheReadTokens,
           inputTokensTooltip: t('llm.promptsHistory.inputTokensTooltip', {
-            chatTokens: item.uncached_input_tokens ?? item.input_tokens ?? 0,
-            cacheReadTokens: item.cache_read_tokens ?? 0,
-            cacheWriteTokens: item.cache_write_tokens ?? 0,
+            inputTokens,
+            cacheWriteTokens,
+            cacheReadTokens,
           }),
         };
       }),

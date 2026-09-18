@@ -38,9 +38,9 @@ export default {
     userHistoryEmpty: 'Aucun utilisateur pour cette configuration.',
     ruleNotSaved: 'Non enregistré',
     inputTokensTooltip:
-      '<strong>Jetons de chat</strong> : {chatTokens}<br />' +
-      '<strong>Jetons de lecture du cache</strong> : {cacheReadTokens}<br />' +
-      '<strong>Jetons d\'écriture du cache</strong> : {cacheWriteTokens}',
+      '<strong>Jetons d\'entrée</strong> : {inputTokens}\n' +
+      '<strong>Jetons d\'écriture du cache</strong> : {cacheWriteTokens}\n' +
+      '<strong>Jetons de lecture du cache</strong> : {cacheReadTokens}',
     columns: {
       userName: 'Utilisateur',
       datetime: 'Date et heure',

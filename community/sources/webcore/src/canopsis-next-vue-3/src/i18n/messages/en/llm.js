@@ -38,9 +38,9 @@ export default {
     userHistoryEmpty: 'No users yet for this configuration.',
     ruleNotSaved: 'Not saved',
     inputTokensTooltip:
-      '<strong>Chat tokens</strong> : {chatTokens}<br />' +
-      '<strong>Cache read tokens</strong> : {cacheReadTokens}<br />' +
-      '<strong>Cache write tokens</strong> : {cacheWriteTokens}',
+      '<strong>Input tokens</strong> : {inputTokens}\n' +
+      '<strong>Cache write tokens</strong> : {cacheWriteTokens}\n' +
+      '<strong>Cache read tokens</strong> : {cacheReadTokens}',
     columns: {
       userName: 'User name',
       datetime: 'Datetime',

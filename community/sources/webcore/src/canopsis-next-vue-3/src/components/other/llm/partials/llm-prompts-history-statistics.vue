@@ -37,6 +37,8 @@
 <script>
 import { computed, ref, watch } from 'vue';
 
+import { DATETIME_FORMATS } from '@/constants';
+
 import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
@@ -45,8 +47,6 @@ import { useLlm } from '@/hooks/store/modules/llm';
 
 import LlmPromptsHistoryStatisticBigBlock from './llm-prompts-history-statistic-big-block.vue';
 import LlmPromptsHistoryStatisticSmallBlock from './llm-prompts-history-statistic-small-block.vue';
-
-const PERIOD_FORMAT = 'D MMM';
 
 const DEFAULT_STATISTICS = {
   input_tokens: 0,
@@ -96,11 +96,13 @@ export default {
     });
 
     const period = computed(() => {
-      if (!statistics.value.timestamp) {
+      const { from, to } = statistics.value;
+
+      if (!from || !to) {
         return '';
       }
 
-      return `${convertDateToString(statistics.value.timestamp, PERIOD_FORMAT)} - ${convertDateToString(Date.now(), PERIOD_FORMAT)}`;
+      return `${convertDateToString(from, DATETIME_FORMATS.period)} - ${convertDateToString(to, DATETIME_FORMATS.period)}`;
     });
 
     const inputItems = computed(() => [
