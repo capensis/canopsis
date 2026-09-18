@@ -513,8 +513,8 @@ export default {
     [PATTERN_OPERATORS.enabled]: 'True',
     [PATTERN_OPERATORS.disabled]: 'False',
 
-    [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
-    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
+    [PATTERN_OPERATORS.isMetaAlarm]: 'Is a meta-alarm',
+    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not a meta-alarm',
     [PATTERN_OPERATORS.ruleIs]: 'Rule is',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
