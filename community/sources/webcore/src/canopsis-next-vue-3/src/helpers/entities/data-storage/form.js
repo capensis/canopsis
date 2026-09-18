@@ -69,6 +69,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Object} DataStorageLlmChatConfig
  * @property {DurationWithEnabled} delete_after
+ * @property {DurationWithEnabled} delete_token_usage_after
  */
 
 /**
@@ -298,6 +299,9 @@ export const dataStorageLlmChatToForm = (llmChat = {}) => ({
   delete_after: llmChat.delete_after
     ? durationWithEnabledToForm(llmChat.delete_after)
     : { value: 1, unit: TIME_UNITS.month, enabled: false },
+  delete_token_usage_after: llmChat.delete_token_usage_after
+    ? durationWithEnabledToForm(llmChat.delete_token_usage_after)
+    : { value: 3, unit: TIME_UNITS.month, enabled: false },
 });
 
 /**

@@ -48,6 +48,19 @@
       {{ formatDate(item.timestamp) }}
     </template>
 
+    <template #input_tokens="{ item }">
+      <c-layout align="center" gap="1">
+        <c-help-icon
+          :text="item.inputTokensTooltip"
+          max-width="280"
+          icon="help"
+          top
+          small
+        />
+        {{ item.input_tokens }}
+      </c-layout>
+    </template>
+
     <template #usage>
       {{ t('pattern.patterns') }}
     </template>
@@ -173,7 +186,8 @@ export default {
           ),
           value: 'timestamp',
         },
-        { text: t('llm.promptsHistory.columns.tokensUsed'), value: 'tokens' },
+        { text: t('llm.promptsHistory.columns.inputTokensUsed'), value: 'input_tokens' },
+        { text: t('llm.promptsHistory.columns.outputTokensUsed'), value: 'output_tokens' },
         { text: t('llm.promptsHistory.columns.modal'), value: 'context', sortable: false },
         { text: t('common.name'), value: 'rule', sortable: false },
         { text: t('llm.promptsHistory.columns.usage'), value: 'usage', sortable: false },
@@ -195,6 +209,7 @@ export default {
         },
       ].filter(Boolean),
     );
+
     const preparedItems = computed(() => items.value.map((item) => {
         const context = item.context?.replace(`${LLM_SOCKET_CONTEXTS.widgetFilter}_`, '');
         const widgetMessageKey = `modals.createWidget.types.${context}.title`;
@@ -204,16 +219,23 @@ export default {
           context: te(widgetMessageKey)
             ? `${t(widgetMessageKey)} / ${t('common.filter')}`
             : t(`llm.promptsHistory.contextTitles.${context}`),
+          inputTokensTooltip: t('llm.promptsHistory.inputTokensTooltip', {
+            chatTokens: item.uncached_input_tokens ?? item.input_tokens ?? 0,
+            cacheReadTokens: item.cache_read_tokens ?? 0,
+            cacheWriteTokens: item.cache_write_tokens ?? 0,
+          }),
         };
       }),
     );
 
     const formatDate = value => convertDateToString(value, 'long', '-');
+
     const onlyOffTopicChange = value => updateOptions({
         ...options.value,
         only_off_topic: value,
         page: 1,
       });
+
     const seeChat = (item) => {
       const chatId = item.chat ?? item._id;
 

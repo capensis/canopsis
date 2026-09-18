@@ -10,8 +10,6 @@
 <script>
 import { computed } from 'vue';
 
-import { GEMINI_AI_CONSOLE_BILLING_URL } from '@/config';
-
 import { sanitizeHtml } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
@@ -21,9 +19,8 @@ export default {
     const { t } = useI18n();
 
     const sanitizedImportantNotesMessage = computed(() => sanitizeHtml(
-        t('llm.importantNotesMessage', { geminiConsoleUrl: GEMINI_AI_CONSOLE_BILLING_URL }),
-      ),
-    );
+      t('llm.importantNotesMessage'),
+    ));
 
     return {
       sanitizedImportantNotesMessage,
@@ -31,9 +28,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.llms-important-notes-banner__content :deep(a) {
-  color: var(--v-info-base) !important;
-}
-</style>

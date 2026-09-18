@@ -1,6 +1,7 @@
 import {
   LLM_AI_CHAT_ERROR_CODES,
   LLM_AI_CHAT_SUGGESTION_TYPES,
+  LLM_MODEL_TYPES,
   LLM_SOCKET_CONTEXTS,
   LLM_THINKING_LEVELS,
 } from '@/constants';
@@ -14,6 +15,13 @@ export default {
   promptsHistory: {
     tabs: {
       allPrompts: 'All prompts',
+    },
+    statistics: {
+      totalInputTokens: 'Total input tokens',
+      totalOutputTokens: 'Total output tokens',
+      uncachedTokens: 'Uncached tokens (Chat)',
+      cacheReadTokens: 'Cache read tokens',
+      cacheWriteTokens: 'Cache write tokens',
     },
     expandUserHistory: {
       lastPromptDate: 'Last prompt date',
@@ -29,10 +37,16 @@ export default {
     userHistoryTitle: 'User history',
     userHistoryEmpty: 'No users yet for this configuration.',
     ruleNotSaved: 'Not saved',
+    inputTokensTooltip:
+      '<strong>Chat tokens</strong> : {chatTokens}<br />' +
+      '<strong>Cache read tokens</strong> : {cacheReadTokens}<br />' +
+      '<strong>Cache write tokens</strong> : {cacheWriteTokens}',
     columns: {
       userName: 'User name',
       datetime: 'Datetime',
       tokensUsed: 'Tokens used',
+      inputTokensUsed: 'Input token used',
+      outputTokensUsed: 'Output token used',
       modal: 'Modal',
       usage: 'Usage',
       canopsisRelated: 'Canopsis related',
@@ -64,6 +78,11 @@ export default {
     },
   },
   modelType: 'LLM model type',
+  modelTypes: {
+    [LLM_MODEL_TYPES.gemini]: 'Gemini',
+    [LLM_MODEL_TYPES.claude]: 'Claude',
+    [LLM_MODEL_TYPES.chatgpt]: 'ChatGPT',
+  },
   modelName: 'LLM model name',
   model: 'LLM model',
   recommendedBadge: 'recommended',
@@ -76,17 +95,19 @@ export default {
   importantNotesMessage:
     '<div class="font-weight-regular">Important notes:</div>' +
     '<ul>' +
-    '<li>Gemini models can be enabled or disabled through this module; however, ' +
+    '<li>LLM models can be enabled or disabled through this module; however, ' +
     '<strong>token limits and quota management</strong>' +
-    ' are configured directly within the ' +
-    '<strong><a href="{geminiConsoleUrl}" target="_blank">Gemini AI Console</a></strong>.</li>' +
-    '<li><strong>Regular monitoring</strong> of Google Cloud limits is required, as <strong>API policies and usage conditions are subject to change.</strong></li>' +
+    ' are configured directly within the LLM provider console.</li>' +
+    '<li><strong>Regular monitoring</strong> of LLM limits is required, as <strong>API policies and usage conditions are subject to change.</strong></li>' +
     '</ul>',
   thinkingLevels: {
+    [LLM_THINKING_LEVELS.none]: 'None',
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',
     [LLM_THINKING_LEVELS.low]: 'Low',
     [LLM_THINKING_LEVELS.medium]: 'Medium',
     [LLM_THINKING_LEVELS.high]: 'High',
+    [LLM_THINKING_LEVELS.xhigh]: 'Extra high',
+    [LLM_THINKING_LEVELS.max]: 'Max',
   },
   chat: {
     title: 'AI assistant',
