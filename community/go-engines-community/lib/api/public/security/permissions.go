@@ -13,4 +13,6 @@ const (
 	PermEvent = "api_event"
 
 	PermMaintenance = "api_maintenance"
+
+	PermAcl = "api_acl"
 )

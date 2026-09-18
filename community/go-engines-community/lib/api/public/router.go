@@ -27,6 +27,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviorreason"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehaviortype"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -117,6 +118,10 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 					With(middleware.SetAuthor(s.Responder)).
 					Patch("/pbehaviors/{id}", pbhAPI.Patch)
 
+				r.With(authorize(permObj, model.PermissionUpdate)).
+					With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+					Patch("/bulk/pbehaviors", pbhAPI.BulkPatch)
+
 				r.Route(bulkPrefix+"/connector-pbehaviors", func(r chi.Router) {
 					r.With(authorize(permObj, model.PermissionCreate)).
 						With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
@@ -191,6 +196,29 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 				)
 				RegisterDataExportRoutes(r, "/alarm", apisecurity.PermAlarmRead, model.PermissionCan, alarmExportAPI, s)
 			}
+			{
+				userAPI := user.NewAPI(
+					user.NewStore(s.PrimaryDbClient, s.SecurityConfig),
+					s.UserMetaUpdater,
+					s.Binder,
+					s.Responder,
+					json.NewDecoder(),
+				)
+
+				permObj := apisecurity.PermAcl
+				RegisterBulkRoutes(r, "/users", permObj, userAPI, s,
+					middleware.ReloadEnforcerPolicyOnChange(s.Enforcer, s.Logger))
+
+				r.With(authorize(permObj, model.PermissionUpdate)).
+					With(middleware.SetAuthor(s.Responder)).
+					With(middleware.ReloadEnforcerPolicyOnChange(s.Enforcer, s.Logger)).
+					Patch("/users/{id}", userAPI.Patch)
+
+				r.With(authorize(permObj, model.PermissionUpdate)).
+					With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+					With(middleware.ReloadEnforcerPolicyOnChange(s.Enforcer, s.Logger)).
+					Patch("/bulk/users", userAPI.BulkPatch)
+			}
 
 			for _, f := range extra {
 				f(r)
@@ -214,6 +242,7 @@ func RegisterCRUDRoutes(
 	pattern, permObj string,
 	a crud.API,
 	s Services,
+	writeMiddlewares ...func(http.Handler) http.Handler,
 ) {
 	authorize := s.authorize
 	r.Route(pattern, func(r chi.Router) {
@@ -225,13 +254,16 @@ func RegisterCRUDRoutes(
 
 		r.With(authorize(permObj, model.PermissionCreate)).
 			With(middleware.SetAuthor(s.Responder)).
+			With(writeMiddlewares...).
 			Post("/", a.Create)
 
 		r.With(authorize(permObj, model.PermissionUpdate)).
 			With(middleware.SetAuthor(s.Responder)).
+			With(writeMiddlewares...).
 			Put("/{id}", a.Update)
 
 		r.With(authorize(permObj, model.PermissionDelete)).
+			With(writeMiddlewares...).
 			Delete("/{id}", a.Delete)
 	})
 }
@@ -242,22 +274,26 @@ func RegisterBulkRoutes(
 	pattern, permObj string,
 	a bulk.API,
 	s Services,
+	writeMiddlewares ...func(http.Handler) http.Handler,
 ) {
-	RegisterCRUDRoutes(r, pattern, permObj, a, s)
+	RegisterCRUDRoutes(r, pattern, permObj, a, s, writeMiddlewares...)
 
 	authorize := s.authorize
 	pattern = bulkPrefix + pattern
 	r.Route(pattern, func(r chi.Router) {
 		r.With(authorize(permObj, model.PermissionCreate)).
 			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+			With(writeMiddlewares...).
 			Post("/", a.BulkCreate)
 
 		r.With(authorize(permObj, model.PermissionUpdate)).
 			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+			With(writeMiddlewares...).
 			Put("/", a.BulkUpdate)
 
 		r.With(authorize(permObj, model.PermissionDelete)).
-			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, false)).
+			With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
+			With(writeMiddlewares...).
 			Delete("/", a.BulkDelete)
 	})
 }
