@@ -6,17 +6,13 @@ import (
 
 // Query is base request for pagination.
 type Query struct {
-	Page  int64 `form:"page,default:1" json:"page" binding:"numeric,gt=0"`
-	Limit int64 `form:"limit,default:10" json:"limit" binding:"numeric,gt=0,lt=10000"`
+	Limit  int `form:"limit,default:10" json:"limit" binding:"numeric,gt=0,lt=10000"`
+	Offset int `form:"offset,default:0" json:"offset" binding:"numeric,gte=0"`
 }
 
 func (q *Query) SetDefaults() {
 	if q == nil {
 		return
-	}
-
-	if q.Page == 0 {
-		q.Page = 1
 	}
 
 	if q.Limit == 0 {
@@ -30,37 +26,23 @@ func CreateAggregationPipeline(
 	sort bson.M,
 	afterLimit ...[]bson.M,
 ) []bson.M {
-	pipeline := make([]bson.M, 0, 4)
+	pipeline := make([]bson.M, len(beforeLimit), len(beforeLimit)+len(afterLimit)+3)
+	copy(pipeline, beforeLimit)
 	if len(sort) == 1 {
 		pipeline = append(pipeline, sort)
 	}
 
 	pipeline = append(
 		pipeline,
-		bson.M{"$skip": (query.Page - 1) * query.Limit},
-		bson.M{"$limit": query.Limit},
+		bson.M{"$skip": query.Offset},
+		bson.M{"$limit": query.Limit + 1},
 	)
+
 	if len(afterLimit) == 1 {
 		pipeline = append(pipeline, afterLimit[0]...)
 	} else if len(afterLimit) > 1 {
 		panic("too much arguments")
 	}
 
-	totalCountPipeline := []bson.M{
-		{"$count": "count"},
-	}
-
-	result := make([]bson.M, len(beforeLimit), len(beforeLimit)+2)
-	copy(result, beforeLimit)
-	result = append(result,
-		bson.M{"$facet": bson.M{
-			"data":        pipeline,
-			"total_count": totalCountPipeline,
-		}},
-		bson.M{"$addFields": bson.M{
-			"total_count": bson.M{"$sum": "$total_count.count"},
-		}},
-	)
-
-	return result
+	return pipeline
 }

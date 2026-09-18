@@ -23,7 +23,7 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-find-all
       parameters:
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/resolution'
@@ -188,7 +188,7 @@ paths:
                 summary: Critical alarms of a component
                 description: Find the open critical alarms of one component
                 value: {
-                  "page": 1,
+                  "offset": 0,
                   "limit": 100,
                   "resolution": "open",
                   "sort": "creation_date:desc",
@@ -284,7 +284,7 @@ paths:
       operationId: alarms-find-steps
       parameters:
         - $ref: '#/components/parameters/id'
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - name: type
@@ -709,7 +709,7 @@ paths:
         -  PERMISSIONS: `api_entity:read`
       operationId: entities-find-all
       parameters:
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - name: search
@@ -828,7 +828,7 @@ paths:
                 summary: Resources of a component
                 description: Find the enabled resources of one component
                 value: {
-                  "page": 1,
+                  "offset": 0,
                   "limit": 100,
                   "enabled": true,
                   "sort": "name:asc",
@@ -1168,7 +1168,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-find-all
       parameters:
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/author'
@@ -1914,7 +1914,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorreason:read`
       operationId: pbehavior-reasons-find-all
       parameters:
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/author'
@@ -2075,7 +2075,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviortype:read`
       operationId: pbehavior-types-find-all
       parameters:
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/author'
@@ -2256,7 +2256,7 @@ paths:
         -  PERMISSIONS: `api_acl:read`
       operationId: users-find-all
       parameters:
-        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/author'
@@ -2696,18 +2696,18 @@ components:
       required: true
       schema:
         type: string
-    page:
-      name: page
+    offset:
+      name: offset
       in: query
-      description: current page number
+      description: current offset
       required: false
       schema:
         type: integer
-        minimum: 1
+        minimum: 0
     limit:
       name: limit
       in: query
-      description: number of items per page
+      description: number of items
       required: false
       schema:
         type: integer
@@ -2822,14 +2822,12 @@ components:
         meta:
           type: object
           properties:
-            page:
+            limit:
               type: integer
-            page_count:
+            offset:
               type: integer
-            per_page:
-              type: integer
-            total_count:
-              type: integer
+            has_more:
+              type: boolean
     BulkResponseItem:
       type: object
       properties:
