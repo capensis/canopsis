@@ -9,12 +9,14 @@
       <c-enabled-color-picker-field
         :model-value="modelValue.color"
         :label="t('settings.actionRequiredSettings.customColor')"
+        name="actionRequiredSettings.color"
         column
         @update:model-value="updateField('color', $event)"
       />
       <c-enabled-icon-field
         :model-value="modelValue.icon_name"
         :label="t('settings.actionRequiredSettings.customIcon')"
+        name="actionRequiredSettings.icon_name"
         @update:model-value="updateField('icon_name', $event)"
       />
     </c-layout>
