@@ -26,7 +26,7 @@ type API interface {
 func NewAPI[TJob Job](
 	jobType string,
 	store *asyncjob.Store[TJob],
-	newJob func(id, source string) TJob,
+	newJob func(id, source, author string) TJob,
 	jobPublisher asyncjob.Publisher,
 	dir string,
 	maxSize uint64,
@@ -50,7 +50,7 @@ func NewAPI[TJob Job](
 type api[TJob Job] struct {
 	jobType      string
 	store        *asyncjob.Store[TJob]
-	newJob       func(id, source string) TJob
+	newJob       func(id, source, author string) TJob
 	jobPublisher asyncjob.Publisher
 	dir          string
 	maxSize      uint64
@@ -72,7 +72,7 @@ func (a *api[TJob]) Start(w http.ResponseWriter, r *http.Request) {
 		body = http.MaxBytesReader(w, r.Body, int64(a.maxSize))
 	}
 
-	job, err := a.createJob(r.Context(), body, d.Source)
+	job, err := a.createJob(r.Context(), body, d.Source, d.Author)
 	if err != nil {
 		if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
 			err = httperror.ErrRequestEntityTooLarge
@@ -98,7 +98,7 @@ func (a *api[TJob]) Status(w http.ResponseWriter, r *http.Request) {
 	a.responder.Respond(w, r, http.StatusOK, job.Response())
 }
 
-func (a *api[TJob]) createJob(ctx context.Context, f io.Reader, source string) (job TJob, resErr error) {
+func (a *api[TJob]) createJob(ctx context.Context, f io.Reader, source, author string) (job TJob, resErr error) {
 	err := os.MkdirAll(a.dir, os.ModeDir|asyncjob.DirPerm)
 	if err != nil {
 		return job, err
@@ -132,7 +132,7 @@ func (a *api[TJob]) createJob(ctx context.Context, f io.Reader, source string) (
 		return job, validation.NewSingleError("required", "body", "body", nil)
 	}
 
-	job = a.newJob(jobID, source)
+	job = a.newJob(jobID, source, author)
 	err = a.store.Create(ctx, job)
 	if err != nil {
 		_ = os.Remove(path)

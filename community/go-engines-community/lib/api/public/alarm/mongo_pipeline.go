@@ -206,6 +206,7 @@ func buildPipeline(resolution string, alarmMatches, entityMatches []bson.M, sort
 		afterLimit = append(afterLimit, lookup...)
 	}
 
+	afterLimit = append(afterLimit, addRawFields(EntityPrefix(resolution))...)
 	afterLimit = append(afterLimit, nestedObjectsPipeline(EntityPrefix(resolution))...)
 	afterLimit = append(afterLimit, durationAddFields(resolution, now))
 	afterLimit = append(afterLimit, typeAddField())
@@ -678,5 +679,19 @@ func durationAddFields(resolution string, now datetime.CpsTime) bson.M {
 				}},
 			}},
 		},
+	}
+}
+
+func addRawFields(prefix string) []bson.M {
+	prefix = strings.TrimSuffix(prefix, ".")
+
+	return []bson.M{
+		{"$addFields": bson.M{
+			"raw_alarm":  "$$ROOT",
+			"raw_entity": "$" + prefix,
+		}},
+		{"$project": bson.M{
+			"raw_alarm.v.steps": 0,
+		}},
 	}
 }

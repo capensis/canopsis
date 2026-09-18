@@ -45,6 +45,10 @@ definitions:
         type: integer
       last_update_date:
         type: integer
+      links:
+        items:
+          $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_public_link.Link'
+        type: array
       long_output:
         type: string
       max_state:
@@ -301,6 +305,10 @@ definitions:
         type: object
       last_event_date:
         type: integer
+      links:
+        items:
+          $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_public_link.Link'
+        type: array
       name:
         type: string
       output_template:
@@ -412,6 +420,15 @@ definitions:
     required:
     - name
     - type
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_public_link.Link:
+    properties:
+      category:
+        type: string
+      label:
+        type: string
+      url:
+        type: string
     type: object
   pattern.Condition:
     properties:

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -69,6 +70,11 @@ type Response struct {
 
 	ImportSource string            `bson:"import_source,omitempty" json:"import_source"`
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported" swaggertype:"integer"`
+
+	Links []link.Link `bson:"-" json:"links"`
+
+	// Raw is used to generate links.
+	Raw types.Entity `bson:"raw" json:"-"`
 }
 
 func (r *Response) SetDefaults() {

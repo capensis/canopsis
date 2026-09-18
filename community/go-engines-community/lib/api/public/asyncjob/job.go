@@ -31,6 +31,7 @@ type Base struct {
 	LastPing  datetime.CpsTime  `bson:"last_ping" json:"last_ping"`
 	Completed *datetime.CpsTime `bson:"completed,omitempty" json:"completed"`
 	Status    string            `bson:"status" json:"status"`
+	Author    string            `bson:"author" json:"author"`
 	Attempts  int64             `bson:"attempts" json:"attempts"`
 	// LeaseGeneration is incremented every time a worker claims the job. It fences a
 	// worker which outlived its lease from updating the job after another worker claimed it.
@@ -39,7 +40,7 @@ type Base struct {
 	ErrorMessage    string `bson:"error_message,omitempty"`
 }
 
-func NewBase(id string) Base {
+func NewBase(id, userID string) Base {
 	now := datetime.NewCpsTime()
 
 	return Base{
@@ -47,6 +48,7 @@ func NewBase(id string) Base {
 		Created:  now,
 		LastPing: now,
 		Status:   StatusPending,
+		Author:   userID,
 		Attempts: 1,
 	}
 }

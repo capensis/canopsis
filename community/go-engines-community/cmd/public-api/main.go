@@ -67,7 +67,7 @@ func run(opts api.Options) int {
 
 	jobHandlers, jobMaintainers := api.AsyncJobs(s)
 	g, gctx := errgroup.WithContext(ctx)
-	api.AddBackground(gctx, g, s, jobHandlers, jobMaintainers, cancel)
+	api.AddBackground(gctx, g, s, opts, jobHandlers, jobMaintainers, cancel)
 	hs := serve(r, opts.Port, s, cancel)
 
 	<-ctx.Done()
