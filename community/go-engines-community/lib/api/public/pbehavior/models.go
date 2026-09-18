@@ -52,9 +52,14 @@ type BulkUpdateRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
+type BulkPatchRequestItem struct {
+	PatchRequest
+	ID string `json:"_id" binding:"required"`
+}
+
 type PatchRequest struct {
 	Enabled       *bool           `json:"enabled"`
-	Name          *string         `json:"name"`
+	Name          *string         `json:"name" binding:"omitempty,max=255"`
 	Reason        *string         `json:"reason"`
 	Type          *string         `json:"type"`
 	EntityPattern pattern.Entity  `json:"entity_pattern"`
@@ -64,7 +69,7 @@ type PatchRequest struct {
 	Start         *int64          `json:"tstart" swaggertype:"integer"`
 	Stop          NullableTime    `json:"tstop" swaggertype:"integer"`
 	Exdates       []ExdateRequest `json:"exdates" binding:"dive"`
-	Color         *string         `json:"color"`
+	Color         *string         `json:"color" binding:"omitempty,iscolororempty"`
 	Inherited     *bool           `json:"inherited"`
 }
 

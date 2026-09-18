@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
@@ -35,6 +36,7 @@ type Services struct {
 	APIConfigProvider      config.ApiConfigProvider
 	TimezoneConfigProvider config.TimezoneConfigProvider
 	JobPublisher           asyncjob.Publisher
+	UserMetaUpdater        metrics.MetaUpdater
 
 	configAdapter          config.Adapter
 	apiConfigProvider      *config.BaseApiConfigProvider
@@ -113,7 +115,7 @@ func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Se
 	s.APIConfigProvider = s.apiConfigProvider
 	s.TimezoneConfigProvider = s.timezoneConfigProvider
 
-	validator, uniTrans, err := RegisterValidators()
+	validator, uniTrans, err := RegisterValidators(s.SecurityConfig)
 	if err != nil {
 		return s, cleanup, fmt.Errorf("cannot register validators: %w", err)
 	}
@@ -132,6 +134,8 @@ func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Se
 	}
 
 	s.JobPublisher = asyncjob.NewPublisher(libamqp.NewPooledPublisher(s.AMQPPubChPool), json.NewEncoder())
+
+	s.UserMetaUpdater = metrics.NewNullMetaUpdater()
 
 	return s, cleanup, nil
 }
