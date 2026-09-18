@@ -28,6 +28,7 @@ import * as RequestComponents from '@/components/common/request';
 import * as ResponsiveListComponents from '@/components/common/responsive-list';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CCopyWrapper from '@/components/common/runtime-template/c-copy-wrapper.vue';
+import CRequestHelper from '@/components/common/runtime-template/c-request-helper.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import * as ScrollbarComponents from '@/components/common/scrollbar';
 import * as SearchComponents from '@/components/common/search';
@@ -74,6 +75,7 @@ app.use(socketPlugin);
 
 app.component('c-runtime-template', CRuntimeTemplate);
 app.component('c-compiled-template', CCompiledTemplate);
+app.component('c-request-helper', CRequestHelper);
 app.component('c-copy-wrapper', CCopyWrapper);
 app.component('c-circle-badge', CCircleBadge);
 app.component('c-progress-overlay', CProgressOverlay);

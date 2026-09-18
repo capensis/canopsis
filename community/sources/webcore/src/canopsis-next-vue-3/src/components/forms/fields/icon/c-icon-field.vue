@@ -9,6 +9,7 @@
     :disabled="disabled"
     item-title="text"
     item-value="value"
+    class="c-icon-field"
     hide-no-data
     clearable
     @update:model-value="$emit('update:modelValue', $event)"
@@ -141,6 +142,12 @@ export default {
 </script>
 
 <style lang="scss">
+.c-icon-field {
+  .v-field__prepend-inner {
+    align-items: center;
+  }
+}
+
 .c-icon-field__icon {
   display: inline-flex;
   max-width: 24px;

@@ -1,6 +1,7 @@
 <template>
   <v-speed-dial
     v-bind="$attrs"
+    :attach="attach"
     :transition="transition"
     class="c-speed-dial"
   >
@@ -19,6 +20,10 @@ export default {
     transition: {
       type: String,
       default: 'scale-transition',
+    },
+    attach: {
+      type: [Boolean, String, Object],
+      default: true,
     },
   },
 };

@@ -1,119 +1,162 @@
-import { generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
-import { defineComponent } from 'vue';
+import axios from 'axios';
+import AxiosMockAdapter from 'axios-mock-adapter';
+import Faker from 'faker';
+
+import { RESPONSE_STATUSES } from '@/constants';
 
 import CRequestHelper from '@/components/common/runtime-template/c-request-helper.vue';
 
+const stubs = {
+  'c-runtime-template': true,
+};
+
 describe('c-request-helper', () => {
-  const factory = generateRenderer(CRequestHelper);
+  const axiosMockAdapter = new AxiosMockAdapter(axios);
+  const helperId = Faker.datatype.uuid();
+  const mockFn = vi.fn(context => Promise.resolve(`<div>${JSON.stringify(context)}</div>`));
+  let consoleErrorSpy;
 
-  test('Does not render anything when template is empty', () => {
-    const wrapper = factory();
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    expect(wrapper.html()).toBe('');
+    global.window = global.window || {
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    };
+    global.window._handlebarsRequestHelper = global.window._handlebarsRequestHelper || {};
+    global.window._handlebarsRequestHelper[helperId] = {
+      options: {
+        fn: mockFn,
+        hash: {
+          method: 'get',
+          url: 'https://api.example.com/data',
+        },
+      },
+    };
+    axiosMockAdapter.reset();
+    mockFn.mockClear();
   });
 
-  test('Renders provided runtime template', async () => {
+  afterEach(() => {
+    /**
+     * Ensure window._handlebarsRequestHelper exists before component cleanup tries to delete from it
+     */
+    if (global.window && !global.window._handlebarsRequestHelper) {
+      global.window._handlebarsRequestHelper = {};
+    }
+    if (global.window && global.window._handlebarsRequestHelper) {
+      delete global.window._handlebarsRequestHelper[helperId];
+    }
+    consoleErrorSpy.mockRestore();
+    vi.clearAllMocks();
+  });
+
+  const factory = generateShallowRenderer(CRequestHelper, { stubs });
+
+  test('Does not send request when helperData is not available', async () => {
+    delete global.window._handlebarsRequestHelper[helperId];
+
+    factory({
+      propsData: { helperId },
+    });
+
+    await flushPromises();
+
+    expect(axiosMockAdapter.history.get).toHaveLength(0);
+    expect(mockFn).not.toHaveBeenCalled();
+  });
+
+  test('Sends request successfully and updates template', async () => {
+    const responseData = { data: { name: 'test', value: 123 } };
+
+    axiosMockAdapter.onGet('https://api.example.com/data').reply(200, responseData);
+
     const wrapper = factory({
-      propsData: {
-        template: '<strong class="runtime-value">Runtime text</strong>',
-      },
+      propsData: { helperId },
     });
 
     await flushPromises();
 
-    expect(wrapper.find('.runtime-value').text()).toBe('Runtime text');
+    expect(axiosMockAdapter.history.get).toHaveLength(1);
+    expect(mockFn).toHaveBeenCalledWith(responseData);
+    expect(wrapper.vm.template).toContain('<div class="all-inherit">');
   });
 
-  test('Passes template props to runtime template', async () => {
+  test('Sends request with custom method and options', async () => {
+    const postData = { key: 'value' };
+    const responseData = { success: true };
+
+    global.window._handlebarsRequestHelper[helperId].options.hash = {
+      method: 'post',
+      url: 'https://api.example.com/create',
+      headers: JSON.stringify({ 'Content-Type': 'application/json' }),
+      data: JSON.stringify(postData),
+      username: 'user',
+      password: 'pass',
+    };
+
+    axiosMockAdapter.onPost('https://api.example.com/create').reply(200, responseData);
+
+    factory({
+      propsData: { helperId },
+    });
+
+    await flushPromises();
+
+    expect(axiosMockAdapter.history.post).toHaveLength(1);
+    expect(axiosMockAdapter.history.post[0].data).toBe(JSON.stringify(postData));
+    expect(axiosMockAdapter.history.post[0].auth).toEqual({ username: 'user', password: 'pass' });
+  });
+
+  test('Handles unauthorized error', async () => {
+    axiosMockAdapter.onGet('https://api.example.com/data').reply(RESPONSE_STATUSES.unauthorized);
+
     const wrapper = factory({
-      propsData: {
-        template: '<span class="runtime-name">{{ name }}</span>',
-        templateProps: {
-          name: 'Canopsis',
-        },
-      },
+      propsData: { helperId },
     });
 
     await flushPromises();
 
-    expect(wrapper.find('.runtime-name').text()).toBe('Canopsis');
+    expect(wrapper.vm.template).toContain('Unauthorized');
   });
 
-  test('Passes parent data to runtime template', async () => {
-    const parent = defineComponent({
-      components: { CRequestHelper },
-      data: () => ({
-        status: 'ready',
-      }),
-      template:
-        '<c-request-helper template="<span class=&quot;runtime-status&quot;>{{ status }}</span>" />',
+  test('Handles timeout error', async () => {
+    axiosMockAdapter.onGet('https://api.example.com/data').reply(RESPONSE_STATUSES.timeout);
+
+    const wrapper = factory({
+      propsData: { helperId },
     });
-    const wrapper = generateRenderer(parent)();
 
     await flushPromises();
 
-    expect(wrapper.find('.runtime-status').text()).toBe('ready');
+    expect(wrapper.vm.template).toContain('Request timeout');
   });
 
-  test('Passes parent props to runtime template', async () => {
-    const parent = defineComponent({
-      components: { CRequestHelper },
-      props: {
-        title: {
-          type: String,
-          default: '',
-        },
-      },
-      template:
-        '<c-request-helper template="<span class=&quot;runtime-title&quot;>{{ title }}</span>" />',
-    });
-    const wrapper = generateRenderer(parent)({
-      propsData: {
-        title: 'Alarm title',
-      },
+  test('Handles other errors', async () => {
+    axiosMockAdapter.onGet('https://api.example.com/data').reply(500);
+
+    const wrapper = factory({
+      propsData: { helperId },
     });
 
     await flushPromises();
 
-    expect(wrapper.find('.runtime-title').text()).toBe('Alarm title');
+    expect(wrapper.vm.template).toContain('Error while fetching data');
   });
 
-  test('Passes parent methods to runtime template', async () => {
-    const parent = defineComponent({
-      components: { CRequestHelper },
-      methods: {
-        getLabel() {
-          return 'computed label';
-        },
-      },
-      template:
-        '<c-request-helper template="<span class=&quot;runtime-label&quot;>{{ getLabel() }}</span>" />',
+  test('Cancels request on component unmount', async () => {
+    axiosMockAdapter.onGet('https://api.example.com/data').reply(200, { data: 'test' });
+
+    const wrapper = factory({
+      propsData: { helperId },
     });
-    const wrapper = generateRenderer(parent)();
+
+    wrapper.destroy();
 
     await flushPromises();
 
-    expect(wrapper.find('.runtime-label').text()).toBe('computed label');
-  });
-
-  test('Template props override parent values', async () => {
-    const parent = defineComponent({
-      components: { CRequestHelper },
-      data: () => ({
-        label: 'parent label',
-      }),
-      template: `
-        <c-request-helper
-          template="<span class=&quot;runtime-label&quot;>{{ label }}</span>"
-          :template-props="{ label: 'template label' }"
-        />
-      `,
-    });
-    const wrapper = generateRenderer(parent)();
-
-    await flushPromises();
-
-    expect(wrapper.find('.runtime-label').text()).toBe('template label');
+    expect(global.window._handlebarsRequestHelper[helperId]).toBeUndefined();
   });
 });
