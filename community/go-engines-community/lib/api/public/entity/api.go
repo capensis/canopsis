@@ -3,6 +3,7 @@ package entity
 import (
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/binding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/response"
 )
@@ -34,6 +35,13 @@ type api struct {
 //
 // @Success 200 {object} Response
 func (a *api) List(w http.ResponseWriter, r *http.Request) {
+	userID, err := authctx.GetUserKey(r.Context())
+	if err != nil {
+		a.responder.RespondError(w, r, err)
+
+		return
+	}
+
 	var d PaginatedListRequest
 	if err := a.binder.BindForm(r, &d); err != nil {
 		a.responder.RespondError(w, r, err)
@@ -41,7 +49,7 @@ func (a *api) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := a.store.Find(r.Context(), d)
+	res, err := a.store.Find(r.Context(), d, userID)
 	if err != nil {
 		a.responder.RespondError(w, r, err)
 
@@ -56,6 +64,13 @@ func (a *api) List(w http.ResponseWriter, r *http.Request) {
 // @Param body body SearchRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Search(w http.ResponseWriter, r *http.Request) {
+	userID, err := authctx.GetUserKey(r.Context())
+	if err != nil {
+		a.responder.RespondError(w, r, err)
+
+		return
+	}
+
 	var d PaginatedSearchRequest
 	d.Query.SetDefaults()
 	if err := a.binder.Bind(r, &d); err != nil {
@@ -64,7 +79,7 @@ func (a *api) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := a.store.Search(r.Context(), d)
+	res, err := a.store.Search(r.Context(), d, userID)
 	if err != nil {
 		a.responder.RespondError(w, r, err)
 

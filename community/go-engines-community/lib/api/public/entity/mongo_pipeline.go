@@ -109,7 +109,8 @@ func ListPipeline(r ListRequest) (beforeLimit []bson.M, afterLimit []bson.M, sor
 		}
 	}
 
-	afterLimit = nestedObjectsPipeline()
+	afterLimit = []bson.M{addRawField()}
+	afterLimit = append(afterLimit, nestedObjectsPipeline()...)
 	afterLimit = append(afterLimit, bson.M{
 		"$project": bson.M{
 			"services":  0,
@@ -163,7 +164,8 @@ func SearchPipeline(r SearchRequest) (beforeLimit []bson.M, afterLimit []bson.M,
 		}
 	}
 
-	afterLimit = nestedObjectsPipeline()
+	afterLimit = []bson.M{addRawField()}
+	afterLimit = append(afterLimit, nestedObjectsPipeline()...)
 	afterLimit = append(afterLimit, bson.M{
 		"$project": bson.M{
 			"services":  0,
@@ -232,5 +234,13 @@ func nestedObjectsPipeline() []bson.M {
 				"else": nil,
 			}},
 		}},
+	}
+}
+
+func addRawField() bson.M {
+	return bson.M{
+		"$addFields": bson.M{
+			"raw": "$$ROOT",
+		},
 	}
 }

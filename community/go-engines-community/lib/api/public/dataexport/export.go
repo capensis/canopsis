@@ -78,6 +78,13 @@ func export(
 			return err
 		}
 
+		if opts.Enrich != nil {
+			err = opts.Enrich(ctx, doc)
+			if err != nil {
+				return err
+			}
+		}
+
 		err = w.Write(ctx, doc)
 		if err != nil {
 			return err

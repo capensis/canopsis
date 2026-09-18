@@ -32,6 +32,7 @@ type Request struct {
 	Format              string             `json:"format" bson:"format" binding:"required,oneof=csv json"`
 	Fields              []dataexport.Field `json:"fields" bson:"fields" binding:"required"`
 	TimeFormat          string             `json:"time_format" bson:"time_format" binding:"time_format"`
+	Author              string             `json:"author" bson:"-" swaggerignore:"true"`
 
 	// csv
 	Delimiter string `json:"delimiter" bson:"delimiter" binding:"oneoforempty=comma semicolon tab space"`
