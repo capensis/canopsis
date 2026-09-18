@@ -2,7 +2,7 @@ import { pick } from 'lodash';
 
 import {
   REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME,
-  REMEDIATION_CONFIGURATION_TYPES,
+  REMEDIATION_CONFIGURATION_TYPES_WITH_SPECIAL_FIELDS,
 } from '@/constants';
 
 /**
@@ -48,7 +48,7 @@ export const isJobTypeIncludesUserName = (type = {}) =>
  * @returns {boolean}
  */
 export const isAwxConfigurationType = (type = {}) =>
-  (type?.name ?? type) === REMEDIATION_CONFIGURATION_TYPES.awx;
+  (type?.name ?? type) === REMEDIATION_CONFIGURATION_TYPES_WITH_SPECIAL_FIELDS.awx;
 
 /**
  * Convert remediation configuration entity to form object
