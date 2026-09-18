@@ -240,8 +240,8 @@ export default {
     itemStyle() {
       return {
         height: `${this.itemHeight}em`,
-        backgroundColor: this.backgroundColorByActionRequired,
-        color: this.colorByActionRequired,
+        backgroundColor: `${this.backgroundColorByActionRequired} !important`,
+        color: `${this.colorByActionRequired} !important`,
       };
     },
 
