@@ -174,7 +174,7 @@ export default {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
       text: 'à l\'aide d\'une correspondance d\'expression rationnelle',
       message:
-        'Cette action peut être utilisée pour définir des balises provenant d\'autres événements filtrés à l\'aide d\'une correspondance d\'expression rationnelle.',
+        'Cette action peut être utilisée pour définir des tags provenant d\'autres événements filtrés à l\'aide d\'une correspondance d\'expression rationnelle.',
       description:
         '<p>' +
         'L\'action <strong>set_tags</strong> permet de créer dynamiquement des tags au format ' +
@@ -233,7 +233,7 @@ export default {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
       text: 'à l\'aide d\'un modèle',
       message:
-        'Cette action peut être utilisée pour définir des balises provenant d\'autres champs d\'événement à l\'aide d\'un modèle.',
+        'Cette action peut être utilisée pour définir des tags provenant d\'autres champs d\'événement à l\'aide d\'un modèle.',
       description:
         '<p>' +
         'Cette action peut être utilisée pour définir des tags à partir d\'autres champs d\'événement en utilisant un modèle.' +

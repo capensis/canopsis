@@ -14,7 +14,7 @@ export default {
   remainingStep: 'Continuer avec les étapes restantes',
   addAction: 'Ajouter une action',
   emptyActions: 'Aucune action ajoutée pour le moment',
-  output: 'Format d\'action de sortie',
+  output: 'Format du message',
   forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
   skip: 'Sauter',
   skipForChild: 'Sauter pour les enfants de la méta-alarme',
