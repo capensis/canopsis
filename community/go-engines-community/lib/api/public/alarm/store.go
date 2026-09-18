@@ -62,7 +62,7 @@ func (s *store) Find(ctx context.Context, r PaginatedListRequest, userID string)
 		sort,
 		afterLimit,
 	)
-	ar, err := db.AggregateOne[pagination.Data[Response]](ctx, s.collection(r.Resolution), pipeline)
+	ar, err := db.AggregateAll[Response](ctx, s.collection(r.Resolution), pipeline)
 	if err != nil {
 		return res, err
 	}
@@ -72,10 +72,10 @@ func (s *store) Find(ctx context.Context, r PaginatedListRequest, userID string)
 		return res, err
 	}
 
-	for i, item := range ar.Data {
-		ar.Data[i].setDefaults()
-		ar.Data[i].Entity.Links = s.generator.GenerateForEntity(ctx, item.RawEntity, user)
-		ar.Data[i].Links = s.generator.GenerateForAlarm(ctx, item.RawAlarm, item.RawEntity, user)
+	for i, item := range ar {
+		ar[i].setDefaults()
+		ar[i].Entity.Links = s.generator.GenerateForEntity(ctx, item.RawEntity, user)
+		ar[i].Links = s.generator.GenerateForAlarm(ctx, item.RawAlarm, item.RawEntity, user)
 	}
 
 	res = pagination.NewResponse[Response](r.Query, ar)
@@ -116,7 +116,7 @@ func (s *store) Search(ctx context.Context, r PaginatedSearchRequest, userID str
 		sort,
 		afterLimit,
 	)
-	ar, err := db.AggregateOne[pagination.Data[Response]](ctx, s.collection(r.Resolution), pipeline)
+	ar, err := db.AggregateAll[Response](ctx, s.collection(r.Resolution), pipeline)
 	if err != nil {
 		return res, err
 	}
@@ -126,10 +126,10 @@ func (s *store) Search(ctx context.Context, r PaginatedSearchRequest, userID str
 		return res, err
 	}
 
-	for i, item := range ar.Data {
-		ar.Data[i].setDefaults()
-		ar.Data[i].Entity.Links = s.generator.GenerateForEntity(ctx, item.RawEntity, user)
-		ar.Data[i].Links = s.generator.GenerateForAlarm(ctx, item.RawAlarm, item.RawEntity, user)
+	for i, item := range ar {
+		ar[i].setDefaults()
+		ar[i].Entity.Links = s.generator.GenerateForEntity(ctx, item.RawEntity, user)
+		ar[i].Links = s.generator.GenerateForAlarm(ctx, item.RawAlarm, item.RawEntity, user)
 	}
 
 	res = pagination.NewResponse[Response](r.Query, ar)
@@ -181,18 +181,18 @@ func (s *store) FindSteps(ctx context.Context, id string, r StepRequest) (res pa
 		beforeLimit,
 		sort,
 	)
-	ar, err := db.AggregateOne[pagination.Data[Step]](ctx, s.dbCollection, pipeline)
+	ar, err := db.AggregateAll[Step](ctx, s.dbCollection, pipeline)
 	if err != nil {
 		return res, err
 	}
 
-	if len(ar.Data) == 0 {
-		ar, err = db.AggregateOne[pagination.Data[Step]](ctx, s.dbResolvedCollection, pipeline)
+	if len(ar) == 0 {
+		ar, err = db.AggregateAll[Step](ctx, s.dbResolvedCollection, pipeline)
 		if err != nil {
 			return res, err
 		}
 
-		if len(ar.Data) == 0 {
+		if len(ar) == 0 {
 			return res, httperror.ErrNotFound
 		}
 	}

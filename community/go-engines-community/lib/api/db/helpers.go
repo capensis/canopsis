@@ -13,13 +13,12 @@ func AggregateIDs(
 	dbCollection mongo.DbCollection,
 	pipeline any,
 	opts ...options.Lister[options.AggregateOptions],
-) ([]string, error) {
+) (ids []string, err error) {
 	cursor, err := dbCollection.Aggregate(ctx, pipeline, opts...)
 	if err != nil {
 		return nil, err
 	}
 
-	ids := make([]string, 0)
 	for cursor.Next(ctx) {
 		var doc struct {
 			ID string `bson:"_id"`
@@ -44,8 +43,7 @@ func AggregateOne[T any](
 	dbCollection mongo.DbCollection,
 	pipeline any,
 	opts ...options.Lister[options.AggregateOptions],
-) (T, error) {
-	var res T
+) (res T, err error) {
 	cursor, err := dbCollection.Aggregate(ctx, pipeline, opts...)
 	if err != nil {
 		return res, err
@@ -65,4 +63,20 @@ func AggregateOne[T any](
 	}
 
 	return res, nil
+}
+
+func AggregateAll[T any](
+	ctx context.Context,
+	dbCollection mongo.DbCollection,
+	pipeline any,
+	opts ...options.Lister[options.AggregateOptions],
+) (res []T, err error) {
+	cursor, err := dbCollection.Aggregate(ctx, pipeline, opts...)
+	if err != nil {
+		return res, err
+	}
+
+	err = cursor.All(ctx, &res)
+
+	return res, err
 }
