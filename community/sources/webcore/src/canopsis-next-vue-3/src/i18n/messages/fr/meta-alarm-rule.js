@@ -72,10 +72,10 @@ export default {
     'Les alarmes ayant la même combinaison de valeurs dans ces champs seront regroupées sous la même méta-alarme',
   componentTemplate: 'Modèle de composant',
   resourceTemplate: 'Modèle de ressource',
-  copyTagsFromChildren: 'Copier les balises des alarmes pour enfants',
-  filterByLabelEnabled: 'Filtrer par étiquette',
+  copyTagsFromChildren: 'Copier les tags depuis les alarmes enfants',
+  filterByLabelEnabled: 'Filtrer par label',
   filterByLabelEnabledTooltip:
-    'Certaines balises peuvent être définies au format Tag:Value, par exemple Env:Prod.\nAvec le filtre par libellé, seules les balises avec le libellé défini seront copiées des alarmes enfants vers la méta-alarme.',
+    'Certains tags peuvent être définis au format Tag:Value, par exemple Env:Prod.\nAvec le filtre par label, seuls les tags avec le label défini seront copiés des alarmes enfants vers la méta-alarme.',
   copyFromLastChild: 'Copie du dernier enfant',
   copyFromLastChildTooltip:
     'Lorsque cette option est activée, la valeur infos est copiée à partir d\'une infos d\'une dernière alarme enfant. Le nom infos de l\'alarme enfant doit être défini dans ce cas.',
