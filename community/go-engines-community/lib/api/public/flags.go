@@ -12,7 +12,7 @@ const (
 )
 
 func BindCmdFlags(o *Options) {
-	log.BindCmdFlags(&o.Options)
+	log.BindCmdFlags(&o.LogOptions)
 	flag.BoolVar(&o.Version, "version", false, "Show the version information")
 	flag.IntVar(&o.Port, "port", defaultPort, "Server port")
 	flag.StringVar(&o.ConfigDir, "c", defaultConfigDir, "Configuration files directory")
@@ -22,7 +22,7 @@ func BindCmdFlags(o *Options) {
 }
 
 type Options struct {
-	log.Options
+	LogOptions log.Options
 
 	Version    bool
 	Port       int
