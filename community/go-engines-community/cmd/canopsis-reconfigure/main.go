@@ -230,7 +230,7 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 
 func updateMongoConfig(ctx context.Context, conf Conf, dbClient mongo.DbClient) error {
 	globalConfAdapter := config.NewAdapter(dbClient)
-	prevGlobalConf, err := globalConfAdapter.GetConfig(ctx)
+	prevGlobalConf, err := globalConfAdapter.GetUserDefinedConfig(ctx)
 	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return fmt.Errorf("failed to fetch global config: %w", err)
 	}

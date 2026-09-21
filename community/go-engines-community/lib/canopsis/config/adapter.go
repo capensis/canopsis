@@ -16,6 +16,8 @@ import (
 type Adapter interface {
 	// GetConfig return the whole config document
 	GetConfig(ctx context.Context) (CanopsisConf, error)
+	// GetUserDefinedConfig return the config document with filled only user defined fields
+	GetUserDefinedConfig(ctx context.Context) (UserDefinedConfig, error)
 	// UpsertConfig upsert a config in mongo.
 	UpsertConfig(ctx context.Context, conf CanopsisConf) error
 }
@@ -33,6 +35,18 @@ func NewAdapter(client mongo.DbClient) Adapter {
 func (c *adapter) GetConfig(ctx context.Context) (CanopsisConf, error) {
 	conf := CanopsisConf{}
 	err := c.collection.FindOne(ctx, bson.M{"_id": ConfigKeyName}).Decode(&conf)
+
+	return conf, err
+}
+
+func (c *adapter) GetUserDefinedConfig(ctx context.Context) (UserDefinedConfig, error) {
+	conf := UserDefinedConfig{}
+	err := c.collection.FindOne(ctx, bson.M{"_id": ConfigKeyName}, options.FindOne().SetProjection(bson.M{
+		"metrics.enabledinstructions":    1,
+		"metrics.enablednotackedmetrics": 1,
+		"metrics.enabledslimetrics":      1,
+		"tech_metrics.enabled":           1,
+	})).Decode(&conf)
 
 	return conf, err
 }
