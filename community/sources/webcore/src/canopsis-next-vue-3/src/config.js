@@ -77,6 +77,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'v-chip',
     'c-remediation-instruction-execution-see-details',
     'c-request-helper',
+    'c-now',
 
     'div',
   ],
@@ -109,6 +110,10 @@ export const DEFAULT_SANITIZE_OPTIONS = {
 
     'data-id',
     'data-c',
+    'format',
+    'timezone',
+    'realtime',
+    'offset',
 
     ':alarm',
     ':selected-tags',
