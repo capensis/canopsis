@@ -81,6 +81,25 @@ export const convertStringToDateInterval = (string, type) => {
 };
 
 /**
+ * Format the current date and time using the existing `now±delta` parser.
+ *
+ * @param {Object} options
+ * @param {string} [options.format = DATETIME_FORMATS.long]
+ * @param {string} [options.timezone = getLocalTimezone()]
+ * @param {string} [options.offset]
+ * @returns {string}
+ */
+export const formatNow = ({
+  format = DATETIME_FORMATS.long,
+  timezone = getLocalTimezone(),
+  offset = '',
+} = {}) => (
+  convertStringToDateInterval(`now${offset}`, DATETIME_INTERVAL_TYPES.start)
+    .tz(timezone)
+    .format(DATETIME_FORMATS[format] ?? format ?? DATETIME_FORMATS.long)
+);
+
+/**
  * Parse date in every format to moment object
  *
  * @param {LocalDate} date
