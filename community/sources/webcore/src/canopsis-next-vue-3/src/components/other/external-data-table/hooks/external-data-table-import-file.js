@@ -20,19 +20,51 @@ import { usePendingHandler } from '@/hooks/query/pending';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useExternalDataTableImport } from '@/hooks/store/modules/external-data-table-import';
 
+/**
+ * Composable for managing external data table import form state and validation.
+ * Handles form data, error states, and form-related operations.
+ *
+ * @param {Object} formContext Form context created by `useForm`.
+ * @returns {Object} Form state management utilities.
+ * @returns {import('vue').Ref<Object>} returns.form Reactive import column form.
+ * @returns {import('vue').Ref<Object>} returns.originalForm Last previewed column form.
+ * @returns {import('vue').Ref<boolean>} returns.needPreview Whether a preview refresh is required.
+ * @returns {import('vue').ComputedRef<boolean>} returns.hasErrors Whether any column has preview error messages.
+ * @returns {Function} returns.toggleOnNeedPreview Enables preview mode.
+ * @returns {Function} returns.toggleOffNeedPreview Disables preview mode.
+ * @returns {Function} returns.setForm Sets form data.
+ * @returns {Function} returns.clearErrors Clears column preview errors and form validation errors.
+ */
 const useExternalDataTableImportForm = (formContext) => {
   const form = ref({});
   const originalForm = ref({});
   const needPreview = ref(true);
 
+  /**
+   * Whether any column currently has preview error messages.
+   *
+   * @type {import('vue').ComputedRef<boolean>}
+   */
   const hasErrors = computed(() =>
     Object.values(form.value).some(value => value?.messages?.length),
   );
 
+  /**
+   * Enables preview mode so the next submit refreshes the import preview.
+   */
   const toggleOnNeedPreview = () => (needPreview.value = true);
 
+  /**
+   * Disables preview mode so the next submit completes the import.
+   */
   const toggleOffNeedPreview = () => (needPreview.value = false);
 
+  /**
+   * Sets the import column form.
+   *
+   * @param {Object} newForm New form data to set.
+   * @param {boolean} [onlyForm=false] Whether to update only the editable form and keep the original snapshot.
+   */
   const setForm = (newForm, onlyForm = false) => {
     form.value = newForm;
 
@@ -41,6 +73,9 @@ const useExternalDataTableImportForm = (formContext) => {
     }
   };
 
+  /**
+   * Clears column preview errors and form validation errors.
+   */
   const clearErrors = () => {
     setForm(
       mapValues(form.value, value => ({ ...value, messages: [], rows: [] })),
@@ -63,7 +98,27 @@ const useExternalDataTableImportForm = (formContext) => {
   };
 };
 
-const useExternalDataTableFileUpload = ({ config, formContext, setForm }) => {
+/**
+ * Composable for handling external data table file upload operations.
+ * Manages file selection, upload process, and initial configuration setup.
+ *
+ * @param {Object} params Configuration parameters.
+ * @param {import('vue').ComputedRef<Object>} params.config External data table modal configuration.
+ * @param {Object} params.formContext Form context created by `useForm`.
+ * @param {Function} params.setForm Function to set form data.
+ * @param {Function} params.toggleOnNeedPreview Function to enable preview mode.
+ * @returns {Object} File upload utilities and state.
+ * @returns {import('vue').Ref<string>} returns.separator CSV separator.
+ * @returns {import('vue').Ref<string|null>} returns.activeImportFileId Active import job identifier.
+ * @returns {import('vue').Ref<boolean>} returns.uploading Whether a file upload is in progress.
+ * @returns {Function} returns.chooseFile Uploads a file or resets import state when the file is cleared.
+ */
+const useExternalDataTableFileUpload = ({
+  config,
+  formContext,
+  setForm,
+  toggleOnNeedPreview,
+}) => {
   const { createExternalDataTableImport, fetchExternalDataTableImportStatus } =
     useExternalDataTableImport();
 
@@ -77,11 +132,22 @@ const useExternalDataTableFileUpload = ({ config, formContext, setForm }) => {
     failedStatus: IMPORT_STATUSES.failed,
   });
 
+  /**
+   * Handles file selection for an external data table import.
+   * Clears current import state, uploads the selected file when present, and loads column configs.
+   *
+   * @param {File[]|File} [selectedFiles=[]] Selected files from the file input.
+   * @param {Function} resetQuery Function to reset the preview query state.
+   * @param {Function} fetchList Function to fetch the preview records list.
+   */
   const chooseFileHandler = async (selectedFiles = [], resetQuery, fetchList) => {
     try {
       resetQuery?.();
 
       activeImportFileId.value = null;
+      setForm({});
+      formContext.resetErrors();
+      toggleOnNeedPreview();
 
       const files = Array.isArray(selectedFiles) ? selectedFiles : [selectedFiles].filter(Boolean);
       const [file] = files;
@@ -89,8 +155,6 @@ const useExternalDataTableFileUpload = ({ config, formContext, setForm }) => {
       if (!file) {
         return;
       }
-
-      formContext.resetErrors();
 
       const data = {
         separator: separator.value,
@@ -127,6 +191,21 @@ const useExternalDataTableFileUpload = ({ config, formContext, setForm }) => {
   };
 };
 
+/**
+ * Composable for managing external data table import preview functionality.
+ * Handles preview generation, polling, and error information processing.
+ *
+ * @param {Object} params Configuration parameters.
+ * @param {import('vue').Ref<string|null>} params.activeImportFileId Active import job identifier.
+ * @param {import('vue').Ref<Object>} params.form Import column form.
+ * @param {Function} params.clearErrors Function to clear form errors.
+ * @param {Function} params.fetchList Function to fetch the preview records list.
+ * @param {Function} params.toggleOffNeedPreview Function to disable preview mode.
+ * @param {import('vue').ComputedRef<boolean>} params.hasErrors Whether the form has preview errors.
+ * @param {Function} params.setForm Function to set form data.
+ * @returns {Object} Preview utilities.
+ * @returns {Function} returns.updatePreview Polls preview status and refreshes preview data.
+ */
 const useExternalDataTableImportPreview = ({
   activeImportFileId,
   form,
@@ -165,6 +244,9 @@ const useExternalDataTableImportPreview = ({
     },
   });
 
+  /**
+   * Updates the preview for the imported file by polling error information and refreshing the data list.
+   */
   const updatePreview = async () => {
     clearErrors();
 
@@ -200,9 +282,25 @@ const useExternalDataTableImportPreview = ({
   };
 };
 
+/**
+ * Composable for handling external data table import completion operations.
+ * Manages the final submission and completion of the import process.
+ *
+ * @param {Object} params Configuration parameters.
+ * @param {import('vue').Ref<string|null>} params.activeImportFileId Active import job identifier.
+ * @param {import('vue').Ref<Object>} params.form Import column form.
+ * @returns {Object} Import completion utilities.
+ * @returns {Function} returns.completeImport Completes the import and runs an optional callback.
+ */
 const useExternalDataTableImportCompletion = ({ activeImportFileId, form }) => {
   const { completeExternalDataTableImport } = useExternalDataTableImport();
 
+  /**
+   * Completes the external data table import by submitting the final column tags
+   * and executing an optional callback after successful completion.
+   *
+   * @param {Function} [afterSubmitCallback] Optional callback executed with the import file id.
+   */
   const completeImport = async (afterSubmitCallback) => {
     await completeExternalDataTableImport({
       id: activeImportFileId.value,
@@ -223,9 +321,9 @@ const useExternalDataTableImportCompletion = ({ activeImportFileId, form }) => {
  * Main composable for external data table import functionality.
  * Orchestrates file upload, form management, preview, and completion operations.
  *
- * @param {Object} params - Configuration parameters
- * @param {Object} params.config - External data table configuration
- * @returns {Object} Complete import functionality interface
+ * @param {Object} params Configuration parameters.
+ * @param {import('vue').ComputedRef<Object>|Object} params.config External data table modal configuration.
+ * @returns {Object} Complete import functionality interface.
  */
 export const useExternalDataTableImportFile = ({ config }) => {
   const formContext = useForm();
@@ -252,6 +350,7 @@ export const useExternalDataTableImportFile = ({ config }) => {
     form,
     formContext,
     setForm,
+    toggleOnNeedPreview,
   });
 
   const {
@@ -270,7 +369,21 @@ export const useExternalDataTableImportFile = ({ config }) => {
       }),
   });
 
-  const chooseFile = files => chooseFileBase(files, resetQuery, fetchList);
+  /**
+   * Selects an import file or clears preview records when the current file is removed.
+   *
+   * @param {File[]|File} files Selected files from the file input.
+   */
+  const chooseFile = (files) => {
+    const selectedFiles = Array.isArray(files) ? files : [files].filter(Boolean);
+
+    if (!selectedFiles.length) {
+      records.value = [];
+      meta.value = {};
+    }
+
+    return chooseFileBase(files, resetQuery, fetchList);
+  };
 
   const { updatePreview } = useExternalDataTableImportPreview({
     activeImportFileId,
@@ -287,6 +400,9 @@ export const useExternalDataTableImportFile = ({ config }) => {
     form,
   });
 
+  /**
+   * Marks a preview refresh as required and validates the form on the next tick.
+   */
   const validate = () => {
     toggleOnNeedPreview();
 

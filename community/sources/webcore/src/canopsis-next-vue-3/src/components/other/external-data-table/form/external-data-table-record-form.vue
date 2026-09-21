@@ -88,7 +88,16 @@ export default {
         }
 
         if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
-          defaultBind.inputmode = 'decimal';
+          return {
+            is,
+            key: column.name,
+            bind: {
+              ...defaultBind,
+              inputmode: 'decimal',
+              value: values.value[column.name],
+              'onUpdate:value': value => setValue(column.name, value),
+            },
+          };
         }
 
         if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean) {
@@ -115,18 +124,6 @@ export default {
             bind: {
               ...defaultBind,
               rules,
-              value: values.value[column.name],
-              'onUpdate:value': value => setValue(column.name, value),
-            },
-          };
-        }
-
-        if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number) {
-          return {
-            is,
-            key: column.name,
-            bind: {
-              ...defaultBind,
               value: values.value[column.name],
               'onUpdate:value': value => setValue(column.name, value),
             },

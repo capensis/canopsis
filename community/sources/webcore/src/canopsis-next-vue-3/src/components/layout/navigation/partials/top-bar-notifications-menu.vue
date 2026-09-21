@@ -90,15 +90,19 @@ export default {
     const canOpenNotifications = computed(() => router.hasRoute(ROUTES_NAMES.notifications));
 
     const { pending, handler: fetchList } = usePendingHandler(async () => {
-      const { data, meta } = await fetchNotificationsListWithoutStore({
-        params: {
-          page: 1,
-          limit: notificationDisplayCount.value || DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
-        },
-      });
+      try {
+        const { data, meta } = await fetchNotificationsListWithoutStore({
+          params: {
+            page: 1,
+            limit: notificationDisplayCount.value || DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
+          },
+        });
 
-      notifications.value = data ?? [];
-      totalCount.value = meta?.total_count ?? 0;
+        notifications.value = data ?? [];
+        totalCount.value = meta?.total_count ?? 0;
+      } catch (err) {
+        console.warn(err);
+      }
     });
 
     const updateNotifications = ({ data, total_count: newTotalCount } = {}) => {

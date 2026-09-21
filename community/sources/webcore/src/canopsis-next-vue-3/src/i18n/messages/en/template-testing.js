@@ -85,6 +85,7 @@ export default {
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: 'Instruction',
     [TEMPLATE_TESTING_TEST_TYPES.job]: 'Job',
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: 'Meta alarm rule',
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: 'External auth token',
   },
   templateVars: {
     ackAuthor: 'Ack author',

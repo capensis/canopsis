@@ -22,7 +22,7 @@
               <v-btn
                 v-bind="menuProps"
                 :icon="leaf ? 'content_copy' : 'save_alt'"
-                size="small"
+                size="x-small"
                 variant="text"
                 @click.stop
               />

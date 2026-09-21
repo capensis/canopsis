@@ -6,15 +6,17 @@
     :total-items="totalItems"
     :options="options"
     :select-all="removable"
+    class="pt-4"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
     <template #toolbar>
-      <div class="entity-infos-properties-list__type-filter">
+      <div>
         <entity-info-property-type-field
           :value="options.type"
           :label="$t('common.filterByType')"
+          hide-details
           @update:value="updateType"
         />
       </div>
@@ -136,11 +138,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.entity-infos-properties-list__type-filter {
-  display: flex;
-  align-items: center;
-  width: 180px;
-}
-</style>

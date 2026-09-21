@@ -236,7 +236,7 @@ app.use(modalsPlugin, {
     [MODALS.createMermaidMap]: { maxWidth: 1600, autoHeight: true },
     [MODALS.createMetaAlarmRule]: { maxWidth: 1000 },
     [MODALS.createPattern]: { maxWidth: 1280 },
-    [MODALS.createPbehaviorException]: { autoHeight: true },
+    [MODALS.createPbehaviorException]: { maxWidth: 1000, autoHeight: true },
     [MODALS.createPbehavior]: { maxWidth: 1280, autoHeight: true },
     [MODALS.createPbehaviorReason]: { autoHeight: true },
     [MODALS.createPbehaviorType]: { autoHeight: true },

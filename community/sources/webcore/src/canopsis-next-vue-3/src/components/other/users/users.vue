@@ -8,6 +8,7 @@
     :users="users"
     @edit="showEditUserModal"
     @remove="showRemoveUserModal"
+    @refresh="fetchList"
     @update:options="updateOptions"
   />
 </template>
@@ -110,6 +111,7 @@ export default {
       options,
       hasUpdateAccess,
       hasDeleteAccess,
+      fetchList,
       updateOptions,
       showEditUserModal,
       showRemoveUserModal,

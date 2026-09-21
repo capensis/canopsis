@@ -28,14 +28,17 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
-import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
+import { MAX_LIMIT } from '@/constants';
+
+import { userToForm, formToUserRequest, findDefaultViewId } from '@/helpers/entities/user/form';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useView } from '@/hooks/store/modules/view';
 
 import UserForm from '@/components/other/users/form/user-form.vue';
 
@@ -52,6 +55,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const modals = useModals();
+    const { viewGroups, fetchViewGroupsList } = useView();
     const config = computed(() => props.modal.config ?? {});
 
     const isNew = computed(() => !config.value.user);
@@ -71,7 +75,40 @@ export default {
       closeModal();
     });
 
-    useFormConfirmableCloseModal({ form: values, submit, close: closeModal });
+    const { updateOriginalForm } = useFormConfirmableCloseModal({ form: values, submit, close: closeModal });
+
+    onMounted(async () => {
+      if (!isNew.value || values.value.defaultview) {
+        return;
+      }
+
+      try {
+        if (!viewGroups.value?.length) {
+          await fetchViewGroupsList({
+            params: {
+              limit: MAX_LIMIT,
+              page: 1,
+              with_views: true,
+              with_tabs: true,
+              with_widgets: true,
+              with_flags: true,
+              with_private: true,
+            },
+          });
+        }
+
+        const defaultViewId = findDefaultViewId(viewGroups.value);
+
+        if (!defaultViewId) {
+          return;
+        }
+
+        form.setValue('defaultview', defaultViewId);
+        updateOriginalForm();
+      } catch (err) {
+        console.error(err);
+      }
+    });
 
     return {
       t,

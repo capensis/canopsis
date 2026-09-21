@@ -35,7 +35,7 @@
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="!activeImportFileId || submitButton.disabled || submitButton.loading || submitting"
+          :disabled="!activeImportFileId || submitButton.loading || submitting"
           :loading="submitButton.loading"
           color="primary"
           type="submit"
@@ -85,7 +85,6 @@ export default {
       form,
       originalForm,
       needPreview,
-      hasErrors,
       records,
       meta,
       pending,
@@ -133,7 +132,6 @@ export default {
 
         return {
           text: t('externalData.updatePreview'),
-          disabled: hasErrors.value,
         };
       }
 

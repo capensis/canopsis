@@ -8,7 +8,7 @@
       color="grey"
       text-color="blue darken-1"
       outlined
-      @update:value="updateField('type', $event)"
+      @update:value="updateType"
     >
       <template #selection-empty>
         <span class="grey--text">
@@ -75,7 +75,7 @@ import {
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES,
 } from '@/constants';
 
-import { useFormErrorsMap } from '@/hooks/form';
+import { useFormContext, useFormErrorsMap } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
@@ -105,8 +105,20 @@ export default {
   },
   setup(props, { emit }) {
     const { t, te } = useI18n();
+    const form = useFormContext();
     const { hasError } = useFormErrorsMap();
-    const { updateField, updateModel } = useModelField(props, emit);
+    const { updateModel } = useModelField(props, emit);
+
+    const updateType = (type) => {
+      form.setFieldError(props.value.name, undefined);
+
+      updateModel({
+        ...props.value,
+        type,
+        messages: [],
+        rows: [],
+      });
+    };
 
     const typesMap = computed(() => mapValues(EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, (type) => {
         const key = `externalData.tableColumnDataTypes.${type}`;
@@ -176,7 +188,7 @@ export default {
       isStringArray,
       isCustomValueTypeSelected,
       stringArrayChip,
-      updateField,
+      updateType,
       updateModel,
     };
   },

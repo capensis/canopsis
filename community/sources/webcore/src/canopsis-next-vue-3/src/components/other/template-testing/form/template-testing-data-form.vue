@@ -8,7 +8,7 @@
     />
 
     <c-form-block>
-      <c-form-block-row :label="t('common.description')">
+      <c-form-block-row :label="t('common.description')" indented>
         <c-description-field
           v-model="descriptionField"
           :label="t('common.description')"
@@ -28,7 +28,7 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('templateTesting.testData')">
+      <c-form-block-row :label="t('templateTesting.testData')" indented>
         <c-json-field
           ref="jsonFieldElement"
           :value="bodyField"

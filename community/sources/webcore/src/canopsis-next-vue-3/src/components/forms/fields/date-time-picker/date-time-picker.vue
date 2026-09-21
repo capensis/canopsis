@@ -157,10 +157,13 @@ export default {
 </script>
 
 <style lang="scss">
+.v-overlay__content.date-time-picker {
+  width: 370px !important;
+}
+
 .date-time-picker {
   &__sheet {
-    width: 360px;
-    max-width: 360px;
+    width: 370px;
     overflow-x: hidden;
 
     .v-field__input {
@@ -169,7 +172,7 @@ export default {
   }
 
   .v-date-picker {
-    width: 360px;
+    width: 370px;
   }
 
   .v-date-picker-controls {

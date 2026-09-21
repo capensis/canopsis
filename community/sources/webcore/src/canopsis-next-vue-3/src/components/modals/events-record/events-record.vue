@@ -29,7 +29,7 @@
           </v-tab>
         </v-tabs>
 
-        <v-window v-model="activeTab" class="events-record-modal__window">
+        <v-window v-model="activeTab" class="pt-4">
           <v-window-item :value="TABS.events">
             <div>
               <events-record-events-filter
@@ -55,9 +55,7 @@
             </div>
           </v-window-item>
           <v-window-item :value="TABS.pattern">
-            <c-layout class="mt-4">
-              <c-event-filter-patterns-field :patterns="patternForm" readonly />
-            </c-layout>
+            <c-event-filter-patterns-field :patterns="patternForm" readonly />
           </v-window-item>
         </v-window>
       </template>
