@@ -1,7 +1,7 @@
 <template>
-  <c-layout class="pbehavior-exception-field" column>
-    <c-layout class="pbehavior-exception-field__row" gap="2" justify="space-between">
-      <div :style="gridFlexStyle(8)" class="pbehavior-exception-field__interval">
+  <div class="pbehavior-exception-field">
+    <v-row class="pbehavior-exception-field__row" align="center">
+      <v-col class="pbehavior-exception-field__interval">
         <date-time-splitted-range-picker-field
           v-if="editing"
           :start="value.begin"
@@ -25,8 +25,8 @@
           :end-label="$t('common.end')"
           :full-day="fullDay"
         />
-      </div>
-      <div v-if="withType" :style="gridFlexStyle(4)">
+      </v-col>
+      <v-col v-if="withType" class="pbehavior-exception-field__type">
         <c-pbehavior-type-field
           v-if="editing"
           :model-value="value.type"
@@ -37,11 +37,12 @@
           @update:model-value="updateField('type', $event)"
         />
         <c-pbehavior-type-text v-else :value="value.type" />
-      </div>
-      <div v-if="!disabled" class="pbehavior-exception-field__actions">
+      </v-col>
+      <v-col v-if="!disabled" class="pbehavior-exception-field__actions">
         <v-btn
           :input-value="editing"
           class="btn--editing"
+          size="small"
           variant="text"
           icon
           @click="toggleEditing"
@@ -56,25 +57,28 @@
         <v-btn
           class="v-btn-legacy-m--y"
           color="error"
+          size="small"
           variant="text"
           icon
           @click="$emit('delete')"
         >
           <v-icon>delete</v-icon>
         </v-btn>
-      </div>
-    </c-layout>
-    <c-layout>
-      <v-switch
-        v-model="fullDay"
-        :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
-        :disabled="disabled || !editing"
-        class="mt-0"
-        color="primary"
-        hide-details
-      />
-    </c-layout>
-  </c-layout>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-switch
+          v-model="fullDay"
+          :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+          :disabled="disabled || !editing"
+          class="mt-0"
+          color="primary"
+          hide-details
+        />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
@@ -89,7 +93,6 @@ import {
   isEndOfDay,
   isStartOfDay,
 } from '@/helpers/date/date';
-import { gridFlexStyle } from '@/helpers/layout';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
@@ -162,7 +165,6 @@ export default {
     };
 
     return {
-      gridFlexStyle,
       editing,
       fullDay,
       beginRules,
@@ -179,25 +181,27 @@ export default {
 <style lang="scss" scoped>
 .pbehavior-exception-field {
   &__row {
-    position: relative;
-    padding-right: 72px;
+    flex-wrap: nowrap;
+  }
+
+  &__interval,
+  &__type {
+    flex-shrink: 1;
+    min-width: 0;
   }
 
   &__interval {
-    flex-shrink: 0;
+    flex-grow: 2;
   }
 
   &__actions {
-    position: absolute;
-    top: 50%;
-    right: 0;
+    flex: 0 0 auto;
+    width: auto;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-end;
     gap: 4px;
-    width: 72px;
-    transform: translateY(-50%);
   }
 }
 </style>

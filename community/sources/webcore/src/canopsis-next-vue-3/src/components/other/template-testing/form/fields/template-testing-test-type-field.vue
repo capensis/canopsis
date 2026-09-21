@@ -8,6 +8,7 @@
     :required="required"
     :disabled="disabled"
     :hide-details="hideDetails"
+    density="compact"
     class="template-testing-test-type-field"
     item-title="text"
     item-value="value"

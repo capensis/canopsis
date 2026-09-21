@@ -2,6 +2,7 @@
   <c-treeview
     :model-value="model"
     :items="items"
+    :hide-actions="!hasNestedItems"
     class="broadcast-message-views-treeview-field"
     item-key="value"
     item-title="name"
@@ -40,6 +41,7 @@ export default {
 
   setup(props, { emit }) {
     const model = computed(() => props.modelValue ?? props.value ?? []);
+    const hasNestedItems = computed(() => props.items.some(getItemChildren));
 
     const updateModel = (nextValue) => {
       emit('update:modelValue', nextValue);
@@ -47,6 +49,7 @@ export default {
 
     return {
       model,
+      hasNestedItems,
       updateModel,
     };
   },

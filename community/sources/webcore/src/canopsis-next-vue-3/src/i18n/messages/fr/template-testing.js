@@ -87,6 +87,7 @@ export default {
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: 'Consigne',
     [TEMPLATE_TESTING_TEST_TYPES.job]: 'Travail',
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: 'Règle de méta-alarme',
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: 'Jeton d\'authentification externe',
   },
   templateVars: {
     ackAuthor: 'Auteur de l\'acquittement',

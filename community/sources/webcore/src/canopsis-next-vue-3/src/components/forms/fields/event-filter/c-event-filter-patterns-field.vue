@@ -214,6 +214,8 @@ export default {
 
             return {
               items: this.sourceTypes,
+              itemTitle: 'text',
+              itemValue: 'value',
               multiple: isMultiple,
               deletableChips: isMultiple,
               smallChips: isMultiple,

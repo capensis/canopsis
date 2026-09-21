@@ -624,3 +624,21 @@ export default {
   }
 }
 </style>
+
+<style lang="scss">
+.c-advanced-data-table__search {
+  flex: 1 1 0;
+  max-width: none;
+}
+
+.c-advanced-data-table__toolbar-field {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+
+  .c-field {
+    width: max-content;
+    flex: 0 0 auto;
+  }
+}
+</style>

@@ -5,6 +5,8 @@
     :label="label || $t('common.type')"
     :name="name"
     :required="required"
+    :hide-details="hideDetails"
+    class="entity-info-property-type-field"
     item-title="text"
     item-value="value"
     clearable
@@ -37,6 +39,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: ['update:value'],
@@ -56,3 +62,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.entity-info-property-type-field {
+  min-width: 200px;
+}
+</style>

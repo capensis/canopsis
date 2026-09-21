@@ -11,8 +11,14 @@
     clearable
     @update:model-value="updateModel"
   >
+    <template #selection>
+      <span class="text-truncate">
+        {{ selectedViewLabel }}
+      </span>
+    </template>
+
     <template #subheader="{ props: subheaderProps }">
-      <v-list-subheader v-bind="subheaderProps" class="view-selector-menu__subheader" />
+      <v-list-subheader v-bind="subheaderProps" />
     </template>
 
     <template #item="{ props: itemProps, item }">
@@ -53,13 +59,18 @@ export default {
 
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { viewGroups, viewGroupsPending, fetchViewGroupsList } = useView();
+    const { viewGroups, viewGroupsPending, getViewById, fetchViewGroupsList } = useView();
     const menuProps = {
       contentClass: 'view-selector-menu',
     };
 
     const viewItems = computed(() => (viewGroups.value ?? []).reduce((acc, group) => {
         const views = group.views ?? [];
+
+        if (!views.length) {
+          return acc;
+        }
+
         const groupTitle = group.title || group.name;
 
         acc.push({
@@ -71,6 +82,7 @@ export default {
           acc.push({
             value: view._id,
             title: view.title || view.name,
+            groupTitle,
           });
         });
 
@@ -78,9 +90,29 @@ export default {
       }, []),
     );
 
-    const updateModel = (value) => {
-      emit('update:modelValue', value);
-    };
+    const selectedViewLabel = computed(() => {
+      if (!props.modelValue) {
+        return '';
+      }
+
+      const selectedItem = viewItems.value.find(({ value }) => value === props.modelValue);
+
+      if (selectedItem) {
+        return `${selectedItem.groupTitle} / ${selectedItem.title}`;
+      }
+
+      try {
+        const view = getViewById(props.modelValue);
+
+        return view?.title ?? '';
+      } catch (error) {
+        console.error(error);
+
+        return '';
+      }
+    });
+
+    const updateModel = value => emit('update:modelValue', value);
 
     onMounted(() => fetchViewGroupsList({
         params: {
@@ -99,17 +131,10 @@ export default {
       t,
       menuProps,
       viewItems,
+      selectedViewLabel,
       viewGroupsPending,
       updateModel,
     };
   },
 };
 </script>
-
-<style lang="scss">
-.view-selector-menu__subheader {
-  .v-list-item-title {
-    font-weight: 600;
-  }
-}
-</style>

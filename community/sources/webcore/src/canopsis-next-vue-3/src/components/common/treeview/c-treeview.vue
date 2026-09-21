@@ -1,55 +1,65 @@
 <template>
-  <v-treeview
-    v-bind="$attrs"
-    :items="items"
-    :item-title="resolvedItemTitle"
-    :item-value="resolvedItemValue"
-    :item-children="itemChildren"
-    :open-on-click="openOnClick"
-    :opened="currentOpened"
-    :activated="currentActivated"
-    :selected="selected"
-    :model-value="currentModelValue"
-    @update:opened="updateOpened"
-    @update:activated="updateActivated"
-    @update:selected="$emit('update:selected', $event)"
-    @update:model-value="updateModelValue"
-    @click:open="$emit('click:open', $event)"
-    @click:select="$emit('click:select', $event)"
-  >
-    <template v-if="$slots.prepend" #prepend="slotProps">
-      <slot v-bind="getLegacySlotProps(slotProps)" name="prepend" />
-    </template>
+  <v-defaults-provider :defaults="buttonDefaults">
+    <v-treeview
+      v-bind="$attrs"
+      :items="items"
+      :item-title="resolvedItemTitle"
+      :item-value="resolvedItemValue"
+      :item-children="itemChildren"
+      :open-on-click="openOnClick"
+      :opened="currentOpened"
+      :activated="currentActivated"
+      :selected="selected"
+      :model-value="currentModelValue"
+      class="c-treeview"
+      @update:opened="updateOpened"
+      @update:activated="updateActivated"
+      @update:selected="$emit('update:selected', $event)"
+      @update:model-value="updateModelValue"
+      @click:open="$emit('click:open', $event)"
+      @click:select="$emit('click:select', $event)"
+    >
+      <template v-if="$slots.prepend" #prepend="slotProps">
+        <slot v-bind="getLegacySlotProps(slotProps)" name="prepend" />
+      </template>
 
-    <template v-if="$slots.label" #title="slotProps">
-      <slot v-bind="getLegacySlotProps(slotProps)" name="label" />
-    </template>
+      <template v-if="$slots.label" #title="slotProps">
+        <slot v-bind="getLegacySlotProps(slotProps)" name="label" />
+      </template>
 
-    <template v-if="$slots.append" #append="slotProps">
-      <slot v-bind="getLegacySlotProps(slotProps)" name="append" />
-    </template>
+      <template v-if="$slots.append" #append="slotProps">
+        <slot v-bind="getLegacySlotProps(slotProps)" name="append" />
+      </template>
 
-    <template v-if="$slots.item" #item="slotProps">
-      <slot v-bind="getLegacySlotProps(slotProps)" name="item" />
-    </template>
+      <template v-if="$slots.item" #item="slotProps">
+        <slot v-bind="getLegacySlotProps(slotProps)" name="item" />
+      </template>
 
-    <template v-if="$slots.header" #header="slotProps">
-      <slot v-bind="getLegacySlotProps(slotProps)" name="header" />
-    </template>
+      <template v-if="$slots.header" #header="slotProps">
+        <slot v-bind="getLegacySlotProps(slotProps)" name="header" />
+      </template>
 
-    <template v-if="$slots.footer" #footer="slotProps">
-      <slot v-bind="getLegacySlotProps(slotProps)" name="footer" />
-    </template>
+      <template v-if="$slots.footer" #footer="slotProps">
+        <slot v-bind="getLegacySlotProps(slotProps)" name="footer" />
+      </template>
 
-    <template v-if="$slots['no-data']" #no-data>
-      <slot name="no-data" />
-    </template>
-  </v-treeview>
+      <template v-if="$slots['no-data']" #no-data>
+        <slot name="no-data" />
+      </template>
+    </v-treeview>
+  </v-defaults-provider>
 </template>
 
 <script>
 import { isString } from 'lodash';
+import { computed, ref } from 'vue';
 import { VTreeview } from 'vuetify/components';
+
+const buttonDefaults = {
+  VBtn: {
+    size: 'x-small',
+  },
+};
 
 export default {
   components: { VTreeview },
@@ -115,14 +125,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-      internalOpened: [],
-      internalActivated: [],
-      internalModelValue: [],
-    };
-  },
-
   emits: [
     'click:open',
     'click:select',
@@ -135,86 +137,94 @@ export default {
     'update:selected',
   ],
 
-  computed: {
-    resolvedItemTitle() {
-      return this.itemTitle ?? this.itemText ?? 'title';
-    },
+  setup(props, { emit }) {
+    const internalOpened = ref([]);
+    const internalActivated = ref([]);
+    const internalModelValue = ref([]);
 
-    resolvedItemValue() {
-      return this.itemValue ?? this.itemKey;
-    },
+    const resolvedItemTitle = computed(() => props.itemTitle ?? props.itemText ?? 'title');
+    const resolvedItemValue = computed(() => props.itemValue ?? props.itemKey);
+    const currentOpened = computed(() => props.opened ?? props.open ?? internalOpened.value);
+    const currentActivated = computed(() => props.activated ?? props.active ?? internalActivated.value);
+    const currentModelValue = computed(() => props.modelValue ?? props.value ?? internalModelValue.value);
 
-    currentOpened() {
-      return this.opened ?? this.open ?? this.internalOpened;
-    },
-
-    currentActivated() {
-      return this.activated ?? this.active ?? this.internalActivated;
-    },
-
-    currentModelValue() {
-      return this.modelValue ?? this.value ?? this.internalModelValue;
-    },
-  },
-
-  methods: {
-    getItemChildren(item) {
-      if (typeof this.itemChildren === 'function') {
-        return this.itemChildren(item);
+    const getItemChildren = (item) => {
+      if (typeof props.itemChildren === 'function') {
+        return props.itemChildren(item);
       }
 
-      if (Array.isArray(this.itemChildren)) {
-        return this.itemChildren.reduce((acc, key) => acc?.[key], item);
+      if (Array.isArray(props.itemChildren)) {
+        return props.itemChildren.reduce((acc, key) => acc?.[key], item);
       }
 
-      return item?.[this.itemChildren];
-    },
+      return item?.[props.itemChildren];
+    };
 
-    isLeaf(item) {
+    const isLeaf = (item) => {
       if (!item || typeof item !== 'object') {
         return true;
       }
 
-      if (isString(this.itemChildren) && Object.hasOwn(item, this.itemChildren)) {
+      if (isString(props.itemChildren) && Object.hasOwn(item, props.itemChildren)) {
         return false;
       }
 
-      return !this.getItemChildren(item);
-    },
+      return !getItemChildren(item);
+    };
 
-    getLegacySlotProps(slotProps) {
-      return {
-        ...slotProps,
-        leaf: this.isLeaf(slotProps.item),
-      };
-    },
+    const getLegacySlotProps = slotProps => ({
+      ...slotProps,
+      leaf: isLeaf(slotProps.item),
+    });
 
-    updateOpened(opened) {
-      if (!this.opened && !this.open) {
-        this.internalOpened = opened;
+    const updateOpened = (opened) => {
+      if (!props.opened && !props.open) {
+        internalOpened.value = opened;
       }
 
-      this.$emit('update:opened', opened);
-      this.$emit('update:open', opened);
-    },
+      emit('update:opened', opened);
+      emit('update:open', opened);
+    };
 
-    updateActivated(activated) {
-      if (!this.activated && !this.active) {
-        this.internalActivated = activated;
+    const updateActivated = (activated) => {
+      if (!props.activated && !props.active) {
+        internalActivated.value = activated;
       }
 
-      this.$emit('update:activated', activated);
-      this.$emit('update:active', activated);
-    },
+      emit('update:activated', activated);
+      emit('update:active', activated);
+    };
 
-    updateModelValue(value) {
-      if (!this.modelValue && !this.value) {
-        this.internalModelValue = value;
+    const updateModelValue = (value) => {
+      if (!props.modelValue && !props.value) {
+        internalModelValue.value = value;
       }
 
-      this.$emit('update:modelValue', value);
-      this.$emit('input', value);
-    },
+      emit('update:modelValue', value);
+      emit('input', value);
+    };
+
+    return {
+      buttonDefaults,
+      resolvedItemTitle,
+      resolvedItemValue,
+      currentOpened,
+      currentActivated,
+      currentModelValue,
+      getLegacySlotProps,
+      updateOpened,
+      updateActivated,
+      updateModelValue,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-treeview {
+  :deep(.v-list-item) {
+    min-height: 32px;
+    padding-block: 0;
+  }
+}
+</style>

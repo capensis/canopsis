@@ -10,7 +10,7 @@
     @update:options="updateOptions"
   >
     <template #toolbar>
-      <div>
+      <div class="c-advanced-data-table__toolbar-field">
         <template-testing-data-type-field
           :value="options.type"
           hide-details

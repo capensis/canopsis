@@ -4,8 +4,9 @@
     :close-on-content-click="false"
     content-class="date-time-picker"
     transition="slide-y-transition"
+    min-width="370"
     max-width="370"
-    location="bottom end"
+    location="bottom start"
   >
     <template #activator="{ props: activatorProps }">
       <slot

@@ -9,7 +9,7 @@
       </v-tab>
     </v-tabs>
 
-    <v-window v-model="activeTab">
+    <v-window v-model="activeTab" class="pt-3">
       <v-window-item value="general">
         <broadcast-message-general-form />
       </v-window-item>

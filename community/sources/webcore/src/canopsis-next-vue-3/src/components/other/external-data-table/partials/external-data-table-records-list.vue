@@ -183,7 +183,7 @@
       <template v-for="header in dataHeaders" :key="header.value" #[header.value]="{ item }">
         <span
           :title="item[header.value]?.initial_value ?? item[header.value]"
-          :class="{ 'table-cell__content--error': item[header.value]?.transform_error }"
+          :class="{ 'table-cell__content--error': hasColumnCellError(header.value, item) }"
           class="table-cell__content"
         >
           {{ item[header.value]?.initial_value ?? item[header.value] }}
@@ -419,7 +419,7 @@ export default {
         text: column.name,
         class: DRAGGABLE_CLASS,
         sortable: column.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
-        errors: column.messages,
+        errors: props.columns[column.name]?.messages,
       }));
 
       if (props.withActions) {
@@ -438,6 +438,9 @@ export default {
     const isMediumDense = computed(() => props.dense === DENSE_TYPES.medium);
 
     const updatePage = page => emit('update:options', { ...props.options, page });
+
+    const hasColumnCellError = (name, item) =>
+      !!item[name]?.transform_error && !!props.columns[name]?.messages?.length;
 
     const updateColumn = (name, value) => emit('update:columns', {
         ...props.columns,
@@ -493,6 +496,7 @@ export default {
       updatePage,
       updateColumn,
       updateColumnField,
+      hasColumnCellError,
 
       tableStyle,
       tableClass,

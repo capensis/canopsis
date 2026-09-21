@@ -12,6 +12,7 @@
     hide-no-data
     single-line
     hide-details
+    class="c-field"
     @keydown.enter="keydownEnterCombobox"
     @update:model-value="submit"
     @update:search="updateModel"
@@ -35,6 +36,7 @@
     :label="label || $t('common.search')"
     hide-details
     single-line
+    class="c-field"
     @update:model-value="updateModel"
     @keydown.enter.prevent="submit(modelValue)"
   />

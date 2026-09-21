@@ -342,6 +342,16 @@ $v2-font-size-root: 14px;
   padding: 0 16px;
 }
 
+.v-list-subheader {
+  padding-left: 10px;
+
+  .v-list-subheader__text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgb(var(--v-theme-on-surface));
+  }
+}
+
 .v-application .text-subtitle-1 {
   font-size: 1.1428571429rem !important;
   font-weight: 400;
