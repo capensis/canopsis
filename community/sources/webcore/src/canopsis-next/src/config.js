@@ -47,6 +47,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
     'service-entities-list', 'v-icon', 'v-row', 'v-chip',
+    'c-now',
   ]),
   allowedAttributes: {
     '*': [
@@ -74,6 +75,8 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
     'v-chip': ['color', 'text-color'],
+
+    'c-now': ['format', 'timezone', 'realtime', 'offset'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
