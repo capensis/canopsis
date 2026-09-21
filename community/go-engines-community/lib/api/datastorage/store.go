@@ -109,6 +109,11 @@ func (s *store) updateRetentionPolicy(ctx context.Context, data datastorage.Data
 		return err
 	}
 
+	err = s.updateLLMTokenUsageRetentionPolicy(ctx, data, pgPool)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -245,6 +250,23 @@ func (s *store) updateConnectorAnomaliesRetentionPolicy(ctx context.Context, dat
 	deleteAfter := data.Config.ConnectorAnomalies.DeleteAfter
 	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.EventAnomalyHourly, deleteAfter.String())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updateLLMTokenUsageRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
+	err := s.deleteRetentionPolicy(ctx, pgPool, metrics.LLMTokenUsageHourly)
+	if err != nil {
+		return err
+	}
+
+	deleteAfter := data.Config.LLMChat.DeleteTokenUsageAfter
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
+		err = s.addRetentionPolicy(ctx, pgPool, metrics.LLMTokenUsageHourly, deleteAfter.String())
 		if err != nil {
 			return err
 		}
