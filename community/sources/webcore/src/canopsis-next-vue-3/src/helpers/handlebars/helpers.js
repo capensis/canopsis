@@ -3,7 +3,12 @@ import { get, isFunction, isNumber, isObject, isString, pick } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
+import {
+  convertDateToStringWithFormatForToday,
+  convertDateToString,
+  getLocalTimezone,
+} from '@/helpers/date/date';
+import { formatNow } from '@/helpers/date/date-intervals';
 import { convertDurationToString } from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
 
@@ -450,4 +455,52 @@ export function mapHelper(string, options) {
     .join('');
 
   return new Handlebars.SafeString(`<v-row class="ga-2" wrap>${chips}</v-row>`);
+}
+
+/**
+ * Return the current date and time.
+ *
+ * Examples:
+ * {{now}}
+ * {{now format='long' timezone='Europe/Paris'}}
+ * {{now format='time' realtime=true offset='+15m'}}
+ *
+ * @param {string} [format]
+ * @param {string} [timezone]
+ * @param {boolean} [realtime]
+ * @param {string} [offset]
+ * @returns {string|Handlebars.SafeString}
+ */
+export function nowHelper(options = {}) {
+  const { format, timezone, realtime, offset, adjustment, delta } = options.hash ?? {};
+  const helperOffset = offset ?? adjustment ?? delta;
+
+  const normalizedOptions = {
+    format,
+    timezone: timezone || getLocalTimezone(),
+    realtime: realtime === true || realtime === 'true',
+    offset: helperOffset,
+  };
+
+  if (normalizedOptions.realtime) {
+    const attributesToPrepare = { realtime: true };
+
+    if (!normalizedOptions.format) {
+      attributesToPrepare.format = DATETIME_FORMATS.long;
+    }
+
+    if (!normalizedOptions.timezone) {
+      attributesToPrepare.timezone = getLocalTimezone();
+    }
+
+    if (!normalizedOptions.offset) {
+      attributesToPrepare.offset = helperOffset;
+    }
+
+    const attributes = prepareAttributes(attributesToPrepare);
+
+    return new Handlebars.SafeString(`<c-now ${attributes}></c-now>`);
+  }
+
+  return formatNow(normalizedOptions);
 }
