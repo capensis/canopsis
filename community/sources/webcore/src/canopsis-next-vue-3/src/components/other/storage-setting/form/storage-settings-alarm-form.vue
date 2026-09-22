@@ -24,15 +24,13 @@
       name="alarm.delete_after"
       switcher
       hide-value-on-false
-      @update:duration="updateDeleteAfter"
+      @update:duration="updateField('delete_after', $event)"
     />
   </c-information-block>
 </template>
 
 <script>
-import { nextTick } from 'vue';
-
-import { useFormContext, useModelField } from '@/hooks/form';
+import { useModelField } from '@/hooks/form';
 
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
@@ -53,18 +51,10 @@ export default {
   emits: ['update:form'],
 
   setup(props, { emit }) {
-    const formContext = useFormContext();
     const { updateField } = useModelField(props, emit);
-
-    const validateDeleteAfter = () => nextTick(() => formContext.validateField('alarm.delete_after'));
-    const updateDeleteAfter = (duration) => {
-      updateField('delete_after', duration);
-      validateDeleteAfter();
-    };
 
     return {
       updateField,
-      updateDeleteAfter,
     };
   },
 };

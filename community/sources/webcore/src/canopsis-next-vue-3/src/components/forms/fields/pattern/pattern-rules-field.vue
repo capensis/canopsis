@@ -10,6 +10,7 @@
       <v-col class="pattern-rules-field__rule py-0">
         <pattern-rule-field
           v-bind="getRuleProps(rule)"
+          :key="`${rule.key}-${rule.attribute}`"
           :rule="rule"
           :name="rule.key"
           :attributes="attributes"

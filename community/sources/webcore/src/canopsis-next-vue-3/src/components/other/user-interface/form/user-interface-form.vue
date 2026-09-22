@@ -4,9 +4,6 @@
       <v-tab :class="{ 'text-error': hasGeneralError }" value="general">
         {{ t('common.general') }}
       </v-tab>
-      <v-tab :class="{ 'text-error': hasNotificationsError }" value="notifications">
-        {{ t('common.notification', 2) }}
-      </v-tab>
       <v-tab :class="{ 'text-error': hasAdvancedError }" value="advanced">
         {{ t('userInterface.advanced') }}
       </v-tab>
@@ -18,10 +15,6 @@
     <v-window v-model="activeTab">
       <v-window-item value="general" class="pt-4" eager>
         <user-interface-general-form ref="generalElement" :disabled="disabled" />
-      </v-window-item>
-
-      <v-window-item value="notifications" class="pt-4" eager>
-        <user-interface-notifications-form ref="notificationsElement" :disabled="disabled" />
       </v-window-item>
 
       <v-window-item value="advanced" class="pt-4" eager>
@@ -44,13 +37,11 @@ import { useValidationElementChildren } from '@/hooks/validator/validation-eleme
 import UserInterfaceAdvancedForm from './user-interface-advanced-form.vue';
 import UserInterfaceGeneralForm from './user-interface-general-form.vue';
 import UserInterfaceLoginForm from './user-interface-login-form.vue';
-import UserInterfaceNotificationsForm from './user-interface-notifications-form.vue';
 
 export default {
   components: {
     UserInterfaceGeneralForm,
     UserInterfaceLoginForm,
-    UserInterfaceNotificationsForm,
     UserInterfaceAdvancedForm,
   },
   props: {
@@ -64,13 +55,10 @@ export default {
     const activeTab = ref('general');
 
     const generalElement = ref(null);
-    const notificationsElement = ref(null);
     const advancedElement = ref(null);
     const loginPageElement = ref(null);
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
-    const { hasChildrenError: hasNotificationsError } =
-      useValidationElementChildren(notificationsElement);
     const { hasChildrenError: hasAdvancedError } = useValidationElementChildren(advancedElement);
     const { hasChildrenError: hasLoginPageError } = useValidationElementChildren(loginPageElement);
 
@@ -78,11 +66,9 @@ export default {
       t,
       activeTab,
       generalElement,
-      notificationsElement,
       advancedElement,
       loginPageElement,
       hasGeneralError,
-      hasNotificationsError,
       hasAdvancedError,
       hasLoginPageError,
     };
