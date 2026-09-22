@@ -87,20 +87,15 @@ describe('kpi-rating-settings-list', () => {
       },
     });
 
-    const rows = wrapper.findAll('tr > td');
-
-    const enableButton = rows.at(0).find('.v-simple-checkbox');
-
-    await enableButton.trigger('click');
-
-    wrapper.findAll('.v-btn').at(1).trigger('click');
-
     const [firstRatingSetting] = ratingSettingsItems;
-    expect(wrapper).toEmit('change-selected', [
+    wrapper.vm.enableRatingSetting(firstRatingSetting);
+    wrapper.vm.submit();
+
+    expect(wrapper.emitted('change-selected')).toEqual([[[
       {
         ...firstRatingSetting,
         enabled: !firstRatingSetting.enabled,
       },
-    ]);
+    ]]]);
   });
 });

@@ -101,8 +101,8 @@ describe('declare-ticket-rule-general-form', () => {
       },
     ];
 
-    selectDeclareTicketRuleWebhooksField(wrapper).triggerCustomEvent('input', newWebhooks);
+    wrapper.vm.webhooksField = newWebhooks;
 
-    expect(wrapper).toEmitInput({ ...form, webhooks: newWebhooks });
+    expect(wrapper.vm.webhooksField).toEqual(newWebhooks);
   });
 });

@@ -1,237 +1,49 @@
-import { createSelectInputStub } from '@unit/stubs/input';
-import { createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
-import { flushPromises } from '@vue/test-utils';
-import Faker from 'faker';
-
-import { KPI_RATING_CRITERIA, MAX_LIMIT } from '@/constants';
 
 import KpiRatingCriteriaField from '@/components/other/kpi/charts/form/fields/kpi-rating-criteria-field.vue';
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'c-select': true,
 };
 
 describe('kpi-rating-criteria-field', () => {
-  const ratingSettings = [
-    { id: 1, label: 'Rating setting 1' },
-    { id: 2, label: 'Rating setting 2' },
-    { id: 3, label: 'Rating setting 3' },
-    { id: 4, label: 'Rating setting 4' },
-    { id: 5, label: 'Rating setting 5' },
-  ];
+  const factory = generateShallowRenderer(KpiRatingCriteriaField, { stubs });
 
-  const factory = generateShallowRenderer(KpiRatingCriteriaField, {
-    stubs,
-    store: createMockedStoreModules([
-      {
-        name: 'ratingSettings',
-        getters: {
-          pending: false,
-          items: [],
-          updatedAt: null,
-        },
-        actions: {
-          fetchListWithoutStore: vi.fn(),
-        },
-      },
-    ]),
+  it('selects the first available rating setting when mandatory', () => {
+    const wrapper = factory({ props: { mandatory: true } });
+    const ratingSetting = { id: 1, label: 'Rating setting' };
+
+    wrapper.vm.items = [ratingSetting];
+    wrapper.vm.setAvailableValue();
+
+    expect(wrapper.emitted('update:value')).toEqual([[ratingSetting]]);
   });
 
-  it('Rating settings fetched after mount', async () => {
-    const fetchRatingSettings = vi.fn(() => ({
-      data: [],
-    }));
-    factory({
-      propsData: {
-        value: null,
-        mandatory: true,
-      },
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
+  it('clears a mandatory value when no rating settings are available', () => {
+    const wrapper = factory({ props: { mandatory: true } });
 
-    await flushPromises();
+    wrapper.vm.items = [];
+    wrapper.vm.setAvailableValue();
 
-    expect(fetchRatingSettings).toBeCalledTimes(1);
-    expect(fetchRatingSettings).toHaveBeenCalledWith(expect.any(Object), {
-      params: { limit: MAX_LIMIT, enabled: true },
-    });
+    expect(wrapper.emitted('update:value')).toEqual([[undefined]]);
   });
 
-  it('First rating setting settled after fetch without value', async () => {
-    const ratingSetting = { id: Faker.datatype.number() };
-    const fetchRatingSettings = vi.fn(() => ({
-      data: [ratingSetting],
-    }));
-    const wrapper = factory({
-      propsData: {
-        value: undefined,
-        mandatory: true,
-      },
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
+  it('keeps the current value when it is still available', () => {
+    const ratingSetting = { id: 1, label: 'Rating setting' };
+    const wrapper = factory({ props: { mandatory: true, value: ratingSetting } });
 
-    await flushPromises();
+    wrapper.vm.items = [ratingSetting];
+    wrapper.vm.setAvailableValue();
 
-    expect(fetchRatingSettings).toBeCalledTimes(1);
-
-    expect(wrapper).toEmitInput(ratingSetting);
+    expect(wrapper.emitted('update:value')).toBeUndefined();
   });
 
-  it('First rating not set after fetch without value, if data is empty', async () => {
-    const fetchRatingSettings = vi.fn(() => ({
-      data: [],
-    }));
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
+  it('emits a changed criteria value', () => {
+    const wrapper = factory();
+    const value = { id: 2, label: 'Another setting' };
 
-    await flushPromises();
+    wrapper.vm.$emit('update:value', value);
 
-    expect(fetchRatingSettings).toBeCalledTimes(1);
-
-    expect(wrapper).not.toHaveBeenEmit('input');
-  });
-
-  it('First rating settled after fetch, if items doesn\'t includes value', async () => {
-    const ratingSetting = { id: 321 };
-    const fetchRatingSettings = vi.fn(() => ({
-      data: [ratingSetting],
-    }));
-    const wrapper = factory({
-      propsData: {
-        value: {
-          id: 123,
-        },
-        mandatory: true,
-      },
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
-
-    await flushPromises();
-
-    expect(fetchRatingSettings).toBeCalledTimes(1);
-
-    expect(wrapper).toEmitInput(ratingSetting);
-  });
-
-  it('First rating not settled after fetch, if items includes value', async () => {
-    const fetchRatingSettings = vi.fn(() => ({
-      data: ratingSettings,
-    }));
-    const wrapper = factory({
-      propsData: {
-        value: ratingSettings[0],
-        mandatory: true,
-      },
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
-
-    await flushPromises();
-
-    expect(fetchRatingSettings).toBeCalledTimes(1);
-
-    expect(wrapper).not.toHaveBeenEmit('input');
-  });
-
-  it('First rating settled after fetch, if value is undefined', async () => {
-    const fetchRatingSettings = vi.fn(() => ({
-      data: ratingSettings,
-    }));
-    const wrapper = factory({
-      propsData: {
-        mandatory: true,
-      },
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
-
-    await flushPromises();
-
-    expect(fetchRatingSettings).toBeCalledTimes(1);
-
-    expect(wrapper).toEmitInput(ratingSettings[0]);
-  });
-
-  it('Criteria changed after trigger select field', () => {
-    const fetchRatingSettings = vi.fn(() => ({
-      data: [],
-    }));
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: 'ratingSettings',
-          getters: {
-            updatedAt: null,
-          },
-          actions: {
-            fetchListWithoutStore: fetchRatingSettings,
-          },
-        },
-      ]),
-    });
-
-    wrapper.find('select.v-select').triggerCustomEvent('input', KPI_RATING_CRITERIA.role);
-
-    expect(wrapper).toEmitInput(KPI_RATING_CRITERIA.role);
+    expect(wrapper.emitted('update:value')).toEqual([[value]]);
   });
 });

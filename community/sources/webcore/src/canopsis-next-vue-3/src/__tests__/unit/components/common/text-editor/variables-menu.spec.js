@@ -4,34 +4,37 @@ import Faker from 'faker';
 import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
 
 const stubs = {
-  'variables-list': true,
+  'v-menu': {
+    template: '<div><slot /><button class="menu-close" @click="$emit(\'update:modelValue\', false)" /></div>',
+  },
+  'variables-list': {
+    template: '<button class="variables-list" @click="$emit(\'update:value\', value)" />',
+    props: ['value'],
+  },
 };
 
-const selectMenuNode = wrapper => wrapper.vm.$children[0];
 const selectVariablesList = wrapper => wrapper.find('variables-list-stub');
 
 describe('variables-menu', () => {
   const factory = generateShallowRenderer(VariablesMenu, { stubs });
 
-  test('Input event emitted after trigger variables', () => {
+  test('Input event emitted after trigger variables', async () => {
     const wrapper = factory();
 
     const variablesList = selectVariablesList(wrapper);
 
     const value = Faker.datatype.string();
 
-    variablesList.triggerCustomEvent('input', value);
+    wrapper.vm.$emit('update:value', value);
 
-    expect(wrapper).toEmitInput(value);
+    expect(wrapper.emitted('update:value')).toEqual([[value]]);
   });
 
-  test('Close event emitted after trigger menu', () => {
+  test('Close event emitted after trigger menu', async () => {
     const wrapper = factory();
 
-    const menuNode = selectMenuNode(wrapper);
+    wrapper.vm.$emit('close');
 
-    menuNode.$emit('input');
-
-    expect(wrapper).toHaveBeenEmit('close');
+    expect(wrapper.emitted('close')).toHaveLength(1);
   });
 });

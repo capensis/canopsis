@@ -1,19 +1,18 @@
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
-import Faker from 'faker';
 
 import ClickOutside from '@/services/click-outside';
 
 import CreateAssociateTicketEvent from '@/components/modals/declare-ticket/create-associate-ticket-event.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'c-alert': true,
+  'c-checkbox': true,
   'alarm-general-table': true,
   'associate-ticket-event-form': true,
   'c-description-field': true,
@@ -21,106 +20,31 @@ const stubs = {
   'v-form': createFormStub('v-form'),
 };
 
-const selectButtons = wrapper => wrapper.findAll('button.v-btn');
-const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
-const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectAssociateTicketEventForm = wrapper => wrapper.find('associate-ticket-event-form-stub');
-
 describe('create-associate-ticket-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
-
-  const alarm = {
-    _id: Faker.datatype.string(),
-    v: {
-      connector: Faker.datatype.string(),
-      connector_name: Faker.datatype.string(),
-      component: Faker.datatype.string(),
-      resource: Faker.datatype.string(),
-      state: {
-        val: Faker.datatype.number(),
-      },
-      status: {
-        val: Faker.datatype.number(),
-      },
-    },
-    entity: {
-      type: Faker.datatype.number(),
-    },
-  };
-  const items = [alarm];
-  const assocTicketEventData = {
-    comment: '',
-    ticket: '',
-    data: {},
-    system_name: '',
-    ticket_resources: false,
-    url: '',
-    url_title: '',
-  };
-
-  const createEvent = vi.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-  const store = createMockedStoreModules([eventModule]);
 
   const factory = generateShallowRenderer(CreateAssociateTicketEvent, {
     stubs,
     attachTo: document.body,
+    parentComponent: { provide: { $clickOutside: new ClickOutside() } },
+    mocks: { $modals, $popups },
+  });
+
+  const createWrapper = (config = {}) => factory({
     propsData: {
       modal: {
-        config: {
-          items: [],
-        },
+        id: 'test-modal-id',
+        config,
       },
-    },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
-    mocks: {
-      $modals,
-      $popups,
     },
   });
 
-  afterEach(() => {
-    createEvent.mockClear();
-  });
-
-  test('Form submitted after trigger submit button', async () => {
+  test('submits the default form and closes the modal by id', async () => {
     const action = vi.fn();
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config: {
-            items: [
-              {
-                ...alarm,
-                v: {
-                  ...alarm.v,
-                  ack: {},
-                },
-              },
-            ],
-            action,
-          },
-        },
-      },
-    });
+    const wrapper = createWrapper({ action });
 
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
+    await wrapper.find('form').trigger('submit');
 
     expect(action).toHaveBeenCalledWith({
       comment: '',
@@ -131,160 +55,56 @@ describe('create-associate-ticket-event', () => {
       url: '',
       url_title: '',
     });
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config: {
-            items,
-          },
-        },
-      },
+  test('maps updated form values before submitting', async () => {
+    const action = vi.fn();
+    const wrapper = createWrapper({ action });
+
+    wrapper.vm.updateForm({
+      comment: 'Comment',
+      ticket: 'INC-42',
+      ticket_url: 'https://tickets.test/INC-42',
+      ticket_url_title: 'Ticket',
+      ticket_system_name: 'Service desk',
+      ticket_resources: true,
+      mapping: [{ key: 'pair-id', text: 'priority', value: 'high' }],
     });
+    await wrapper.find('form').trigger('submit');
 
-    const associateTicketEventForm = selectAssociateTicketEventForm(wrapper);
-
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => associateTicketEventForm.vm,
-      vm: associateTicketEventForm.vm,
+    expect(action).toHaveBeenCalledWith({
+      comment: 'Comment',
+      ticket: 'INC-42',
+      data: { priority: 'high' },
+      system_name: 'Service desk',
+      ticket_resources: true,
+      url: 'https://tickets.test/INC-42',
+      url_title: 'Ticket',
     });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(createEvent).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
-
-    validator.detach('name');
   });
 
-  test('Errors added after trigger submit button with action errors', async () => {
-    const formErrors = {
-      ticket: 'Ticket id error',
-      ticket_url: 'Ticket url error',
-    };
-    const action = vi.fn().mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config: {
-            action,
-            items: [
-              {
-                ...alarm,
-                v: {
-                  ...alarm.v,
-                  ack: null,
-                },
-              },
-            ],
-          },
-        },
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(addedErrors).toEqual(formErrors);
-    expect(action).toHaveBeenCalledWith(assocTicketEventData);
-    expect($modals.hide).not.toHaveBeenCalledWith();
-  });
-
-  test('Error popup showed after trigger submit button with action errors', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
-    const errors = {
-      unavailableField: 'Error',
-      anotherUnavailableField: 'Second error',
-    };
+  test('shows an error popup and keeps the modal open for unmapped action errors', async () => {
+    const errors = { unavailableField: 'Error', anotherUnavailableField: 'Second error' };
     const action = vi.fn().mockRejectedValueOnce(errors);
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
+    const wrapper = createWrapper({ action });
 
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config: {
-            action,
-            items: [
-              {
-                ...alarm,
-                v: {
-                  ...alarm.v,
-                  ack: {},
-                },
-              },
-            ],
-          },
-        },
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.find('form').trigger('submit');
     await flushPromises();
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
-    expect($popups.error).toHaveBeenCalledWith({
-      text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
-    });
-    expect(action).toHaveBeenCalledWith(assocTicketEventData);
-    expect($modals.hide).not.toHaveBeenCalledWith();
-
-    consoleErrorSpy.mockClear();
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Error\nSecond error' });
+    expect($modals.hide).not.toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
-  test('Modal submitted with correct data after trigger form with ticket', async () => {
-    const action = vi.fn();
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config: {
-            action,
-            items,
-          },
-        },
-      },
-    });
+  test('closes without an action when cancel is clicked', async () => {
+    const wrapper = createWrapper();
 
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.findAll('button.v-btn').at(0).trigger('click');
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith(assocTicketEventData);
-    expect($modals.hide).toBeCalled();
-  });
-
-  test('Modal hidden after trigger cancel button', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config: {
-            items,
-          },
-        },
-      },
-    });
-
-    selectCancelButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

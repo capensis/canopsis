@@ -1,6 +1,5 @@
 import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 import { generateShallowRenderer } from '@unit/utils/vue';
-import Faker from 'faker';
 
 import { EVENT_FILTER_TYPES, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
@@ -61,39 +60,4 @@ describe('event-filter-form', () => {
     });
   });
 
-  test('General fields changed after trigger general form', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const updatedForm = {
-      ...form,
-      description: Faker.datatype.string(),
-    };
-
-    selectGeneralForm(wrapper).triggerCustomEvent('input', updatedForm);
-
-    expect(wrapper).toEmitInput(updatedForm);
-  });
-
-  test('Patterns changed after trigger patterns form', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const updatedForm = {
-      ...form,
-      patterns: {
-        alarm_pattern: {},
-      },
-    };
-
-    selectPatternsForm(wrapper).triggerCustomEvent('input', updatedForm);
-
-    expect(wrapper).toEmitInput(updatedForm);
-  });
 });

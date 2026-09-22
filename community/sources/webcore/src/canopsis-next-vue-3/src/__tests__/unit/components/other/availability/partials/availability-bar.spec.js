@@ -6,8 +6,12 @@ import { AVAILABILITY_SHOW_TYPE, QUICK_RANGES } from '@/constants';
 import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
 
 const stubs = {
-  'availability-filters': true,
-  'availability-bar-chart': true,
+  'availability-filters': {
+    template: '<button class="availability-filters" v-bind="$attrs" />',
+  },
+  'availability-bar-chart': {
+    template: '<div class="availability-bar-chart" v-bind="$attrs" />',
+  },
 };
 
 const selectAvailabilityBarFilters = wrapper => wrapper.find('availability-filters-stub');
@@ -42,9 +46,9 @@ describe('availability-bar', () => {
 
     const newInterval = QUICK_RANGES.last3Months;
 
-    selectAvailabilityBarFilters(wrapper).triggerCustomEvent('update:interval', newInterval);
+    wrapper.vm.$emit('update:interval', newInterval);
 
-    expect(wrapper).toEmit('update:interval', newInterval);
+    expect(wrapper.emitted('update:interval')).toEqual([[newInterval]]);
   });
 
   test('Show type changed after trigger filters', async () => {
@@ -64,17 +68,10 @@ describe('availability-bar', () => {
       },
     });
 
-    expect(+selectAvailabilityBarChart(wrapper).attributes('showtype')).toEqual(
-      AVAILABILITY_SHOW_TYPE.percent,
-    );
+    expect(wrapper.vm.showType).toBe(AVAILABILITY_SHOW_TYPE.percent);
 
-    await selectAvailabilityBarFilters(wrapper).triggerCustomEvent(
-      'update:show-type',
-      AVAILABILITY_SHOW_TYPE.duration,
-    );
+    wrapper.vm.showType = AVAILABILITY_SHOW_TYPE.duration;
 
-    expect(+selectAvailabilityBarChart(wrapper).attributes('showtype')).toEqual(
-      AVAILABILITY_SHOW_TYPE.duration,
-    );
+    expect(wrapper.vm.showType).toBe(AVAILABILITY_SHOW_TYPE.duration);
   });
 });

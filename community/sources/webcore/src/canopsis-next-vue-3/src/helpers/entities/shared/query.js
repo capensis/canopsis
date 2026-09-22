@@ -1,7 +1,7 @@
 import { isArray, isEqual, omit, pick } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { ADVANCED_SEARCH_FIELDS, DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
+import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 
 import {
   convertStartDateIntervalToTimestamp,
@@ -223,7 +223,7 @@ export const getQueryForList = ({
   itemsPerPage,
   sortBy = [],
   sortDesc = [],
-  [ADVANCED_SEARCH_FIELDS.search]: searchPattern,
+  search_pattern: searchPattern,
 } = {}) => {
   const query = {
     page,
@@ -237,7 +237,7 @@ export const getQueryForList = ({
   }
 
   if (searchPattern) {
-    query[ADVANCED_SEARCH_FIELDS.search] = searchPattern;
+    query.search_pattern = searchPattern;
   }
 
   if (category) {

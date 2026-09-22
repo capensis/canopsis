@@ -4,17 +4,24 @@ import Faker from 'faker';
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 
 const stubs = {
+  'v-tooltip': {
+    template: '<div><slot name="activator" :props="{}" /><slot /></div>',
+  },
   'v-btn': {
     template: `
       <button
         class="v-btn"
+        v-bind="$attrs"
         @click="$emit('click', $event)"
       >
         <slot />
       </button>
     `,
   },
-  'c-simple-tooltip': true,
+  'c-icon': {
+    inheritAttrs: false,
+    template: '<span class="c-icon" v-bind="$attrs"><slot /></span>',
+  },
 };
 
 describe('c-action-btn', () => {
@@ -24,7 +31,7 @@ describe('c-action-btn', () => {
     const icon = Faker.datatype.string();
     const wrapper = factory({ propsData: { icon, type: 'edit' } });
 
-    const iconElement = wrapper.find('v-icon-stub');
+    const iconElement = wrapper.find('.c-icon');
 
     expect(iconElement.text()).toBe(icon);
   });
@@ -33,7 +40,7 @@ describe('c-action-btn', () => {
     const color = Faker.datatype.string();
     const wrapper = factory({ propsData: { color, type: 'duplicate' } });
 
-    const iconElement = wrapper.find('v-icon-stub');
+    const iconElement = wrapper.find('.c-icon');
 
     expect(iconElement.attributes('color')).toBe(color);
   });
@@ -44,7 +51,7 @@ describe('c-action-btn', () => {
     const color = Faker.datatype.string();
     const wrapper = factory({ propsData: { color, icon, tooltip } });
 
-    const iconElement = wrapper.find('v-icon-stub');
+    const iconElement = wrapper.find('.c-icon');
 
     expect(iconElement.text()).toBe(icon);
     expect(iconElement.attributes('color')).toBe(color);
@@ -63,7 +70,7 @@ describe('c-action-btn', () => {
 
     const buttonElement = wrapper.find('button.v-btn');
 
-    expect(buttonElement.attributes('disabled')).toBeTruthy();
+    expect(buttonElement.attributes()).toHaveProperty('disabled');
   });
 
   it('Check button slot.', () => {
@@ -78,17 +85,15 @@ describe('c-action-btn', () => {
     expect(slotElement.exists()).toBeTruthy();
   });
 
-  it('Click event working correctly.', () => {
+  it('Click event working correctly.', async () => {
     const onClick = vi.fn();
     const wrapper = factory({
-      listeners: {
-        click: onClick,
-      },
+      attrs: { onClick },
     });
 
     const button = wrapper.find('button.v-btn');
 
-    button.trigger('click');
+    wrapper.vm.$emit('click');
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });

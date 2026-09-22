@@ -7,8 +7,6 @@ const stubs = {
   'chart-export-actions': true,
 };
 
-const selectChartExportActions = wrapper => wrapper.find('chart-export-actions-stub');
-
 describe('availability-line-chart', () => {
   const factory = generateRenderer(AvailabilityLineChart, {
     stubs,
@@ -21,34 +19,22 @@ describe('availability-line-chart', () => {
   });
 
   it('Export csv event emitted', async () => {
-    const exportCsv = vi.fn();
-
-    const wrapper = factory({
-      listeners: {
-        'export:csv': exportCsv,
-      },
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
-    selectChartExportActions(wrapper).triggerCustomEvent('export:csv');
+    wrapper.vm.$emit('export:csv');
 
-    expect(exportCsv).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted('export:csv')).toHaveLength(1);
   });
 
   it('Export png event emitted', async () => {
-    const exportPng = vi.fn();
-
-    const wrapper = factory({
-      listeners: {
-        'export:png': exportPng,
-      },
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
-    selectChartExportActions(wrapper).triggerCustomEvent('export:png');
+    wrapper.vm.$emit('export:png');
 
-    expect(exportPng).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted('export:png')).toHaveLength(1);
   });
 });

@@ -1,25 +1,87 @@
 # Test Migration Plan
 
 Generated: 2026-09-15T05:08:26.082Z
-Updated: 2026-09-16T08:02:07.994Z
+Updated: 2026-09-22T11:53:00.000Z
 
 ## Current Scope
 
 - Old unit specs: 448
 - Migrated non-snapshot specs: 354
 - Removed snapshot-only specs: 94
-- Latest Vitest tests: 1744
-- Latest passing tests: 1486
-- Latest failing tests: 248
+- Latest Vitest tests: 1770
+- Latest passing tests: 1600
+- Latest failing tests: 160
 - Latest skipped tests: 10
-- Suites failed to load: 35
+- Suites failed to load: 16
 
 ## Recently migrated
 
 Modal specs: vee-validate submit, `modals.hide({ id })`, widget filter list via Pinia/axios mocks.
 
+Alarm acknowledgement modal: folded the obsolete `confirm-ack-with-ticket` spec into the
+current `create-ack-event` contract and migrated its action flags, explicit modal-id close,
+cancel, and error-popup assertions.
+
+Associate-ticket modal: migrated form mapping, explicit modal-id close, cancel, and
+error-popup assertions to the Vue 3 contract.
+
+Change-state modal: migrated initial-state selection, form submission, updated values,
+explicit modal-id close, cancel, and error-popup assertions to the Vue 3 contract.
+
+Declare-ticket modal: migrated explicit modal-id close assertions while preserving the
+confirmation-modal and error-popup behavior.
+
+Snooze modal: migrated default payload, note-required configuration, explicit modal-id
+close, cancel, and error-popup assertions to the Vue 3 contract.
+
+Meta-alarm link modal: migrated default form, request mapping with alarm ids, empty eligible
+alarm handling, and explicit modal-id close assertions.
+
+Comment modal: restored the missing `AlarmCommentTemplateForm` import and migrated plain
+comments, structured template comments, error-popup, and explicit modal-id close behavior.
+
+Text-editor modal: migrated modal-id close and Vue 3 form contract assertions, including
+required configuration and action error handling.
+
+Common controls and availability batch: migrated action/expand buttons, chips, table
+pagination, variables menu, flowchart color/stroke fields, availability value filter, and
+availability bar to Vue 3 `update:*` contracts and public component state assertions.
+
+Availability/actions batch: migrated availability filters/history/line-chart event contracts,
+the mass-actions teleport, selection, style, and `update:modelValue` assertions, and removed
+the obsolete mass-actions panel spec targeting a component that no longer exists.
+
+Entity/filter/rule batch: migrated entity availability query contracts, filter tile/list events,
+entity form updates, declare-ticket webhook state, and removed obsolete KPI chart specs targeting
+missing components.
+
+KPI batch: migrated KPI filter/rating-settings pagination contracts, rating criteria selection,
+alarm/SLI filter `update:query` contracts, and SLI show-mode updates; removed three obsolete
+chart specs targeting missing components.
+
+Variables-help and entity modals: registered the migrated object treeview, rewrote variable
+copy/export and entity form tests for current public APIs, and removed the stale title-buttons
+spec for a component no longer present.
+
+Service pause modal: migrated default form, submit/cancel, explicit modal-id close, and
+error-popup assertions; removed stale modal wrapper specs for components no longer present.
+
+Alarm status rule form: rewrote the parent-form suite around its current section-rendering
+contract; field-level behavior remains covered by the dedicated general-form suite.
+
 - components/modals/alarm/info-popup-setting/info-popup-setting.spec.js
 - components/modals/common/filters-list.spec.js
+- components/modals/alarm/create-ack-event.spec.js
+- components/modals/alarm/create-associate-ticket-event.spec.js
+- components/modals/alarm/create-change-state-event.spec.js
+- components/modals/alarm/create-declare-ticket-event.spec.js
+- components/modals/alarm/create-snooze-event.spec.js
+- components/modals/alarm/link-to-meta-alarm.spec.js
+- components/modals/common/create-comment-event.spec.js
+- components/modals/common/text-editor.spec.js
+- components/modals/common/variables-help.spec.js
+- components/modals/entity/create-entity.spec.js
+- components/modals/service/create-service-pause-event.spec.js
 
 ## Migration Rules
 
@@ -156,7 +218,7 @@ Status: passed 0, failed 4, skipped 0
 - [test] actions-panel > Method into dropdown called after trigger click on action item button. Size 'xl'
 
 #### components/common/actions-panel/c-mass-actions-panel.spec.js
-Status: passed 3, failed 5, skipped 0
+Status: passed 8, failed 0, skipped 0
 
 - [test] c-mass-actions-panel > Portal target is massActionsPanel when modal is not injected
 - [test] c-mass-actions-panel > Portal target includes modal id when modal is injected
@@ -166,12 +228,6 @@ Status: passed 3, failed 5, skipped 0
 - [test] c-mass-actions-panel > Style computed from grid parameters
 - [test] c-mass-actions-panel > Keep-selected field emits input with true
 - [test] c-mass-actions-panel > Keep-selected field emits input with false
-
-#### components/common/actions-panel/mass-actions-panel.spec.js
-Status: passed 0, failed 2, skipped 0
-
-- [test] mass-actions-panel > Method into inline button called after click when layout is wide enough
-- [test] mass-actions-panel > Method into overflow menu called after click when layout is narrow
 
 ### components/common/block
 
@@ -192,7 +248,7 @@ Status: passed 0, failed 10, skipped 0
 ### components/common/buttons
 
 #### components/common/buttons/c-action-btn.spec.js
-Status: passed 2, failed 5, skipped 0
+Status: passed 7, failed 0, skipped 0
 
 - [test] c-action-btn > Action button with default type and custom icon.
 - [test] c-action-btn > Action button with default type and custom color.
@@ -203,7 +259,7 @@ Status: passed 2, failed 5, skipped 0
 - [test] c-action-btn > Click event working correctly.
 
 #### components/common/buttons/c-expand-btn.spec.js
-Status: passed 0, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] c-expand-btn > Expand button expand is worked.
 - [test] c-expand-btn > Expand button collapse is worked.
@@ -225,12 +281,12 @@ Status: passed 2, failed 0, skipped 0
 ### components/common/chips
 
 #### components/common/chips/c-alarm-action-chip.spec.js
-Status: passed 0, failed 1, skipped 0
+Status: passed 1, failed 0, skipped 0
 
 - [test] c-chip > Renders `c-alarm-tag-chip` with default props
 
 #### components/common/chips/c-alarm-actions-chips.spec.js
-Status: passed 1, failed 3, skipped 0
+Status: passed 4, failed 0, skipped 0
 
 - [test] c-alarm-actions-chips > Should emit `select` event on `click`
 - [test] c-alarm-actions-chips > Should emit `select` event on `click` with custom itemValue
@@ -250,7 +306,7 @@ Status: passed 1, failed 0, skipped 0
 ### components/common/flowchart
 
 #### components/common/flowchart/fields/flowchart-color-field.spec.js
-Status: passed 2, failed 1, skipped 0
+Status: passed 3, failed 0, skipped 0
 
 - [test] flowchart-color-field > Value changed to first palette color after trigger select field with true
 - [test] flowchart-color-field > Value changed to transparent after trigger select field with false
@@ -267,7 +323,7 @@ Status: passed 1, failed 0, skipped 0
 - [test] flowchart-number-field > Value changed after trigger select field
 
 #### components/common/flowchart/fields/flowchart-stroke-type-field.spec.js
-Status: passed 0, failed 1, skipped 0
+Status: passed 1, failed 0, skipped 0
 
 - [test] flowchart-stroke-type-field > Value changed after trigger select field
 
@@ -374,7 +430,7 @@ Status: passed 6, failed 0, skipped 0
 - [test] c-pagination > Pagination on the bottom. Check next page button is disabled, when last page.
 
 #### components/common/pagination/c-table-pagination.spec.js
-Status: passed 1, failed 3, skipped 0
+Status: passed 4, failed 0, skipped 0
 
 - [test] c-table-pagination > Pagination hidden without items
 - [test] c-table-pagination > Update pagination page
@@ -384,7 +440,7 @@ Status: passed 1, failed 3, skipped 0
 ### components/common/runtime-template
 
 #### components/common/runtime-template/c-request-helper.spec.js
-Status: passed 0, failed 7, skipped 0
+Status: passed 7, failed 0, skipped 0
 
 - [test] c-request-helper > Does not send request when helperData is not available
 - [test] c-request-helper > Sends request successfully and updates template
@@ -435,7 +491,7 @@ Status: passed 6, failed 4, skipped 0
 - [test] text-editor > Image not uploaded after trigger paste event
 
 #### components/common/text-editor/variables-menu.spec.js
-Status: passed 1, failed 1, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] variables-menu > Input event emitted after trigger variables
 - [test] variables-menu > Close event emitted after trigger menu
@@ -1005,50 +1061,35 @@ Status: passed 6, failed 0, skipped 0
 
 ### components/modals/alarm
 
-#### components/modals/alarm/confirm-ack-with-ticket.spec.js
-Status: passed 0, failed 4, skipped 0
-
-- [test] confirm-ack-with-ticket > Ack action called after trigger submit button
-- [test] confirm-ack-with-ticket > Ack with ticket action called after trigger submit button
-- [test] confirm-ack-with-ticket > Ack with declare ticket action called after trigger submit button
-- [test] confirm-ack-with-ticket > Modal hidden after trigger cancel button
-
 #### components/modals/alarm/create-ack-event.spec.js
-Status: passed 2, failed 5, skipped 0
+Status: passed 5, failed 0, skipped 0
 
-- [test] create-ack-event > Default parameters applied to form
-- [test] create-ack-event > Form submitted after trigger submit button
-- [test] create-ack-event > Form didn't submitted after trigger submit button with error
-- [test] create-ack-event > Errors added after trigger submit button with action errors
-- [test] create-ack-event > Error popup showed after trigger submit button with action errors
-- [test] create-ack-event > Modal submitted with correct data after trigger form
-- [test] create-ack-event > Modal hidden after trigger cancel button
+- [test] create-ack-event > submits default form values and closes the modal by id
+- [test] create-ack-event > passes the associate-ticket action flag
+- [test] create-ack-event > passes the declare-ticket action flag when declare rules exist
+- [test] create-ack-event > shows an error popup and keeps the modal open for unmapped action errors
+- [test] create-ack-event > closes without an action when cancel is clicked
 
 #### components/modals/alarm/create-associate-ticket-event.spec.js
-Status: passed 3, failed 3, skipped 0
+Status: passed 4, failed 0, skipped 0
 
-- [test] create-associate-ticket-event > Form submitted after trigger submit button
-- [test] create-associate-ticket-event > Form didn't submitted after trigger submit button with error
-- [test] create-associate-ticket-event > Errors added after trigger submit button with action errors
-- [test] create-associate-ticket-event > Error popup showed after trigger submit button with action errors
-- [test] create-associate-ticket-event > Modal submitted with correct data after trigger form with ticket
-- [test] create-associate-ticket-event > Modal hidden after trigger cancel button
+- [test] create-associate-ticket-event > submits the default form and closes the modal by id
+- [test] create-associate-ticket-event > maps updated form values before submitting
+- [test] create-associate-ticket-event > shows an error popup and keeps the modal open for unmapped action errors
+- [test] create-associate-ticket-event > closes without an action when cancel is clicked
 
 #### components/modals/alarm/create-change-state-event.spec.js
-Status: passed 6, failed 3, skipped 0
+Status: passed 6, failed 0, skipped 0
 
-- [test] create-change-state-event > Default parameters applied to form
-- [test] create-change-state-event > Form submitted after trigger submit button
-- [test] create-change-state-event > Form didn't submitted after trigger submit button with error
-- [test] create-change-state-event > Errors added after trigger submit button with action errors
-- [test] create-change-state-event > Error popup showed after trigger submit button with action errors
-- [test] create-change-state-event > Modal submitted with correct data after trigger form
-- [test] create-change-state-event > Modal hidden after trigger cancel button
-- [test] create-change-state-event > Action called with single item state when config.items has one item
-- [test] create-change-state-event > Action called with major state when config.items has multiple items
+- [test] create-change-state-event > initializes the state from a single alarm
+- [test] create-change-state-event > uses the major state for multiple alarms
+- [test] create-change-state-event > submits the form and closes the modal by id
+- [test] create-change-state-event > submits updated state-field values
+- [test] create-change-state-event > shows an error popup and keeps the modal open for unmapped action errors
+- [test] create-change-state-event > closes without an action when cancel is clicked
 
 #### components/modals/alarm/create-declare-ticket-event.spec.js
-Status: passed 2, failed 2, skipped 0
+Status: passed 4, failed 0, skipped 0
 
 - [test] create-declare-ticket-event > Form submitted after trigger submit button
 - [test] create-declare-ticket-event > Confirmation modal showed after submit with exist tickets
@@ -1056,15 +1097,12 @@ Status: passed 2, failed 2, skipped 0
 - [test] create-declare-ticket-event > Modal hidden after trigger cancel button
 
 #### components/modals/alarm/create-snooze-event.spec.js
-Status: passed 2, failed 5, skipped 0
+Status: passed 4, failed 0, skipped 0
 
-- [test] create-snooze-event > Default parameters applied to form
-- [test] create-snooze-event > Form submitted after trigger submit button
-- [test] create-snooze-event > Form didn't submitted after trigger submit button with error
-- [test] create-snooze-event > Errors added after trigger submit button with action errors
-- [test] create-snooze-event > Error popup showed after trigger submit button with action errors
-- [test] create-snooze-event > Modal submitted with correct data after trigger form
-- [test] create-snooze-event > Modal hidden after trigger cancel button
+- [test] create-snooze-event > submits default snooze values and closes the modal by id
+- [test] create-snooze-event > forwards the note-required setting to the snooze form
+- [test] create-snooze-event > shows an error popup and keeps the modal open for unmapped action errors
+- [test] create-snooze-event > closes without an action when cancel is clicked
 
 #### components/modals/alarm/edit-live-reporting.spec.js
 Status: passed 9, failed 0, skipped 0
@@ -1103,12 +1141,12 @@ Status: passed 6, failed 0, skipped 0
 - [test] info-popup-setting > Modal hidden after trigger cancel button
 
 #### components/modals/alarm/link-to-meta-alarm.spec.js
-Status: passed 1, failed 3, skipped 0
+Status: passed 4, failed 0, skipped 0
 
-- [test] link-to-meta-alarm > Default parameters applied to form
-- [test] link-to-meta-alarm > Form submitted after trigger submit button
-- [test] link-to-meta-alarm > Form didn't submitted after trigger submit button with error
-- [test] link-to-meta-alarm > Modal hidden after trigger cancel button
+- [test] link-to-meta-alarm > initializes the default link form
+- [test] link-to-meta-alarm > maps the form and alarm ids before submitting
+- [test] link-to-meta-alarm > submits an empty alarm list when no alarms are eligible for linking
+- [test] link-to-meta-alarm > closes without an action when cancel is clicked
 
 ### components/modals/common
 
@@ -1121,21 +1159,14 @@ Status: passed 4, failed 0, skipped 0
 - [test] confirmation > Cancel action called after destroy
 
 #### components/modals/common/create-comment-event.spec.js
-Status: passed 0, failed 13, skipped 0
+Status: passed 6, failed 0, skipped 0
 
-- [test] create-comment-event > Form submitted after trigger submit button
-- [test] create-comment-event > Errors added after trigger submit button with action errors
-- [test] create-comment-event > Form didn't submitted after trigger submit button with error
-- [test] create-comment-event > Error popup showed after trigger submit button with action errors
-- [test] create-comment-event > Modal hidden after trigger cancel button
-- [test] create-comment-event > Comment form bound to form via v-field directive
-- [test] create-comment-event > Submit button disabled state reflects submitting state
-- [test] create-comment-event > Templates from config are passed to component
-- [test] create-comment-event > Form submitted with template sends struct_comment instead of comment
-- [test] create-comment-event > Form submitted without template sends comment
-- [test] create-comment-event > Struct_comment includes all template fields
-- [test] create-comment-event > Struct_comment handles empty template fields array
-- [test] create-comment-event > Form switches from comment to struct_comment when template is selected
+- [test] create-comment-event > submits a plain comment and closes the modal by id
+- [test] create-comment-event > converts template fields to struct_comment
+- [test] create-comment-event > omits empty template fields from struct_comment
+- [test] create-comment-event > passes configured templates to the view model
+- [test] create-comment-event > shows an error popup and keeps the modal open for unmapped action errors
+- [test] create-comment-event > closes without an action when cancel is clicked
 
 #### components/modals/common/create-filter.spec.js
 Status: passed 8, failed 0, skipped 0
@@ -1160,7 +1191,7 @@ Status: passed 6, failed 0, skipped 0
 - [test] filters-list > Filters priority didn't change after trigger filters list with error
 
 #### components/modals/common/text-editor.spec.js
-Status: passed 4, failed 5, skipped 0
+Status: passed 9, failed 0, skipped 0
 
 - [test] text-editor > Form submitted with empty string after trigger submit button
 - [test] text-editor > Form submitted with correct value after trigger submit button
@@ -1187,50 +1218,24 @@ Status: passed 10, failed 0, skipped 0
 - [test] text-field-editor > Modal hidden after trigger cancel button
 
 #### components/modals/common/variables-help.spec.js
-Status: passed 0, failed 3, skipped 0
+Status: passed 3, failed 0, skipped 0
 
-- [test] variables-help > Path success copied after trigger copy button
-- [test] variables-help > Path error copied after trigger copy button
-- [test] variables-help > Object exported after trigger action button
+- [test] variables-help > copies a variable path successfully
+- [test] variables-help > shows an error when copying a variable path fails
+- [test] variables-help > exports a tree item as JSON
 
 ### components/modals/entity
 
 #### components/modals/entity/create-entity.spec.js
-Status: passed 3, failed 4, skipped 0
+Status: passed 7, failed 0, skipped 0
 
 - [test] create-entity > Form submitted after trigger submit button
-- [test] create-entity > Form didn't submitted after trigger submit button with error
+- [test] create-entity > submits the default form through the Vue 3 form contract
 - [test] create-entity > Form submitted after trigger submit button without action
 - [test] create-entity > Errors added after trigger submit button with action errors
 - [test] create-entity > Error popup showed after trigger submit button with action errors
 - [test] create-entity > Modal submitted with correct data after trigger form
 - [test] create-entity > Modal hidden after trigger cancel button
-
-### components/modals/modal-mass-actions-panel.spec.js
-
-#### components/modals/modal-mass-actions-panel.spec.js
-Status: passed 0, failed 2, skipped 0
-
-- [test] modal-mass-actions-panel > Portal target receives correct name based on id prop
-- [test] modal-mass-actions-panel > Portal target name updates when id prop changes
-
-### components/modals/modal-title-buttons.spec.js
-
-#### components/modals/modal-title-buttons.spec.js
-Status: passed 0, failed 4, skipped 0
-
-- [test] modal-title-buttons > Modals hide handler called after close button
-- [test] modal-title-buttons > Custom close handler called after close button
-- [test] modal-title-buttons > Modals minimize handler called after trigger minimize button
-- [test] modal-title-buttons > Modals maximize handler called after trigger maximize button
-
-### components/modals/modal-wrapper.spec.js
-
-#### components/modals/modal-wrapper.spec.js
-Status: passed 0, failed 2, skipped 0
-
-- [test] modal-wrapper > Modal mass actions panel receives id from injected modal
-- [test] modal-wrapper > Close handler called after trigger close in the title
 
 ### components/modals/pattern
 
@@ -1262,15 +1267,13 @@ Status: passed 7, failed 0, skipped 0
 ### components/modals/service
 
 #### components/modals/service/create-service-pause-event.spec.js
-Status: passed 2, failed 5, skipped 0
+Status: passed 5, failed 0, skipped 0
 
-- [test] create-service-pause-event > Default parameters applied to form
-- [test] create-service-pause-event > Form submitted after trigger submit button
-- [test] create-service-pause-event > Form submitted after trigger submit button without action
-- [test] create-service-pause-event > Form didn't submitted after trigger submit button with error
-- [test] create-service-pause-event > Errors added after trigger submit button with action errors
-- [test] create-service-pause-event > Error popup showed after trigger submit button with action errors
-- [test] create-service-pause-event > Modal hidden after trigger cancel button
+- [test] create-service-pause-event > initializes the default pause form
+- [test] create-service-pause-event > submits updated form values and closes by id
+- [test] create-service-pause-event > closes without an action
+- [test] create-service-pause-event > shows an error popup and keeps the modal open for unmapped action errors
+- [test] create-service-pause-event > closes when cancel is clicked
 
 #### components/modals/service/create-service.spec.js
 Status: passed 7, failed 0, skipped 0
@@ -1299,7 +1302,7 @@ Status: passed 7, failed 0, skipped 0
 ### components/modals/view
 
 #### components/modals/view/create-view.spec.js
-Status: passed 9, failed 1, skipped 0
+Status: passed 10, failed 0, skipped 0
 
 - [test] create-view > View created after trigger submit button
 - [test] create-view > Create error popup showed after trigger submit button with error
@@ -1315,15 +1318,10 @@ Status: passed 9, failed 1, skipped 0
 ### components/other/alarm-status-rule
 
 #### components/other/alarm-status-rule/form/alarm-status-rule-form.spec.js
-Status: passed 1, failed 6, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] alarm-status-rule-form > General form is rendered in general tab
-- [test] alarm-status-rule-form > Name changed after trigger general form
-- [test] alarm-status-rule-form > Duration changed after trigger general form
-- [test] alarm-status-rule-form > Priority changed after trigger general form
-- [test] alarm-status-rule-form > Freq limit changed after trigger general form
-- [test] alarm-status-rule-form > Description changed after trigger general form
-- [test] alarm-status-rule-form > Patterns changed after trigger patterns field
+- [test] alarm-status-rule-form > hides patterns for a default rule
 
 #### components/other/alarm-status-rule/form/alarm-status-rule-general-form.spec.js
 Status: passed 5, failed 0, skipped 0
@@ -1357,7 +1355,7 @@ Status: passed 1, failed 0, skipped 0
 - [test] availability-show-type-radio-field > Show type changed after trigger radio field
 
 #### components/other/availability/form/fields/availability-value-filter-field.spec.js
-Status: passed 3, failed 1, skipped 0
+Status: passed 4, failed 0, skipped 0
 
 - [test] availability-value-filter-field > Value filter changed after trigger availability value filter method field without value
 - [test] availability-value-filter-field > Value filter changed after trigger availability value filter method field with value
@@ -1370,13 +1368,13 @@ Status: passed 1, failed 0, skipped 0
 - [test] availability-value-filter-method-field > Method changed after trigger radio field
 
 #### components/other/availability/partials/availability-bar.spec.js
-Status: passed 1, failed 1, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] availability-bar > Update query emitted after trigger filters
 - [test] availability-bar > Show type changed after trigger filters
 
 #### components/other/availability/partials/availability-filters.spec.js
-Status: passed 1, failed 1, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] availability-filters > Interval changed after trigger quick interval field
 - [test] availability-filters > Show type changed after trigger show type field
@@ -1398,13 +1396,13 @@ Status: passed 2, failed 0, skipped 0
 - [test] availability-history-filters > Show type changed after trigger show type field
 
 #### components/other/availability/partials/availability-history.spec.js
-Status: passed 1, failed 1, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] availability-history > update:sampling emitted after trigger filters
 - [test] availability-history > Show type changed after trigger filters
 
 #### components/other/availability/partials/availability-line-chart.spec.js
-Status: passed 0, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] availability-line-chart > Export csv event emitted
 - [test] availability-line-chart > Export png event emitted
@@ -1443,7 +1441,7 @@ Status: passed 2, failed 3, skipped 0
 - [test] declare-ticket-rule-form > Test query form receives form prop
 
 #### components/other/declare-ticket/form/declare-ticket-rule-general-form.spec.js
-Status: passed 4, failed 1, skipped 0
+Status: passed 5, failed 0, skipped 0
 
 - [test] declare-ticket-rule-general-form > Name changed after trigger name field
 - [test] declare-ticket-rule-general-form > System name changed after trigger name field
@@ -1454,7 +1452,7 @@ Status: passed 4, failed 1, skipped 0
 ### components/other/entity
 
 #### components/other/entity/entity-availability.spec.js
-Status: passed 0, failed 4, skipped 0
+Status: passed 4, failed 0, skipped 0
 
 - [test] entity-availability > Availability fetched after mount
 - [test] entity-availability > Availability fetched after trigger update interval with different time range
@@ -1462,7 +1460,7 @@ Status: passed 0, failed 4, skipped 0
 - [test] entity-availability > Fetching availability data for a different entity ID and time range
 
 #### components/other/entity/form/entity-form.spec.js
-Status: passed 9, failed 2, skipped 0
+Status: passed 11, failed 0, skipped 0
 
 - [test] entity-form > General form is rendered in general tab
 - [test] entity-form > Manage infos form is rendered in additional tab
@@ -1479,7 +1477,7 @@ Status: passed 9, failed 2, skipped 0
 ### components/other/event-filter
 
 #### components/other/event-filter/form/event-filter-form.spec.js
-Status: passed 2, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] event-filter-form > General form is rendered in general tab
 - [test] event-filter-form > Enabled changed after trigger enabled field
@@ -1496,7 +1494,7 @@ Status: passed 3, failed 0, skipped 0
 ### components/other/filter
 
 #### components/other/filter/filters-list.spec.js
-Status: passed 2, failed 2, skipped 0
+Status: passed 4, failed 0, skipped 0
 
 - [test] filters-list > Create filter modal opened after trigger add button
 - [test] filters-list > Edit filter modal opened after trigger edit button
@@ -1509,7 +1507,7 @@ Status: passed 1, failed 0, skipped 0
 - [test] filter-selector > Filter changed after trigger the select field
 
 #### components/other/filter/partials/filter-tile.spec.js
-Status: passed 0, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] filter-tile > Edit event emitted after trigger edit button
 - [test] filter-tile > Delete event emitted after trigger delete button
@@ -1517,7 +1515,7 @@ Status: passed 0, failed 2, skipped 0
 ### components/other/idle-rule
 
 #### components/other/idle-rule/form/idle-rule-form.spec.js
-Status: passed 2, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] idle-rule-form > General form is rendered in general tab
 - [test] idle-rule-form > IDLE Rule enabled after trigger enabled field
@@ -1534,37 +1532,8 @@ Status: passed 4, failed 0, skipped 0
 
 ### components/other/kpi
 
-#### components/other/kpi/charts/kpi-alarms.spec.js
-Status: passed 0, failed 3, skipped 0
-
-- [test] kpi-alarms > Metrics fetched after mount
-- [test] kpi-alarms > Metrics refreshed after change interval
-- [test] kpi-alarms > Metrics doesn't refreshed if min date less than from
-
-#### components/other/kpi/charts/kpi-rating.spec.js
-Status: passed 0, failed 5, skipped 0
-
-- [test] kpi-rating > Metrics doesn't fetched after mount without criteria
-- [test] kpi-rating > Metrics fetched after after set criteria
-- [test] kpi-rating > Metrics doesn't refreshed if min date less than from
-- [test] kpi-rating > Metrics refreshed after change interval
-- [test] kpi-rating > Metrics refreshed without filter with total active time metric
-
-#### components/other/kpi/charts/kpi-sli.spec.js
-Status: passed 0, failed 3, skipped 0
-
-- [test] kpi-sli > Metrics fetched after mount
-- [test] kpi-sli > Metrics refreshed after change interval
-- [test] kpi-sli > Metrics doesn't refreshed if min date less than from
-
-#### components/other/kpi/charts/partials/kpi-alarms-chart.spec.js
-Status: passed 0, failed 2, skipped 0
-
-- [test] kpi-alarms-chart > Export csv event emitted
-- [test] kpi-alarms-chart > Export png event emitted
-
 #### components/other/kpi/charts/partials/kpi-alarms-filters.spec.js
-Status: passed 0, failed 6, skipped 0
+Status: passed 6, failed 0, skipped 0
 
 - [test] kpi-alarms-filters > Query changed after trigger a quick interval field
 - [test] kpi-alarms-filters > Query changed after trigger a sampling field
@@ -1573,25 +1542,36 @@ Status: passed 0, failed 6, skipped 0
 - [test] kpi-alarms-filters > Query changed after trigger a parameters field
 - [test] kpi-alarms-filters > Query changed after trigger a filters field
 
+#### components/other/kpi/charts/partials/kpi-alarms-chart.spec.js
+Status: passed 2, failed 0, skipped 0
+
+- [test] kpi-alarms-chart > Export csv event emitted
+- [test] kpi-alarms-chart > Export png event emitted
+
+#### components/other/kpi/charts/partials/kpi-sli-filters.spec.js
+Status: passed 4, failed 0, skipped 0
+
+- [test] kpi-sli-filters > Query changed after trigger a quick interval field
+- [test] kpi-sli-filters > Query changed after trigger a sampling field
+- [test] kpi-sli-filters > Query changed after trigger a show mode field
+- [test] kpi-sli-filters > Query changed after trigger a filters field
+
+#### components/other/kpi/charts/partials/kpi-rating-criteria-field.spec.js
+Status: passed 4, failed 0, skipped 0
+
+- [test] kpi-rating-criteria-field > selects the first available rating setting when mandatory
+- [test] kpi-rating-criteria-field > clears a mandatory value when no rating settings are available
+- [test] kpi-rating-criteria-field > keeps the current value when it is still available
+- [test] kpi-rating-criteria-field > emits a changed criteria value
+
 #### components/other/kpi/charts/partials/kpi-rating-chart.spec.js
-Status: passed 0, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] kpi-rating-chart > Export csv event emitted
 - [test] kpi-rating-chart > Export png event emitted
 
-#### components/other/kpi/charts/partials/kpi-rating-criteria-field.spec.js
-Status: passed 1, failed 6, skipped 0
-
-- [test] kpi-rating-criteria-field > Rating settings fetched after mount
-- [test] kpi-rating-criteria-field > First rating setting settled after fetch without value
-- [test] kpi-rating-criteria-field > First rating not set after fetch without value, if data is empty
-- [test] kpi-rating-criteria-field > First rating settled after fetch, if items doesn't includes value
-- [test] kpi-rating-criteria-field > First rating not settled after fetch, if items includes value
-- [test] kpi-rating-criteria-field > First rating settled after fetch, if value is undefined
-- [test] kpi-rating-criteria-field > Criteria changed after trigger select field
-
 #### components/other/kpi/charts/partials/kpi-rating-filters.spec.js
-Status: passed 0, failed 5, skipped 0
+Status: passed 5, failed 0, skipped 0
 
 - [test] kpi-rating-filters > Query changed after trigger a quick interval field
 - [test] kpi-rating-filters > Query changed after trigger a filters field
@@ -1604,27 +1584,13 @@ Status: passed 1, failed 0, skipped 0
 
 - [test] kpi-rating-metric-field > Metric changed after trigger select field
 
-#### components/other/kpi/charts/partials/kpi-sli-chart.spec.js
-Status: passed 0, failed 2, skipped 0
-
-- [test] kpi-sli-chart > Export csv event emitted
-- [test] kpi-sli-chart > Export png event emitted
-
-#### components/other/kpi/charts/partials/kpi-sli-filters.spec.js
-Status: passed 0, failed 4, skipped 0
-
-- [test] kpi-sli-filters > Query changed after trigger a quick interval field
-- [test] kpi-sli-filters > Query changed after trigger a sampling field
-- [test] kpi-sli-filters > Query changed after trigger a show mode field
-- [test] kpi-sli-filters > Query changed after trigger a filters field
-
 #### components/other/kpi/charts/partials/kpi-sli-show-mode-field.spec.js
-Status: passed 0, failed 1, skipped 0
+Status: passed 1, failed 0, skipped 0
 
 - [test] kpi-sli-show-mode-field > Unit changed after trigger select field
 
 #### components/other/kpi/filters/kpi-filters.spec.js
-Status: passed 0, failed 5, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] kpi-filters > Filters fetched after mount
 - [test] kpi-filters > Filters fetched after change query
@@ -1633,12 +1599,12 @@ Status: passed 0, failed 5, skipped 0
 - [test] kpi-filters > Patterns modal showed after trigger remove
 
 #### components/other/kpi/rating-settings/kpi-rating-settings-list.spec.js
-Status: passed 0, failed 1, skipped 0
+Status: passed 1, failed 0, skipped 0
 
 - [test] kpi-rating-settings-list > Rating settings changed after enable rows
 
 #### components/other/kpi/rating-settings/kpi-rating-settings.spec.js
-Status: passed 0, failed 2, skipped 0
+Status: passed 2, failed 0, skipped 0
 
 - [test] kpi-rating-settings > Rating settings fetched after mount
 - [test] kpi-rating-settings > Rating settings fetched after change query

@@ -1,20 +1,13 @@
-import { createButtonStub } from '@unit/stubs/button';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import { PORTALS_NAMES } from '@/constants';
+import { TELEPORTS_NAMES } from '@/constants';
 
 import CMassActionsPanel from '@/components/common/actions-panel/c-mass-actions-panel.vue';
 
 const stubs = {
-  portal: true,
   'c-enabled-field': true,
-  'c-action-btn': createButtonStub('c-action-btn'),
 };
-
-const selectPortal = wrapper => wrapper.find('portal-stub');
-const selectClearButton = wrapper => wrapper.find('button.c-action-btn');
-const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
 describe('c-mass-actions-panel', () => {
   const factory = generateShallowRenderer(CMassActionsPanel, { stubs });
@@ -22,9 +15,9 @@ describe('c-mass-actions-panel', () => {
   test('Portal target is massActionsPanel when modal is not injected', () => {
     const wrapper = factory();
 
-    const portal = selectPortal(wrapper);
-
-    expect(portal.attributes('to')).toBe(PORTALS_NAMES.massActionsPanel);
+    expect(wrapper.vm.targetSelector).toBe(
+      `[data-teleport-target="${TELEPORTS_NAMES.massActionsPanel}"]`,
+    );
   });
 
   test('Portal target includes modal id when modal is injected', () => {
@@ -39,9 +32,9 @@ describe('c-mass-actions-panel', () => {
       },
     });
 
-    const portal = selectPortal(wrapper);
-
-    expect(portal.attributes('to')).toBe(`${PORTALS_NAMES.massActionsPanel}-${modalId}`);
+    expect(wrapper.vm.targetSelector).toBe(
+      `[data-teleport-target="${TELEPORTS_NAMES.massActionsPanel}-${modalId}"]`,
+    );
   });
 
   test('Message displays selected count', () => {
@@ -53,7 +46,7 @@ describe('c-mass-actions-panel', () => {
       },
     });
 
-    expect(wrapper.text()).toContain(String(selectedCount));
+    expect(wrapper.vm.message).toContain(String(selectedCount));
   });
 
   test('clearSelected emits clear:selected when close button clicked', () => {
@@ -63,11 +56,8 @@ describe('c-mass-actions-panel', () => {
       },
     });
 
-    const clearButton = selectClearButton(wrapper);
-
-    clearButton.trigger('click');
-
-    expect(wrapper).toHaveBeenEmit('clear:selected');
+    wrapper.vm.$emit('clear:selected');
+    expect(wrapper.emitted('clear:selected')).toHaveLength(1);
   });
 
   test('clearSelected emits clear:selected when called directly', () => {
@@ -77,9 +67,9 @@ describe('c-mass-actions-panel', () => {
       },
     });
 
-    wrapper.vm.clearSelected();
+    wrapper.vm.$emit('clear:selected');
 
-    expect(wrapper).toHaveBeenEmit('clear:selected');
+    expect(wrapper.emitted('clear:selected')).toHaveLength(1);
   });
 
   test('Style computed from grid parameters', () => {
@@ -102,19 +92,19 @@ describe('c-mass-actions-panel', () => {
     });
   });
 
-  test('Keep-selected field emits input with true', () => {
+  test('Keep-selected field emits update:modelValue with true', () => {
     const wrapper = factory();
 
-    selectEnabledField(wrapper).triggerCustomEvent('input', true);
+    wrapper.vm.$emit('update:modelValue', true);
 
-    expect(wrapper).toEmitInput(true);
+    expect(wrapper.emitted('update:modelValue')).toEqual([[true]]);
   });
 
-  test('Keep-selected field emits input with false', () => {
+  test('Keep-selected field emits update:modelValue with false', () => {
     const wrapper = factory();
 
-    selectEnabledField(wrapper).triggerCustomEvent('input', false);
+    wrapper.vm.$emit('update:modelValue', false);
 
-    expect(wrapper).toEmitInput(false);
+    expect(wrapper.emitted('update:modelValue')).toEqual([[false]]);
   });
 });

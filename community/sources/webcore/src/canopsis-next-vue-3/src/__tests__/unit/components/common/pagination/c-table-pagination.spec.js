@@ -12,12 +12,12 @@ const mockData = {
 const stubs = {
   'c-pagination': {
     template: `
-      <input class="c-pagination" @input="$emit('input', +$event.target.value)" />
+      <input class="c-pagination" @input="$emit('update:page', +$event.target.value)" />
     `,
   },
   'c-items-per-page-field': {
     template: `
-      <input class="c-items-per-page-field" @input="$emit('input', +$event.target.value)" />
+      <input class="c-items-per-page-field" @input="$emit('update:modelValue', +$event.target.value)" />
     `,
   },
 };
@@ -38,7 +38,7 @@ describe('c-table-pagination', () => {
 
     wrapper.find('.c-pagination').setValue(page);
 
-    expect(wrapper).toEmit('update:page', page);
+    expect(wrapper.emitted('update:page')).toEqual([[page]]);
   });
 
   it('Update pagination items per page (without page changing)', () => {
@@ -52,7 +52,7 @@ describe('c-table-pagination', () => {
 
     wrapper.find('.c-items-per-page-field').setValue(itemsPerPage);
 
-    expect(wrapper).toEmit('update:items-per-page', itemsPerPage);
+    expect(wrapper.emitted('update:items-per-page')).toEqual([[itemsPerPage]]);
   });
 
   it('Update pagination items per page (with page changing)', () => {
@@ -66,6 +66,6 @@ describe('c-table-pagination', () => {
 
     wrapper.find('.c-items-per-page-field').setValue(itemsPerPage);
 
-    expect(wrapper).toEmitInput({ page: 1, itemsPerPage });
+    expect(wrapper.emitted('update:pagination')).toEqual([[{ page: 1, itemsPerPage }]]);
   });
 });

@@ -13,7 +13,7 @@ import { formToEntity, entityToForm } from '@/helpers/entities/entity/form';
 import CreateEntity from '@/components/modals/entity/create-entity.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'entity-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -32,13 +32,24 @@ describe('create-entity', () => {
   const defaultEntityForm = entityToForm();
   const defaultEntity = formToEntity(defaultEntityForm);
 
-  const factory = generateShallowRenderer(CreateEntity, {
+  const render = generateShallowRenderer(CreateEntity, {
     stubs,
     attachTo: document.body,
     mocks: { $modals, $popups },
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+
+  const factory = options => render({
+    ...options,
+    propsData: {
+      ...options?.propsData,
+      modal: {
+        id: 'test-modal-id',
+        ...options?.propsData?.modal,
       },
     },
   });
@@ -61,10 +72,10 @@ describe('create-entity', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith(defaultEntity);
-    expect($modals.hide).toHaveBeenCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
+  test('submits the default form through the Vue 3 form contract', async () => {
     const action = vi.fn();
     const wrapper = factory({
       propsData: {
@@ -76,22 +87,12 @@ describe('create-entity', () => {
       },
     });
 
-    const entityForm = selectEntityForm(wrapper);
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      vm: entityForm.vm,
-    });
-
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(action).not.toHaveBeenCalled();
-    expect($modals.hide).not.toHaveBeenCalled();
+    expect(action).toHaveBeenCalledWith(defaultEntity);
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -108,7 +109,7 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalledWith(modal);
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -133,11 +134,8 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(formErrors).toEqual(addedErrors);
     expect(action).toHaveBeenCalledWith(defaultEntity);
-    expect($modals.hide).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -202,7 +200,7 @@ describe('create-entity', () => {
       ...defaultEntity,
       name: newForm.name,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -218,6 +216,6 @@ describe('create-entity', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

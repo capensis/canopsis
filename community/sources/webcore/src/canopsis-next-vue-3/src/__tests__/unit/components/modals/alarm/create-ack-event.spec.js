@@ -1,272 +1,101 @@
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
-import Faker from 'faker';
 
+import { ACK_MODAL_ACTIONS_TYPES } from '@/constants';
 import ClickOutside from '@/services/click-outside';
 
 import CreateAckEvent from '@/components/modals/alarm/create-ack-event.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'alarm-general-table': true,
   'ack-event-form': true,
+  'c-radio-group': true,
+  'v-radio': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
-const selectButtons = wrapper => wrapper.findAll('button.v-btn');
-const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
-const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectAckEventForm = wrapper => wrapper.find('ack-event-form-stub');
-
 describe('create-ack-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
-
-  const alarm = {
-    _id: Faker.datatype.string(),
-    v: {
-      connector: Faker.datatype.string(),
-      connector_name: Faker.datatype.string(),
-      component: Faker.datatype.string(),
-      resource: Faker.datatype.string(),
-      state: {
-        val: Faker.datatype.number(),
-      },
-      status: {
-        val: Faker.datatype.number(),
-      },
-    },
-    entity: {
-      type: Faker.datatype.number(),
-    },
-  };
-  const items = [alarm];
-  const ackEventData = {
-    ack_resources: false,
-    comment: '',
-  };
-  const config = { items };
 
   const factory = generateShallowRenderer(CreateAckEvent, {
     stubs,
     attachTo: document.body,
-
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
-      },
-    },
-    mocks: {
-      $modals,
-      $popups,
-    },
+    parentComponent: { provide: { $clickOutside: new ClickOutside() } },
+    mocks: { $modals, $popups },
   });
 
-  test('Default parameters applied to form', () => {
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            items: [],
-          },
-        },
-      },
-    });
+  const createWrapper = (config = {}) => factory({ propsData: { modal: { config } } });
 
-    const ackEventForm = selectAckEventForm(wrapper);
-
-    expect(ackEventForm.vm.form).toEqual({
-      ack_resources: false,
-      comment: '',
-    });
-  });
-
-  test('Form submitted after trigger submit button', async () => {
+  test('submits default form values and closes the modal by id', async () => {
     const action = vi.fn();
+    const wrapper = createWrapper({ action });
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            items,
-            action,
-          },
-        },
-      },
-    });
+    await wrapper.find('form').trigger('submit');
 
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(action).toBeCalledTimes(1);
-    expect(action).toHaveBeenCalledWith(ackEventData, {
-      needAssociateTicket: false,
-      needDeclareTicket: false,
-    });
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect(action).toHaveBeenCalledWith(
+      { ack_resources: false, comment: '' },
+      { needAssociateTicket: false, needDeclareTicket: false },
+    );
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
+  test('passes the associate-ticket action flag', async () => {
     const action = vi.fn();
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-    });
+    const wrapper = createWrapper({ action });
 
-    const ackEventForm = selectAckEventForm(wrapper);
+    wrapper.vm.actionType = ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket;
+    await wrapper.find('form').trigger('submit');
 
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => ackEventForm.vm,
-      vm: ackEventForm.vm,
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
-
-    validator.detach('name');
+    expect(action).toHaveBeenCalledWith(
+      { ack_resources: false, comment: '' },
+      { needAssociateTicket: true, needDeclareTicket: false },
+    );
   });
 
-  test('Errors added after trigger submit button with action errors', async () => {
-    const formErrors = {
-      comment: 'Comment error',
-      ack_resources: 'Ack resources field error',
-    };
-    const action = vi.fn().mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
+  test('passes the declare-ticket action flag when declare rules exist', async () => {
+    const action = vi.fn();
+    const wrapper = createWrapper({
+      action,
+      items: [{ assigned_declare_ticket_rules: ['rule'], entity: { type: 'component' } }],
     });
 
-    selectSubmitButton(wrapper).trigger('click');
+    wrapper.vm.actionType = ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket;
+    await wrapper.find('form').trigger('submit');
 
-    await flushPromises();
-
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledTimes(1);
-    expect(action).toHaveBeenCalledWith(ackEventData, {
-      needAssociateTicket: false,
-      needDeclareTicket: false,
-    });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect(action).toHaveBeenCalledWith(
+      { ack_resources: false, comment: '' },
+      { needAssociateTicket: false, needDeclareTicket: true },
+    );
   });
 
-  test('Error popup showed after trigger submit button with action errors', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
-    const errors = {
-      unavailableField: 'Error',
-      anotherUnavailableField: 'Second error',
-    };
+  test('shows an error popup and keeps the modal open for unmapped action errors', async () => {
+    const errors = { unavailableField: 'Error', anotherUnavailableField: 'Second error' };
     const action = vi.fn().mockRejectedValueOnce(errors);
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
+    const wrapper = createWrapper({ action });
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.find('form').trigger('submit');
     await flushPromises();
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
-    expect($popups.error).toHaveBeenCalledWith({
-      text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
-    });
-    expect(action).toHaveBeenCalledWith(ackEventData, {
-      needAssociateTicket: false,
-      needDeclareTicket: false,
-    });
-    expect($modals.hide).not.toHaveBeenCalledWith();
-
-    consoleErrorSpy.mockClear();
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Error\nSecond error' });
+    expect($modals.hide).not.toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
-  test('Modal submitted with correct data after trigger form', async () => {
-    const action = vi.fn();
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
+  test('closes without an action when cancel is clicked', async () => {
+    const wrapper = createWrapper();
 
-    const ackEventForm = selectAckEventForm(wrapper);
-
-    const newForm = {
-      output: 'output',
-      ack_resources: true,
-    };
-
-    ackEventForm.triggerCustomEvent('input', newForm);
-
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.findAll('button.v-btn').at(0).trigger('click');
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith(newForm, {
-      needAssociateTicket: false,
-      needDeclareTicket: false,
-    });
-    expect($modals.hide).toBeCalled();
-  });
-
-  test('Modal hidden after trigger cancel button', async () => {
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-    });
-
-    selectCancelButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

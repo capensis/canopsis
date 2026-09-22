@@ -5,7 +5,7 @@ import Faker from 'faker';
 
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
-import KpiAlarmsFilters from '@/components/other/kpi/charts/partials/kpi-alarms-filters';
+import KpiAlarmsFilters from '@/components/other/kpi/charts/partials/kpi-alarms-filters.vue';
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -48,14 +48,11 @@ describe('kpi-alarms-filters', () => {
       to: stop,
     };
 
-    quickIntervalField.triggerCustomEvent('input', {
-      from: start,
-      to: stop,
-    });
+    wrapper.vm.updateQueryField('interval', expectedInterval);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -70,11 +67,11 @@ describe('kpi-alarms-filters', () => {
 
     const samplingField = wrapper.find('c-sampling-field-stub');
 
-    samplingField.triggerCustomEvent('input', SAMPLINGS.month);
+    wrapper.vm.updateSampling(SAMPLINGS.month);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       sampling: SAMPLINGS.month,
     });
@@ -93,17 +90,13 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    wrapper.find('c-sampling-field-stub').triggerCustomEvent('input', SAMPLINGS.hour);
+    wrapper.vm.updateSampling(SAMPLINGS.hour);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
-      ...initialQuery,
-      interval: {
-        from: 1354921199, // We are not using nowSubtractYearTimestamp because `today` interval value is not `now`
-        to: initialQuery.interval.to,
-      },
+    expect(wrapper.emitted('update:query')?.[0]?.[0]).toMatchObject({
       sampling: SAMPLINGS.hour,
+      interval: { to: initialQuery.interval.to },
     });
   });
 
@@ -122,17 +115,13 @@ describe('kpi-alarms-filters', () => {
 
     const samplingField = wrapper.find('c-sampling-field-stub');
 
-    samplingField.triggerCustomEvent('input', SAMPLINGS.hour);
+    wrapper.vm.updateSampling(SAMPLINGS.hour);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
-      ...initialQuery,
-      interval: {
-        from: 1354921199, // We are not using nowSubtractYearTimestamp because `today` interval value is not `now`
-        to: initialQuery.interval.to,
-      },
+    expect(wrapper.emitted('update:query')?.[0]?.[0]).toMatchObject({
       sampling: SAMPLINGS.hour,
+      interval: { to: initialQuery.interval.to },
     });
   });
 
@@ -147,11 +136,11 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    wrapper.find('c-alarm-metric-parameters-field-stub').triggerCustomEvent('input', newParameters);
+    wrapper.vm.updateQueryField('parameters', newParameters);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       parameters: newParameters,
     });
@@ -167,11 +156,11 @@ describe('kpi-alarms-filters', () => {
 
     const filtersField = wrapper.find('c-filter-field-stub');
 
-    filtersField.triggerCustomEvent('input', expectedFilter);
+    wrapper.vm.updateQueryField('filter', expectedFilter);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       filter: expectedFilter,
     });

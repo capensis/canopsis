@@ -45,6 +45,7 @@ import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 
+import AlarmCommentTemplateForm from '@/components/other/comment-template/form/alarm-comment-template-form.vue';
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
 /**

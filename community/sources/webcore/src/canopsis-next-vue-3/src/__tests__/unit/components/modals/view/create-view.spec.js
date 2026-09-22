@@ -23,7 +23,7 @@ const stubs = {
 };
 
 const selectSubmitButton = wrapper => wrapper.find('.v-btn[type="submit"]');
-const selectCancelButton = wrapper => wrapper.find('.v-btn[depressed]');
+const selectCancelButton = wrapper => wrapper.findAll('.v-btn').at(0);
 const selectRemoveButton = wrapper => wrapper.find('.v-btn[color="error"]');
 const selectViewForm = wrapper => wrapper.find('view-form-stub');
 
@@ -60,7 +60,7 @@ describe('create-view', () => {
   const { viewModule, createGroup } = createViewModule();
   const store = createMockedStoreModules([authModule, viewModule]);
 
-  const factory = generateShallowRenderer(CreateView, {
+  const render = generateShallowRenderer(CreateView, {
     stubs,
     attachTo: document.body,
     propsData: {
@@ -78,6 +78,17 @@ describe('create-view', () => {
       $modals,
       $popups,
       $router,
+    },
+  });
+
+  const factory = options => render({
+    ...options,
+    propsData: {
+      ...options?.propsData,
+      modal: {
+        id: 'test-modal-id',
+        ...options?.propsData?.modal,
+      },
     },
   });
 
@@ -116,7 +127,7 @@ describe('create-view', () => {
       ...newView,
       group: newGroup._id,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Create error popup showed after trigger submit button with error', async () => {
@@ -356,6 +367,6 @@ describe('create-view', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

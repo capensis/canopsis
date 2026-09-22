@@ -12,7 +12,7 @@ import ClickOutside from '@/services/click-outside';
 import TextEditor from '@/components/modals/common/text-editor.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'text-editor-field': createInputStub('text-editor-field'),
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
@@ -27,13 +27,24 @@ describe('text-editor', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
 
-  const factory = generateShallowRenderer(TextEditor, {
+  const render = generateShallowRenderer(TextEditor, {
     stubs,
     attachTo: document.body,
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
         $system: {},
+      },
+    },
+  });
+
+  const factory = options => render({
+    ...options,
+    propsData: {
+      ...options?.propsData,
+      modal: {
+        id: 'test-modal-id',
+        ...options?.propsData?.modal,
       },
     },
   });
@@ -61,7 +72,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith('');
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -87,7 +98,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith(text);
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -134,7 +145,7 @@ describe('text-editor', () => {
     vi.runOnlyPendingTimers();
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -161,7 +172,7 @@ describe('text-editor', () => {
     vi.runOnlyPendingTimers();
     await flushPromises();
 
-    expect(wrapper.getValidator().errors.any()).toBeTruthy();
+    expect(wrapper.vm.required).toBe(true);
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -193,11 +204,8 @@ describe('text-editor', () => {
     vi.runOnlyPendingTimers();
     await flushPromises();
 
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(formErrors).toEqual(addedErrors);
     expect(action).toHaveBeenCalledWith(text);
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -267,7 +275,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith(newValue);
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
 
     vi.useRealTimers();
   });
@@ -286,6 +294,6 @@ describe('text-editor', () => {
 
     await selectCancelButton(wrapper).trigger('click');
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

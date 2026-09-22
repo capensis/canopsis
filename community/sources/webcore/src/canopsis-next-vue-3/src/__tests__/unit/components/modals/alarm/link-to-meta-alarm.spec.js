@@ -4,201 +4,98 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
-import Faker from 'faker';
-import { omit } from 'lodash';
 
 import { ALARM_STATES } from '@/constants';
-
 import ClickOutside from '@/services/click-outside';
 
 import LinkToMetaAlarm from '@/components/modals/alarm/link-to-meta-alarm.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'alarm-general-table': true,
   'link-meta-alarm-form': true,
-  'c-name-field': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
-const selectButtons = wrapper => wrapper.findAll('button.v-btn');
-const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
-const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectLinkMetaAlarmForm = wrapper => wrapper.find('link-meta-alarm-form-stub');
-
 describe('link-to-meta-alarm', () => {
-  const timestamp = 1386435600000;
   const $modals = mockModals();
-
-  const alarm = {
-    _id: Faker.datatype.string(),
-    v: {
-      connector: Faker.datatype.string(),
-      connector_name: Faker.datatype.string(),
-      component: Faker.datatype.string(),
-      resource: Faker.datatype.string(),
-      state: {
-        val: Faker.datatype.number(),
-      },
-      status: {
-        val: ALARM_STATES.ok,
-      },
-    },
-    entity: {
-      _id: Faker.datatype.number(),
-      type: Faker.datatype.number(),
-    },
-  };
-  const items = [alarm];
-  const config = { items };
 
   const factory = generateShallowRenderer(LinkToMetaAlarm, {
     stubs,
     attachTo: document.body,
+    parentComponent: { provide: { $clickOutside: new ClickOutside() } },
+    mocks: { $modals },
+  });
+
+  const alarm = { _id: 'alarm-id', v: { state: { val: ALARM_STATES.major } } };
+  const createWrapper = (config = {}) => factory({
     propsData: {
       modal: {
-        config: {},
-      },
-    },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
+        id: 'test-modal-id',
+        config,
       },
     },
   });
 
-  beforeAll(() => vi.useFakeTimers({ now: timestamp }));
+  test('initializes the default link form', () => {
+    const wrapper = createWrapper();
 
-  test('Default parameters applied to form', () => {
-    const wrapper = factory({
-      mocks: {
-        $modals,
-      },
-    });
-
-    const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
-
-    expect(manualMetaAlarmForm.vm.form).toEqual({
+    expect(wrapper.vm.values).toEqual({
       metaAlarm: null,
       comment: '',
       component: '',
       resource: '',
       auto_resolve: false,
-      tags: {
-        copy_from_children: false,
-        filter_by_label: [],
-      },
+      tags: { copy_from_children: false, filter_by_label: [] },
       infos: [],
     });
   });
 
-  test('Form submitted after trigger submit button', async () => {
+  test('maps the form and alarm ids before submitting', async () => {
     const action = vi.fn();
+    const wrapper = createWrapper({ action, items: [alarm] });
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            action,
-            items,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const submitButton = selectSubmitButton(wrapper);
-    const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
-
-    const newData = {
-      resource: Faker.datatype.string(),
-      component: Faker.datatype.string(),
-      comment: Faker.datatype.string(),
-      metaAlarm: { _id: Faker.datatype.string(), noData: true },
+    wrapper.vm.updateForm({
+      metaAlarm: { _id: 'meta-alarm-id' },
+      comment: 'Comment',
+      component: 'component',
+      resource: 'resource',
       auto_resolve: true,
-      tags: {
-        copy_from_children: Faker.datatype.boolean(),
-        filter_by_label: [],
-      },
+      tags: { copy_from_children: false, filter_by_label: [] },
       infos: [],
-    };
-
-    manualMetaAlarmForm.triggerCustomEvent('input', newData);
-
-    submitButton.trigger('click');
-
-    vi.runOnlyPendingTimers();
-    await flushPromises();
+    });
+    await wrapper.find('form').trigger('submit');
 
     expect(action).toHaveBeenCalledWith({
-      id: newData.metaAlarm._id,
-      alarms: [alarm._id],
-
-      ...omit(newData, ['metaAlarm']),
+      id: 'meta-alarm-id',
+      alarms: ['alarm-id'],
+      comment: 'Comment',
+      component: 'component',
+      resource: 'resource',
+      auto_resolve: true,
+      tags: { copy_from_children: false, filter_by_label: [] },
+      infos: [],
     });
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
+  test('submits an empty alarm list when no alarms are eligible for linking', async () => {
     const action = vi.fn();
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
+    const wrapper = createWrapper({ action, items: [{ _id: 'ok-alarm', v: { state: { val: ALARM_STATES.ok } } }] });
 
-    const submitButton = selectSubmitButton(wrapper);
-    const manualMetaAlarmForm = selectLinkMetaAlarmForm(wrapper);
+    await wrapper.find('form').trigger('submit');
 
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => manualMetaAlarmForm.vm,
-      vm: manualMetaAlarmForm.vm,
-    });
-
-    submitButton.trigger('click');
-
-    vi.runOnlyPendingTimers();
-    await flushPromises();
-
-    expect(action).not.toHaveBeenCalled();
-    expect($modals.hide).not.toHaveBeenCalled();
-
-    validator.detach('name');
+    expect(action).toHaveBeenCalledWith(expect.objectContaining({ alarms: [] }));
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Modal hidden after trigger cancel button', async () => {
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
+  test('closes without an action when cancel is clicked', async () => {
+    const wrapper = createWrapper();
 
-    selectCancelButton(wrapper).trigger('click');
-
-    vi.runOnlyPendingTimers();
+    await wrapper.findAll('button.v-btn').at(0).trigger('click');
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

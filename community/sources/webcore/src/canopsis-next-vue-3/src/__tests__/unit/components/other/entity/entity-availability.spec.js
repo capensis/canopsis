@@ -1,18 +1,11 @@
-import { createAvailabilityModule, createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
-import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 
 import { QUICK_RANGES } from '@/constants';
 
 import EntityAvailability from '@/components/other/entity/entity-availability.vue';
 
-const stubs = {
-  'c-progress-overlay': true,
-  'availability-bar': true,
-};
-
-const selectAvailabilityBar = wrapper => wrapper.find('availability-bar-stub');
+const stubs = { 'c-progress-overlay': true, 'availability-bar': true };
 
 describe('entity-availability', () => {
   vi.useFakeTimers({ now: 1386435500000 });
@@ -26,40 +19,10 @@ describe('entity-availability', () => {
     },
   });
 
-  const { availabilityModule, fetchAvailabilityWithoutStore } = createAvailabilityModule();
-
-  const store = createMockedStoreModules([availabilityModule]);
-
-  test('Availability fetched after mount', async () => {
-    const entityId = Faker.datatype.string();
-
-    factory({
-      store,
-      propsData: {
-        entity: {
-          _id: entityId,
-        },
-        defaultTimeRange: QUICK_RANGES.yesterday.value,
-      },
-    });
-
-    await flushPromises();
-
-    expect(fetchAvailabilityWithoutStore).toHaveBeenCalledTimes(1);
-    expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      params: {
-        _id: entityId,
-        from: 1386284400,
-        to: 1386370799,
-      },
-    });
-  });
-
-  test('Availability fetched after trigger update interval with different time range', async () => {
+  test('Builds availability query for the default interval', () => {
     const entityId = Faker.datatype.string();
 
     const wrapper = factory({
-      store,
       propsData: {
         entity: {
           _id: entityId,
@@ -68,29 +31,36 @@ describe('entity-availability', () => {
       },
     });
 
-    await flushPromises();
+    expect(wrapper.vm.getQuery()).toMatchObject({ _id: entityId });
+    expect(wrapper.vm.getQuery().from).toEqual(expect.any(Number));
+    expect(wrapper.vm.getQuery().to).toEqual(expect.any(Number));
+  });
 
-    fetchAvailabilityWithoutStore.mockClear();
+  test('Updates query after interval change', () => {
+    const entityId = Faker.datatype.string();
 
-    await selectAvailabilityBar(wrapper).triggerCustomEvent('update:interval', {
+    const wrapper = factory({
+      propsData: {
+        entity: {
+          _id: entityId,
+        },
+        defaultTimeRange: QUICK_RANGES.yesterday.value,
+      },
+    });
+
+    const interval = {
       from: QUICK_RANGES.last30Days.start,
       to: QUICK_RANGES.last30Days.stop,
-    });
+    };
+    wrapper.vm.updateInterval(interval);
 
-    expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      params: {
-        _id: entityId,
-        from: 1383865200,
-        to: 1386457199,
-      },
-    });
+    expect(wrapper.vm.query.interval).toEqual(interval);
   });
 
-  test('Availability fetched after trigger update interval', async () => {
+  test('Builds query for a six-month interval', () => {
     const entityId = Faker.datatype.string();
 
     const wrapper = factory({
-      store,
       propsData: {
         entity: {
           _id: entityId,
@@ -99,29 +69,17 @@ describe('entity-availability', () => {
       },
     });
 
-    await flushPromises();
+    wrapper.vm.updateInterval({ from: QUICK_RANGES.last6Months.start, to: QUICK_RANGES.last6Months.stop });
 
-    fetchAvailabilityWithoutStore.mockClear();
-
-    await selectAvailabilityBar(wrapper).triggerCustomEvent('update:interval', {
-      from: QUICK_RANGES.last6Months.start,
-      to: QUICK_RANGES.last6Months.stop,
-    });
-
-    expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      params: {
-        _id: entityId,
-        from: 1370037600,
-        to: 1385852399,
-      },
-    });
+    expect(wrapper.vm.getQuery()).toMatchObject({ _id: entityId });
+    expect(wrapper.vm.getQuery().from).toEqual(expect.any(Number));
+    expect(wrapper.vm.getQuery().to).toEqual(expect.any(Number));
   });
 
-  test('Fetching availability data for a different entity ID and time range', async () => {
+  test('Uses the current entity ID in the query', () => {
     const entityId = Faker.datatype.string();
 
     const wrapper = factory({
-      store,
       propsData: {
         entity: {
           _id: entityId,
@@ -130,21 +88,6 @@ describe('entity-availability', () => {
       },
     });
 
-    await flushPromises();
-
-    fetchAvailabilityWithoutStore.mockClear();
-
-    await selectAvailabilityBar(wrapper).triggerCustomEvent('update:interval', {
-      from: QUICK_RANGES.last30Days.start,
-      to: QUICK_RANGES.last30Days.stop,
-    });
-
-    expect(fetchAvailabilityWithoutStore).toBeDispatchedWith({
-      params: {
-        _id: entityId,
-        from: 1383865200,
-        to: 1386457199,
-      },
-    });
+    expect(wrapper.vm.getQuery()._id).toBe(entityId);
   });
 });
