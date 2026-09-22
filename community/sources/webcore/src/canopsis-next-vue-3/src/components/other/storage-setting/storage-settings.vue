@@ -74,7 +74,10 @@ import { ref, onMounted, computed } from 'vue';
 
 import { MODALS, TIME_UNITS } from '@/constants';
 
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
+import {
+  dataStorageSettingsToForm,
+  mapStorageSettingsErrors,
+} from '@/helpers/entities/data-storage/form';
 
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
@@ -82,7 +85,6 @@ import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useDataStorage } from '@/hooks/store/modules/data-storage';
 import { useEntity } from '@/hooks/store/modules/entity';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
 import StorageSettingsArchiveEntityUnlinkedForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-unlinked-form.vue';
@@ -99,6 +101,7 @@ export default {
 
     const form = useForm({
       initialValues: dataStorageSettingsToForm(),
+      errorsToValidation: errors => mapStorageSettingsErrors(errors, form.values.value),
     });
     const { handleSubmit, isSubmitting: submitting } = form;
     const originalForm = ref(null);
@@ -113,7 +116,6 @@ export default {
 
     const { archiveDisabledEntitiesData, archiveUnlinkedEntitiesData, cleanArchivedEntitiesData } =
       useEntity();
-    const { setFormErrors } = useValidationFormErrors(form.values);
 
     const hasChanges = computed(() => !isEqual(form.values.value, originalForm.value));
 
@@ -223,15 +225,11 @@ export default {
           ...getConfirmationPhraseMessages('modals.confirmationPhrase.updateStorageSettings'),
 
           action: async () => {
-            try {
-              dataStorageSettings = await updateDataStorage({ data: form.values.value });
+            dataStorageSettings = await updateDataStorage({ data: form.values.value });
 
-              popups.success({ text: t('success.default') });
+            popups.success({ text: t('success.default') });
 
-              resetForm();
-            } catch (err) {
-              setFormErrors(err);
-            }
+            resetForm();
           },
         },
       }),

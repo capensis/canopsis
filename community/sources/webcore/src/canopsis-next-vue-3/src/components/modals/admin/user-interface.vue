@@ -35,7 +35,6 @@ import { computed, onMounted, ref } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
 
-import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
 import { userInterfaceToForm } from '@/helpers/entities/user-interface/form';
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 
@@ -46,7 +45,6 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { useInfo } from '@/hooks/store/modules/info';
-import { useNotificationSettings } from '@/hooks/store/modules/notification-settings';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 
 import UserInterfaceForm from '@/components/other/user-interface/form/user-interface-form.vue';
@@ -72,15 +70,12 @@ export default {
     const { hasUpdateAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.parameters);
 
     const { appInfo, appInfoPending, fetchAppInfo, updateUserInterface, setTitle } = useInfo();
-    const { fetchNotificationSettingsWithoutStore, updateNotificationSettings } =
-      useNotificationSettings();
     const { fetchTemplateVarsList } = useTemplateVars();
 
-    const buildForm = (appInfoValue, notificationSettingsValue) => ({
+    const buildForm = appInfoValue => ({
       ...userInterfaceToForm(appInfoValue),
       version_description:
         appInfoValue?.version_description || t('userInterface.defaultVersionDescription'),
-      ...notificationsSettingsToForm(notificationSettingsValue),
     });
 
     const form = useForm({
@@ -92,7 +87,7 @@ export default {
     const close = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      const { instruction, logo, ...userInterfaceData } = values.value;
+      const { logo, ...userInterfaceData } = values.value;
       const data = { ...userInterfaceData };
 
       if (logo) {
@@ -100,7 +95,6 @@ export default {
       }
 
       await updateUserInterface({ data });
-      await updateNotificationSettings({ data: { instruction } });
       await fetchAppInfo();
       await setTitle();
 
@@ -119,9 +113,7 @@ export default {
       isFormLoading.value = true;
 
       try {
-        const notificationSettings = await fetchNotificationSettingsWithoutStore();
-
-        form.reset(buildForm(appInfo.value, notificationSettings));
+        form.reset(buildForm(appInfo.value));
         updateOriginalForm();
       } finally {
         isFormLoading.value = false;
