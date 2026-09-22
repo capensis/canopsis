@@ -2,17 +2,15 @@
   <div v-if="hasSettingsAccess" class="groups-settings-button">
     <c-speed-dial
       :close-on-content-click="false"
-      location="top center"
+      v-bind="speedDialProps"
     >
       <template #activator="{ props: activatorProps, isActive }">
         <v-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
-              v-bind="{ ...activatorProps, ...tooltipProps }"
+              v-bind="{ ...activatorProps, ...tooltipProps, ...speedDialBtnProps }"
               :class="{ 'c-speed-dial__btn--active': isActive }"
               class="c-speed-dial__btn"
-              color="primary"
-              size="x-large"
               icon
             >
               <v-icon icon="settings" />
@@ -23,7 +21,7 @@
         </v-tooltip>
       </template>
 
-      <div v-if="hasEditAccess" key="edit">
+      <div v-if="hasEditAccess" key="edit" class="groups-settings-button__action--edit">
         <v-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
@@ -46,7 +44,11 @@
         </v-tooltip>
       </div>
 
-      <div v-if="hasCreateAnyViewAccess" key="create-view">
+      <div
+        v-if="hasCreateAnyViewAccess"
+        key="create-view"
+        class="groups-settings-button__action--create-view"
+      >
         <v-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
@@ -63,7 +65,11 @@
         </v-tooltip>
       </div>
 
-      <div v-if="hasAccessToPrivateView" key="create-private-view">
+      <div
+        v-if="hasAccessToPrivateView"
+        key="create-private-view"
+        class="groups-settings-button__action--create-private-view"
+      >
         <v-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
@@ -102,6 +108,10 @@ export default {
   ],
 
   props: {
+    topBar: {
+      type: Boolean,
+      default: false,
+    },
     tooltipRight: {
       type: Boolean,
       default: false,
@@ -132,6 +142,34 @@ export default {
           [this.tooltipRight]: 'right',
         }.true || 'right'
       );
+    },
+
+    speedDialProps() {
+      if (this.topBar) {
+        return {
+          contentClass: 'groups-settings-button__content--top-bar',
+          location: 'bottom center',
+          transition: 'slide-y-transition',
+        };
+      }
+
+      return {
+        location: 'top center',
+      };
+    },
+
+    speedDialBtnProps() {
+      if (this.topBar) {
+        return {
+          color: 'white',
+          size: 'default',
+        };
+      }
+
+      return {
+        color: 'primary',
+        size: 'x-large',
+      };
     },
   },
 
@@ -174,4 +212,19 @@ export default {
   bottom: 16px;
   z-index: 8;
 }
+
+:global(.groups-settings-button__content--top-bar) {
+  .groups-settings-button__action--edit {
+    order: 3;
+  }
+
+  .groups-settings-button__action--create-view {
+    order: 2;
+  }
+
+  .groups-settings-button__action--create-private-view {
+    order: 1;
+  }
+}
+
 </style>

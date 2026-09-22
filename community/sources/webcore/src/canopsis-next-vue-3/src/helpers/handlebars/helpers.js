@@ -460,10 +460,20 @@ export function mapHelper(string, options) {
 /**
  * Return the current date and time.
  *
- * Examples:
+ * @example Default format and system timezone:
  * {{now}}
+ *
+ * @example Named format:
+ * {{now format='short'}}
+ *
+ * @example Date in a specific timezone:
  * {{now format='long' timezone='Europe/Paris'}}
- * {{now format='time' realtime=true offset='+15m'}}
+ *
+ * @example Date shifted five days into the past:
+ * {{now format='short' offset='-5d'}}
+ *
+ * @example Realtime clock shifted fifteen minutes forward:
+ * {{now format='time' timezone='UTC' realtime=true offset='+15m'}}
  *
  * @param {string} [format]
  * @param {string} [timezone]
