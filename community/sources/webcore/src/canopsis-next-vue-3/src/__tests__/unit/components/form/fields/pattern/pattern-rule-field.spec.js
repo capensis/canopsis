@@ -153,6 +153,29 @@ describe('pattern-rule-field', () => {
     });
   });
 
+  test('Attribute without definedType resets fieldType to string on updateAttribute', () => {
+    const rule = {
+      ...emptyRule,
+      fieldType: PATTERN_FIELD_TYPES.number,
+    };
+    const wrapper = factory({
+      propsData: {
+        rule,
+      },
+    });
+
+    wrapper.vm.updateAttribute({
+      value: ALARM_PATTERN_FIELDS.displayName,
+    });
+
+    expect(wrapper).toEmitInput({
+      ...rule,
+      attribute: ALARM_PATTERN_FIELDS.displayName,
+      alias: false,
+      fieldType: PATTERN_FIELD_TYPES.string,
+    });
+  });
+
   test('Operator changed after trigger input event on the operator field', () => {
     const rule = {
       ...emptyRule,
