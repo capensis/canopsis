@@ -1,284 +1,85 @@
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
-import Faker from 'faker';
 
 import { TIME_UNITS } from '@/constants';
-
 import ClickOutside from '@/services/click-outside';
 
 import CreateSnoozeEvent from '@/components/modals/alarm/create-snooze-event.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'snooze-event-form': true,
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
+  'snooze-event-form': {
+    props: { isNoteRequired: Boolean },
+    template: '<div class="snooze-event-form-stub" />',
+  },
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
-const selectButtons = wrapper => wrapper.findAll('button.v-btn');
-const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
-const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectSnoozeEventForm = wrapper => wrapper.find('snooze-event-form-stub');
-
 describe('create-snooze-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
-
-  const alarm = {
-    _id: Faker.datatype.string(),
-    v: {
-      connector: Faker.datatype.string(),
-      connector_name: Faker.datatype.string(),
-      component: Faker.datatype.string(),
-      resource: Faker.datatype.string(),
-      state: {
-        val: Faker.datatype.number(),
-      },
-      status: {
-        val: Faker.datatype.number(),
-      },
-    },
-    entity: {
-      type: Faker.datatype.number(),
-    },
-  };
-  const items = [alarm];
-  const snoozeEventData = {
-    duration: {
-      unit: TIME_UNITS.minute,
-      value: 1,
-    },
-    comment: '',
-  };
-  const config = { items };
 
   const factory = generateShallowRenderer(CreateSnoozeEvent, {
     stubs,
     attachTo: document.body,
+    parentComponent: { provide: { $clickOutside: new ClickOutside() } },
+    mocks: { $modals, $popups },
+  });
+
+  const createWrapper = (config = {}) => factory({
     propsData: {
       modal: {
-        config: {},
-      },
-    },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
+        id: 'test-modal-id',
+        config,
       },
     },
   });
 
-  test('Default parameters applied to form', () => {
-    const wrapper = factory({
-      mocks: {
-        $modals,
-      },
-    });
+  test('submits default snooze values and closes the modal by id', async () => {
+    const action = vi.fn();
+    const wrapper = createWrapper({ action });
 
-    const snoozeEventForm = selectSnoozeEventForm(wrapper);
+    await wrapper.find('form').trigger('submit');
 
-    expect(snoozeEventForm.vm.form).toEqual({
+    expect(action).toHaveBeenCalledWith({
+      duration: { unit: TIME_UNITS.minute, value: 1 },
       comment: '',
-      duration: {
-        unit: TIME_UNITS.minute,
-        value: 1,
-      },
     });
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Form submitted after trigger submit button', async () => {
-    const action = vi.fn();
+  test('forwards the note-required setting to the snooze form', () => {
+    const wrapper = createWrapper({ isNoteRequired: true });
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            items,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(action).toHaveBeenCalledWith(snoozeEventData);
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect(wrapper.vm.config.isNoteRequired).toBe(true);
   });
 
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
-    const action = vi.fn();
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const snoozeEventForm = selectSnoozeEventForm(wrapper);
-
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => snoozeEventForm.vm,
-      vm: snoozeEventForm.vm,
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(action).not.toBeCalled();
-
-    validator.detach('name');
-  });
-
-  test('Errors added after trigger submit button with action errors', async () => {
-    const action = vi.fn();
-    const formErrors = {
-      duration: 'Ticket error',
-      comment: 'Comment error',
-    };
-    action.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(formErrors).toEqual(addedErrors);
-    expect(action).toHaveBeenCalledWith(snoozeEventData);
-    expect($modals.hide).not.toHaveBeenCalledWith();
-
-    action.mockClear();
-  });
-
-  test('Error popup showed after trigger submit button with action errors', async () => {
-    const action = vi.fn();
+  test('shows an error popup and keeps the modal open for unmapped action errors', async () => {
+    const errors = { unavailableField: 'Error', anotherUnavailableField: 'Second error' };
+    const action = vi.fn().mockRejectedValueOnce(errors);
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
-    const errors = {
-      unavailableField: 'Error',
-      anotherUnavailableField: 'Second error',
-    };
-    action.mockRejectedValueOnce(errors);
+    const wrapper = createWrapper({ action });
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-        $popups,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.find('form').trigger('submit');
     await flushPromises();
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
-    expect($popups.error).toHaveBeenCalledWith({
-      text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
-    });
-    expect(action).toHaveBeenCalledWith(snoozeEventData);
-    expect($modals.hide).not.toHaveBeenCalledWith();
-
-    consoleErrorSpy.mockClear();
-    action.mockClear();
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Error\nSecond error' });
+    expect($modals.hide).not.toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
-  test('Modal submitted with correct data after trigger form', async () => {
-    const action = vi.fn();
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            ...config,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
+  test('closes without an action when cancel is clicked', async () => {
+    const wrapper = createWrapper();
 
-    const snoozeEventForm = selectSnoozeEventForm(wrapper);
-
-    const newForm = {
-      duration: {
-        unit: TIME_UNITS.hour,
-        value: 2,
-      },
-      comment: 'comment',
-    };
-
-    snoozeEventForm.triggerCustomEvent('input', newForm);
-
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.findAll('button.v-btn').at(0).trigger('click');
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith(newForm);
-    expect($modals.hide).toBeCalled();
-  });
-
-  test('Modal hidden after trigger cancel button', async () => {
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectCancelButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

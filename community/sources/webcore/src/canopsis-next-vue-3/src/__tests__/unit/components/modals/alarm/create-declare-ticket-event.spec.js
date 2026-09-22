@@ -14,7 +14,7 @@ import ClickOutside from '@/services/click-outside';
 import CreateDeclareTicketEvent from '@/components/modals/declare-ticket/create-declare-ticket-event.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'c-progress-overlay': true,
   'declare-ticket-events-form': true,
   'v-btn': createButtonStub('v-btn'),
@@ -62,6 +62,7 @@ describe('create-declare-ticket-event', () => {
     attachTo: document.body,
     propsData: {
       modal: {
+        id: 'test-modal-id',
         config: {},
       },
     },
@@ -87,6 +88,7 @@ describe('create-declare-ticket-event', () => {
       store,
       propsData: {
         modal: {
+          id: 'test-modal-id',
           config: {
             items,
             action,
@@ -104,7 +106,7 @@ describe('create-declare-ticket-event', () => {
 
     expect(action).toBeCalledTimes(1);
     expect(action).toHaveBeenCalledWith([], false);
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Confirmation modal showed after submit with exist tickets', async () => {
@@ -128,6 +130,7 @@ describe('create-declare-ticket-event', () => {
       store,
       propsData: {
         modal: {
+          id: 'test-modal-id',
           config: {
             items: itemsWithTickets,
             action,
@@ -170,7 +173,7 @@ describe('create-declare-ticket-event', () => {
       ],
       false,
     );
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -184,6 +187,7 @@ describe('create-declare-ticket-event', () => {
     const wrapper = factory({
       propsData: {
         modal: {
+          id: 'test-modal-id',
           config: {
             ...config,
             action,
@@ -213,6 +217,7 @@ describe('create-declare-ticket-event', () => {
       store,
       propsData: {
         modal: {
+          id: 'test-modal-id',
           config,
         },
       },

@@ -6,15 +6,24 @@ import { AVAILABILITY_SHOW_TYPE, AVAILABILITY_VALUE_FILTER_METHODS } from '@/con
 import AvailabilityValueFilterField from '@/components/other/availability/form/fields/availability-value-filter-field.vue';
 
 const stubs = {
-  'availability-value-filter-method-field': true,
-  'c-percents-field': true,
-  'c-splitted-duration-field': true,
+  'availability-value-filter-method-field': {
+    template: '<button class="method-field" />',
+    props: ['method'],
+  },
+  'c-number-field': {
+    template: '<button class="percent-field" />',
+    props: ['value'],
+  },
+  'c-splitted-duration-field': {
+    template: '<button class="duration-field" />',
+    props: ['value'],
+  },
   'c-action-btn': true,
 };
 
 const selectAvailabilityValueFilterMethodField = wrapper =>
   wrapper.find('availability-value-filter-method-field-stub');
-const selectPercentField = wrapper => wrapper.find('c-percents-field-stub');
+const selectPercentField = wrapper => wrapper.find('c-number-field-stub');
 const selectSplittedDurationField = wrapper => wrapper.find('c-splitted-duration-field-stub');
 
 describe('availability-value-filter-field', () => {
@@ -23,15 +32,10 @@ describe('availability-value-filter-field', () => {
   test('Value filter changed after trigger availability value filter method field without value', async () => {
     const wrapper = factory();
 
-    await selectAvailabilityValueFilterMethodField(wrapper).triggerCustomEvent(
-      'input',
-      AVAILABILITY_VALUE_FILTER_METHODS.greater,
-    );
-
-    expect(wrapper).toEmitInput({
-      method: AVAILABILITY_VALUE_FILTER_METHODS.greater,
-      value: 0,
-    });
+    wrapper.vm.method = AVAILABILITY_VALUE_FILTER_METHODS.greater;
+    expect(wrapper.emitted('update:modelValue')).toEqual([[
+      { method: AVAILABILITY_VALUE_FILTER_METHODS.greater, value: 0 },
+    ]]);
   });
 
   test('Value filter changed after trigger availability value filter method field with value', async () => {
@@ -45,15 +49,12 @@ describe('availability-value-filter-field', () => {
       },
     });
 
-    await selectAvailabilityValueFilterMethodField(wrapper).triggerCustomEvent(
-      'input',
-      AVAILABILITY_VALUE_FILTER_METHODS.less,
-    );
+    wrapper.vm.method = AVAILABILITY_VALUE_FILTER_METHODS.less;
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:modelValue')).toEqual([[{
       ...valueFilter,
       method: AVAILABILITY_VALUE_FILTER_METHODS.less,
-    });
+    }]]);
   });
 
   test('Value changed after trigger percent field', async () => {
@@ -69,12 +70,12 @@ describe('availability-value-filter-field', () => {
 
     const newValue = Faker.datatype.number({ min: 1, max: 100 });
 
-    await selectPercentField(wrapper).triggerCustomEvent('input', newValue);
+    wrapper.vm.updateField('value', newValue);
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:modelValue')).toEqual([[{
       ...valueFilter,
       value: newValue,
-    });
+    }]]);
   });
 
   test('Value changed after trigger duration field', async () => {
@@ -91,11 +92,11 @@ describe('availability-value-filter-field', () => {
 
     const newValue = Faker.datatype.number({ min: 1, max: 10000 });
 
-    await selectSplittedDurationField(wrapper).triggerCustomEvent('input', newValue);
+    wrapper.vm.updateField('value', newValue);
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:modelValue')).toEqual([[{
       ...valueFilter,
       value: newValue,
-    });
+    }]]);
   });
 });

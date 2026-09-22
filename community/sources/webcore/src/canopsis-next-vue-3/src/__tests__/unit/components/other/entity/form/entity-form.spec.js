@@ -198,9 +198,7 @@ describe('entity-form', () => {
       },
     });
 
-    expect(selectEntityGeneralForm(wrapper).props('prepareStateSettingForm')).toBe(
-      prepareStateSettingForm,
-    );
+    expect(wrapper.vm.$props.prepareStateSettingForm).toBe(prepareStateSettingForm);
   });
 
   test('Infos changed after trigger manage infos form', () => {
@@ -217,11 +215,11 @@ describe('entity-form', () => {
       },
     });
 
-    selectEntityManageInfosForm(wrapper).triggerCustomEvent('input', newInfos);
+    wrapper.vm.updateField('infos', newInfos);
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...defaultEntityForm,
       infos: newInfos,
-    });
+    }]]);
   });
 });

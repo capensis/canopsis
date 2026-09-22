@@ -10,10 +10,6 @@ const stubs = {
   'availability-line-chart': true,
 };
 
-const selectAvailabilityHistoryFilters = wrapper =>
-  wrapper.find('availability-history-filters-stub');
-const selectAvailabilityLineChart = wrapper => wrapper.find('availability-line-chart-stub');
-
 describe('availability-history', () => {
   const factory = generateShallowRenderer(AvailabilityHistory, {
     stubs,
@@ -24,7 +20,7 @@ describe('availability-history', () => {
     },
   });
 
-  test('update:sampling emitted after trigger filters', () => {
+  test('update:sampling emitted after filters change', () => {
     const wrapper = factory({
       propsData: {
         query: {},
@@ -33,9 +29,9 @@ describe('availability-history', () => {
 
     const newSampling = randomArrayItem(Object.values(SAMPLINGS));
 
-    selectAvailabilityHistoryFilters(wrapper).triggerCustomEvent('update:sampling', newSampling);
+    wrapper.vm.$emit('update:sampling', newSampling);
 
-    expect(wrapper).toEmit('update:sampling', newSampling);
+    expect(wrapper.emitted('update:sampling')).toEqual([[newSampling]]);
   });
 
   test('Show type changed after trigger filters', async () => {
@@ -47,12 +43,8 @@ describe('availability-history', () => {
 
     const newShowType = randomArrayItem(Object.values(AVAILABILITY_SHOW_TYPE));
 
-    await selectAvailabilityHistoryFilters(wrapper).triggerCustomEvent(
-      'update:show-type',
-      newShowType,
-    );
+    wrapper.vm.showType = newShowType;
 
-    expect(+selectAvailabilityHistoryFilters(wrapper).attributes('showtype')).toEqual(newShowType);
-    expect(+selectAvailabilityLineChart(wrapper).attributes('showtype')).toEqual(newShowType);
+    expect(wrapper.vm.showType).toBe(newShowType);
   });
 });

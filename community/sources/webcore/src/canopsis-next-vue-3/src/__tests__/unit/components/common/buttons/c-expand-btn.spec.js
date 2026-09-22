@@ -19,18 +19,18 @@ describe('c-expand-btn', () => {
   const factory = generateShallowRenderer(CExpandBtn, { stubs });
 
   it('Expand button expand is worked.', () => {
-    const wrapper = factory({ propsData: { expanded: false } });
+    const wrapper = factory({ propsData: { modelValue: false } });
 
     wrapper.find('button.v-btn').trigger('click');
 
-    expect(wrapper).toEmit('expand', true);
+    expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([true]);
   });
 
   it('Expand button collapse is worked.', () => {
-    const wrapper = factory({ propsData: { expanded: true } });
+    const wrapper = factory({ propsData: { modelValue: true } });
 
     wrapper.find('button.v-btn').trigger('click');
 
-    expect(wrapper).toEmit('expand', false);
+    expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([false]);
   });
 });

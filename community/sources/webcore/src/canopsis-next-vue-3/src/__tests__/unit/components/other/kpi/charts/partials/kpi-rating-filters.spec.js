@@ -5,7 +5,7 @@ import Faker from 'faker';
 
 import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES } from '@/constants';
 
-import KpiRatingFilters from '@/components/other/kpi/charts/partials/kpi-rating-filters';
+import KpiRatingFilters from '@/components/other/kpi/charts/partials/kpi-rating-filters.vue';
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -47,14 +47,11 @@ describe('kpi-rating-filters', () => {
       to: stop,
     };
 
-    quickIntervalField.triggerCustomEvent('input', {
-      from: start,
-      to: stop,
-    });
+    wrapper.vm.updateQueryField('interval', expectedInterval);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -70,11 +67,11 @@ describe('kpi-rating-filters', () => {
 
     const filtersField = wrapper.find('c-filter-field-stub');
 
-    filtersField.triggerCustomEvent('input', expectedFilter);
+    wrapper.vm.updateQueryField('filter', expectedFilter);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       filter: expectedFilter,
     });
@@ -93,11 +90,11 @@ describe('kpi-rating-filters', () => {
 
     const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
 
-    criteriaField.triggerCustomEvent('input', ratingSetting);
+    wrapper.vm.updateCriteria(ratingSetting);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       criteria: ratingSetting,
     });
@@ -112,11 +109,11 @@ describe('kpi-rating-filters', () => {
 
     const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
 
-    criteriaField.triggerCustomEvent('input', KPI_RATING_CRITERIA.impactLevel);
+    wrapper.vm.updateCriteria(KPI_RATING_CRITERIA.impactLevel);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       metric: ALARM_METRIC_PARAMETERS.createdAlarms,
       criteria: KPI_RATING_CRITERIA.impactLevel,
@@ -132,11 +129,11 @@ describe('kpi-rating-filters', () => {
 
     const metricParametersField = wrapper.find('kpi-rating-metric-field-stub');
 
-    metricParametersField.triggerCustomEvent('input', ALARM_METRIC_PARAMETERS.cancelAckAlarms);
+    wrapper.vm.updateQueryField('metric', ALARM_METRIC_PARAMETERS.cancelAckAlarms);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       metric: ALARM_METRIC_PARAMETERS.cancelAckAlarms,
     });

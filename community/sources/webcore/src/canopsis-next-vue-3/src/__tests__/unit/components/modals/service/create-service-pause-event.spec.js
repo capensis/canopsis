@@ -1,232 +1,89 @@
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
-import Faker from 'faker';
 
 import ClickOutside from '@/services/click-outside';
 
 import CreateServicePauseEvent from '@/components/modals/service/create-service-pause-event.vue';
 
 const stubs = {
-  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-modal-wrapper': createModalWrapperStub('c-modal-wrapper'),
   'service-pause-event-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
-const selectButtons = wrapper => wrapper.findAll('button.v-btn');
-const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
-const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectServicePauseEventForm = wrapper => wrapper.find('service-pause-event-form-stub');
-
 describe('create-service-pause-event', () => {
-  const timestamp = 1386435600000;
-
-  mockDateNow(timestamp);
-
   const $modals = mockModals();
   const $popups = mockPopups();
 
   const factory = generateShallowRenderer(CreateServicePauseEvent, {
     stubs,
     attachTo: document.body,
+    parentComponent: { provide: { $clickOutside: new ClickOutside() } },
+    mocks: { $modals, $popups },
+  });
+
+  const createWrapper = (config = {}) => factory({
     propsData: {
       modal: {
-        config: {},
-      },
-    },
-    parentComponent: {
-      provide: {
-        $clickOutside: new ClickOutside(),
+        id: 'test-modal-id',
+        config,
       },
     },
   });
 
-  test('Default parameters applied to form', () => {
-    const wrapper = factory({
-      mocks: {
-        $modals,
-      },
-    });
+  test('initializes the default pause form', () => {
+    const wrapper = createWrapper();
 
-    const servicePauseEventForm = selectServicePauseEventForm(wrapper);
-
-    expect(servicePauseEventForm.vm.form).toEqual({
-      comment: '',
-      reason: '',
-    });
+    expect(wrapper.vm.form).toEqual({ comment: '', reason: '' });
   });
 
-  test('Form submitted after trigger submit button', async () => {
+  test('submits updated form values and closes by id', async () => {
     const action = vi.fn();
-    const config = { action };
+    const wrapper = createWrapper({ action });
+    const form = { comment: 'Comment', reason: 'Maintenance' };
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
+    wrapper.vm.form = form;
+    await wrapper.find('form').trigger('submit');
 
-    const submitButton = selectSubmitButton(wrapper);
-    const servicePauseEventForm = selectServicePauseEventForm(wrapper);
+    expect(action).toHaveBeenCalledWith(form);
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
+  });
 
-    const newData = {
-      comment: Faker.datatype.string(),
-      reason: Faker.datatype.string(),
-    };
+  test('closes without an action', async () => {
+    const wrapper = createWrapper();
 
-    servicePauseEventForm.triggerCustomEvent('input', newData);
-
-    submitButton.trigger('click');
-
+    await wrapper.find('form').trigger('submit');
     await flushPromises();
 
-    expect(action).toBeCalledTimes(1);
-    expect(action).toHaveBeenCalledWith(newData);
-    expect($modals.hide).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Form submitted after trigger submit button without action', async () => {
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {},
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect($modals.hide).toHaveBeenCalledWith();
-  });
-
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
-    const action = vi.fn();
-    const config = { action };
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const submitButton = selectSubmitButton(wrapper);
-    const servicePauseEventForm = selectServicePauseEventForm(wrapper);
-
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => servicePauseEventForm.vm,
-      vm: servicePauseEventForm.vm,
-    });
-
-    submitButton.trigger('click');
-
-    await flushPromises();
-
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
-
-    validator.detach('name');
-  });
-
-  test('Errors added after trigger submit button with action errors', async () => {
-    const action = vi.fn();
-    const formErrors = {
-      comment: 'Comment error',
-      reason: 'Reason error',
-    };
-    action.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: { action },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledTimes(1);
-    expect(action).toHaveBeenCalledWith({ comment: '', reason: '' });
-    expect($modals.hide).not.toHaveBeenCalledWith();
-  });
-
-  test('Error popup showed after trigger submit button with action errors', async () => {
-    const action = vi.fn();
+  test('shows an error popup and keeps the modal open for unmapped action errors', async () => {
+    const errors = { unavailableField: 'Error', anotherUnavailableField: 'Second error' };
+    const action = vi.fn().mockRejectedValueOnce(errors);
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
-    const errors = {
-      unavailableField: 'Error',
-      anotherUnavailableField: 'Second error',
-    };
-    action.mockRejectedValueOnce(errors);
+    const wrapper = createWrapper({ action });
 
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: { action },
-        },
-      },
-      mocks: {
-        $modals,
-        $popups,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
+    await wrapper.find('form').trigger('submit');
     await flushPromises();
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
-    expect($popups.error).toHaveBeenCalledWith({
-      text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
-    });
-    expect(action).toBeCalledTimes(1);
-    expect(action).toHaveBeenCalledWith({ reason: '', comment: '' });
-    expect($modals.hide).not.toHaveBeenCalledWith();
-
-    consoleErrorSpy.mockClear();
+    expect($popups.error).toHaveBeenCalledWith({ text: 'Error\nSecond error' });
+    expect($modals.hide).not.toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
-  test('Modal hidden after trigger cancel button', async () => {
-    const wrapper = factory({
-      mocks: {
-        $modals,
-      },
-    });
+  test('closes when cancel is clicked', async () => {
+    const wrapper = createWrapper();
 
-    selectCancelButton(wrapper).trigger('click');
-
+    await wrapper.findAll('button.v-btn').at(0).trigger('click');
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 });

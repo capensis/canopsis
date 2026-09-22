@@ -5,7 +5,7 @@ import Faker from 'faker';
 
 import { KPI_SLI_GRAPH_DATA_TYPE, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
-import KpiSliFilters from '@/components/other/kpi/charts/partials/kpi-sli-filters';
+import KpiSliFilters from '@/components/other/kpi/charts/partials/kpi-sli-filters.vue';
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -45,14 +45,11 @@ describe('kpi-sli-filters', () => {
       to: stop,
     };
 
-    quickIntervalField.triggerCustomEvent('input', {
-      from: start,
-      to: stop,
-    });
+    wrapper.vm.updateQueryField('interval', expectedInterval);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -65,11 +62,11 @@ describe('kpi-sli-filters', () => {
       },
     });
 
-    wrapper.find('c-sampling-field-stub').triggerCustomEvent('input', SAMPLINGS.month);
+    wrapper.vm.updateQueryField('sampling', SAMPLINGS.month);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       sampling: SAMPLINGS.month,
     });
@@ -82,13 +79,11 @@ describe('kpi-sli-filters', () => {
       },
     });
 
-    wrapper
-      .find('kpi-sli-show-mode-field-stub')
-      .triggerCustomEvent('input', KPI_SLI_GRAPH_DATA_TYPE.time);
+    wrapper.vm.updateQueryField('type', KPI_SLI_GRAPH_DATA_TYPE.time);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       type: KPI_SLI_GRAPH_DATA_TYPE.time,
     });
@@ -104,11 +99,11 @@ describe('kpi-sli-filters', () => {
 
     const filtersField = wrapper.find('c-filter-field-stub');
 
-    filtersField.triggerCustomEvent('input', expectedFilter);
+    wrapper.vm.updateQueryField('filter', expectedFilter);
 
     await flushPromises();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper).toEmit('update:query', {
       ...initialQuery,
       filter: expectedFilter,
     });

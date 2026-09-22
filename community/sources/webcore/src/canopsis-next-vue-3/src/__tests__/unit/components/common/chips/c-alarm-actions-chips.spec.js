@@ -4,7 +4,8 @@ import CAlarmActionsChips from '@/components/common/chips/c-alarm-actions-chips.
 
 const stubs = {
   'c-chip': {
-    template: '<span v-on="$attrs" class="c-chip"></span>',
+    template: '<span class="c-chip" @click="$emit(\'click\')"></span>',
+    emits: ['click'],
   },
 };
 

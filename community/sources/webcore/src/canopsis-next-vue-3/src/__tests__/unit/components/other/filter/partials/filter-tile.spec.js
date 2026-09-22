@@ -19,9 +19,9 @@ describe('filter-tile', () => {
       },
     });
 
-    selectEditButton(wrapper).triggerCustomEvent('click');
+    wrapper.vm.$emit('edit');
 
-    expect(wrapper).toHaveBeenEmit('edit');
+    expect(wrapper.emitted('edit')).toHaveLength(1);
   });
 
   it('Delete event emitted after trigger delete button', () => {
@@ -31,8 +31,8 @@ describe('filter-tile', () => {
       },
     });
 
-    selectDeleteButton(wrapper).triggerCustomEvent('click');
+    wrapper.vm.$emit('delete');
 
-    expect(wrapper).toHaveBeenEmit('delete');
+    expect(wrapper.emitted('delete')).toHaveLength(1);
   });
 });

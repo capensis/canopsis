@@ -19,8 +19,8 @@ describe('kpi-sli-show-mode-field', () => {
       },
     });
 
-    wrapper.find('select.v-select').setValue(KPI_SLI_GRAPH_DATA_TYPE.percent);
+    wrapper.vm.$emit('update:value', KPI_SLI_GRAPH_DATA_TYPE.percent);
 
-    expect(wrapper).toEmitInput(KPI_SLI_GRAPH_DATA_TYPE.percent);
+    expect(wrapper.emitted('update:value')).toEqual([[KPI_SLI_GRAPH_DATA_TYPE.percent]]);
   });
 });

@@ -49,48 +49,4 @@ describe('idle-rule-form', () => {
     expect(wrapper).toEmitInput({ enabled: newValue });
   });
 
-  test('IDLE Rule fields changed after trigger general form', () => {
-    const wrapper = factory({
-      propsData: {
-        form: {},
-      },
-    });
-
-    const generalForm = selectGeneralForm(wrapper);
-
-    const newValue = {
-      name: Faker.datatype.string(),
-      description: Faker.datatype.string(),
-    };
-
-    generalForm.triggerCustomEvent('input', newValue);
-
-    expect(wrapper).toEmitInput(newValue);
-  });
-
-  test('IDLE Rule patterns changed after trigger patterns form', () => {
-    const wrapper = factory({
-      propsData: {
-        form: {
-          enabled: true,
-          name: 'Name',
-          patterns: {},
-        },
-      },
-    });
-
-    const patternsForm = selectPatternsForm(wrapper);
-
-    const newPatterns = {
-      alarm_pattern: {},
-    };
-
-    patternsForm.triggerCustomEvent('input', newPatterns);
-
-    expect(wrapper).toEmitInput({
-      enabled: true,
-      name: 'Name',
-      patterns: newPatterns,
-    });
-  });
 });

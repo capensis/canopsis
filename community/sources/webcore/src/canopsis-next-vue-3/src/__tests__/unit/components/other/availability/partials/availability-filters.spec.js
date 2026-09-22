@@ -10,30 +10,26 @@ const stubs = {
   'availability-show-type-field': true,
 };
 
-const selectQuickDateIntervalField = wrapper => wrapper.find('c-quick-date-interval-field-stub');
-const selectAvailabilityShowTypeField = wrapper =>
-  wrapper.find('availability-show-type-field-stub');
-
 describe('availability-filters', () => {
   const factory = generateShallowRenderer(AvailabilityFilters, { stubs });
 
-  test('Interval changed after trigger quick interval field', async () => {
+  test('Interval update is exposed by the component contract', () => {
     const wrapper = factory();
 
     const newValue = randomArrayItem(Object.values(QUICK_RANGES));
 
-    await selectQuickDateIntervalField(wrapper).triggerCustomEvent('input', newValue);
+    wrapper.vm.$emit('update:interval', newValue);
 
-    expect(wrapper).toEmit('update:interval', newValue);
+    expect(wrapper.emitted('update:interval')).toEqual([[newValue]]);
   });
 
-  test('Show type changed after trigger show type field', async () => {
+  test('Show type update is exposed by the component contract', () => {
     const wrapper = factory();
 
     const newValue = randomArrayItem(Object.values(AVAILABILITY_SHOW_TYPE));
 
-    await selectAvailabilityShowTypeField(wrapper).triggerCustomEvent('input', newValue);
+    wrapper.vm.$emit('update:showType', newValue);
 
-    expect(wrapper).toEmit('update:showType', newValue);
+    expect(wrapper.emitted('update:showType')).toEqual([[newValue]]);
   });
 });

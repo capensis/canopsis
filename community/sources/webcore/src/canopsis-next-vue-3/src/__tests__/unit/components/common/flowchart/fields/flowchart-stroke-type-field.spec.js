@@ -6,7 +6,10 @@ import { STROKE_TYPES } from '@/constants';
 import FlowchartStrokeTypeField from '@/components/common/flowchart/fields/flowchart-stroke-type-field.vue';
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'v-select': {
+    template: '<button class="v-select" @click="$emit(\'update:modelValue\', { value: selected })" />',
+    props: ['selected'],
+  },
 };
 
 const selectSelectField = wrapper => wrapper.find('.v-select');
@@ -19,8 +22,8 @@ describe('flowchart-stroke-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.triggerCustomEvent('input', STROKE_TYPES.dashed);
+    selectField.triggerCustomEvent('update:modelValue', { value: STROKE_TYPES.dashed });
 
-    expect(wrapper).toEmitInput(STROKE_TYPES.dashed);
+    expect(wrapper.emitted('update:value')).toEqual([[STROKE_TYPES.dashed]]);
   });
 });

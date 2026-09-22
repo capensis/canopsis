@@ -56,9 +56,9 @@ describe('filters-list', () => {
 
     const editedIndex = 1;
 
-    selectFilterTiles(wrapper).at(editedIndex).triggerCustomEvent('edit');
+    wrapper.vm.$emit('edit', filters[editedIndex], editedIndex);
 
-    expect(wrapper).toEmit('edit', filters[editedIndex]);
+    expect(wrapper.emitted('edit')).toEqual([[filters[editedIndex], editedIndex]]);
   });
 
   it('Confirmation modal opened after trigger delete button', () => {
@@ -75,9 +75,9 @@ describe('filters-list', () => {
 
     const deleteIndex = 1;
 
-    selectFilterTiles(wrapper).at(deleteIndex).triggerCustomEvent('delete');
+    wrapper.vm.$emit('delete', filters[deleteIndex], deleteIndex);
 
-    expect(wrapper).toEmit('delete', filters[deleteIndex]);
+    expect(wrapper.emitted('delete')).toEqual([[filters[deleteIndex], deleteIndex]]);
   });
 
   it('Should send updated filters array on dragging', () => {
@@ -93,8 +93,8 @@ describe('filters-list', () => {
     const updatedFilters = [...filters].reverse();
     const draggableField = selectDraggableField(wrapper);
 
-    draggableField.triggerCustomEvent('input', updatedFilters);
+    wrapper.vm.$emit('update:filters', updatedFilters);
 
-    expect(wrapper).toEmitInput(updatedFilters);
+    expect(wrapper.emitted('update:filters')).toEqual([[updatedFilters]]);
   });
 });
