@@ -412,11 +412,8 @@ export default {
 
         attribute: attribute?.value,
         alias: attribute?.alias ?? false,
+        fieldType: attribute?.definedType ?? PATTERN_FIELD_TYPES.string,
       };
-
-      if (attribute?.definedType) {
-        newRule.fieldType = attribute.definedType;
-      }
 
       this.updateModel(newRule);
     },
