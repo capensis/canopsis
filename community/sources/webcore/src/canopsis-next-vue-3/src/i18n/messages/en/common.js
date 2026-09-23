@@ -55,6 +55,7 @@ export default {
   end: 'End',
   every: 'Every',
   message: 'Message',
+  text: 'Text',
   preview: 'Preview',
   recursive: 'Recursive',
   select: 'Select',

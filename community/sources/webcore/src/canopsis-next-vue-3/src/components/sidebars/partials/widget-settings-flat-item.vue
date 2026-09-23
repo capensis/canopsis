@@ -1,7 +1,7 @@
 <template>
   <v-list-item class="widget-settings-flat-item">
     <template #title>
-      {{ title }}
+      <slot name="title">{{ title }}</slot>
     </template>
 
     <template #append>

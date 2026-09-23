@@ -11,6 +11,7 @@
     />
 
     <v-divider />
+    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
@@ -24,6 +25,7 @@ import { useWidgetSettings } from '@/hooks/widget/settings';
 
 import FieldTextEditor from '../form/fields/text-editor.vue';
 import FieldTitle from '../form/fields/title.vue';
+import WidgetColorsForm from '../form/fields/widget-colors-form.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 
 defineOptions({

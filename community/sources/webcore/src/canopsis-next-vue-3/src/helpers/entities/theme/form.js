@@ -1,5 +1,5 @@
 import { COLORS } from '@/config';
-import { THEME_FONT_SIZES } from '@/constants';
+import { DEFAULT_WIDGET_BORDER_RADIUS, THEME_FONT_SIZES } from '@/constants';
 
 import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color';
 
@@ -20,6 +20,13 @@ import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color';
  */
 
 /**
+ * @typedef {Object} ThemeWidgetColorsForm
+ * @property {string} title_background
+ * @property {string} content_background
+ * @property {ThemeEnabledColor} border
+ */
+
+/**
  * @typedef {ThemeStatesColors} ThemeStatesColorsForm
  */
 
@@ -27,6 +34,7 @@ import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color';
  * @typedef {ThemeColors} ThemeColorsForm
  * @property {ThemeMainColorsForm} main
  * @property {ThemeTableColorsForm} table
+ * @property {ThemeWidgetColorsForm} widget
  * @property {ThemeStatesColorsForm} state
  */
 
@@ -100,26 +108,46 @@ export const themeMainColorsToForm = (main = {}) => ({
  */
 export const themeTableColorsToForm = (table = {}) => {
   const isDarkRowColor = table.row_color && isDarkColor(table.row_color);
+  const shiftRowEnabled = table.shift_row?.enabled ?? Boolean(table.shift_row);
+  const hoverRowEnabled = table.hover_row?.enabled ?? Boolean(table.hover_row);
   const shiftRowColor =
     table.shift_row_color ??
+    table.shift_row?.color ??
     (isDarkRowColor ? COLORS.table.shiftRowDarkColor : COLORS.table.shiftRowColor);
   const hoverRowColor =
     table.hover_row_color ??
+    table.hover_row?.color ??
     (isDarkRowColor ? COLORS.table.hoverRowDarkColor : COLORS.table.hoverRowColor);
 
   return {
     background: table.background ?? COLORS.table.background,
     row_color: table.row_color ?? COLORS.table.rowColor,
     shift_row: {
-      enabled: Boolean(table.shift_row),
+      enabled: shiftRowEnabled,
       color: shiftRowColor,
     },
     hover_row: {
-      enabled: Boolean(table.hover_row),
+      enabled: hoverRowEnabled,
       color: hoverRowColor,
     },
   };
 };
+
+/**
+ * Convert theme widget colors to form object.
+ *
+ * @param {ThemeWidgetColors} [widget = {}]
+ * @returns {ThemeWidgetColorsForm}
+ */
+export const themeWidgetColorsToForm = (widget = {}) => ({
+  border: {
+    enabled: widget.border?.enabled ?? Boolean(widget.border),
+    color: widget.border_color ?? widget.border?.color ?? COLORS.widget.borderColor,
+    radius: widget.border_radius ?? widget.border?.radius ?? DEFAULT_WIDGET_BORDER_RADIUS,
+  },
+  title_background: widget.title_background ?? COLORS.widget.titleBackground,
+  content_background: widget.content_background ?? COLORS.widget.contentBackground,
+});
 
 /**
  * Convert theme main colors to form object
@@ -144,6 +172,7 @@ export const themeStatesColorsToForm = (states = {}) => ({
 export const themeColorsToForm = (colors = {}) => ({
   main: themeMainColorsToForm(colors.main),
   table: themeTableColorsToForm(colors.table),
+  widget: themeWidgetColorsToForm(colors.widget),
   state: themeStatesColorsToForm(colors.state),
   status: colors.status ?? COLORS.status,
 });
@@ -161,17 +190,40 @@ export const themeToForm = (theme = {}) => ({
 });
 
 /**
- * Convert table colors from form to API object.
+ * Convert table colors to theme object.
  *
- * @param {ThemeTableColorsForm} [table = {}]
+ * @param {ThemeTableColors|ThemeTableColorsForm} [table = {}]
  * @returns {ThemeTableColors}
  */
-export const formTableColorsToTheme = (table = {}) => ({
-  ...table,
-  shift_row: table.shift_row?.enabled ?? false,
-  shift_row_color: table.shift_row?.color ?? null,
-  hover_row: table.hover_row?.enabled ?? false,
-  hover_row_color: table.hover_row?.color ?? null,
+export const tableColorsToTheme = (table = {}) => {
+  const shiftRowEnabled = table.shift_row?.enabled ?? Boolean(table.shift_row);
+  const hoverRowEnabled = table.hover_row?.enabled ?? Boolean(table.hover_row);
+
+  return {
+    ...table,
+    shift_row: shiftRowEnabled,
+    shift_row_color: shiftRowEnabled
+      ? table.shift_row?.color ?? table.shift_row_color ?? null
+      : null,
+    hover_row: hoverRowEnabled,
+    hover_row_color: hoverRowEnabled
+      ? table.hover_row?.color ?? table.hover_row_color ?? null
+      : null,
+  };
+};
+
+/**
+ * Convert widget colors from form to API object.
+ *
+ * @param {ThemeWidgetColorsForm} [widget = {}]
+ * @returns {ThemeWidgetColors}
+ */
+export const formWidgetColorsToTheme = (widget = {}) => ({
+  title_background: widget.title_background ?? null,
+  content_background: widget.content_background ?? null,
+  border: widget.border?.enabled ?? false,
+  border_color: widget.border?.color ?? null,
+  border_radius: widget.border?.radius ?? null,
 });
 
 /**
@@ -182,7 +234,8 @@ export const formTableColorsToTheme = (table = {}) => ({
  */
 export const formColorsToTheme = (colors = {}) => ({
   ...colors,
-  table: formTableColorsToTheme(colors.table),
+  table: tableColorsToTheme(colors.table),
+  widget: formWidgetColorsToTheme(colors.widget),
 });
 
 /**

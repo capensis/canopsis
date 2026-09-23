@@ -46,6 +46,7 @@
       <field-file-name-masks v-model="form.parameters" />
     </widget-settings-group>
     <v-divider />
+    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
@@ -64,6 +65,7 @@ import { useWidgetSettings } from '@/hooks/widget/settings';
 import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
 import FieldTitle from '../form/fields/title.vue';
+import WidgetColorsForm from '../form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 

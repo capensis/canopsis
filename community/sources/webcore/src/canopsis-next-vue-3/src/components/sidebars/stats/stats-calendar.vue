@@ -41,6 +41,7 @@
         hide-suffix
       />
     </widget-settings-group>
+    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
@@ -61,6 +62,7 @@ import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/o
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
@@ -78,6 +80,7 @@ export default {
     FieldOpenedResolvedFilter,
     FieldSwitcher,
     FieldTitle,
+    WidgetColorsForm,
     WidgetSettings,
     WidgetSettingsGroup,
   },

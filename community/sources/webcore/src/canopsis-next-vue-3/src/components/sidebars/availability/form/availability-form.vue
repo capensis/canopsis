@@ -58,6 +58,7 @@
         without-infos-attributes
       />
     </widget-settings-group>
+    <widget-colors-form v-model="localForm.parameters.colors" with-table />
   </c-layout>
 </template>
 
@@ -72,6 +73,7 @@ import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 import FieldAvailabilityDisplayParameter from './fields/availability-display-parameter.vue';
@@ -88,6 +90,7 @@ export default {
     FieldColumns,
     FieldTitle,
     FieldPeriodicRefresh,
+    WidgetColorsForm,
   },
 
   props: {

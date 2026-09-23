@@ -124,6 +124,11 @@ export default {
       [STATS_CRITICITY.critical]: 'critical',
     },
   },
+  colors: {
+    title: 'Colors',
+    theme: 'Theme colors',
+    custom: 'Custom colors',
+  },
   infoPopup: {
     title: 'Info popup for column',
     fields: {

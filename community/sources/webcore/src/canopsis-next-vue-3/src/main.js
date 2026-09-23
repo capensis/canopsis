@@ -257,7 +257,7 @@ app.use(modalsPlugin, {
     [MODALS.createTag]: { maxWidth: 920 },
     [MODALS.createTemplateTestingData]: { autoHeight: true },
     [MODALS.createTemplateTestingTest]: { autoHeight: true },
-    [MODALS.createTheme]: { maxWidth: 500, autoHeight: true },
+    [MODALS.createTheme]: { maxWidth: 900, autoHeight: true },
     [MODALS.createTicketStatusJob]: { maxWidth: 1200, autoHeight: true },
     [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334, autoHeight: true },
     [MODALS.createUser]: { autoHeight: true },

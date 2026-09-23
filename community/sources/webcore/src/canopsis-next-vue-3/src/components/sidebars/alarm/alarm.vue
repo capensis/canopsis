@@ -259,6 +259,7 @@
       optional-infos-attributes
     />
     <charts-form v-model="form.parameters.charts" />
+    <widget-colors-form v-model="form.parameters.colors" with-table />
   </widget-settings>
 </template>
 
@@ -311,6 +312,7 @@ import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 

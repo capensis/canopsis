@@ -660,6 +660,11 @@ export const COLORS = {
     hoverRowColor: '#F5F5F5',
     hoverRowDarkColor: '#616161',
   },
+  widget: {
+    titleBackground: '#FFFFFF',
+    contentBackground: '#FFFFFF',
+    borderColor: '#C7C7C7',
+  },
   state: {
     ok: '#24834C',
     minor: '#FFF176',
@@ -951,6 +956,11 @@ export const DEFAULT_THEME_COLORS = {
     background: COLORS.table.background,
     row_color: COLORS.table.rowColor,
     hover_row_color: COLORS.table.hoverRowColor,
+  },
+  widget: {
+    title_background: COLORS.widget.titleBackground,
+    content_background: COLORS.widget.contentBackground,
+    border_color: COLORS.widget.borderColor,
   },
 };
 

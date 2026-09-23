@@ -8,10 +8,16 @@
     :required="required"
     :disabled="disabled"
     @update:value="updateModel"
-  />
+  >
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="slotProps || {}" />
+    </template>
+  </c-number-field>
 </template>
 
 <script>
+import { MIN_PRIORITY } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -32,7 +38,7 @@ export default {
     },
     min: {
       type: Number,
-      default: 0,
+      default: MIN_PRIORITY,
     },
     required: {
       type: Boolean,

@@ -29,6 +29,11 @@ export const WIDGET_TYPES = {
   ...featuresService.get('constants.WIDGET_TYPES'),
 };
 
+export const WIDGET_COLORS_MODES = {
+  theme: 'theme',
+  custom: 'custom',
+};
+
 export const TOP_LEVEL_WIDGET_TYPES = [
   WIDGET_TYPES.alarmList,
   WIDGET_TYPES.context,
