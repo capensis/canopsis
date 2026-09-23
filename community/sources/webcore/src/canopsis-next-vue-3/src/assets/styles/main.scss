@@ -559,6 +559,82 @@ kbd {
   }
 }
 
+.v-table,
+.v-data-table {
+  background-color: var(--c-table-row-color, rgb(var(--v-theme-surface)));
+
+  > .v-table__wrapper > table {
+    background-color: var(--c-table-row-color, rgb(var(--v-theme-surface)));
+
+    > thead > tr,
+    > thead > tr > th,
+    > thead > tr > td {
+      background-color: var(--c-table-background, rgb(var(--v-theme-surface)));
+    }
+
+    > tbody > tr {
+      background-color: var(--c-table-row-color, rgb(var(--v-theme-surface)));
+
+      > th,
+      > td {
+        background-color: var(--c-table-row-color, rgb(var(--v-theme-surface)));
+      }
+
+      &:nth-of-type(even) {
+        background-color: var(
+          --c-table-shift-row-color,
+          var(--c-table-row-color, rgb(var(--v-theme-surface)))
+        );
+
+        > th,
+        > td {
+          background-color: var(
+            --c-table-shift-row-color,
+            var(--c-table-row-color, rgb(var(--v-theme-surface)))
+          );
+        }
+      }
+
+      &:hover {
+        background-color: var(
+          --c-table-hover-row-color,
+          var(--c-table-row-color, rgb(var(--v-theme-surface)))
+        );
+
+        > th,
+        > td {
+          background-color: var(
+            --c-table-hover-row-color,
+            var(--c-table-row-color, rgb(var(--v-theme-surface)))
+          );
+        }
+      }
+    }
+
+    > tfoot > tr,
+    > tfoot > tr > th,
+    > tfoot > tr > td {
+      background-color: var(--c-table-row-color, rgb(var(--v-theme-surface)));
+    }
+  }
+
+  .v-data-table-column--fixed,
+  .v-data-table-column--fixed-end,
+  .v-data-table__th--sticky {
+    background-color: var(--c-table-row-color, rgb(var(--v-theme-surface)));
+  }
+
+  > .v-table__wrapper > table > thead > tr > th.v-data-table-column--fixed,
+  > .v-table__wrapper > table > thead > tr > th.v-data-table-column--fixed-end,
+  > .v-table__wrapper > table > thead > tr > th.v-data-table__th--sticky {
+    background-color: var(--c-table-background, rgb(var(--v-theme-surface)));
+  }
+
+  &.v-table--fixed-header > .v-table__wrapper > table > thead > tr > th {
+    background-color: var(--c-table-background, rgb(var(--v-theme-surface)));
+  }
+}
+
 .display-block {
   display: block !important;
 }
@@ -710,14 +786,7 @@ kbd {
     .v-expansion-panel-header,
     .v-expansion-panel-title,
     .v-expansion-panel-text,
-    .v-card,
-    .v-table,
-    .v-data-table,
-    .v-data-table thead,
-    .v-data-table thead tr,
-    .v-data-table thead th,
-    .v-data-table tbody tr,
-    .treeview-data-table {
+    .v-card {
       background-color: var(--v-application-background-darken1) !important;
       border-color: var(--v-application-background-darken1) !important;
     }
@@ -745,14 +814,7 @@ kbd {
     .v-expansion-panel-header,
     .v-expansion-panel-title,
     .v-expansion-panel-text,
-    .v-card,
-    .v-table,
-    .v-data-table,
-    .v-data-table thead,
-    .v-data-table thead tr,
-    .v-data-table thead th,
-    .v-data-table tbody tr,
-    .treeview-data-table {
+    .v-card {
       color: var(--v-active-color-base) !important;
       background-color: var(--v-application-background-lighten2) !important;
       border-color: var(--v-application-background-lighten2) !important;

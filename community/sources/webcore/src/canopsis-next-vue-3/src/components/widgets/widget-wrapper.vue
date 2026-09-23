@@ -1,56 +1,59 @@
 <template>
-  <div :style="widgetWrapperStyles">
-    <template v-if="widget.title || activeViewEditing">
-      <v-card-title class="widget-title pa-2">
-        <c-layout justify="space-between" align="center">
-          <div>
-            <h4 class="widget-title__text ml-2 font-weight-regular">
-              {{ widget.title }}
-            </h4>
-          </div>
+  <widget-theme-provider :widget="widget">
+    <div :style="widgetWrapperStyles" class="widget-wrapper">
+      <template v-if="widget.title || activeViewEditing">
+        <v-card-title class="widget-title pa-2">
+          <c-layout justify="space-between" align="center">
+            <div>
+              <h4 class="widget-title__text ml-2">
+                {{ widget.title }}
+              </h4>
+            </div>
 
-          <v-spacer />
-        </c-layout>
-      </v-card-title>
+            <v-spacer />
+          </c-layout>
+        </v-card-title>
 
-      <v-divider />
-    </template>
+        <v-divider />
+      </template>
 
-    <v-card-text v-if="component" class="pa-0 position-relative">
-      <component
-        :is="component"
-        v-bind="widgetSpecificProps"
-        :widget="preparedWidget"
-        :tab-id="tab._id"
-        :visible="visible"
-      />
-    </v-card-text>
+      <v-card-text v-if="component" class="pa-0 position-relative">
+        <component
+          :is="component"
+          v-bind="widgetSpecificProps"
+          :widget="preparedWidget"
+          :tab-id="tab._id"
+          :visible="visible"
+        />
+      </v-card-text>
 
-    <v-card-text v-else class="widget-placeholder pa-3">
-      <div class="widget-placeholder__content">
-        <v-icon class="widget-placeholder__icon" icon="widgets" size="32" />
+      <v-card-text v-else class="widget-placeholder pa-3">
+        <div class="widget-placeholder__content">
+          <v-icon class="widget-placeholder__icon" icon="widgets" size="32" />
 
-        <div class="widget-placeholder__body">
-          <div class="widget-placeholder__title">
-            {{ placeholderTitle }}
-          </div>
+          <div class="widget-placeholder__body">
+            <div class="widget-placeholder__title">
+              {{ placeholderTitle }}
+            </div>
 
-          <div class="widget-placeholder__meta">
-            {{ widget.type }}
-          </div>
+            <div class="widget-placeholder__meta">
+              {{ widget.type }}
+            </div>
 
-          <div v-if="widget._id" class="widget-placeholder__id">
-            {{ widget._id }}
+            <div v-if="widget._id" class="widget-placeholder__id">
+              {{ widget._id }}
+            </div>
           </div>
         </div>
-      </div>
-    </v-card-text>
-  </div>
+      </v-card-text>
+    </div>
+  </widget-theme-provider>
 </template>
 
 <script>
-import { WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
+import { WIDGET_COLORS_MODES, WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
 
+import { themeTableColorsToForm, themeWidgetColorsToForm } from '@/helpers/entities/theme/form';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
 import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
@@ -70,6 +73,7 @@ import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
 import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
 import MapWidget from './map/map.vue';
+import WidgetThemeProvider from './partials/widget-theme-provider.vue';
 import ServiceWeatherWidget from './service-weather/service-weather.vue';
 import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
 import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
@@ -78,6 +82,8 @@ import TestingWeatherWidget from './testing-weather/testing-weather.vue';
 import TextWidget from './text/text.vue';
 
 export default {
+  inject: ['$system'],
+
   provide() {
     return {
       $widget: this.widget,
@@ -98,6 +104,7 @@ export default {
     StatsCalendarWidget,
     TestingWeatherWidget,
     TextWidget,
+    WidgetThemeProvider,
     AlarmStatisticsWidget,
     UserStatisticsWidget,
   },
@@ -192,8 +199,39 @@ export default {
      * @returns {{minHeight: string}}
      */
     widgetWrapperStyles() {
-      return { minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px` };
+      const widgetColors = this.widgetColors.widget ?? {};
+      const tableColors = this.widgetColors.table ?? {};
+
+      return {
+        minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px`,
+        '--widget-title-background': widgetColors.title_background,
+        '--c-table-background': tableColors.background,
+        '--c-table-row-color': tableColors.row_color,
+        '--c-table-shift-row-color': tableColors.shift_row?.enabled
+          ? tableColors.shift_row.color
+          : tableColors.row_color,
+        '--c-table-hover-row-color': tableColors.hover_row?.enabled
+          ? tableColors.hover_row.color
+          : tableColors.row_color,
+        overflow: 'hidden',
+      };
     },
+
+    widgetColors() {
+      const themeColors = this.$system?.theme?.colors ?? {};
+      const widgetColors = this.widget.parameters?.colors;
+
+      if (widgetColors?.mode !== WIDGET_COLORS_MODES.custom) {
+        return themeColors;
+      }
+
+      return {
+        ...themeColors,
+        table: themeTableColorsToForm(widgetColors.table),
+        widget: themeWidgetColorsToForm(widgetColors.widget),
+      };
+    },
+
   },
 };
 </script>
@@ -201,12 +239,14 @@ export default {
 <style lang="scss" scoped>
 .widget-title {
   height: 37px;
+  background-color: var(--widget-title-background);
 }
 
 .widget-title__text {
   overflow: hidden;
   margin: 0;
   font-size: 1.25rem;
+  font-weight: 500;
   line-height: 1.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;

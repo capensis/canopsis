@@ -28,6 +28,15 @@ import { isString, kebabCase } from 'lodash';
  */
 
 /**
+ * @typedef {Object} ThemeWidgetColors
+ * @property {string} title_background
+ * @property {string} content_background
+ * @property {boolean} border
+ * @property {string} border_color
+ * @property {number} border_radius
+ */
+
+/**
  * @typedef {Object} ThemeStatesColors
  * @property {string} ok
  * @property {string} minor
@@ -39,6 +48,7 @@ import { isString, kebabCase } from 'lodash';
  * @typedef {Object} ThemeColors
  * @property {ThemeMainColors} main
  * @property {ThemeTableColors} table
+ * @property {ThemeWidgetColors} widget
  * @property {ThemeStatesColors} state
  */
 
