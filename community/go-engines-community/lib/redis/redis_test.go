@@ -1,6 +1,7 @@
 package redis_test
 
 import (
+	cryptotls "crypto/tls"
 	"fmt"
 	"os"
 	"strconv"
@@ -27,6 +28,28 @@ func TestNewRedisOptions(t *testing.T) {
 	}
 
 	if redisOptions.DB != 0 {
+		t.Fatalf("redis bad database: %d", redisOptions.DB)
+	}
+	if redisOptions.TLSConfig != nil {
+		t.Fatal("redis:// unexpectedly enabled TLS")
+	}
+}
+
+func TestNewRedissOptions(t *testing.T) {
+	redisOptions, err := redis.NewOptions("rediss://user:password@host:7777/2", -1, zerolog.Nop(), 0, 0)
+	if err != nil {
+		t.Fatalf("redis options error: %v", err)
+	}
+	if redisOptions.TLSConfig == nil {
+		t.Fatal("rediss:// did not enable TLS")
+	}
+	if redisOptions.TLSConfig.ServerName != "host" {
+		t.Fatalf("redis bad TLS server name: %q", redisOptions.TLSConfig.ServerName)
+	}
+	if redisOptions.TLSConfig.MinVersion != cryptotls.VersionTLS12 {
+		t.Fatalf("redis bad minimum TLS version: %d", redisOptions.TLSConfig.MinVersion)
+	}
+	if redisOptions.DB != 2 {
 		t.Fatalf("redis bad database: %d", redisOptions.DB)
 	}
 }
