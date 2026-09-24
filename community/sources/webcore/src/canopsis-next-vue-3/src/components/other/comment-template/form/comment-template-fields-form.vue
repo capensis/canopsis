@@ -28,7 +28,7 @@
               <c-name-field
                 :model-value="fields[index].name"
                 :label="t('common.fieldName')"
-                :name="`fields[${fields[index].key}].name`"
+                :name="`fields.${fields[index].key}.name`"
                 :max-length="FORM_MAX_STRING_LENGTH"
                 required
                 @update:model-value="updateField(index, 'name', $event)"

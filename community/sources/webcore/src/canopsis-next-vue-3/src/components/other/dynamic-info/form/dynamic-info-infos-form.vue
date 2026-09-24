@@ -4,7 +4,7 @@
       <v-card-text>
         <dynamic-info-infos-item-form
           :form="field"
-          :name="`infos.${index}`"
+          :name="`${name}.${field.key}`"
           :unique-names="uniqueNames(index)"
           :variables="variables"
           :copy-variables="copyVariables"
@@ -50,6 +50,10 @@ export default {
     copyVariables: {
       type: Array,
       default: () => [],
+    },
+    name: {
+      type: String,
+      default: 'infos',
     },
   },
 

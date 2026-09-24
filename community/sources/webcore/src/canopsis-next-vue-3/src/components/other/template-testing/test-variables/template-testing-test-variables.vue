@@ -121,12 +121,11 @@ export default {
       hasSelectedTest,
       isEmptyValidationForm,
       isEqualValidationForm,
-      setFormErrors,
       getValidationFormData,
       updateSelectedTest: updateSelectedTestHook,
       resetLastRunVariables,
       setLastRunVariables,
-    } = useTemplateTestingValidationForm(props, testDataFormContext);
+    } = useTemplateTestingValidationForm(props);
 
     const {
       save: saveAction,
@@ -145,7 +144,6 @@ export default {
 
     const { running, runTest } = createRunTestHandler(
       getValidationFormData,
-      setFormErrors,
       (isValid) => {
         isGeneralFormValid.value = isValid;
       },

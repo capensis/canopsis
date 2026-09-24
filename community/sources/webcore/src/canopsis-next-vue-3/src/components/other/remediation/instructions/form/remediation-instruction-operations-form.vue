@@ -15,6 +15,7 @@
       <template #item="{ element: operation, index }">
         <remediation-instruction-operation-field
           :operation="operation"
+          :name="`${name}.${operation.key}`"
           :operation-number="getOperationNumber(index)"
           :disabled="disabled"
           :template-vars="templateVars"

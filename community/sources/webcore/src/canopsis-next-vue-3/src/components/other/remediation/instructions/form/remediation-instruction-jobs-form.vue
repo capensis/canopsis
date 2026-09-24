@@ -16,7 +16,7 @@
       <remediation-instruction-job-field
         :job="jobsField[index]"
         :jobs="jobsItems"
-        :name="job.key"
+        :name="`${name}.${job.key}`"
         :job-number="index + 1"
         :disabled="disabled"
         :loading="pending"

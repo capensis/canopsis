@@ -19,6 +19,8 @@ const stubs = {
 };
 
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
+const selectPriorityField = wrapper => wrapper.find('c-priority-field-stub');
+const selectRecurrenceRuleField = wrapper => wrapper.find('pbehavior-recurrence-rule-field-stub');
 const selectEnrichmentForm = wrapper => wrapper.find('event-filter-enrichment-form-stub');
 const selectChangeEntityForm = wrapper => wrapper.find('event-filter-change-entity-form-stub');
 
@@ -32,6 +34,16 @@ describe('event-filter-general-form', () => {
 
   const factory = generateShallowRenderer(EventFilterGeneralForm, { stubs });
 
+  test('Priority is optional', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    expect(selectPriorityField(wrapper).attributes('required')).toBeUndefined();
+  });
+
   test('Description changed after trigger description field', () => {
     const wrapper = factory({
       propsData: {
@@ -44,6 +56,18 @@ describe('event-filter-general-form', () => {
     selectDescriptionField(wrapper).triggerCustomEvent('input', newDescription);
 
     expect(wrapper).toEmitInput({ ...form, description: newDescription });
+  });
+
+  test('Recurrence rule is stored in the event-filter form', async () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    await selectRecurrenceRuleField(wrapper).triggerCustomEvent('update:rrule', 'FREQ=DAILY');
+
+    expect(globalThis.__TEST_FORM__.values.value.rrule).toBe('FREQ=DAILY');
   });
 
   test('Enrichment form is rendered for enrichment type', () => {

@@ -4,7 +4,7 @@
       <v-btn
         v-bind="activatorProps"
         :loading="pending"
-        :disabled="initialized && !availableExceptions.length && !hasMoreExceptions"
+        :disabled="!availableExceptions.length && !hasMoreExceptions"
         color="primary"
         variant="outlined"
       >
@@ -21,7 +21,7 @@
         <v-list-item-title>{{ exception.name }}</v-list-item-title>
       </v-list-item>
 
-      <v-list-item v-if="pending && initialized">
+      <v-list-item v-if="pending">
         <v-list-item-title class="text-center">
           <v-progress-circular size="24" indeterminate />
         </v-list-item-title>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { ref, computed, onBeforeUnmount, watch } from 'vue';
+import { ref, computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -56,8 +56,7 @@ export default {
 
     const menu = ref(false);
     const exceptions = ref([]);
-    const pending = ref(false);
-    const initialized = ref(false);
+    const pending = ref(false);;
     const page = ref(1);
     const pageCount = ref(1);
     const appendElement = ref(null);
@@ -89,7 +88,6 @@ export default {
 
         page.value = nextPage;
         pageCount.value = meta.page_count ?? 1;
-        initialized.value = true;
         exceptions.value = nextPage === 1 ? data : [...exceptions.value, ...data];
       } catch (err) {
         console.error(err);
@@ -113,10 +111,12 @@ export default {
     });
 
     watch(menu, (opened) => {
-      if (opened && !initialized.value) {
+      if (opened) {
         fetchList();
       }
     });
+
+    onMounted(fetchList);
 
     watch(appendElement, (element, oldElement) => {
       if (oldElement) {
@@ -133,7 +133,6 @@ export default {
     return {
       menu,
       pending,
-      initialized,
       availableExceptions,
       hasMoreExceptions,
       appendElement,

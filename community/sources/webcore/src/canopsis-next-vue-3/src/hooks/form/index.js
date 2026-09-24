@@ -6,7 +6,17 @@ import {
   useFormErrors as veeUseFormErrors,
   useFieldError as veeUseFieldError,
 } from 'vee-validate';
-import { computed, inject, nextTick, onBeforeUnmount, provide, ref, unref, watch } from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  provide,
+  ref,
+  unref,
+  watch,
+} from 'vue';
 
 import { FORM_CONTEXT_KEY } from '@/constants';
 
@@ -65,7 +75,11 @@ export const useForm = ({
   const afterSubmitObserver = new Observer();
 
   const veeForm = useVeeForm(veeOptions);
-  const veeFormContext = instance?.provides?.[VEE_FORM_CONTEXT_KEY] ?? null;
+
+  /**
+   * Avoid accessing Vue's internal instance when Vee Validate exposes this context publicly.
+   */
+  const veeFormContext = getCurrentInstance()?.provides?.[VEE_FORM_CONTEXT_KEY] ?? null;
   const { pending: submitting, handler: runSubmit } = usePendingHandler(callback => callback());
   const isSubmitting = computed(() => veeForm.isSubmitting.value || submitting.value);
 
@@ -414,8 +428,26 @@ export const useForm = ({
       },
     );
 
+  /**
+   * Validates the form through its submit handler so fields display errors.
+   *
+   * @returns {Promise<boolean>}
+   */
+  const validateForSubmit = async () => {
+    let valid = false;
+
+    await handleSubmit(() => {
+      valid = true;
+    }, () => {
+      valid = false;
+    })();
+
+    return valid;
+  };
+
   form.setFormErrors = setFormErrors;
   form.handleSubmit = handleSubmit;
+  form.validateForSubmit = validateForSubmit;
 
   provide(FORM_CONTEXT_KEY, form);
   provide('$afterSubmitObserver', afterSubmitObserver);

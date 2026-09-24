@@ -16,7 +16,7 @@
       />
     </c-layout>
     <c-form-block>
-      <c-form-block-row :label="$t('common.description')">
+      <c-form-block-row :label="$t('common.description')" indented>
         <c-description-field
           :model-value="form.description"
           autofocus

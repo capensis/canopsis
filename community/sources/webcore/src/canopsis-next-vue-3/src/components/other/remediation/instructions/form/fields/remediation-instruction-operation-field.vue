@@ -11,7 +11,7 @@
     <template #header>
       <c-name-field
         :model-value="operation.name"
-        :name="nameFieldName"
+        :name="`${name}.name`"
         :disabled="disabled"
         required
         @update:model-value="updateField('name', $event)"
@@ -26,7 +26,7 @@
           :units-label="t('common.unit')"
           :units="timeToCompleteUnits"
           :disabled="disabled"
-          :name="timeToCompleteFieldName"
+          :name="`${name}.time_to_complete`"
           required
           @update:duration="updateField('time_to_complete', $event)"
         />
@@ -43,7 +43,7 @@
         <text-editor-field
           :model-value="operation.description"
           :label="t('common.description')"
-          :name="descriptionFieldName"
+          :name="`${name}.description`"
           :variables="templateVars.operation"
           required
           @update:model-value="updateField('description', $event)"
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { computed, toRef } from 'vue';
+import { toRef } from 'vue';
 
 import { SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
 
@@ -95,6 +95,10 @@ export default {
       type: [Number, String],
       default: 0,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -109,10 +113,6 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const fieldName = computed(() => (props.operation.key ? props.operation.key : ''));
-    const nameFieldName = computed(() => `${fieldName.value}.name`);
-    const timeToCompleteFieldName = computed(() => `${fieldName.value}.timeToComplete`);
-    const descriptionFieldName = computed(() => `${fieldName.value}.description`);
     const timeToCompleteUnits = Object.values(SHORT_AVAILABLE_TIME_UNITS);
 
     const { confirmAction: remove } = useConfirmableForm({
@@ -129,9 +129,6 @@ export default {
     return {
       t,
       timeToCompleteUnits,
-      nameFieldName,
-      timeToCompleteFieldName,
-      descriptionFieldName,
       updateField,
       remove,
     };
