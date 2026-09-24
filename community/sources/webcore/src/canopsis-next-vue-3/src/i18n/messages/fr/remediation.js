@@ -71,6 +71,7 @@ export default {
   configuration: {
     usingConfiguration: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     host: 'Hôte',
+    clientId: 'ID client',
   },
 
   instructionExecute: {

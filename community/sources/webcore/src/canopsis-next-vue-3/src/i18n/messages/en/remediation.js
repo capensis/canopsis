@@ -70,6 +70,7 @@ export default {
 
   configuration: {
     host: 'Host',
+    clientId: 'Client id',
     usingConfiguration: 'Cannot be deleted since it is in use',
   },
 
