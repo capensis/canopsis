@@ -22,18 +22,33 @@ import {
 import { formToWidget } from '@/helpers/entities/widget/form';
 import { uid } from '@/helpers/uid';
 
+import { getServerFieldErrors } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
-const validateFormContext = async (formContext) => {
-  const { valid } = (await unref(formContext)?.validate?.()) ?? { valid: true };
+/**
+ * Extracts template validation errors belonging to the rule form.
+ *
+ * @param {*} errors
+ * @returns {Object<string, string|string[]>}
+ */
+export const getTemplateRuleValidationErrors = errors =>
+  Object.entries(getServerFieldErrors(errors)).reduce(
+    (result, [key, value]) => {
+      if (!key.startsWith('rule.')) {
+        return result;
+      }
 
-  return valid;
-};
+      return {
+        ...result,
+        [key.replace('rule.', '')]: value,
+      };
+    },
+    {},
+  );
 
 /**
  * Hook for managing template testing validation form
@@ -43,7 +58,7 @@ const validateFormContext = async (formContext) => {
  * @param {string} props.type - The type of template testing
  * @returns {Object} Validation form state and methods
  */
-export const useTemplateTestingValidationForm = (props, formContext) => {
+export const useTemplateTestingValidationForm = (props) => {
   const originalValidationForm = ref([]);
   const validationForm = ref([]);
   const selectedTest = ref({});
@@ -57,8 +72,6 @@ export const useTemplateTestingValidationForm = (props, formContext) => {
   const isEqualValidationForm = computed(() =>
     isEqual(originalValidationForm.value, validationForm.value),
   );
-
-  const { setFormErrors } = useValidationFormErrors(validationForm, formContext);
 
   watch(
     () => props.active,
@@ -182,7 +195,6 @@ export const useTemplateTestingValidationForm = (props, formContext) => {
     hasSelectedTest,
     isEmptyValidationForm,
     isEqualValidationForm,
-    setFormErrors,
     getValidationFormData,
     updateSelectedTest,
     resetLastRunVariables,
@@ -384,7 +396,6 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
 
   const createRunTestHandler = (
     getValidationFormData,
-    setFormErrors,
     onValidationStateChange,
     onLastRunVariablesChange,
   ) => {
@@ -392,8 +403,8 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
       unref(testDataFormContext)?.resetErrors?.();
 
       const [isMainFormValid, isTestDataFormValid] = await Promise.all([
-        validateFormContext(mainFormContext),
-        validateFormContext(testDataFormContext),
+        unref(mainFormContext)?.validateForSubmit?.() ?? true,
+        unref(testDataFormContext)?.validateForSubmit?.() ?? true,
       ]);
       const isValid = isMainFormValid && isTestDataFormValid;
 
@@ -433,25 +444,14 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
           onLastRunVariablesChange(newLastRunVariables);
         }
       } catch (err) {
-        const { mainFormErrors, testDataErrors } = Object.entries(err).reduce(
-          (acc, [key, value]) => {
-            if (key.startsWith('rule.')) {
-              acc.mainFormErrors[key.replace('rule.', '')] = value;
-            } else {
-              acc.testDataErrors[key] = value;
-            }
-
-            return acc;
-          },
-          { mainFormErrors: {}, testDataErrors: {} },
-        );
+        const mainFormErrors = getTemplateRuleValidationErrors(err);
 
         if (!isEmpty(mainFormErrors) && onValidationStateChange) {
           onValidationStateChange(false);
         }
 
         unref(mainFormContext)?.setFormErrors?.(mainFormErrors);
-        setFormErrors(testDataErrors, 'testdata');
+        unref(testDataFormContext)?.setFormErrors?.(err);
       }
     });
 

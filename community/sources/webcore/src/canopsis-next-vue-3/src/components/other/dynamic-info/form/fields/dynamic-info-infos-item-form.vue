@@ -3,7 +3,7 @@
     <c-layout align="center" justify="space-between" gap="2">
       <c-name-field
         :model-value="form.name"
-        :name="nameFieldName"
+        :name="`${name}.name`"
         :unique="uniqueNames"
         required
         @update:model-value="updateField('name', $event)"
@@ -13,6 +13,7 @@
 
     <dynamic-info-information-type-field
       :model-value="form.type"
+      :name="`${name}.type`"
       @update:model-value="changeType"
     />
 
@@ -21,7 +22,7 @@
       :value="form.value"
       :label="$t('common.value')"
       :types="mixedFieldTypes"
-      :name="valueFieldName"
+      :name="`${name}.value`"
       required
       @update:value="updateField('value', $event)"
     />
@@ -31,7 +32,7 @@
       :value="form.value"
       :label="$t('common.value')"
       :variables="variables"
-      :name="valueFieldName"
+      :name="`${name}.value`"
       required
       @update:value="updateField('value', $event)"
     />
@@ -41,10 +42,10 @@
       :model-value="form.value"
       :label="$t('common.value')"
       :items="copyVariables"
-      :name="valueFieldName"
+      :name="`${name}.value`"
       :menu-props="comboboxMenuProps"
-      children-key="variables"
       :return-object="false"
+      children-key="variables"
       required
       @update:model-value="updateCopyValue"
     />
@@ -104,9 +105,6 @@ export default {
 
     const { updateField, updateModel } = useModelField(props, emit);
 
-    const nameFieldName = computed(() => `${props.name}.name`);
-    const valueFieldName = computed(() => `${props.name}.value`);
-
     const isDefaultType = computed(
       () => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
     );
@@ -132,8 +130,6 @@ export default {
 
     return {
       mixedFieldTypes,
-      nameFieldName,
-      valueFieldName,
       isDefaultType,
       isTemplateType,
       comboboxMenuProps,

@@ -121,9 +121,9 @@
 </template>
 
 <script setup>
-import { isEmpty, isNil, isNumber } from 'lodash';
+import { isNil, isNumber } from 'lodash';
 import { RRule } from 'rrule';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 
 import {
   formOptionsToRecurrenceRuleOptions,
@@ -221,17 +221,6 @@ const advancedFields = computed(() => {
   return fields;
 });
 
-const hasChangedAdvancedFields = () => {
-  const { rrule } = props.form;
-
-  return isNumber(rrule.wkst) || ![
-    ...advancedFields.value.map(field => rrule[field.name]),
-    rrule.byweekday,
-    rrule.bymonth,
-  ].every(isEmpty);
-};
-
-const enabledAdvancedFields = ref(hasChangedAdvancedFields());
 const rruleBodyForInformation = computed(() => recurrenceRuleFormOptionsToRruleBodyString(props.form.rrule),
 );
 
@@ -244,6 +233,11 @@ const updateRruleField = (field, value) => updateFormField('rrule', {
     ...props.form.rrule,
     [field]: value,
   });
+
+const enabledAdvancedFields = computed({
+  get: () => props.form.rrule.advancedEnabled ?? false,
+  set: value => updateRruleField('advancedEnabled', value),
+});
 
 const validateRecurrenceRrule = () => {
   if (isNil(props.form.rrule.freq)) {
@@ -268,11 +262,5 @@ const validateRecurrenceRrule = () => {
   }
 };
 
-watch(() => props.form.rrule, () => {
-  validateRecurrenceRrule();
-
-  if (hasChangedAdvancedFields()) {
-    enabledAdvancedFields.value = true;
-  }
-}, { deep: true, immediate: true });
+watch(() => props.form.rrule, validateRecurrenceRrule, { deep: true, immediate: true });
 </script>

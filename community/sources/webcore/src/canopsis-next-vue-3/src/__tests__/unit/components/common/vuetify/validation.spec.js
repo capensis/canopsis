@@ -15,6 +15,7 @@ import {
   validationProps,
 } from '@/components/common/vuetify/validation';
 import CNumberField from '@/components/forms/fields/compat/c-number-field.vue';
+import TemplateTestingTestVariablesFormProvider from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-form-provider.vue';
 
 const TestField = defineComponent({
   props: validationProps,
@@ -72,6 +73,35 @@ const TestFieldWithExternalErrors = defineComponent({
 
     return {
       name,
+    };
+  },
+});
+
+const TestProvidedDirectValidationForm = defineComponent({
+  components: { TestField, TemplateTestingTestVariablesFormProvider },
+  template: `
+    <template-testing-test-variables-form-provider :form-context="testDataForm">
+      <test-field v-model="name" label="Name" name="testdata.event" required :validation-delay="0" />
+      <button type="button" @click="validate">Validate</button>
+      <button type="button" @click="setServerError">Set server error</button>
+    </template-testing-test-variables-form-provider>
+  `,
+  setup() {
+    const testDataForm = useForm();
+    const name = ref('');
+    const validate = testDataForm.validateForSubmit;
+    const setServerError = () =>
+      testDataForm.setFormErrors({
+        errors: {
+          'testdata.event': 'The field must match the rule',
+        },
+      });
+
+    return {
+      testDataForm,
+      name,
+      validate,
+      setServerError,
     };
   },
 });
@@ -148,6 +178,35 @@ describe('useVuetifyFieldValidation', () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain('The field is required');
+  });
+
+  it('validates fields registered through the test-data form provider', async () => {
+    const wrapper = mount(TestProvidedDirectValidationForm, {
+      global: {
+        plugins: [createPinia(), i18n, [veeValidatePlugin, { i18n }]],
+      },
+    });
+
+    await wrapper.find('button').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('The field is required');
+  });
+
+  it('maps template-validate errors to fields registered through the test-data form provider', async () => {
+    const wrapper = mount(TestProvidedDirectValidationForm, {
+      global: {
+        plugins: [createPinia(), i18n, [veeValidatePlugin, { i18n }]],
+      },
+    });
+
+    await wrapper.find('input[name="testdata.event"]').setValue('event');
+    await wrapper.find('button').trigger('click');
+    await flushPromises();
+    await wrapper.findAll('button')[1].trigger('click');
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('The field must match the rule');
   });
 
   it('shows internal errors for dirty fields when external errors are empty', async () => {

@@ -11,6 +11,7 @@
     <c-sort-columns-field
       :model-value="modelValue"
       :items="items"
+      :name="name"
       @update:model-value="$emit('update:modelValue', $event)"
     />
   </c-layout>

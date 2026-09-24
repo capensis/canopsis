@@ -178,6 +178,14 @@ export default {
     align-self: end;
     width: 50px;
     max-width: 50px;
+
+    .v-field {
+      font-size: 16px !important;
+
+      .v-field__input {
+        padding: 0;
+      }
+    }
   }
 }
 </style>
