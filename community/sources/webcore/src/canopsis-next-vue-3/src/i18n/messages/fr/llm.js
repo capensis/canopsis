@@ -1,6 +1,7 @@
 import {
   LLM_AI_CHAT_ERROR_CODES,
   LLM_AI_CHAT_SUGGESTION_TYPES,
+  LLM_MODEL_TYPES,
   LLM_SOCKET_CONTEXTS,
   LLM_THINKING_LEVELS,
 } from '@/constants';
@@ -14,6 +15,13 @@ export default {
   promptsHistory: {
     tabs: {
       allPrompts: 'Toutes les invites',
+    },
+    statistics: {
+      totalInputTokens: 'Total des jetons d\'entrée',
+      totalOutputTokens: 'Total des jetons de sortie',
+      uncachedTokens: 'Jetons non mis en cache (Chat)',
+      cacheReadTokens: 'Jetons de lecture du cache',
+      cacheWriteTokens: 'Jetons d\'écriture du cache',
     },
     expandUserHistory: {
       lastPromptDate: 'Date de la dernière invite',
@@ -29,10 +37,16 @@ export default {
     userHistoryTitle: 'Historique utilisateur',
     userHistoryEmpty: 'Aucun utilisateur pour cette configuration.',
     ruleNotSaved: 'Non enregistré',
+    inputTokensTooltip:
+      '<strong>Jetons d\'entrée</strong> : {inputTokens}\n' +
+      '<strong>Jetons d\'écriture du cache</strong> : {cacheWriteTokens}\n' +
+      '<strong>Jetons de lecture du cache</strong> : {cacheReadTokens}',
     columns: {
       userName: 'Utilisateur',
       datetime: 'Date et heure',
       tokensUsed: 'Jetons utilisés',
+      inputTokensUsed: 'Jetons d\'entrée utilisés',
+      outputTokensUsed: 'Jetons de sortie utilisés',
       modal: 'Modal',
       usage: 'Utilisation',
       canopsisRelated: 'Lié à Canopsis',
@@ -64,6 +78,11 @@ export default {
     },
   },
   modelType: 'Type de modèle LLM',
+  modelTypes: {
+    [LLM_MODEL_TYPES.gemini]: 'Gemini',
+    [LLM_MODEL_TYPES.claude]: 'Claude',
+    [LLM_MODEL_TYPES.chatgpt]: 'ChatGPT',
+  },
   modelName: 'Nom du modèle LLM',
   model: 'Modèle LLM',
   recommendedBadge: 'recommandé',
@@ -76,17 +95,19 @@ export default {
   importantNotesMessage:
     '<div>Notes importantes :</div>' +
     '<ul>' +
-    '<li>Les modèles Gemini peuvent être activés ou désactivés via ce module ; toutefois, ' +
+    '<li>Les modèles LLM peuvent être activés ou désactivés via ce module ; toutefois, ' +
     '<strong>la gestion des limites de jetons et des quotas</strong>' +
-    ' se configure directement dans la ' +
-    '<strong><a href="{geminiConsoleUrl}" target="_blank">Console Gemini AI</a></strong>.</li>' +
-    '<li><strong>Une surveillance régulière</strong> des limites Google Cloud est requise, car les <strong>politiques d\'API et les conditions d\'utilisation sont susceptibles d\'évoluer.</strong></li>' +
+    ' se configure directement dans la console du fournisseur LLM.</li>' +
+    '<li><strong>Une surveillance régulière</strong> des limites LLM est requise, car les <strong>politiques d\'API et les conditions d\'utilisation sont susceptibles d\'évoluer.</strong></li>' +
     '</ul>',
   thinkingLevels: {
+    [LLM_THINKING_LEVELS.none]: 'Aucun',
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',
     [LLM_THINKING_LEVELS.low]: 'Faible',
     [LLM_THINKING_LEVELS.medium]: 'Moyen',
     [LLM_THINKING_LEVELS.high]: 'Élevé',
+    [LLM_THINKING_LEVELS.xhigh]: 'Extra élevé',
+    [LLM_THINKING_LEVELS.max]: 'Max',
   },
   chat: {
     title: 'Assistant IA',

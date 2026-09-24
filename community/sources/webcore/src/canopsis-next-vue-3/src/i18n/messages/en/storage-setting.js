@@ -90,6 +90,7 @@ export default {
   llmChat: {
     title: 'AI chats',
     deleteHistory: 'Delete AI chats history',
+    deleteStats: 'Delete AI models stats',
   },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
