@@ -42,6 +42,7 @@
         @update:filters="localForm.filters = $event"
       />
     </widget-settings-group>
+    <widget-colors-form v-model="localForm.parameters.colors" />
   </c-layout>
 </template>
 
@@ -51,6 +52,7 @@ import { ALARM_METRIC_PARAMETERS, METRICS_QUICK_RANGES } from '@/constants';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 import FieldAlarmMetricAggregateFunction from './fields/alarm-metric-aggregate-function.vue';
@@ -71,6 +73,7 @@ export default {
     FieldQuickDateIntervalType,
     FieldSampling,
     FieldTitle,
+    WidgetColorsForm,
     WidgetSettingsGroup,
   },
 

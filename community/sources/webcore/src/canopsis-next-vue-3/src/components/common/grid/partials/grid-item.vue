@@ -15,9 +15,15 @@
 <script>
 import { debounce, throttle } from 'lodash';
 
+import { WIDGET_COLORS_MODES } from '@/constants';
+
+import { colorToRgb } from '@/helpers/color';
+import { themeWidgetColorsToForm } from '@/helpers/entities/theme/form';
 import { getControlPosition, getCountAboveItems, getItemDelta } from '@/helpers/grid';
 
 export default {
+  inject: ['$system'],
+
   props: {
     layout: {
       type: Array,
@@ -84,6 +90,29 @@ export default {
       return {
         'grid-item--resizing': this.resizing || this.dragging,
         'grid-item--disabled': this.disabled,
+      };
+    },
+
+    widgetCardStyle() {
+      const widgetColors = this.item.widget?.parameters?.colors;
+      const themeWidgetColors = this.$system?.theme?.colors?.widget ?? {};
+      const widget = widgetColors?.mode === WIDGET_COLORS_MODES.custom
+        ? themeWidgetColorsToForm(widgetColors.widget)
+        : themeWidgetColors;
+      const border = widget.border;
+      const style = {
+        backgroundColor: widget.content_background,
+      };
+
+      if (!border?.enabled) {
+        return style;
+      }
+
+      return {
+        ...style,
+        border: `1px solid ${border.color}`,
+        '--v-shadow-color': colorToRgb(border.color).replace(/^rgb\((.*)\)$/, '$1'),
+        borderRadius: `${border.radius}px`,
       };
     },
 
@@ -171,7 +200,10 @@ export default {
     },
 
     style() {
-      return this.disabled ? this.disabledItemStyle : this.enabledItemStyle;
+      return {
+        ...(this.disabled ? this.disabledItemStyle : this.enabledItemStyle),
+        ...this.widgetCardStyle,
+      };
     },
   },
   watch: {

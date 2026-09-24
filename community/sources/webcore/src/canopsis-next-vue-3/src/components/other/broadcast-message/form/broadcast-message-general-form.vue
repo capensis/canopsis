@@ -1,5 +1,18 @@
 <template>
   <c-form-block>
+    <c-form-block-row :label="t('common.priority')">
+      <c-priority-field v-model="priorityField" required>
+        <template #append>
+          <c-help-icon
+            :text="t('broadcastMessage.priorityHelp')"
+            max-width="250"
+            icon="help"
+            left
+          />
+        </template>
+      </c-priority-field>
+    </c-form-block-row>
+
     <c-form-block-row :label="t('common.message')">
       <text-editor-field
         v-model="messageField"
@@ -42,6 +55,22 @@
       </v-row>
     </c-form-block-row>
 
+    <c-form-block-row :label="t('broadcastMessage.closable')" align-center>
+      <v-switch v-model="closableField" color="primary" hide-details>
+        <template #label>
+          {{ t('broadcastMessage.closable') }}
+        </template>
+        <template #append>
+          <c-help-icon
+            :text="t('broadcastMessage.closableHelp')"
+            max-width="250"
+            icon="help"
+            left
+          />
+        </template>
+      </v-switch>
+    </c-form-block-row>
+
     <c-form-block-row :label="t('common.color')" align-center>
       <c-color-picker-field v-model="colorField" />
     </c-form-block-row>
@@ -67,10 +96,19 @@ export default {
   setup() {
     const { t } = useI18n();
 
-    const { messageField, startField, endField, colorField } = useFormModels({
+    const {
+      priorityField,
+      messageField,
+      startField,
+      endField,
+      closableField,
+      colorField,
+    } = useFormModels({
+      priorityField: 'priority',
       messageField: 'message',
       startField: 'start',
       endField: 'end',
+      closableField: 'closable',
       colorField: 'color',
     });
 
@@ -88,9 +126,11 @@ export default {
     return {
       t,
 
+      priorityField,
       messageField,
       startField,
       endField,
+      closableField,
       colorField,
 
       startRules,

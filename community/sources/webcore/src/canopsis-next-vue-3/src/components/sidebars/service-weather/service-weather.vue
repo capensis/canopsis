@@ -133,6 +133,7 @@
         :title="t('settings.entitiesActionsInQueue')"
       />
     </widget-settings-group>
+    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
@@ -173,6 +174,7 @@ import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import FieldTreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import MarginsForm from '@/components/sidebars/form/margins.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';

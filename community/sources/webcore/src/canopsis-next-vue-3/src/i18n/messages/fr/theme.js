@@ -1,6 +1,12 @@
 import { THEME_FONT_SIZES } from '@/constants/theme';
 
 export default {
+  tabs: {
+    mainColors: 'Couleurs principales',
+    widgetTable: 'Couleurs des widgets et tableaux',
+    severity: 'Couleurs de criticité',
+    fontSize: 'Taille de police',
+  },
   themes: 'Thèmes',
   exampleText: 'Bonjour le monde!',
   defaultTheme: 'Le thème est par défaut, vous ne pouvez pas modifier le thème !',
@@ -46,10 +52,26 @@ export default {
       [THEME_FONT_SIZES.large]: 'Grande',
     },
   },
+  widget: {
+    title: 'Widget',
+    titleBackground: 'Arrière-plan du titre du widget',
+    contentBackground: 'Arrière-plan du contenu du widget',
+    border: 'Définir la bordure',
+    borderColor: 'Couleur de la bordure du widget',
+    borderRadius: 'Rayon (px)',
+  },
+  preview: {
+    title: 'Aperçu',
+    widgetTitle: 'Titre du widget',
+    header: 'En-tête',
+    tableRow: 'Ligne du tableau',
+    secondTableRow: 'Deuxième ligne du tableau',
+    hoveredRow: 'Ligne survolée',
+  },
   table: {
-    title: 'Paramètres des tableaux',
+    title: 'Tableau',
 
-    background: 'Arrière-plan des tableaux',
+    background: 'En-tête du tableau',
 
     rowColor: 'Ligne des tableaux',
 
@@ -57,7 +79,7 @@ export default {
     shiftRowEnableHelpText:
       'Sélecteur pour activer/désactiver les changements de couleur pour les lignes des tableaux',
 
-    shiftRowColor: 'Arrière-plan de la deuxième ligne des tableaux',
+    shiftRowColor: 'Deuxième ligne du tableau',
 
     hoverRowEnable: 'Changer la couleur de la ligne au survol',
 

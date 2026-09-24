@@ -61,6 +61,7 @@
         @update:template="updateEntitiesColumnsTemplate"
       />
     </widget-settings-group>
+    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
@@ -92,6 +93,7 @@ import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-ref
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTextEditor from '@/components/sidebars/form/fields/text-editor.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';

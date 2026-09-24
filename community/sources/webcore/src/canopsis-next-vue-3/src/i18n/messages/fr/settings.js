@@ -126,6 +126,11 @@ export default {
       [STATS_CRITICITY.critical]: 'critique',
     },
   },
+  colors: {
+    title: 'Couleurs',
+    theme: 'Couleurs du thème',
+    custom: 'Couleurs personnalisées',
+  },
   infoPopup: {
     title: 'Fenêtre d\'information pour la colonne',
     fields: {
