@@ -402,41 +402,44 @@ func (m *manager) applyAssignedServices(
 	entity.Services = newServices
 }
 
-func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) (types.Entity, error) {
+func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) (types.Entity, ServicePauseChanges, error) {
+	var pauseChanges ServicePauseChanges
 	if serviceID == "" {
-		return types.Entity{}, nil
+		return types.Entity{}, pauseChanges, nil
 	}
 
 	service, err := m.storage.Get(ctx, serviceID)
 	if err != nil {
-		return types.Entity{}, err
+		return types.Entity{}, pauseChanges, err
 	}
 
 	if !service.Enabled || service.ID == "" {
 		err := m.processDisabledService(ctx, serviceID, commRegister)
 		if err != nil {
-			return types.Entity{}, fmt.Errorf("recompute service %s: failed to process disabled service: %w", serviceID, err)
+			return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to process disabled service: %w", serviceID, err)
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
 		err = m.LoadServices(ctx)
 		if err != nil {
-			return types.Entity{}, fmt.Errorf("recompute service %s: failed to load services: %w", serviceID, err)
+			return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to load services: %w", serviceID, err)
 		}
 
 		m.AssignServices(&service.Entity, commRegister)
 
-		return service.Entity, nil
+		return service.Entity, pauseChanges, nil
 	}
 
 	query, negativeQuery, err := service.GetMongoQueries()
 	if err != nil {
-		return types.Entity{}, fmt.Errorf("recompute service %s: failed to get mongo queries: %w", serviceID, err)
+		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to get mongo queries: %w", serviceID, err)
 	}
 
 	if query == nil || negativeQuery == nil {
-		return types.Entity{}, fmt.Errorf("recompute service %s: can't get queries from patterns", serviceID)
+		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: can't get queries from patterns", serviceID)
 	}
+
+	pauseChanges.ServicePause = service.InheritedPause()
 
 	var entitiesToRemove []types.Entity
 
@@ -461,10 +464,15 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 			{
 				"$project": bson.M{
 					"_id":                1,
+					"name":               1,
+					"type":               1,
+					"component":          1,
+					"connector":          1,
 					"services":           1,
 					"inherited_services": 1,
 					"services_to_add":    1,
 					"services_to_remove": 1,
+					"pause":              1,
 				},
 			},
 			{
@@ -510,12 +518,12 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		},
 	)
 	if err != nil {
-		return types.Entity{}, fmt.Errorf("recompute service %s: failed to query entities to remove: %w", serviceID, err)
+		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to query entities to remove: %w", serviceID, err)
 	}
 
 	err = cursor.All(ctx, &entitiesToRemove)
 	if err != nil {
-		return types.Entity{}, fmt.Errorf("recompute service %s: failed to decode entities to remove: %w", serviceID, err)
+		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to decode entities to remove: %w", serviceID, err)
 	}
 
 	for _, ent := range entitiesToRemove {
@@ -525,11 +533,16 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 			"services_to_add":    ent.ServicesToAdd,
 			"services_to_remove": ent.ServicesToRemove,
 		})
+
+		// The entity is not a dependency of the service anymore, so its pause must be ended.
+		if ent.Pause != nil && ent.Pause.Source == serviceID {
+			pauseChanges.ToResume = append(pauseChanges.ToResume, ent)
+		}
 	}
 
 	_, err = m.AssignStateSetting(ctx, &service.Entity, commRegister)
 	if err != nil {
-		return types.Entity{}, err
+		return types.Entity{}, pauseChanges, err
 	}
 
 	var matchQuery bson.M
@@ -608,7 +621,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		},
 	)
 	if err != nil {
-		return types.Entity{}, fmt.Errorf("recompute service %s: failed to query entities to add: %w", serviceID, err)
+		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to query entities to add: %w", serviceID, err)
 	}
 
 	defer cursor.Close(ctx)
@@ -617,20 +630,26 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		var ent types.Entity
 		err = cursor.Decode(&ent)
 		if err != nil {
-			return types.Entity{}, fmt.Errorf("recompute service %s: failed to decode entity to add: %w", serviceID, err)
+			return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to decode entity to add: %w", serviceID, err)
 		}
 
 		matched, err := match.MatchEntityPattern(service.EntityPattern, &ent)
 		if err != nil {
-			return types.Entity{}, fmt.Errorf("recompute service %s: failed to match entity pattern: %w", serviceID, err)
+			return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to match entity pattern: %w", serviceID, err)
 		}
 
 		if matched {
 			ent.Services = append(ent.Services, serviceID)
+
+			// The entity is a dependency of the paused service now, so it must inherit its pause.
+			if pauseChanges.ServicePause != nil && pauseChanges.ServicePause.CanApplyOver(ent.LatestPause, ent.ID) {
+				pauseChanges.ToPause = append(pauseChanges.ToPause, ent)
+			}
+
 			if service.StateInfo != nil {
 				inheritedMatched, err := match.MatchEntityPattern(service.StateInfo.InheritedPattern, &ent)
 				if err != nil {
-					return types.Entity{}, fmt.Errorf("recompute service %s: failed to match inherited pattern: %w", serviceID, err)
+					return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to match inherited pattern: %w", serviceID, err)
 				}
 
 				if inheritedMatched {
@@ -648,18 +667,18 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	}
 
 	if err := cursor.Err(); err != nil {
-		return types.Entity{}, fmt.Errorf("recompute service %s: failed to process entities to add cursor: %w", serviceID, err)
+		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to process entities to add cursor: %w", serviceID, err)
 	}
 
 	// todo: should be called to get fresh services from the db, should be removed when we do something with cache
 	err = m.LoadServices(ctx)
 	if err != nil {
-		return types.Entity{}, err
+		return types.Entity{}, pauseChanges, err
 	}
 
 	m.AssignServices(&service.Entity, commRegister)
 
-	return service.Entity, nil
+	return service.Entity, pauseChanges, nil
 }
 
 func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {

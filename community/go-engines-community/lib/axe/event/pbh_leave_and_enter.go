@@ -111,7 +111,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 				"$push": bson.M{"v.steps": bson.M{"$each": bson.A{newLeaveStep, newEnterStep}}},
 			}
 			var inactiveStart *datetime.CpsTime
-			if !event.Parameters.PbehaviorInfo.IsActive() || alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress || alarm.InactiveDelayMetaAlarmInProgress {
+			if !event.Parameters.PbehaviorInfo.IsActive() || alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress || alarm.InactiveDelayMetaAlarmInProgress || alarm.Value.Pause != nil {
 				inactiveStart = &event.Parameters.Timestamp
 			}
 

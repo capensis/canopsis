@@ -202,12 +202,13 @@ func (mr *MockManagerMockRecorder) ProcessComponentInfos(ctx, component, updated
 }
 
 // RecomputeService mocks base method.
-func (m *MockManager) RecomputeService(ctx context.Context, serviceID string, commRegister mongo.CommandsRegister) (types.Entity, error) {
+func (m *MockManager) RecomputeService(ctx context.Context, serviceID string, commRegister mongo.CommandsRegister) (types.Entity, contextgraph.ServicePauseChanges, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RecomputeService", ctx, serviceID, commRegister)
 	ret0, _ := ret[0].(types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(contextgraph.ServicePauseChanges)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // RecomputeService indicates an expected call of RecomputeService.

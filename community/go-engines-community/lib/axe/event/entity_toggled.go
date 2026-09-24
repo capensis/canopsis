@@ -45,6 +45,7 @@ func NewEntityToggledProcessor(
 	return &entityToggledProcessor{
 		dbClient:                dbClient,
 		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
 		closeDelayJobCollection: dbClient.Collection(mongo.CloseDelayJobCollection),
 		logger:                  logger,
 		countersHelper:          newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
@@ -91,6 +92,7 @@ func NewEntityToggledProcessor(
 type entityToggledProcessor struct {
 	dbClient                mongo.DbClient
 	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
 	closeDelayJobCollection mongo.DbCollection
 	logger                  zerolog.Logger
 	resolveHelper           *resolveHelper
@@ -143,6 +145,15 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		}
 
 		entity := *event.Entity
+		// The entity has been added to or removed from services, its pause is updated,
+		// its alarm is resolved so it's not updated.
+		var resolvedAlarm types.Alarm
+		_, err = updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+			&entity, &resolvedAlarm, event.Parameters.Timestamp)
+		if err != nil {
+			return err
+		}
+
 		if beforeAlarm.ID != "" {
 			_, err = p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
 			if err != nil {

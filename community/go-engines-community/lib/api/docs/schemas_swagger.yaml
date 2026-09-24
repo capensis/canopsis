@@ -332,6 +332,8 @@ definitions:
         items:
           type: string
         type: array
+      pause:
+        $ref: '#/definitions/common.AlarmStep'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbh_inactive_duration:
@@ -1947,6 +1949,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -2229,6 +2233,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -2533,6 +2539,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -2673,6 +2681,8 @@ definitions:
         type: integer
       output_template:
         type: string
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -2833,6 +2843,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -7243,6 +7255,33 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.Pause:
+    properties:
+      author:
+        type: string
+      inherited:
+        type: boolean
+      initiator:
+        type: string
+      message:
+        type: string
+      path:
+        description: |-
+          Path is the entities the pause has passed through between its source and the paused entity,
+          its own source is not in it. It's used to compare a pause with a pause of an entity
+          above or below its source.
+        items:
+          type: string
+        type: array
+      source:
+        type: string
+      timestamp:
+        type: integer
+      type:
+        type: string
+      user_id:
+        type: string
     type: object
   types.StructuredMessage:
     properties:

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"slices"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -101,6 +102,73 @@ type Entity struct {
 
 	Comments    []EntityComment `bson:"comments,omitempty" json:"comments,omitempty"`
 	LastComment *EntityComment  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+
+	// Pause is the active pause, nil if the entity is not paused.
+	Pause *Pause `bson:"pause,omitempty" json:"pause,omitempty"`
+	// LatestPause is the newest pause received, active or ended (End is set).
+	// It is used to order pause/resume events and reject late ones, not to check if the entity is paused.
+	LatestPause *LatestPause `bson:"latest_pause,omitempty" json:"-"`
+}
+
+// LatestPause is a pause with its end, Source is always set (entity ID for its own pause).
+type LatestPause struct {
+	Pause `bson:",inline"`
+	End   *datetime.CpsTime `bson:"end,omitempty" json:"end,omitempty"`
+}
+
+// CanApplyOver reports whether the pause p can be applied to the entity whose latest pause is o.
+// A pause inherited from another entity replaces the entity's own pause, whatever their times.
+// A pause of an entity above the source of o, i.e. which has passed through it, replaces it,
+// and a pause from below it is ignored, so all the dependencies of a paused entity keep its pause.
+// Two other inherited pauses are compared by their times.
+// The entity's own pause is applied only if the entity is not paused and its latest pause has ended before it.
+func (p LatestPause) CanApplyOver(o *LatestPause, entityID string) bool {
+	switch {
+	case o == nil:
+		return true
+	case p.Source == entityID:
+		return o.End != nil && p.Timestamp.After(*o.End)
+	case o.Source == entityID:
+		return true
+	case slices.Contains(p.Path, o.Source):
+		return true
+	case slices.Contains(o.Path, p.Source):
+		return false
+	case !p.Timestamp.Equal(o.Timestamp):
+		return p.Timestamp.After(o.Timestamp)
+	default:
+		// Source breaks ties so all entities pick the same pause.
+		return p.Source > o.Source
+	}
+}
+
+// InheritedPause returns the pause which the dependencies of the entity inherit from it,
+// nil if the entity is not paused or if its pause is applied only to itself.
+// The own pause of the entity becomes a pause with the entity as a source, and the entity is added
+// to the pause path, so the dependencies know that the pause has passed through it.
+func (e Entity) InheritedPause() *LatestPause {
+	if e.Pause == nil || !e.Pause.Inherited {
+		return nil
+	}
+
+	pause := LatestPause{Pause: *e.Pause}
+	if pause.Source != "" && pause.Source != e.ID {
+		// The pause of another entity passes through this one.
+		pause.Path = append(slices.Clone(pause.Path), e.ID)
+
+		return &pause
+	}
+
+	// The entity is the source of its own pause, so it's not in the path.
+	pause.Source = e.ID
+	switch e.Type {
+	case EntityTypeComponent:
+		pause.Message += "\nComponent: " + e.Name
+	case EntityTypeService:
+		pause.Message += "\nService: " + e.Name
+	}
+
+	return &pause
 }
 
 type StateInfo struct {
@@ -128,6 +196,21 @@ type Coordinates struct {
 
 func (c Coordinates) IsZero() bool {
 	return c == Coordinates{}
+}
+
+type Pause struct {
+	Timestamp datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
+	Message   string           `bson:"message" json:"message"`
+	Author    string           `bson:"author" json:"author"`
+	UserID    string           `bson:"user_id" json:"user_id"`
+	Initiator string           `bson:"initiator" json:"initiator"`
+	Type      string           `bson:"type,omitempty" json:"type"`
+	Source    string           `bson:"source,omitempty" json:"source"`
+	Inherited bool             `bson:"inherited,omitempty" json:"inherited,omitempty"`
+	// Path is the entities the pause has passed through between its source and the paused entity,
+	// its own source is not in it. It's used to compare a pause with a pause of an entity
+	// above or below its source.
+	Path []string `bson:"path,omitempty" json:"path,omitempty"`
 }
 
 // EnsureInitialized verifies that all complex structs are well initialized

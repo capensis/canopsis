@@ -44,7 +44,11 @@ func NewContextUpdateProcessor(
 	return &contextUpdateProcessor{
 		dbClient:           dbClient,
 		alarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:   dbClient.Collection(mongo.EntityMongoCollection),
 		alarmStatusService: alarmStatusService,
+		eventGenerator:     eventGenerator,
+		publisher:          amqpPublisher,
+		encoder:            encoder,
 		logger:             logger,
 		countersHelper:     newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
@@ -71,7 +75,11 @@ func NewContextUpdateProcessor(
 type contextUpdateProcessor struct {
 	dbClient           mongo.DbClient
 	alarmCollection    mongo.DbCollection
+	entityCollection   mongo.DbCollection
 	alarmStatusService alarmstatus.Service
+	eventGenerator     libevent.Generator
+	publisher          amqp.Publisher
+	encoder            encoding.Encoder
 	logger             zerolog.Logger
 	countersHelper     *countersHelper
 	upstreamHelper     *upstreamHelper
@@ -104,6 +112,14 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 				return err
 			}
 
+			// The entity has been added to or removed from services, so its pause
+			// and its alarm pause are updated.
+			result.PauseChange, err = updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+				&entity, &alarm, event.Parameters.Timestamp)
+			if err != nil {
+				return err
+			}
+
 			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 				ctx,
 				&alarm,
@@ -118,6 +134,12 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		}
 
 		go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
+	}
+
+	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
+		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	if err != nil {
+		p.logger.Err(err).Msg("cannot publish pause change")
 	}
 
 	// to dynamic-infos
@@ -151,6 +173,18 @@ func (p *contextUpdateProcessor) processOnUpstreamChange(ctx context.Context, ev
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
+
+		// The entity has been added to or removed from services, so its pause
+		// and its alarm pause are updated.
+		pauseChange, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+			&entity, &alarm, event.Parameters.Timestamp)
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			result.PauseChange = pauseChange
+		}()
 
 		if alarm.ID == "" {
 			result, err = p.upstreamHelper.UpdateAlarm(ctx, event, alarm, entity)
@@ -222,6 +256,12 @@ func (p *contextUpdateProcessor) processOnUpstreamChange(ctx context.Context, ev
 
 	if result.Alarm.ID != "" {
 		go p.upstreamHelper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
+	}
+
+	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
+		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	if err != nil {
+		p.logger.Err(err).Msg("cannot publish pause change")
 	}
 
 	return result, alarm, nil

@@ -71,6 +71,8 @@ const (
 	AlarmStepMetaAlarmDetach = "metaalarmdetach"
 	AlarmStepActivate        = "activate"
 	AlarmStepResolve         = "resolve"
+	AlarmStepPause           = "pause"
+	AlarmStepResume          = "resume"
 
 	AlarmStepAssocTicket       = "assocticket"
 	AlarmStepDeclareTicket     = "declareticket"
@@ -111,6 +113,8 @@ func GetAlarmStepTypes() []string {
 		AlarmStepComment,
 		AlarmStepSnooze,
 		AlarmStepUnsnooze,
+		AlarmStepPause,
+		AlarmStepResume,
 		AlarmStepStateCounter,
 		AlarmStepChangeState,
 		AlarmStepPbhEnter,
@@ -301,6 +305,10 @@ func (a *Alarm) IsSnoozed() bool {
 	return snoozeEnd.After(datetime.NewCpsTime())
 }
 
+func (a *Alarm) IsPaused() bool {
+	return a.Value.Pause != nil
+}
+
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)
 func (a *Alarm) IsStateLocked() bool {
 	return a.Value.ChangeState != nil
@@ -408,6 +416,7 @@ func (a *Alarm) IsInActivePeriod() bool {
 func (a *Alarm) CanActivate() bool {
 	return !a.IsActivated() &&
 		!a.IsSnoozed() &&
+		!a.IsPaused() &&
 		a.Value.PbehaviorInfo.IsActive() &&
 		!a.InactiveAutoInstructionInProgress &&
 		!a.InactiveDelayMetaAlarmInProgress

@@ -22,4 +22,8 @@ type Result struct {
 
 	AddedExternalTags   []string
 	RemovedExternalTags []string
+
+	// PauseChange is the pause or the resume applied to the entity and its alarm
+	// outside of a pause or resume event, see updatePauseOnServicesChange.
+	PauseChange pauseChange
 }

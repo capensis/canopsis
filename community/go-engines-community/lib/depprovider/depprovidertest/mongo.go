@@ -34,6 +34,8 @@ type MongoClientOptions struct {
 
 type MongoCollOptions struct {
 	WrapAggregate func(c mongo.Cursor) mongo.Cursor
+	BeforeFindOne func(ctx context.Context, filter any)
+	AfterFindOne  func(ctx context.Context, filter any)
 }
 
 type MongoCursorOptions struct {
@@ -72,6 +74,20 @@ func (c *hookedDbCollection) Aggregate(ctx context.Context, pipeline any, opts .
 	}
 
 	return cur, nil
+}
+
+func (c *hookedDbCollection) FindOne(ctx context.Context, filter any, opts ...options.Lister[options.FindOneOptions]) mongo.SingleResultHelper {
+	if c.opts.BeforeFindOne != nil {
+		c.opts.BeforeFindOne(ctx, filter)
+	}
+
+	r := c.DbCollection.FindOne(ctx, filter, opts...)
+
+	if c.opts.AfterFindOne != nil {
+		c.opts.AfterFindOne(ctx, filter)
+	}
+
+	return r
 }
 
 type hookedCursor struct {

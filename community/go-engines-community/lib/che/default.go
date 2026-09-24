@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
@@ -334,7 +335,8 @@ func NewEngine(
 	s.EventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
 	s.EventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
 	s.EventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
-	s.EventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
+	s.EventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender,
+		libevent.NewGenerator(canopsis.CheConnector, canopsis.CheConnector), amqpPublisher, json.NewEncoder(), json.NewDecoder()))
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,

@@ -334,6 +334,7 @@ type AlarmValue struct {
 	ACK          *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled     *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
 	Snooze       *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	Pause        *common.AlarmStep  `bson:"pause,omitempty" json:"pause,omitempty"`
 	State        *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status       *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	ChangeState  *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
