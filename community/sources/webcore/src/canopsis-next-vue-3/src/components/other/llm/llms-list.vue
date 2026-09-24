@@ -27,7 +27,12 @@
     </template>
 
     <template #type="{ item }">
-      {{ item.type ?? item.model_type }}
+      <span v-if="item.type && te(`llm.modelTypes.${item.type}`)">
+        {{ t(`llm.modelTypes.${item.type}`) }}
+      </span>
+      <span v-else>
+        {{ item.type ?? item.model_type }}
+      </span>
     </template>
 
     <template #thinking_level="{ item }">

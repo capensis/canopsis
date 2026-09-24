@@ -10,6 +10,15 @@
         hide-value-on-false
         @update:duration="updateField('delete_after', $event)"
       />
+      <c-enabled-duration-field
+        :duration="form.delete_token_usage_after"
+        :label="$t('storageSetting.llmChat.deleteStats')"
+        :suffix="$t('storageSetting.olderThan')"
+        name="llm_chat.delete_token_usage_after"
+        switcher
+        hide-value-on-false
+        @update:duration="updateField('delete_token_usage_after', $event)"
+      />
     </c-information-block>
   </c-layout>
 </template>
