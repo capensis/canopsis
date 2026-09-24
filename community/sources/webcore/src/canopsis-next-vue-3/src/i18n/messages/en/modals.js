@@ -658,6 +658,10 @@ export default {
     fields: {
       host: 'Host',
       token: 'Authorization token',
+      enableRefreshToken: 'Enable refresh token',
+      refreshToken: 'Refresh token',
+      clientId: 'Client id',
+      clientSecret: 'Client secret',
     },
   },
   createRemediationJob: {

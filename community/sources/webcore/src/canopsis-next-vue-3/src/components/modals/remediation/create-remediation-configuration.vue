@@ -6,7 +6,7 @@
       </template>
 
       <template #text>
-        <remediation-configuration-form />
+        <remediation-configuration-form :is-new="isNew" />
       </template>
 
       <template #actions>
@@ -59,7 +59,7 @@ export default {
     const modals = useModals();
     const config = computed(() => props.modal.config ?? {});
     const remediationConfiguration = computed(() => config.value.remediationConfiguration);
-    const isNew = computed(() => !remediationConfiguration.value);
+    const isNew = computed(() => !remediationConfiguration.value?._id);
     const title = computed(
       () => config.value.title || t('modals.createRemediationConfiguration.create.title'),
     );
@@ -73,7 +73,9 @@ export default {
     const closeModal = () => modals.hide({ id: props.modal.id });
 
     const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(formToRemediationConfiguration(values.value));
+      const result = await config.value.action?.(
+        formToRemediationConfiguration(values.value),
+      );
 
       closeModal();
 
@@ -91,6 +93,7 @@ export default {
       title,
       submitLabel,
       submitting,
+      isNew,
       submit,
       closeModal,
     };
