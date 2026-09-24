@@ -2,6 +2,9 @@
   <div class="pa-4 secondary lighten-2">
     <v-card>
       <v-card-text>
+
+        <llm-prompts-history-statistics :llm-id="llmId" class="mb-4" />
+
         <v-tabs v-model="activeTab" color="primary" align-tabs="center">
           <v-tab :value="TABS.allPrompts">
             {{ t('llm.promptsHistory.tabs.allPrompts') }}
@@ -31,6 +34,7 @@ import { ref } from 'vue';
 import { useI18n } from '@/hooks/i18n';
 
 import LlmPromptsHistoryByUserTable from './llm-prompts-history-by-user-table.vue';
+import LlmPromptsHistoryStatistics from './llm-prompts-history-statistics.vue';
 import LlmPromptsHistoryTable from './llm-prompts-history-table.vue';
 
 const TABS = {
@@ -41,6 +45,7 @@ const TABS = {
 export default {
   components: {
     LlmPromptsHistoryByUserTable,
+    LlmPromptsHistoryStatistics,
     LlmPromptsHistoryTable,
   },
 

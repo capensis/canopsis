@@ -30,7 +30,7 @@
         <c-action-btn
           v-if="removable"
           :tooltip="
-            disabled ? $t('remediation.configuration.usingConfiguration') : $t('common.delete')
+            disabled ? t('remediation.configuration.usingConfiguration') : t('common.delete')
           "
           :disabled-button="disabled"
           type="delete"
@@ -42,6 +42,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     remediationConfigurations: {
@@ -80,38 +84,44 @@ export default {
 
   emits: ['update:options', 'refresh', 'remove', 'duplicate', 'edit'],
 
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.author'),
-          value: 'author.display_name',
-        },
-        {
-          text: this.$t('common.type'),
-          value: 'type',
-        },
-        {
-          text: this.$t('remediation.configuration.host'),
-          value: 'host',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
+  setup() {
+    const { t } = useI18n();
 
-  methods: {
-    isDisabledConfiguration({ deletable }) {
-      return !deletable;
-    },
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('common.author'),
+        value: 'author.display_name',
+      },
+      {
+        text: t('common.type'),
+        value: 'type',
+      },
+      {
+        text: t('remediation.configuration.host'),
+        value: 'host',
+      },
+      {
+        text: t('remediation.configuration.clientId'),
+        value: 'client_id',
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const isDisabledConfiguration = ({ deletable }) => !deletable;
+
+    return {
+      t,
+      headers,
+      isDisabledConfiguration,
+    };
   },
 };
 </script>

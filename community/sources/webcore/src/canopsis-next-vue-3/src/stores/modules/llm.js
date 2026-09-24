@@ -39,6 +39,10 @@ export const useLlmStore = createCRUDStore({
       return request.get(`${API_ROUTES.llms.list}/${id}/messages`, { params });
     },
 
+    fetchLlmStatsWithoutStore({ id } = {}) {
+      return request.get(`${API_ROUTES.llms.list}/${id}/stats`);
+    },
+
     bulkLinkLlmHistory({ data } = {}) {
       return request.put(API_ROUTES.llms.bulkHistoryLink, data);
     },

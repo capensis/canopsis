@@ -18,12 +18,12 @@
 
     <c-form-block>
       <c-form-block-row :label="$t('llm.modelType')">
-        <c-text-field
+        <llm-model-type-field
           :model-value="form.type"
-          :label="$t('llm.modelType')"
-          disabled
-          readonly
-          @update:model-value="updateField('type', $event)"
+          :disabled="!isNew"
+          name="type"
+          required
+          @update:model-value="updateType"
         />
       </c-form-block-row>
 
@@ -41,7 +41,7 @@
       </c-form-block-row>
 
       <c-form-block-row :label="$t('llm.model')">
-        <c-layout gap="3">
+        <v-row>
           <v-col cols="6" class="pa-0">
             <llm-model-field
               :model-value="form.model"
@@ -52,7 +52,7 @@
               @update:model-value="updateField('model', $event)"
             />
           </v-col>
-          <v-col cols="6" class="pa-0">
+          <v-col v-if="thinkingLevels.length" cols="6" class="pa-0">
             <llm-thinking-level-field
               :model-value="form.thinking_level"
               :items="thinkingLevels"
@@ -60,7 +60,7 @@
               @update:model-value="updateField('thinking_level', $event)"
             />
           </v-col>
-        </c-layout>
+        </v-row>
       </c-form-block-row>
 
       <c-form-block-row :label="$t('llm.isDefaultModel')" align-center>
@@ -92,11 +92,13 @@ import { useModelField } from '@/hooks/form/model-field';
 import { useLlmModelsListForSelect } from '@/components/other/llm/hooks/llm-models-list';
 
 import LlmModelField from './fields/llm-model-field.vue';
+import LlmModelTypeField from './fields/llm-model-type-field.vue';
 import LlmThinkingLevelField from './fields/llm-thinking-level-field.vue';
 
 export default {
   components: {
     LlmModelField,
+    LlmModelTypeField,
     LlmThinkingLevelField,
   },
 
@@ -119,16 +121,26 @@ export default {
 
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
+    const type = computed(() => props.form.type);
     const {
       items: models,
       itemsByName: modelsByName,
       pending: modelsPending,
-    } = useLlmModelsListForSelect();
+    } = useLlmModelsListForSelect(type);
     const emptyThinkingLevels = [];
 
     const thinkingLevels = computed(
       () => modelsByName.value[props.form.model]?.thinking_levels ?? emptyThinkingLevels,
     );
+
+    const updateType = (value) => {
+      updateModel({
+        ...props.form,
+        type: value,
+        model: '',
+        thinking_level: '',
+      });
+    };
 
     const updateEnabled = (value) => {
       const newForm = {
@@ -151,6 +163,7 @@ export default {
 
       updateEnabled,
       updateField,
+      updateType,
     };
   },
 };

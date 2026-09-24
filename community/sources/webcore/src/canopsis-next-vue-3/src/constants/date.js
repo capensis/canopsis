@@ -99,6 +99,7 @@ export const DATETIME_FORMATS = {
   durationWithMilliseconds: 'Y __ D __ H _ m _ s _ S _',
   testSuiteFormat: 'DD MMM YYYY [\n]H:mm:ss [GMT]',
   vuetifyDatePicker: 'YYYY-MM-DD',
+  period: 'D MMM',
 };
 
 export const DATETIME_INTERVAL_TYPES = {
