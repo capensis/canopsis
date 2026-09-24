@@ -348,9 +348,10 @@ Loop:
 func updateInactiveStart(
 	ts datetime.CpsTime,
 	withSnoozeCond bool,
-	withPbhCond bool,
+	withPbhCond bool, // nolint:unparam
 	withAutoInstructionCond bool,
 	withMetaAlarmCond bool,
+	withPauseCond bool,
 ) bson.M {
 	conds := make([]bson.M, 0)
 	if withSnoozeCond {
@@ -373,6 +374,13 @@ func updateInactiveStart(
 
 	if withMetaAlarmCond {
 		conds = append(conds, bson.M{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}})
+	}
+
+	if withPauseCond {
+		conds = append(conds, bson.M{"$eq": bson.A{
+			bson.M{"$ifNull": bson.A{"$v.pause", nil}},
+			nil,
+		}})
 	}
 
 	return bson.M{"$cond": bson.M{

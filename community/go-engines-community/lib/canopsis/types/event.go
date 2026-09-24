@@ -47,6 +47,8 @@ const (
 	EventTypeSnooze       = "snooze"
 	EventTypeUnsnooze     = "unsnooze"
 	EventTypeUncancel     = "uncancel"
+	EventTypePause        = "pause"
+	EventTypeResume       = "resume"
 
 	// EventTypeContextUpdate is used to send a context graph update event without counting it and updating LastEventDate
 	EventTypeContextUpdate = "contextupdate"
@@ -145,6 +147,7 @@ type Event struct {
 	Alarm             *Alarm              `bson:"current_alarm,omitempty" json:"current_alarm,omitempty"`
 	Entity            *Entity             `bson:"current_entity,omitempty" json:"current_entity,omitempty"`
 	StructuredMessage []StructuredMessage `bson:"struct_m,omitempty" json:"struct_m,omitempty"`
+	Inherited         bool                `bson:"inherited,omitempty" json:"inherited,omitempty"`
 
 	// AlarmID is used if an event is emitted for the specific alarm.
 	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`
@@ -220,6 +223,10 @@ type Event struct {
 	CloseDelayValue *int64 `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `bson:"is_close_delay,omitempty" json:"is_close_delay,omitempty"`
+
+	PauseType   string   `bson:"pause_type,omitempty" json:"pause_type,omitempty"`
+	PauseSource string   `bson:"pause_source,omitempty" json:"pause_source,omitempty"`
+	PausePath   []string `bson:"pause_path,omitempty" json:"pause_path,omitempty"`
 }
 
 // Format an event
@@ -570,6 +577,8 @@ func isValidEventType(t string) bool {
 		EventTypeSnooze,
 		EventTypeUnsnooze,
 		EventTypeUncancel,
+		EventTypePause,
+		EventTypeResume,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
 		EventTypeResolveDeleted,

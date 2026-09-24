@@ -516,6 +516,7 @@ type AlarmValue struct {
 	ACK         *AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
 	Snooze      *AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	Pause       *AlarmStep  `bson:"pause,omitempty" json:"pause,omitempty"`
 	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	Comments    []AlarmStep `bson:"comments,omitempty" json:"comments,omitempty"`

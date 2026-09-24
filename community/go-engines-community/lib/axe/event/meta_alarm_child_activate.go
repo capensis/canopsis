@@ -45,7 +45,7 @@ func (p *metaAlarmChildActivateProcessor) Process(ctx context.Context, event rpc
 					"$v.inactive_start",
 				}},
 			}},
-			"v.inactive_start": updateInactiveStart(event.Parameters.Timestamp, true, true, true, false),
+			"v.inactive_start": updateInactiveStart(event.Parameters.Timestamp, true, true, true, false, true),
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

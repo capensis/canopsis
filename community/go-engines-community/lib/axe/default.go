@@ -616,6 +616,8 @@ func (m DependencyMaker) EventProcessor(
 		alarmStatusService, templateExecutor))
 	container.Set(types.EventTypeTrigger, event.NewTriggerProcessor(dbClient))
 	container.Set(types.EventTypeChangeTicketStatus, event.NewChangeTicketStatusProcessor(dbClient))
+	container.Set(types.EventTypePause, event.NewPauseProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, metricsSender, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResume, event.NewResumeProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, metricsSender, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
 
 	return event.NewCombinedProcessor(container)
 }

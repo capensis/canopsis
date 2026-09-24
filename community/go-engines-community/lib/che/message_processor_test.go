@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
@@ -284,7 +285,8 @@ func benchmarkMessageProcessorWithConfig(
 	eventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), zerolog.Nop()))
 	eventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), zerolog.Nop()))
 	eventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
-	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
+	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender,
+		libevent.NewGenerator(canopsis.CheConnector, canopsis.CheConnector), amqpChannel, json.NewEncoder(), json.NewDecoder()))
 
 	p := messageProcessor{
 		EventProcessorContainer:  eventProcessorContainer,

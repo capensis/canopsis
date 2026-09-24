@@ -5,14 +5,17 @@ import (
 	"errors"
 	"fmt"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -23,6 +26,8 @@ type serviceProcessor struct {
 	contextGraphManager     contextgraph.Manager
 	eventFilterService      eventfilter.Service
 	entityInfosUpdateSender metrics.EntityInfosUpdateSender
+	eventGenerator          libevent.Generator
+	publisher               libamqp.Publisher
 	encoder                 encoding.Encoder
 	decoder                 encoding.Decoder
 }
@@ -32,6 +37,8 @@ func NewServiceProcessor(
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
 	entityInfosUpdateSender metrics.EntityInfosUpdateSender,
+	eventGenerator libevent.Generator,
+	publisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 ) Processor {
@@ -41,6 +48,8 @@ func NewServiceProcessor(
 		contextGraphManager:     contextGraphManager,
 		eventFilterService:      eventFilterService,
 		entityInfosUpdateSender: entityInfosUpdateSender,
+		eventGenerator:          eventGenerator,
+		publisher:               publisher,
 		encoder:                 encoder,
 		decoder:                 decoder,
 	}
@@ -57,14 +66,16 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 
 		if event.EventType == types.EventTypeRecomputeEntityService {
 			var eventEntity types.Entity
+			var pauseChanges contextgraph.ServicePauseChanges
 
 			err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 				commRegister.Clear()
 
 				eventEntity = types.Entity{}
+				pauseChanges = contextgraph.ServicePauseChanges{}
 				var err error
 
-				eventEntity, err = p.contextGraphManager.RecomputeService(ctx, event.GetEID(), commRegister)
+				eventEntity, pauseChanges, err = p.contextGraphManager.RecomputeService(ctx, event.GetEID(), commRegister)
 				if err != nil {
 					return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
 				}
@@ -73,6 +84,13 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 			})
 			if err != nil {
 				return res, err
+			}
+
+			// The recompute doesn't update the pause of the dependencies, so pause and resume events
+			// are sent for the ones which have been added to or removed from the service.
+			err = p.sendPauseChanges(ctx, event, pauseChanges)
+			if err != nil {
+				return res, fmt.Errorf("cannot send pause changes of service %s: %w", event.Component, err)
 			}
 
 			event.Entity = &eventEntity
@@ -199,4 +217,73 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 	}
 
 	return res, nil
+}
+
+// sendPauseChanges sends a pause event for each new dependency of the paused service and a resume event
+// for each removed dependency which the service has paused, so their pause, their alarm
+// and their own dependencies are updated by engine-axe.
+func (p *serviceProcessor) sendPauseChanges(ctx context.Context, event *types.Event, changes contextgraph.ServicePauseChanges) error {
+	for _, entity := range changes.ToPause {
+		pauseEvent, err := p.eventGenerator.Generate(entity)
+		if err != nil {
+			return fmt.Errorf("cannot generate pause event of %s: %w", entity.ID, err)
+		}
+
+		pause := changes.ServicePause
+		pauseEvent.EventType = types.EventTypePause
+		pauseEvent.Timestamp = pause.Timestamp
+		pauseEvent.Output = pause.Message
+		pauseEvent.Author = pause.Author
+		pauseEvent.UserID = pause.UserID
+		pauseEvent.Initiator = pause.Initiator
+		pauseEvent.PauseType = pause.Type
+		pauseEvent.PauseSource = pause.Source
+		pauseEvent.PausePath = pause.Path
+		pauseEvent.Inherited = true
+
+		err = p.sendEvent(ctx, pauseEvent)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, entity := range changes.ToResume {
+		resumeEvent, err := p.eventGenerator.Generate(entity)
+		if err != nil {
+			return fmt.Errorf("cannot generate resume event of %s: %w", entity.ID, err)
+		}
+
+		resumeEvent.EventType = types.EventTypeResume
+		resumeEvent.Timestamp = event.Timestamp
+		resumeEvent.Initiator = types.InitiatorSystem
+		resumeEvent.PauseSource = entity.Pause.Source
+		resumeEvent.PausePath = entity.Pause.Path
+
+		err = p.sendEvent(ctx, resumeEvent)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *serviceProcessor) sendEvent(ctx context.Context, event types.Event) error {
+	body, err := p.encoder.Encode(event)
+	if err != nil {
+		return fmt.Errorf("cannot encode event: %w", err)
+	}
+
+	return p.publisher.PublishWithContext(
+		ctx,
+		"",
+		canopsis.FIFOQueueName,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType:  canopsis.JsonContentType,
+			Body:         body,
+			DeliveryMode: amqp.Persistent,
+		},
+	)
 }

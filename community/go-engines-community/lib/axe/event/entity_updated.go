@@ -45,6 +45,10 @@ func NewEntityUpdatedProcessor(
 	return &entityUpdatedProcessor{
 		dbClient:                    dbClient,
 		alarmCollection:             dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		eventGenerator:              eventGenerator,
+		publisher:                   amqpPublisher,
+		encoder:                     encoder,
 		componentCountersCalculator: componentCountersCalculator,
 		externalTagUpdater:          externalTagUpdater,
 		metaAlarmPostProcessor:      metaAlarmPostProcessor,
@@ -74,6 +78,10 @@ func NewEntityUpdatedProcessor(
 type entityUpdatedProcessor struct {
 	dbClient                    mongo.DbClient
 	alarmCollection             mongo.DbCollection
+	entityCollection            mongo.DbCollection
+	eventGenerator              libevent.Generator
+	publisher                   amqp.Publisher
+	encoder                     encoding.Encoder
 	componentCountersCalculator calculator.ComponentCountersCalculator
 	externalTagUpdater          alarmtag.ExternalUpdater
 	metaAlarmPostProcessor      MetaAlarmPostProcessor
@@ -101,10 +109,20 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return err
 		}
 
+		// The entity has been added to or removed from services, so its pause
+		// and its alarm pause are updated.
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+			&entity, &alarm, event.Parameters.Timestamp)
+		if err != nil {
+			return err
+		}
+
 		result, err = p.upstreamHelper.UpdateAlarm(ctx, event, alarm, entity)
 		if err != nil {
 			return err
 		}
+
+		result.PauseChange = change
 
 		if result.Alarm.ID == "" {
 			// to dynamic-infos
@@ -194,6 +212,12 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	if err != nil {
 		return result, err
+	}
+
+	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
+		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	if err != nil {
+		p.logger.Err(err).Msg("cannot publish pause change")
 	}
 
 	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)

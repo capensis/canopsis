@@ -1,6 +1,6 @@
 package postgres
 
-//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool,PoolProvider
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v5 Rows,Tx,BatchResults
 
 import (
@@ -64,7 +64,13 @@ func NewPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration)
 	if err != nil {
 		return nil, err
 	}
-	return newPool(ctx, connStr, retryCount, minRetryTimeout)
+
+	pgxPool, err := pgxpool.New(ctx, connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewPoolWithRetries(pgxPool, retryCount, minRetryTimeout), nil
 }
 
 func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
@@ -72,21 +78,22 @@ func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout tim
 	if err != nil {
 		return nil, err
 	}
-	return newPool(ctx, connStr, retryCount, minRetryTimeout)
-}
 
-func newPool(ctx context.Context, connStr string, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
 	pgxPool, err := pgxpool.New(ctx, connStr)
 	if err != nil {
 		return nil, err
 	}
 
+	return NewPoolWithRetries(pgxPool, retryCount, minRetryTimeout), nil
+}
+
+func NewPoolWithRetries(pgxPool BasePool, retryCount int, minRetryTimeout time.Duration) Pool {
 	return &poolWithRetries{
 		pgxPool: pgxPool,
 
 		retryCount:      retryCount,
 		minRetryTimeout: minRetryTimeout,
-	}, nil
+	}
 }
 
 type BasePool interface {

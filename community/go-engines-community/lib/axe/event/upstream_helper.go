@@ -183,10 +183,20 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 			return err
 		}
 
+		// The entity has been added to or removed from services, so its pause
+		// and its alarm pause are updated.
+		change, err := updatePauseOnServicesChange(ctx, h.entityCollection, h.alarmCollection,
+			&entity, &alarm, event.Parameters.Timestamp)
+		if err != nil {
+			return err
+		}
+
 		result, err = h.UpdateAlarm(ctx, event, alarm, entity)
 		if err != nil {
 			return err
 		}
+
+		result.PauseChange = change
 
 		if forceCountersUpdate || result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
 			result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCounters(
@@ -199,8 +209,18 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 
 		return err
 	})
-	if err != nil || result.Alarm.ID == "" {
+	if err != nil {
 		return result, alarm, err
+	}
+
+	pauseChangeErr := publishPauseChange(ctx, h.entityCollection, h.amqpPublisher, h.encoder, h.eventGenerator,
+		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	if pauseChangeErr != nil {
+		h.logger.Err(pauseChangeErr).Msg("cannot publish pause change")
+	}
+
+	if result.Alarm.ID == "" {
+		return result, alarm, nil
 	}
 
 	go h.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
