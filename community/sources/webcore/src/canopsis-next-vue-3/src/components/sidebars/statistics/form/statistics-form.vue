@@ -30,6 +30,7 @@
         @update:filters="localForm.filters = $event"
       />
     </widget-settings-group>
+    <widget-colors-form v-model="localForm.parameters.colors" with-table />
   </c-layout>
 </template>
 
@@ -40,6 +41,7 @@ import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 import FieldMainParameter from './fields/main-parameter.vue';
@@ -54,6 +56,7 @@ export default {
     FieldFilters,
     FieldMainParameter,
     FieldStatisticsColumns,
+    WidgetColorsForm,
   },
 
   props: {

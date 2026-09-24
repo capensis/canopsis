@@ -4,6 +4,7 @@ import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } 
 
 import { uid } from '@/helpers/uid';
 
+import { formToWidgetColors, widgetColorsToForm } from './colors';
 import {
   alarmListWidgetParametersToForm,
   formToAlarmListWidgetParameters,
@@ -222,7 +223,12 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
 
   const preparer = widgetsMap[type];
 
-  return preparer ? preparer(parameters) : cloneDeep(parameters);
+  const form = preparer ? preparer(parameters) : cloneDeep(parameters);
+
+  return {
+    ...form,
+    colors: widgetColorsToForm(parameters.colors),
+  };
 };
 
 /**
@@ -346,8 +352,12 @@ export const formToWidgetParameters = ({ type, parameters }) => {
   };
 
   const preparer = widgetsMap[type];
+  const widgetParameters = preparer ? preparer(parameters) : cloneDeep(parameters);
 
-  return preparer ? preparer(parameters) : cloneDeep(parameters);
+  return {
+    ...widgetParameters,
+    colors: formToWidgetColors(parameters.colors),
+  };
 };
 
 /**

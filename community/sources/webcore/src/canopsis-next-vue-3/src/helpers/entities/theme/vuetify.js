@@ -12,7 +12,11 @@ import {
   isDarkColor,
 } from '@/helpers/color';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
-import { convertTypeColors, themeToForm } from '@/helpers/entities/theme/form';
+import {
+  convertTypeColors,
+  tableColorsToTheme,
+  themeToForm,
+} from '@/helpers/entities/theme/form';
 
 const DEFAULT_TEXT_ON_LIGHT = '#000000';
 const DEFAULT_TEXT_ON_DARK = '#FFFFFF';
@@ -30,6 +34,7 @@ const getThemeForm = (theme = {}) => {
     colors: {
       main: flatColors,
       table: flatColors.table,
+      widget: flatColors.widget,
       state: flatColors.state,
       status: flatColors.status,
     },
@@ -59,11 +64,14 @@ const createPaletteColorVariations = (key, value) => {
   }, {});
 };
 
-const createVuetifyColors = ({ variables, main, table }) => {
+const createVuetifyColors = ({ variables, main }) => {
+  const vuetifyVariables = Object.fromEntries(
+    Object.entries(variables).filter(([key]) => !key.startsWith('table-')),
+  );
   const colors = Object.entries({
-    ...variables,
+    ...vuetifyVariables,
     background: variables['application-background'] ?? main.background,
-    surface: table.background ?? main.background,
+    surface: main.background,
     primary: main.primary,
     secondary: main.secondary,
     accent: main.accent,
@@ -150,6 +158,10 @@ const createLegacyColorVariations = (key, value) => {
 
 const createLegacyCssVariables = ({ themeVariables, runtimeVariables }) => {
   const legacyThemeVariables = Object.entries(themeVariables).reduce((acc, [key, value]) => {
+    if (key.startsWith('table-')) {
+      return acc;
+    }
+
     acc.push(`--v-${key}:${value};`);
     acc.push(`--v-${key}-base:${value};`);
     acc.push(...createLegacyColorVariations(key, value));
@@ -161,17 +173,29 @@ const createLegacyCssVariables = ({ themeVariables, runtimeVariables }) => {
     themePropertiesToCSSVariables(runtimeVariables),
   ).map(([key, value]) => `--v-${key}:${value};`);
 
-  return [...legacyThemeVariables, ...legacyRuntimeVariables].join('');
+  const tableCssVariables = Object.entries(themeVariables)
+    .filter(([key]) => key.startsWith('table-'))
+    .map(([key, value]) => `--c-${key}:${value};`);
+
+  return [...legacyThemeVariables, ...legacyRuntimeVariables, ...tableCssVariables].join('');
 };
 
 export const createCanopsisVuetifyTheme = (theme = {}) => {
   const form = getThemeForm(theme);
-  const { main, table, state, status } = form.colors;
+  const { main, table, widget, state, status } = form.colors;
   const isDark = isDarkColor(main.background);
   const stateText = createStateTextColors(state);
   const typeColors = convertTypeColors(main);
+  const tableVariables = tableColorsToTheme(table);
   const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
-    table,
+    table: tableVariables,
+    widget: {
+      title_background: widget.title_background,
+      content_background: widget.content_background,
+      border: widget.border.enabled,
+      border_color: widget.border.color,
+      border_radius: widget.border.radius,
+    },
     'impact-state': COLORS.impactStateGrouped,
     state: {
       ...state,
@@ -212,7 +236,6 @@ export const createCanopsisVuetifyTheme = (theme = {}) => {
         ...main,
         ...typeColors,
       },
-      table,
     }),
     variables: {
       'border-color': isDark ? DEFAULT_TEXT_ON_DARK : DEFAULT_TEXT_ON_LIGHT,

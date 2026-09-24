@@ -34,7 +34,7 @@
           </v-btn>
         </template>
         <v-btn
-          v-if="!activeMessage.maintenance"
+          v-if="!activeMessage.maintenance && activeMessage.closable"
           class="my-0 ml-0 mr-2"
           color="white"
           variant="outlined"

@@ -44,6 +44,7 @@
         :title="$t('settings.chart.showComparison')"
       />
     </widget-settings-group>
+    <widget-colors-form v-model="localForm.parameters.colors" />
   </c-layout>
 </template>
 
@@ -54,6 +55,7 @@ import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 import FieldAlarmMetricPresets from './fields/alarm-metric-presets.vue';
@@ -72,6 +74,7 @@ export default {
     FieldPreset,
     FieldQuickDateIntervalType,
     FieldSampling,
+    WidgetColorsForm,
   },
   props: {
     modelValue: {

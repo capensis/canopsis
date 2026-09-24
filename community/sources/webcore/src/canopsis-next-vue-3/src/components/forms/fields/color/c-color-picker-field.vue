@@ -21,6 +21,7 @@
             <c-btn-with-error
               v-bind="activatorProps"
               :error="buttonError"
+              :size="size"
               :style="style"
               :disabled="disabled"
             >
@@ -86,6 +87,10 @@ export default {
     hideLabel: {
       type: Boolean,
       default: false,
+    },
+    size: {
+      type: String,
+      default: undefined,
     },
   },
 
