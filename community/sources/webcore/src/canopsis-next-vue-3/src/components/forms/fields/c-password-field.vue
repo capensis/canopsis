@@ -7,16 +7,20 @@
 
     <c-layout v-if="shownField" align="center" gap="3">
       <c-text-field
+        ref="fieldElement"
         v-bind="$attrs"
-        :model-value="modelValue"
+        :model-value="displayedValue"
         :placeholder="fieldPlaceholder"
         :name="name"
         :type="inputType"
         :append-inner-icon="appendInnerIcon"
         :clearable="false"
         :required="required"
+        :readonly="isValueMasked"
         @update:model-value="updateModel"
         @click:append-inner="toggleShownPassword"
+        @focus="revealValue"
+        @blur="maskValueIfEmpty"
       />
 
       <v-btn
@@ -36,22 +40,28 @@
 
   <c-text-field
     v-else
+    ref="fieldElement"
     v-bind="$attrs"
-    :model-value="modelValue"
+    :model-value="displayedValue"
     :label="fieldLabel"
     :name="name"
     :type="inputType"
     :append-inner-icon="appendInnerIcon"
     :clearable="false"
     :required="required"
+    :readonly="isValueMasked"
     @update:model-value="updateModel"
     @click:append-inner="toggleShownPassword"
+    @focus="revealValue"
+    @blur="maskValueIfEmpty"
   />
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const MASKED_VALUE_PLACEHOLDER = '*'.repeat(30);
 
 const props = defineProps({
   modelValue: {
@@ -86,17 +96,27 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  masked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
 
 const { t } = useI18n();
 
+const fieldElement = ref(null);
+
 const shownPassword = ref(false);
 const shownField = ref(false);
+const isValueMasked = ref(props.masked && !props.modelValue);
 
 const fieldLabel = computed(() => props.label || t('common.password'));
 const fieldPlaceholder = computed(() => props.placeholder || t('common.password'));
+const displayedValue = computed(() => (
+  isValueMasked.value ? MASKED_VALUE_PLACEHOLDER : props.modelValue
+));
 
 const appendInnerIcon = computed(() => {
   if (!props.visibility) {
@@ -108,8 +128,72 @@ const appendInnerIcon = computed(() => {
 
 const inputType = computed(() => (shownPassword.value ? 'text' : 'password'));
 
-const updateModel = value => emit('update:modelValue', value);
-const toggleShownPassword = () => (shownPassword.value = !shownPassword.value);
+/**
+ * Returns the root DOM element of the password text field.
+ *
+ * @returns {HTMLElement|undefined}
+ */
+const getFieldEl = () => fieldElement.value?.$el ?? fieldElement.value;
+
+let blurTimeout;
+
+/**
+ * Restores the masked placeholder after blur when the value is still empty.
+ */
+const maskValueIfEmpty = () => {
+  window.clearTimeout(blurTimeout);
+
+  blurTimeout = window.setTimeout(() => {
+    if (getFieldEl()?.contains(document.activeElement)) {
+      return;
+    }
+
+    isValueMasked.value = props.masked && !props.modelValue;
+  });
+};
+
+/**
+ * Stops masking the field and shows the real empty value.
+ */
+const revealValue = () => {
+  window.clearTimeout(blurTimeout);
+  isValueMasked.value = false;
+};
+
+/**
+ * Focuses the native input inside the password text field.
+ */
+const focusField = () => {
+  nextTick(() => getFieldEl()?.querySelector?.('input')?.focus());
+};
+
+/**
+ * Emits the new field value and ignores the masked placeholder.
+ *
+ * @param {string} value
+ */
+const updateModel = (value) => {
+  revealValue();
+
+  if (value === MASKED_VALUE_PLACEHOLDER) {
+    return;
+  }
+
+  emit('update:modelValue', value);
+};
+
+/**
+ * Toggles password visibility and reveals the real value when it was masked.
+ */
+const toggleShownPassword = () => {
+  revealValue();
+  shownPassword.value = !shownPassword.value;
+  focusField();
+};
+
+/**
+ * Shows or hides the replaceable password field.
+ */
 const toggleShownField = () => {
   shownField.value = !shownField.value;
 
@@ -117,6 +201,10 @@ const toggleShownField = () => {
     updateModel('');
   }
 };
+
+watch(() => props.masked, masked => isValueMasked.value = masked && !props.modelValue);
+
+onBeforeUnmount(() => window.clearTimeout(blurTimeout));
 </script>
 
 <style lang="scss" scoped>

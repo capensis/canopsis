@@ -36,6 +36,7 @@ export const useLlm = () => {
     fetchLlmChatsWithoutStore: llmStore.fetchLlmChatsWithoutStore,
     fetchLlmUsersWithoutStore: llmStore.fetchLlmUsersWithoutStore,
     fetchLlmMessagesWithoutStore: llmStore.fetchLlmMessagesWithoutStore,
+    fetchLlmStatsWithoutStore: llmStore.fetchLlmStatsWithoutStore,
     bulkLinkLlmHistory: llmStore.bulkLinkLlmHistory,
   };
 };
