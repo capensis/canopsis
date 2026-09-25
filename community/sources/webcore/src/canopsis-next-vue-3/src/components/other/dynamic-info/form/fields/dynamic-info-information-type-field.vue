@@ -3,7 +3,7 @@
     :model-value="modelValue"
     :items="typeItems"
     :label="$t('common.actionType')"
-    name="type"
+    :name="name"
     item-title="title"
     item-value="value"
     required
@@ -23,6 +23,10 @@ export default {
     modelValue: {
       type: String,
       default: DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
+    },
+    name: {
+      type: String,
+      default: 'type',
     },
   },
 

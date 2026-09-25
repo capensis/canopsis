@@ -1,21 +1,21 @@
 <template>
-  <c-layout class="c-form-block" column>
-    <c-layout v-if="title || helpText" class="c-form-block__header mb-3" align="center">
+  <v-row class="c-form-block" no-gutters>
+    <v-col v-if="title || helpText" class="c-form-block__header mb-3 d-flex align-center" cols="12">
       <div class="text-subtitle-1 font-weight-bold">
         {{ title }}
       </div>
-    </c-layout>
+    </v-col>
 
-    <c-layout v-if="$slots.subtitle" class="c-form-block__subtitle mb-2">
+    <v-col v-if="$slots.subtitle" class="c-form-block__subtitle mb-2" cols="12">
       <span class="text-medium-emphasis">
         <slot name="subtitle" />
       </span>
-    </c-layout>
+    </v-col>
 
-    <div :class="surfaceClasses" class="c-form-block__surface">
+    <v-col :class="surfaceClasses" class="c-form-block__surface" cols="12">
       <slot />
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

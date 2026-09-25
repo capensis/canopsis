@@ -1,6 +1,6 @@
 <template>
-  <c-layout>
-    <div class="mt-3 flex-grow-0" style="flex-basis: 8.33%">
+  <v-row class="flex-grow-0" no-gutters>
+    <v-col class="mt-3" cols="1">
       <c-layout class="fill-height" align="center" column>
         <v-avatar
           class="text-white"
@@ -14,8 +14,8 @@
           class="step-line mt-3"
         />
       </c-layout>
-    </div>
-    <div style="flex-basis: 91.67%">
+    </v-col>
+    <v-col cols="11">
       <c-text-field
         :model-value="step.name"
         :label="t('common.name')"
@@ -40,8 +40,8 @@
         @execute-job="$emit('execute-job', $event)"
         @cancel-job-execution="$emit('cancel-job-execution', $event)"
       />
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

@@ -1,55 +1,49 @@
-import { createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
+import { ref } from 'vue';
 
 import Patterns from '@/components/other/pattern/patterns.vue';
 
+vi.mock('@/hooks/store/modules/pattern', () => ({
+  usePattern: () => globalThis.__TEST_PATTERN_HOOK__,
+}));
+
 const stubs = {
-  'patterns-list': true,
+  'patterns-list': {
+    name: 'PatternsList',
+    emits: ['update:options', 'edit', 'remove', 'remove-selected'],
+    template: '<div />',
+  },
 };
 
-const selectPattersListNode = wrapper => wrapper.vm.$children[0];
+const selectPatternsList = wrapper => wrapper.findComponent({ name: 'PatternsList' });
 
 describe('patterns', () => {
   const fetchPatternsList = vi.fn();
 
-  const patternModule = {
-    name: 'pattern',
-    getters: {
-      pending: false,
-      items: [],
-      meta: {
-        total_count: 0,
-      },
-    },
-    actions: {
-      fetchList: fetchPatternsList,
-    },
-  };
-  const store = createMockedStoreModules([patternModule]);
-  const edit = vi.fn();
-  const remove = vi.fn();
-  const removeSelected = vi.fn();
-  const listeners = {
-    edit,
-    remove,
-    'remove-selected': removeSelected,
-  };
-
   const factory = generateShallowRenderer(Patterns, { stubs });
+
+  beforeEach(() => {
+    globalThis.__TEST_PATTERN_HOOK__ = {
+      patterns: ref([]),
+      patternsMeta: ref({ total_count: 0 }),
+      patternsPending: ref(false),
+      fetchPatternsList,
+    };
+  });
 
   afterEach(() => {
     fetchPatternsList.mockClear();
   });
 
   test('Filters fetched after mount', async () => {
-    factory({ store, listeners });
+    factory();
 
     await flushPromises();
 
     expect(fetchPatternsList).toHaveBeenCalledTimes(1);
-    expect(fetchPatternsList).toHaveBeenCalledWith(expect.any(Object), {
+    expect(fetchPatternsList).toHaveBeenCalledWith({
       params: {
         page: 1,
         limit: 10,
@@ -59,19 +53,15 @@ describe('patterns', () => {
   });
 
   test('Filters fetched after change query', async () => {
-    const wrapper = factory({
-      store,
-      listeners,
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
     fetchPatternsList.mockClear();
 
-    const patternsListNode = selectPattersListNode(wrapper);
     const page = Faker.datatype.number({ min: 2 });
 
-    patternsListNode.$emit('update:options', {
+    selectPatternsList(wrapper).vm.$emit('update:options', {
       page,
       itemsPerPage: 10,
     });
@@ -79,7 +69,7 @@ describe('patterns', () => {
     await flushPromises();
 
     expect(fetchPatternsList).toHaveBeenCalledTimes(1);
-    expect(fetchPatternsList).toHaveBeenCalledWith(expect.any(Object), {
+    expect(fetchPatternsList).toHaveBeenCalledWith({
       params: {
         page,
         limit: 10,
@@ -90,64 +80,46 @@ describe('patterns', () => {
 
   test('Edit event emitted after trigger edit event on patterns list', async () => {
     const data = Faker.datatype.string();
-    const wrapper = factory({
-      store,
-      listeners,
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
     fetchPatternsList.mockClear();
 
-    const patternsListNode = selectPattersListNode(wrapper);
-
-    patternsListNode.$emit('edit', data);
+    selectPatternsList(wrapper).vm.$emit('edit', data);
 
     await flushPromises();
 
-    expect(edit).toHaveBeenCalledTimes(1);
-    expect(edit).toHaveBeenCalledWith(data);
+    expect(wrapper.emitted('edit')).toEqual([[data]]);
   });
 
   test('Remove selected event emitted after trigger remove selected event on patterns list', async () => {
     const data = [Faker.datatype.string()];
-    const wrapper = factory({
-      store,
-      listeners,
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
     fetchPatternsList.mockClear();
 
-    const patternsListNode = selectPattersListNode(wrapper);
-
-    patternsListNode.$emit('remove-selected', data);
+    selectPatternsList(wrapper).vm.$emit('remove-selected', data);
 
     await flushPromises();
 
-    expect(removeSelected).toHaveBeenCalledTimes(1);
-    expect(removeSelected).toHaveBeenCalledWith(data);
+    expect(wrapper.emitted('remove-selected')).toEqual([[data]]);
   });
 
   test('Remove event emitted after trigger remove event on patterns list', async () => {
     const data = Faker.datatype.string();
-    const wrapper = factory({
-      store,
-      listeners,
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
     fetchPatternsList.mockClear();
 
-    const patternsListNode = selectPattersListNode(wrapper);
-
-    patternsListNode.$emit('remove', data);
+    selectPatternsList(wrapper).vm.$emit('remove', data);
 
     await flushPromises();
 
-    expect(remove).toHaveBeenCalledTimes(1);
-    expect(remove).toHaveBeenCalledWith(data);
+    expect(wrapper.emitted('remove')).toEqual([[data]]);
   });
 });

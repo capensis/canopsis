@@ -10,7 +10,7 @@
     />
 
     <c-form-block>
-      <c-form-block-row :label="t('modals.createPbehaviorType.fields.description')">
+      <c-form-block-row :label="t('modals.createPbehaviorType.fields.description')" indented>
         <c-description-field
           v-model="description"
           :disabled="onlyColor"

@@ -1,16 +1,16 @@
 <template>
   <c-layout class="draggable-playlist-tabs" column>
-    <c-layout class="draggable-playlist-tabs__header">
-      <div class="draggable-playlist-tabs__header-cell">
+    <v-row class="draggable-playlist-tabs__header flex-grow-0" no-gutters>
+      <v-col class="draggable-playlist-tabs__header-cell" cols="4">
         {{ t('common.group', 1) }}
-      </div>
-      <div class="draggable-playlist-tabs__header-cell">
+      </v-col>
+      <v-col class="draggable-playlist-tabs__header-cell" cols="4">
         {{ t('common.view', 1) }}
-      </div>
-      <div class="draggable-playlist-tabs__header-cell">
+      </v-col>
+      <v-col class="draggable-playlist-tabs__header-cell" cols="4">
         {{ t('common.tab', 1) }}
-      </div>
-    </c-layout>
+      </v-col>
+    </v-row>
 
     <c-draggable-list-field
       :model-value="tabs"
@@ -95,7 +95,6 @@ export default {
 }
 
 .draggable-playlist-tabs__header-cell {
-  width: 33.333%;
   color: #000;
   font-size: 14px;
   font-weight: 500;

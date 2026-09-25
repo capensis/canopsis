@@ -1,12 +1,12 @@
 <template>
-  <c-layout wrap>
-    <div :style="gridFlexStyle(3)">
+  <v-row class="flex-grow-0" no-gutters>
+    <v-col cols="3">
       <event-filter-failure-type-field
         :value="query.type"
         @update:model-value="updateQueryField('type', $event)"
       />
-    </div>
-    <div v-if="eventFilter.unread_failures_count" :style="gridFlexStyle(12)">
+    </v-col>
+    <v-col v-if="eventFilter.unread_failures_count" cols="12">
       <v-btn
         :loading="markAsReadPending"
         class="v-btn-legacy-m--y"
@@ -18,8 +18,8 @@
         </v-icon>
         <span>{{ $t('eventFilter.markAsRead') }}</span>
       </v-btn>
-    </div>
-    <div :style="gridFlexStyle(12)">
+    </v-col>
+    <v-col cols="12">
       <event-filter-failures-list
         :failures="eventFilterFailures"
         :options="options"
@@ -27,14 +27,13 @@
         :pending="eventFilterFailuresPending"
         @update:options="updateOptions"
       />
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import { onMounted, ref, watch } from 'vue';
 
-import { gridFlexStyle } from '@/helpers/layout';
 import { convertQueryToRequest } from '@/helpers/query';
 
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
@@ -110,7 +109,6 @@ export default {
     onMounted(fetchList);
 
     return {
-      gridFlexStyle,
       query,
       options,
       updateOptions,

@@ -10,7 +10,7 @@
         :method="form.request.method"
         :url="form.request.url"
         :help-text="$t('common.request.urlHelp')"
-        :name="requestFormName"
+        :name="`${name}.request`"
         :disabled="disabled"
         :url-variables="templateVars[webhookTemplateVarsKey]"
         @update:method="updateField('request.method', $event)"
@@ -20,7 +20,7 @@
     <c-form-block>
       <request-with-token-form
         :form="form"
-        :name="requestFormName"
+        :name="`${name}.request`"
         :headers-variables="templateVars[webhookTemplateVarsKey]"
         :payload-variables="templateVars[webhookTemplateVarsKey]"
         hide-url
@@ -51,6 +51,7 @@
       <c-form-block-row :label="$t('declareTicket.workflowIfStepFails')" top-border align-center>
         <c-workflow-field
           :model-value="form.stop_on_fail"
+          :name="`${name}.stop_on_fail`"
           :disabled="disabled"
           :continue-label="$t('declareTicket.continueWithNextStep')"
           hide-details
@@ -115,7 +116,6 @@ export default {
 
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
-    const requestFormName = computed(() => `${props.name}.request`);
     const webhookTemplateVarsKey = computed(() => props.hasPrevious ? 'webhook' : 'first_webhook',
     );
 
@@ -125,7 +125,6 @@ export default {
     });
 
     return {
-      requestFormName,
       webhookTemplateVarsKey,
       updateField,
 

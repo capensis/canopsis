@@ -27,6 +27,7 @@ import { useValidationFormErrors } from '@/hooks/validator/validation-form-error
  * @param {Function} options.fetchExecution Action that fetches execution status by id after
  * socket error.
  * @param {Function} options.getExecutionData Maps `{ alarm, form }` to API request payload.
+ * @param {Function} [options.errorsToValidation] Maps API error paths to form field paths.
  * @returns {{
  *   alarm: import('vue').Ref<string>,
  *   pending: import('vue').Ref<boolean>,
@@ -43,6 +44,7 @@ export const useAlarmWebhookTestQuery = ({
   createExecution,
   fetchExecution,
   getExecutionData,
+  errorsToValidation = errors => errors,
 }) => {
   const { t } = useI18n();
   const popups = usePopups();
@@ -136,7 +138,7 @@ export const useAlarmWebhookTestQuery = ({
       if (err.error) {
         popups.error({ text: err.error });
       } else {
-        setFormErrors(err);
+        setFormErrors(errorsToValidation(err));
       }
 
       executionStatus.value = undefined;

@@ -115,6 +115,7 @@ import { computed, ref, toRef, useSlots, watch, onMounted } from 'vue';
 import { FORM_GENERAL_PATTERNS_TABS } from '@/constants';
 
 import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
+import { useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useCopyVarsList } from '@/hooks/vars/copy';
@@ -200,6 +201,7 @@ export default {
   setup(props, { emit }) {
     const slots = useSlots();
     const { t } = useI18n();
+    const formContext = useFormContext();
 
     const activeTab = ref(FORM_GENERAL_PATTERNS_TABS.general);
 
@@ -239,11 +241,16 @@ export default {
       form: toRef(props, 'form'),
     });
 
+    const updateForm = (event, value) => {
+      formContext.values.value = value;
+      emit(event, value);
+    };
+
     const {
       hasAccess: hasAccessToTemplateTesting,
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesTabData(props, toRef(props, 'type'), emit);
+    } = useTestVariablesTabData(props, toRef(props, 'type'), updateForm);
 
     const hasTemplateTestingTab = computed(
       () => props.withTemplateTesting && isNumber(props.type) && hasAccessToTemplateTesting.value,

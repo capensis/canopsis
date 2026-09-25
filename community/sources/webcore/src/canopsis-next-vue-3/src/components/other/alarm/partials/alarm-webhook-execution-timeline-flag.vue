@@ -1,6 +1,6 @@
 <template>
   <v-badge
-    :value="isFailedStep"
+    :model-value="isFailedStep"
     class="time-line-flag"
     color="transparent"
     overlap

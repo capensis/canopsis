@@ -1,26 +1,27 @@
 <template>
   <div class="map-widget pa-2">
-    <c-layout
+    <v-row
       v-if="hasAccessToCategory || hasAccessToUserFilter"
-      class="map-widget__filters mx-1 mb-2"
+      class="map-widget__filters mx-1 mb-2 flex-grow-0"
       align="center"
-      wrap
+      no-gutters
     >
-      <div
+      <v-col
         v-if="hasAccessToCategory"
-        class="map-widget__filter-cell map-widget__filter-cell--category"
+        class="map-widget__filter-cell"
+        cols="3"
       >
         <c-entity-category-field
           :category="query.category"
           class="mr-3"
           @update:category="updateCategory"
         />
-      </div>
+      </v-col>
 
-      <c-layout
+      <v-col
         v-if="hasAccessToUserFilter"
-        class="map-widget__filter-cell map-widget__filter-cell--user"
-        align="center"
+        class="map-widget__filter-cell d-flex align-center"
+        cols="4"
       >
         <filter-selector
           :model-value="query.filter"
@@ -38,8 +39,8 @@
           with-entity
           private
         />
-      </c-layout>
-    </c-layout>
+      </v-col>
+    </v-row>
 
     <v-fade-transition v-if="mapState" mode="out-in">
       <v-progress-linear
@@ -461,16 +462,6 @@ export default {
 .map-widget {
   &__filter-cell {
     min-width: 0;
-  }
-
-  &__filter-cell--category {
-    flex: 0 0 25%;
-    max-width: 25%;
-  }
-
-  &__filter-cell--user {
-    flex: 0 0 33.3333%;
-    max-width: 33.3333%;
 
     :deep(.filter-selector) {
       flex: 1 1 auto;

@@ -4,46 +4,53 @@ import Faker from 'faker';
 import MermaidMapForm from '@/components/other/map/form/mermaid-map-form.vue';
 
 const stubs = {
-  'c-name-field': true,
-  'mermaid-editor': true,
+  'c-name-field': {
+    name: 'CNameField',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
+  'mermaid-editor': {
+    name: 'MermaidEditor',
+    emits: ['update:form'],
+    template: '<div />',
+  },
 };
 
-const selectNameField = wrapper => wrapper.find('c-name-field-stub');
-const selectMermaidEditor = wrapper => wrapper.find('mermaid-editor-stub');
+const selectNameField = wrapper => wrapper.findComponent({ name: 'CNameField' });
+const selectMermaidEditor = wrapper => wrapper.findComponent({ name: 'MermaidEditor' });
 
 describe('mermaid-map-form', () => {
   const factory = generateShallowRenderer(MermaidMapForm, { stubs });
 
-  test('Name changed after trigger name field', () => {
+  test('Name changed after trigger name field', async () => {
     const form = {
       name: '',
       parameters: {},
     };
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
 
     const newName = Faker.datatype.string();
 
-    const nameField = selectNameField(wrapper);
+    selectNameField(wrapper).vm.$emit('update:modelValue', newName);
+    await wrapper.vm.$nextTick();
 
-    nameField.triggerCustomEvent('input', newName);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...form,
       name: newName,
-    });
+    }]]);
   });
 
-  test('Parameters changed after trigger mermaid editor field', () => {
+  test('Parameters changed after trigger mermaid editor field', async () => {
     const form = {
       name: '',
       parameters: {},
     };
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -52,13 +59,12 @@ describe('mermaid-map-form', () => {
       param: Faker.datatype.string(),
     };
 
-    const mermaidEditor = selectMermaidEditor(wrapper);
+    selectMermaidEditor(wrapper).vm.$emit('update:form', newParameters);
+    await wrapper.vm.$nextTick();
 
-    mermaidEditor.triggerCustomEvent('input', newParameters);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...form,
       parameters: newParameters,
-    });
+    }]]);
   });
 });

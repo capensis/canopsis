@@ -47,6 +47,4 @@ export const renderMermaid = (value = '', options = {}) => {
  * @param {string} value
  * @return {boolean}
  */
-export const validateMermaidDiagram = (value) => {
-  mermaid.parse(value);
-};
+export const validateMermaidDiagram = value => mermaid.parse(value);

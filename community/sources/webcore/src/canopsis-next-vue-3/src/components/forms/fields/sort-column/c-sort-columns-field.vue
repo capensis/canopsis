@@ -11,7 +11,7 @@
         <sort-column-field
           :key="sortColumn.key"
           :model-value="modelValue[index]"
-          :name="sortColumn.key"
+          :name="`${name}.${sortColumn.key}`"
           :drag-handle-class="dragItemHandleClass"
           :items="items"
           class="mb-3"
@@ -64,6 +64,10 @@ export default {
     items: {
       type: Array,
       required: false,
+    },
+    name: {
+      type: String,
+      default: 'sort_columns',
     },
   },
 

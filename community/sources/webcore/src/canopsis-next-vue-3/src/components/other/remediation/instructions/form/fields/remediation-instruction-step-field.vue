@@ -10,7 +10,7 @@
         <v-col>
           <c-name-field
             :model-value="step.name"
-            :name="nameFieldName"
+            :name="`${name}.name`"
             :disabled="disabled"
             variant="filled"
             density="comfortable"
@@ -35,6 +35,7 @@
           :label="t('remediation.instruction.workflow')"
           :continue-label="t('remediation.instruction.remainingStep')"
           :disabled="disabled"
+          :name="`${name}.stop_on_fail`"
           @update:model-value="updateField('stop_on_fail', $event)"
         />
       </c-form-block-row>
@@ -42,7 +43,7 @@
       <c-form-block-row :label="t('remediation.instruction.endpoint')">
         <remediation-instruction-step-endpoint-field
           :model-value="step.endpoint"
-          :name="endpointFieldName"
+          :name="`${name}.endpoint`"
           :disabled="disabled"
           @update:model-value="updateField('endpoint', $event)"
         />
@@ -51,7 +52,7 @@
       <c-form-block-row :label="t('remediation.instruction.operations')" indented>
         <remediation-instruction-operations-form
           :operations="step.operations"
-          :name="operationFieldName"
+          :name="`${name}.operations`"
           :step-number="stepNumber"
           :disabled="disabled"
           :template-vars="templateVars"
@@ -93,6 +94,10 @@ export default {
       type: [Number, String],
       required: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -107,10 +112,6 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const fieldSuffix = computed(() => (props.step.key ? `-${props.step.key}` : ''));
-    const nameFieldName = computed(() => `name${fieldSuffix.value}`);
-    const endpointFieldName = computed(() => `endpoint${fieldSuffix.value}`);
-    const operationFieldName = computed(() => `operations${fieldSuffix.value}`);
     const timeToComplete = computed(() => props.step.operations.reduce((acc, operation) => {
         const {
           time_to_complete: { value, unit },
@@ -136,9 +137,6 @@ export default {
 
     return {
       t,
-      nameFieldName,
-      endpointFieldName,
-      operationFieldName,
       formattedTimeToComplete,
       updateField,
       remove,

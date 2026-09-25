@@ -7,24 +7,44 @@ import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form
 
 const stubs = {
   'c-form-block': true,
-  'c-form-block-row': true,
-  'meta-alarm-rule-corel-form': true,
-  'meta-alarm-rule-threshold-field': true,
-  'meta-alarm-rule-time-based-field': true,
+  'meta-alarm-rule-corel-form': {
+    name: 'MetaAlarmRuleCorelForm',
+    emits: ['update:config'],
+    template: '<div />',
+  },
+  'meta-alarm-rule-threshold-field': {
+    name: 'MetaAlarmRuleThresholdField',
+    emits: ['update:config'],
+    template: '<div />',
+  },
+  'meta-alarm-rule-time-based-field': {
+    name: 'MetaAlarmRuleTimeBasedField',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
   'meta-alarm-rule-child-inactive-delay-field': true,
-  'meta-alarm-rule-value-paths-field': true,
-  'meta-alarm-rule-patterns-form': true,
+  'meta-alarm-value-paths-field': {
+    name: 'MetaAlarmValuePathsField',
+    emits: ['update:items'],
+    template: '<div />',
+  },
+  'meta-alarm-rule-patterns-form': {
+    name: 'MetaAlarmRulePatternsForm',
+    emits: ['update:form'],
+    template: '<div />',
+  },
 };
 
-const selectMetaAlarmRuleCorelForm = wrapper => wrapper.find('meta-alarm-rule-corel-form-stub');
+const selectMetaAlarmRuleCorelForm = wrapper =>
+  wrapper.findComponent({ name: 'MetaAlarmRuleCorelForm' });
 const selectMetaAlarmRuleThresholdField = wrapper =>
-  wrapper.find('meta-alarm-rule-threshold-field-stub');
+  wrapper.findComponent({ name: 'MetaAlarmRuleThresholdField' });
 const selectMetaAlarmRuleTimeBasedField = wrapper =>
-  wrapper.find('meta-alarm-rule-time-based-field-stub');
+  wrapper.findComponent({ name: 'MetaAlarmRuleTimeBasedField' });
 const selectMetaAlarmRuleValuePathsField = wrapper =>
-  wrapper.find('meta-alarm-rule-value-paths-field-stub');
+  wrapper.findComponent({ name: 'MetaAlarmValuePathsField' });
 const selectMetaAlarmRulePatternsForm = wrapper =>
-  wrapper.find('meta-alarm-rule-patterns-form-stub');
+  wrapper.findComponent({ name: 'MetaAlarmRulePatternsForm' });
 
 describe('meta-alarm-rule-parameters-form', () => {
   const form = {
@@ -38,13 +58,13 @@ describe('meta-alarm-rule-parameters-form', () => {
 
   const factory = generateShallowRenderer(MetaAlarmRuleParametersForm, { stubs });
 
-  test('Corel changed after trigger corel form', () => {
+  test('Corel changed after trigger corel form', async () => {
     const corelForm = {
       ...form,
       type: META_ALARMS_RULE_TYPES.corel,
     };
     const wrapper = factory({
-      propsData: {
+      props: {
         form: corelForm,
       },
     });
@@ -55,17 +75,15 @@ describe('meta-alarm-rule-parameters-form', () => {
       corel_id: Faker.datatype.string(),
     };
 
-    metaAlarmRuleCorelForm.triggerCustomEvent('input', newCorelConfig);
+    metaAlarmRuleCorelForm.vm.$emit('update:config', newCorelConfig);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...corelForm,
-      config: newCorelConfig,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('config')).toEqual(newCorelConfig);
   });
 
-  test('Threshold changed after trigger threshold form', () => {
+  test('Threshold changed after trigger threshold form', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -76,17 +94,15 @@ describe('meta-alarm-rule-parameters-form', () => {
       threshold_count: 0.2,
     };
 
-    metaAlarmRuleThresholdField.triggerCustomEvent('input', newThresholdConfig);
+    metaAlarmRuleThresholdField.vm.$emit('update:config', newThresholdConfig);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      config: newThresholdConfig,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('config')).toEqual(newThresholdConfig);
   });
 
-  test('Time based changed after trigger time based field', () => {
+  test('Time based changed after trigger time based field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -95,24 +111,19 @@ describe('meta-alarm-rule-parameters-form', () => {
 
     const newTimeInterval = {};
 
-    metaAlarmRuleTimeBasedField.triggerCustomEvent('input', newTimeInterval);
+    metaAlarmRuleTimeBasedField.vm.$emit('update:modelValue', newTimeInterval);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      config: {
-        ...form.config,
-        time_interval: newTimeInterval,
-      },
-    });
+    expect(globalThis.__TEST_FORM__.getValue('config.time_interval')).toEqual(newTimeInterval);
   });
 
-  test('Value paths changed after trigger value paths field', () => {
+  test('Value paths changed after trigger value paths field', async () => {
     const valuegroupForm = {
       ...form,
       type: META_ALARMS_RULE_TYPES.valuegroup,
     };
     const wrapper = factory({
-      propsData: {
+      props: {
         form: valuegroupForm,
       },
     });
@@ -121,20 +132,15 @@ describe('meta-alarm-rule-parameters-form', () => {
 
     const newValuePaths = [Faker.datatype.string()];
 
-    metaAlarmRuleValuePathsField.triggerCustomEvent('input', newValuePaths);
+    metaAlarmRuleValuePathsField.vm.$emit('update:items', newValuePaths);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...valuegroupForm,
-      config: {
-        ...valuegroupForm.config,
-        value_paths: newValuePaths,
-      },
-    });
+    expect(globalThis.__TEST_FORM__.getValue('config.value_paths')).toEqual(newValuePaths);
   });
 
-  test('Patterns changed after trigger patterns field', () => {
+  test('Patterns changed after trigger patterns field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -147,11 +153,9 @@ describe('meta-alarm-rule-parameters-form', () => {
       },
     };
 
-    patternsField.triggerCustomEvent('input', newPatterns);
+    patternsField.vm.$emit('update:form', newPatterns);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      patterns: newPatterns,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('patterns')).toEqual(newPatterns);
   });
 });

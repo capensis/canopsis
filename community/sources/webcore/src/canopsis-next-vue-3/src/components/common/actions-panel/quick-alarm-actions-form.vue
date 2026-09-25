@@ -2,6 +2,7 @@
   <c-card-iterator-form
     :value="actions"
     :handle="`.${dragItemHandleClass}`"
+    :name="name"
     :iterator-class="{ empty: isActionsEmpty }"
     @update:value="$emit('update:actions', $event)"
     @add="add"
@@ -11,7 +12,7 @@
         :key="action.key"
         :model-value="actions[index].value"
         :drag-handle-class="dragItemHandleClass"
-        :name="action.key"
+        :name="`${name}.${action.key}`"
         :selected-actions="actions"
         :massive="massive"
         @update:model-value="updateAction(index, $event)"
@@ -41,6 +42,10 @@ export default {
     massive: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: 'actions',
     },
   },
 

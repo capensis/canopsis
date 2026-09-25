@@ -23,7 +23,7 @@
                   :model-value="modelValue[index].template"
                   :items="getAvailableTemplates(modelValue[index].template)"
                   :label="t('common.template', 1)"
-                  :name="`commentTemplates[${modelValue[index].key}].template`"
+                  :name="`${name}.${modelValue[index].key}.template`"
                   :loading="pending"
                   item-title="name"
                   item-value="_id"
@@ -64,6 +64,10 @@ export default {
     modelValue: {
       type: Array,
       default: () => [],
+    },
+    name: {
+      type: String,
+      default: 'comment_templates',
     },
   },
 

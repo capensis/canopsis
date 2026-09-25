@@ -13,12 +13,12 @@
       hide-details
     />
 
-    <c-layout align="start" gap="3">
-      <div class="text-subtitle-1 mt-3 notifications-settings-form__label">
+    <v-row class="flex-grow-0" align="start" density="comfortable">
+      <v-col class="text-subtitle-1 mt-3" cols="2">
         {{ t('notificationSetting.instruction.rateFrequency') }}
-      </div>
+      </v-col>
 
-      <div class="notifications-settings-form__duration">
+      <v-col cols="3">
         <c-duration-field
           v-model:duration="instructionRateFrequencyField"
           :disabled="!instructionRateField"
@@ -27,8 +27,8 @@
           name="instruction.rate_frequency"
           long
         />
-      </div>
-    </c-layout>
+      </v-col>
+    </v-row>
   </c-layout>
 </template>
 
@@ -52,15 +52,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.notifications-settings-form__label {
-  flex: 0 0 16.6667%;
-  max-width: 16.6667%;
-}
-
-.notifications-settings-form__duration {
-  flex: 0 0 25%;
-  max-width: 25%;
-}
-</style>

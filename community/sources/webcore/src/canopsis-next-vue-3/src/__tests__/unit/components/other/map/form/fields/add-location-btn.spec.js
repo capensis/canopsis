@@ -2,22 +2,34 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 
 import AddLocationBtn from '@/components/other/map/form/fields/add-location-btn.vue';
 
-const selectBtnToggleNode = wrapper => wrapper.vm.$children[0];
+const stubs = {
+  'v-btn-toggle': {
+    name: 'VBtnToggle',
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
+    template: '<div><slot /></div>',
+  },
+  'v-btn': true,
+  'v-icon': true,
+};
+
+const selectBtnToggle = wrapper => wrapper.findComponent({ name: 'VBtnToggle' });
 
 describe('add-location-btn', () => {
-  const factory = generateShallowRenderer(AddLocationBtn);
+  const factory = generateShallowRenderer(AddLocationBtn, { stubs });
 
-  test('Value updated after click button', () => {
+  test('Value updated after click button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         value: true,
       },
     });
 
-    const btnToggleNode = selectBtnToggleNode(wrapper);
+    expect(selectBtnToggle(wrapper).props('modelValue')).toBe(true);
 
-    btnToggleNode.$emit('change');
+    selectBtnToggle(wrapper).vm.$emit('update:modelValue', undefined);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput(false);
+    expect(wrapper.emitted('input')).toEqual([[false]]);
   });
 });

@@ -16,7 +16,7 @@
         <idle-rule-alarm-type-field v-model="alarmConditionField" :label="t('common.type')" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.description')">
+      <c-form-block-row :label="t('common.description')" indented>
         <c-description-field v-model="descriptionField" required />
       </c-form-block-row>
 

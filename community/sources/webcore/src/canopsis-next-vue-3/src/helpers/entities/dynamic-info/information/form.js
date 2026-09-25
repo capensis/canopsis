@@ -1,5 +1,8 @@
+import { isArray } from 'lodash';
+
 import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
 
+import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
 import { uid } from '@/helpers/uid';
 
 /**
@@ -24,12 +27,16 @@ import { uid } from '@/helpers/uid';
  * @param {Object} [info={}] - The dynamic info information object
  * @returns {Object} The form data structure with name and value fields
  */
-export const dynamicInfoInformationToForm = (info = {}) => ({
-  key: info.key ?? uid('dynamic-info-information'),
-  name: info.name ?? '',
-  type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
-  value: info.value ?? '',
-});
+export const dynamicInfoInformationToForm = (info = {}) => {
+  const value = info.value ?? '';
+
+  return {
+    key: info.key ?? uid('dynamic-info-information'),
+    name: info.name ?? '',
+    type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
+    value: isArray(value) ? primitiveArrayToForm(value) : value,
+  };
+};
 
 /**
  * Converts a dynamic info information form object to a dynamic info information object
@@ -41,6 +48,10 @@ export const formToDynamicInfoInformation = (form = {}) => {
   const dynamicInfo = { ...form };
 
   delete dynamicInfo.key;
+
+  if (isArray(dynamicInfo.value)) {
+    dynamicInfo.value = formToPrimitiveArray(dynamicInfo.value);
+  }
 
   return dynamicInfo;
 };
