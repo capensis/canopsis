@@ -54,7 +54,8 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 export const isIdleRuleEntityType = type => type === IDLE_RULE_TYPES.entity;
 
-const DEFAULT_IDLE_RULE_PBEHAVIOR_DURATION = { value: MIN_DURATION_VALUE, unit: TIME_UNITS.hour };
+const DEFAULT_IDLE_RULE_SNOOZE_DURATION = { value: MIN_DURATION_VALUE, unit: TIME_UNITS.second };
+const DEFAULT_IDLE_RULE_PBEHAVIOR_DURATION = { value: MIN_DURATION_VALUE, unit: TIME_UNITS.minute };
 
 /**
  * Prepare finite numeric form values with a minimum while preserving empty invalid form states.
@@ -97,12 +98,21 @@ const idleRuleActionParametersToForm = (operation = {}) => {
     type,
     parameters: operation.parameters,
   });
-  const hasExistingPbehaviorParameters = type === ACTION_TYPES.pbehavior && operation.parameters;
+  const hasExistingSnoozeDuration =
+    type === ACTION_TYPES.snooze && operation.parameters?.duration;
+  const hasExistingPbehaviorDuration =
+    type === ACTION_TYPES.pbehavior && operation.parameters?.duration;
 
-  if (!hasExistingPbehaviorParameters) {
+  if (!hasExistingSnoozeDuration) {
+    parameters[ACTION_TYPES.snooze] = {
+      ...parameters[ACTION_TYPES.snooze],
+      duration: prepareDuration(null, DEFAULT_IDLE_RULE_SNOOZE_DURATION),
+    };
+  }
+
+  if (!hasExistingPbehaviorDuration) {
     parameters[ACTION_TYPES.pbehavior] = {
       ...parameters[ACTION_TYPES.pbehavior],
-      start_on_trigger: false,
       duration: prepareDuration(null, DEFAULT_IDLE_RULE_PBEHAVIOR_DURATION),
     };
   }
@@ -137,10 +147,7 @@ export const prepareIdleRuleNumbers = (form) => {
         ...preparedForm.operation.parameters,
         [ACTION_TYPES.snooze]: {
           ...snoozeParameters,
-          duration: prepareDuration(snoozeParameters.duration, {
-            value: MIN_DURATION_VALUE,
-            unit: TIME_UNITS.hour,
-          }),
+          duration: prepareDuration(snoozeParameters.duration, DEFAULT_IDLE_RULE_SNOOZE_DURATION),
         },
       },
     };

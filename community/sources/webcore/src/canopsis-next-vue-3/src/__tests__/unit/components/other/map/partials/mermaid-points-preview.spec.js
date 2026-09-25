@@ -5,13 +5,21 @@ import { mermaidPointToForm } from '@/helpers/entities/map/form';
 import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 
 const stubs = {
-  'mermaid-point-marker': true,
-  'point-popup-dialog': true,
+  'mermaid-point-marker': {
+    name: 'MermaidPointMarker',
+    emits: ['click'],
+    template: '<div />',
+  },
+  'point-popup-dialog': {
+    name: 'PointPopupDialog',
+    emits: ['show:alarms', 'show:map', 'close'],
+    template: '<div />',
+  },
 };
 
-const selectPointMarkers = wrapper => wrapper.findAll('mermaid-point-marker-stub');
+const selectPointMarkers = wrapper => wrapper.findAllComponents({ name: 'MermaidPointMarker' });
 const selectPointMarkerByIndex = (wrapper, index) => selectPointMarkers(wrapper).at(index);
-const selectPointPopupDialog = wrapper => wrapper.find('point-popup-dialog-stub');
+const selectPointPopupDialog = wrapper => wrapper.findComponent({ name: 'PointPopupDialog' });
 
 const triggerPointClick = async (wrapper, index, rect = { left: 0, top: 0, width: 0 }) => {
   const pointMarker = selectPointMarkerByIndex(wrapper, index);
@@ -20,9 +28,10 @@ const triggerPointClick = async (wrapper, index, rect = { left: 0, top: 0, width
     .spyOn(pointMarker.element, 'getBoundingClientRect')
     .mockReturnValue(rect);
 
-  await pointMarker.triggerCustomEvent('click', {
+  pointMarker.vm.$emit('click', {
     target: pointMarker.element,
   });
+  await wrapper.vm.$nextTick();
 
   getBoundingClientRect.mockClear();
 
@@ -36,7 +45,7 @@ describe('mermaid-points-preview', () => {
     const point = mermaidPointToForm({ x: 1, y: 2 });
 
     const wrapper = factory({
-      propsData: {
+      props: {
         points: [point],
       },
     });
@@ -44,16 +53,17 @@ describe('mermaid-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.triggerCustomEvent('show:alarms');
+    pointPopupDialog.vm.$emit('show:alarms');
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmit('show:alarms', point);
+    expect(wrapper.emitted('show:alarms')).toEqual([[point]]);
   });
 
   test('Show map emitted after trigger point popup dialog', async () => {
     const point = mermaidPointToForm({ x: 1, y: 2, map: 'map' });
 
     const wrapper = factory({
-      propsData: {
+      props: {
         points: [point],
       },
     });
@@ -61,16 +71,17 @@ describe('mermaid-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.triggerCustomEvent('show:map');
+    pointPopupDialog.vm.$emit('show:map');
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmit('show:map', point.map);
+    expect(wrapper.emitted('show:map')).toEqual([[point.map]]);
   });
 
   test('Point popup dialog closed after trigger close event', async () => {
     const point = mermaidPointToForm({ x: 1, y: 2, map: 'map' });
 
     const wrapper = factory({
-      propsData: {
+      props: {
         points: [point],
       },
     });
@@ -78,8 +89,9 @@ describe('mermaid-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    await pointPopupDialog.triggerCustomEvent('close');
+    pointPopupDialog.vm.$emit('close');
+    await wrapper.vm.$nextTick();
 
-    expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
+    expect(selectPointPopupDialog(wrapper).exists()).toBe(false);
   });
 });

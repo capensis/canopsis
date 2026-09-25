@@ -1,48 +1,55 @@
-import { createTextareaInputStub } from '@unit/stubs/input';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
 import PbehaviorCommentField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-comment-field.vue';
 
 const stubs = {
-  'v-textarea': createTextareaInputStub('v-textarea'),
-  'c-action-btn': true,
+  'c-textarea': {
+    name: 'CTextarea',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
+  'c-action-btn': {
+    name: 'CActionBtn',
+    emits: ['click'],
+    template: '<button @click="$emit(\'click\', $event)" />',
+  },
 };
 
-const selectMessageField = wrapper => wrapper.find('.v-textarea');
-const selectRemoveButton = wrapper => wrapper.find('c-action-btn-stub');
+const selectMessageField = wrapper => wrapper.findComponent({ name: 'CTextarea' });
+const selectRemoveButton = wrapper => wrapper.findComponent({ name: 'CActionBtn' });
 
 describe('pbehavior-comment-field', () => {
   const factory = generateShallowRenderer(PbehaviorCommentField, { stubs });
 
-  test('Message changed after trigger textarea', () => {
+  test('Message changed after trigger textarea', async () => {
     const comment = {
       key: Faker.datatype.string(),
       message: Faker.datatype.string(),
     };
     const wrapper = factory({
-      propsData: { comment },
+      props: { comment },
     });
 
     const newMessage = Faker.datatype.string();
 
-    selectMessageField(wrapper).triggerCustomEvent('input', newMessage);
+    selectMessageField(wrapper).vm.$emit('update:modelValue', newMessage);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:comment')).toEqual([[{
       ...comment,
       message: newMessage,
-    });
+    }]]);
   });
 
-  test('Remove event emitted after trigger remove button', () => {
+  test('Remove event emitted after trigger remove button', async () => {
     const wrapper = factory({
-      propsData: { comment: {} },
+      props: { comment: {} },
     });
 
-    const newMessage = Faker.datatype.string();
+    selectRemoveButton(wrapper).vm.$emit('click');
+    await wrapper.vm.$nextTick();
 
-    selectRemoveButton(wrapper).triggerCustomEvent('click', newMessage);
-
-    expect(wrapper).toHaveBeenEmit('remove');
+    expect(wrapper.emitted('remove')).toHaveLength(1);
   });
 });

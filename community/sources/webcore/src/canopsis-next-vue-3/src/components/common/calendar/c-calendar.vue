@@ -1,36 +1,42 @@
 <template>
   <c-layout class="c-calendar" column>
-    <c-layout class="c-calendar__toolbar py-3" justify="space-between">
-      <c-layout class="c-calendar__toolbar-column" gap="2" align="center">
-        <calendar-today-btn class="c-calendar__today-btn" @click="setToday" />
+    <v-row class="c-calendar__toolbar py-3 flex-grow-0" no-gutters>
+      <v-col class="c-calendar__toolbar-column" cols="4">
+        <c-layout gap="2" align="center">
+          <calendar-today-btn class="c-calendar__today-btn" @click="setToday" />
 
-        <c-timezone-field
-          v-if="!noTimezone"
-          v-model="localTimezone"
-          class="c-timezone-field"
-          server
-          hide-details
-          @update:model-value="updateTimezone"
-        />
-      </c-layout>
+          <c-timezone-field
+            v-if="!noTimezone"
+            v-model="localTimezone"
+            class="c-timezone-field"
+            server
+            hide-details
+            @update:model-value="updateTimezone"
+          />
+        </c-layout>
+      </v-col>
 
-      <c-layout class="c-calendar__toolbar-column" justify="center">
-        <calendar-pagination
-          :focus="focus"
-          :type="internalType"
-          class="c-calendar__pagination"
-          @prev="prev"
-          @next="next"
-          @update:focus="setFocusDate"
-        />
-      </c-layout>
+      <v-col class="c-calendar__toolbar-column" cols="4">
+        <c-layout justify="center">
+          <calendar-pagination
+            :focus="focus"
+            :type="internalType"
+            class="c-calendar__pagination"
+            @prev="prev"
+            @next="next"
+            @update:focus="setFocusDate"
+          />
+        </c-layout>
+      </v-col>
 
-      <c-layout class="c-calendar__toolbar-column c-calendar__menu-right" justify="end">
-        <calendar-view-mode v-model="internalType" />
+      <v-col class="c-calendar__toolbar-column" cols="4">
+        <c-layout class="c-calendar__menu-right" justify="end">
+          <calendar-view-mode v-model="internalType" />
 
-        <slot name="menu-right" />
-      </c-layout>
-    </c-layout>
+          <slot name="menu-right" />
+        </c-layout>
+      </v-col>
+    </v-row>
 
     <div class="position-relative">
       <v-calendar
@@ -820,11 +826,6 @@ export default {
     --c-calendar-present-day-background-color: rgba(255, 255, 255, 0.04);
   }
 
-  &__toolbar-column {
-    flex: 0 0 33.3333%;
-    max-width: 33.3333%;
-  }
-
   &__menu-right {
     margin-left: auto;
   }
@@ -966,7 +967,7 @@ export default {
   }
 
   &__week-day-label-btn {
-    font-size: 25px !important;
+    font-size: 20px !important;
   }
 
   .v-present > &__current-time {

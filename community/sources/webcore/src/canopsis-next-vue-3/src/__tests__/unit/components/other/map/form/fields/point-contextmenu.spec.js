@@ -2,56 +2,67 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 
 import PointContextmenu from '@/components/other/map/form/fields/point-contextmenu.vue';
 
-const selectListTiles = wrapper => wrapper.findAll('v-list-item-stub');
-const selectListTileByIndex = (wrapper, index) => selectListTiles(wrapper).at(index);
+const stubs = {
+  'v-menu': {
+    template: '<div><slot /></div>',
+  },
+  'v-list': {
+    template: '<div><slot /></div>',
+  },
+  'v-list-item': {
+    name: 'VListItem',
+    emits: ['click'],
+    template: '<button @click="$emit(\'click\')"><slot /></button>',
+  },
+  'v-list-item-title': {
+    template: '<span><slot /></span>',
+  },
+};
+
+const selectListItems = wrapper => wrapper.findAllComponents({ name: 'VListItem' });
+const selectListItemByIndex = (wrapper, index) => selectListItems(wrapper).at(index);
 
 describe('mermaid-contextmenu', () => {
-  const factory = generateShallowRenderer(PointContextmenu);
+  const factory = generateShallowRenderer(PointContextmenu, { stubs });
 
-  test('Add point event emitted after trigger click on add point', () => {
+  test('Add point event emitted after trigger click on add point', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         positionX: 1,
         positionY: 2,
       },
     });
 
-    const addPointTile = selectListTileByIndex(wrapper, 0);
+    await selectListItemByIndex(wrapper, 0).trigger('click');
 
-    addPointTile.triggerCustomEvent('click');
-
-    expect(wrapper).toHaveBeenEmit('add:point');
+    expect(wrapper.emitted('add:point')).toHaveLength(1);
   });
 
-  test('Edit point event emitted after trigger click on edit point', () => {
+  test('Edit point event emitted after trigger click on edit point', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         positionX: 1,
         positionY: 2,
         editing: true,
       },
     });
 
-    const editPointTile = selectListTileByIndex(wrapper, 0);
+    await selectListItemByIndex(wrapper, 0).trigger('click');
 
-    editPointTile.triggerCustomEvent('click');
-
-    expect(wrapper).toHaveBeenEmit('edit:point');
+    expect(wrapper.emitted('edit:point')).toHaveLength(1);
   });
 
-  test('Remove point event emitted after trigger click on remove point', () => {
+  test('Remove point event emitted after trigger click on remove point', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         positionX: 1,
         positionY: 2,
         editing: true,
       },
     });
 
-    const removePointTile = selectListTileByIndex(wrapper, 1);
+    await selectListItemByIndex(wrapper, 1).trigger('click');
 
-    removePointTile.triggerCustomEvent('click');
-
-    expect(wrapper).toHaveBeenEmit('remove:point');
+    expect(wrapper.emitted('remove:point')).toHaveLength(1);
   });
 });

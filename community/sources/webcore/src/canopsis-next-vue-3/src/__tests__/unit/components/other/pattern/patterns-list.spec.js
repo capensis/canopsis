@@ -1,33 +1,40 @@
-import {
-  selectRowRemoveButtonByIndex,
-  selectRowEditButtonByIndex,
-  selectRowCheckboxByIndex,
-  selectMassRemoveButton,
-} from '@unit/utils/table';
-import { generateRenderer } from '@unit/utils/vue';
-import { flushPromises } from '@vue/test-utils';
+import { generateShallowRenderer } from '@unit/utils/vue';
 import { range } from 'lodash';
 
 import { PATTERN_TYPES } from '@/constants';
 
-import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PatternsList from '@/components/other/pattern/patterns-list.vue';
 
-const cMassActionsPanelStub = {
-  name: 'c-mass-actions-panel-stub',
-  template:
-    '<div class="c-mass-actions-panel-stub"><div class="layout"><slot name="actions" /></div></div>',
+const stubs = {
+  'c-advanced-data-table': {
+    name: 'CAdvancedDataTable',
+    props: ['items'],
+    template: `
+      <div>
+        <div class="mass-actions">
+          <slot name="mass-actions" :selected="[items[0], items[2]]" />
+        </div>
+        <div v-for="item in items" :key="item._id" class="row-actions">
+          <slot name="actions" :item="item" />
+        </div>
+      </div>
+    `,
+  },
+  'c-action-btn': {
+    name: 'CActionBtn',
+    props: ['type'],
+    emits: ['click'],
+    template: '<button @click="$emit(\'click\', $event)" />',
+  },
 };
 
-const stubs = {
-  'c-advanced-data-table': CAdvancedDataTable,
-  'c-mass-actions-panel': cMassActionsPanelStub,
-  'c-search': true,
-  'v-checkbox': true,
-  'c-expand-btn': true,
-  'c-action-btn': true,
-  'c-table-pagination': true,
-};
+const selectMassRemoveButton = wrapper =>
+  wrapper.find('.mass-actions').findComponent({ name: 'CActionBtn' });
+const selectRowActionButtons = (wrapper, index) =>
+  wrapper.findAll('.row-actions').at(index).findAllComponents({ name: 'CActionBtn' });
+const selectRowEditButtonByIndex = (wrapper, index) => selectRowActionButtons(wrapper, index).at(0);
+const selectRowRemoveButtonByIndex = (wrapper, index) =>
+  selectRowActionButtons(wrapper, index).at(1);
 
 describe('patterns-list', () => {
   const totalItems = 11;
@@ -44,11 +51,11 @@ describe('patterns-list', () => {
     updated: 1614861888 + index,
   }));
 
-  const factory = generateRenderer(PatternsList, { stubs });
+  const factory = generateShallowRenderer(PatternsList, { stubs });
 
   it('Selected items removed after trigger mass remove button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         patterns,
         options: {
           page: 1,
@@ -58,20 +65,15 @@ describe('patterns-list', () => {
       },
     });
 
-    await flushPromises();
+    selectMassRemoveButton(wrapper).vm.$emit('click');
+    await wrapper.vm.$nextTick();
 
-    await selectRowCheckboxByIndex(wrapper, 0).trigger('click');
-    await selectRowCheckboxByIndex(wrapper, 2).trigger('click');
-
-    const massRemoveButton = selectMassRemoveButton(wrapper);
-    await massRemoveButton.triggerCustomEvent('click');
-
-    expect(wrapper).toEmit('remove-selected', [patterns[0], patterns[2]]);
+    expect(wrapper.emitted('remove-selected')).toEqual([[[patterns[0], patterns[2]]]]);
   });
 
   it('Remove event emitted after trigger click on the remove button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         patterns,
         options: {
           page: 1,
@@ -81,18 +83,17 @@ describe('patterns-list', () => {
       },
     });
 
-    await flushPromises();
-
     const removableRowIndex = 2;
 
-    await selectRowRemoveButtonByIndex(wrapper, removableRowIndex).triggerCustomEvent('click');
+    selectRowRemoveButtonByIndex(wrapper, removableRowIndex).vm.$emit('click');
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmit('remove', patterns[removableRowIndex]._id);
+    expect(wrapper.emitted('remove')).toEqual([[patterns[removableRowIndex]._id]]);
   });
 
   it('Update event emitted after trigger click on the remove button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         patterns,
         options: {
           page: 1,
@@ -102,12 +103,11 @@ describe('patterns-list', () => {
       },
     });
 
-    await flushPromises();
-
     const editableRowIndex = 5;
 
-    await selectRowEditButtonByIndex(wrapper, editableRowIndex).triggerCustomEvent('click');
+    selectRowEditButtonByIndex(wrapper, editableRowIndex).vm.$emit('click');
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmit('edit', patterns[editableRowIndex]);
+    expect(wrapper.emitted('edit')).toEqual([[patterns[editableRowIndex]]]);
   });
 });

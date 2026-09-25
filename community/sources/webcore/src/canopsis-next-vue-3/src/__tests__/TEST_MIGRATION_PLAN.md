@@ -1,18 +1,18 @@
 # Test Migration Plan
 
 Generated: 2026-09-15T05:08:26.082Z
-Updated: 2026-09-22T11:53:00.000Z
+Updated: 2026-09-25T08:29:58+05:00
 
 ## Current Scope
 
 - Old unit specs: 448
-- Migrated non-snapshot specs: 354
+- Migrated non-snapshot specs: 352
 - Removed snapshot-only specs: 94
-- Latest Vitest tests: 1770
-- Latest passing tests: 1600
-- Latest failing tests: 160
+- Latest Vitest tests: 1796
+- Latest passing tests: 1673
+- Latest failing tests: 113
 - Latest skipped tests: 10
-- Suites failed to load: 16
+- Suites failed to load: 19
 
 ## Recently migrated
 
@@ -58,6 +58,14 @@ missing components.
 KPI batch: migrated KPI filter/rating-settings pagination contracts, rating criteria selection,
 alarm/SLI filter `update:query` contracts, and SLI show-mode updates; removed three obsolete
 chart specs targeting missing components.
+
+Map editor batch: migrated 10 map form/list/preview specs from Vue 2 wrapper internals and
+legacy input assertions to explicit Vue 3 props/emits, scoped-slot stubs, and public required-field
+state; updated Mermaid syntax validation for its asynchronous API.
+
+Map/meta-alarm/pattern batch: migrated 10 remaining map preview, meta-alarm form, pattern list,
+and pbehavior comment specs to Vue 3 events, shared form-context assertions, Pinia hook mocks,
+and focused scoped-slot stubs.
 
 Variables-help and entity modals: registered the migrated object treeview, rewrote variable
 copy/export and entity form tests for current public APIs, and removed the stale title-buttons

@@ -4,72 +4,77 @@ import Faker from 'faker';
 import MermaidCodeEditor from '@/components/other/map/form/fields/mermaid-code-editor.vue';
 
 const stubs = {
-  'code-editor': true,
+  'code-editor': {
+    name: 'CodeEditor',
+    props: ['value', 'errorMarkers'],
+    emits: ['update:value'],
+    template: '<div />',
+  },
 };
 
-const selectCodeEditorNode = wrapper => wrapper.vm.$children[0];
+const selectCodeEditor = wrapper => wrapper.findComponent({ name: 'CodeEditor' });
 
 describe('mermaid-code-editor', () => {
   const factory = generateShallowRenderer(MermaidCodeEditor, { stubs });
 
-  test('Value changed after trigger code editor', () => {
+  test('Value changed after trigger code editor', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         value: '',
       },
     });
 
     const newValue = Faker.datatype.string();
 
-    const codeEditorNode = selectCodeEditorNode(wrapper);
+    selectCodeEditor(wrapper).vm.$emit('update:value', newValue);
+    await wrapper.vm.$nextTick();
 
-    codeEditorNode.$emit('input', newValue);
-
-    expect(wrapper).toEmitInput(newValue);
+    expect(wrapper.emitted('input')).toEqual([[newValue]]);
   });
 
   test('Error added after update value', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         value: '',
       },
     });
 
     await wrapper.setProps({
-      value: 'invalid code',
+      value: 'graph TB\n a--',
     });
-
-    const codeEditorNode = selectCodeEditorNode(wrapper);
-
-    expect(codeEditorNode.errorMarkers).toEqual([
-      {
-        endColumn: 1,
-        endLineNumber: 1,
-        severity: 8,
-        startColumn: 0,
-        startLineNumber: 1,
-        message: expect.any(String),
-      },
-    ]);
+    await vi.waitFor(() => {
+      expect(selectCodeEditor(wrapper).props('errorMarkers')).toEqual([
+        {
+          endColumn: 1,
+          endLineNumber: 3,
+          severity: 8,
+          startColumn: 2,
+          startLineNumber: 2,
+          message: expect.any(String),
+        },
+      ]);
+    });
   });
 
   test('Error removed after input valid value', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         value: '',
       },
     });
 
     await wrapper.setProps({
-      value: 'invalid code',
+      value: 'graph TB\n a--',
     });
-
-    expect(selectCodeEditorNode(wrapper).errorMarkers).toHaveLength(1);
+    await vi.waitFor(() => {
+      expect(selectCodeEditor(wrapper).props('errorMarkers')).toHaveLength(1);
+    });
 
     await wrapper.setProps({
       value: 'graph TB\n  a-->b',
     });
-
-    expect(selectCodeEditorNode(wrapper).errorMarkers).toHaveLength(0);
+    await vi.waitFor(() => {
+      expect(selectCodeEditor(wrapper).props('errorMarkers')).toHaveLength(0);
+    });
   });
 });

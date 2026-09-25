@@ -45,13 +45,36 @@ describe('prepareIdleRuleNumbers', () => {
     });
   });
 
+  it('sets a one-second snooze duration for new idle rules', () => {
+    const form = idleRuleToForm();
+
+    expect(form.operation.parameters[ACTION_TYPES.snooze].duration).toEqual({
+      value: MIN_DURATION_VALUE,
+      unit: TIME_UNITS.second,
+    });
+  });
+
   it('sets valid default PBehavior duration for new idle rules', () => {
     const form = idleRuleToForm();
 
     expect(form.operation.parameters[ACTION_TYPES.pbehavior].start_on_trigger).toBe(false);
     expect(form.operation.parameters[ACTION_TYPES.pbehavior].duration).toEqual({
       value: MIN_DURATION_VALUE,
-      unit: TIME_UNITS.hour,
+      unit: TIME_UNITS.minute,
+    });
+  });
+
+  it('sets the default PBehavior duration when operation parameters omit it', () => {
+    const form = idleRuleToForm({
+      operation: {
+        type: ACTION_TYPES.pbehavior,
+        parameters: {},
+      },
+    });
+
+    expect(form.operation.parameters[ACTION_TYPES.pbehavior].duration).toEqual({
+      value: MIN_DURATION_VALUE,
+      unit: TIME_UNITS.minute,
     });
   });
 
@@ -77,7 +100,7 @@ describe('prepareIdleRuleNumbers', () => {
       start_on_trigger: true,
       duration: {
         value: MIN_DURATION_VALUE,
-        unit: TIME_UNITS.hour,
+        unit: TIME_UNITS.minute,
       },
     });
   });

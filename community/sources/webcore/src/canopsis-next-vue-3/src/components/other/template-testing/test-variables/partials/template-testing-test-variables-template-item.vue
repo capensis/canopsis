@@ -4,12 +4,17 @@
       {{ title }}
     </span>
 
-    <c-layout :class="statusProps.headerClass" class="template-item__header" align="stretch">
-      <div class="template-item__header-section">
+    <v-row
+      :class="statusProps.headerClass"
+      class="template-item__header flex-grow-0"
+      align="stretch"
+      no-gutters
+    >
+      <v-col class="template-item__header-section" cols="6">
         <span>{{ t('common.input') }}</span>
-      </div>
+      </v-col>
 
-      <div class="template-item__header-section">
+      <v-col class="template-item__header-section" cols="6">
         <c-layout justify="space-between" align="center">
           <c-layout align="center">
             <span>{{ t('common.output') }}</span>
@@ -26,11 +31,11 @@
             hide-details
           />
         </c-layout>
-      </div>
-    </c-layout>
+      </v-col>
+    </v-row>
 
-    <c-layout class="template-item__content">
-      <div class="template-item__input-section">
+    <v-row class="template-item__content flex-grow-0" no-gutters>
+      <v-col class="template-item__input-section" cols="6">
         <c-payload-textarea-field
           v-if="textarea"
           :value="template"
@@ -51,9 +56,9 @@
           class="template-item__input-editor"
           @update:value="updateTemplate"
         />
-      </div>
+      </v-col>
 
-      <div class="template-item__output-section">
+      <v-col class="template-item__output-section" cols="6">
         <simple-code-editor
           :value="formattedOutput"
           :language="isJson ? 'json' : 'plaintext'"
@@ -61,8 +66,8 @@
           class="template-item__output-editor"
           readonly
         />
-      </div>
-    </c-layout>
+      </v-col>
+    </v-row>
   </c-layout>
 </template>
 
@@ -220,8 +225,6 @@ export default {
     }
 
     &-section {
-      flex: 0 0 50%;
-      max-width: 50%;
       padding: var(--paddings);
 
       &:first-child {
@@ -233,8 +236,6 @@ export default {
   &__content {
     .template-item__input-section,
     .template-item__output-section {
-      flex: 0 0 50%;
-      max-width: 50%;
       padding: var(--paddings);
       border-right: 1px solid var(--border-color);
       border-bottom: 1px solid var(--border-color);

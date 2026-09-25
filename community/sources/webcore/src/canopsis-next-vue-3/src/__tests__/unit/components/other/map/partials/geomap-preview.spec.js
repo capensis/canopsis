@@ -9,21 +9,30 @@ const fitBounds = vi.fn();
 
 const stubs = {
   geomap: {
-    template: '<div v-on="$attrs" class="geomap"><slot/></div>',
-    computed: {
-      mapObject() {
-        return {
+    name: 'Geomap',
+    inheritAttrs: false,
+    props: ['minZoom', 'disabled'],
+    setup(props, { expose }) {
+      expose({
+        mapObject: {
           fitBounds,
-        };
-      },
+        },
+      });
+
+      return {};
     },
+    template: '<div class="geomap"><slot /></div>',
   },
   'geomap-control-zoom': true,
   'geomap-control-layers': true,
   'geomap-tile-layer': true,
   'geomap-control': true,
   'geomap-cluster-group': true,
-  'geomap-marker': true,
+  'geomap-marker': {
+    name: 'GeomapMarker',
+    emits: ['click'],
+    template: '<div><slot /></div>',
+  },
   'geomap-icon': true,
   'point-popup-dialog': true,
   'point-icon': true,
@@ -31,7 +40,7 @@ const stubs = {
   'c-zoom-overlay': true,
 };
 
-const selectPointMarkers = wrapper => wrapper.findAll('geomap-marker-stub');
+const selectPointMarkers = wrapper => wrapper.findAllComponents({ name: 'GeomapMarker' });
 const selectPointMarkerByIndex = (wrapper, index) => selectPointMarkers(wrapper).at(index);
 const selectPointPopupDialog = wrapper => wrapper.find('point-popup-dialog-stub');
 
@@ -42,11 +51,12 @@ const triggerPointClick = async (wrapper, index, rect = { left: 0, top: 0, width
     .spyOn(pointMarker.element, 'getBoundingClientRect')
     .mockReturnValue(rect);
 
-  await pointMarker.triggerCustomEvent('click', {
+  pointMarker.vm.$emit('click', {
     originalEvent: {
       target: pointMarker.element,
     },
   });
+  await wrapper.vm.$nextTick();
 
   getBoundingClientRect.mockClear();
 
@@ -64,7 +74,7 @@ describe('geomap-preview', () => {
     const point = geomapPointToForm();
 
     const wrapper = factory({
-      propsData: {
+      props: {
         map: {
           parameters: {
             points: [point],
@@ -90,7 +100,7 @@ describe('geomap-preview', () => {
     });
 
     const wrapper = factory({
-      propsData: {
+      props: {
         map: {
           parameters: {
             points: [point],
@@ -137,7 +147,7 @@ describe('geomap-preview', () => {
     const point = geomapPointToForm({ map: 'map' });
 
     const wrapper = factory({
-      propsData: {
+      props: {
         map: {
           parameters: {
             points: [point],
@@ -158,7 +168,7 @@ describe('geomap-preview', () => {
     const point = geomapPointToForm({ map: 'map' });
 
     const wrapper = factory({
-      propsData: {
+      props: {
         map: {
           parameters: {
             points: [point],
@@ -172,6 +182,6 @@ describe('geomap-preview', () => {
     const pointPopupDialog = selectPointPopupDialog(wrapper);
     await pointPopupDialog.triggerCustomEvent('close');
 
-    expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
+    expect(selectPointPopupDialog(wrapper).exists()).toBe(false);
   });
 });

@@ -50,17 +50,14 @@ export const usePatternCounters = ({ counterMethod, entityCountersType, hasError
   const allCount = computed(() => combinedCounter.value?.count ?? 0);
 
   const patternsCountMessageBind = computed(() => {
-    if (unref(hasError)) {
-      return { errorMessage: t('pattern.errors.required') };
-    }
-
-    if (unref(entityCountersType)) {
-      return { entityCounter: counters.value?.combined };
-    }
+    const isEntityCountersType = unref(entityCountersType);
 
     return {
-      alarmCounter: counters.value?.alarms?.combined,
-      entityCounter: counters.value?.entities?.entity_pattern,
+      errorMessage: unref(hasError) ? t('pattern.errors.required') : undefined,
+      alarmCounter: isEntityCountersType ? undefined : counters.value?.alarms?.combined,
+      entityCounter: isEntityCountersType
+        ? counters.value?.combined
+        : counters.value?.entities?.entity_pattern,
     };
   });
 
