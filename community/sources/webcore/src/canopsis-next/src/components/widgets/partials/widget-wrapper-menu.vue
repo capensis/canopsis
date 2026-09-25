@@ -89,13 +89,16 @@ export default {
 
       await this.redirectToSelectedViewAndTab({ viewId, tabId });
 
-      this.$sidebar.show({
+      /**
+       * We add a delay to the sidebar show to avoid the sidebar big z-index
+       */
+      this.$nextTick(() => this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[newWidget.type],
         config: {
           duplicate: true,
           widget: newWidget,
         },
-      });
+      }));
     },
 
     /**
@@ -105,7 +108,13 @@ export default {
       this.$modals.show({
         name: MODALS.selectViewTab,
         config: {
-          action: ({ tabId, viewId }) => this.cloneWidget({ tabId, viewId }),
+          action: ({ tabId, viewId }) => {
+            /**
+             * We don't add a await to the cloneWidget function to avoid hide modal
+             * before sidebar showing to avoid the sidebar big z-index
+             */
+            this.cloneWidget({ tabId, viewId });
+          },
         },
       });
     },
