@@ -237,6 +237,20 @@ $v2-font-size-root: 14px;
   --v-field-label-scale: 0.75rem;
 }
 
+.v-field__clearable {
+  &.expand-x-transition-enter-active,
+  &.expand-x-transition-leave-active {
+    // VExpandXTransition writes an inline width; keep it stable and disable the transition.
+    width: auto !important;
+    transition: none !important;
+  }
+
+  &.expand-x-transition-enter-from,
+  &.expand-x-transition-leave-to {
+    opacity: 0 !important;
+  }
+}
+
 .v-autocomplete--single,
 .v-combobox--single,
 .v-select--single {
@@ -261,6 +275,13 @@ $v2-font-size-root: 14px;
 
     .v-field__input {
       align-items: center;
+    }
+
+    .v-field__append-inner,
+    .v-field__prepend-inner {
+      align-items: center !important;
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     .v-label.v-field-label--floating {

@@ -3,10 +3,8 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
 /**
  * @typedef {Object} HealthcheckNode
  * @property {string} name
- * @property {boolean} is_running
- * @property {boolean} [is_queue_overflown]
- * @property {boolean} [is_too_few_instances]
- * @property {boolean} [is_diff_instances_config]
+ * @property {'healthy'|'degraded'|'unhealthy'} status
+ * @property {string[]} [issues]
  * @property {boolean} [is_unknown]
  * @property {number} [nodes]
  * @property {number} [running_nodes]

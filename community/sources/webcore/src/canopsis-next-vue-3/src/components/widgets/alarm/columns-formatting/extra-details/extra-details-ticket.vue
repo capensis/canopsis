@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="top">
+  <c-simple-tooltip :content="tooltipContent" html top>
     <template #activator="{ props: activatorProps }">
       <v-badge
         :model-value="!!failedTicket"
@@ -16,19 +16,14 @@
         <c-alarm-extra-details-chip v-bind="activatorProps" :color="color" :icon="icon" />
       </v-badge>
     </template>
-
-    <span v-html="sanitizedTooltipContent" />
-  </v-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
-import { sanitizeHtml } from '@/helpers/html';
 
 import { useExtraDetailsTicketTooltip } from '../../hooks/extra-details-tooltips';
 
@@ -52,10 +47,9 @@ export default {
 
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
     const color = COLORS.alarmExtraDetails.ticket;
-    const sanitizedTooltipContent = computed(() => sanitizeHtml(tooltipContent.value));
 
     return {
-      sanitizedTooltipContent,
+      tooltipContent,
       icon,
       color,
     };

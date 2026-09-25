@@ -494,6 +494,43 @@ describe('alarms-list-table', () => {
     expect(selectAlarmsListRow(wrapper)).toHaveLength(alarms.length);
   });
 
+  test('Limits the initial rows rendering and defers the remaining rows', async () => {
+    const animationFrames = [];
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        animationFrames.push(callback);
+
+        return animationFrames.length;
+      });
+    const manyAlarms = range(25).map(value => ({
+      ...alarms[value % alarms.length],
+      _id: `alarm-${value}`,
+    }));
+    const wrapper = factory({
+      store,
+      propsData: {
+        alarms: manyAlarms,
+      },
+    });
+
+    animationFrames.length = 0;
+    requestAnimationFrameSpy.mockClear();
+    wrapper.vm.setBootedRows(manyAlarms, 0);
+
+    expect(Object.keys(wrapper.vm.bootedRows)).toEqual(
+      manyAlarms.slice(0, 20).map(({ _id }) => _id),
+    );
+    expect(animationFrames).toHaveLength(1);
+
+    await animationFrames.shift()();
+
+    expect(wrapper.vm.bootedRows[manyAlarms[20]._id]).toBe(true);
+    expect(animationFrames.length).toBeGreaterThanOrEqual(1);
+
+    requestAnimationFrameSpy.mockRestore();
+  });
+
   test('Top pagination emits query update after page changes', () => {
     const wrapper = factory({
       store,

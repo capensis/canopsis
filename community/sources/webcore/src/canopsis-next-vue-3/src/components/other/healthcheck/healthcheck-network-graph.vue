@@ -16,10 +16,12 @@ import { get, isNil, minBy } from 'lodash';
 
 import { COLORS } from '@/config';
 import {
+  HEALTHCHECK_ENGINE_ISSUES,
   HEALTHCHECK_ENGINES_NAMES,
   HEALTHCHECK_NETWORK_GRAPH_OPTIONS,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS,
+  HEALTHCHECK_STATUSES,
   MODALS,
 } from '@/constants';
 
@@ -74,12 +76,9 @@ export default {
               classes:
                 node.name === HEALTHCHECK_SERVICES_NAMES.rabbit ? [] : ['service-title--bottom'],
               data: {
+                ...node,
                 id: node.name,
-                name: node.name,
                 color: getHealthcheckNodeColor(node),
-                is_running: node.is_running,
-                nodes: node.nodes,
-                running_nodes: node.running_nodes,
               },
             })),
             {
@@ -221,7 +220,10 @@ export default {
         nodes.push(HEALTHCHECK_ENGINES_NAMES.fifo);
 
         if (!parameters[HEALTHCHECK_ENGINES_NAMES.fifo]) {
-          parameters[HEALTHCHECK_ENGINES_NAMES.fifo] = { is_running: true };
+          parameters[HEALTHCHECK_ENGINES_NAMES.fifo] = {
+            status: HEALTHCHECK_STATUSES.healthy,
+            issues: [],
+          };
         }
       }
 
@@ -541,37 +543,18 @@ export default {
     },
 
     getTooltipText(data = {}) {
-      const statusKeys = [];
-      const itemWithDefaultFlags = {
-        is_running: true,
-        is_queue_overflown: false,
-        is_too_few_instances: false,
-        is_diff_instances_config: false,
-        ...data,
-      };
-
-      if (!itemWithDefaultFlags.is_running) {
-        statusKeys.push('healthcheck.notRunning');
+      if (data.is_unknown) {
+        return this.$t('healthcheck.unknown');
       }
 
-      if (itemWithDefaultFlags.is_queue_overflown) {
-        statusKeys.push('healthcheck.queueOverflow');
-      }
+      return (data.issues ?? [])
+        .map((issue) => {
+          const issueKey = `healthcheck.issues.${issue}`;
 
-      if (itemWithDefaultFlags.is_too_few_instances) {
-        statusKeys.push('healthcheck.lackOfInstances');
-      }
-
-      if (itemWithDefaultFlags.is_diff_instances_config) {
-        statusKeys.push('healthcheck.diffInstancesConfig');
-      }
-
-      if (itemWithDefaultFlags.is_unknown) {
-        statusKeys.push('healthcheck.unknown');
-      }
-
-      return statusKeys
-        .map(stateKey => this.$t(stateKey, { name: this.getNodeName(data.name) }))
+          return this.$te(issueKey)
+            ? this.$t(issueKey, { name: this.getNodeName(data.name) })
+            : issue;
+        })
         .join('\n');
     },
 
@@ -580,17 +563,11 @@ export default {
         return this.getTooltip(data);
       }
 
-      const tooltipTextsMap = {
-        [HEALTHCHECK_SERVICES_NAMES.enginesChain]: this.hasInvalidEnginesOrder
+      const tooltipMessage =
+        data.id === HEALTHCHECK_SERVICES_NAMES.enginesChain && this.hasInvalidEnginesOrder
           ? this.$t('healthcheck.invalidEnginesOrder')
-          : '',
-        [HEALTHCHECK_SERVICES_NAMES.timescaleDB]: !data.is_running
-          ? this.$t('healthcheck.metricsUnavailable')
-          : '',
-      };
-
-      const tooltipMessage = tooltipTextsMap[data.id] ?? this.getTooltipText(data);
-
+          : this.getTooltipText(data);
+      console.log('tooltipMessage', tooltipMessage, data);
       return tooltipMessage ? `<div class="pre-wrap">${tooltipMessage}</div>` : '';
     },
 
@@ -627,10 +604,11 @@ export default {
       instances,
       min_instances: minInstances,
       queue_length: queueLength,
-      is_too_few_instances: isTooFewInstances,
-      is_queue_overflown: isQueueOverflown,
+      issues = [],
       is_unknown: isUnknown,
     }) {
+      const isTooFewInstances = issues.includes(HEALTHCHECK_ENGINE_ISSUES.tooFewInstances);
+      const isQueueOverflown = issues.includes(HEALTHCHECK_ENGINE_ISSUES.queueOverflowed);
       const elements = [`<div class="text-subtitle-1">${this.getNodeName(id)}</div>`];
 
       if (!isUnknown && this.showDescription) {
@@ -641,7 +619,6 @@ export default {
             : getHealthcheckInfoDiv(
                 this.$t('healthcheck.queueLength', {
                   queueLength,
-                  maxQueueLength: this.maxQueueLength,
                 }),
                 isQueueOverflown,
               ),
@@ -686,13 +663,7 @@ export default {
     },
 
     isWrongEngine(engine = {}) {
-      return (
-        !engine.is_running ||
-        engine.is_queue_overflown ||
-        engine.is_too_few_instances ||
-        engine.is_diff_instances_config ||
-        engine.is_unknown
-      );
+      return engine.status !== HEALTHCHECK_STATUSES.healthy || engine.is_unknown;
     },
 
     nodeTapHandler({ target }) {

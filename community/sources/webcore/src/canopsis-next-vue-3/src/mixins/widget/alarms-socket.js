@@ -99,6 +99,10 @@ export const widgetAlarmsSocketMixin = {
     },
 
     joinToAlarmsSocketRoom(alarms) {
+      if (!alarms?.length) {
+        return;
+      }
+
       this.$socket.join(this.alarmsSocketRoom, mapIds(alarms)).addListener(this.updateAlarmInStore);
     },
 

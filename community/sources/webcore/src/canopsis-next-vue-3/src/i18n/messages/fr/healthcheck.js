@@ -6,7 +6,7 @@ export default {
   queueOverflow: 'Débordement de file d\'attente',
   lackOfInstances: 'Nombre d\'instances insuffisant',
   diffInstancesConfig: 'Configuration des instances non valide',
-  queueLength: 'Longueur de la file\nd\'attente {queueLength}/{maxQueueLength}',
+  queueLength: 'Longueur de la file\nd\'attente {queueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
   runningNodes: 'Nodes en cours d\'exécution {runningNodes}/{nodes}',
   activeInstances:
@@ -44,6 +44,14 @@ export default {
   systemStatusServerError:
     'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
   systemsOperational: 'Tous les systèmes sont opérationnels',
+  issues: {
+    node_down: 'Un ou plusieurs nœuds {name} sont en panne',
+    no_quorum: '{name} n\'a pas de quorum',
+    quorum_degraded: 'Le quorum de {name} est dégradé',
+    queue_overflowed: '{name} : Débordement de file d\'attente',
+    too_few_instances: '{name} : Nombre d\'instances insuffisant',
+    instances_config_mismatch: '{name} : Configuration des instances non valide',
+  },
   connectors: 'Connecteurs',
   connectorsBlocks: {
     description: 'Entraînement du modèle en cours, veuillez vérifier plus tard',

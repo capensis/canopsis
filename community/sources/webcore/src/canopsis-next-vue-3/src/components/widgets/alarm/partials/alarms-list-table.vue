@@ -227,7 +227,6 @@ import {
   getNearestAndFarthestIndexes,
   getNearestViewportIndexesBound,
   recursiveRaf,
-  splitIdsToChunk,
 } from '@/helpers/render';
 
 import { activeViewMixin } from '@/mixins/active-view';
@@ -244,6 +243,8 @@ import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 
 import AlarmsListRow from './alarms-list-row.vue';
+
+const INITIAL_BOOTED_ROWS_LIMIT = 20;
 
 export default {
   provide() {
@@ -792,6 +793,7 @@ export default {
 
   beforeCreate() {
     this.$intersectionObserver = new TableIntersectionObserver();
+    this.$cancelBootedRowsRendering = null;
   },
 
   mounted() {
@@ -811,6 +813,7 @@ export default {
   },
 
   beforeUnmount() {
+    this.$cancelBootedRowsRendering?.();
     this.asyncBootingActionsPanel.clear();
     this.$intersectionObserver.destroy();
   },
@@ -822,7 +825,10 @@ export default {
       });
     },
 
-    setBootedRows(items, itemsPerRender = 10) {
+    setBootedRows(items, duration) {
+      this.$cancelBootedRowsRendering?.();
+      this.$cancelBootedRowsRendering = null;
+
       if (!this.$tbodyEl || !items.length) {
         return;
       }
@@ -836,16 +842,16 @@ export default {
         end,
         ids: mapIds(items),
       });
+      const initialRows = nearest.slice(0, INITIAL_BOOTED_ROWS_LIMIT);
+      const deferredRows = [...nearest.slice(INITIAL_BOOTED_ROWS_LIMIT), ...farthest];
 
-      this.bootedRows = nearest.reduce((acc, id) => {
+      this.bootedRows = initialRows.reduce((acc, id) => {
         acc[id] = true;
 
         return acc;
       }, {});
 
-      const chunks = splitIdsToChunk(farthest, itemsPerRender);
-
-      if (!chunks.length) {
+      if (!deferredRows.length) {
         window.requestAnimationFrame(() => {
           if (this.stickyHorizontalScroll) {
             this.setHorizontalScrollbarWidth();
@@ -859,11 +865,12 @@ export default {
         return;
       }
 
-      chunks.forEach((idsChunk, index) => {
-        recursiveRaf(() => {
-          idsChunk.forEach((id) => {
-            this.bootedRows[id] = true;
-          });
+      this.$cancelBootedRowsRendering = recursiveRaf(
+        deferredRows,
+        async (id, index) => {
+          this.bootedRows[id] = true;
+
+          await this.$nextTick();
 
           if (!index && this.stickyHorizontalScroll) {
             window.requestAnimationFrame(() => {
@@ -872,12 +879,15 @@ export default {
               this.setHorizontalScrollPosition();
             });
           }
-
-          if (index === chunks.length - 1) {
+        },
+        {
+          duration,
+          onComplete: () => {
+            this.$cancelBootedRowsRendering = null;
             window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
-          }
-        }, index + 1);
-      });
+          },
+        },
+      );
     },
 
     updateOptions(options) {

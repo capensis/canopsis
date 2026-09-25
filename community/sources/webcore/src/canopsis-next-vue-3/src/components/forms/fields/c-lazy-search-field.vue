@@ -55,6 +55,9 @@
     <template v-if="$slots.icon && !isMultiple && hasSelectedValue" #prepend-inner>
       <slot :item="selectedFieldItem" name="icon" />
     </template>
+    <template v-if="$slots['prepend-item']" #prepend-item="">
+      <slot name="prepend-item" />
+    </template>
     <template #append-item="">
       <div ref="appendElement" class="c-lazy-search-field__append" />
     </template>
