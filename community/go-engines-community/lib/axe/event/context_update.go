@@ -120,11 +120,12 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 				return err
 			}
 
-			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&alarm,
 				&entity,
 				result.AlarmChange,
+				result.PauseChange,
 			)
 
 			return err
@@ -192,11 +193,12 @@ func (p *contextUpdateProcessor) processOnUpstreamChange(ctx context.Context, ev
 				return err
 			}
 
-			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
+				pauseChange,
 			)
 
 			return err
@@ -231,21 +233,23 @@ func (p *contextUpdateProcessor) processOnUpstreamChange(ctx context.Context, ev
 				return err
 			}
 
-			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
+				pauseChange,
 			)
 
 			return err
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 			ctx,
 			&alarm,
 			&entity,
 			result.AlarmChange,
+			pauseChange,
 		)
 
 		return err

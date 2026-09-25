@@ -21,9 +21,12 @@ import (
 // pauseChange is the pause or the resume applied to an entity and its alarm outside of a pause
 // or resume event, e.g. when the entity has been added to or removed from services.
 type pauseChange struct {
-	// alarmChange is types.AlarmChangeTypePause, types.AlarmChangeTypeResume or empty if the pause hasn't changed.
+	// alarmChange is types.AlarmChangeTypePause when the entity has been paused,
+	// types.AlarmChangeTypeResume when it has been resumed, and it's empty when the entity stays
+	// paused because its pause has only been replaced by another one, or when its pause hasn't changed.
 	alarmChange types.AlarmChangeType
-	// pause is the applied pause, nil on a resume.
+	// pause is the applied pause, nil on a resume or if the pause hasn't changed. It's propagated
+	// to the dependencies of the entity even if it only replaces its previous pause.
 	pause *types.LatestPause
 }
 
@@ -107,12 +110,19 @@ func updatePauseOnServicesChange(
 		return pauseChange{}, nil
 	}
 
+	wasPaused := entity.Pause != nil
+
 	err = applyInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, *inherited, now)
 	if err != nil {
 		return pauseChange{}, err
 	}
 
-	return pauseChange{alarmChange: types.AlarmChangeTypePause, pause: inherited}, nil
+	change := pauseChange{pause: inherited}
+	if !wasPaused {
+		change.alarmChange = types.AlarmChangeTypePause
+	}
+
+	return change, nil
 }
 
 func applyInheritedPause(
@@ -249,11 +259,13 @@ func publishPauseChange(
 	change pauseChange,
 	now datetime.CpsTime,
 ) error {
-	if change.alarmChange == "" {
+	if change.alarmChange == "" && change.pause == nil {
 		return nil
 	}
 
-	if alarmID != "" {
+	// A pause which only replaces the previous pause of the entity is not an alarm change,
+	// but it's still propagated to its dependencies.
+	if change.alarmChange != "" {
 		triggerEvent, err := eventGenerator.Generate(entity)
 		if err != nil {
 			return fmt.Errorf("cannot generate event: %w", err)
@@ -299,7 +311,7 @@ func publishPauseChange(
 		}
 
 		depEvent.Inherited = true
-		if change.alarmChange == types.AlarmChangeTypePause {
+		if change.pause != nil {
 			depEvent.EventType = types.EventTypePause
 			depEvent.Timestamp = change.pause.Timestamp
 			depEvent.PauseSource = change.pause.Source

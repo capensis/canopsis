@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"maps"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
@@ -67,6 +68,67 @@ func (h *countersHelper) CalculateCounters(
 	res.NewComponentState = newComponentState
 
 	return serviceCountersUpdated || componentCountersUpdated, res, nil
+}
+
+// CalculateCountersWithPauseChange calculates the counters of the event and, when the entity has been
+// paused or resumed by the event itself, see updatePauseOnServicesChange, the counters of this pause
+// change: the event is counted with the pause the entity had before, which is what the counters of its
+// services hold, then the pause or the resume is applied to all of them.
+func (h *countersHelper) CalculateCountersWithPauseChange(
+	ctx context.Context,
+	alarm *types.Alarm,
+	entity *types.Entity,
+	alarmChange types.AlarmChange,
+	change pauseChange,
+) (bool, countersResult, error) {
+	if change.alarmChange != types.AlarmChangeTypePause && change.alarmChange != types.AlarmChangeTypeResume {
+		return h.CalculateCounters(ctx, alarm, entity, alarmChange)
+	}
+
+	entityBefore := *entity
+	entityBefore.Pause = nil
+	if change.alarmChange == types.AlarmChangeTypeResume {
+		// The entity was paused by the pause which has just ended.
+		ended := types.Pause{}
+		if entity.LatestPause != nil {
+			ended = entity.LatestPause.Pause
+		}
+
+		entityBefore.Pause = &ended
+	}
+
+	updated, res, err := h.CalculateCounters(ctx, alarm, &entityBefore, alarmChange)
+	if err != nil {
+		return false, res, err
+	}
+
+	// Only the pause of the entity changes, its pbehavior is the same before and after it.
+	pauseAlarmChange := types.NewAlarmChange()
+	pauseAlarmChange.Type = change.alarmChange
+	pauseAlarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
+	pauseAlarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
+
+	pauseUpdated, pauseRes, err := h.CalculateCounters(ctx, alarm, entity, pauseAlarmChange)
+	if err != nil {
+		return false, res, err
+	}
+
+	if pauseRes.UpdatedServiceStates != nil {
+		if res.UpdatedServiceStates == nil {
+			res.UpdatedServiceStates = pauseRes.UpdatedServiceStates
+		} else {
+			// The states of the pause change are the newest ones.
+			maps.Copy(res.UpdatedServiceStates, pauseRes.UpdatedServiceStates)
+		}
+	}
+
+	if pauseRes.IsComponentStateChanged {
+		res.IsComponentStateChanged = true
+		res.ComponentID = pauseRes.ComponentID
+		res.NewComponentState = pauseRes.NewComponentState
+	}
+
+	return updated || pauseUpdated, res, nil
 }
 
 func (h *countersHelper) UpdateStates(

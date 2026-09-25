@@ -198,12 +198,14 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 
 		result.PauseChange = change
 
-		if forceCountersUpdate || result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
-			result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCounters(
+		if forceCountersUpdate || change.alarmChange != "" ||
+			result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
+			result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
+				change,
 			)
 		}
 
