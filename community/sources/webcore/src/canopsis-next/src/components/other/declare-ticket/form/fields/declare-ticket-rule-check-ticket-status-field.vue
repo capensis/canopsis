@@ -9,7 +9,12 @@
       <v-layout class="gap-3" column>
         <c-enabled-field v-field="form.enabled" />
         <v-expand-transition>
-          <v-layout v-if="form.enabled" class="gap-3" column>
+          <v-layout
+            v-if="form.enabled"
+            key="check-ticket-status-fields"
+            class="gap-3"
+            column
+          >
             <request-with-token-form
               v-field="form"
               :name="`${name}.request`"
@@ -21,7 +26,7 @@
               :hide-headers="form.reuse_headers_and_auth"
               hide-repeat
             >
-              <template #additional-fields>
+              <template #additional-fields="">
                 <c-enabled-field
                   v-field="form.reuse_headers_and_auth"
                   :label="$t('declareTicket.reuseHeadersAndAuthFromTicketDeclarationRule')"
