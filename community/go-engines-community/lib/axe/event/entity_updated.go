@@ -187,11 +187,12 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 			ctx,
 			&alarm,
 			&entity,
 			result.AlarmChange,
+			result.PauseChange,
 		)
 		if err != nil {
 			return err

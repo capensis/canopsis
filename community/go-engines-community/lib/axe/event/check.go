@@ -205,11 +205,12 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if !event.Healthcheck {
-			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
+				result.PauseChange,
 			)
 			if err != nil {
 				return err
@@ -367,8 +368,14 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	if pause != nil {
-		// The alarm is created paused, so a trigger event is sent and the pause is propagated.
-		result.PauseChange = pauseChange{alarmChange: types.AlarmChangeTypePause, pause: pause}
+		// The alarm is created paused, so the pause is propagated. The entity is paused by this event
+		// only if the pause has been resolved from its parents, otherwise it's already paused
+		// and already counted as paused, so it's not an alarm change.
+		result.PauseChange = pauseChange{pause: pause}
+		if resolvedFromParents {
+			result.PauseChange.alarmChange = types.AlarmChangeTypePause
+		}
+
 		newStep := types.NewAlarmStep(types.AlarmStepPause, pause.Timestamp, pause.Author,
 			pause.Message, pause.UserID, "", pause.Initiator, false)
 		alarm.Value.Pause = &newStep
