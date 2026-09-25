@@ -6,7 +6,7 @@ export default {
   queueOverflow: 'Queue overflow',
   lackOfInstances: 'Lack of instances',
   diffInstancesConfig: 'Invalid instances configuration',
-  queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+  queueLength: 'Queue length {queueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
   runningNodes: 'Running nodes {runningNodes}/{nodes}',
   activeInstances:
@@ -42,6 +42,14 @@ export default {
   systemStatusChipError: 'The system is not operational',
   systemStatusServerError: 'System configuration is invalid, please contact the administrator',
   systemsOperational: 'All systems are operational',
+  issues: {
+    node_down: 'One or more {name} nodes are down',
+    no_quorum: '{name} has no quorum',
+    quorum_degraded: '{name} quorum is degraded',
+    queue_overflowed: '{name}: Queue overflow',
+    too_few_instances: '{name}: Lack of instances',
+    instances_config_mismatch: '{name}: Invalid instances configuration',
+  },
   connectors: 'Connectors',
   connectorsBlocks: {
     description: 'Model training in progress, please check later',

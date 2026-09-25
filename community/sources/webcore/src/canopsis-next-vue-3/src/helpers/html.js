@@ -39,6 +39,43 @@ LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
 const COMMENT_REGEX = /<!--([\s\S]*?)-->/g;
 const COMMENT_DIV_REGEX = /<div class="html-comment"[^>]*data-c="([^"]+)"[^>]*><\/div>/g;
 
+const SANITIZE_HTML_CACHE_LIMIT = 500;
+const SANITIZE_HTML_MAX_CACHEABLE_LENGTH = 20_000;
+const sanitizeHtmlCache = new Map();
+
+/**
+ * Returns a cached sanitized value and refreshes its LRU position.
+ *
+ * @param {string} html
+ * @returns {string | undefined}
+ */
+const getCachedSanitizedHtml = (html) => {
+  if (!sanitizeHtmlCache.has(html)) {
+    return undefined;
+  }
+
+  const sanitizedHtml = sanitizeHtmlCache.get(html);
+
+  sanitizeHtmlCache.delete(html);
+  sanitizeHtmlCache.set(html, sanitizedHtml);
+
+  return sanitizedHtml;
+};
+
+/**
+ * Stores a sanitized value in the bounded LRU cache.
+ *
+ * @param {string} html
+ * @param {string} sanitizedHtml
+ */
+const cacheSanitizedHtml = (html, sanitizedHtml) => {
+  sanitizeHtmlCache.set(html, sanitizedHtml);
+
+  if (sanitizeHtmlCache.size > SANITIZE_HTML_CACHE_LIMIT) {
+    sanitizeHtmlCache.delete(sanitizeHtmlCache.keys().next().value);
+  }
+};
+
 /**
  * Replaces HTML comments with placeholder elements so DOMPurify preserves them.
  *
@@ -79,12 +116,27 @@ export const restoreHtmlComments = (html = '') =>
  * @param {import('dompurify').Config} [options = DEFAULT_SANITIZE_OPTIONS] - DOMPurify configuration.
  * @returns {string} Sanitized HTML safe for rendering.
  */
-export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) =>
-  decodeVueAttributes(
+export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => {
+  const cacheable =
+    options === DEFAULT_SANITIZE_OPTIONS && html.length <= SANITIZE_HTML_MAX_CACHEABLE_LENGTH;
+  const cachedHtml = cacheable ? getCachedSanitizedHtml(html) : undefined;
+
+  if (cachedHtml !== undefined) {
+    return cachedHtml;
+  }
+
+  const sanitizedHtml = decodeVueAttributes(
     restoreHtmlComments(
       DOMPurify.sanitize(replaceHtmlComments(encodeVueAttributes(html)), options),
     ),
   );
+
+  if (cacheable) {
+    cacheSanitizedHtml(html, sanitizedHtml);
+  }
+
+  return sanitizedHtml;
+};
 
 /**
  * Converts plain-text URLs in HTML into clickable anchor tags.

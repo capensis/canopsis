@@ -69,7 +69,13 @@
 
 <script>
 import { SOCKET_ROOMS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES, KPI_TABS, MODALS, USER_PERMISSIONS } from '@/constants';
+import {
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_STATUSES,
+  KPI_TABS,
+  MODALS,
+  USER_PERMISSIONS,
+} from '@/constants';
 
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFilter } from '@/hooks/store/modules/filter';
@@ -212,7 +218,10 @@ export default {
         ({ name }) => name === HEALTHCHECK_SERVICES_NAMES.timescaleDB,
       );
 
-      this.timescaleAvailable = !!timeScaleService?.is_running;
+      this.timescaleAvailable = [
+        HEALTHCHECK_STATUSES.healthy,
+        HEALTHCHECK_STATUSES.degraded,
+      ].includes(timeScaleService?.status);
     },
 
     async fetchHealthcheck() {

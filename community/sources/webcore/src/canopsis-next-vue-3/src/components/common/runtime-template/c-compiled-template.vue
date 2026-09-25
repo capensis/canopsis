@@ -4,7 +4,7 @@
 
 <script>
 import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars';
-import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 
 export default {
   inject: ['$system'],
@@ -84,8 +84,9 @@ export default {
           ? await runTemplate(this.templateId, context)
           : await compile(this.template, context);
 
-        const html = normalizeHtml(
-          sanitizeHtml(linkifyHtml(compiledTemplate, this.linkifyOptions), this.sanitizeOptions),
+        const html = sanitizeHtml(
+          linkifyHtml(compiledTemplate, this.linkifyOptions),
+          this.sanitizeOptions,
         );
         this.compiledTemplate = `<${this.parentElement}>${html}</${this.parentElement}>`;
       } catch (err) {

@@ -66,6 +66,7 @@ export { default as CMapField } from './map/c-map-field.vue';
 export { default as CMetaAlarmRuleField } from './meta-alarm-rule/c-meta-alarm-rule-field.vue';
 export { default as CEntityPatternsField } from './entity/c-entity-patterns-field.vue';
 export { default as CEventFilterPatternsField } from './event-filter/c-event-filter-patterns-field.vue';
+export { default as CFilterField } from './pattern/c-filter-field.vue';
 export { default as CPatternField } from './pattern/c-pattern-field.vue';
 export { default as CPatternsField } from './pattern/c-patterns-field.vue';
 export { default as CPbehaviorPatternsField } from './pbehavior/c-pbehavior-patterns-field.vue';

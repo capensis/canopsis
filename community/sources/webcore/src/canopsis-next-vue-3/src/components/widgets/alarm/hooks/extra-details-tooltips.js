@@ -5,7 +5,7 @@ import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
-import { linkifyHtml, sanitizeHtml } from '@/helpers/html';
+import { linkifyHtml } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -99,16 +99,14 @@ export const useExtraDetailsLastCommentTooltip = (props) => {
   const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.lastComment.t));
-  const sanitizedLastComment = computed(() =>
-    sanitizeHtml(linkifyHtml(String(props.lastComment?.m ?? ''))),
-  );
+  const linkifiedLastComment = computed(() => linkifyHtml(String(props.lastComment?.m ?? '')));
 
   const tooltipContent = computed(
     () => `<div class="text-md-center">
           <strong>${t('alarm.actions.iconsTitles.comment')}</strong>
           <div>${t('common.by')}: ${escape(props.lastComment.a)}</div>
           <div>${t('common.date')}: ${date.value}</div>
-          <div class="c-extra-details__message">${t('common.comment')}:&nbsp;<div>${sanitizedLastComment.value}</div></div>
+          <div class="c-extra-details__message">${t('common.comment')}:&nbsp;<div>${linkifiedLastComment.value}</div></div>
         </div>`,
   );
 

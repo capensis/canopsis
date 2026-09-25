@@ -11,6 +11,7 @@
         <c-entity-category-field
           :category="form.category"
           addable
+          clearable
           required
           @update:category="updateField('category', $event)"
         />

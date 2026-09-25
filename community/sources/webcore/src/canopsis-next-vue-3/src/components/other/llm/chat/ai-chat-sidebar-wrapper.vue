@@ -73,7 +73,7 @@ import { computed, inject, onMounted, ref, watch } from 'vue';
 import { CSS_COLORS_VARS } from '@/config';
 import { LLM_AI_CHAT_WIDTH } from '@/constants';
 
-import { recursiveRaf } from '@/helpers/render';
+import { callAfterAnimationFrames } from '@/helpers/render';
 import { getMaxZIndex } from '@/helpers/vuetify';
 
 export default {
@@ -141,7 +141,7 @@ export default {
      * slides the sidebar from right to left. Skips the delayed open when already minimized.
      */
     const playEnterTransition = () =>
-      recursiveRaf(() => {
+      callAfterAnimationFrames(() => {
         entered.value = true;
       }, minimized.value ? 0 : 2);
 

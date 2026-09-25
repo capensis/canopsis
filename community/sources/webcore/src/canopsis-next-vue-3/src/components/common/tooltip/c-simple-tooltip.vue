@@ -1,15 +1,21 @@
 <template>
-  <v-tooltip :disabled="disabled || !content" :location="top ? 'top' : 'bottom'">
+  <v-tooltip
+    v-model="opened"
+    :disabled="disabled || !content"
+    :location="top ? 'top' : 'bottom'"
+  >
     <template #activator="{ props }">
       <slot :on="props" :props="props" name="activator" />
     </template>
-    <span v-if="html" v-html="sanitizedContent" />
+    <template v-if="html">
+      <span v-if="opened" v-html="sanitizedContent" />
+    </template>
     <span v-else>{{ content }}</span>
   </v-tooltip>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { sanitizeHtml } from '@/helpers/html';
 
@@ -34,9 +40,13 @@ export default {
   },
 
   setup(props) {
-    const sanitizedContent = computed(() => sanitizeHtml(props.content));
+    const opened = ref(false);
+    const sanitizedContent = computed(() => (opened.value ? sanitizeHtml(props.content) : ''));
 
-    return { sanitizedContent };
+    return {
+      opened,
+      sanitizedContent,
+    };
   },
 };
 </script>

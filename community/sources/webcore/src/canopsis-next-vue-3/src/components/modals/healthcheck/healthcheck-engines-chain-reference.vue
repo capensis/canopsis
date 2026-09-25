@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { HEALTHCHECK_SERVICES_NAMES } from '@/constants';
+import { HEALTHCHECK_SERVICES_NAMES, HEALTHCHECK_STATUSES } from '@/constants';
 
 import { useHealthcheckStore } from '@/stores/modules/healthcheck';
 
@@ -59,7 +59,7 @@ export default {
   computed: {
     enginesParameters() {
       return this.enginesGraph.nodes.reduce((acc, name) => {
-        acc[name] = { name, is_running: true };
+        acc[name] = { name, status: HEALTHCHECK_STATUSES.healthy, issues: [] };
 
         return acc;
       }, {});
