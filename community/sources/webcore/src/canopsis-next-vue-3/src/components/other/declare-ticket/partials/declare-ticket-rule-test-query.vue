@@ -23,7 +23,10 @@ import { toRef } from 'vue';
 
 import { SOCKET_ROOMS } from '@/config';
 
-import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import {
+  declareTicketRuleErrorsToForm,
+  formToDeclareTicketRule,
+} from '@/helpers/entities/declare-ticket/rule/form';
 
 import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 
@@ -41,8 +44,7 @@ const props = defineProps({
   },
 });
 
-const { createTestDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } =
-  useDeclareTicketRule();
+const { createTestDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } = useDeclareTicketRule();
 const {
   alarm,
   pending,
@@ -56,6 +58,7 @@ const {
   socketRoom: SOCKET_ROOMS.declareticket,
   createExecution: createTestDeclareTicketExecution,
   fetchExecution: fetchDeclareTicketExecutionWithoutStore,
+  errorsToValidation: errors => declareTicketRuleErrorsToForm(errors, props.form),
   getExecutionData: ({ alarm: alarmId, form }) => ({
     alarms: [alarmId],
     ...formToDeclareTicketRule(form),

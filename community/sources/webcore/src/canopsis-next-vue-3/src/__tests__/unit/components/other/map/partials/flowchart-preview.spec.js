@@ -8,8 +8,8 @@ import { shapeToForm } from '@/helpers/flowchart/shapes';
 import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
 
 const stubs = {
-  panzoom: true,
   flowchart: {
+    name: 'Flowchart',
     props: ['shapes'],
     template: `
     <div
@@ -27,7 +27,7 @@ const stubs = {
   'c-help-icon': true,
 };
 
-const selectFlowchart = wrapper => wrapper.find('div.flowchart');
+const selectFlowchart = wrapper => wrapper.findComponent({ name: 'Flowchart' });
 
 describe('flowchart-preview', () => {
   const rectShape = shapeToForm({ type: SHAPES.rect, _id: 'rect' });
@@ -84,7 +84,7 @@ describe('flowchart-preview', () => {
 
   test('Shapes color changed by point with color indicator impact state', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         map,
         popupActions: true,
         colorIndicator: COLOR_INDICATOR_TYPES.state,
@@ -96,7 +96,7 @@ describe('flowchart-preview', () => {
 
     const okColorDarken = '#000000';
 
-    expect(flowchart.vm.shapes).toEqual({
+    expect(flowchart.props('shapes')).toEqual({
       [lineShape._id]: lineShape,
       [rectShape._id]: rectShape,
       [circleShape._id]: {
@@ -116,7 +116,7 @@ describe('flowchart-preview', () => {
 
   test('Shapes color changed by point with color indicator state', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         map,
         popupActions: true,
         colorIndicator: COLOR_INDICATOR_TYPES.impactState,
@@ -128,7 +128,7 @@ describe('flowchart-preview', () => {
 
     const colorDarken = '#22360e';
 
-    expect(flowchart.vm.shapes).toEqual({
+    expect(flowchart.props('shapes')).toEqual({
       [lineShape._id]: lineShape,
       [rectShape._id]: rectShape,
       [circleShape._id]: {

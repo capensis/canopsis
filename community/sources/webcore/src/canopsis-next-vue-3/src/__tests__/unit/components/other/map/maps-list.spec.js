@@ -1,26 +1,33 @@
-import {
-  selectRowRemoveButtonByIndex,
-  selectRowEditButtonByIndex,
-  selectRowDuplicateButtonByIndex,
-} from '@unit/utils/table';
-import { generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer } from '@unit/utils/vue';
 import { range } from 'lodash';
 
 import { MAP_TYPES } from '@/constants';
 
-import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import MapsList from '@/components/other/map/maps-list.vue';
 
 const stubs = {
-  'c-advanced-data-table': CAdvancedDataTable,
+  'c-advanced-data-table': {
+    name: 'CAdvancedDataTable',
+    props: ['items'],
+    template: `
+      <div>
+        <div v-for="item in items" :key="item._id" class="map-actions">
+          <slot name="actions" :item="item" />
+        </div>
+      </div>
+    `,
+  },
+  'c-action-btn': {
+    name: 'CActionBtn',
+    props: ['type'],
+    emits: ['click'],
+    template: '<button @click="$emit(\'click\', $event)" />',
+  },
   'c-table-mass-actions-panel': true,
-  'c-search': true,
-  'v-checkbox': true,
-  'c-expand-btn': true,
-  'c-action-btn': true,
-  'c-table-pagination': true,
-  'maps-list-expand-item': true,
 };
+
+const selectActionButtons = wrapper => wrapper.findAllComponents({ name: 'CActionBtn' });
+const selectActionButtonByIndex = (wrapper, index) => selectActionButtons(wrapper).at(index);
 
 describe('maps-list', () => {
   const totalItems = 11;
@@ -37,11 +44,11 @@ describe('maps-list', () => {
     updated: 1614861888 + index,
   }));
 
-  const factory = generateRenderer(MapsList, { stubs });
+  const factory = generateShallowRenderer(MapsList, { stubs });
 
   test('Remove event emitted after trigger click on the remove button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         maps,
         removable: true,
         options: {
@@ -54,15 +61,14 @@ describe('maps-list', () => {
 
     const removableRowIndex = 2;
 
-    const removeButton = selectRowRemoveButtonByIndex(wrapper, removableRowIndex);
-    await removeButton.triggerCustomEvent('click');
+    await selectActionButtonByIndex(wrapper, removableRowIndex).trigger('click');
 
-    expect(wrapper).toEmit('remove', maps[removableRowIndex]._id);
+    expect(wrapper.emitted('remove')).toEqual([[maps[removableRowIndex]._id]]);
   });
 
   test('Update event emitted after trigger click on the edit button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         maps,
         updatable: true,
         options: {
@@ -75,15 +81,14 @@ describe('maps-list', () => {
 
     const editableRowIndex = 5;
 
-    const editButton = selectRowEditButtonByIndex(wrapper, editableRowIndex);
-    await editButton.triggerCustomEvent('click');
+    await selectActionButtonByIndex(wrapper, editableRowIndex).trigger('click');
 
-    expect(wrapper).toEmit('edit', maps[editableRowIndex]);
+    expect(wrapper.emitted('edit')).toEqual([[maps[editableRowIndex]]]);
   });
 
   test('Duplicate event emitted after trigger click on the duplicate button', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         maps,
         duplicable: true,
         options: {
@@ -96,9 +101,8 @@ describe('maps-list', () => {
 
     const editableRowIndex = 5;
 
-    const duplicateButton = selectRowDuplicateButtonByIndex(wrapper, editableRowIndex);
-    await duplicateButton.triggerCustomEvent('click');
+    await selectActionButtonByIndex(wrapper, editableRowIndex).trigger('click');
 
-    expect(wrapper).toEmit('duplicate', maps[editableRowIndex]);
+    expect(wrapper.emitted('duplicate')).toEqual([[maps[editableRowIndex]]]);
   });
 });

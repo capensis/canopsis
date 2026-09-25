@@ -8,31 +8,56 @@ import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/me
 const stubs = {
   'c-form-block': true,
   'c-form-block-row': true,
-  'c-id-field': true,
-  'c-name-field': true,
-  'c-payload-textarea-field': true,
+  'c-id-field': {
+    name: 'CIdField',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
+  'c-name-field': {
+    name: 'CNameField',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
+  'c-payload-textarea-field': {
+    name: 'CPayloadTextareaField',
+    emits: ['update:value'],
+    template: '<div />',
+  },
   'c-payload-text-field': true,
-  'c-enabled-field': true,
-  'meta-alarm-rule-tags-form': true,
-  'meta-alarm-rule-infos-form': true,
+  'c-enabled-field': {
+    name: 'CEnabledField',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
+  'meta-alarm-rule-tags-form': {
+    name: 'MetaAlarmRuleTagsForm',
+    emits: ['update:form'],
+    template: '<div />',
+  },
+  'meta-alarm-rule-infos-form': {
+    name: 'MetaAlarmRuleInfosForm',
+    emits: ['update:infos'],
+    template: '<div />',
+  },
   'meta-alarm-rule-type-field': true,
 };
 
-const selectIdField = wrapper => wrapper.find('c-id-field-stub');
-const selectPayloadTextareaField = wrapper => wrapper.find('c-payload-textarea-field-stub');
-const selectNameField = wrapper => wrapper.find('c-name-field-stub');
-const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
-const selectTagsForm = wrapper => wrapper.find('meta-alarm-rule-tags-form-stub');
-const selectInfosForm = wrapper => wrapper.find('meta-alarm-rule-infos-form-stub');
+const selectIdField = wrapper => wrapper.findComponent({ name: 'CIdField' });
+const selectPayloadTextareaField = wrapper =>
+  wrapper.findComponent({ name: 'CPayloadTextareaField' });
+const selectNameField = wrapper => wrapper.findComponent({ name: 'CNameField' });
+const selectEnabledField = wrapper => wrapper.findComponent({ name: 'CEnabledField' });
+const selectTagsForm = wrapper => wrapper.findComponent({ name: 'MetaAlarmRuleTagsForm' });
+const selectInfosForm = wrapper => wrapper.findComponent({ name: 'MetaAlarmRuleInfosForm' });
 
 describe('meta-alarm-rule-general-form', () => {
   const form = metaAlarmRuleToForm();
 
   const factory = generateShallowRenderer(MetaAlarmRuleGeneralForm, { stubs });
 
-  test('ID changed after trigger id field', () => {
+  test('ID changed after trigger id field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -41,17 +66,15 @@ describe('meta-alarm-rule-general-form', () => {
 
     const newId = Faker.datatype.string();
 
-    idField.triggerCustomEvent('input', newId);
+    idField.vm.$emit('update:modelValue', newId);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      _id: newId,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('_id')).toBe(newId);
   });
 
-  test('Output template changed after trigger description field', () => {
+  test('Output template changed after trigger description field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -60,17 +83,15 @@ describe('meta-alarm-rule-general-form', () => {
 
     const outputTemplate = Faker.datatype.string();
 
-    payloadTextareaField.triggerCustomEvent('input', outputTemplate);
+    payloadTextareaField.vm.$emit('update:value', outputTemplate);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      output_template: outputTemplate,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('output_template')).toBe(outputTemplate);
   });
 
-  test('Name changed after trigger text field', () => {
+  test('Name changed after trigger text field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
@@ -79,18 +100,16 @@ describe('meta-alarm-rule-general-form', () => {
 
     const name = Faker.datatype.string();
 
-    nameField.triggerCustomEvent('input', name);
+    nameField.vm.$emit('update:modelValue', name);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      name,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('name')).toBe(name);
   });
 
-  test('Enabled changed after trigger enabled field', () => {
+  test('Enabled changed after trigger enabled field', async () => {
     const autoResolve = Faker.datatype.boolean();
     const wrapper = factory({
-      propsData: {
+      props: {
         form: {
           ...form,
           auto_resolve: autoResolve,
@@ -102,18 +121,16 @@ describe('meta-alarm-rule-general-form', () => {
 
     const newAutoResolve = !autoResolve;
 
-    enabledField.triggerCustomEvent('input', newAutoResolve);
+    enabledField.vm.$emit('update:modelValue', newAutoResolve);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      auto_resolve: newAutoResolve,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('auto_resolve')).toBe(newAutoResolve);
   });
 
   test('Tags changed after trigger tags form', async () => {
     const copyFromChildren = Faker.datatype.boolean();
     const wrapper = factory({
-      propsData: {
+      props: {
         form: {
           ...form,
           tags: { copy_from_children: copyFromChildren },
@@ -125,28 +142,24 @@ describe('meta-alarm-rule-general-form', () => {
       copy_from_children: !copyFromChildren,
     };
 
-    await selectTagsForm(wrapper).triggerCustomEvent('input', newTags);
+    selectTagsForm(wrapper).vm.$emit('update:form', newTags);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      tags: newTags,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('tags')).toEqual(newTags);
   });
 
   test('Infos changed after trigger infos form', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
     });
 
     const newInfos = [{ key: Faker.datatype.string() }];
 
-    await selectInfosForm(wrapper).triggerCustomEvent('input', newInfos);
+    selectInfosForm(wrapper).vm.$emit('update:infos', newInfos);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      infos: newInfos,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('infos')).toEqual(newInfos);
   });
 });

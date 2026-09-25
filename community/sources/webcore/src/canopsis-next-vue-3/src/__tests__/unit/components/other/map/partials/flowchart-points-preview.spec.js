@@ -47,7 +47,7 @@ describe('flowchart-points-preview', () => {
 
   test('Show alarms emitted after trigger point popup dialog', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         shapes,
         points,
       },
@@ -63,7 +63,7 @@ describe('flowchart-points-preview', () => {
 
   test('Show map emitted after trigger point popup dialog', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         shapes,
         points,
       },
@@ -79,7 +79,7 @@ describe('flowchart-points-preview', () => {
 
   test('Point popup dialog closed after trigger close event', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         shapes,
         points,
       },
@@ -90,6 +90,6 @@ describe('flowchart-points-preview', () => {
     const pointPopupDialog = selectPointPopupDialog(wrapper);
     await pointPopupDialog.triggerCustomEvent('close');
 
-    expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
+    expect(selectPointPopupDialog(wrapper).exists()).toBe(false);
   });
 });

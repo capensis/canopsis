@@ -12,11 +12,12 @@ import FlowchartEditor from '@/components/other/map/form/fields/flowchart-editor
 
 const stubs = {
   flowchart: {
+    name: 'Flowchart',
     props: ['shapes'],
+    emits: ['update:shapes', 'update:backgroundColor'],
     template: `
     <div
       class="flowchart"
-      :shapes="shapes"
     >
       <slot
         name="sidebar-prepend"
@@ -28,13 +29,32 @@ const stubs = {
       />
     </div>`,
   },
-  'add-location-btn': true,
-  'flowchart-points-editor': true,
+  'add-location-btn': {
+    name: 'AddLocationBtn',
+    props: ['value'],
+    emits: ['input'],
+    template: '<div />',
+  },
+  'flowchart-points-editor': {
+    name: 'FlowchartPointsEditor',
+    props: ['points', 'shapes', 'addOnClick'],
+    emits: ['input'],
+    template: '<div />',
+  },
+  'map-editor-required-field': {
+    name: 'MapEditorRequiredField',
+    props: ['valid', 'message', 'name'],
+    template: '<div><slot :has-error="!valid" :messages="[message]" /></div>',
+  },
+  'v-divider': true,
+  'v-messages': true,
 };
 
-const selectFlowchart = wrapper => wrapper.find('.flowchart');
-const selectAddLocationBtn = wrapper => wrapper.find('add-location-btn-stub');
-const selectFlowchartPointsEditor = wrapper => wrapper.find('flowchart-points-editor-stub');
+const selectFlowchart = wrapper => wrapper.findComponent({ name: 'Flowchart' });
+const selectAddLocationBtn = wrapper => wrapper.findComponent({ name: 'AddLocationBtn' });
+const selectFlowchartPointsEditor = wrapper =>
+  wrapper.findComponent({ name: 'FlowchartPointsEditor' });
+const selectRequiredField = wrapper => wrapper.findComponent({ name: 'MapEditorRequiredField' });
 
 describe('flowchart-editor', () => {
   const rectShape = shapeToForm({ type: SHAPES.rect, _id: 'rect' });
@@ -49,45 +69,43 @@ describe('flowchart-editor', () => {
 
   const factory = generateShallowRenderer(FlowchartEditor, { stubs });
 
-  test('Background changed after trigger flowchart', () => {
+  test('Background changed after trigger flowchart', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
     const newColor = Faker.internet.color();
 
-    const flowchartCodeEditor = selectFlowchart(wrapper);
+    selectFlowchart(wrapper).vm.$emit('update:backgroundColor', newColor);
+    await wrapper.vm.$nextTick();
 
-    flowchartCodeEditor.triggerCustomEvent('update:backgroundColor', newColor);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       background_color: newColor,
-    });
+    }]]);
   });
 
-  test('Shapes changed after trigger flowchart', () => {
+  test('Shapes changed after trigger flowchart', async () => {
     const shapes = keyBy([rectShape, lineShape], '_id');
 
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
-    const flowchart = selectFlowchart(wrapper);
+    selectFlowchart(wrapper).vm.$emit('update:shapes', shapes);
+    await wrapper.vm.$nextTick();
 
-    flowchart.triggerCustomEvent('input', shapes);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       shapes,
-    });
+    }]]);
   });
 
-  test('Linked point removed when shape removed', () => {
+  test('Linked point removed when shape removed', async () => {
     const shapes = keyBy([rectShape, lineShape], '_id');
 
     const firstPoint = { _id: 'point-1', x: 12, y: 32 };
@@ -99,7 +117,7 @@ describe('flowchart-editor', () => {
     const points = [firstPoint, secondPoint];
 
     const wrapper = factory({
-      propsData: {
+      props: {
         form: {
           ...initialForm,
           points,
@@ -110,67 +128,58 @@ describe('flowchart-editor', () => {
 
     const newShapes = { [lineShape._id]: lineShape };
 
-    const flowchart = selectFlowchart(wrapper);
+    selectFlowchart(wrapper).vm.$emit('update:shapes', newShapes);
+    await wrapper.vm.$nextTick();
 
-    flowchart.triggerCustomEvent('input', newShapes);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       points: [firstPoint],
       shapes: newShapes,
-    });
+    }]]);
   });
 
-  test('Points changed after trigger points editor', () => {
+  test('Points changed after trigger points editor', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
     const newPoints = [flowchartPointToForm()];
 
-    const flowchartPointsEditor = selectFlowchartPointsEditor(wrapper);
+    selectFlowchartPointsEditor(wrapper).vm.$emit('input', newPoints);
+    await wrapper.vm.$nextTick();
 
-    flowchartPointsEditor.triggerCustomEvent('input', newPoints);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       points: newPoints,
-    });
+    }]]);
   });
 
   test('Add on click mode enabled after trigger add location btn', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
-    const addLocationBtn = selectAddLocationBtn(wrapper);
+    selectAddLocationBtn(wrapper).vm.$emit('input', true);
+    await wrapper.vm.$nextTick();
 
-    await addLocationBtn.triggerCustomEvent('input', true);
-
-    const flowchartPointsEditor = selectFlowchartPointsEditor(wrapper);
-
-    expect(flowchartPointsEditor.vm.addOnClick).toBeTruthy();
+    expect(selectFlowchartPointsEditor(wrapper).props('addOnClick')).toBe(true);
   });
 
   test('Form re-validated after change form with error', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         name: 're-validate-name',
         form: initialForm,
       },
     });
 
-    const validator = wrapper.getValidator();
+    expect(selectRequiredField(wrapper).props('valid')).toBe(false);
 
-    await validator.validateAll();
-
-    expect(validator.errors.items).toHaveLength(1);
-
-    wrapper.setProps({
+    await wrapper.setProps({
       form: {
         ...initialForm,
         code: 'flowchart-code',
@@ -180,6 +189,6 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(validator.errors.items).toHaveLength(0);
+    expect(selectRequiredField(wrapper).props('valid')).toBe(true);
   });
 });

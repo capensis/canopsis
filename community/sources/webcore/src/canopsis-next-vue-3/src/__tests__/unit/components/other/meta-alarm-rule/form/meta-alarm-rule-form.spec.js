@@ -1,96 +1,98 @@
-import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
-import { createMockedStoreModules, createEntityInfoPropertyModule } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
-import Faker from 'faker';
+
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
 const stubs = {
-  'c-enabled-field': true,
-  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
-  'meta-alarm-rule-general-form': true,
-  'meta-alarm-rule-parameters-form': true,
+  'c-enabled-field': {
+    name: 'CEnabledField',
+    emits: ['update:modelValue'],
+    template: '<div />',
+  },
+  'c-form-general-patterns-tabs': {
+    name: 'CFormGeneralPatternsTabs',
+    props: ['form', 'ruleId', 'type'],
+    template: `
+      <div>
+        <slot name="general" :set-ref="() => {}" />
+        <slot name="patterns" :set-ref="() => {}" />
+      </div>
+    `,
+  },
+  'meta-alarm-rule-general-form': {
+    name: 'MetaAlarmRuleGeneralForm',
+    props: ['disabledIdField'],
+    template: '<div />',
+  },
+  'meta-alarm-rule-parameters-form': {
+    name: 'MetaAlarmRuleParametersForm',
+    template: '<div />',
+  },
 };
 
-const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
-const selectMetaAlarmRuleGeneralForm = wrapper => wrapper.find('meta-alarm-rule-general-form-stub');
+const selectEnabledField = wrapper => wrapper.findComponent({ name: 'CEnabledField' });
+const selectTabs = wrapper => wrapper.findComponent({ name: 'CFormGeneralPatternsTabs' });
+const selectMetaAlarmRuleGeneralForm = wrapper =>
+  wrapper.findComponent({ name: 'MetaAlarmRuleGeneralForm' });
 const selectMetaAlarmRuleParametersForm = wrapper =>
-  wrapper.find('meta-alarm-rule-parameters-form-stub');
+  wrapper.findComponent({ name: 'MetaAlarmRuleParametersForm' });
 
 describe('meta-alarm-rule-form', () => {
   const form = metaAlarmRuleToForm();
-
-  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
-
-  const store = createMockedStoreModules([entityInfoPropertyModule]);
 
   const factory = generateShallowRenderer(MetaAlarmRuleForm, { stubs });
 
   test('General form is rendered in general tab', () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
-      store,
     });
 
     expect(selectMetaAlarmRuleGeneralForm(wrapper).exists()).toBe(true);
   });
 
-  test('Enabled changed after trigger enabled field', () => {
+  test('Enabled changed after trigger enabled field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
       },
-      store,
     });
 
-    selectEnabledField(wrapper).triggerCustomEvent('input', false);
+    selectEnabledField(wrapper).vm.$emit('update:modelValue', false);
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper).toEmitInput({
-      ...form,
-      enabled: false,
-    });
+    expect(globalThis.__TEST_FORM__.getValue('enabled')).toBe(false);
   });
 
-  test('General fields updated after trigger general form', async () => {
+  test('Disabled ID state forwarded to general form', () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
+        disabledIdField: true,
       },
-      store,
     });
 
-    const newFields = {
-      ...form,
-      name: Faker.datatype.string(),
-      output_template: Faker.datatype.string(),
-    };
-
-    await selectMetaAlarmRuleGeneralForm(wrapper).triggerCustomEvent('input', newFields);
-
-    expect(wrapper).toEmitInput(newFields);
+    expect(selectMetaAlarmRuleGeneralForm(wrapper).props('disabledIdField')).toBe(true);
   });
 
-  test('Parameters changed after trigger parameters form', () => {
+  test('Tabs receive form context, rule ID and test type', () => {
+    const ruleId = 'rule-id';
     const wrapper = factory({
-      propsData: {
+      props: {
         form,
+        ruleId,
       },
-      store,
     });
 
-    const newFields = {
-      ...form,
-      patterns: {
-        alarm_pattern: {},
-      },
-    };
-
-    selectMetaAlarmRuleParametersForm(wrapper).triggerCustomEvent('input', newFields);
-
-    expect(wrapper).toEmitInput(newFields);
+    expect(selectTabs(wrapper).props()).toMatchObject({
+      form,
+      ruleId,
+      type: TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule,
+    });
+    expect(selectMetaAlarmRuleParametersForm(wrapper).exists()).toBe(true);
   });
 });

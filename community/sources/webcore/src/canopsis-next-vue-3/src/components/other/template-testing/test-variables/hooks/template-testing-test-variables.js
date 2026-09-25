@@ -33,22 +33,68 @@ import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
  * Extracts template validation errors belonging to the rule form.
  *
  * @param {*} errors
+ * @param {Object} [form={}] Rule form containing stable keys for array items.
  * @returns {Object<string, string|string[]>}
  */
-export const getTemplateRuleValidationErrors = errors =>
-  Object.entries(getServerFieldErrors(errors)).reduce(
-    (result, [key, value]) => {
-      if (!key.startsWith('rule.')) {
-        return result;
-      }
+export const getTemplateRuleValidationErrors = (errors, form = {}) =>
+  Object.entries(getServerFieldErrors(errors)).reduce((result, [key, value]) => {
+    if (!key.startsWith('rule.')) {
+      return result;
+    }
 
-      return {
-        ...result,
-        [key.replace('rule.', '')]: value,
-      };
-    },
-    {},
-  );
+    const field = key
+      .slice('rule.'.length)
+      .split('.')
+      .reduce(
+        ({ path, value: formValue }, segment) => {
+          if (Array.isArray(formValue) && /^\d+$/.test(segment)) {
+            const item = formValue[Number(segment)];
+
+            return {
+              path: [...path, item?.key ?? segment],
+              value: item,
+            };
+          }
+
+          return {
+            path: [...path, segment],
+            value: formValue?.[segment],
+          };
+        },
+        { path: [], value: unref(form) },
+      )
+      .path.join('.');
+
+    return {
+      ...result,
+      [field]: value,
+    };
+  }, {});
+
+/**
+ * Maps template validation result errors to registered template field names.
+ *
+ * `resultKey` is the API response key for fields whose form path differs from
+ * the result path. Only configured template fields are returned.
+ *
+ * @param {Object} [result={}] Template validation result.
+ * @param {TemplateTestingTestValidateForm} [fields=[]] Configured template fields.
+ * @returns {Object<string, string>}
+ */
+export const getTemplateFieldsValidationErrors = (result = {}, fields = []) =>
+  fields.reduce((errors, field) => {
+    const resultKey = field.resultKey ?? field.key;
+    const error = result[resultKey]?.err;
+
+    if (!error) {
+      return errors;
+    }
+
+    return {
+      ...errors,
+      [`templateTesting.${resultKey}`]: `${error.line}|${error.message}`,
+    };
+  }, {});
 
 /**
  * Hook for managing template testing validation form
@@ -171,11 +217,11 @@ export const useTemplateTestingValidationForm = (props) => {
   };
 
   /**
-   * Resets last run variables by replacing all values with unique symbols
+   * Resets last run variables with a non-string value so every template is marked as not run.
    */
   const resetLastRunVariables = () => {
     lastRunVariables.value = Object.fromEntries(
-      Object.keys(lastRunVariables.value).map(key => [key, Symbol('lastRunVariables')]),
+      Object.keys(lastRunVariables.value).map(key => [key, null]),
     );
   };
 
@@ -230,8 +276,8 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
     };
 
     const isValid = await Promise.all([
-      validateFormContext(testFormContext),
-      validateFormContext(testDataFormContext),
+      testFormContext.validateForSubmit(),
+      testDataFormContext.validateForSubmit(),
     ]).then(results => results.every(Boolean));
 
     if (!isValid) {
@@ -258,10 +304,10 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
    *
    * @param {Function} getValidationFormData - Function to get validation form data
    * @param {Function} [onTestCreated] - Optional callback when test is created
-   * @returns {Promise<void>}
-   */
+  * @returns {Promise<void>}
+  */
   const saveAsNew = async (getValidationFormData, onTestCreated) => {
-    const isValid = await validateFormContext(testDataFormContext);
+    const isValid = await testDataFormContext.validateForSubmit();
 
     if (!isValid) {
       return;
@@ -424,13 +470,9 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
           },
         });
 
-        Object.entries(testResult.value).forEach(([key, { err }]) => {
-          if (!err) {
-            return;
-          }
-
-          unref(testDataFormContext)?.addError?.(key, `${err.line}|${err.message}`);
-        });
+        unref(testDataFormContext)?.setFormErrors?.(
+          getTemplateFieldsValidationErrors(testResult.value, props.variablesFields),
+        );
 
         const newLastRunVariables = props.variablesFields.reduce((acc, field) => {
           const { key } = field;
@@ -444,7 +486,7 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
           onLastRunVariablesChange(newLastRunVariables);
         }
       } catch (err) {
-        const mainFormErrors = getTemplateRuleValidationErrors(err);
+        const mainFormErrors = getTemplateRuleValidationErrors(err, props.generalForm);
 
         if (!isEmpty(mainFormErrors) && onValidationStateChange) {
           onValidationStateChange(false);

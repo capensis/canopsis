@@ -1,14 +1,14 @@
 <template>
   <v-card class="text-subtitle-1">
     <v-card-text>
-      <c-layout wrap>
-        <div class="scenario-action-card__number pt-2">
+      <v-row class="flex-grow-0" no-gutters>
+        <v-col class="pt-2" cols="1">
           <v-avatar class="text-white mr-2" color="primary" size="32">
             {{ actionNumber }}
           </v-avatar>
           <c-expand-btn v-model="expanded" />
-        </div>
-        <div class="scenario-action-card__content">
+        </v-col>
+        <v-col cols="11">
           <scenario-info-item
             :label="$t('common.type')"
             :value="action.type"
@@ -36,19 +36,27 @@
                   <scenario-action-card-general-tab :action="action" />
                 </v-window-item>
                 <v-window-item :value="1">
-                  <pre class="scenario-action-card__patterns">{{ patterns }}
-</pre>
+                  <c-patterns-field
+                    :value="patterns"
+                    with-alarm
+                    with-entity
+                    readonly
+                  />
                 </v-window-item>
               </v-window>
             </c-layout>
           </v-expand-transition>
-        </div>
-      </c-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import { PATTERNS_FIELDS } from '@/constants';
+
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
+
 import ScenarioActionCardGeneralTab from './scenario-action-card-general-tab.vue';
 import ScenarioInfoItem from './scenario-info-item.vue';
 
@@ -75,33 +83,13 @@ export default {
 
   computed: {
     patterns() {
-      return JSON.stringify(
-        {
-          alarm_pattern: this.action.alarm_pattern,
-          entity_pattern: this.action.entity_pattern,
-        },
-        null,
-        2,
-      );
+      return filterPatternsToForm(this.action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.scenario-action-card__number {
-  width: 8.333333%;
-}
-
-.scenario-action-card__content {
-  width: 91.666667%;
-}
-
-.scenario-action-card__patterns {
-  margin: 0;
-  white-space: pre-wrap;
-}
-
 .scenario-info-type :deep(.v-list-item) {
   min-height: 30px;
 }
