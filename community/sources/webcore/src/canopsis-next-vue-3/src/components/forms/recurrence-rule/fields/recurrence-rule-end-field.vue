@@ -31,6 +31,7 @@
           <c-number-field
             :value="modelValue.count"
             :disabled="!isAfterType"
+            :min="1"
             :required="isAfterType"
             class="recurrence-rule-end-field__count"
             name="count"

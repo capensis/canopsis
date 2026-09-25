@@ -12,9 +12,10 @@
     @add="addStep"
     @update:value="stepsField = $event"
   >
-    <template #item="{ index }">
+    <template #item="{ index, item: step }">
       <remediation-instruction-step-field
         :step="stepsField[index]"
+        :name="`${name}.${step.key}`"
         :step-number="index + 1"
         :disabled="disabled"
         :template-vars="templateVars"

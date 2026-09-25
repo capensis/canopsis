@@ -1,6 +1,6 @@
 <template>
-  <c-layout gap="2">
-    <div :style="flexSizeStyle">
+  <v-row class="flex-grow-0" density="compact">
+    <v-col :cols="hasParameterField ? 4 : 6">
       <c-select
         :model-value="value.type"
         :label="$t('request.whereToAdd')"
@@ -12,8 +12,8 @@
         item-value="value"
         @update:model-value="updateField('type', $event)"
       />
-    </div>
-    <div v-if="hasParameterField" :style="flexSizeStyle">
+    </v-col>
+    <v-col v-if="hasParameterField" cols="4">
       <c-text-field
         :model-value="value.parameter"
         :label="$t('request.parameterName')"
@@ -22,8 +22,8 @@
         :required="required"
         @update:model-value="updateField('parameter', $event)"
       />
-    </div>
-    <div :style="flexSizeStyle">
+    </v-col>
+    <v-col :cols="hasParameterField ? 4 : 6">
       <external-auth-token-field
         :value="value.rule"
         :label="$t('request.tokenValue')"
@@ -32,16 +32,14 @@
         :required="required"
         @update:value="updateField('rule', $event)"
       />
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import { computed } from 'vue';
 
 import { REQUEST_AUTH_TOKEN_TYPES } from '@/constants';
-
-import { gridFlexStyle } from '@/helpers/layout';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
@@ -96,8 +94,6 @@ export default {
       () => isHeaderCustomParameterType.value || isPayloadType.value || isUrlType.value,
     );
 
-    const flexSizeStyle = computed(() => gridFlexStyle(hasParameterField.value ? 4 : 6));
-
     return {
       types,
       isAnyHeaderAuthorizationType,
@@ -105,7 +101,6 @@ export default {
       isPayloadType,
       isUrlType,
       hasParameterField,
-      flexSizeStyle,
       updateField,
     };
   },

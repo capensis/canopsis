@@ -46,8 +46,10 @@
               key="value"
               :model-value="action.value"
               :label="$t('common.value')"
-              :name="valueFieldName"
+              :name="`${name}.value`"
               :prefix="eventExtraPrefix"
+              class="event-filter-enrichment-action-field__dictionary-value"
+              active
               clearable
               required
               @update:model-value="updateField('value', $event)"
@@ -61,7 +63,7 @@
                 :model-value="action.name"
                 :items="EVENT_FILTER_SET_FIELD_ITEMS"
                 :label="$t('common.name')"
-                :name="nameFieldName"
+                :name="`${name}.name`"
                 class="mr-2"
                 required
                 @update:model-value="updateField('name', $event)"
@@ -70,7 +72,7 @@
                 v-else
                 key="name"
                 :model-value="action.name"
-                :name="nameFieldName"
+                :name="`${name}.name`"
                 class="mr-2"
                 required
                 @update:model-value="updateField('name', $event)"
@@ -83,7 +85,7 @@
                 :value="action.value"
                 :label="$t('common.value')"
                 :variables="variables"
-                :name="valueFieldName"
+                :name="`${name}.value`"
                 class="ml-2"
                 required
                 clearable
@@ -95,9 +97,11 @@
                 :model-value="action.value"
                 :label="$t('common.value')"
                 :items="copyVariables"
-                :name="valueFieldName"
+                :name="`${name}.value`"
+                :menu-props="comboboxMenuProps"
+                :return-object="false"
+                children-key="variables"
                 class="ml-2"
-                return-object
                 required
                 @update:model-value="updateCopyValue"
               />
@@ -106,7 +110,7 @@
                 key="value-tags"
                 :value="action.value"
                 :items="setTagsItems"
-                :name="valueFieldName"
+                :name="`${name}.value`"
                 @update:value="updateField('value', $event)"
               />
               <c-mixed-field
@@ -114,7 +118,7 @@
                 key="value-mixed"
                 :value="action.value"
                 :label="$t('common.value')"
-                :name="valueFieldName"
+                :name="`${name}.value`"
                 :types="mixedFieldTypes"
                 class="ml-2"
                 @update:value="updateField('value', $event)"
@@ -189,8 +193,7 @@ export default {
       { value: PATTERN_FIELD_TYPES.stringArray },
     ];
 
-    const nameFieldName = computed(() => `${props.name}.name`);
-    const valueFieldName = computed(() => `${props.name}.value`);
+    const comboboxMenuProps = { minWidth: 200 };
 
     const eventFilterActionTypes = computed(() =>
       Object.entries(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS).reduce((acc, [group, groupItems]) => {
@@ -275,8 +278,7 @@ export default {
       eventExtraPrefix,
       mixedFieldTypes,
 
-      nameFieldName,
-      valueFieldName,
+      comboboxMenuProps,
       eventFilterActionTypes,
       isSetFieldValueType,
       isStringCopyValueType,
@@ -291,3 +293,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.event-filter-enrichment-action-field__dictionary-value {
+  :deep(.v-text-field__prefix) {
+    padding-top: 20px;
+  }
+}
+</style>

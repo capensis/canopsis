@@ -10,7 +10,7 @@ export default {
   ticketUrlAndId: 'URL et ID du ticket',
   ticketURLTitle: 'Titre de l\'URL du ticket',
   ticketURLTitleHelp:
-    'TCe titre s\'affichera dans le corps de la balise de lien : <strong>&lt;a href=&quot;{URL}&quot;&gt;{TITLE}&lt;/a&gt;</strong>',
+    'TCe titre s\'affichera dans le corps de la balise de lien : <strong>&lt;a href=&quot;{\'{LINK}\'}&quot;&gt;{\'{TITLE}\'}&lt;/a&gt;</strong>',
   ticketSystemName: 'Nom du système de ticket',
   allowTicketURLTemplate: 'Autoriser les variables dans l\'URL',
   allowTicketIdTemplate: 'Autoriser les variables dans l\'ID',

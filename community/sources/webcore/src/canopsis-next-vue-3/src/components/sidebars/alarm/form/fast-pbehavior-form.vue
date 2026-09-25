@@ -3,6 +3,7 @@
     <c-card-iterator-form
       :value="modelValue"
       :handle="`.${dragHandleClass}`"
+      :name="name"
       @update:value="$emit('update:modelValue', $event)"
       @add="add"
     >
@@ -28,7 +29,7 @@
                 :model-value="modelValue[index].name_prefix"
                 :label="t('common.namePrefix')"
                 :max-length="FORM_MAX_STRING_LENGTH"
-                :name="getName(modelValue[index], 'name_prefix')"
+                :name="`${name}.${modelValue[index].key}.name_prefix`"
                 required
                 @update:model-value="updateField(index, 'name_prefix', $event)"
               />
@@ -36,7 +37,7 @@
                 :model-value="modelValue[index].type"
                 :label="t('common.type')"
                 :types="types"
-                :name="getName(modelValue[index], 'type')"
+                :name="`${name}.${modelValue[index].key}.type`"
                 independent
                 clearable
                 required
@@ -45,7 +46,7 @@
               <c-pbehavior-reason-field
                 :model-value="modelValue[index].reason"
                 :label="t('common.reason')"
-                :name="getName(modelValue[index], 'reason')"
+                :name="`${name}.${modelValue[index].key}.reason`"
                 clearable
                 required
                 @update:model-value="updateField(index, 'reason', $event)"
@@ -76,6 +77,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    name: {
+      type: String,
+      default: 'fast_pbehaviors',
+    },
   },
 
   emits: ['update:modelValue'],
@@ -92,7 +97,6 @@ export default {
 
     const add = () => addItemIntoArray(alarmListFastPbehaviorParametersItemToForm());
     const updateField = (index, field, value) => updateFieldInArrayItem(index, field, value);
-    const getName = (item, suffix) => `${item.key}${suffix}`;
 
     return {
       t,
@@ -102,7 +106,6 @@ export default {
       add,
       updateField,
       remove: removeItemFromArray,
-      getName,
     };
   },
 };

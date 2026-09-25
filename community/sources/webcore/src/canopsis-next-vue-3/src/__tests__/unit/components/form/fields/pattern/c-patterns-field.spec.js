@@ -21,11 +21,15 @@ const {
   fetchOptimizeEntitiesStatus,
   updateOptimization,
   removeOptimization,
+  checkPatternsEntitiesCount,
+  checkPatternsAlarmsCount,
 } = vi.hoisted(() => ({
   optimizeEntities: vi.fn().mockResolvedValue({}),
   fetchOptimizeEntitiesStatus: vi.fn().mockResolvedValue({}),
   updateOptimization: vi.fn().mockResolvedValue({}),
   removeOptimization: vi.fn().mockResolvedValue({}),
+  checkPatternsEntitiesCount: vi.fn().mockResolvedValue({}),
+  checkPatternsAlarmsCount: vi.fn().mockResolvedValue({}),
 }));
 
 vi.mock('@/hooks/store/modules/pattern-entities-optimize', () => ({
@@ -34,6 +38,13 @@ vi.mock('@/hooks/store/modules/pattern-entities-optimize', () => ({
     fetchOptimizeEntitiesStatus,
     updateOptimization,
     removeOptimization,
+  }),
+}));
+
+vi.mock('@/hooks/store/modules/pattern', () => ({
+  usePattern: () => ({
+    checkPatternsEntitiesCount,
+    checkPatternsAlarmsCount,
   }),
 }));
 
@@ -59,6 +70,11 @@ const stubs = {
     template: '<pattern-progress-stub />',
   },
   'pattern-suggestions': true,
+  'pattern-count-message': {
+    name: 'PatternCountMessage',
+    props: ['errorMessage', 'alarmCounter', 'entityCounter'],
+    template: '<pattern-count-message-stub />',
+  },
   'pattern-field-suggestions-wrapper': {
     name: 'PatternFieldSuggestionsWrapper',
     props: [
@@ -83,6 +99,8 @@ const selectTryOptimization = wrapper =>
 const selectOptimizationProgress = wrapper => wrapper.findComponent({ name: 'PatternProgress' });
 const selectPatternFieldSuggestionsWrapper = wrapper =>
   wrapper.findComponent({ name: 'PatternFieldSuggestionsWrapper' });
+const selectPatternCountMessage = wrapper =>
+  wrapper.findComponent({ name: 'PatternCountMessage' });
 
 const createPatternWithRegexpInfos = () => {
   const entityPattern = patternToForm({
@@ -128,10 +146,14 @@ describe('c-patterns-field', () => {
     fetchOptimizeEntitiesStatus.mockReset();
     updateOptimization.mockReset();
     removeOptimization.mockReset();
+    checkPatternsEntitiesCount.mockReset();
+    checkPatternsAlarmsCount.mockReset();
     optimizeEntities.mockResolvedValue({});
     fetchOptimizeEntitiesStatus.mockResolvedValue({});
     updateOptimization.mockResolvedValue({});
     removeOptimization.mockResolvedValue({});
+    checkPatternsEntitiesCount.mockResolvedValue({});
+    checkPatternsAlarmsCount.mockResolvedValue({});
   });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
@@ -192,6 +214,33 @@ describe('c-patterns-field', () => {
       ...patterns,
       entity_pattern: entityPattern,
     });
+  });
+
+  test('Shows the total entity count after checking a newly added entity pattern', async () => {
+    const combined = { count: 12, ms: 5 };
+    checkPatternsEntitiesCount.mockResolvedValue({ combined });
+
+    const wrapper = factory({
+      propsData: {
+        value: filterPatternsToForm(),
+        withEntity: true,
+        entityCountersType: true,
+        someRequired: true,
+      },
+    });
+
+    expect(selectPatternCountMessage(wrapper).props('errorMessage')).toBe(
+      'Add at least one pattern',
+    );
+
+    await wrapper.setProps({ value: createPatternWithRegexpInfos() });
+    await wrapper.vm.checkFilter();
+    await flushPromises();
+
+    const countMessage = selectPatternCountMessage(wrapper);
+
+    expect(countMessage.props('errorMessage')).toBeUndefined();
+    expect(countMessage.props('entityCounter')).toEqual(combined);
   });
 
   test('Pbehavior pattern changed after trigger pbehavior patterns field', () => {

@@ -1,26 +1,27 @@
 <template>
   <div class="service-weather-widget pa-2">
-    <c-layout
+    <v-row
       v-if="hasAccessToCategory || hasAccessToUserFilter"
-      class="service-weather-widget__filters mx-1 mb-2"
+      class="service-weather-widget__filters mx-1 mb-2 flex-grow-0"
       align="center"
-      wrap
+      no-gutters
     >
-      <div
+      <v-col
         v-if="hasAccessToCategory"
-        class="service-weather-widget__filter-cell service-weather-widget__filter-cell--category"
+        class="service-weather-widget__filter-cell"
+        cols="3"
       >
         <c-entity-category-field
           :category="query.category"
           class="mr-3"
           @update:category="updateCategory"
         />
-      </div>
+      </v-col>
 
-      <c-layout
+      <v-col
         v-if="hasAccessToUserFilter || isHideGrayEnabled"
-        align="center"
-        class="service-weather-widget__filter-cell service-weather-widget__filter-cell--user"
+        class="service-weather-widget__filter-cell d-flex align-center"
+        cols="5"
       >
         <template v-if="hasAccessToUserFilter">
           <filter-selector
@@ -55,8 +56,8 @@
           no-margin
           @update:model-value="updateHideGray"
         />
-      </c-layout>
-    </c-layout>
+      </v-col>
+    </v-row>
 
     <v-fade-transition v-if="servicesPending" mode="out-in">
       <v-progress-linear
@@ -382,16 +383,6 @@ export default {
 .service-weather-widget {
   &__filter-cell {
     min-width: 0;
-  }
-
-  &__filter-cell--category {
-    flex: 0 0 25%;
-    max-width: 25%;
-  }
-
-  &__filter-cell--user {
-    flex: 0 0 41.6667%;
-    max-width: 41.6667%;
 
     :deep(.filter-selector) {
       flex: 1 1 auto;

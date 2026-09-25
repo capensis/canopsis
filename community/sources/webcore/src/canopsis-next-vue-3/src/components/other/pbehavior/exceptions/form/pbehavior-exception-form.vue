@@ -10,7 +10,7 @@
     />
 
     <c-form-block>
-      <c-form-block-row :label="t('modals.createPbehaviorException.fields.description')">
+      <c-form-block-row :label="t('modals.createPbehaviorException.fields.description')" indented>
         <c-description-field v-model="description" name="description" required />
       </c-form-block-row>
 

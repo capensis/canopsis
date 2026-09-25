@@ -8,6 +8,7 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
 import {
+  DYNAMIC_INFO_INFORMATION_TYPES,
   FORM_GENERAL_PATTERNS_TABS,
   TEMPLATE_TESTING_TEST_TYPES,
   USER_PERMISSIONS,
@@ -190,6 +191,30 @@ describe('c-form-general-patterns-tabs', () => {
 
     expect(wrapper.find('template-testing-test-variables-tab-stub').exists()).toBe(true);
     expect(wrapper.find('template-testing-test-variables-stub').exists()).toBe(true);
+  });
+
+  test('Template Studio fields update the provided form context', () => {
+    const form = {
+      infos: [
+        {
+          key: 'dynamic-info-key',
+          type: DYNAMIC_INFO_INFORMATION_TYPES.setToInfoFromTemplate,
+          value: 'old template',
+        },
+      ],
+    };
+    const wrapper = factory({
+      store: createStore(),
+      propsData: {
+        type: TEMPLATE_TESTING_TEST_TYPES.dynamicInfo,
+        form,
+      },
+      slots: defaultSlots,
+    });
+
+    wrapper.vm.variablesFields[0].updateField('new template');
+
+    expect(globalThis.__TEST_FORM__.values.value.infos[0].value).toBe('new template');
   });
 
   test('Visible tabs contain expected tab ids', () => {

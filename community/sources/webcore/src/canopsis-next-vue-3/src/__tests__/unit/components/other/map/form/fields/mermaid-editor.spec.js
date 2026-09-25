@@ -9,17 +9,41 @@ import { mermaidPointToForm } from '@/helpers/entities/map/form';
 import MermaidEditor from '@/components/other/map/form/fields/mermaid-editor.vue';
 
 const stubs = {
-  'mermaid-code-editor': true,
-  'add-location-btn': true,
-  'mermaid-theme-field': true,
+  'mermaid-code-editor': {
+    name: 'MermaidCodeEditor',
+    emits: ['input'],
+    template: '<div />',
+  },
+  'add-location-btn': {
+    name: 'AddLocationBtn',
+    emits: ['input'],
+    template: '<div />',
+  },
+  'mermaid-theme-field': {
+    name: 'MermaidThemeField',
+    emits: ['input'],
+    template: '<div />',
+  },
   'mermaid-code-preview': true,
-  'mermaid-points-editor': true,
+  'mermaid-points-editor': {
+    name: 'MermaidPointsEditor',
+    props: ['value', 'addOnClick'],
+    emits: ['input'],
+    template: '<div />',
+  },
+  'map-editor-required-field': {
+    name: 'MapEditorRequiredField',
+    props: ['valid', 'message', 'name'],
+    template: '<div><slot :has-error="!valid" :messages="[message]" /></div>',
+  },
+  'v-messages': true,
 };
 
-const selectMermaidCodeEditor = wrapper => wrapper.find('mermaid-code-editor-stub');
-const selectAddLocationBtn = wrapper => wrapper.find('add-location-btn-stub');
-const selectMermaidThemeField = wrapper => wrapper.find('mermaid-theme-field-stub');
-const selectMermaidPoints = wrapper => wrapper.find('mermaid-points-editor-stub');
+const selectMermaidCodeEditor = wrapper => wrapper.findComponent({ name: 'MermaidCodeEditor' });
+const selectAddLocationBtn = wrapper => wrapper.findComponent({ name: 'AddLocationBtn' });
+const selectMermaidThemeField = wrapper => wrapper.findComponent({ name: 'MermaidThemeField' });
+const selectMermaidPoints = wrapper => wrapper.findComponent({ name: 'MermaidPointsEditor' });
+const selectRequiredField = wrapper => wrapper.findComponent({ name: 'MapEditorRequiredField' });
 
 describe('mermaid-editor', () => {
   const initialForm = {
@@ -30,94 +54,84 @@ describe('mermaid-editor', () => {
 
   const factory = generateShallowRenderer(MermaidEditor, { stubs });
 
-  test('Code changed after trigger code editor', () => {
+  test('Code changed after trigger code editor', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
     const newCode = Faker.datatype.string();
 
-    const mermaidCodeEditor = selectMermaidCodeEditor(wrapper);
+    selectMermaidCodeEditor(wrapper).vm.$emit('input', newCode);
+    await wrapper.vm.$nextTick();
 
-    mermaidCodeEditor.triggerCustomEvent('input', newCode);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       code: newCode,
-    });
+    }]]);
   });
 
-  test('Theme changed after trigger theme field', () => {
+  test('Theme changed after trigger theme field', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
     const newTheme = MERMAID_THEMES.canopsis;
 
-    const mermaidThemeField = selectMermaidThemeField(wrapper);
+    selectMermaidThemeField(wrapper).vm.$emit('input', newTheme);
+    await wrapper.vm.$nextTick();
 
-    mermaidThemeField.triggerCustomEvent('input', newTheme);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       theme: newTheme,
-    });
+    }]]);
   });
 
-  test('Points changed after trigger points editor', () => {
+  test('Points changed after trigger points editor', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
     const newPoints = [mermaidPointToForm()];
 
-    const mermaidPoints = selectMermaidPoints(wrapper);
+    selectMermaidPoints(wrapper).vm.$emit('input', newPoints);
+    await wrapper.vm.$nextTick();
 
-    mermaidPoints.triggerCustomEvent('input', newPoints);
-
-    expect(wrapper).toEmitInput({
+    expect(wrapper.emitted('update:form')).toEqual([[{
       ...initialForm,
       points: newPoints,
-    });
+    }]]);
   });
 
   test('Add on click mode enabled after trigger add location btn', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         form: initialForm,
       },
     });
 
-    const addLocationBtn = selectAddLocationBtn(wrapper);
+    selectAddLocationBtn(wrapper).vm.$emit('input', true);
+    await wrapper.vm.$nextTick();
 
-    await addLocationBtn.triggerCustomEvent('input', true);
-
-    const mermaidPoints = selectMermaidPoints(wrapper);
-
-    expect(mermaidPoints.vm.addOnClick).toBeTruthy();
+    expect(selectMermaidPoints(wrapper).props('addOnClick')).toBe(true);
   });
 
   test('Form re-validated after change form with error', async () => {
     const wrapper = factory({
-      propsData: {
+      props: {
         name: 're-validate-name',
         form: initialForm,
       },
     });
 
-    const validator = wrapper.getValidator();
+    expect(selectRequiredField(wrapper).props('valid')).toBe(false);
 
-    await validator.validateAll();
-
-    expect(validator.errors.items).toHaveLength(1);
-
-    wrapper.setProps({
+    await wrapper.setProps({
       form: {
         ...initialForm,
         code: 'mermaid-code',
@@ -127,6 +141,6 @@ describe('mermaid-editor', () => {
 
     await flushPromises();
 
-    expect(validator.errors.items).toHaveLength(0);
+    expect(selectRequiredField(wrapper).props('valid')).toBe(true);
   });
 });

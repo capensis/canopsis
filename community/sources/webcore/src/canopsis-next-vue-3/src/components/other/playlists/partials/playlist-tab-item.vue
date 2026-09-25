@@ -1,15 +1,15 @@
 <template>
-  <c-layout class="playlist-tab-item">
-    <div class="playlist-tab-item__cell playlist-tab-item__cell--group">
+  <v-row class="playlist-tab-item flex-grow-0" no-gutters>
+    <v-col class="playlist-tab-item__cell playlist-tab-item__cell--group" cols="4">
       <span class="playlist-tab-item__text">{{ group.title }}</span>
-    </div>
-    <div class="playlist-tab-item__cell playlist-tab-item__cell--view">
+    </v-col>
+    <v-col class="playlist-tab-item__cell playlist-tab-item__cell--view" cols="4">
       <span class="playlist-tab-item__text">{{ view.title }}</span>
-    </div>
-    <div class="playlist-tab-item__cell playlist-tab-item__cell--tab">
+    </v-col>
+    <v-col class="playlist-tab-item__cell playlist-tab-item__cell--tab" cols="4">
       <span class="playlist-tab-item__text">{{ tab.title }}</span>
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -41,7 +41,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 33.333%;
   min-width: 0;
   padding: 12px 28px;
   border: 1px solid var(--v-application-background-darken2);

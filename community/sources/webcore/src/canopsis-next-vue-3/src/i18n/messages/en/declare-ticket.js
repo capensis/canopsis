@@ -9,7 +9,7 @@ export default {
   ticketUrlAndId: 'Ticket URL and ID',
   ticketURLTitle: 'Ticket URL title',
   ticketURLTitleHelp:
-    'This title will display in the body of link tag: <strong>&lt;a href=&quot;{URL}&quot;&gt;{TITLE}&lt;/a&gt;</strong>',
+    'This title will display in the body of link tag: <strong>&lt;a href=&quot;{\'{LINK}\'}&quot;&gt;{\'{TITLE}\'}&lt;/a&gt;</strong>',
   ticketSystemName: 'Ticket system name',
   allowTicketURLTemplate: 'Allow variables in the URL',
   allowTicketIdTemplate: 'Allow variables in the ID',

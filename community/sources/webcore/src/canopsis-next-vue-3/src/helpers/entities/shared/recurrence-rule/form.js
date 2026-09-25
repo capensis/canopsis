@@ -58,6 +58,46 @@ const prepareRecurrenceRuleOption = (value) => {
 };
 
 /**
+ * Converts an RRULE list option into the array shape expected by form fields.
+ * The rrule parser returns a scalar for a list containing one value.
+ *
+ * @param {*} value
+ * @returns {Array}
+ */
+const recurrenceRuleArrayOptionToForm = (value) => {
+  if (isNil(value)) {
+    return [];
+  }
+
+  return isArray(value) ? value : [value];
+};
+
+const RECURRENCE_ADVANCED_FIELD_NAMES = [
+  'wkst',
+  'byweekday',
+  'bymonth',
+  'bysetpos',
+  'byyearday',
+  'bymonthday',
+  'byweekno',
+  'byhour',
+  'byminute',
+  'bysecond',
+];
+
+const isRecurrenceRuleOptionFilled = value =>
+  isArray(value) ? value.length > 0 : !isNil(value) && value !== '';
+
+/**
+ * Checks whether the recurrence rule contains advanced options.
+ *
+ * @param {RecurrenceRuleOptions|RecurrenceRuleFormOptions} options
+ * @returns {boolean}
+ */
+export const hasRecurrenceRuleAdvancedOptions = (options = {}) =>
+  RECURRENCE_ADVANCED_FIELD_NAMES.some(field => isRecurrenceRuleOptionFilled(options[field]));
+
+/**
  * Prepare rrule options to form
  *
  * @param {RecurrenceRuleOptions} recurrenceRule
@@ -65,12 +105,12 @@ const prepareRecurrenceRuleOption = (value) => {
  */
 export const recurrenceRuleToFormOptions = recurrenceRule => ({
   freq: recurrenceRule.freq || null,
-  count: recurrenceRule.count || '',
+  count: recurrenceRule.count > 0 ? recurrenceRule.count : '',
   interval: recurrenceRule.interval || '',
   until: recurrenceRule.until,
   byweekday: recurrenceRule.byweekday ? recurrenceRule.byweekday.map(v => v.weekday) : [],
   wkst: recurrenceRule.wkst ? recurrenceRule.wkst.weekday : '',
-  bymonth: recurrenceRule.bymonth || [],
+  bymonth: recurrenceRuleArrayOptionToForm(recurrenceRule.bymonth),
   bysetpos: prepareRecurrenceRuleOption(recurrenceRule.bysetpos),
   bymonthday: prepareRecurrenceRuleOption(recurrenceRule.bymonthday),
   byyearday: prepareRecurrenceRuleOption(recurrenceRule.byyearday),
@@ -78,6 +118,7 @@ export const recurrenceRuleToFormOptions = recurrenceRule => ({
   byhour: prepareRecurrenceRuleOption(recurrenceRule.byhour),
   byminute: prepareRecurrenceRuleOption(recurrenceRule.byminute),
   bysecond: prepareRecurrenceRuleOption(recurrenceRule.bysecond),
+  advancedEnabled: hasRecurrenceRuleAdvancedOptions(recurrenceRule),
 });
 
 /**
@@ -88,29 +129,21 @@ export const recurrenceRuleToFormOptions = recurrenceRule => ({
  * @return {RecurrenceRuleOptions}
  */
 export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = []) => {
+  const advancedEnabled = options.advancedEnabled !== false;
   const recurrenceRuleOptions = {
     freq: options.freq,
-    ...mapValues(pick(options, advancedFields), o => o.split(',').filter(v => v)),
+    ...mapValues(
+      pick(options, advancedEnabled ? advancedFields : []),
+      o => o.split(',').filter(v => v),
+    ),
   };
 
-  if (isNumber(options.count)) {
+  if (isNumber(options.count) && options.count > 0) {
     recurrenceRuleOptions.count = options.count;
   }
 
   if (isNumber(options.interval)) {
     recurrenceRuleOptions.interval = options.interval;
-  }
-
-  if (options.freq !== RRule.YEARLY && options.byweekday.length) {
-    recurrenceRuleOptions.byweekday = options.byweekday;
-  }
-
-  if (options.bymonth.length) {
-    recurrenceRuleOptions.bymonth = options.bymonth;
-  }
-
-  if (isNumber(options.wkst)) {
-    recurrenceRuleOptions.wkst = options.wkst;
   }
 
   if (options.until) {
@@ -121,6 +154,20 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
       options.until.getHours(),
       options.until.getMinutes(),
     );
+  }
+
+  if (advancedEnabled) {
+    if (options.freq !== RRule.YEARLY && options.byweekday?.length) {
+      recurrenceRuleOptions.byweekday = options.byweekday;
+    }
+
+    if (options.bymonth?.length) {
+      recurrenceRuleOptions.bymonth = options.bymonth;
+    }
+
+    if (isNumber(options.wkst)) {
+      recurrenceRuleOptions.wkst = options.wkst;
+    }
   }
 
   return recurrenceRuleOptions;
@@ -195,8 +242,11 @@ export const normalizeRruleFormFieldForForm = (value) => {
     return rruleBodyStringToRecurrenceRuleFormOptions(value);
   }
 
-  if (typeof value === 'object' && 'freq' in value) {
-    return value;
+  if (value?.freq !== undefined) {
+    return {
+      ...value,
+      advancedEnabled: value.advancedEnabled ?? hasRecurrenceRuleAdvancedOptions(value),
+    };
   }
 
   return emptyRecurrenceRuleFormOptions();

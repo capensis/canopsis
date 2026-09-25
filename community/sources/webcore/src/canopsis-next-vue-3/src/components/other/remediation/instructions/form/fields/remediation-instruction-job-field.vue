@@ -13,7 +13,7 @@
             :loading="loading"
             :items="jobs"
             :label="t('remediation.instruction.job')"
-            :name="jobFieldName"
+            :name="`${name}.job`"
             :disabled="disabled"
             item-title="name"
             item-value="_id"
@@ -24,7 +24,8 @@
         </v-col>
         <v-col cols="12">
           <c-workflow-field
-            :model-value="job.stop_on_fail"
+          :model-value="job.stop_on_fail"
+          :name="`${name}.stop_on_fail`"
             :disabled="disabled"
             :label="t('remediation.instruction.jobWorkflow')"
             :continue-label="t('remediation.instruction.remainingJob')"
@@ -37,8 +38,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
@@ -74,11 +73,8 @@ export default {
     const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const jobFieldName = computed(() => `${props.name}.job`);
-
     return {
       t,
-      jobFieldName,
       updateField,
     };
   },

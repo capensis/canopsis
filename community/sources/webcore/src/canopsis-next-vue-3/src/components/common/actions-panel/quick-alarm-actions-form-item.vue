@@ -10,7 +10,7 @@
         :model-value="modelValue"
         :items="availableActions"
         :label="t('common.action', 1)"
-        :name="name"
+        :name="`${name}.value`"
         item-title="text"
         item-value="value"
         hide-details
