@@ -13,6 +13,7 @@
       <c-color-picker-field
         :model-value="modelValue"
         :label="colorLabel"
+        :icon="icon"
         :hide-label="!colorLabel"
         :disabled="disabled"
         justify-end
@@ -40,6 +41,10 @@ export default {
       required: false,
     },
     colorLabel: {
+      type: String,
+      default: '',
+    },
+    icon: {
       type: String,
       default: '',
     },

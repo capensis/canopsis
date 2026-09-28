@@ -1,15 +1,5 @@
 @use 'sass:math';
 
-:root {
-  --app-font-size: 14px;
-}
-
-html,
-body,
-#app {
-  font-size: var(--app-font-size);
-}
-
 p {
   margin-top: 0;
 }

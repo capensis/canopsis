@@ -21,6 +21,12 @@ import {
 const DEFAULT_TEXT_ON_LIGHT = '#000000';
 const DEFAULT_TEXT_ON_DARK = '#FFFFFF';
 
+/**
+ * Normalize a stored theme or a flat color object into a theme form.
+ *
+ * @param {Theme|Object} [theme={}] - Theme entity, theme form, or flat color map.
+ * @returns {ThemeForm}
+ */
 const getThemeForm = (theme = {}) => {
   if (theme.colors?.main) {
     return themeToForm(theme);
@@ -36,11 +42,18 @@ const getThemeForm = (theme = {}) => {
       table: flatColors.table,
       widget: flatColors.widget,
       state: flatColors.state,
+      icons: flatColors.icons,
       status: flatColors.status,
     },
   });
 };
 
+/**
+ * Build a readable text color for each state color.
+ *
+ * @param {ThemeStatesColors} state - State colors keyed by state name.
+ * @returns {Object<string, string>} Text colors keyed as `{state}-text`.
+ */
 const createStateTextColors = state =>
   Object.entries(state).reduce((acc, [key, color]) => {
     acc[`${key}-text`] = getMostReadableTextColor(color);
@@ -51,6 +64,13 @@ const createStateTextColors = state =>
 const COLOR_VARIATION_INDEXES = [1, 2, 3, 4, 5];
 const VUETIFY_PALETTE_VARIATION_KEYS = ['primary', 'secondary'];
 
+/**
+ * Build Vuetify darken and lighten palette steps for a hex color.
+ *
+ * @param {string} key - Palette color name.
+ * @param {string} value - Source color. Non-hex values produce no variations.
+ * @returns {Object<string, string>} Colors keyed as `{key}-darken-{n}` and `{key}-lighten-{n}`.
+ */
 const createPaletteColorVariations = (key, value) => {
   if (!String(value).startsWith('#')) {
     return {};
@@ -64,6 +84,14 @@ const createPaletteColorVariations = (key, value) => {
   }, {});
 };
 
+/**
+ * Build the Vuetify theme color map from CSS variables and main palette colors.
+ *
+ * @param {Object} colors
+ * @param {Object<string, string>} colors.variables - Theme CSS variables.
+ * @param {ThemeMainColors} colors.main - Main palette colors.
+ * @returns {Object<string, string>} Hex colors, including primary and secondary variations.
+ */
 const createVuetifyColors = ({ variables, main }) => {
   const vuetifyVariables = Object.fromEntries(
     Object.entries(variables).filter(([key]) => !key.startsWith('table-')),
@@ -94,6 +122,17 @@ const createVuetifyColors = ({ variables, main }) => {
   );
 };
 
+/**
+ * Build text, button, stepper, and divider variables for the active theme.
+ *
+ * @param {Object} options
+ * @param {string} options.activeColor - Color used for active controls.
+ * @param {string} options.darkBaseColor - Base color for text on dark surfaces.
+ * @param {boolean} options.isDark - Whether the theme background is dark.
+ * @param {string} options.lightBaseColor - Base color for text on light surfaces.
+ * @param {Object<string, string>} options.typeBackgroundColors - Error, warning, success, and info backgrounds.
+ * @returns {Object} Runtime theme variables.
+ */
 const createVuetifyRuntimeVariables = ({
   activeColor,
   darkBaseColor,
@@ -143,6 +182,13 @@ const createVuetifyRuntimeVariables = ({
   };
 };
 
+/**
+ * Build legacy Vuetify 2 darken and lighten CSS declarations for a hex color.
+ *
+ * @param {string} key - CSS variable name without the `--v-` prefix.
+ * @param {string} value - Source color. Non-hex values produce no variations.
+ * @returns {string[]} Declarations for hyphenated and non-hyphenated variation names.
+ */
 const createLegacyColorVariations = (key, value) => {
   if (!String(value).startsWith('#')) {
     return [];
@@ -156,6 +202,14 @@ const createLegacyColorVariations = (key, value) => {
   ]);
 };
 
+/**
+ * Join legacy `--v-*` and table `--c-*` CSS variables into one declaration string.
+ *
+ * @param {Object} variables
+ * @param {Object<string, string>} variables.themeVariables - Theme CSS variables.
+ * @param {Object} variables.runtimeVariables - Runtime text, button, and divider variables.
+ * @returns {string}
+ */
 const createLegacyCssVariables = ({ themeVariables, runtimeVariables }) => {
   const legacyThemeVariables = Object.entries(themeVariables).reduce((acc, [key, value]) => {
     if (key.startsWith('table-')) {
@@ -180,9 +234,28 @@ const createLegacyCssVariables = ({ themeVariables, runtimeVariables }) => {
   return [...legacyThemeVariables, ...legacyRuntimeVariables, ...tableCssVariables].join('');
 };
 
+/**
+ * Convert a Canopsis theme into a Vuetify theme and the legacy CSS still used by the app.
+ *
+ * @param {Theme|Object} [theme={}] - Theme entity, theme form, or flat color map.
+ * @returns {{
+ *   definition: Object,
+ *   isDark: boolean,
+ *   legacyCssVariables: string,
+ *   runtimeVariables: Object,
+ *   theme: ThemeForm,
+ * }}
+ */
 export const createCanopsisVuetifyTheme = (theme = {}) => {
   const form = getThemeForm(theme);
-  const { main, table, widget, state, status } = form.colors;
+  const {
+    main,
+    table,
+    widget,
+    state,
+    icons,
+    status,
+  } = form.colors;
   const isDark = isDarkColor(main.background);
   const stateText = createStateTextColors(state);
   const typeColors = convertTypeColors(main);
@@ -201,6 +274,7 @@ export const createCanopsisVuetifyTheme = (theme = {}) => {
       ...state,
       ...stateText,
     },
+    icons,
     status,
     applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
 

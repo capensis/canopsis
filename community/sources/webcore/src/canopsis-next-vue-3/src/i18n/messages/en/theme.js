@@ -6,6 +6,7 @@ export default {
     widgetTable: 'Widget and table colors',
     severity: 'Severity colors',
     fontSize: 'Font size',
+    extraDetails: 'Extra details',
   },
   themes: 'Themes',
   exampleText: 'Hello world!',
@@ -93,5 +94,15 @@ export default {
     major: 'Major',
 
     critical: 'Critical',
+  },
+  extraDetails: {
+    ack: 'Ack / fast ack',
+    canceled: 'Canceled',
+    children: 'Children',
+    parent: 'Parent',
+    comment: 'Comment',
+    snooze: 'Snooze',
+    tickets: 'Tickets',
+    cancel_delay: 'Cancel delay',
   },
 };

@@ -7,6 +7,7 @@
       <v-tab value="widget-table">{{ t('theme.tabs.widgetTable') }}</v-tab>
       <v-tab value="severity">{{ t('theme.tabs.severity') }}</v-tab>
       <v-tab value="font-size">{{ t('theme.tabs.fontSize') }}</v-tab>
+      <v-tab value="extra-details">{{ t('theme.tabs.extraDetails') }}</v-tab>
     </v-tabs>
 
     <v-window v-model="activeTab" :touchless="true" class="theme-form__window">
@@ -22,6 +23,9 @@
       <v-window-item value="font-size">
         <theme-font-size-form />
       </v-window-item>
+      <v-window-item value="extra-details">
+        <theme-extra-details-colors-form />
+      </v-window-item>
     </v-window>
   </div>
 </template>
@@ -32,6 +36,7 @@ import { ref } from 'vue';
 import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
+import ThemeExtraDetailsColorsForm from './theme-extra-details-colors-form.vue';
 import ThemeFontSizeForm from './theme-font-size-form.vue';
 import ThemeMainColorsForm from './theme-main-colors-form.vue';
 import ThemeSeverityColorsForm from './theme-severity-colors-form.vue';
@@ -40,6 +45,7 @@ import ThemeWidgetTableColorsForm from './theme-widget-table-colors-form.vue';
 export default {
   components: {
     ThemeFontSizeForm,
+    ThemeExtraDetailsColorsForm,
     ThemeMainColorsForm,
     ThemeSeverityColorsForm,
     ThemeWidgetTableColorsForm,

@@ -10,7 +10,7 @@ body,
 #app {
   font-family: Roboto, sans-serif;
   min-height: 100%;
-  font-size: var(--app-font-size);
+  font-size: var(--v-font-size-root, var(--app-font-size));
 }
 
 .v-application {
