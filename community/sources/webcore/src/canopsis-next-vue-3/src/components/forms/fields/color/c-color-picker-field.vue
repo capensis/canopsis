@@ -25,7 +25,8 @@
               :style="style"
               :disabled="disabled"
             >
-              <span v-if="!hideLabel">{{ displayLabel }}</span>
+              <v-icon v-if="icon">{{ icon }}</v-icon>
+              <span v-else-if="!hideLabel">{{ displayLabel }}</span>
             </c-btn-with-error>
           </template>
 
@@ -57,6 +58,10 @@ export default {
       required: false,
     },
     color: {
+      type: String,
+      default: '',
+    },
+    icon: {
       type: String,
       default: '',
     },
@@ -123,7 +128,10 @@ export default {
 
     const style = computed(() => ({
       backgroundColor: colorValue.value,
-      color: getMostReadableTextColor(colorValue.value),
+      color: getMostReadableTextColor(
+        colorValue.value,
+        props.icon ? { level: 'AA', size: 'large' } : undefined,
+      ),
     }));
 
     watch(

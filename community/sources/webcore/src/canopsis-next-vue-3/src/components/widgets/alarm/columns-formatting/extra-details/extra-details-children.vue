@@ -4,8 +4,8 @@
       <template #activator="{ props: activatorProps }">
         <c-alarm-extra-details-chip
           v-bind="activatorProps"
-          :color="color"
           icon="center_focus_strong"
+          theme-color="children"
         />
       </template>
     </c-simple-tooltip>
@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { COLORS } from '@/config';
-
 import { useExtraDetailsChildrenTooltip } from '../../hooks/extra-details-tooltips';
 
 export default {
@@ -40,10 +38,7 @@ export default {
   setup(props) {
     const { tooltipContent } = useExtraDetailsChildrenTooltip(props);
 
-    const color = COLORS.alarmExtraDetails.children;
-
     return {
-      color,
       tooltipContent,
     };
   },

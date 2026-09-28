@@ -13,14 +13,13 @@
           </v-icon>
         </template>
 
-        <c-alarm-extra-details-chip v-bind="activatorProps" :color="color" :icon="icon" />
+        <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" theme-color="tickets" />
       </v-badge>
     </template>
   </c-simple-tooltip>
 </template>
 
 <script>
-import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
@@ -46,12 +45,9 @@ export default {
     const { tooltipContent } = useExtraDetailsTicketTooltip(props);
 
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
-    const color = COLORS.alarmExtraDetails.ticket;
-
     return {
       tooltipContent,
       icon,
-      color,
     };
   },
 };

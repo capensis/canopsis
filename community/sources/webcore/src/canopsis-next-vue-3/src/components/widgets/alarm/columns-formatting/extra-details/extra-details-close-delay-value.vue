@@ -2,15 +2,17 @@
   <div>
     <c-simple-tooltip :content="tooltipContent" html top>
       <template #activator="{ props: activatorProps }">
-        <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" :color="color" />
+        <c-alarm-extra-details-chip
+          v-bind="activatorProps"
+          :icon="icon"
+          theme-color="cancel_delay"
+        />
       </template>
     </c-simple-tooltip>
   </div>
 </template>
 
 <script>
-import { COLORS } from '@/config';
-
 import { useExtraDetailsCloseDelayValueTooltip } from '../../hooks/extra-details-tooltips';
 
 export default {
@@ -25,10 +27,7 @@ export default {
     const { tooltipContent } = useExtraDetailsCloseDelayValueTooltip(props);
 
     const icon = '$vuetify.icons.remove_clock';
-    const color = COLORS.alarmExtraDetails.closeDelay;
-
     return {
-      color,
       icon,
       tooltipContent,
     };

@@ -694,14 +694,14 @@ export const COLORS = {
     instruction: '#6A6A6A',
   },
   alarmExtraDetails: {
-    ack: '#9c27b0',
-    canceled: '#607d8b',
-    children: '#6d4c41',
-    parent: '#6d4c41',
-    comment: '#ba68c8',
-    snooze: '#e91e63',
-    ticket: '#2196F3',
-    closeDelay: '#808080',
+    ack: '#9C27B0',
+    canceled: '#607D8B',
+    children: '#6D4C41',
+    parent: '#6D4C41',
+    comment: '#BA68C8',
+    snooze: '#E91E63',
+    tickets: '#2196F3',
+    cancel_delay: '#808080',
   },
   entitiesEvents: {
     ack: '#9c27b0',
@@ -952,6 +952,7 @@ export const DEFAULT_THEME_COLORS = {
 
   state: COLORS.state,
   status: COLORS.status,
+  icons: COLORS.alarmExtraDetails,
   table: {
     background: COLORS.table.background,
     row_color: COLORS.table.rowColor,

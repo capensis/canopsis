@@ -45,11 +45,24 @@ import { isString, kebabCase } from 'lodash';
  */
 
 /**
+ * @typedef {Object} ThemeIconsColors
+ * @property {string} ack
+ * @property {string} canceled
+ * @property {string} children
+ * @property {string} parent
+ * @property {string} comment
+ * @property {string} snooze
+ * @property {string} tickets
+ * @property {string} cancel_delay
+ */
+
+/**
  * @typedef {Object} ThemeColors
  * @property {ThemeMainColors} main
  * @property {ThemeTableColors} table
  * @property {ThemeWidgetColors} widget
  * @property {ThemeStatesColors} state
+ * @property {ThemeIconsColors} icons
  */
 
 /**

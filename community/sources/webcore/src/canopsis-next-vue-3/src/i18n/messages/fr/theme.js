@@ -6,6 +6,7 @@ export default {
     widgetTable: 'Couleurs des widgets et tableaux',
     severity: 'Couleurs de criticité',
     fontSize: 'Taille de police',
+    extraDetails: 'Détails supplémentaires',
   },
   themes: 'Thèmes',
   exampleText: 'Bonjour le monde!',
@@ -95,5 +96,15 @@ export default {
     major: 'Majeure',
 
     critical: 'Critique',
+  },
+  extraDetails: {
+    ack: 'Acquittement / acquittement rapide',
+    canceled: 'Annulée',
+    children: 'Enfants',
+    parent: 'Parent',
+    comment: 'Commentaire',
+    snooze: 'Mise en veille',
+    tickets: 'Tickets',
+    cancel_delay: 'Délai d’annulation',
   },
 };
