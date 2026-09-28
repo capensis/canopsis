@@ -37,7 +37,9 @@
           text
           @click="nextImage"
         >
-          <v-icon :size="32">chevron_right</v-icon>
+          <v-icon :size="32">
+            chevron_right
+          </v-icon>
         </v-btn>
         <v-btn
           color="white"
@@ -45,7 +47,9 @@
           text
           @click="prevImage"
         >
-          <v-icon :size="32">chevron_left</v-icon>
+          <v-icon :size="32">
+            chevron_left
+          </v-icon>
         </v-btn>
       </v-layout>
       <v-layout

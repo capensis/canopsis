@@ -122,7 +122,8 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
-	amqpPublisher amqp.Channel,
+	amqpPubPool amqp.ChannelPool,
+	amqpPublisher amqp.Publisher,
 	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
@@ -149,7 +150,7 @@ func RegisterRoutes(
 	exdataImportWorker externaldatatable.ImportWorker,
 	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	tplTestTypePermMapping map[int][]any,
 	logger zerolog.Logger,
 ) error {
@@ -329,7 +330,7 @@ func RegisterRoutes(
 
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, patternfields.NewTransformer(primaryDbClient),
 			timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), errorResponder, logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), json.NewDecoder(), errorResponder, logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger),
 			errorResponder)
@@ -518,7 +519,7 @@ func RegisterRoutes(
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
-				notifStore, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer,
+				notifStore, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataGetter,
 				json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
@@ -986,7 +987,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(amqpPublisher, errorResponder, logger)
+		eventApi := event.NewApi(amqpPubPool, errorResponder, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -1855,7 +1856,7 @@ func RegisterRoutes(
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient),
-				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer, enforcer),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataGetter, enforcer),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
 		)
@@ -1974,12 +1975,12 @@ func RegisterRoutes(
 			)
 			colorThemeRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.List,
 			)
 			colorThemeRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer, errorResponder),
+				middleware.OnlyAuth(errorResponder),
 				colorThemeApi.Get,
 			)
 			colorThemeRouter.PUT(
@@ -2442,6 +2443,12 @@ func RegisterRoutes(
 				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 				roleApi.BulkUpdatePermissions,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer, errorResponder),
+			)
+			bulkRouter.DELETE(
+				"/roles",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer, errorResponder),
+				middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+				roleApi.BulkDelete,
 			)
 
 			userBulkRouter := bulkRouter.Group("/users")

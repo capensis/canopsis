@@ -2,7 +2,9 @@
   <div>
     <v-layout v-if="!hasStructure" class="gap-4" column>
       <v-flex align-self-center>
-        <span class="grey--text">{{ $t('common.noDataAvailable') }}</span>
+        <span class="grey--text">
+          {{ $t('common.noDataAvailable') }}
+        </span>
       </v-flex>
       <v-flex align-self-center>
         <v-btn
@@ -103,6 +105,7 @@
       <template #mass-actions="{ selected }">
         <c-action-btn
           type="delete"
+          small
           @click="$emit('remove-selected', selected)"
         />
       </template>

@@ -26,6 +26,7 @@ import {
   PATTERN_STRING_OPERATORS,
   PATTERN_CONDITIONS,
   PATTERN_DATE_OPERATORS,
+  ALARM_FIELDS,
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
@@ -382,6 +383,8 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ticketValue,
   ALARM_PATTERN_FIELDS.ticketInitiator,
   ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.snoozeInitiator,
   ALARM_PATTERN_FIELDS.ackBy,
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
@@ -610,33 +613,28 @@ export const isValidRuleValue = rule => (
  * @param {string} field Rule field id (alarm, entity, or event-filter pattern field constant).
  * @return {boolean} True when the field is not one of the excluded primitive / specialized array fields.
  */
-export const isArrayPatternRuleFieldWithoutPrimitive = field => (
-  field !== ALARM_PATTERN_FIELDS.tags
-    && field !== ALARM_PATTERN_FIELDS.component
-    && field !== ALARM_PATTERN_FIELDS.connector
-    && field !== ALARM_PATTERN_FIELDS.connectorName
-    && field !== ALARM_PATTERN_FIELDS.resource
-    && field !== ALARM_PATTERN_FIELDS.ackBy
-    && field !== ALARM_PATTERN_FIELDS.ackInitiator
-    && field !== ALARM_PATTERN_FIELDS.ticketInitiator
-    && field !== ALARM_PATTERN_FIELDS.snoozeAuthor
-    && field !== ALARM_PATTERN_FIELDS.snoozeInitiator
-    && field !== ALARM_PATTERN_FIELDS.canceledInitiator
-    && field !== ALARM_PATTERN_FIELDS.lastCommentAuthor
-    && field !== ALARM_PATTERN_FIELDS.lastCommentInitiator
-    && field !== ALARM_PATTERN_FIELDS.stateInitiator
-    && field !== ENTITY_PATTERN_FIELDS.id
-    && field !== ENTITY_PATTERN_FIELDS.component
-    && field !== ENTITY_PATTERN_FIELDS.connector
-    && field !== ENTITY_PATTERN_FIELDS.category
-    && field !== EVENT_FILTER_PATTERN_FIELDS.eventType
-    && field !== EVENT_FILTER_PATTERN_FIELDS.component
-    && field !== EVENT_FILTER_PATTERN_FIELDS.connector
-    && field !== EVENT_FILTER_PATTERN_FIELDS.connectorName
-    && field !== EVENT_FILTER_PATTERN_FIELDS.resource
-    && field !== EVENT_FILTER_PATTERN_FIELDS.initiator
-    && field !== EVENT_FILTER_PATTERN_FIELDS.author
-);
+export const isArrayPatternRuleFieldWithoutPrimitive = field => ![
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.displayName,
+  ALARM_PATTERN_FIELDS.output,
+  ALARM_PATTERN_FIELDS.ackMessage,
+  ALARM_PATTERN_FIELDS.ticketValue,
+  ALARM_PATTERN_FIELDS.ticketMessage,
+  ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.snoozeAuthor,
+  ALARM_PATTERN_FIELDS.lastComment,
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
+  ALARM_PATTERN_FIELDS.longOutput,
+  ALARM_PATTERN_FIELDS.initialOutput,
+  ALARM_PATTERN_FIELDS.initialLongOutput,
+
+  ENTITY_PATTERN_FIELDS.name,
+
+  EVENT_FILTER_PATTERN_FIELDS.author,
+  EVENT_FILTER_PATTERN_FIELDS.output,
+  EVENT_FILTER_PATTERN_FIELDS.longOutput,
+  EVENT_FILTER_PATTERN_FIELDS.extraInfos,
+].includes(field);
 
 /**
  * Check pattern rule is valid
@@ -1004,6 +1002,7 @@ export const patternRuleToForm = (rule = {}) => {
           [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
           [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
           [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+          [ALARM_FIELDS.failedTicket]: PATTERN_OPERATORS.ticketCreationFailed,
           [ALARM_PATTERN_FIELDS.activationDate]: PATTERN_OPERATORS.activated,
           [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.isMetaAlarm,
         }[rule.field];
@@ -1026,6 +1025,10 @@ export const patternRuleToForm = (rule = {}) => {
 
       if (rule.field === ALARM_PATTERN_FIELDS.activationDate) {
         form.attribute = ALARM_PATTERN_FIELDS.activated;
+      }
+
+      if (rule.field === ALARM_FIELDS.failedTicket) {
+        form.attribute = ALARM_PATTERN_FIELDS.ticket;
       }
       break;
 
@@ -1143,7 +1146,7 @@ export const patternRuleToForm = (rule = {}) => {
     (form.fieldType === PATTERN_FIELD_TYPES.stringArray || isArrayOperator(form.operator))
     && isArray(form.value)
     && (!form.value.length || !form.value[0]?.key)
-    && !isArrayPatternRuleFieldWithoutPrimitive(form.field)
+    && (!isArrayPatternRuleFieldWithoutPrimitive(form.attribute) || isInfos)
   ) {
     form.value = primitiveArrayToForm(form.value);
   }
@@ -1286,10 +1289,16 @@ export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
  * @return {PatternRule}
  */
 export const formRuleToPatternRule = (rule) => {
+  let field = rule.attribute;
+
+  if (rule.attribute === ALARM_PATTERN_FIELDS.activated) {
+    field = ALARM_PATTERN_FIELDS.activationDate;
+  } else if (rule.operator === PATTERN_OPERATORS.ticketCreationFailed) {
+    field = ALARM_FIELDS.failedTicket;
+  }
+
   const pattern = {
-    [rule.alias ? 'alias' : 'field']: rule.attribute === ALARM_PATTERN_FIELDS.activated
-      ? ALARM_PATTERN_FIELDS.activationDate
-      : rule.attribute,
+    [rule.alias ? 'alias' : 'field']: field,
     cond: {
       value: rule.value,
       type: PATTERN_CONDITIONS.equal,
@@ -1412,6 +1421,7 @@ export const formRuleToPatternRule = (rule) => {
 
     case PATTERN_OPERATORS.exist:
     case PATTERN_OPERATORS.ticketAssociated:
+    case PATTERN_OPERATORS.ticketCreationFailed:
     case PATTERN_OPERATORS.canceled:
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:

@@ -92,9 +92,11 @@ type SectionApi struct {
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
 	WebsocketPingInterval    string   `toml:"WebsocketPingInterval"`
 	NotificationDisplayCount int      `toml:"NotificationDisplayCount"`
-	LLM                      struct {
-		OffTopicErrors  []string       `toml:"off_topic_errors"`
-		SuggestedModels []LLMModelConf `toml:"suggested_models"`
+	ActionLogger             struct {
+		Enabled bool `toml:"Enabled"`
+	} `toml:"action_logger"`
+	LLM struct {
+		SuggestedModels map[string][]LLMModelConf `toml:"suggested_models"`
 	} `toml:"llm"`
 }
 
@@ -158,6 +160,18 @@ type CanopsisConf struct {
 	TechMetrics     SectionTechMetrics     `bson:"tech_metrics" toml:"tech_metrics"`
 	Template        SectionTemplate        `bson:"template" toml:"template"`
 	ExternalData    SectionExternalData    `bson:"external_data" toml:"external_data"`
+}
+
+// UserDefinedConfig is a part of global config, which is updated by user via API and is not controlled by toml file.
+type UserDefinedConfig struct {
+	Metrics struct {
+		EnabledInstructions    bool `bson:"enabledinstructions"`
+		EnabledNotAckedMetrics bool `bson:"enablednotackedmetrics"`
+		EnabledSliMetrics      bool `bson:"enabledslimetrics"`
+	} `bson:"metrics"`
+	TechMetrics struct {
+		Enabled bool `bson:"enabled"`
+	} `bson:"tech_metrics"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

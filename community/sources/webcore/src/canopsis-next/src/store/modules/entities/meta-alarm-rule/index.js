@@ -20,5 +20,9 @@ export default createCRUDModule({
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.bulkMetaAlarmRule, { data });
     },
+
+    checkPatternsAlarmsCount(context, { data }) {
+      return request.post(API_ROUTES.metaAlarmRuleAlarmCount, data);
+    },
   },
 });

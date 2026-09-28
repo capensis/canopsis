@@ -147,7 +147,7 @@ describe('tags', () => {
         config: {
           tag,
           isImported: true,
-          title: 'Edit a tag',
+          title: 'Edit tag',
           action: expect.any(Function),
         },
       },

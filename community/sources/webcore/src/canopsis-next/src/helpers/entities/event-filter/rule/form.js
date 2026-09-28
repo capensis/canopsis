@@ -77,7 +77,6 @@ import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/s
 
 /**
  * @typedef {FilterPatterns} EventFilter
- * @property {string} _id
  * @property {EventFilterType} type
  * @property {string} description
  * @property {number} priority
@@ -191,12 +190,11 @@ export const eventFilterPatternToForm = (eventFilter) => {
  * @returns {EventFilterForm}
  */
 export const eventFilterToForm = (eventFilter = {}, timezone) => ({
-  _id: eventFilter._id ?? '',
   type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter.description ?? '',
   priority: eventFilter.priority,
   enabled: eventFilter.enabled ?? true,
-  rrule: eventFilter.rrule ?? null,
+  rrule: eventFilter.rrule ?? '',
   start: eventFilter.start,
   stop: eventFilter.stop,
   exceptions: exceptionsToForm(eventFilter.exceptions),

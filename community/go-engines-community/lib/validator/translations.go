@@ -68,6 +68,7 @@ type tagTransConfig struct {
 	translations map[string]string
 }
 
+//nolint:misspell
 func getTranslations() map[string]map[string]string {
 	return map[string]map[string]string{
 		"field": {
@@ -93,6 +94,10 @@ func getTranslations() map[string]map[string]string {
 		"pbehavior_reason": {
 			types.LocaleEn: "pbehavior reason",
 			types.LocaleFr: "raison de comportement périodique",
+		},
+		"undefined": {
+			types.LocaleEn: "undefined",
+			types.LocaleFr: "indéfini",
 		},
 
 		// LLM
@@ -124,9 +129,22 @@ func getTranslations() map[string]map[string]string {
 			types.LocaleEn: "{0} '{1}' ({2}) doesn't exist.",
 			types.LocaleFr: "{0} '{1}' ({2}) n'existe pas.",
 		},
+		"llm_retry_budget_exhausted": {
+			types.LocaleEn: "LLM did not return a valid response within the retry budget",
+			types.LocaleFr: "Le LLM n'a pas renvoyé de réponse valide dans la limite de tentatives autorisées",
+		},
+		"meta_alarm_threshold": {
+			types.LocaleEn: "Threshold rate = {0} * 100 / {1} = {2}\n({3} - alarms matched alarm and entity patterns, {4} - entities matched entity pattern)",
+			types.LocaleFr: "Taux de déclenchement = {0} * 100 / {1} = {2}\n({3} - alarmes correspondant aux modèles d'alarme et d'entité, {4} - entités correspondant au modèle d'entité)",
+		},
+		"meta_alarm_threshold_total": {
+			types.LocaleEn: "Threshold rate = {0} * 100 / {1} = {2}\n({3} - alarms matched alarm and entity patterns, {4} - entities matched total entity pattern)",
+			types.LocaleFr: "Taux de déclenchement = {0} * 100 / {1} = {2}\n({3} - alarmes correspondant aux modèles d'alarme et d'entité, {4} - entités correspondant au modèle d'entité totale)",
+		},
 	}
 }
 
+//nolint:misspell
 func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 	return map[string]tagTransConfig{
 		"gtfield": {
@@ -475,6 +493,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must contain columns [{1}]",
 				types.LocaleFr: "{0} doit contenir toutes les colonnes [{1}]",
+			},
+		},
+		"reservedcols": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains reserved columns [{1}]",
+				types.LocaleFr: "{0} contient des colonnes réservées [{1}]",
 			},
 		},
 		"invalidpayload": {

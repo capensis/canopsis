@@ -30,7 +30,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="primary"
           type="submit"
         >
@@ -86,17 +86,17 @@ export default {
      * @param {string|null} ticketValue - Selected ticket value to match
      * @return {boolean} True if item should be disabled
      */
-    const isDisabledItem = (item, ticketValue) => (
+    const submittingItem = (item, ticketValue) => (
       ticketValue && !item.v.tickets?.find?.(ticket => ticket.ticket === ticketValue)
     );
 
     const items = computed(() => (config.value.items ?? []).map(item => ({
       ...item,
 
-      itemClass: isDisabledItem(item, form.value.ticket) ? 'grey--text' : '',
+      itemClass: submittingItem(item, form.value.ticket) ? 'grey--text' : '',
     })));
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, submit } = useSubmittableForm({
       form,
       method: async () => {
         if (config.value.action) {
@@ -116,7 +116,6 @@ export default {
       form,
       items,
       submitting,
-      isDisabled,
       submit,
     };
   },

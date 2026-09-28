@@ -24,7 +24,7 @@ type service struct {
 	executionStorage        ScenarioExecutionStorage
 	encoder                 encoding.Encoder
 	decoder                 encoding.Decoder
-	fifoChan                libamqp.Channel
+	amqpPublisher           libamqp.Publisher
 	fifoExchange, fifoQueue string
 	activationService       libalarm.ActivationService
 	techMetricsSender       techmetrics.Sender
@@ -39,7 +39,7 @@ func NewService(
 	storage ScenarioExecutionStorage,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
-	fifoChan libamqp.Channel,
+	amqpPublisher libamqp.Publisher,
 	fifoExchange string,
 	fifoQueue string,
 	activationService libalarm.ActivationService,
@@ -51,7 +51,7 @@ func NewService(
 		scenarioInputChannel:   scenarioInputChan,
 		delayedScenarioManager: delayedScenarioManager,
 		executionStorage:       storage,
-		fifoChan:               fifoChan,
+		amqpPublisher:          amqpPublisher,
 		encoder:                encoder,
 		decoder:                decoder,
 		fifoExchange:           fifoExchange,
@@ -125,9 +125,10 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					s.sendEventToFifoAck(ctx, fifoAckEvent)
 				}
 
-				eventMetric := techmetrics.ActionEventMetric{}
-				eventMetric.Timestamp = result.StartEventProcessing
-				eventMetric.EventType = fifoAckEvent.EventType
+				eventMetric := techmetrics.ActionEventMetric{
+					Timestamp: result.StartEventProcessing,
+					EventType: fifoAckEvent.EventType,
+				}
 				eventMetric.Interval = time.Since(eventMetric.Timestamp)
 				eventMetric.ExecutedRules = result.ExecutedRuleCount
 				eventMetric.ExecutedWebhooks = result.ExecutedWebhookCount
@@ -236,7 +237,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		Entity:   entity,
 		Start:    start,
 		AdditionalData: types.AdditionalData{
-			AlarmChangeType: string(event.AlarmChange.Type),
+			AlarmChangeType: string(event.AlarmChange.Type), //nolint:staticcheck
 			Author:          event.Author,
 			User:            event.UserID,
 			Initiator:       event.Initiator,
@@ -311,7 +312,7 @@ func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
 		return
 	}
 
-	err = s.fifoChan.PublishWithContext(
+	err = s.amqpPublisher.PublishWithContext(
 		ctx,
 		s.fifoExchange,
 		s.fifoQueue,
@@ -331,11 +332,9 @@ func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
 func (s *service) sendCpsEventMetric(event types.Event) {
 	if event.ReceivedTimestamp.Time.Unix() > 0 {
 		eventMetric := techmetrics.CpsEventMetric{
-			EventMetric: techmetrics.EventMetric{
-				Timestamp: event.ReceivedTimestamp.Time,
-				EventType: event.EventType,
-				Interval:  time.Since(event.ReceivedTimestamp.Time),
-			},
+			Timestamp: event.ReceivedTimestamp.Time,
+			EventType: event.EventType,
+			Interval:  time.Since(event.ReceivedTimestamp.Time),
 		}
 
 		if event.EventType == types.EventTypeCheck {

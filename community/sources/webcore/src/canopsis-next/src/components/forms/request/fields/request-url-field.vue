@@ -1,12 +1,10 @@
 <template>
   <v-layout
+    class="gap-2"
     justify-space-between
     align-start
   >
-    <v-flex
-      class="pr-2"
-      xs6
-    >
+    <v-flex xs6>
       <v-select
         v-field="request.method"
         v-validate="'required'"
@@ -17,10 +15,7 @@
         :disabled="disabled"
       />
     </v-flex>
-    <v-flex
-      class="pl-2"
-      xs6
-    >
+    <v-flex xs6>
       <c-payload-text-field
         v-field="request.url"
         :label="urlLabel || $t('common.url')"

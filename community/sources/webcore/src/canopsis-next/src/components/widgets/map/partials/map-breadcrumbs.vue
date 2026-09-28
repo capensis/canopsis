@@ -11,7 +11,9 @@
         text
         @click="$emit('click', item)"
       >
-        <span class="text-none">{{ item.text }}</span>
+        <span class="text-none">
+          {{ item.text }}
+        </span>
       </v-btn>
     </template>
   </v-breadcrumbs>

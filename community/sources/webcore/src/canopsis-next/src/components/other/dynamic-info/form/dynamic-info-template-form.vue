@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-layout class="gap-2" column>
     <v-text-field
       v-field="template.title"
       v-validate="'required'"
@@ -8,15 +8,8 @@
       name="title"
       autofocus
     />
-    <h3>{{ $t('modals.createDynamicInfoTemplate.fields.names') }}</h3>
-    <dynamic-info-template-names-field v-field="template.names">
-      <template #no-data="">
-        <v-alert type="info">
-          {{ $t('modals.createDynamicInfoTemplate.emptyNames') }}
-        </v-alert>
-      </template>
-    </dynamic-info-template-names-field>
-  </div>
+    <dynamic-info-template-names-field v-field="template.names" />
+  </v-layout>
 </template>
 
 <script>

@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -26,11 +25,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequest{
-		Query: pagination.Query{
-			Page:     2,
-			Limit:    10,
-			Paginate: true,
-		},
+		Page:     2,
+		Limit:    10,
+		Paginate: true,
 	}
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "name", Value: 1}}},
@@ -76,13 +73,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
@@ -140,13 +135,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
-			WeatherServicePattern: pattern.WeatherServicePattern{
+		WeatherServicePattern: pattern.WeatherServicePattern{
+			{
 				{
-					{
-						Field:     "state.val",
-						Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
-					},
+					Field:     "state.val",
+					Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
 				},
 			},
 		},
@@ -206,13 +199,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
-		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
-			WeatherServicePattern: pattern.WeatherServicePattern{
+		WeatherServicePattern: pattern.WeatherServicePattern{
+			{
 				{
-					{
-						Field:     "icon",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "icon",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
@@ -323,36 +314,30 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 
 	filter1 := view.WidgetFilter{
 		ID: "test-filter-1",
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field:     "name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-service"),
-					},
+					Field:     "name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-service"),
 				},
 			},
 		},
-		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
-			WeatherServicePattern: pattern.WeatherServicePattern{
+		WeatherServicePattern: pattern.WeatherServicePattern{
+			{
 				{
-					{
-						Field:     "icon",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "icon",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},
 	}
 	filter2 := view.WidgetFilter{
 		ID: "test-filter-2",
-		WeatherServicePatternFields: savedpattern.WeatherServicePatternFields{
-			WeatherServicePattern: pattern.WeatherServicePattern{
+		WeatherServicePattern: pattern.WeatherServicePattern{
+			{
 				{
-					{
-						Field:     "secondary_icon",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
-					},
+					Field:     "secondary_icon",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 				},
 			},
 		},

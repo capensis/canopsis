@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -23,7 +22,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -267,44 +265,42 @@ func benchmarkMessageProcessorWithConfig(
 	techMetricsSender := techmetrics.NewSender(canopsis.CheEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), zerolog.Nop())
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externaldata.NewGetterContainer(), failureService, tplExecutor))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), eventfilter.NewActionProcessor(alarmConfigProvider, failureService, tplExecutor), failureService))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(failureService, tplExecutor))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewActionProcessor(alarmConfigProvider, failureService, tplExecutor), failureService))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
-	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, eventCounter, failureService, tplExecutor, zerolog.Nop())
+	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, nil, eventCounter, failureService, tplExecutor, zerolog.Nop())
 	err = ruleService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
 
-	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, zerolog.Nop())
-
 	entityAdapter := entity.NewAdapter(dbClient)
 	stateSettingsService := statesetting.NewService(dbClient, zerolog.Nop())
 	contextGraphManager := contextgraph.NewManager(entityAdapter, dbClient, contextgraph.NewEntityServiceStorage(dbClient), stateSettingsService, zerolog.Nop())
-	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, zerolog.Nop())
 	entityInfosUpdateSender := metrics.NewNullEntityInfosUpdateSender()
 
 	eventProcessorContainer := event.NewProcessorContainer()
-	eventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, zerolog.Nop()))
-	eventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, zerolog.Nop()))
-	eventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender))
-	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender))
+	eventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), zerolog.Nop()))
+	eventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), zerolog.Nop()))
+	eventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
+	eventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(dbClient, contextGraphManager, ruleService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
 
 	p := messageProcessor{
 		EventProcessorContainer:  eventProcessorContainer,
 		FeaturePrintEventOnError: true,
 		AlarmConfigProvider:      alarmConfigProvider,
-		MetricsConfigProvider:    metricsConfigProvider,
-		MetricsSender:            metricsSender,
-		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
 		EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
-		Encoder:                  json.NewEncoder(),
-		Decoder:                  json.NewDecoder(),
-		Logger:                   zerolog.Nop(),
-		// AmqpPublisher field has not accessed by test paths, otherwise it has to be initialized with mock value
+		PostProcessor: NewEventPostProcessor(
+			amqpChannel,
+			metrics.NewNullMetaUpdater(),
+			json.NewEncoder(),
+			zerolog.Nop(),
+		),
+		Encoder: json.NewEncoder(),
+		Decoder: json.NewDecoder(),
+		Logger:  zerolog.Nop(),
 	}
 
 	b.ResetTimer()

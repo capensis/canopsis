@@ -136,9 +136,10 @@ func TestAlarmSteps_Crop_GivenCounterStep_ShouldSaveInDB(t *testing.T) {
 		Author:    "coucou",
 		Timestamp: datetime.NewCpsTime(time.Now().Unix()),
 	}
-	stateCounter := types.CropCounter{}
-	stateCounter.Stateinc = 1
-	stateCounter.Statedec = 2
+	stateCounter := types.CropCounter{
+		Stateinc: 1,
+		Statedec: 2,
+	}
 	counterStep := types.AlarmStep{
 		Type:         types.AlarmStepStateCounter,
 		StateCounter: stateCounter,

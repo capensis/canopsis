@@ -198,6 +198,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
+ * @property {boolean} openExpandPanelByDoubleClick
  * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} keepSelectedAfterAction
@@ -425,6 +426,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
+  openExpandPanelByDoubleClick: parameters.openExpandPanelByDoubleClick ?? false,
   pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,

@@ -1,6 +1,6 @@
 <template>
-  <v-layout class="gap-3" column>
-    <span class="text-subtitle-1 font-weight-bold">{{ $tc('common.tag', 2) }}</span>
+  <v-layout column>
+    <c-label :label="$tc('common.tag', 2)" />
     <v-layout>
       <c-enabled-field
         v-field="form.copy_from_children"
@@ -8,11 +8,11 @@
         hide-details
       />
     </v-layout>
-    <v-layout v-if="form.copy_from_children">
+    <v-layout v-if="form.copy_from_children" class="gap-3" align-start>
       <c-enabled-field
         v-model="filterByLabelEnabled"
         :label="$t('metaAlarmRule.filterByLabelEnabled')"
-        class="mr-4 pt-4"
+        hide-details
       >
         <template #append>
           <c-help-icon
@@ -22,7 +22,7 @@
           />
         </template>
       </c-enabled-field>
-      <v-fade-transition>
+      <v-expand-transition>
         <c-alarm-tag-field
           v-if="filterByLabelEnabled"
           v-field="form.filter_by_label"
@@ -43,7 +43,7 @@
             </v-list-item>
           </template>
         </c-alarm-tag-field>
-      </v-fade-transition>
+      </v-expand-transition>
     </v-layout>
   </v-layout>
 </template>

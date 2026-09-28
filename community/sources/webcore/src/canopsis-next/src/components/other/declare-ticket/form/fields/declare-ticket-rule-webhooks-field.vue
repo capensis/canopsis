@@ -7,7 +7,6 @@
     :required-error-message="$t('declareTicket.errors.webhookRequired')"
     :empty-message="$t('declareTicket.emptyWebhooks')"
     :add-button-label="$t('declareTicket.addWebhook')"
-    iterator-class="mb-2"
     item-key="key"
     required
     @add="addWebhook"
@@ -27,9 +26,12 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { declareTicketRuleWebhookToForm } from '@/helpers/entities/declare-ticket/rule/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useValidator } from '@/hooks/validator/validator';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import DeclareTicketRuleWebhookField from './declare-ticket-rule-webhook-field.vue';
 
@@ -38,7 +40,6 @@ export default {
   components: {
     DeclareTicketRuleWebhookField,
   },
-  mixins: [formArrayMixin],
   model: {
     prop: 'webhooks',
     event: 'input',
@@ -61,25 +62,29 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    isSomeOneDeclareTicketEnabled() {
-      return this.webhooks.some(webhook => webhook.declare_ticket.enabled);
-    },
+  setup(props, { emit }) {
+    const validator = useValidator();
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-    hasWebhooksErrors() {
-      return this.errors.has(this.name);
-    },
+    const isSomeOneDeclareTicketEnabled = computed(() => props.webhooks.some(
+      webhook => webhook.declare_ticket.enabled,
+    ));
 
-    draggableGroup() {
-      return {
-        name: 'declare-ticket-steps',
-      };
-    },
-  },
-  methods: {
-    addWebhook() {
-      this.addItemIntoArray(declareTicketRuleWebhookToForm());
-    },
+    const hasWebhooksErrors = computed(() => validator?.errors?.has(props.name) ?? false);
+
+    const draggableGroup = computed(() => ({
+      name: 'declare-ticket-steps',
+    }));
+
+    const addWebhook = () => addItemIntoArray(declareTicketRuleWebhookToForm());
+
+    return {
+      isSomeOneDeclareTicketEnabled,
+      hasWebhooksErrors,
+      draggableGroup,
+      addWebhook,
+      removeItemFromArray,
+    };
   },
 };
 </script>

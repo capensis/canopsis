@@ -5,6 +5,7 @@
       :label="$t('modals.linkToMetaAlarm.fields.metaAlarm')"
       :autocomplete="false"
       name="metaAlarm"
+      return-object
       required
       blur-on-create
       addable

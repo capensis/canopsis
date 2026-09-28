@@ -13,8 +13,14 @@ import { PATTERN_TYPES } from '@/constants';
 import PatternsList from '@/components/other/pattern/patterns-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
+const cMassActionsPanelStub = {
+  name: 'c-mass-actions-panel-stub',
+  template: '<div class="c-mass-actions-panel-stub"><div class="layout"><slot name="actions" /></div></div>',
+};
+
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
+  'c-mass-actions-panel': cMassActionsPanelStub,
   'c-search': true,
   'v-checkbox': true,
   'c-expand-btn': true,

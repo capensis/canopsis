@@ -4,8 +4,10 @@ import (
 	"cmp"
 	"context"
 	"fmt"
+	"maps"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -13,12 +15,8 @@ import (
 )
 
 const (
-	FieldTypeObject    = "object"
-	FieldTypeDuration  = "duration"
-	FieldTypeReference = "reference"
+	aliasLimit = 500
 )
-
-const aliasLimit = 500
 
 var alarmFields = []FieldResponse{
 	{
@@ -55,11 +53,11 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.duration",
-		Type: FieldTypeDuration,
+		Type: pattern.FieldTypeDuration,
 	},
 	{
 		Name: "v.infos",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "v.output",
@@ -75,7 +73,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.ack",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.ack.t",
@@ -99,7 +97,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.ticket",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.ticket.ticket",
@@ -110,12 +108,20 @@ var alarmFields = []FieldResponse{
 		Type: pattern.FieldTypeString,
 	},
 	{
+		Name: "v.ticket.initiator",
+		Type: pattern.FieldTypeString,
+	},
+	{
 		Name: "v.ticket.ticket_data",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
+	},
+	{
+		Name: "v.failed_ticket",
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.snooze",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.snooze.a",
@@ -127,7 +133,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.canceled",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.canceled.initiator",
@@ -151,7 +157,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.activation_date",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.activation_date",
@@ -175,7 +181,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.change_state",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.total_state_changes",
@@ -183,7 +189,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.meta",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.meta",
@@ -214,11 +220,11 @@ var entityFields = []FieldResponse{
 	},
 	{
 		Name: "infos",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "component_infos",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "category",
@@ -269,7 +275,7 @@ var eventFields = []FieldResponse{
 	},
 	{
 		Name: "extra",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "long_output",
@@ -323,75 +329,89 @@ var weatherServiceFields = []FieldResponse{
 	},
 }
 
-var disabledFieldsInAlarmPattern = map[string][]string{
-	mongo.IdleRuleMongoCollection:          {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.MetaAlarmRulesMongoCollection:    {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.FlappingRuleMongoCollection:      {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.ResolveRuleMongoCollection:       {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.ScenarioCollection:               {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.InstructionMongoCollection:       {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.DeclareTicketRuleCollection:      {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.LinkRuleMongoCollection:          {"v.last_event_date", "v.last_update_date", "v.resolved"},
-	mongo.DynamicInfosRulesMongoCollection: {"v.last_event_date", "v.last_update_date", "v.resolved", "v.duration", "v.infos"},
-	mongo.AlarmTagCollection:               {"v.last_event_date", "v.last_update_date", "v.resolved", "v.duration", "tags"},
+var disabledFieldsInAlarmPattern = map[string]map[string]bool{
+	mongo.IdleRuleMongoCollection:          {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.MetaAlarmRulesMongoCollection:    {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.FlappingRuleMongoCollection:      {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.ResolveRuleMongoCollection:       {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.ScenarioCollection:               {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.InstructionMongoCollection:       {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.DeclareTicketRuleCollection:      {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.LinkRuleMongoCollection:          {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true},
+	mongo.DynamicInfosRulesMongoCollection: {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true, "v.duration": true, "v.infos": true},
+	mongo.AlarmTagCollection:               {"v.last_event_date": true, "v.last_update_date": true, "v.resolved": true, "v.duration": true, "tags": true},
 	mongo.WidgetFiltersMongoCollection:     {},
 }
 
-var onlyAbsoluteTimeCondFieldsInAlarmPattern = map[string][]string{
-	mongo.IdleRuleMongoCollection:          {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.DynamicInfosRulesMongoCollection: {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.MetaAlarmRulesMongoCollection:    {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.FlappingRuleMongoCollection:      {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.ResolveRuleMongoCollection:       {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.ScenarioCollection:               {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.InstructionMongoCollection:       {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.DeclareTicketRuleCollection:      {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.LinkRuleMongoCollection:          {"v.creation_date", "v.ack.t", "v.activation_date"},
-	mongo.AlarmTagCollection:               {"v.creation_date", "v.ack.t", "v.activation_date"},
+var onlyAbsoluteTimeCondFieldsInAlarmPattern = map[string]map[string]bool{
+	mongo.IdleRuleMongoCollection:          {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.DynamicInfosRulesMongoCollection: {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.MetaAlarmRulesMongoCollection:    {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.FlappingRuleMongoCollection:      {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.ResolveRuleMongoCollection:       {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.ScenarioCollection:               {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.InstructionMongoCollection:       {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.DeclareTicketRuleCollection:      {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.LinkRuleMongoCollection:          {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
+	mongo.AlarmTagCollection:               {"v.creation_date": true, "v.ack.t": true, "v.activation_date": true},
 }
 
-var disabledFieldsInEntityPattern = map[string][]string{
-	mongo.StateSettingsMongoCollection:     {"last_event_date", "component", "component_infos"},
-	mongo.EntityMongoCollection:            {"last_event_date", "connector", "component_infos"},
-	mongo.PbehaviorMongoCollection:         {"last_event_date"},
-	mongo.IdleRuleMongoCollection:          {"last_event_date"},
-	mongo.DynamicInfosRulesMongoCollection: {"last_event_date"},
-	mongo.MetaAlarmRulesMongoCollection:    {"last_event_date"},
-	mongo.FlappingRuleMongoCollection:      {"last_event_date"},
-	mongo.ResolveRuleMongoCollection:       {"last_event_date"},
-	mongo.ScenarioCollection:               {"last_event_date"},
-	mongo.InstructionMongoCollection:       {"last_event_date"},
-	mongo.KpiFilterMongoCollection:         {"last_event_date"},
-	mongo.DeclareTicketRuleCollection:      {"last_event_date"},
-	mongo.LinkRuleMongoCollection:          {"last_event_date"},
-	mongo.AlarmTagCollection:               {"last_event_date"},
+var disabledFieldsInEntityPattern = map[string]map[string]bool{
+	mongo.StateSettingsMongoCollection:     {"last_event_date": true, "component": true, "type": true, "component_infos": true},
+	mongo.EntityMongoCollection:            {"last_event_date": true, "connector": true},
+	mongo.PbehaviorMongoCollection:         {"last_event_date": true},
+	mongo.IdleRuleMongoCollection:          {"last_event_date": true},
+	mongo.DynamicInfosRulesMongoCollection: {"last_event_date": true},
+	mongo.MetaAlarmRulesMongoCollection:    {"last_event_date": true},
+	mongo.FlappingRuleMongoCollection:      {"last_event_date": true},
+	mongo.ResolveRuleMongoCollection:       {"last_event_date": true},
+	mongo.ScenarioCollection:               {"last_event_date": true},
+	mongo.InstructionMongoCollection:       {"last_event_date": true},
+	mongo.KpiFilterMongoCollection:         {"last_event_date": true},
+	mongo.DeclareTicketRuleCollection:      {"last_event_date": true},
+	mongo.LinkRuleMongoCollection:          {"last_event_date": true},
+	mongo.AlarmTagCollection:               {"last_event_date": true},
 	mongo.EventFilterRuleCollection:        {},
 	mongo.WidgetFiltersMongoCollection:     {},
 }
 
-var disabledFieldsInEventPattern = map[string][]string{
+var disabledFieldsInInheritedEntityPattern = map[string]map[string]map[string]bool{
+	mongo.StateSettingsMongoCollection: {
+		statesetting.RuleTypeService:   {"last_event_date": true},
+		statesetting.RuleTypeComponent: {"last_event_date": true, "component": true, "type": true, "component_infos": true},
+	},
+}
+
+var disabledFieldsInEventPattern = map[string]map[string]bool{
 	mongo.EventFilterRuleCollection:   {},
 	mongo.EventRecordsMongoCollection: {},
 }
 
-var disabledFieldsInPbehaviorPattern = map[string][]string{
+var disabledFieldsInPbehaviorPattern = map[string]map[string]bool{
 	mongo.WidgetFiltersMongoCollection: {},
 }
 
-var disabledFieldsInWeatherServicePattern = map[string][]string{
+var disabledFieldsInWeatherServicePattern = map[string]map[string]bool{
 	mongo.WidgetFiltersMongoCollection: {},
+}
+
+type FieldsRequest struct {
+	// Type should be only used to get state settings inherited pattern fields
+	// if empty inherited pattern fields aren't included in the response.
+	Type string `form:"type" binding:"oneoforempty=service component"`
 }
 
 type FieldGetter interface {
-	Get(ctx context.Context, collection string) (FieldsResponse, error)
+	Get(ctx context.Context, collection string, r FieldsRequest) (FieldsResponse, error)
 }
 
 type FieldsResponse struct {
-	AlarmPattern          []AlarmFieldResponse  `json:"alarm_pattern,omitempty"`
-	EntityPattern         []EntityFieldResponse `json:"entity_pattern,omitempty"`
-	EventPattern          []FieldResponse       `json:"event_pattern,omitempty"`
-	PbehaviorPattern      []FieldResponse       `json:"pbehavior_pattern,omitempty"`
-	WeatherServicePattern []FieldResponse       `json:"weather_service_pattern,omitempty"`
+	AlarmPattern           []AlarmFieldResponse  `json:"alarm_pattern,omitempty"`
+	EntityPattern          []EntityFieldResponse `json:"entity_pattern,omitempty"`
+	InheritedEntityPattern []EntityFieldResponse `json:"inherited_entity_pattern,omitempty"`
+	EventPattern           []FieldResponse       `json:"event_pattern,omitempty"`
+	PbehaviorPattern       []FieldResponse       `json:"pbehavior_pattern,omitempty"`
+	WeatherServicePattern  []FieldResponse       `json:"weather_service_pattern,omitempty"`
 }
 
 type FieldResponse struct {
@@ -411,82 +431,77 @@ type EntityFieldResponse struct {
 }
 
 func NewFieldGetter(dbClient mongo.DbClient) FieldGetter {
-	g := &fieldGetter{
-		entityPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+	return &fieldGetter{
+		entityPropCollection:                     dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		disabledFieldsInAlarmPattern:             maps.Clone(disabledFieldsInAlarmPattern),
+		onlyAbsoluteTimeCondFieldsInAlarmPattern: maps.Clone(onlyAbsoluteTimeCondFieldsInAlarmPattern),
+		disabledFieldsInEntityPattern:            maps.Clone(disabledFieldsInEntityPattern),
+		disabledFieldsInInheritedEntityPattern:   maps.Clone(disabledFieldsInInheritedEntityPattern),
+		disabledFieldsInEventPattern:             maps.Clone(disabledFieldsInEventPattern),
+		disabledFieldsInPbehaviorPattern:         maps.Clone(disabledFieldsInPbehaviorPattern),
+		disabledFieldsInWeatherServicePattern:    maps.Clone(disabledFieldsInWeatherServicePattern),
 	}
-
-	g.diabledFieldsInAlarmPattern = make(map[string]map[string]bool, len(disabledFieldsInAlarmPattern))
-	for k, v := range disabledFieldsInAlarmPattern {
-		g.diabledFieldsInAlarmPattern[k] = g.sliceToMap(v)
-	}
-
-	g.onlyAbsoluteTimeCondFieldsInAlarmPattern = make(map[string]map[string]bool, len(onlyAbsoluteTimeCondFieldsInAlarmPattern))
-	for k, v := range onlyAbsoluteTimeCondFieldsInAlarmPattern {
-		g.onlyAbsoluteTimeCondFieldsInAlarmPattern[k] = g.sliceToMap(v)
-	}
-
-	g.disabledFieldsInEntityPattern = make(map[string]map[string]bool, len(disabledFieldsInEntityPattern))
-	for k, v := range disabledFieldsInEntityPattern {
-		g.disabledFieldsInEntityPattern[k] = g.sliceToMap(v)
-	}
-
-	g.disabledFieldsInEventPattern = make(map[string]map[string]bool, len(disabledFieldsInEventPattern))
-	for k, v := range disabledFieldsInEventPattern {
-		g.disabledFieldsInEventPattern[k] = g.sliceToMap(v)
-	}
-
-	g.disabledFieldsInPbehaviorPattern = make(map[string]map[string]bool, len(disabledFieldsInPbehaviorPattern))
-	for k, v := range disabledFieldsInPbehaviorPattern {
-		g.disabledFieldsInPbehaviorPattern[k] = g.sliceToMap(v)
-	}
-
-	g.disabledFieldsInWeatherServicePattern = make(map[string]map[string]bool, len(disabledFieldsInWeatherServicePattern))
-	for k, v := range disabledFieldsInWeatherServicePattern {
-		g.disabledFieldsInWeatherServicePattern[k] = g.sliceToMap(v)
-	}
-
-	return g
 }
 
-func GetForbiddenFieldsInAlarmPattern(collection string) []string {
+func GetForbiddenFieldsInAlarmPattern(collection string) map[string]bool {
 	return disabledFieldsInAlarmPattern[collection]
 }
 
-func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
+func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) map[string]bool {
 	return onlyAbsoluteTimeCondFieldsInAlarmPattern[collection]
 }
 
-func GetForbiddenFieldsInEntityPattern(collection string) []string {
+func GetForbiddenFieldsInEntityPattern(collection string) map[string]bool {
 	return disabledFieldsInEntityPattern[collection]
+}
+
+func GetForbiddenFieldsInInheritedEntityPattern(collection string, t string) map[string]bool {
+	return disabledFieldsInInheritedEntityPattern[collection][t]
 }
 
 type fieldGetter struct {
 	entityPropCollection                     mongo.DbCollection
-	diabledFieldsInAlarmPattern              map[string]map[string]bool
+	disabledFieldsInAlarmPattern             map[string]map[string]bool
 	onlyAbsoluteTimeCondFieldsInAlarmPattern map[string]map[string]bool
 	disabledFieldsInEntityPattern            map[string]map[string]bool
+	disabledFieldsInInheritedEntityPattern   map[string]map[string]map[string]bool
 	disabledFieldsInEventPattern             map[string]map[string]bool
 	disabledFieldsInPbehaviorPattern         map[string]map[string]bool
 	disabledFieldsInWeatherServicePattern    map[string]map[string]bool
 }
 
-func (g *fieldGetter) Get(ctx context.Context, collection string) (FieldsResponse, error) {
-	ep, err := g.getEntityFields(ctx, collection)
-	if err != nil {
-		return FieldsResponse{}, err
+func (g *fieldGetter) Get(ctx context.Context, collection string, r FieldsRequest) (FieldsResponse, error) {
+	var ep, iep []EntityFieldResponse
+	var err error
+
+	if disabledEntityFields, ok := g.disabledFieldsInEntityPattern[collection]; ok {
+		ep, err = g.getEntityFields(ctx, disabledEntityFields)
+		if err != nil {
+			return FieldsResponse{}, err
+		}
+
+		if disabledInheritedEntityFieldsColl, ok := g.disabledFieldsInInheritedEntityPattern[collection]; ok {
+			if disabledInheritedEntityFields, ok := disabledInheritedEntityFieldsColl[r.Type]; ok {
+				iep, err = g.getEntityFields(ctx, disabledInheritedEntityFields)
+				if err != nil {
+					return FieldsResponse{}, err
+				}
+			}
+		}
 	}
 
 	return FieldsResponse{
-		AlarmPattern:          g.getAlarmFields(collection),
-		EntityPattern:         ep,
-		EventPattern:          g.getFields(collection, eventFields, g.disabledFieldsInEventPattern),
-		PbehaviorPattern:      g.getFields(collection, pbehaviorFields, g.disabledFieldsInPbehaviorPattern),
-		WeatherServicePattern: g.getFields(collection, weatherServiceFields, g.disabledFieldsInWeatherServicePattern),
+		AlarmPattern:           g.getAlarmFields(collection),
+		EntityPattern:          ep,
+		InheritedEntityPattern: iep,
+		EventPattern:           g.getFields(collection, eventFields, g.disabledFieldsInEventPattern),
+		PbehaviorPattern:       g.getFields(collection, pbehaviorFields, g.disabledFieldsInPbehaviorPattern),
+		WeatherServicePattern:  g.getFields(collection, weatherServiceFields, g.disabledFieldsInWeatherServicePattern),
 	}, nil
 }
 
 func (g *fieldGetter) getAlarmFields(collection string) []AlarmFieldResponse {
-	disabledFields, ok := g.diabledFieldsInAlarmPattern[collection]
+	disabledFields, ok := g.disabledFieldsInAlarmPattern[collection]
 	if !ok {
 		return nil
 	}
@@ -504,12 +519,7 @@ func (g *fieldGetter) getAlarmFields(collection string) []AlarmFieldResponse {
 	return fields
 }
 
-func (g *fieldGetter) getEntityFields(ctx context.Context, collection string) ([]EntityFieldResponse, error) {
-	disabledFields, ok := g.disabledFieldsInEntityPattern[collection]
-	if !ok {
-		return nil, nil
-	}
-
+func (g *fieldGetter) getEntityFields(ctx context.Context, disabledFields map[string]bool) ([]EntityFieldResponse, error) {
 	fields := make([]EntityFieldResponse, len(entityFields))
 	for i := range fields {
 		fields[i].FieldResponse = entityFields[i]
@@ -546,12 +556,10 @@ func (g *fieldGetter) getEntityFields(ctx context.Context, collection string) ([
 		}
 
 		fields = append(fields, EntityFieldResponse{
-			FieldResponse: FieldResponse{
-				Name:    alias.Alias,
-				Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
-				Enabled: true,
-			},
-			Alias: true,
+			Name:    alias.Alias,
+			Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
+			Enabled: true,
+			Alias:   true,
 		})
 	}
 
@@ -575,13 +583,4 @@ func (g *fieldGetter) getFields(collection string, fields []FieldResponse, disab
 	}
 
 	return res
-}
-
-func (g *fieldGetter) sliceToMap(s []string) map[string]bool {
-	m := make(map[string]bool, len(s))
-	for _, v := range s {
-		m[v] = true
-	}
-
-	return m
 }

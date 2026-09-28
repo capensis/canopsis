@@ -12,8 +12,13 @@ func (s PbhLeaveStrategy) CanSkip(calcData entitycounters.EntityServiceCountersC
 
 func (s PbhLeaveStrategy) Calculate(calcData entitycounters.EntityServiceCountersCalcData) entitycounters.EntityCounters {
 	if calcData.ServicesToRemove[calcData.Counters.ID] {
+		inheritedMode := entitycounters.InheritedNone
+		if calcData.PrevInherited {
+			inheritedMode = entitycounters.InheritedWith
+		}
+
 		calcData.Counters.Depends--
-		calcData.Counters.DecrementState(calcData.PrevState, calcData.Inherited)
+		calcData.Counters.DecrementState(calcData.PrevState, inheritedMode)
 
 		if calcData.AlarmExists {
 			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.PrevActive)
@@ -23,15 +28,29 @@ func (s PbhLeaveStrategy) Calculate(calcData entitycounters.EntityServiceCounter
 			calcData.Counters.DecrementPbhCounters(calcData.PrevPbhTypeID)
 		}
 	} else if calcData.ServicesToAdd[calcData.Counters.ID] {
+		inheritedMode := entitycounters.InheritedNone
+		if calcData.CurInherited {
+			inheritedMode = entitycounters.InheritedWith
+		}
+
 		calcData.Counters.Depends++
-		calcData.Counters.IncrementState(calcData.CurState, calcData.Inherited)
+		calcData.Counters.IncrementState(calcData.CurState, inheritedMode)
 
 		if calcData.AlarmExists {
 			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, true)
 		}
 	} else {
-		calcData.Counters.DecrementState(calcData.PrevState, calcData.Inherited)
-		calcData.Counters.IncrementState(calcData.CurState, calcData.Inherited)
+		prevInheritedMode := entitycounters.InheritedNone
+		if calcData.PrevInherited {
+			prevInheritedMode = entitycounters.InheritedWith
+		}
+		curInheritedMode := entitycounters.InheritedNone
+		if calcData.CurInherited {
+			curInheritedMode = entitycounters.InheritedWith
+		}
+
+		calcData.Counters.DecrementState(calcData.PrevState, prevInheritedMode)
+		calcData.Counters.IncrementState(calcData.CurState, curInheritedMode)
 
 		if !calcData.PrevActive {
 			calcData.Counters.DecrementPbhCounters(calcData.PrevPbhTypeID)

@@ -76,7 +76,9 @@
               </template>
               <span>{{ line.error.message }}</span>
             </v-tooltip>
-            <span class="c-payload-textarea-field__line-text" contenteditable="true">{{ line.text }}</span>
+            <span class="c-payload-textarea-field__line-text" contenteditable="true">
+              {{ line.text }}
+            </span>
           </span>
         </span>
       </div>

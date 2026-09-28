@@ -10,7 +10,9 @@
       overlap
     >
       <template #badge="">
-        <span class="px-1">{{ badgeValue }}</span>
+        <span class="px-1">
+          {{ badgeValue }}
+        </span>
       </template>
       <span
         :style="{ backgroundColor: style.color }"

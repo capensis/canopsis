@@ -7,12 +7,20 @@ import flatten from 'flat';
 
 registerRequireContextHook();
 
+const i18n = require('@/i18n').default;
+
+i18n.silentTranslationWarn = true;
+i18n.silentFallbackWarn = true;
+
 global.ResizeObserver = ResizeObserver;
 global.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollTo = jest.fn();
 
 Object.defineProperty(HTMLElement.prototype, 'innerText', {
   set(value) {
@@ -163,7 +171,25 @@ function toBeDispatchedWith(received, expected) {
   }
 }
 
+function toMatchCleanSnapshot(received, hint) {
+  const html = received && typeof received.html === 'function'
+    ? received.html()
+    : received;
+
+  const cleaned = String(html).replace(
+    /\s([\w-]+)="\(\.\.\.args\)\s*=>[\s\S]*?"/g,
+    ' $1="[Function]"',
+  );
+
+  if (typeof hint === 'string') {
+    return toMatchSnapshot.call(this, cleaned, hint);
+  }
+
+  return toMatchSnapshot.call(this, cleaned);
+}
+
 expect.extend({
+  toMatchCleanSnapshot,
   toMatchImageSnapshot,
   toMatchCanvasSnapshot,
   toMatchTooltipSnapshot,

@@ -15,6 +15,7 @@
         v-if="removable"
         :tooltip="$t('shareToken.revokeSelectedTokens')"
         type="delete"
+        small
         @click="$emit('remove-selected', selected)"
       />
     </template>

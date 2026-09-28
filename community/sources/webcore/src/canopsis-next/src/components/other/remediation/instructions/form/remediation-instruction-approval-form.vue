@@ -1,15 +1,16 @@
 <template>
   <v-layout column>
-    <v-checkbox
+    <c-enabled-field
       v-model="needApprove"
       :label="$t('remediation.instruction.requestApproval')"
       :disabled="disabled || required"
-      color="primary"
       hide-details
     />
     <template v-if="needApprove">
       <v-layout v-if="disabled">
-        <span class="text-subtitle-1 grey--text my-4">{{ assignLabel }}: {{ assignValue }}</span>
+        <span class="text-subtitle-1 grey--text my-4">
+          {{ assignLabel }}: {{ assignValue }}
+        </span>
       </v-layout>
       <v-layout
         v-else

@@ -1,52 +1,82 @@
 <template>
-  <div>
-    <c-payload-text-field
-      v-field="form.resource"
-      :label="$t('eventFilter.resource')"
-      :name="`${name}.resource`"
-      :variables="variables"
-    />
-    <c-payload-text-field
-      v-field="form.component"
-      :label="$t('eventFilter.component')"
-      :name="`${name}.component`"
-      :variables="variables"
-    />
-    <c-payload-text-field
-      v-field="form.connector"
-      :label="$t('eventFilter.connector')"
-      :name="`${name}.connector`"
-      :variables="variables"
-    />
-    <c-payload-text-field
-      v-field="form.connector_name"
-      :label="$t('eventFilter.connectorName')"
-      :name="`${name}.connector_name`"
-      :variables="variables"
-    />
-    <c-payload-text-field
-      v-field="form.upstream"
-      :label="$t('eventFilter.upstream')"
-      :name="`${name}.upstream`"
-      :variables="variables"
-    />
-    <v-alert
-      :value="errors.has(name)"
-      type="error"
-    >
-      {{ $t('eventFilter.configRequired') }}
-    </v-alert>
-  </div>
+  <v-layout class="gap-3" column>
+    <span class="text-subtitle-1">
+      {{ $t('eventFilter.changeEntityOptions') }}
+    </span>
+
+    <c-form-block>
+      <c-form-block-row :label="$t('externalData.title')">
+        <div class="py-3">
+          <external-data-form
+            v-field="form.external_data"
+            :variables="templateVars.external_data"
+            optionally
+          />
+        </div>
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.resource')">
+        <c-payload-text-field
+          v-field="form.config.resource"
+          :label="$t('eventFilter.resource')"
+          :name="`${name}.resource`"
+          :variables="templateVars.config"
+          :required="someRequired"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.component')">
+        <c-payload-text-field
+          v-field="form.config.component"
+          :label="$t('eventFilter.component')"
+          :name="`${name}.component`"
+          :variables="templateVars.config"
+          :required="someRequired"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.connector')">
+        <c-payload-text-field
+          v-field="form.config.connector"
+          :label="$t('eventFilter.connector')"
+          :name="`${name}.connector`"
+          :variables="templateVars.config"
+          :required="someRequired"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.connectorName')">
+        <c-payload-text-field
+          v-field="form.config.connector_name"
+          :label="$t('eventFilter.connectorName')"
+          :name="`${name}.connector_name`"
+          :variables="templateVars.config"
+          :required="someRequired"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.upstream')">
+        <c-payload-text-field
+          v-field="form.config.upstream"
+          :label="$t('eventFilter.upstream')"
+          :name="`${name}.upstream`"
+          :variables="templateVars.config"
+          :required="someRequired"
+        />
+      </c-form-block-row>
+    </c-form-block>
+  </v-layout>
 </template>
 
 <script>
-import { onBeforeUnmount, watch } from 'vue';
+import { computed } from 'vue';
 
-import { useModelField } from '@/hooks/form/model-field';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
 export default {
-  inject: ['$validator'],
+  components: {
+    ExternalDataForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -60,33 +90,23 @@ export default {
       type: String,
       default: 'config',
     },
-    variables: {
-      type: Array,
-      default: () => [],
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
-  setup(props, { emit }) {
-    useModelField(props, emit);
+  setup(props) {
+    const someRequired = computed(() => !(
+      props.form.config.resource
+       || props.form.config.component
+       || props.form.config.connector
+       || props.form.config.connector_name
+       || props.form.config.upstream
+    ));
 
-    const {
-      attachRequiredRule,
-      detachRequiredRule,
-      validateRequiredRule,
-    } = useValidationAttachRequired(props.name);
-
-    const getRequiredValue = () => (
-      props.form.resource
-       || props.form.component
-       || props.form.connector
-       || props.form.connector_name
-       || props.form.upstream
-    );
-
-    watch(() => props.form, validateRequiredRule);
-
-    attachRequiredRule(getRequiredValue);
-
-    onBeforeUnmount(detachRequiredRule);
+    return {
+      someRequired,
+    };
   },
 };
 </script>

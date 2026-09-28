@@ -607,7 +607,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <span>
-                ticket-url-1
+        ticket-url-1
               </span>
             </td>
             <td
@@ -706,7 +706,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <span>
-                ticket-url-3
+        ticket-url-3
               </span>
             </td>
             <td
@@ -805,7 +805,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <span>
-                ticket-url-5
+        ticket-url-5
               </span>
             </td>
             <td
@@ -904,7 +904,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <span>
-                ticket-url-7
+        ticket-url-7
               </span>
             </td>
             <td
@@ -1003,7 +1003,7 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
               class="text-start"
             >
               <span>
-                ticket-url-9
+        ticket-url-9
               </span>
             </td>
             <td

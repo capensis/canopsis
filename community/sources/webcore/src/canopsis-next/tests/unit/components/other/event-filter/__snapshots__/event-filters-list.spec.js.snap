@@ -14,15 +14,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -520,12 +512,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -631,12 +623,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -740,12 +732,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -851,12 +843,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -960,12 +952,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1071,12 +1063,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1180,12 +1172,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1291,12 +1283,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1400,12 +1392,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1511,12 +1503,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1620,12 +1612,12 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                <c-action-btn-stub
-                  type="delete"
-                />
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
+                />
+                <c-action-btn-stub
+                  type="delete"
                 />
               </div>
             </td>
@@ -1658,15 +1650,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -2015,15 +1999,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -2462,11 +2438,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -2546,11 +2522,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -2628,11 +2604,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -2712,11 +2688,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -2794,11 +2770,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -2878,11 +2854,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -2960,11 +2936,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -3044,11 +3020,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -3126,11 +3102,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -3210,11 +3186,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               >
                 <!---->
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -3247,15 +3223,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
         label=""
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -3746,11 +3714,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -3853,11 +3821,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -3958,11 +3926,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4065,11 +4033,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4170,11 +4138,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4277,11 +4245,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4382,11 +4350,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4489,11 +4457,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4594,11 +4562,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
                 />
+                <!---->
               </div>
             </td>
           </tr>
@@ -4701,11 +4669,11 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                   type="edit"
                 />
                 <!---->
-                <!---->
                 <c-db-export-btn-stub
                   event-filter=""
                   id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
                 />
+                <!---->
               </div>
             </td>
           </tr>

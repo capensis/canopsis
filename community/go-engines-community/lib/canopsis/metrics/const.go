@@ -44,6 +44,9 @@ const (
 	MessageRate       = "message_rate"
 	MessageRateHourly = "message_rate_hourly"
 
+	LLMTokenUsage       = "llm_token_usage"        //nolint:gosec
+	LLMTokenUsageHourly = "llm_token_usage_hourly" //nolint:gosec
+
 	EntityInfosUpdate = "entity_infos_update"
 
 	EventAnomaly               = "event_anomaly"

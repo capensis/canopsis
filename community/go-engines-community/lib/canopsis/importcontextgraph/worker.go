@@ -188,12 +188,20 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 			if resErr == nil {
 				resErr = err
 			}
-		} else {
-			err = os.Remove(filename)
-			if err != nil && resErr == nil {
+
+			return
+		}
+
+		err = os.Remove(filename)
+		if err != nil {
+			if resErr == nil {
 				resErr = err
 			}
+
+			return
 		}
+
+		w.logger.Debug().Str("filename", filename).Msg("context graph import file removed")
 	}()
 
 	var entityParseRes parseEntityResult

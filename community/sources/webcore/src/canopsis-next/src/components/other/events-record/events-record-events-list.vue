@@ -14,7 +14,9 @@
     <template #toolbar>
       <v-expand-transition>
         <v-layout v-if="resending" class="gap-4" align-center>
-          <span class="font-italic">{{ $t('eventsRecord.resendingInProgress') }}</span>
+          <span class="font-italic">
+            {{ $t('eventsRecord.resendingInProgress') }}
+          </span>
           <v-progress-circular
             color="primary"
             width="3"
