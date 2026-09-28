@@ -17,7 +17,6 @@ import (
 	libwidget "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -533,7 +532,13 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			{"$unwind": bson.M{"path": "$views", "preserveNullAndEmptyArrays": true}},
 			{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$views",
-				bson.M{"group_obj": "$$ROOT"},
+				bson.M{"group_obj": bson.M{
+					"_id":     "$_id",
+					"title":   "$title",
+					"author":  "$author",
+					"created": "$created",
+					"updated": "$updated",
+				}},
 			}}}},
 		}...)
 		pipeline = append(pipeline, nestedObjectsPipeline...)
@@ -780,19 +785,13 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 											Title:            filter.Title,
 											Widget:           widgetId,
 											IsUserPreference: false,
-											AlarmPatternFields: savedpattern.AlarmPatternFields{
-												AlarmPattern: filter.AlarmPattern,
-											},
-											EntityPatternFields: savedpattern.EntityPatternFields{
-												EntityPattern: filter.EntityPattern,
-											},
-											PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-												PbehaviorPattern: filter.PbehaviorPattern,
-											},
-											Author:   userID,
-											Position: int64(fi),
-											Created:  now,
-											Updated:  now,
+											AlarmPattern:     filter.AlarmPattern,
+											EntityPattern:    filter.EntityPattern,
+											PbehaviorPattern: filter.PbehaviorPattern,
+											Author:           userID,
+											Position:         int64(fi),
+											Created:          now,
+											Updated:          now,
 										})
 
 										if widget.Parameters.MainFilter != "" && filter.ID == widget.Parameters.MainFilter {
@@ -1490,8 +1489,7 @@ func mergePositions(
 	minUpdatedOldPosition int,
 ) []string {
 	// Add not updated items to the begin if they were before first updated item.
-	for oldPosition := len(oldPositions) - 1; oldPosition >= 0; oldPosition-- {
-		id := oldPositions[oldPosition]
+	for oldPosition, id := range slices.Backward(oldPositions) {
 		if _, ok := notUpdated[id]; !ok {
 			continue
 		}

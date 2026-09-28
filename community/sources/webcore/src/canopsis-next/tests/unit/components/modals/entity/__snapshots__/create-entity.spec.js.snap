@@ -42,7 +42,7 @@ exports[`create-entity Renders \`create-entity\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -92,7 +92,7 @@ exports[`create-entity Renders \`create-entity\` with pbehavior 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>

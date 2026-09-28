@@ -1,4 +1,5 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { ALARM_STATUSES, ENTITY_TYPES } from '@/constants';
 
@@ -6,13 +7,17 @@ import ServiceEntityHeader from '@/components/other/service/partials/service-ent
 
 const stubs = {
   'c-no-events-icon': true,
+  'c-simple-tooltip': true,
 };
 
 const selectAlert = wrapper => wrapper.find('v-alert-stub');
 
 describe('service-entity-header', () => {
-  const snapshotFactory = generateRenderer(ServiceEntityHeader, { stubs });
-  const factory = generateShallowRenderer(ServiceEntityHeader, { stubs });
+  const { authModule } = createAuthModule();
+  const store = createMockedStoreModules([authModule]);
+
+  const snapshotFactory = generateRenderer(ServiceEntityHeader, { stubs, store });
+  const factory = generateShallowRenderer(ServiceEntityHeader, { stubs, store });
 
   test('Alert removed after trigger alert', () => {
     const wrapper = factory({

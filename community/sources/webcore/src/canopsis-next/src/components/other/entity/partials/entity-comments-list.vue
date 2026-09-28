@@ -19,8 +19,12 @@
         />
       </template>
       <span v-else class="font-italic text-center">
-        <span v-if="pending" class="grey--text">{{ $t('common.loadingItems') }}</span>
-        <span v-else>{{ $t('entity.comments.emptyList') }}</span>
+        <span v-if="pending" class="grey--text">
+          {{ $t('common.loadingItems') }}
+        </span>
+        <span v-else>
+          {{ $t('entity.comments.emptyList') }}
+        </span>
       </span>
     </v-layout>
   </v-layout>

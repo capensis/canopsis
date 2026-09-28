@@ -18,7 +18,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -86,7 +86,7 @@ export default {
       isNew.value ? t('common.add') : t('common.submit')
     ));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(formToLlm(form.value));
@@ -122,7 +122,6 @@ export default {
       title,
       submitLabel,
 
-      isDisabled,
       submitting,
 
       submit,

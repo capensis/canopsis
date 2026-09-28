@@ -1,56 +1,54 @@
 <template>
-  <div>
-    <slot
-      v-if="!names.length"
-      name="no-data"
+  <v-layout class="gap-2" column>
+    <c-label
+      :label="$t('modals.createDynamicInfoTemplate.fields.names')"
+      required
     />
     <v-layout
       v-for="(name, index) in names"
       :key="name.key"
+      align-center
       justify-space-between
     >
-      <v-flex xs11>
-        <v-text-field
+      <v-flex :xs11="names.length > 1" :xs12="names.length <= 1">
+        <c-name-field
           v-field="names[index].value"
-          v-validate="'required'"
-          :error-messages="errors.collect(`name[${name.key}]`)"
-          :name="`name[${name.key}]`"
-          :placeholder="$t('common.name')"
+          :label="$t('common.name')"
+          :name="`names[${name.key}]`"
+          required
         />
       </v-flex>
-      <v-flex xs1>
+      <v-flex
+        v-if="names.length > 1"
+        shrink
+      >
         <v-btn
           color="error"
           icon
-          @click="removeItemFromArray(index)"
+          @click="removeName(index)"
         >
           <v-icon>delete</v-icon>
         </v-btn>
       </v-flex>
     </v-layout>
-    <v-btn
-      class="primary mx-0"
-      @click="showAddValueModal"
-    >
-      {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
-    </v-btn>
-    <v-alert
-      :value="errors.has('names')"
-      type="error"
-    >
-      <span>{{ $t('modals.createDynamicInfoTemplate.errors.noNames') }}</span>
-    </v-alert>
-  </div>
+    <div>
+      <v-btn
+        color="primary"
+        outlined
+        @click="addName"
+      >
+        {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
+      </v-btn>
+    </div>
+  </v-layout>
 </template>
 
 <script>
 import { generateTemplateFormName } from '@/helpers/entities/dynamic-info/template/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formArrayMixin],
   model: {
     prop: 'names',
     event: 'input',
@@ -61,20 +59,15 @@ export default {
       default: () => [],
     },
   },
-  created() {
-    this.$validator.attach({
-      name: 'names',
-      rules: 'required:true',
-      getter: () => this.names.length > 0,
-      vm: this,
-    });
-  },
-  methods: {
-    showAddValueModal() {
-      this.addItemIntoArray(generateTemplateFormName());
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-      this.$nextTick(() => this.$validator.validate('names'));
-    },
+    const addName = () => addItemIntoArray(generateTemplateFormName());
+
+    return {
+      addName,
+      removeName: removeItemFromArray,
+    };
   },
 };
 </script>

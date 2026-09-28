@@ -96,9 +96,11 @@ export const remediationJobToForm = (remediationJob = {}) => ({
   payload: remediationJob.payload ?? '',
   multiple_executions: remediationJob.multiple_executions ?? false,
   query: remediationJob.query ? objectToTextPairs(remediationJob.query) : [],
-  job_wait_interval: remediationJob.job_wait_interval
-    ? durationWithEnabledToForm({ enabled: true, ...remediationJob.job_wait_interval })
-    : { value: undefined, unit: undefined },
+  job_wait_interval: durationWithEnabledToForm(
+    remediationJob.job_wait_interval
+      ? { enabled: true, ...remediationJob.job_wait_interval }
+      : undefined,
+  ),
 });
 
 /**

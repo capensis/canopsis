@@ -10,7 +10,7 @@ const stubs = {
   'date-time-splitted-range-picker-text': true,
   'c-pbehavior-type-field': true,
   'c-pbehavior-type-text': true,
-  'v-checkbox': createCheckboxInputStub('v-checkbox'),
+  'v-switch': createCheckboxInputStub('v-switch'),
 };
 
 const snapshotStubs = {
@@ -18,14 +18,14 @@ const snapshotStubs = {
   'date-time-splitted-range-picker-text': true,
   'c-pbehavior-type-field': true,
   'c-pbehavior-type-text': true,
-  'v-checkbox': true,
+  'v-switch': true,
 };
 
 const selectDateTimePickerField = wrapper => wrapper.find('date-time-splitted-range-picker-field-stub');
 const selectTypeField = wrapper => wrapper.find('c-pbehavior-type-field-stub');
 const selectToggleEditButton = wrapper => wrapper.findAll('v-btn-stub').at(0);
 const selectRemoveButton = wrapper => wrapper.findAll('v-btn-stub').at(1);
-const selectFullDayCheckbox = wrapper => wrapper.find('.v-checkbox');
+const selectFullDayCheckbox = wrapper => wrapper.find('.v-switch');
 
 describe('pbehavior-exception-field', () => {
   const factory = generateShallowRenderer(PbehaviorExceptionField, {

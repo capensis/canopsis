@@ -103,16 +103,14 @@ func (s *store) Enable(ctx context.Context, message, color, userID string) error
 		}
 
 		_, err = s.broadcastCollection.InsertOne(ctx, broadcastmessage.CreateRequest{
-			ID: broadcastID,
-			EditRequest: broadcastmessage.EditRequest{
-				Color:   color,
-				Message: message,
-				Start:   now,
-				End:     datetime.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
-				Author:  userID,
-				Created: &now,
-				Updated: &now,
-			},
+			ID:      broadcastID,
+			Color:   color,
+			Message: message,
+			Start:   now,
+			End:     datetime.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
+			Author:  userID,
+			Created: &now,
+			Updated: &now,
 		})
 
 		return err

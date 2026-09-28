@@ -2,7 +2,9 @@
   <widget-settings-group :title="$t('settings.commentTemplates.title')">
     <v-container>
       <v-layout class="gap-2" column>
-        <span class="text-body-2">{{ $tc('common.template', 2) }}</span>
+        <span class="text-body-2">
+          {{ $tc('common.template', 2) }}
+        </span>
         <span>{{ $t('settings.commentTemplates.description') }}</span>
         <c-card-iterator-field
           v-field="templates"

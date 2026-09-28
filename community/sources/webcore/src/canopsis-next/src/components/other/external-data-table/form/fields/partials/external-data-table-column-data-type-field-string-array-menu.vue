@@ -32,7 +32,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
-            :disabled="isDisabled"
+            :disabled="submitting"
             :loading="submitting"
             color="success"
             type="submit"
@@ -109,7 +109,7 @@ export default {
      * Handles form submission by validating the form data and updating the model
      * Closes the menu if validation passes
      */
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         const isValid = await validator.validateAll();
@@ -160,7 +160,6 @@ export default {
       isOpen,
       form,
       submit,
-      isDisabled,
       submitting,
       cancel,
       callMenuResize,

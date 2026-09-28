@@ -6,7 +6,9 @@
       @add="add"
     >
       <template #header>
-        <span class="text-body-2">{{ $t('settings.fastPbehavior') }}</span>
+        <span class="text-body-2">
+          {{ $t('settings.fastPbehavior') }}
+        </span>
         <span>{{ $t('settings.fastPbehaviorDescription') }}</span>
       </template>
       <template #item="{ index }">

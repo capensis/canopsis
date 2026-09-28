@@ -1,11 +1,11 @@
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 export default {
-  ticketUrlAndId: 'Ticket URL and ID',
   ticketUrlAndIdHelpText: 'The ticket URL received from the API response can be added to the alarm dynamic infos.',
   dataFromOneStepAttention: 'Data from the API response can be taken only from one step of a rule.',
   ticketID: 'Ticket ID',
   ticketURL: 'Ticket URL',
+  ticketUrlAndId: 'Ticket URL and ID',
   ticketURLTitle: 'Ticket URL title',
   ticketURLTitleHelp: 'This title will display in the body of link tag: <strong>&lt;a href=&quot;{URL}&quot;&gt;{TITLE}&lt;/a&gt;</strong>',
   ticketSystemName: 'Ticket system name',
@@ -17,7 +17,6 @@ export default {
   emptyResponse: 'Empty response',
   isRegexp: 'The value can be a RegExp',
   addWebhook: 'Add webhook',
-  emptyFields: 'No fields added yet',
   emptyWebhooks: 'No webhooks added yet',
   workflowIfStepFails: 'If this step fails',
   continueWithNextStep: 'Continue with next steps',
@@ -41,9 +40,10 @@ export default {
   massDisable: 'Disable declare ticket rules',
   checkTicketStatus: 'Check ticket status',
   checkTicketStatusHelpText: 'Enable to verify that the ticket exists in the ticket system before performing the next steps.',
+  ticketStatusEndpoint: 'Ticket status endpoint',
   ticketStatusMapping: 'Ticket status mapping',
   ticketStatusMappingHelpText: 'At least one source value must be mapped to Canopsis "Closed" value.',
-  ticketStatusMappingUnmappedToOpen: 'All unmapped source values will be mapped to Canopsis status "Unknown".',
+  ticketStatusMappingUnmappedToOpen: 'All unmapped source values will be mapped to Canopsis status "Open".',
   sourceValue: 'Source value',
   canopsisValue: 'Canopsis value',
   addMappingPair: 'Add mapping pair',

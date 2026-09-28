@@ -6,7 +6,9 @@
       :pending="templatesPending"
       @input="updateTemplate"
     />
-    <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
+    <span class="text-body-2 my-2">
+      {{ $tc('common.column', 2) }}
+    </span>
     <c-columns-field
       v-bind="$attrs"
       @input="updateValue"

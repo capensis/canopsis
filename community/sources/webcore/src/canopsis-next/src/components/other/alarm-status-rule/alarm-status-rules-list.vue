@@ -19,6 +19,7 @@
         :disablable="updatable"
         :flapping-rule="flapping"
         :resolve-rule="!flapping"
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
@@ -44,12 +45,12 @@
           type="duplicate"
           @click="$emit('duplicate', item)"
         />
+        <c-db-export-btn :id="item._id" flapping-rule />
         <c-action-btn
           v-if="removable"
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <c-db-export-btn :id="item._id" flapping-rule />
       </v-layout>
     </template>
     <template #expand="{ item }">

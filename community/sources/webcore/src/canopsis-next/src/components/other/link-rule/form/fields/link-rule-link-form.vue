@@ -16,58 +16,66 @@
             @click="remove"
           />
         </v-layout>
-        <v-layout align-center>
-          <v-flex
-            class="pr-2"
-            xs8
-          >
+        <c-form-block>
+          <c-form-block-row :label="$t('common.category')">
             <v-text-field
               v-field="form.category"
               :label="$t('common.category')"
             />
-          </v-flex>
-          <v-flex xs4>
+          </c-form-block-row>
+
+          <c-form-block-row :label="$tc('common.icon', 1)">
             <c-icon-field
               v-field="form.icon_name"
               :label="$tc('common.icon', 1)"
               :name="iconFieldName"
               required
             />
-          </v-flex>
-        </v-layout>
-        <template v-if="isAlarmType">
-          <c-enabled-field
-            v-field="form.single"
-            :label="$t('linkRule.single')"
-            hide-details
-          />
-          <c-enabled-field
-            v-field="form.hide_in_menu"
-            :label="$t('linkRule.hideInMenu')"
-          />
-        </template>
-        <c-payload-text-field
-          v-field="form.url"
-          :label="$t('common.url')"
-          :variables="templateVars.url"
-          :name="form.key"
-          required
-        />
-        <v-radio-group
-          v-field="form.action"
-          :label="$t('common.actionType')"
-        >
-          <v-radio
-            :value="$constants.LINK_RULE_ACTIONS.open"
-            :label="$t('linkRule.actionTypes.open')"
-            color="primary"
-          />
-          <v-radio
-            :value="$constants.LINK_RULE_ACTIONS.copy"
-            :label="$t('linkRule.actionTypes.copy')"
-            color="primary"
-          />
-        </v-radio-group>
+          </c-form-block-row>
+
+          <c-form-block-row
+            v-if="isAlarmType"
+            :label="$t('linkRule.alarmListParameters')"
+          >
+            <c-enabled-field
+              v-field="form.single"
+              :label="$t('linkRule.single')"
+              hide-details
+            />
+            <c-enabled-field
+              v-field="form.hide_in_menu"
+              :label="$t('linkRule.hideInMenu')"
+            />
+          </c-form-block-row>
+
+          <c-form-block-row :label="$t('common.url')">
+            <c-payload-text-field
+              v-field="form.url"
+              :label="$t('common.url')"
+              :variables="templateVars.url"
+              :name="form.key"
+              required
+            />
+          </c-form-block-row>
+
+          <c-form-block-row :label="$t('common.actionType')">
+            <v-radio-group
+              v-field="form.action"
+              :label="$t('common.actionType')"
+            >
+              <v-radio
+                :value="$constants.LINK_RULE_ACTIONS.open"
+                :label="$t('linkRule.actionTypes.open')"
+                color="primary"
+              />
+              <v-radio
+                :value="$constants.LINK_RULE_ACTIONS.copy"
+                :label="$t('linkRule.actionTypes.copy')"
+                color="primary"
+              />
+            </v-radio-group>
+          </c-form-block-row>
+        </c-form-block>
       </v-layout>
     </v-card-text>
   </v-card>
@@ -79,7 +87,6 @@ import { computed } from 'vue';
 import { LINK_RULE_TYPES } from '@/constants';
 
 export default {
-  inject: ['$validator'],
   model: {
     prop: 'form',
     event: 'input',

@@ -22,7 +22,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="primary"
           type="submit"
         >
@@ -75,7 +75,7 @@ export default {
     const items = computed(() => config.value.items ?? []);
     const templates = computed(() => config.value.templates ?? []);
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, submit } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action(createCommentFormToCreateCommentEvent(form.value));
@@ -94,7 +94,6 @@ export default {
       items,
       templates,
       submitting,
-      isDisabled,
       submit,
     };
   },

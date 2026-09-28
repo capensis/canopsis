@@ -34,7 +34,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
               <span
                 class="text-truncate"
               >
-                Text
+        Text
               </span>
               <button
                 aria-label="Close"
@@ -55,7 +55,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
               <span
                 class="text-truncate"
               >
-                Text 2
+        Text 2
               </span>
               <button
                 aria-label="Close"
@@ -76,7 +76,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
               <span
                 class="text-truncate"
               >
-                Text 3
+        Text 3
               </span>
               <button
                 aria-label="Close"
@@ -157,13 +157,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
           Text
           <span
             class="v-list-item__mask"
-          />
+          >
+          </span>
         </span>
       </div>
       <span
         class="ml-4 grey--text"
       >
-        type1
+          type1
       </span>
     </div>
     <div
@@ -179,13 +180,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
           Text 2
           <span
             class="v-list-item__mask"
-          />
+          >
+          </span>
         </span>
       </div>
       <span
         class="ml-4 grey--text"
       >
-        type2
+          type2
       </span>
     </div>
     <div
@@ -201,13 +203,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
           Text 3
           <span
             class="v-list-item__mask"
-          />
+          >
+          </span>
         </span>
       </div>
       <span
         class="ml-4 grey--text"
       >
-        type3
+          type3
       </span>
     </div>
     <div
@@ -434,13 +437,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           id
           <span
             class="v-list-item__mask"
-          />
+          >
+          </span>
         </span>
       </div>
       <span
         class="ml-4 grey--text"
       >
-        type1
+          type1
       </span>
     </div>
     <div
@@ -456,13 +460,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           id 2
           <span
             class="v-list-item__mask"
-          />
+          >
+          </span>
         </span>
       </div>
       <span
         class="ml-4 grey--text"
       >
-        type2
+          type2
       </span>
     </div>
     <div
@@ -478,13 +483,14 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           id 3
           <span
             class="v-list-item__mask"
-          />
+          >
+          </span>
         </span>
       </div>
       <span
         class="ml-4 grey--text"
       >
-        type3
+          type3
       </span>
     </div>
     <div

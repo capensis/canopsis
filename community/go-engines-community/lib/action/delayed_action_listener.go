@@ -18,7 +18,7 @@ import (
 type delayedScenarioListener struct {
 	PeriodicalInterval     time.Duration
 	DelayedScenarioManager action.DelayedScenarioManager
-	AmqpChannel            libamqp.Channel
+	AmqpPublisher          libamqp.Publisher
 	Queue                  string
 	EventGenerator         libevent.Generator
 	Encoder                encoding.Encoder
@@ -70,7 +70,7 @@ func (l *delayedScenarioListener) publishRunDelayedScenarioEvent(
 		return fmt.Errorf("cannot encode event: %w", err)
 	}
 
-	err = l.AmqpChannel.PublishWithContext(
+	err = l.AmqpPublisher.PublishWithContext(
 		ctx,
 		"",
 		l.Queue,

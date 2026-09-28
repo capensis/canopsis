@@ -13,12 +13,12 @@ func (s ResolveStrategy) CanSkip(calcData entitycounters.ComponentCountersCalcDa
 
 func (s ResolveStrategy) Calculate(calcData entitycounters.ComponentCountersCalcData) entitycounters.EntityCounters {
 	if calcData.Info.ComponentStateSettingsToRemove {
-		calcData.Counters.DecrementState(calcData.PrevState, false)
+		calcData.Counters.DecrementState(calcData.PrevState, entitycounters.InheritedNone)
 	} else if calcData.Info.ComponentStateSettingsToAdd {
-		calcData.Counters.IncrementState(types.AlarmStateOK, false)
+		calcData.Counters.IncrementState(types.AlarmStateOK, entitycounters.InheritedNone)
 	} else {
-		calcData.Counters.DecrementState(calcData.PrevState, false)
-		calcData.Counters.IncrementState(types.AlarmStateOK, false)
+		calcData.Counters.DecrementState(calcData.PrevState, entitycounters.InheritedNone)
+		calcData.Counters.IncrementState(types.AlarmStateOK, entitycounters.InheritedNone)
 	}
 
 	return calcData.Counters

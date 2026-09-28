@@ -144,6 +144,13 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
+					// task may be sent as abandoned because prev execution was too long, there is a chance that
+					// prev task finishes in the exact same time as we sent abandoned task, so we need to check again
+					// if it's completed.
+					if execution.ActionExecutions[len(execution.ActionExecutions)-1].Executed {
+						return
+					}
+
 					step := 0
 					for _, e := range execution.ActionExecutions {
 						if e.Executed {
@@ -401,6 +408,22 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Str("execution", taskRes.ExecutionCacheKey).
 			Int("step", taskRes.Step).
 			Msg("action execution failed")
+
+		if executedAction.EmitTriggerFail {
+			err := e.processEmittedTrigger(ctx, taskRes, *scenarioExecution)
+			if err != nil {
+				e.logger.Err(err).
+					Str("source", taskRes.Source).
+					Str("alarm", taskRes.Alarm.ID).
+					Str("execution", taskRes.ExecutionCacheKey).
+					Int("step", taskRes.Step).
+					Msg("cannot process emitted trigger")
+				e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
+
+				return
+			}
+		}
+
 		if executedAction.Parameters.StopOnFail != nil && *executedAction.Parameters.StopOnFail {
 			e.logger.Debug().
 				Str("source", taskRes.Source).
@@ -446,7 +469,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		}
 	}
 
-	if executedAction.EmitTrigger && taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
+	if taskRes.Status != TaskRpcError && executedAction.EmitTriggerSuccess && taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
 		err := e.processEmittedTrigger(ctx, taskRes, *scenarioExecution)
 		if err != nil {
 			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot process emitted trigger")

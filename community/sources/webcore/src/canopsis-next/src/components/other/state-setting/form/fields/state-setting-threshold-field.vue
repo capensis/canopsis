@@ -53,7 +53,9 @@
     <v-expand-transition>
       <span v-if="summaryMessage">
         <strong>{{ $t('common.summary') }}:</strong>
-        <span class="ml-2">{{ summaryMessage }}</span>
+        <span class="ml-2">
+          {{ summaryMessage }}
+        </span>
       </span>
     </v-expand-transition>
   </v-layout>

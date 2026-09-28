@@ -10,6 +10,8 @@ type ServicesInfo struct {
 	Services         []string `bson:"services"`
 	ServicesToAdd    []string `bson:"services_to_add"`
 	ServicesToRemove []string `bson:"services_to_remove"`
+
+	InheritedServices []string `bson:"inherited_services"`
 }
 
 type ComponentCountersCalcData struct {
@@ -23,20 +25,21 @@ type ComponentCountersCalcData struct {
 }
 
 type EntityServiceCountersCalcData struct {
-	ServicesToAdd    map[string]bool
-	ServicesToRemove map[string]bool
-	Info             ServicesInfo
-	Counters         EntityCounters
-	PrevPbhTypeID    string
-	CurPbhTypeID     string
-	PrevState        int
-	CurState         int
-	PrevActive       bool
-	CurActive        bool
-	IsAcked          bool
-	Inherited        bool
-	AlarmExists      bool
-	EntityEnabled    bool
+	ServicesToAdd     map[string]bool
+	ServicesToRemove  map[string]bool
+	InheritedServices map[string]bool
+	Counters          EntityCounters
+	PrevPbhTypeID     string
+	CurPbhTypeID      string
+	PrevState         int
+	CurState          int
+	PrevActive        bool
+	CurActive         bool
+	IsAcked           bool
+	PrevInherited     bool
+	CurInherited      bool
+	AlarmExists       bool
+	EntityEnabled     bool
 }
 
 type UpdatedServicesInfo struct {

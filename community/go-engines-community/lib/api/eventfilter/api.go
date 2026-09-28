@@ -216,8 +216,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 // ListFailures
 // @Success 200 {object} pagination.ListResponse{data=[]FailureResponse}
 func (a *api) ListFailures(c *gin.Context) {
-	r := FailureRequest{}
-	r.Query = pagination.GetDefaultQuery()
+	r := FailureRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
 	if err := validation.Bind(c, &r); err != nil {
 		a.errorResponder.Respond(c, err)
 

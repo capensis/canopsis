@@ -1,36 +1,22 @@
 <template>
-  <v-tabs
-    slider-color="primary"
-    centered
-  >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
-    <v-tab :class="{ 'error--text': hasPagesError }">
-      {{ $t('broadcastMessage.viewsAndPages') }}
-    </v-tab>
-
-    <v-tab-item eager>
+  <c-form-general-patterns-tabs :patterns-label="$t('broadcastMessage.viewsAndPages')">
+    <template #general="{ setRef }">
       <broadcast-message-general-form
         v-field="form"
-        ref="generalElement"
+        :ref="setRef"
       />
-    </v-tab-item>
-    <v-tab-item eager>
+    </template>
+    <template #patterns="{ setRef }">
       <broadcast-message-views-form
         v-field="form.views"
-        ref="pagesElement"
+        :ref="setRef"
         :tree-items="treeItems"
       />
-    </v-tab-item>
-  </v-tabs>
+    </template>
+  </c-form-general-patterns-tabs>
 </template>
 
 <script>
-import { ref } from 'vue';
-
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-
 import BroadcastMessageGeneralForm from './broadcast-message-general-form.vue';
 import BroadcastMessageViewsForm from './broadcast-message-views-form.vue';
 
@@ -50,24 +36,9 @@ export default {
       required: true,
     },
     treeItems: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
-  },
-  setup() {
-    const generalElement = ref(null);
-    const pagesElement = ref(null);
-
-    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
-    const { hasChildrenError: hasPagesError } = useValidationElementChildren(pagesElement);
-
-    return {
-      generalElement,
-      pagesElement,
-
-      hasGeneralError,
-      hasPagesError,
-    };
   },
 };
 </script>

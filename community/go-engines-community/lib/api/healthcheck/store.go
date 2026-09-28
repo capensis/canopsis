@@ -70,7 +70,7 @@ type store struct {
 
 	mxConn      sync.Mutex
 	mongoClient mongo.DbClient
-	redisClient libredis.UniversalClient
+	redisClient *libredis.Client
 	rmqClient   *rabbithole.Client
 	pgConn      *pgx.Conn
 
@@ -446,10 +446,9 @@ func (s *store) checkRabbitMQ() Service {
 		}
 	}
 
-	count := len(nodes)
 	res.IsRunning = runningCount > 0
-	res.Nodes = &count
-	res.RunningNodes = &runningCount
+	res.Nodes = new(len(nodes))
+	res.RunningNodes = new(runningCount)
 
 	return res
 }
@@ -486,8 +485,9 @@ func (s *store) checkTimescaleDB(ctx context.Context) Service {
 }
 
 func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []string, parameters config.HealthCheckParameters) Engines {
-	graph := Graph{}
-	graph.Nodes = make([]string, len(order))
+	graph := Graph{
+		Nodes: make([]string, len(order)),
+	}
 	enginesParams := make(map[string]Engine, len(order))
 	for i, name := range order {
 		if info, ok := engines[name]; ok {

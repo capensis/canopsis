@@ -33,6 +33,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         <!---->
         <associate-ticket-event-form-stub
           class="mt-3"
+          depth="0"
           form="[object Object]"
         />
         <c-description-field-stub
@@ -109,6 +110,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         <!---->
         <associate-ticket-event-form-stub
           class="mt-3"
+          depth="0"
           form="[object Object]"
         />
         <c-description-field-stub

@@ -1,54 +1,53 @@
 <template>
-  <v-layout column>
-    <v-layout class="mt-3">
-      <v-flex xs12>
-        <slot
-          v-if="!exdates.length"
-          name="no-data"
-        />
+  <v-layout
+    class="gap-3"
+    column
+  >
+    <slot
+      v-if="!exdates.length"
+      name="no-data"
+    />
+    <c-form-block-array-field
+      v-field="exdates"
+      :item-to-form="pbehaviorExdateItemToForm"
+      :add-button-label="addButtonLabel || $t('modals.createPbehaviorException.addDate')"
+      :disabled="disabled"
+      :required="required"
+      :error-messages="errors.collect(name)"
+      :required-error-message="resolvedRequiredErrorMessage"
+    >
+      <template #item="{ index, remove }">
         <pbehavior-exception-field
-          v-for="(exdate, index) in exdates"
           v-field="exdates[index]"
-          :key="exdate.key"
           :disabled="disabled"
           :with-type="withExdateType"
-          class="mb-3"
-          @delete="removeItemFromArray(index)"
+          @delete="remove"
         />
-      </v-flex>
-    </v-layout>
-    <v-layout v-if="!disabled">
-      <slot name="actions">
-        <v-flex>
-          <v-btn
-            class="ml-0"
-            color="secondary"
-            @click="addExceptionDate"
-          >
-            {{ $t('modals.createPbehaviorException.addDate') }}
-          </v-btn>
-        </v-flex>
-      </slot>
-    </v-layout>
+      </template>
+    </c-form-block-array-field>
   </v-layout>
 </template>
 
 <script>
-import { uid } from '@/helpers/uid';
-import { convertDateToStartOfDayDateObject, convertDateToEndOfDayDateObject } from '@/helpers/date/date';
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  watch,
+} from 'vue';
 
-import { formArrayMixin } from '@/mixins/form';
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { pbehaviorExdateItemToForm } from '@/helpers/entities/pbehavior/form';
+
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { PbehaviorExceptionField },
-  mixins: [
-    formArrayMixin,
-    entitiesFieldPbehaviorFieldTypeMixin,
-  ],
   model: {
     prop: 'exdates',
     event: 'input',
@@ -66,19 +65,73 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  mounted() {
-    this.fetchFieldPbehaviorTypesList();
-  },
-  methods: {
-    addExceptionDate() {
-      this.addItemIntoArray({
-        key: uid(),
-        begin: convertDateToStartOfDayDateObject(),
-        end: convertDateToEndOfDayDateObject(),
-        type: '',
-      });
+    required: {
+      type: Boolean,
+      default: false,
     },
+    name: {
+      type: String,
+      default: 'exdates',
+    },
+    requiredErrorMessage: {
+      type: String,
+      default: '',
+    },
+    addButtonLabel: {
+      type: String,
+      default: '',
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
+
+    const {
+      validator,
+      attachMinValueRule,
+      detachMinValueRule,
+      validateMinValueRule,
+    } = useValidationAttachMinValue(props.name);
+
+    const resolvedRequiredErrorMessage = computed(
+      () => props.requiredErrorMessage || t('common.addAtLeastOneItem'),
+    );
+
+    /**
+     * Returns the current number of exception dates for min_value validation.
+     *
+     * @returns {number}
+     */
+    const exdatesLengthGetter = () => props.exdates?.length ?? 0;
+
+    /**
+     * Re-validates the exdates min_value rule on the next tick after the array changes.
+     */
+    const asyncValidateMinValueRule = () => nextTick(validateMinValueRule);
+
+    watch(() => props.exdates, () => {
+      if (props.required) {
+        asyncValidateMinValueRule();
+      }
+    });
+
+    onMounted(() => {
+      fetchPbehaviorTypesFieldList();
+
+      if (!props.required) {
+        return;
+      }
+
+      attachMinValueRule(exdatesLengthGetter);
+    });
+
+    onBeforeUnmount(detachMinValueRule);
+
+    return {
+      errors: validator.errors,
+      pbehaviorExdateItemToForm,
+      resolvedRequiredErrorMessage,
+    };
   },
 };
 </script>

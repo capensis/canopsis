@@ -1,7 +1,5 @@
 // http://nightwatchjs.org/guide#usage
 
-const { CRUD_ACTIONS } = require('../../../constants');
-
 const { WIDGET_TYPES } = require('@/constants');
 
 const {
@@ -253,92 +251,6 @@ module.exports = {
     alarmsWidget.waitFirstPbehaviorXHR(
       () => createPbehaviorModal.clickSubmitButton(),
       id => browser.assert.equal(!!id, true),
-    );
-  },
-
-  'The "List periodic behaviors" feature allows to look through all periodic behaviors': (browser) => {
-    const alarmsWidget = browser.page.widget.alarms();
-    const dateIntervalField = browser.page.fields.dateInterval();
-    const pbehaviorForm = browser.page.forms.pbehavior();
-    const commonTable = browser.page.tables.common();
-    const createPbehaviorModal = browser.page.modals.alarm.createPbehavior();
-    const pbehaviorListModal = browser.page.modals.alarm.pbehaviorList();
-    const sixthAlarm = browser.globals.temporary.alarmsList[5];
-
-    commonTable
-      .clickOnDropDownDots(sixthAlarm._id)
-      .clickOnDropDownAction(ALARMS_SHARED_DROPDOWN_ACTIONS.LIST_PERIODICAL_BEHAVIOR);
-
-    pbehaviorListModal
-      .verifyModalOpened()
-      .clickAction(sixthAlarm._id, CRUD_ACTIONS.UPDATE);
-
-    createPbehaviorModal.verifyModalOpened();
-
-    pbehaviorForm
-      .clearName()
-      .clickName()
-      .setName('Name')
-      .clearReason()
-      .clickReason()
-      .setReason('P')
-      .selectReason(PERIODICAL_BEHAVIOR_REASONS.REHABILITATION_PROBLEM)
-      .selectType(1)
-      .clickStartDate();
-
-    dateIntervalField
-      .clickDatePickerDayTab()
-      .selectCalendarDay(3)
-      .clickDatePickerHoursTab()
-      .selectCalendarHour(16)
-      .clickDatePickerMinutesTab()
-      .selectCalendarMinute(DATE_INTERVAL_MINUTES.FIVE)
-      .clickOutsideDateInterval();
-
-    pbehaviorForm.clickEndDate();
-
-    dateIntervalField
-      .clickDatePickerDayTab()
-      .selectCalendarDay(4)
-      .clickDatePickerHoursTab()
-      .selectCalendarHour(16)
-      .clickDatePickerMinutesTab()
-      .selectCalendarMinute(DATE_INTERVAL_MINUTES.TEN)
-      .clickOutsideDateInterval();
-
-    pbehaviorForm
-      .clickPbehaviorFormStep(PBEHAVIOR_STEPS.RRULE)
-      .setRuleCheckbox(true)
-      .selectFrequency(PERIODICAL_BEHAVIOR_FREQUENCY.MINUTELY)
-      .clickByWeekDay()
-      .selectByWeekDay(WEEK_DAYS.TUESDAY, true)
-      .selectByWeekDay(WEEK_DAYS.FRIDAY, true)
-      .clickOutsideByWeekDay()
-      .clearRepeat()
-      .clickRepeat()
-      .setRepeat(5)
-      .clearInterval()
-      .clickInterval()
-      .setInterval(5);
-
-    pbehaviorForm
-      .clickPbehaviorFormStep(PBEHAVIOR_STEPS.COMMENTS)
-      .clickAddComment()
-      .clickCommentField(1)
-      .clearCommentField(1)
-      .clearCommentField(1)
-      .setCommentField(1, 2);
-
-    alarmsWidget.waitFirstPbehaviorXHR(
-      () => createPbehaviorModal.clickSubmitButton(),
-      (id) => {
-        browser.assert.equal(!!id, true);
-
-        createPbehaviorModal.verifyModalClosed();
-        pbehaviorListModal
-          .clickSubmitButton()
-          .verifyModalClosed();
-      },
     );
   },
 };

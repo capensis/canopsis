@@ -6,8 +6,12 @@
     <v-list-item-content>
       <v-layout align-center>
         <div class="text-subtitle-1">
-          <span class="font-weight-bold">{{ label }}</span>
-          <span v-if="value">: {{ value }}</span>
+          <span class="font-weight-bold">
+            {{ label }}
+          </span>
+          <span v-if="value">
+            : {{ value }}
+          </span>
         </div>
       </v-layout>
     </v-list-item-content>

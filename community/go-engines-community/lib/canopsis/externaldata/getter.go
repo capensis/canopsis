@@ -4,55 +4,63 @@ package externaldata
 
 import (
 	"context"
-	"fmt"
+	"errors"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 )
 
-type GetterContainer struct {
-	getters map[string]Getter
-}
-
-func NewGetterContainer() *GetterContainer {
-	return &GetterContainer{
-		getters: make(map[string]Getter),
-	}
-}
-
-func (c *GetterContainer) Get(dataType string) (Getter, bool) {
-	g, ok := c.getters[dataType]
-
-	return g, ok
-}
-
-func (c *GetterContainer) Set(dataType string, service Getter) {
-	if c.Has(dataType) {
-		panic(fmt.Errorf("data getter %q already exists", dataType))
-	}
-
-	c.getters[dataType] = service
-}
-
-func (c *GetterContainer) Has(dataType string) bool {
-	_, ok := c.getters[dataType]
-
-	return ok
-}
-
 type Getter interface {
-	Get(ctx context.Context, parameters ParsedRefParameters, templateParameters any) (any, error)
+	Get(ctx context.Context, rule Rule, tplData any) (GetterResult, error)
+}
+
+type GetterResult struct {
+	ExternalData  map[string]any
+	CorrelationID string
+	WebhookEvent  *rpc.WebhookEvent
+	RequestCount  map[string]int64
+}
+
+type Rule struct {
+	ID            string
+	Name          string
+	ExternalData  []ParsedRefParameters
+	TriggerUserID string
+	TriggerAuthor string
+}
+
+func NewNullGetter() Getter {
+	return &nullGetter{}
+}
+
+type nullGetter struct {
+}
+
+func (*nullGetter) Get(_ context.Context, _ Rule, _ any) (GetterResult, error) {
+	return GetterResult{}, errors.New("null getter")
 }
 
 type GetterError struct {
+	t               string
 	failReason      string
 	isParamsInvalid bool
 	err             error
 }
 
-func NewGetterError(err error, failReason string, isParamsInvalid bool) error {
-	return &GetterError{err: err, failReason: failReason, isParamsInvalid: isParamsInvalid}
+func NewGetterError(err error, t string, failReason string, isParamsInvalid bool) error {
+	return &GetterError{
+		err:             err,
+		t:               t,
+		failReason:      failReason,
+		isParamsInvalid: isParamsInvalid,
+	}
 }
 
 func (e *GetterError) Error() string {
 	return e.err.Error()
+}
+
+func (e *GetterError) Type() string {
+	return e.t
 }
 
 func (e *GetterError) FailReason() string {

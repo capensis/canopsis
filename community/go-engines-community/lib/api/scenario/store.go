@@ -517,7 +517,11 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 			EntityPatternFields:      ar.EntityRequest.ToModelWithoutFields(s.collection.Name()),
 			AlarmPatternFields:       ar.AlarmRequest.ToModelWithoutFields(s.collection.Name()),
 			DropScenarioIfNotMatched: *ar.DropScenarioIfNotMatched,
-			EmitTrigger:              *ar.EmitTrigger,
+			EmitTriggerSuccess:       *ar.EmitTriggerSuccess,
+		}
+
+		if ar.EmitTriggerFail != nil {
+			actions[idx].EmitTriggerFail = *ar.EmitTriggerFail
 		}
 	}
 

@@ -1,214 +1,87 @@
 <template>
   <v-layout column>
-    <v-layout>
-      <text-editor-field
-        v-field="form.app_title"
-        :disabled="disabled"
-        :label="$t('userInterface.appTitle')"
-        :variables="variables"
-        class="fill-width"
-      />
-    </v-layout>
-    <c-number-field
-      v-field="form.popup_timeout.info.value"
-      :label="$t('userInterface.infoPopupTimeout')"
-      :min="1"
-      name="popup_timeout.info.value"
+    <v-tabs
+      v-model="activeTab"
+      slider-color="primary"
+      centered
     >
-      <template #append>
-        {{ $tc('common.times.second', form.popup_timeout.info.value) }}
-      </template>
-    </c-number-field>
-    <c-number-field
-      v-field="form.popup_timeout.error.value"
-      :label="$t('userInterface.errorPopupTimeout')"
-      :min="1"
-      name="popup_timeout.error.value"
-    >
-      <template #append>
-        {{ $tc('common.times.second', form.popup_timeout.error.value) }}
-      </template>
-    </c-number-field>
-    <v-layout>
-      <c-language-field
-        v-field="form.language"
-        :label="$t('userInterface.language')"
-      />
-    </v-layout>
-    <v-layout>
-      <c-number-field
-        v-field="form.max_matched_items"
-        :label="$t('userInterface.maxMatchedItems')"
-        :min="1"
-        name="max_matched_items"
+      <v-tab :class="{ 'error--text': hasGeneralError }">
+        {{ $t('common.general') }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasNotificationsError }">
+        {{ $tc('common.notification', 2) }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasAdvancedError }">
+        {{ $t('userInterface.advanced') }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasLoginPageError }">
+        {{ $t('userInterface.loginPage') }}
+      </v-tab>
+
+      <v-tab-item
+        class="pt-4"
+        eager
       >
-        <template #append="">
-          <c-help-icon
-            :text="$t('userInterface.tooltips.maxMatchedItems')"
-            color="grey darken-1"
-            icon="help"
-            left
-          />
-        </template>
-      </c-number-field>
-    </v-layout>
-    <v-layout>
-      <c-number-field
-        v-field="form.check_count_request_timeout"
-        :label="$t('userInterface.checkCountRequestTimeout')"
-        :min="1"
-        name="check_count_request_timeout"
+        <user-interface-general-form
+          v-field="form"
+          ref="generalElement"
+          :disabled="disabled"
+        />
+      </v-tab-item>
+
+      <v-tab-item
+        class="pt-4"
+        eager
       >
-        <template #append="">
-          <c-help-icon
-            :text="$t('userInterface.tooltips.checkCountRequestTimeout')"
-            color="grey darken-1"
-            icon="help"
-            left
-          />
-        </template>
-      </c-number-field>
-    </v-layout>
-    <v-layout>
-      <c-timezone-field
-        v-field="form.timezone"
-        disabled
-      />
-    </v-layout>
-    <v-layout>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="form.allow_change_severity_to_info"
-          :label="$t('userInterface.allowChangeSeverityToInfo')"
+        <user-interface-notifications-form
+          v-field="form"
+          ref="notificationsElement"
+          :disabled="disabled"
         />
-      </v-flex>
-      <v-flex xs6>
-        <v-layout>
-          <c-enabled-field
-            v-field="form.show_header_on_kiosk_mode"
-            :label="$t('userInterface.showHeaderOnKioskMode')"
-          >
-            <template #append>
-              <c-help-icon
-                :text="$t('userInterface.showHeaderOnKioskModeTooltip')"
-                color="grey darken-1"
-                icon="help"
-                top
-              />
-            </template>
-          </c-enabled-field>
-        </v-layout>
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="form.required_instruction_approve"
-          :label="$t('userInterface.requiredInstructionApprove')"
+      </v-tab-item>
+
+      <v-tab-item
+        class="pt-4"
+        eager
+      >
+        <user-interface-advanced-form
+          v-field="form"
+          ref="advancedElement"
+          :disabled="disabled"
         />
-      </v-flex>
-      <v-flex xs6>
-        <v-layout>
-          <c-enabled-field
-            v-field="form.disabled_transitions"
-            :label="$t('userInterface.disabledTransitions')"
-          >
-            <template #append>
-              <c-help-icon
-                :text="$t('userInterface.disabledTransitionsTooltip')"
-                color="grey darken-1"
-                icon="help"
-                top
-              />
-            </template>
-          </c-enabled-field>
-        </v-layout>
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="form.auto_suggest_pbehavior_name"
-          :label="$t('userInterface.autoSuggestPbehaviorName')"
+      </v-tab-item>
+
+      <v-tab-item
+        class="pt-4"
+        eager
+      >
+        <user-interface-login-form
+          v-field="form"
+          ref="loginPageElement"
+          :disabled="disabled"
         />
-      </v-flex>
-      <v-flex xs6>
-        <c-theme-field
-          v-field="form.default_color_theme"
-          :label="$t('userInterface.defaultTheme')"
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-flex>
-        <text-editor-field
-          v-field="form.version_description"
-          :label="$t('userInterface.versionDescriptionTooltip')"
-          :config="textEditorConfig"
-          :variables="versionDescriptionVariables"
-          public
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-flex>
-        <text-editor-field
-          v-field="form.footer"
-          :label="$t('userInterface.footer')"
-          :config="textEditorConfig"
-          :variables="variables"
-          public
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout class="mt-3">
-      <v-flex>
-        <text-editor-field
-          v-field="form.login_page_description"
-          :label="$t('userInterface.description')"
-          :config="textEditorConfig"
-          :variables="variables"
-          public
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout class="mt-3">
-      <v-flex>
-        <span class="v-label file-selector__label">{{ $t('userInterface.logo') }}</span>
-        <v-layout>
-          <file-selector
-            ref="fileSelectorElement"
-            :max-file-size="maxFileSize"
-            :disabled="disabled"
-            class="mt-1"
-            accept="image/*"
-            name="logo"
-            with-files-list
-            @change="changeLogoFile"
-          />
-        </v-layout>
-      </v-flex>
-    </v-layout>
+      </v-tab-item>
+    </v-tabs>
   </v-layout>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
-import { MAX_ICON_SIZE_IN_KB } from '@/constants';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
-import { objectToVariables, variableTemplatePreparer } from '@/helpers/variables';
-
-import { useModelField } from '@/hooks/form/model-field';
-import { useTemplateVars } from '@/hooks/store/modules/template-vars';
-
-import FileSelector from '@/components/forms/fields/file-selector.vue';
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import UserInterfaceAdvancedForm from './user-interface-advanced-form.vue';
+import UserInterfaceGeneralForm from './user-interface-general-form.vue';
+import UserInterfaceLoginForm from './user-interface-login-form.vue';
+import UserInterfaceNotificationsForm from './user-interface-notifications-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
-    FileSelector,
-    TextEditorField,
+    UserInterfaceGeneralForm,
+    UserInterfaceLoginForm,
+    UserInterfaceNotificationsForm,
+    UserInterfaceAdvancedForm,
   },
   model: {
     prop: 'form',
@@ -224,60 +97,33 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const { updateField } = useModelField(props, emit);
-    const { templateVars } = useTemplateVars();
+  setup() {
+    const activeTab = ref(0);
 
-    const maxFileSize = MAX_ICON_SIZE_IN_KB;
+    const generalElement = ref(null);
+    const loginPageElement = ref(null);
+    const notificationsElement = ref(null);
+    const advancedElement = ref(null);
 
-    const fileSelectorElement = ref(null);
-    const variables = computed(() => objectToVariables({ env: templateVars.value }));
+    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
+    const { hasChildrenError: hasLoginPageError } = useValidationElementChildren(loginPageElement);
+    const { hasChildrenError: hasNotificationsError } = useValidationElementChildren(notificationsElement);
+    const { hasChildrenError: hasAdvancedError } = useValidationElementChildren(advancedElement);
 
-    const versionDescriptionVariables = computed(() => ([
-      ...variables.value,
-      ...[
-        'edition',
-        'versionUpdated',
-        'serialName',
-      ].map(text => ({ text, value: variableTemplatePreparer(text) })),
-    ]));
-
-    const textEditorConfig = computed(() => ({ disabled: props.disabled }));
-
-    /**
-     * Updates the 'logo' field with the provided file.
-     *
-     * @param {Array} [file=[]] - An array containing the file to be set as the logo.
-     */
-    const changeLogoFile = ([file] = []) => updateField('logo', file);
-
-    /**
-     * Clears the file selector element.
-     *
-     * This function accesses the `fileSelectorElement` and calls its `clear` method,
-     * if the element is defined, to reset the file selection.
-     */
-    const reset = () => fileSelectorElement.value?.clear();
+    const reset = () => generalElement.value?.reset?.();
 
     return {
-      maxFileSize,
-      fileSelectorElement,
-      textEditorConfig,
-      variables,
-      versionDescriptionVariables,
-
-      changeLogoFile,
+      activeTab,
+      generalElement,
+      loginPageElement,
+      notificationsElement,
+      advancedElement,
+      hasGeneralError,
+      hasLoginPageError,
+      hasNotificationsError,
+      hasAdvancedError,
       reset,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.file-selector {
-  &__label {
-    font-size: .85em;
-    display: block;
-  }
-}
-</style>

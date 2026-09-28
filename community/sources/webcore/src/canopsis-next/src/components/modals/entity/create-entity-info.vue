@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.stop.prevent="submit">
+  <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
@@ -13,19 +13,20 @@
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.add') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -33,13 +34,16 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { entityInfoToForm, formToEntityInfo } from '@/helpers/entities/entity-info/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import EntityInfoForm from '@/components/other/entity/form/entity-info-form.vue';
 
@@ -52,31 +56,42 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: { EntityInfoForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(entityInfoToForm(config.value.entityInfo));
+
+    const title = computed(() => config.value.title ?? t('modals.createEntityInfo.create.title'));
+
+    const { submit, submitting, submitLabel } = useSubmittableForm({
+      form,
+      item: config.value.entityInfo,
+      isNewCheck: value => !value?.name,
+      method: async () => {
+        await config.value.action?.(formToEntityInfo(form.value));
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
     return {
-      form: entityInfoToForm(this.modal.config.entityInfo),
+      form,
+      config,
+      title,
+      submit,
+      submitting,
+      submitLabel,
+      close,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createEntityInfo.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config.action(formToEntityInfo(this.form));
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

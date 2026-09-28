@@ -1735,6 +1735,8 @@ definitions:
         properties:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
+          delete_token_usage_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       metrics:
         properties:
@@ -4556,6 +4558,25 @@ definitions:
       total_count:
         type: integer
     type: object
+  pattern.AlarmCountResponse:
+    properties:
+      alarms:
+        properties:
+          alarm_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+          combined:
+            $ref: '#/definitions/pattern.CountResponse'
+          entity_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+          pbehavior_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+        type: object
+      entities:
+        properties:
+          entity_pattern:
+            $ref: '#/definitions/pattern.CountResponse'
+        type: object
+    type: object
   pattern.BulkDeleteRequestItem:
     properties:
       _id:
@@ -4569,30 +4590,6 @@ definitions:
         type: string
       value:
         type: object
-    type: object
-  pattern.CountAlarmsResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      all:
-        $ref: '#/definitions/pattern.CountResponse'
-      entities:
-        $ref: '#/definitions/pattern.CountResponse'
-      entity_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-    type: object
-  pattern.CountEntitiesResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      all:
-        $ref: '#/definitions/pattern.CountResponse'
-      entity_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.CountRequest:
     properties:
@@ -4666,6 +4663,17 @@ definitions:
     - is_corporate
     - title
     - type
+    type: object
+  pattern.EntityCountResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.CountResponse'
+      combined:
+        $ref: '#/definitions/pattern.CountResponse'
+      entity_pattern:
+        $ref: '#/definitions/pattern.CountResponse'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.FieldCondition:
     properties:
@@ -4834,6 +4842,10 @@ definitions:
       event_pattern:
         items:
           $ref: '#/definitions/patternfields.FieldResponse'
+        type: array
+      inherited_entity_pattern:
+        items:
+          $ref: '#/definitions/patternfields.EntityFieldResponse'
         type: array
       pbehavior_pattern:
         items:
@@ -5931,6 +5943,13 @@ definitions:
     - enabled
     - name
     type: object
+  role.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:
       _id:
@@ -6069,7 +6088,9 @@ definitions:
         type: string
       drop_scenario_if_not_matched:
         type: boolean
-      emit_trigger:
+      emit_trigger_fail:
+        type: boolean
+      emit_trigger_success:
         type: boolean
       entity_pattern:
         items:
@@ -6098,7 +6119,9 @@ definitions:
         type: string
       drop_scenario_if_not_matched:
         type: boolean
-      emit_trigger:
+      emit_trigger_fail:
+        type: boolean
+      emit_trigger_success:
         type: boolean
       entity_pattern:
         items:
@@ -6123,7 +6146,7 @@ definitions:
         type: string
     required:
     - drop_scenario_if_not_matched
-    - emit_trigger
+    - emit_trigger_success
     - type
     type: object
   scenario.BulkDeleteRequestItem:
@@ -6432,6 +6455,7 @@ definitions:
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
             * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `declareticketwebhookfail` - Ticket is failed to be declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
             * `unsnooze` - Alarm has been unsnoozed
@@ -6448,6 +6472,8 @@ definitions:
             * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
             * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
             * `eventscount` - Alarm check events count
+            * `changedoutput` - Alarm output is changed
+            * `changedlongoutput` - Alarm long output is changed
         enum:
         - create
         - statedec
@@ -6460,6 +6486,7 @@ definitions:
         - uncancel
         - comment
         - declareticketwebhook
+        - declareticketwebhookfail
         - assocticket
         - snooze
         - unsnooze
@@ -6476,6 +6503,8 @@ definitions:
         - autoinstructionresultok
         - autoinstructionresultfail
         - eventscount
+        - changedoutput
+        - changedlongoutput
         type: string
     required:
     - type

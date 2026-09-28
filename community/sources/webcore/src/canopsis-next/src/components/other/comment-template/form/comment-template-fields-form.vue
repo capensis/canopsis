@@ -1,6 +1,8 @@
 <template>
   <v-layout class="gap-2" column>
-    <span class="text-subtitle-2">{{ $t('common.fields') }}</span>
+    <span class="text-subtitle-2">
+      {{ $t('common.fields') }}
+    </span>
     <v-flex xs12>
       <v-alert
         :value="!form.length"

@@ -43,6 +43,10 @@ func NewNullMetaUpdater() MetaUpdater {
 	return &nullMetaUpdater{}
 }
 
+func NewNullAsyncMetaUpdater() AsyncMetaUpdater {
+	return &nullMetaUpdater{}
+}
+
 func (u *nullMetaUpdater) UpdateAll(_ context.Context) {
 }
 
@@ -51,3 +55,5 @@ func (u *nullMetaUpdater) UpdateById(_ context.Context, _ ...string) {
 
 func (u *nullMetaUpdater) DeleteById(_ context.Context, _ ...string) {
 }
+
+func (u *nullMetaUpdater) Run(_ context.Context) {}

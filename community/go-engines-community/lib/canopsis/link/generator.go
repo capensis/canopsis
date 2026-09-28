@@ -33,7 +33,7 @@ var (
 func NewGenerator(
 	client mongo.DbClient,
 	tplExecutor libtemplate.Executor,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	logger zerolog.Logger,
 ) Generator {
 	return &generator{
@@ -42,7 +42,7 @@ func NewGenerator(
 		entityCollection:        client.Collection(mongo.EntityMongoCollection),
 		linkCollection:          client.Collection(mongo.LinkRuleMongoCollection),
 		tplExecutor:             tplExecutor,
-		externalDataContainer:   externalDataContainer,
+		externalDataGetter:      externalDataGetter,
 		logger:                  logger,
 	}
 }
@@ -53,7 +53,7 @@ type generator struct {
 	entityCollection        mongo.DbCollection
 	linkCollection          mongo.DbCollection
 	tplExecutor             libtemplate.Executor
-	externalDataContainer   *externaldata.GetterContainer
+	externalDataGetter      externaldata.Getter
 	logger                  zerolog.Logger
 
 	rulesMx sync.RWMutex
@@ -547,6 +547,10 @@ func (g *generator) addExternalData(
 	alarms []AlarmWithData,
 	entities []EntityWithData,
 ) error {
+	if len(rule.ExternalData) == 0 {
+		return nil
+	}
+
 	switch rule.Type {
 	case TypeAlarm:
 		return g.addExternalDataToAlarms(ctx, rule.ExternalData, alarms)
@@ -568,12 +572,9 @@ func (g *generator) addExternalDataToAlarms(
 
 	var err error
 	for i, item := range data {
-		data[i].ExternalData = make(map[string]any, len(externalData))
-		for _, params := range externalData {
-			data[i].ExternalData[params.Reference], err = g.processExternalData(ctx, params, item)
-			if err != nil {
-				return err
-			}
+		data[i].ExternalData, err = g.processExternalData(ctx, externalData, item)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -591,12 +592,9 @@ func (g *generator) addExternalDataToEntities(
 
 	var err error
 	for i, item := range data {
-		data[i].ExternalData = make(map[string]any, len(externalData))
-		for _, params := range externalData {
-			data[i].ExternalData[params.Reference], err = g.processExternalData(ctx, params, item)
-			if err != nil {
-				return err
-			}
+		data[i].ExternalData, err = g.processExternalData(ctx, externalData, item)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -605,15 +603,17 @@ func (g *generator) addExternalDataToEntities(
 
 func (g *generator) processExternalData(
 	ctx context.Context,
-	params externaldata.ParsedRefParameters,
+	params []externaldata.ParsedRefParameters,
 	data any,
-) (any, error) {
-	getter, ok := g.externalDataContainer.Get(params.Type)
-	if !ok {
-		return nil, fmt.Errorf("cannot find external data getter by type %q", params.Type)
+) (map[string]any, error) {
+	res, err := g.externalDataGetter.Get(ctx, externaldata.Rule{
+		ExternalData: params,
+	}, data)
+	if err != nil {
+		return nil, err
 	}
 
-	return getter.Get(ctx, params, data)
+	return res.ExternalData, nil
 }
 
 func (g *generator) getLinksWithCategoryByTpl(
@@ -636,16 +636,14 @@ func (g *generator) getLinksWithCategoryByTpl(
 		}
 
 		res[i] = linkWithCategory{
-			Category: linkTpl.Category,
-			Link: Link{
-				RuleID:     id,
-				Label:      label,
-				IconName:   linkTpl.IconName,
-				Url:        url,
-				Action:     linkTpl.Action,
-				Single:     linkTpl.Single,
-				HideInMenu: linkTpl.HideInMenu,
-			},
+			Category:   linkTpl.Category,
+			RuleID:     id,
+			Label:      label,
+			IconName:   linkTpl.IconName,
+			Url:        url,
+			Action:     linkTpl.Action,
+			Single:     linkTpl.Single,
+			HideInMenu: linkTpl.HideInMenu,
 		}
 	}
 
@@ -720,13 +718,11 @@ func (g *generator) getLinksWithCategoryByCode(
 
 		res[i] = linkWithCategory{
 			Category: category,
-			Link: Link{
-				RuleID:   id,
-				Label:    label,
-				IconName: iconName,
-				Url:      url,
-				Action:   action,
-			},
+			RuleID:   id,
+			Label:    label,
+			IconName: iconName,
+			Url:      url,
+			Action:   action,
 		}
 		if single, ok := item["single"].(bool); ok {
 			res[i].Link.Single = single

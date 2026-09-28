@@ -83,7 +83,7 @@ export default {
       close();
     };
 
-    const { submit, submitting, isDisabled } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       method: async () => {
         await config.value.action?.();
 
@@ -102,7 +102,6 @@ export default {
       config,
 
       submitting,
-      isDisabled,
       title,
       sanitizedText,
       sanitizedAlertText,

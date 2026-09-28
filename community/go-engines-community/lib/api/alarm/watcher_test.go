@@ -30,8 +30,6 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 	connId3 := "test-conn-3"
 	userID1 := "test-user-1"
 	userID2 := "test-user-2"
-	alarmResForUserId1 := &alarm.Alarm{ID: userID1}
-	alarmResForUserId2 := &alarm.Alarm{ID: userID2}
 	changeCh := make(chan struct{}, 1)
 	done := make(chan struct{})
 	mockChangeStream := mock_mongo.NewMockChangeStream(ctrl)
@@ -62,11 +60,11 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
 	mockStore := mock_alarm.NewMockStore(ctrl)
-	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID1)).Return(alarmResForUserId1, nil)
-	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID2)).Return(alarmResForUserId2, nil)
+	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID1)).Return(&alarm.Alarm{Bookmark: true}, nil)
+	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID2)).Return(&alarm.Alarm{Bookmark: false}, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId1)))
-	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId2, connId3)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Alarm{Bookmark: true}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Alarm{Bookmark: false}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId2, connId3)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	data := []string{alarmId}
@@ -240,10 +238,6 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 	connId3 := "test-conn-3"
 	userID1 := "test-user-1"
 	userID2 := "test-user-2"
-	alarmResForUserId1 := &alarm.Details{}
-	alarmResForUserId1.Entity.ID = userID1
-	alarmResForUserId2 := &alarm.Details{}
-	alarmResForUserId2.Entity.ID = userID2
 	changeCh := make(chan struct{}, 1)
 	done := make(chan struct{})
 	mockChangeStream := mock_mongo.NewMockChangeStream(ctrl)
@@ -275,11 +269,11 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
 	mockStore := mock_alarm.NewMockStore(ctrl)
-	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID1)).Return(alarmResForUserId1, nil)
-	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID2)).Return(alarmResForUserId2, nil)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID1)).Return(&alarm.Details{Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: true}}}}, nil)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID2)).Return(&alarm.Details{Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: false}}}}, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
-	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForUserId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2, connId3)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId, Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: true}}}}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId, Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: false}}}}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2, connId3)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	data := []alarm.DetailsRequest{{ID: alarmId}}
@@ -335,10 +329,6 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 	connId1 := "test-conn-1"
 	connId2 := "test-conn-2"
 	userID := "test-user-2"
-	alarmResForConnId1 := &alarm.Details{}
-	alarmResForConnId1.Entity.ID = alarmId1
-	alarmResForConnId2 := &alarm.Details{}
-	alarmResForConnId2.Entity.ID = alarmId2
 	changeCh1 := make(chan struct{}, 1)
 	changeCh2 := make(chan struct{}, 1)
 	done := make(chan struct{}, 2)
@@ -397,11 +387,11 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
 	mockStore := mock_alarm.NewMockStore(ctrl)
-	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId1}), gomock.Eq(userID)).Return(alarmResForConnId1, nil)
-	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId2}), gomock.Eq(userID)).Return(alarmResForConnId2, nil)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId1}), gomock.Eq(userID)).Return(&alarm.Details{ID: alarmId1}, nil)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId2}), gomock.Eq(userID)).Return(&alarm.Details{ID: alarmId2}, nil)
 	mockHub := mock_websocket.NewMockHub(ctrl)
-	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
-	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId1}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId2}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2)))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	err := w.StartWatchDetails(ctx, websocket.JoinOptions{

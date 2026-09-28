@@ -43,6 +43,29 @@ export const getMaxZIndex = (base, minZIndex = 6, exclude = []) => {
   return Math.max(...zis) + 1;
 };
 
+/**
+ * Checks whether an element is fully visible across all levels of nested Vuetify tabs,
+ * walking up the DOM until reaching the given root element.
+ * Returns false if any ancestor `.v-window-item` is not active.
+ *
+ * @param {HTMLElement} el - The element to check.
+ * @param {HTMLElement} rootEl - The boundary element to stop traversal at.
+ * @returns {boolean}
+ */
+export const isElementVisibleInTabs = (el, rootEl) => {
+  let node = el.parentElement;
+
+  while (node && node !== rootEl) {
+    if (node.classList.contains('v-window-item') && !node.classList.contains('v-window-item--active')) {
+      return false;
+    }
+
+    node = node.parentElement;
+  }
+
+  return true;
+};
+
 export const getSelectionText = (items, selectionItem, itemValue = 'value', itemText = 'text') => {
   const text = getPropertyFromItem(selectionItem, itemText, selectionItem);
 

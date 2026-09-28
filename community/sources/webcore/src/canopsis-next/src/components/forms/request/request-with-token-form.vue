@@ -8,6 +8,7 @@
     :headers-variables="headersVariables"
     :payload-variables="payloadVariables"
     :url-variables="urlVariables"
+    :depth="depth"
     with-auth-token
     @update:auth-token="updateAuthToken"
     @update:multiple="updateMultiple"
@@ -54,6 +55,10 @@ export default {
     variables: {
       type: Array,
       default: () => [],
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props, { emit }) {

@@ -14,7 +14,9 @@
           :title="item.ticket_url_title"
           target="_blank"
         >{{ item.ticket_url_title || item.ticket_url }}</a>
-        <span v-else>{{ item.ticket_url }}</span>
+        <span v-else>
+          {{ item.ticket_url }}
+        </span>
       </template>
     </template>
     <template #t="{ item }">

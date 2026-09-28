@@ -67,7 +67,7 @@ type store struct {
 	tplValidator              tplvalidator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
-	externalDataContainer     *externaldata.GetterContainer
+	externalDataGetter        externaldata.Getter
 	enforcer                  security.Enforcer
 
 	defaultSearchByFields []string
@@ -86,7 +86,7 @@ func NewStore(
 	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
-	externalDataContainer *externaldata.GetterContainer,
+	externalDataGetter externaldata.Getter,
 	enforcer security.Enforcer,
 ) Store {
 	userTplVars := []template.VarResponse{
@@ -113,7 +113,7 @@ func NewStore(
 		tplValidator:              tplValidator,
 		tplExecutor:               tplExecutor,
 		tplConfigProvider:         tplConfigProvider,
-		externalDataContainer:     externalDataContainer,
+		externalDataGetter:        externalDataGetter,
 		enforcer:                  enforcer,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
@@ -830,11 +830,6 @@ func (s *store) processTableExdata(
 	idx int,
 	r TemplateRequest,
 ) (any, error) {
-	getter, ok := s.externalDataContainer.Get(d.Type)
-	if !ok {
-		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)
-	}
-
 	refParam := externaldata.RefParameters{
 		Reference: d.Reference,
 		Type:      d.Type,
@@ -863,7 +858,9 @@ func (s *store) processTableExdata(
 		return nil, errors.New("expected not empty array")
 	}
 
-	res, err := getter.Get(ctx, parsedParams[0], tplData)
+	res, err := s.externalDataGetter.Get(ctx, externaldata.Rule{
+		ExternalData: parsedParams,
+	}, tplData)
 	if err != nil {
 		getterTplErr := &externaldata.GetterTplError{}
 		getterErr := &externaldata.GetterError{}
@@ -875,5 +872,5 @@ func (s *store) processTableExdata(
 		return nil, err
 	}
 
-	return res, nil
+	return res.ExternalData[d.Reference], nil
 }

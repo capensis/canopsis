@@ -5,6 +5,7 @@
     :alarms-patterns-params="alarmsPatternsParams"
     :pending="pending"
     :has-errors="hasErrors"
+    class="mt-3"
     @run:execution="runTestExecution"
     @clear:execution="clearWebhookStatus"
   >

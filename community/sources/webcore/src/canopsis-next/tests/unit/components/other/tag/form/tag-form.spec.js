@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import { COLORS } from '@/config';
 import { IDLE_RULE_TYPES } from '@/constants';
@@ -8,20 +9,31 @@ import { IDLE_RULE_TYPES } from '@/constants';
 import TagForm from '@/components/other/tag/form/tag-form.vue';
 
 const stubs = {
-  'c-name-field': true,
-  'c-color-picker-field': true,
+  'tag-general-form': true,
   'tag-patterns-form': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
 };
 
-const selectValueField = wrapper => wrapper.find('c-name-field-stub');
-const selectColorPickerField = wrapper => wrapper.find('c-color-picker-field-stub');
+const selectTagGeneralForm = wrapper => wrapper.find('tag-general-form-stub');
 const selectTagPatternsForm = wrapper => wrapper.find('tag-patterns-form-stub');
 
 describe('tag-form', () => {
   const factory = generateShallowRenderer(TagForm, { stubs });
   const snapshotFactory = generateRenderer(TagForm, { stubs });
 
-  test('Value changed after trigger name field', () => {
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          value: '',
+        },
+      },
+    });
+
+    expect(selectTagGeneralForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Value changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: {
@@ -32,12 +44,12 @@ describe('tag-form', () => {
 
     const newValue = Faker.datatype.string();
 
-    selectValueField(wrapper).triggerCustomEvent('input', newValue);
+    selectTagGeneralForm(wrapper).triggerCustomEvent('input', { value: newValue });
 
     expect(wrapper).toEmitInput({ value: newValue });
   });
 
-  test('Color changed after trigger color picker field', () => {
+  test('Color changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: {
@@ -48,7 +60,7 @@ describe('tag-form', () => {
 
     const newValue = Faker.internet.color();
 
-    selectColorPickerField(wrapper).triggerCustomEvent('input', newValue);
+    selectTagGeneralForm(wrapper).triggerCustomEvent('input', { color: newValue });
 
     expect(wrapper).toEmitInput({ color: newValue });
   });

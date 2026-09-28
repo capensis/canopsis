@@ -1,68 +1,70 @@
 <template>
-  <v-layout class="gap-2" column>
-    <request-url-field
-      v-if="!hideUrl"
-      v-field="form"
-      :help-text="urlHelpText ||$t('common.request.urlHelp')"
-      :name="name"
-      :disabled="disabled"
-      :url-variables="urlVariables"
-    />
-    <v-layout v-if="withMultipleUrls">
-      <v-flex
-        offset-xs6
-        xs6
+  <div>
+    <c-form-block-row v-if="!hideUrl" :label="urlLabel || $t('common.url')" :depth="depth">
+      <request-url-field
+        v-field="form"
+        :help-text="urlHelpText ||$t('common.request.urlHelp')"
+        :name="name"
+        :disabled="disabled"
+        :url-variables="urlVariables"
+      />
+    </c-form-block-row>
+
+    <c-form-block-row v-if="withMultipleUrls" :label="$t('scenario.allowMultipleUrls')" :depth="depth">
+      <c-enabled-field
+        :value="multiple"
+        :label="$t('scenario.allowMultipleUrls')"
+        :disabled="disabled"
+        @input="updateMultiple"
       >
-        <c-enabled-field
-          :value="multiple"
-          :label="$t('scenario.allowMultipleUrls')"
-          :disabled="disabled"
-          @input="updateMultiple"
-        >
-          <template #append>
-            <c-help-icon
-              :text="$t('scenario.allowMultipleUrlsTooltip')"
-              icon="help"
-              color="grey darken-1"
-              left
-            />
-          </template>
-        </c-enabled-field>
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-flex
-        class="mr-3"
-        xs6
-      >
-        <c-information-block :title="$t('common.request.timeoutSettings')">
-          <c-duration-field
-            v-field="form.timeout"
-            :disabled="disabled"
-            :units-label="$t('common.unit')"
-            clearable
+        <template #append>
+          <c-help-icon
+            :text="$t('scenario.allowMultipleUrlsTooltip')"
+            icon="help"
+            color="grey darken-1"
+            left
           />
-        </c-information-block>
-      </v-flex>
-      <v-flex xs6>
-        <c-information-block :title="$t('common.request.repeatRequest')">
-          <span v-if="hideRepeat" class="font-italic mt-4">{{ $t('common.request.repeatRequestInTomlFile') }}</span>
-          <c-retry-field
-            v-else
-            v-field="form"
-            :disabled="disabled"
-          />
-        </c-information-block>
-      </v-flex>
-    </v-layout>
-    <c-enabled-field
-      v-field="form.skip_verify"
-      :label="$t('common.request.skipVerify')"
-      :disabled="disabled"
-      hide-details
-    />
+        </template>
+      </c-enabled-field>
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('common.request.timeoutSettings')" :depth="depth">
+      <c-duration-field
+        v-field="form.timeout"
+        :disabled="disabled"
+        :units-label="$t('common.unit')"
+        same-width
+        clearable
+      />
+    </c-form-block-row>
+
+    <c-form-block-row
+      :label="$t('common.request.repeatRequest')"
+      :depth="depth"
+      :align-center="hideRepeat"
+    >
+      <span v-if="hideRepeat" class="font-italic">
+        {{ $t('common.request.repeatRequestInTomlFile') }}
+      </span>
+      <c-retry-field
+        v-else
+        v-field="form"
+        :disabled="disabled"
+      />
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('common.request.skipVerify')" :depth="depth">
+      <c-enabled-field
+        v-field="form.skip_verify"
+        :label="$t('common.request.skipVerify')"
+        :disabled="disabled"
+        hide-details
+      />
+    </c-form-block-row>
+
     <slot name="additional-fields" />
-    <c-information-block v-if="!hideAuth" :title="$t('user.auth')" class="mb-2 mt-2">
+
+    <c-form-block-row v-if="!hideAuth" :label="$t('user.auth')" :depth="depth">
       <request-auth-with-token-field
         v-field="form.auth"
         :auth-token="authToken"
@@ -71,14 +73,13 @@
         :only-credentials="!withAuthToken"
         @update:auth-token="updateAuthToken"
       />
-    </c-information-block>
-    <c-information-block
+    </c-form-block-row>
+
+    <c-form-block-row
       v-if="!hideHeaders"
-      :title="$tc('common.header', 2)"
-      :help-text="$t('common.request.headersHelpText')"
-      class="mb-2"
-      help-icon="help"
-      help-icon-color="grey darken-1"
+      :label="$tc('common.header', 2)"
+      :depth="depth"
+      indented
     >
       <request-headers-field
         v-field="form.headers"
@@ -86,16 +87,19 @@
         :disabled="disabled"
         :headers-variables="headersVariables"
       />
-    </c-information-block>
-    <c-payload-textarea-field
-      v-field="form.payload"
-      :label="$t('common.payload')"
-      :line-height="16"
-      :disabled="disabled"
-      :variables="payloadVariables"
-      :name="`${name}.payload`"
-    />
-  </v-layout>
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('common.payload')" :depth="depth">
+      <c-payload-textarea-field
+        v-field="form.payload"
+        :label="$t('common.payload')"
+        :line-height="16"
+        :disabled="disabled"
+        :variables="payloadVariables"
+        :name="`${name}.payload`"
+      />
+    </c-form-block-row>
+  </div>
 </template>
 
 <script>
@@ -171,9 +175,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    urlLabel: {
+      type: String,
+      default: '',
+    },
     urlHelpText: {
       type: String,
       default: '',
+    },
+    depth: {
+      type: [Number, String],
+      default: 0,
     },
   },
 

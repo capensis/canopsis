@@ -7,6 +7,7 @@
     :options="options"
     :is-disabled-item="isDisabledType"
     :select-all="removable || updatable"
+    :hide-mass-actions="!active"
     expand
     search
     advanced-pagination
@@ -19,6 +20,7 @@
         :hideable="updatable"
         :unhideable="updatable"
         pbehavior-type
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
@@ -99,6 +101,10 @@ export default {
     updatable: {
       type: Boolean,
       required: true,
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   setup() {

@@ -66,3 +66,13 @@ export const TREE_OF_DEPENDENCIES_TYPES = {
 export const DEFAULT_MAP_ENTITY_TEMPLATE = `<ul>
     <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>`;
+
+export const GEOMAP_PANES = {
+  markers: 'geomapMarkersPane',
+  clusters: 'geomapClustersPane',
+};
+
+export const GEOMAP_PANE_Z_INDEXES = {
+  [GEOMAP_PANES.clusters]: 610,
+  [GEOMAP_PANES.markers]: 620,
+};

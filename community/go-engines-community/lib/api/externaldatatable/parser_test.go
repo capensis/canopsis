@@ -656,11 +656,9 @@ func TestParseNumber(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rawResult, err := p.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type:               externaldata.ColumnTypeNumber,
-					ThousandsSeparator: tc.thousandsSeparator,
-					DecimalSeparator:   tc.decimalSeparator,
-				},
+				Type:               externaldata.ColumnTypeNumber,
+				ThousandsSeparator: tc.thousandsSeparator,
+				DecimalSeparator:   tc.decimalSeparator,
 			}, tc.input)
 			if err != nil {
 				if tc.expectedErrorMessage == "" {
@@ -715,11 +713,9 @@ func FuzzParseNumber(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, input string, thousandsSeparator string, decimalSeparator string) {
 		rawResult, err := p.Parse(ColumnConfig{
-			BaseColumnConfig: BaseColumnConfig{
-				Type:               externaldata.ColumnTypeNumber,
-				ThousandsSeparator: thousandsSeparator,
-				DecimalSeparator:   decimalSeparator,
-			},
+			Type:               externaldata.ColumnTypeNumber,
+			ThousandsSeparator: thousandsSeparator,
+			DecimalSeparator:   decimalSeparator,
 		}, input)
 
 		result, ok := rawResult.(float64)
@@ -991,9 +987,7 @@ func TestParseBool(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rawResult, err := p.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeBoolean,
-				},
+				Type: externaldata.ColumnTypeBoolean,
 			}, tc.input)
 			if err != nil {
 				if tc.expectedErrorMessage == "" {
@@ -1046,9 +1040,7 @@ func FuzzParseBool(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, input string) {
 		rawResult, err := p.Parse(ColumnConfig{
-			BaseColumnConfig: BaseColumnConfig{
-				Type: externaldata.ColumnTypeBoolean,
-			},
+			Type: externaldata.ColumnTypeBoolean,
 		}, input)
 
 		result, ok := rawResult.(bool)
@@ -1210,11 +1202,9 @@ func TestParseStringArray(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			raw, err := p.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type:                 externaldata.ColumnTypeStringArray,
-					StringArrayType:      tc.arrayType,
-					StringArraySeparator: tc.separator,
-				},
+				Type:                 externaldata.ColumnTypeStringArray,
+				StringArrayType:      tc.arrayType,
+				StringArraySeparator: tc.separator,
 			}, tc.input)
 			if err != nil {
 				if tc.expectedErrorMessage == "" {
@@ -1254,11 +1244,9 @@ func FuzzParseStringArray(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, input string, arrayType int, separator string) {
 		result, err := p.Parse(ColumnConfig{
-			BaseColumnConfig: BaseColumnConfig{
-				Type:                 externaldata.ColumnTypeStringArray,
-				StringArrayType:      arrayType,
-				StringArraySeparator: separator,
-			},
+			Type:                 externaldata.ColumnTypeStringArray,
+			StringArrayType:      arrayType,
+			StringArraySeparator: separator,
 		}, input)
 
 		if err != nil {
@@ -1420,9 +1408,7 @@ func TestParseDatetime(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rawResult, err := p.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeDateTime,
-				},
+				Type: externaldata.ColumnTypeDateTime,
 			}, tc.input)
 			if err != nil {
 				if tc.expectedErrorMessage == "" {
@@ -1475,9 +1461,7 @@ func FuzzParseDatetime(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, input string) {
 		rawResult, err := p.Parse(ColumnConfig{
-			BaseColumnConfig: BaseColumnConfig{
-				Type: externaldata.ColumnTypeDateTime,
-			},
+			Type: externaldata.ColumnTypeDateTime,
 		}, input)
 
 		result, ok := rawResult.(int64)
@@ -1585,9 +1569,7 @@ func TestParseTimestamp(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rawResult, err := p.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeTimestamp,
-				},
+				Type: externaldata.ColumnTypeTimestamp,
 			}, tc.input)
 			if err != nil {
 				if tc.expectedErrorMessage == "" {
@@ -1625,9 +1607,7 @@ func FuzzParseTimestamp(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, input string) {
 		rawResult, err := p.Parse(ColumnConfig{
-			BaseColumnConfig: BaseColumnConfig{
-				Type: externaldata.ColumnTypeTimestamp,
-			},
+			Type: externaldata.ColumnTypeTimestamp,
 		}, input)
 
 		result, ok := rawResult.(int64)
@@ -1822,9 +1802,7 @@ func TestParseRegexp(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rawResult, err := p.Parse(ColumnConfig{
-				BaseColumnConfig: BaseColumnConfig{
-					Type: externaldata.ColumnTypeRegexp,
-				},
+				Type: externaldata.ColumnTypeRegexp,
 			}, tc.input)
 
 			if tc.expectedError != "" {

@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group v-field="value" :disabled="disabled">
+  <v-radio-group v-field="value" :disabled="disabled" v-bind="$attrs">
     <template #label="">
       {{ $t('common.type') }}
     </template>

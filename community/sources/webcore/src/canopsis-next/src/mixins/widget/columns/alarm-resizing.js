@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import { throttle, isEmpty } from 'lodash';
 
 export const widgetColumnResizingAlarmMixin = {
   props: {
@@ -36,6 +36,10 @@ export const widgetColumnResizingAlarmMixin = {
 
     sumOfColumnsWidth() {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
+    },
+
+    isEmptyColumnsWidthByField() {
+      return isEmpty(this.columnsWidthByField);
     },
   },
   methods: {

@@ -115,13 +115,11 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 		return nil, err
 	}
 	return &Response{
-		ID:     comm.ID,
-		Entity: r.Entity,
-		Comment: Comment{
-			Timestamp: comm.Timestamp,
-			Author:    comm.Author,
-			Message:   comm.Message,
-		},
+		ID:        comm.ID,
+		Entity:    r.Entity,
+		Timestamp: comm.Timestamp,
+		Author:    comm.Author,
+		Message:   comm.Message,
 	}, nil
 
 }
@@ -142,12 +140,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, userID, username st
 		return nil, err
 	}
 	return &Response{
-		ID:     doc.ID,
-		Entity: r.Entity,
-		Comment: Comment{
-			Timestamp: doc.Timestamp,
-			Author:    doc.Author,
-			Message:   doc.Message,
-		},
+		ID:        doc.ID,
+		Entity:    r.Entity,
+		Timestamp: doc.Timestamp,
+		Author:    doc.Author,
+		Message:   doc.Message,
 	}, nil
 }

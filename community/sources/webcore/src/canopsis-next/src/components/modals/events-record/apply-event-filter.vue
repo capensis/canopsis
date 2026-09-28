@@ -34,7 +34,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -101,7 +101,7 @@ export default {
       field: PATTERNS_FIELDS.event,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         const result = await config.value.action?.(formGroupsToPatternRules(form.value?.groups));
@@ -123,7 +123,6 @@ export default {
     return {
       config,
       form,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,

@@ -7,7 +7,11 @@
     :name="name"
     :min="min"
     :required="required"
-  />
+  >
+    <template #append>
+      <slot name="append" />
+    </template>
+  </c-number-field>
 </template>
 
 <script>

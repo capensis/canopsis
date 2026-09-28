@@ -13,14 +13,14 @@ func NewRunInfoPeriodicalWorker(
 	periodicalInterval time.Duration,
 	manager RunInfoManager,
 	info InstanceRunInfo,
-	channel amqp.Channel,
+	chPool amqp.ChannelPool,
 	logger zerolog.Logger,
 ) PeriodicalWorker {
 	return &runInfoPeriodicalWorker{
 		periodicalInterval: periodicalInterval,
 		manager:            manager,
 		info:               info,
-		channel:            channel,
+		chPool:             chPool,
 		logger:             logger,
 	}
 }
@@ -29,7 +29,7 @@ type runInfoPeriodicalWorker struct {
 	periodicalInterval time.Duration
 	manager            RunInfoManager
 	info               InstanceRunInfo
-	channel            amqp.Channel
+	chPool             amqp.ChannelPool
 	logger             zerolog.Logger
 }
 
@@ -38,7 +38,16 @@ func (w *runInfoPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *runInfoPeriodicalWorker) Work(ctx context.Context) {
-	updateInstanceRunInfo(ctx, w.GetInterval(), w.manager, w.info, w.channel, w.logger)
+	ch, err := w.chPool.Get(ctx)
+	if err != nil {
+		w.logger.Error().Err(err).Msg("cannot get channel")
+
+		return
+	}
+
+	defer w.chPool.Put(ch)
+
+	updateInstanceRunInfo(ctx, w.GetInterval(), w.manager, w.info, ch, w.logger)
 }
 
 func updateInstanceRunInfo(
@@ -52,7 +61,7 @@ func updateInstanceRunInfo(
 	info.QueueLength = 0
 
 	for i := range info.ConsumeQueues {
-		queue, err := channel.QueueInspect(info.ConsumeQueues[i])
+		queue, err := channel.QueueDeclarePassive(ctx, info.ConsumeQueues[i], false, false, false, false, nil)
 		if err != nil {
 			logger.Err(err).Msg("cannot get consume queue length")
 			return InstanceRunInfo{}

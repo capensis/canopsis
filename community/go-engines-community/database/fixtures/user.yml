@@ -2457,6 +2457,9 @@ permission:
       - "@group_widgets_alarmslist_alarmactions"
     api_permissions:
       "@permission_api_pbehavior": 8
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
+      "@permission_api_pbehaviorexception": 4
   permission_listalarm_fastPbehavior:
     <<: *permission
     _id: listalarm_fastPbehavior
@@ -2467,7 +2470,9 @@ permission:
       - "@group_widgets_alarmslist"
       - "@group_widgets_alarmslist_alarmactions"
     api_permissions:
-      "@permission_api_pbehavior": 8
+      "@permission_api_pbehavior": 9
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
   permission_listalarm_snoozeAlarm:
     <<: *permission
     _id: listalarm_snoozeAlarm
@@ -3976,7 +3981,6 @@ role_template:
     permissions:
       # UI permissions
       "@permission_models_exploitation_remediationStatistics": 1
-      "@permission_models_llm": 4
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -4083,7 +4087,6 @@ role_template:
       "@permission_api_entity": 4
       "@permission_api_associative_table": 4
       "@permission_api_junit": 4
-      "@permission_api_llm_config": 4
       "@permission_api_map": 4
       "@permission_api_declare_ticket_execution": 1
       "@permission_api_alarm_tag": 4

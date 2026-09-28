@@ -396,7 +396,9 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 
 	model.Aliases = aliasPropIDs
 	model.EntityPatternFields = r.EntityRequest.ToModelWithoutFields(s.dbCollection.Name())
-	model.InheritedEntityPatternFields = r.InheritedEntityPatternRequest.ToModelWithoutFields(s.dbCollection.Name())
+	if r.Type != nil {
+		model.InheritedEntityPatternFields = r.InheritedEntityPatternRequest.ToModelWithoutFields(s.dbCollection.Name(), *r.Type)
+	}
 
 	return model, nil
 }

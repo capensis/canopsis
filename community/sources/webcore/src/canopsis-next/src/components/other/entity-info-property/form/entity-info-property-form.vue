@@ -1,5 +1,8 @@
 <template>
-  <v-layout column>
+  <v-layout
+    class="gap-3"
+    column
+  >
     <c-entity-info-property-key-field
       :value="form.name"
       :label="$t('entityInfoProperties.infosKey')"
@@ -8,22 +11,28 @@
       required
       @update:selected-items="updateSelectedItems"
     />
-    <c-description-field
-      v-field="form.description"
-      :label="$t('common.description')"
-      :max-length="255"
-      name="description"
-    />
-    <c-name-field
-      v-field="form.alias"
-      :label="$t('common.alias')"
-      :max-length="255"
-      name="alias"
-    />
-    <entity-info-property-type-field
-      v-field="form.type"
-      required
-    />
+    <c-form-block>
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field
+          v-field="form.description"
+          :max-length="255"
+          name="description"
+        />
+      </c-form-block-row>
+      <c-form-block-row :label="$t('common.alias')">
+        <c-name-field
+          v-field="form.alias"
+          :max-length="255"
+          name="alias"
+        />
+      </c-form-block-row>
+      <c-form-block-row :label="$t('common.type')">
+        <entity-info-property-type-field
+          v-field="form.type"
+          required
+        />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
@@ -35,7 +44,6 @@ import { useModelField } from '@/hooks/form';
 import EntityInfoPropertyTypeField from './entity-info-property-type-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     EntityInfoPropertyTypeField,
   },

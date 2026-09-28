@@ -11,7 +11,11 @@
         :max="max"
         :hide-details="hideDetails"
         :autofocus="autofocus"
-      />
+      >
+        <template #append="">
+          <slot name="append" />
+        </template>
+      </c-number-field>
     </v-flex>
     <v-flex :xs6="sameWidth" :xs5="!sameWidth">
       <v-select

@@ -71,7 +71,13 @@
   </v-list>
 </template>
 <script>
-import { uniq, uniqBy, isObject, isUndefined } from 'lodash';
+import {
+  uniq,
+  uniqBy,
+  isObject,
+  isArray,
+  isUndefined,
+} from 'lodash';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
@@ -178,16 +184,17 @@ export default {
      * @param {Object} [item={}] - The item to check for activity status. Defaults to an empty object.
      * @returns {boolean} - Returns `true` if the item is active, otherwise `false`.
      */
-    const isActiveItem = (item = {}) => props.value === item[props.itemValue] || props.value.find?.((selectedItem) => {
-      const selectedValue = String(getValue(selectedItem) ?? '');
-      const value = String(getValue(item) ?? '');
+    const isActiveItem = (item = {}) => props.value === item[props.itemValue]
+      || (isArray(props.value) && props.value.find?.((selectedItem) => {
+        const selectedValue = String(getValue(selectedItem) ?? '');
+        const value = String(getValue(item) ?? '');
 
-      if (selectedValue.length > value.length) {
-        return selectedValue.startsWith(`${value}.`);
-      }
+        if (selectedValue.length > value.length) {
+          return selectedValue.startsWith(`${value}.`);
+        }
 
-      return selectedValue === value;
-    });
+        return selectedValue === value;
+      }));
 
     /**
      * Emits an 'input' event with the selected item(s) based on the component's configuration.

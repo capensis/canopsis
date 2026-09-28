@@ -599,6 +599,15 @@ export default {
       },
     },
 
+    resizableColumn: {
+      immediate: true,
+      handler(newResizableColumn) {
+        if (newResizableColumn && this.isEmptyColumnsWidthByField) {
+          this.$nextTick(() => this.calculateColumnsWidths());
+        }
+      },
+    },
+
     dense() {
       if (!this.resizableColumn) {
         this.$nextTick(() => this.calculateColumnsWidths());

@@ -1,4 +1,4 @@
-import { RRule } from 'rrule';
+import { RRule, rrulestr } from 'rrule';
 import { isArray, isNumber, mapValues, pick } from 'lodash';
 
 /**
@@ -128,3 +128,153 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
 
   return recurrenceRuleOptions;
 };
+
+/**
+ * @return {RecurrenceRuleFormOptions}
+ */
+export const emptyRecurrenceRuleFormOptions = () => (
+  recurrenceRuleToFormOptions(new RRule().origOptions)
+);
+
+/**
+ * @param {RecurrenceRuleFormOptions} options
+ * @return {string[]}
+ */
+export const getRecurrenceAdvancedFieldNames = (options) => {
+  const { freq } = options;
+
+  if (freq == null) {
+    return [];
+  }
+
+  const fields = ['bysetpos'];
+
+  if (freq !== RRule.MONTHLY) {
+    fields.push('byyearday');
+  }
+
+  if (freq !== RRule.YEARLY) {
+    fields.push('bymonthday');
+  }
+
+  if (freq !== RRule.MONTHLY && freq !== RRule.YEARLY) {
+    fields.push('byweekno');
+  }
+
+  if (freq === RRule.HOURLY) {
+    fields.push('byhour');
+  }
+
+  return fields;
+};
+
+/**
+ * @param {string} [rruleBody]
+ * @return {RecurrenceRuleFormOptions}
+ */
+export const rruleBodyStringToRecurrenceRuleFormOptions = (rruleBody) => {
+  if (!rruleBody || typeof rruleBody !== 'string') {
+    return emptyRecurrenceRuleFormOptions();
+  }
+
+  try {
+    return recurrenceRuleToFormOptions(rrulestr(rruleBody).origOptions);
+  } catch {
+    return emptyRecurrenceRuleFormOptions();
+  }
+};
+
+/**
+ * API / legacy: string body, or already-normalized form options
+ *
+ * @param {*} value
+ * @return {RecurrenceRuleFormOptions}
+ */
+export const normalizeRruleFormFieldForForm = (value) => {
+  if (value == null || value === '') {
+    return emptyRecurrenceRuleFormOptions();
+  }
+
+  if (typeof value === 'string') {
+    return rruleBodyStringToRecurrenceRuleFormOptions(value);
+  }
+
+  if (typeof value === 'object' && 'freq' in value) {
+    return value;
+  }
+
+  return emptyRecurrenceRuleFormOptions();
+};
+
+/**
+ * @param {RecurrenceRuleFormOptions} options
+ * @return {string}
+ */
+export const recurrenceRuleFormOptionsToRruleBodyString = (options) => {
+  if (!options || options.freq == null) {
+    return '';
+  }
+
+  try {
+    const names = getRecurrenceAdvancedFieldNames(options);
+    const rrule = new RRule(formOptionsToRecurrenceRuleOptions(options, names));
+
+    if (!rrule.isFullyConvertibleToText()) {
+      return '';
+    }
+
+    return rrule.toString().replace(/.*RRULE:/, '');
+  } catch {
+    return '';
+  }
+};
+
+/**
+ * Normalize API / config RRULE value into recurrence form state (`form.rrule`).
+ *
+ * @param {*} rrule
+ * @return {RecurrenceRuleFormOptions}
+ */
+export const rruleToForm = rrule => normalizeRruleFormFieldForForm(rrule);
+
+/**
+ * Serialize `form.rrule` for the API: unchanged string (e.g. event filter before edit), or RRULE body from options.
+ *
+ * @param {*} formRrule
+ * @return {string}
+ */
+export const formToRrule = (formRrule) => {
+  if (formRrule == null || formRrule === '') {
+    return '';
+  }
+
+  if (typeof formRrule === 'string') {
+    return formRrule;
+  }
+
+  return recurrenceRuleFormOptionsToRruleBodyString(formRrule);
+};
+
+/**
+ * Create-recurrence-rule modal: build internal state from `config` (API string or legacy shape).
+ *
+ * @param {{ rrule: *, exdates?: Array, exceptions?: Array }} modalConfig
+ * @return {{ rrule: RecurrenceRuleFormOptions, exdates: Array, exceptions: Array }}
+ */
+export const recurrenceRuleModalConfigToForm = ({ rrule, exdates, exceptions }) => ({
+  rrule: rruleToForm(rrule),
+  exdates: exdates ?? [],
+  exceptions: exceptions ?? [],
+});
+
+/**
+ * Create-recurrence-rule modal: serialize state for `action` callback / parent merge.
+ *
+ * @param {{ rrule: *, exdates: Array, exceptions: Array }} modalForm
+ * @return {{ rrule: string, exdates: Array, exceptions: Array }}
+ */
+export const formToReccurenceRuleModalConfig = ({ rrule, exdates, exceptions }) => ({
+  rrule: formToRrule(rrule),
+  exdates,
+  exceptions,
+});

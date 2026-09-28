@@ -11,7 +11,9 @@
         src="@/assets/canopsis-green.png"
         alt=""
       >
-      <span class="text-subtitle-1 pt-4">{{ $t('errors.default') }}</span>
+      <span class="text-subtitle-1 pt-4">
+        {{ $t('errors.default') }}
+      </span>
       <span
         v-if="message"
         class="text-subtitle-1"

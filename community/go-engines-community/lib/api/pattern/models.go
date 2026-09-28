@@ -78,19 +78,23 @@ type CountRequest struct {
 	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 }
 
-type CountAlarmsResponse struct {
-	AlarmPattern     CountResponse `json:"alarm_pattern"`
-	EntityPattern    CountResponse `json:"entity_pattern"`
-	PbehaviorPattern CountResponse `json:"pbehavior_pattern"`
-	All              CountResponse `json:"all"`
-	Entities         CountResponse `json:"entities"`
+type AlarmCountResponse struct {
+	Alarms struct {
+		AlarmPattern     CountResponse `json:"alarm_pattern"`
+		EntityPattern    CountResponse `json:"entity_pattern"`
+		PbehaviorPattern CountResponse `json:"pbehavior_pattern"`
+		Combined         CountResponse `json:"combined"`
+	} `json:"alarms"`
+	Entities struct {
+		EntityPattern CountResponse `json:"entity_pattern"`
+	} `json:"entities"`
 }
 
-type CountEntitiesResponse struct {
+type EntityCountResponse struct {
 	AlarmPattern     CountResponse `json:"alarm_pattern"`
 	EntityPattern    CountResponse `json:"entity_pattern"`
 	PbehaviorPattern CountResponse `json:"pbehavior_pattern"`
-	All              CountResponse `json:"all"`
+	Combined         CountResponse `json:"combined"`
 }
 
 type CountResponse struct {

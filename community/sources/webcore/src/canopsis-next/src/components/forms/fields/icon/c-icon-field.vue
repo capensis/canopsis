@@ -4,19 +4,24 @@
     v-validate="rules"
     :label="label"
     :hint="hint"
+    :placeholder="placeholder"
     :items="allIcons"
     :name="name"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
-    persistent-hint
+    :persistent-hint="!!hint"
   >
     <template #selection="{ item }">
       <v-icon>{{ item.value }}</v-icon>
-      <span class="ml-2">{{ item.text }}</span>
+      <span class="ml-2">
+        {{ item.text }}
+      </span>
     </template>
     <template #item="{ item }">
       <v-icon>{{ item.value }}</v-icon>
-      <span class="ml-2">{{ item.text }}</span>
+      <span class="ml-2">
+        {{ item.text }}
+      </span>
     </template>
     <template #no-data="">
       <slot name="no-data" />
@@ -48,6 +53,10 @@ export default {
       default: '',
     },
     hint: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
       type: String,
       default: '',
     },

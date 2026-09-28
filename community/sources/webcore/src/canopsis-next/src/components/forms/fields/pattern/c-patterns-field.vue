@@ -12,11 +12,15 @@
       class="c-patterns-field"
       column
     >
+      <c-label
+        :label="$tc('common.pattern', 2)"
+        :required="someRequired || required"
+      />
       <c-collapse-panel
         v-if="withAlarm"
         :expanded="expanded.alarm"
-        :outline-color="alarmPatternOutlineColor"
         :title="alarmTitle || $t('common.alarmPatterns')"
+        :outline-color="alarmPatternOutlineColor"
       >
         <c-alarm-patterns-field
           v-field="value.alarm_pattern"
@@ -25,7 +29,7 @@
           :readonly="readonly"
           :name="preparedAlarmName"
           :attributes="alarmAttributes"
-          :alarm-counter="counters.alarm_pattern"
+          :alarm-counter="alarmPatternCounter"
           with-type
           @input="errors.remove(preparedAlarmName)"
           @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.alarm])"
@@ -34,15 +38,15 @@
       <c-collapse-panel
         v-if="withEntity"
         :expanded="expanded.entity"
-        :outline-color="entityPatternOutlineColor"
         :title="entityTitle || $t('common.entityPatterns')"
+        :outline-color="entityPatternOutlineColor"
       >
         <pattern-field-suggestions-wrapper
           :suggestions="optimizationSuggestions"
           :patterns="value.entity_pattern"
           :entity-attributes="entityAttributes"
           :optimized-fields-regexps="optimizedFieldsRegexps"
-          :entities-count="counters.entity_pattern?.count"
+          :entities-count="entityPatternEntitiesCounter?.count"
           @apply:suggestion="applySuggestion"
           @reject:all="rejectAllSuggestions"
           @show:entities-comparison="showEntitiesComparisonModal"
@@ -66,8 +70,8 @@
       <c-collapse-panel
         v-if="withPbehavior"
         :expanded="expanded.pbehavior"
-        :outline-color="pbehaviorPatternOutlineColor"
         :title="pbehaviorTitle || $t('common.pbehaviorPatterns')"
+        :outline-color="pbehaviorPatternOutlineColor"
       >
         <c-pbehavior-patterns-field
           v-field="value.pbehavior_pattern"
@@ -86,8 +90,8 @@
       <c-collapse-panel
         v-if="withEvent"
         :expanded="expanded.event"
-        :outline-color="eventPatternOutlineColor"
         :title="eventTitle || $t('common.eventPatterns')"
+        :outline-color="eventPatternOutlineColor"
       >
         <c-event-filter-patterns-field
           v-field="value.event_pattern"
@@ -104,8 +108,8 @@
       <c-collapse-panel
         v-if="withTotalEntity"
         :expanded="expanded.totalEntity"
-        :outline-color="totalEntityPatternOutlineColor"
         :title="totalEntityTitle || $t('common.totalEntityPatterns')"
+        :outline-color="totalEntityPatternOutlineColor"
       >
         <c-entity-patterns-field
           v-field="value.total_entity_pattern"
@@ -114,15 +118,17 @@
           :readonly="readonly"
           :name="preparedTotalEntityName"
           :attributes="totalEntityAttributes"
+          :entity-counter="totalEntityPatternCounter"
           with-type
           @input="errors.remove(preparedTotalEntityName)"
+          @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.totalEntity])"
         />
       </c-collapse-panel>
       <c-collapse-panel
         v-if="withServiceWeather"
         :expanded="expanded.serviceWeather"
-        :outline-color="serviceWeatherPatternOutlineColor"
         :title="serviceWeatherTitle || $t('common.serviceWeatherPatterns')"
+        :outline-color="serviceWeatherPatternOutlineColor"
       >
         <c-service-weather-patterns-field
           v-field="value.weather_service_pattern"
@@ -184,6 +190,8 @@
           {{ $t('common.checkFilter') }}
         </v-btn>
       </v-layout>
+
+      <slot :counters="counters" name="additional-counters" />
     </v-layout>
   </div>
 </template>
@@ -201,8 +209,6 @@ import {
   formGroupsToPatternRulesQuery,
 } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-
-import { useValidator } from '@/hooks/validator/validator';
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
 import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-modal';
@@ -384,8 +390,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = useValidator();
-
     const { showPatternAlarmsModal } = usePatternCountAlarmsModal(props);
     const { showPatternEntitiesModal } = usePatternCountEntitiesModal(props);
 
@@ -474,15 +478,42 @@ export default {
       patterns,
     });
 
+    const alarmPatternCounter = computed(() => (
+      props.entityCountersType
+        ? counters.value?.alarm_pattern
+        : counters.value?.alarms?.alarm_pattern
+    ));
+
+    const totalEntityPatternCounter = computed(() => (
+      props.entityCountersType
+        ? counters.value?.total_entity_pattern
+        : counters.value?.entities?.total_entity_pattern
+    ));
+
+    const entityPatternEntitiesCounter = computed(() => (
+      props.entityCountersType
+        ? counters.value?.entity_pattern
+        : counters.value?.entities?.entity_pattern
+    ));
+
     const entityPatternsCounters = computed(() => {
       if (props.entityCountersType) {
         return { entityCounter: counters.value?.entity_pattern };
       }
 
-      return { alarmCounter: counters.value?.entity_pattern, entityCounter: counters.value?.entities };
+      return {
+        alarmCounter: counters.value?.alarms?.entity_pattern,
+        entityCounter: counters.value?.entities?.entity_pattern,
+      };
     });
 
-    const pbehaviorPatternsCounters = computed(() => ({ [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counters.value?.pbehavior_pattern }));
+    const pbehaviorPatternsCounters = computed(() => {
+      const counter = props.entityCountersType
+        ? counters.value?.pbehavior_pattern
+        : counters.value?.alarms?.pbehavior_pattern;
+
+      return { [props.entityCountersType ? 'entityCounter' : 'alarmCounter']: counter };
+    });
 
     /**
      * Validates pattern rules
@@ -514,17 +545,12 @@ export default {
      */
     const getPatternOutlineColor = (name) => {
       const rules = formGroupsToPatternRules(props.value[name]?.groups ?? []);
-      const fieldName = patternNamesToFields.value[name];
 
-      if (validator.errors.has(fieldName)) {
-        return CSS_COLORS_VARS.error;
-      }
-
-      if (!isPatternRequired.value && !rules.length) {
+      if (!rules.length) {
         return undefined;
       }
 
-      return isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
+      return isValidPatternRules(rules) ? 'var(--v-success-lighten1)' : CSS_COLORS_VARS.error;
     };
 
     const alarmPatternOutlineColor = computed(() => getPatternOutlineColor(PATTERNS_FIELDS.alarm));
@@ -591,12 +617,6 @@ export default {
       isPatternRequired,
       mayHaveOptimizationSuggestions,
       patternNamesToFields,
-      alarmPatternOutlineColor,
-      entityPatternOutlineColor,
-      eventPatternOutlineColor,
-      totalEntityPatternOutlineColor,
-      pbehaviorPatternOutlineColor,
-      serviceWeatherPatternOutlineColor,
       hasError,
       hasAllInCounter,
       patternsCountMessageBind,
@@ -604,13 +624,20 @@ export default {
       patterns,
       allOverLimit,
       allCount,
-      isValidPatternRules,
-      getPatternOutlineColor,
+      alarmPatternOutlineColor,
+      entityPatternOutlineColor,
+      pbehaviorPatternOutlineColor,
+      eventPatternOutlineColor,
+      totalEntityPatternOutlineColor,
+      serviceWeatherPatternOutlineColor,
       showPatternAlarms,
       showPatternEntities,
       checkFilter,
       showPatternAlarmsModal,
       showPatternEntitiesModal,
+      alarmPatternCounter,
+      totalEntityPatternCounter,
+      entityPatternEntitiesCounter,
       entityPatternsCounters,
       pbehaviorPatternsCounters,
 

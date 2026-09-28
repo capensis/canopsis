@@ -5,9 +5,20 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
+        <v-layout
+          v-if="noPattern"
+          class="gap-2"
+          column
+        >
+          <pbehavior-general-form
+            v-field="form"
+            :with-inherited="withInherited"
+            with-enabled
+          />
+        </v-layout>
         <pbehavior-form
+          v-else
           v-model="form"
-          :no-pattern="noPattern"
           :with-inherited="withInherited"
           :pbehavior-id="pbehaviorId"
           pbehavior-counter-type
@@ -28,12 +39,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -55,6 +66,7 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
+import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -64,7 +76,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { PbehaviorForm, ModalWrapper, AiChatSidebar },
+  components: { PbehaviorForm, PbehaviorGeneralForm, ModalWrapper, AiChatSidebar },
   props: {
     modal: {
       type: Object,
@@ -95,8 +107,9 @@ export default {
       context: LLM_SOCKET_CONTEXTS.pbehavior,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.pbehavior,
       method: async () => {
         const result = await config.value.action?.(
           pbehaviorToRequest(formToPbehavior(form.value, config.value.timezone)),
@@ -118,10 +131,10 @@ export default {
       noPattern,
       withInherited,
       pbehaviorId,
-      isDisabled,
       submitting,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
       close,
     };

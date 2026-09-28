@@ -16,7 +16,9 @@
               <v-icon v-if="sidebar.config.titleIcon" color="white">
                 {{ sidebar.config.titleIcon }}
               </v-icon>
-              <span class="text-h6 white--text">{{ title }}</span>
+              <span class="text-h6 white--text">
+                {{ title }}
+              </span>
             </v-layout>
           </v-list-item-title>
           <v-btn

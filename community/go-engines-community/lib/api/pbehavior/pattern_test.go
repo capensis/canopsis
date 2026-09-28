@@ -405,7 +405,7 @@ func TestSearchPatternToMongoQuery(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			query, err := data.pattern.ToMongoQuery()
+			query, err := data.pattern.toMongoQuery(now)
 			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}

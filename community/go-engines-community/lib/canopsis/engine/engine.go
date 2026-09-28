@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"runtime/debug"
 	"sync"
@@ -11,7 +12,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const shutdownTimout = 5 * time.Second
+const shutdownTimeout = 5 * time.Second
 
 func New(
 	init func(ctx context.Context) error,
@@ -67,12 +68,30 @@ func (e *engine) AddDeferFunc(deferFunc func(ctx context.Context)) {
 	}
 }
 
-func (e *engine) Run(ctx context.Context) error {
+func (e *engine) Run(ctx context.Context) (resErr error) {
 	defer func() { // nolint: contextcheck
 		if e.deferFunc != nil {
-			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimout)
+			deferCtx, deferCancel := context.WithTimeout(context.Background(), shutdownTimeout)
 			defer deferCancel()
-			e.deferFunc(deferCtx)
+
+			// Run deferFunc in a goroutine so we can enforce shutdownTimeout even if
+			// the deferFunc implementation does not honor deferCtx cancellation.
+			done := make(chan struct{})
+			go func() {
+				e.deferFunc(deferCtx)
+				close(done)
+			}()
+
+			select {
+			case <-done:
+			case <-deferCtx.Done():
+				err := fmt.Errorf("deferFunc did not finish within %s", shutdownTimeout)
+				if resErr == nil {
+					resErr = err
+				} else {
+					resErr = errors.Join(resErr, err)
+				}
+			}
 		}
 	}()
 

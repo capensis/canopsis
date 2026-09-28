@@ -1,36 +1,29 @@
 <template>
-  <v-layout column>
-    <c-enabled-field
-      v-field="form.enabled"
-      :disabled="disabledCommon"
-      class="mt-0"
-      hide-details
-      with-background
-    />
-    <c-instruction-type-field
-      v-field="form.type"
-      :disabled="disabled || !isNew"
-      class="mb-2"
-    />
+  <div>
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
       required
       autofocus
     />
-    <v-text-field
-      v-field="form.description"
-      v-validate="'required'"
-      :label="$t('common.description')"
-      :error-messages="errors.collect('description')"
-      :disabled="disabledCommon"
-      name="description"
-    />
-    <v-layout
-      justify-space-between
-      align-center
-    >
-      <v-flex xs7>
+
+    <c-form-block>
+      <c-form-block-row :label="$t('remediation.instruction.type')" indented>
+        <c-instruction-type-field
+          v-field="form.type"
+          :disabled="disabled || !isNew"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field
+          v-field="form.description"
+          :disabled="disabledCommon"
+          required
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('remediation.instruction.timeoutAfterExecution')">
         <c-duration-field
           v-field="form.timeout_after_execution"
           :label="$t('remediation.instruction.timeoutAfterExecution')"
@@ -40,53 +33,40 @@
           name="timeout_after_execution"
           required
         />
-      </v-flex>
-      <v-flex
-        v-if="isAutoType"
-        class="ml-2"
-        xs3
-      >
         <c-priority-field
+          v-if="isAutoType"
           v-field="form.priority"
           :disabled="disabled"
         />
-      </v-flex>
-    </v-layout>
-    <v-layout v-if="isAutoType" class="gap-3">
-      <c-enabled-field
-        :value="form.retry_enabled"
-        :label="$t('remediation.instruction.retryEnabled')"
-        class="pb-1"
-        @input="updateRetryEnabled"
-      >
-        <template #append>
-          <c-help-icon
-            :text="$t('remediation.instruction.retryEnabledTooltip')"
-            icon="help"
-            color="grey darken-1"
-            top
-          />
-        </template>
-      </c-enabled-field>
-      <v-fade-transition>
-        <c-number-field
-          v-if="form.retry_enabled"
-          v-field="form.retry_count"
-          :label="$t('remediation.instruction.retryCount')"
-          :min="1"
-          :max="100"
-          name="retry_count"
-          required
+      </c-form-block-row>
+
+      <c-form-block-row v-if="isAutoType" :label="$t('remediation.instruction.retryEnabled')">
+        <c-enabled-field
+          :value="form.retry_enabled"
+          :label="$t('remediation.instruction.retryEnabled')"
+          :disabled="disabled"
+          @input="updateRetryEnabled"
         />
-      </v-fade-transition>
-    </v-layout>
-    <template v-if="isAutoType">
-      <c-triggers-field
-        v-field="form.triggers"
-        :types="availableTriggers"
-        with-additional-values
-      />
-      <v-layout>
+        <v-expand-transition>
+          <c-number-field
+            v-if="form.retry_enabled"
+            v-field="form.retry_count"
+            :label="$t('remediation.instruction.retryCount')"
+            :min="1"
+            :max="100"
+            name="retry_count"
+            required
+          />
+        </v-expand-transition>
+      </c-form-block-row>
+
+      <c-form-block-row v-if="isAutoType" :label="$tc('common.trigger', 2)">
+        <c-triggers-field
+          v-field="form.triggers"
+          :types="availableTriggers"
+          with-additional-values
+        />
+
         <c-enabled-field
           v-field="form.enabled_repeat_triggers"
           :label="$t('remediation.instruction.enabledRepeatTrigger')"
@@ -100,36 +80,28 @@
             />
           </template>
         </c-enabled-field>
-      </v-layout>
-      <v-expand-transition>
-        <c-triggers-field
-          v-if="form.enabled_repeat_triggers"
-          v-field="form.repeat_triggers"
-          :types="availableRepeatTriggers"
-          :label="$t('remediation.instruction.repeatTriggers')"
-          name="repeat_triggers"
-          translation-key-prefix="common.repeatTriggers"
+
+        <v-expand-transition>
+          <c-triggers-field
+            v-if="form.enabled_repeat_triggers"
+            v-field="form.repeat_triggers"
+            :types="availableRepeatTriggers"
+            :label="$t('remediation.instruction.repeatTriggers')"
+            name="repeat_triggers"
+            translation-key-prefix="common.repeatTriggers"
+          />
+        </v-expand-transition>
+      </c-form-block-row>
+
+      <c-form-block-row v-if="!disabledCommon" :label="$t('remediation.instruction.requestApproval')">
+        <remediation-instruction-approval-form
+          v-field="form.approval"
+          :disabled="disabled"
+          :required="requiredApprove"
         />
-      </v-expand-transition>
-    </template>
-    <remediation-instruction-jobs-form
-      v-if="isAutoType || isManualSimplified"
-      v-field="form.jobs"
-      :disabled="disabled"
-    />
-    <remediation-instruction-steps-form
-      v-else
-      v-field="form.steps"
-      :disabled="disabled"
-      :template-vars="templateVars"
-    />
-    <remediation-instruction-approval-form
-      v-if="!disabledCommon"
-      v-field="form.approval"
-      :disabled="disabled"
-      :required="requiredApprove"
-    />
-  </v-layout>
+      </c-form-block-row>
+    </c-form-block>
+  </div>
 </template>
 
 <script>
@@ -144,15 +116,11 @@ import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/
 
 import { useModelField } from '@/hooks/form/model-field';
 
-import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
-import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    RemediationInstructionStepsForm,
-    RemediationInstructionJobsForm,
     RemediationInstructionApprovalForm,
   },
   model: {

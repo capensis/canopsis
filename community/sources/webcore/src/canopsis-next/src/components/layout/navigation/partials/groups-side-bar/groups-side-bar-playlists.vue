@@ -29,7 +29,9 @@
               >
                 <v-flex>
                   <v-layout align-center>
-                    <span class="text-truncate pl-3">{{ playlist.name }}</span>
+                    <span class="text-truncate pl-3">
+                      {{ playlist.name }}
+                    </span>
                   </v-layout>
                 </v-flex>
               </v-layout>

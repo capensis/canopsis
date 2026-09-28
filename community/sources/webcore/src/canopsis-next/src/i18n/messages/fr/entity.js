@@ -5,7 +5,7 @@ export default {
   form: 'Formulaire',
   impact: 'Impacts',
   depends: 'Dépendances',
-  addInformation: 'Ajouter une information',
+  addInfos: 'Ajouter des infos',
   emptyInfos: 'Aucune information',
   availabilityState: 'État de disponibilité',
   types: {

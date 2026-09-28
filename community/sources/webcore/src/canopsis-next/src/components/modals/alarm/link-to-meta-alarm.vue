@@ -20,7 +20,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="primary"
           type="submit"
         >
@@ -87,7 +87,7 @@ export default {
       modals.hide();
     };
 
-    const { submit, submitting, isDisabled } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: submitMethod,
     });
@@ -103,7 +103,6 @@ export default {
       alarms,
       submit,
       submitting,
-      isDisabled,
     };
   },
 };

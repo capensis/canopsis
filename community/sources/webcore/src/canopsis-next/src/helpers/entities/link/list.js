@@ -42,7 +42,7 @@ export const getLinkRuleLinkActionType = (link = {}) => [link.rule_id, link.icon
  * @param {AlarmLinks} [links = {}]
  * @returns {AlarmLink[]}
  */
-export const harmonizeLinks = (links = {}) => sortBy(Object.values(links).flat(), 'label');
+export const harmonizeLinks = (links = {}) => sortBy(Object.values(links || {}).flat(), 'label');
 
 /**
  * Get filtered links for alarms

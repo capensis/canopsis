@@ -18,6 +18,7 @@
         :enablable="updatable"
         :disablable="updatable"
         idle-rule
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
@@ -49,12 +50,12 @@
           type="duplicate"
           @click="$emit('duplicate', item)"
         />
+        <c-db-export-btn :id="item._id" idle-rule />
         <c-action-btn
           v-if="removable"
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <c-db-export-btn :id="item._id" idle-rule />
       </v-layout>
     </template>
     <template #expand="{ item }">

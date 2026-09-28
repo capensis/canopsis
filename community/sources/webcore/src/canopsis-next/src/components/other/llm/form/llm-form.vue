@@ -15,55 +15,67 @@
       required
     />
 
-    <v-text-field
-      v-field="form.type"
-      :label="$t('llm.modelType')"
-      disabled
-      readonly
-    />
-
-    <c-password-field
-      v-field="form.api_key"
-      :label="$t('llm.apiKey')"
-      :required="isNew"
-      :placeholder="$t('llm.apiKeyPlaceholder')"
-      :replaceable="!isNew"
-      name="api_key"
-      visibility
-    />
-
-    <v-layout class="gap-3">
-      <v-flex xs6>
-        <llm-model-field
-          v-field="form.model"
-          :items="models"
-          :loading="modelsPending"
-          name="model"
-          required
+    <c-form-block>
+      <c-form-block-row :label="$t('llm.modelType')">
+        <v-text-field
+          v-field="form.type"
+          :label="$t('llm.modelType')"
+          disabled
+          readonly
         />
-      </v-flex>
-      <v-flex xs6>
-        <llm-thinking-level-field
-          v-field="form.thinking_level"
-          :items="thinkingLevels"
-          name="thinking_level"
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('llm.apiKey')">
+        <c-password-field
+          v-field="form.api_key"
+          :label="$t('llm.apiKey')"
+          :required="isNew"
+          :placeholder="$t('llm.apiKeyPlaceholder')"
+          :replaceable="!isNew"
+          name="api_key"
+          visibility
         />
-      </v-flex>
-    </v-layout>
+      </c-form-block-row>
 
-    <c-enabled-field
-      v-field="form.default"
-      :label="$t('llm.isDefaultModel')"
-      :disabled="!form.enabled"
-      hide-details
-    />
+      <c-form-block-row :label="$t('llm.model')">
+        <v-layout class="gap-3">
+          <v-flex xs6>
+            <llm-model-field
+              v-field="form.model"
+              :items="models"
+              :loading="modelsPending"
+              name="model"
+              required
+            />
+          </v-flex>
+          <v-flex xs6>
+            <llm-thinking-level-field
+              v-field="form.thinking_level"
+              :items="thinkingLevels"
+              name="thinking_level"
+            />
+          </v-flex>
+        </v-layout>
+      </c-form-block-row>
 
-    <div
-      v-if="defaultLlm"
-      class="text-caption text--secondary"
-    >
-      {{ $t('llm.currentDefaultModelLine') }} <strong>{{ defaultLlm.name }}</strong>
-    </div>
+      <c-form-block-row :label="$t('llm.isDefaultModel')" align-center>
+        <v-layout column>
+          <c-enabled-field
+            v-field="form.default"
+            :label="$t('llm.isDefaultModel')"
+            :disabled="!form.enabled"
+            hide-details
+            no-margin
+          />
+          <div
+            v-if="defaultLlm"
+            class="text-caption text--secondary mt-1"
+          >
+            {{ $t('llm.currentDefaultModelLine') }} <strong>{{ defaultLlm.name }}</strong>
+          </div>
+        </v-layout>
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
