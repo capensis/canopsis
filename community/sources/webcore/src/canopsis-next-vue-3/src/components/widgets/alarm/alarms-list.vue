@@ -17,7 +17,10 @@
         />
       </div>
 
-      <div v-if="hasAccessToCategory" class="alarms-list-widget__toolbar-cell">
+      <div
+        v-if="hasAccessToCategory"
+        class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--category"
+      >
         <c-entity-category-field
           :category="query.category"
           class="ma-0"
@@ -589,12 +592,13 @@ export default {
   gap: 16px;
 }
 
-.alarms-list-widget__toolbar-cell {
+.alarms-list-widget__toolbar-cell--category {
   min-width: 180px;
 }
 
 .alarms-list-widget__toolbar-cell--advanced-search {
-  flex: 1 1 360px;
+  flex: 1 1 auto;
+  max-width: 100%;
   min-width: 320px;
 }
 

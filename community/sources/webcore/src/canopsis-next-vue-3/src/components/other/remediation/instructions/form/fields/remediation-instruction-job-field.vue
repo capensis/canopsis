@@ -1,6 +1,7 @@
 <template>
   <c-card-iterator-item
     :item-number="jobNumber"
+    :disabled="disabled"
     :removable="!disabled"
     static-delete
     @remove="$emit('remove')"

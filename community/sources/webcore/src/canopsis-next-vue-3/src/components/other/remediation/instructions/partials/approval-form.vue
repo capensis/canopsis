@@ -1,20 +1,20 @@
 <template>
   <v-form @submit.prevent="submitDismiss">
-    <c-layout column>
-      <c-description-field
-        v-if="dismissing"
-        v-model="comment"
-        :label="$t('common.comment')"
-        name="dismiss_comment"
-        required
-      />
+    <v-row>
+      <v-col v-if="dismissing" cols="12">
+        <c-description-field
+          v-model="comment"
+          :label="$t('common.comment')"
+          name="dismiss_comment"
+          required
+        />
+      </v-col>
 
-      <c-layout justify="end">
+      <v-col class="d-flex justify-end" cols="12">
         <template v-if="!dismissing">
           <v-btn
             :disabled="disabled || submitting"
             class="mr-2"
-            variant="text"
             color="warning"
             @click="showDismissComment"
           >
@@ -41,7 +41,7 @@
           <v-btn
             :disabled="disabled || submitting"
             :loading="submitting"
-            variant="text"
+            color="warning"
             type="submit"
           >
             {{ $t('common.dismiss') }}
@@ -50,8 +50,8 @@
             </v-icon>
           </v-btn>
         </template>
-      </c-layout>
-    </c-layout>
+      </v-col>
+    </v-row>
   </v-form>
 </template>
 

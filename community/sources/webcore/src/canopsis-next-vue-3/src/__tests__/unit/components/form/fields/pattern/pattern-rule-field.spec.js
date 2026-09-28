@@ -46,6 +46,7 @@ const stubs = {
 const selectPatternAttributeField = wrapper =>
   wrapper.findComponent({ name: 'PatternAttributeField' });
 const selectInfosAttributeField = wrapper => wrapper.find('c-infos-attribute-field-stub');
+const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
 
 describe('pattern-rule-field', () => {
   const emptyRule = {
@@ -217,6 +218,31 @@ describe('pattern-rule-field', () => {
     });
   });
 
+  test.each([
+    [true, 'common.true'],
+    [false, 'common.false'],
+  ])('Boolean value field displays the %s label', (value, label) => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          attribute: ALARM_PATTERN_FIELDS.output,
+          operator: PATTERN_OPERATORS.equal,
+          fieldType: PATTERN_FIELD_TYPES.boolean,
+          value,
+        },
+      },
+    });
+
+    expect(wrapper.vm.valueComponent).toEqual({
+      is: 'c-enabled-field',
+      props: expect.objectContaining({
+        modelValue: value,
+        label,
+      }),
+    });
+  });
+
   test('Field and dictionary changed after trigger input event on the infos attribute field', () => {
     const wrapper = factory({
       propsData: {
@@ -264,6 +290,24 @@ describe('pattern-rule-field', () => {
       ...emptyRule,
       field,
     });
+  });
+
+  test('Infos value type field has a dedicated validation name', () => {
+    const name = 'rule-key';
+    const wrapper = factory({
+      propsData: {
+        name,
+        rule: {
+          ...emptyRule,
+          attribute: ALARM_PATTERN_FIELDS.infos,
+          dictionary: 'dictionary',
+          field: PATTERN_RULE_INFOS_FIELDS.value,
+        },
+        type: PATTERN_RULE_TYPES.infos,
+      },
+    });
+
+    expect(selectInputTypeField(wrapper).attributes('name')).toBe(`${name}.fieldType`);
   });
 
   test('Range operator changed after trigger input event on the operator field', () => {

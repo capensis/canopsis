@@ -116,10 +116,12 @@
           :readonly="readonly"
           :name="preparedTotalEntityName"
           :attributes="totalEntityAttributes"
+          :entity-counter="totalEntityPatternCounter"
           with-type
           @update:value="
             updatePatternAndClear(PATTERNS_FIELDS.totalEntity, preparedTotalEntityName, $event)
           "
+          @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.totalEntity])"
         />
       </c-collapse-panel>
       <c-collapse-panel
@@ -531,6 +533,11 @@ export default {
         : counters.value?.alarms?.alarm_pattern,
     );
 
+    const totalEntityPatternCounter = computed(() => props.entityCountersType
+        ? counters.value?.total_entity_pattern
+        : counters.value?.entities?.total_entity_pattern,
+    );
+
     const entityPatternEntitiesCounter = computed(() => props.entityCountersType
         ? counters.value?.entity_pattern
         : counters.value?.entities?.entity_pattern,
@@ -711,6 +718,7 @@ export default {
       updatePatternAndClear,
       validate,
       alarmPatternCounter,
+      totalEntityPatternCounter,
       entityPatternEntitiesCounter,
       entityPatternsCounters,
       pbehaviorPatternsCounters,

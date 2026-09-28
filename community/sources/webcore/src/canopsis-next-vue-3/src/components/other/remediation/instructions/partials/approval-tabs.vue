@@ -15,6 +15,7 @@
           :form="updatedForm"
           disabled-common
           disabled
+          with-additional
         />
       </v-window-item>
       <v-window-item value="original" class="pt-3">
@@ -22,6 +23,7 @@
           :form="originalForm"
           disabled-common
           disabled
+          with-additional
         />
       </v-window-item>
     </v-window>

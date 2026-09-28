@@ -181,15 +181,6 @@ export default {
 
 <style lang="scss">
 .c-alarm-tag-field {
-  &.v-autocomplete--chips .v-field.v-field,
-  .v-field.v-field:has(.v-autocomplete__selection .v-chip) {
-    .v-field__input {
-      align-items: center;
-      padding-top: 8px;
-      padding-bottom: 0;
-    }
-  }
-
   .v-select__selection,
   .v-autocomplete__selection {
     width: auto;

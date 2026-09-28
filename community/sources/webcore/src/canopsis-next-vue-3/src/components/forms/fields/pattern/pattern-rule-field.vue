@@ -45,7 +45,7 @@
               :label="$t('common.type')"
               :types="inputTypesWithDefinedType"
               :disabled="disabled"
-              :name="name"
+              :name="inputTypeFieldName"
               @update:value="updateField('fieldType', $event)"
             />
           </v-col>
@@ -168,6 +168,10 @@ export default {
     },
   },
   computed: {
+    inputTypeFieldName() {
+      return `${this.name}.fieldType`;
+    },
+
     operatorFieldName() {
       return `${this.name}.operator`;
     },
@@ -305,7 +309,7 @@ export default {
           is: 'c-enabled-field',
           props: {
             ...valueProps,
-            hideLabel: true,
+            label: this.$t(this.rule.value ? 'common.true' : 'common.false'),
           },
         };
       }

@@ -49,9 +49,12 @@ import veeValidatePlugin from './plugins/vee-validate';
 import vuetify, { registerVuetifyComponentAliases } from './plugins/vuetify';
 import { customIconsRegistry } from './plugins/vuetify/icons';
 import router from './router';
+import { registerVitePreloadErrorHandler } from './services/vite-preload-error';
 import { useSidebarStore } from './stores/modules/sidebar';
 
 import 'vuetify/styles';
+
+registerVitePreloadErrorHandler();
 
 const app = createApp(App);
 

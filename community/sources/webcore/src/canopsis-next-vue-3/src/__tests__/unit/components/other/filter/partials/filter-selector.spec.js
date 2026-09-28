@@ -26,6 +26,17 @@ describe('filter-selector', () => {
 
   const factory = generateShallowRenderer(FilterSelector, { stubs });
 
+  it('Limits visible selected filters and enables the remaining filters counter', () => {
+    const wrapper = factory({
+      propsData: {
+        filters,
+        modelValue: filters.map(({ _id }) => _id),
+      },
+    });
+
+    expect(selectFilterSelectField(wrapper).attributes('show-count')).toBe('2');
+  });
+
   it('Filter changed after trigger the select field', () => {
     const wrapper = factory({
       propsData: {

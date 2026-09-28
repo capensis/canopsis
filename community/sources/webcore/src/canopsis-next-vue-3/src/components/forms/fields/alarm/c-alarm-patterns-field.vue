@@ -30,6 +30,7 @@ import { isArray, keyBy } from 'lodash';
 
 import {
   ALARM_EVENT_INITIATORS,
+  ALARM_FIELDS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ALARM_STATES,
@@ -357,9 +358,9 @@ export default {
 
             return {
               items: Object.values(ALARM_EVENT_INITIATORS),
+              chips: isMultiple,
               multiple: isMultiple,
-              deletableChips: isMultiple,
-              smallChips: isMultiple,
+              closableChips: isMultiple,
             };
           },
         },
@@ -559,7 +560,11 @@ export default {
     },
 
     availableAlarmAttributes() {
-      return mergePatternAttributes(this.alarmAttributes, this.attributes);
+      const externalAttributes = this.attributes.filter(
+        attribute => attribute.value !== ALARM_FIELDS.failedTicket,
+      );
+
+      return mergePatternAttributes(this.alarmAttributes, externalAttributes);
     },
   },
   mounted() {

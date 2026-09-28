@@ -18,6 +18,7 @@
         v-if="!form.copy_from_children"
         :model-value="form.description"
         :label="t('common.description')"
+        :max-length="FORM_MAX_STRING_LENGTH"
         @update:model-value="updateField('description', $event)"
       />
       <v-row class="align-start" density="default">
@@ -51,6 +52,8 @@
 <script>
 import { computed } from 'vue';
 
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
@@ -79,6 +82,7 @@ export default {
     });
 
     return {
+      FORM_MAX_STRING_LENGTH,
       t,
       nameFieldName,
       copyFromChildren,

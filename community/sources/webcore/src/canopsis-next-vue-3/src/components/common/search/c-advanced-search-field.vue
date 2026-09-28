@@ -211,6 +211,7 @@ export default {
 
   flex: 1 1 auto;
   min-width: 280px;
+  font-size: 16px;
 
   .v-input__control,
   .v-input__slot,
@@ -238,9 +239,20 @@ export default {
   }
 
   & &__rule {
+    max-width: 100%;
+    min-width: 0;
+
+    > span,
+    > span > span {
+      display: inline-flex;
+      max-width: 100%;
+      min-width: 0;
+    }
+
     input {
       flex: 0 1 auto;
       field-sizing: content;
+      max-inline-size: 100%;
       min-inline-size: var(--input-min-inline-size);
       border: 0;
       outline: 0;
@@ -280,7 +292,14 @@ export default {
     margin: 0;
 
     .v-chip__content {
+      display: inline-flex;
+      align-items: center;
       gap: var(--advanced-search-chip-gap);
+    }
+
+    > .v-chip__content > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &:has(> .v-chip__content > .v-chip) {

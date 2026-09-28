@@ -19,6 +19,7 @@
           <v-col cols="auto">
             <c-draggable-step-number
               :color="hasChildrenError ? 'error' : 'primary'"
+              :disabled="disabled"
               :hide-number="small"
               :drag-class="dragHandleClass"
               class="c-card-iterator-item__step-number"
@@ -87,6 +88,10 @@ export default {
     removable: {
       type: Boolean,
       default: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     staticDelete: {
       type: Boolean,

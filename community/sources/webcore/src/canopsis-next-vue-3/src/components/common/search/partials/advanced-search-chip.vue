@@ -10,7 +10,6 @@
             :closable="closable && !disabled"
             :color="color"
             class="c-advanced-search__chip c-advanced-search__array-chip"
-            size="small"
             v-bind="multipleChipListeners"
           >
             <v-progress-circular
@@ -24,7 +23,6 @@
               v-for="(item, index) in selectedItems"
               :key="item[itemValue]"
               :closable="!disabled"
-              size="x-small"
               @click:close="closeChildChip(index)"
             >
               {{ item[itemText] ?? item[itemValue] }}
@@ -64,7 +62,6 @@
             :color="color"
             :closable="closable && !disabled"
             class="c-advanced-search__chip"
-            size="small"
             v-bind="chipListeners"
           >
             <v-progress-circular

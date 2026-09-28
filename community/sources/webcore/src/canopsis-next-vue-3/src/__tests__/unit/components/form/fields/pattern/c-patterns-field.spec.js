@@ -53,7 +53,12 @@ const stubs = {
   'c-collapse-panel': true,
   'c-alarm-patterns-field': true,
   'c-service-weather-patterns-field': true,
-  'c-entity-patterns-field': true,
+  'c-entity-patterns-field': {
+    name: 'CEntityPatternsField',
+    props: ['patterns', 'entityCounter'],
+    emits: ['update:value', 'show:entities'],
+    template: '<div />',
+  },
   'c-pbehavior-patterns-field': true,
   'c-event-filter-patterns-field': true,
   'c-alert': true,
@@ -90,7 +95,8 @@ const stubs = {
 };
 
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
-const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
+const selectEntityPatternsField = wrapper =>
+  wrapper.findComponent({ name: 'CEntityPatternsField' });
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
 const selectEventFilterPatternsField = wrapper =>
   wrapper.find('c-event-filter-patterns-field-stub');
@@ -214,6 +220,45 @@ describe('c-patterns-field', () => {
       ...patterns,
       entity_pattern: entityPattern,
     });
+  });
+
+  test('Shows the total entity pattern counter after checking the filter', async () => {
+    const totalEntityPatternCounter = { count: 50, over_limit: false, ms: 1 };
+    const counterMethod = vi.fn().mockResolvedValue({
+      entities: {
+        total_entity_pattern: totalEntityPatternCounter,
+      },
+    });
+    const totalEntityPattern = patternToForm({
+      total_entity_pattern: [
+        [
+          {
+            field: ENTITY_PATTERN_FIELDS.type,
+            cond: {
+              type: PATTERN_CONDITIONS.equal,
+              value: 'resource',
+            },
+          },
+        ],
+      ],
+    });
+    const wrapper = factory({
+      propsData: {
+        value: {
+          ...patterns,
+          total_entity_pattern: totalEntityPattern,
+        },
+        withTotalEntity: true,
+        counterMethod,
+      },
+    });
+
+    await wrapper.vm.checkFilter();
+    await flushPromises();
+
+    expect(selectEntityPatternsField(wrapper).props('entityCounter')).toEqual(
+      totalEntityPatternCounter,
+    );
   });
 
   test('Shows the total entity count after checking a newly added entity pattern', async () => {

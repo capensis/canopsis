@@ -11,6 +11,8 @@ import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 import { range } from 'lodash';
 
+import { MODALS } from '@/constants';
+
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
@@ -65,7 +67,7 @@ const VDataTableServerStub = {
 const AlarmsListRowStub = {
   name: 'AlarmsListRow',
   props: ['alarm'],
-  emits: ['update:selected', 'update:expanded', 'select:tag', 'remove:tag'],
+  emits: ['update:selected', 'update:expanded', 'click:state', 'select:tag', 'remove:tag'],
   template: '<tr class="alarms-list-row-stub"><td>{{ alarm._id }}</td></tr>',
 };
 
@@ -481,6 +483,7 @@ describe('alarms-list-table', () => {
   });
 
   test('Root cause diagram opened after trigger click state event', async () => {
+    const entity = alarms[0].entity;
     const wrapper = factory({
       store,
       propsData: {
@@ -490,8 +493,15 @@ describe('alarms-list-table', () => {
       mocks: { $modals },
     });
 
-    expect(wrapper.vm.expandedAlarmIds).toEqual([]);
-    expect(selectAlarmsListRow(wrapper)).toHaveLength(alarms.length);
+    selectAlarmsListRow(wrapper).at(0).vm.$emit('click:state', entity);
+
+    expect($modals.show).toHaveBeenCalledWith({
+      name: MODALS.entitiesRootCauseDiagram,
+      config: {
+        entity,
+        colorIndicator: defaultWidget.parameters.rootCauseColorIndicator,
+      },
+    });
   });
 
   test('Limits the initial rows rendering and defers the remaining rows', async () => {

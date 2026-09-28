@@ -3,7 +3,6 @@
     :closable="closable"
     :color="color"
     class="c-advanced-search__chip c-advanced-search__array-chip"
-    size="small"
     @click.prevent="$emit('click')"
     @click:close="close"
     @focusout="$emit('focusout')"
@@ -18,7 +17,6 @@
       <template #activator="{ props: activatorProps }">
         <v-chip
           class="c-advanced-search__chip"
-          size="x-small"
           v-bind="activatorProps"
         >
           <span class="font-italic text-medium-emphasis">

@@ -567,8 +567,8 @@ export default {
         data.id === HEALTHCHECK_SERVICES_NAMES.enginesChain && this.hasInvalidEnginesOrder
           ? this.$t('healthcheck.invalidEnginesOrder')
           : this.getTooltipText(data);
-      console.log('tooltipMessage', tooltipMessage, data);
-      return tooltipMessage ? `<div class="pre-wrap">${tooltipMessage}</div>` : '';
+
+          return tooltipMessage ? `<div class="pre-wrap">${tooltipMessage}</div>` : '';
     },
 
     getEnginesChainHtmlLabel({ id }) {
