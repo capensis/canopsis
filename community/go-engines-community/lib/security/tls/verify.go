@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -81,19 +82,24 @@ func CreateTLSConfigFromEnv(envVarCaCertFile, envVarInsecureSkipVerify string, l
 	cf := os.Getenv(envVarCaCertFile)
 	if cf != "" {
 		tc := &tls.Config{MinVersion: tls.VersionTLS12}
-		var roots *x509.CertPool
-		caCert, err := os.ReadFile(cf)
+		cf, err := filepath.EvalSymlinks(cf)
 		if err != nil {
-			logger.Warn().Err(err).Msgf("failed to read certificate file %q, skip it", cf)
+			logger.Warn().Err(err).Msgf("failed to evaluate symlinks for certificate file %q, skip it", cf)
 		} else {
-			roots = x509.NewCertPool()
-			if !roots.AppendCertsFromPEM(caCert) {
-				logger.Warn().Msgf("failed to append certificate from file %q, skip it", cf)
+			var roots *x509.CertPool
+			caCert, err := os.ReadFile(cf) // #nosec G703 - requirement for filepath.Clean, but it's part of EvalSymlinks
+			if err != nil {
+				logger.Warn().Err(err).Msgf("failed to read certificate file %q, skip it", cf)
 			} else {
-				logger.Debug().Msgf("certificate from file %q added to CA", cf)
+				roots = x509.NewCertPool()
+				if !roots.AppendCertsFromPEM(caCert) {
+					logger.Warn().Msgf("failed to append certificate from file %q, skip it", cf)
+				} else {
+					logger.Debug().Msgf("certificate from file %q added to CA", cf)
+				}
 			}
+			tc.RootCAs = roots
 		}
-		tc.RootCAs = roots
 		return tc
 	}
 
