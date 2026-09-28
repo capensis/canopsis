@@ -1,6 +1,7 @@
 <template>
   <c-card-iterator-item
     :item-number="operationNumber"
+    :disabled="disabled"
     :removable="!disabled"
     drag-handle-class="operation-drag-handler"
     class="remediation-instruction-operation-field"

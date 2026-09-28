@@ -95,6 +95,16 @@
         />
       </c-form-block-row>
     </c-form-block>
+
+    <template v-if="withAdditional">
+      <remediation-instruction-steps-form
+        v-if="isManualType"
+        :disabled="disabled"
+        :template-vars="templateVars"
+        class="mt-3"
+      />
+      <remediation-instruction-jobs-form v-else :disabled="disabled" class="mt-3" />
+    </template>
   </div>
 </template>
 
@@ -106,16 +116,23 @@ import {
   REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES,
 } from '@/constants';
 
-import { isInstructionTypeAuto } from '@/helpers/entities/remediation/instruction/form';
+import {
+  isInstructionTypeAuto,
+  isInstructionTypeManual,
+} from '@/helpers/entities/remediation/instruction/form';
 
 import { useFormContext, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';
+import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
+import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 
 export default {
   components: {
     RemediationInstructionApprovalForm,
+    RemediationInstructionJobsForm,
+    RemediationInstructionStepsForm,
   },
   props: {
     form: {
@@ -141,6 +158,10 @@ export default {
     templateVars: {
       type: Object,
       default: () => ({}),
+    },
+    withAdditional: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {
@@ -179,6 +200,7 @@ export default {
     });
 
     const isAutoType = computed(() => isInstructionTypeAuto(typeField.value));
+    const isManualType = computed(() => isInstructionTypeManual(typeField.value));
 
     /**
      * Updates the retry enabled field and sets initial retry count when enabled
@@ -199,6 +221,7 @@ export default {
       availableRepeatTriggers,
 
       isAutoType,
+      isManualType,
 
       nameField,
       typeField,

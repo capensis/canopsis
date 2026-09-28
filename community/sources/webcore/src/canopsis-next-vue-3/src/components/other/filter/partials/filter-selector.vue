@@ -7,6 +7,7 @@
     :item-title="itemText"
     :item-value="itemValue"
     :multiple="isMultiple"
+    :show-count="2"
     :hide-details="hideDetails"
     :clearable="clearable"
     class="filter-selector mt-0"
@@ -40,7 +41,6 @@
 
     <template #selection="{ item, index }">
       <v-chip
-        v-if="index < 2"
         :closable="isChipRemovable"
         size="small"
         @click:close="removeFilter(index)"
@@ -240,10 +240,6 @@ export default {
 </script>
 
 <style lang="scss">
-.filter-selector {
-  max-width: 500px;
-}
-
 .filter-selector__locked-chip {
   margin-right: 4px;
 }

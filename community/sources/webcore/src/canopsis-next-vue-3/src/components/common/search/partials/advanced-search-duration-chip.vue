@@ -3,12 +3,11 @@
     :closable="closable && !disabled"
     :color="color"
     class="c-advanced-search__chip c-advanced-search__array-chip"
-    size="small"
     @click.prevent="$emit('click')"
     @click:close="close"
     @focusout="$emit('focusout')"
   >
-    <v-chip size="x-small">
+    <v-chip>
       <span v-if="disabled">
         {{ chipValue.value }}
       </span>
@@ -22,7 +21,7 @@
     </v-chip>
     <v-menu :disabled="disabled" location="bottom">
       <template #activator="{ props: activatorProps }">
-        <v-chip v-bind="activatorProps" size="x-small">
+        <v-chip v-bind="activatorProps">
           <span>{{ unitText }}</span>
         </v-chip>
       </template>

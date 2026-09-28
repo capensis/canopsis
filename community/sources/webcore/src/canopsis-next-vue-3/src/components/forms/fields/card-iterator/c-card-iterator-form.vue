@@ -6,6 +6,7 @@
     </c-alert>
     <c-card-iterator-field
       :data="value"
+      :disabled="disabled"
       v-bind="$attrs"
       :class="iteratorClass"
       @update:data="$emit('update:value', $event)"
@@ -24,6 +25,7 @@
         <template #activator="{ props: tooltipProps }">
           <c-btn-with-error
             :error="addButtonError"
+            :disabled="disabled"
             size="small"
             variant="outlined"
             icon
@@ -39,6 +41,7 @@
       <c-btn-with-error
         v-else
         :error="addButtonError"
+        :disabled="disabled"
         :icon="!addButtonLabel"
         :size="!addButtonLabel ? 'small' : undefined"
         variant="outlined"
@@ -93,6 +96,10 @@ export default {
     requiredErrorMessage: {
       type: String,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     addButtonLabel: {
       type: String,

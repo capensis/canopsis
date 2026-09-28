@@ -1,29 +1,37 @@
 <template>
   <v-card>
     <v-card-text>
-      <c-layout class="approval-alert-text">
-        <div class="approval-alert-text__icon">
+      <v-row class="approval-alert-text" no-gutters>
+        <v-col class="approval-alert-text__icon" cols="auto">
           <v-icon color="error">
             notification_important
           </v-icon>
-        </div>
-        <c-layout column>
-          <c-layout>
-            <strong>{{ userName }}</strong>
-            <span class="ml-1">
-              {{ statusText }}
-            </span>
-          </c-layout>
-          <c-layout class="mt-3">
-            <span class="grey--text text--darken-2"> {{ $t('common.comment', 1) }}: </span>
-          </c-layout>
-          <c-layout class="mt-3">
-            <span>{{ comment }}</span>
-          </c-layout>
+        </v-col>
+        <v-col>
+          <v-row no-gutters>
+            <v-col>
+              <strong>{{ userName }}</strong>
+              <span class="ml-1">
+                {{ statusText }}
+              </span>
+            </v-col>
+          </v-row>
+          <v-row class="mt-3" no-gutters>
+            <v-col>
+              <span class="grey--text text--darken-2">
+                {{ $t('common.comment', 1) }}:
+              </span>
+            </v-col>
+          </v-row>
+          <v-row class="mt-3" no-gutters>
+            <v-col>
+              <span>{{ comment }}</span>
+            </v-col>
+          </v-row>
 
           <slot />
-        </c-layout>
-      </c-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>

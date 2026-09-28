@@ -1,6 +1,8 @@
 <template>
   <c-card-iterator-item
     :item-number="stepNumber"
+    :disabled="disabled"
+    :removable="!disabled"
     class="remediation-instruction-step-field"
     static-delete
     @remove="remove"

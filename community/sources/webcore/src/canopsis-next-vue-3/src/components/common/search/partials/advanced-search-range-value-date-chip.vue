@@ -3,7 +3,6 @@
     :closable="closable"
     :color="color"
     class="c-advanced-search__chip c-advanced-search__array-chip"
-    size="small"
     @click.prevent="$emit('click')"
     @click:close="close"
     @focusout="$emit('focusout')"
@@ -16,7 +15,7 @@
       @update:value="updateField(chip.key, $event)"
     >
       <template #activator="{ props: activatorProps, value }">
-        <v-chip v-bind="activatorProps" size="x-small">
+        <v-chip v-bind="activatorProps">
           <span class="font-italic text-medium-emphasis">
             {{ $t(`common.${chip.key}`) }}:
           </span>

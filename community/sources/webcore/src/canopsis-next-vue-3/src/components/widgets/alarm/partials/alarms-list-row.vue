@@ -76,6 +76,7 @@
           :selected-tags="selectedTags"
           :small="small"
           :parent-alarm="parentAlarm"
+          @click:state="$emit('click:state', $event)"
           @select:tag="$emit('select:tag', $event)"
           @remove:tag="$emit('remove:tag', $event)"
         />
@@ -208,7 +209,14 @@ export default {
     },
   },
 
-  emits: ['update:selected', 'update:expanded', 'start:resize', 'select:tag', 'remove:tag'],
+  emits: [
+    'update:selected',
+    'update:expanded',
+    'start:resize',
+    'click:state',
+    'select:tag',
+    'remove:tag',
+  ],
 
   data() {
     const visible = this.booted || this.eager;

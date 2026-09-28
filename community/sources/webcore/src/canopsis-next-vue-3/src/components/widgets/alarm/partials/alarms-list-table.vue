@@ -11,7 +11,7 @@
       class="alarms-list-table__top-pagination"
     >
       <c-layout
-        class="px-4 py-2 position-relative"
+        class="pa-2 position-relative"
         align="center"
       >
         <div class="alarms-list-table__top-pagination-left">
@@ -168,6 +168,7 @@
             @update:selected="toggleAlarmSelection(getTableItem(item), $event)"
             @update:expanded="toggleAlarmExpanded(getTableItem(item), $event)"
             @start:resize="startColumnResize"
+            @click:state="openRootCauseDiagram"
             @select:tag="$emit('select:tag', $event)"
             @remove:tag="$emit('remove:tag', $event)"
           />
@@ -207,6 +208,7 @@ import {
   ALARM_ACTIONS_PADDINGS,
   DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
   DENSE_TYPES,
+  MODALS,
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
 } from '@/constants';
 
@@ -1047,6 +1049,16 @@ export default {
         ...alarm,
         ...(alarmDetails.data ?? alarmDetails),
       };
+    },
+
+    openRootCauseDiagram(entity) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity,
+          colorIndicator: this.preparedWidget.parameters.rootCauseColorIndicator,
+        },
+      });
     },
 
     clearSelected() {

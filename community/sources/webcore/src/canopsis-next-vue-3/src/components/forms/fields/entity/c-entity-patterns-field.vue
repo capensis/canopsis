@@ -270,8 +270,7 @@ export default {
               ellipsis: !isMultiple,
               chips: isMultiple,
               multiple: isMultiple,
-              deletableChips: isMultiple,
-              smallChips: isMultiple,
+              closableChips: isMultiple,
             };
           },
         },

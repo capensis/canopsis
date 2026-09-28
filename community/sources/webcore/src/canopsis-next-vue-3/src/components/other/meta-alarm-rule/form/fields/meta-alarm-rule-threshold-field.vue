@@ -27,6 +27,7 @@
                 :min="0"
                 :max="option.value === META_ALARMS_THRESHOLD_TYPES.thresholdRate ? 100 : undefined"
                 :name="getThresholdName(option.value)"
+                class="meta-alarm-rule-threshold-field__value"
                 hide-details
                 hide-label
                 @update:value="updateThreshold(option.value, $event)"
@@ -94,12 +95,24 @@ export default {
 .meta-alarm-rule-threshold-field__option {
   width: 100%;
 
-  :deep(.c-number-field) {
-    max-width: 120px;
-  }
+  :deep(.meta-alarm-rule-threshold-field__value) {
+    --v-input-control-height: 36px;
 
-  :deep(.v-text-field) {
-    margin-top: -6px;
+    flex: 0 0 100px;
+    width: 100px;
+    max-width: 100px;
+
+    .v-field,
+    .v-field__field,
+    .v-field__input {
+      height: 36px;
+      min-height: 36px;
+    }
+
+    .v-field__input {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
 }
 </style>

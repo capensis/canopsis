@@ -135,9 +135,11 @@ const createLegacyFormContext = (initialValues) => {
       },
       set: value => setValue(path, value),
     });
+  const reset = form => values.value = form;
 
   return {
     values,
+    reset,
     model,
     models,
     array,

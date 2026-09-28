@@ -259,6 +259,11 @@ $v2-font-size-root: 14px;
   }
 }
 
+.v-input__append {
+  align-items: center !important;
+  padding-top: 0 !important;
+}
+
 .c-field {
   .v-field--variant-underlined,
   .v-field--variant-plain {
