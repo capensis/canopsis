@@ -357,7 +357,7 @@ func RegisterRoutes(
 		}
 
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, patternfields.NewTransformer(primaryDbClient),
-			timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
+			timezoneConfigProvider, userInterfaceAdapter, authorProvider, tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), json.NewDecoder(), errorResponder, logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger),
@@ -491,7 +491,7 @@ func RegisterRoutes(
 			)
 		}
 
-		timelineExportStore := alarmtimeline.NewStore(secondaryDbClient, dbExportClient, json.NewDecoder(), timezoneConfigProvider)
+		timelineExportStore := alarmtimeline.NewStore(secondaryDbClient, dbExportClient, json.NewDecoder(), timezoneConfigProvider, userInterfaceAdapter)
 		timelineExportAPI := alarmtimeline.NewApi(timelineExportStore, exportTaskExecutor, json.NewEncoder(), errorResponder)
 		exportTaskExecutor.RegisterType(alarmtimeline.ExportType, timelineExportStore.Export)
 		timelineExportRouter := protected.Group("/alarm-timeline-export")
@@ -521,7 +521,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, authorProvider,
+		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, userInterfaceAdapter, authorProvider,
 			patternfields.NewTransformer(primaryDbClient), json.NewEncoder(), json.NewDecoder(), amqpPublisher, eventGenerator)
 		entityAPI := entity.NewApi(
 			entityStore,
