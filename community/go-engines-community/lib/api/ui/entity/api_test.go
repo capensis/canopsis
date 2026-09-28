@@ -100,7 +100,7 @@ func benchmarkBulkPause_givenNCreateItems(b *testing.B, itemCount int) {
 	authorProvider := author.NewProvider(&config.BaseApiConfigProvider{})
 	amqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	amqpPublisher.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
-	store := entity.NewStore(dbClient, nil, nil, authorProvider, nil, json.NewEncoder(), json.NewDecoder(), amqpPublisher, event.NewGenerator("", ""))
+	store := entity.NewStore(dbClient, nil, nil, nil, authorProvider, nil, json.NewEncoder(), json.NewDecoder(), amqpPublisher, event.NewGenerator("", ""))
 	errorResponder := response.NewErrorResponder(validation.NewErrorTranslator(trans, zerolog.Nop()), zerolog.Nop())
 	api := entity.NewApi(store, nil, nil, nil, nil, nil, errorResponder, zerolog.Nop())
 	encoder := json.NewEncoder()

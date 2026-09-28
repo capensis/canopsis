@@ -267,6 +267,7 @@ type ExportRequest struct {
 // easyjson:json
 type ExportFetchParameters struct {
 	BaseFilterRequest
+	// TimeFormat accepts a legacy format name or a user interface Go date layout. It overrides date_format for this export. If both are empty, the default export format is used.
 	TimeFormat string `json:"time_format" binding:"time_format"`
 }
 

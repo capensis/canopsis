@@ -1,14 +1,12 @@
 package alarmtimeline
 
 import (
-	"cmp"
 	"context"
 	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -28,6 +26,7 @@ func NewStore(
 	dbExportClient mongo.DbClient,
 	decoder encoding.Decoder,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 ) Store {
 	return &store{
 		dbCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
@@ -35,6 +34,7 @@ func NewStore(
 		dbExportCollection:     dbExportClient.Collection(mongo.AlarmMongoCollection),
 		decoder:                decoder,
 		timezoneConfigProvider: timezoneConfigProvider,
+		userInterfaceAdapter:   userInterfaceAdapter,
 	}
 }
 
@@ -44,6 +44,7 @@ type store struct {
 	dbExportCollection     mongo.DbCollection
 	decoder                encoding.Decoder
 	timezoneConfigProvider config.TimezoneConfigProvider
+	userInterfaceAdapter   config.UserInterfaceAdapter
 }
 
 func (s *store) Exists(ctx context.Context, id string) (bool, error) {
@@ -104,7 +105,10 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	timeFormat := cmp.Or(validation.GetRealFormatTime(t.TimeFormat), validation.DefaultTimeFormat)
+	timeFormat, err := export.ResolveTimeFormat(ctx, t.TimeFormat, s.userInterfaceAdapter)
+	if err != nil {
+		return nil, fmt.Errorf("resolve time format: %w", err)
+	}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {
 		if k == "t" {

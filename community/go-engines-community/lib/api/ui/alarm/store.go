@@ -3,7 +3,6 @@ package alarm
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../../mocks/lib/api/ui/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm Store
 
 import (
-	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -81,6 +80,7 @@ type store struct {
 	transformer                      patternfields.Transformer
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+	userInterfaceAdapter   config.UserInterfaceAdapter
 
 	tplExecutor template.Executor
 
@@ -97,6 +97,7 @@ func NewStore(
 	linkGenerator link.Generator,
 	transformer patternfields.Transformer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 	authorProvider author.Provider,
 	tplExecutor template.Executor,
 	decoder encoding.Decoder,
@@ -119,6 +120,7 @@ func NewStore(
 		transformer: transformer,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+		userInterfaceAdapter:   userInterfaceAdapter,
 
 		tplExecutor: tplExecutor,
 
@@ -675,6 +677,11 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, err
 	}
 
+	timeFormat, err := export.ResolveTimeFormat(ctx, r.TimeFormat, s.userInterfaceAdapter)
+	if err != nil {
+		return nil, err
+	}
+
 	collectionName := mongo.AlarmMongoCollection
 	if r.GetOpenedFilter() == OnlyResolved {
 		collectionName = mongo.ResolvedAlarmMongoCollection
@@ -766,7 +773,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, cmp.Or(validation.GetRealFormatTime(r.TimeFormat), validation.DefaultTimeFormat), location,
+	exportCursor := newExportCursor(cursor, t.Fields, timeFormat, location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }
