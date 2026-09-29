@@ -3254,6 +3254,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.SnoozeDuration = int64(in.Int64())
 			}
+		case "pause_duration":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PauseDuration = int64(in.Int64())
+			}
 		case "pbh_inactive_duration":
 			if in.IsNull() {
 				in.Skip()
@@ -3729,6 +3735,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"snooze_duration\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.SnoozeDuration))
+	}
+	{
+		const prefix string = ",\"pause_duration\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.PauseDuration))
 	}
 	{
 		const prefix string = ",\"pbh_inactive_duration\":"

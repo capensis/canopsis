@@ -81,7 +81,6 @@ func NewEngineAction(
 	m := DependencyMaker{}
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	amqpPubChPool := m.DepAMQPPubChannelPool(amqpPubConn)
 	amqpPublisher := amqp.NewPooledPublisher(amqpPubChPool)
 	amqpConsumeChPool := m.DepAMQPConsumeChannelPool(amqpConsumeConn)
@@ -145,7 +144,7 @@ func NewEngineAction(
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
 				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(),
-					logger, templateExecutor, alarmConfigProvider),
+					logger, templateExecutor),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -301,7 +300,6 @@ func NewEngineAction(
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,
-		alarmConfigProvider,
 	))
 
 	healthcheck.Start(ctx, healthcheck.NewChecker(

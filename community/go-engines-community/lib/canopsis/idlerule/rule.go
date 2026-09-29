@@ -70,12 +70,15 @@ type Parameters struct {
 	// Pbehavior
 	Name           string            `json:"name" bson:"name,omitempty" binding:"max=255"`
 	Reason         string            `json:"reason" bson:"reason,omitempty"`
-	Type           string            `json:"type" bson:"type,omitempty"`
 	RRule          string            `json:"rrule" bson:"rrule,omitempty"`
 	Tstart         *datetime.CpsTime `json:"tstart" bson:"tstart,omitempty" swaggertype:"integer"`
 	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty" swaggertype:"integer"`
 	StartOnTrigger *bool             `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
 	Color          string            `json:"color" bson:"color,omitempty"`
+	// Pbehavior and Pause
+	Type string `json:"type" bson:"type,omitempty" binding:"max=255"`
+	// Pause
+	Inherited bool `json:"inherited" bson:"inherited,omitempty"`
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.

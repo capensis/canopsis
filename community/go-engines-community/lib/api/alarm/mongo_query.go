@@ -75,9 +75,6 @@ type MongoQueryBuilder struct {
 	defaultSortBy                 string
 	defaultSort                   string
 
-	fieldsAliases        map[string]string
-	fieldsAliasesByRegex map[string]string
-
 	searchPipeline []bson.M
 	// alarmMatch is match before all lookups
 	alarmMatch []bson.M
@@ -140,28 +137,6 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider,
 		},
 		defaultSortBy: "t",
 		defaultSort:   pagination.SortDesc,
-
-		fieldsAliases: map[string]string{
-			"uid":            "_id",
-			"connector":      "v.connector",
-			"connector_name": "v.connector_name",
-			"component":      "v.component",
-			"resource":       "v.resource",
-			"entity_id":      "d",
-			"state":          "v.state.val",
-			"status":         "v.status.val",
-			"snooze":         "v.snooze",
-			"ack":            "v.ack",
-			"cancel":         "v.cancel",
-			"ticket":         "v.ticket.ticket",
-			"output":         "v.output",
-			"opened":         "t",
-			"resolved":       "v.resolved",
-		},
-		fieldsAliasesByRegex: map[string]string{
-			"^infos\\.(.+)":           entityDbPrefix + ".infos.$1",
-			"^v\\.infos\\.\\*\\.(.+)": "v.infos_array.v.$1",
-		},
 	}
 }
 
@@ -1453,6 +1428,18 @@ func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 				"$v.snooze_duration",
 				bson.M{"$cond": bson.M{
 					"if":   "$v.snooze",
+					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"else": 0,
+				}},
+			}},
+		}},
+		"v.pause_duration": bson.M{"$cond": bson.M{
+			"if":   "$v.resolved",
+			"then": "$v.pause_duration",
+			"else": bson.M{"$sum": bson.A{
+				"$v.pause_duration",
+				bson.M{"$cond": bson.M{
+					"if":   "$v.pause",
 					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
 					"else": 0,
 				}},

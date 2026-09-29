@@ -100,6 +100,9 @@ definitions:
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
+      inherited:
+        description: Inherited is used in pause action.
+        type: boolean
       multiple_urls:
         type: boolean
       name:
@@ -166,7 +169,8 @@ definitions:
         description: Tstop is used in pbehavior action.
         type: integer
       type:
-        description: Type is used in pbehavior action.
+        description: Type is used in pbehavior and pause action.
+        maxLength: 255
         type: string
     type: object
   alarm.Alarm:
@@ -334,6 +338,8 @@ definitions:
         type: array
       pause:
         $ref: '#/definitions/common.AlarmStep'
+      pause_duration:
+        type: integer
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbh_inactive_duration:
@@ -412,6 +418,8 @@ definitions:
   alarm.Count:
     properties:
       ack:
+        type: integer
+      pause:
         type: integer
       pbehavior_active:
         type: integer
@@ -2042,6 +2050,21 @@ definitions:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
     type: object
+  entity.PauseRequest:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      inherited:
+        type: boolean
+      type:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
   entity.PbehaviorInfo:
     properties:
       author:
@@ -2102,6 +2125,16 @@ definitions:
         type: string
       type:
         type: string
+    type: object
+  entity.ResumeRequest:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
     type: object
   entity.StateSettingResponse:
     properties:
@@ -3792,6 +3825,9 @@ definitions:
         allOf:
         - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
+      inherited:
+        description: Pause
+        type: boolean
       name:
         description: Pbehavior
         maxLength: 255
@@ -3836,6 +3872,8 @@ definitions:
       tstop:
         type: integer
       type:
+        description: Pbehavior and Pause
+        maxLength: 255
         type: string
     type: object
   healthcheck.Edge:
@@ -6124,6 +6162,8 @@ definitions:
         - pbehaviorremove
         - snooze
         - unsnooze
+        - pause
+        - resume
         - webhook
         type: string
     required:
@@ -6254,6 +6294,8 @@ definitions:
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
+      inherited:
+        type: boolean
       multiple_urls:
         type: boolean
       name:
@@ -6299,7 +6341,9 @@ definitions:
       tstop:
         type: integer
       type:
-        $ref: '#/definitions/pbehavior.Type'
+        allOf:
+        - $ref: '#/definitions/pbehavior.Type'
+        description: Pbehavior and Pause
     type: object
   scenario.Scenario:
     properties:
@@ -6441,6 +6485,8 @@ definitions:
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
             * `unsnooze` - Alarm has been unsnoozed
+            * `pause` - Alarm has been paused
+            * `resume` - Alarm has been resumed
             * `pbhenter` - Alarm enters a periodic behavior
             * `pbhleave` - Alarm leaves a periodic behavior
             * `activate` - Alarm has been activated
@@ -6472,6 +6518,8 @@ definitions:
         - assocticket
         - snooze
         - unsnooze
+        - pause
+        - resume
         - resolve
         - activate
         - pbhenter

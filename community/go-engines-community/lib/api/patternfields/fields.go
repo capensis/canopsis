@@ -234,6 +234,18 @@ var entityFields = []FieldResponse{
 		Name: "last_event_date",
 		Type: pattern.FieldTypeTimestamp,
 	},
+	{
+		Name: "pause",
+		Type: FieldTypeReference,
+	},
+	{
+		Name: "pause.author",
+		Type: pattern.FieldTypeString,
+	},
+	{
+		Name: "pause.initiator",
+		Type: pattern.FieldTypeString,
+	},
 }
 
 var eventFields = []FieldResponse{
@@ -353,28 +365,28 @@ var onlyAbsoluteTimeCondFieldsInAlarmPattern = map[string]map[string]bool{
 }
 
 var disabledFieldsInEntityPattern = map[string]map[string]bool{
-	mongo.StateSettingsMongoCollection:     {"last_event_date": true, "component": true, "type": true, "component_infos": true},
-	mongo.EntityMongoCollection:            {"last_event_date": true, "connector": true},
-	mongo.PbehaviorMongoCollection:         {"last_event_date": true},
-	mongo.IdleRuleMongoCollection:          {"last_event_date": true},
-	mongo.DynamicInfosRulesMongoCollection: {"last_event_date": true},
-	mongo.MetaAlarmRulesMongoCollection:    {"last_event_date": true},
-	mongo.FlappingRuleMongoCollection:      {"last_event_date": true},
-	mongo.ResolveRuleMongoCollection:       {"last_event_date": true},
+	mongo.StateSettingsMongoCollection:     {"last_event_date": true, "component": true, "type": true, "component_infos": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.EntityMongoCollection:            {"last_event_date": true, "connector": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.PbehaviorMongoCollection:         {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.IdleRuleMongoCollection:          {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.DynamicInfosRulesMongoCollection: {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.MetaAlarmRulesMongoCollection:    {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.FlappingRuleMongoCollection:      {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.ResolveRuleMongoCollection:       {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.ScenarioCollection:               {"last_event_date": true},
 	mongo.InstructionMongoCollection:       {"last_event_date": true},
-	mongo.KpiFilterMongoCollection:         {"last_event_date": true},
+	mongo.KpiFilterMongoCollection:         {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.DeclareTicketRuleCollection:      {"last_event_date": true},
-	mongo.LinkRuleMongoCollection:          {"last_event_date": true},
-	mongo.AlarmTagCollection:               {"last_event_date": true},
+	mongo.LinkRuleMongoCollection:          {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.AlarmTagCollection:               {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.EventFilterRuleCollection:        {},
 	mongo.WidgetFiltersMongoCollection:     {},
 }
 
 var disabledFieldsInInheritedEntityPattern = map[string]map[string]map[string]bool{
 	mongo.StateSettingsMongoCollection: {
-		statesetting.RuleTypeService:   {"last_event_date": true},
-		statesetting.RuleTypeComponent: {"last_event_date": true, "component": true, "type": true, "component_infos": true},
+		statesetting.RuleTypeService:   {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+		statesetting.RuleTypeComponent: {"last_event_date": true, "component": true, "type": true, "component_infos": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	},
 }
 

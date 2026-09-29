@@ -96,6 +96,8 @@ func EntityPatternErrors(p pattern.Entity, forbiddenFieldsMap map[string]bool) [
 				_, err = v.Condition.MatchInt(i)
 			} else if t, ok := emptyEntity.GetTimeField(f); ok {
 				_, err = v.Condition.MatchTime(t, now)
+			} else if r, ok := emptyEntity.GetRefField(f); ok {
+				_, err = v.Condition.MatchRef(r)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
@@ -161,6 +163,8 @@ func MatchEntityPattern(p pattern.Entity, entity *types.Entity) (bool, error) {
 				matched, err = v.Condition.MatchInt(i)
 			} else if t, ok := entity.GetTimeField(f); ok {
 				matched, err = v.Condition.MatchTime(t, now)
+			} else if r, ok := entity.GetRefField(f); ok {
+				matched, err = v.Condition.MatchRef(r)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
@@ -311,6 +315,8 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 				matched, err = v.Condition.MatchInt(i)
 			} else if t, ok := entity.GetTimeField(f); ok {
 				matched, err = v.Condition.MatchTime(t, now)
+			} else if r, ok := entity.GetRefField(f); ok {
+				matched, err = v.Condition.MatchRef(r)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}

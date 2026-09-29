@@ -33,6 +33,10 @@ type API interface {
 	GetContextGraph(c *gin.Context)
 	CheckStateSetting(c *gin.Context)
 	GetStateSetting(c *gin.Context)
+	Pause(c *gin.Context)
+	BulkPause(c *gin.Context)
+	Resume(c *gin.Context)
+	BulkResume(c *gin.Context)
 }
 
 type api struct {
@@ -362,6 +366,118 @@ func (a *api) GetStateSetting(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// Pause
+// @Param body body PauseRequest true "body"
+func (a *api) Pause(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	r := PauseRequest{}
+	if err = validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	err = a.store.Pause(c, r, userID, username)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// Resume
+// @Param body body ResumeRequest true "body"
+func (a *api) Resume(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	r := ResumeRequest{}
+	if err = validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	err = a.store.Resume(c, r, userID, username)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// BulkPause
+// @Param body body []PauseRequest true "body"
+func (a *api) BulkPause(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	bulk.Handler(c, func(r PauseRequest) (string, error) {
+		return r.ID, a.store.Pause(c, r, userID, username)
+	}, a.errorResponder)
+}
+
+// BulkResume
+// @Param body body []ResumeRequest true "body"
+func (a *api) BulkResume(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	bulk.Handler(c, func(r ResumeRequest) (string, error) {
+		return r.ID, a.store.Resume(c, r, userID, username)
+	}, a.errorResponder)
 }
 
 func (a *api) toggle(c *gin.Context, enabled bool) {

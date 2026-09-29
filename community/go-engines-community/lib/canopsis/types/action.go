@@ -7,7 +7,8 @@ const (
 	ActionTypeCancel          = EventTypeCancel
 	ActionTypeChangeState     = EventTypeChangestate
 	ActionTypeSnooze          = EventTypeSnooze
-	ActionTypeUnsnooze        = EventTypeUnsnooze
+	ActionTypePause           = EventTypePause
+	ActionTypeResume          = EventTypeResume
 	ActionTypePbehavior       = "pbehavior"
 	ActionTypePbehaviorRemove = "pbehaviorremove"
 	ActionTypeWebhook         = "webhook"

@@ -88,6 +88,7 @@ func (v *Validator) validateAlarmRule(sl validator.StructLevel, r EditRequest) {
 			types.ActionTypeAssocTicket,
 			types.ActionTypeChangeState,
 			types.ActionTypeSnooze,
+			types.ActionTypePause,
 			types.ActionTypePbehavior,
 		}
 
@@ -166,6 +167,8 @@ func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel,
 		if params.Duration == nil {
 			sl.ReportError(params.Duration, "Duration", "Operation.Parameters.Duration", "required", "")
 		}
+	case types.ActionTypePause:
+		// do nothing
 	case types.ActionTypePbehavior:
 		if params.Name == "" {
 			sl.ReportError(params.Name, "Name", "Operation.Parameters.Name", "required", "")
@@ -218,7 +221,7 @@ func (v *Validator) validateEntityRulePatterns(sl validator.StructLevel, r EditR
 	}
 
 	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 {
-		sl.ReportError(r.Type, "AlarmPattern", "AlarmPattern", "must_be_empty", "")
+		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "must_be_empty", "")
 	}
 
 	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" {
