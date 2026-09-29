@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -122,7 +123,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		if r.Operation != nil {
+		if r.Operation != nil && r.Operation.Type == types.ActionTypePbehavior {
 			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
 			if err != nil {
 				return err
@@ -173,7 +174,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		if r.Operation != nil {
+		if r.Operation != nil && r.Operation.Type == types.ActionTypePbehavior {
 			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
 			if err != nil {
 				return err

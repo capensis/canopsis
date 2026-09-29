@@ -195,7 +195,8 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 			types.EventTypeAssocTicket,
 			types.EventTypeTicketRemove,
 			types.EventTypeChangestate,
-			types.EventTypeSnooze:
+			types.EventTypeSnooze,
+			types.EventTypePause:
 			role := roles[0]
 			value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
 			a.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)

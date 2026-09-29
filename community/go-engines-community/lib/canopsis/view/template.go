@@ -42,6 +42,7 @@ var columnsByType = map[string][]string{
 		"v.duration",
 		"v.current_state_duration",
 		"v.snooze_duration",
+		"v.pause_duration",
 		"v.pbh_inactive_duration",
 		"v.active_duration",
 		"v.events_count",

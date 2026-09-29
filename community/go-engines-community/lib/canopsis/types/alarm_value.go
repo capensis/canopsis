@@ -30,6 +30,7 @@ const (
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "
 	OutputUpstreamPrefix   = "Upstream: "
+	OutputTypePrefix       = "Type: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -580,6 +581,8 @@ type AlarmValue struct {
 	InactiveDuration int64 `bson:"inactive_duration" json:"inactive_duration"`
 	// SnoozeDuration represents a duration when an alarm was in snooze.
 	SnoozeDuration int64 `bson:"snooze_duration" json:"snooze_duration"`
+	// PauseDuration represents a duration when an alarm was in pause.
+	PauseDuration int64 `bson:"pause_duration" json:"pause_duration"`
 	// PbehaviorInactiveDuration represents a duration when an alarm was in maintenance, pause, inactive pbehavior interval.
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 	// CloseDelayValue represents a close delay timeout, used only in the API response.

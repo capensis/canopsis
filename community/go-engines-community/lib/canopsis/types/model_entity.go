@@ -238,6 +238,18 @@ func (e *Entity) GetStringField(f string) (string, bool) {
 		return e.Connector, true
 	case "component":
 		return e.Component, true
+	case "pause.author":
+		if e.Pause == nil {
+			return "", false
+		}
+
+		return e.Pause.Author, true
+	case "pause.initiator":
+		if e.Pause == nil {
+			return "", false
+		}
+
+		return e.Pause.Initiator, true
 	default:
 		return "", false
 	}
@@ -274,4 +286,14 @@ func (e *Entity) GetInfoVal(f string) (any, bool) {
 	}
 
 	return nil, false
+}
+
+// GetRefField is a magic getter for reference fields for easier field retrieving when matching entity pattern
+func (e *Entity) GetRefField(f string) (any, bool) {
+	switch f {
+	case "pause":
+		return e.Pause, true
+	default:
+		return nil, false
+	}
 }

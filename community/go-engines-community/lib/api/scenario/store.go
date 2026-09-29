@@ -897,21 +897,24 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	pbhReasonIDs := make([]string, 0)
 	tokenRuleIDs := make([]string, 0)
 	for _, a := range r.Actions {
-		if a.Parameters.Type != "" {
-			pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
-		}
+		switch a.Type {
+		case types.ActionTypePbehavior:
+			if a.Parameters.Type != "" {
+				pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
+			}
 
-		if a.Parameters.Reason != "" {
-			pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
-		}
+			if a.Parameters.Reason != "" {
+				pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
+			}
+		case types.ActionTypeWebhook:
+			if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
+				tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
+			}
 
-		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
-			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
-		}
-
-		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
-			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
-			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
+			if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+				a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
+				tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
+			}
 		}
 	}
 
@@ -954,22 +957,25 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	}
 
 	for i, a := range r.Actions {
-		if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
-		}
+		switch a.Type {
+		case types.ActionTypePbehavior:
+			if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
+			}
 
-		if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
-		}
+			if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
+			}
+		case types.ActionTypeWebhook:
+			if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
+			}
 
-		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
-		}
-
-		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
-			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
-			!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
+			if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+				a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
+				!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
+			}
 		}
 	}
 

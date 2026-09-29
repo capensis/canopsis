@@ -372,6 +372,7 @@ type AlarmValue struct {
 	Duration                  int   `bson:"duration" json:"duration"`
 	CurrentStateDuration      int   `bson:"current_state_duration" json:"current_state_duration"`
 	SnoozeDuration            int64 `bson:"snooze_duration" json:"snooze_duration"`
+	PauseDuration             int64 `bson:"pause_duration" json:"pause_duration"`
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 	ActiveDuration            int64 `bson:"active_duration" json:"active_duration"`
 
@@ -476,6 +477,7 @@ type Count struct {
 	Total          int `bson:"total" json:"total"`
 	TotalActive    int `bson:"total_active" json:"total_active"`
 	TotalSnooze    int `bson:"total_snooze" json:"snooze"`
+	TotalPause     int `bson:"total_pause" json:"pause"`
 	TotalAck       int `bson:"total_ack" json:"ack"`
 	TotalUnack     int `bson:"total_unack" json:"unack"`
 	TotalTicket    int `bson:"total_ticket" json:"ticket"`
