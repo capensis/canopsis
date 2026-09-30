@@ -129,7 +129,10 @@ func getTranslations() map[string]map[string]string {
 			types.LocaleEn: "{0} '{1}' ({2}) doesn't exist.",
 			types.LocaleFr: "{0} '{1}' ({2}) n'existe pas.",
 		},
-
+		"llm_retry_budget_exhausted": {
+			types.LocaleEn: "LLM did not return a valid response within the retry budget",
+			types.LocaleFr: "Le LLM n'a pas renvoyé de réponse valide dans la limite de tentatives autorisées",
+		},
 		"meta_alarm_threshold": {
 			types.LocaleEn: "Threshold rate = {0} * 100 / {1} = {2}\n({3} - alarms matched alarm and entity patterns, {4} - entities matched entity pattern)",
 			types.LocaleFr: "Taux de déclenchement = {0} * 100 / {1} = {2}\n({3} - alarmes correspondant aux modèles d'alarme et d'entité, {4} - entités correspondant au modèle d'entité)",
