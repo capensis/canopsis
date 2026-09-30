@@ -104,6 +104,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		result = Result{}
 		alarm = types.Alarm{}
 		countersRes = countersResult{}
+		entity = *event.Entity
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err

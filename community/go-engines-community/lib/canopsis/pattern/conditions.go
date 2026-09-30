@@ -54,6 +54,10 @@ const (
 	FieldTypeBool        = "bool"
 	FieldTypeStringArray = "string_array"
 	FieldTypeTimestamp   = "timestamp"
+	FieldTypeDuration    = "duration"
+	FieldTypeReference   = "reference"
+	FieldTypeTags        = "tags"
+	FieldTypeObject      = "object"
 )
 
 const tagLabelSeparator = ":"
