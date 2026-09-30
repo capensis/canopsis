@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	cryptotls "crypto/tls"
 	"errors"
 	"fmt"
 	"net"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
@@ -40,6 +42,12 @@ const (
 // Env vars for redis session
 const (
 	EnvURL = "CPS_REDIS_URL"
+
+	// CPS_VALKEY_ prefix is preferrable, but if not set, CPS_REDIS_ prefix is used as fallback for backward compatibility.
+	EnvInsecureSkipVerify      = "CPS_VALKEY_INSECURE_SKIP_VERIFY"
+	EnvCaCertFile              = "CPS_VALKEY_CA_CERT_FILE"
+	EnvRedisInsecureSkipVerify = "CPS_REDIS_INSECURE_SKIP_VERIFY"
+	EnvRedisCaCertFile         = "CPS_REDIS_CA_CERT_FILE"
 )
 
 var ErrFailedToRefreshLock = errors.New("failed to refresh lock")
@@ -48,6 +56,7 @@ var ErrFailedToRefreshLock = errors.New("failed to refresh lock")
 // the surl, which must be on the following shape:
 //
 // redis://[nouser:password@]host:port/int
+// rediss://[nouser:password@]host:port/int enables TLS.
 // int must be un number indicating the database
 //
 // If you have a password for the database, no user is required.
@@ -93,6 +102,12 @@ func NewOptions(surl string, db int, logger zerolog.Logger,
 		MaxRetries:      reconnectCount,
 		MinRetryBackoff: minReconnectTimeout,
 	}
+	if redisURL.Scheme == "rediss" {
+		redisOptions.TLSConfig = &cryptotls.Config{
+			ServerName: redisURL.Hostname(),
+			MinVersion: cryptotls.VersionTLS12,
+		}
+	}
 	if redisOptions.MaxRetries > 0 && redisOptions.MinRetryBackoff > 0 {
 		redisOptions.MaxRetryBackoff = redisOptions.MinRetryBackoff << redisOptions.MaxRetries
 	}
@@ -100,18 +115,19 @@ func NewOptions(surl string, db int, logger zerolog.Logger,
 	return &redisOptions, nil
 }
 
-// NewFailoverOptions handles redis.FailoverOptions creation based on the provided
-// url, which must be on the following shape:
+// NewFailoverOptions creates redis.FailoverOptions from a redis-sentinel URL.
+// It first delegates to go-redis ParseFailoverURL after replacing the
+// redis-sentinel scheme with redis. In this format, go-redis reads the
+// master_name query parameter into FailoverOptions.MasterName:
 //
-// redis-sentinel://[password@]host1[:port1][,host2[:port2]][,hostN[:portN]][/database][?
+//	redis-sentinel://user:sentinel-pass@host1:26379/0?master_name=mymaster&addr=host2:26379&password=redis-pass
 //
-//	[timeout=timeout[d|h|m|s|ms|us|ns]][&sentinelMasterId=sentinelMasterId]]
+// If go-redis rejects the URL, the fallback below accepts the deprecated
+// comma-separated format. This format reads sentinelMasterId for the master name:
 //
-// As well supported password parameter same as in NewOptions():
+//	redis-sentinel://[password@]host1[:port1][,host2[:port2]][/database]?sentinelMasterId=mymaster
 //
-//	redis://[nouser:password@]host:port/int
-//
-// With this form "nouser" is ignored, and "password" extracted only.
+// The legacy format also supports timeout and redisPassword query parameters.
 func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 	reconnectCount int, minReconnectTimeout time.Duration) (*redis.FailoverOptions, error) {
 	failoverOptions, err := redis.ParseFailoverURL(strings.ReplaceAll(sURL, "redis-sentinel://", "redis://"))
@@ -206,16 +222,24 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 
 	var redisClient *redis.Client
 	readTimeout := 3 * time.Second // redis.Options.ReadTimeout default value
+	envCaCertFile, envInsecureSkipVerify := getTLSConfigEnvVars()
+	tc := tls.CreateTLSConfigFromEnv(envCaCertFile, envInsecureSkipVerify, logger)
 	if strings.HasPrefix(connectUrl, "redis-sentinel://") {
 		failoverOptions, err := NewFailoverOptions(connectUrl, db, logger, reconnectCount, minReconnectTimeout)
 		if err != nil {
 			return nil, err
+		}
+		if tc != nil {
+			failoverOptions.TLSConfig = tc
 		}
 		redisClient = redis.NewFailoverClient(failoverOptions)
 	} else {
 		redisOptions, err := NewOptions(connectUrl, db, logger, reconnectCount, minReconnectTimeout)
 		if err != nil {
 			return nil, err
+		}
+		if tc != nil {
+			redisOptions.TLSConfig = tc
 		}
 		redisClient = redis.NewClient(redisOptions)
 	}
@@ -252,4 +276,14 @@ func IsConnectionError(err error) bool {
 	}
 
 	return false
+}
+
+func getTLSConfigEnvVars() (envCaCertFile, envInsecureSkipVerify string) {
+	envCaCertFile, envInsecureSkipVerify = EnvCaCertFile, EnvInsecureSkipVerify
+	caCertFile, insecureSkipVerify := os.Getenv(EnvCaCertFile), os.Getenv(EnvInsecureSkipVerify)
+	if caCertFile != "" || insecureSkipVerify != "" {
+		return
+	}
+	envCaCertFile, envInsecureSkipVerify = EnvRedisCaCertFile, EnvRedisInsecureSkipVerify
+	return
 }
