@@ -43,7 +43,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/prometheus/client_golang v1.24.1
 	github.com/prometheus/procfs v0.22.0
-	github.com/rabbitmq/amqp091-go v1.14.0
+	github.com/rabbitmq/amqp091-go v1.15.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/rs/zerolog v1.35.1
 	github.com/russellhaering/gosaml2 v0.12.0 // since v0.10.0 assertions are not decrypted when SkipSignatureValidation is set, see decryptSAMLResponse in lib/api/auth/providers/saml.
