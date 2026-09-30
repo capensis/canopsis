@@ -35,11 +35,11 @@
   "overrides": [
     {
       "files": [
-        "src/__tests__/setup.js",
-        "src/__tests__/unit/utils/**",
-        "src/__tests__/unit/stubs/**",
-        "src/__tests__/unit/mocks/**",
-        "src/__tests__/unit/data/**"
+        "__tests__/setup.js",
+        "__tests__/unit/utils/**",
+        "__tests__/unit/stubs/**",
+        "__tests__/unit/mocks/**",
+        "__tests__/unit/data/**"
       ],
       "rules": {
         "jest/no-export": "off",

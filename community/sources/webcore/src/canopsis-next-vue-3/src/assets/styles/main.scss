@@ -683,6 +683,30 @@ kbd {
   min-width: 64px;
 }
 
+.v-autocomplete__menu-icon,
+.v-combobox__menu-icon,
+.v-select__menu-icon {
+  align-self: end;
+  margin-bottom: 5px;
+}
+
+.v-pagination {
+  .v-pagination__item .v-btn {
+    width: 30px;
+    min-width: 30px;
+    height: 34px;
+  }
+
+  .v-pagination__first .v-btn,
+  .v-pagination__prev .v-btn,
+  .v-pagination__next .v-btn,
+  .v-pagination__last .v-btn {
+    width: 30px;
+    min-width: 30px;
+    height: 32px;
+  }
+}
+
 .not-required label:before {
   content: none !important;
 }

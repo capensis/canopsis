@@ -3,7 +3,7 @@
     <c-compiled-template :template="title" parent-element="span" />
 
     <div v-if="showBadge" class="badge-wrapper">
-      <v-tooltip location="right">
+      <c-tooltip location="right">
         <template #activator="{ props }">
           <v-btn
             class="badge-button"
@@ -20,7 +20,7 @@
         </template>
 
         <span>{{ $t('modals.webSocketError.title') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </div>
   </v-toolbar-title>
 </template>

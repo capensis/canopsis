@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="bottom">
+  <c-tooltip location="bottom">
     <template #activator="{ props: tooltipProps }">
       <v-btn
         v-bind="tooltipProps"
@@ -14,7 +14,7 @@
     </template>
 
     <span>{{ label }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

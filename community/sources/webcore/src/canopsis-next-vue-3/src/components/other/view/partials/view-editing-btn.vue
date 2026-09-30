@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="left">
+  <c-tooltip location="left">
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
@@ -20,7 +20,7 @@
         {{ $t('common.toggleEditViewSubtitle') }}
       </div>
     </div>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

@@ -34,6 +34,7 @@
 
       <stats-calendar-menu
         v-if="hasMenu"
+        :attach="calendarElement"
         :activator="menuActivator"
         :calendar-event="menuCalendarEvent"
         @click:event="menuEventClick"
@@ -104,6 +105,10 @@ export default {
   computed: {
     hasError() {
       return !!this.serverErrorMessage;
+    },
+
+    calendarElement() {
+      return this.$refs.calendar?.$el;
     },
 
     hasMenu() {

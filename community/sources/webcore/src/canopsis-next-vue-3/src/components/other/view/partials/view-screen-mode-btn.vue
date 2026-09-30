@@ -17,7 +17,7 @@
     </template>
 
     <v-list class="view-screen-mode-btn__list bg-grey-darken-3 pa-0">
-      <v-tooltip
+      <c-tooltip
         v-for="item in availableScreenModes"
         :key="`tooltip-${item.key}`"
         location="left"
@@ -34,7 +34,7 @@
           </v-list-item>
         </template>
         <span>{{ item.tooltip }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </v-list>
   </v-menu>
 </template>

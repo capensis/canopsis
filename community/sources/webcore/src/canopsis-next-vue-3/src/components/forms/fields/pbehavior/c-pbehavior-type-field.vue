@@ -1,26 +1,29 @@
 <template>
-  <c-autocomplete
-    :model-value="modelValue"
+  <c-lazy-search-field
+    :value="selectedValue"
     :items="items"
     :label="label || t('common.type')"
-    :loading="pending"
+    :loading="wholePending"
+    :has-more="hasMoreItems"
     :name="name"
     :required="required"
     :disabled="disabled"
-    :return-object="returnObject"
-    :multiple="multiple"
-    :chips="chips"
-    :closable-chips="chips"
     :clearable="clearable"
-    item-title="name"
+    item-text="name"
     item-value="_id"
-    @update:model-value="$emit('update:modelValue', $event)"
+    autocomplete
+    return-object
+    @update:value="changeSelectedItems"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
+    @update:search="updateSearch"
   />
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { computed, toRef, watch } from 'vue';
 
+import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useI18n } from '@/hooks/i18n';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
@@ -62,40 +65,64 @@ export default {
       type: Boolean,
       default: false,
     },
+    types: {
+      type: Array,
+      required: false,
+    },
   },
 
   emits: ['update:modelValue'],
 
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    const items = ref([]);
-    const pending = ref(false);
+    const fetchHandler = ({ params }) =>
+      fetchPbehaviorTypesFieldList({
+        params: {
+          ...params,
+          with_hidden: true,
+          ...(props.types ? { types: props.types } : {}),
+        },
+      });
 
-    const fetchList = async () => {
-      try {
-        pending.value = true;
+    const {
+      selectedItem,
+      selectedItems,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
+    } = useLazySearch(
+      {
+        value: toRef(props, 'modelValue'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler,
+        multiple: toRef(props, 'multiple'),
+        returnObject: toRef(props, 'returnObject'),
+        attachValue: true,
+      },
+      emit,
+    );
 
-        const { data = [] } = await fetchPbehaviorTypesFieldList({
-          params: {
-            paginate: false,
-            with_hidden: true,
-          },
-        });
+    const selectedValue = computed(() => (props.multiple ? selectedItems.value : selectedItem.value));
 
-        items.value = data;
-      } finally {
-        pending.value = false;
-      }
-    };
-
-    onMounted(fetchList);
+    watch(() => props.types, () => fetchItems(), { deep: true });
 
     return {
       t,
+      selectedValue,
       items,
-      pending,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
     };
   },
 };

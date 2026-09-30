@@ -1,7 +1,13 @@
 <template>
-  <v-input>
-    <c-layout :justify="justifyEnd ? 'end' : 'center'" column>
-      <c-layout v-if="splitted" align="center" justify="space-between">
+  <v-input :hide-details="hideDetails">
+    <div
+      :class="[
+        'd-flex flex-column align-stretch',
+        justifyEnd ? 'justify-end' : 'justify-center',
+        { 'w-100': fillWidth },
+      ]"
+    >
+      <div v-if="splitted" class="d-flex align-center justify-space-between">
         <v-btn :disabled="disabled" class="mr-3" @click="shown = true">
           {{ displayLabel }}
         </v-btn>
@@ -9,33 +15,44 @@
         <div :style="style" class="pa-1 text-center">
           {{ colorValue }}
         </div>
-      </c-layout>
+      </div>
 
-      <c-layout
-        :justify="justifyEnd ? 'end' : 'center'"
-        class="color-picker__button__wrapper"
-        align="center"
+      <div
+        :class="[
+          'color-picker__button__wrapper d-flex align-center',
+          justifyEnd ? 'justify-end' : 'justify-center',
+          { 'w-100': fillWidth },
+        ]"
       >
         <v-menu v-model="shown" :close-on-content-click="false" location="bottom">
           <template #activator="{ props: activatorProps }">
-            <c-btn-with-error
-              v-bind="activatorProps"
-              :error="buttonError"
-              :size="size"
+            <slot
+              :props="activatorProps"
+              :color="colorValue"
+              :label="displayLabel"
               :style="style"
               :disabled="disabled"
+              name="activator"
             >
-              <v-icon v-if="icon">{{ icon }}</v-icon>
-              <span v-else-if="!hideLabel">{{ displayLabel }}</span>
-            </c-btn-with-error>
+              <c-btn-with-error
+                v-bind="activatorProps"
+                :error="buttonError"
+                :size="size"
+                :style="style"
+                :disabled="disabled"
+              >
+                <v-icon v-if="icon">{{ icon }}</v-icon>
+                <span v-else-if="!hideLabel">{{ displayLabel }}</span>
+              </c-btn-with-error>
+            </slot>
           </template>
 
           <v-card>
             <v-color-picker v-model="colorValue" :mode="type" show-swatches />
           </v-card>
         </v-menu>
-      </c-layout>
-    </c-layout>
+      </div>
+    </div>
   </v-input>
 </template>
 
@@ -93,9 +110,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
     size: {
       type: String,
       default: undefined,
+    },
+    fillWidth: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -7,7 +7,7 @@
 
       <template #text>
         <c-layout justify="end">
-          <v-tooltip location="left">
+          <c-tooltip location="left">
             <template #activator="{ props }">
               <v-btn
                 color="primary"
@@ -21,7 +21,7 @@
               </v-btn>
             </template>
             <span>{{ $t('modals.infoPopupSetting.add') }}</span>
-          </v-tooltip>
+          </c-tooltip>
         </c-layout>
 
         <c-layout column>

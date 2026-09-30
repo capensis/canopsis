@@ -1,22 +1,37 @@
 <template>
   <widget-settings-item :title="$t('settings.colorsSelector.title')">
-    <c-layout column>
-      <c-color-picker-field
-        v-for="level in levels"
-        :key="level"
-        :model-value="modelValue[level]"
-        :label="getButtonText(level)"
-        :type="colorType"
-        class="mb-3"
-        splitted
-        @update:model-value="updateLevel(level, $event)"
-      />
-    </c-layout>
+    <c-color-picker-field
+      v-for="level in levels"
+      :key="level"
+      :model-value="modelValue[level]"
+      :label="getButtonText(level)"
+      :type="colorType"
+      class="mb-3 w-100"
+      fill-width
+      @update:model-value="updateLevel(level, $event)"
+    >
+      <template #activator="{ props, color, label, style, disabled }">
+        <v-row class="w-100" align="center" justify="space-between">
+          <v-btn v-bind="props" :disabled="disabled">
+            {{ label }}
+          </v-btn>
+
+          <div :style="style" class="pa-1 text-center">
+            {{ color }}
+          </div>
+        </v-row>
+      </template>
+    </c-color-picker-field>
   </widget-settings-item>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { ALARM_LEVELS_COLORS, STATS_CRITICITY } from '@/constants';
+
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
@@ -40,33 +55,37 @@ export default {
 
   emits: ['update:modelValue'],
 
-  computed: {
-    levels() {
-      return Object.values(STATS_CRITICITY);
-    },
-  },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateModel } = useModelField(props, emit);
+    const levels = computed(() => Object.values(STATS_CRITICITY));
 
-  methods: {
-    getButtonText(key) {
+    const getButtonText = (key) => {
       let suffix = '';
 
-      if (!this.hideSuffix) {
+      if (!props.hideSuffix) {
         if (key === STATS_CRITICITY.ok) {
-          suffix = ` / ${this.$t('common.yes')}`;
+          suffix = ` / ${t('common.yes')}`;
         } else if (key === STATS_CRITICITY.critical) {
-          suffix = ` / ${this.$t('common.no')}`;
+          suffix = ` / ${t('common.no')}`;
         }
       }
 
-      return this.$t(`settings.colorsSelector.statsCriticity.${key}`) + suffix;
-    },
+      return t(`settings.colorsSelector.statsCriticity.${key}`) + suffix;
+    };
 
-    updateLevel(level, value) {
-      this.$emit('update:modelValue', {
-        ...this.modelValue,
+    const updateLevel = (level, value) => {
+      updateModel({
+        ...props.modelValue,
         [level]: value,
       });
-    },
+    };
+
+    return {
+      levels,
+      getButtonText,
+      updateLevel,
+    };
   },
 };
 </script>

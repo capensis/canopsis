@@ -1,7 +1,7 @@
 <template>
   <div :id="`view-tab-${tab._id}`" class="view">
     <Teleport
-      v-if="activeViewEditing && additionalTopBarItemsTarget"
+      v-if="activeViewEditing && visible && additionalTopBarItemsTarget"
       :to="additionalTopBarItemsTarget"
     >
       <window-size-field v-model="size" color="white" />

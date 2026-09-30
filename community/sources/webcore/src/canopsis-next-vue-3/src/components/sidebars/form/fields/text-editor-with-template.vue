@@ -11,9 +11,15 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { CUSTOM_WIDGET_TEMPLATE, MODALS } from '@/constants';
 
 import { getWidgetTemplateModalTitle } from '@/helpers/entities/widget/template/modal-title';
+
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 
@@ -24,10 +30,6 @@ export default {
     modelValue: {
       type: String,
       default: undefined,
-    },
-    value: {
-      type: String,
-      default: '',
     },
     title: {
       type: String,
@@ -69,58 +71,60 @@ export default {
 
   emits: ['update:modelValue', 'update:template'],
 
-  computed: {
-    currentValue() {
-      return this.modelValue ?? this.value;
-    },
-
-    isValueEmpty() {
-      return this.defaultValue === String(this.currentValue);
-    },
-
-    modalTitle() {
-      if (!this.widgetTemplateType) {
+  setup(props, { emit }) {
+    const { t, te } = useI18n();
+    const modals = useModals();
+    const { updateModel } = useModelField(props, emit);
+    const isValueEmpty = computed(() => props.defaultValue === String(props.modelValue));
+    const modalTitle = computed(() => {
+      if (!props.widgetTemplateType) {
         return undefined;
       }
 
       return getWidgetTemplateModalTitle({
-        t: this.$t.bind(this),
-        te: this.$te.bind(this),
-        type: this.widgetTemplateType,
-        isEdit: !this.isValueEmpty,
+        t,
+        te,
+        type: props.widgetTemplateType,
+        isEdit: !isValueEmpty.value,
       });
-    },
-  },
+    });
 
-  methods: {
-    updateModel(text, template) {
-      this.$emit('update:modelValue', text);
-      this.$emit('update:template', template);
-    },
+    const updateText = (text, template) => {
+      updateModel(text);
+      emit('update:template', template, text);
+    };
 
-    showTextEditorWithTemplateModal() {
-      this.$modals.show({
+    const showTextEditorWithTemplateModal = () => {
+      modals.show({
         name: MODALS.textEditorWithTemplate,
-        dialogProps: this.dialogProps,
+        dialogProps: props.dialogProps,
         config: {
-          text: this.currentValue,
-          template: this.template,
-          templates: this.templates,
-          variables: this.variables,
-          title: this.modalTitle,
-          action: ({ text, template }) => this.updateModel(text, template),
+          text: props.modelValue,
+          template: props.template,
+          templates: props.templates,
+          variables: props.variables,
+          title: modalTitle.value,
+          action: ({ text, template }) => updateText(text, template),
         },
       });
-    },
+    };
 
-    showRemoveTextConfirmationModal() {
-      this.$modals.show({
+    const showRemoveTextConfirmationModal = () => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.updateModel(this.defaultValue, CUSTOM_WIDGET_TEMPLATE),
+          action: () => updateText(props.defaultValue, CUSTOM_WIDGET_TEMPLATE),
         },
       });
-    },
+    };
+
+    return {
+      isValueEmpty,
+      modalTitle,
+      updateText,
+      showTextEditorWithTemplateModal,
+      showRemoveTextConfirmationModal,
+    };
   },
 };
 </script>

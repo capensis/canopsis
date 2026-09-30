@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="top">
+  <c-tooltip location="top">
     <template #activator="{ props: tooltipProps }">
       <c-layout class="alarm-counters fill-height" column v-bind="tooltipProps">
         <alarm-counter
@@ -16,7 +16,7 @@
         {{ message }}
       </span>
     </c-layout>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
@@ -70,7 +70,7 @@ export default {
     },
 
     countersMessages() {
-      const messages = this.$t('serviceWeather.stateCountersTooltips');
+      const messages = this.$tm('serviceWeather.stateCountersTooltips');
 
       return this.preparedCounters.map(({ type, count }) => `${count} ${messages[type]}`);
     },

@@ -27,7 +27,7 @@
         <v-divider />
         <v-expansion-panel-text>
           <c-layout wrap>
-            <v-tooltip
+            <c-tooltip
               v-for="(button, index) in buttons"
               :key="index"
               z-index="230"
@@ -45,10 +45,10 @@
                 </v-btn>
               </template>
               <span>{{ button.label }}</span>
-            </v-tooltip>
+            </c-tooltip>
             <file-selector ref="fileSelector" hide-details @change="addImage">
               <template #activator="{ props: fileActivatorProps }">
-                <v-tooltip z-index="230" location="top">
+                <c-tooltip z-index="230" location="top">
                   <template #activator="{ props: tooltipActivatorProps }">
                     <v-btn
                       v-bind="{ ...fileActivatorProps, ...tooltipActivatorProps }"
@@ -60,7 +60,7 @@
                     </v-btn>
                   </template>
                   <span>{{ $t('flowchart.shapes.image') }}</span>
-                </v-tooltip>
+                </c-tooltip>
               </template>
             </file-selector>
           </c-layout>

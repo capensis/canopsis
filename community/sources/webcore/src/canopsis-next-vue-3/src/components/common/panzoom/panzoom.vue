@@ -26,7 +26,7 @@
     </c-layout>
 
     <c-layout v-if="helpText" class="panzoom__bottom-right-actions" column>
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props }">
           <v-icon
             v-bind="props"
@@ -38,7 +38,7 @@
           </v-icon>
         </template>
         <div v-html="helpText" class="pre-wrap" />
-      </v-tooltip>
+      </c-tooltip>
     </c-layout>
   </c-layout>
 </template>

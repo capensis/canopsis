@@ -1,7 +1,7 @@
 <template>
   <v-fade-transition>
     <div v-if="pageScrolled" class="view-scroll-top-btn">
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props }">
           <v-btn
             v-bind="props"
@@ -15,7 +15,7 @@
         </template>
 
         <span>{{ $t('common.toTheTop') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </div>
   </v-fade-transition>
 </template>

@@ -1,11 +1,11 @@
 <template>
-  <c-simple-tooltip v-if="pbehaviorInfo && icon" :content="pbehaviorInfo.name" top>
+  <c-tooltip v-if="pbehaviorInfo && icon" :content="pbehaviorInfo.name" top>
     <template #activator="{ props: activatorProps }">
       <v-icon v-bind="activatorProps" color="primary">
         {{ icon }}
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <c-simple-tooltip :content="iconTooltip" html top>
+  <c-tooltip :content="iconTooltip" html top>
     <template #activator="{ props }">
       <v-icon
         :class="iconClass"
@@ -10,7 +10,7 @@
         {{ iconName }}
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

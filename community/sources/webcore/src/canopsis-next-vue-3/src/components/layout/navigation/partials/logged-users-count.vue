@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="left">
+  <c-tooltip location="left">
     <template #activator="{ props }">
       <v-badge :color="badgeColor" :content="count" class="logged-users-count">
         <v-btn
@@ -16,7 +16,7 @@
     </template>
 
     <span>{{ $t('layout.sideBar.loggedUsersCount') }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

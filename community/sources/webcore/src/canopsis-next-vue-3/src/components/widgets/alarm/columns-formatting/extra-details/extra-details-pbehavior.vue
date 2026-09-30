@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-simple-tooltip :content="tooltipContent" html top>
+    <c-tooltip :content="tooltipContent" html top>
       <template #activator="{ props: activatorProps }">
         <c-alarm-pbehavior-chip
           v-bind="activatorProps"
@@ -8,7 +8,7 @@
           :icon="pbehaviorInfo.icon_name"
         />
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </div>
 </template>
 

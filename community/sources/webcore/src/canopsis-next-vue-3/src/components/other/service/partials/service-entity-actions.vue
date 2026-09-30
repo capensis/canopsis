@@ -1,6 +1,6 @@
 <template>
   <c-layout class="gap-4 ml-2" wrap>
-    <v-tooltip
+    <c-tooltip
       v-for="action in actions"
       :key="action.type"
       location="top"
@@ -28,7 +28,7 @@
         </span>
       </template>
       <span>{{ $t(`serviceWeather.actions.${action.type}`) }}</span>
-    </v-tooltip>
+    </c-tooltip>
   </c-layout>
 </template>
 

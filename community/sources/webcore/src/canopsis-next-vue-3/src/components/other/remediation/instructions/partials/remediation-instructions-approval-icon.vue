@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip :disabled="isApproved" location="top">
+  <c-tooltip :disabled="isApproved" location="top">
     <template #activator="{ props: activatorProps }">
       <span v-bind="activatorProps">
         <c-icon :color="iconData.color">
@@ -8,7 +8,7 @@
       </span>
     </template>
     {{ iconData.tooltip }}
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

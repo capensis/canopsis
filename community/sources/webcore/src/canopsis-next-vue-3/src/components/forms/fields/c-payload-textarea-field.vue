@@ -61,7 +61,7 @@
               </span>
             </span>
 
-            <v-tooltip v-if="line.error" location="top">
+            <c-tooltip v-if="line.error" location="top">
               <template #activator="{ props: activatorProps }">
                 <c-icon
                   v-bind="activatorProps"
@@ -74,7 +74,7 @@
               </template>
 
               <span>{{ line.error.message }}</span>
-            </v-tooltip>
+            </c-tooltip>
 
             <span class="c-payload-textarea-field__line-text" contenteditable="true">
               {{ line.text }}

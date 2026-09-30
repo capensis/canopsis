@@ -1,23 +1,29 @@
 <template>
-  <c-autocomplete
-    :model-value="modelValue"
+  <c-lazy-search-field
+    :value="selectedItem"
     :items="items"
     :label="label || t('common.reason')"
-    :loading="pending"
+    :loading="wholePending"
+    :has-more="hasMoreItems"
     :name="name"
     :required="required"
     :disabled="disabled"
-    :return-object="returnObject"
     :clearable="clearable"
-    item-title="name"
+    item-text="name"
     item-value="_id"
-    @update:model-value="$emit('update:modelValue', $event)"
+    autocomplete
+    return-object
+    @update:value="changeSelectedItems"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
+    @update:search="updateSearch"
   />
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { toRef } from 'vue';
 
+import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useI18n } from '@/hooks/i18n';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 
@@ -55,36 +61,49 @@ export default {
 
   emits: ['update:modelValue'],
 
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const { fetchPbehaviorReasonsListWithoutStore } = usePbehaviorReason();
 
-    const items = ref([]);
-    const pending = ref(false);
+    const fetchHandler = ({ params }) =>
+      fetchPbehaviorReasonsListWithoutStore({
+        params: {
+          ...params,
+          with_hidden: true,
+        },
+      });
 
-    const fetchList = async () => {
-      try {
-        pending.value = true;
-
-        const { data = [] } = await fetchPbehaviorReasonsListWithoutStore({
-          params: {
-            paginate: false,
-            with_hidden: true,
-          },
-        });
-
-        items.value = data;
-      } finally {
-        pending.value = false;
-      }
-    };
-
-    onMounted(fetchList);
+    const {
+      selectedItem,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
+    } = useLazySearch(
+      {
+        value: toRef(props, 'modelValue'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler,
+        returnObject: toRef(props, 'returnObject'),
+        attachValue: true,
+      },
+      emit,
+    );
 
     return {
       t,
+      selectedItem,
       items,
-      pending,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
     };
   },
 };

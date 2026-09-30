@@ -1,7 +1,7 @@
 <template>
   <v-menu :close-on-content-click="false" location="start" offset="8">
     <template #activator="{ props: menuProps }">
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props: tooltipProps }">
           <v-btn v-bind="{ ...tooltipProps, ...menuProps }" variant="text" icon>
             <v-icon>info</v-icon>
@@ -9,7 +9,7 @@
         </template>
 
         <div>{{ $t('calendar.pbehaviorPlanningLegend.title') }}</div>
-      </v-tooltip>
+      </c-tooltip>
     </template>
 
     <v-card max-width="500">

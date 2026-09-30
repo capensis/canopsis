@@ -165,7 +165,7 @@ export default {
 ### Vuetify UI Patterns
 - Use **BEM** naming convention for CSS classes
 - Use Vuetify components when possible — follow existing patterns
-- Use `v-layout` component instead of `v-row` and `v-col`
+- Do **not** use `c-layout`; use `v-row` and `v-col` for grid layouts or Vuetify flex utility classes for simple flex layouts
 - All interactive elements must include **accessibility attributes**: `aria-label`, `tabindex`, `role`, keyboard handlers (`@keydown.enter`, etc.)
 - Do **not** pass `density="default"` on fields. Vuetify already uses default density. If a field looks too compact, fix the component default instead of overriding it at the call site.
 
@@ -178,11 +178,9 @@ export default {
 ```
 
 ```html
-<v-layout column>
-  <v-layout row wrap justify-space-between align-center>
-    <!-- content -->
-  </v-layout>
-</v-layout>
+<v-row align="center" justify="space-between">
+  <!-- content -->
+</v-row>
 ```
 
 ### Hooks/Composables Usage

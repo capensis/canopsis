@@ -1,12 +1,12 @@
 <template>
-  <v-tooltip location="start">
+  <c-tooltip location="start">
     <template #activator="{ props: tooltipProps }">
       <v-icon v-bind="tooltipProps" :color="color">
         {{ icon }}
       </v-icon>
     </template>
     <span>{{ t(`remediation.instructionExecute.status.tooltips.${status}`) }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

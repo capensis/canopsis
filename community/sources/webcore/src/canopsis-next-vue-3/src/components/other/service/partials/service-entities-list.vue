@@ -49,6 +49,7 @@
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
+      :total-visible="5"
       class="mt-1"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"

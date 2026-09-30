@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-simple-tooltip :content="tooltipContent" html top>
+    <c-tooltip :content="tooltipContent" html top>
       <template #activator="{ props: activatorProps }">
         <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" theme-color="snooze">
           <template #default="{ iconColor }">
@@ -13,7 +13,7 @@
           </template>
         </c-alarm-extra-details-chip>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </div>
 </template>
 

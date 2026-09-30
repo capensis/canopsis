@@ -1,6 +1,6 @@
 <template>
   <c-layout class="alarm-counters" column>
-    <v-tooltip
+    <c-tooltip
       v-for="counter in preparedCounters.selected"
       :key="counter.key"
       location="top"
@@ -13,9 +13,9 @@
         />
       </template>
       <span>{{ counter.name }}</span>
-    </v-tooltip>
+    </c-tooltip>
 
-    <v-tooltip v-if="otherCountersValue" location="top">
+    <c-tooltip v-if="otherCountersValue" location="top">
       <template #activator="{ props: tooltipProps }">
         <alarm-counter
           :count="otherCountersValue"
@@ -27,7 +27,7 @@
         <strong>{{ otherCounter.name }}</strong>
         <span>: {{ otherCounter.count }}</span>
       </div>
-    </v-tooltip>
+    </c-tooltip>
   </c-layout>
 </template>
 

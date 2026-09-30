@@ -5,7 +5,7 @@
     transition="scale-transition"
   >
     <template #activator="{ props: activatorProps, isActive }">
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props: tooltipProps }">
           <v-btn
             v-bind="{ ...tooltipProps, ...activatorProps }"
@@ -19,7 +19,7 @@
           </v-btn>
         </template>
         <span>{{ $t('context.fab.common') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
     <c-action-fab-btn
       :tooltip="$t('context.fab.addService')"

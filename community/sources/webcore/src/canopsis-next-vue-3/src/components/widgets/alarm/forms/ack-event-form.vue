@@ -1,6 +1,6 @@
 <template>
   <c-layout gap="2" column>
-    <c-simple-tooltip
+    <c-tooltip
       v-if="!hideAckResources"
       :content="t('alarm.ackResourcesQuestion')"
       top
@@ -13,7 +13,7 @@
           color="primary"
         />
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
     <c-description-field
       v-model="comment"
       :label="t('common.note')"

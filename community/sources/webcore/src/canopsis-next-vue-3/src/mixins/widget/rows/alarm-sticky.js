@@ -21,15 +21,18 @@ export const widgetStickyAlarmMixin = {
     return {
       actionsTranslateY: 0,
       previousScrollTranslateY: 0,
-      previousTranslateY: 0,
       scrollBarTranslateY: 0,
-      scrolling: false,
+      stickyScrollTarget: null,
       translateY: 0,
     };
   },
 
   computed: {
     topBarHeight() {
+      if (this.isFullscreenMode || this.isKioskMode) {
+        return 0;
+      }
+
       return this.shownHeader ? TOP_BAR_HEIGHT : 0;
     },
 
@@ -93,15 +96,33 @@ export const widgetStickyAlarmMixin = {
         return;
       }
 
-      window.addEventListener('scroll', this.stickyScrollHandler);
-      window.addEventListener('resize', this.stickyScrollHandler);
+      window.addEventListener('scroll', this.stickyScrollEventHandler);
+      window.addEventListener('resize', this.scheduleStickyScrollHandler);
+      document.addEventListener('fullscreenchange', this.updateStickyScrollTarget);
+      this.updateStickyScrollTarget();
       this.registeredScrollHandler = true;
     },
 
     unregisterScrollHandler() {
-      window.removeEventListener('scroll', this.stickyScrollHandler);
-      window.removeEventListener('resize', this.stickyScrollHandler);
+      window.removeEventListener('scroll', this.stickyScrollEventHandler);
+      window.removeEventListener('resize', this.scheduleStickyScrollHandler);
+      document.removeEventListener('fullscreenchange', this.updateStickyScrollTarget);
+      this.stickyScrollTarget?.removeEventListener('scroll', this.stickyScrollEventHandler);
+      this.stickyScrollTarget = null;
       this.registeredScrollHandler = false;
+    },
+
+    updateStickyScrollTarget() {
+      const scrollTarget = this.$el?.closest('.view-fullscreen') ?? null;
+
+      if (scrollTarget === this.stickyScrollTarget) {
+        return;
+      }
+
+      this.stickyScrollTarget?.removeEventListener('scroll', this.stickyScrollEventHandler);
+      scrollTarget?.addEventListener('scroll', this.stickyScrollEventHandler);
+      this.stickyScrollTarget = scrollTarget;
+      this.scheduleStickyScrollHandler();
     },
 
     connectHorizontalScroll() {
@@ -123,14 +144,16 @@ export const widgetStickyAlarmMixin = {
     },
 
     startScrollingForHeader() {
-      if (this.stickyTableHeader && this.translateY !== this.previousTranslateY) {
-        this.stickyTableHeader.style.opacity = '0';
+      if (!this.stickyHeader || !this.stickyTableHeader) {
+        return;
+      }
 
-        const stickyActions = this.getStickyActionsEl();
+      this.stickyTableHeader.style.opacity = '0';
 
-        if (stickyActions) {
-          stickyActions.style.opacity = '0';
-        }
+      const stickyActions = this.getStickyActionsEl();
+
+      if (stickyActions) {
+        stickyActions.style.opacity = '0';
       }
     },
 
@@ -143,19 +166,17 @@ export const widgetStickyAlarmMixin = {
       }
     },
 
-    startScrolling() {
-      this.scrolling = true;
-    },
-
     finishScrollingForHeader() {
-      if (this.stickyTableHeader && !Number(this.stickyTableHeader.style.opacity)) {
-        this.stickyTableHeader.style.opacity = '1.0';
+      if (!this.stickyTableHeader || Number(this.stickyTableHeader.style.opacity)) {
+        return;
+      }
 
-        const stickyActions = this.getStickyActionsEl();
+      this.stickyTableHeader.style.opacity = '1';
 
-        if (stickyActions) {
-          stickyActions.style.opacity = '1.0';
-        }
+      const stickyActions = this.getStickyActionsEl();
+
+      if (stickyActions) {
+        stickyActions.style.opacity = '1';
       }
     },
 
@@ -165,12 +186,7 @@ export const widgetStickyAlarmMixin = {
       }
     },
 
-    finishScrolling() {
-      this.scrolling = false;
-    },
-
     fullFinishScrolling() {
-      this.finishScrolling();
       this.finishScrollingForHeader();
       this.finishScrollingForScrollbar();
     },
@@ -179,6 +195,15 @@ export const widgetStickyAlarmMixin = {
       if (this.finishTimer) {
         clearTimeout(this.finishTimer);
       }
+    },
+
+    stickyScrollEventHandler() {
+      this.clearFinishTimer();
+      this.startScrollingForHeader();
+      this.startScrollingForScrollbar();
+      this.stickyScrollHandler();
+
+      this.finishTimer = setTimeout(this.fullFinishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
     },
 
     setHeaderPosition() {
@@ -233,7 +258,6 @@ export const widgetStickyAlarmMixin = {
       const offset = headerTop - this.translateY - this.topBarHeight - actionsHeight;
       const actionsOffset = actionsTop - this.actionsTranslateY - this.topBarHeight;
 
-      this.previousTranslateY = this.actionsTranslateY;
       this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
       this.actionsTranslateY = Math.min(bodyHeight, Math.max(0, -actionsOffset));
     },
@@ -274,9 +298,6 @@ export const widgetStickyAlarmMixin = {
     },
 
     stickyScrollHandler() {
-      this.clearFinishTimer();
-
-      this.setHeaderWidth();
       this.calculateStickyPositions();
       this.setHeaderPosition();
 
@@ -285,29 +306,16 @@ export const widgetStickyAlarmMixin = {
         this.setHorizontalScrollPosition();
       }
 
-      if (!this.actionsTranslateY || !this.translateY) {
-        this.finishScrollingForHeader();
-
-        if (!this.scrollBarTranslateY) {
-          this.finishScrollingForScrollbar();
-          this.finishScrolling();
-          return;
-        }
+      if (!this.scrollBarTranslateY) {
+        this.finishScrollingForScrollbar();
       }
-
-      if (!this.scrolling) {
-        this.startScrolling();
-        this.startScrollingForHeader();
-        this.startScrollingForScrollbar();
-      }
-
-      this.finishTimer = setTimeout(this.fullFinishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
     },
 
     scheduleStickyScrollHandler() {
       this.$nextTick(() => {
         window.requestAnimationFrame(() => {
           this.connectHorizontalScroll();
+          this.setHeaderWidth();
           this.stickyScrollHandler();
         });
       });
@@ -316,7 +324,6 @@ export const widgetStickyAlarmMixin = {
     resetHeaderPosition() {
       this.translateY = 0;
       this.actionsTranslateY = 0;
-      this.previousTranslateY = 0;
       this.previousScrollTranslateY = 0;
 
       if (this.stickyTableHeader) {

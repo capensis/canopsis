@@ -2,7 +2,7 @@
   <c-layout column>
     <c-description-field
       :model-value="modelValue.comment"
-      :label="$tc('common.comment')"
+      :label="$t('common.comment', 1)"
       name="comment"
       autofocus
       required
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { useModelField } from '@/hooks/form/model-field';
+
 export default {
   props: {
     modelValue: {
@@ -26,13 +28,11 @@ export default {
     },
   },
   emits: ['update:modelValue'],
-  methods: {
-    updateField(field, value) {
-      this.$emit('update:modelValue', {
-        ...this.modelValue,
-        [field]: value,
-      });
-    },
+
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+
+    return { updateField };
   },
 };
 </script>

@@ -15,7 +15,7 @@
 
         <div :class="titleButtonsClasses" class="modal-title-buttons">
           <div v-if="minimize" class="modal-title-button__wrapper">
-            <v-tooltip v-if="!modal.minimized" location="left">
+            <c-tooltip v-if="!modal.minimized" location="left">
               <template #activator="{ props: activatorProps }">
                 <v-btn
                   class="v-btn--minimize my-0"
@@ -32,7 +32,7 @@
               </template>
 
               <span>{{ t('modals.common.titleButtons.minimizeTooltip') }}</span>
-            </v-tooltip>
+            </c-tooltip>
 
             <v-btn
               v-else

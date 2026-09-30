@@ -15,7 +15,7 @@
     @activate="$emit('activate')"
   >
     <template #item="{ item }">
-      <v-tooltip v-if="onlyIcon" location="top">
+      <c-tooltip v-if="onlyIcon" location="top">
         <template #activator="{ props: activatorProps }">
           <v-icon v-bind="activatorProps" size="small">
             {{ item.icon }}
@@ -23,7 +23,7 @@
         </template>
 
         <span>{{ item.text }}</span>
-      </v-tooltip>
+      </c-tooltip>
       <c-layout v-else align="center">
         <v-icon class="mr-1" size="small">
           {{ item.icon }}

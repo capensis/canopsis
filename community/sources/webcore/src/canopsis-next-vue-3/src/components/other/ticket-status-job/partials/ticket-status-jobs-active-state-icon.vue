@@ -1,10 +1,10 @@
 <template>
-  <v-tooltip location="right">
+  <c-tooltip location="right">
     <template #activator="{ props: activatorProps }">
       <v-icon v-bind="activatorProps" :color="statusColor" :icon="statusIcon" />
     </template>
     <span class="pre-line">{{ label }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

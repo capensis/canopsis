@@ -796,9 +796,15 @@ export default {
         name: MODALS.linkToMetaAlarm,
         config: {
           items: this.alarmsForActions,
-          createMetaAlarm: this.createMetaAlarm,
-          addAlarmsIntoMetaAlarm: this.addAlarmsIntoMetaAlarm,
-          onSubmit: this.afterSubmit,
+          action: async (data) => {
+            if (data.id) {
+              await this.addAlarmsIntoMetaAlarm({ id: data.id, data });
+            } else {
+              await this.createMetaAlarm({ data });
+            }
+
+            await this.afterSubmit();
+          },
         },
       });
     },

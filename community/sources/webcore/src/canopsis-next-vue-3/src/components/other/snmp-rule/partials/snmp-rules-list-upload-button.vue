@@ -6,7 +6,7 @@
     @change="changeFiles"
   >
     <template #activator="{ on, attrs }">
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props }">
           <v-btn
             v-bind="{ ...attrs, ...props }"
@@ -23,7 +23,7 @@
           </v-btn>
         </template>
         <span>{{ t('snmpRule.uploadMib') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
   </file-selector>
 </template>

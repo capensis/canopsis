@@ -11,7 +11,7 @@
   >
     <template #name="{ item }">
       <span>{{ item.name }}</span>
-      <v-tooltip v-if="item.removed_from_config" location="bottom">
+      <c-tooltip v-if="item.removed_from_config" location="bottom">
         <template #activator="{ props: tooltipProps }">
           <v-icon v-bind="tooltipProps" class="ml-2" color="error">
             warning
@@ -21,7 +21,7 @@
           v-html="t('externalData.tableRemovedFromConfig', { rules: item.linkedRulesTooltip })"
           class="pre-wrap"
         />
-      </v-tooltip>
+      </c-tooltip>
     </template>
 
     <template #type="{ item }">

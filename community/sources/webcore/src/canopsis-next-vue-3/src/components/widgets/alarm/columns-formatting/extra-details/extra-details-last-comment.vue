@@ -1,9 +1,9 @@
 <template>
-  <c-simple-tooltip :content="tooltipContent" html top>
+  <c-tooltip :content="tooltipContent" html top>
     <template #activator="{ props: activatorProps }">
       <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" theme-color="comment" />
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

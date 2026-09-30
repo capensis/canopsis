@@ -18,7 +18,7 @@
         </v-list-item-title>
 
         <template v-if="item?.alias" #append>
-          <c-simple-tooltip :content="`infos.${item.originalValue}.value`" top>
+          <c-tooltip :content="`infos.${item.originalValue}.value`" top>
             <template #activator="{ props: activatorProps }">
               <v-icon
                 class="ml-1"
@@ -29,7 +29,7 @@
                 alternate_email
               </v-icon>
             </template>
-          </c-simple-tooltip>
+          </c-tooltip>
         </template>
       </v-list-item>
     </template>
