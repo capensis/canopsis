@@ -22,7 +22,7 @@
     </c-card-iterator-field>
 
     <c-layout justify="end">
-      <v-tooltip location="left">
+      <c-tooltip location="left">
         <template #activator="{ props }">
           <v-btn
             class="mt-3"
@@ -37,7 +37,7 @@
           </v-btn>
         </template>
         <span>{{ $t('common.add') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </c-layout>
   </c-layout>
 </template>

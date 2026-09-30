@@ -1,5 +1,5 @@
 <template>
-  <c-simple-tooltip v-if="value" :content="message" :top="top">
+  <c-tooltip v-if="value" :content="message" :top="top">
     <template #activator="{ props: activatorProps }">
       <v-icon
         v-bind="activatorProps"
@@ -10,7 +10,7 @@
         sync_problem
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

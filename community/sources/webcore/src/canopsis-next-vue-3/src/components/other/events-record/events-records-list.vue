@@ -9,7 +9,7 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #loader="{ item }">
-      <v-tooltip v-if="item.is_recording" location="right">
+      <c-tooltip v-if="item.is_recording" location="right">
         <template #activator="{ props: tooltipProps }">
           <v-progress-circular
             v-bind="tooltipProps"
@@ -19,7 +19,7 @@
           />
         </template>
         <span>{{ item.progress }}</span>
-      </v-tooltip>
+      </c-tooltip>
       <v-icon v-else-if="item.is_resending" class="c-advanced-data-table__blink" color="primary">
         play_arrow
       </v-icon>

@@ -5,7 +5,7 @@
       v-bind="speedDialProps"
     >
       <template #activator="{ props: activatorProps, isActive }">
-        <v-tooltip :location="tooltipLocation">
+        <c-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="{ ...activatorProps, ...tooltipProps, ...speedDialBtnProps }"
@@ -18,11 +18,11 @@
             </v-btn>
           </template>
           <span>{{ $t('common.settings') }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </template>
 
       <div v-if="hasEditAccess" key="edit" class="groups-settings-button__action--edit">
-        <v-tooltip :location="tooltipLocation">
+        <c-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               :active="isNavigationEditingMode"
@@ -41,7 +41,7 @@
             </v-btn>
           </template>
           <span>{{ $t('layout.sideBar.buttons.edit') }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </div>
 
       <div
@@ -49,7 +49,7 @@
         key="create-view"
         class="groups-settings-button__action--create-view"
       >
-        <v-tooltip :location="tooltipLocation">
+        <c-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               color="green-darken-4"
@@ -62,7 +62,7 @@
             </v-btn>
           </template>
           <span>{{ $t('layout.sideBar.buttons.createView') }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </div>
 
       <div
@@ -70,7 +70,7 @@
         key="create-private-view"
         class="groups-settings-button__action--create-private-view"
       >
-        <v-tooltip :location="tooltipLocation">
+        <c-tooltip :location="tooltipLocation">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               color="blue-darken-3"
@@ -85,7 +85,7 @@
             </v-btn>
           </template>
           <span>{{ $t('layout.sideBar.buttons.createPrivateView') }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </div>
     </c-speed-dial>
   </div>

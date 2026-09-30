@@ -2,9 +2,9 @@
   <v-menu v-bind="menuProps" :model-value="opened" @update:model-value="updateMenuOpened">
     <template #activator="{ props: activatorProps }">
       <span v-bind="activatorProps">
-        <v-tooltip v-if="tooltip" activator="parent" location="top">
+        <c-tooltip v-if="tooltip" activator="parent" location="top">
           {{ tooltip }}
-        </v-tooltip>
+        </c-tooltip>
         <span v-if="multiple">
           <v-chip
             :closable="closable && !disabled"
@@ -72,7 +72,7 @@
               indeterminate
             />
             <span v-else>
-              <c-simple-tooltip v-if="icon" :content="icon.tooltip" top>
+              <c-tooltip v-if="icon" :content="icon.tooltip" top>
                 <template #activator="{ props: iconTooltipProps }">
                   <c-icon
                     class="mr-2"
@@ -82,7 +82,7 @@
                     {{ icon.icon }}
                   </c-icon>
                 </template>
-              </c-simple-tooltip>
+              </c-tooltip>
               {{ chipText }}
             </span>
           </v-chip>

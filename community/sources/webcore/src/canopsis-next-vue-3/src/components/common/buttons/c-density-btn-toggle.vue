@@ -26,7 +26,7 @@
     mandatory
     @update:model-value="updateModel"
   >
-    <v-tooltip v-for="type in types" :key="type.value" location="top">
+    <c-tooltip v-for="type in types" :key="type.value" location="top">
       <template #activator="{ props: tooltipProps }">
         <v-btn
           v-bind="tooltipProps"
@@ -42,7 +42,7 @@
         </v-btn>
       </template>
       <span>{{ type.text }}</span>
-    </v-tooltip>
+    </c-tooltip>
   </v-btn-toggle>
 </template>
 

@@ -21,7 +21,7 @@
       </template>
     </c-card-iterator-field>
     <c-layout :justify="addButtonJustify">
-      <v-tooltip v-if="!addButtonLabel && !addButtonError" location="left">
+      <c-tooltip v-if="!addButtonLabel && !addButtonError" location="left">
         <template #activator="{ props: tooltipProps }">
           <c-btn-with-error
             :error="addButtonError"
@@ -36,7 +36,7 @@
           </c-btn-with-error>
         </template>
         <span>{{ $t('common.add') }}</span>
-      </v-tooltip>
+      </c-tooltip>
 
       <c-btn-with-error
         v-else

@@ -1,6 +1,6 @@
 <template>
   <span class="service-dependencies-expand">
-    <c-simple-tooltip v-if="item.loadMore" :content="$t('common.loadMore')" right>
+    <c-tooltip v-if="item.loadMore" :content="$t('common.loadMore')" right>
       <template #activator="{ props: tooltipProps }">
         <v-btn
           v-bind="tooltipProps"
@@ -11,7 +11,7 @@
           @click="$emit('load', item)"
         />
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
     <v-badge
       v-else
       :model-value="!!entity.pbehavior_info?.id"
@@ -33,7 +33,7 @@
         </v-icon>
       </template>
     </v-badge>
-    <c-simple-tooltip v-if="item.cycle" :content="$t('common.cycleDependency')" top>
+    <c-tooltip v-if="item.cycle" :content="$t('common.cycleDependency')" top>
       <template #activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -44,7 +44,7 @@
           autorenew
         </v-icon>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </span>
 </template>
 

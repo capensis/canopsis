@@ -6,7 +6,7 @@
     item-value="label"
   >
     <template #default="{ item }">
-      <v-tooltip :disabled="!item.tooltip" location="bottom">
+      <c-tooltip :disabled="!item.tooltip" location="bottom">
         <template #activator="{ props }">
           <c-engine-chip
             :color="item.color"
@@ -20,7 +20,7 @@
         </template>
 
         <span>{{ item.tooltip }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
   </c-responsive-list>
 </template>

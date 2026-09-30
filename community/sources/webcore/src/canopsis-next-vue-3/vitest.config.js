@@ -12,7 +12,7 @@ export default mergeConfig(
       exclude: [...configDefaults.exclude, 'e2e/**'],
       globals: true,
       root: fileURLToPath(new URL('./', import.meta.url)),
-      setupFiles: ['./src/__tests__/setup.js'],
+      setupFiles: ['./__tests__/setup.js'],
       deps: {
         web: {
           transformAssets: true,

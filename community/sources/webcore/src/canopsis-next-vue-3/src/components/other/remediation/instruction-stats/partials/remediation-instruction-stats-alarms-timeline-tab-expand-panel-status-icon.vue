@@ -1,11 +1,11 @@
 <template>
-  <c-simple-tooltip :content="tooltip">
+  <c-tooltip :content="tooltip">
     <template #activator="{ props: activatorProps }">
       <v-icon v-bind="activatorProps" :color="color">
         {{ icon }}
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

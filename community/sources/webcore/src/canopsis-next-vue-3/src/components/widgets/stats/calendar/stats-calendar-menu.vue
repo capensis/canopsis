@@ -2,7 +2,9 @@
   <v-menu
     v-model="menu"
     :target="activator"
+    :attach="attach"
     :close-on-content-click="false"
+    min-width="200"
     max-width="500"
     transition="fade-transition"
     location="end"
@@ -41,6 +43,10 @@ const getCalendarEventSource = event => event?.input ?? event;
 
 export default {
   props: {
+    attach: {
+      type: [Boolean, String, Object],
+      default: false,
+    },
     activator: {
       type: Object,
       required: true,

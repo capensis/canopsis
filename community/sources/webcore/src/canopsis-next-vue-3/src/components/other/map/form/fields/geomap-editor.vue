@@ -28,7 +28,7 @@
             :marker-items="markerItems"
           />
           <geomap-control position="topleft">
-            <v-tooltip max-width="unset" min-width="max-content" location="right">
+            <c-tooltip max-width="unset" min-width="max-content" location="right">
               <template #activator="{ props: activatorProps }">
                 <v-btn
                   :class="{ 'lighten-4': !addOnClick }"
@@ -42,7 +42,7 @@
                 </v-btn>
               </template>
               <span>{{ $t('map.toggleAddingPointMode') }}</span>
-            </v-tooltip>
+            </c-tooltip>
           </geomap-control>
           <geomap-control position="bottomright">
             <c-help-icon

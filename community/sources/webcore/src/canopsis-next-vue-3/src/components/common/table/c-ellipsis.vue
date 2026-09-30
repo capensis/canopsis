@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-simple-tooltip
+    <c-tooltip
       v-if="hover"
       :content="preparedText"
       :disabled="isShort"
@@ -12,7 +12,7 @@
           <span v-if="!isShort">...</span>
         </span>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
 
     <template v-else>
       <span @click.stop="textClicked">{{ shortenedText }}</span>

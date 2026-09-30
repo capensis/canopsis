@@ -70,7 +70,7 @@
       >
         {{ actionsRequests.length }} {{ $t('modals.service.actionInQueue', actionsRequests.length) }}
       </v-alert>
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props: tooltipProps }">
           <v-btn
             class="mx-2"
@@ -82,7 +82,7 @@
           </v-btn>
         </template>
         <span>{{ $t('modals.service.refreshEntities') }}</span>
-      </v-tooltip>
+      </c-tooltip>
       <v-btn
         variant="text"
         @click="close"

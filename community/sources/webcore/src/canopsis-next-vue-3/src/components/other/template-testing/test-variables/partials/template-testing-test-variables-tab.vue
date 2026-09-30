@@ -5,7 +5,7 @@
     :class="{ 'text-error': error }"
     class="v-tab--tooltip"
   >
-    <v-tooltip :disabled="!disabled" location="top">
+    <c-tooltip :disabled="!disabled" location="top">
       <template #activator="{ props: activatorProps }">
         <span v-bind="activatorProps" class="test-variables-tab__wrapper">
           {{ t('templateTesting.testVariables') }}
@@ -13,7 +13,7 @@
       </template>
 
       <span>{{ t('templateTesting.testVariablesDisabledTooltip') }}</span>
-    </v-tooltip>
+    </c-tooltip>
   </v-tab>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="top">
+  <c-tooltip location="top">
     <template #activator="{ props: activatorProps }">
       <c-layout
         v-bind="activatorProps"
@@ -19,7 +19,7 @@
     <span class="pre-wrap">
       {{ statisticsMessage }}
     </span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

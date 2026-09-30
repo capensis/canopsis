@@ -1,6 +1,6 @@
 <template>
   <span class="horizontal-time-line-card">
-    <v-tooltip
+    <c-tooltip
       :disabled="!step.m"
       location="top"
     >
@@ -29,7 +29,7 @@
         <alarm-timeline-step-title :step="step" class="text-subtitle-1" />
         <div v-html="sanitizedStepMessage" />
       </div>
-    </v-tooltip>
+    </c-tooltip>
   </span>
 </template>
 

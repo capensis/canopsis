@@ -214,6 +214,9 @@ export const exportAlarmToPdf = async (
       windowWidth: 1000,
       html2canvas: {
         logging: false,
+        ignoreElements: element =>
+          element.parentElement === document.body &&
+          !element.classList.contains('html2pdf__overlay'),
       },
     })
     .save(`alarm-${alarm?._id}.pdf`);

@@ -15,14 +15,14 @@
 
         <v-tabs v-model="activeTab" color="primary" align-tabs="center">
           <v-tab :value="TABS.events" :disabled="isRecording" class="v-tab--tooltip">
-            <v-tooltip :disabled="!isRecording" location="bottom">
+            <c-tooltip :disabled="!isRecording" location="bottom">
               <template #activator="{ props: tooltipProps }">
                 <span v-bind="tooltipProps">
                   {{ t('modals.eventsRecord.eventsTab') }}
                 </span>
               </template>
               <span>{{ t('eventsRecord.eventsAreLoading') }}</span>
-            </v-tooltip>
+            </c-tooltip>
           </v-tab>
           <v-tab :value="TABS.pattern">
             {{ t('modals.eventsRecord.patternTab') }}

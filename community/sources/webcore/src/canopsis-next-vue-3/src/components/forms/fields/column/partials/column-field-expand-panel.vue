@@ -55,6 +55,7 @@
         :label="$t('settings.columns.onlyIcon')"
         class="pa-0 my-0"
         color="primary"
+        density="compact"
         hide-details
         @update:model-value="updateField('onlyIcon', $event)"
       />
@@ -76,6 +77,7 @@
         :label="$t('settings.columns.customLabel')"
         class="pa-0 my-0"
         color="primary"
+        density="compact"
         hide-details
         @update:model-value="updateCustomLabel"
       />
@@ -94,6 +96,7 @@
         :model-value="!!formValue.template"
         class="pa-0 my-0"
         color="primary"
+        density="compact"
         hide-details
         @update:model-value="switchChangeTemplate"
       >
@@ -120,6 +123,7 @@
       :disabled="!!formValue.template"
       class="pa-0 my-0"
       color="primary"
+      density="compact"
       hide-details
       @update:model-value="switchChangeIsHtml"
     />
@@ -131,6 +135,7 @@
       :disabled="!!formValue.template"
       class="pa-0 my-0"
       color="primary"
+      density="compact"
       hide-details
       @update:model-value="switchChangeColorIndicator"
     />
@@ -149,6 +154,7 @@
       :disabled="!!formValue.template || !!formValue.isHtml"
       class="pa-0 my-0"
       color="primary"
+      density="compact"
       hide-details
       @update:model-value="updateField('isFilter', $event)"
     />

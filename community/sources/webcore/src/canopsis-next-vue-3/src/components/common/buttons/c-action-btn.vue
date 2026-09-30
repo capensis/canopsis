@@ -1,6 +1,6 @@
 <template>
   <span class="c-action-btn">
-    <v-tooltip :location="location" :disabled="disabled">
+    <c-tooltip :location="location" :disabled="disabled">
       <template #activator="{ props: activatorProps }">
         <slot :props="activatorProps" name="button">
           <div class="c-action-btn__button-wrapper" v-bind="{ ...activatorProps, ...$attrs }">
@@ -25,7 +25,7 @@
       </template>
 
       <span>{{ preparedProps.tooltip }}</span>
-    </v-tooltip>
+    </c-tooltip>
   </span>
 </template>
 

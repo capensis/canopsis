@@ -13,7 +13,7 @@
           :disabled="isEmptyVariablesFields"
           class="v-tab--tooltip"
         >
-          <v-tooltip :disabled="!isEmptyVariablesFields" location="top">
+          <c-tooltip :disabled="!isEmptyVariablesFields" location="top">
             <template #activator="{ props: tooltipProps }">
               <span v-bind="tooltipProps" class="test-variables-tab__wrapper">
                 {{ t('templateTesting.testVariables') }}
@@ -21,7 +21,7 @@
             </template>
 
             <span>{{ t('templateTesting.testVariablesDisabledTooltip') }}</span>
-          </v-tooltip>
+          </c-tooltip>
         </v-tab>
         <v-tab
           v-else
@@ -39,12 +39,12 @@
             {{ additionalLabel || $t('common.additional') }}
           </template>
           <template v-else-if="tab['test-query']">
-            <v-tooltip :disabled="!disabledTestQueryTooltip" location="top">
+            <c-tooltip :disabled="!disabledTestQueryTooltip" location="top">
               <template #activator="{ props: tooltipProps }">
                 <span v-bind="tooltipProps">{{ $t('common.testQuery') }}</span>
               </template>
               <span>{{ disabledTestQueryTooltip }}</span>
-            </v-tooltip>
+            </c-tooltip>
           </template>
         </v-tab>
       </template>

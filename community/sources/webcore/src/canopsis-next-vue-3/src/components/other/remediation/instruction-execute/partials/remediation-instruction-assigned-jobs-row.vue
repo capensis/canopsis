@@ -19,7 +19,7 @@
         >
           {{ job.name }}
         </span>
-        <v-tooltip
+        <c-tooltip
           v-if="isFailedJob || isCompletedJob"
           :disabled="!hasStatusMessage"
           max-width="400"
@@ -44,8 +44,8 @@
             <span>{{ t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;</span>
             <span v-html="job.fail_reason" class="pre-wrap" />
           </div>
-        </v-tooltip>
-        <v-tooltip
+        </c-tooltip>
+        <c-tooltip
           v-if="cancelable && isRunningJob && hasJobsInQueue"
           location="top"
         >
@@ -63,7 +63,7 @@
             </v-btn>
           </template>
           <span>{{ queueNumberTooltip }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </c-layout>
     </td>
     <td

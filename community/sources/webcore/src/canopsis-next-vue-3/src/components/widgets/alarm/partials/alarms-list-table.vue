@@ -1210,6 +1210,27 @@ export default {
       user-select: none;
     }
   }
+
+  &.alarms-list-table__table--truncated {
+    .color-indicator {
+      max-width: 100%;
+    }
+
+    .alarms-column-cell__layout .alarm-column-cell__text {
+      display: grid;
+    }
+
+    .alarms-list-row__cell {
+      .alarm-column-cell__text,
+      .alarm-column-cell__text > span,
+      .alarm-column-value {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
 }
 
 .alarms-list-table__select-all {

@@ -1,6 +1,6 @@
 <template>
   <td class="permissions-table-cell">
-    <v-tooltip
+    <c-tooltip
       v-for="(checkbox, index) in checkboxes"
       :key="index"
       :disabled="!checkbox.tooltip"
@@ -19,7 +19,7 @@
       </template>
 
       <span>{{ checkbox.tooltip }}</span>
-    </v-tooltip>
+    </c-tooltip>
   </td>
 </template>
 

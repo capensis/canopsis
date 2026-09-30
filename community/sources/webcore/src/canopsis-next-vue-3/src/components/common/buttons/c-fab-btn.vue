@@ -5,7 +5,7 @@
 
       <slot name="additional" />
 
-      <v-tooltip v-if="hasAccess && hasCreateListener" location="left">
+      <c-tooltip v-if="hasAccess && hasCreateListener" location="left">
         <template #activator="{ props: activatorProps }">
           <v-btn
             color="primary"
@@ -18,7 +18,7 @@
           </v-btn>
         </template>
         <slot />
-      </v-tooltip>
+      </c-tooltip>
     </c-layout>
   </div>
 </template>

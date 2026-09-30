@@ -2,7 +2,7 @@
   <div class="widget-edit-drag-handler" @pointerdown.left="$emit('pointerdown', $event)">
     <c-layout class="widget-edit-drag-handler__controls pr-1" justify="end" align="center">
       <span @pointerdown.stop="">
-        <v-tooltip location="bottom">
+        <c-tooltip location="bottom">
           <template #activator="{ props }">
             <v-btn
               :color="autoHeight ? 'grey-lighten-1' : 'transparent'"
@@ -18,7 +18,7 @@
           </template>
 
           <span>{{ $t('view.autoHeightButton') }}</span>
-        </v-tooltip>
+        </c-tooltip>
 
         <widget-wrapper-menu :widget="widget" :tab="tab" />
       </span>

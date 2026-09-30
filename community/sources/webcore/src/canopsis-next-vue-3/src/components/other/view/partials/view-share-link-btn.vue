@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="left">
+  <c-tooltip location="left">
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
@@ -14,7 +14,7 @@
     </template>
 
     <span>{{ t('common.shareLink') }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

@@ -84,7 +84,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     calculateElementNormalizedWidth(element, field) {
-      const { width } = element.getBoundingClientRect();
+      const { offsetWidth: width } = element;
 
       return this.getNormalizedWidth(field, width);
     },

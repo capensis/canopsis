@@ -28,7 +28,7 @@
         {{ t('templateTesting.saveTestAsNew') }}
       </v-btn>
 
-      <v-tooltip :disabled="!saveButtonTooltip" location="top">
+      <c-tooltip :disabled="!saveButtonTooltip" location="top">
         <template #activator="{ props: activatorProps }">
           <span v-bind="activatorProps">
             <v-btn :disabled="isDisabledSaveButton" color="secondary" @click="save">
@@ -38,7 +38,7 @@
         </template>
 
         <span>{{ saveButtonTooltip }}</span>
-      </v-tooltip>
+      </c-tooltip>
 
       <v-btn
         :loading="running"

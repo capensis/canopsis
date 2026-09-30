@@ -29,7 +29,7 @@
           item-value="value"
           @update:model-value="changeColumn"
         />
-        <v-tooltip v-if="!withoutCustomLabel" location="left">
+        <c-tooltip v-if="!withoutCustomLabel" location="left">
           <template #activator="{ props }">
             <v-btn
               :class="isCustom ? 'text-primary' : 'text-disabled'"
@@ -46,7 +46,7 @@
             </v-btn>
           </template>
           <span>{{ $t('common.convertToCustomColumn') }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </c-layout>
     </template>
 

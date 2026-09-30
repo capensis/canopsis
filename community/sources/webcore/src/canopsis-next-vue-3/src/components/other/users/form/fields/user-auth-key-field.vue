@@ -5,7 +5,7 @@
     </span>
 
     <c-layout v-if="value" align="center" gap="1">
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props: activatorProps }">
           <v-btn
             v-bind="activatorProps"
@@ -19,9 +19,9 @@
         </template>
 
         <span>{{ visibilityTooltip }}</span>
-      </v-tooltip>
+      </c-tooltip>
 
-      <v-tooltip location="top">
+      <c-tooltip location="top">
         <template #activator="{ props: activatorProps }">
           <v-btn
             v-bind="activatorProps"
@@ -35,7 +35,7 @@
         </template>
 
         <span>{{ t('common.copyToClipboard') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </c-layout>
   </c-layout>
 </template>

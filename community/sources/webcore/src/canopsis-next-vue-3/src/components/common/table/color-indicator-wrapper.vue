@@ -1,5 +1,5 @@
 <template>
-  <c-simple-tooltip :content="text" top>
+  <c-tooltip :content="text" top>
     <template #activator="{ props: activatorProps }">
       <div
         v-bind="activatorProps"
@@ -11,7 +11,7 @@
         <slot>{{ value }}</slot>
       </div>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

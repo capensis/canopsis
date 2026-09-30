@@ -9,7 +9,7 @@
     expand
   >
     <template #status="{ item }">
-      <v-tooltip
+      <c-tooltip
         :disabled="!item.message"
         location="bottom"
       >
@@ -20,7 +20,7 @@
           />
         </template>
         <span>{{ item.message }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
     <template #time="{ item }">
       <span>{{ convertNumberToFixedString(item.time) }}{{ $constants.TIME_UNITS.second }}</span>

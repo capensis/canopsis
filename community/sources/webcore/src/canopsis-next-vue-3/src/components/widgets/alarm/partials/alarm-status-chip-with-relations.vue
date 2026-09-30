@@ -6,7 +6,7 @@
     class="pl-2 pr-1"
   >
     <slot />
-    <c-simple-tooltip :content="tooltipText" top>
+    <c-tooltip :content="tooltipText" top>
       <template #activator="{ props: activatorProps }">
         <v-btn
           v-bind="activatorProps"
@@ -20,7 +20,7 @@
           </v-icon>
         </v-btn>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </v-chip>
 </template>
 

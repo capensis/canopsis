@@ -33,7 +33,7 @@
     />
     <field-info-popup
       :model-value="form.infoPopups"
-      :columns="form.widgetColumns"
+      :columns="preparedWidgetColumns"
       @update:model-value="updateField('infoPopups', $event)"
     />
     <field-text-editor-with-template
@@ -316,20 +316,20 @@ export default {
   },
 
   methods: {
-    updateSortTemplate(template = '', sort = []) {
+    updateTemplate(field, template, value) {
       this.updateModel({
         ...this.form,
-        sort,
-        sortTemplate: template,
+        [field]: value,
+        [`${field}Template`]: template,
       });
     },
 
+    updateSortTemplate(template = '', sort = []) {
+      this.updateTemplate('sort', template, sort);
+    },
+
     updateColumnsTemplate(template, columns) {
-      this.updateModel({
-        ...this.form,
-        widgetColumnsTemplate: template,
-        widgetColumns: columns,
-      });
+      this.updateTemplate('widgetColumns', template, columns);
     },
 
     updateMoreInfo(content) {
@@ -339,11 +339,8 @@ export default {
       });
     },
 
-    updateMoreInfoTemplate(template) {
-      this.updateModel({
-        ...this.form,
-        moreInfoTemplateTemplate: template,
-      });
+    updateMoreInfoTemplate(template, content = this.form.moreInfoTemplate) {
+      this.updateTemplate('moreInfoTemplate', template, content);
     },
 
     updateExportPdf(content) {
@@ -353,11 +350,8 @@ export default {
       });
     },
 
-    updateExportPdfTemplate(template) {
-      this.updateModel({
-        ...this.form,
-        exportPdfTemplateTemplate: template,
-      });
+    updateExportPdfTemplate(template, content = this.form.exportPdfTemplate) {
+      this.updateTemplate('exportPdfTemplate', template, content);
     },
   },
 };

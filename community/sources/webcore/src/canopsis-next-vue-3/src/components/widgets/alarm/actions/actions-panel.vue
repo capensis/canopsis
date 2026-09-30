@@ -1,6 +1,5 @@
 <template>
   <actions-panel
-    ref="sharedActionsPanel"
     v-bind="additionalProps"
     :actions="preparedActions"
     :small="small"
@@ -64,6 +63,16 @@ import { exportAlarmToPdf as exportAlarmToPdfFile } from '@/helpers/file/pdf';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
+
+const IMMEDIATE_ACTIONS_TYPES = new Set([
+  ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
+  ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove,
+  ALARM_LIST_ACTIONS_TYPES.exportPdf,
+  ALARM_LIST_ACTIONS_TYPES.fastAck,
+  ALARM_LIST_ACTIONS_TYPES.fastCancel,
+  ALARM_LIST_ACTIONS_TYPES.addBookmark,
+  ALARM_LIST_ACTIONS_TYPES.removeBookmark,
+]);
 
 export default {
   inject: ['$system'],
@@ -300,6 +309,7 @@ export default {
       if (fastPbehaviorsParameters.length > 1) {
         fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
           title: pbehaviorParameters.name_prefix,
+          closeOnClick: false,
           method: () => this.fastAddPbehavior(pbehaviorParameters),
         }));
       } else {
@@ -490,6 +500,8 @@ export default {
         ...action,
         icon: action.icon ?? getAlarmActionIcon(action.type),
         loading: this.isActionTypeInPending(action.type),
+        closeOnClick:
+          action.closeOnClick ?? !(action.link || IMMEDIATE_ACTIONS_TYPES.has(action.type)),
       }));
     },
 
@@ -546,7 +558,6 @@ export default {
 
     afterSubmit() {
       this.refreshAlarmsList();
-      this.$refs.sharedActionsPanel?.closeMenu?.();
     },
 
     isActionTypeInPending(type) {

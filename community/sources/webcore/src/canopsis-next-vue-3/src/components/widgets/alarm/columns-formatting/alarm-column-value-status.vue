@@ -29,7 +29,7 @@
     :alarm="alarm"
     :style="chipStyle"
   >
-    <c-simple-tooltip :content="tooltipContent" top>
+    <c-tooltip :content="tooltipContent" top>
       <template #activator="{ props: activatorProps }">
         <v-icon
           v-bind="activatorProps"
@@ -40,9 +40,9 @@
           {{ status.icon }}
         </v-icon>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </alarm-status-chip-with-relations>
-  <c-simple-tooltip v-else :content="tooltipContent" top>
+  <c-tooltip v-else :content="tooltipContent" top>
     <template #activator="{ props: activatorProps }">
       <v-icon
         v-bind="activatorProps"
@@ -53,7 +53,7 @@
         {{ status.icon }}
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

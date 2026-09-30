@@ -43,7 +43,7 @@
         </div>
 
         <div v-if="updatable" key="add-widget">
-          <v-tooltip location="left">
+          <c-tooltip location="left">
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
@@ -56,11 +56,11 @@
               </v-btn>
             </template>
             <span>{{ $t('common.addWidget') }}</span>
-          </v-tooltip>
+          </c-tooltip>
         </div>
 
         <div v-if="updatable" key="add-tab">
-          <v-tooltip location="left">
+          <c-tooltip location="left">
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
@@ -73,7 +73,7 @@
               </v-btn>
             </template>
             <span>{{ $t('common.addTab') }}</span>
-          </v-tooltip>
+          </c-tooltip>
         </div>
       </c-speed-dial>
     </c-layout>
@@ -150,6 +150,14 @@ export default {
     );
 
     const isHeaderShown = () => {
+      if (
+        [VIEW_SCREEN_MODES.fullscreen, VIEW_SCREEN_MODES.kioskFullscreen].includes(
+          activeViewScreenMode.value,
+        )
+      ) {
+        return false;
+      }
+
       if (
         [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(
           activeViewScreenMode.value,

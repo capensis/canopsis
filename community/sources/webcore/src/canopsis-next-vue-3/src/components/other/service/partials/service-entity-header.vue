@@ -34,7 +34,7 @@
             {{ icon.icon }}
           </v-icon>
         </v-btn>
-        <c-simple-tooltip
+        <c-tooltip
           v-for="link in entityLinks"
           :key="link.rule_id"
           :content="link.label"
@@ -56,7 +56,7 @@
               </v-icon>
             </v-btn>
           </template>
-        </c-simple-tooltip>
+        </c-tooltip>
         <c-no-events-icon
           :value="entity.idle_since"
           color="white"
@@ -159,7 +159,7 @@ export default {
       if (props.entity.status?.val === ALARM_STATUSES.cancelled) {
         icons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
-          color: 'grey-darken-1',
+          color: CSS_COLORS_VARS.status.cancelled,
         });
       }
 

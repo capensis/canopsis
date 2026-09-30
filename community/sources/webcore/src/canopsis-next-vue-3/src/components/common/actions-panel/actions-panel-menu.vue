@@ -2,6 +2,7 @@
   <v-menu
     v-if="actions.length"
     v-model="menu"
+    :close-on-content-click="false"
     location="bottom end"
     @click.stop=""
   >
@@ -77,7 +78,10 @@ export default {
 
     selectAction(item) {
       item?.method?.();
-      this.closeMenu();
+
+      if (item?.closeOnClick !== false) {
+        this.closeMenu();
+      }
     },
   },
 };

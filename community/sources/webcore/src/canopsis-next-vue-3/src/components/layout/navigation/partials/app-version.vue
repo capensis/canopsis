@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="left">
+  <c-tooltip location="left">
     <template #activator="{ props }">
       <div v-bind="{ ...props, ...$attrs }">
         {{ version }}
@@ -7,7 +7,7 @@
     </template>
 
     <c-compiled-template :template="template" :context="context" />
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>

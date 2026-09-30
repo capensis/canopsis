@@ -17,7 +17,7 @@
     @update:model-value="changeValue"
   >
     <template #chip="{ item, index }">
-      <v-tooltip
+      <c-tooltip
         :disabled="!getPreparedTrigger(item).deprecated || hasError(getChipName(index))"
         location="top"
       >
@@ -42,7 +42,7 @@
                 : ''
           }}
         </span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
     <template #item="{ item, props: itemProps }">
       <v-list-item

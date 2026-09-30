@@ -29,7 +29,7 @@
           {{ t('common.submit') }}
         </v-btn>
 
-        <v-tooltip v-if="config.deletable" :disabled="group.deletable" location="top">
+        <c-tooltip v-if="config.deletable" :disabled="group.deletable" location="top">
           <template #activator="{ props: activatorProps }">
             <div class="ml-2" v-bind="activatorProps">
               <v-btn
@@ -44,7 +44,7 @@
           </template>
 
           <span>{{ t('modals.group.errors.isNotEmpty') }}</span>
-        </v-tooltip>
+        </c-tooltip>
       </template>
     </c-modal-wrapper>
   </v-form>

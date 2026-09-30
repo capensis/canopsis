@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="left">
+  <c-tooltip location="left">
     <template #activator="{ props: activatorProps }">
       <v-btn
         color="secondary"
@@ -12,7 +12,7 @@
       </v-btn>
     </template>
     <span>{{ t('common.refresh') }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
