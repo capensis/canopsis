@@ -53,6 +53,8 @@ type Sender interface {
 	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 
 	SendMessageRate(timestamp time.Time, eventType, connectorName string)
+
+	SendLLMTokenUsage(timestamp time.Time, configID, model string, inputTokens, outputTokens, thinkingTokens, cacheWriteTokens, cacheReadTokens, retries int64)
 }
 
 type EntityInfosUpdateSender interface {
