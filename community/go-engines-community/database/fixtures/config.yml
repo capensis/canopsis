@@ -40,6 +40,15 @@ configuration:
           value: 14
           unit: d
           enabled: true
+      llm_chat:
+        delete_after:
+          value: 30
+          unit: d
+          enabled: true
+        delete_token_usage_after:
+          value: 90
+          unit: d
+          enabled: true
   alarm_tag_color:
     _id: alarm_tag_color
     colors:
