@@ -161,11 +161,12 @@ func (e Entity) InheritedPause() *LatestPause {
 
 	// The entity is the source of its own pause, so it's not in the path.
 	pause.Source = e.ID
+	pause.SourceType = e.Type
 	switch e.Type {
 	case EntityTypeComponent:
-		pause.Message += "\nComponent: " + e.Name
+		pause.Message += "\n" + OutputComponentPrefix + e.Name
 	case EntityTypeService:
-		pause.Message += "\nService: " + e.Name
+		pause.Message += "\n" + OutputServicePrefix + e.Name
 	}
 
 	return &pause
@@ -199,14 +200,15 @@ func (c Coordinates) IsZero() bool {
 }
 
 type Pause struct {
-	Timestamp datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
-	Message   string           `bson:"message" json:"message"`
-	Author    string           `bson:"author" json:"author"`
-	UserID    string           `bson:"user_id" json:"user_id"`
-	Initiator string           `bson:"initiator" json:"initiator"`
-	Type      string           `bson:"type,omitempty" json:"type"`
-	Source    string           `bson:"source,omitempty" json:"source"`
-	Inherited bool             `bson:"inherited,omitempty" json:"inherited,omitempty"`
+	Timestamp  datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
+	Message    string           `bson:"message" json:"message"`
+	Author     string           `bson:"author" json:"author"`
+	UserID     string           `bson:"user_id" json:"user_id"`
+	Initiator  string           `bson:"initiator" json:"initiator"`
+	Type       string           `bson:"type,omitempty" json:"type"`
+	Source     string           `bson:"source,omitempty" json:"source"`
+	SourceType string           `bson:"source_type,omitempty" json:"source_type"`
+	Inherited  bool             `bson:"inherited,omitempty" json:"inherited,omitempty"`
 	// Path is the entities the pause has passed through between its source and the paused entity,
 	// its own source is not in it. It's used to compare a pause with a pause of an entity
 	// above or below its source.

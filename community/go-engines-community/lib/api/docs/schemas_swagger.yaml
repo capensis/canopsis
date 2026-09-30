@@ -7334,6 +7334,8 @@ definitions:
         type: array
       source:
         type: string
+      source_type:
+        type: string
       timestamp:
         type: integer
       type:

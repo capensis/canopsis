@@ -941,6 +941,7 @@ func (p *checkProcessor) resolvePause(ctx context.Context, entity types.Entity) 
 		pause := types.LatestPause{Pause: *entity.Pause}
 		if pause.Source == "" {
 			pause.Source = entity.ID
+			pause.SourceType = entity.Type
 		}
 
 		return &pause, false, nil
@@ -984,12 +985,13 @@ func (p *checkProcessor) resolvePause(ctx context.Context, entity types.Entity) 
 	if pause.Source == "" {
 		// The parent is paused by itself, the entity inherits the parent's pause.
 		pause.Source = parent.ID
+		pause.SourceType = parent.Type
 		pause.Message += "\n"
 		switch parent.Type {
 		case types.EntityTypeComponent:
-			pause.Message += "Component: "
+			pause.Message += types.OutputComponentPrefix
 		case types.EntityTypeService:
-			pause.Message += "Service: "
+			pause.Message += types.OutputServicePrefix
 		}
 
 		pause.Message += parent.Name
