@@ -161,6 +161,7 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		StructuredMessage:   event.StructuredMessage,
 		PauseType:           event.PauseType,
 		PauseSource:         event.PauseSource,
+		PauseSourceType:     event.PauseSourceType,
 		PausePath:           event.PausePath,
 	}
 

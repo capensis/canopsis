@@ -90,15 +90,16 @@ func (p *pauseProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (Result, countersResult, bool, error) {
 	newPause := types.Pause{
-		Timestamp: event.Parameters.Timestamp,
-		Message:   event.Parameters.Output,
-		Author:    event.Parameters.Author,
-		UserID:    event.Parameters.User,
-		Initiator: event.Parameters.Initiator,
-		Type:      event.Parameters.PauseType,
-		Source:    event.Parameters.PauseSource,
-		Inherited: event.Parameters.Inherited,
-		Path:      event.Parameters.PausePath,
+		Timestamp:  event.Parameters.Timestamp,
+		Message:    event.Parameters.Output,
+		Author:     event.Parameters.Author,
+		UserID:     event.Parameters.User,
+		Initiator:  event.Parameters.Initiator,
+		Type:       event.Parameters.PauseType,
+		Source:     event.Parameters.PauseSource,
+		SourceType: event.Parameters.PauseSourceType,
+		Inherited:  event.Parameters.Inherited,
+		Path:       event.Parameters.PausePath,
 	}
 	match := getOpenAlarmMatch(event)
 	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepPause, event.Parameters.Output, event.Parameters)
@@ -153,6 +154,7 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 		latestPause := types.LatestPause{Pause: newPause}
 		if latestPause.Source == "" {
 			latestPause.Source = entity.ID
+			latestPause.SourceType = entity.Type
 		}
 
 		// An inherited pause replaces an older one and the entity's own pause, the entity's own pause
@@ -266,24 +268,26 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 			"type":      types.EntityTypeResource,
 			"enabled":   true,
 		}
-		label = "Component: "
+		label = types.OutputComponentPrefix
 	case types.EntityTypeService:
 		filter = bson.M{
 			"services": entity.ID,
 			"enabled":  true,
 		}
-		label = "Service: "
+		label = types.OutputServicePrefix
 	default:
 		return nil
 	}
 
 	output := event.Parameters.Output
 	pauseSource := event.Parameters.PauseSource
+	pauseSourceType := event.Parameters.PauseSourceType
 	// The pause of another entity passes through this one, its own pause starts from it,
 	// so it's not in the path.
 	pausePath := event.Parameters.PausePath
 	if pauseSource == "" {
 		pauseSource = entity.ID
+		pauseSourceType = entity.Type
 		output += "\n" + label + entity.Name
 	} else {
 		pausePath = append(slices.Clone(pausePath), entity.ID)
@@ -299,18 +303,19 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 	depEvent := rpc.AxeEvent{
 		EventType: event.EventType,
 		Parameters: rpc.AxeParameters{
-			Output:        output,
-			Author:        event.Parameters.Author,
-			User:          event.Parameters.User,
-			Role:          event.Parameters.Role,
-			Initiator:     event.Parameters.Initiator,
-			Timestamp:     event.Parameters.Timestamp,
-			Inherited:     true,
-			Connector:     event.Parameters.Connector,
-			ConnectorName: event.Parameters.ConnectorName,
-			PauseType:     event.Parameters.PauseType,
-			PauseSource:   pauseSource,
-			PausePath:     pausePath,
+			Output:          output,
+			Author:          event.Parameters.Author,
+			User:            event.Parameters.User,
+			Role:            event.Parameters.Role,
+			Initiator:       event.Parameters.Initiator,
+			Timestamp:       event.Parameters.Timestamp,
+			Inherited:       true,
+			Connector:       event.Parameters.Connector,
+			ConnectorName:   event.Parameters.ConnectorName,
+			PauseType:       event.Parameters.PauseType,
+			PauseSource:     pauseSource,
+			PauseSourceType: pauseSourceType,
+			PausePath:       pausePath,
 		},
 	}
 

@@ -315,6 +315,7 @@ func publishPauseChange(
 			depEvent.EventType = types.EventTypePause
 			depEvent.Timestamp = change.pause.Timestamp
 			depEvent.PauseSource = change.pause.Source
+			depEvent.PauseSourceType = change.pause.SourceType
 			depEvent.PauseType = change.pause.Type
 			depEvent.Output = change.pause.Message
 			depEvent.Author = change.pause.Author
@@ -324,6 +325,7 @@ func publishPauseChange(
 			depEvent.EventType = types.EventTypeResume
 			depEvent.Timestamp = now
 			depEvent.PauseSource = entity.LatestPause.Source
+			depEvent.PauseSourceType = entity.LatestPause.SourceType
 			depEvent.Initiator = types.InitiatorSystem
 		}
 

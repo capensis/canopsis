@@ -102,9 +102,10 @@ type AxeParameters struct {
 	// CheckTicketStatus shows if an event processor should create a check ticket status job.
 	CheckTicketStatus bool `json:"check_ticket_status,omitempty"`
 
-	PauseType   string   `json:"pause_type,omitempty"`
-	PauseSource string   `json:"pause_source,omitempty"`
-	PausePath   []string `json:"pause_path,omitempty"`
+	PauseType       string   `json:"pause_type,omitempty"`
+	PauseSource     string   `json:"pause_source,omitempty"`
+	PauseSourceType string   `json:"pause_source_type,omitempty"`
+	PausePath       []string `json:"pause_path,omitempty"`
 }
 
 // AxeResultEvent

@@ -209,6 +209,13 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
 	}
 
+	for _, field := range []string{"pause_source", "pause_source_type", "pause_path"} {
+		if value.Exists(field) {
+			value.Del(field)
+			a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("%s cannot be set in an event, it has been removed", field)
+		}
+	}
+
 	author, err := getStringField(value, "author")
 	if err != nil && !errors.Is(err, ErrFieldNotExists) {
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())

@@ -224,9 +224,10 @@ type Event struct {
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `bson:"is_close_delay,omitempty" json:"is_close_delay,omitempty"`
 
-	PauseType   string   `bson:"pause_type,omitempty" json:"pause_type,omitempty"`
-	PauseSource string   `bson:"pause_source,omitempty" json:"pause_source,omitempty"`
-	PausePath   []string `bson:"pause_path,omitempty" json:"pause_path,omitempty"`
+	PauseType       string   `bson:"pause_type,omitempty" json:"pause_type,omitempty"`
+	PauseSource     string   `bson:"pause_source,omitempty" json:"pause_source,omitempty"`
+	PauseSourceType string   `bson:"pause_source_type,omitempty" json:"pause_source_type,omitempty"`
+	PausePath       []string `bson:"pause_path,omitempty" json:"pause_path,omitempty"`
 }
 
 // Format an event

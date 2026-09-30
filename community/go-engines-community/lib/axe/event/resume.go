@@ -139,8 +139,10 @@ func (p *resumeProcessor) processEvent(ctx context.Context, event rpc.AxeEvent, 
 		}
 
 		source := event.Parameters.PauseSource
+		sourceType := event.Parameters.PauseSourceType
 		if source == "" {
 			source = entity.ID
+			sourceType = entity.Type
 		}
 
 		prev := entity.LatestPause
@@ -158,10 +160,11 @@ func (p *resumeProcessor) processEvent(ctx context.Context, event rpc.AxeEvent, 
 		ended := types.LatestPause{
 			// A pause of another entity is always inherited.
 			Pause: types.Pause{
-				Timestamp: *start,
-				Source:    source,
-				Inherited: source != entity.ID,
-				Path:      event.Parameters.PausePath,
+				Timestamp:  *start,
+				Source:     source,
+				SourceType: sourceType,
+				Inherited:  source != entity.ID,
+				Path:       event.Parameters.PausePath,
 			},
 			End: &end,
 		}
@@ -279,24 +282,26 @@ func (p *resumeProcessor) processDepends(ctx context.Context, event rpc.AxeEvent
 			"type":      types.EntityTypeResource,
 			"enabled":   true,
 		}
-		label = "Component: "
+		label = types.OutputComponentPrefix
 	case types.EntityTypeService:
 		filter = bson.M{
 			"services": entity.ID,
 			"enabled":  true,
 		}
-		label = "Service: "
+		label = types.OutputServicePrefix
 	default:
 		return nil
 	}
 
 	output := event.Parameters.Output
 	pauseSource := event.Parameters.PauseSource
+	pauseSourceType := event.Parameters.PauseSourceType
 	// The resumed pause of another entity passes through this one, its own pause starts from it,
 	// so it's not in the path.
 	pausePath := event.Parameters.PausePath
 	if pauseSource == "" {
 		pauseSource = entity.ID
+		pauseSourceType = entity.Type
 		output += "\n" + label + entity.Name
 	} else {
 		pausePath = append(slices.Clone(pausePath), entity.ID)
@@ -312,17 +317,18 @@ func (p *resumeProcessor) processDepends(ctx context.Context, event rpc.AxeEvent
 	depEvent := rpc.AxeEvent{
 		EventType: event.EventType,
 		Parameters: rpc.AxeParameters{
-			Output:        output,
-			Author:        event.Parameters.Author,
-			User:          event.Parameters.User,
-			Role:          event.Parameters.Role,
-			Initiator:     event.Parameters.Initiator,
-			Timestamp:     event.Parameters.Timestamp,
-			Inherited:     true,
-			Connector:     event.Parameters.Connector,
-			ConnectorName: event.Parameters.ConnectorName,
-			PauseSource:   pauseSource,
-			PausePath:     pausePath,
+			Output:          output,
+			Author:          event.Parameters.Author,
+			User:            event.Parameters.User,
+			Role:            event.Parameters.Role,
+			Initiator:       event.Parameters.Initiator,
+			Timestamp:       event.Parameters.Timestamp,
+			Inherited:       true,
+			Connector:       event.Parameters.Connector,
+			ConnectorName:   event.Parameters.ConnectorName,
+			PauseSource:     pauseSource,
+			PauseSourceType: pauseSourceType,
+			PausePath:       pausePath,
 		},
 	}
 
