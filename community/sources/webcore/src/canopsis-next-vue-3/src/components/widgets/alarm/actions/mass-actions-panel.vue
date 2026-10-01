@@ -17,6 +17,7 @@ import {
   ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT,
   ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  FEATURES_SERVICE_KEYS,
   LINK_RULE_ACTIONS,
   MODALS,
   PBEHAVIOR_ORIGINS,
@@ -337,9 +338,12 @@ export default {
         });
       }
 
-      if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
+      const featuresActionsKey =
+        FEATURES_SERVICE_KEYS.components.alarmListMassActionsPanel.computed.actions;
+
+      if (featuresService.has(featuresActionsKey)) {
         const featuresActions = featuresService.call(
-          'components.alarmListMassActionsPanel.computed.actions',
+          featuresActionsKey,
           this,
           [],
         );
@@ -416,7 +420,7 @@ export default {
   },
 
   methods: {
-    ...featuresService.get('components.alarmListMassActionsPanel.methods', {}),
+    ...featuresService.get(FEATURES_SERVICE_KEYS.components.alarmListMassActionsPanel.methods, {}),
     ...mapActions(useAlarmStore, [
       'bulkCreateAlarmAckEvent',
       'bulkCreateAlarmAckremoveEvent',

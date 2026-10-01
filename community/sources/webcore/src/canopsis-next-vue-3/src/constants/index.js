@@ -6,6 +6,7 @@ export * from './broadcast-message';
 export * from './date';
 export * from './dynamic-info';
 export * from './event-filter';
+export * from './features';
 export * from './pattern';
 export * from './healthcheck';
 export * from './idle-rule';

@@ -25,6 +25,7 @@
 import { computed } from 'vue';
 
 import {
+  FEATURES_SERVICE_KEYS,
   UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
   UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
 } from '@/constants';
@@ -68,11 +69,13 @@ export default {
       const { actions, featuresActionsKey } = props.massive
         ? {
             actions: UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
-            featuresActionsKey: 'components.alarmListMassActionsPanel.computed.actions',
+            featuresActionsKey:
+              FEATURES_SERVICE_KEYS.components.alarmListMassActionsPanel.computed.actions,
           }
         : {
             actions: UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
-            featuresActionsKey: 'components.alarmListActionPanel.computed.actions',
+            featuresActionsKey:
+              FEATURES_SERVICE_KEYS.components.alarmListActionPanel.computed.actions,
           };
 
       const preparedActions = Object.entries(actions).map(([value, textKey]) => ({
