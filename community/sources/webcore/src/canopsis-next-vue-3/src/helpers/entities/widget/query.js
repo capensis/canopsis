@@ -1,6 +1,6 @@
 import { isArray, omit } from 'lodash';
 
-import { WIDGET_TYPES } from '@/constants';
+import { FEATURES_SERVICE_KEYS, WIDGET_TYPES } from '@/constants';
 
 import { featuresService } from '@/services/features';
 
@@ -62,7 +62,9 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
 
-    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+    ...featuresService.get(
+      FEATURES_SERVICE_KEYS.helpers.query.convertUserPreferenceToQuery.convertersMap,
+    ),
   };
 
   const converter = convertersMap[widgetType];
@@ -93,7 +95,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.map]: convertMapWidgetToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
 
-    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+    ...featuresService.get(FEATURES_SERVICE_KEYS.helpers.query.convertWidgetToQuery.convertersMap),
   };
 
   const converter = convertersMap[widget.type];

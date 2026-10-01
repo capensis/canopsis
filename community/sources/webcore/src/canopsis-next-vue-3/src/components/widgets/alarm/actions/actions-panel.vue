@@ -17,6 +17,7 @@ import {
   ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
+  FEATURES_SERVICE_KEYS,
   LINK_RULE_ACTIONS,
   MODALS,
   PBEHAVIOR_ORIGINS,
@@ -454,8 +455,11 @@ export default {
         });
       }
 
-      if (this.isOpenedAlarm && featuresService.has('components.alarmListActionPanel.computed.actions')) {
-        const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
+      const featuresActionsKey =
+        FEATURES_SERVICE_KEYS.components.alarmListActionPanel.computed.actions;
+
+      if (this.isOpenedAlarm && featuresService.has(featuresActionsKey)) {
+        const featuresActions = featuresService.call(featuresActionsKey, this, []);
 
         if (featuresActions?.length) {
           actions.unshift(...featuresActions);

@@ -5,6 +5,7 @@ import { featuresService } from '@/services/features';
 import { ALARM_METRIC_PARAMETERS } from './alarm';
 import { QUICK_RANGES } from './common';
 import { SAMPLINGS } from './date';
+import { FEATURES_SERVICE_KEYS } from './features';
 import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODS } from './kpi';
 import { CANOPSIS_EDITION } from './permission';
 
@@ -26,7 +27,7 @@ export const WIDGET_TYPES = {
   availability: 'Availability',
   externalDataTable: 'ExternalDataTable',
 
-  ...featuresService.get('constants.WIDGET_TYPES'),
+  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetTypes),
 };
 
 export const WIDGET_COLORS_MODES = {
@@ -65,7 +66,7 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.availability]: 'availability-widget',
   [WIDGET_TYPES.externalDataTable]: 'external-data-table-widget',
 
-  ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
+  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.componentsByWidgetTypes),
 };
 
 export const WIDGET_ICONS = {
@@ -87,7 +88,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.availability]: 'published_with_changes',
   [WIDGET_TYPES.externalDataTable]: 'database',
 
-  ...featuresService.get('constants.WIDGET_ICONS'),
+  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetIcons),
 };
 
 export const SIDE_BARS = {
@@ -108,7 +109,7 @@ export const SIDE_BARS = {
   availabilitySettings: 'availability-settings',
   externalDataTableSettings: 'external-data-table-settings',
 
-  ...featuresService.get('constants.SIDE_BARS'),
+  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.sideBars),
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -129,7 +130,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.availability]: SIDE_BARS.availabilitySettings,
   [WIDGET_TYPES.externalDataTable]: SIDE_BARS.externalDataTableSettings,
 
-  ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
+  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.sideBarsByWidgetTypes),
 };
 
 export const WIDGET_TYPES_RULES = {
@@ -140,7 +141,7 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.alarmStatistics]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.availability]: { edition: CANOPSIS_EDITION.pro },
 
-  ...featuresService.get('constants.WIDGET_TYPES_RULES'),
+  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetTypesRules),
 };
 
 export const WIDGET_GRID_SIZES_KEYS = {

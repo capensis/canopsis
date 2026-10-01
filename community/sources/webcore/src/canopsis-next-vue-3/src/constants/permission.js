@@ -4,6 +4,7 @@ import { groupedPermissionToPermission } from '@/helpers/permission';
 
 import { ALARM_LIST_ACTIONS_TYPES } from './alarm';
 import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './entity';
+import { FEATURES_SERVICE_KEYS } from './features';
 
 export const CRUD_ACTIONS = {
   can: 'can',
@@ -284,7 +285,9 @@ export const USER_PERMISSIONS = {
          */
         variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
 
-        ...featuresService.get('constants.USER_PERMISSIONS.business.alarmsList.actions'),
+        ...featuresService.get(
+          FEATURES_SERVICE_KEYS.constants.userPermissions.business.alarmsList.actions,
+        ),
       },
     },
     context: {
@@ -488,7 +491,7 @@ export const USER_PERMISSIONS = {
       templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
       anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.api}_anomaly_monitored_connector`,
 
-      ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
+      ...featuresService.get(FEATURES_SERVICE_KEYS.constants.userPermissions.api.general),
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
