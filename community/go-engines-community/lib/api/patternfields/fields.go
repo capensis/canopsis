@@ -240,7 +240,7 @@ var entityFields = []FieldResponse{
 	},
 	{
 		Name: "pause",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "pause.author",
