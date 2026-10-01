@@ -259,6 +259,7 @@ import { mapActions, mapState } from 'pinia';
 import {
   ALARMS_EXPAND_PANEL_TABS,
   ENTITY_TYPES,
+  GRID_SIZES,
   JUNIT_ALARM_CONNECTOR,
   USER_PERMISSIONS,
 } from '@/constants';
@@ -442,12 +443,20 @@ export default {
       ].filter(Boolean);
     },
 
+    expandGridRangeSize() {
+      const range = this.widget.parameters.expandGridRangeSize;
+
+      return Array.isArray(range) && range.length >= 2
+        ? range
+        : [GRID_SIZES.min, GRID_SIZES.max];
+    },
+
     expandPanelOffset() {
-      return this.widget.parameters.expandGridRangeSize[0];
+      return this.expandGridRangeSize[0];
     },
 
     expandPanelCols() {
-      const [start, end] = this.widget.parameters.expandGridRangeSize;
+      const [start, end] = this.expandGridRangeSize;
 
       return end - start;
     },

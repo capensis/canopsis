@@ -1,7 +1,7 @@
 <template>
-  <c-tooltip location="top">
+  <c-tooltip :theme="$system.dark ? 'dark' : 'light'" location="top">
     <template #activator="{ props: tooltipProps }">
-      <c-layout class="alarm-counters fill-height" column v-bind="tooltipProps">
+      <div class="alarm-counters fill-height d-flex flex-column" v-bind="tooltipProps">
         <alarm-counter
           v-for="counter in preparedCounters"
           :key="counter.type"
@@ -9,13 +9,13 @@
           :color="counter.color"
           :icon="counter.icon"
         />
-      </c-layout>
+      </div>
     </template>
-    <c-layout column>
+    <div class="d-flex flex-column">
       <span v-for="(message, index) in countersMessages" :key="preparedCounters[index].type">
         {{ message }}
       </span>
-    </c-layout>
+    </div>
   </c-tooltip>
 </template>
 
@@ -34,6 +34,8 @@ import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 import AlarmCounter from './alarm-counter.vue';
 
 export default {
+  inject: ['$system'],
+
   components: { AlarmCounter },
 
   props: {

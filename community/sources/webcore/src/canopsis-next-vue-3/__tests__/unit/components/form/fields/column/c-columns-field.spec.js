@@ -10,9 +10,13 @@ const stubs = {
         type: Array,
         default: () => [],
       },
+      addButtonJustify: {
+        type: String,
+        default: '',
+      },
     },
     template: `
-      <ul class="c-card-iterator-form">
+      <ul class="c-card-iterator-form" :data-add-button-justify="addButtonJustify">
         <li v-for="(item, index) in value" :key="item.key">
           <slot :item="item" :index="index" name="item" />
         </li>
@@ -36,6 +40,12 @@ describe('c-columns-field', () => {
   ];
 
   const factory = generateShallowRenderer(CColumnsField, { stubs });
+
+  test('Add button is aligned to the right', () => {
+    const wrapper = factory();
+
+    expect(wrapper.find('.c-card-iterator-form').attributes('data-add-button-justify')).toBe('end');
+  });
 
   test('Column added after trigger add event', async () => {
     const wrapper = factory({

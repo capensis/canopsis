@@ -477,20 +477,10 @@ kbd {
         content: ' ';
         background: rgba(0, 0, 0, 0.12);
         position: absolute;
-        right: -1px;
+        right: 0;
         top: 0;
         width: 1px;
         height: 100%;
-      }
-
-      &:last-of-type {
-        &:after {
-          right: 0;
-        }
-
-        .table__resize-handler {
-          right: 0;
-        }
       }
     }
   }
@@ -501,7 +491,7 @@ kbd {
     justify-content: center;
     width: 15px;
     position: absolute;
-    right: -7px;
+    right: 0;
     top: 0;
     height: 100%;
     z-index: 2;

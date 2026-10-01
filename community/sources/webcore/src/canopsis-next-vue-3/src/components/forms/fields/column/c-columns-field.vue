@@ -4,6 +4,7 @@
     :name="name || undefined"
     :handle="`.${dragItemHandleClass}`"
     :iterator-class="{ empty: isColumnsEmpty }"
+    add-button-justify="end"
     @add="add"
     @update:value="$emit('update:modelValue', $event)"
   >

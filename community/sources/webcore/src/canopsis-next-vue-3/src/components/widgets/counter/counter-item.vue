@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import { invert } from 'lodash';
+import { invert, omit } from 'lodash';
+import { mapActions } from 'pinia';
 
 import {
   ALARM_STATES,
@@ -40,6 +41,9 @@ import {
   USER_PERMISSIONS,
 } from '@/constants';
 
+import { useAlarmStore } from '@/stores/modules/alarm';
+
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
@@ -61,6 +65,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    query: {
+      type: Object,
+      default: () => ({}),
     },
     hideActions: {
       type: Boolean,
@@ -128,7 +136,37 @@ export default {
   },
 
   methods: {
-    showAlarmListModal() {},
+    ...mapActions(useAlarmStore, {
+      fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
+    }),
+
+    showAlarmListModal() {
+      const widget = generatePreparedDefaultAlarmListWidget();
+
+      widget._id = this.widget._id;
+      widget.parameters = {
+        ...widget.parameters,
+        ...this.widget.parameters.alarmsList,
+
+        opened: this.widget.parameters.opened,
+      };
+
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
+          fetchList: params => this.fetchAlarmsListWithoutStore({
+            params: {
+              ...this.query,
+              ...omit(params, ['tstart', 'tstop']),
+
+              filters: [this.counter.filter?._id],
+            },
+          }),
+        },
+      });
+    },
 
     showVariablesHelpModal() {
       const counterFields = convertObjectToTreeview(this.counter, 'counter');

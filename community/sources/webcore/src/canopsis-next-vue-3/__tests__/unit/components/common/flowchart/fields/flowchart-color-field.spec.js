@@ -9,10 +9,23 @@ describe('flowchart-color-field', () => {
 
   const pickerStubs = {
     'c-color-picker-field': {
-      template: '<button class="color-picker" @click="$emit(\'update:modelValue\', value)" />',
-      props: ['value'],
+      template:
+        '<button class="color-picker" :data-hide-details="String(hideDetails)" :data-size="size" @click="$emit(\'update:modelValue\', value)" />',
+      props: {
+        value: String,
+        size: String,
+        hideDetails: Boolean,
+      },
     },
   };
+
+  test('Color picker uses compact layout', () => {
+    const wrapper = factory({ stubs: pickerStubs });
+    const colorPicker = wrapper.find('.color-picker');
+
+    expect(colorPicker.attributes('data-size')).toBe('small');
+    expect(colorPicker.attributes('data-hide-details')).toBe('true');
+  });
 
   test('Value changed to first palette color after trigger select field with true', () => {
     const firstColor = Faker.internet.color();

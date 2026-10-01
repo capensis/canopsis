@@ -15,6 +15,8 @@
     <v-col v-show="isFilled || hideCheckbox" class="flowchart-color-field__picker" cols="3">
       <c-color-picker-field
         :model-value="value"
+        size="small"
+        hide-details
         hide-label
         @update:model-value="updateModel"
       />

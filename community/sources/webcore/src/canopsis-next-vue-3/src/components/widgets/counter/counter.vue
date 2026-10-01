@@ -25,6 +25,7 @@
           <counter-item
             :counter="counter"
             :hide-actions="hideActions"
+            :query="queryWithoutFilters"
             :widget="widget"
             class="weatherItem"
           />

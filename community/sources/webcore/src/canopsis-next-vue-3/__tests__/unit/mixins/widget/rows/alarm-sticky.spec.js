@@ -28,4 +28,26 @@ describe('widget-sticky-alarm mixin', () => {
   test('does not add top spacing when the toolbar is hidden', () => {
     expect(computeTopBarHeight({ shownHeader: false })).toBe(0);
   });
+
+  test('recalculates sticky positions after view screen mode changes', () => {
+    const scheduleStickyScrollHandler = vi.fn();
+
+    widgetStickyAlarmMixin.watch.activeViewScreenMode.call({
+      someSticky: true,
+      scheduleStickyScrollHandler,
+    });
+
+    expect(scheduleStickyScrollHandler).toHaveBeenCalledOnce();
+  });
+
+  test('does not recalculate positions without sticky elements', () => {
+    const scheduleStickyScrollHandler = vi.fn();
+
+    widgetStickyAlarmMixin.watch.activeViewScreenMode.call({
+      someSticky: false,
+      scheduleStickyScrollHandler,
+    });
+
+    expect(scheduleStickyScrollHandler).not.toHaveBeenCalled();
+  });
 });
