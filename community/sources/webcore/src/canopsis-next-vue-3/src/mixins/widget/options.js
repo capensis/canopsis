@@ -26,8 +26,8 @@ export const widgetOptionsMixin = {
       },
 
       set(newOptions = {}) {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [] } = newOptions;
-        const sort = convertDataTableSortToQuery(sortBy);
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT } = newOptions;
+        const sort = convertDataTableSortToQuery(newOptions);
         const oldItemsPerPage = this.query.itemsPerPage ?? PAGINATION_LIMIT;
         const convertedOptions = {
           page: itemsPerPage <= oldItemsPerPage ? page : 1,

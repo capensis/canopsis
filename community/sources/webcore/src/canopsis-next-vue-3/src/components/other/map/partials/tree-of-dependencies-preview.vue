@@ -248,6 +248,7 @@ export default {
         const nodeLabelEl = document.createElement('div');
         nodeLabelEl.classList.add('position-absolute');
         nodeLabelEl.style.top = `${nodeSize}px`;
+        nodeLabelEl.style.color = '#000000';
         nodeLabelEl.textContent = getMapEntityText(entity);
 
         const nodeEl = document.createElement('div');
@@ -277,7 +278,14 @@ export default {
         btnContentEl.textContent = this.$t('map.showAll', { count: entity[this.countProperty] });
 
         const btnEl = document.createElement('button');
-        btnEl.classList.add('v-btn', 'v-btn--rounded', 'tree-of-dependencies__show-all-btn');
+        btnEl.classList.add(
+          'v-btn',
+          'v-btn--rounded',
+          'bg-grey-lighten-3',
+          'tree-of-dependencies__show-all-btn',
+        );
+        btnEl.dataset.id = entity._id;
+        btnEl.type = 'button';
         btnEl.appendChild(btnContentEl);
 
         return btnEl.outerHTML;
@@ -614,6 +622,20 @@ export default {
 
           return;
         }
+      }
+
+      const showAllButton = originalEvent.target.closest?.(
+        '.tree-of-dependencies__show-all-btn',
+      );
+
+      if (showAllButton) {
+        const entity = this.entitiesById[showAllButton.dataset.id]?.entity;
+
+        if (entity && this.hasDependencies(entity)) {
+          this.showAllDependenciesModal(entity);
+        }
+
+        return;
       }
 
       const { entity, showAll } = target.data();

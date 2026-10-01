@@ -90,6 +90,17 @@ const PaginationStub = {
   template: '<div class="c-pagination-stub" />',
 };
 
+const HorizontalScrollbarStub = {
+  name: 'CHorizontalScrollbar',
+  methods: {
+    connect: vi.fn(),
+    setContentWidth: vi.fn(),
+    setOpacity: vi.fn(),
+    setTranslateY: vi.fn(),
+  },
+  template: '<div class="c-horizontal-scrollbar-stub" />',
+};
+
 const stubs = {
   'v-data-table-server': VDataTableServerStub,
   'mass-actions-panel': true,
@@ -104,7 +115,7 @@ const stubs = {
   'c-grid-btns': true,
   'c-light-checkbox': true,
   'c-table-expand-row': TableExpandRowStub,
-  'c-horizontal-scrollbar': true,
+  'c-horizontal-scrollbar': HorizontalScrollbarStub,
   'c-layout': {
     template: '<div><slot /></div>',
   },
@@ -116,6 +127,8 @@ const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
 const selectPagination = wrapper => wrapper.findComponent({ name: 'CPagination' });
 const selectMassActionsPanel = wrapper => wrapper.findComponent({ name: 'CMassActionsPanel' });
+const selectHorizontalScrollbar = wrapper =>
+  wrapper.findComponent({ name: 'CHorizontalScrollbar' });
 
 describe('alarms-list-table', () => {
   const $modals = mockModals();
@@ -270,6 +283,146 @@ describe('alarms-list-table', () => {
 
     expect(selectTable(wrapper).classes()).toContain('alarms-list-table__table--truncated');
     expect(selectTable(wrapper).classes()).not.toContain('alarms-list-table__table--wrapped');
+  });
+
+  test('Freezes rendered column widths for virtual scroll', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+            isVirtualScrollEnabled: true,
+          },
+        },
+      },
+    });
+    const table = selectTable(wrapper);
+    const headerCells = table.findAll('th');
+
+    vi.spyOn(headerCells.at(0).element, 'getBoundingClientRect').mockReturnValue({ width: 320 });
+    vi.spyOn(headerCells.at(1).element, 'getBoundingClientRect').mockReturnValue({ width: 120 });
+
+    wrapper.vm.captureVirtualScrollColumnsWidth();
+    await flushPromises();
+
+    expect(wrapper.vm.virtualScrollColumnsWidth).toEqual({
+      label: 320,
+      actions: 120,
+    });
+    expect(table.classes()).toContain('alarms-list-table__table--fixed');
+    expect(table.attributes('style')).toContain('--alarms-list-table-width: 440px');
+    expect(table.props('headers')).toEqual([
+      expect.objectContaining({ value: 'label', width: '320px', minWidth: '320px' }),
+      expect.objectContaining({ value: 'actions', width: '120px', minWidth: '120px' }),
+    ]);
+  });
+
+  test('Uses resized column widths instead of frozen virtual scroll widths', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        resizableColumn: true,
+      },
+    });
+    const table = selectTable(wrapper);
+
+    await flushPromises();
+
+    wrapper.vm.virtualScrollColumnsWidth = {
+      label: 320,
+      actions: 120,
+    };
+    wrapper.vm.setColumnsWidth({
+      label: 240,
+      actions: 80,
+    });
+    await flushPromises();
+
+    expect(table.props('headers')).toEqual([
+      expect.objectContaining({
+        value: 'label',
+        width: 'var(--alarms-list-table-column-width-0, 240px)',
+        minWidth: 'var(--alarms-list-table-column-width-0, 240px)',
+      }),
+      expect.objectContaining({
+        value: 'actions',
+        width: 'var(--alarms-list-table-column-width-1, 80px)',
+        minWidth: 'var(--alarms-list-table-column-width-1, 80px)',
+      }),
+    ]);
+    expect(table.attributes('style')).toContain('--alarms-list-table-width: 320px');
+  });
+
+  test('Hides horizontal scrollbars while a column is being resized', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        stickyHorizontalScroll: true,
+      },
+    });
+    const table = selectTable(wrapper);
+    const horizontalScrollbar = selectHorizontalScrollbar(wrapper);
+
+    expect(table.classes()).not.toContain('alarms-list-table__table--resizing');
+    expect(horizontalScrollbar.classes()).not.toContain(
+      'alarms-list-table__horizontal-scrollbar--hidden',
+    );
+
+    wrapper.vm.resizingColumnIndex = 0;
+    await flushPromises();
+
+    expect(table.classes()).toContain('alarms-list-table__table--resizing');
+    expect(horizontalScrollbar.classes()).toContain(
+      'alarms-list-table__horizontal-scrollbar--hidden',
+    );
+  });
+
+  test('Recalculates the sticky horizontal scrollbar before showing it after resize', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        stickyHorizontalScroll: true,
+      },
+    });
+    const horizontalScrollbar = selectHorizontalScrollbar(wrapper);
+
+    await flushPromises();
+
+    const setWidth = vi.spyOn(wrapper.vm, 'setHorizontalScrollbarWidth');
+    const calculatePosition = vi.spyOn(wrapper.vm, 'calculateScrollPosition');
+    const setPosition = vi.spyOn(wrapper.vm, 'setHorizontalScrollPosition');
+    let animationFrameCallback;
+    const requestAnimationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        animationFrameCallback = callback;
+
+        return 1;
+      });
+
+    wrapper.vm.resizingColumnIndex = 0;
+    wrapper.vm.refreshHorizontalScrollbarAfterColumnResize();
+    wrapper.vm.resizingColumnIndex = null;
+    await wrapper.vm.$nextTick();
+
+    expect(horizontalScrollbar.classes()).toContain(
+      'alarms-list-table__horizontal-scrollbar--hidden',
+    );
+    expect(setWidth).not.toHaveBeenCalled();
+
+    animationFrameCallback();
+    await wrapper.vm.$nextTick();
+
+    expect(setWidth).toHaveBeenCalledOnce();
+    expect(calculatePosition).toHaveBeenCalledOnce();
+    expect(setPosition).toHaveBeenCalledOnce();
+    expect(horizontalScrollbar.classes()).not.toContain(
+      'alarms-list-table__horizontal-scrollbar--hidden',
+    );
+
+    requestAnimationFrame.mockRestore();
   });
 
   test('Pagination update event emitted after trigger update pagination', async () => {

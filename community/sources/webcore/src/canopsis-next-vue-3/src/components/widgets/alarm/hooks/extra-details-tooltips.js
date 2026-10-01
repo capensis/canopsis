@@ -129,7 +129,7 @@ export const useExtraDetailsParentsTooltip = (props) => {
 
     return `<div class="text-md-center">
           <strong>${t('alarm.actions.iconsTitles.grouping')}</strong>
-          <div class="v-layout column">
+          <div class="d-flex flex-column">
             <div>${t('common.rule', props.rules.length)}&nbsp;:</div>
             ${rulesContent}
           </div>

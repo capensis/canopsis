@@ -53,3 +53,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-data-table-header__span--ellipsis {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

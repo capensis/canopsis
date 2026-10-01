@@ -88,9 +88,11 @@ export default {
       return wrapper.innerHTML;
     },
 
-    renderMermaid() {
+    async renderMermaid() {
       try {
-        this.svg = this.normalizeSvgHeight(renderMermaid(this.value, this.resultConfig));
+        const svg = await renderMermaid(this.value, this.resultConfig);
+
+        this.svg = this.normalizeSvgHeight(svg);
 
         this.parsed = true;
       } catch (err) {

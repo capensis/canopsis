@@ -143,8 +143,10 @@ describe('c-pbehavior-type-field', () => {
 
     await flushPromises();
     wrapper.findComponent(lazySearchFieldStub).vm.$emit('update:value', pbehaviorTypes[0]);
+    await flushPromises();
 
     expect(wrapper).toEmitInput(pbehaviorTypes[0]._id);
+    expect(wrapper.emitted('update:selected-items').at(-1)).toEqual([pbehaviorTypes.slice(0, 1)]);
   });
 
   test('Emits selected PBehavior type objects for a multiple object field', async () => {

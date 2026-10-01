@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
+    :width="320"
     class="flowchart-sidebar"
-    width="100%"
     permanent
     touchless
     absolute

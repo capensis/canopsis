@@ -88,7 +88,7 @@ export const useWidgetSettings = ({ sidebar, localWidget = false } = {}) => {
   const submit = async () => {
     await nextTick();
 
-    const { valid: isFormValid } = await validationForm.validate();
+    const isFormValid = await validationForm.validateForSubmit();
 
     if (!isFormValid) {
       scrollToFirstError();

@@ -1,8 +1,9 @@
 <template>
-  <c-layout class="alarm-counters" column>
+  <div class="alarm-counters d-flex flex-column">
     <c-tooltip
       v-for="counter in preparedCounters.selected"
       :key="counter.key"
+      :theme="$system.dark ? 'dark' : 'light'"
       location="top"
     >
       <template #activator="{ props: tooltipProps }">
@@ -15,7 +16,11 @@
       <span>{{ counter.name }}</span>
     </c-tooltip>
 
-    <c-tooltip v-if="otherCountersValue" location="top">
+    <c-tooltip
+      v-if="otherCountersValue"
+      :theme="$system.dark ? 'dark' : 'light'"
+      location="top"
+    >
       <template #activator="{ props: tooltipProps }">
         <alarm-counter
           :count="otherCountersValue"
@@ -28,13 +33,15 @@
         <span>: {{ otherCounter.count }}</span>
       </div>
     </c-tooltip>
-  </c-layout>
+  </div>
 </template>
 
 <script>
 import AlarmCounter from './alarm-counter.vue';
 
 export default {
+  inject: ['$system'],
+
   components: {
     AlarmCounter,
   },

@@ -209,6 +209,9 @@ export default {
   [MODALS.entitiesRootCauseDiagram]: defineAsyncComponent(
     () => import('./entity/entities-root-cause-diagram.vue'),
   ),
+  [MODALS.entityDependenciesList]: defineAsyncComponent(
+    () => import('./entity/entity-dependencies-list.vue'),
+  ),
   [MODALS.createService]: defineAsyncComponent(() => import('./service/create-service.vue')),
   [MODALS.createIcon]: defineAsyncComponent(() => import('./icon/create-icon.vue')),
   [MODALS.createMap]: defineAsyncComponent(() => import('./map/create-map.vue')),

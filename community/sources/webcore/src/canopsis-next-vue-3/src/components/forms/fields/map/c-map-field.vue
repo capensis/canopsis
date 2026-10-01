@@ -7,6 +7,7 @@
     :disabled="disabled"
     :name="name"
     :hide-details="hideDetails"
+    :required="required"
     item-title="name"
     item-value="_id"
     clearable

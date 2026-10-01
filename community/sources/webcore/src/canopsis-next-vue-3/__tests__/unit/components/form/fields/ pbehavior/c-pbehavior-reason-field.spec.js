@@ -138,8 +138,10 @@ describe('c-pbehavior-reason-field', () => {
 
     await flushPromises();
     wrapper.findComponent(lazySearchFieldStub).vm.$emit('update:value', pbehaviorReasons[0]);
+    await flushPromises();
 
     expect(wrapper).toEmitInput(pbehaviorReasons[0]._id);
+    expect(wrapper.emitted('update:selected-items').at(-1)).toEqual([pbehaviorReasons.slice(0, 1)]);
   });
 
   test('Emits the selected PBehavior reason object', async () => {

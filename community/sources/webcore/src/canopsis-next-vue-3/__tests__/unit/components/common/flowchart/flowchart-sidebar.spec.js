@@ -87,6 +87,17 @@ describe('flowchart-sidebar', () => {
 
   const factory = generateShallowRenderer(FlowchartSidebar, { stubs });
 
+  test('Sidebar uses the fixed editor toolbar width', () => {
+    const wrapper = factory({
+      propsData: {
+        shapes: {},
+        viewBox,
+      },
+    });
+
+    expect(wrapper.findComponent({ name: 'VNavigationDrawer' }).props('width')).toBe(320);
+  });
+
   test('Rect shape added after trigger button', async () => {
     const id = Faker.datatype.string();
     uid.mockReturnValueOnce(id);

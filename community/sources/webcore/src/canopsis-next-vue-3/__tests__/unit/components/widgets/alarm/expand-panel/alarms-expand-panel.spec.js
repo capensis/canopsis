@@ -2,7 +2,7 @@ import { fakeAlarmDetails } from '@unit/data/alarm';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
-import { CANOPSIS_EDITION, ENTITY_TYPES, USER_PERMISSIONS } from '@/constants';
+import { CANOPSIS_EDITION, ENTITY_TYPES, GRID_SIZES, USER_PERMISSIONS } from '@/constants';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -86,6 +86,34 @@ describe('alarms-expand-panel', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it.each([undefined, null, []])(
+    'Uses the full grid width when expandGridRangeSize is %s',
+    (expandGridRangeSize) => {
+      const range = AlarmsExpandPanel.computed.expandGridRangeSize.call({
+        widget: {
+          parameters: {
+            expandGridRangeSize,
+          },
+        },
+      });
+
+      expect(range).toEqual([GRID_SIZES.min, GRID_SIZES.max]);
+    },
+  );
+
+  it('Uses the configured expand grid range size', () => {
+    const expandGridRangeSize = [2, 10];
+    const range = AlarmsExpandPanel.computed.expandGridRangeSize.call({
+      widget: {
+        parameters: {
+          expandGridRangeSize,
+        },
+      },
+    });
+
+    expect(range).toBe(expandGridRangeSize);
   });
 
   it('Tab key updated after change moreInfoTemplate', async () => {

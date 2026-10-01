@@ -69,4 +69,15 @@ describe('c-map-field', () => {
 
     expect(wrapper).toEmitInput(map._id);
   });
+
+  it('Required state forwarded to select field', () => {
+    const wrapper = factory({
+      propsData: {
+        required: true,
+      },
+      store,
+    });
+
+    expect(selectSelectField(wrapper).attributes('required')).toBeDefined();
+  });
 });

@@ -192,7 +192,12 @@
       </template>
     </v-data-table-server>
 
-    <c-horizontal-scrollbar v-if="stickyHorizontalScroll" ref="horizontalScrollbar" />
+    <c-horizontal-scrollbar
+      v-if="stickyHorizontalScroll"
+      ref="horizontalScrollbar"
+      :class="{ 'alarms-list-table__horizontal-scrollbar--hidden': isHorizontalScrollbarHidden }"
+      class="alarms-list-table__horizontal-scrollbar"
+    />
     </template>
   </div>
 </template>
@@ -374,6 +379,8 @@ export default {
       expandedAlarmIds: [],
       asyncBootingActionsPanel: new AsyncBooting(),
       bootedRows: {},
+      virtualScrollColumnsWidth: {},
+      recalculatingHorizontalScrollbar: false,
     };
   },
 
@@ -434,6 +441,10 @@ export default {
 
     isColumnsChanging() {
       return this.resizingMode || this.draggingMode;
+    },
+
+    isHorizontalScrollbarHidden() {
+      return this.isColumnResizing || this.recalculatingHorizontalScrollbar;
     },
 
     baseHeaders() {
@@ -527,18 +538,27 @@ export default {
     },
 
     headersWithWidth() {
-      if (!this.resizableColumn) {
+      const hasVirtualScrollColumnsWidth = Object.keys(this.virtualScrollColumnsWidth).length > 0;
+
+      if (!this.resizableColumn && !hasVirtualScrollColumnsWidth) {
         return this.headers;
       }
 
-      return this.headers.map((header) => {
-        const width = this.getColumnWidthByField(header.value);
-        const columnWidth = header.width ? header.width : width && `${width}px`;
+      return this.headers.map((header, index) => {
+        const virtualScrollWidth = this.virtualScrollColumnsWidth[header.value];
+        const configuredWidth = this.getColumnWidthByField(header.value);
+        const columnWidth = this.resizableColumn
+          ? header.width || (configuredWidth && `${configuredWidth}px`)
+          : (virtualScrollWidth && `${virtualScrollWidth}px`) || header.width;
+        const preparedColumnWidth = isNumber(columnWidth) ? `${columnWidth}px` : columnWidth;
+        const renderedColumnWidth = this.resizableColumn && preparedColumnWidth
+          ? `var(${this.getColumnWidthCssVariable(index)}, ${preparedColumnWidth})`
+          : preparedColumnWidth;
 
         return {
           ...header,
-          width: columnWidth,
-          minWidth: columnWidth,
+          width: renderedColumnWidth,
+          minWidth: renderedColumnWidth,
         };
       });
     },
@@ -548,21 +568,32 @@ export default {
     },
 
     tableStyle() {
+      const style = {};
+
       if (this.resizableColumn) {
-        return {
-          '--alarms-list-table-width': this.sumOfColumnsWidth
-            ? `${this.sumOfColumnsWidth}px`
-            : '100%',
-        };
+        style['--alarms-list-table-width'] = this.sumOfColumnsWidth
+          ? `${this.sumOfColumnsWidth}px`
+          : '100%';
+      } else if (Object.keys(this.virtualScrollColumnsWidth).length) {
+        const tableWidth = Object.values(this.virtualScrollColumnsWidth).reduce(
+          (sum, width) => sum + width,
+          0,
+        );
+
+        style['--alarms-list-table-width'] = `${tableWidth}px`;
       }
 
-      return {};
+      return style;
     },
 
     tableClasses() {
       return {
         table__grid: this.isColumnsChanging,
-        'alarms-list-table__table--fixed': this.resizableColumn || this.draggableColumn,
+        'alarms-list-table__table--fixed':
+          this.resizableColumn ||
+          this.draggableColumn ||
+          Object.keys(this.virtualScrollColumnsWidth).length > 0,
+        'alarms-list-table__table--resizing': this.isHorizontalScrollbarHidden,
         'alarms-list-table__table--sticky-header': this.stickyHeader,
         'alarms-list-table__table--sticky-horizontal-scroll': this.stickyHorizontalScroll,
         'alarms-list-table__table--wrapped': this.isCellContentWrapped,
@@ -700,6 +731,7 @@ export default {
       }
 
       this.scheduleActionsPanelBooting();
+      this.scheduleVirtualScrollColumnsWidthCapture();
     },
 
     defaultKeepSelectedAfterAction(value) {
@@ -751,8 +783,18 @@ export default {
     resizableColumn: {
       immediate: true,
       handler(newResizableColumn) {
-        if (newResizableColumn && this.isEmptyColumnsWidthByField) {
-          this.$nextTick(() => this.calculateColumnsWidths());
+        if (newResizableColumn) {
+          this.virtualScrollColumnsWidth = {};
+
+          if (this.isEmptyColumnsWidthByField) {
+            this.$nextTick(() => this.calculateColumnsWidths());
+          }
+
+          return;
+        }
+
+        if (this.preparedWidget.parameters.isVirtualScrollEnabled) {
+          this.scheduleVirtualScrollColumnsWidthCapture();
         }
       },
     },
@@ -785,10 +827,18 @@ export default {
         if (isVirtualScrollEnabled) {
           this.$intersectionObserver.connect();
 
+          if (
+            this.alarms.length &&
+            this.alarms.every(({ _id: id }) => this.bootedRows[id])
+          ) {
+            this.scheduleVirtualScrollColumnsWidthCapture();
+          }
+
           return;
         }
 
         this.$intersectionObserver.disconnect();
+        this.virtualScrollColumnsWidth = {};
       },
     },
   },
@@ -807,6 +857,7 @@ export default {
 
     if (this.eager) {
       this.scheduleActionsPanelBooting();
+      this.scheduleVirtualScrollColumnsWidthCapture();
     } else {
       this.setBootedRows(this.alarms);
     }
@@ -821,6 +872,57 @@ export default {
   },
 
   methods: {
+    refreshHorizontalScrollbarAfterColumnResize() {
+      if (!this.stickyHorizontalScroll) {
+        return;
+      }
+
+      this.recalculatingHorizontalScrollbar = true;
+
+      this.$nextTick(() => {
+        window.requestAnimationFrame(() => {
+          this.setHorizontalScrollbarWidth();
+          this.calculateScrollPosition();
+          this.setHorizontalScrollPosition();
+          this.recalculatingHorizontalScrollbar = false;
+        });
+      });
+    },
+
+    captureVirtualScrollColumnsWidth() {
+      if (
+        !this.preparedWidget.parameters.isVirtualScrollEnabled ||
+        Object.keys(this.virtualScrollColumnsWidth).length ||
+        this.resizableColumn ||
+        this.draggableColumn ||
+        !this.headerCells.length
+      ) {
+        return;
+      }
+
+      const columnsWidth = [...this.headerCells].reduce((acc, headerElement) => {
+        const { value } = headerElement.dataset;
+        const width = headerElement.getBoundingClientRect().width || headerElement.offsetWidth;
+
+        if (value && width) {
+          acc[value] = width;
+        }
+
+        return acc;
+      }, {});
+
+      if (Object.keys(columnsWidth).length === this.headers.length) {
+        this.virtualScrollColumnsWidth = columnsWidth;
+        this.$nextTick(() => this.$intersectionObserver.connect());
+      }
+    },
+
+    scheduleVirtualScrollColumnsWidthCapture() {
+      this.$nextTick(() => {
+        window.requestAnimationFrame(this.captureVirtualScrollColumnsWidth);
+      });
+    },
+
     scheduleActionsPanelBooting() {
       this.$nextTick(() => {
         window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
@@ -855,6 +957,8 @@ export default {
 
       if (!deferredRows.length) {
         window.requestAnimationFrame(() => {
+          this.captureVirtualScrollColumnsWidth();
+
           if (this.stickyHorizontalScroll) {
             this.setHorizontalScrollbarWidth();
             this.calculateScrollPosition();
@@ -886,7 +990,10 @@ export default {
           duration,
           onComplete: () => {
             this.$cancelBootedRowsRendering = null;
-            window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
+            window.requestAnimationFrame(() => {
+              this.captureVirtualScrollColumnsWidth();
+              this.asyncBootingActionsPanel.run();
+            });
           },
         },
       );
@@ -1153,6 +1260,17 @@ export default {
     }
   }
 
+  &.alarms-list-table__table--resizing {
+    > .v-table__wrapper {
+      scrollbar-color: transparent transparent;
+
+      &::-webkit-scrollbar-thumb,
+      &::-webkit-scrollbar-track {
+        visibility: hidden;
+      }
+    }
+  }
+
   &.alarms-list-table__table--sticky-header {
     thead {
       position: relative;
@@ -1231,6 +1349,11 @@ export default {
       }
     }
   }
+}
+
+.alarms-list-table__horizontal-scrollbar--hidden {
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .alarms-list-table__select-all {

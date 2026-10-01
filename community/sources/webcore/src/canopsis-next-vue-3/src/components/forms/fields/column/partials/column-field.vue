@@ -27,6 +27,7 @@
           class="flex-grow-1"
           item-title="text"
           item-value="value"
+          required
           @update:model-value="changeColumn"
         />
         <c-tooltip v-if="!withoutCustomLabel" location="left">

@@ -62,6 +62,12 @@ export const widgetStickyAlarmMixin = {
   },
 
   watch: {
+    activeViewScreenMode() {
+      if (this.someSticky) {
+        this.scheduleStickyScrollHandler();
+      }
+    },
+
     stickyFlagsArray() {
       if (this.someSticky) {
         this.scheduleStickyScrollHandler();
