@@ -336,6 +336,12 @@ viewtabs:
     position: 0
 
 widget_templates:
+  tpl_default_ticket_formats:
+    <<: *widget_tpl
+    _id: 62500000-0000-4000-8000-000000000001
+    title: Default ticket formats
+    type: ticket_formats
+    formats: []
   tpl_alarm_columns:
     <<: *widget_tpl
     title: Default columns

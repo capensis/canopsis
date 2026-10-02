@@ -9,6 +9,9 @@ import (
 
 func ValidateEditRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
+	if r.Type != view.WidgetTemplateTypeTicketFormats && len(r.Formats) > 0 {
+		sl.ReportError(r.Formats, "Formats", "Formats", "must_be_empty", "")
+	}
 
 	switch r.Type {
 	case view.WidgetTemplateTypeAlarmColumns,
@@ -92,6 +95,19 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 		if r.Content != "" {
 			sl.ReportError(r.Content, "Content", "Content", "must_be_empty", "")
+		}
+	case view.WidgetTemplateTypeTicketFormats:
+		if len(r.Columns) > 0 {
+			sl.ReportError(r.Columns, "Columns", "Columns", "must_be_empty", "")
+		}
+		if r.Content != "" {
+			sl.ReportError(r.Content, "Content", "Content", "must_be_empty", "")
+		}
+		if len(r.Actions) > 0 {
+			sl.ReportError(r.Actions, "Actions", "Actions", "must_be_empty", "")
+		}
+		if len(r.SortColumns) > 0 {
+			sl.ReportError(r.SortColumns, "SortColumns", "SortColumns", "must_be_empty", "")
 		}
 	default:
 		// do nothing
