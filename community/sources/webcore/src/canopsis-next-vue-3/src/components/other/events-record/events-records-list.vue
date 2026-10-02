@@ -114,11 +114,11 @@ export default {
 
     const headers = computed(() => [
       { text: '', value: 'loader', sortable: false },
-      { text: t('eventsRecord.recordingStart'), value: 't', sortable: false },
-      { text: t('eventsRecord.recordingEnd'), value: 'e', sortable: false },
+      { text: t('eventsRecord.recordingStart'), value: 't' },
+      { text: t('eventsRecord.recordingEnd'), value: 'e' },
       { text: t('eventsRecord.duration'), value: 'd', sortable: false },
-      { text: t('eventsRecord.eventsCount'), value: 'count', sortable: false },
-      { text: t('eventsRecord.launchedBy'), value: 'author.display_name', sortable: false },
+      { text: t('eventsRecord.eventsCount'), value: 'count' },
+      { text: t('eventsRecord.launchedBy'), value: 'author.display_name' },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 

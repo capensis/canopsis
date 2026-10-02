@@ -159,7 +159,6 @@ export default {
         {
           text: this.$t('remediation.instruction.table.monthExecutions'),
           value: 'month_executions',
-          sortable: false,
         },
         {
           text: this.$t('remediation.instruction.table.lastExecutedOn'),

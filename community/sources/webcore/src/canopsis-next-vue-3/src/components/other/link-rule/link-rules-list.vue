@@ -84,7 +84,7 @@ export default {
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
       { text: t('common.lastModifiedOn'), value: 'updated' },
       { text: t('common.lastModifiedBy'), value: 'author.display_name' },
       {

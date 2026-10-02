@@ -153,7 +153,6 @@ export default {
       {
         text: t('common.enabled'),
         value: 'enabled',
-        sortable: false,
       },
       {
         text: t('common.actionsLabel'),

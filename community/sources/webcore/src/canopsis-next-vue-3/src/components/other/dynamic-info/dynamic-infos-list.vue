@@ -108,7 +108,7 @@ export default {
       { text: t('common.id'), value: '_id' },
       { text: t('common.name'), value: 'name' },
       { text: t('common.description'), value: 'description', sortable: false },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
       { text: t('common.author'), value: 'author.display_name' },
       { text: t('common.created'), value: 'created' },
       { text: t('common.updated'), value: 'updated' },

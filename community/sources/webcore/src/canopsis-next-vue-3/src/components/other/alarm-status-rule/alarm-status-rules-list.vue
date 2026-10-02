@@ -110,7 +110,7 @@ export default {
         { text: t('common.name'), value: 'name' },
         { text: t('common.duration'), value: 'duration', sortable: false },
         { text: t('common.priority'), value: 'priority' },
-        { text: t('common.enabled'), value: 'enabled', sortable: false },
+        { text: t('common.enabled'), value: 'enabled' },
         props.flapping && { text: t('common.frequencyLimit'), value: 'freq_limit' },
         { text: t('common.author'), value: 'author.display_name' },
         { text: t('common.actionsLabel'), value: 'actions', sortable: false },

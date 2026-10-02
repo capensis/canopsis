@@ -64,7 +64,7 @@ export default {
     headers() {
       const headers = [
         { title: this.$t('common.title'), key: 'title' },
-        { title: this.$t('common.type'), key: 'type', sortable: false },
+        { title: this.$t('common.type'), key: 'type' },
         { title: this.$t('common.lastModifiedOn'), key: 'updated' },
       ];
 

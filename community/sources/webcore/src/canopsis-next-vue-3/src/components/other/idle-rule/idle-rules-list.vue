@@ -111,8 +111,8 @@ export default {
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
       { text: t('common.type'), value: 'type' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
-      { text: t('common.action'), value: 'operation.type', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.action'), value: 'operation.type' },
       { text: t('idleRules.timeAwaiting'), value: 'duration', sortable: false },
       { text: t('common.priority'), value: 'priority' },
       { text: t('common.author'), value: 'author.display_name' },

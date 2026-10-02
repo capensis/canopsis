@@ -47,14 +47,14 @@
           :optionally="optionally"
           @update:form="updateModel"
         />
-        <request-form
+        <request-with-token-form
           v-else
-          :form="form.request"
+          :form="form"
           :name="`${name}.request`"
           :disabled="disabled"
           :payload-variables="variables"
           :url-variables="variables"
-          @update:form="updateField('request', $event)"
+          @update:form="updateModel"
         />
         <c-alert v-if="serverErrorMessages.length" type="error">
           {{ serverErrorMessages.join('\n') }}
@@ -76,13 +76,13 @@ import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { useComponentInstance } from '@/hooks/vue';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 
 import ExternalDataTableForm from './external-data-table-form.vue';
 
 export default {
   emits: ['update:form'],
-  components: { RequestForm, ExternalDataTableForm },
+  components: { RequestWithTokenForm, ExternalDataTableForm },
   props: {
     form: {
       type: Object,

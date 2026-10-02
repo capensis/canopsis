@@ -90,27 +90,22 @@ export default {
       {
         text: t('common.connectorName'),
         value: 'name',
-        sortable: false,
       },
       {
         text: t('common.enabled'),
         value: 'enabled',
-        sortable: false,
       },
       {
         text: t('common.created'),
         value: 'created',
-        sortable: false,
       },
       {
         text: t('common.updated'),
         value: 'updated',
-        sortable: false,
       },
       {
         text: t('common.author'),
         value: 'author.display_name',
-        sortable: false,
       },
       {
         text: t('common.actionsLabel'),
