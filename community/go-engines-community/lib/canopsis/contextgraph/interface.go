@@ -17,6 +17,8 @@ import (
 type ServicePauseChanges struct {
 	// ServicePause is the pause which the dependencies inherit from the service, nil if it's not paused.
 	ServicePause *types.LatestPause
+	// ServiceName is used in the resume message of the dependencies.
+	ServiceName string
 	// ToPause are the new dependencies of the paused service.
 	ToPause []types.Entity
 	// ToResume are the removed dependencies which are paused by the service.
