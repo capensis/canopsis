@@ -116,10 +116,10 @@ export default {
 
     const headers = computed(() => [
       { text: t('common.id'), value: '_id' },
-      { text: t('common.type'), value: 'type', sortable: false },
+      { text: t('common.type'), value: 'type' },
       { text: t('common.priority'), value: 'priority' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
-      { text: t('common.error', 2), value: 'unread_failures_count', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.error', 2), value: 'unread_failures_count' },
       { text: t('common.author'), value: 'author.display_name' },
       { text: t('common.created'), value: 'created' },
       { text: t('common.updated'), value: 'updated' },

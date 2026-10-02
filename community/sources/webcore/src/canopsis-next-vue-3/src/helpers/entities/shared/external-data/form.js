@@ -5,7 +5,12 @@ import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants'
 import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 import { uid } from '@/helpers/uid';
 
-import { formToRequest, requestToForm } from '../request/form';
+import {
+  formToRequest,
+  formToRequestAuthToken,
+  requestAuthTokenToForm,
+  requestToForm,
+} from '../request/form';
 
 /**
  * @typedef {'mongo' | 'api'} ExternalDataType
@@ -28,6 +33,7 @@ import { formToRequest, requestToForm } from '../request/form';
  * @property {string} [sort]
  * @property {boolean} [optional]
  * @property {Request} [request]
+ * @property {RequestAuthToken} [auth_token]
  */
 
 /**
@@ -44,6 +50,7 @@ import { formToRequest, requestToForm } from '../request/form';
 /**
  * @typedef {Object & ObjectKey} ExternalDataItemForm
  * @property {RequestForm} request
+ * @property {RequestAuthTokenForm} auth_token
  * @property {string} reference
  * @property {ExternalDataType} type
  * @property {string} table
@@ -114,7 +121,8 @@ export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table 
   key: uid(),
   reference: item.reference,
   type: item.type,
-  request: requestToForm(item.request),
+  request: requestToForm(item.request, item.auth_token),
+  auth_token: requestAuthTokenToForm(item.auth_token),
   sort_by: item.sort_by,
   sort: item.sort,
   optional: item.optional ?? false,
@@ -159,9 +167,17 @@ export const formToExternalData = (form = []) =>
     const { type, reference } = externalData;
 
     return isApiExternalDataType(type)
-      ? { reference, type, request: formToRequest(externalData.request) }
+      ? {
+          reference,
+          type,
+          request: formToRequest(externalData.request),
+          auth_token: formToRequestAuthToken(
+            externalData.auth_token,
+            externalData.request.auth?.type,
+          ),
+        }
       : {
-          ...omit(externalData, ['request']),
+          ...omit(externalData, ['request', 'auth_token']),
           ...formToExternalDataConditions(externalData.conditions),
         };
   });

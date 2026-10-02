@@ -145,37 +145,31 @@ export default {
         {
           text: t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
-          sortable: false,
           width: 140,
         },
         {
           text: t('remediation.instructionStat.averageAlarmOkTimeout'),
           value: 'avg_alarm_ok_timeout',
-          sortable: false,
           width: 100,
         },
         {
           text: t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
-          sortable: false,
           width: 100,
         },
         {
           text: t('remediation.instructionStat.averageSuccessfulAllOk'),
           value: 'avg_successful',
-          sortable: false,
           width: 100,
         },
         {
           text: t('remediation.instructionStat.alarmStates'),
           value: 'alarm_states',
-          sortable: false,
           width: 300,
         },
         {
           text: t('remediation.instructionStat.okAlarmStates'),
           value: 'ok_alarm_states',
-          sortable: false,
           width: 90,
         },
         { text: t('common.rating'), value: 'rating', sortable: false, width: 230 },

@@ -191,7 +191,7 @@ export default {
       { text: t('common.created'), value: PBEHAVIOR_LIST_FIELDS.created },
       { text: t('common.updated'), value: PBEHAVIOR_LIST_FIELDS.updated },
       { text: t('pbehavior.lastAlarmDate'), value: PBEHAVIOR_LIST_FIELDS.lastAlarmDate },
-      { text: t('pbehavior.alarmCount'), value: PBEHAVIOR_LIST_FIELDS.alarmCount, sortable: false },
+      { text: t('pbehavior.alarmCount'), value: PBEHAVIOR_LIST_FIELDS.alarmCount },
       { text: t('pbehavior.alarmFilteringTime'), value: PBEHAVIOR_LIST_FIELDS.patternMs },
       { text: t('pbehavior.lastFilteringDate'), value: PBEHAVIOR_LIST_FIELDS.patternExecAt },
       { text: t('common.icon', 1), value: PBEHAVIOR_LIST_FIELDS.typeIcon },

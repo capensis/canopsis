@@ -26,7 +26,7 @@
       />
     </template>
 
-    <template #visible="{ item }">
+    <template #hidden="{ item }">
       <c-enabled :value="!item.hidden" />
     </template>
 
@@ -99,7 +99,10 @@ export default {
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
-      { text: t('pbehavior.visible'), value: 'visible', sortable: false },
+      /**
+       * The column displays visibility, but uses the hidden field supported by the API for sorting.
+       */
+      { text: t('pbehavior.visible'), value: 'hidden' },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
