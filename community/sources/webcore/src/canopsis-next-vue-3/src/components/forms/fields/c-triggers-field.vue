@@ -44,6 +44,9 @@
         </span>
       </c-tooltip>
     </template>
+    <template #subheader="{ props: subheaderProps }">
+      <v-list-subheader v-bind="subheaderProps" />
+    </template>
     <template #item="{ item, props: itemProps }">
       <v-list-item
         v-bind="itemProps"
@@ -98,17 +101,19 @@
 import { find } from 'lodash';
 import { computed, ref, toRef, watch } from 'vue';
 
-import { TRIGGERS_TYPES, PRO_TRIGGERS } from '@/constants';
+import { TRIGGERS_TYPES } from '@/constants';
 
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 import { setSeveralFields } from '@/helpers/immutable';
 
 import { useField, useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import {
+  DEFAULT_TRIGGERS_TRANSLATION_PREFIX,
+  usePreparedTriggers,
+} from '@/hooks/form/triggers';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
-
-const DEFAULT_TRANSLATION_PREFIX = 'common.triggers';
 
 export default {
   props: {
@@ -142,7 +147,7 @@ export default {
     },
     translationKeyPrefix: {
       type: String,
-      default: DEFAULT_TRANSLATION_PREFIX,
+      default: DEFAULT_TRIGGERS_TRANSLATION_PREFIX,
     },
   },
   emits: ['update:modelValue'],
@@ -151,7 +156,7 @@ export default {
       [TRIGGERS_TYPES.eventscount]: 'threshold',
     };
 
-    const { t, te } = useI18n();
+    const { t } = useI18n();
     const { updateModel, removeItemFromArray } = useArrayModelField(props, emit);
     const { isProVersion, eventsCountTriggerDefaultThreshold } = useInfo();
 
@@ -187,38 +192,17 @@ export default {
       [TRIGGERS_TYPES.eventscount]: eventsCountTriggerDefaultThreshold.value ?? '',
     }));
 
-    const getTriggerTranslationKey = (type) => {
-      const key = `${props.translationKeyPrefix}.${type}`;
+    const {
+      preparedTriggers,
+      triggerToPreparedTrigger,
+      getTriggerSelectedText,
+    } = usePreparedTriggers({
+      types: toRef(props, 'types'),
+      translationKeyPrefix: toRef(props, 'translationKeyPrefix'),
+      isProVersion,
+      preparedTriggersByTypes,
+    });
 
-      return props.translationKeyPrefix !== DEFAULT_TRANSLATION_PREFIX && te(`${key}.text`)
-        ? key
-        : `${DEFAULT_TRANSLATION_PREFIX}.${type}`;
-    };
-
-    const triggerToPreparedTrigger = (trigger = {}) => {
-      const { type } = trigger;
-      const triggerKey = getTriggerTranslationKey(type);
-
-      return {
-        ...trigger,
-
-        text: te(`${triggerKey}.text`) ? t(`${triggerKey}.text`) : type,
-        helpText: te(`${triggerKey}.helpText`) ? t(`${triggerKey}.helpText`) : '',
-        deprecated: isDeprecatedTrigger(type),
-      };
-    };
-
-    const preparedTriggers = computed(() => props.types.reduce((acc, type) => {
-        if (!PRO_TRIGGERS.includes(type) || isProVersion.value) {
-          acc.push(triggerToPreparedTrigger({
-            ...preparedTriggersByTypes.value[type],
-            type,
-          }));
-        }
-
-        return acc;
-      }, []),
-    );
     const selectedTriggers = computed(() => props.modelValue.map((trigger) => {
         const preparedTrigger = preparedTriggers.value.find(({ type }) => type === trigger.type);
 
@@ -282,12 +266,11 @@ export default {
      * @return {VueI18n.TranslateResult|*}
      */
     const getSelectedText = (trigger = {}) => {
-      const { type, text } = trigger;
+      const { type } = trigger;
       const additionalValueKey = additionalValuesKeysByTriggers[type];
       const additionalValue = additionalValueKey ? trigger[additionalValueKey] : undefined;
-      const messageKey = `${getTriggerTranslationKey(type)}.selectedText`;
 
-      return te(messageKey) ? t(messageKey, { additionalValue }) : text;
+      return getTriggerSelectedText(trigger, { additionalValue });
     };
 
     /**

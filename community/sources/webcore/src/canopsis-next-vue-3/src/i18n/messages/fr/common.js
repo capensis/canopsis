@@ -548,98 +548,137 @@ export default {
     [PATTERN_OPERATORS.inRangeDates]: 'Dans l\'intervalle (dates)',
     [PATTERN_OPERATORS.inRangePeriod]: 'Dans l\'intervalle (période)',
   },
+  triggersGroups: {
+    general: 'Général',
+    pbehavior: 'Pbehavior',
+    tickets: 'Tickets',
+    instructions: 'Instructions',
+  },
   triggers: {
     [TRIGGERS_TYPES.create]: {
-      text: 'Alarme créée',
+      text: 'Créée',
+      selectedText: 'Alarme créée',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: 'Criticité de l\'alarme diminuée',
+      text: 'Criticité diminuée',
+      selectedText: 'Criticité de l\'alarme diminuée',
     },
     [TRIGGERS_TYPES.changestate]: {
-      text: 'Criticité de l\'alarme changée par l\'action "changer de criticité"',
+      text: 'Criticité changée par l\'action "changer de criticité"',
+      selectedText: 'Criticité de l\'alarme changée par l\'action "changer de criticité"',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: 'Criticité de l\'alarme augmentée',
+      text: 'Criticité augmentée',
+      selectedText: 'Criticité de l\'alarme augmentée',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: 'Statut de l\'alarme changé, par ex. flapping',
+      text: 'Statut changé, par ex. flapping',
+      selectedText: 'Statut de l\'alarme changé, par ex. flapping',
+    },
+    [TRIGGERS_TYPES.changedoutput]: {
+      text: 'Sortie modifiée',
+      selectedText: 'Alarme sortie modifiée',
+    },
+    [TRIGGERS_TYPES.changedlongoutput]: {
+      text: 'Sortie longue modifiée',
+      selectedText: 'Alarme sortie longue modifiée',
     },
     [TRIGGERS_TYPES.ack]: {
-      text: 'Alarme acquittée',
+      text: 'Acquittée',
+      selectedText: 'Alarme acquittée',
     },
     [TRIGGERS_TYPES.ackremove]: {
-      text: 'Alarme désacquittée',
+      text: 'Désacquittée',
+      selectedText: 'Alarme désacquittée',
     },
     [TRIGGERS_TYPES.cancel]: {
-      text: 'Alarme annulée',
+      text: 'Annulée',
+      selectedText: 'Alarme annulée',
     },
     [TRIGGERS_TYPES.uncancel]: {
-      text: 'Alarme désannulée',
+      text: 'Désannulée',
+      selectedText: 'Alarme désannulée',
       helpText:
         'Probablement un déclencheur hérité, car il n\'y a aucun moyen d\'annuler l\'alarme lorsque vous l\'annulez dans l\'interface utilisateur, mais il est possible d\'envoyer un événement d\'annulation via l\'API',
     },
     [TRIGGERS_TYPES.comment]: {
-      text: 'Alarme commentée',
+      text: 'Commentée',
+      selectedText: 'Alarme commentée',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: 'Ticket déclaré par l\'action de l\'interface utilisateur',
+      text: 'Ticket déclaré par l\'action de l\'interface',
+      selectedText: 'Ticket déclaré par l\'action de l\'interface utilisateur',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
-      text: 'Ticket déclaré par le webhook',
+      text: 'Ticket déclaré par webhook',
+      selectedText: 'Ticket déclaré par le webhook',
     },
     [TRIGGERS_TYPES.declareticketwebhookfail]: {
       text: 'La déclaration du ticket par le webhook a échoué',
     },
     [TRIGGERS_TYPES.assocticket]: {
-      text: 'Ticket associé à une alarme',
+      text: 'Ticket associé',
+      selectedText: 'Ticket associé à une alarme',
     },
     [TRIGGERS_TYPES.ticketremove]: {
       text: 'Ticket retiré',
     },
     [TRIGGERS_TYPES.snooze]: {
-      text: 'Alarme mise en veille',
+      text: 'Mise en veille',
+      selectedText: 'Alarme mise en veille',
     },
     [TRIGGERS_TYPES.unsnooze]: {
-      text: 'Alarme sortie de veille',
+      text: 'Sortie de veille',
+      selectedText: 'Alarme sortie de veille',
     },
     [TRIGGERS_TYPES.resolve]: {
-      text: 'Alarme résolue',
+      text: 'Résolue',
+      selectedText: 'Alarme résolue',
     },
     [TRIGGERS_TYPES.activate]: {
-      text: 'Alarme activée',
+      text: 'Activée',
+      selectedText: 'Alarme activée',
     },
     [TRIGGERS_TYPES.pbhenter]: {
-      text: 'Alarme entrée dans un pbehavior',
+      text: 'Entrée dans un pbehavior',
+      selectedText: 'Alarme entrée dans un pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: 'Alarme sortie d\'un pbehavior',
+      text: 'Sortie d\'un pbehavior',
+      selectedText: 'Alarme sortie d\'un pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
       text: 'Consigne manuelle en erreur',
+      selectedText: 'La consigne manuelle a échoué',
     },
     [TRIGGERS_TYPES.autoinstructionfail]: {
       text: 'Consigne automatique en erreur',
+      selectedText: 'La consigne automatique a échoué',
     },
     [TRIGGERS_TYPES.instructionjobfail]: {
       text: 'Job de consigne manuelle ou automatique en erreur',
+      selectedText: 'Le job de consigne manuelle ou automatique a échoué',
     },
     [TRIGGERS_TYPES.instructionjobcomplete]: {
       text: 'Job de consigne manuelle ou automatique terminé',
+      selectedText: 'Le job de consigne manuelle ou automatique est terminé',
     },
     [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Consigne manuelle terminée',
+      selectedText: 'La consigne manuelle est terminée',
     },
     [TRIGGERS_TYPES.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
+      selectedText: 'La consigne automatique est terminée',
     },
     [TRIGGERS_TYPES.autoinstructionresultok]: {
-      text: 'L\'alarme est en état OK après toutes les consignes automatiques',
+      text: 'Alarme en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.autoinstructionresultfail]: {
-      text: 'L\'alarme n\'est pas en état OK après toutes les consignes automatiques',
+      text: 'Alarme en état KO après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: 'L\'alarme a reçu N événements',
+      text: 'N événements reçus',
       selectedText: 'L\'alarme a reçu {additionalValue} événements',
       additionalFieldLabel: 'Nombre d\'événements',
     },
@@ -647,7 +686,6 @@ export default {
   repeatTriggers: {
     [TRIGGERS_TYPES.eventscount]: {
       text: 'L\'alarme a reçu un nouvel événement check',
-      selectedText: 'L\'alarme a reçu un nouvel événement check',
     },
   },
   request: {
