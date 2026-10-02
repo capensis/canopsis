@@ -413,10 +413,19 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		return types.Entity{}, pauseChanges, err
 	}
 
+	pauseChanges.ServiceName = service.Name
 	if !service.Enabled || service.ID == "" {
-		err := m.processDisabledService(ctx, serviceID, commRegister)
+		pauseChanges.ToResume, err = m.processDisabledService(ctx, serviceID, commRegister)
 		if err != nil {
 			return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: failed to process disabled service: %w", serviceID, err)
+		}
+
+		if service.Pause != nil {
+			// The pause of the service is ended, so it's not paused anymore if it's enabled again.
+			commRegister.RegisterUpdate(serviceID, bson.M{
+				"pause":            nil,
+				"latest_pause.end": datetime.NewCpsTime(),
+			})
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
@@ -1305,7 +1314,9 @@ func (m *manager) getEntity(ctx context.Context, id string) (*types.Entity, erro
 	return &eventEntity, nil
 }
 
-func (m *manager) processDisabledService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) error {
+// processDisabledService removes the disabled or deleted service from its dependencies and returns
+// the ones which have inherited its pause, so that they are resumed: the service cannot resume them anymore.
+func (m *manager) processDisabledService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) ([]types.Entity, error) {
 	var dependedEntities []types.Entity
 	cursor, err := m.entityCollection.Aggregate(
 		ctx,
@@ -1316,9 +1327,14 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 			{
 				"$project": bson.M{
 					"_id":                1,
+					"name":               1,
+					"type":               1,
+					"component":          1,
+					"connector":          1,
 					"services":           1,
 					"inherited_services": 1,
 					"services_to_add":    1,
+					"pause":              1,
 				},
 			},
 			{
@@ -1354,13 +1370,15 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 		},
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = cursor.All(ctx, &dependedEntities)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	var toResume []types.Entity
 
 	for _, ent := range dependedEntities {
 		commRegister.RegisterUpdate(ent.ID, bson.M{
@@ -1368,7 +1386,11 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 			"inherited_services": ent.InheritedServices,
 			"services_to_add":    ent.ServicesToAdd,
 		})
+
+		if ent.Pause != nil && ent.Pause.Source == serviceID {
+			toResume = append(toResume, ent)
+		}
 	}
 
-	return nil
+	return toResume, nil
 }
