@@ -547,98 +547,137 @@ export default {
     [PATTERN_OPERATORS.inRangeDates]: 'In range (dates)',
     [PATTERN_OPERATORS.inRangePeriod]: 'In range (period)',
   },
+  triggersGroups: {
+    general: 'General',
+    pbehavior: 'Pbehavior',
+    tickets: 'Tickets',
+    instructions: 'Instructions',
+  },
   triggers: {
     [TRIGGERS_TYPES.create]: {
-      text: 'Alarm created',
+      text: 'Created',
+      selectedText: 'Alarm created',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: 'Alarm state decreased',
+      text: 'State decreased',
+      selectedText: 'Alarm state decreased',
     },
     [TRIGGERS_TYPES.changestate]: {
-      text: 'Alarm state changed by "change state" action',
+      text: 'State changed by "change state" action',
+      selectedText: 'Alarm state changed by "change state" action',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: 'Alarm state increased',
+      text: 'State increased',
+      selectedText: 'Alarm state increased',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: 'Alarm status changed eg. flapping',
+      text: 'Status changed eg. flapping',
+      selectedText: 'Alarm status changed eg. flapping',
+    },
+    [TRIGGERS_TYPES.changedoutput]: {
+      text: 'Output changed',
+      selectedText: 'Alarm output changed',
+    },
+    [TRIGGERS_TYPES.changedlongoutput]: {
+      text: 'Long output changed',
+      selectedText: 'Alarm long output changed',
     },
     [TRIGGERS_TYPES.ack]: {
-      text: 'Alarm acked',
+      text: 'Acked',
+      selectedText: 'Alarm acked',
     },
     [TRIGGERS_TYPES.ackremove]: {
-      text: 'Alarm unacked',
+      text: 'Unacked',
+      selectedText: 'Alarm unacked',
     },
     [TRIGGERS_TYPES.cancel]: {
-      text: 'Alarm cancelled',
+      text: 'Cancelled',
+      selectedText: 'Alarm cancelled',
     },
     [TRIGGERS_TYPES.uncancel]: {
-      text: 'Alarm uncancelled',
+      text: 'Uncancelled',
+      selectedText: 'Alarm uncancelled',
       helpText:
         'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
     },
     [TRIGGERS_TYPES.comment]: {
-      text: 'Alarm commented',
+      text: 'Commented',
+      selectedText: 'Alarm commented',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: 'Ticket declared by the UI action',
+      text: 'Ticket declared by UI action',
+      selectedText: 'Ticket declared by the UI action',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
-      text: 'Ticket declared by the webhook',
+      text: 'Ticket declared by webhook',
+      selectedText: 'Ticket declared by the webhook',
     },
     [TRIGGERS_TYPES.declareticketwebhookfail]: {
       text: 'Ticket declaration by the webhook has failed',
     },
     [TRIGGERS_TYPES.assocticket]: {
-      text: 'Ticket associated with an alarm',
+      text: 'Ticket associated',
+      selectedText: 'Ticket associated with an alarm',
     },
     [TRIGGERS_TYPES.ticketremove]: {
       text: 'Ticket removed',
     },
     [TRIGGERS_TYPES.snooze]: {
-      text: 'Alarm snoozed',
+      text: 'Snoozed',
+      selectedText: 'Alarm snoozed',
     },
     [TRIGGERS_TYPES.unsnooze]: {
-      text: 'Alarm unsnoozed',
+      text: 'Unsnoozed',
+      selectedText: 'Alarm unsnoozed',
     },
     [TRIGGERS_TYPES.resolve]: {
-      text: 'Alarm resolved',
+      text: 'Resolved',
+      selectedText: 'Alarm resolved',
     },
     [TRIGGERS_TYPES.activate]: {
-      text: 'Alarm activated',
+      text: 'Activated',
+      selectedText: 'Alarm activated',
     },
     [TRIGGERS_TYPES.pbhenter]: {
-      text: 'Alarm entered pbehavior',
+      text: 'Entered pbehavior',
+      selectedText: 'Alarm entered pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: 'Alarm leaved pbehavior',
+      text: 'Left pbehavior',
+      selectedText: 'Alarm left pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
-      text: 'Manual instruction has failed',
+      text: 'Manual instruction failed',
+      selectedText: 'Manual instruction has failed',
     },
     [TRIGGERS_TYPES.autoinstructionfail]: {
-      text: 'Auto instruction has failed',
+      text: 'Auto instruction failed',
+      selectedText: 'Auto instruction has failed',
     },
     [TRIGGERS_TYPES.instructionjobfail]: {
-      text: 'Manual or auto instruction\'s job is failed',
+      text: 'Manual or auto instruction job failed',
+      selectedText: 'Manual or auto instruction\'s job is failed',
     },
     [TRIGGERS_TYPES.instructionjobcomplete]: {
-      text: 'Manual or auto instruction\'s job is completed',
+      text: 'Manual or auto instruction job completed',
+      selectedText: 'Manual or auto instruction\'s job is completed',
     },
     [TRIGGERS_TYPES.instructioncomplete]: {
-      text: 'Manual instruction is completed',
+      text: 'Manual instruction completed',
+      selectedText: 'Manual instruction is completed',
     },
     [TRIGGERS_TYPES.autoinstructioncomplete]: {
-      text: 'Auto instruction is completed',
+      text: 'Auto instruction completed',
+      selectedText: 'Auto instruction is completed',
     },
     [TRIGGERS_TYPES.autoinstructionresultok]: {
-      text: 'Alarm is in OK state after all auto instructions',
+      text: 'Alarm is OK state after all auto instructions',
     },
     [TRIGGERS_TYPES.autoinstructionresultfail]: {
-      text: 'Alarm is in not OK state after all auto instructions',
+      text: 'Alarm is KO state after all auto instructions',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: 'Alarm received N events',
+      text: 'Received N events',
       selectedText: 'Alarm received {additionalValue} events',
       additionalFieldLabel: 'Number of events',
     },
@@ -646,7 +685,6 @@ export default {
   repeatTriggers: {
     [TRIGGERS_TYPES.eventscount]: {
       text: 'Alarm received new check event',
-      selectedText: 'Alarm received new check event',
     },
   },
   request: {

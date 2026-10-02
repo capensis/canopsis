@@ -380,6 +380,8 @@ export const TRIGGERS_TYPES = {
   statedec: 'statedec',
   changestate: 'changestate',
   changestatus: 'changestatus',
+  changedoutput: 'changedoutput',
+  changedlongoutput: 'changedlongoutput',
   ack: 'ack',
   ackremove: 'ackremove',
   cancel: 'cancel',
@@ -405,6 +407,52 @@ export const TRIGGERS_TYPES = {
   autoinstructionresultok: 'autoinstructionresultok',
   autoinstructionresultfail: 'autoinstructionresultfail',
   eventscount: 'eventscount',
+};
+
+export const TRIGGERS_GROUPS = {
+  general: 'general',
+  pbehavior: 'pbehavior',
+  tickets: 'tickets',
+  instructions: 'instructions',
+};
+
+export const GROUPED_TRIGGERS = {
+  [TRIGGERS_GROUPS.general]: [
+    TRIGGERS_TYPES.create,
+    TRIGGERS_TYPES.ack,
+    TRIGGERS_TYPES.ackremove,
+    TRIGGERS_TYPES.cancel,
+    TRIGGERS_TYPES.uncancel,
+    TRIGGERS_TYPES.comment,
+    TRIGGERS_TYPES.snooze,
+    TRIGGERS_TYPES.unsnooze,
+    TRIGGERS_TYPES.resolve,
+    TRIGGERS_TYPES.activate,
+    TRIGGERS_TYPES.stateinc,
+    TRIGGERS_TYPES.statedec,
+    TRIGGERS_TYPES.changestate,
+    TRIGGERS_TYPES.changestatus,
+    TRIGGERS_TYPES.changedoutput,
+    TRIGGERS_TYPES.changedlongoutput,
+    TRIGGERS_TYPES.eventscount,
+  ],
+  [TRIGGERS_GROUPS.pbehavior]: [TRIGGERS_TYPES.pbhenter, TRIGGERS_TYPES.pbhleave],
+  [TRIGGERS_GROUPS.tickets]: [
+    TRIGGERS_TYPES.declareticket,
+    TRIGGERS_TYPES.declareticketwebhook,
+    TRIGGERS_TYPES.assocticket,
+    TRIGGERS_TYPES.ticketremove,
+  ],
+  [TRIGGERS_GROUPS.instructions]: [
+    TRIGGERS_TYPES.instructionfail,
+    TRIGGERS_TYPES.autoinstructionfail,
+    TRIGGERS_TYPES.instructionjobfail,
+    TRIGGERS_TYPES.instructioncomplete,
+    TRIGGERS_TYPES.autoinstructioncomplete,
+    TRIGGERS_TYPES.instructionjobcomplete,
+    TRIGGERS_TYPES.autoinstructionresultok,
+    TRIGGERS_TYPES.autoinstructionresultfail,
+  ],
 };
 
 export const PRO_TRIGGERS = [
