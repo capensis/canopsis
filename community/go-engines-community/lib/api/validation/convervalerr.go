@@ -8,6 +8,11 @@ import (
 )
 
 func ConvertValErr(err error, v any) error {
+	// Keep errors already built by a custom decoder: their namespace is not bound to v.
+	if valErr, ok := errors.AsType[*Error](err); ok {
+		return valErr
+	}
+
 	if ve, ok := errors.AsType[validator.ValidationErrors](err); ok {
 		return NewError(ve, v)
 	}
