@@ -2769,6 +2769,7 @@ definitions:
             * `declare_ticket_rule` - export declare_ticket_rule collection
             * `link_rule` - export link_rule collection
             * `map` - export map collection
+            * `icon` - export icon collection
         items:
           type: string
         type: array
