@@ -40,5 +40,9 @@ type Request struct {
 	//   * `link_rule` - export link_rule collection
 	//   * `map` - export map collection
 	//   * `entity_infos_property` - export entity_infos_property collection
+	//   * `template_data` - export template_data collection
+	//   * `template_test` - export template_test collection
+	//   * `webhook_token_rule` - export webhook_token_rule collection
+	//   * `icon` - export icon collection
 	Exports []string `json:"export"`
 }
