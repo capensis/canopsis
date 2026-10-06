@@ -18712,7 +18712,7 @@ paths:
         - widgettemplates
       summary: Update widget template by id
       description: |
-        Update widget template by id. A ticket_formats list may contain at most 100 strings, each at most 255 Unicode characters. Editing a ticket_formats template propagates its formats and title to linked AlarmsList widgets. Deleting it removes the widget's formatsTemplate reference and derived title while retaining the copied formats.
+        Update widget template by id. A formats list for ticket_formats type object may contain at most 100 strings, each at most 255 Unicode characters. Editing a ticket_formats template propagates its formats and title to linked AlarmsList widgets. Deleting it removes the widget's formatsTemplate reference and derived title while retaining the copied formats.
       operationId: widgettemplates-update-by-id
       parameters:
         - $ref: '#/components/parameters/id'
