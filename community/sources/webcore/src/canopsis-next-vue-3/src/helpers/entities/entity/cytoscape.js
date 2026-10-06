@@ -65,9 +65,13 @@ export const getStateSettingsNodeIconElement = (node) => {
   const { isEvents, entity } = node;
   const size = `${isEvents ? 20 : 30}px`;
 
-  const icon = isEvents
-    ? 'textsms'
-    : (ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity');
+  let icon = ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity';
+
+  if (isEvents) {
+    icon = 'textsms';
+  } else if (entity.pause) {
+    icon = 'pause';
+  }
 
   const element = getIconElement(icon);
 

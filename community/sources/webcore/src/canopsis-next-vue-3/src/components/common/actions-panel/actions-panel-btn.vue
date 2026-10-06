@@ -4,6 +4,7 @@
       <c-action-btn
         :tooltip="action.title"
         :disabled="action.disabled"
+        :disabled-button="action.disabledButton"
         :loading="action.loading"
         :icon="action.icon"
         :icon-size="action.iconSize"
@@ -30,6 +31,7 @@
     v-else
     :tooltip="action.title"
     :disabled="action.disabled"
+    :disabled-button="action.disabledButton"
     :loading="action.loading"
     :icon="action.icon"
     :icon-size="action.iconSize"

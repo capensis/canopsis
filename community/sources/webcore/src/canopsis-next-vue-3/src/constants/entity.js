@@ -127,7 +127,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   // TODO: remove it
   [EVENT_ENTITY_TYPES.ack]: 'check',
   [EVENT_ENTITY_TYPES.fastAck]: 'done_all',
-  [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
+  [EVENT_ENTITY_TYPES.pbehaviorList]: '$vuetify.icons.pbehavior',
   [EVENT_ENTITY_TYPES.ackRemove]: 'remove_done',
   [EVENT_ENTITY_TYPES.declareTicket]: 'note_add',
   [EVENT_ENTITY_TYPES.declareTicketFail]: 'report_problem',
@@ -199,6 +199,7 @@ export const AVAILABLE_COUNTERS = {
   total: 'total',
   total_active: 'total_active',
   snooze: 'snooze',
+  pause: 'pause',
   ack: 'ack',
   unack: 'unack',
   ticket: 'ticket',
@@ -274,6 +275,8 @@ export const CONTEXT_ACTIONS_TYPES = {
   editEntity: 'editEntity',
   duplicateEntity: 'duplicateEntity',
   deleteEntity: 'deleteEntity',
+  pause: 'pause',
+  resume: 'resume',
   pbehaviorAdd: 'pbehaviorAdd',
   pbehaviorList: 'pbehaviorList',
   pbehaviorDelete: 'pbehaviorDelete',
@@ -366,6 +369,9 @@ export const ENTITY_PATTERN_FIELDS = {
   lastEventDate: ENTITY_FIELDS.lastEventDate,
   lastAlarmUpdateDate: ENTITY_FIELDS.lastAlarmUpdateDate,
   enabled: ENTITY_FIELDS.enabled,
+  pause: 'pause',
+  pauseAuthor: 'pause.author',
+  pauseInitiator: 'pause.initiator',
 };
 
 export const ENTITY_TEMPLATE_FIELDS = {
@@ -433,6 +439,9 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.tags]: 'common.tag',
   [ENTITY_FIELDS.lastComment]: 'common.lastComment',
   [ENTITY_FIELDS.sourceType]: 'common.sourceType',
+  [ENTITY_PATTERN_FIELDS.pause]: 'entity.fields.pause',
+  [ENTITY_PATTERN_FIELDS.pauseAuthor]: 'entity.fields.pauseAuthor',
+  [ENTITY_PATTERN_FIELDS.pauseInitiator]: 'entity.fields.pauseInitiator',
 
   /**
    * OBJECTS

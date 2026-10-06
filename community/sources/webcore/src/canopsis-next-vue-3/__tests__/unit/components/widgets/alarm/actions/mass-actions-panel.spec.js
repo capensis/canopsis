@@ -2,6 +2,7 @@ import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import {
   createAlarmModule,
   createAuthModule,
+  createEntityModule,
   createMetaAlarmModule,
   createMockedStoreModules,
   createPbehaviorModule,
@@ -15,7 +16,9 @@ import { range } from 'lodash';
 
 import {
   ALARM_LIST_ACTIONS_TYPES,
+  ALARM_LIST_PAUSE_METHODS,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  USER_PERMISSIONS,
   ALARM_STATUSES,
   ENTITY_PATTERN_FIELDS,
   LINK_RULE_ACTIONS,
@@ -135,7 +138,9 @@ describe('mass-actions-panel', () => {
           ...acc,
           [BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[type]]: { actions: [] },
         }),
-        {},
+        {
+          [USER_PERMISSIONS.business.alarmsList.actions.pause]: { actions: [] },
+        },
       ),
     },
   };
@@ -155,6 +160,11 @@ describe('mass-actions-panel', () => {
     createPbehaviorModule();
   const { pbehaviorTypesModule } = createPbehaviorTypesModule();
   const { pbehaviorReasonModule } = createPbehaviorReasonModule();
+  const {
+    entityModule,
+    bulkPause: bulkPauseEntities,
+    bulkResume: bulkResumeEntities,
+  } = createEntityModule();
 
   const items = [alarm, metaAlarm];
 
@@ -165,6 +175,7 @@ describe('mass-actions-panel', () => {
     pbehaviorModule,
     pbehaviorTypesModule,
     pbehaviorReasonModule,
+    entityModule,
   ]);
 
   const widget = {
@@ -304,7 +315,12 @@ describe('mass-actions-panel', () => {
       propsData: {
         items: alarmsWithFastPbehavior,
         refreshAlarmsList,
-        widget,
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: { mode: ALARM_LIST_PAUSE_METHODS.pbehavior },
+          },
+        },
       },
       mocks: {
         $modals,
@@ -329,6 +345,91 @@ describe('mass-actions-panel', () => {
     });
     expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Pause action pauses only entities without a pause', async () => {
+    const itemsWithPauses = [
+      { ...alarm, entity: { _id: 'entity-to-pause' } },
+      { ...metaAlarm, entity: { _id: 'already-paused', pause: { timestamp: 123 } } },
+    ];
+    const pauseType = {
+      name: 'Maintenance',
+      comment: 'Planned maintenance',
+      type: 'maintenance',
+    };
+    const wrapper = factory({
+      store,
+      propsData: {
+        items: itemsWithPauses,
+        refreshAlarmsList,
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: {
+              mode: ALARM_LIST_PAUSE_METHODS.pause,
+              types: [pauseType],
+            },
+          },
+        },
+      },
+      mocks: { $modals, $popups },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd).trigger('click');
+    await flushPromises();
+
+    expect(bulkPauseEntities).toHaveBeenCalledWith(expect.any(Object), {
+      data: [
+        {
+          _id: 'entity-to-pause',
+          comment: pauseType.comment,
+          type: pauseType.type,
+          inherited: false,
+        },
+      ],
+    });
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'entity.popups.pauseOperation',
+    });
+    expect(wrapper).toHaveBeenEmit('clear:items');
+  });
+
+  test('Unpause action resumes only own entity pauses', async () => {
+    const itemsWithPauses = [
+      { ...alarm, entity: { _id: 'own-pause', pause: { timestamp: 123 } } },
+      {
+        ...metaAlarm,
+        entity: {
+          _id: 'inherited-pause',
+          pause: { timestamp: 123, inherited: true },
+        },
+      },
+    ];
+    const wrapper = factory({
+      store,
+      propsData: {
+        items: itemsWithPauses,
+        refreshAlarmsList,
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: { mode: ALARM_LIST_PAUSE_METHODS.pause, types: [] },
+          },
+        },
+      },
+      mocks: { $modals, $popups },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove).trigger('click');
+    await flushPromises();
+
+    expect(bulkResumeEntities).toHaveBeenCalledWith(expect.any(Object), {
+      data: [{ _id: 'own-pause', comment: '' }],
+    });
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'entity.popups.resumeOperation',
+    });
+    expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
   test('Ack modal showed after trigger ack action', async () => {

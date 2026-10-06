@@ -14,6 +14,8 @@ import { ALARM_LIST_STEPS } from '@/constants';
  *   'ackremove' |
  *   'pbhenter' |
  *   'pbhleave' |
+ *   'pause' |
+ *   'resume' |
  *   'assocticket' |
  *   'webhookstart' |
  *   'webhookprogress' |
@@ -111,6 +113,15 @@ export const isAckStepType = type =>
  */
 export const isSnoozeStepType = type =>
   [ALARM_LIST_STEPS.snooze, ALARM_LIST_STEPS.unsnooze].includes(type);
+
+/**
+ * Check whether an alarm step is an entity pause or resume step.
+ *
+ * @param {string} type
+ * @returns {boolean}
+ */
+export const isPauseStepType = type =>
+  [ALARM_LIST_STEPS.pause, ALARM_LIST_STEPS.resume].includes(type);
 
 /**
  * Checks if the provided type is a status step type.

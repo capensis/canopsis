@@ -337,6 +337,15 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     [ENTITY_PATTERN_FIELDS.componentInfos]: {
       items: unref(infosItems) ?? [],
     },
+    [ENTITY_PATTERN_FIELDS.pause]: {
+      operators: PATTERN_EXISTS_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.pauseAuthor]: {
+      operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.pauseInitiator]: {
+      operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
+    },
     [ENTITY_PATTERN_FIELDS.enabled]: {
       operators: [PATTERN_OPERATORS.enabled, PATTERN_OPERATORS.disabled],
     },

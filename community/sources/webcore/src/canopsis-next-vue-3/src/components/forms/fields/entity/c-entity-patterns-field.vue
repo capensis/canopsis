@@ -44,6 +44,7 @@ import {
   MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
+  PATTERN_EXISTS_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
   ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
@@ -353,6 +354,19 @@ export default {
           text: this.$t('common.impactLevel'),
           value: ENTITY_PATTERN_FIELDS.impactLevel,
           options: this.impactLevelOptions,
+        },
+        {
+          text: this.$t('entity.fields.pause'),
+          value: ENTITY_PATTERN_FIELDS.pause,
+          options: { operators: PATTERN_EXISTS_OPERATORS },
+        },
+        {
+          text: this.$t('entity.fields.pauseAuthor'),
+          value: ENTITY_PATTERN_FIELDS.pauseAuthor,
+        },
+        {
+          text: this.$t('entity.fields.pauseInitiator'),
+          value: ENTITY_PATTERN_FIELDS.pauseInitiator,
         },
         {
           text: this.$t('common.lastEventDate'),

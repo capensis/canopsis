@@ -10,6 +10,7 @@
       :size="iconSize"
       :color-indicator="colorIndicator"
       :pbehavior-enabled="pbehaviorEnabled"
+      :pause-enabled="pauseEnabled"
       @click="openPopup(point, $event)"
     />
     <point-popup-dialog

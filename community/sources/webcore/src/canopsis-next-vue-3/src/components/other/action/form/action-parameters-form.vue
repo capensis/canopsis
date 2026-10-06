@@ -13,6 +13,7 @@ import { ACTION_TYPES } from '@/constants';
 
 import ActionAssocticketForm from './action-assocticket-form.vue';
 import ActionNoteForm from './action-note-form.vue';
+import ActionPauseForm from './action-pause-form.vue';
 import ActionPbehaviorForm from './action-pbehavior-form.vue';
 import ActionSnoozeForm from './action-snooze-form.vue';
 import ActionWebhookForm from './action-webhook-form.vue';
@@ -28,6 +29,8 @@ const ACTION_COMPONENTS = {
   [ACTION_TYPES.assocticket]: 'action-assocticket-form',
   [ACTION_TYPES.changeState]: 'c-change-state-field',
   [ACTION_TYPES.webhook]: 'action-webhook-form',
+  [ACTION_TYPES.pause]: 'action-pause-form',
+  [ACTION_TYPES.resume]: 'action-note-form',
 };
 
 export default {
@@ -35,6 +38,7 @@ export default {
     ActionAssocticketForm,
     ActionNoteForm,
     ActionPbehaviorForm,
+    ActionPauseForm,
     ActionSnoozeForm,
     ActionWebhookForm,
   },

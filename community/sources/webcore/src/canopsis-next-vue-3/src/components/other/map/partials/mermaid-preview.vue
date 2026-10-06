@@ -13,6 +13,7 @@
         :popup-actions="popupActions"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
+        :pause-enabled="pauseEnabled"
         class="mermaid-preview__points"
         @show:map="$emit('show:map', $event)"
         @show:alarms="$emit('show:alarms', $event)"
@@ -52,6 +53,10 @@ export default {
       required: false,
     },
     pbehaviorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    pauseEnabled: {
       type: Boolean,
       default: false,
     },

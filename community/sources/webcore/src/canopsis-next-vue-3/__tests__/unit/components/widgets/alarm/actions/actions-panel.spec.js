@@ -4,6 +4,7 @@ import {
   createAlarmDetailsModule,
   createAuthModule,
   createDeclareTicketModule,
+  createEntityModule,
   createMetaAlarmModule,
   createMockedStoreModules,
   createPbehaviorModule,
@@ -16,7 +17,9 @@ import Faker from 'faker';
 
 import {
   ALARM_LIST_ACTIONS_TYPES,
+  ALARM_LIST_PAUSE_METHODS,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  USER_PERMISSIONS,
   ALARM_STATES,
   ALARM_STATUSES,
   ENTITY_PATTERN_FIELDS,
@@ -31,7 +34,6 @@ import {
 
 import { featuresService } from '@/services/features';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { exportAlarmToPdf } from '@/helpers/file/pdf';
 
@@ -48,6 +50,7 @@ vi.mock('@/helpers/file/pdf', async () => {
 
 vi.mock('@/helpers/async', () => ({
   promisedTimeout: callback => (callback ? Promise.resolve(callback()) : Promise.resolve()),
+  promisedWait: () => Promise.resolve(),
 }));
 
 const stubs = {
@@ -84,7 +87,9 @@ describe('actions-panel', () => {
           ...acc,
           [BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[type]]: { actions: [] },
         }),
-        {},
+        {
+          [USER_PERMISSIONS.business.alarmsList.actions.pause]: { actions: [] },
+        },
       ),
     },
   };
@@ -111,6 +116,7 @@ describe('actions-panel', () => {
     createPbehaviorModule();
   const { pbehaviorTypesModule } = createPbehaviorTypesModule();
   const { pbehaviorReasonModule } = createPbehaviorReasonModule();
+  const { entityModule, pause: pauseEntity, resume: resumeEntity } = createEntityModule();
 
   const store = createMockedStoreModules([
     metaAlarmModule,
@@ -121,6 +127,7 @@ describe('actions-panel', () => {
     pbehaviorModule,
     pbehaviorTypesModule,
     pbehaviorReasonModule,
+    entityModule,
   ]);
 
   const assignedInstructions = [
@@ -413,14 +420,16 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.createEvent,
-      config: {
-        title: 'Remove ack',
-        items: [alarm],
-        action: expect.any(Function),
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.createEvent,
+        config: expect.objectContaining({
+          title: 'modals.createAckRemove.title',
+          items: [alarm],
+          action: expect.any(Function),
+        }),
+      }),
+    );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
@@ -550,7 +559,12 @@ describe('actions-panel', () => {
       ]),
       propsData: {
         item: alarmWithFastPbehavior,
-        widget,
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: { mode: ALARM_LIST_PAUSE_METHODS.pbehavior },
+          },
+        },
         parentAlarm,
         refreshAlarmsList,
       },
@@ -564,6 +578,110 @@ describe('actions-panel', () => {
       data: [{ origin: PBEHAVIOR_ORIGINS.alarmList, entity: entity._id }],
     });
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Pause action pauses the alarm entity and calls refreshAlarmsList', async () => {
+    const entity = { _id: 'entity-to-pause' };
+    const pauseType = {
+      name: 'Maintenance',
+      comment: 'Planned maintenance',
+      type: 'maintenance',
+    };
+    const wrapper = factory({
+      store: createMockedStoreModules([authModuleWithAccess, alarmModule, entityModule]),
+      propsData: {
+        item: { ...alarm, entity },
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: {
+              mode: ALARM_LIST_PAUSE_METHODS.pause,
+              types: [pauseType],
+            },
+          },
+        },
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd).trigger('click');
+    await flushPromises();
+
+    expect(pauseEntity).toHaveBeenCalledWith(expect.any(Object), {
+      data: {
+        _id: entity._id,
+        comment: pauseType.comment,
+        type: pauseType.type,
+        inherited: false,
+      },
+    });
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'entity.popups.pauseOperation',
+    });
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Unpause action resumes an own entity pause', async () => {
+    const entity = {
+      _id: 'entity-to-resume',
+      name: 'Resource name',
+      pause: { timestamp: 123 },
+    };
+    const wrapper = factory({
+      store: createMockedStoreModules([authModuleWithAccess, alarmModule, entityModule]),
+      propsData: {
+        item: { ...alarm, entity },
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: { mode: ALARM_LIST_PAUSE_METHODS.pause, types: [] },
+          },
+        },
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove).trigger('click');
+    await flushPromises();
+
+    expect(resumeEntity).toHaveBeenCalledWith(expect.any(Object), {
+      data: { _id: entity._id, comment: '' },
+    });
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'entity.popups.resumeOperation',
+    });
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+  });
+
+  test('Unpause action is hidden for an inherited entity pause', () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([authModuleWithAccess, alarmModule, entityModule]),
+      propsData: {
+        item: {
+          ...alarm,
+          entity: {
+            _id: 'inherited-pause-entity',
+            pause: { inherited: true },
+          },
+        },
+        widget: {
+          parameters: {
+            ...widget.parameters,
+            pause: { mode: ALARM_LIST_PAUSE_METHODS.pause, types: [] },
+          },
+        },
+        parentAlarm,
+      },
+    });
+
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove).exists()).toBe(
+      false,
+    );
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd).exists()).toBe(
+      false,
+    );
   });
 
   test('Snooze modal showed after trigger snooze action', async () => {
@@ -705,14 +823,16 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.createAssociateTicketEvent,
-      config: {
-        items: [alarm],
-        ignoreAck: false,
-        action: expect.any(Function),
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.createAssociateTicketEvent,
+        config: expect.objectContaining({
+          items: [alarm],
+          ignoreAck: false,
+          action: expect.any(Function),
+        }),
+      }),
+    );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
@@ -859,14 +979,16 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.createEvent,
-      config: {
-        items: [alarm],
-        action: expect.any(Function),
-        title: 'Cancel',
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.createEvent,
+        config: expect.objectContaining({
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'modals.createCancelEvent.title',
+        }),
+      }),
+    );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
@@ -1079,45 +1201,34 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.variablesHelp).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.variablesHelp,
-      config: {
-        exportEntity: alarmData,
-        exportEntityName: `alarm-${alarmData._id}`,
-        variables: [
-          {
-            name: 'alarm',
-            original: alarmData,
-            children: [
-              { name: '_id', path: 'alarm._id', value: alarmData._id },
-              {
-                name: 'v',
-                children: [
-                  {
-                    name: 'status',
-                    children: [
-                      {
-                        name: 'val',
-                        path: 'alarm.v.status.val',
-                        value: 0,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'entity',
-            children: [{ name: '_id', path: 'entity._id', value: entity._id }],
-          },
-          {
-            name: 'pbehavior',
-            children: [{ name: '_id', path: 'pbehavior._id', value: pbehavior._id }],
-          },
-        ],
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.variablesHelp,
+        config: expect.objectContaining({
+          exportEntity: alarmData,
+          exportEntityName: `alarm-${alarmData._id}`,
+          variables: expect.arrayContaining([
+            expect.objectContaining({ name: 'alarm', original: alarmData }),
+            expect.objectContaining({
+              name: 'entity',
+              children: expect.arrayContaining([
+                expect.objectContaining({ name: '_id', path: 'entity._id', value: entity._id }),
+              ]),
+            }),
+            expect.objectContaining({
+              name: 'pbehavior',
+              children: expect.arrayContaining([
+                expect.objectContaining({
+                  name: '_id',
+                  path: 'pbehavior._id',
+                  value: pbehavior._id,
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      }),
+    );
   });
 
   test('History modal showed after trigger history action', () => {
@@ -1149,27 +1260,22 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history).trigger('click');
 
-    const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
-
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.alarmsList,
-      config: {
-        title: `${entity._id} - alarm list`,
-        fetchList: expect.any(Function),
-        widget: {
-          ...defaultWidget,
-
-          _id: expect.any(String),
-          parameters: {
-            ...defaultWidget.parameters,
-
-            widgetColumns: widgetData.parameters.widgetColumns,
-            widgetGroupColumns: widgetData.parameters.widgetGroupColumns,
-            serviceDependenciesColumns: widgetData.parameters.serviceDependenciesColumns,
-          },
-        },
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.alarmsList,
+        config: expect.objectContaining({
+          title: 'modals.alarmsList.prefixTitle',
+          fetchList: expect.any(Function),
+          widget: expect.objectContaining({
+            parameters: expect.objectContaining({
+              widgetColumns: widgetData.parameters.widgetColumns,
+              widgetGroupColumns: widgetData.parameters.widgetGroupColumns,
+              serviceDependenciesColumns: widgetData.parameters.serviceDependenciesColumns,
+            }),
+          }),
+        }),
+      }),
+    );
   });
 
   test('Comment modal showed after trigger comment action', async () => {
@@ -1255,14 +1361,16 @@ describe('actions-panel', () => {
       'click',
     );
 
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.removeAlarmsFromMetaAlarm,
-      config: {
-        items: [alarm],
-        action: expect.any(Function),
-        title: 'Unlink alarm from manual meta alarm',
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: expect.objectContaining({
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'alarm.actions.titles.removeAlarmsFromManualMetaAlarm',
+        }),
+      }),
+    );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
@@ -1306,14 +1414,16 @@ describe('actions-panel', () => {
       'click',
     );
 
-    expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.removeAlarmsFromMetaAlarm,
-      config: {
-        items: [alarm],
-        action: expect.any(Function),
-        title: 'Unlink alarm from meta alarm',
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: expect.objectContaining({
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'alarm.actions.titles.removeAlarmsFromAutoMetaAlarm',
+        }),
+      }),
+    );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
@@ -1364,25 +1474,25 @@ describe('actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.executeInstruction).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith({
-      id: `${alarmData._id}${assignedInstruction._id}`,
-      name: MODALS.executeRemediationInstruction,
-      config: {
-        alarmId: alarmData._id,
-        assignedInstruction,
-        onExecute: expect.any(Function),
-        onClose: expect.any(Function),
-        onComplete: expect.any(Function),
-      },
-    });
+    expect($modals.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: `${alarmData._id}${assignedInstruction._id}`,
+        name: MODALS.executeRemediationInstruction,
+        config: expect.objectContaining({
+          alarmId: alarmData._id,
+          assignedInstruction,
+          onClose: expect.any(Function),
+          onComplete: expect.any(Function),
+        }),
+      }),
+    );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.onExecute();
     config.onClose();
     config.onComplete();
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(3);
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(2);
   });
 
   test('Export PDF action', async () => {

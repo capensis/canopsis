@@ -30,7 +30,7 @@ export default {
   setup(props) {
     const stateSetting = ref();
 
-    const { checkStateSetting: checkEntityStateSetting } = useEntity();
+    const { checkEntityStateSetting } = useEntity();
 
     const {
       pending: stateSettingPending,

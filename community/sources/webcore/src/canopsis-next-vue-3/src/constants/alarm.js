@@ -45,6 +45,7 @@ export const ALARM_FIELDS = {
   duration: 'v.duration',
   currentStateDuration: 'v.current_state_duration',
   snoozeDuration: 'v.snooze_duration',
+  pauseDuration: 'v.pause_duration',
   snoozeAuthor: 'v.snooze.a',
   snoozeInitiator: 'v.snooze.initiator',
   pbhInactiveDuration: 'v.pbh_inactive_duration',
@@ -75,6 +76,9 @@ export const ALARM_FIELDS = {
   entityInfos: 'entity.infos',
   entityComponentInfos: 'entity.component_infos',
   entityLastPbehaviorDate: 'entity.last_pbehavior_date',
+  entityPause: 'entity.pause',
+  entityPauseAuthor: 'entity.pause.author',
+  entityPauseInitiator: 'entity.pause.initiator',
   pbehaviorInfoId: 'v.pbehavior_info.id',
   pbehaviorInfoName: 'v.pbehavior_info.name',
   pbehaviorInfoReason: 'v.pbehavior_info.reason',
@@ -90,6 +94,7 @@ export const ALARM_FIELDS = {
   canceled: 'v.canceled',
   canceledInitiator: 'v.canceled.initiator',
   snooze: 'v.snooze',
+  pause: 'v.pause',
   pbehaviorInfo: 'v.pbehavior_info',
   stateObject: 'v.state',
   statusObject: 'v.status',
@@ -132,6 +137,7 @@ export const ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK = [
   ALARM_FIELDS.duration,
   ALARM_FIELDS.currentStateDuration,
   ALARM_FIELDS.snoozeDuration,
+  ALARM_FIELDS.pauseDuration,
   ALARM_FIELDS.pbhInactiveDuration,
   ALARM_FIELDS.activeDuration,
   ALARM_FIELDS.infos,
@@ -296,8 +302,8 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 };
 
 export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
-  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
-  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'motion_photos_paused',
+  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: '$vuetify.icons.pbehavior',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: '$vuetify.icons.pbehavior',
   [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove]: 'play_arrow',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
@@ -324,6 +330,11 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 
   [ALARM_LIST_ACTIONS_TYPES.addBookmark]: 'bookmark_add',
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: 'bookmark_remove',
+};
+
+export const ALARM_LIST_PAUSE_METHODS = {
+  pause: 'pause',
+  pbehavior: 'pbehavior',
 };
 
 export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
@@ -440,6 +451,8 @@ export const ALARM_LIST_STEPS = {
 
   snooze: 'snooze',
   unsnooze: 'unsnooze',
+  pause: 'pause',
+  resume: 'resume',
 
   comment: 'comment',
 
@@ -478,6 +491,8 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.declareTicketRuleFail]: 'note_add',
   [ALARM_LIST_STEPS.snooze]: 'alarm',
   [ALARM_LIST_STEPS.unsnooze]: 'alarm_off',
+  [ALARM_LIST_STEPS.pause]: '$vuetify.icons.pause_action',
+  [ALARM_LIST_STEPS.resume]: 'play_arrow',
   [ALARM_LIST_STEPS.pbhenter]: 'pause',
   [ALARM_LIST_STEPS.pbhleave]: 'pause',
   [ALARM_LIST_STEPS.comment]: 'comment',
@@ -499,6 +514,8 @@ export const ALARM_STEPS_COLORS = {
   [ALARM_LIST_STEPS.ack]: COLORS.alarmSteps.ack,
   [ALARM_LIST_STEPS.ackRemove]: COLORS.alarmSteps.ackRemove,
   [ALARM_LIST_STEPS.snooze]: COLORS.alarmSteps.snooze,
+  [ALARM_LIST_STEPS.pause]: COLORS.state.pause,
+  [ALARM_LIST_STEPS.resume]: COLORS.alarmSteps.activate,
   [ALARM_LIST_STEPS.comment]: COLORS.alarmSteps.comment,
   [ALARM_LIST_STEPS.junitTestCaseUpdate]: COLORS.alarmSteps.junitTestCaseUpdate,
   [ALARM_LIST_STEPS.junitTestSuiteUpdate]: COLORS.alarmSteps.junitTestCaseUpdate,
@@ -536,6 +553,8 @@ export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
   ALARM_LIST_STEPS.resolve,
   ALARM_LIST_STEPS.snooze,
   ALARM_LIST_STEPS.unsnooze,
+  ALARM_LIST_STEPS.pause,
+  ALARM_LIST_STEPS.resume,
   ALARM_LIST_STEPS.ack,
   ALARM_LIST_STEPS.ackRemove,
   ALARM_LIST_STEPS.pbhenter,
@@ -678,6 +697,8 @@ const {
   ticket,
   canceled,
   snooze,
+  pause,
+  entityPause,
   pbehaviorInfo,
   activated,
 
@@ -725,6 +746,7 @@ export const ALARM_LIST_WIDGET_GROUPED_COLUMNS = {
     ALARM_FIELDS.duration,
     ALARM_FIELDS.currentStateDuration,
     ALARM_FIELDS.snoozeDuration,
+    ALARM_FIELDS.pauseDuration,
     ALARM_FIELDS.pbhInactiveDuration,
     ALARM_FIELDS.activeDuration,
   ],
@@ -814,6 +836,9 @@ export const ALARM_PATTERN_FIELDS = {
   entityImpactLevel: ALARM_FIELDS.entityImpactLevel,
   entityInfos: ALARM_FIELDS.entityInfos,
   entityComponentInfos: ALARM_FIELDS.entityComponentInfos,
+  entityPause: ALARM_FIELDS.entityPause,
+  entityPauseAuthor: ALARM_FIELDS.entityPauseAuthor,
+  entityPauseInitiator: ALARM_FIELDS.entityPauseInitiator,
   pbehaviorInfoId: ALARM_FIELDS.pbehaviorInfoId,
   pbehaviorInfoName: ALARM_FIELDS.pbehaviorInfoName,
   pbehaviorInfoReason: ALARM_FIELDS.pbehaviorInfoReason,
@@ -943,6 +968,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.duration]: 'common.duration',
   [ALARM_FIELDS.currentStateDuration]: 'alarm.fields.currentStateDuration',
   [ALARM_FIELDS.snoozeDuration]: 'alarm.fields.snoozeDuration',
+  [ALARM_FIELDS.pauseDuration]: 'alarm.fields.pauseDuration',
   [ALARM_FIELDS.snoozeAuthor]: 'alarm.fields.snoozeAuthor',
   [ALARM_FIELDS.snoozeInitiator]: 'alarm.fields.snoozeInitiator',
   [ALARM_FIELDS.pbhInactiveDuration]: 'alarm.fields.pbhInactiveDuration',
@@ -972,6 +998,9 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityInfos]: 'alarm.fields.entityInfos',
   [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
   [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
+  [ALARM_FIELDS.entityPause]: 'entity.fields.pause',
+  [ALARM_FIELDS.entityPauseAuthor]: 'entity.fields.pauseAuthor',
+  [ALARM_FIELDS.entityPauseInitiator]: 'entity.fields.pauseInitiator',
   [ALARM_FIELDS.changeState]: 'alarm.fields.changeState',
   [ALARM_FIELDS.meta]: 'alarm.metaAlarm',
   [ALARM_FIELDS.pbehaviorInfoId]: 'common.id',

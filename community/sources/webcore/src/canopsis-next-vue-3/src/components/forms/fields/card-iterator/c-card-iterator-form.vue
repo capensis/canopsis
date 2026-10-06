@@ -26,8 +26,8 @@
           <c-btn-with-error
             :error="addButtonError"
             :disabled="disabled"
+            :variant="addButtonVariant"
             size="small"
-            variant="outlined"
             icon
             v-bind="tooltipProps"
             @click="$emit('add')"
@@ -44,7 +44,7 @@
         :disabled="disabled"
         :icon="!addButtonLabel"
         :size="!addButtonLabel ? 'small' : undefined"
-        variant="outlined"
+        :variant="addButtonVariant"
         @click="$emit('add')"
       >
         <span v-if="addButtonLabel">
@@ -108,6 +108,10 @@ export default {
     addButtonJustify: {
       type: String,
       default: '',
+    },
+    addButtonVariant: {
+      type: String,
+      default: 'outlined',
     },
   },
   setup(props) {

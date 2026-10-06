@@ -86,6 +86,7 @@ const IDLE_RULE_ACTION_TYPES = [
   ACTION_TYPES.assocticket,
   ACTION_TYPES.changeState,
   ACTION_TYPES.pbehavior,
+  ACTION_TYPES.pause,
 ];
 
 export default {

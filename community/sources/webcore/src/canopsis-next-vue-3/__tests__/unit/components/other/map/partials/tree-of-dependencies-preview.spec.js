@@ -1,7 +1,7 @@
 import { mockModals } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
-import { ENTITY_TYPES, MODALS } from '@/constants';
+import { ENTITY_TYPES, MODALS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import TreeOfDependenciesPreview from '@/components/other/map/partials/tree-of-dependencies-preview.vue';
 
@@ -63,6 +63,45 @@ describe('tree-of-dependencies-preview', () => {
     container.innerHTML = nodeTemplate.tpl({ entity });
 
     expect(container.querySelector('.position-absolute').style.color).toBe('rgb(0, 0, 0)');
+  });
+
+  test('Entity pause icon takes priority over a PBehavior icon', () => {
+    const wrapper = factory({
+      props: { map, pbehaviorEnabled: true, pauseEnabled: true },
+    });
+    const nodeTemplate = wrapper.vm.nodeHtmlLabelsOptions.find(({ query }) => query === 'node');
+    const container = document.createElement('div');
+
+    container.innerHTML = nodeTemplate.tpl({
+      entity: {
+        ...entity,
+        pause: { timestamp: 1 },
+        pbehavior_info: {
+          canonical_type: PBEHAVIOR_TYPE_TYPES.maintenance,
+          icon_name: 'build',
+        },
+      },
+    });
+
+    expect(container.querySelector('.tree-of-dependencies__node-icon').textContent).toBe('pause');
+  });
+
+  test('Pause PBehavior keeps the entity pause icon when both are enabled', () => {
+    const wrapper = factory({
+      props: { map, pbehaviorEnabled: true, pauseEnabled: true },
+    });
+    const nodeTemplate = wrapper.vm.nodeHtmlLabelsOptions.find(({ query }) => query === 'node');
+    const container = document.createElement('div');
+
+    container.innerHTML = nodeTemplate.tpl({
+      entity: {
+        ...entity,
+        pause: { timestamp: 1 },
+        pbehavior_info: { canonical_type: PBEHAVIOR_TYPE_TYPES.pause },
+      },
+    });
+
+    expect(container.querySelector('.tree-of-dependencies__node-icon').textContent).toBe('pause');
   });
 
   test('Dependencies modal showed after trigger nested show all button content', () => {

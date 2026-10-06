@@ -191,6 +191,44 @@ export const useExtraDetailsPbehaviorTooltip = (props) => {
 };
 
 /**
+ * Function to provide tooltip content for Pause action in extra details.
+ *
+ * @param {Object} props - The props object containing pause information.
+ * @returns {Object} - The tooltip content for Pause action.
+ */
+export const useExtraDetailsPauseTooltip = (props) => {
+  const { t } = useI18n();
+
+  const tooltipContent = computed(() => {
+    const comment = props.pause.m ?? '';
+    const isInherited = props.entity.pause?.message === comment;
+    const source = `${t(`entity.types.${props.entity.type}`)} ${props.entity.name}`;
+
+    const content = [];
+
+    if (isInherited && source) {
+      content.push(
+        `<div>${t('alarm.actions.iconsFields.pauseInheritedFrom', {
+          source: escape(source),
+        })}</div>`,
+      );
+    }
+
+    if (comment) {
+      content.push(`<div class="c-extra-details__message pre-line">${escape(comment)}</div>`);
+    }
+
+    if (!content.length) {
+      return '';
+    }
+
+    return `<div class="text-md-center">${content.join('')}</div>`;
+  });
+
+  return { tooltipContent };
+};
+
+/**
  * Function to provide tooltip content for Snooze action in extra details.
  *
  * @param {Object} props - The props object containing snooze information.

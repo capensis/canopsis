@@ -638,6 +638,14 @@ export default {
       text: 'Activated',
       selectedText: 'Alarm activated',
     },
+    [TRIGGERS_TYPES.pause]: {
+      text: 'Paused',
+      selectedText: 'Alarm paused',
+    },
+    [TRIGGERS_TYPES.resume]: {
+      text: 'Resumed',
+      selectedText: 'Alarm resumed',
+    },
     [TRIGGERS_TYPES.pbhenter]: {
       text: 'Entered pbehavior',
       selectedText: 'Alarm entered pbehavior',
@@ -683,6 +691,12 @@ export default {
     },
   },
   repeatTriggers: {
+    [TRIGGERS_TYPES.pause]: {
+      text: 'Alarm paused',
+    },
+    [TRIGGERS_TYPES.resume]: {
+      text: 'Alarm resumed',
+    },
     [TRIGGERS_TYPES.eventscount]: {
       text: 'Alarm received new check event',
     },

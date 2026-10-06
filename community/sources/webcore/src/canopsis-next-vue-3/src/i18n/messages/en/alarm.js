@@ -32,6 +32,12 @@ export default {
     addBookmarkFailed: 'Something went wrong. Bookmark wasn\'t added',
     removeBookmarkSuccess: 'Bookmark was removed',
     removeBookmarkFailed: 'Something went wrong. Bookmark wasn\'t removed',
+    pauseFailed: 'The resource could not be paused',
+    unpauseFailed: 'The resource could not be unpaused',
+    unpauseSuccess:
+      'Resource {resource} is unpaused. You may need to wait 60 sec to see it in interface',
+    massUnpauseSuccess:
+      '{count} selected resources are unpaused. You may need to wait 60 sec to see them in interface',
   },
   actions: {
     titles: {
@@ -39,8 +45,8 @@ export default {
       fastAck: 'Fast ack',
       ackRemove: 'Cancel ack',
       pbehavior: 'Periodical behavior',
-      fastPbehaviorAdd: 'Fast periodical behavior',
-      fastPbehaviorRemove: 'Play',
+      fastPbehaviorAdd: 'Pause',
+      fastPbehaviorRemove: 'Unpause',
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
@@ -66,6 +72,7 @@ export default {
       declareTicket: 'Declare ticket',
       canceled: 'Canceled',
       snooze: 'Snooze',
+      pause: 'Pause',
       pbehaviors: 'Periodic behaviors',
       grouping: 'Meta alarm',
       comment: 'Comment',
@@ -75,6 +82,7 @@ export default {
       parents: 'Causes',
       children: 'Consequences',
       cannotUnsnoozeUntilPbehaviorInProgress: 'Cannot unsnooze until pbehavior is in progress',
+      pauseInheritedFrom: 'Pause is inherited from {source}',
     },
   },
   timeline: {
@@ -94,6 +102,8 @@ export default {
       [ALARM_LIST_STEPS.activate]: 'Alarm is active',
       [ALARM_LIST_STEPS.snooze]: 'Alarm snoozed for {duration}',
       [ALARM_LIST_STEPS.unsnooze]: 'Alarm unsnoozed',
+      [ALARM_LIST_STEPS.pause]: 'Resource paused',
+      [ALARM_LIST_STEPS.resume]: 'Resource resumed',
       [ALARM_LIST_STEPS.ack]: 'Ack',
       [ALARM_LIST_STEPS.ackRemove]: 'Cancel ack',
       [ALARM_LIST_STEPS.pbhenter]: 'Periodical behavior activated',
@@ -223,6 +233,7 @@ export default {
     activationDate: 'Activation date',
     currentStateDuration: 'Current state duration',
     snoozeDuration: 'Snooze duration',
+    pauseDuration: 'Pause duration',
     snoozeAuthor: 'Snooze author',
     snoozeInitiator: 'Snooze initiator',
     pbhInactiveDuration: 'Pbehavior inactive duration',

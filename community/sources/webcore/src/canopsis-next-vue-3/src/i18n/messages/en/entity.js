@@ -28,6 +28,13 @@ export default {
     alarmLastComment: 'Alarm last comment',
     importSource: 'Import source',
     imported: 'Imported date',
+    pause: 'Pause',
+    pauseAuthor: 'Pause author',
+    pauseInitiator: 'Pause initiator',
+  },
+  popups: {
+    pauseOperation: 'Pause operation may take up to 60 seconds to appear in the interface',
+    resumeOperation: 'Resume operation may take up to 60 seconds to appear in the interface',
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Show all dependencies',

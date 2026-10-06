@@ -1,11 +1,10 @@
-import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { mockModals } from '@unit/utils/mock-hooks';
 import {
   createAlarmModule,
   createAuthModule,
   createDeclareTicketModule,
+  createEntityModule,
   createMockedStoreModules,
-  createPbehaviorModule,
-  createPbehaviorTypesModule,
 } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
@@ -13,20 +12,15 @@ import Faker from 'faker';
 
 import {
   ALARM_STATES,
+  ENTITY_TYPES,
   MODALS,
-  PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
   USER_PERMISSIONS,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
-  WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
 
-import { uid } from '@/helpers/uid';
-
 import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
-
-vi.mock('@/helpers/uid');
 
 const stubs = {
   'service-entity-actions': true,
@@ -64,9 +58,6 @@ const unselectAllEntities = async (wrapper) => {
 };
 
 describe('service-entities-list', () => {
-  const nowTimestamp = 1386435600000;
-  mockDateNow(nowTimestamp);
-
   const $modals = mockModals();
   const service = {
     _id: 'service-id',
@@ -107,17 +98,13 @@ describe('service-entities-list', () => {
     bulkCreateDeclareTicketExecution,
     fetchAssignedDeclareTicketsWithoutStore,
   } = createDeclareTicketModule();
-  const { pbehaviorTypesModule, fetchPbehaviorTypesListWithoutStore } =
-    createPbehaviorTypesModule();
-  const { pbehaviorModule, createEntityPbehaviors, removeEntityPbehaviors } =
-    createPbehaviorModule();
+  const { entityModule, bulkPause, bulkResume } = createEntityModule();
 
   const store = createMockedStoreModules([
     alarmModule,
     authModule,
     declareTicketRuleModule,
-    pbehaviorTypesModule,
-    pbehaviorModule,
+    entityModule,
   ]);
 
   const refresh = vi.fn();
@@ -352,13 +339,10 @@ describe('service-entities-list', () => {
   });
 
   test('Pause action applied after trigger mass pause action', async () => {
-    const uniqId = Faker.datatype.string();
-
-    uid.mockReturnValueOnce(uniqId);
     const entity = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
-      pbh_origin_icon: '',
+      type: ENTITY_TYPES.service,
     };
     const wrapper = factory({
       propsData: {
@@ -371,42 +355,26 @@ describe('service-entities-list', () => {
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPause);
 
     expect($modals.show).toHaveBeenCalledWith({
-      name: MODALS.createServicePauseEvent,
+      name: MODALS.createEntityPauseEvent,
       config: {
+        withInherited: true,
         action: expect.any(Function),
       },
     });
 
     const [{ config }] = $modals.show.mock.calls[0];
     const comment = Faker.datatype.string();
-    const reason = Faker.datatype.string();
+    const type = Faker.datatype.string();
 
-    const pauseType = {
-      type: PBEHAVIOR_TYPE_TYPES.pause,
-    };
+    await config.action({ comment, type, inherited: true });
 
-    fetchPbehaviorTypesListWithoutStore.mockResolvedValue({
-      data: [pauseType],
-    });
-
-    await config.action({ comment, reason });
-
-    expect(createEntityPbehaviors).toHaveBeenCalledWith(expect.any(Object), {
+    expect(bulkPause).toHaveBeenCalledWith(expect.any(Object), {
       data: [
         {
+          _id: entity._id,
           comment,
-          reason,
-          comments: [],
-          enabled: true,
-          entity: entity._id,
-          exceptions: [],
-          exdates: [],
-          name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uniqId}`,
-          origin: PBEHAVIOR_ORIGINS.serviceWeather,
-          tstart: nowTimestamp / 1000,
-          tstop: null,
-          type: undefined,
-          exec_pattern: true,
+          type,
+          inherited: true,
         },
       ],
     });
@@ -415,13 +383,7 @@ describe('service-entities-list', () => {
   test('Play action applied after trigger mass play action', async () => {
     const entity = {
       _id: Faker.datatype.string(),
-      pbehaviors: [
-        {
-          type: {
-            type: PBEHAVIOR_TYPE_TYPES.pause,
-          },
-        },
-      ],
+      pause: { timestamp: 123 },
     };
     const wrapper = factory({
       propsData: {
@@ -433,13 +395,18 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPlay);
 
-    expect(removeEntityPbehaviors).toHaveBeenCalledWith(expect.any(Object), {
-      data: [
-        {
-          entity: entity._id,
-          origin: PBEHAVIOR_ORIGINS.serviceWeather,
-        },
-      ],
+    expect($modals.show).toHaveBeenCalledWith({
+      name: MODALS.createEntityResumeEvent,
+      config: { action: expect.any(Function) },
+    });
+
+    const [{ config }] = $modals.show.mock.calls[0];
+    const comment = Faker.datatype.string();
+
+    await config.action({ comment });
+
+    expect(bulkResume).toHaveBeenCalledWith(expect.any(Object), {
+      data: [{ _id: entity._id, comment }],
     });
   });
 

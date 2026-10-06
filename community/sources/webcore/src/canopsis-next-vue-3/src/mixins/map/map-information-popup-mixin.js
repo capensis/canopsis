@@ -20,6 +20,10 @@ export const mapInformationPopupMixin = {
       type: Boolean,
       default: false,
     },
+    pauseEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {

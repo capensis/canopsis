@@ -90,9 +90,6 @@ export default {
     () => import('./service/service-dependencies.vue'),
   ),
   [MODALS.serviceEntities]: defineAsyncComponent(() => import('./service/service-entities.vue')),
-  [MODALS.createServicePauseEvent]: defineAsyncComponent(
-    () => import('./service/create-service-pause-event.vue'),
-  ),
   [MODALS.createMaintenance]: defineAsyncComponent(
     () => import('./maintenance/create-maintenance.vue'),
   ),
@@ -150,6 +147,12 @@ export default {
   [MODALS.createEvent]: defineAsyncComponent(() => import('./alarm/create-event.vue')),
   [MODALS.createAckEvent]: defineAsyncComponent(() => import('./alarm/create-ack-event.vue')),
   [MODALS.createSnoozeEvent]: defineAsyncComponent(() => import('./alarm/create-snooze-event.vue')),
+  [MODALS.createEntityPauseEvent]: defineAsyncComponent(
+    () => import('./entity/create-entity-pause-event.vue'),
+  ),
+  [MODALS.createEntityResumeEvent]: defineAsyncComponent(
+    () => import('./entity/create-entity-resume-event.vue'),
+  ),
   [MODALS.createChangeStateEvent]: defineAsyncComponent(
     () => import('./alarm/create-change-state-event.vue'),
   ),

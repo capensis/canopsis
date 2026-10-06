@@ -781,10 +781,18 @@ export const createServiceModule = () => {
 export const createEntityModule = () => {
   const fetchStateSettingWithoutStore = vi.fn();
   const fetchEntityInfosLogsListWithoutStore = vi.fn();
+  const pause = vi.fn();
+  const resume = vi.fn();
+  const bulkPause = vi.fn();
+  const bulkResume = vi.fn();
 
   afterEach(() => {
     fetchStateSettingWithoutStore.mockClear();
     fetchEntityInfosLogsListWithoutStore.mockClear();
+    pause.mockClear();
+    resume.mockClear();
+    bulkPause.mockClear();
+    bulkResume.mockClear();
   });
 
   const entityModule = {
@@ -792,12 +800,20 @@ export const createEntityModule = () => {
     actions: {
       fetchStateSettingWithoutStore,
       fetchEntityInfosLogsListWithoutStore,
+      pause,
+      resume,
+      bulkPause,
+      bulkResume,
     },
   };
 
   return {
     fetchStateSettingWithoutStore,
     fetchEntityInfosLogsListWithoutStore,
+    pause,
+    resume,
+    bulkPause,
+    bulkResume,
     entityModule,
   };
 };

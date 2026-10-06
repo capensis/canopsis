@@ -15,7 +15,11 @@
         </v-btn>
       </c-layout>
 
-      <c-object-treeview :items="config.variables" value-max-width="520px">
+      <c-object-treeview
+        :items="config.variables"
+        value-max-width="520px"
+        items-registration="props"
+      >
         <template #append="{ leaf, item }">
           <v-menu location="bottom end">
             <template #activator="{ props: menuProps }">

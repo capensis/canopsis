@@ -181,6 +181,12 @@ export default {
   createPause: {
     title: 'Create Pause event',
   },
+  createEntityPauseEvent: {
+    title: 'Pause entity',
+  },
+  createEntityResumeEvent: {
+    title: 'Unpause entity',
+  },
   createAckRemove: {
     title: 'Remove ack',
   },

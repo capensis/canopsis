@@ -53,7 +53,7 @@
         </c-icon-field>
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.color')" align="center">
+      <c-form-block-row :label="t('common.color')" align-center>
         <c-layout gap="2" align="center" justify-start>
           <span v-if="onlyColor" class="text-medium-emphasis">
             {{ t('pbehavior.types.defaultType') }}
@@ -62,6 +62,7 @@
             v-model="color"
             :justify-end="onlyColor"
             name="color"
+            hide-details
             required
             @update:model-value="setColorWasChanged"
           />

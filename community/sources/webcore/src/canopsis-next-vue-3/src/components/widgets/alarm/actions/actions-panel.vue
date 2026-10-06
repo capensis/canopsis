@@ -1,5 +1,5 @@
 <template>
-  <actions-panel
+  <shared-actions-panel
     v-bind="additionalProps"
     :actions="preparedActions"
     :small="small"
@@ -50,6 +50,10 @@ import {
   mapAlarmsEntities,
 } from '@/helpers/entities/alarm/form';
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
+import {
+  isResumeAvailableForEntity,
+  isEntityPaused,
+} from '@/helpers/entities/entity/pause';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import {
   isAutoMetaAlarmRuleType,
@@ -64,6 +68,9 @@ import { exportAlarmToPdf as exportAlarmToPdfFile } from '@/helpers/file/pdf';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
+import { widgetActionsPanelAlarmPauseMixin } from '@/mixins/widget/actions-panel/alarm-pause';
+
+import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 const IMMEDIATE_ACTIONS_TYPES = new Set([
   ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
@@ -78,7 +85,9 @@ const IMMEDIATE_ACTIONS_TYPES = new Set([
 export default {
   inject: ['$system'],
 
-  mixins: [authMixin],
+  components: { SharedActionsPanel },
+
+  mixins: [authMixin, widgetActionsPanelAlarmPauseMixin],
 
   props: {
     item: {
@@ -292,7 +301,23 @@ export default {
       return actions;
     },
 
-    fastPbehaviorAction() {
+    pauseAction() {
+      if (this.isPauseActionMode) {
+        if (isResumeAvailableForEntity(this.item.entity)) {
+          return this.getEntityResumeAction(() => this.resumeAlarmEntities([this.item.entity]));
+        }
+
+        if (isEntityPaused(this.item.entity)) {
+          return null;
+        }
+
+        const pauseTypes = this.widget.parameters.pause?.types ?? [];
+        return this.getEntityPauseAction(
+          pauseTypes,
+          pauseType => this.pauseAlarmEntities([this.item.entity], pauseType),
+        );
+      }
+
       if (this.item.pbh_origin_icon) {
         return {
           type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorRemove,
@@ -302,22 +327,11 @@ export default {
       }
 
       const fastPbehaviorsParameters = this.widget.parameters.fast_pbehaviors ?? [];
-      const fastPbehaviorAction = {
-        type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
-        title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
-      };
-
-      if (fastPbehaviorsParameters.length > 1) {
-        fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
-          title: pbehaviorParameters.name_prefix,
-          closeOnClick: false,
-          method: () => this.fastAddPbehavior(pbehaviorParameters),
-        }));
-      } else {
-        fastPbehaviorAction.method = () => this.fastAddPbehavior(fastPbehaviorsParameters[0]);
-      }
-
-      return fastPbehaviorAction;
+      return this.getFastPbehaviorAction(
+        fastPbehaviorsParameters,
+        pbehaviorParameters => this.fastAddPbehavior(pbehaviorParameters),
+        { keepMenuOpen: true },
+      );
     },
 
     actions() {
@@ -398,19 +412,21 @@ export default {
       actions.push(...this.ticketsActions);
 
       if (isNotResolvedOpenedAlarm) {
-        actions.push(
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.snooze,
-            title: this.$t('alarm.actions.titles.snooze'),
-            method: this.showSnoozeModal,
-          },
-          this.fastPbehaviorAction,
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-            title: this.$t('alarm.actions.titles.pbehavior'),
-            method: this.showAddPbehaviorModal,
-          },
-        );
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.snooze,
+          title: this.$t('alarm.actions.titles.snooze'),
+          method: this.showSnoozeModal,
+        });
+
+        if (this.pauseAction) {
+          actions.push(this.pauseAction);
+        }
+
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
+          title: this.$t('alarm.actions.titles.pbehavior'),
+          method: this.showAddPbehaviorModal,
+        });
       }
 
       actions.push(

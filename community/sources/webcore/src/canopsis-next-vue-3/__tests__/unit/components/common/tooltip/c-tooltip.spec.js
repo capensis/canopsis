@@ -1,6 +1,8 @@
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { h } from 'vue';
 
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import CTooltip from '@/components/common/tooltip/c-tooltip.vue';
 
 const { sanitizeHtmlMock } = vi.hoisted(() => ({
@@ -32,6 +34,10 @@ describe('c-tooltip', () => {
 
   beforeEach(() => {
     sanitizeHtmlMock.mockClear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('renders tooltip content lazily', () => {
@@ -109,6 +115,55 @@ describe('c-tooltip', () => {
     await wrapper.vm.$nextTick();
 
     expect(sanitizeHtmlMock).toHaveBeenCalledExactlyOnceWith(content);
+  });
+
+  it('unmounts HTML content after the closing animation', async () => {
+    vi.useFakeTimers();
+
+    const wrapper = factory({
+      propsData: {
+        content: '<em>tooltip content</em>',
+        html: true,
+      },
+    });
+    const tooltip = wrapper.findComponent(VTooltipStub);
+
+    tooltip.vm.$emit('update:modelValue', true);
+    await wrapper.vm.$nextTick();
+    tooltip.vm.$emit('update:modelValue', false);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('strong').exists()).toBe(true);
+
+    vi.advanceTimersByTime(VUETIFY_ANIMATION_DELAY);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('strong').exists()).toBe(false);
+  });
+
+  it('keeps HTML content mounted when reopened during the closing animation', async () => {
+    vi.useFakeTimers();
+
+    const wrapper = factory({
+      propsData: {
+        content: '<em>tooltip content</em>',
+        html: true,
+      },
+    });
+    const tooltip = wrapper.findComponent(VTooltipStub);
+
+    tooltip.vm.$emit('update:modelValue', true);
+    await wrapper.vm.$nextTick();
+    tooltip.vm.$emit('update:modelValue', false);
+    await wrapper.vm.$nextTick();
+
+    vi.advanceTimersByTime(VUETIFY_ANIMATION_DELAY / 2);
+    tooltip.vm.$emit('update:modelValue', true);
+    await wrapper.vm.$nextTick();
+    vi.advanceTimersByTime(VUETIFY_ANIMATION_DELAY);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('strong').exists()).toBe(true);
   });
 
   it('does not sanitize plain text content when the tooltip is opened', async () => {

@@ -166,6 +166,12 @@ export default {
   createPause: {
     title: 'Mettre en pause',
   },
+  createEntityPauseEvent: {
+    title: 'Mettre l\'entité en pause',
+  },
+  createEntityResumeEvent: {
+    title: 'Réactiver l\'entité',
+  },
   createAckRemove: {
     title: 'Annuler l\'acquittement',
   },

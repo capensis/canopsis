@@ -111,7 +111,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]:
       'Définir un comportement périodique',
     [USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]:
-      'Définir un comportement périodique rapidement',
+      'Mettre en pause / reprendre les alarmes',
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Mettre en veille',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Déclarer un ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associer un ticket',
@@ -157,7 +157,8 @@ export default {
       'Activer les entités sélectionnées en masse',
     [USER_PERMISSIONS.business.context.actions.massDisable]:
       'Désactiver les entités sélectionnées en masse',
-    [USER_PERMISSIONS.business.context.actions.pbehavior]: 'Définir un comportement périodique',
+    [USER_PERMISSIONS.business.context.actions.pbehavior]: 'Gérer les comportements périodiques',
+    [USER_PERMISSIONS.business.context.actions.pause]: 'Mettre en pause / reprendre les entités',
     [USER_PERMISSIONS.business.context.actions.filter]: 'Définir les filtres des entités',
     [USER_PERMISSIONS.business.context.actions.userFilter]: 'Filtrer les entités',
     [USER_PERMISSIONS.business.context.actions.category]: 'Filtrer les entités par catégorie',
@@ -174,10 +175,8 @@ export default {
       'Valider les alarmes et changer leur état en critique',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]:
       'Invalider les alarmes et les annuler',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]:
-      'Mettre les alarmes en pause (définir le type de comportement P "Pause")',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]:
-      'Activer les alarmes en pause (retirer le type de comportement P "Pause")',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]: 'Mettre les entités en pause',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Reprendre les entités en pause',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]:
       'Accéder à la liste des comportements périodiques associés aux services (dans l\'onglet des fenêtres modales des services)',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]:
@@ -411,7 +410,8 @@ export default {
     [USER_PERMISSIONS.api.general.junit]: 'JUnit',
     [USER_PERMISSIONS.api.general.llmConfig]: 'Configuration LLM',
     [USER_PERMISSIONS.api.general.kpiFilter]: 'Filtres KPI',
-    [USER_PERMISSIONS.api.general.launchEventRecording]: 'Enregistrement d\'événements - lancer l\'enregistrement',
+    [USER_PERMISSIONS.api.general.launchEventRecording]:
+      'Enregistrement d\'événements - lancer l\'enregistrement',
     [USER_PERMISSIONS.api.general.maintenance]: 'Mode maintenance',
     [USER_PERMISSIONS.api.general.map]: 'Cartes',
     [USER_PERMISSIONS.api.general.messageRateStatsRead]: 'Lire le taux de messages',
@@ -421,7 +421,8 @@ export default {
     [USER_PERMISSIONS.api.general.playlist]: 'Listes de lecture',
     [USER_PERMISSIONS.api.general.privateViewGroups]: 'Groupes de vues privées',
     [USER_PERMISSIONS.api.general.ratingSettings]: 'Paramètres de notation',
-    [USER_PERMISSIONS.api.general.resendEvents]: 'Enregistrement d\'événements - renvoyer les événements',
+    [USER_PERMISSIONS.api.general.resendEvents]:
+      'Enregistrement d\'événements - renvoyer les événements',
     [USER_PERMISSIONS.api.general.shareToken]: 'Partager les jetons',
     [USER_PERMISSIONS.api.general.stateSettings]: 'Paramètres d\'état/sévérité',
     [USER_PERMISSIONS.api.general.techmetrics]: 'Métriques techniques',

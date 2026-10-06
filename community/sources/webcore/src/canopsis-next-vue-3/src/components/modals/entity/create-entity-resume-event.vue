@@ -2,18 +2,20 @@
   <v-form @submit.prevent="submit">
     <c-modal-wrapper close>
       <template #title>
-        <span>{{ t('modals.createPause.title') }}</span>
+        <span>{{ t('modals.createEntityResumeEvent.title') }}</span>
       </template>
+
       <template #text>
-        <service-pause-event-form v-model="form" />
+        <entity-resume-form />
       </template>
+
       <template #actions>
         <v-btn :disabled="submitting" variant="text" @click="close">
           {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="submitting"
           :loading="submitting"
+          :disabled="submitting"
           color="primary"
           type="submit"
         >
@@ -27,17 +29,19 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { entityResumeFormToRequest } from '@/helpers/entities/entity/pause';
+
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 
-import ServicePauseEventForm from '@/components/widgets/service-weather/service-pause-event-form.vue';
+import EntityResumeForm from '@/components/forms/entity-resume-form.vue';
 
 export default {
-  name: MODALS.createServicePauseEvent,
+  name: MODALS.createEntityResumeEvent,
 
-  components: { ServicePauseEventForm },
+  components: { EntityResumeForm },
 
   props: {
     modal: {
@@ -49,32 +53,31 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
-
-    const { values: form, handleSubmit, isSubmitting: submitting } = useForm({
+    const form = useForm({
       initialValues: {
         comment: '',
-        reason: '',
+        ...config.value.initialValues,
       },
     });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const submit = handleSubmit(async () => {
-      await config.value.action?.(form.value);
-
+      await config.value.action?.(entityResumeFormToRequest(values.value));
       close();
     });
 
     useFormConfirmableCloseModal({
-      form,
+      form: values,
       submit,
       close,
     });
 
     return {
       t,
-      form,
+      values,
       submitting,
-      close,
       submit,
+      close,
     };
   },
 };

@@ -38,6 +38,7 @@ import {
   getMapEntityText,
   normalizeTreeOfDependenciesMapEntities,
 } from '@/helpers/entities/map/list';
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
@@ -62,6 +63,14 @@ export default {
     columns: {
       type: Array,
       default: () => [],
+    },
+    pauseEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -173,7 +182,17 @@ export default {
           'tree-of-dependencies__node-icon',
         );
 
-        el.innerHTML = entity.type === ENTITY_TYPES.service ? 'engineering' : 'person';
+        const pbehaviorInfo = entity.pbehavior_info;
+        const hasPbehavior = this.pbehaviorEnabled &&
+          isNotActivePbehaviorType(pbehaviorInfo?.canonical_type);
+
+        if (this.pauseEnabled && entity.pause) {
+          el.innerHTML = 'pause';
+        } else if (hasPbehavior) {
+          el.innerHTML = pbehaviorInfo.icon_name || 'pause';
+        } else {
+          el.innerHTML = entity.type === ENTITY_TYPES.service ? 'engineering' : 'person';
+        }
 
         return el;
       };

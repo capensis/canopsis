@@ -10,7 +10,7 @@
 import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { ALARM_STATES } from '@/constants';
+import { ALARM_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 import { getEntityColor } from '@/helpers/entities/entity/color';
@@ -33,6 +33,10 @@ export default {
       required: false,
     },
     pbehaviorEnabled: {
+      type: Boolean,
+      required: false,
+    },
+    pauseEnabled: {
       type: Boolean,
       required: false,
     },
@@ -68,6 +72,11 @@ export default {
       return isNotActivePbehaviorType(this.entity.pbehavior_info?.canonical_type);
     },
 
+    hasNonPausePbehavior() {
+      return this.isNotActivePbehavior &&
+        this.entity.pbehavior_info?.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause;
+    },
+
     icon() {
       if (!this.entity) {
         return {
@@ -76,9 +85,27 @@ export default {
         };
       }
 
-      if (this.pbehaviorEnabled && this.isNotActivePbehavior) {
+      if (this.pbehaviorEnabled && this.hasNonPausePbehavior) {
         return {
           name: this.entity.pbehavior_info.icon_name,
+          color: 'white',
+          size: this.size - 8,
+          backgroundColor: CSS_COLORS_VARS.secondary,
+        };
+      }
+
+      if (this.pauseEnabled && this.entity.pause) {
+        return {
+          name: 'pause',
+          color: 'white',
+          size: this.size - 8,
+          backgroundColor: CSS_COLORS_VARS.secondary,
+        };
+      }
+
+      if (this.pbehaviorEnabled && this.isNotActivePbehavior) {
+        return {
+          name: '$vuetify.icons.pbehavior',
           color: 'white',
           size: this.size - 8,
           backgroundColor: CSS_COLORS_VARS.secondary,

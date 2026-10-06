@@ -16,14 +16,21 @@
 
     <slot v-if="$slots.default" />
     <template v-else-if="html">
-      <span v-if="opened" v-html="sanitizedContent" />
+      <span v-if="contentMounted" v-html="sanitizedContent" />
     </template>
     <span v-else>{{ content }}</span>
   </v-tooltip>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  onBeforeUnmount,
+} from 'vue';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { sanitizeHtml } from '@/helpers/html';
 
@@ -110,12 +117,36 @@ export default {
       return undefined;
     });
 
+    const contentMounted = ref(opened.value);
+    let contentUnmountTimer;
+
     const sanitizedContent = computed(() => (
-      opened.value && props.html ? sanitizeHtml(props.content) : ''
+      contentMounted.value && props.html ? sanitizeHtml(props.content) : ''
     ));
+
+    watch(opened, (value) => {
+      if (!props.html) {
+        return;
+      }
+
+      clearTimeout(contentUnmountTimer);
+
+      if (value) {
+        contentMounted.value = true;
+
+        return;
+      }
+
+      contentUnmountTimer = setTimeout(() => {
+        contentMounted.value = false;
+      }, VUETIFY_ANIMATION_DELAY);
+    });
+
+    onBeforeUnmount(() => clearTimeout(contentUnmountTimer));
 
     return {
       opened,
+      contentMounted,
       tooltipDisabled,
       tooltipLocation,
       sanitizedContent,

@@ -7,6 +7,7 @@
     :size="size"
     :color-indicator="colorIndicator"
     :pbehavior-enabled="pbehaviorEnabled"
+    :pause-enabled="pauseEnabled"
     class="mermaid-point"
     @click="$emit('click', $event)"
     @contextmenu="$emit('contextmenu', $event)"
@@ -47,6 +48,10 @@ export default {
       required: false,
     },
     pbehaviorEnabled: {
+      type: Boolean,
+      required: false,
+    },
+    pauseEnabled: {
       type: Boolean,
       required: false,
     },

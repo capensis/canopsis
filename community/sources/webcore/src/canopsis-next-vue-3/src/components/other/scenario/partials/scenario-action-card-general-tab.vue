@@ -72,6 +72,7 @@ export default {
           [ACTION_TYPES.snooze]: this.getItemsForSnoozeType,
           [ACTION_TYPES.pbehavior]: this.getItemsForPbehaviorType,
           [ACTION_TYPES.webhook]: this.getItemsForWebhookType,
+          [ACTION_TYPES.pause]: this.getItemsForPauseType,
         }[this.action.type] ?? this.getItemsDefault;
 
       const items = getItems.call(this);
@@ -155,6 +156,27 @@ export default {
      */
     getItemsDefault() {
       return [this.outputItem];
+    },
+
+    /**
+     * Get items for an entity pause action.
+     *
+     * @returns {Object[]}
+     */
+    getItemsForPauseType() {
+      return [
+        this.outputItem,
+        {
+          icon: 'label',
+          label: this.$t('common.type'),
+          value: this.action.parameters.type,
+        },
+        {
+          icon: 'account_tree',
+          label: this.$t('settings.pause.propagate'),
+          value: this.$t(this.action.parameters.inherited ? 'common.yes' : 'common.no'),
+        },
+      ];
     },
 
     /**

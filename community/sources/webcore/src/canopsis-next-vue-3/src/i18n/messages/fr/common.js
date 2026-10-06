@@ -639,6 +639,14 @@ export default {
       text: 'Activée',
       selectedText: 'Alarme activée',
     },
+    [TRIGGERS_TYPES.pause]: {
+      text: 'Mise en pause',
+      selectedText: 'Alarme mise en pause',
+    },
+    [TRIGGERS_TYPES.resume]: {
+      text: 'Reprise',
+      selectedText: 'Alarme reprise',
+    },
     [TRIGGERS_TYPES.pbhenter]: {
       text: 'Entrée dans un pbehavior',
       selectedText: 'Alarme entrée dans un pbehavior',
@@ -684,6 +692,12 @@ export default {
     },
   },
   repeatTriggers: {
+    [TRIGGERS_TYPES.pause]: {
+      text: 'Alarme mise en pause',
+    },
+    [TRIGGERS_TYPES.resume]: {
+      text: 'Alarme reprise',
+    },
     [TRIGGERS_TYPES.eventscount]: {
       text: 'L\'alarme a reçu un nouvel événement check',
     },

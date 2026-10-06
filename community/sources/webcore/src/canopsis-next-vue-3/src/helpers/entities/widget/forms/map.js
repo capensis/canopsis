@@ -26,6 +26,7 @@ import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../templat
  * @property {string} color_indicator
  * @property {string} entity_info_template
  * @property {boolean} entities_under_pbehavior_enabled
+ * @property {boolean} entities_under_pause_enabled
  * @property {string | null} mainFilter
  * @property {string} alarmsColumnsTemplate
  * @property {string} entitiesColumnsTemplate
@@ -54,6 +55,7 @@ export const mapWidgetParametersToForm = (parameters = {}) => ({
   map: parameters.map ?? '',
   color_indicator: parameters.color_indicator ?? COLOR_INDICATOR_TYPES.state,
   entities_under_pbehavior_enabled: parameters.entities_under_pbehavior_enabled ?? true,
+  entities_under_pause_enabled: parameters.entities_under_pause_enabled ?? true,
   mainFilter: parameters.mainFilter ?? null,
   entity_info_template: parameters.entity_info_template ?? DEFAULT_MAP_ENTITY_TEMPLATE,
   alarmsColumnsTemplate: widgetTemplateValueToForm(parameters.alarmsColumnsTemplate),

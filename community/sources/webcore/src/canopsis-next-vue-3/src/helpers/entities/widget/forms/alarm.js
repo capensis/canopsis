@@ -4,6 +4,7 @@ import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
+  ALARM_LIST_PAUSE_METHODS,
   ALARM_UNSORTABLE_FIELDS,
   DEFAULT_ALARMS_QUICK_ACTIONS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -220,6 +221,43 @@ export const alarmListFastPbehaviorParametersToForm = (fastPbehavior = []) =>
   fastPbehavior.map(alarmListFastPbehaviorParametersItemToForm);
 
 /**
+ * Convert a pause type setting to form values.
+ *
+ * @param {Object} [pauseType]
+ * @returns {Object}
+ */
+export const alarmListPauseTypeToForm = (pauseType = {}) => ({
+  key: uid(),
+  name: pauseType.name ?? '',
+  comment: pauseType.comment ?? '',
+  type: pauseType.type ?? '',
+});
+
+/**
+ * Resolve the alarm-list pause implementation. Legacy widgets with configured fast pbehaviors
+ * keep their previous behavior; new widgets and legacy widgets without them use the pause API.
+ *
+ * @param {Object} [parameters]
+ * @returns {string}
+ */
+export const getAlarmListPauseMode = (parameters = {}) =>
+  parameters.pause?.mode ??
+  (parameters.fast_pbehaviors?.length
+    ? ALARM_LIST_PAUSE_METHODS.pbehavior
+    : ALARM_LIST_PAUSE_METHODS.pause);
+
+/**
+ * Convert pause settings to form values.
+ *
+ * @param {Object} [parameters]
+ * @returns {{ mode: string, types: Object[] }}
+ */
+export const alarmListPauseParametersToForm = (parameters = {}) => ({
+  mode: getAlarmListPauseMode(parameters),
+  types: (parameters.pause?.types ?? []).map(alarmListPauseTypeToForm),
+});
+
+/**
  * Convert alarm list widget parameters to form values.
  *
  * @param {Object} [parameters={}]
@@ -245,6 +283,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   keepSelectedAfterAction: !!parameters.keepSelectedAfterAction,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
+  pause: alarmListPauseParametersToForm(parameters),
   fast_pbehaviors: alarmListFastPbehaviorParametersToForm(parameters.fast_pbehaviors),
   sticky_header: !!parameters.sticky_header,
   sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
@@ -335,6 +374,10 @@ export const formToAlarmListWidgetParameters = (form = {}) => {
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
     comment_templates: map(form.comment_templates, 'template'),
+    pause: {
+      ...form.pause,
+      types: removeKeyFromEntities(form.pause?.types),
+    },
     fast_pbehaviors: removeKeyFromEntities(form.fast_pbehaviors),
     sort: formToWidgetSortColumns(form.sort),
     sortTemplate: formToWidgetTemplateValue(form.sortTemplate),

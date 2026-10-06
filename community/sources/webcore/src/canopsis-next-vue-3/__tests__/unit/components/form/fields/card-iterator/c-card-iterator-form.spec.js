@@ -26,4 +26,15 @@ describe('c-card-iterator-form', () => {
     expect(selectIteratorField(wrapper).attributes('disabled')).toBe('true');
     expect(selectAddButton(wrapper).attributes('disabled')).toBe('true');
   });
+
+  test('Add button variant is forwarded', () => {
+    const wrapper = factory({
+      props: {
+        addButtonLabel: 'Add item',
+        addButtonVariant: 'flat',
+      },
+    });
+
+    expect(selectAddButton(wrapper).attributes('variant')).toBe('flat');
+  });
 });

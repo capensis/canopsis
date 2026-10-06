@@ -73,6 +73,7 @@
       :popup-template="preparedWidget.parameters.entity_info_template"
       :color-indicator="preparedWidget.parameters.color_indicator"
       :pbehavior-enabled="preparedWidget.parameters.entities_under_pbehavior_enabled"
+      :pause-enabled="preparedWidget.parameters.entities_under_pause_enabled"
       popup-actions
       @show:map="showMap"
       @show:alarms="showAlarmListModal"
