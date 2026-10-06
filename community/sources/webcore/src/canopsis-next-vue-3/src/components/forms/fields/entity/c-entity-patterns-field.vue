@@ -204,7 +204,7 @@ export default {
           is: 'c-entity-field',
           props: {
             required: true,
-            entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.connector],
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
           },
         },
       };

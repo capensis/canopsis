@@ -1,4 +1,9 @@
-import { ENTITY_PATTERN_FIELDS, PATTERN_EXISTS_OPERATORS } from '@/constants';
+import {
+  BASIC_ENTITY_TYPES,
+  ENTITY_PATTERN_FIELDS,
+  ENTITY_TYPES,
+  PATTERN_EXISTS_OPERATORS,
+} from '@/constants';
 
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 
@@ -20,6 +25,14 @@ describe('c-entity-patterns-field', () => {
         closableChips: true,
       }),
     );
+  });
+
+  test('Connector values are limited to connector entities when entity types are provided', () => {
+    const connectorOptions = CEntityPatternsField.computed.connectorOptions.call({
+      entityTypes: [ENTITY_TYPES.service],
+    });
+
+    expect(connectorOptions.valueField.props.entityTypes).toEqual([BASIC_ENTITY_TYPES.connector]);
   });
 
   test('Pause fields are available with the correct operators', () => {
