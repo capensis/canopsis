@@ -53,6 +53,7 @@ import {
   isInstructionStepType,
   isJunitStepType,
   isMetaAlarmStepType,
+  isPauseStepType,
   isPbehaviorStepType,
   isResolveStepType,
   isSnoozeStepType,
@@ -94,6 +95,7 @@ export default {
         isActivateStepType(props.step._t) ||
         isAckStepType(props.step._t) ||
         isSnoozeStepType(props.step._t) ||
+        isPauseStepType(props.step._t) ||
         isCommentStepType(props.step._t) ||
         isMetaAlarmStepType(props.step._t) ||
         isAssocTicketStepType(props.step._t) ||

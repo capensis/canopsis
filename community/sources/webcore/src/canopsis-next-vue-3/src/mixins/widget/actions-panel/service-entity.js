@@ -5,23 +5,23 @@ import {
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   WEATHER_ACTIONS_TYPES,
-  PBEHAVIOR_TYPE_TYPES,
   ALARM_STATES,
 } from '@/constants';
 
 import { useAlarmStore } from '@/stores/modules/alarm';
 import { useDeclareTicketRuleStore } from '@/stores/modules/declare-ticket-rule';
-import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
 
 import { mapIds } from '@/helpers/array';
 import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity/actions';
+import { isPausePropagationAvailableForEntity } from '@/helpers/entities/entity/pause';
 
 import { authMixin } from '@/mixins/auth';
+import { entityPauseMixin } from '@/mixins/entities/entity-pause';
 
 import { widgetActionsPanelCommonMixin } from './common';
 
 export const widgetActionPanelServiceEntityMixin = {
-  mixins: [authMixin, widgetActionsPanelCommonMixin],
+  mixins: [authMixin, entityPauseMixin, widgetActionsPanelCommonMixin],
   props: {
     actionsRequests: {
       type: Array,
@@ -67,18 +67,6 @@ export const widgetActionPanelServiceEntityMixin = {
     ...mapActions(useDeclareTicketRuleStore, {
       fetchAssignedDeclareTicketsWithoutStore: 'fetchAssignedTicketsWithoutStore',
     }),
-    ...mapActions(usePbehaviorTypeStore, {
-      fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
-    }),
-
-    async fetchDefaultPbehaviorTypes() {
-      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
-        params: { default: true },
-      });
-
-      return data;
-    },
-
     async runAction(actionType, entities, action) {
       if (this.widgetParameters?.entitiesActionsInQueue) {
         this.$emit('add:action', { actionType, action, entitiesIds: mapIds(entities) });
@@ -377,40 +365,86 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     showCreateServicePauseEventModal(entities) {
+      const availableEntities = this.getAvailableEntitiesByActionType(
+        WEATHER_ACTIONS_TYPES.entityPause,
+        entities,
+      );
+
       this.$modals.show({
-        name: MODALS.createServicePauseEvent,
+        name: MODALS.createEntityPauseEvent,
         config: {
+          withInherited: availableEntities.every(isPausePropagationAvailableForEntity),
           action: async (pause) => {
-            const defaultPbehaviorTypes = await this.fetchDefaultPbehaviorTypes();
+            try {
+              await this.runAction(
+                WEATHER_ACTIONS_TYPES.entityPause,
+                availableEntities,
+                async () => {
+                  try {
+                    await this.bulkPauseEntities({
+                      data: availableEntities.map(({ _id: id }) => ({ _id: id, ...pause })),
+                    });
+                    this.$popups.success({ text: this.$t('entity.popups.pauseOperation') });
+                  } catch (err) {
+                    console.error(err);
+                    this.$popups.error({ text: this.$t('alarm.popups.pauseFailed') });
+                  }
+                },
+              );
 
-            const pauseType = defaultPbehaviorTypes.find(
-              ({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause,
-            );
-
-            await this.runAction(WEATHER_ACTIONS_TYPES.entityPause, entities, () =>
-              this.createDowntimePbehavior(entities, {
-                comment: pause.comment,
-                reason: pause.reason,
-                type: pauseType,
-              }),
-            );
-
-            this.refreshEntities();
+              this.refreshEntities();
+            } catch (err) {
+              console.error(err);
+              this.$popups.error({
+                text: this.$t('alarm.popups.pauseFailed'),
+              });
+            }
           },
         },
       });
     },
 
-    async applyPlayAction(entities) {
-      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
-
-      await this.runAction(WEATHER_ACTIONS_TYPES.entityPlay, entities, () =>
-        this.removeDowntimePbehavior(entities),
+    applyPlayAction(entities) {
+      const availableEntities = this.getAvailableEntitiesByActionType(
+        WEATHER_ACTIONS_TYPES.entityPlay,
+        entities,
       );
 
-      this.refreshEntities();
+      this.$modals.show({
+        name: MODALS.createEntityResumeEvent,
+        config: {
+          action: async (resume) => {
+            this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
 
-      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, false);
+            try {
+              await this.runAction(
+                WEATHER_ACTIONS_TYPES.entityPlay,
+                availableEntities,
+                async () => {
+                  try {
+                    await this.bulkResumeEntities({
+                      data: availableEntities.map(({ _id: id }) => ({ _id: id, ...resume })),
+                    });
+                    this.$popups.success({ text: this.$t('entity.popups.resumeOperation') });
+                  } catch (err) {
+                    console.error(err);
+                    this.$popups.error({ text: this.$t('alarm.popups.unpauseFailed') });
+                  }
+                },
+              );
+
+              this.refreshEntities();
+            } catch (err) {
+              console.error(err);
+              this.$popups.error({
+                text: this.$t('alarm.popups.unpauseFailed'),
+              });
+            } finally {
+              this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, false);
+            }
+          },
+        },
+      });
     },
 
     showCancelModal(entities) {

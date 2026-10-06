@@ -14,7 +14,7 @@
     </c-tooltip>
     <v-badge
       v-else
-      :model-value="!!entity.pbehavior_info?.id"
+      :model-value="hasStatusIcon"
       color="grey"
       location="top end"
     >
@@ -29,7 +29,7 @@
       </v-btn>
       <template #badge>
         <v-icon class="pa-0" size="12">
-          {{ pbehaviorIcon }}
+          {{ statusIcon }}
         </v-icon>
       </template>
     </v-badge>
@@ -49,7 +49,11 @@
 </template>
 
 <script>
-import { COLOR_INDICATOR_TYPES, ENTITY_TYPES_ICONS } from '@/constants';
+import {
+  COLOR_INDICATOR_TYPES,
+  ENTITY_TYPES_ICONS,
+  PBEHAVIOR_TYPE_TYPES,
+} from '@/constants';
 
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
 
@@ -80,8 +84,24 @@ export default {
       return ENTITY_TYPES_ICONS[this.entity.type] ?? 'perm_identity';
     },
 
-    pbehaviorIcon() {
-      return this.entity?.pbehavior_info?.icon_name ?? 'pause';
+    hasStatusIcon() {
+      return Boolean(this.entity.pause || this.entity.pbehavior_info?.id);
+    },
+
+    statusIcon() {
+      const pbehavior = this.entity.pbehavior_info;
+      const hasNonPausePbehavior = pbehavior?.id &&
+        pbehavior.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause;
+
+      if (hasNonPausePbehavior) {
+        return pbehavior.icon_name ?? 'build';
+      }
+
+      if (this.entity.pause) {
+        return 'pause';
+      }
+
+      return '$vuetify.icons.pbehavior';
     },
   },
 };

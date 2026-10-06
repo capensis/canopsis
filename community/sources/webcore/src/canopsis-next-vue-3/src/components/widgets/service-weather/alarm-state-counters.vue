@@ -57,6 +57,9 @@ export default {
         [SERVICE_WEATHER_STATE_COUNTERS.minor]: getAlarmStateColor(ALARM_STATES.minor),
         [SERVICE_WEATHER_STATE_COUNTERS.major]: getAlarmStateColor(ALARM_STATES.major),
         [SERVICE_WEATHER_STATE_COUNTERS.critical]: getAlarmStateColor(ALARM_STATES.critical),
+        [SERVICE_WEATHER_STATE_COUNTERS.paused]: CSS_COLORS_VARS.secondary,
+        [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: CSS_COLORS_VARS.secondary,
+        [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: CSS_COLORS_VARS.secondary,
       };
     },
 

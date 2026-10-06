@@ -47,6 +47,10 @@ import {
 } from '@/helpers/entities/alarm/form';
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import {
+  isResumeAvailableForEntity,
+  isEntityPaused,
+} from '@/helpers/entities/entity/pause';
+import {
   getLinkRuleLinkActionType,
   harmonizeAlarmsLinks,
 } from '@/helpers/entities/link/list';
@@ -54,13 +58,14 @@ import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 import { createDowntimePbehavior } from '@/helpers/entities/pbehavior/form';
 
 import { authMixin } from '@/mixins/auth';
+import { widgetActionsPanelAlarmPauseMixin } from '@/mixins/widget/actions-panel/alarm-pause';
 
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 export default {
   components: { ActionsPanel },
 
-  mixins: [authMixin],
+  mixins: [authMixin, widgetActionsPanelAlarmPauseMixin],
 
   props: {
     items: {
@@ -115,6 +120,14 @@ export default {
 
     alarmsWithoutFastPbehavior() {
       return this.alarmsForActions.filter(item => !item.pbh_origin_icon);
+    },
+
+    alarmsWithOwnPause() {
+      return this.alarmsForActions.filter(item => isResumeAvailableForEntity(item.entity));
+    },
+
+    alarmsWithoutPause() {
+      return this.alarmsForActions.filter(item => !isEntityPaused(item.entity));
     },
 
     alarmsForActionsWithoutUnknown() {
@@ -187,8 +200,29 @@ export default {
       return this.alarmsForActions.some(item => item.is_meta_alarm);
     },
 
-    fastPbehaviorActions() {
+    pauseActions() {
       const actions = [];
+
+      if (this.isPauseActionMode) {
+        if (this.alarmsWithOwnPause.length) {
+          actions.push(this.getEntityResumeAction(() =>
+            this.resumeAlarmEntities(mapAlarmsEntities(this.alarmsWithOwnPause), { bulk: true })));
+        }
+
+        if (this.alarmsWithoutPause.length) {
+          const pauseTypes = this.widget.parameters.pause?.types ?? [];
+          actions.push(this.getEntityPauseAction(
+            pauseTypes,
+            pauseType => this.pauseAlarmEntities(
+              mapAlarmsEntities(this.alarmsWithoutPause),
+              pauseType,
+              { bulk: true },
+            ),
+          ));
+        }
+
+        return actions;
+      }
 
       if (this.alarmsWithFastPbehavior.length) {
         actions.push({
@@ -200,21 +234,10 @@ export default {
 
       if (this.alarmsWithoutFastPbehavior.length) {
         const fastPbehaviorsParameters = this.widget.parameters.fast_pbehaviors ?? [];
-        const fastPbehaviorAction = {
-          type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
-          title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
-        };
-
-        if (fastPbehaviorsParameters.length > 1) {
-          fastPbehaviorAction.items = fastPbehaviorsParameters.map(pbehaviorParameters => ({
-            title: pbehaviorParameters.name_prefix,
-            method: () => this.fastAddPbehavior(pbehaviorParameters),
-          }));
-        } else {
-          fastPbehaviorAction.method = () => this.fastAddPbehavior(fastPbehaviorsParameters[0]);
-        }
-
-        actions.push(fastPbehaviorAction);
+        actions.push(this.getFastPbehaviorAction(
+          fastPbehaviorsParameters,
+          pbehaviorParameters => this.fastAddPbehavior(pbehaviorParameters),
+        ));
       }
 
       return actions;
@@ -225,7 +248,7 @@ export default {
 
       if (this.hasOpenedAlarms) {
         actions.push(
-          ...this.fastPbehaviorActions,
+          ...this.pauseActions,
           {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
             title: this.$t('alarm.actions.titles.pbehavior'),

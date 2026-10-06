@@ -152,7 +152,10 @@
 
       <field-comment-templates v-model="form.parameters.comment_templates" />
 
-      <fast-pbehavior-form v-model="form.parameters.fast_pbehaviors" />
+      <pause-form
+        v-model="form.parameters.pause"
+        v-model:fast-pbehaviors="form.parameters.fast_pbehaviors"
+      />
 
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
@@ -290,13 +293,13 @@ import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
 import { useVarsPrepare } from '@/hooks/vars/shared';
 import { useWidgetSettings } from '@/hooks/widget/settings';
 
-import FastPbehaviorForm from '@/components/sidebars/alarm/form/fast-pbehavior-form.vue';
 import FieldCommentTemplates from '@/components/sidebars/alarm/form/fields/comment-templates.vue';
 import FieldFastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
 import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
 import FieldQuickAlarmActions from '@/components/sidebars/alarm/form/fields/quick-alarm-actions.vue';
 import FieldResizeColumnBehavior from '@/components/sidebars/alarm/form/fields/resize-column-behavior.vue';
+import PauseForm from '@/components/sidebars/alarm/form/pause-form.vue';
 import FieldAvailabilityGraphSettings from '@/components/sidebars/availability/form/fields/availability-graph-settings.vue';
 import ChartsForm from '@/components/sidebars/chart/form/charts-form.vue';
 import FieldExportCsv from '@/components/sidebars/form/export-csv.vue';

@@ -16,6 +16,11 @@
       :snooze="alarm.v.snooze"
       :has-inactive-pbehavior="hasInactivePbehavior"
     />
+    <extra-details-pause
+      v-if="alarm.v?.pause"
+      :pause="alarm.v.pause"
+      :entity="alarm.entity"
+    />
     <extra-details-pbehavior
       v-if="alarm.v.pbehavior_info"
       :pbehavior-info="alarm.v.pbehavior_info"
@@ -48,6 +53,7 @@ import ExtraDetailsCloseDelayValue from './extra-details/extra-details-close-del
 import ExtraDetailsCloseDelay from './extra-details/extra-details-close-delay.vue';
 import ExtraDetailsLastComment from './extra-details/extra-details-last-comment.vue';
 import ExtraDetailsParents from './extra-details/extra-details-parents.vue';
+import ExtraDetailsPause from './extra-details/extra-details-pause.vue';
 import ExtraDetailsPbehavior from './extra-details/extra-details-pbehavior.vue';
 import ExtraDetailsSnooze from './extra-details/extra-details-snooze.vue';
 import ExtraDetailsTicket from './extra-details/extra-details-ticket.vue';
@@ -68,6 +74,7 @@ export default {
     ExtraDetailsCloseDelayValue,
     ExtraDetailsLastComment,
     ExtraDetailsParents,
+    ExtraDetailsPause,
     ExtraDetailsPbehavior,
     ExtraDetailsSnooze,
     ExtraDetailsTicket,

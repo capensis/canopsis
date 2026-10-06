@@ -8,6 +8,7 @@
           :popup-actions="popupActions"
           :color-indicator="colorIndicator"
           :pbehavior-enabled="pbehaviorEnabled"
+          :pause-enabled="pauseEnabled"
           :shapes="data"
           v-bind="$attrs"
         />
@@ -26,6 +27,8 @@
 
 <script>
 import { keyBy } from 'lodash';
+
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import {
   getCSSVariableColor,
@@ -63,6 +66,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    pauseEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     pointsByShape() {
@@ -70,7 +77,7 @@ export default {
     },
 
     shapes() {
-      if (this.colorIndicator || this.pbehaviorEnabled) {
+      if (this.colorIndicator || this.pbehaviorEnabled || this.pauseEnabled) {
         return this.map.parameters.shapes.reduce((acc, shape) => {
           const point = this.pointsByShape[shape._id];
 
@@ -108,7 +115,12 @@ export default {
     getShapeByPoint(shape, point) {
       if (
         this.pbehaviorEnabled &&
-        isNotActivePbehaviorType(point.entity?.pbehavior_info?.canonical_type)
+        isNotActivePbehaviorType(point.entity?.pbehavior_info?.canonical_type) &&
+        (
+          point.entity?.pbehavior_info?.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause ||
+          !this.pauseEnabled ||
+          !point.entity?.pause
+        )
       ) {
         return shape;
       }

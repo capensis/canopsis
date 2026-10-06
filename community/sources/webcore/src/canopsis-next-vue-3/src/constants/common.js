@@ -407,6 +407,8 @@ export const TRIGGERS_TYPES = {
   autoinstructionresultok: 'autoinstructionresultok',
   autoinstructionresultfail: 'autoinstructionresultfail',
   eventscount: 'eventscount',
+  pause: 'pause',
+  resume: 'resume',
 };
 
 export const TRIGGERS_GROUPS = {
@@ -435,6 +437,8 @@ export const GROUPED_TRIGGERS = {
     TRIGGERS_TYPES.changedoutput,
     TRIGGERS_TYPES.changedlongoutput,
     TRIGGERS_TYPES.eventscount,
+    TRIGGERS_TYPES.pause,
+    TRIGGERS_TYPES.resume,
   ],
   [TRIGGERS_GROUPS.pbehavior]: [TRIGGERS_TYPES.pbhenter, TRIGGERS_TYPES.pbhleave],
   [TRIGGERS_GROUPS.tickets]: [

@@ -7,10 +7,11 @@ export const MODALS = {
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',
+  createEntityPauseEvent: 'create-entity-pause-event',
+  createEntityResumeEvent: 'create-entity-resume-event',
   variablesHelp: 'variables-help',
 
   serviceDependencies: 'service-dependencies',
-  createServicePauseEvent: 'create-service-pause-event',
   editLiveReporting: 'edit-live-reporting',
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',

@@ -35,6 +35,7 @@ export default {
   advancedSettings: 'Paramètres avancés',
   entityDisplaySettings: 'Paramètres d\'affichage des entités',
   entitiesUnderPbehaviorEnabled: 'Entités sous type PBh inactives, Pause, Maintenance',
+  entitiesUnderPauseEnabled: 'Afficher les entités en pause',
   widgetTitle: 'Titre du widget',
   columnName: 'Nom de la colonne',
   defaultSortColumn: 'Colonne de tri par défaut',
@@ -80,6 +81,15 @@ export default {
   fastPbehavior: 'Comportement périodique rapide',
   fastPbehaviorDescription:
     'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
+  pause: {
+    pauseAction: 'Action Pause',
+    recommended: 'recommandée',
+    pbehavior: 'PBehavior de type Pause',
+    types: 'Types de pause',
+    pbehaviorTypes: 'Types de PBehavior rapides',
+    typesDescription: 'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Pause',
+    propagate: 'Propager la pause à toutes les dépendances',
+  },
   duration: 'Durée',
   tstop: 'Date de fin',
   periodsNumber: 'Nombre d\'étapes',

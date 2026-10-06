@@ -2,7 +2,11 @@ import { mapActions, mapStores } from 'pinia';
 
 import { useEntityStore } from '@/stores/modules/entity';
 
+import { entityPauseMixin } from '@/mixins/entities/entity-pause';
+
 export const entitiesContextEntityMixin = {
+  mixins: [entityPauseMixin],
+
   computed: {
     ...mapStores(useEntityStore),
 
@@ -47,6 +51,22 @@ export const entitiesContextEntityMixin = {
       bulkEnableEntities: 'bulkEnable',
       bulkDisableEntities: 'bulkDisable',
     }),
+
+    pauseContextEntity(...args) {
+      return this.pauseEntity(...args);
+    },
+
+    resumeContextEntity(...args) {
+      return this.resumeEntity(...args);
+    },
+
+    bulkPauseContextEntities(...args) {
+      return this.bulkPauseEntities(...args);
+    },
+
+    bulkResumeContextEntities(...args) {
+      return this.bulkResumeEntities(...args);
+    },
 
     async updateContextEntityWithPopup({ data, id }) {
       await this.updateContextEntity({ data, id });

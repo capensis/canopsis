@@ -32,6 +32,12 @@ export default {
     addBookmarkFailed: 'Quelque chose s\'est mal passé. Le signet n\'a pas été ajouté',
     removeBookmarkSuccess: 'Le signet a été supprimé',
     removeBookmarkFailed: 'Quelque chose s\'est mal passé. Le signet n\'a pas été supprimé',
+    pauseFailed: 'La ressource n\'a pas pu être mise en pause',
+    unpauseFailed: 'La pause de la ressource n\'a pas pu être supprimée',
+    unpauseSuccess:
+      'La ressource {resource} n\'est plus en pause. Vous devrez peut-être attendre 60 s pour le voir dans l\'interface',
+    massUnpauseSuccess:
+      'La pause a été supprimée pour {count} ressources sélectionnées. Vous devrez peut-être attendre 60 s pour les voir dans l\'interface',
   },
   actions: {
     titles: {
@@ -39,8 +45,8 @@ export default {
       fastAck: 'Acquitter rapidement',
       ackRemove: 'Annuler l\'acquittement',
       pbehavior: 'Définir un comportement périodique',
-      fastPbehaviorAdd: 'Définir un comportement périodique rapidemment',
-      fastPbehaviorRemove: 'Jouer',
+      fastPbehaviorAdd: 'Mettre en pause',
+      fastPbehaviorRemove: 'Supprimer la pause',
       snooze: 'Mettre en veille',
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
@@ -66,6 +72,7 @@ export default {
       declareTicket: 'Déclarer un ticket',
       canceled: 'Annulée',
       snooze: 'Mise en veille',
+      pause: 'Pause',
       pbehaviors: 'Définir un comportement périodique',
       grouping: 'Meta-alarmes',
       comment: 'Commentée',
@@ -76,6 +83,7 @@ export default {
       children: 'Conséquences',
       cannotUnsnoozeUntilPbehaviorInProgress:
         'Impossible de supprimer la veille tant que le comportement périodique est en cours',
+      pauseInheritedFrom: 'La pause est héritée de {source}',
     },
   },
   timeline: {
@@ -96,6 +104,8 @@ export default {
       [ALARM_LIST_STEPS.activate]: 'Alarme activée',
       [ALARM_LIST_STEPS.snooze]: 'Alarme mise en veille pendant {duration}',
       [ALARM_LIST_STEPS.unsnooze]: 'Fin de veille de l\'alarme',
+      [ALARM_LIST_STEPS.pause]: 'Ressource mise en pause',
+      [ALARM_LIST_STEPS.resume]: 'Ressource reprise',
       [ALARM_LIST_STEPS.ack]: 'Alarme acquittée',
       [ALARM_LIST_STEPS.ackRemove]: 'Acquittement annulé',
       [ALARM_LIST_STEPS.pbhenter]: 'Comportement périodique activé',
@@ -228,6 +238,7 @@ export default {
     activationDate: 'Date d\'activation',
     currentStateDuration: 'Durée de l\'état actuel',
     snoozeDuration: 'Durée de mise en veille',
+    pauseDuration: 'Durée de la pause',
     snoozeAuthor: 'Auteur de snooze',
     snoozeInitiator: 'Initiateur de la fonction snooze',
     pbhInactiveDuration: 'Durée d\'inactivité (comportement périodique)',

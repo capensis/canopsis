@@ -18,6 +18,11 @@
         v-model="form.parameters.entities_under_pbehavior_enabled"
         :title="t('settings.entitiesUnderPbehaviorEnabled')"
       />
+
+      <field-switcher
+        v-model="form.parameters.entities_under_pause_enabled"
+        :title="t('settings.entitiesUnderPauseEnabled')"
+      />
     </widget-settings-group>
 
     <widget-settings-group :title="t('settings.advancedSettings')">

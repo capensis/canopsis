@@ -43,6 +43,8 @@ export default {
     [ACTION_TYPES.assocticket]: 'Associer un ticket',
     [ACTION_TYPES.cancel]: 'Annuler',
     [ACTION_TYPES.webhook]: 'Webhook',
+    [ACTION_TYPES.pause]: 'Mettre en pause',
+    [ACTION_TYPES.resume]: 'Reprendre',
   },
   tabs: {
     pattern: 'Modèle',

@@ -156,6 +156,8 @@ vi.mock('@/stores/modules/alarm', async () => {
           dispatch('alarm/bulkCreateAlarmUnCancelEvent', payload),
         bulkCreateAlarmChangestateEvent: payload =>
           dispatch('alarm/bulkCreateAlarmChangestateEvent', payload),
+        addBookmarkToAlarm: payload => dispatch('alarm/addBookmarkToAlarm', payload),
+        removeBookmarkFromAlarm: payload => dispatch('alarm/removeBookmarkFromAlarm', payload),
         fetchAlarmDetails: payload => dispatch('alarm/details/fetchItem', payload),
         fetchAlarmDetailsList: payload => dispatch('alarm/details/fetchList', payload),
         fetchAlarmDetailsListWithoutStore: payload =>
@@ -164,6 +166,22 @@ vi.mock('@/stores/modules/alarm', async () => {
         setDetails: vi.fn(),
         setDetailsQuery: vi.fn(),
         updateDetailsItemInStore: vi.fn(),
+      },
+    }),
+  };
+});
+
+vi.mock('@/stores/modules/entity', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+  const dispatch = (type, payload) => globalThis.__TEST_STORE__?.dispatch(type, payload);
+
+  return {
+    useEntityStore: defineStore('entity', {
+      actions: {
+        pause: payload => dispatch('entity/pause', payload),
+        resume: payload => dispatch('entity/resume', payload),
+        bulkPause: payload => dispatch('entity/bulkPause', payload),
+        bulkResume: payload => dispatch('entity/bulkResume', payload),
       },
     }),
   };

@@ -42,7 +42,7 @@
     <c-fab-expand-btn :has-access="hasAccessToCreatePattern" @refresh="refresh">
       <c-action-fab-btn
         :tooltip="createPbehaviorTitle"
-        icon="pause"
+        icon="$vuetify.icons.pbehavior"
         color="grey-darken-1"
         top
         @click.stop="showCreatePbehaviorPatternModal"

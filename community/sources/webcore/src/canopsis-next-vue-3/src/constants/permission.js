@@ -297,6 +297,7 @@ export const USER_PERMISSIONS = {
         duplicateEntity: `${USER_PERMISSIONS_PREFIXES.business.context}_duplicate`,
         deleteEntity: `${USER_PERMISSIONS_PREFIXES.business.context}_delete`,
         pbehavior: `${USER_PERMISSIONS_PREFIXES.business.context}_pbehavior`,
+        pause: `${USER_PERMISSIONS_PREFIXES.business.context}_pause`,
         massEnable: `${USER_PERMISSIONS_PREFIXES.business.context}_massEnable`,
         massDisable: `${USER_PERMISSIONS_PREFIXES.business.context}_massDisable`,
         listPbehavior: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`,
@@ -597,6 +598,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.duplicateEntity]:
       USER_PERMISSIONS.business.context.actions.duplicateEntity,
     [CONTEXT_ACTIONS_TYPES.deleteEntity]: USER_PERMISSIONS.business.context.actions.deleteEntity,
+    [CONTEXT_ACTIONS_TYPES.pause]: USER_PERMISSIONS.business.context.actions.pause,
+    [CONTEXT_ACTIONS_TYPES.resume]: USER_PERMISSIONS.business.context.actions.pause,
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USER_PERMISSIONS.business.context.actions.pbehavior,
     [CONTEXT_ACTIONS_TYPES.massEnable]: USER_PERMISSIONS.business.context.actions.massEnable,
     [CONTEXT_ACTIONS_TYPES.massDisable]: USER_PERMISSIONS.business.context.actions.massDisable,

@@ -43,6 +43,7 @@
               :size="icon.size"
               :color-indicator="colorIndicator"
               :pbehavior-enabled="pbehaviorEnabled"
+              :pause-enabled="pauseEnabled"
             />
           </geomap-icon>
         </geomap-marker>
@@ -68,7 +69,7 @@ import { LatLng, LatLngBounds } from 'leaflet';
 import { groupBy } from 'lodash';
 
 import { OPEN_STREET_LAYER_URL } from '@/config';
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
@@ -140,6 +141,17 @@ export default {
           return 'map';
         }
 
+        const hasNonPausePbehavior = entity.pbehavior_info &&
+          entity.pbehavior_info.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause;
+
+        if (this.pbehaviorEnabled && hasNonPausePbehavior) {
+          return 'pbehavior';
+        }
+
+        if (this.pauseEnabled && entity.pause) {
+          return 'pause';
+        }
+
         if (this.pbehaviorEnabled && entity.pbehavior_info) {
           return 'pbehavior';
         }
@@ -155,7 +167,7 @@ export default {
     layers() {
       const layers = {};
 
-      if (!this.colorIndicator && !this.pbehaviorEnabled) {
+      if (!this.colorIndicator && !this.pbehaviorEnabled && !this.pauseEnabled) {
         return {
           points: {
             name: this.$t('map.layers.points'),
@@ -164,7 +176,12 @@ export default {
         };
       }
 
-      const { map: mapMarkers, pbehavior: pbehaviorMarkers, ...restGroups } = this.groupedMarkers;
+      const {
+        map: mapMarkers,
+        pbehavior: pbehaviorMarkers,
+        pause: pauseMarkers,
+        ...restGroups
+      } = this.groupedMarkers;
 
       if (mapMarkers) {
         layers.map = {
@@ -177,6 +194,13 @@ export default {
         layers.pbehavior = {
           name: this.$t('common.pbehavior'),
           markers: pbehaviorMarkers,
+        };
+      }
+
+      if (pauseMarkers) {
+        layers.pause = {
+          name: this.$t('common.pause'),
+          markers: pauseMarkers,
         };
       }
 

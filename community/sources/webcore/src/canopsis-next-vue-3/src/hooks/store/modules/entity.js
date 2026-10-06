@@ -1,5 +1,3 @@
-import { storeToRefs } from 'pinia';
-
 import { useEntityStore } from '@/stores/modules/entity';
 
 /**
@@ -9,10 +7,17 @@ import { useEntityStore } from '@/stores/modules/entity';
  */
 export const useEntity = () => {
   const entityStore = useEntityStore();
-  const refs = storeToRefs(entityStore);
 
   return {
-    ...refs,
-    ...entityStore,
+    fetchContextEntitiesListWithoutStore: entityStore.fetchContextEntitiesListWithoutStore,
+    fetchEntityInfosLogsListWithoutStore: entityStore.fetchEntityInfosLogsListWithoutStore,
+    archiveDisabledEntitiesData: entityStore.archiveDisabledEntitiesData,
+    archiveUnlinkedEntitiesData: entityStore.archiveUnlinkedEntitiesData,
+    cleanArchivedEntitiesData: entityStore.cleanArchivedEntitiesData,
+    checkEntityStateSetting: entityStore.checkStateSetting,
+    pauseEntity: entityStore.pause,
+    resumeEntity: entityStore.resume,
+    bulkPauseEntities: entityStore.bulkPause,
+    bulkResumeEntities: entityStore.bulkResume,
   };
 };

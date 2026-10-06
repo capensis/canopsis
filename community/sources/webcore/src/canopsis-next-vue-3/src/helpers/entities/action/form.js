@@ -40,7 +40,9 @@ import { uid } from '@/helpers/uid';
  *   "ack" |
  *   "ackremove" |
  *   "assocticket" |
- *   "cancel"
+ *   "cancel" |
+ *   "pause" |
+ *   "resume"
  * } ActionType
  */
 
@@ -63,6 +65,18 @@ import { uid } from '@/helpers/uid';
 /**
  * @typedef {ActionDefaultParameters} ActionChangeStateParameters
  * @property {number} state
+ */
+
+/**
+ * @typedef {Object} ActionPauseParameters
+ * @property {string} output
+ * @property {string} type
+ * @property {boolean} inherited
+ */
+
+/**
+ * @typedef {Object} ActionResumeParameters
+ * @property {string} output
  */
 
 /**
@@ -119,7 +133,9 @@ import { uid } from '@/helpers/uid';
  *   ActionSnoozeParameters |
  *   ActionChangeStateParameters |
  *   ActionWebhookParameters |
- *   ActionAssocTicketParameters
+ *   ActionAssocTicketParameters |
+ *   ActionPauseParameters |
+ *   ActionResumeParameters
  * } ActionParameters
  */
 
@@ -136,7 +152,9 @@ import { uid } from '@/helpers/uid';
  *   ActionSnoozeParameters |
  *   ActionChangeStateParameters |
  *   ActionWebhookFormParameters |
- *   ActionAssocTicketParametersForm
+ *   ActionAssocTicketParametersForm |
+ *   ActionPauseParameters |
+ *   ActionResumeParameters
  * } ActionFormParameters
  */
 
@@ -190,6 +208,30 @@ const defaultActionForwardAuthorToForm = (parameters = {}) => ({
  * @returns {Object}
  */
 export const defaultActionParametersToForm = (parameters = {}) => ({
+  ...defaultActionForwardAuthorToForm(parameters),
+  output: parameters.output ?? '',
+});
+
+/**
+ * Creates pause action parameters form.
+ *
+ * @param {Object} [parameters={}]
+ * @returns {Object}
+ */
+export const pauseActionParametersToForm = (parameters = {}) => ({
+  ...defaultActionForwardAuthorToForm(parameters),
+  output: parameters.output ?? '',
+  type: parameters.type ?? '',
+  inherited: parameters.inherited ?? false,
+});
+
+/**
+ * Creates resume action parameters form.
+ *
+ * @param {Object} [parameters={}]
+ * @returns {Object}
+ */
+const resumeActionParametersToForm = (parameters = {}) => ({
   ...defaultActionForwardAuthorToForm(parameters),
   output: parameters.output ?? '',
 });
@@ -296,6 +338,8 @@ const prepareDefaultActionParameters = () => ({
   [ACTION_TYPES.assocticket]: associateTicketActionParametersToForm(),
   [ACTION_TYPES.cancel]: defaultActionParametersToForm(),
   [ACTION_TYPES.webhook]: webhookActionParametersToForm(),
+  [ACTION_TYPES.pause]: pauseActionParametersToForm(),
+  [ACTION_TYPES.resume]: resumeActionParametersToForm(),
 });
 
 /**
@@ -318,6 +362,8 @@ export const actionParametersToForm = (action = {}, timezone) => {
     [ACTION_TYPES.pbehavior]: pbehaviorActionParametersToForm,
     [ACTION_TYPES.assocticket]: associateTicketActionParametersToForm,
     [ACTION_TYPES.changeState]: changeStateActionParametersToForm,
+    [ACTION_TYPES.pause]: pauseActionParametersToForm,
+    [ACTION_TYPES.resume]: resumeActionParametersToForm,
   };
 
   const prepareParametersToForm = parametersPreparers[action.type];

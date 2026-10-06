@@ -9,6 +9,7 @@ import {
 
 import { getEntityEventColor } from './color';
 import { getEntityEventIcon } from './icons';
+import { isEntityPaused, isResumeAvailableForEntity } from './pause';
 
 /**
  * Check is action available for the entity
@@ -25,10 +26,9 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     alarm_id: alarmId,
     alarm_display_name: alarmDisplayName,
     assigned_instructions: assignedInstructions,
-    pbh_origin_icon: pbhOriginIcon,
   } = entity;
 
-  const paused = pbhOriginIcon !== '';
+  const isPaused = isEntityPaused(entity);
   const stateIsOk = state?.val === ALARM_STATES.ok;
   const statusIsCancelled = status?.val === ALARM_STATUSES.cancelled;
   const hasAlarm = !!alarmId;
@@ -51,10 +51,10 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
       return !stateIsOk && alarmDisplayName && (!status || !statusIsCancelled) && hasAlarm;
 
     case WEATHER_ACTIONS_TYPES.entityPlay:
-      return paused;
+      return isResumeAvailableForEntity(entity);
 
     case WEATHER_ACTIONS_TYPES.entityPause:
-      return !paused;
+      return !isPaused;
 
     case WEATHER_ACTIONS_TYPES.executeInstruction:
       return !stateIsOk && !!assignedInstructions?.length && hasAlarm;

@@ -49,6 +49,8 @@ export default {
     [ACTION_TYPES.assocticket]: 'Associate ticket',
     [ACTION_TYPES.cancel]: 'Cancel',
     [ACTION_TYPES.webhook]: 'Webhook',
+    [ACTION_TYPES.pause]: 'Pause',
+    [ACTION_TYPES.resume]: 'Resume',
   },
   tabs: {
     pattern: 'Pattern',

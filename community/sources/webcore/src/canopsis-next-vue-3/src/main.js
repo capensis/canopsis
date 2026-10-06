@@ -252,7 +252,6 @@ app.use(modalsPlugin, {
     [MODALS.createRole]: { autoHeight: true },
     [MODALS.createScenario]: { maxWidth: 1280 },
     [MODALS.createService]: { maxWidth: 1000 },
-    [MODALS.createServicePauseEvent]: { autoHeight: true },
     [MODALS.createShareToken]: { autoHeight: true },
     [MODALS.createSnmpRule]: { maxWidth: 1000, autoHeight: true },
     [MODALS.createSnoozeEvent]: { autoHeight: true },

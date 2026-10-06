@@ -16,6 +16,7 @@
         :size="iconSize"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
+        :pause-enabled="pauseEnabled"
       />
     </component>
     <component
@@ -34,6 +35,7 @@
         :size="iconSize"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
+        :pause-enabled="pauseEnabled"
       />
     </component>
     <component :is="'foreignObject'" style="overflow: visible">
