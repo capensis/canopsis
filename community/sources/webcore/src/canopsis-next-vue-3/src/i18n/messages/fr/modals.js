@@ -262,6 +262,9 @@ export default {
       [WIDGET_TYPES.counter]: {
         title: 'Compteur',
       },
+      [WIDGET_TYPES.clock]: {
+        title: 'Horloge',
+      },
       [WIDGET_TYPES.testingWeather]: {
         title: 'Scénarios Junit',
       },

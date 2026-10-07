@@ -1,6 +1,14 @@
 import { defineAsyncComponent } from 'vue';
 
-import { MODALS } from '@/constants';
+import { FEATURES_SERVICE_KEYS, MODALS } from '@/constants';
+
+import { featuresService } from '@/services/features';
+
+import { normalizeFeatureComponents } from '@/helpers/component';
+
+const featureModalComponents = normalizeFeatureComponents(
+  featuresService.get(FEATURES_SERVICE_KEYS.components.modals.components, {}),
+);
 
 export default {
   [MODALS.confirmation]: defineAsyncComponent(() => import('./common/confirmation.vue')),
@@ -253,4 +261,6 @@ export default {
     () => import('./ticket-status-job/create-ticket-status-job.vue'),
   ),
   [MODALS.testSuite]: defineAsyncComponent(() => import('./test-suite/test-suite.vue')),
+
+  ...featureModalComponents,
 };

@@ -61,6 +61,7 @@ const MIGRATED_SETTINGS_WIDGET_TYPES = [
   WIDGET_TYPES.context,
   WIDGET_TYPES.text,
   WIDGET_TYPES.counter,
+  WIDGET_TYPES.clock,
   WIDGET_TYPES.map,
   WIDGET_TYPES.externalDataTable,
   WIDGET_TYPES.serviceWeather,

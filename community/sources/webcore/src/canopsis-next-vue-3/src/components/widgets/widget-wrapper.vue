@@ -51,8 +51,17 @@
 </template>
 
 <script>
-import { WIDGET_COLORS_MODES, WIDGET_GRID_ROW_HEIGHT, WIDGET_TYPES } from '@/constants';
+import {
+  COMPONENTS_BY_WIDGET_TYPES,
+  FEATURES_SERVICE_KEYS,
+  WIDGET_COLORS_MODES,
+  WIDGET_GRID_ROW_HEIGHT,
+  WIDGET_TYPES,
+} from '@/constants';
 
+import { featuresService } from '@/services/features';
+
+import { normalizeFeatureComponents } from '@/helpers/component';
 import { themeTableColorsToForm, themeWidgetColorsToForm } from '@/helpers/entities/theme/form';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
@@ -69,6 +78,7 @@ import BarChartWidget from './chart/bar-chart-widget.vue';
 import LineChartWidget from './chart/line-chart-widget.vue';
 import NumbersWidget from './chart/numbers-widget.vue';
 import PieChartWidget from './chart/pie-chart-widget.vue';
+import ClockWidget from './clock/clock-widget.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import CounterWidget from './counter/counter.vue';
 import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
@@ -80,6 +90,10 @@ import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
 import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
 import TestingWeatherWidget from './testing-weather/testing-weather.vue';
 import TextWidget from './text/text.vue';
+
+const featureWidgetComponents = normalizeFeatureComponents(
+  featuresService.get(FEATURES_SERVICE_KEYS.components.widgetWrapper.components, {}),
+);
 
 export default {
   inject: ['$system'],
@@ -93,6 +107,7 @@ export default {
     AlarmsListWidget,
     AvailabilityWidget,
     BarChartWidget,
+    ClockWidget,
     CounterWidget,
     EntitiesListWidget,
     ExternalDataTableWidget,
@@ -107,6 +122,8 @@ export default {
     WidgetThemeProvider,
     AlarmStatisticsWidget,
     UserStatisticsWidget,
+
+    ...featureWidgetComponents,
   },
   mixins: [authMixin, activeViewMixin],
   props: {
@@ -129,10 +146,11 @@ export default {
     },
 
     component() {
-      return {
+      const coreComponent = {
         [WIDGET_TYPES.alarmList]: AlarmsListWidget,
         [WIDGET_TYPES.barChart]: BarChartWidget,
         [WIDGET_TYPES.context]: EntitiesListWidget,
+        [WIDGET_TYPES.clock]: ClockWidget,
         [WIDGET_TYPES.text]: TextWidget,
         [WIDGET_TYPES.counter]: CounterWidget,
         [WIDGET_TYPES.statsCalendar]: StatsCalendarWidget,
@@ -147,9 +165,21 @@ export default {
         [WIDGET_TYPES.availability]: AvailabilityWidget,
         [WIDGET_TYPES.testingWeather]: TestingWeatherWidget,
       }[this.widget.type];
+
+      const componentName = COMPONENTS_BY_WIDGET_TYPES[this.widget.type];
+
+      return featureWidgetComponents[componentName] ?? coreComponent;
     },
 
     preparedWidget() {
+      const preparer = featuresService.get(
+        FEATURES_SERVICE_KEYS.components.widgetWrapper.computed.preparedWidget,
+      );
+
+      if (preparer) {
+        return preparer.call(this);
+      }
+
       if (this.widget.type === WIDGET_TYPES.alarmList) {
         return prepareAlarmListWidget(this.widget);
       }
@@ -231,7 +261,6 @@ export default {
         widget: themeWidgetColorsToForm(widgetColors.widget),
       };
     },
-
   },
 };
 </script>

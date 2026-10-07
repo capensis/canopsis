@@ -1,6 +1,13 @@
 import { cloneDeep } from 'lodash';
 
-import { DEFAULT_WIDGET_GRID_PARAMETERS, WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
+import {
+  DEFAULT_WIDGET_GRID_PARAMETERS,
+  FEATURES_SERVICE_KEYS,
+  WIDGET_GRID_SIZES_KEYS,
+  WIDGET_TYPES,
+} from '@/constants';
+
+import { featuresService } from '@/services/features';
 
 import { uid } from '@/helpers/uid';
 
@@ -15,6 +22,7 @@ import {
   formToAvailabilityWidgetParameters,
 } from './forms/availability';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './forms/bar-chart';
+import { clockWidgetParametersToForm, formToClockWidgetParameters } from './forms/clock';
 import {
   contextWidgetParametersToForm,
   formToContextWidgetParameters,
@@ -61,6 +69,7 @@ import { textWidgetParametersToForm } from './forms/text';
  *   'StatsCalendar' |
  *   'Text' |
  *   'Counter' |
+ *   'Clock' |
  *   'Junit' |
  *   'Map' |
  *   'BarChart' |
@@ -147,6 +156,7 @@ import { textWidgetParametersToForm } from './forms/text';
  *   ServiceWeatherWidgetParameters |
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
+ *   ClockWidgetParameters |
  *   TestingWeatherWidgetParameters |
  *   TextWidgetParameters |
  *   MapWidgetParameters |
@@ -167,6 +177,7 @@ import { textWidgetParametersToForm } from './forms/text';
  *   ServiceWeatherWidgetParameters |
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
+ *   ClockWidgetParametersForm |
  *   TestingWeatherWidgetParametersForm |
  *   TextWidgetParameters |
  *   MapWidgetParameters |
@@ -207,6 +218,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.context]: contextWidgetParametersToForm,
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
+    [WIDGET_TYPES.clock]: clockWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
     [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
     [WIDGET_TYPES.statsCalendar]: statsCalendarWidgetParametersToForm,
@@ -219,6 +231,11 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.availability]: availabilityWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
     [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
+
+    ...featuresService.get(
+      FEATURES_SERVICE_KEYS.helpers.forms.widgets.widgetParametersToForm.widgetsMap,
+      {},
+    ),
   };
 
   const preparer = widgetsMap[type];
@@ -337,6 +354,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
     [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
+    [WIDGET_TYPES.clock]: formToClockWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
@@ -349,6 +367,11 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.availability]: formToAvailabilityWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
     [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
+
+    ...featuresService.get(
+      FEATURES_SERVICE_KEYS.helpers.forms.widgets.formToWidgetParameters.widgetsMap,
+      {},
+    ),
   };
 
   const preparer = widgetsMap[type];

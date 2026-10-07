@@ -16,7 +16,7 @@
 import { uniqBy } from 'lodash';
 import { computed } from 'vue';
 
-import { getLocalTimezone, getTimezones } from '@/helpers/date/date';
+import { formatTimezoneLabel, getLocalTimezone, getTimezones } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
@@ -55,12 +55,16 @@ export default {
 
     const timezones = computed(() => {
       if (!props.server) {
-        return getTimezones().map(timezone => ({ text: timezone, value: timezone }));
+        return getTimezones().map(timezone => ({
+          text: formatTimezoneLabel(timezone),
+          value: timezone,
+        }));
       }
 
       const serverTimezone = systemTimezone.value || getLocalTimezone();
       const preparedUserTimezones = userTimezones.value.map((timezone) => {
-        const text = timezone === serverTimezone ? `${timezone} (${t('common.server')})` : timezone;
+        const label = formatTimezoneLabel(timezone);
+        const text = timezone === serverTimezone ? `${label} (${t('common.server')})` : label;
 
         return {
           text,
@@ -72,8 +76,14 @@ export default {
 
       return uniqBy(
         [
-          { text: `${localTimezone} (${t('common.local')})`, value: localTimezone },
-          { text: `${serverTimezone} (${t('common.server')})`, value: serverTimezone },
+          {
+            text: `${formatTimezoneLabel(localTimezone)} (${t('common.local')})`,
+            value: localTimezone,
+          },
+          {
+            text: `${formatTimezoneLabel(serverTimezone)} (${t('common.server')})`,
+            value: serverTimezone,
+          },
           ...preparedUserTimezones,
         ],
         'value',

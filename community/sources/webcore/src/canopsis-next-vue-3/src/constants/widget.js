@@ -9,6 +9,8 @@ import { FEATURES_SERVICE_KEYS } from './features';
 import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODS } from './kpi';
 import { CANOPSIS_EDITION } from './permission';
 
+const featuresWidgetTypes = featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetTypes, {});
+
 export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
   context: 'Context',
@@ -16,6 +18,7 @@ export const WIDGET_TYPES = {
   statsCalendar: 'StatsCalendar',
   text: 'Text',
   counter: 'Counter',
+  clock: 'Clock',
   testingWeather: 'Junit',
   map: 'Map',
   barChart: 'BarChart',
@@ -27,7 +30,7 @@ export const WIDGET_TYPES = {
   availability: 'Availability',
   externalDataTable: 'ExternalDataTable',
 
-  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetTypes),
+  ...featuresWidgetTypes,
 };
 
 export const WIDGET_COLORS_MODES = {
@@ -36,16 +39,20 @@ export const WIDGET_COLORS_MODES = {
 };
 
 export const TOP_LEVEL_WIDGET_TYPES = [
-  WIDGET_TYPES.alarmList,
-  WIDGET_TYPES.context,
-  WIDGET_TYPES.serviceWeather,
-  WIDGET_TYPES.statsCalendar,
-  WIDGET_TYPES.text,
-  WIDGET_TYPES.counter,
-  WIDGET_TYPES.testingWeather,
-  WIDGET_TYPES.map,
-  WIDGET_TYPES.availability,
-  WIDGET_TYPES.externalDataTable,
+  ...new Set([
+    WIDGET_TYPES.alarmList,
+    WIDGET_TYPES.context,
+    WIDGET_TYPES.serviceWeather,
+    WIDGET_TYPES.statsCalendar,
+    WIDGET_TYPES.text,
+    WIDGET_TYPES.counter,
+    WIDGET_TYPES.clock,
+    WIDGET_TYPES.testingWeather,
+    WIDGET_TYPES.map,
+    WIDGET_TYPES.availability,
+    WIDGET_TYPES.externalDataTable,
+    ...Object.values(featuresWidgetTypes),
+  ]),
 ];
 
 export const COMPONENTS_BY_WIDGET_TYPES = {
@@ -55,6 +62,7 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
   [WIDGET_TYPES.text]: 'text-widget',
   [WIDGET_TYPES.counter]: 'counter-widget',
+  [WIDGET_TYPES.clock]: 'clock-widget',
   [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
   [WIDGET_TYPES.map]: 'map-widget',
   [WIDGET_TYPES.barChart]: 'bar-chart-widget',
@@ -76,6 +84,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.statsCalendar]: 'calendar_today',
   [WIDGET_TYPES.text]: 'view_headline',
   [WIDGET_TYPES.counter]: 'numbers',
+  [WIDGET_TYPES.clock]: 'schedule',
   [WIDGET_TYPES.testingWeather]: 'view_module',
   [WIDGET_TYPES.map]: 'location_on',
   [WIDGET_TYPES.barChart]: 'stacked_bar_chart',
@@ -98,6 +107,7 @@ export const SIDE_BARS = {
   statsCalendarSettings: 'stats-calendar-settings',
   textSettings: 'text-settings',
   counterSettings: 'counter-settings',
+  clockSettings: 'clock-settings',
   testingWeatherSettings: 'testing-weather-settings',
   mapSettings: 'map-settings',
   barChartSettings: 'bar-chart-settings',
@@ -119,6 +129,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCalendar]: SIDE_BARS.statsCalendarSettings,
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
+  [WIDGET_TYPES.clock]: SIDE_BARS.clockSettings,
   [WIDGET_TYPES.testingWeather]: SIDE_BARS.testingWeatherSettings,
   [WIDGET_TYPES.map]: SIDE_BARS.mapSettings,
   [WIDGET_TYPES.barChart]: SIDE_BARS.barChartSettings,

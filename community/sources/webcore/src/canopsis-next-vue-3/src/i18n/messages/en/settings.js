@@ -16,6 +16,7 @@ export default {
     [SIDE_BARS.statsCalendarSettings]: 'Stats calendar settings',
     [SIDE_BARS.textSettings]: 'Text settings',
     [SIDE_BARS.counterSettings]: 'Counter settings',
+    [SIDE_BARS.clockSettings]: 'Clock settings',
     [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
     [SIDE_BARS.mapSettings]: 'Mapping widget settings',
     [SIDE_BARS.barChartSettings]: 'Bar chart settings',

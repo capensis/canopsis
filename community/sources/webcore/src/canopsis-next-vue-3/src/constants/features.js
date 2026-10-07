@@ -1,4 +1,5 @@
 export const FEATURES_SERVICE_KEYS = {
+  i18n: 'i18n',
   constants: {
     widgetTypes: 'constants.WIDGET_TYPES',
     componentsByWidgetTypes: 'constants.COMPONENTS_BY_WIDGET_TYPES',
@@ -18,6 +19,19 @@ export const FEATURES_SERVICE_KEYS = {
     },
   },
   components: {
+    modals: {
+      components: 'components.modals.components',
+      dialogPropsMap: 'components.modals.dialogPropsMap',
+    },
+    sidebars: {
+      components: 'components.sidebars.components',
+    },
+    widgetWrapper: {
+      components: 'components.widgetWrapper.components',
+      computed: {
+        preparedWidget: 'components.widgetWrapper.computed.preparedWidget',
+      },
+    },
     alarmListActionPanel: {
       computed: {
         actions: 'components.alarmListActionPanel.computed.actions',
@@ -31,6 +45,16 @@ export const FEATURES_SERVICE_KEYS = {
     },
   },
   helpers: {
+    forms: {
+      widgets: {
+        widgetParametersToForm: {
+          widgetsMap: 'helpers.forms.widgets.widgetParametersToForm.widgetsMap',
+        },
+        formToWidgetParameters: {
+          widgetsMap: 'helpers.forms.widgets.formToWidgetParameters.widgetsMap',
+        },
+      },
+    },
     query: {
       convertUserPreferenceToQuery: {
         convertersMap: 'helpers.query.convertUserPreferenceToQuery.convertersMap',
