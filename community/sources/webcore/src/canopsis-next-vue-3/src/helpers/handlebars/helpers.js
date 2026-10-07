@@ -486,28 +486,13 @@ export function nowHelper(options = {}) {
   const helperOffset = offset ?? adjustment ?? delta;
 
   const normalizedOptions = {
-    format,
+    format: format || DATETIME_FORMATS.long,
     timezone: timezone || getLocalTimezone(),
-    realtime: realtime === true || realtime === 'true',
-    offset: helperOffset,
+    ...(helperOffset ? { offset: helperOffset } : {}),
   };
 
-  if (normalizedOptions.realtime) {
-    const attributesToPrepare = { realtime: true };
-
-    if (!normalizedOptions.format) {
-      attributesToPrepare.format = DATETIME_FORMATS.long;
-    }
-
-    if (!normalizedOptions.timezone) {
-      attributesToPrepare.timezone = getLocalTimezone();
-    }
-
-    if (!normalizedOptions.offset) {
-      attributesToPrepare.offset = helperOffset;
-    }
-
-    const attributes = prepareAttributes(attributesToPrepare);
+  if (realtime === true || realtime === 'true') {
+    const attributes = prepareAttributes(normalizedOptions);
 
     return new Handlebars.SafeString(`<c-now ${attributes}></c-now>`);
   }

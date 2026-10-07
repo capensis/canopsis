@@ -1,9 +1,59 @@
 import Handlebars from 'handlebars';
 
-import { requestHelper } from '@/helpers/handlebars/helpers';
+import { DATETIME_FORMATS } from '@/constants';
+
+import { nowHelper, requestHelper } from '@/helpers/handlebars/helpers';
 import { uid } from '@/helpers/uid';
 
 vi.mock('@/helpers/uid');
+
+describe('nowHelper', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-07T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test('Applies format without realtime', () => {
+    expect(nowHelper({ hash: { format: '[formatted]' } })).toBe('formatted');
+  });
+
+  test('Applies timezone without realtime', () => {
+    expect(nowHelper({ hash: { timezone: 'America/New_York' } })).toBe('07/10/2026 8:00:00');
+  });
+
+  test('Applies offset without realtime', () => {
+    expect(nowHelper({ hash: { offset: '+15m' } })).toMatch(/:15:00$/);
+  });
+
+  test('Enables realtime without other options', () => {
+    const result = nowHelper({ hash: { realtime: true } });
+
+    expect(result).toBeInstanceOf(Handlebars.SafeString);
+    expect(result.toString()).toContain(`format="${DATETIME_FORMATS.long}"`);
+    expect(result.toString()).toMatch(/timezone="[^"]+"/);
+    expect(result.toString()).not.toContain('offset=');
+  });
+
+  test('Renders a realtime component with normalized formatting attributes', () => {
+    const result = nowHelper({
+      hash: {
+        format: 'time',
+        timezone: 'Europe/Paris',
+        realtime: true,
+        offset: '+15m',
+      },
+    });
+
+    expect(result).toBeInstanceOf(Handlebars.SafeString);
+    expect(result.toString()).toBe(
+      '<c-now format="time" timezone="Europe/Paris" offset="+15m"></c-now>',
+    );
+  });
+});
 
 describe('requestHelper', () => {
   const mockContext = { test: 'context' };

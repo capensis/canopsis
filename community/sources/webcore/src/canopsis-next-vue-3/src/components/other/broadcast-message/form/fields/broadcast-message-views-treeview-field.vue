@@ -41,7 +41,7 @@ export default {
 
   setup(props, { emit }) {
     const model = computed(() => props.modelValue ?? props.value ?? []);
-    const hasNestedItems = computed(() => props.items.some(getItemChildren));
+    const hasNestedItems = computed(() => props.items.some(item => item.children?.length));
 
     const updateModel = (nextValue) => {
       emit('update:modelValue', nextValue);
@@ -56,10 +56,20 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .broadcast-message-views-treeview-field {
-  :deep(.v-list-item__overlay) {
-    display: none;
+  background: transparent;
+
+  .v-list-item__overlay {
+    display: block;
+  }
+
+  .v-list-item--active > .v-list-item__overlay {
+    opacity: 0;
+  }
+
+  .v-list-item:hover > .v-list-item__overlay {
+    opacity: calc(var(--v-hover-opacity) * var(--v-theme-overlay-multiplier));
   }
 }
 </style>

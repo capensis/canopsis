@@ -103,7 +103,8 @@ describe('alarm-timeline-step', () => {
     expect(getAlarmStepColor(ALARM_LIST_STEPS.resume)).toBe(COLORS.alarmSteps.activate);
   });
 
-  test('Pause step uses the pause action icon', () => {
-    expect(getAlarmStepIcon(ALARM_LIST_STEPS.pause)).toBe('$vuetify.icons.pause_action');
+  test('Pause and resume steps use pause and play icons', () => {
+    expect(getAlarmStepIcon(ALARM_LIST_STEPS.pause)).toBe('pause');
+    expect(getAlarmStepIcon(ALARM_LIST_STEPS.resume)).toBe('play_arrow');
   });
 });
