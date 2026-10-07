@@ -16849,6 +16849,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/top/active-connects:
+    get:
+      tags:
+        - users
+      summary: Get user with the most active connections
+      description: |
+        Get the enabled user with the highest active connection count. The count represents distinct websocket tokens observed within the websocket store's freshness window, so multiple sockets sharing one token count once. Equal counts are ordered by user ID ascending. Disabled users and users with no matching user document are excluded before selecting the winner. The response contains the existing enriched user representation, including active_connects and deletable. If no enabled user has an active token, the response is `204` with no body.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: users-get-top-active-connects
+      responses:
+        '200':
+          description: User with the highest active connection count
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.User'
+        '204':
+          description: No enabled user has an active connection
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
   /users:
     get:
       tags:
