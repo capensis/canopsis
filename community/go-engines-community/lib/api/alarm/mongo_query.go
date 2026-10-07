@@ -192,7 +192,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
-	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services"}
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services", entityDbPrefix + ".pause.path", entityDbPrefix + ".latest_pause"}
 }
 
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {

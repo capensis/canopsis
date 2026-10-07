@@ -98,7 +98,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime) {
 	q.computedFieldsForAdditionalMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields()
-	q.excludedFields = []string{"services", "alarm", "event_stats"}
+	q.excludedFields = []string{"services", "alarm", "event_stats", "pause.path", "latest_pause"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime) ([]bson.M, error) {
