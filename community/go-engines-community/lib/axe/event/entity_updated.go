@@ -112,7 +112,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		// The entity has been added to or removed from services, so its pause
 		// and its alarm pause are updated.
 		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
-			&entity, &alarm, event.Parameters.Timestamp)
+			&entity, &alarm, event.Parameters.Timestamp, p.logger)
 		if err != nil {
 			return err
 		}

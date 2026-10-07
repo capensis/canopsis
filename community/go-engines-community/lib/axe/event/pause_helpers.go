@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -29,7 +31,12 @@ type pauseChange struct {
 
 // resolveInheritedPause returns the pause which the entity inherits from its parents:
 // the newest inheritable pause of its services and of its component, nil if none of them is paused.
-func resolveInheritedPause(ctx context.Context, entityCollection mongo.DbCollection, entity types.Entity) (*types.LatestPause, error) {
+func resolveInheritedPause(
+	ctx context.Context,
+	entityCollection mongo.DbCollection,
+	entity types.Entity,
+	logger zerolog.Logger,
+) (*types.LatestPause, error) {
 	parentIDs := make([]string, len(entity.Services))
 	copy(parentIDs, entity.Services)
 	if entity.Type == types.EntityTypeResource {
@@ -58,7 +65,15 @@ func resolveInheritedPause(ctx context.Context, entityCollection mongo.DbCollect
 		return nil, err
 	}
 
-	return parent.InheritedPause(), nil
+	// The entity is not paused if the pause of its parent cannot be inherited, the event itself is processed anyway.
+	pause, err := parent.InheritedPause()
+	if err != nil {
+		logger.Err(err).Str("entity", entity.ID).Msg("entity is not paused by its parent")
+
+		return nil, nil
+	}
+
+	return pause, nil
 }
 
 // updatePauseOnServicesChange updates the pause of the entity and of its alarm when the entity has been
@@ -72,12 +87,13 @@ func updatePauseOnServicesChange(
 	entity *types.Entity,
 	alarm *types.Alarm,
 	now datetime.CpsTime,
+	logger zerolog.Logger,
 ) (pauseChange, error) {
 	if len(entity.ServicesToAdd) == 0 && len(entity.ServicesToRemove) == 0 {
 		return pauseChange{}, nil
 	}
 
-	inherited, err := resolveInheritedPause(ctx, entityCollection, *entity)
+	inherited, err := resolveInheritedPause(ctx, entityCollection, *entity, logger)
 	if err != nil {
 		return pauseChange{}, err
 	}
@@ -279,6 +295,20 @@ func publishPauseChange(
 		return nil
 	}
 
+	// The pause passes through this entity, so it's added to its path, see the path of types.Pause.
+	var pausePath []string
+	if change.pause != nil {
+		pausePath = change.pause.Path
+	} else if entity.LatestPause != nil {
+		pausePath = entity.LatestPause.Path
+	}
+
+	if len(pausePath) >= types.MaxPausePathLength {
+		return fmt.Errorf("the pause path of %s is too long, the change is not propagated to its dependencies", entity.ID)
+	}
+
+	pausePath = append(slices.Clone(pausePath), entity.ID)
+
 	cursor, err := entityCollection.Find(ctx, filter)
 	if err != nil {
 		return err
@@ -299,6 +329,7 @@ func publishPauseChange(
 		}
 
 		depEvent.Inherited = true
+		depEvent.PausePath = pausePath
 		if change.alarmChange == types.AlarmChangeTypePause {
 			depEvent.EventType = types.EventTypePause
 			depEvent.Timestamp = change.pause.Timestamp
@@ -311,8 +342,10 @@ func publishPauseChange(
 		} else {
 			depEvent.EventType = types.EventTypeResume
 			depEvent.Timestamp = now
-			depEvent.PauseSource = entity.LatestPause.Source
 			depEvent.Initiator = types.InitiatorSystem
+			if entity.LatestPause != nil {
+				depEvent.PauseSource = entity.LatestPause.Source
+			}
 		}
 
 		err = publishEvent(ctx, publisher, encoder, depEvent)
