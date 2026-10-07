@@ -265,7 +265,7 @@ func publishPauseChange(
 
 	// A pause which only replaces the previous pause of the entity is not an alarm change,
 	// but it's still propagated to its dependencies.
-	if change.alarmChange != "" {
+	if change.alarmChange != "" && alarmID != "" {
 		triggerEvent, err := eventGenerator.Generate(entity)
 		if err != nil {
 			return fmt.Errorf("cannot generate event: %w", err)
