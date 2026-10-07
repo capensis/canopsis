@@ -1,90 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 1`] = `
-<div
-  class="layout"
->
-  <div
-    class="v-menu"
-  >
-    <!---->
-  </div>
-  <button
-    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light"
-      >
-        more_vert
-      </i>
-    </span>
-  </button>
-</div>
-`;
-
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items="[object Object],[object Object]"
-    return-object=""
-  />
-</div>
-`;
-
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
-<div
-  class="layout"
->
-  <div
-    class="v-menu"
-  >
-    <!---->
-  </div>
-  <button
-    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate material-icons theme--light"
-      >
-        more_vert
-      </i>
-    </span>
-  </button>
-</div>
-`;
-
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items="[object Object],[object Object]"
-    return-object=""
-  />
-</div>
-`;
-
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly. Size 'xl' 1`] = `
 <div
   class="layout"
 >
@@ -118,5 +34,265 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the l
       </i>
     </span>
   </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly. Size 'xl' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items=""
+    return-object=""
+  />
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 2 inlineCount. Size 'xl' 1`] = `
+<div
+  class="layout"
+>
+  <c-action-btn-stub
+    color="primary"
+    icon="edit"
+    tooltip="Edit title"
+  />
+  <div
+    class="v-menu"
+  >
+    <!---->
+  </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 2 inlineCount. Size 'xl' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items="[object Object],[object Object]"
+    return-object=""
+  />
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 1`] = `
+<div
+  class="layout"
+>
+  <c-action-btn-stub
+    color="primary"
+    icon="edit"
+    tooltip="Edit title"
+  />
+  <c-action-btn-stub
+    color="secondary"
+    icon="delete"
+    tooltip="Delete title"
+  />
+  <c-action-btn-stub
+    color="secondary"
+    icon="done"
+    tooltip="Ack title"
+  />
+  <div
+    class="v-menu"
+  >
+    <!---->
+  </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items=""
+    return-object=""
+  />
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 'm' 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="v-menu"
+  >
+    <!---->
+  </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 'm' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items="[object Object],[object Object],[object Object]"
+    return-object=""
+  />
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 't' 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="v-menu"
+  >
+    <!---->
+  </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 't' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items="[object Object],[object Object],[object Object]"
+    return-object=""
+  />
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 1`] = `
+<div
+  class="layout"
+>
+  <c-action-btn-stub
+    color="primary"
+    icon="edit"
+    tooltip="Edit title"
+  />
+  <c-action-btn-stub
+    color="secondary"
+    icon="delete"
+    tooltip="Delete title"
+  />
+  <c-action-btn-stub
+    color="secondary"
+    icon="done"
+    tooltip="Ack title"
+  />
+  <div
+    class="v-menu"
+  >
+    <!---->
+  </div>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+      >
+        more_vert
+      </i>
+    </span>
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  role="menu"
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
+>
+  <c-list-stub
+    item-text="title"
+    item-value="title"
+    items=""
+    return-object=""
+  />
 </div>
 `;
