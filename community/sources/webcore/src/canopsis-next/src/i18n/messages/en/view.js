@@ -12,7 +12,7 @@ export default {
   duplicateAsPrivate: 'Duplicate as private view',
   duplicateAsRegular: 'Duplicate as regular view',
   periodicRefresh: 'Periodic refresh',
-  groupIds: 'Choose a group, or create a new one',
+  groupIds: 'Choose a view group, or create a new one',
   groupTags: 'Group tags',
   noGroupsFound: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
   errors: {
