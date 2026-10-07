@@ -491,7 +491,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.declareTicketRuleFail]: 'note_add',
   [ALARM_LIST_STEPS.snooze]: 'alarm',
   [ALARM_LIST_STEPS.unsnooze]: 'alarm_off',
-  [ALARM_LIST_STEPS.pause]: '$vuetify.icons.pause_action',
+  [ALARM_LIST_STEPS.pause]: 'pause',
   [ALARM_LIST_STEPS.resume]: 'play_arrow',
   [ALARM_LIST_STEPS.pbhenter]: 'pause',
   [ALARM_LIST_STEPS.pbhleave]: 'pause',
