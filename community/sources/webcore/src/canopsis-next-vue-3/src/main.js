@@ -1,8 +1,10 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
-import { MODALS } from '@/constants';
+import { FEATURES_SERVICE_KEYS, MODALS } from '@/constants';
 import * as constants from '@/constants';
+
+import { featuresService } from '@/services/features';
 
 import * as ActionsPanelComponents from '@/components/common/actions-panel';
 import CCircleBadge from '@/components/common/badge/c-circle-badge.vue';
@@ -323,6 +325,8 @@ app.use(modalsPlugin, {
     [MODALS.textFieldEditor]: { autoHeight: true },
     [MODALS.userInterface]: { maxWidth: 1000 },
     [MODALS.variablesHelp]: { autoHeight: true },
+
+    ...featuresService.get(FEATURES_SERVICE_KEYS.components.modals.dialogPropsMap, {}),
   },
 });
 app.use(popupsPlugin);

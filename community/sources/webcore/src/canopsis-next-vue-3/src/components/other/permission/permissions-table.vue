@@ -146,7 +146,7 @@ export default {
 
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: auto;
+  table-layout: fixed;
   width: 100%;
 
   &--collapsed-header {

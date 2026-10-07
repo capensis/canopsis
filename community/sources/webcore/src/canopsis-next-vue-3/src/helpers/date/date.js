@@ -37,6 +37,16 @@ export const convertDateToMoment = (date, format) => {
 export const getTimezones = () => moment.tz.names();
 
 /**
+ * Convert an IANA timezone identifier to a human-readable label.
+ *
+ * The identifier itself must stay unchanged when it is used for date conversion.
+ *
+ * @param {string} timezone
+ * @return {string}
+ */
+export const formatTimezoneLabel = (timezone = '') => timezone.replace(/_/g, ' ');
+
+/**
  * Set locale for each dates
  *
  * @param {string} locale

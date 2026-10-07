@@ -277,6 +277,9 @@ export default {
       [WIDGET_TYPES.counter]: {
         title: 'Counter',
       },
+      [WIDGET_TYPES.clock]: {
+        title: 'Clock',
+      },
       [WIDGET_TYPES.testingWeather]: {
         title: 'Junit scenarios',
       },

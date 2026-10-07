@@ -16,6 +16,7 @@ export default {
     [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
     [SIDE_BARS.textSettings]: 'Paramètres du widget texte',
     [SIDE_BARS.counterSettings]: 'Paramètres du widget compteur',
+    [SIDE_BARS.clockSettings]: 'Paramètres du widget horloge',
     [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
     [SIDE_BARS.mapSettings]: 'Paramètres du widget de cartographie',
     [SIDE_BARS.barChartSettings]: 'Paramètres du graphique à barres',
