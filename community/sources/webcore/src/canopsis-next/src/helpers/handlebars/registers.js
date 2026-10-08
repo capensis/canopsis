@@ -2,6 +2,25 @@ import * as helpers from '@/helpers/handlebars/helpers';
 
 import { Handlebars } from './handlebars';
 
+const helperRegistrationsByInstance = new WeakMap();
+
+/**
+ * Get helper registrations for a Handlebars instance
+ *
+ * @param {Handlebars} instance
+ * @returns {Map}
+ */
+const getHelperRegistrations = (instance) => {
+  let registrations = helperRegistrationsByInstance.get(instance);
+
+  if (!registrations) {
+    registrations = new Map();
+    helperRegistrationsByInstance.set(instance, registrations);
+  }
+
+  return registrations;
+};
+
 /**
  * Register handlebars helper
  *
@@ -10,11 +29,26 @@ import { Handlebars } from './handlebars';
  * @returns {*}
  */
 export function registerHelper(name, helper, instance = Handlebars) {
-  if (instance.helpers[name]) {
+  const registrations = getHelperRegistrations(instance);
+  const registration = registrations.get(name);
+
+  if (registration) {
+    registration.owners += 1;
+
     return;
   }
 
-  instance.registerHelper(name, helper);
+  const isExternal = Boolean(instance.helpers[name]);
+
+  if (!isExternal) {
+    instance.registerHelper(name, helper);
+  }
+
+  registrations.set(name, {
+    owners: 1,
+    external: isExternal,
+    helper: instance.helpers[name],
+  });
 }
 
 /**
@@ -24,7 +58,28 @@ export function registerHelper(name, helper, instance = Handlebars) {
  * @returns {*}
  */
 export function unregisterHelper(name, instance = Handlebars) {
-  instance.unregisterHelper(name);
+  const registrations = helperRegistrationsByInstance.get(instance);
+  const registration = registrations?.get(name);
+
+  if (!registration) {
+    return;
+  }
+
+  registration.owners -= 1;
+
+  if (registration.owners > 0) {
+    return;
+  }
+
+  registrations.delete(name);
+
+  if (!registrations.size) {
+    helperRegistrationsByInstance.delete(instance);
+  }
+
+  if (!registration.external && instance.helpers[name] === registration.helper) {
+    instance.unregisterHelper(name);
+  }
 }
 
 /**
