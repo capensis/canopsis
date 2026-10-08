@@ -1,21 +1,25 @@
 <template>
-  <v-layout column>
-    <span class="subheading font-weight-bold">{{ $t('stateSetting.computeMethod') }}</span>
+  <v-layout class="gap-2" column>
+    <c-label :label="$t('stateSetting.computeMethod')" />
     <v-radio-group
       v-field="value"
+      class="mt-0"
       hide-details
       mandatory
     >
       <v-radio
-        v-for="method in methods"
+        v-for="method in STATE_SETTING_METHODS"
         :key="method"
         :value="method"
         color="primary"
       >
         <template #label>
-          <span class="mr-2">{{ $t(`stateSetting.methods.${method}.label`) }}</span>
+          <span class="mr-2">
+            {{ $t(`stateSetting.methods.${method}.label`) }}
+          </span>
           <c-help-icon
             :text="$t(`stateSetting.methods.${method}.tooltip`)"
+            icon="help"
             top
           />
         </template>
@@ -39,10 +43,10 @@ export default {
       default: STATE_SETTING_METHODS.inherited,
     },
   },
-  computed: {
-    methods() {
-      return STATE_SETTING_METHODS;
-    },
+  setup() {
+    return {
+      STATE_SETTING_METHODS,
+    };
   },
 };
 </script>

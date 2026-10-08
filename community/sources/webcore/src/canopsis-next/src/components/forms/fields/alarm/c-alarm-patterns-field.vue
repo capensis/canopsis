@@ -244,6 +244,7 @@ export default {
         operators: [
           PATTERN_OPERATORS.ticketAssociated,
           PATTERN_OPERATORS.ticketNotAssociated,
+          PATTERN_OPERATORS.ticketCreationFailed,
         ],
       };
     },

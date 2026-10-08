@@ -1,7 +1,6 @@
 <template>
   <widget-settings
     :submitting="submitting"
-    :dirty="hasChanges"
     divider
     @submit="submit"
   >

@@ -1,5 +1,7 @@
 <template>
-  <span>{{ texts.start }}<span class="v-list-item__mask">{{ texts.middle }}</span>{{ texts.end }}</span>
+  <span>{{ texts.start }}<span class="v-list-item__mask">
+    {{ texts.middle }}
+  </span>{{ texts.end }}</span>
 </template>
 
 <script>

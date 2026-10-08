@@ -1,8 +1,6 @@
 <template>
   <div class="text-editor">
-    <v-label v-show="label">
-      {{ label }}
-    </v-label>
+    <c-label v-if="label" :error="hasError" class="mb-2">{{ label }}</c-label>
     <div
       :class="{ 'error--text': hasError }"
       class="text-editor"
@@ -143,7 +141,7 @@ export default {
     const sanitized = ref(false);
 
     const sanitizedValue = computed(() => sanitizeHtml(props.value, props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS));
-    const hasError = computed(() => props.errorMessages.length);
+    const hasError = computed(() => props.errorMessages.length > 0);
 
     const { controlsOptions, uploaderOptions } = useTextEditorUpload({
       editor,

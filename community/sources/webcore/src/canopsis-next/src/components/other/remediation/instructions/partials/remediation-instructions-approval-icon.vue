@@ -5,7 +5,9 @@
   >
     <template #activator="{ on }">
       <span v-on="on">
-        <v-icon :color="iconData.color">{{ iconData.name }}</v-icon>
+        <v-icon :color="iconData.color">
+          {{ iconData.name }}
+        </v-icon>
       </span>
     </template>
     {{ iconData.tooltip }}

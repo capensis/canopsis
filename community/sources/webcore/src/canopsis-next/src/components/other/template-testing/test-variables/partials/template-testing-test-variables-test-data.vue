@@ -2,7 +2,9 @@
   <v-card class="test-data-card">
     <v-card-text>
       <v-layout column>
-        <span class="text-subtitle-2">{{ $t('templateTesting.testData') }}</span>
+        <span class="text-subtitle-2">
+          {{ $t('templateTesting.testData') }}
+        </span>
         <component
           v-for="field in fields"
           :is="field.is"

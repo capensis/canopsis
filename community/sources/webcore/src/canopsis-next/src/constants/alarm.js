@@ -56,6 +56,7 @@ export const ALARM_FIELDS = {
   ticketValue: 'v.ticket.ticket',
   ticketCreatedAt: 'v.ticket.t',
   changeState: 'v.change_state',
+  failedTicket: 'v.failed_ticket',
   meta: 'v.meta',
   entityId: 'entity._id',
   entityName: 'entity.name',

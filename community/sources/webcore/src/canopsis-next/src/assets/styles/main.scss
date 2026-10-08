@@ -5,6 +5,12 @@ html {
   background-color: var(--v-application-background-base);
 }
 
+.v-application .text-body-2 {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  letter-spacing: .0178571429em !important;
+}
+
 .v-app--disabled-transitions {
   .v-navigation-drawer {
     &, .v-item-group, .v-expansion-panel {
@@ -51,6 +57,11 @@ html {
   &-group--disabled .v-list-group__header.v-list-item:not(.v-list-item--disabled) {
     color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
     pointer-events: none;
+  }
+
+  .v-subheader {
+    font-size: 1.1428571429rem;
+    color: inherit;
   }
 }
 
@@ -430,6 +441,10 @@ html {
   }
 }
 
+.display-block {
+  display: block !important;
+}
+
 .full-width {
   width: 100%;
 }
@@ -472,18 +487,25 @@ html {
   min-width: 64px;
 }
 
+*[aria-required="true"] label, label[aria-required="true"] {
+  &:before {
+    content: '*' !important;
+    padding-right: 4px !important;
+    color: var(--v-error-base) !important;
+  }
+}
+
 .v-select.v-select--chips.v-select--chips--small .v-select__selections {
   min-height: 32px;
 }
 
-*[aria-required="true"] label:before {
-  content: '*' !important;
-  padding-right: 4px !important;
-  color: var(--v-error-base) !important;
-}
-
 .not-required label:before {
   content: none !important;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }
 
 @for $i from 0 through 16 {
@@ -603,4 +625,8 @@ html {
 
 .all-inherit {
   all: inherit;
+}
+
+.text-center {
+  text-align: center;
 }

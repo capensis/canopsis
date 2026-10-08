@@ -6,11 +6,12 @@ import { MODALS } from '@/constants';
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
 
 const stubs = {
+  'c-label': true,
   'c-action-btn': true,
 };
 
 const selectCreateRruleButton = wrapper => wrapper.find('v-btn-stub');
-const selectRemoveRruleButton = wrapper => wrapper.find('c-action-btn-stub');
+const selectRemoveRruleButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 
 describe('pbehavior-recurrence-rule-field', () => {
   const $modals = mockModals();

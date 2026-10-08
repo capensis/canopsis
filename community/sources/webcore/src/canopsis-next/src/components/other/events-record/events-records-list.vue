@@ -41,7 +41,9 @@
       <span v-if="item.is_recording">
         {{ $t('common.inProgress') }}
       </span>
-      <span v-else>{{ item.e | date('long', '-') }}</span>
+      <span v-else>
+        {{ item.e | date('long', '-') }}
+      </span>
     </template>
     <template #d="{ item }">
       <span v-if="item.is_recording">
@@ -53,7 +55,9 @@
     </template>
     <template #count="{ item }">
       <span>{{ item.count }}</span>
-      <span v-if="item.is_recording">...</span>
+      <span v-if="item.is_recording">
+        ...
+      </span>
     </template>
     <template #author="{ item }">
       {{ item.author || '—' }}

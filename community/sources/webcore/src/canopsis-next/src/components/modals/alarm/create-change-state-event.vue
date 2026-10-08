@@ -25,7 +25,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="primary"
           type="submit"
         >
@@ -75,7 +75,7 @@ export default {
       state: firstItem && items.length === 1 ? firstItem.v.state.val : ALARM_STATES.major,
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(form.value);
@@ -88,7 +88,6 @@ export default {
     return {
       config,
       form,
-      isDisabled,
       submitting,
       submit,
       close,

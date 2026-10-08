@@ -1,6 +1,8 @@
 <template>
   <v-layout column>
-    <span class="pl-4">{{ $t('kpi.filters.helpInformation') }}</span>
+    <span class="pl-4">
+      {{ $t('kpi.filters.helpInformation') }}
+    </span>
     <kpi-filters-list
       :options.sync="options"
       :filters="filters"

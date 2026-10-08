@@ -1,7 +1,9 @@
 <template>
   <v-layout class="mb-2 state-setting-information-row">
     <v-flex class="state-setting-information-row--label">
-      <span class="font-weight-bold">{{ label }}</span>
+      <span class="font-weight-bold">
+        {{ label }}
+      </span>
     </v-flex>
     <v-flex>
       <slot>{{ value }}{{ unit }}</slot>

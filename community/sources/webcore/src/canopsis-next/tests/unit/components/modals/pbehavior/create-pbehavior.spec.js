@@ -16,6 +16,9 @@ const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'pattern-progress': true,
   'pbehavior-form': true,
+  'pbehavior-general-form': true,
+  'c-enabled-field': true,
+  'v-layout': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -23,6 +26,9 @@ const stubs = {
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'pbehavior-form': true,
+  'pbehavior-general-form': true,
+  'c-enabled-field': true,
+  'v-layout': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
@@ -68,7 +74,7 @@ describe('create-pbehavior', () => {
     exdates: [],
     reason: undefined,
     type: undefined,
-    rrule: null,
+    rrule: '',
     tstart: null,
     tstop: null,
     timezone: 'Europe/Paris',

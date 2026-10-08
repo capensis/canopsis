@@ -121,13 +121,7 @@ exports[`c-description-field Renders \`c-description-field\` with errors 1`] = `
           class="v-messages__wrapper"
           name="message-transition"
           tag="div"
-        >
-          <div
-            class="v-messages__message"
-          >
-            The field is required
-          </div>
-        </transition-group-stub>
+        />
       </div>
     </div>
   </div>

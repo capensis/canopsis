@@ -1,54 +1,53 @@
 <template>
-  <v-layout column>
-    <c-collapse-panel
-      :title="$t('eventFilter.editActions')"
-      class="mb-2"
-    >
-      <event-filter-enrichment-actions-form
-        v-field="form.config.actions"
-        :variables="templateVariables"
-        :copy-variables="copyVariables"
-        :name="name"
-        :set-tags-items="setTagsItems"
-      />
-    </c-collapse-panel>
-    <v-layout>
-      <v-select
-        v-field="form.config.on_success"
-        :label="$t('eventFilter.onSuccess')"
-        :items="eventFilterAfterTypes"
-        class="mr-3"
-      />
-      <v-select
-        v-field="form.config.on_failure"
-        :label="$t('eventFilter.onFailure')"
-        :items="eventFilterAfterTypes"
-        class="ml-3"
-      />
-    </v-layout>
-    <c-alert
-      :value="errors.has(name)"
-      type="error"
-    >
-      {{ $t('eventFilter.actionsRequired') }}
-    </c-alert>
+  <v-layout class="gap-3" column>
+    <span class="text-subtitle-1">
+      {{ $t('eventFilter.enrichmentOptions') }}
+    </span>
+
+    <c-form-block>
+      <c-form-block-row :label="$t('externalData.title')" indented>
+        <external-data-form
+          v-field="form.external_data"
+          :variables="templateVars.external_data"
+          optionally
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.actionsLabel')" indented>
+        <c-label :label="$t('common.actionsLabel')" class="mb-3" required />
+        <event-filter-enrichment-actions-form
+          v-field="form.config.actions"
+          :variables="templateVars.config"
+          :copy-variables="copyVars.config"
+          :name="name"
+          :set-tags-items="setTagsItems"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('eventFilter.onSuccessAndFailure')">
+        <event-filter-enrichment-after-outcome-fields v-field="form" />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { formMixin } from '@/mixins/form';
-import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
+import { getSetTagsItemsFromPattern } from '@/helpers/entities/event-filter/rule/entity';
+
+import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
 import EventFilterEnrichmentActionsForm from './event-filter-enrichment-actions-form.vue';
+import EventFilterEnrichmentAfterOutcomeFields from './event-filter-enrichment-after-outcome-fields.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    ExternalDataForm,
     EventFilterEnrichmentActionsForm,
+    EventFilterEnrichmentAfterOutcomeFields,
   },
-  mixins: [formMixin, validationAttachRequiredMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -62,34 +61,21 @@ export default {
       type: String,
       default: 'config.actions',
     },
-    templateVariables: {
-      type: Array,
-      default: () => [],
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
-    copyVariables: {
-      type: Array,
-      default: () => [],
-    },
-    setTagsItems: {
-      type: Array,
-      default: () => [],
+    copyVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
-  computed: {
-    eventFilterAfterTypes() {
-      return Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES);
-    },
-  },
-  watch: {
-    'form.config.actions': function validateActions() {
-      this.validateRequiredRule();
-    },
-  },
-  created() {
-    this.attachRequiredRule(() => this.form.config.actions);
-  },
-  beforeDestroy() {
-    this.detachRequiredRule();
+  setup(props) {
+    const setTagsItems = computed(() => getSetTagsItemsFromPattern(props.form.patterns?.event_pattern));
+
+    return {
+      setTagsItems,
+    };
   },
 };
 </script>

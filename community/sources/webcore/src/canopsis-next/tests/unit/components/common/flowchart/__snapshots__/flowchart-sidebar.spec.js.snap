@@ -41,7 +41,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
           <span
             class="v-label"
           >
-            Shapes
+          Shapes
           </span>
           <transition-stub
             name="fade-transition"
@@ -857,7 +857,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
           <span
             class="v-label"
           >
-            Icons
+          Icons
           </span>
           <transition-stub
             name="fade-transition"
@@ -1008,7 +1008,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
           <span
             class="v-label"
           >
-            Shapes
+          Shapes
           </span>
           <transition-stub
             name="fade-transition"
@@ -1824,7 +1824,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
           <span
             class="v-label"
           >
-            Icons
+          Icons
           </span>
           <transition-stub
             name="fade-transition"

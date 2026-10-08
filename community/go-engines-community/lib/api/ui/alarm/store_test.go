@@ -17,31 +17,19 @@ import (
 
 func BenchmarkStore_Find_GivenRequestWithBookmarksFilterWithoutUser(b *testing.B) {
 	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", ListRequestWithPagination{
-		Query: pagination.Query{
-			Page:     1,
-			Limit:    100,
-			Paginate: true,
-		},
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{},
-			},
-		},
+		Page:              1,
+		Limit:             100,
+		Paginate:          true,
+		BaseFilterRequest: BaseFilterRequest{},
 	}, "")
 }
 
 func BenchmarkStore_Find_GivenRequestWithBookmarksFilterWithUser(b *testing.B) {
 	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", ListRequestWithPagination{
-		Query: pagination.Query{
-			Page:     1,
-			Limit:    100,
-			Paginate: true,
-		},
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{},
-			},
-		},
+		Page:              1,
+		Limit:             100,
+		Paginate:          true,
+		BaseFilterRequest: BaseFilterRequest{},
 	}, "user_500")
 }
 
@@ -50,19 +38,11 @@ func BenchmarkStore_Find_GivenRequestWithIncludeInstructionsFilter(b *testing.B)
 	instructionType := InstructionTypeManual
 
 	benchmarkStoreFind(b, "./testdata/fixtures/include_instructions_filter.yml", ListRequestWithPagination{
-		Query: pagination.Query{
-			Page:     1,
-			Limit:    100,
-			Paginate: true,
-		},
-		ListRequest: ListRequest{
-			FilterRequest: FilterRequest{
-				BaseFilterRequest: BaseFilterRequest{
-					InstructionFilterType: &instructionFilterType,
-					InstructionType:       &instructionType,
-				},
-			},
-		},
+		Page:                  1,
+		Limit:                 100,
+		Paginate:              true,
+		InstructionFilterType: &instructionFilterType,
+		InstructionType:       &instructionType,
 	}, "test")
 }
 
@@ -113,22 +93,16 @@ func detailsRequest(reversed, group bool, page int64) DetailsRequest {
 		WithDeclareTickets: true,
 		WithDependencies:   true,
 		Steps: &StepsRequest{
-			Query: pagination.Query{
-				Page:  page,
-				Limit: 10,
-			},
+			Page:     page,
+			Limit:    10,
 			Reversed: reversed,
 			Group:    group,
 		},
 		Children: &ChildDetailsRequest{
-			Query: pagination.Query{
-				Page:  1,
-				Limit: 10,
-			},
-			SortRequest: SortRequest{
-				SortBy: "v.last_event_date",
-				Sort:   "desc",
-			},
+			Page:   1,
+			Limit:  10,
+			SortBy: "v.last_event_date",
+			Sort:   "desc",
 		},
 	}
 	r.Format()

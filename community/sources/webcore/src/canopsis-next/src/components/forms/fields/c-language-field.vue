@@ -4,10 +4,15 @@
     :items="languages"
     :disabled="disabled"
     :label="label"
+    :menu-props="menuProps"
   />
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useComponentInstance } from '@/hooks/vue';
+
 export default {
   model: {
     prop: 'value',
@@ -31,10 +36,18 @@ export default {
       default: 'language',
     },
   },
-  computed: {
-    languages() {
-      return Object.keys(this.$i18n.messages);
-    },
+  setup() {
+    const menuProps = { offsetY: true };
+
+    const instance = useComponentInstance();
+
+    const languages = computed(() => Object.keys(instance.$i18n.messages));
+
+    return {
+      menuProps,
+
+      languages,
+    };
   },
 };
 </script>

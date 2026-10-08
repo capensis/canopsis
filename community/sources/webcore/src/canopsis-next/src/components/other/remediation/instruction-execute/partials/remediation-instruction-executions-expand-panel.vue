@@ -26,10 +26,10 @@ export default {
     },
   },
   setup() {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
     const headers = computed(() => [
       { text: '', value: 'icon', sortable: false },
-      { text: t('common.step'), value: 'name', sortable: false },
+      { text: tc('common.step'), value: 'name', sortable: false },
       { text: t('common.output'), value: 'fail_reason', sortable: false },
       { text: t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at', sortable: false },
     ]);

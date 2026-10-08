@@ -1,60 +1,65 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs12>
-        <text-editor-field
-          v-field="form.message"
-          v-validate="'required'"
-          :label="$t('common.message')"
-          :error-messages="errors.collect('message')"
-          name="message"
-          autofocus
-          public
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout>
+  <c-form-block>
+    <c-form-block-row :label="$t('common.message')" indented>
+      <text-editor-field
+        v-field="form.message"
+        v-validate="'required'"
+        :label="$t('common.message')"
+        :error-messages="errors.collect('message')"
+        name="message"
+        autofocus
+        public
+      />
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('common.period')">
+      <v-layout class="gap-4">
+        <v-flex xs6>
+          <date-time-picker-field
+            v-validate="startRules"
+            :value="form.start"
+            :label="$t('common.start')"
+            :error-message="errors.collect('start')"
+            name="start"
+            @input="updateField('start', $event)"
+          >
+            <template #append-outer>
+              <v-btn icon>
+                <v-icon>
+                  calendar_today
+                </v-icon>
+              </v-btn>
+            </template>
+          </date-time-picker-field>
+        </v-flex>
+        <v-flex xs6>
+          <date-time-picker-field
+            v-validate="endRules"
+            :value="form.end"
+            :label="$t('common.end')"
+            :error-message="errors.collect('end')"
+            name="end"
+            @input="updateField('end', $event)"
+          >
+            <template #append-outer>
+              <v-btn icon>
+                <v-icon>
+                  calendar_today
+                </v-icon>
+              </v-btn>
+            </template>
+          </date-time-picker-field>
+        </v-flex>
+      </v-layout>
+    </c-form-block-row>
+
+    <c-form-block-row
+      :label="$t('common.color')"
+      align-center
+    >
       <c-color-picker-field v-field="form.color" />
-    </v-layout>
-    <v-layout class="gap-4">
-      <v-flex xs6>
-        <date-time-picker-field
-          v-validate="startRules"
-          :value="form.start"
-          :label="$t('common.start')"
-          :error-message="errors.collect('start')"
-          name="start"
-          @input="updateField('start', $event)"
-        >
-          <template #append-outer>
-            <v-btn icon>
-              <v-icon>
-                calendar_today
-              </v-icon>
-            </v-btn>
-          </template>
-        </date-time-picker-field>
-      </v-flex>
-      <v-flex xs6>
-        <date-time-picker-field
-          v-validate="endRules"
-          :value="form.end"
-          :label="$t('common.end')"
-          :error-message="errors.collect('end')"
-          name="end"
-          @input="updateField('end', $event)"
-        >
-          <template #append-outer>
-            <v-btn icon>
-              <v-icon>
-                calendar_today
-              </v-icon>
-            </v-btn>
-          </template>
-        </date-time-picker-field>
-      </v-flex>
-    </v-layout>
-  </div>
+    </c-form-block-row>
+  </c-form-block>
 </template>
 
 <script>

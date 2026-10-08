@@ -723,7 +723,7 @@ paths:
         -  PERMISSIONS: `api_alarm_tag:read`
       operationId: alarm-tags-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -7485,7 +7485,7 @@ paths:
         -  PERMISSIONS: `api_entityservice:read`
       operationId: entityservices-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -8501,7 +8501,7 @@ paths:
         -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilters-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -9854,7 +9854,7 @@ paths:
         -  PERMISSIONS: `api_flapping_rule:read`
       operationId: flappingrules-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10588,7 +10588,7 @@ paths:
         -  PERMISSIONS: `api_idlerule:read`
       operationId: idlerules-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -10948,7 +10948,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountAlarmsResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.AlarmCountResponse'
         '400':
           description: Bad Request
           content:
@@ -11014,7 +11014,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountEntitiesResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.EntityCountResponse'
         '400':
           description: Bad Request
           content:
@@ -13165,7 +13165,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -13588,7 +13588,7 @@ paths:
         -  PERMISSIONS: `api_resolve_rule:read`
       operationId: resolverules-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -15271,7 +15271,7 @@ paths:
         -  PERMISSIONS: `api_action:read`
       operationId: scenarios-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -16334,7 +16334,7 @@ paths:
         -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
@@ -18482,7 +18482,7 @@ paths:
         -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-pattern-fields
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:

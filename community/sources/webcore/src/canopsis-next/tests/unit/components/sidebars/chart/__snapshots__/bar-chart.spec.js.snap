@@ -26,7 +26,6 @@ exports[`bar-chart Renders \`bar-chart\` widget settings with default props 1`] 
 
 exports[`bar-chart Renders \`bar-chart\` widget settings with default props with changed title 1`] = `
 <widget-settings-stub
-  dirty="true"
   divider="true"
 >
   <bar-chart-widget-form-stub

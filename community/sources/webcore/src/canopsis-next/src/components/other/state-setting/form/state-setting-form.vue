@@ -1,104 +1,79 @@
 <template>
-  <v-layout class="gap-2" column>
+  <v-layout class="gap-3" column>
     <c-enabled-field v-field="form.enabled" with-background />
-    <v-stepper
-      v-model="stepper"
-      class="state-setting-form"
+    <c-form-general-patterns-tabs
+      :form="form"
+      :patterns-label="$tc('common.condition', 2)"
+      :additional-label="$t('stateSetting.steps.targetEntities')"
+      :ai-chat-expand-tab-keys="aiChatExpandTabKeys"
     >
-      <v-stepper-header>
-        <v-stepper-step
-          :complete="stepper > STATE_SETTING_FORM_STEPS.basics"
-          :step="STATE_SETTING_FORM_STEPS.basics"
-          :rules="[() => !hasBasicsFormAnyError]"
-          editable
-        >
-          {{ $t('stateSetting.steps.basics') }}
-        </v-stepper-step>
-        <v-divider />
-        <v-stepper-step
-          :complete="stepper > STATE_SETTING_FORM_STEPS.entityPattern"
-          :step="STATE_SETTING_FORM_STEPS.entityPattern"
-          :rules="[() => !hasEntityPatternFormAnyError]"
-          editable
-        >
-          {{ $t('stateSetting.steps.rulePatterns') }}
-        </v-stepper-step>
-        <v-divider />
-        <v-stepper-step
-          :complete="stepper > STATE_SETTING_FORM_STEPS.thresholds"
-          :step="STATE_SETTING_FORM_STEPS.thresholds"
-          :rules="[() => !hasThresholdsFormAnyError]"
-          editable
-        >
-          {{ $t('stateSetting.steps.conditions') }}
-        </v-stepper-step>
-      </v-stepper-header>
-      <v-stepper-items>
-        <v-stepper-content :step="STATE_SETTING_FORM_STEPS.basics">
-          <state-setting-basics-step
-            v-field="form"
-            ref="basicsFormElement"
-          />
-        </v-stepper-content>
-        <v-stepper-content :step="STATE_SETTING_FORM_STEPS.entityPattern">
-          <c-alert
-            class="mb-4"
-            type="info"
-          >
+      <template #general="{ setRef }">
+        <state-setting-general-form
+          v-field="form"
+          :ref="setRef"
+        />
+      </template>
+
+      <template #additional="{ setRef }">
+        <v-layout class="gap-4" column>
+          <c-alert type="info">
             {{ methodMessage }}
           </c-alert>
-          <state-setting-entity-pattern-step
+          <state-setting-entity-patterns-form
             v-field="form.entity_pattern"
-            ref="entityPatternFormElement"
+            :ref="setRef"
             :entity-types="patternEntityTypes"
           />
-        </v-stepper-content>
-        <v-stepper-content :step="STATE_SETTING_FORM_STEPS.thresholds">
-          <c-alert
-            class="mb-4"
-            type="info"
-          >
+        </v-layout>
+      </template>
+
+      <template #patterns="{ setRef }">
+        <v-layout class="gap-4" column>
+          <c-alert type="info">
             {{ methodMessage }}
           </c-alert>
           <state-setting-inherited-entity-pattern-step
             v-if="isInheritedMethod"
             v-field="form.inherited_entity_pattern"
-            ref="thresholdsFormElement"
+            :ref="setRef"
           />
           <state-setting-thresholds-step
             v-else
             v-field="form.state_thresholds"
-            ref="thresholdsFormElement"
+            :ref="setRef"
           />
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
+        </v-layout>
+      </template>
+    </c-form-general-patterns-tabs>
   </v-layout>
 </template>
 
 <script>
-import { computed, inject, ref, watch } from 'vue';
+import { computed } from 'vue';
 
-import { STATE_SETTING_METHODS, PATTERNS_FIELDS } from '@/constants';
+import {
+  FORM_GENERAL_PATTERNS_TABS,
+  STATE_SETTING_METHODS,
+  PATTERNS_FIELDS,
+  STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
+} from '@/constants';
 
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 import { useI18n } from '@/hooks/i18n';
 
-import StateSettingBasicsStep from './steps/state-setting-basics-step.vue';
-import StateSettingEntityPatternStep from './steps/state-setting-entity-pattern-step.vue';
+import StateSettingGeneralForm from './state-setting-general-form.vue';
+import StateSettingEntityPatternsForm from './state-setting-entity-patterns-form.vue';
 import StateSettingInheritedEntityPatternStep from './steps/state-setting-inherited-entity-pattern-step.vue';
 import StateSettingThresholdsStep from './steps/state-setting-thresholds-step.vue';
 
-const STATE_SETTING_FORM_STEPS = {
-  basics: 1,
-  entityPattern: 2,
-  thresholds: 3,
+const AI_CHAT_EXPAND_TAB_KEYS = {
+  [PATTERNS_FIELDS.entity]: FORM_GENERAL_PATTERNS_TABS.patterns,
+  [STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD]: FORM_GENERAL_PATTERNS_TABS.additional,
 };
 
 export default {
   components: {
-    StateSettingBasicsStep,
-    StateSettingEntityPatternStep,
+    StateSettingGeneralForm,
+    StateSettingEntityPatternsForm,
     StateSettingInheritedEntityPatternStep,
     StateSettingThresholdsStep,
   },
@@ -113,18 +88,7 @@ export default {
     },
   },
   setup(props) {
-    inject('$validator');
-
     const { t } = useI18n();
-
-    const stepper = ref(STATE_SETTING_FORM_STEPS.basics);
-    const hasBasicsFormAnyError = ref(false);
-    const hasEntityPatternFormAnyError = ref(false);
-    const hasThresholdsFormAnyError = ref(false);
-
-    const basicsFormElement = ref(null);
-    const entityPatternFormElement = ref(null);
-    const thresholdsFormElement = ref(null);
 
     const isInheritedMethod = computed(() => props.form.method === STATE_SETTING_METHODS.inherited);
 
@@ -132,35 +96,8 @@ export default {
 
     const patternEntityTypes = computed(() => [props.form.type]);
 
-    useAiChatExpand({
-      activeTab: stepper,
-      neededTab: {
-        [PATTERNS_FIELDS.entity]: STATE_SETTING_FORM_STEPS.entityPattern,
-        inherited_entity_pattern: STATE_SETTING_FORM_STEPS.thresholds,
-      },
-    });
-
-    watch(() => basicsFormElement.value?.hasAnyError, (value) => {
-      hasBasicsFormAnyError.value = value ?? false;
-    });
-
-    watch(() => entityPatternFormElement.value?.hasAnyError, (value) => {
-      hasEntityPatternFormAnyError.value = value ?? false;
-    });
-
-    watch(() => thresholdsFormElement.value?.hasAnyError, (value) => {
-      hasThresholdsFormAnyError.value = value ?? false;
-    });
-
     return {
-      STATE_SETTING_FORM_STEPS,
-      stepper,
-      hasBasicsFormAnyError,
-      hasEntityPatternFormAnyError,
-      hasThresholdsFormAnyError,
-      basicsFormElement,
-      entityPatternFormElement,
-      thresholdsFormElement,
+      aiChatExpandTabKeys: AI_CHAT_EXPAND_TAB_KEYS,
       isInheritedMethod,
       methodMessage,
       patternEntityTypes,
@@ -168,11 +105,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.state-setting-form {
-  .v-stepper__wrapper {
-    overflow: unset;
-  }
-}
-</style>

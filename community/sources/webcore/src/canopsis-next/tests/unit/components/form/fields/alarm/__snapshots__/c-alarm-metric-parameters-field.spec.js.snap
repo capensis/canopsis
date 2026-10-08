@@ -20,7 +20,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            Number of created alarms
+        Number of created alarms
           </span>
           <input
             autocomplete="off"
@@ -197,7 +197,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            Number of created alarms
+        Number of created alarms
           </span>
           <input
             autocomplete="off"

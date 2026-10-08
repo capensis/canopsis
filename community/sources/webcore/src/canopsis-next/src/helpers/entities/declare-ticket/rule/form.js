@@ -49,7 +49,8 @@ import { uid } from '@/helpers/uid';
 /**
  * @typedef {FilterPatterns} DeclareTicketRule
  * @property {boolean} enabled
- * @property {boolean} emit_trigger
+ * @property {boolean} emit_trigger_success
+ * @property {boolean} emit_trigger_fail
  * @property {string} name
  * @property {string} system_name
  * @property {DeclareTicketRuleWebhooks} webhooks
@@ -191,7 +192,8 @@ export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) => webho
  */
 export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
   enabled: declareTicketRule.enabled ?? true,
-  emit_trigger: declareTicketRule.emit_trigger ?? true,
+  emit_trigger_success: declareTicketRule.emit_trigger_success ?? true,
+  emit_trigger_fail: declareTicketRule.emit_trigger_fail ?? false,
   name: declareTicketRule.name ?? '',
   system_name: declareTicketRule.system_name ?? '',
   webhooks: declareTicketRuleWebhooksToForm(declareTicketRule.webhooks),

@@ -334,7 +334,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 // CountAlarms
 // @Param body body CountRequest true "body"
-// @Success 200 {object} CountAlarmsResponse
+// @Success 200 {object} AlarmCountResponse
 func (a *api) CountAlarms(c *gin.Context) {
 	request := CountRequest{}
 	if err := binding.Bind(c, &request); err != nil {
@@ -359,7 +359,7 @@ func (a *api) CountAlarms(c *gin.Context) {
 
 // CountEntities
 // @Param body body CountRequest true "body"
-// @Success 200 {object} CountEntitiesResponse
+// @Success 200 {object} EntityCountResponse
 func (a *api) CountEntities(c *gin.Context) {
 	request := CountRequest{}
 	if err := binding.Bind(c, &request); err != nil {
