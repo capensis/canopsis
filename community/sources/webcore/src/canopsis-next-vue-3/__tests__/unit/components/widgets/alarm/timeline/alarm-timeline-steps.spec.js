@@ -4,14 +4,25 @@ import { flushPromises } from '@vue/test-utils';
 
 import AlarmTimelineSteps from '@/components/widgets/alarm/timeline/alarm-timeline-steps.vue';
 
-const stubs = {
-  'alarm-timeline-step': true,
-  'alarm-timeline-step-expand': true,
+const alarmTimelineStepStub = {
+  name: 'AlarmTimelineStep',
+  emits: ['expand'],
+  template: '<div />',
+};
+const alarmTimelineStepExpandStub = {
+  name: 'AlarmTimelineStepExpand',
+  props: ['expanded'],
+  template: '<div />',
 };
 
-const selectAlarmTimelineSteps = wrapper => wrapper.findAll('alarm-timeline-step-stub');
+const stubs = {
+  'alarm-timeline-step': alarmTimelineStepStub,
+  'alarm-timeline-step-expand': alarmTimelineStepExpandStub,
+};
+
+const selectAlarmTimelineSteps = wrapper => wrapper.findAllComponents(alarmTimelineStepStub);
 const selectAlarmTimelineStepExpands = wrapper =>
-  wrapper.findAll('alarm-timeline-step-expand-stub');
+  wrapper.findAllComponents(alarmTimelineStepExpandStub);
 
 describe('alarm-timeline-steps', () => {
   const {
@@ -27,7 +38,7 @@ describe('alarm-timeline-steps', () => {
     });
 
     const firstAlarmTimelineStep = selectAlarmTimelineSteps(wrapper).at(0);
-    firstAlarmTimelineStep.triggerCustomEvent('expand', true);
+    firstAlarmTimelineStep.vm.$emit('expand', true);
 
     await flushPromises();
 
@@ -43,7 +54,7 @@ describe('alarm-timeline-steps', () => {
     });
 
     const secondAlarmTimelineStep = selectAlarmTimelineSteps(wrapper).at(1);
-    secondAlarmTimelineStep.triggerCustomEvent('expand', true);
+    secondAlarmTimelineStep.vm.$emit('expand', true);
 
     await flushPromises();
 

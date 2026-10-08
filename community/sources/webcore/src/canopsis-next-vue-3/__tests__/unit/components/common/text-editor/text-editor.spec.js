@@ -1,4 +1,3 @@
-import { mockXMLHttpRequest } from '@unit/utils/mock-hooks';
 import { generateRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
@@ -25,12 +24,60 @@ const selectEditorImageUrlInput = wrapper =>
   selectEditorTabsWrapper(wrapper).find('input[name="url"]');
 const selectEditorImageTextInput = wrapper =>
   selectEditorTabsWrapper(wrapper).find('input[name="text"]');
-const selectEditorImageInsetButton = wrapper => selectEditorTabsWrapper(wrapper).findAll('button');
+const selectEditorImageInsertButton = wrapper =>
+  selectEditorTabsWrapper(wrapper).find('button[type="submit"]');
 const selectVariablesMenu = wrapper => wrapper.find('variables-menu-stub');
 const selectVariablesButton = wrapper => wrapper.find('.jodit-ui-group__variables button');
 
 describe('text-editor', () => {
-  const XMLHttpRequest = mockXMLHttpRequest();
+  const XMLHttpRequest = {
+    addEventListener: vi.fn(),
+    open: vi.fn(),
+    responseText: undefined,
+    send: vi.fn(),
+    setRequestHeader: vi.fn(),
+    status: undefined,
+    statusText: undefined,
+    upload: {
+      addEventListener: vi.fn(),
+    },
+  };
+  let focusSpy;
+  let xmlHttpRequestSpy;
+
+  beforeAll(() => {
+    XMLHttpRequest.addEventListener.mockImplementation((event, handler) => {
+      XMLHttpRequest[`on${event}`] = handler;
+    });
+    xmlHttpRequestSpy = vi
+      .spyOn(globalThis, 'XMLHttpRequest')
+      .mockImplementation(function XMLHttpRequestMock() {
+        return XMLHttpRequest;
+      });
+  });
+
+  beforeEach(() => {
+    focusSpy = vi.spyOn(window, 'focus').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    focusSpy.mockRestore();
+    vi.useRealTimers();
+    XMLHttpRequest.addEventListener.mockClear();
+    XMLHttpRequest.open.mockClear();
+    XMLHttpRequest.send.mockClear();
+    XMLHttpRequest.setRequestHeader.mockClear();
+    XMLHttpRequest.upload.addEventListener.mockClear();
+    XMLHttpRequest.onload = undefined;
+    XMLHttpRequest.onerror = undefined;
+    XMLHttpRequest.responseText = undefined;
+    XMLHttpRequest.status = undefined;
+    XMLHttpRequest.statusText = undefined;
+  });
+
+  afterAll(() => {
+    xmlHttpRequestSpy.mockRestore();
+  });
   const filesMeta = [
     {
       filename: 'file.png',
@@ -89,7 +136,6 @@ describe('text-editor', () => {
   });
 
   test('Value changed after trigger variables', async () => {
-    const focusSpy = vi.spyOn(window, 'focus').mockImplementation();
     const initialValue = 'Text';
     const wrapper = factory({
       propsData: {
@@ -111,9 +157,9 @@ describe('text-editor', () => {
     selection.addRange(range);
     const variablesMenu = selectVariablesMenu(wrapper);
 
-    variablesMenu.triggerCustomEvent('input', variable);
+    variablesMenu.triggerCustomEvent('update:value', variable);
 
-    expect(wrapper).toEmitInput(`<p>${variable}</p>`);
+    expect(wrapper).toEmitInput(`<p>{{ ${variable} }}</p>`);
     expect(focusSpy).toHaveBeenCalled();
   });
 
@@ -145,7 +191,6 @@ describe('text-editor', () => {
   });
 
   test('Value changed after trigger variables with caret in variable', async () => {
-    const focusSpy = vi.spyOn(window, 'focus').mockImplementation();
     const initialValue = 'Variable: {{ variable }}';
     const wrapper = factory({
       propsData: {
@@ -177,7 +222,6 @@ describe('text-editor', () => {
   });
 
   test('Value changed after trigger variables with selected variable', async () => {
-    const focusSpy = vi.spyOn(window, 'focus').mockImplementation();
     const initialValue = 'Variable: {{ variable }}';
     const wrapper = factory({
       propsData: {
@@ -209,7 +253,6 @@ describe('text-editor', () => {
 
   test('Image uploaded after trigger image control', async () => {
     vi.useFakeTimers('legacy');
-    const focusSpy = vi.spyOn(window, 'focus').mockImplementation(() => {});
 
     const [file] = files;
 
@@ -229,9 +272,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(XMLHttpRequest.open).toHaveBeenCalledWith(
-      'post',
+      'POST',
       `${API_HOST}${API_ROUTES.file}?public=false`,
-      true,
     );
 
     await flushPromises();
@@ -257,7 +299,6 @@ describe('text-editor', () => {
   });
 
   test('Image as url uploaded after trigger image control', async () => {
-    const focusSpy = vi.spyOn(window, 'focus').mockImplementation(() => {});
     const url = Faker.lorem.word();
     const text = Faker.lorem.word();
     const wrapper = factory();
@@ -273,11 +314,11 @@ describe('text-editor', () => {
 
     const editorImageUrlInput = selectEditorImageUrlInput(wrapper);
     const editorImageTextInput = selectEditorImageTextInput(wrapper);
-    const editorImageInsetButton = selectEditorImageInsetButton(wrapper);
+    const editorImageInsertButton = selectEditorImageInsertButton(wrapper);
 
     editorImageUrlInput.setValue(url);
     editorImageTextInput.setValue(text);
-    editorImageInsetButton.trigger('click');
+    editorImageInsertButton.trigger('click');
 
     expect(focusSpy).toHaveBeenCalled();
 
@@ -314,7 +355,6 @@ describe('text-editor', () => {
 
   test('Image not uploaded after trigger paste event', async () => {
     vi.useFakeTimers('legacy');
-    const focusSpy = vi.spyOn(window, 'focus').mockImplementation(() => {});
 
     const wrapper = factory();
 
@@ -332,9 +372,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(XMLHttpRequest.open).toHaveBeenCalledWith(
-      'post',
+      'POST',
       `${API_HOST}${API_ROUTES.file}?public=false`,
-      true,
     );
 
     await flushPromises();

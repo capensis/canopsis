@@ -9,8 +9,6 @@ const stubs = {
   },
 };
 
-const selectCloseIcon = wrapper => wrapper.find('v-icon-stub');
-
 describe('c-chip', () => {
   const factory = generateShallowRenderer(CChip, { stubs });
 
@@ -20,8 +18,6 @@ describe('c-chip', () => {
         closable: true,
       },
     });
-
-    const closeIcon = selectCloseIcon(wrapper);
 
     wrapper.vm.$emit('close');
 

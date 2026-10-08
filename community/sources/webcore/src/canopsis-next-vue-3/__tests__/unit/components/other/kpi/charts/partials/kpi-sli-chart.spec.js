@@ -1,7 +1,7 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
-import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart';
+import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart.vue';
 
 const stubs = {
   'chart-export-actions': true,
@@ -21,34 +21,22 @@ describe('kpi-sli-chart', () => {
   });
 
   it('Export csv event emitted', async () => {
-    const exportCsv = vi.fn();
-
-    const wrapper = factory({
-      listeners: {
-        'export:csv': exportCsv,
-      },
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
     selectChartExportActions(wrapper).triggerCustomEvent('export:csv');
 
-    expect(exportCsv).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted('export:csv')).toHaveLength(1);
   });
 
   it('Export png event emitted', async () => {
-    const exportPng = vi.fn();
-
-    const wrapper = factory({
-      listeners: {
-        'export:png': exportPng,
-      },
-    });
+    const wrapper = factory();
 
     await flushPromises();
 
     selectChartExportActions(wrapper).triggerCustomEvent('export:png');
 
-    expect(exportPng).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted('export:png')).toHaveLength(1);
   });
 });

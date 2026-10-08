@@ -6,9 +6,6 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const selectEditButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
-const selectDeleteButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
-
 describe('filter-tile', () => {
   const factory = generateShallowRenderer(FilterTile, { stubs });
 

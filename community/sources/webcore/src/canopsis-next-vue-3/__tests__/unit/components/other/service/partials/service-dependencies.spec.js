@@ -1,9 +1,4 @@
 import { mockModals } from '@unit/utils/mock-hooks';
-import {
-  createEntityModule,
-  createMockedStoreModules,
-  createServiceModule,
-} from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
@@ -11,25 +6,31 @@ import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES, MODALS } fro
 
 import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
-import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 
+const service = vi.hoisted(() => ({
+  fetchServiceDependenciesWithoutStore: vi.fn(),
+  fetchServiceImpactsWithoutStore: vi.fn(),
+}));
+
+vi.mock('@/stores/modules/service', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useServiceStore: defineStore('service', {
+      actions: service,
+    }),
+  };
+});
+
 const stubs = {
-  'c-treeview-data-table': CTreeviewDataTable,
-  'c-no-events-icon': true,
   'service-dependencies-show-type-field': true,
   'state-settings-summary': true,
-  'service-dependencies-expand': true,
-  'service-dependencies-entity-cell': true,
+  'service-dependencies-row': true,
 };
-
-const selectTreeviewTable = wrapper => wrapper.find('.service-dependencies');
-const selectNodeExpandPanel = wrapper => wrapper.findAll('.v-treeview-node__label');
-const selectServiceDependenciesExpand = wrapper => wrapper.find('service-dependencies-expand-stub');
 
 describe('service-dependencies', () => {
   const $modals = mockModals();
-
   const data = [
     {
       _id: 'data-alarm-1-entity',
@@ -60,61 +61,50 @@ describe('service-dependencies', () => {
       impact_state: 0,
       has_impacts: false,
     },
-    {
-      _id: 'data-alarm-4-entity',
-      name: 'Data alarm 4 entity',
-      type: ENTITY_TYPES.service,
-      state: 3,
-      impact_level: 1,
-      impact_state: 0,
-      has_impacts: false,
-    },
   ];
   const meta = {
     page: 1,
     per_page: 10,
     page_count: 1,
-    total_count: 4,
+    total_count: data.length,
   };
-  const entity = {
+  const root = {
     _id: 'root-alarm-entity',
     name: 'Root alarm entity',
-    impact: [
-      'data-alarm-entity-1',
-      'data-alarm-entity-2',
-      'data-alarm-entity-3',
-      'data-alarm-entity-4',
-    ],
     impact_state: 7,
   };
-
-  const { entityModule } = createEntityModule();
-  const { serviceModule, fetchDependenciesWithoutStore } = createServiceModule();
-
   const columns = [{ value: ENTITY_FIELDS.name }, { value: ENTITY_FIELDS.type }].map(column => ({
     ...column,
-
     sortable: false,
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
+  const factory = generateShallowRenderer(ServiceDependencies, {
+    stubs,
+    propsData: {
+      columns,
+      root,
+    },
+    mocks: {
+      $modals,
+    },
+  });
 
-  const store = createMockedStoreModules([serviceModule, entityModule]);
+  beforeEach(() => {
+    service.fetchServiceDependenciesWithoutStore.mockResolvedValue({ data, meta });
+    service.fetchServiceImpactsWithoutStore.mockResolvedValue({ data, meta });
+  });
 
-  const factory = generateShallowRenderer(ServiceDependencies, { stubs });
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
-  it('Dependencies fetched after mount', async () => {
-    factory({
-      store,
-      propsData: {
-        columns,
-        root: entity,
-      },
-    });
+  it('fetches root dependencies after mount', async () => {
+    factory();
 
     await flushPromises();
 
-    expect(fetchDependenciesWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
-      id: entity._id,
+    expect(service.fetchServiceDependenciesWithoutStore).toHaveBeenCalledWith({
+      id: root._id,
       params: {
         limit: 10,
         with_flags: true,
@@ -123,25 +113,16 @@ describe('service-dependencies', () => {
     });
   });
 
-  it('Children loaded after trigger load children', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        columns,
-        root: entity,
-      },
-    });
+  it('loads dependencies for a child entity', async () => {
+    const wrapper = factory();
 
     await flushPromises();
+    service.fetchServiceDependenciesWithoutStore.mockClear();
 
-    const treeviewTable = selectTreeviewTable(wrapper);
+    await wrapper.vm.fetchDependenciesById(data[1]._id);
 
-    const [, entityWithDeps] = data;
-
-    treeviewTable.vm.loadChildren(entityWithDeps);
-
-    expect(fetchDependenciesWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
-      id: entityWithDeps._id,
+    expect(service.fetchServiceDependenciesWithoutStore).toHaveBeenCalledWith({
+      id: data[1]._id,
       params: {
         limit: 10,
         with_flags: true,
@@ -150,110 +131,56 @@ describe('service-dependencies', () => {
     });
   });
 
-  it('More dependencies fetched after trigger more button', async () => {
-    fetchDependenciesWithoutStore.mockResolvedValueOnce({
+  it('loads the next dependencies page', async () => {
+    service.fetchServiceDependenciesWithoutStore.mockResolvedValueOnce({
       data: data.slice(0, 2),
       meta: {
         page: 1,
         per_page: 2,
         page_count: 2,
-        total_count: 4,
+        total_count: data.length,
       },
     });
-    const wrapper = factory({
-      store,
-      propsData: {
-        columns,
-        root: entity,
-      },
-    });
+    const wrapper = factory();
 
     await flushPromises();
+    service.fetchServiceDependenciesWithoutStore.mockClear();
 
-    fetchDependenciesWithoutStore.mockClear();
+    await wrapper.vm.loadMore({ parentId: root._id });
 
-    const expandPanel = selectNodeExpandPanel(wrapper).at(2);
-    const moreButton = selectServiceDependenciesExpand(expandPanel);
-
-    moreButton.triggerCustomEvent('load', {
-      entity: data[2],
-      parentId: entity._id,
-    });
-
-    await flushPromises();
-
-    expect(fetchDependenciesWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
-      id: entity._id,
+    expect(service.fetchServiceDependenciesWithoutStore).toHaveBeenCalledWith({
+      id: root._id,
       params: {
-        limit: 10,
         page: 2,
+        limit: 10,
         with_flags: true,
         define_state: false,
       },
     });
   });
 
-  it('Dependencies modal showed after trigger dependencies button', async () => {
-    fetchDependenciesWithoutStore.mockResolvedValueOnce({
-      data,
-      meta,
-    });
-    const wrapper = factory({
-      store,
-      propsData: {
-        columns,
-        root: entity,
-      },
-      mocks: {
-        $modals,
-      },
-    });
+  it('shows the dependencies modal for an entity with children', async () => {
+    const wrapper = factory();
 
     await flushPromises();
-
-    const expandPanel = selectNodeExpandPanel(wrapper).at(1);
-    const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
-
-    dependenciesModalButton.triggerCustomEvent('show', { entity: data[1] });
-
-    const [, entityWithDeps] = data;
+    wrapper.vm.showTreeOfDependenciesModal({ entity: data[1] });
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.serviceDependencies,
       config: {
+        root: data[1],
         columns,
         impact: false,
-        root: {
-          ...entityWithDeps,
-          impact_state: 0,
-        },
       },
     });
   });
 
-  it('Dependencies modal not showed after trigger dependencies button with impact', async () => {
-    fetchDependenciesWithoutStore.mockResolvedValueOnce({
-      data,
-      meta,
-    });
-    const wrapper = factory({
-      store,
-      propsData: {
-        columns,
-        root: entity,
-      },
-      mocks: {
-        $modals,
-      },
-    });
+  it('does not show the dependencies modal for an entity without children', async () => {
+    const wrapper = factory();
 
     await flushPromises();
+    wrapper.vm.showTreeOfDependenciesModal({ entity: data[2] });
 
-    const expandPanel = selectNodeExpandPanel(wrapper).at(2);
-    const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
-
-    dependenciesModalButton.triggerCustomEvent('show', { entity: data[2] });
-
-    expect($modals.show).not.toBeCalled();
+    expect($modals.show).not.toHaveBeenCalled();
   });
 });

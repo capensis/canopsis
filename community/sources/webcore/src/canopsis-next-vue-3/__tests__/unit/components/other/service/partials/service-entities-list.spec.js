@@ -1,4 +1,4 @@
-import { mockModals } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import {
   createAlarmModule,
   createAuthModule,
@@ -59,6 +59,7 @@ const unselectAllEntities = async (wrapper) => {
 
 describe('service-entities-list', () => {
   const $modals = mockModals();
+  const $popups = mockPopups();
   const service = {
     _id: 'service-id',
   };
@@ -114,6 +115,7 @@ describe('service-entities-list', () => {
     stubs,
     mocks: {
       $modals,
+      $popups,
     },
     propsData: {
       service,
@@ -366,9 +368,11 @@ describe('service-entities-list', () => {
     const comment = Faker.datatype.string();
     const type = Faker.datatype.string();
 
+    wrapper.vm.bulkPauseEntities = bulkPause;
+
     await config.action({ comment, type, inherited: true });
 
-    expect(bulkPause).toHaveBeenCalledWith(expect.any(Object), {
+    expect(bulkPause).toHaveBeenCalledWith({
       data: [
         {
           _id: entity._id,
@@ -403,9 +407,11 @@ describe('service-entities-list', () => {
     const [{ config }] = $modals.show.mock.calls[0];
     const comment = Faker.datatype.string();
 
+    wrapper.vm.bulkResumeEntities = bulkResume;
+
     await config.action({ comment });
 
-    expect(bulkResume).toHaveBeenCalledWith(expect.any(Object), {
+    expect(bulkResume).toHaveBeenCalledWith({
       data: [{ _id: entity._id, comment }],
     });
   });

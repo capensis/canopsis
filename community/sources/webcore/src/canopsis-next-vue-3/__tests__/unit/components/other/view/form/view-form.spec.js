@@ -12,11 +12,11 @@ const stubs = {
   'periodic-refresh-field': true,
   'view-tags-field': true,
   'view-group-field': true,
-  'v-text-field': createInputStub('v-text-field'),
+  'c-text-field': createInputStub('c-text-field'),
 };
 
 const selectTitleField = wrapper => wrapper.find('c-name-field-stub');
-const selectDescriptionField = wrapper => wrapper.find('input.v-text-field');
+const selectDescriptionField = wrapper => wrapper.find('input.c-text-field');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectPeriodicRefreshField = wrapper => wrapper.find('periodic-refresh-field-stub');
 const selectTagsField = wrapper => wrapper.find('view-tags-field-stub');
@@ -57,7 +57,7 @@ describe('view-form', () => {
 
     selectDescriptionField(wrapper).triggerCustomEvent('input', newDescription);
 
-    expect(wrapper).toEmitInput({ ...form, description: newDescription });
+    expect(wrapper).toEmit('update:form', { ...form, description: newDescription });
   });
 
   test('Enabled changed after trigger enabled field', () => {
@@ -83,9 +83,12 @@ describe('view-form', () => {
 
     const newPeriodicRefresh = randomPeriodicRefresh();
 
-    selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newPeriodicRefresh);
+    selectPeriodicRefreshField(wrapper).triggerCustomEvent(
+      'update:periodic-refresh',
+      newPeriodicRefresh,
+    );
 
-    expect(wrapper).toEmitInput({ ...form, periodic_refresh: newPeriodicRefresh });
+    expect(wrapper).toEmit('update:form', { ...form, periodic_refresh: newPeriodicRefresh });
   });
 
   it('Tag changed after trigger tag field', () => {

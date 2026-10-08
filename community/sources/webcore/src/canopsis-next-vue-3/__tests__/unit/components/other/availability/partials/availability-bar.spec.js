@@ -14,9 +14,6 @@ const stubs = {
   },
 };
 
-const selectAvailabilityBarFilters = wrapper => wrapper.find('availability-filters-stub');
-const selectAvailabilityBarChart = wrapper => wrapper.find('availability-bar-chart-stub');
-
 describe('availability-bar', () => {
   const factory = generateShallowRenderer(AvailabilityBar, {
     stubs,

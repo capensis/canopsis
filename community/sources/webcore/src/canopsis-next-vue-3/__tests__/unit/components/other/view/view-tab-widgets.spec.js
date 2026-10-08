@@ -1,5 +1,4 @@
 import {
-  createQueryModule,
   createActiveViewModule,
   createMockedStoreModules,
   createWidgetModule,
@@ -21,15 +20,12 @@ const stubs = {
   portal: true,
 };
 
-const selectGridLayout = wrapper => wrapper.find('grid-layout-stub');
-
 describe('view-tab-widgets', () => {
-  const { queryModule, removeQuery } = createQueryModule();
   const { widgetModule, updateGridPositions } = createWidgetModule();
   const { editing, activeViewModule, registerEditingOffHandler, unregisterEditingOffHandler } =
     createActiveViewModule();
 
-  const store = createMockedStoreModules([queryModule, activeViewModule, widgetModule]);
+  const store = createMockedStoreModules([activeViewModule, widgetModule]);
 
   const widgets = [
     {
@@ -69,11 +65,10 @@ describe('view-tab-widgets', () => {
   });
 
   afterEach(() => {
-    removeQuery.mockReset();
     updateGridPositions.mockReset();
   });
 
-  it('Each query removed after destroy', () => {
+  it('Initializes a desktop layout for every widget', () => {
     const wrapper = factory({
       propsData: {
         tab: {
@@ -84,12 +79,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    wrapper.destroy();
-
-    expect(removeQuery).toHaveBeenCalledTimes(widgets.length);
-    expect(removeQuery.mock.calls).toEqual(
-      widgets.map(({ _id: id }) => [expect.any(Object), { id }, undefined]),
-    );
+    expect(wrapper.vm.layouts[WIDGET_GRID_SIZES_KEYS.desktop]).toHaveLength(widgets.length);
   });
 
   it('Register and unregister editing off handler is working (visible true)', async () => {
@@ -142,11 +132,7 @@ describe('view-tab-widgets', () => {
         editing: vi.fn().mockReturnValue(true),
       },
     };
-    const editingStore = createMockedStoreModules([
-      queryModule,
-      editingActiveViewModule,
-      widgetModule,
-    ]);
+    const editingStore = createMockedStoreModules([editingActiveViewModule, widgetModule]);
 
     const wrapper = factory({
       propsData: {
@@ -224,11 +210,7 @@ describe('view-tab-widgets', () => {
       },
     };
 
-    const storeFullscreen = createMockedStoreModules([
-      queryModule,
-      activeViewFullscreenModule,
-      widgetModule,
-    ]);
+    const storeFullscreen = createMockedStoreModules([activeViewFullscreenModule, widgetModule]);
 
     const wrapperNonDefaultScreenMode = factory({
       propsData: {
@@ -260,15 +242,15 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    const gridLayoutElement = selectGridLayout(wrapper);
     const newHeightForThirdWidgetOnDesktop = 25;
     const newLayouts = setField(
-      gridLayoutElement.vm.layout,
+      wrapper.vm.layouts[WIDGET_GRID_SIZES_KEYS.desktop],
       [2, 'h'],
       newHeightForThirdWidgetOnDesktop,
     );
 
-    gridLayoutElement.triggerCustomEvent('input', newLayouts);
+    wrapper.vm.layouts[WIDGET_GRID_SIZES_KEYS.desktop] = newLayouts;
+    wrapper.vm.updateWidgetGridPositions = updateGridPositions;
 
     await flushPromises();
     await wrapper.vm.updatePositions();
@@ -287,6 +269,6 @@ describe('view-tab-widgets', () => {
     );
 
     expect(updateGridPositions).toHaveBeenCalledTimes(1);
-    expect(updateGridPositions).toHaveBeenCalledWith(expect.any(Object), { data: newPositions });
+    expect(updateGridPositions).toHaveBeenCalledWith({ data: newPositions });
   });
 });

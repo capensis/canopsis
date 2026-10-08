@@ -7,6 +7,9 @@ import ServiceDependenciesExpand from '@/components/other/service/partials/servi
 
 const stubs = {
   'c-tooltip': createActivatorElementStub('c-tooltip'),
+  'v-badge': {
+    template: '<div><slot /><slot name="badge" /></div>',
+  },
 };
 
 const selectButton = wrapper => wrapper.find('v-btn-stub');

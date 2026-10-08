@@ -39,8 +39,6 @@ describe('kpi-rating-filters', () => {
       },
     });
 
-    const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
-
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedInterval = {
       from: start,
@@ -65,8 +63,6 @@ describe('kpi-rating-filters', () => {
       },
     });
 
-    const filtersField = wrapper.find('c-filter-field-stub');
-
     wrapper.vm.updateQueryField('filter', expectedFilter);
 
     await flushPromises();
@@ -88,8 +84,6 @@ describe('kpi-rating-filters', () => {
       },
     });
 
-    const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
-
     wrapper.vm.updateCriteria(ratingSetting);
 
     await flushPromises();
@@ -106,8 +100,6 @@ describe('kpi-rating-filters', () => {
         query: initialQuery,
       },
     });
-
-    const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
 
     wrapper.vm.updateCriteria(KPI_RATING_CRITERIA.impactLevel);
 
@@ -126,8 +118,6 @@ describe('kpi-rating-filters', () => {
         query: initialQuery,
       },
     });
-
-    const metricParametersField = wrapper.find('kpi-rating-metric-field-stub');
 
     wrapper.vm.updateQueryField('metric', ALARM_METRIC_PARAMETERS.cancelAckAlarms);
 

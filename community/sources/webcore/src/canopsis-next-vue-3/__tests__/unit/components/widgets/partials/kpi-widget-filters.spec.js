@@ -36,7 +36,7 @@ describe('kpi-widget-filters', () => {
       to: Faker.datatype.number(),
     };
 
-    selectQuickDateIntervalField(wrapper).triggerCustomEvent('input', newInterval);
+    selectQuickDateIntervalField(wrapper).triggerCustomEvent('update:interval', newInterval);
 
     expect(wrapper).toEmit('update:interval', newInterval);
   });

@@ -18,11 +18,31 @@ import {
   MODALS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   USER_PERMISSIONS,
+  WIDGET_TYPES,
 } from '@/constants';
 
-import { generateDefaultServiceWeatherWidget } from '@/helpers/entities/widget/form';
+import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';
+
+vi.mock('@/stores/modules/weather-service-widget', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+  const dispatch = (type, payload) => globalThis.__TEST_STORE__?.dispatch(type, payload);
+  const getter = (type, fallback) => globalThis.__TEST_STORE__?.getters?.[type] ?? fallback;
+
+  return {
+    useWeatherServiceWidgetStore: defineStore('weatherServiceWidget', {
+      getters: {
+        getListByWidgetId: () => getter('service/getListByWidgetId', () => []),
+        getPendingByWidgetId: () => getter('service/getPendingByWidgetId', () => false),
+        getErrorByWidgetId: () => getter('service/getErrorByWidgetId', () => undefined),
+      },
+      actions: {
+        fetchList: payload => dispatch('service/fetchList', payload),
+      },
+    }),
+  };
+});
 
 const stubs = {
   'c-entity-category-field': true,
@@ -55,7 +75,7 @@ describe('service-weather', () => {
   };
 
   const widget = {
-    ...generateDefaultServiceWeatherWidget(),
+    ...formToWidget(widgetToForm({ type: WIDGET_TYPES.serviceWeather })),
     _id: 'service-weather-id',
   };
 
@@ -96,6 +116,12 @@ describe('service-weather', () => {
     },
   });
 
+  beforeEach(() => {
+    currentUserPermissionsById.mockReturnValue({});
+    getQueryById.mockReturnValue(() => ({}));
+    getServicesListByWidgetId.mockReturnValue([]);
+  });
+
   test('Query updated after mount', async () => {
     factory({ store });
 
@@ -124,7 +150,7 @@ describe('service-weather', () => {
 
   test('Services list fetched with custom limit query', async () => {
     const limit = Faker.datatype.number({ min: 0, max: 100 });
-    getQueryById.mockReturnValueOnce(() => ({
+    getQueryById.mockReturnValue(() => ({
       itemsPerPage: limit,
     }));
 
@@ -143,7 +169,7 @@ describe('service-weather', () => {
   });
 
   test('Category query updated after trigger category field', async () => {
-    currentUserPermissionsById.mockReturnValueOnce({
+    currentUserPermissionsById.mockReturnValue({
       [USER_PERMISSIONS.business.serviceWeather.actions.category]: { actions: [] },
     });
     const wrapper = factory({
@@ -164,7 +190,7 @@ describe('service-weather', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectEntityCategoryField(wrapper).triggerCustomEvent('input', category);
+    selectEntityCategoryField(wrapper).triggerCustomEvent('update:category', category);
 
     expect(updateUserPreference).toHaveBeenCalledWith(expect.any(Object), {
       data: {
@@ -183,7 +209,7 @@ describe('service-weather', () => {
   });
 
   test('Filter updated after trigger filter field', async () => {
-    currentUserPermissionsById.mockReturnValueOnce({
+    currentUserPermissionsById.mockReturnValue({
       [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: { actions: [] },
     });
     const wrapper = factory({
@@ -206,7 +232,7 @@ describe('service-weather', () => {
       filter: {},
     };
 
-    selectFilterSelectorField(wrapper).triggerCustomEvent('input', selectedFilter._id);
+    selectFilterSelectorField(wrapper).triggerCustomEvent('update:modelValue', selectedFilter._id);
 
     await flushPromises();
 
@@ -220,20 +246,33 @@ describe('service-weather', () => {
     expect(updateQuery).toHaveBeenCalledWith(expect.any(Object), {
       id: widget._id,
       query: {
-        page: 1,
         filter: selectedFilter._id,
       },
     });
   });
 
   test('Gray filter updated after trigger enabled field', async () => {
-    const wrapper = factory({ store });
+    currentUserPermissionsById.mockReturnValue({
+      [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: { actions: [] },
+    });
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            isHideGrayEnabled: true,
+          },
+        },
+      },
+    });
 
     await flushPromises();
 
     updateQuery.mockClear();
 
-    selectEnabledField(wrapper).triggerCustomEvent('input', true);
+    selectEnabledField(wrapper).triggerCustomEvent('update:modelValue', true);
 
     await flushPromises();
 
@@ -257,10 +296,10 @@ describe('service-weather', () => {
       name: Faker.datatype.string(),
     };
 
-    currentUserPermissionsById.mockReturnValueOnce({
+    currentUserPermissionsById.mockReturnValue({
       [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
     });
-    getServicesListByWidgetId.mockReturnValueOnce([service]);
+    getServicesListByWidgetId.mockReturnValue([service]);
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -287,7 +326,7 @@ describe('service-weather', () => {
             widgetColumns: widget.parameters.alarmsList.widgetColumns,
           }),
         }),
-        title: `${service.name} - alarm list`,
+        title: 'modals.alarmsList.prefixTitle',
         fetchList: expect.any(Function),
       }),
     });
@@ -307,10 +346,10 @@ describe('service-weather', () => {
     const service = {
       name: Faker.datatype.string(),
     };
-    currentUserPermissionsById.mockReturnValueOnce({
+    currentUserPermissionsById.mockReturnValue({
       [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
     });
-    getServicesListByWidgetId.mockReturnValueOnce([service]);
+    getServicesListByWidgetId.mockReturnValue([service]);
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -345,7 +384,7 @@ describe('service-weather', () => {
     const service = {
       name: Faker.datatype.string(),
     };
-    getServicesListByWidgetId.mockReturnValueOnce([service]);
+    getServicesListByWidgetId.mockReturnValue([service]);
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -378,10 +417,10 @@ describe('service-weather', () => {
       name: Faker.datatype.string(),
       is_grey: true,
     };
-    currentUserPermissionsById.mockReturnValueOnce({
+    currentUserPermissionsById.mockReturnValue({
       [USER_PERMISSIONS.business.serviceWeather.actions.moreInfos]: { actions: [] },
     });
-    getServicesListByWidgetId.mockReturnValueOnce([service]);
+    getServicesListByWidgetId.mockReturnValue([service]);
 
     const wrapper = factory({
       store: createMockedStoreModules([

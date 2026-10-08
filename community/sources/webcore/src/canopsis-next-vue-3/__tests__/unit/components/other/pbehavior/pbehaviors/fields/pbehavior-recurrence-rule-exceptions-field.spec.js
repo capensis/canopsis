@@ -2,13 +2,25 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 
 import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
-const stubs = {
-  'pbehavior-exceptions-list': true,
-  'pbehavior-exceptions-field': true,
+const pbehaviorExceptionsListStub = {
+  name: 'PbehaviorExceptionsList',
+  props: ['exceptions'],
+  template: '<div />',
+};
+const pbehaviorExceptionsFieldStub = {
+  name: 'PbehaviorExceptionsField',
+  props: ['exdates'],
+  template: '<div />',
 };
 
-const selectPbehaviorExceptionsList = wrapper => wrapper.find('pbehavior-exceptions-list-stub');
-const selectPbehaviorExceptionsField = wrapper => wrapper.find('pbehavior-exceptions-field-stub');
+const stubs = {
+  'pbehavior-exceptions-list': pbehaviorExceptionsListStub,
+  'pbehavior-exceptions-field': pbehaviorExceptionsFieldStub,
+};
+
+const selectPbehaviorExceptionsList = wrapper => wrapper.findComponent(pbehaviorExceptionsListStub);
+const selectPbehaviorExceptionsField = wrapper =>
+  wrapper.findComponent(pbehaviorExceptionsFieldStub);
 
 describe('pbehavior-recurrence-rule-exceptions-field', () => {
   const factory = generateShallowRenderer(PbehaviorRecurrenceRuleExceptionsField, { stubs });

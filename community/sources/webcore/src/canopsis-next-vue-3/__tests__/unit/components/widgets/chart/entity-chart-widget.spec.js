@@ -2,7 +2,6 @@ import { mockDateNow } from '@unit/utils/mock-hooks';
 import {
   createAlarmModule,
   createAuthModule,
-  createMetricsModule,
   createMockedStoreModules,
   createServiceModule,
   createUserPreferenceModule,
@@ -16,6 +15,23 @@ import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, SAMPLINGS, WIDGET_TYPES }
 import { widgetToForm } from '@/helpers/entities/widget/form';
 
 import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vue';
+
+const metrics = vi.hoisted(() => ({
+  createKpiAlarmExport: vi.fn(),
+  fetchEntityAggregateMetricsWithoutStore: vi.fn(),
+  fetchEntityAlarmsMetricsWithoutStore: vi.fn(),
+  fetchMetricExport: vi.fn(),
+}));
+
+vi.mock('@/stores/modules/metrics', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useMetricsStore: defineStore('metrics', {
+      actions: metrics,
+    }),
+  };
+});
 
 const stubs = {
   'kpi-widget-filters': true,
@@ -32,30 +48,24 @@ describe('entity-chart-widget', () => {
   const { alarmModule } = createAlarmModule();
   const { userPreferenceModule } = createUserPreferenceModule();
   const { serviceModule } = createServiceModule();
-  const {
-    metricsModule,
-    fetchEntityAlarmsMetricsWithoutStore,
-    fetchEntityAggregateMetricsWithoutStore,
-  } = createMetricsModule();
-
   const store = createMockedStoreModules([
     authModule,
     userPreferenceModule,
     alarmModule,
     serviceModule,
-    metricsModule,
   ]);
 
   const factory = generateShallowRenderer(EntityChartWidget, {
     stubs,
     parentComponent: {
       provide: {
-        $system: {},
+        $system: { timezone: 'Europe/Paris' },
       },
     },
   });
 
   test('Vector metrics fetched after mount', async () => {
+    metrics.fetchEntityAlarmsMetricsWithoutStore.mockResolvedValue({ data: [], meta: {} });
     const entityId = Faker.datatype.string();
     const barChartWidget = widgetToForm({
       type: WIDGET_TYPES.barChart,
@@ -84,7 +94,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchEntityAlarmsMetricsWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchEntityAlarmsMetricsWithoutStore).toHaveBeenCalledWith({
       params: {
         entity: entityId,
         from: 1383865200,
@@ -102,6 +112,7 @@ describe('entity-chart-widget', () => {
   });
 
   test('Aggregated metrics fetched after mount', async () => {
+    metrics.fetchEntityAggregateMetricsWithoutStore.mockResolvedValue({ data: [], meta: {} });
     const entityId = Faker.datatype.string();
     const numbersWidget = widgetToForm({
       type: WIDGET_TYPES.numbers,
@@ -129,7 +140,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchEntityAggregateMetricsWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchEntityAggregateMetricsWithoutStore).toHaveBeenCalledWith({
       params: {
         entity: entityId,
         from: 1383865200,

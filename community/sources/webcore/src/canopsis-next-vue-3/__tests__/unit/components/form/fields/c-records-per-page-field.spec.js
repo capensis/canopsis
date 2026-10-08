@@ -1,8 +1,17 @@
 import { generateShallowRenderer } from '@unit/utils/vue';
+import { shallowMount } from '@vue/test-utils';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
 import CItemsPerPageField from '@/components/forms/fields/c-items-per-page-field.vue';
+
+const fullscreenState = vi.hoisted(() => ({
+  isFullscreen: { value: false, __v_isRef: true },
+}));
+
+vi.mock('@/hooks/fullscreen', () => ({
+  useFullscreen: () => fullscreenState,
+}));
 
 const stubs = {
   'c-select': {
@@ -11,6 +20,7 @@ const stubs = {
     props: {
       modelValue: [Number, String],
       items: Array,
+      menuProps: Object,
     },
     emits: ['update:modelValue'],
     template: `
@@ -30,6 +40,14 @@ const selectOptionValues = wrapper =>
 describe('c-items-per-page-field', () => {
   const factory = generateShallowRenderer(CItemsPerPageField, { stubs });
 
+  afterEach(() => {
+    fullscreenState.isFullscreen.value = false;
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      value: null,
+    });
+  });
+
   it('Default items is equal to PAGINATION_PER_PAGE_VALUES', () => {
     const wrapper = factory();
 
@@ -40,6 +58,24 @@ describe('c-items-per-page-field', () => {
     const wrapper = factory();
 
     expect(selectOptionValues(wrapper)).toEqual(PAGINATION_PER_PAGE_VALUES);
+  });
+
+  it('Attaches the menu to the fullscreen root', () => {
+    const fullscreenElement = document.createElement('div');
+
+    fullscreenState.isFullscreen.value = true;
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      value: fullscreenElement,
+    });
+
+    const wrapper = shallowMount(CItemsPerPageField, {
+      global: { stubs },
+    });
+
+    expect(selectCSelect(wrapper).props('menuProps')).toEqual({ attach: fullscreenElement });
+
+    wrapper.unmount();
   });
 
   it('Custom items property applied to select element', () => {

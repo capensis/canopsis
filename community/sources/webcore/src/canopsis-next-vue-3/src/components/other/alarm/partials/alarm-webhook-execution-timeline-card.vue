@@ -3,10 +3,10 @@
     <c-layout class="mb-2" align="center">
       <c-expand-btn
         v-if="expandable"
-        :expanded="expanded"
+        :model-value="expanded"
         :loading="expanding"
         color="grey"
-        @expand="expandResponse"
+        @update:model-value="expandResponse"
       />
       <span class="ml-2">
         {{ $t(`alarm.timeline.steps.${step._t}`) }}

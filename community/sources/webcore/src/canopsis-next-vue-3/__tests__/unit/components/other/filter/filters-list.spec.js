@@ -12,8 +12,6 @@ const stubs = {
 };
 
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
-const selectFilterTiles = wrapper => wrapper.findAll('filter-tile-stub');
-const selectDraggableField = wrapper => wrapper.find('c-draggable-list-field-stub');
 
 describe('filters-list', () => {
   const $modals = mockModals();
@@ -91,7 +89,6 @@ describe('filters-list', () => {
     });
 
     const updatedFilters = [...filters].reverse();
-    const draggableField = selectDraggableField(wrapper);
 
     wrapper.vm.$emit('update:filters', updatedFilters);
 

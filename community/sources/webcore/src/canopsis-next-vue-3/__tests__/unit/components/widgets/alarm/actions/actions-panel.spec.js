@@ -62,7 +62,7 @@ const stubs = {
           v-for="action in actions"
           :class="'action-' + action.type"
           :disabled="action.disabled"
-          @click="action.method"
+          @click="action.method()"
         >{{ action.title }}|{{ action.icon }}|{{ action.type }}</button>
       </div>
     `,

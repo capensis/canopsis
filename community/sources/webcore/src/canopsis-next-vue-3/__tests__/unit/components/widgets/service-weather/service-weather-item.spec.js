@@ -1,5 +1,4 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { flushPromises } from '@vue/test-utils';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -64,9 +63,9 @@ describe('service-weather-item', () => {
       },
     });
 
-    await flushPromises();
-
-    await wrapper.find('.custom-template').trigger('click');
+    selectCard(wrapper).triggerCustomEvent('click', {
+      target: { tagName: 'DIV' },
+    });
 
     expect(wrapper).toHaveBeenEmit('show:service');
   });
@@ -92,9 +91,9 @@ describe('service-weather-item', () => {
       },
     });
 
-    await flushPromises();
-
-    await wrapper.find('.custom-template-link').trigger('click');
+    selectCard(wrapper).triggerCustomEvent('click', {
+      target: { tagName: 'A', href: '#123' },
+    });
 
     expect(wrapper).not.toHaveBeenEmit('show:service');
   });

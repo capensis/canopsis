@@ -45,7 +45,7 @@ export const usePatternCountEntitiesModal = (props) => {
       [PATTERNS_FIELDS.entity]: true,
       [PATTERNS_FIELDS.pbehavior]: props.withPbehavior,
       [PATTERNS_FIELDS.event]: props.eventName,
-      [PATTERNS_FIELDS.totalEntity]: props.totalEntityName,
+      [PATTERNS_FIELDS.totalEntity]: props.withTotalEntity,
       [PATTERNS_FIELDS.serviceWeather]: props.serviceWeatherName,
     };
 
@@ -54,8 +54,13 @@ export const usePatternCountEntitiesModal = (props) => {
         return acc;
       }
 
-      acc[patternName === PATTERNS_FIELDS.entity ? 'search_pattern' : patternName] =
-        formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
+      const queryField =
+        {
+          [PATTERNS_FIELDS.entity]: 'search_pattern',
+          [PATTERNS_FIELDS.totalEntity]: 'entity_pattern',
+        }[patternName] ?? patternName;
+
+      acc[queryField] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
 
       return acc;
     }, {});

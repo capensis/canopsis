@@ -6,7 +6,7 @@ import Faker from 'faker';
 
 import { MODALS, PATTERN_TABS, PATTERN_TYPES } from '@/constants';
 
-import Patterns from '@/views/profile/patterns.vue';
+import Patterns from '@/views/profile/patterns-page.vue';
 
 vi.mock('@/hooks/auth', async () => {
   const { computed } = await vi.importActual('vue');

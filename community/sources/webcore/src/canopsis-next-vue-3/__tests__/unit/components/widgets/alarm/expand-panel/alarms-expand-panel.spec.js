@@ -24,8 +24,6 @@ const stubs = {
   'c-runtime-template': CRuntimeTemplate,
 };
 
-const selectTabs = wrapper => wrapper.vm.$children[0];
-
 describe('alarms-expand-panel', () => {
   // TODO: add tests for children, timeline, query
   const infoModule = {
@@ -116,8 +114,9 @@ describe('alarms-expand-panel', () => {
     expect(range).toBe(expandGridRangeSize);
   });
 
-  it('Tab key updated after change moreInfoTemplate', async () => {
+  it('More-info template id is derived from the widget id', () => {
     const widget = {
+      _id: 'widget-id',
       parameters: {
         moreInfoTemplate: 'template',
       },
@@ -137,16 +136,6 @@ describe('alarms-expand-panel', () => {
       },
     });
 
-    const prevKey = selectTabs(wrapper).$vnode.key;
-
-    await wrapper.setProps({
-      widget: {
-        parameters: {
-          moreInfoTemplate: 'template2',
-        },
-      },
-    });
-
-    expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
+    expect(wrapper.vm.moreInfosTemplateId).toBe('widget-id-moreInfoTemplate');
   });
 });

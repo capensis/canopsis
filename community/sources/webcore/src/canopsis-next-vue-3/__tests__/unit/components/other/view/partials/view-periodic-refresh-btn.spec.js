@@ -14,6 +14,11 @@ const stubs = {
 
 describe('view-periodic-refresh-btn', () => {
   const factory = generateShallowRenderer(ViewPeriodicRefreshBtn, { stubs });
+  const getPeriodicRefreshFullPaused = (activeViewPeriodicRefreshPaused, isNavigationEditingMode) =>
+    ViewPeriodicRefreshBtn.computed.periodicRefreshFullPaused.call({
+      activeViewPeriodicRefreshPaused,
+      isNavigationEditingMode,
+    });
 
   const mockPeriodicRefresh = {
     notify: vi.fn(),
@@ -47,57 +52,15 @@ describe('view-periodic-refresh-btn', () => {
 
   describe('computed', () => {
     test('Should return correct periodicRefreshFullPaused value when activeViewPeriodicRefreshPaused', () => {
-      const wrapper = factory({
-        provide: {
-          $periodicRefresh: mockPeriodicRefresh,
-        },
-        mocks: {
-          $popups: mockPopups,
-        },
-        computed: {
-          view: () => createViewWithPeriodicRefresh(true),
-          activeViewPeriodicRefreshPaused: () => true,
-          isNavigationEditingMode: () => false,
-        },
-      });
-
-      expect(wrapper.vm.periodicRefreshFullPaused).toBe(true);
+      expect(getPeriodicRefreshFullPaused(true, false)).toBe(true);
     });
 
     test('Should return correct periodicRefreshFullPaused value when isNavigationEditingMode', () => {
-      const wrapper = factory({
-        provide: {
-          $periodicRefresh: mockPeriodicRefresh,
-        },
-        mocks: {
-          $popups: mockPopups,
-        },
-        computed: {
-          view: () => createViewWithPeriodicRefresh(true),
-          activeViewPeriodicRefreshPaused: () => false,
-          isNavigationEditingMode: () => true,
-        },
-      });
-
-      expect(wrapper.vm.periodicRefreshFullPaused).toBe(true);
+      expect(getPeriodicRefreshFullPaused(false, true)).toBe(true);
     });
 
     test('Should return false for periodicRefreshFullPaused when not paused', () => {
-      const wrapper = factory({
-        provide: {
-          $periodicRefresh: mockPeriodicRefresh,
-        },
-        mocks: {
-          $popups: mockPopups,
-        },
-        computed: {
-          view: () => createViewWithPeriodicRefresh(true),
-          activeViewPeriodicRefreshPaused: () => false,
-          isNavigationEditingMode: () => false,
-        },
-      });
-
-      expect(wrapper.vm.periodicRefreshFullPaused).toBe(false);
+      expect(getPeriodicRefreshFullPaused(false, false)).toBe(false);
     });
   });
 
@@ -148,39 +111,8 @@ describe('view-periodic-refresh-btn', () => {
 
   describe('new periodic refresh pause functionality', () => {
     test('Should incorporate activeViewPeriodicRefreshPaused in periodicRefreshFullPaused', () => {
-      // Test when activeViewPeriodicRefreshPaused is true
-      const wrapper1 = factory({
-        provide: {
-          $periodicRefresh: mockPeriodicRefresh,
-        },
-        mocks: {
-          $popups: mockPopups,
-        },
-        computed: {
-          view: () => createViewWithPeriodicRefresh(true),
-          activeViewPeriodicRefreshPaused: () => true,
-          isNavigationEditingMode: () => false,
-        },
-      });
-
-      expect(wrapper1.vm.periodicRefreshFullPaused).toBe(true);
-
-      // Test when activeViewPeriodicRefreshPaused is false
-      const wrapper2 = factory({
-        provide: {
-          $periodicRefresh: mockPeriodicRefresh,
-        },
-        mocks: {
-          $popups: mockPopups,
-        },
-        computed: {
-          view: () => createViewWithPeriodicRefresh(true),
-          activeViewPeriodicRefreshPaused: () => false,
-          isNavigationEditingMode: () => false,
-        },
-      });
-
-      expect(wrapper2.vm.periodicRefreshFullPaused).toBe(false);
+      expect(getPeriodicRefreshFullPaused(true, false)).toBe(true);
+      expect(getPeriodicRefreshFullPaused(false, false)).toBe(false);
     });
 
     test('Should access activeViewPeriodicRefreshPaused computed property from mixin', () => {

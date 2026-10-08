@@ -43,7 +43,12 @@
         </c-form-block-row>
 
         <c-form-block-row v-if="isShownUserNameField" :label="t('common.username')">
-          <c-name-field v-model="authUsername" :label="t('common.username')" name="username" required />
+          <c-name-field
+            v-model="authUsername"
+            :label="t('common.username')"
+            name="username"
+            required
+          />
         </c-form-block-row>
 
         <template v-if="isShownAwxFields">

@@ -3,7 +3,6 @@ import {
   createInfoModule,
   createMockedStoreModules,
   createPbehaviorCommentModule,
-  createPbehaviorModule,
 } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
@@ -15,6 +14,14 @@ import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
+
+const { fetchPbehaviorsByEntityIdWithoutStore } = vi.hoisted(() => ({
+  fetchPbehaviorsByEntityIdWithoutStore: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock('@/hooks/store/modules/pbehavior', () => ({
+  usePbehavior: () => ({ fetchPbehaviorsByEntityIdWithoutStore }),
+}));
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -37,10 +44,14 @@ describe('pbehaviors-simple-list', () => {
   const $router = mockRouter();
 
   const { infoModule } = createInfoModule();
-  const { pbehaviorModule, fetchPbehaviorsByEntityIdWithoutStore } = createPbehaviorModule();
   const { pbehaviorCommentModule } = createPbehaviorCommentModule();
 
-  const store = createMockedStoreModules([infoModule, pbehaviorModule, pbehaviorCommentModule]);
+  const store = createMockedStoreModules([infoModule, pbehaviorCommentModule]);
+
+  afterEach(() => {
+    fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+    $modals.show.mockClear();
+  });
 
   const factory = generateShallowRenderer(PbehaviorsSimpleList, {
     stubs,
@@ -67,7 +78,7 @@ describe('pbehaviors-simple-list', () => {
 
     await flushPromises();
 
-    expect(fetchPbehaviorsByEntityIdWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(fetchPbehaviorsByEntityIdWithoutStore).toHaveBeenCalledWith({
       id: entityId,
       params: { with_flags: true },
     });
@@ -104,7 +115,7 @@ describe('pbehaviors-simple-list', () => {
     const [{ config }] = $modals.show.mock.calls[0];
 
     await config.afterSubmit();
-    expect(fetchPbehaviorsByEntityIdWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(fetchPbehaviorsByEntityIdWithoutStore).toHaveBeenCalledWith({
       id: entity._id,
       params: { with_flags: true },
     });

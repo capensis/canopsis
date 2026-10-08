@@ -12,8 +12,6 @@ const stubs = {
   'c-tooltip': createActivatorElementStub('c-tooltip'),
 };
 
-const selectButton = wrapper => wrapper.find('v-btn-stub');
-
 describe('alarm-status-chip-with-relations', () => {
   const $modals = mockModals();
 
@@ -47,8 +45,7 @@ describe('alarm-status-chip-with-relations', () => {
 
     await flushPromises();
 
-    const button = selectButton(wrapper);
-    button.triggerCustomEvent('click', new Event('click'));
+    wrapper.vm.showRelationsModal();
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,
@@ -83,8 +80,7 @@ describe('alarm-status-chip-with-relations', () => {
 
     await flushPromises();
 
-    const button = selectButton(wrapper);
-    button.triggerCustomEvent('click', new Event('click'));
+    wrapper.vm.showRelationsModal();
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,

@@ -20,6 +20,7 @@ import { durationToForm } from '@/helpers/date/duration';
 import {
   formRuleToPatternRule,
   getOperatorsByRule,
+  isValidPatternRule,
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
 
@@ -1284,4 +1285,21 @@ describe('pattern form converters', () => {
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
+});
+
+describe('pattern validation', () => {
+  test.each([PATTERN_CONDITIONS.isOneOf, PATTERN_CONDITIONS.isNotOneOf])(
+    'validates snooze author with %s condition',
+    (condition) => {
+      expect(
+        isValidPatternRule({
+          field: ALARM_PATTERN_FIELDS.snoozeAuthor,
+          cond: {
+            type: condition,
+            value: ['admin'],
+          },
+        }),
+      ).toBe(true);
+    },
+  );
 });

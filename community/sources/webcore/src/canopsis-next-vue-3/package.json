@@ -11,13 +11,14 @@
     "test:e2e": "playwright test",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "run-s lint:oxfmt lint:oxlint lint:eslint",
-    "lint:oxfmt": "oxfmt --write \"src/**/*.{js,ts,cjs,mjs,jsx,tsx}\" \"__tests__/**/*.{js,ts,cjs,mjs,jsx,tsx}\" --no-error-on-unmatched-pattern",
+    "lint": "run-s lint:oxlint lint:eslint",
     "lint:oxlint": "run-s lint:oxlint:fix lint:oxlint:vue",
     "lint:oxlint:fix": "oxlint src __tests__ --fix --ignore-pattern \"**/*.vue\" --no-error-on-unmatched-pattern",
     "lint:oxlint:vue": "oxlint src",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "run-s lint:oxfmt lint:eslint",
+    "format": "run-s format:code format:assets",
+    "format:code": "eslint . --fix --cache",
+    "format:assets": "oxfmt --write \"**/*.{json,jsonc,css,scss,html,md}\" --no-error-on-unmatched-pattern",
     "generate-icons-json": "node ./tools/generate-icons-json.js",
     "prepare": "husky",
     "postinstall": "patch-package"
@@ -103,7 +104,6 @@
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx}": [
-      "oxfmt --write --no-error-on-unmatched-pattern",
       "oxlint --fix",
       "eslint --fix --cache"
     ],

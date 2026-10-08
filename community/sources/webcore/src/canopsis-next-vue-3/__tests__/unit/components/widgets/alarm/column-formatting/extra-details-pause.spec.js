@@ -16,7 +16,7 @@ describe('extra-details-pause', () => {
     },
   });
 
-  it('shows only the pause comment and type texts in the tooltip', () => {
+  it('shows only the pause comment in the tooltip', () => {
     const wrapper = factory({
       propsData: {
         pause: {
@@ -30,7 +30,7 @@ describe('extra-details-pause', () => {
     const content = wrapper.findComponent(CTooltipStub).props('content');
 
     expect(content).toContain('Maintenance window');
-    expect(content).toContain('maintenance');
+    expect(content).not.toContain('maintenance');
     expect(content).not.toContain('<strong>Pause</strong>');
     expect(content).not.toContain('Comment:');
     expect(content).not.toContain('Type:');
@@ -38,13 +38,13 @@ describe('extra-details-pause', () => {
     expect(content).not.toContain('1641768553');
   });
 
-  it('does not show a tooltip without a comment or type', () => {
+  it('does not show a tooltip without a comment', () => {
     const wrapper = factory({ propsData: { pause: {} } });
 
     expect(wrapper.findComponent(CTooltipStub).exists()).toBe(false);
   });
 
-  it('shows the inherited message when entity and alarm pause comment and type match', () => {
+  it('shows the inherited message when entity and alarm pause comments match', () => {
     const wrapper = factory({
       propsData: {
         pause: {
@@ -65,12 +65,10 @@ describe('extra-details-pause', () => {
 
     expect(content).toContain('Pause is inherited from Component API');
     expect(content).toContain('Maintenance window');
-    expect(content).toContain('maintenance');
     expect(content).toContain('<div>Pause is inherited from Component API</div>');
     expect(content).toContain(
       '<div class="c-extra-details__message pre-line">Maintenance window</div>',
     );
-    expect(content).toContain('<div>maintenance</div>');
   });
 
   it('matches equal multiline comments and preserves their line breaks', () => {
@@ -113,7 +111,7 @@ describe('extra-details-pause', () => {
     expect(content).not.toContain('Pause is inherited from');
   });
 
-  it('does not show the inherited message when pause types differ', () => {
+  it('shows the inherited message regardless of legacy pause type metadata', () => {
     const wrapper = factory({
       propsData: {
         pause: { m: 'Maintenance window', pause_type: 'maintenance' },
@@ -126,6 +124,6 @@ describe('extra-details-pause', () => {
     });
     const content = wrapper.findComponent(CTooltipStub).props('content');
 
-    expect(content).not.toContain('Pause is inherited from');
+    expect(content).toContain('Pause is inherited from Component API');
   });
 });

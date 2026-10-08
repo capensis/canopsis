@@ -3,10 +3,11 @@ import { generateRenderer } from '@unit/utils/vue';
 import StorageSettingsArchiveEntityDisabledForm from '@/components/other/storage-setting/form/storage-settings-archive-entity-disabled-form.vue';
 
 const stubs = {
+  'c-checkbox': true,
   'c-help-icon': true,
 };
 
-const selectWithDependenciesCheckbox = wrapper => wrapper.find('input[type="checkbox"]');
+const selectWithDependenciesCheckbox = wrapper => wrapper.find('c-checkbox-stub');
 
 describe('storage-settings-archive-entity-disabled-form', () => {
   const form = {
@@ -24,9 +25,8 @@ describe('storage-settings-archive-entity-disabled-form', () => {
 
     const newValue = false;
 
-    const checkbox = selectWithDependenciesCheckbox(wrapper);
-    checkbox.setChecked(newValue);
+    selectWithDependenciesCheckbox(wrapper).triggerCustomEvent('update:modelValue', newValue);
 
-    expect(wrapper).toEmitInput({ ...form, with_dependencies: newValue });
+    expect(wrapper).toEmit('update:modelValue', { ...form, with_dependencies: newValue });
   });
 });

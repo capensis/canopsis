@@ -10,15 +10,8 @@ const stubs = {
 const selectServiceEntityActions = wrapper => wrapper.find('service-entity-actions-stub');
 
 describe('service-entity-info-tab', () => {
-  const applyAction = vi.fn();
-  const executeInstruction = vi.fn();
-
   const factory = generateShallowRenderer(ServiceEntityInfoTab, {
     stubs,
-    listeners: {
-      apply: applyAction,
-      execute: executeInstruction,
-    },
   });
 
   test('Action applied after trigger entity actions', () => {
@@ -31,7 +24,7 @@ describe('service-entity-info-tab', () => {
 
     selectServiceEntityActions(wrapper).triggerCustomEvent('apply');
 
-    expect(applyAction).toHaveBeenCalled();
+    expect(wrapper).toHaveBeenEmit('apply');
   });
 
   test('Instruction executed after trigger entity actions', () => {
@@ -44,6 +37,6 @@ describe('service-entity-info-tab', () => {
 
     selectServiceEntityActions(wrapper).triggerCustomEvent('execute');
 
-    expect(executeInstruction).toHaveBeenCalled();
+    expect(wrapper).toHaveBeenEmit('execute');
   });
 });

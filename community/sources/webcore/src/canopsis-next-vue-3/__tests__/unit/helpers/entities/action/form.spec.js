@@ -1,8 +1,19 @@
-import { ACTION_TYPES } from '@/constants';
+import { ACTION_TYPES, MIN_DURATION_VALUE, TIME_UNITS } from '@/constants';
 
-import { actionToForm, formToAction } from '@/helpers/entities/action/form';
+import {
+  actionToForm,
+  formToAction,
+  snoozeActionParametersToForm,
+} from '@/helpers/entities/action/form';
 
-describe('entity pause scenario action form', () => {
+describe('scenario action form', () => {
+  test('uses one second as the default snooze duration', () => {
+    expect(snoozeActionParametersToForm().duration).toEqual({
+      value: MIN_DURATION_VALUE,
+      unit: TIME_UNITS.second,
+    });
+  });
+
   test('converts pause parameters with author fields', () => {
     const form = actionToForm({
       type: ACTION_TYPES.pause,

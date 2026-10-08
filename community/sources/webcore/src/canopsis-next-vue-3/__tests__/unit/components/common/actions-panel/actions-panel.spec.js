@@ -42,6 +42,7 @@ describe('actions-panel', () => {
     const wrapper = factory({
       propsData: {
         actions,
+        ignoreMediaQuery: true,
       },
       mocks: {
         $mq: 'xl',
@@ -55,7 +56,7 @@ describe('actions-panel', () => {
 
     const secondActionElement = actionElements.at(1);
 
-    secondActionElement.trigger('click');
+    await secondActionElement.trigger('click');
 
     const [, secondAction] = actions;
     expect(secondAction.method).toBeCalledTimes(1);
@@ -67,6 +68,7 @@ describe('actions-panel', () => {
     const wrapper = factory({
       propsData: {
         actions,
+        ignoreMediaQuery: true,
       },
       mocks: {
         $mq: 'xl',
@@ -76,7 +78,7 @@ describe('actions-panel', () => {
     await flushPromises();
 
     const addButton = wrapper.find('button.actions-panel-btn');
-    addButton.trigger('click');
+    await addButton.trigger('click');
 
     expect(fastPbehaviorAddAction.method).toHaveBeenCalledTimes(1);
   });
@@ -87,6 +89,7 @@ describe('actions-panel', () => {
     const wrapper = factory({
       propsData: {
         actions,
+        ignoreMediaQuery: true,
       },
       mocks: {
         $mq: 'xl',
@@ -96,7 +99,7 @@ describe('actions-panel', () => {
     await flushPromises();
 
     const removeButton = wrapper.find('button.actions-panel-btn');
-    removeButton.trigger('click');
+    await removeButton.trigger('click');
 
     expect(fastPbehaviorRemoveAction.method).toHaveBeenCalledTimes(1);
   });
@@ -108,6 +111,7 @@ describe('actions-panel', () => {
       propsData: {
         actions,
         inlineCount,
+        ignoreMediaQuery: true,
       },
       mocks: {
         $mq: 'xl',
@@ -122,7 +126,7 @@ describe('actions-panel', () => {
 
     const firstDropdownActionElement = dropdownActionElements.at(0);
 
-    firstDropdownActionElement.trigger('click');
+    await firstDropdownActionElement.trigger('click');
 
     const [, secondAction] = actions;
     expect(secondAction.method).toBeCalledTimes(1);

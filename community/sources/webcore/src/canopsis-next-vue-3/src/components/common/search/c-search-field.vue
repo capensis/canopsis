@@ -9,10 +9,10 @@
     :return-object="false"
     item-title="search"
     item-value="search"
+    class="c-field"
     hide-no-data
     single-line
     hide-details
-    class="c-field"
     @keydown.enter="keydownEnterCombobox"
     @update:model-value="submit"
     @update:search="updateModel"
@@ -34,9 +34,9 @@
     v-else
     :model-value="modelValue"
     :label="label || $t('common.search')"
+    class="c-field"
     hide-details
     single-line
-    class="c-field"
     @update:model-value="updateModel"
     @keydown.enter.prevent="submit(modelValue)"
   />

@@ -37,8 +37,6 @@ describe('kpi-sli-filters', () => {
       },
     });
 
-    const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
-
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedInterval = {
       from: start,
@@ -96,8 +94,6 @@ describe('kpi-sli-filters', () => {
         query: initialQuery,
       },
     });
-
-    const filtersField = wrapper.find('c-filter-field-stub');
 
     wrapper.vm.updateQueryField('filter', expectedFilter);
 

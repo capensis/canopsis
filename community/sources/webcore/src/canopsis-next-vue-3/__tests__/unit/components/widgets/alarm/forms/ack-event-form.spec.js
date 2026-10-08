@@ -1,4 +1,3 @@
-import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
@@ -8,12 +7,12 @@ import AckEventForm from '@/components/widgets/alarm/forms/ack-event-form.vue';
 
 const stubs = {
   'c-description-field': true,
-  'v-checkbox': createCheckboxInputStub('v-checkbox'),
+  'c-checkbox': true,
   'c-tooltip': createActivatorElementStub('c-tooltip'),
 };
 
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
-const selectCheckboxField = wrapper => wrapper.find('.v-checkbox');
+const selectCheckboxField = wrapper => wrapper.find('c-checkbox-stub');
 
 describe('ack-event-form', () => {
   const factory = generateShallowRenderer(AckEventForm, {
@@ -56,8 +55,11 @@ describe('ack-event-form', () => {
 
     const ackResources = !form.ack_resources;
 
-    selectCheckboxField(wrapper).triggerCustomEvent('change', ackResources);
+    selectCheckboxField(wrapper).triggerCustomEvent('update:modelValue', ackResources);
 
-    expect(wrapper).toEmitInput({ ...form, ack_resources: ackResources });
+    expect(globalThis.__TEST_FORM__.values.value).toEqual({
+      ...form,
+      ack_resources: ackResources,
+    });
   });
 });

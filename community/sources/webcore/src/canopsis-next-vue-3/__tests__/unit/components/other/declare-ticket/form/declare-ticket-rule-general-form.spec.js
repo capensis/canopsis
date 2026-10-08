@@ -17,8 +17,6 @@ const selectEmitTriggerFailField = wrapper => selectEnabledFields(wrapper).at(1)
 const selectNameFields = wrapper => wrapper.findAll('c-name-field-stub');
 const selectNameField = wrapper => selectNameFields(wrapper).at(0);
 const selectSystemNameField = wrapper => selectNameFields(wrapper).at(1);
-const selectDeclareTicketRuleWebhooksField = wrapper =>
-  wrapper.find('declare-ticket-rule-webhooks-field-stub');
 
 describe('declare-ticket-rule-general-form', () => {
   const form = {

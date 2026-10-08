@@ -3,6 +3,7 @@
     :items="items"
     :model-value="modelValue"
     :density="density"
+    :menu-props="menuProps"
     class="select"
     name="itemsPerPage"
     hide-details
@@ -12,7 +13,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
+
+import { useFullscreen } from '@/hooks/fullscreen';
 
 /**
  * Component to select number of items per page on lists
@@ -39,11 +44,28 @@ export default {
   },
 
   emits: ['update:modelValue'],
+
+  setup() {
+    const { isFullscreen } = useFullscreen();
+    const menuProps = computed(() => {
+      if (!isFullscreen.value || !document.fullscreenElement) {
+        return {};
+      }
+
+      return { attach: document.fullscreenElement };
+    });
+
+    return { menuProps };
+  },
 };
 </script>
 
 <style scoped>
 .select {
   max-width: 70px;
+}
+
+.select :deep(.v-field__input) {
+  --v-field-input-padding-top: 20px;
 }
 </style>

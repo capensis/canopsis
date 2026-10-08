@@ -1,6 +1,6 @@
 import { createButtonStub } from '@unit/stubs/button';
 import { generateShallowRenderer } from '@unit/utils/vue';
-import Vue from 'vue';
+import { flushPromises } from '@vue/test-utils';
 
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
@@ -23,10 +23,9 @@ describe('chart-export-actions', () => {
     expect(wrapper).toHaveBeenEmit('export:csv');
   });
 
-  it('Export png event emitted with correct blob', (done) => {
+  it('Export png event emitted with correct blob', async () => {
     const canvas = document.createElement('canvas');
-
-    const originalToBlob = canvas.toBlob;
+    const blob = new Blob();
 
     const wrapper = factory({
       propsData: {
@@ -36,22 +35,15 @@ describe('chart-export-actions', () => {
       },
     });
 
-    const toBlobSpy = vi.spyOn(canvas, 'toBlob').mockImplementation(callback =>
-      originalToBlob.call(canvas, (...args) => {
-        callback(...args);
-
-        Vue.nextTick(() => {
-          expect(wrapper).toEmit('export:png', expect.any(Blob));
-
-          done();
-        });
-      }),
-    );
+    const toBlobSpy = vi.spyOn(canvas, 'toBlob').mockImplementation(callback => callback(blob));
 
     const exportPngButton = wrapper.findAll('button.v-btn').at(1);
 
-    exportPngButton.trigger('click');
+    await exportPngButton.trigger('click');
+    await flushPromises();
 
-    toBlobSpy.mockReset();
+    expect(wrapper).toEmit('export:png', blob);
+
+    toBlobSpy.mockRestore();
   });
 });

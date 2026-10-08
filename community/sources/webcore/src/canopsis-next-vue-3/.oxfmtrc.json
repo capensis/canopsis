@@ -1,6 +1,4 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "arrowParens": "avoid",
-  "semi": true,
-  "singleQuote": true
+  "printWidth": 120
 }

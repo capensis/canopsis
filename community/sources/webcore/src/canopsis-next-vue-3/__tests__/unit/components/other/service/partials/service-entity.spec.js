@@ -10,14 +10,21 @@ const stubs = {
   'v-expansion-panel-content': {
     template: '<div><slot name="header"/><slot/></div>',
   },
-  'service-entity-header': true,
-  'service-entity-info-tab': true,
+  'service-entity-header': {
+    name: 'ServiceEntityHeader',
+    emits: ['update:selected', 'remove:unavailable'],
+    template: '<div />',
+  },
+  'service-entity-info-tab': {
+    name: 'ServiceEntityInfoTab',
+    emits: ['apply', 'execute'],
+    template: '<div />',
+  },
   'service-entity-tree-of-dependencies-tab': true,
   'pbehaviors-simple-list': true,
 };
 
-const selectServiceEntityHeader = wrapper => wrapper.find('service-entity-header-stub');
-const selectServiceEntityInfoTab = wrapper => wrapper.find('service-entity-info-tab-stub');
+const selectServiceEntityHeader = wrapper => wrapper.findComponent({ name: 'ServiceEntityHeader' });
 
 describe('service-entity', () => {
   const $modals = mockModals();
@@ -35,9 +42,6 @@ describe('service-entity', () => {
     ack: null,
   };
 
-  const updateSelected = vi.fn();
-  const removeUnavailable = vi.fn();
-
   const { authModule } = createAuthModule();
 
   const store = createMockedStoreModules([authModule]);
@@ -47,10 +51,6 @@ describe('service-entity', () => {
 
     stubs,
     mocks: { $modals },
-    listeners: {
-      'update:selected': updateSelected,
-      'remove:unavailable': removeUnavailable,
-    },
     propsData: {
       entity,
     },
@@ -61,9 +61,9 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.triggerCustomEvent('update:selected');
+    header.vm.$emit('update:selected');
 
-    expect(updateSelected).toHaveBeenCalled();
+    expect(wrapper).toHaveBeenEmit('update:selected');
   });
 
   test('Remove unavailable emitted after trigger entity header', async () => {
@@ -71,18 +71,17 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.triggerCustomEvent('remove:unavailable');
+    header.vm.$emit('remove:unavailable');
 
-    expect(removeUnavailable).toHaveBeenCalled();
+    expect(wrapper).toHaveBeenEmit('remove:unavailable');
   });
 
-  test('Instruction executed after trigger entity info tab', async () => {
+  test('Instruction execution opens the remediation modal', () => {
     const wrapper = factory();
 
-    const info = selectServiceEntityInfoTab(wrapper);
     const assignedInstruction = {};
 
-    await info.triggerCustomEvent('execute', assignedInstruction);
+    wrapper.vm.executeAlarmInstruction(assignedInstruction);
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.executeRemediationSimpleInstruction,

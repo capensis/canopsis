@@ -393,6 +393,7 @@ export const isArrayPatternRuleField = value =>
     ALARM_PATTERN_FIELDS.ticketValue,
     ALARM_PATTERN_FIELDS.ticketInitiator,
     ALARM_PATTERN_FIELDS.ticketData,
+    ALARM_PATTERN_FIELDS.snoozeAuthor,
     ALARM_PATTERN_FIELDS.snoozeInitiator,
     ALARM_PATTERN_FIELDS.ackBy,
     ALARM_PATTERN_FIELDS.ackMessage,

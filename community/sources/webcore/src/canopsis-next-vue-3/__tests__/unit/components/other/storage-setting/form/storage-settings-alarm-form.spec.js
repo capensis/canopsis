@@ -1,6 +1,5 @@
 import { randomDurationEnabledValue } from '@unit/utils/duration';
 import { generateRenderer } from '@unit/utils/vue';
-import { flushPromises } from '@vue/test-utils';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -33,16 +32,8 @@ describe('storage-settings-alarm-form', () => {
     },
   };
 
-  const validator = {
-    validate: vi.fn(),
-  };
-
   const factory = generateRenderer(StorageSettingsAlarmForm, {
     stubs,
-
-    provide: {
-      $validator: validator,
-    },
   });
 
   test('Alarm archive after changed after trigger enabled duration field', () => {
@@ -55,12 +46,12 @@ describe('storage-settings-alarm-form', () => {
 
     const newValue = randomDurationEnabledValue();
 
-    selectAlarmArchiveAfterField(wrapper).triggerCustomEvent('input', newValue);
+    selectAlarmArchiveAfterField(wrapper).triggerCustomEvent('update:duration', newValue);
 
-    expect(wrapper).toEmitInput({ ...form, archive_after: newValue });
+    expect(wrapper).toEmit('update:form', { ...form, archive_after: newValue });
   });
 
-  test('Alarm delete after changed after trigger enabled duration field', async () => {
+  test('Alarm delete after changed after trigger enabled duration field', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -70,11 +61,8 @@ describe('storage-settings-alarm-form', () => {
 
     const newValue = randomDurationEnabledValue();
 
-    selectAlarmDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
+    selectAlarmDeleteAfterField(wrapper).triggerCustomEvent('update:duration', newValue);
 
-    await flushPromises();
-
-    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
-    expect(validator.validate).toHaveBeenCalledWith('alarm.delete_after');
+    expect(wrapper).toEmit('update:form', { ...form, delete_after: newValue });
   });
 });

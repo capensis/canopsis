@@ -1,12 +1,21 @@
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
-import KpiRating from '@/components/other/kpi/charts/kpi-rating';
+import KpiRating from '@/components/other/kpi/charts/kpi-rating.vue';
+
+const metrics = vi.hoisted(() => ({
+  createKpiRatingExport: vi.fn(),
+  fetchMetricExport: vi.fn(),
+  fetchRatingMetricsWithoutStore: vi.fn(),
+}));
+
+vi.mock('@/hooks/store/modules/metrics', () => ({
+  useMetrics: () => metrics,
+}));
 
 const stubs = {
   'c-progress-overlay': true,
@@ -25,60 +34,43 @@ describe('kpi-rating', () => {
     stubs,
     parentComponent: {
       provide: {
-        $system: {},
+        $system: { timezone: 'Europe/Paris' },
       },
     },
   });
 
-  it('Metrics doesn\'t fetched after mount without criteria', async () => {
-    const fetchRatingMetrics = vi.fn(() => []);
+  it('Metrics are not fetched after mount without criteria', async () => {
+    metrics.fetchRatingMetricsWithoutStore.mockResolvedValue([]);
 
-    factory({
-      store: createMockedStoreModules([
-        {
-          name: 'metrics',
-          actions: {
-            fetchRatingMetricsWithoutStore: fetchRatingMetrics,
-          },
-        },
-      ]),
-    });
+    factory();
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).toBeCalledTimes(0);
+    expect(metrics.fetchRatingMetricsWithoutStore).not.toHaveBeenCalled();
   });
 
-  it('Metrics fetched after after set criteria', async () => {
+  it('Metrics fetched after setting criteria', async () => {
     const expectedDefaultParams = {
       /* now - 30d  */
       from: 1383843600,
       criteria: 1,
       metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       limit: 10,
+      filter: undefined,
       to: nowUnix,
     };
-    const fetchRatingMetrics = vi.fn(() => ({
+    metrics.fetchRatingMetricsWithoutStore.mockResolvedValue({
       data: [],
       meta: {
         min_date: expectedDefaultParams.from,
       },
-    }));
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: 'metrics',
-          actions: {
-            fetchRatingMetricsWithoutStore: fetchRatingMetrics,
-          },
-        },
-      ]),
     });
+
+    const wrapper = factory();
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.triggerCustomEvent('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('update:query', {
       criteria: {
         id: expectedDefaultParams.criteria,
       },
@@ -92,8 +84,8 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).toBeCalledTimes(1);
-    expect(fetchRatingMetrics).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalledTimes(1);
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalledWith({
       params: {
         ...expectedDefaultParams,
 
@@ -103,36 +95,28 @@ describe('kpi-rating', () => {
     });
   });
 
-  it('Metrics doesn\'t refreshed if min date less than from', async () => {
+  it('Metrics are not refreshed if min date is later than from', async () => {
     const expectedDefaultParams = {
       /* now - 30d  */
       from: 1383843600,
       criteria: 1,
       metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       limit: 10,
+      filter: undefined,
       to: nowUnix,
     };
-    const fetchRatingMetrics = vi.fn(() => ({
+    metrics.fetchRatingMetricsWithoutStore.mockResolvedValue({
       data: [],
       meta: {
         min_date: 1383943600,
       },
-    }));
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: 'metrics',
-          actions: {
-            fetchRatingMetricsWithoutStore: fetchRatingMetrics,
-          },
-        },
-      ]),
     });
+
+    const wrapper = factory();
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.triggerCustomEvent('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('update:query', {
       criteria: {
         id: expectedDefaultParams.criteria,
       },
@@ -146,13 +130,13 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).toHaveBeenCalled();
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalled();
 
-    fetchRatingMetrics.mockReset();
+    metrics.fetchRatingMetricsWithoutStore.mockClear();
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).not.toHaveBeenCalled();
+    expect(metrics.fetchRatingMetricsWithoutStore).not.toHaveBeenCalled();
   });
 
   it('Metrics refreshed after change interval', async () => {
@@ -166,33 +150,24 @@ describe('kpi-rating', () => {
       limit: 10,
       to: 1386370800,
     };
-    const fetchRatingMetrics = vi.fn(() => ({
+    metrics.fetchRatingMetricsWithoutStore.mockResolvedValue({
       data: [],
       meta: {
         min_date: expectedParamsAfterUpdate.from,
       },
-    }));
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: 'metrics',
-          actions: {
-            fetchRatingMetricsWithoutStore: fetchRatingMetrics,
-          },
-        },
-      ]),
     });
+
+    const wrapper = factory();
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.triggerCustomEvent('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('update:query', {
       criteria: {
         id: expectedParamsAfterUpdate.criteria,
       },
       filter: expectedParamsAfterUpdate.filter,
       metric: expectedParamsAfterUpdate.metric,
-      limit: expectedParamsAfterUpdate.limit,
+      itemsPerPage: expectedParamsAfterUpdate.limit,
       interval: {
         from: start,
         to: stop,
@@ -201,8 +176,8 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).toBeCalledTimes(1);
-    expect(fetchRatingMetrics).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalledTimes(1);
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalledWith({
       params: expectedParamsAfterUpdate,
     });
   });
@@ -213,36 +188,28 @@ describe('kpi-rating', () => {
       /* today - 1d  */
       from: 1386284400,
       criteria: 1,
+      filter: undefined,
       metric: USER_METRIC_PARAMETERS.totalUserActivity,
       limit: 10,
       to: 1386370800,
     };
-    const fetchRatingMetrics = vi.fn(() => ({
+    metrics.fetchRatingMetricsWithoutStore.mockResolvedValue({
       data: [],
       meta: {
         min_date: expectedParamsAfterUpdate.from,
       },
-    }));
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: 'metrics',
-          actions: {
-            fetchRatingMetricsWithoutStore: fetchRatingMetrics,
-          },
-        },
-      ]),
     });
+
+    const wrapper = factory();
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.triggerCustomEvent('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('update:query', {
       criteria: {
         id: expectedParamsAfterUpdate.criteria,
       },
       metric: expectedParamsAfterUpdate.metric,
-      limit: expectedParamsAfterUpdate.limit,
+      itemsPerPage: expectedParamsAfterUpdate.limit,
       filter: Faker.datatype.string(),
       interval: {
         from: start,
@@ -252,8 +219,8 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(fetchRatingMetrics).toBeCalledTimes(1);
-    expect(fetchRatingMetrics).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalledTimes(1);
+    expect(metrics.fetchRatingMetricsWithoutStore).toHaveBeenCalledWith({
       params: expectedParamsAfterUpdate,
     });
   });

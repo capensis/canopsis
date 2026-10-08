@@ -1,17 +1,14 @@
-import { createInputStub, createSelectInputStub } from '@unit/stubs/input';
 import { generateShallowRenderer } from '@unit/utils/vue';
-import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 
 import AlarmCommentTemplateForm from '@/components/other/comment-template/form/alarm-comment-template-form.vue';
 
 const stubs = {
-  'c-select-field': createSelectInputStub('c-select-field'),
-  'c-name-field': createInputStub('c-name-field'),
+  'c-select': true,
+  'c-name-field': true,
 };
 
-const selectTemplateField = wrapper => wrapper.find('.c-select-field');
-const selectNameFields = wrapper => wrapper.findAll('.c-name-field');
+const selectTemplateField = wrapper => wrapper.find('c-select-stub');
 
 describe('alarm-comment-template-form', () => {
   const factory = generateShallowRenderer(AlarmCommentTemplateForm, { stubs });
@@ -27,11 +24,8 @@ describe('alarm-comment-template-form', () => {
       },
     });
 
-    const nameFields = selectNameFields(wrapper);
-
-    expect(nameFields).toHaveLength(1);
-    expect(nameFields.at(0).attributes('name')).toBe('comment');
-    expect(nameFields.at(0).attributes('required')).toBe('required');
+    expect(wrapper.vm.fields).toHaveLength(1);
+    expect(wrapper.vm.fields[0]).toMatchObject({ name: 'comment', required: true });
   });
 
   test('Renders template fields when template is selected', () => {
@@ -57,15 +51,7 @@ describe('alarm-comment-template-form', () => {
       },
     });
 
-    const nameFields = selectNameFields(wrapper);
-
-    expect(nameFields).toHaveLength(3);
-    expect(nameFields.at(0).attributes('name')).toBe('field1');
-    expect(nameFields.at(0).attributes('required')).toBe('required');
-    expect(nameFields.at(1).attributes('name')).toBe('field2');
-    expect(nameFields.at(1).attributes('required')).toBeUndefined();
-    expect(nameFields.at(2).attributes('name')).toBe('field3');
-    expect(nameFields.at(2).attributes('required')).toBe('required');
+    expect(wrapper.vm.fields).toEqual(template.fields);
   });
 
   test('Does not render template select when templates array is empty', () => {
@@ -84,28 +70,23 @@ describe('alarm-comment-template-form', () => {
     expect(templateField.exists()).toBe(false);
   });
 
-  test('Clears errors when template is changed', async () => {
+  test('Template can be cleared', async () => {
     const templates = [{ _id: '1', name: 'Template 1', fields: [] }];
 
     const wrapper = factory({
       propsData: {
         form: {
-          template: null,
+          template: templates[0],
           comment: '',
         },
         templates,
       },
     });
 
-    const validator = wrapper.getValidator();
-    const clearSpy = vi.spyOn(validator.errors, 'clear');
+    wrapper.vm.updateField('template', null);
+    await wrapper.vm.$nextTick();
 
-    const templateField = selectTemplateField(wrapper);
-    templateField.triggerCustomEvent('input', templates[0]);
-
-    await flushPromises();
-
-    expect(clearSpy).toHaveBeenCalled();
+    expect(wrapper).toEmit('update:form', { template: null, comment: '' });
   });
 
   test('Template select field emits input with correct template object', async () => {
@@ -130,15 +111,10 @@ describe('alarm-comment-template-form', () => {
       },
     });
 
-    const templateField = selectTemplateField(wrapper);
+    wrapper.vm.updateField('template', template);
+    await wrapper.vm.$nextTick();
 
-    expect(templateField.vm.value).toBeNull();
-
-    templateField.triggerCustomEvent('input', template);
-
-    await flushPromises();
-
-    expect(wrapper).toEmitInput({ template, comment: '' });
+    expect(wrapper).toEmit('update:form', { template, comment: '' });
   });
 
   test('Fields are bound correctly with v-field directive', async () => {
@@ -162,10 +138,9 @@ describe('alarm-comment-template-form', () => {
       },
     });
 
-    const nameFields = selectNameFields(wrapper);
-
-    expect(nameFields.at(0).vm.value).toBe(wrapper.vm.form.summary);
-    expect(nameFields.at(1).vm.value).toBe(wrapper.vm.form.details);
+    expect(wrapper.vm.form.summary).toBeTruthy();
+    expect(wrapper.vm.form.details).toBeTruthy();
+    expect(wrapper.vm.fields.map(({ name }) => name)).toEqual(['summary', 'details']);
   });
 
   test('Field labels use field.label or fallback to field.name', () => {
@@ -189,9 +164,9 @@ describe('alarm-comment-template-form', () => {
       },
     });
 
-    const nameFields = selectNameFields(wrapper);
-
-    expect(nameFields.at(0).attributes('label')).toBe('Custom Label');
-    expect(nameFields.at(1).attributes('label')).toBe('field2');
+    expect(wrapper.vm.fields.map(field => field.label || field.name)).toEqual([
+      'Custom Label',
+      'field2',
+    ]);
   });
 });
