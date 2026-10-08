@@ -1,5 +1,5 @@
 [Unit]
-Description=Canopsis API daemon
+Description=Canopsis Internal API daemon
 PartOf=canopsis.service
 After=canopsis.service
 ReloadPropagatedFrom=canopsis.service
@@ -16,7 +16,7 @@ Restart=always
 Type=simple
 RestartSec=1
 StartLimitBurst=300
-ExecStart=/opt/canopsis/bin/canopsis-api -port 8082
+ExecStart=/opt/canopsis/bin/canopsis-internal-api -port 8082
 
 [Install]
 WantedBy=canopsis.service
