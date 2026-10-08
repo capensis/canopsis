@@ -14,12 +14,8 @@ import (
 )
 
 const (
-	FieldTypeObject    = "object"
-	FieldTypeDuration  = "duration"
-	FieldTypeReference = "reference"
+	aliasLimit = 500
 )
-
-const aliasLimit = 500
 
 var alarmFields = []FieldResponse{
 	{
@@ -56,11 +52,11 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.duration",
-		Type: FieldTypeDuration,
+		Type: pattern.FieldTypeDuration,
 	},
 	{
 		Name: "v.infos",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "v.output",
@@ -76,7 +72,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.ack",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.ack.t",
@@ -100,7 +96,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.ticket",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.ticket.ticket",
@@ -111,12 +107,20 @@ var alarmFields = []FieldResponse{
 		Type: pattern.FieldTypeString,
 	},
 	{
+		Name: "v.ticket.initiator",
+		Type: pattern.FieldTypeString,
+	},
+	{
 		Name: "v.ticket.ticket_data",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
+	},
+	{
+		Name: "v.failed_ticket",
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.snooze",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.snooze.a",
@@ -128,7 +132,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.canceled",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.canceled.initiator",
@@ -152,7 +156,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.activation_date",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.activation_date",
@@ -176,7 +180,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.change_state",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.total_state_changes",
@@ -184,7 +188,7 @@ var alarmFields = []FieldResponse{
 	},
 	{
 		Name: "v.meta",
-		Type: FieldTypeReference,
+		Type: pattern.FieldTypeReference,
 	},
 	{
 		Name: "v.meta",
@@ -215,11 +219,11 @@ var entityFields = []FieldResponse{
 	},
 	{
 		Name: "infos",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "component_infos",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "category",
@@ -270,7 +274,7 @@ var eventFields = []FieldResponse{
 	},
 	{
 		Name: "extra",
-		Type: FieldTypeObject,
+		Type: pattern.FieldTypeObject,
 	},
 	{
 		Name: "long_output",
@@ -469,12 +473,10 @@ func (g *fieldGetter) getEntityFields(ctx context.Context, disabledFields map[st
 		}
 
 		fields = append(fields, EntityFieldResponse{
-			FieldResponse: FieldResponse{
-				Name:    alias.Alias,
-				Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
-				Enabled: true,
-			},
-			Alias: true,
+			Name:    alias.Alias,
+			Type:    cmp.Or(typeMapping[alias.Type], pattern.FieldTypeString),
+			Enabled: true,
+			Alias:   true,
 		})
 	}
 
