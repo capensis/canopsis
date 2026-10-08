@@ -8,12 +8,18 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 
+const declareTicketRuleTestQueryStub = {
+  name: 'DeclareTicketRuleTestQuery',
+  props: ['form'],
+  template: '<div />',
+};
+
 const stubs = {
   'c-enabled-field': true,
   'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
   'declare-ticket-rule-general-form': true,
   'declare-ticket-rule-patterns-form': true,
-  'declare-ticket-rule-test-query': true,
+  'declare-ticket-rule-test-query': declareTicketRuleTestQueryStub,
   'template-testing-test-variables-tab': true,
   'template-testing-test-variables': true,
 };
@@ -24,7 +30,7 @@ const selectDeclareTicketRuleGeneralForm = wrapper =>
 const selectDeclareTicketRulePatternsForm = wrapper =>
   wrapper.find('declare-ticket-rule-patterns-form-stub');
 const selectDeclareTicketRuleTestQuery = wrapper =>
-  wrapper.find('declare-ticket-rule-test-query-stub');
+  wrapper.findComponent(declareTicketRuleTestQueryStub);
 
 describe('declare-ticket-rule-form', () => {
   const { authModule } = createAuthModule();
@@ -68,41 +74,26 @@ describe('declare-ticket-rule-form', () => {
     });
   });
 
-  test('Form fields changed after trigger input event on general form', () => {
+  test('General form uses the shared form context', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    const newForm = {
-      ...form,
-      enabled: !form.enabled,
-    };
-
-    selectDeclareTicketRuleGeneralForm(wrapper).triggerCustomEvent('input', newForm);
-
-    expect(wrapper).toEmitInput(newForm);
+    expect(selectDeclareTicketRuleGeneralForm(wrapper).exists()).toBe(true);
+    expect(globalThis.__TEST_FORM__.values.value).toEqual(form);
   });
 
-  test('Patterns fields changed after trigger input event on patterns form', () => {
+  test('Patterns form uses the shared form context', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    const newFormPatterns = {
-      alarm_patterns: [{}, {}],
-      entity_patterns: [{}, {}],
-    };
-
-    selectDeclareTicketRulePatternsForm(wrapper).triggerCustomEvent('input', newFormPatterns);
-
-    expect(wrapper).toEmitInput({
-      ...form,
-      patterns: newFormPatterns,
-    });
+    expect(selectDeclareTicketRulePatternsForm(wrapper).exists()).toBe(true);
+    expect(globalThis.__TEST_FORM__.values.value.patterns).toEqual(form.patterns);
   });
 
   test('Test query form receives form prop', () => {

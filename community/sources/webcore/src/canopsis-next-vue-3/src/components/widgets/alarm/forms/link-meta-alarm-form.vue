@@ -7,6 +7,7 @@
       name="metaAlarm"
       required
       addable
+      return-object
       @update:value="updateField('metaAlarm', $event)"
     >
       <template #no-data>

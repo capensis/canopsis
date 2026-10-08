@@ -8,7 +8,7 @@
     :required="required"
     :error-messages="errorMessages"
     :item-props="getTriggerItemProps"
-    item-value="type"
+    :item-value="getTriggerItemValue"
     item-title="text"
     multiple
     chips
@@ -71,7 +71,7 @@
           </v-col>
           <v-col
             v-if="additionalValuesComponentsByTypes[getPreparedTrigger(item).type]"
-            cols="auto"
+            cols="6"
           >
             <component
               v-bind="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].bind"
@@ -305,6 +305,14 @@ export default {
     });
 
     /**
+     * Get a unique select value for trigger items and group subheaders.
+     *
+     * @param {Object} item
+     * @returns {string}
+     */
+    const getTriggerItemValue = item => item.type === 'subheader' ? item.value : item.type;
+
+    /**
      * Set preparedTriggersByTypes by types array
      *
      * @param {string[]} [types = []]
@@ -421,6 +429,7 @@ export default {
       getChipName,
       getAdditionalValueFieldName,
       getTriggerItemProps,
+      getTriggerItemValue,
       isTriggerSelected,
       getPreparedTrigger,
       getSelectedClass,

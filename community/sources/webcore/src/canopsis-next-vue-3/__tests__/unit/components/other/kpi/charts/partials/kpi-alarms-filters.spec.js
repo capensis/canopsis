@@ -40,8 +40,6 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    const quickIntervalField = wrapper.find('c-quick-date-interval-field-stub');
-
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedInterval = {
       from: start,
@@ -64,8 +62,6 @@ describe('kpi-alarms-filters', () => {
         query: initialQuery,
       },
     });
-
-    const samplingField = wrapper.find('c-sampling-field-stub');
 
     wrapper.vm.updateSampling(SAMPLINGS.month);
 
@@ -113,8 +109,6 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    const samplingField = wrapper.find('c-sampling-field-stub');
-
     wrapper.vm.updateSampling(SAMPLINGS.hour);
 
     await flushPromises();
@@ -153,8 +147,6 @@ describe('kpi-alarms-filters', () => {
         query: initialQuery,
       },
     });
-
-    const filtersField = wrapper.find('c-filter-field-stub');
 
     wrapper.vm.updateQueryField('filter', expectedFilter);
 

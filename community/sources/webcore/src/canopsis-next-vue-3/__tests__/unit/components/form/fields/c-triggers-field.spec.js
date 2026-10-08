@@ -64,4 +64,16 @@ describe('c-triggers-field', () => {
       }),
     ]);
   });
+
+  it('Uses unique values for group subheaders', () => {
+    const wrapper = factory();
+
+    expect(wrapper.vm.getTriggerItemValue({
+      type: 'subheader',
+      value: '__subheader__0',
+    })).toBe('__subheader__0');
+    expect(wrapper.vm.getTriggerItemValue({ type: TRIGGERS_TYPES.create })).toBe(
+      TRIGGERS_TYPES.create,
+    );
+  });
 });

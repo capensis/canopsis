@@ -1,6 +1,4 @@
-import { createSelectInputStub } from '@unit/stubs/input';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules, createPbehaviorTimespanModule } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
@@ -8,12 +6,38 @@ import { MODALS, PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 import PbehaviorRecurrenceRulePeriods from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-recurrence-rule-periods.vue';
 
+const pbehaviorTimespan = vi.hoisted(() => ({
+  fetchPbehaviorTimespansListWithoutStore: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock('@/hooks/store/modules/pbehavior-timespan', () => ({
+  usePbehaviorTimespan: () => pbehaviorTimespan,
+}));
+
+vi.mock('@/hooks/store/modules/info', () => ({
+  useInfo: () => ({ timezone: 'Asia/Almaty' }),
+}));
+
 const stubs = {
   'c-action-btn': true,
-  'v-select': createSelectInputStub('v-select'),
+  'c-select': {
+    props: ['modelValue', 'items'],
+    emits: ['update:modelValue'],
+    template: `
+      <select
+        class="c-select"
+        :value="modelValue"
+        @change="$emit('update:modelValue', $event.target.value)"
+      >
+        <option v-for="item in items" :key="item.value" :value="item.value">
+          {{ item.text }}
+        </option>
+      </select>
+    `,
+  },
 };
 
-const selectTextField = wrapper => wrapper.find('select.v-select');
+const selectTextField = wrapper => wrapper.find('select.c-select');
 const selectActionButton = wrapper => wrapper.find('c-action-btn-stub');
 
 describe('pbehavior-recurrence-rule-periods', () => {
@@ -37,11 +61,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
     type: pbehavior.type._id,
   };
 
-  const { pbehaviorTimespanModule, fetchTimespansListWithoutStore } =
-    createPbehaviorTimespanModule();
-
-  const store = createMockedStoreModules([pbehaviorTimespanModule]);
-
   const factory = generateShallowRenderer(PbehaviorRecurrenceRulePeriods, {
     stubs,
     mocks: { $modals },
@@ -56,7 +75,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
   test('Pbehavior timespans fetched after mount', async () => {
     factory({
-      store,
       propsData: {
         pbehavior,
       },
@@ -64,18 +82,17 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore).toHaveBeenCalledWith({
       data: {
         ...defaultTimespansData,
-        view_from: 1385938800,
-        view_to: 1386543599,
+        view_from: 1385920800,
+        view_to: 1386525599,
       },
     });
   });
 
   test('Pbehavior timespans fetched after pbehavior updated', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         pbehavior,
       },
@@ -83,16 +100,15 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    fetchTimespansListWithoutStore.mockClear();
+    pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore.mockClear();
 
     await wrapper.setProps({ pbehavior: { ...pbehavior } });
 
-    expect(fetchTimespansListWithoutStore).toBeCalled();
+    expect(pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore).toBeCalled();
   });
 
   test('Pbehavior timespans fetched after range changed to next week', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         pbehavior,
       },
@@ -100,25 +116,23 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    fetchTimespansListWithoutStore.mockClear();
+    pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore.mockClear();
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek);
-    await selectField.triggerCustomEvent('change');
+    await selectField.setValue(PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek);
 
-    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore).toHaveBeenCalledWith({
       data: {
         ...defaultTimespansData,
-        view_from: 1386543600,
-        view_to: 1387148399,
+        view_from: 1386525600,
+        view_to: 1387130399,
       },
     });
   });
 
   test('Pbehavior timespans fetched after range changed to next two week', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         pbehavior,
       },
@@ -126,25 +140,23 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    fetchTimespansListWithoutStore.mockClear();
+    pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore.mockClear();
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks);
-    await selectField.triggerCustomEvent('change');
+    await selectField.setValue(PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks);
 
-    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore).toHaveBeenCalledWith({
       data: {
         ...defaultTimespansData,
-        view_from: 1386543600,
-        view_to: 1387753199,
+        view_from: 1386525600,
+        view_to: 1387735199,
       },
     });
   });
 
   test('Pbehavior timespans fetched after range changed to this month', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         pbehavior,
       },
@@ -152,25 +164,23 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    fetchTimespansListWithoutStore.mockClear();
+    pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore.mockClear();
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth);
-    await selectField.triggerCustomEvent('change');
+    await selectField.setValue(PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth);
 
-    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore).toHaveBeenCalledWith({
       data: {
         ...defaultTimespansData,
-        view_from: 1385852400,
-        view_to: 1388530799,
+        view_from: 1385834400,
+        view_to: 1388512799,
       },
     });
   });
 
   test('Pbehavior timespans fetched after range changed to next month', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         pbehavior,
       },
@@ -178,25 +188,23 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    fetchTimespansListWithoutStore.mockClear();
+    pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore.mockClear();
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth);
-    await selectField.triggerCustomEvent('change');
+    await selectField.setValue(PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth);
 
-    expect(fetchTimespansListWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(pbehaviorTimespan.fetchPbehaviorTimespansListWithoutStore).toHaveBeenCalledWith({
       data: {
         ...defaultTimespansData,
-        view_from: 1388530800,
-        view_to: 1391209199,
+        view_from: 1388512800,
+        view_to: 1391191199,
       },
     });
   });
 
   test('Pbehavior recurrence rule modal opened after click action', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         pbehavior,
       },

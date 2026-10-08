@@ -1,47 +1,50 @@
-import { createNumberInputStub } from '@unit/stubs/input';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
 
-import LoginForm from '@/components/other/login/form/login-form.vue';
+import LoginForm from '@/components/other/login/login-form.vue';
 
 const stubs = {
+  'c-text-field': true,
   'c-password-field': true,
-  'v-text-field': createNumberInputStub('v-text-field'),
 };
 
-const selectTextField = wrapper => wrapper.find('input.v-text-field');
+const selectTextField = wrapper => wrapper.find('c-text-field-stub');
 const selectPasswordField = wrapper => wrapper.find('c-password-field-stub');
 
 describe('login-form', () => {
   const factory = generateShallowRenderer(LoginForm, { stubs });
 
-  it('Username changed after trigger text field', () => {
+  it('Username changed after trigger text field', async () => {
     const wrapper = factory({
       propsData: {
-        username: '',
-        password: '',
+        form: {
+          username: '',
+          password: '',
+        },
       },
     });
 
     const username = Faker.datatype.string();
 
-    selectTextField(wrapper).triggerCustomEvent('input', username);
+    await selectTextField(wrapper).triggerCustomEvent('update:modelValue', username);
 
-    expect(wrapper).toEmitInput(username);
+    expect(globalThis.__TEST_FORM__.getValue('username')).toBe(username);
   });
 
-  it('Password changed after trigger password field', () => {
+  it('Password changed after trigger password field', async () => {
     const wrapper = factory({
       propsData: {
-        username: '',
-        password: '',
+        form: {
+          username: '',
+          password: '',
+        },
       },
     });
 
     const password = Faker.datatype.string();
 
-    selectPasswordField(wrapper).triggerCustomEvent('input', password);
+    await selectPasswordField(wrapper).triggerCustomEvent('update:modelValue', password);
 
-    expect(wrapper).toEmitInput(password);
+    expect(globalThis.__TEST_FORM__.getValue('password')).toBe(password);
   });
 });

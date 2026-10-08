@@ -1,10 +1,17 @@
 import { fakeAlarm } from '@unit/data/alarm';
-import { createEntityModule, createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 
 import AlarmsExpandPanelEntityEnrichments from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-entity-enrichments.vue';
+
+const { fetchEntityInfosLogsListWithoutStore } = vi.hoisted(() => ({
+  fetchEntityInfosLogsListWithoutStore: vi.fn(),
+}));
+
+vi.mock('@/hooks/store/modules/entity', () => ({
+  useEntity: () => ({ fetchEntityInfosLogsListWithoutStore }),
+}));
 
 const stubs = {
   'entity-infos-logs-list': true,
@@ -46,11 +53,11 @@ describe('alarms-expand-panel-entity-enrichments', () => {
     page_count: 1,
   };
 
-  const { entityModule, fetchEntityInfosLogsListWithoutStore } = createEntityModule();
+  const factory = generateShallowRenderer(AlarmsExpandPanelEntityEnrichments, { stubs });
 
-  const store = createMockedStoreModules([entityModule]);
-
-  const factory = generateShallowRenderer(AlarmsExpandPanelEntityEnrichments, { stubs, store });
+  afterEach(() => {
+    fetchEntityInfosLogsListWithoutStore.mockClear();
+  });
 
   test('Should call fetchEntityInfosLogsListWithoutStore on mount', async () => {
     const alarm = fakeAlarm();
@@ -69,7 +76,6 @@ describe('alarms-expand-panel-entity-enrichments', () => {
     await flushPromises();
 
     expect(fetchEntityInfosLogsListWithoutStore).toHaveBeenCalledWith(
-      expect.any(Object),
       expect.objectContaining({
         params: expect.objectContaining({
           _id: alarm.entity._id,

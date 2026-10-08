@@ -24,7 +24,8 @@
 import Handlebars from 'handlebars';
 
 import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
-import { alarmOrEntityTagsHelper } from '@/helpers/handlebars/tags-helper';
+
+import { handlebarsTagsHelperMixin } from '@/mixins/handlebars/tags-helper';
 
 import ServiceEntitiesList from './service-entities-list.vue';
 
@@ -32,9 +33,11 @@ const ENTITIES_ONLY_TEMPLATE_REGEX = /^\{\{\s*entities(?:\s+name="[^"]+")?\s*\}\
 
 export default {
   components: {
-     
     ServiceEntitiesList,
   },
+
+  mixins: [handlebarsTagsHelperMixin],
+
   props: {
     service: {
       type: Object,
@@ -104,8 +107,6 @@ export default {
     },
   },
   beforeCreate() {
-    registerHelper('tags', alarmOrEntityTagsHelper);
-
     registerHelper('entities', ({ hash }) => {
       const entityNameField = hash.name || 'entity.name';
 
@@ -126,7 +127,6 @@ export default {
     });
   },
   beforeUnmount() {
-    unregisterHelper('tags');
     unregisterHelper('entities');
   },
   methods: {

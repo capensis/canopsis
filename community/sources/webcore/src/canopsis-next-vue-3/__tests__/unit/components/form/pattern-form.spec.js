@@ -27,7 +27,7 @@ describe('pattern-form', () => {
       groups: {},
       type: PATTERN_TYPES.alarm,
     };
-    const wrapper = factory({
+    factory({
       propsData: {
         form,
       },

@@ -8,7 +8,6 @@ import {
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
-  createVectorMetricsModule,
 } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
@@ -17,6 +16,27 @@ import Faker from 'faker';
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import BarChartWidget from '@/components/widgets/chart/bar-chart-widget.vue';
+
+const metrics = vi.hoisted(() => ({
+  createKpiAlarmExport: vi.fn(),
+  fetchMetricExport: vi.fn(),
+  fetchVectorMetricsList: vi.fn(),
+}));
+
+vi.mock('@/stores/modules/metrics', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useMetricsStore: defineStore('metrics', {
+      getters: {
+        getVectorMetricsListByWidgetId: () => () => [],
+        getVectorMetricsPendingByWidgetId: () => () => false,
+        getVectorMetricsMetaByWidgetId: () => () => ({}),
+      },
+      actions: metrics,
+    }),
+  };
+});
 
 const stubs = {
   'kpi-widget-filters': true,
@@ -34,7 +54,6 @@ describe('bar-chart-widget', () => {
   const { userPreferenceModule, fetchUserPreference } = createUserPreferenceModule();
   const { serviceModule } = createServiceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
-  const { vectorMetricsModule, fetchVectorMetricsList } = createVectorMetricsModule();
 
   const store = createMockedStoreModules([
     authModule,
@@ -43,7 +62,6 @@ describe('bar-chart-widget', () => {
     alarmModule,
     serviceModule,
     queryModule,
-    vectorMetricsModule,
   ]);
 
   const widget = {
@@ -59,7 +77,7 @@ describe('bar-chart-widget', () => {
     stubs,
     parentComponent: {
       provide: {
-        $system: {},
+        $system: { timezone: 'Europe/Paris' },
       },
     },
   });
@@ -88,7 +106,7 @@ describe('bar-chart-widget', () => {
     const sampling = randomArrayItem(Object.values(SAMPLINGS));
     const parameters = [randomArrayItem(Object.values(ALARM_METRIC_PARAMETERS))];
 
-    getQueryById.mockReturnValueOnce(() => ({
+    getQueryById.mockReturnValue(() => ({
       filter,
       sampling,
       parameters,
@@ -106,7 +124,6 @@ describe('bar-chart-widget', () => {
         alarmModule,
         serviceModule,
         queryModule,
-        vectorMetricsModule,
       ]),
       propsData: {
         widget,
@@ -115,7 +132,7 @@ describe('bar-chart-widget', () => {
 
     await wrapper.vm.fetchList();
 
-    expect(fetchVectorMetricsList).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchVectorMetricsList).toHaveBeenCalledWith({
       widgetId: widget._id,
       params: {
         widget_filters: [filter],

@@ -131,10 +131,11 @@ describe('create-view', () => {
     expect($modals.hide).toHaveBeenCalledWith({ id: 'test-modal-id' });
   });
 
-  test('Create error popup showed after trigger submit button with error', async () => {
-    const action = vi.fn().mockRejectedValueOnce({
+  test('Create error is propagated without closing the modal', async () => {
+    const error = {
       title: 'Title error',
-    });
+    };
+    const action = vi.fn().mockRejectedValueOnce(error);
     const wrapper = factory({
       propsData: {
         modal: {
@@ -147,9 +148,9 @@ describe('create-view', () => {
     await flushPromises();
 
     selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
-    selectSubmitButton(wrapper).trigger('click');
-
     await flushPromises();
+
+    await expect(wrapper.vm.submit()).rejects.toEqual(error);
 
     expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -180,10 +181,11 @@ describe('create-view', () => {
     expect($modals.hide).toBeCalled();
   });
 
-  test('Update error popup showed after trigger submit button with error', async () => {
-    const action = vi.fn().mockRejectedValueOnce({
+  test('Update error is propagated without closing the modal', async () => {
+    const error = {
       description: 'Description error',
-    });
+    };
+    const action = vi.fn().mockRejectedValueOnce(error);
     const wrapper = factory({
       propsData: {
         modal: {
@@ -196,9 +198,7 @@ describe('create-view', () => {
       store,
     });
 
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
+    await expect(wrapper.vm.submit()).rejects.toEqual(error);
 
     expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -233,10 +233,11 @@ describe('create-view', () => {
     expect($modals.hide).toBeCalled();
   });
 
-  test('Duplicate error popup showed after trigger submit button with error', async () => {
-    const action = vi.fn().mockRejectedValueOnce({
+  test('Duplicate error is propagated without closing the modal', async () => {
+    const error = {
       tags: 'Tags error',
-    });
+    };
+    const action = vi.fn().mockRejectedValueOnce(error);
     const wrapper = factory({
       propsData: {
         modal: {
@@ -253,9 +254,9 @@ describe('create-view', () => {
     await flushPromises();
 
     selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
-    selectSubmitButton(wrapper).trigger('click');
-
     await flushPromises();
+
+    await expect(wrapper.vm.submit()).rejects.toEqual(error);
 
     expect(action).toBeCalled();
     expect($modals.hide).not.toBeCalled();

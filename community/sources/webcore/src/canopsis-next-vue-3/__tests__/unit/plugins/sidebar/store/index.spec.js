@@ -1,141 +1,100 @@
 import Faker from 'faker';
-import { cloneDeep } from 'lodash';
+import { createPinia, setActivePinia } from 'pinia';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import sidebarModule, { types } from '@/plugins/sidebar/store';
+import { useSidebarStore } from '@/stores/modules/sidebar';
 
-const { actions, state: initialState, mutations, getters } = sidebarModule;
+describe('sidebar store', () => {
+  let store;
 
-describe('Sidebar plugin store module', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    store = useSidebarStore();
+  });
+
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  const createShownState = () => {
+  const showSidebar = () => {
     const id = Faker.datatype.uuid();
     const name = Faker.datatype.string();
     const config = Faker.helpers.createTransaction();
-    const state = cloneDeep(initialState);
 
-    mutations[types.SHOW](state, { id, name, config });
+    store.show({ id, name, config });
 
-    return { state, id, name, config };
+    return { id, name, config };
   };
 
-  it('Mutate state after commit SHOW', () => {
-    const state = cloneDeep(initialState);
+  it('shows a sidebar', () => {
+    const { id, name, config } = showSidebar();
+
+    expect(store.allIds).toEqual([id]);
+    expect(store.byId[id]).toEqual({ id, name, config, hidden: false });
+    expect(store.sidebars).toEqual([{ id, name, config, hidden: false }]);
+  });
+
+  it('uses an empty config by default', () => {
     const id = Faker.datatype.uuid();
-    const name = Faker.datatype.string();
-    const config = Faker.helpers.createTransaction();
 
-    mutations[types.SHOW](state, { id, name, config });
+    store.show({ id, name: Faker.datatype.string() });
 
-    expect(state.allIds).toEqual([id]);
-    expect(state.byId[id]).toEqual({
-      id,
-      name,
-      config,
-      hidden: false,
-    });
+    expect(store.byId[id].config).toEqual({});
   });
 
-  it('Mutate state after commit SHOW without config', () => {
-    const state = cloneDeep(initialState);
-    const id = Faker.datatype.uuid();
-    const name = Faker.datatype.string();
+  it('keeps the currently opened sidebar', () => {
+    const { id } = showSidebar();
+    const nextId = Faker.datatype.uuid();
 
-    mutations[types.SHOW](state, { id, name });
+    const result = store.show({ id: nextId, name: Faker.datatype.string() });
 
-    expect(state.byId[id].config).toEqual({});
+    expect(result).toBe(id);
+    expect(store.byId[nextId]).toBeUndefined();
   });
 
-  it('Mutate state after commit HIDE', () => {
-    const { state, id } = createShownState();
-
-    mutations[types.HIDE](state, { id });
-
-    expect(state.byId[id].hidden).toBe(true);
-  });
-
-  it('Mutate state after commit HIDE_COMPLETED', () => {
-    const { state, id } = createShownState();
-
-    mutations[types.HIDE_COMPLETED](state, { id });
-
-    expect(state).toEqual(initialState);
-  });
-
-  it('Show sidebar. Action: show', () => {
-    const commit = vi.fn();
-    const state = cloneDeep(initialState);
-
-    const name = Faker.datatype.string();
-    const config = Faker.helpers.createTransaction();
-    const id = Faker.datatype.uuid();
-    const payload = { id, name, config };
-
-    actions.show({ commit, state }, payload);
-
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.SHOW, payload);
-  });
-
-  it('Show sidebar with existing id still commits SHOW. Action: show', () => {
-    const commit = vi.fn();
-    const { id } = createShownState();
-
-    actions.show({ commit }, { id, name: 'other', config: {} });
-
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.SHOW, {
-      id,
-      name: 'other',
-      config: {},
-    });
-  });
-
-  it('Hide sidebar. Action: hide', () => {
+  it('marks a sidebar hidden and removes it after the animation', () => {
     vi.useFakeTimers();
-    vi.spyOn(global, 'setTimeout');
+    const { id } = showSidebar();
 
-    const commit = vi.fn();
-    const { state, id } = createShownState();
+    store.hide({ id });
 
-    actions.hide({ commit, state }, { id });
+    expect(store.byId[id].hidden).toBe(true);
 
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.HIDE, { id });
+    vi.advanceTimersByTime(VUETIFY_ANIMATION_DELAY);
 
-    commit.mockReset();
-
-    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), VUETIFY_ANIMATION_DELAY);
-
-    vi.runAllTimers();
-
-    expect(commit).toHaveBeenCalledTimes(1);
-    expect(commit).toHaveBeenCalledWith(types.HIDE_COMPLETED, { id });
+    expect(store.allIds).toEqual([]);
+    expect(store.byId[id]).toBeUndefined();
   });
 
-  it('Hide sidebar skips when id unknown. Action: hide', () => {
-    const commit = vi.fn();
-    const state = cloneDeep(initialState);
+  it('ignores an unknown sidebar id', () => {
+    store.hide({ id: 'missing' });
 
-    actions.hide({ commit, state }, { id: 'missing' });
-
-    expect(commit).not.toHaveBeenCalled();
+    expect(store.allIds).toEqual([]);
   });
 
-  it('Getter: sidebars', () => {
-    const { state, id, name, config } = createShownState();
+  it('requires an id when hiding a sidebar', () => {
+    expect(() => store.hide()).toThrow('Missed required parameter');
+  });
 
-    expect(getters.sidebars(state)).toEqual([
-      {
-        id,
-        name,
-        config,
-        hidden: false,
-      },
-    ]);
+  it('updates sidebar config', () => {
+    const { id, config } = showSidebar();
+    const patch = { title: Faker.datatype.string() };
+
+    store.updateConfig({ id, config: patch });
+
+    expect(store.byId[id].config).toEqual({ ...config, ...patch });
+  });
+
+  it('removes hidden sidebars before showing a new one', () => {
+    vi.useFakeTimers();
+    const { id } = showSidebar();
+    const nextId = Faker.datatype.uuid();
+
+    store.hide({ id });
+    store.show({ id: nextId, name: Faker.datatype.string() });
+
+    expect(store.allIds).toEqual([nextId]);
+    expect(store.byId[id]).toBeUndefined();
   });
 });

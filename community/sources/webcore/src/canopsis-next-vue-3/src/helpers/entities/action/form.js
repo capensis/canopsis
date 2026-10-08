@@ -273,7 +273,7 @@ export const snoozeActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
   duration: parameters.duration
     ? durationToForm(parameters.duration)
-    : { value: MIN_DURATION_VALUE, unit: TIME_UNITS.hour },
+    : { value: MIN_DURATION_VALUE, unit: TIME_UNITS.second },
 });
 
 /**

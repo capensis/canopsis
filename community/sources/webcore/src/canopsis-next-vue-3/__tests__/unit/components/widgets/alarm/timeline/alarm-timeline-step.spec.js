@@ -39,28 +39,23 @@ describe('alarm-timeline-step', () => {
     expect(wrapper).toEmit('expand', expanded);
   });
 
-  test('Pause details are displayed separately from the comment', () => {
+  test('Step message is sanitized and linkified', () => {
     const wrapper = factory({
       propsData: {
         step: {
           t: new Date(),
           _t: ALARM_LIST_STEPS.pause,
           a: 'John Doe',
-          m: 'Planned maintenance\nService: API',
-          source_type: 'Component',
-          source_name: 'API',
-          pause_type: 'maintenance',
+          m: 'See https://example.com for details',
         },
       },
     });
 
-    expect(wrapper.vm.pauseSource).toBe('Component API');
-    expect(wrapper.vm.sanitizedStepMessage).toContain('Planned maintenance');
-    expect(wrapper.vm.sanitizedStepMessage).toContain('Service: API');
-    expect(wrapper.vm.pauseType).toBe('maintenance');
+    expect(wrapper.vm.sanitizedStepMessage).toContain('<a href="https://example.com"');
+    expect(wrapper.vm.sanitizedStepMessage).toContain('for details');
   });
 
-  test('Inherited pause metadata comes from fields and leaves the comment untouched', () => {
+  test('Plain step message is rendered unchanged when HTML is disabled', () => {
     const wrapper = factory({
       propsData: {
         step: {
@@ -68,34 +63,28 @@ describe('alarm-timeline-step', () => {
           _t: ALARM_LIST_STEPS.pause,
           in_pbh: true,
           m: 'Planned maintenance\nComponent: API',
-          source_type: 'Component',
-          source_name: 'API',
-          pause_type: 'maintenance',
         },
       },
     });
 
-    expect(wrapper.vm.pauseSource).toBe('Component API');
-    expect(wrapper.vm.pauseType).toBe('maintenance');
     expect(wrapper.text()).toContain('Planned maintenance\nComponent: API');
   });
 
-  test('Pause source metadata is read only from explicit step fields', () => {
+  test('HTML step message is rendered through sanitized content', () => {
     const wrapper = factory({
       propsData: {
         step: {
           t: new Date(),
           _t: ALARM_LIST_STEPS.pause,
           in_pbh: false,
-          m: 'Planned maintenance\nComponent: API',
-          pause_type: 'maintenance',
+          m: '<strong>Planned maintenance</strong><script>alert(1)</script>',
         },
+        isHtmlEnabled: true,
       },
     });
 
-    expect(wrapper.vm.pauseSource).toBe('');
-    expect(wrapper.vm.sanitizedStepMessage).toContain('Planned maintenance');
-    expect(wrapper.vm.sanitizedStepMessage).toContain('Component: API');
+    expect(wrapper.vm.sanitizedStepMessage).toContain('<strong>Planned maintenance</strong>');
+    expect(wrapper.vm.sanitizedStepMessage).not.toContain('<script>');
   });
 
   test('Pause and resume steps use gray and blue colors', () => {

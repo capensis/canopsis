@@ -14,15 +14,11 @@ const stubs = {
   },
 };
 
-const selectVariablesList = wrapper => wrapper.find('variables-list-stub');
-
 describe('variables-menu', () => {
   const factory = generateShallowRenderer(VariablesMenu, { stubs });
 
   test('Input event emitted after trigger variables', async () => {
     const wrapper = factory();
-
-    const variablesList = selectVariablesList(wrapper);
 
     const value = Faker.datatype.string();
 

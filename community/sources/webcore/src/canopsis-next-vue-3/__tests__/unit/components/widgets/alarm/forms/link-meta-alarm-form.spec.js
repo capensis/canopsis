@@ -1,13 +1,20 @@
 import { createInputStub } from '@unit/stubs/input';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import Faker from 'faker';
-import { Validator } from 'vee-validate';
 
 import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
 
 const stubs = {
-  'c-meta-alarm-field': createInputStub('c-meta-alarm-field'),
-  'v-text-field': createInputStub('v-text-field'),
+  'c-meta-alarm-field': {
+    ...createInputStub('c-meta-alarm-field'),
+    name: 'CMetaAlarmField',
+    props: {
+      value: [String, Object],
+      modelValue: [String, Object],
+      returnObject: Boolean,
+    },
+  },
+  'c-text-field': createInputStub('c-text-field'),
   'meta-alarm-rule-tags-form': true,
   'meta-alarm-rule-infos-form': true,
   'c-enabled-field': true,
@@ -20,11 +27,20 @@ const selectMetaAlarmField = wrapper => wrapper.find('.c-meta-alarm-field');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
 describe('link-meta-alarm-form', () => {
-  const factory = generateShallowRenderer(LinkMetaAlarmForm, {
-    stubs,
-    provide: {
-      validator: new Validator(),
-    },
+  const factory = generateShallowRenderer(LinkMetaAlarmForm, { stubs });
+
+  test('Meta alarm field returns the selected meta alarm object', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          metaAlarm: null,
+          comment: '',
+          auto_resolve: false,
+        },
+      },
+    });
+
+    expect(wrapper.findComponent({ name: 'CMetaAlarmField' }).props('returnObject')).toBe(true);
   });
 
   test('Meta alarm changed after trigger text field', () => {
@@ -45,7 +61,7 @@ describe('link-meta-alarm-form', () => {
 
     comboboxField.setValue(metaAlarm);
 
-    expect(wrapper).toEmitInput({ ...form, metaAlarm });
+    expect(wrapper).toEmit('update:form', { ...form, metaAlarm });
   });
 
   test('Comment changed after trigger description field', () => {
@@ -63,7 +79,7 @@ describe('link-meta-alarm-form', () => {
     const comment = Faker.datatype.string();
     selectTextField(wrapper).setValue(comment);
 
-    expect(wrapper).toEmitInput({ ...form, comment });
+    expect(wrapper).toEmit('update:form', { ...form, comment });
   });
 
   test('Auto resolve changed after trigger enabled field', () => {
@@ -82,8 +98,8 @@ describe('link-meta-alarm-form', () => {
 
     const enabledField = selectEnabledField(wrapper);
 
-    enabledField.triggerCustomEvent('input', autoResolve);
+    enabledField.triggerCustomEvent('update:modelValue', autoResolve);
 
-    expect(wrapper).toEmitInput({ ...form, auto_resolve: autoResolve });
+    expect(wrapper).toEmit('update:form', { ...form, auto_resolve: autoResolve });
   });
 });

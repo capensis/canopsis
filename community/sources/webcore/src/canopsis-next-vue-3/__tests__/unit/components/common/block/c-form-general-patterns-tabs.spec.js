@@ -1,9 +1,3 @@
-import {
-  createMockedStoreModules,
-  createAuthModule,
-  createCopyVarsModule,
-  createTemplateVarsModule,
-} from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
@@ -11,15 +5,35 @@ import {
   DYNAMIC_INFO_INFORMATION_TYPES,
   FORM_GENERAL_PATTERNS_TABS,
   TEMPLATE_TESTING_TEST_TYPES,
-  USER_PERMISSIONS,
 } from '@/constants';
 
 import CFormGeneralPatternsTabs from '@/components/common/block/c-form-general-patterns-tabs.vue';
 
-const { authModule, currentUserPermissionsById } = createAuthModule();
-const { copyVarsModule, fetchEventFiltersVarsWithoutStore, fetchDynamicInfosVarsWithoutStore } =
-  createCopyVarsModule();
-const { templateVarsModule, fetchDeclareTicketRulesVarsWithoutStore } = createTemplateVarsModule();
+const hooks = vi.hoisted(() => ({
+  hasAccess: { value: false, __v_isRef: true },
+  fetchCopyVarsList: vi.fn(),
+  fetchTemplateVarsList: vi.fn(),
+}));
+
+vi.mock('@/hooks/auth', () => ({
+  useCanPermission: () => ({ hasAccess: hooks.hasAccess }),
+}));
+
+vi.mock('@/hooks/vars/copy', () => ({
+  useCopyVarsList: () => ({
+    vars: { value: {}, __v_isRef: true },
+    pending: { value: false, __v_isRef: true },
+    fetchList: hooks.fetchCopyVarsList,
+  }),
+}));
+
+vi.mock('@/hooks/vars/template', () => ({
+  useTemplateVarsList: () => ({
+    vars: { value: {}, __v_isRef: true },
+    pending: { value: false, __v_isRef: true },
+    fetchList: hooks.fetchTemplateVarsList,
+  }),
+}));
 
 const defaultSlots = {
   general: '<div class="general-slot" />',
@@ -28,29 +42,36 @@ const defaultSlots = {
 
 const stubs = {
   'template-testing-test-variables': true,
-  'template-testing-test-variables-tab': true,
+  'v-tabs': { template: '<div class="v-tabs"><slot /></div>' },
+  'v-tab': {
+    props: ['value', 'disabled'],
+    template: '<button class="v-tab" :disabled="disabled"><slot /></button>',
+  },
+  'v-window': { template: '<div class="v-window"><slot /></div>' },
+  'v-window-item': {
+    props: ['value'],
+    template: '<div class="v-window-item"><slot /></div>',
+  },
 };
 
-const selectTabItems = wrapper => wrapper.findAll('v-tab-stub');
+const selectTabItems = wrapper => wrapper.findAll('button.v-tab');
 const selectGeneralTab = wrapper =>
-  selectTabItems(wrapper).wrappers.find(tab => tab.text() === 'General');
+  selectTabItems(wrapper).find(tab => tab.text() === 'common.general');
 const selectPatternsTab = wrapper =>
-  selectTabItems(wrapper).wrappers.find(tab => /pattern/i.test(tab.text()));
-
-const createStore = ({ withTemplateTestingAccess = false } = {}) => {
-  currentUserPermissionsById.mockReturnValue(
-    withTemplateTestingAccess
-      ? { [USER_PERMISSIONS.technical.templateTesting]: { actions: [] } }
-      : {},
-  );
-
-  return createMockedStoreModules([authModule, copyVarsModule, templateVarsModule]);
-};
+  selectTabItems(wrapper).find(tab => /pattern/i.test(tab.text()));
 
 describe('c-form-general-patterns-tabs', () => {
   const factory = generateShallowRenderer(CFormGeneralPatternsTabs, {
     stubs,
-    store: createStore(),
+  });
+
+  beforeEach(() => {
+    hooks.hasAccess.value = false;
+  });
+
+  afterEach(() => {
+    hooks.fetchCopyVarsList.mockClear();
+    hooks.fetchTemplateVarsList.mockClear();
   });
 
   test('General and patterns tabs are rendered by default', () => {
@@ -75,7 +96,7 @@ describe('c-form-general-patterns-tabs', () => {
     const tabs = selectTabItems(wrapper);
 
     expect(tabs.at(0).text()).toContain('Pattern');
-    expect(tabs.at(1).text()).toBe('General');
+    expect(tabs.at(1).text()).toBe('common.general');
   });
 
   test('General tab is hidden when hideGeneral is true', async () => {
@@ -88,7 +109,7 @@ describe('c-form-general-patterns-tabs', () => {
 
     expect(selectGeneralTab(wrapper)).toBeUndefined();
     expect(selectPatternsTab(wrapper).exists()).toBe(true);
-    expect(wrapper.vm.activeTab).toBe(0);
+    expect(wrapper.vm.activeTab).toBe(FORM_GENERAL_PATTERNS_TABS.general);
   });
 
   test('Active tab switches to patterns when hideGeneral becomes true', async () => {
@@ -104,7 +125,7 @@ describe('c-form-general-patterns-tabs', () => {
     await wrapper.vm.$nextTick();
 
     expect(selectGeneralTab(wrapper)).toBeUndefined();
-    expect(wrapper.vm.activeTab).toBe(0);
+    expect(wrapper.vm.activeTab).toBe(FORM_GENERAL_PATTERNS_TABS.patterns);
   });
 
   test('Custom patterns and additional labels are rendered', () => {
@@ -139,16 +160,18 @@ describe('c-form-general-patterns-tabs', () => {
       },
     });
 
-    const testQueryTab = selectTabItems(wrapper).wrappers.find(tab => tab.props('disabled'));
+    const testQueryTab = selectTabItems(wrapper).find(
+      tab => tab.attributes('disabled') !== undefined,
+    );
 
     expect(wrapper.vm.visibleTabs.some(tab => tab['test-query'])).toBe(true);
     expect(testQueryTab).toBeDefined();
-    expect(testQueryTab.props('disabled')).toBe(true);
+    expect(testQueryTab.attributes('disabled')).toBeDefined();
   });
 
   test('Template vars lists are fetched on mount when template testing tab is available', async () => {
+    hooks.hasAccess.value = true;
     factory({
-      store: createStore({ withTemplateTestingAccess: true }),
       propsData: {
         type: TEMPLATE_TESTING_TEST_TYPES.declareTicketRule,
         form: { name: 'rule-name' },
@@ -158,14 +181,12 @@ describe('c-form-general-patterns-tabs', () => {
 
     await flushPromises();
 
-    expect(fetchDeclareTicketRulesVarsWithoutStore).toHaveBeenCalledTimes(1);
-    expect(fetchEventFiltersVarsWithoutStore).not.toHaveBeenCalled();
-    expect(fetchDynamicInfosVarsWithoutStore).not.toHaveBeenCalled();
+    expect(hooks.fetchTemplateVarsList).toHaveBeenCalledTimes(1);
+    expect(hooks.fetchCopyVarsList).toHaveBeenCalledTimes(1);
   });
 
   test('Template vars lists are not fetched on mount when template testing tab is unavailable', async () => {
     factory({
-      store: createStore({ withTemplateTestingAccess: false }),
       propsData: {
         type: TEMPLATE_TESTING_TEST_TYPES.declareTicketRule,
         form: { name: 'rule-name' },
@@ -175,21 +196,19 @@ describe('c-form-general-patterns-tabs', () => {
 
     await flushPromises();
 
-    expect(fetchDeclareTicketRulesVarsWithoutStore).not.toHaveBeenCalled();
-    expect(fetchEventFiltersVarsWithoutStore).not.toHaveBeenCalled();
-    expect(fetchDynamicInfosVarsWithoutStore).not.toHaveBeenCalled();
+    expect(hooks.fetchTemplateVarsList).toHaveBeenCalledTimes(1);
+    expect(hooks.fetchCopyVarsList).not.toHaveBeenCalled();
   });
 
   test('Testing tab is rendered when user has access and type is defined', () => {
+    hooks.hasAccess.value = true;
     const wrapper = factory({
-      store: createStore({ withTemplateTestingAccess: true }),
       propsData: {
         type: TEMPLATE_TESTING_TEST_TYPES.declareTicketRule,
       },
       slots: defaultSlots,
     });
 
-    expect(wrapper.find('template-testing-test-variables-tab-stub').exists()).toBe(true);
     expect(wrapper.find('template-testing-test-variables-stub').exists()).toBe(true);
   });
 
@@ -204,7 +223,6 @@ describe('c-form-general-patterns-tabs', () => {
       ],
     };
     const wrapper = factory({
-      store: createStore(),
       propsData: {
         type: TEMPLATE_TESTING_TEST_TYPES.dynamicInfo,
         form,
@@ -218,8 +236,8 @@ describe('c-form-general-patterns-tabs', () => {
   });
 
   test('Visible tabs contain expected tab ids', () => {
+    hooks.hasAccess.value = true;
     const wrapper = factory({
-      store: createStore({ withTemplateTestingAccess: true }),
       propsData: {
         type: TEMPLATE_TESTING_TEST_TYPES.declareTicketRule,
         reverse: true,

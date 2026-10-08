@@ -21,11 +21,6 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const selectAvailabilityValueFilterMethodField = wrapper =>
-  wrapper.find('availability-value-filter-method-field-stub');
-const selectPercentField = wrapper => wrapper.find('c-number-field-stub');
-const selectSplittedDurationField = wrapper => wrapper.find('c-splitted-duration-field-stub');
-
 describe('availability-value-filter-field', () => {
   const factory = generateShallowRenderer(AvailabilityValueFilterField, { stubs });
 

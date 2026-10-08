@@ -11,16 +11,23 @@ import { infosToArray } from '@/helpers/entities/shared/form';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
 
+const serviceGeneralFormStub = {
+  name: 'ServiceGeneralForm',
+  props: ['form', 'prepareStateSettingForm', 'templateVars'],
+  emits: ['update:form'],
+  template: '<div />',
+};
+
 const stubs = {
   'c-enabled-field': true,
-  'service-general-form': true,
+  'service-general-form': serviceGeneralFormStub,
   'service-entity-patterns-form': true,
   'service-manage-infos-form': true,
   'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
 };
 
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
-const selectServiceGeneralForm = wrapper => wrapper.find('service-general-form-stub');
+const selectServiceGeneralForm = wrapper => wrapper.findComponent(serviceGeneralFormStub);
 const selectServiceEntityPatternsForm = wrapper =>
   wrapper.find('service-entity-patterns-form-stub');
 const selectServiceManageInfosForm = wrapper => wrapper.find('service-manage-infos-form-stub');
@@ -83,7 +90,7 @@ describe('service-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('update:form', {
       ...defaultServiceForm,
       name: newName,
     });
@@ -105,7 +112,7 @@ describe('service-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('update:form', {
       ...defaultServiceForm,
       category: newCategory,
     });
@@ -125,7 +132,7 @@ describe('service-form', () => {
 
     const newState = ALARM_STATES.minor;
 
-    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('update:form', {
       ...defaultServiceForm,
       sli_avail_state: newState,
     });
@@ -145,7 +152,7 @@ describe('service-form', () => {
 
     const newImpactLevel = ALARM_STATES.minor;
 
-    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('update:form', {
       ...defaultServiceForm,
       impact_level: newImpactLevel,
     });
@@ -168,7 +175,7 @@ describe('service-form', () => {
       lng: Faker.datatype.number(),
     };
 
-    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('update:form', {
       ...defaultServiceForm,
       coordinates: newCoordinates,
     });
@@ -188,7 +195,7 @@ describe('service-form', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('update:form', {
       ...defaultServiceForm,
       output_template: newTemplate,
     });
@@ -273,7 +280,7 @@ describe('service-form', () => {
       },
     });
 
-    selectServiceManageInfosForm(wrapper).triggerCustomEvent('input', newInfos);
+    selectServiceManageInfosForm(wrapper).triggerCustomEvent('update:infos', newInfos);
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,

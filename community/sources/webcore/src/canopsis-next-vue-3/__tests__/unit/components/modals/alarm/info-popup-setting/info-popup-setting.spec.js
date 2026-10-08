@@ -21,7 +21,6 @@ const stubs = {
 };
 
 const selectModalActionsButtons = wrapper => wrapper.findAll('.actions button.v-btn');
-const selectSubmitButton = wrapper => selectModalActionsButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectModalActionsButtons(wrapper).at(0);
 const modalId = wrapper => ({ id: wrapper.props().modal.id });
 

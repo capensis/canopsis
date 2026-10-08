@@ -691,7 +691,7 @@ describe('alarms-list', () => {
 
     const removeHistoryButton = selectRemoveHistoryButton(wrapper);
 
-    removeHistoryButton.triggerCustomEvent('click:close');
+    removeHistoryButton.triggerCustomEvent('close');
 
     await flushPromises();
 
@@ -793,7 +793,7 @@ describe('alarms-list', () => {
       _id: Faker.datatype.string(),
     };
 
-    categoryField.triggerCustomEvent('input', newCategory);
+    categoryField.triggerCustomEvent('update:category', newCategory);
 
     await flushPromises();
 

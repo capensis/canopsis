@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 
 import { MODALS, TAG_TYPES } from '@/constants';
 
-import Tags from '@/views/admin/custom-objects/tags.vue';
+import Tags from '@/views/admin/custom-objects/tags-page.vue';
 
 vi.mock('@/hooks/auth', async () => {
   const { computed } = await vi.importActual('vue');

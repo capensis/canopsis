@@ -63,10 +63,10 @@ export const formToMetaAlarmLinkRequest = ({ infos, metaAlarm, ...form } = {}) =
     infos: removeKeyFromEntities(infos),
   };
 
-  if (metaAlarm?._id) {
+  if (metaAlarm?._id && !metaAlarm.noData) {
     result.id = metaAlarm._id;
   } else {
-    result.name = metaAlarm;
+    result.name = metaAlarm?._id ?? metaAlarm;
   }
 
   return result;

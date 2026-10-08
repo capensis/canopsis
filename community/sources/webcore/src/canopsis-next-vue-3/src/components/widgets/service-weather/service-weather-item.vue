@@ -92,9 +92,9 @@ import { ALARM_STATES, MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/const
 
 import { getMostReadableTextColor } from '@/helpers/color';
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
-import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
-import { alarmOrEntityTagsHelper } from '@/helpers/handlebars/tags-helper';
 import { convertObjectToTreeview } from '@/helpers/treeview';
+
+import { handlebarsTagsHelperMixin } from '@/mixins/handlebars/tags-helper';
 
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
@@ -109,6 +109,8 @@ export default {
     AlarmStateCounters,
     ImpactStateIndicator,
   },
+
+  mixins: [handlebarsTagsHelperMixin],
 
   props: {
     service: {
@@ -277,14 +279,6 @@ export default {
     stateCountersTypes() {
       return this.countersSettings?.state_types ?? [];
     },
-  },
-
-  beforeCreate() {
-    registerHelper('tags', alarmOrEntityTagsHelper);
-  },
-
-  beforeUnmount() {
-    unregisterHelper('tags');
   },
 
   methods: {

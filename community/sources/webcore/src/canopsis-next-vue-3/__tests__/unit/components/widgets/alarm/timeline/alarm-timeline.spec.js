@@ -74,7 +74,7 @@ describe('alarm-timeline', () => {
 
     const pagination = selectPagination(wrapper);
 
-    pagination.triggerCustomEvent('input', newPage);
+    pagination.triggerCustomEvent('update:page', newPage);
 
     expect(wrapper).toEmit('update:query', { ...query, page: newPage });
   });

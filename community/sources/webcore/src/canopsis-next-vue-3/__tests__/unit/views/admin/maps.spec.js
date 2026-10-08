@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 
 import { MAP_TYPES, MODALS } from '@/constants';
 
-import Maps from '@/views/admin/custom-objects/maps.vue';
+import Maps from '@/views/admin/custom-objects/maps-page.vue';
 
 const stubs = {
   'c-page': {

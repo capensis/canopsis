@@ -1,4 +1,3 @@
-import { createSelectInputStub } from '@unit/stubs/input';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
 import { STROKE_TYPES } from '@/constants';

@@ -46,7 +46,6 @@ const selectFieldPeriodicRefresh = wrapper => wrapper.find('field-periodic-refre
 const selectFieldMap = wrapper => wrapper.find('field-map-stub');
 const selectFieldSwitcher = wrapper => wrapper.find('field-switcher-stub');
 const selectFieldColorIndicator = wrapper => wrapper.find('c-color-indicator-field-stub');
-const selectFieldFilters = wrapper => wrapper.find('field-filters-stub');
 const selectFieldTextEditor = wrapper => wrapper.find('field-text-editor-stub');
 const selectFieldColumns = wrapper => wrapper.findAll('field-columns-stub');
 const selectAlarmsColumns = wrapper => selectFieldColumns(wrapper).at(0);

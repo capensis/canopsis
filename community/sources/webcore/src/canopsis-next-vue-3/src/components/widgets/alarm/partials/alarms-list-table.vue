@@ -237,6 +237,7 @@ import {
 } from '@/helpers/render';
 
 import { activeViewMixin } from '@/mixins/active-view';
+import { handlebarsTagsHelperMixin } from '@/mixins/handlebars/tags-helper';
 import {
   widgetColumnDraggingAlarmMixin,
   widgetColumnResizingAlarmMixin,
@@ -270,6 +271,7 @@ export default {
 
   mixins: [
     activeViewMixin,
+    handlebarsTagsHelperMixin,
     widgetColumnsAlarmMixin,
     widgetColumnDraggingAlarmMixin,
     widgetColumnResizingAlarmMixin,

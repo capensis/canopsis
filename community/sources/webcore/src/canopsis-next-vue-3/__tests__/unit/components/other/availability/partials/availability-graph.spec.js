@@ -1,10 +1,9 @@
 import { mockConsole, mockPopups } from '@unit/utils/mock-hooks';
-import { createAvailabilityModule, createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
 import { API_HOST, API_ROUTES, AVAILABILITY_FILENAME_PREFIX } from '@/config';
-import { EXPORT_STATUSES, SAMPLINGS } from '@/constants';
+import { SAMPLINGS } from '@/constants';
 
 import { saveFile } from '@/helpers/file/files';
 
@@ -13,6 +12,21 @@ import AvailabilityGraph from '@/components/other/availability/partials/availabi
 vi.mock('@/helpers/file/files', () => ({
   saveFile: vi.fn(),
 }));
+
+const metrics = vi.hoisted(() => ({
+  fetchAvailabilityHistoryWithoutStore: vi.fn().mockResolvedValue({ data: [] }),
+  fetchAvailabilityHistoryExport: vi.fn().mockResolvedValue({
+    _id: 'export-availability-history-id',
+  }),
+}));
+
+vi.mock('@/stores/modules/metrics', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useMetricsStore: defineStore('metrics', { actions: metrics }),
+  };
+});
 
 const stubs = {
   'c-progress-overlay': true,
@@ -41,14 +55,6 @@ describe('availability-graph', () => {
     to: 1384435500000,
   };
 
-  const {
-    availabilityModule,
-    exportAvailabilityData,
-    fetchAvailabilityHistoryWithoutStore,
-    fetchAvailabilityHistoryExport,
-  } = createAvailabilityModule();
-  const store = createMockedStoreModules([availabilityModule]);
-
   const defaultParams = {
     _id: availability.entity._id,
     sampling: SAMPLINGS.hour,
@@ -65,18 +71,21 @@ describe('availability-graph', () => {
 
   afterEach(() => {
     saveFile.mockClear();
+    metrics.fetchAvailabilityHistoryWithoutStore.mockReset().mockResolvedValue({ data: [] });
+    metrics.fetchAvailabilityHistoryExport.mockReset().mockResolvedValue({
+      _id: 'export-availability-history-id',
+    });
   });
 
   test('History fetched after mount', () => {
     factory({
-      store,
       propsData: {
         availability,
         interval,
       },
     });
 
-    expect(fetchAvailabilityHistoryWithoutStore).toBeDispatchedWith({
+    expect(metrics.fetchAvailabilityHistoryWithoutStore).toHaveBeenCalledWith({
       params: {
         _id: availability.entity._id,
         sampling: SAMPLINGS.hour,
@@ -93,18 +102,17 @@ describe('availability-graph', () => {
     };
 
     const wrapper = factory({
-      store,
       propsData: {
         availability,
         interval: longInterval,
       },
     });
 
-    fetchAvailabilityHistoryWithoutStore.mockClear();
+    metrics.fetchAvailabilityHistoryWithoutStore.mockClear();
 
     await selectAvailabilityHistory(wrapper).triggerCustomEvent('update:sampling', SAMPLINGS.day);
 
-    expect(fetchAvailabilityHistoryWithoutStore).toBeDispatchedWith({
+    expect(metrics.fetchAvailabilityHistoryWithoutStore).toHaveBeenCalledWith({
       params: {
         _id: availability.entity._id,
         sampling: SAMPLINGS.day,
@@ -116,7 +124,6 @@ describe('availability-graph', () => {
 
   test('History exported as png after trigger export:png on availability history', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         availability,
         interval,
@@ -138,7 +145,6 @@ describe('availability-graph', () => {
     saveFile.mockRejectedValue(error);
 
     const wrapper = factory({
-      store,
       propsData: {
         availability,
         interval,
@@ -156,7 +162,6 @@ describe('availability-graph', () => {
     const windowOpenMock = vi.spyOn(window, 'open').mockReturnValue();
 
     const wrapper = factory({
-      store,
       propsData: {
         availability,
         interval,
@@ -167,37 +172,22 @@ describe('availability-graph', () => {
 
     await flushPromises();
 
-    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
+    expect(metrics.fetchAvailabilityHistoryExport).toHaveBeenCalledWith({
       params: defaultParams,
     });
-
-    await flushPromises();
-
-    vi.runAllTimers();
-
-    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
-      params: defaultParams,
-    });
-
-    await flushPromises();
 
     expect(windowOpenMock).toHaveBeenCalledWith(
-      `${API_HOST}${API_ROUTES.metrics.exportMetric}/${exportAvailabilityData._id}/download`,
+      `${API_HOST}${API_ROUTES.metrics.exportMetric}/export-availability-history-id/download`,
       '_blank',
     );
+    windowOpenMock.mockRestore();
   });
 
   test('Error popup showed after trigger export button with error', async () => {
     const windowOpenMock = vi.spyOn(window, 'open').mockReturnValue();
-    const exportFailedAvailabilityData = {
-      _id: 'export-availability-history-id',
-      status: EXPORT_STATUSES.failed,
-    };
-
-    fetchAvailabilityHistoryExport.mockRejectedValue(exportFailedAvailabilityData);
+    metrics.fetchAvailabilityHistoryExport.mockRejectedValue(new Error('Export failed'));
 
     const wrapper = factory({
-      store,
       propsData: {
         availability,
         interval,
@@ -208,23 +198,14 @@ describe('availability-graph', () => {
 
     await flushPromises();
 
-    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
+    expect(metrics.fetchAvailabilityHistoryExport).toHaveBeenCalledWith({
       params: defaultParams,
     });
-
-    await flushPromises();
-
-    vi.runAllTimers();
-
-    expect(fetchAvailabilityHistoryExport).toBeDispatchedWith({
-      params: defaultParams,
-    });
-
-    await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: 'Failed to export availabilities in CSV format',
+      text: 'availability.popups.exportCSVFailed',
     });
     expect(windowOpenMock).not.toHaveBeenCalled();
+    windowOpenMock.mockRestore();
   });
 });

@@ -1,11 +1,21 @@
-import { mockSidebar } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules } from '@unit/utils/store';
 import { generateRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
 import { SIDE_BARS } from '@/constants';
 
-import TheSidebar from '@/plugins/sidebar/components/the-sidebar.vue';
+import TheSidebar from '@/components/layout/sidebar/the-sidebar.vue';
+
+const sidebarState = vi.hoisted(() => ({ sidebars: [] }));
+
+vi.mock('@/stores/modules/sidebar', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useSidebarStore: defineStore('sidebar', {
+      state: () => sidebarState,
+    }),
+  };
+});
 
 const stubs = {
   'sidebar-base': {
@@ -15,8 +25,6 @@ const stubs = {
 };
 
 describe('the-sidebar', () => {
-  const $sidebar = mockSidebar();
-
   const factory = generateRenderer(TheSidebar, { stubs });
 
   it('Renders `the-sidebars` with type: alarmSettings', async () => {
@@ -27,19 +35,9 @@ describe('the-sidebar', () => {
       hidden: false,
     };
 
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        {
-          name: $sidebar.moduleName,
-          getters: {
-            sidebars: [sidebar],
-          },
-        },
-      ]),
-      mocks: {
-        $sidebar,
-      },
-    });
+    sidebarState.sidebars = [sidebar];
+
+    const wrapper = factory();
 
     await flushPromises();
 

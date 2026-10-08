@@ -3,6 +3,11 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 
+import {
+  convertDateToEndOfDayDateObject,
+  convertDateToStartOfDayDateObject,
+} from '@/helpers/date/date';
+
 import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 
 const stubs = {
@@ -147,21 +152,20 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('update:modelValue', true);
     await flushPromises();
 
     expect(wrapper).toEmitInput({
       ...value,
-
-      begin: new Date(1610319600000),
-      end: new Date(1757541599000),
+      begin: convertDateToStartOfDayDateObject(value.begin),
+      end: convertDateToEndOfDayDateObject(value.end),
     });
   });
 
   test('Full day disabled after trigger checkbox', async () => {
     const value = {
-      begin: new Date(1610319600000),
-      end: new Date(1757541599000),
+      begin: convertDateToStartOfDayDateObject(new Date(1610393200000)),
+      end: convertDateToEndOfDayDateObject(new Date(1757480799000)),
     };
     const wrapper = factory({
       propsData: {
@@ -170,7 +174,7 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', false);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('update:modelValue', false);
     await flushPromises();
 
     expect(wrapper).toEmitInput(value);

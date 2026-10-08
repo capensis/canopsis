@@ -44,6 +44,6 @@ export function convertContextUserPreferenceToQuery({ content = {} } = {}) {
   return {
     category,
     filter: mainFilter,
-    no_events: noEvents,
+    no_events: noEvents ?? false,
   };
 }

@@ -13,7 +13,6 @@ const stubs = {
 
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectGeneralForm = wrapper => wrapper.find('idle-rule-general-form-stub');
-const selectPatternsForm = wrapper => wrapper.find('idle-rule-patterns-form-stub');
 
 describe('idle-rule-form', () => {
   const factory = generateShallowRenderer(IdleRuleForm, { stubs });

@@ -1,10 +1,20 @@
-import { createMockedStoreModules, createPbehaviorEntitiesModule } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 import Faker from 'faker';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorEntities from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-entities.vue';
+
+const { fetchPbehaviorEntitiesListWithoutStore } = vi.hoisted(() => ({
+  fetchPbehaviorEntitiesListWithoutStore: vi.fn().mockResolvedValue({
+    data: [],
+    meta: { total_count: 0 },
+  }),
+}));
+
+vi.mock('@/hooks/store/modules/pbehavior-entities', () => ({
+  usePbehaviorEntities: () => ({ fetchPbehaviorEntitiesListWithoutStore }),
+}));
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -16,17 +26,15 @@ const stubs = {
 };
 
 describe('pbehavior-entities', () => {
-  const { pbehaviorEntitiesModule, fetchPbehaviorEntitiesListWithoutStore } =
-    createPbehaviorEntitiesModule();
-
-  const store = createMockedStoreModules([pbehaviorEntitiesModule]);
-
   const factory = generateShallowRenderer(PbehaviorEntities, { stubs });
+
+  afterEach(() => {
+    fetchPbehaviorEntitiesListWithoutStore.mockClear();
+  });
 
   test('Pbehavior entities fetched after mount', async () => {
     const pbehaviorId = Faker.datatype.string();
     factory({
-      store,
       propsData: {
         pbehavior: {
           _id: pbehaviorId,
@@ -36,7 +44,7 @@ describe('pbehavior-entities', () => {
 
     await flushPromises();
 
-    expect(fetchPbehaviorEntitiesListWithoutStore).toHaveBeenCalledWith(expect.any(Object), {
+    expect(fetchPbehaviorEntitiesListWithoutStore).toHaveBeenCalledWith({
       id: pbehaviorId,
       params: {
         limit: 10,

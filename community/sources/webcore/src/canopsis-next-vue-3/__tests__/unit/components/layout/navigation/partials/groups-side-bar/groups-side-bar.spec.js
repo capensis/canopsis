@@ -35,9 +35,7 @@ const stubs = {
 
 const selectDraggableField = wrapper => wrapper.find('c-draggable-list-field-stub');
 const selectOverlayButtons = wrapper => wrapper.findAll('.side-bar__overlay button');
-const selectSubmitButton = wrapper => selectOverlayButtons(wrapper).at(0);
 const selectCancelButton = wrapper => selectOverlayButtons(wrapper).at(1);
-const selectGroupsSettingsButton = wrapper => wrapper.find('.groups-settings-button-stub');
 const selectNavigationDrawer = wrapper => wrapper.find('v-navigation-drawer-stub');
 
 describe('groups-side-bar', () => {

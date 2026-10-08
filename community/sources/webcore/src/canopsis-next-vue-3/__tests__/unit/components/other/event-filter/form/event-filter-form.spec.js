@@ -14,7 +14,6 @@ const stubs = {
 
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectGeneralForm = wrapper => wrapper.find('event-filter-general-form-stub');
-const selectPatternsForm = wrapper => wrapper.find('event-filter-patterns-form-stub');
 
 describe('event-filter-form', () => {
   const form = {

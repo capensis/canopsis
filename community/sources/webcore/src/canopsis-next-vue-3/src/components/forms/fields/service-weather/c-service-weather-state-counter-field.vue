@@ -5,6 +5,7 @@
     :label="t('common.state')"
     :name="name"
     :disabled="disabled"
+    :required="required"
     :item-props="getItemProps"
     chips
     closable-chips

@@ -9,7 +9,7 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const selectSelectField = wrapper => wrapper.find('.v-select');
+const selectSelectField = wrapper => wrapper.find('c-select-stub');
 
 describe('c-service-weather-state-counter-field', () => {
   const factory = generateShallowRenderer(CServiceWeatherStateCounterField, { stubs });
@@ -22,5 +22,15 @@ describe('c-service-weather-state-counter-field', () => {
     selectField.triggerCustomEvent('input', SERVICE_WEATHER_STATE_COUNTERS.all);
 
     expect(wrapper).toEmitInput(SERVICE_WEATHER_STATE_COUNTERS.all);
+  });
+
+  it('Passes required state to the select', () => {
+    const wrapper = factory({
+      propsData: {
+        required: true,
+      },
+    });
+
+    expect(selectSelectField(wrapper).attributes('required')).toBeDefined();
   });
 });

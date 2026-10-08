@@ -323,7 +323,7 @@ describe('alarm-column-cell', () => {
     );
   });
 
-  it('Calls selectAdvancedSearchField when column is clicked without filter styling', async () => {
+  it('Does not call selectAdvancedSearchField when column is clicked without filter styling', async () => {
     const mockSelectAdvancedSearchField = vi.fn();
     globalThis.__TEST_SELECT_ADVANCED_SEARCH_FIELD__ = mockSelectAdvancedSearchField;
     const column = {
@@ -350,10 +350,7 @@ describe('alarm-column-cell', () => {
 
     await ellipsis.trigger('click');
 
-    expect(mockSelectAdvancedSearchField).toHaveBeenCalledWith(
-      ALARM_FIELDS.displayName,
-      'Test Name',
-    );
+    expect(mockSelectAdvancedSearchField).not.toHaveBeenCalled();
   });
 
   it('Calls both custom click handler and selectAdvancedSearchField when column has both', async () => {

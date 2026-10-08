@@ -8,7 +8,6 @@ import {
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
-  createAggregatedMetricsModule,
 } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
@@ -17,6 +16,26 @@ import Faker from 'faker';
 import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import PieChartWidget from '@/components/widgets/chart/pie-chart-widget.vue';
+
+const metrics = vi.hoisted(() => ({
+  createKpiAlarmAggregateExport: vi.fn(),
+  fetchAggregatedMetrics: vi.fn(),
+  fetchMetricExport: vi.fn(),
+}));
+
+vi.mock('@/stores/modules/metrics', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useMetricsStore: defineStore('metrics', {
+      getters: {
+        getListByWidgetId: () => () => [],
+        getPendingByWidgetId: () => () => false,
+      },
+      actions: metrics,
+    }),
+  };
+});
 
 const stubs = {
   'kpi-widget-filters': true,
@@ -34,7 +53,6 @@ describe('pie-chart-widget', () => {
   const { userPreferenceModule, fetchUserPreference } = createUserPreferenceModule();
   const { serviceModule } = createServiceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
-  const { aggregatedMetricsModule, fetchAggregatedMetricsList } = createAggregatedMetricsModule();
 
   const store = createMockedStoreModules([
     authModule,
@@ -43,7 +61,6 @@ describe('pie-chart-widget', () => {
     alarmModule,
     serviceModule,
     queryModule,
-    aggregatedMetricsModule,
   ]);
 
   const widget = {
@@ -64,7 +81,7 @@ describe('pie-chart-widget', () => {
     stubs,
     parentComponent: {
       provide: {
-        $system: {},
+        $system: { timezone: 'Europe/Paris' },
       },
     },
   });
@@ -88,7 +105,7 @@ describe('pie-chart-widget', () => {
     });
   });
 
-  test('Vectors metrics fetched with correct query', async () => {
+  test('Aggregated metrics fetched with correct query', async () => {
     const filter = Faker.datatype.string();
     const sampling = randomArrayItem(Object.values(SAMPLINGS));
     const parameters = [
@@ -98,7 +115,7 @@ describe('pie-chart-widget', () => {
       },
     ];
 
-    getQueryById.mockReturnValueOnce(() => ({
+    getQueryById.mockReturnValue(() => ({
       filter,
       sampling,
       parameters,
@@ -116,7 +133,6 @@ describe('pie-chart-widget', () => {
         alarmModule,
         serviceModule,
         queryModule,
-        aggregatedMetricsModule,
       ]),
       propsData: {
         widget,
@@ -125,7 +141,7 @@ describe('pie-chart-widget', () => {
 
     await wrapper.vm.fetchList();
 
-    expect(fetchAggregatedMetricsList).toHaveBeenCalledWith(expect.any(Object), {
+    expect(metrics.fetchAggregatedMetrics).toHaveBeenCalledWith({
       widgetId: widget._id,
       params: {
         widget_filters: [filter],

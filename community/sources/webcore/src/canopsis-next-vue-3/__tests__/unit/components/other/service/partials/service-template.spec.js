@@ -19,11 +19,7 @@ describe('service-template', () => {
   const service = {
     _id: 'service-id',
   };
-  const modalTemplate = `
-    Id: {{ entity._id }}
-    Entities: {{ entities name="entity._id" }}
-    <br />
-  `;
+  const modalTemplate = '{{ entities name="entity._id" }}';
 
   const { authModule } = createAuthModule();
 

@@ -1,3 +1,4 @@
+import { mockModals } from '@unit/utils/mock-hooks';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
@@ -23,6 +24,7 @@ const {
   removeOptimization,
   checkPatternsEntitiesCount,
   checkPatternsAlarmsCount,
+  fetchContextEntitiesListWithoutStore,
 } = vi.hoisted(() => ({
   optimizeEntities: vi.fn().mockResolvedValue({}),
   fetchOptimizeEntitiesStatus: vi.fn().mockResolvedValue({}),
@@ -30,6 +32,7 @@ const {
   removeOptimization: vi.fn().mockResolvedValue({}),
   checkPatternsEntitiesCount: vi.fn().mockResolvedValue({}),
   checkPatternsAlarmsCount: vi.fn().mockResolvedValue({}),
+  fetchContextEntitiesListWithoutStore: vi.fn().mockResolvedValue({ data: [], meta: {} }),
 }));
 
 vi.mock('@/hooks/store/modules/pattern-entities-optimize', () => ({
@@ -48,6 +51,12 @@ vi.mock('@/hooks/store/modules/pattern', () => ({
   }),
 }));
 
+vi.mock('@/hooks/store/modules/entity', () => ({
+  useEntity: () => ({
+    fetchContextEntitiesListWithoutStore,
+  }),
+}));
+
 const stubs = {
   'c-label': true,
   'c-collapse-panel': true,
@@ -55,7 +64,7 @@ const stubs = {
   'c-service-weather-patterns-field': true,
   'c-entity-patterns-field': {
     name: 'CEntityPatternsField',
-    props: ['patterns', 'entityCounter'],
+    props: ['patterns', 'attributes', 'entityCounter'],
     emits: ['update:value', 'show:entities'],
     template: '<div />',
   },
@@ -143,6 +152,7 @@ const createOptimizationSuggestion = () => ({
 });
 
 describe('c-patterns-field', () => {
+  const $modals = mockModals();
   const patterns = filterPatternsToForm();
   const factory = generateShallowRenderer(CPatternsField, { stubs });
 
@@ -153,12 +163,14 @@ describe('c-patterns-field', () => {
     removeOptimization.mockReset();
     checkPatternsEntitiesCount.mockReset();
     checkPatternsAlarmsCount.mockReset();
+    fetchContextEntitiesListWithoutStore.mockReset();
     optimizeEntities.mockResolvedValue({});
     fetchOptimizeEntitiesStatus.mockResolvedValue({});
     updateOptimization.mockResolvedValue({});
     removeOptimization.mockResolvedValue({});
     checkPatternsEntitiesCount.mockResolvedValue({});
     checkPatternsAlarmsCount.mockResolvedValue({});
+    fetchContextEntitiesListWithoutStore.mockResolvedValue({ data: [], meta: {} });
   });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
@@ -258,6 +270,43 @@ describe('c-patterns-field', () => {
     expect(selectEntityPatternsField(wrapper).props('entityCounter')).toEqual(
       totalEntityPatternCounter,
     );
+  });
+
+  test('Fetches entities matching the total entity pattern', async () => {
+    const totalEntityPatternRules = [
+      [
+        {
+          field: ENTITY_PATTERN_FIELDS.type,
+          cond: {
+            type: PATTERN_CONDITIONS.equal,
+            value: 'resource',
+          },
+        },
+      ],
+    ];
+    const totalEntityPattern = patternToForm({
+      total_entity_pattern: totalEntityPatternRules,
+    });
+    const wrapper = factory({
+      propsData: {
+        value: {
+          ...patterns,
+          total_entity_pattern: totalEntityPattern,
+        },
+        withTotalEntity: true,
+      },
+    });
+
+    selectEntityPatternsField(wrapper).triggerCustomEvent('show:entities');
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    await config.fetchList({ page: 1 });
+
+    const [{ params }] = fetchContextEntitiesListWithoutStore.mock.calls[0];
+
+    expect(params.page).toBe(1);
+    expect(JSON.parse(params.entity_pattern)).toEqual(totalEntityPatternRules);
   });
 
   test('Shows the total entity count after checking a newly added entity pattern', async () => {

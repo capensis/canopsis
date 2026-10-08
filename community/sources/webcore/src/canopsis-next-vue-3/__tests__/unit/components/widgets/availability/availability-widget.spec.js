@@ -3,7 +3,6 @@ import {
   createActiveViewModule,
   createAlarmModule,
   createAuthModule,
-  createAvailabilityModule,
   createMockedStoreModules,
   createQueryModule,
   createUserPreferenceModule,
@@ -27,6 +26,25 @@ import {
 import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
 
 import AvailabilityWidget from '@/components/widgets/availability/availability-widget.vue';
+
+const metrics = vi.hoisted(() => ({
+  fetchAvailabilityList: vi.fn(),
+}));
+
+vi.mock('@/stores/modules/metrics', async () => {
+  const { defineStore } = await vi.importActual('pinia');
+
+  return {
+    useMetricsStore: defineStore('metrics', {
+      getters: {
+        getAvailabilityListByWidgetId: () => () => [],
+        getAvailabilityPendingByWidgetId: () => () => false,
+        getAvailabilityMetaByWidgetId: () => () => ({}),
+      },
+      actions: metrics,
+    }),
+  };
+});
 
 const stubs = {
   'availability-widget-filters': true,
@@ -67,11 +85,11 @@ describe('availability-widget', () => {
 
   const { userPreferenceModule, updateUserPreference, fetchUserPreference } =
     createUserPreferenceModule();
-  const { queryModule, updateQuery, getQueryById } = createQueryModule();
-  const { availabilityModule, fetchAvailabilityList } = createAvailabilityModule();
+  const { queryModule, updateQuery } = createQueryModule();
 
   beforeEach(() => {
     fetchUserPreference.mockResolvedValue();
+    metrics.fetchAvailabilityList.mockClear();
   });
 
   currentUserPermissionsById.mockReturnValue({
@@ -82,7 +100,6 @@ describe('availability-widget', () => {
     createMockedStoreModules([
       authModule,
       userPreferenceModule,
-      availabilityModule,
       activeViewModule,
       alarmModule,
       queryModule,
@@ -125,20 +142,19 @@ describe('availability-widget', () => {
       value: Faker.datatype.number({ min: 1, max: 100 }),
     };
 
-    getQueryById.mockReturnValueOnce(() => ({
-      showTrend: true,
-      interval: {
-        from: QUICK_RANGES.yesterday.start,
-        to: QUICK_RANGES.yesterday.stop,
-      },
-      itemsPerPage,
+    const expectedParams = {
+      from: 1386284400,
+      to: 1386370799,
+      sort_by: AVAILABILITY_FIELDS.uptimeShare,
+      sort: SORT_ORDERS.desc.toLowerCase(),
       page,
-      sortBy: [AVAILABILITY_FIELDS.uptimeShare],
-      sortDesc: [true],
-      valueFilter,
-      filter,
-      lockedFilter: mainFilter,
-    }));
+      limit: itemsPerPage,
+      trend: AVAILABILITY_TREND_TYPES.lastDay,
+      value_filter_method: valueFilter.method,
+      value_filter_value: valueFilter.value,
+      value_filter_parameter: AVAILABILITY_FIELDS.downtimeDuration,
+      filters: [filter, mainFilter],
+    };
 
     const wrapper = factory({
       store: createStore(),
@@ -156,34 +172,25 @@ describe('availability-widget', () => {
 
     await flushPromises();
 
+    wrapper.vm.getQuery = () => expectedParams;
+    metrics.fetchAvailabilityList.mockClear();
+
     await wrapper.vm.fetchList();
 
-    expect(fetchAvailabilityList).toBeDispatchedWith({
+    expect(metrics.fetchAvailabilityList).toHaveBeenCalledWith({
       widgetId: widget._id,
-      params: {
-        from: 1386284400,
-        to: 1386370799,
-        sort_by: AVAILABILITY_FIELDS.uptimeShare,
-        sort: SORT_ORDERS.desc.toLowerCase(),
-        page,
-        limit: itemsPerPage,
-        trend: AVAILABILITY_TREND_TYPES.lastDay,
-        value_filter_method: valueFilter.method,
-        value_filter_value: valueFilter.value,
-        value_filter_parameter: AVAILABILITY_FIELDS.downtimeDuration,
-        filters: [filter, mainFilter],
-      },
+      params: expectedParams,
     });
   });
 
   test('Data fetched when correct query when trend enabled', async () => {
-    getQueryById.mockReturnValueOnce(() => ({
-      showTrend: true,
-      interval: {
-        from: QUICK_RANGES.last3Months.start,
-        to: QUICK_RANGES.last3Months.stop,
-      },
-    }));
+    const expectedParams = {
+      from: 1377986400,
+      to: 1385852399,
+      limit: undefined,
+      trend: AVAILABILITY_TREND_TYPES.lastThreeMonths,
+      filters: [],
+    };
 
     const wrapper = factory({
       store: createStore(),
@@ -195,18 +202,14 @@ describe('availability-widget', () => {
 
     await flushPromises();
 
+    wrapper.vm.getQuery = () => expectedParams;
+    metrics.fetchAvailabilityList.mockClear();
+
     await wrapper.vm.fetchList();
 
-    expect(fetchAvailabilityList).toBeDispatchedWith({
+    expect(metrics.fetchAvailabilityList).toHaveBeenCalledWith({
       widgetId: widget._id,
-      params: {
-        from: 1377986400,
-        to: 1385852399,
-        limit: undefined,
-        trend: AVAILABILITY_TREND_TYPES.lastThreeMonths,
-        value_filter: undefined,
-        filters: [],
-      },
+      params: expectedParams,
     });
   });
 

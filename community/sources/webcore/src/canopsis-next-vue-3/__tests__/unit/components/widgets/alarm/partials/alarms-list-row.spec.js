@@ -1,47 +1,36 @@
-import { createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
-import { featuresService } from '@/services/features';
-
 import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.vue';
+
+const AlarmsExpandPanelBtnStub = {
+  props: ['expanded'],
+  emits: ['update:expanded'],
+  methods: { showExpandPanel() {} },
+  template: '<button class="expand-panel-btn" @click="$emit(\'update:expanded\', !expanded)" />',
+};
 
 const stubs = {
   'alarms-list-row-instructions-icon': true,
   'alarms-list-row-bookmark-icon': true,
-  'alarms-expand-panel-btn': true,
+  'alarms-expand-panel-btn': AlarmsExpandPanelBtnStub,
   'alarm-column-value': true,
   'actions-panel': true,
   'c-booted-placeholder-loader': true,
+  'c-light-checkbox': {
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
+    template:
+      '<button class="light-checkbox" @click="$emit(\'update:modelValue\', !modelValue)" />',
+  },
 };
 
-const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
+const selectExpandButton = wrapper => wrapper.find('button.expand-panel-btn');
 const selectTableRow = wrapper => wrapper.find('tr');
-const selectCheckbox = wrapper => wrapper.find('.v-simple-checkbox');
+const selectCheckbox = wrapper => wrapper.find('button.light-checkbox');
 const selectAlarmColumnValue = wrapper => wrapper.find('alarm-column-value-stub');
 
 describe('alarms-list-row', () => {
-  const fetchItem = vi.fn();
-  const updateQuery = vi.fn();
-  const alarmModule = {
-    name: 'alarm',
-    getters: {},
-    actions: {
-      fetchItem,
-    },
-  };
-  const queryModule = {
-    name: 'query',
-    getters: { getQueryById: () => () => ({}) },
-    actions: {
-      update: updateQuery,
-    },
-  };
-
-  const featureHasSpy = vi.spyOn(featuresService, 'has').mockReturnValueOnce(true);
-  const featureGetSpy = vi.spyOn(featuresService, 'get').mockReturnValueOnce(undefined);
-  const featureCallSpy = vi.spyOn(featuresService, 'call').mockReturnValueOnce(() => {});
-
   const factory = generateShallowRenderer(AlarmsListRow, {
     stubs,
     parentComponent: {
@@ -55,15 +44,7 @@ describe('alarms-list-row', () => {
     },
   });
 
-  afterEach(() => {
-    updateQuery.mockClear();
-    fetchItem.mockClear();
-    featureHasSpy.mockClear();
-    featureGetSpy.mockClear();
-    featureCallSpy.mockClear();
-  });
-
-  it('Alarm selected after trigger checkbox', () => {
+  it('Alarm selected after trigger checkbox', async () => {
     const wrapper = factory({
       propsData: {
         alarm: {
@@ -74,26 +55,19 @@ describe('alarms-list-row', () => {
         booted: true,
         expanded: false,
         widget: {},
-        headers: [],
+        headers: [{ key: 'icons' }],
+        rowIconsColumnKey: 'icons',
         selectable: true,
+        selectableAlarm: true,
       },
     });
 
-    selectCheckbox(wrapper).trigger('click');
+    await selectCheckbox(wrapper).trigger('click');
 
-    expect(wrapper).toEmitInput(true);
+    expect(wrapper).toEmit('update:selected', true);
   });
 
-  it('Listeners from feature called after trigger', () => {
-    const clickListener = vi.fn();
-    const hasFeatureSpy = vi
-      .spyOn(featuresService, 'has')
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true);
-    const callFeatureSpy = vi
-      .spyOn(featuresService, 'call')
-      .mockReturnValueOnce({ click: clickListener });
-
+  it('Alarm selection is toggled while mouse-selecting', async () => {
     const wrapper = factory({
       propsData: {
         alarm: {
@@ -104,23 +78,16 @@ describe('alarms-list-row', () => {
         booted: true,
         expanded: false,
         widget: {},
-        headers: [],
+        headers: [{ key: 'icons' }],
+        rowIconsColumnKey: 'icons',
+        selecting: true,
+        selected: false,
       },
     });
 
-    expect(hasFeatureSpy).toHaveBeenCalledTimes(2);
-    expect(callFeatureSpy).toHaveBeenCalledTimes(1);
-    expect(hasFeatureSpy).toHaveBeenNthCalledWith(1, 'components.alarmListRow.computed.classes');
-    expect(hasFeatureSpy).toHaveBeenNthCalledWith(2, 'components.alarmListRow.computed.listeners');
+    await selectTableRow(wrapper).trigger('mousedown', { button: 0 });
 
-    const row = selectTableRow(wrapper);
-
-    row.trigger('click');
-
-    expect(clickListener).toHaveBeenCalled();
-
-    hasFeatureSpy.mockClear();
-    callFeatureSpy.mockClear();
+    expect(wrapper).toEmit('update:selected', true);
   });
 
   it('Row expanded after trigger expand button with hidden groups and without filtered alarms', async () => {
@@ -133,13 +100,13 @@ describe('alarms-list-row', () => {
 
     const newExpanded = false;
     const wrapper = factory({
-      store: createMockedStoreModules([alarmModule, queryModule]),
       propsData: {
         alarm,
         booted: true,
         expanded: false,
         widget: {},
-        headers: [{}, {}],
+        headers: [{ key: 'icons' }, { key: 'value' }],
+        rowIconsColumnKey: 'icons',
         expandable: true,
         hideGroups: true,
       },
@@ -147,11 +114,11 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.triggerCustomEvent('input', newExpanded);
+    expandButton.triggerCustomEvent('update:expanded', newExpanded);
 
     await flushPromises();
 
-    expect(wrapper).toEmit('expand', newExpanded);
+    expect(wrapper).toEmit('update:expanded', newExpanded);
   });
 
   it('Row closed after trigger expand button with expanded: true', async () => {
@@ -167,20 +134,21 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        expand: true,
+        expanded: true,
         widget: {},
-        headers: [{}, {}],
+        headers: [{ key: 'icons' }, { key: 'value' }],
+        rowIconsColumnKey: 'icons',
         expandable: true,
       },
     });
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.triggerCustomEvent('input', newExpanded);
+    expandButton.triggerCustomEvent('update:expanded', newExpanded);
 
     await flushPromises();
 
-    expect(wrapper).toEmit('expand', newExpanded);
+    expect(wrapper).toEmit('update:expanded', newExpanded);
   });
 
   it('Click state emitted after trigger click state event', async () => {
@@ -199,9 +167,13 @@ describe('alarms-list-row', () => {
       propsData: {
         alarm,
         booted: true,
-        expand: true,
+        expanded: true,
         widget: {},
-        headers: [{ value: 'first' }, { value: 'second' }],
+        headers: [
+          { key: 'first', value: 'first' },
+          { key: 'second', value: 'second' },
+        ],
+        rowIconsColumnKey: 'icons',
         expandable: true,
       },
     });
@@ -213,40 +185,16 @@ describe('alarms-list-row', () => {
     expect(wrapper).toHaveBeenEmit('click:state');
   });
 
-  it('Expand panel opened after double click on row when openExpandPanelByDoubleClick enabled', async () => {
+  it('Expand panel opened after double click on row when openExpandPanelByDoubleClick enabled', () => {
     const showExpandPanel = vi.fn();
-    const hasFeatureSpy = vi.spyOn(featuresService, 'has').mockReturnValue(false);
 
-    const alarm = {
-      _id: 'alarm-id',
-      v: {
-        status: {},
-      },
-    };
-
-    const wrapper = factory({
-      propsData: {
-        alarm,
-        booted: true,
-        expanded: false,
-        widget: {
-          parameters: {
-            openExpandPanelByDoubleClick: true,
-          },
-        },
-        headers: [{ value: 'first' }],
-        expandable: true,
-      },
+    AlarmsListRow.methods.openExpandPanelByDoubleClick.call({
+      expandable: true,
+      expanded: false,
+      widget: { parameters: { openExpandPanelByDoubleClick: true } },
+      $refs: { expandPanelBtn: { showExpandPanel } },
     });
 
-    await flushPromises();
-
-    wrapper.vm.$refs.expandPanelBtn = { showExpandPanel };
-
-    selectTableRow(wrapper).trigger('dblclick');
-
-    expect(showExpandPanel).toHaveBeenCalledTimes(1);
-
-    hasFeatureSpy.mockRestore();
+    expect(showExpandPanel).toHaveBeenCalledWith(true);
   });
 });

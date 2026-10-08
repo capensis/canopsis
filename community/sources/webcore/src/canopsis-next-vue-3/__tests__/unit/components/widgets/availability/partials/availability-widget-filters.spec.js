@@ -72,7 +72,7 @@ describe('availability-widget-filters', () => {
       to: QUICK_RANGES.today.stop,
     };
 
-    await selectQuickDateIntervalField(wrapper).triggerCustomEvent('input', newInterval);
+    await selectQuickDateIntervalField(wrapper).triggerCustomEvent('update:interval', newInterval);
 
     expect(wrapper).toEmit('update:interval', newInterval);
   });
@@ -96,7 +96,7 @@ describe('availability-widget-filters', () => {
 
     await selectSearch(wrapper).triggerCustomEvent('submit', advancedSearch);
 
-    expect(wrapper).toEmit('update:query', expect.objectContaining({ search: newSearch, page: 1 }));
+    expect(wrapper).toEmit('submit:search', advancedSearch);
   });
 
   test('Filters changed after trigger filters field', async () => {

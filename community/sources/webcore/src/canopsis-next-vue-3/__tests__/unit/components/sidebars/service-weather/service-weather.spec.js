@@ -85,7 +85,6 @@ const selectFieldGridSizeItems = wrapper => wrapper.findAll('field-grid-size-stu
 const selectFieldColumnMobile = wrapper => selectFieldGridSizeItems(wrapper).at(0);
 const selectFieldColumnTablet = wrapper => selectFieldGridSizeItems(wrapper).at(1);
 const selectFieldColumnDesktop = wrapper => selectFieldGridSizeItems(wrapper).at(2);
-const selectFieldFilters = wrapper => wrapper.find('field-filters-stub');
 const selectMarginsForm = wrapper => wrapper.find('margins-form-stub');
 const selectFieldSlider = wrapper => wrapper.find('field-slider-stub');
 const selectFieldCounters = wrapper => wrapper.find('field-counters-selector-stub');

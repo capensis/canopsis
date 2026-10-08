@@ -74,7 +74,6 @@ const selectFieldContextEntitiesTypesFilter = wrapper =>
   wrapper.find('input.field-context-entities-types-filter');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectChartsForm = wrapper => wrapper.find('input.charts-form');
-const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
 const selectFieldAvailabilityGraphSettings = wrapper =>

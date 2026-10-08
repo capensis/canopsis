@@ -1,27 +1,22 @@
 import { createButtonStub } from '@unit/stubs/button';
-import { mockModals, mockSidebar } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
 import { SIDE_BARS } from '@/constants';
 
-import SidebarWrapper from '@/plugins/sidebar/components/sidebar-wrapper.vue';
+import SidebarWrapper from '@/components/layout/sidebar/sidebar-wrapper.vue';
 
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
   'v-navigation-drawer': {
-    props: ['value'],
-    model: {
-      event: 'input',
-      prop: 'value',
-    },
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
     template: `
       <div class="v-navigation-drawer">
         <input
-          :checked="value"
+          :checked="modelValue"
           type="checkbox"
-          @change="$emit('input', $event.target.checked)"
+          @change="$emit('update:modelValue', $event.target.checked)"
         />
         <slot />
       </div>
@@ -30,18 +25,6 @@ const stubs = {
 };
 
 describe('sidebar-wrapper', () => {
-  const $modals = mockModals();
-  const $sidebar = mockSidebar();
-
-  const store = createMockedStoreModules([
-    {
-      name: $modals.moduleName,
-      getters: {
-        hasMaximizedModal: false,
-      },
-    },
-  ]);
-
   const sidebar = {
     id: 'test-sidebar-id',
     name: SIDE_BARS.alarmSettings,
@@ -73,15 +56,10 @@ describe('sidebar-wrapper', () => {
     window.requestAnimationFrame.mockRestore();
   });
 
-  it('Sidebar hidden trigger drawer', async () => {
+  it('Close emitted after drawer is hidden', async () => {
     const wrapper = factory({
       propsData: {
         sidebar,
-      },
-      store,
-      mocks: {
-        $modals,
-        $sidebar,
       },
     });
 
@@ -89,68 +67,22 @@ describe('sidebar-wrapper', () => {
 
     const navigationDrawerInput = wrapper.find('.v-navigation-drawer input');
 
-    navigationDrawerInput.setChecked(false);
+    await navigationDrawerInput.setChecked(false);
 
-    expect($sidebar.hide).toHaveBeenCalledTimes(1);
-    expect($sidebar.hide).toHaveBeenCalledWith({ id: sidebar.id });
+    expect(wrapper.emitted('close')).toHaveLength(1);
   });
 
-  it('Sidebar hidden happened after click on the close button', async () => {
-    const $clickOutside = {
-      call: vi.fn(() => true),
-    };
-
+  it('Close emitted after click on the overlay', async () => {
     const wrapper = factory({
-      parentComponent: {
-        provide: {
-          $clickOutside,
-        },
-      },
       propsData: {
         sidebar,
       },
-      store,
-      mocks: {
-        $modals,
-        $sidebar,
-      },
     });
 
-    const closeButton = wrapper.findAll('button.v-btn').at(0);
+    await flushPromises();
 
-    closeButton.trigger('click');
+    await wrapper.find('.sidebar-wrapper-overlay').trigger('click');
 
-    expect($clickOutside.call).toHaveBeenCalledTimes(1);
-    expect($sidebar.hide).toHaveBeenCalledTimes(1);
-    expect($sidebar.hide).toHaveBeenCalledWith({ id: sidebar.id });
-  });
-
-  it('Sidebar hidden after click on the close button with close condition', async () => {
-    const $clickOutside = {
-      call: vi.fn(),
-    };
-
-    const wrapper = factory({
-      parentComponent: {
-        provide: {
-          $clickOutside,
-        },
-      },
-      propsData: {
-        sidebar,
-      },
-      store,
-      mocks: {
-        $modals,
-        $sidebar,
-      },
-    });
-
-    const closeButton = wrapper.findAll('button.v-btn').at(0);
-
-    closeButton.trigger('click');
-
-    expect($clickOutside.call).toHaveBeenCalledTimes(1);
-    expect($sidebar.hide).not.toHaveBeenCalled();
+    expect(wrapper.emitted('close')).toHaveLength(1);
   });
 });

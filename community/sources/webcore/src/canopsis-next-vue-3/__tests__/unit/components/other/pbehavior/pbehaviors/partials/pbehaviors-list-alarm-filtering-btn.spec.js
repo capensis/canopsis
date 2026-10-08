@@ -1,11 +1,18 @@
 import { mockModals, mockSocket } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules, createPbehaviorPatternsModule } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 import { flushPromises } from '@vue/test-utils';
 
 import { MODALS } from '@/constants';
 
 import PbehaviorsListAlarmFilteringBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-alarm-filtering-btn.vue';
+
+const { runAlarmFiltering } = vi.hoisted(() => ({
+  runAlarmFiltering: vi.fn().mockResolvedValue(),
+}));
+
+vi.mock('@/hooks/store/modules/pbehavior-patterns', () => ({
+  usePbehaviorPatterns: () => ({ runAlarmFiltering }),
+}));
 
 const stubs = {
   'v-progress-circular': true,
@@ -16,8 +23,6 @@ const selectButton = wrapper => wrapper.find('v-btn-stub');
 describe('pbehaviors-list-alarm-filtering-btn', () => {
   const $modals = mockModals();
   const $socket = mockSocket();
-  const { runAlarmFiltering, pbehaviorPatternsModule } = createPbehaviorPatternsModule();
-  const store = createMockedStoreModules([pbehaviorPatternsModule]);
 
   const factory = generateShallowRenderer(PbehaviorsListAlarmFilteringBtn, {
     stubs,
@@ -27,8 +32,13 @@ describe('pbehaviors-list-alarm-filtering-btn', () => {
     },
   });
 
+  afterEach(() => {
+    $modals.show.mockClear();
+    runAlarmFiltering.mockClear();
+  });
+
   test('Should render button with correct structure', async () => {
-    const wrapper = factory({ store });
+    const wrapper = factory();
 
     await flushPromises();
 
@@ -38,7 +48,7 @@ describe('pbehaviors-list-alarm-filtering-btn', () => {
   });
 
   test('Should have required component structure', async () => {
-    const wrapper = factory({ store });
+    const wrapper = factory();
 
     await flushPromises();
 
@@ -52,7 +62,7 @@ describe('pbehaviors-list-alarm-filtering-btn', () => {
   });
 
   test('Should handle component lifecycle correctly', async () => {
-    const wrapper = factory({ store });
+    const wrapper = factory();
 
     await flushPromises();
 
@@ -62,11 +72,9 @@ describe('pbehaviors-list-alarm-filtering-btn', () => {
   });
 
   test('Should trigger modal when button is clicked', async () => {
-    const wrapper = factory({
-      store,
-    });
+    const wrapper = factory();
 
-    wrapper.findRoot().$emit('click');
+    await selectButton(wrapper).trigger('click');
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.confirmation,
@@ -79,11 +87,9 @@ describe('pbehaviors-list-alarm-filtering-btn', () => {
   });
 
   test('Should call runAlarmFiltering when modal action is executed', async () => {
-    const wrapper = factory({
-      store,
-    });
+    const wrapper = factory();
 
-    wrapper.findRoot().$emit('click');
+    await selectButton(wrapper).trigger('click');
 
     // Get the modal config from the first call
     const [{ config }] = $modals.show.mock.calls[0];

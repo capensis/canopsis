@@ -29,9 +29,9 @@ describe('flowchart', () => {
       rect: rectShapeToForm({ _id: 'rect' }),
     };
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    flowchartSidebar.triggerCustomEvent('input', newShapes);
+    flowchartSidebar.triggerCustomEvent('update:shapes', newShapes);
 
-    expect(wrapper).toEmitInput(newShapes);
+    expect(wrapper).toEmit('update:shapes', newShapes);
   });
 
   test('Shapes added after trigger flowchart editor', () => {
@@ -45,9 +45,9 @@ describe('flowchart', () => {
       rect: rectShapeToForm({ _id: 'rect' }),
     };
     const flowchartEditor = selectFlowchartEditor(wrapper);
-    flowchartEditor.triggerCustomEvent('input', newShapes);
+    flowchartEditor.triggerCustomEvent('update:shapes', newShapes);
 
-    expect(wrapper).toEmitInput(newShapes);
+    expect(wrapper).toEmit('update:shapes', newShapes);
   });
 
   test('Shapes added after trigger flowchart properties', async () => {
@@ -67,9 +67,9 @@ describe('flowchart', () => {
       circle: circleShapeToForm({ _id: 'circle' }),
     };
     const flowchartProperties = selectFlowchartProperties(wrapper);
-    flowchartProperties.triggerCustomEvent('input', newShapes);
+    flowchartProperties.triggerCustomEvent('update:shapes', newShapes);
 
-    expect(wrapper).toEmitInput(newShapes);
+    expect(wrapper).toEmit('update:shapes', newShapes);
   });
 
   test('Points updated after trigger flowchart properties', async () => {
@@ -89,8 +89,8 @@ describe('flowchart', () => {
       circle: circleShapeToForm({ _id: 'circle' }),
     };
     const flowchartProperties = selectFlowchartProperties(wrapper);
-    flowchartProperties.triggerCustomEvent('input', newShapes);
+    flowchartProperties.triggerCustomEvent('update:shapes', newShapes);
 
-    expect(wrapper).toEmitInput(newShapes);
+    expect(wrapper).toEmit('update:shapes', newShapes);
   });
 });
