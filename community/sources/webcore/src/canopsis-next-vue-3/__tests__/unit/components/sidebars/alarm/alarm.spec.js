@@ -14,9 +14,12 @@ import {
   createCommentTemplateModule,
 } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises } from '@vue/test-utils';
+import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 import { omit, map } from 'lodash';
 
+import { API_ROUTES } from '@/config';
 import {
   ALARMS_OPENED_VALUES,
   EXPORT_CSV_DATETIME_FORMATS,
@@ -26,12 +29,16 @@ import {
   USER_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
+  CUSTOM_WIDGET_TEMPLATE,
+  DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
   WIDGET_TYPES,
+  WIDGET_TEMPLATES_TYPES,
   AVAILABILITY_SHOW_TYPE,
   QUICK_RANGES,
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
+import request from '@/services/request';
 
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 import {
@@ -261,6 +268,91 @@ describe('alarm', () => {
         },
       },
     });
+  });
+
+  test('Create widget with the fetched default ticket formats template', async () => {
+    const localWidget = getEmptyWidgetByType(WIDGET_TYPES.alarmList);
+    const axiosMockAdapter = new AxiosMockAdapter(request);
+    const defaultTicketFormatsTemplate = {
+      _id: 'installation-specific-default-template-id',
+      title: DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
+      type: WIDGET_TEMPLATES_TYPES.ticketFormats,
+      formats: ['^INC-[0-9]+$'],
+    };
+
+    localWidget.tab = Faker.datatype.string();
+    axiosMockAdapter.onGet(API_ROUTES.widgetTemplate).reply(200, {
+      data: [defaultTicketFormatsTemplate],
+    });
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar: {
+          ...sidebar,
+          config: { widget: localWidget },
+        },
+      },
+      mocks: { $sidebar },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.vm.$.setupState.form.parameters.associateTicket.formatsTemplate).toBe(
+      defaultTicketFormatsTemplate._id,
+    );
+
+    const expectedWidget = formToWidget(widgetToForm(localWidget));
+
+    expectedWidget.parameters.associateTicket = {
+      formats: defaultTicketFormatsTemplate.formats,
+      formatsTemplate: defaultTicketFormatsTemplate._id,
+    };
+    expectedWidget.tab = localWidget.tab;
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: createWidget,
+      expectData: { data: expectedWidget },
+    });
+
+    axiosMockAdapter.restore();
+  });
+
+  test('Keep explicitly configured custom ticket formats', async () => {
+    const localWidget = getEmptyWidgetByType(WIDGET_TYPES.alarmList);
+    const axiosMockAdapter = new AxiosMockAdapter(request);
+
+    localWidget.parameters.associateTicket = { formats: ['^CUSTOM-[0-9]+$'] };
+    axiosMockAdapter.onGet(API_ROUTES.widgetTemplate).reply(200, {
+      data: [{
+        _id: 'installation-specific-default-template-id',
+        title: DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
+        type: WIDGET_TEMPLATES_TYPES.ticketFormats,
+        formats: ['^DEFAULT-[0-9]+$'],
+      }],
+    });
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar: {
+          ...sidebar,
+          config: { widget: localWidget },
+        },
+      },
+      mocks: { $sidebar },
+    });
+
+    await flushPromises();
+
+    const { associateTicket } = wrapper.vm.$.setupState.form.parameters;
+
+    expect(associateTicket.formatsTemplate).toBe(CUSTOM_WIDGET_TEMPLATE);
+    expect(map(associateTicket.formats, 'value')).toEqual(['^CUSTOM-[0-9]+$']);
+
+    axiosMockAdapter.restore();
   });
 
   test('Duplicate widget without changes', async () => {

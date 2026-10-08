@@ -7,6 +7,7 @@ import {
 import { widgetColumnsToForm } from '../column/form';
 import { widgetQuickActionsToForm } from '../quick-action/form';
 import { widgetSortColumnsToForm } from '../sort-column/form';
+import { ticketFormatsToForm } from '../ticket-format/form';
 
 /**
  * Prepare API widget templates for settings forms.
@@ -26,6 +27,10 @@ export const prepareWidgetTemplates = (templates = []) =>
 
     if (WIDGET_TEMPLATES_TYPES.alarmSortColumns === template.type) {
       return { ...template, sort_columns: widgetSortColumnsToForm(template.sort_columns) };
+    }
+
+    if (WIDGET_TEMPLATES_TYPES.ticketFormats === template.type) {
+      return { ...template, formats: ticketFormatsToForm(template.formats) };
     }
 
     return template;

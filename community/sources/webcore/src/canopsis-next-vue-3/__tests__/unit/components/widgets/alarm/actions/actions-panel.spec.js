@@ -806,9 +806,10 @@ describe('actions-panel', () => {
   });
 
   test('Associate ticket modal showed after trigger associate ticket action', async () => {
+    const ticketFormats = ['^INC-[0-9]+$'];
     const widgetData = {
       _id: Faker.datatype.string(),
-      parameters: {},
+      parameters: { associateTicket: { formats: ticketFormats } },
     };
 
     const wrapper = factory({
@@ -829,6 +830,7 @@ describe('actions-panel', () => {
         config: expect.objectContaining({
           items: [alarm],
           ignoreAck: false,
+          ticketFormats,
           action: expect.any(Function),
         }),
       }),

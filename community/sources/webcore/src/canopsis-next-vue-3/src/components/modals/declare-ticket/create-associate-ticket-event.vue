@@ -6,7 +6,7 @@
       </template>
 
       <template #text>
-        <c-layout gap="3" column>
+        <div class="d-flex flex-column gap-3">
           <alarm-general-table v-if="config.items" :items="config.items" />
           <v-divider />
           <c-checkbox
@@ -15,17 +15,25 @@
             :label="t('alarm.associateTicketResources')"
             color="primary"
           />
-          <associate-ticket-event-form :form="values" class="mt-3" @update:form="updateForm" />
-          <c-description-field
-            v-model="comment"
-            :label="t('common.comment')"
-            :max-length="FORM_MAX_STRING_LENGTH"
-            name="comment"
-          />
+          <c-form-block class="mt-3">
+            <associate-ticket-event-form
+              :form="values"
+              :ticket-formats="config.ticketFormats"
+              @update:form="updateForm"
+            />
+            <c-form-block-row :label="t('common.comment')" top-border indented>
+              <c-description-field
+                v-model="comment"
+                :label="t('common.comment')"
+                :max-length="FORM_MAX_STRING_LENGTH"
+                name="comment"
+              />
+            </c-form-block-row>
+          </c-form-block>
           <c-alert v-if="itemsWithoutAck.length" type="info">
             {{ alertMessage }}
           </c-alert>
-        </c-layout>
+        </div>
       </template>
 
       <template #actions>

@@ -675,6 +675,7 @@ export default {
         config: {
           items: [this.item],
           ignoreAck,
+          ticketFormats: this.widget.parameters.associateTicket?.formats,
           action: async (associateEvent) => {
             if (!ignoreAck && !this.item.v.ack) {
               const { fastAckOutput } = this.widget.parameters;

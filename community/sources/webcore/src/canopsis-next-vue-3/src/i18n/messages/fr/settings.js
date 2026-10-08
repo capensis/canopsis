@@ -68,6 +68,14 @@ export default {
   isUncancelAlarmsCommentRequired: 'Annuler - champ de commentaire obligatoire',
   isMultiAckEnabled: 'Acquittements multiples',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
+  associateTicket: {
+    title: 'Associer un ticket',
+    ticketFormats: 'Formats de ticket',
+    description: 'Ajouter des expressions régulières pour valider l\'ID du ticket',
+    formatsHelp:
+      'Exemples d\'expressions régulières valides :<br><code>\\b[0-9]{4}[A-Za-z][0-9]{5}\\b</code><br><code>^S[0-9]{9}$</code>',
+    emptyTemplate: 'Ce modèle est vide',
+  },
   isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK',
   isVirtualScrollEnabled: 'Rendre les éléments lors du défilement',
   fastAckOutput: 'Commentaire d\'acquittement rapide',

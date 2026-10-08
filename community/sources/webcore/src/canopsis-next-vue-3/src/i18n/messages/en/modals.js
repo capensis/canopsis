@@ -1084,6 +1084,7 @@ export default {
       [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Quick actions (single alarm)',
       [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Quick actions (massive)',
       [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export to PDF',
+      [WIDGET_TEMPLATES_TYPES.ticketFormats]: 'Associate ticket (Ticket formats)',
       [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Tile template',
       [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modal template',
       [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Entity template',

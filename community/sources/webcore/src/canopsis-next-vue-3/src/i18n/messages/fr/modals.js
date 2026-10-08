@@ -1088,6 +1088,7 @@ export default {
       [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Actions rapides (alarme unitaire)',
       [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Actions rapides (massive)',
       [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export PDF',
+      [WIDGET_TEMPLATES_TYPES.ticketFormats]: 'Associer un ticket (Formats de ticket)',
       [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Modèle de tuile',
       [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modèle de modale',
       [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Modèle d\'entité',
