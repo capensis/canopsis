@@ -43,11 +43,11 @@ func TestStoreClaim_ReturnsPostUpdateLeaseGeneration(t *testing.T) {
 			return result
 		})
 	result.EXPECT().Decode(gomock.Any()).DoAndReturn(func(v any) error {
-		*v.(*storeTestJob) = storeTestJob{Base: Base{
+		*v.(*storeTestJob) = storeTestJob{
 			ID:              "job-id",
 			Status:          StatusOngoing,
 			LeaseGeneration: 3,
-		}}
+		}
 
 		return nil
 	})

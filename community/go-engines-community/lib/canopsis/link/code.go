@@ -51,13 +51,11 @@ func ExecCode(ctx context.Context, rule ParsedRule, args []any) ([]GeneratedLink
 
 		res[i] = GeneratedLink{
 			Category: category,
-			Link: Link{
-				RuleID:   rule.ID,
-				Label:    label,
-				IconName: iconName,
-				Url:      url,
-				Action:   action,
-			},
+			RuleID:   rule.ID,
+			Label:    label,
+			IconName: iconName,
+			Url:      url,
+			Action:   action,
 		}
 		if single, ok := item["single"].(bool); ok {
 			res[i].Link.Single = single

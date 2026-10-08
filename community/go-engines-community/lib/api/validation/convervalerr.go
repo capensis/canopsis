@@ -8,9 +8,8 @@ import (
 )
 
 func ConvertValErr(err error, v any) error {
-	var valErr validator.ValidationErrors
-	if errors.As(err, &valErr) {
-		return NewError(valErr, v)
+	if ve, ok := errors.AsType[validator.ValidationErrors](err); ok {
+		return NewError(ve, v)
 	}
 
 	return NewInvalidRequestBodyError(err)

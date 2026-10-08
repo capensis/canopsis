@@ -63,7 +63,7 @@ func ValidateColorOrEmpty(fl validator.FieldLevel) bool {
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
 func ValidateCpsTimeType(field reflect.Value) any {
 	if field.Type() == reflect.TypeFor[datetime.CpsTime]() {
-		if t, ok := field.Interface().(datetime.CpsTime); ok {
+		if t, ok := reflect.TypeAssert[datetime.CpsTime](field); ok {
 			val := t.Time
 			if val.IsZero() {
 				return nil
