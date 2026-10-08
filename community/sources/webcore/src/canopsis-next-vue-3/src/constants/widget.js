@@ -252,6 +252,7 @@ export const WIDGET_TEMPLATES_TYPES = {
   entityColumns: 'entity_columns',
   alarmMoreInfos: 'alarm_more_infos',
   alarmExportToPdf: 'alarm_export_to_pdf',
+  ticketFormats: 'ticket_formats',
   alarmQuickActions: 'alarm_quick_actions',
   alarmMassQuickActions: 'alarm_mass_quick_actions',
   weatherItem: 'weather_item',
@@ -272,6 +273,7 @@ export const WIDGET_TEMPLATE_TYPES_TO_ICONS = {
   [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'description',
   [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'description',
   [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'description',
+  [WIDGET_TEMPLATES_TYPES.ticketFormats]: 'description',
   [WIDGET_TEMPLATES_TYPES.weatherItem]: 'description',
   [WIDGET_TEMPLATES_TYPES.weatherModal]: 'description',
   [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'description',
@@ -288,6 +290,8 @@ export const ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES = [
 ];
 
 export const CUSTOM_WIDGET_TEMPLATE = Symbol('custom').toString();
+
+export const DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE = 'Default ticket formats';
 
 export const CHART_WIDGET_PRESET_TYPES = {
   numberOfActiveAlarms: 'number_of_active_alarms',

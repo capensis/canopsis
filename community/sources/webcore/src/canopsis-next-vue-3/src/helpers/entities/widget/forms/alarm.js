@@ -44,6 +44,7 @@ import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { formToWidgetQuickActions, widgetQuickActionsToForm } from '../quick-action/form';
 import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column/form';
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+import { formToTicketFormats, ticketFormatsToForm } from '../ticket-format/form';
 
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
@@ -258,6 +259,46 @@ export const alarmListPauseParametersToForm = (parameters = {}) => ({
 });
 
 /**
+ * @typedef {Object} AlarmListAssociateTicketParameters
+ * @property {TicketFormat[]} formats
+ * @property {string} formatsTemplate
+ */
+
+/**
+ * @typedef {AlarmListAssociateTicketParameters} AlarmListAssociateTicketParametersForm
+ * @property {TicketFormatForm[]} formats
+ * @property {string | Symbol} formatsTemplate
+ */
+
+/**
+ * Convert associate ticket settings to form values.
+ *
+ * @param {AlarmListAssociateTicketParameters} [associateTicket]
+ * @returns {AlarmListAssociateTicketParametersForm}
+ */
+export const alarmListAssociateTicketParametersToForm = (associateTicket) => {
+  const settings = associateTicket ?? {};
+
+  return {
+    ...cloneDeep(settings),
+    formats: ticketFormatsToForm(settings.formats),
+    formatsTemplate: widgetTemplateValueToForm(settings.formatsTemplate),
+  };
+};
+
+/**
+ * Convert associate ticket form values to widget settings.
+ *
+ * @param {AlarmListAssociateTicketParametersForm} [associateTicket]
+ * @returns {AlarmListAssociateTicketParameters}
+ */
+export const formToAlarmListAssociateTicketParameters = (associateTicket = {}) => ({
+  ...cloneDeep(associateTicket),
+  formats: formToTicketFormats(associateTicket.formats),
+  formatsTemplate: formToWidgetTemplateValue(associateTicket.formatsTemplate),
+});
+
+/**
  * Convert alarm list widget parameters to form values.
  *
  * @param {Object} [parameters={}]
@@ -276,6 +317,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
+  associateTicket: alarmListAssociateTicketParametersToForm(parameters.associateTicket),
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   openExpandPanelByDoubleClick: parameters.openExpandPanelByDoubleClick ?? false,
   pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
@@ -373,6 +415,7 @@ export const formToAlarmListWidgetParameters = (form = {}) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    associateTicket: formToAlarmListAssociateTicketParameters(form.associateTicket),
     comment_templates: map(form.comment_templates, 'template'),
     pause: {
       ...form.pause,

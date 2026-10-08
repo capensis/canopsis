@@ -6,6 +6,8 @@ export default {
   dataFromOneStepAttention:
     'Les données de la réponse de l\'API ne peuvent être extraites que d\'une étape d\'une règle.',
   ticketID: 'ID de ticket',
+  allowedTicketFormats: 'Formats de ticket autorisés (expressions régulières) :',
+  incorrectTicketFormat: 'Format de ticket incorrect',
   ticketURL: 'URL du ticket',
   ticketUrlAndId: 'URL et ID du ticket',
   ticketURLTitle: 'Titre de l\'URL du ticket',

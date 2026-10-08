@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <div class="d-flex flex-column">
     <c-name-field
       v-model="title"
       :label="t('common.name')"
@@ -22,8 +22,10 @@
       required
     />
 
+    <widget-template-ticket-formats-form v-else-if="isTicketFormatsType" />
+
     <widget-template-text-form v-else :entity-infos="entityInfos" />
-  </c-layout>
+  </div>
 </template>
 
 <script>
@@ -44,12 +46,14 @@ import WidgetTemplateColumnsForm from './widget-template-columns-form.vue';
 import WidgetTemplateQuickActionsForm from './widget-template-quick-actions-form.vue';
 import WidgetTemplateSortColumnsForm from './widget-template-sort-columns-form.vue';
 import WidgetTemplateTextForm from './widget-template-text-form.vue';
+import WidgetTemplateTicketFormatsForm from './widget-template-ticket-formats-form.vue';
 
 export default {
   components: {
     WidgetTemplateColumnsForm,
     WidgetTemplateQuickActionsForm,
     WidgetTemplateSortColumnsForm,
+    WidgetTemplateTicketFormatsForm,
     WidgetTemplateTextForm,
   },
 
@@ -70,6 +74,9 @@ export default {
     const isAlarmSortColumnsType = computed(
       () => type.value === WIDGET_TEMPLATES_TYPES.alarmSortColumns,
     );
+    const isTicketFormatsType = computed(
+      () => type.value === WIDGET_TEMPLATES_TYPES.ticketFormats,
+    );
 
     onMounted(() => fetchInfos({ withRules: true }));
 
@@ -83,6 +90,7 @@ export default {
       isAlarmQuickActionsType,
       isMassiveQuickActionsType,
       isAlarmSortColumnsType,
+      isTicketFormatsType,
     };
   },
 };

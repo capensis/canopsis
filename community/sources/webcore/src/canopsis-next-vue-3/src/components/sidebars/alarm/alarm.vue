@@ -177,6 +177,14 @@
         v-model="form.parameters.keepSelectedAfterAction"
         :title="t('common.massActionsPanel.keepSelectedAfterAction')"
       />
+      <field-associate-ticket
+        :model-value="form.parameters.associateTicket.formats"
+        :template="form.parameters.associateTicket.formatsTemplate"
+        :templates="ticketFormatsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        @update:model-value="form.parameters.associateTicket.formats = $event"
+        @update:template="updateAssociateTicketTemplate"
+      />
       <field-text-editor-with-template
         :model-value="form.parameters.exportPdfTemplate"
         :template="form.parameters.exportPdfTemplateTemplate"
@@ -275,6 +283,8 @@ import {
   ALARM_TEMPLATE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
+  CUSTOM_WIDGET_TEMPLATE,
+  DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
   ENTITIES_TYPES,
   ENTITY_TEMPLATE_FIELDS,
   MAX_LIMIT,
@@ -293,6 +303,7 @@ import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
 import { useVarsPrepare } from '@/hooks/vars/shared';
 import { useWidgetSettings } from '@/hooks/widget/settings';
 
+import FieldAssociateTicket from '@/components/sidebars/alarm/form/fields/associate-ticket.vue';
 import FieldCommentTemplates from '@/components/sidebars/alarm/form/fields/comment-templates.vue';
 import FieldFastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
@@ -342,6 +353,7 @@ const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
 const { prepare: prepareTemplateVars } = useVarsPrepare('templateTesting.templateVars');
 
 const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+let shouldSetDefaultTicketFormatsTemplate = widget.value.parameters?.associateTicket === undefined;
 
 const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
 
@@ -371,6 +383,10 @@ const alarmQuickActionsWidgetTemplates = computed(() => preparedWidgetTemplates.
 );
 const alarmMassQuickActionsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
     ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmMassQuickActions,
+  ),
+);
+const ticketFormatsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.ticketFormats,
   ),
 );
 const defaultExportPdfTemplateValue = ALARM_EXPORT_PDF_TEMPLATE;
@@ -518,55 +534,170 @@ const exportPdfAlarmVariables = computed(() => [
 );
 const templateVars = ref({});
 
+/**
+ * Apply a sort columns template to the widget form.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetSortColumnForm[]} columns
+ */
 const updateSortTemplate = (template, columns) => {
   form.value.parameters.sortTemplate = template;
   form.value.parameters.sort = columns;
 };
+
+/**
+ * Apply a columns template to the alarm list columns.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetColumnForm[]} columns
+ */
 const updateWidgetColumnsTemplate = (template, columns) => {
   form.value.parameters.widgetColumnsTemplate = template;
   form.value.parameters.widgetColumns = columns;
 };
+
+/**
+ * Apply a columns template to the grouped alarm columns.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetColumnForm[]} columns
+ */
 const updateGroupColumnsTemplate = (template, columns) => {
   form.value.parameters.widgetGroupColumnsTemplate = template;
   form.value.parameters.widgetGroupColumns = columns;
 };
+
+/**
+ * Apply a columns template to the service dependencies columns.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetColumnForm[]} columns
+ */
 const updateServiceDependenciesColumnsTemplate = (template, columns) => {
   form.value.parameters.serviceDependenciesColumnsTemplate = template;
   form.value.parameters.serviceDependenciesColumns = columns;
 };
+
+/**
+ * Set the more info template content.
+ *
+ * @param {string} value
+ */
 const updateMoreInfo = (value) => {
   form.value.parameters.moreInfoTemplate = value;
 };
+
+/**
+ * Set the selected more info widget template.
+ *
+ * @param {string | Symbol} value
+ */
 const updateMoreInfoTemplate = (value) => {
   form.value.parameters.moreInfoTemplateTemplate = value;
 };
+
+/**
+ * Set the export PDF template content.
+ *
+ * @param {string} value
+ */
 const updateExportPdf = (value) => {
   form.value.parameters.exportPdfTemplate = value;
 };
+
+/**
+ * Set the selected export PDF widget template.
+ *
+ * @param {string | Symbol} value
+ */
 const updateExportPdfTemplate = (value) => {
   form.value.parameters.exportPdfTemplateTemplate = value;
 };
+
+/**
+ * Apply a quick actions template to the widget form.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetQuickActionForm[]} actions
+ */
 const updateQuickActionsTemplate = (template, actions) => {
   form.value.parameters.quickActionsTemplate = template;
   form.value.parameters.quickActions = actions;
 };
+
+/**
+ * Apply a mass quick actions template to the widget form.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetQuickActionForm[]} actions
+ */
 const updateQuickMassActionsTemplate = (template, actions) => {
   form.value.parameters.quickMassActionsTemplate = template;
   form.value.parameters.quickMassActions = actions;
 };
 
+/**
+ * Apply a ticket formats template to associate ticket settings.
+ *
+ * @param {string | Symbol} template
+ * @param {TicketFormatForm[]} formats
+ */
+const updateAssociateTicketTemplate = (template, formats) => {
+  form.value.parameters.associateTicket.formatsTemplate = template;
+  form.value.parameters.associateTicket.formats = formats;
+};
+
+/**
+ * Select the default ticket formats template when associate ticket settings are missing.
+ *
+ * @param {WidgetTemplate[]} templates
+ */
+const setDefaultTicketFormatsTemplate = (templates) => {
+  const { associateTicket } = form.value.parameters;
+
+  if (
+    !shouldSetDefaultTicketFormatsTemplate ||
+    associateTicket.formatsTemplate !== CUSTOM_WIDGET_TEMPLATE ||
+    associateTicket.formats.length
+  ) {
+    return;
+  }
+
+  const defaultTemplate = prepareWidgetTemplates(templates).find(
+    ({ title, type }) =>
+      type === WIDGET_TEMPLATES_TYPES.ticketFormats &&
+      title === DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
+  );
+
+  if (defaultTemplate) {
+    updateAssociateTicketTemplate(defaultTemplate._id, defaultTemplate.formats);
+    shouldSetDefaultTicketFormatsTemplate = false;
+  }
+};
+
+/**
+ * Load widget templates and apply the default ticket formats template when needed.
+ *
+ * @returns {Promise<void>}
+ */
 const fetchWidgetTemplates = async () => {
   try {
     widgetTemplatesPending.value = true;
     const { data } = await fetchWidgetTemplatesListWithoutStore({ params: { limit: MAX_LIMIT } });
 
     widgetTemplates.value = data;
+    setDefaultTicketFormatsTemplate(data);
   } catch (err) {
     console.warn(err);
   } finally {
     widgetTemplatesPending.value = false;
   }
 };
+/**
+ * Load template variables used by export and column editors.
+ *
+ * @returns {Promise<void>}
+ */
 const fetchTemplateVars = async () => {
   try {
     const data = await fetchWidgetsTemplateVarsWithoutStore();

@@ -5,6 +5,8 @@ export default {
     'The ticket URL received from the API response can be added to the alarm dynamic infos.',
   dataFromOneStepAttention: 'Data from the API response can be taken only from one step of a rule.',
   ticketID: 'Ticket ID',
+  allowedTicketFormats: 'Allowed ticket formats (regular expressions):',
+  incorrectTicketFormat: 'Incorrect ticket format',
   ticketURL: 'Ticket URL',
   ticketUrlAndId: 'Ticket URL and ID',
   ticketURLTitle: 'Ticket URL title',

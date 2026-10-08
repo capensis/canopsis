@@ -67,6 +67,14 @@ export default {
   isUncancelAlarmsCommentRequired: 'Uncancel - comment field required',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
+  associateTicket: {
+    title: 'Associate ticket',
+    ticketFormats: 'Ticket formats',
+    description: 'Add regexp formats to validate ticket ID',
+    formatsHelp:
+      'Examples of valid regular expressions:<br><code>\\b[0-9]{4}[A-Za-z][0-9]{5}\\b</code><br><code>^S[0-9]{9}$</code>',
+    emptyTemplate: 'This template is empty',
+  },
   isActionsAllowWithOkState: 'Actions allowed when state OK',
   isVirtualScrollEnabled: 'Render elements on scroll',
   fastAckOutput: 'Fast-ack output',

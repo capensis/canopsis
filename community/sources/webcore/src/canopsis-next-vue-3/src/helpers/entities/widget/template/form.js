@@ -8,6 +8,7 @@ import {
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { formToWidgetQuickActions, widgetQuickActionsToForm } from '../quick-action/form';
 import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column/form';
+import { formToTicketFormats, ticketFormatsToForm } from '../ticket-format/form';
 
 /**
  * @typedef {
@@ -18,6 +19,7 @@ import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column
  *  | 'alarm_quick_actions'
  *  | 'alarm_mass_quick_actions'
  *  | 'alarm_sort_columns'
+ *  | 'ticket_formats'
  *  | 'weather_item'
  *  | 'weather_modal'
  *  | 'weather_entity'
@@ -32,6 +34,7 @@ import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column
  * @property {WidgetQuickAction[]} [actions]
  * @property {Object[]} [sort_columns]
  * @property {string} [content]
+ * @property {TicketFormat[]} [formats]
  */
 
 /**
@@ -39,6 +42,7 @@ import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column
  * @property {WidgetColumnForm[]} columns
  * @property {WidgetQuickActionForm[]} actions
  * @property {Object[]} sort_columns
+ * @property {TicketFormatForm[]} formats
  */
 
 /**
@@ -53,6 +57,7 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
   columns: widgetColumnsToForm(widgetTemplate.columns),
   actions: widgetQuickActionsToForm(widgetTemplate.actions),
   sort_columns: widgetSortColumnsToForm(widgetTemplate.sort_columns),
+  formats: ticketFormatsToForm(widgetTemplate.formats),
   content: widgetTemplate.content ?? '',
 });
 
@@ -62,6 +67,7 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
  * @param {WidgetTemplateForm} form
  * @param {WidgetColumnForm[]} columns
  * @param {WidgetQuickActionForm[]} actions
+ * @param {TicketFormatForm[]} formats
  * @param {string} content
  * @returns {WidgetTemplate}
  */
@@ -69,6 +75,7 @@ export const formToWidgetTemplate = ({
   columns,
   content,
   actions,
+  formats,
   sort_columns: sortColumns,
   ...form
 }) => {
@@ -80,6 +87,8 @@ export const formToWidgetTemplate = ({
     widgetTemplate.actions = formToWidgetQuickActions(actions);
   } else if (form.type === WIDGET_TEMPLATES_TYPES.alarmSortColumns) {
     widgetTemplate.sort_columns = formToWidgetSortColumns(sortColumns ?? []);
+  } else if (form.type === WIDGET_TEMPLATES_TYPES.ticketFormats) {
+    widgetTemplate.formats = formToTicketFormats(formats);
   } else {
     widgetTemplate.content = content;
   }

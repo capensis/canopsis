@@ -74,6 +74,20 @@ describe('associate-ticket-event-form', () => {
     });
   });
 
+  test('Ticket is validated against configured formats', () => {
+    const ticketFormats = ['^INC-[0-9]+$'];
+    const wrapper = factory({
+      propsData: {
+        form,
+        ticketFormats,
+      },
+    });
+    const [validateTicketFormat] = wrapper.vm.ticketValidationRules;
+
+    expect(validateTicketFormat('INC-42')).toBe(true);
+    expect(validateTicketFormat('REQ-42')).toBe('Incorrect ticket format');
+  });
+
   test('Ticket url changed after trigger ticket url field', () => {
     const wrapper = factory({
       propsData: {
