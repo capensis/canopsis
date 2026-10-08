@@ -19,7 +19,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 	defer ctrl.Finish()
 	expectedCode := http.StatusOK
 	expectedAuthorValue := "test-author"
-	noAuthorBody := map[string]interface{}{
+	noAuthorBody := map[string]any{
 		"test_key": "test_value",
 	}
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)

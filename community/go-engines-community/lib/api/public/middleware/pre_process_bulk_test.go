@@ -24,7 +24,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	expectedCode := http.StatusOK
 	author := "test-author"
 	expectedAuthorValue := "test-author test-author test-author"
-	noAuthorBody := []map[string]interface{}{
+	noAuthorBody := []map[string]any{
 		{
 			"test_key-1": "test_value-1",
 		},
@@ -47,7 +47,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	})
 	r.Use(PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, zerolog.Nop()), mockResponder, true))
 	r.Post(okURL, func(w http.ResponseWriter, r *http.Request) {
-		var body []map[string]interface{}
+		var body []map[string]any
 		encodedBody := json.NewDecoder(r.Body)
 		err := encodedBody.Decode(&body)
 		if err != nil {
@@ -96,7 +96,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	r.Post(okURL, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
-	valid := []map[string]interface{}{
+	valid := []map[string]any{
 		{
 			"test_key-1": "test_value-1",
 		},
@@ -115,7 +115,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		t.Errorf("expected code: %v but got %v", http.StatusOK, w.Code)
 	}
 
-	invalid := []map[string]interface{}{
+	invalid := []map[string]any{
 		{
 			"test_key-1": "test_value-1",
 		},

@@ -3,6 +3,7 @@ package asyncjob
 import (
 	"context"
 	"errors"
+	"maps"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -134,9 +135,7 @@ func (s *Store[T]) complete(
 		update["error_message"] = errorMessage
 	}
 
-	for k, v := range set {
-		update[k] = v
-	}
+	maps.Copy(update, set)
 
 	return s.updateClaimed(ctx, id, generation, bson.M{"$set": update})
 }

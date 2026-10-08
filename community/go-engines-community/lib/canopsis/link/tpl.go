@@ -18,16 +18,14 @@ func ExecTemplate(rule ParsedRule, data any, tplExecutor template.Executor) ([]G
 		}
 
 		res[i] = GeneratedLink{
-			Category: link.Category,
-			Link: Link{
-				RuleID:     rule.ID,
-				Label:      label,
-				IconName:   link.IconName,
-				Url:        url,
-				Action:     link.Action,
-				Single:     link.Single,
-				HideInMenu: link.HideInMenu,
-			},
+			Category:   link.Category,
+			RuleID:     rule.ID,
+			Label:      label,
+			IconName:   link.IconName,
+			Url:        url,
+			Action:     link.Action,
+			Single:     link.Single,
+			HideInMenu: link.HideInMenu,
 		}
 	}
 

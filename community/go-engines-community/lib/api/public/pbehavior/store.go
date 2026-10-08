@@ -20,7 +20,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/go-playground/validator/v10"
@@ -513,15 +512,13 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		Color:    r.Color,
 		Origin:   r.Origin,
 		Entities: entities,
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: pattern.Entity{
+		EntityPattern: pattern.Entity{
+			{
 				{
-					{
-						Field: "_id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionIsOneOf,
-							Value: entities,
-						},
+					Field: "_id",
+					Condition: pattern.Condition{
+						Type:  pattern.ConditionIsOneOf,
+						Value: entities,
 					},
 				},
 			},
@@ -679,21 +676,19 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 	}
 
 	return pbehavior.PBehavior{
-		Author:    r.Author,
-		Enabled:   *r.Enabled,
-		Name:      r.Name,
-		Reason:    r.Reason,
-		RRule:     r.RRule,
-		Timezone:  r.Timezone,
-		Start:     r.Start,
-		Stop:      r.Stop,
-		Type:      r.Type,
-		Exdates:   exdates,
-		Color:     r.Color,
-		Inherited: r.Inherited,
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: r.EntityPattern,
-		},
+		Author:        r.Author,
+		Enabled:       *r.Enabled,
+		Name:          r.Name,
+		Reason:        r.Reason,
+		RRule:         r.RRule,
+		Timezone:      r.Timezone,
+		Start:         r.Start,
+		Stop:          r.Stop,
+		Type:          r.Type,
+		Exdates:       exdates,
+		Color:         r.Color,
+		Inherited:     r.Inherited,
+		EntityPattern: r.EntityPattern,
 	}
 }
 
