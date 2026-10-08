@@ -16,9 +16,13 @@
         close
         @click:close="parent.onChipInput(item)"
       >
-        <span class="text-truncate">{{ item }}</span>
+        <span class="text-truncate">
+          {{ item }}
+        </span>
       </v-chip>
-      <span v-else-if="index === showCount">+{{ value.length - showCount }} {{ $t('common.more') }}</span>
+      <span v-else-if="index === showCount">
+        +{{ value.length - showCount }} {{ $t('common.more') }}
+      </span>
       <span v-else />
     </template>
   </c-event-type-field>

@@ -8,6 +8,8 @@ exports[`pbehavior-recurrence-rule Renders \`pbehavior-recurrence-rule\` with pb
     class="flex offset-xs3 xs6"
   >
     <recurrence-rule-information-stub
+      exceptions=""
+      exdates=""
       rrule="RRULE"
     />
     <pbehavior-recurrence-rule-periods-stub

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <span class="text-subtitle-2">{{ $t('common.preview') }}</span>
+    <span class="text-subtitle-2">
+      {{ $t('common.preview') }}
+    </span>
     <external-data-table-records-list
       v-field="form"
       :original-columns="originalForm"

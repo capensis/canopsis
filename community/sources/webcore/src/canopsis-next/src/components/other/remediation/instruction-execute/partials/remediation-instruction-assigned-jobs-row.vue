@@ -80,7 +80,9 @@
         :pending="isRunningJob && !job.started_at"
         class="text-center"
       >
-        <span v-if="!isCancelledJob">{{ job.started_at | date('long', '-') }}</span>
+        <span v-if="!isCancelledJob">
+          {{ job.started_at | date('long', '-') }}
+        </span>
       </progress-cell>
       <progress-cell
         :pending="shownLaunchedPendingJob"

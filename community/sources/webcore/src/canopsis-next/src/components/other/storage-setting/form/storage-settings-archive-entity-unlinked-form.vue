@@ -1,6 +1,8 @@
 <template>
   <v-layout class="gap-2" column>
-    <span class="grey--text">{{ $t('storageSetting.entityUnlinked.archiveUnlinkedAfter') }}</span>
+    <span class="grey--text">
+      {{ $t('storageSetting.entityUnlinked.archiveUnlinkedAfter') }}
+    </span>
     <c-duration-field
       v-field="duration"
       :units-label="$t('common.unit')"

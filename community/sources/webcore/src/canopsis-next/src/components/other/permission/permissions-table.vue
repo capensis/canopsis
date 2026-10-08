@@ -23,7 +23,9 @@
             @click="item.children && expand(!isExpanded)"
           >
             <v-list-item-mask v-if="item.hasMask" :text="item.title" :mask="search" />
-            <span v-else>{{ item.title }}</span>
+            <span v-else>
+              {{ item.title }}
+            </span>
           </span>
         </td>
         <td v-for="role in roles" :key="role.value">

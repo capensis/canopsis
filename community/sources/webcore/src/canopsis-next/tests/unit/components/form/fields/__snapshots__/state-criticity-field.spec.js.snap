@@ -16,7 +16,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with custom pro
       <span
         class="v-btn__content"
       >
-      Info
+      Ok
       </span>
     </button>
     <button
@@ -61,7 +61,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with default pr
       <span
         class="v-btn__content"
       >
-      Info
+      Ok
       </span>
     </button>
     <button

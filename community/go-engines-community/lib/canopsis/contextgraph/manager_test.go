@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/contextgraph"
@@ -1070,17 +1069,13 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
 	storage.EXPECT().GetAll(gomock.Any()).Return([]contextgraph.EntityService{}, nil).AnyTimes()
 	storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(entityservice.EntityService{
-		Entity: types.Entity{
-			ID:      "serv-1",
-			Enabled: true,
-		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: [][]pattern.FieldCondition{
+		ID:      "serv-1",
+		Enabled: true,
+		EntityPattern: [][]pattern.FieldCondition{
+			{
 				{
-					{
-						Field:     "component",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-					},
+					Field:     "component",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 				},
 			},
 		},
@@ -1139,17 +1134,13 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
 	storage.EXPECT().GetAll(gomock.Any()).Return([]contextgraph.EntityService{}, nil).AnyTimes()
 	storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(entityservice.EntityService{
-		Entity: types.Entity{
-			ID:      "serv-1",
-			Enabled: true,
-		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: [][]pattern.FieldCondition{
+		ID:      "serv-1",
+		Enabled: true,
+		EntityPattern: [][]pattern.FieldCondition{
+			{
 				{
-					{
-						Field:     "component",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-					},
+					Field:     "component",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 				},
 			},
 		},
@@ -1223,17 +1214,13 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	storage := mock_contextgraph.NewMockEntityServiceStorage(ctrl)
 	storage.EXPECT().GetAll(gomock.Any()).Return([]contextgraph.EntityService{}, nil).AnyTimes()
 	storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(entityservice.EntityService{
-		Entity: types.Entity{
-			ID:      "serv-1",
-			Enabled: true,
-		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: [][]pattern.FieldCondition{
+		ID:      "serv-1",
+		Enabled: true,
+		EntityPattern: [][]pattern.FieldCondition{
+			{
 				{
-					{
-						Field:     "component",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
-					},
+					Field:     "component",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 				},
 			},
 		},

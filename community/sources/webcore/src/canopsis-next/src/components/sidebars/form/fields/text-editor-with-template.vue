@@ -13,6 +13,8 @@
 <script>
 import { CUSTOM_WIDGET_TEMPLATE, MODALS } from '@/constants';
 
+import { getWidgetTemplateModalTitle } from '@/helpers/entities/widget/template/modal-title';
+
 import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 
 export default {
@@ -38,6 +40,10 @@ export default {
       type: Array,
       required: false,
     },
+    widgetTemplateType: {
+      type: String,
+      required: false,
+    },
     addable: {
       type: Boolean,
       default: false,
@@ -59,6 +65,19 @@ export default {
     isValueEmpty() {
       return this.defaultValue === String(this.value);
     },
+
+    modalTitle() {
+      if (!this.widgetTemplateType) {
+        return undefined;
+      }
+
+      return getWidgetTemplateModalTitle({
+        t: this.$t.bind(this),
+        te: this.$te.bind(this),
+        type: this.widgetTemplateType,
+        isEdit: !this.isValueEmpty,
+      });
+    },
   },
   methods: {
     showTextEditorWithTemplateModal() {
@@ -70,6 +89,7 @@ export default {
           template: this.template,
           templates: this.templates,
           variables: this.variables,
+          title: this.modalTitle,
           action: ({ text, template }) => this.$emit('input', text, template),
         },
       });

@@ -2,59 +2,54 @@
 
 exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-field\` with custom props 1`] = `
 <div
-  class="flex"
+  class="layout gap-3 justify-center column"
 >
-  <button
-    class="ml-0 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
-    >
-    Edit recurrence rule
-    </span>
-  </button>
-  <span
-    class="v-tooltip v-tooltip--top"
-    fixed=""
-  >
-    <!---->
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light grey--text text--darken-1"
-        >
-          info
-        </i>
-      </span>
-    </button>
-  </span>
-  <c-action-btn-stub
-    type="delete"
+  <c-label-stub
+    label="Recurrence"
   />
+  <div
+    class="layout"
+  >
+    <div
+      class="c-word-break-all pa-3 mr-2 v-sheet theme--light rounded-xxl grey lighten-2"
+    >
+      <p>
+        RRULE:FREQ=DAILY
+      </p>
+      <p>
+        every day
+      </p>
+      <!---->
+    </div>
+    <c-action-btn-stub
+      tooltip="Edit recurrence rule"
+      type="edit"
+    />
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
 </div>
 `;
 
 exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-field\` with required props 1`] = `
 <div
-  class="flex"
+  class="layout gap-3 justify-center column"
 >
-  <button
-    class="ml-0 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
-    type="button"
-  >
-    <span
-      class="v-btn__content"
+  <c-label-stub
+    label="Recurrence"
+  />
+  <div>
+    <button
+      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+      type="button"
     >
-    Add recurrence rule
-    </span>
-  </button>
-  <!---->
+      <span
+        class="v-btn__content"
+      >
+      Add recurrence rule
+      </span>
+    </button>
+  </div>
 </div>
 `;

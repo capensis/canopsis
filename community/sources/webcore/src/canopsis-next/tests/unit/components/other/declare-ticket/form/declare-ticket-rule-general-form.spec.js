@@ -13,7 +13,8 @@ const stubs = {
 };
 
 const selectEnabledFields = wrapper => wrapper.findAll('c-enabled-field-stub');
-const selectEmitTriggerField = wrapper => selectEnabledFields(wrapper).at(1);
+const selectEmitTriggerSuccessField = wrapper => selectEnabledFields(wrapper).at(0);
+const selectEmitTriggerFailField = wrapper => selectEnabledFields(wrapper).at(1);
 const selectNameFields = wrapper => wrapper.findAll('c-name-field-stub');
 const selectNameField = wrapper => selectNameFields(wrapper).at(0);
 const selectSystemNameField = wrapper => selectNameFields(wrapper).at(1);
@@ -24,7 +25,8 @@ describe('declare-ticket-rule-general-form', () => {
     name: Faker.datatype.string(),
     system_name: Faker.datatype.string(),
     enabled: Faker.datatype.boolean(),
-    emit_trigger: Faker.datatype.boolean(),
+    emit_trigger_success: Faker.datatype.boolean(),
+    emit_trigger_fail: Faker.datatype.boolean(),
     webhooks: [],
   };
   const factory = generateShallowRenderer(PbehaviorGeneralForm, { stubs });
@@ -58,18 +60,32 @@ describe('declare-ticket-rule-general-form', () => {
     expect(wrapper).toEmitInput({ ...form, system_name: newName });
   });
 
-  test('Emit trigger field changed after trigger emit trigger field', () => {
+  test('Emit trigger success field changed after trigger emit trigger success field', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    const newEnabled = !form.emit_trigger;
+    const newEnabled = !form.emit_trigger_success;
 
-    selectEmitTriggerField(wrapper).triggerCustomEvent('input', newEnabled);
+    selectEmitTriggerSuccessField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmitInput({ ...form, emit_trigger: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, emit_trigger_success: newEnabled });
+  });
+
+  test('Emit trigger fail field changed after trigger emit trigger fail field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newEnabled = !form.emit_trigger_fail;
+
+    selectEmitTriggerFailField(wrapper).triggerCustomEvent('input', newEnabled);
+
+    expect(wrapper).toEmitInput({ ...form, emit_trigger_fail: newEnabled });
   });
 
   test('Webhooks field changed after trigger webhooks field', () => {
@@ -96,7 +112,8 @@ describe('declare-ticket-rule-general-form', () => {
           name: '',
           system_name: '',
           enabled: true,
-          emit_trigger: false,
+          emit_trigger_success: false,
+          emit_trigger_fail: false,
           webhooks: [],
         },
       },
@@ -112,7 +129,8 @@ describe('declare-ticket-rule-general-form', () => {
           name: 'name',
           system_name: 'system-name',
           enabled: true,
-          emit_trigger: false,
+          emit_trigger_success: false,
+          emit_trigger_fail: false,
           webhooks: [{
             method: REQUEST_METHODS.post,
             url: 'url',

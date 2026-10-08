@@ -1,7 +1,9 @@
 <template>
   <c-collapse-panel class="c-alternative-bg-panel" expanded>
     <template #header>
-      <span class="font-weight-medium text-uppercase">{{ title }} - {{ meta.total_count ?? '' }}</span>
+      <span class="font-weight-medium text-uppercase">
+        {{ title }} - {{ meta.total_count ?? '' }}
+      </span>
     </template>
     <entities-list-table-with-pagination
       :widget="widget"

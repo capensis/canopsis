@@ -17,7 +17,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -67,7 +67,7 @@ export default {
 
     const form = ref(templateTestingDataToForm(config.value.templateTestingData));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(formToTemplateTestingData(form.value));
@@ -85,7 +85,6 @@ export default {
     return {
       form,
 
-      isDisabled,
       submitting,
 
       title,

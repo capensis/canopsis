@@ -1,96 +1,47 @@
 <template>
-  <v-layout column>
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
-    <v-layout>
-      <v-flex
-        class="pr-3"
-        xs6
-      >
-        <c-entity-category-field
-          v-field="form.category"
-          class="mt-1"
-          addable
-          required
-        />
-      </v-flex>
-      <v-flex
-        class="pr-3"
-        xs3
-      >
-        <c-alarm-state-field
-          v-field="form.sli_avail_state"
-          :label="$t('service.availabilityState')"
-          required
-        />
-      </v-flex>
-      <v-flex xs3>
-        <c-impact-level-field
-          v-field="form.impact_level"
-          required
-        />
-      </v-flex>
-    </v-layout>
-    <c-coordinates-field
-      v-field="form.coordinates"
-      row
-    />
-    <text-editor-field
-      v-validate="'required'"
-      v-field="form.output_template"
-      :label="$t('service.outputTemplate')"
-      :error-messages="errors.collect('output_template')"
-      :variables="templateVars.output"
-      name="output_template"
-    />
-    <c-enabled-field v-field="form.enabled" />
-    <entity-state-setting
+  <v-layout class="gap-3" column>
+    <c-enabled-field v-field="form.enabled" with-background />
+    <c-form-general-patterns-tabs
       :form="form"
-      :preparer="prepareStateSettingForm"
-    />
-    <v-tabs
-      slider-color="primary"
-      centered
+      :additional-label="$t('common.entityPatterns')"
+      :patterns-label="$t('entity.manageInfos')"
     >
-      <v-tab :class="{ 'error--text': errors.has('entity_patterns') }">
-        {{ $t('common.entityPatterns') }}
-      </v-tab>
-      <v-tab-item eager>
-        <c-patterns-field
-          v-field="form.patterns"
-          :entity-attributes="entityAttributes"
-          :pending="pending"
-          class="mt-2"
-          with-entity
-          entity-counters-type
+      <template #general="{ setRef }">
+        <service-general-form
+          v-field="form"
+          :ref="setRef"
+          :prepare-state-setting-form="prepareStateSettingForm"
+          :template-vars="templateVars"
         />
-      </v-tab-item>
-      <v-tab class="validation-header">
-        {{ $t('entity.manageInfos') }}
-      </v-tab>
-      <v-tab-item eager>
-        <manage-infos v-field="form.infos" />
-      </v-tab-item>
-    </v-tabs>
+      </template>
+
+      <template #additional="{ setRef }">
+        <service-entity-patterns-form
+          v-field="form.patterns"
+          :ref="setRef"
+        />
+      </template>
+
+      <template #patterns="{ setRef }">
+        <service-manage-infos-form
+          v-field="form.infos"
+          :ref="setRef"
+        />
+      </template>
+    </c-form-general-patterns-tabs>
   </v-layout>
 </template>
 
 <script>
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
-
-import ManageInfos from '@/components/widgets/context/manage-infos.vue';
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
-import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
+import ServiceGeneralForm from './service-general-form.vue';
+import ServiceEntityPatternsForm from './service-entity-patterns-form.vue';
+import ServiceManageInfosForm from './service-manage-infos-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
-    TextEditorField,
-    ManageInfos,
-    EntityStateSetting,
+    ServiceGeneralForm,
+    ServiceEntityPatternsForm,
+    ServiceManageInfosForm,
   },
   model: {
     prop: 'form',
@@ -109,19 +60,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-  },
-  setup() {
-    const { fetchServicePatternFields } = usePatternsFields();
-
-    const {
-      pending,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchServicePatternFields);
-
-    return {
-      pending,
-      entityAttributes,
-    };
   },
 };
 </script>

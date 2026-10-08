@@ -1,7 +1,7 @@
 <template>
   <v-select
     v-field="value"
-    v-validate="'required'"
+    v-validate="required ? 'required' : ''"
     :items="actionTypes"
     :error-messages="errors.collect(name)"
     :label="label || $t('common.type')"
@@ -44,6 +44,10 @@ export default {
     types: {
       type: Array,
       required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

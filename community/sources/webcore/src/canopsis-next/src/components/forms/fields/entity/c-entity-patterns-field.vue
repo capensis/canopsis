@@ -294,6 +294,7 @@ export default {
           is: 'c-entity-type-field',
           props: {
             types: Object.values(ENTITY_TYPES),
+            required: true,
           },
         },
       };

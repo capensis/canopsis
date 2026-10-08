@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -98,11 +97,9 @@ func (s *service) getExdates(ctx context.Context, r TimespansRequest) ([]pbehavi
 	exdates := make([]pbehavior.Exdate, len(r.Exdates))
 	for i, v := range r.Exdates {
 		exdates[i] = pbehavior.Exdate{
-			Exdate: types.Exdate{
-				Begin: v.Begin,
-				End:   v.End,
-			},
-			Type: v.Type,
+			Begin: v.Begin,
+			End:   v.End,
+			Type:  v.Type,
 		}
 	}
 
@@ -114,11 +111,9 @@ func (s *service) getExdates(ctx context.Context, r TimespansRequest) ([]pbehavi
 	for _, ex := range exceptions {
 		for _, v := range ex.Exdates {
 			exdates = append(exdates, pbehavior.Exdate{
-				Exdate: types.Exdate{
-					Begin: v.Begin,
-					End:   v.End,
-				},
-				Type: v.Type,
+				Begin: v.Begin,
+				End:   v.End,
+				Type:  v.Type,
 			})
 		}
 	}

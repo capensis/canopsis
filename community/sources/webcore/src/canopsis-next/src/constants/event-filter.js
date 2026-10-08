@@ -17,13 +17,31 @@ export const EVENT_FILTER_ENRICHMENT_AFTER_TYPES = {
 export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   setField: 'set_field',
   setFieldFromTemplate: 'set_field_from_template',
-  setEntityInfoFromTemplate: 'set_entity_info_from_template',
   copy: 'copy',
-  setEntityInfo: 'set_entity_info',
-  copyToEntityInfo: 'copy_to_entity_info',
   setTags: 'set_tags',
   setTagsFromTemplate: 'set_tags_from_template',
+  copyToEntityInfo: 'copy_to_entity_info',
+  setEntityInfo: 'set_entity_info',
+  setEntityInfoFromTemplate: 'set_entity_info_from_template',
   setEntityInfoFromDictionary: 'set_entity_info_from_dictionary',
+};
+
+export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_GROUPS = {
+  setEventField: [
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
+  ],
+  setTags: [
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags,
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
+  ],
+  setEntityInfo: [
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo,
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary,
+  ],
 };
 
 export const EVENT_FILTER_PATTERN_FIELDS = {

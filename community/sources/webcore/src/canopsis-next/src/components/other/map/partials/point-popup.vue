@@ -37,7 +37,9 @@
         <span v-if="point.entity">
           {{ $tc('common.entity') }}: {{ point.entity.name }}
         </span>
-        <span v-if="point.map">{{ $tc('common.map') }}: {{ point.map.name }}</span>
+        <span v-if="point.map">
+          {{ $tc('common.map') }}: {{ point.map.name }}
+        </span>
       </v-layout>
     </v-card-text>
     <v-layout
@@ -61,7 +63,9 @@
         <v-icon left>
           link
         </v-icon>
-        <span class="text-none text-truncate">{{ point.map.name }}</span>
+        <span class="text-none text-truncate">
+          {{ point.map.name }}
+        </span>
       </v-btn>
     </v-layout>
   </v-card>

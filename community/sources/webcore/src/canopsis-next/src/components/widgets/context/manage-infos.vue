@@ -1,11 +1,9 @@
 <template>
   <div>
     <v-layout justify-end>
-      <c-action-btn
-        :tooltip="$t('entity.addInformation')"
-        icon="add"
-        @click="showAddInfoModal"
-      />
+      <v-btn color="primary" outlined @click="showAddInfoModal">
+        {{ $t('entity.addInfos') }}
+      </v-btn>
     </v-layout>
     <v-data-table
       :items="infos"

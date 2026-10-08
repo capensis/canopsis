@@ -22,7 +22,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
@@ -73,7 +73,7 @@ export default {
       config.value.units?.map(unit => ({ ...unit, text: tc(unit.text, form.value.value) }))
     ));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(form.value);
@@ -88,7 +88,6 @@ export default {
       title,
       label,
       units,
-      isDisabled,
       submitting,
 
       close,
