@@ -11,8 +11,9 @@ import Handlebars from 'handlebars';
 import { DATETIME_FORMATS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
+import { convertDateToStringWithFormatForToday, convertDateToString, getLocalTimezone } from '@/helpers/date/date';
+import { formatNow } from '@/helpers/date/date-intervals';
 import { convertDurationToString } from '@/helpers/date/duration';
-import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -455,4 +456,49 @@ export function mapHelper(string, options) {
   return new Handlebars.SafeString(
     `<v-row class="gap-2" wrap>${chips}</v-row>`,
   );
+}
+
+/**
+ * Return the current date and time.
+ *
+ * Examples:
+ * {{now}}
+ * {{now format='long' timezone='Europe/Paris'}}
+ * {{now format='time' realtime=true offset='+15m'}}
+ *
+ * @param {Object} options
+ * @returns {string|Handlebars.SafeString}
+ */
+export function nowHelper(options = {}) {
+  const { format, timezone, realtime, offset, adjustment, delta } = options.hash ?? {};
+  const helperOffset = offset ?? adjustment ?? delta;
+
+  const normalizedOptions = {
+    format,
+    timezone: timezone || getLocalTimezone(),
+    realtime: realtime === true || realtime === 'true',
+    offset: helperOffset,
+  };
+
+  if (normalizedOptions.realtime) {
+    const attributesToPrepare = {
+      format: normalizedOptions.format || DATETIME_FORMATS.long,
+    };
+
+    if (normalizedOptions.offset) {
+      attributesToPrepare.offset = normalizedOptions.offset;
+    }
+
+    if (normalizedOptions.format) {
+      attributesToPrepare.format = normalizedOptions.format;
+    }
+
+    if (normalizedOptions.timezone) {
+      attributesToPrepare.timezone = normalizedOptions.timezone;
+    }
+
+    return new Handlebars.SafeString(`<c-now ${prepareAttributes(attributesToPrepare)}></c-now>`);
+  }
+
+  return formatNow(normalizedOptions);
 }
