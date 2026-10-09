@@ -44,6 +44,7 @@ export { useLazySearchEmptyDefaultValue } from './lazy-search-empty-default-valu
 export {
   applyServerFormErrors,
   getServerFieldErrors,
+  getSubmitErrorPopupText,
   toLiteralVeeFieldPath,
 } from './server-errors';
 
@@ -59,11 +60,13 @@ const fallbackFormContexts = new WeakMap();
  * @param {Object} [options={}] Vee-validate form options.
  * @param {Object} [options.initialValues={}] Initial form values.
  * @param {Function} [options.errorsToValidation=v => v] Maps a server error to field errors.
+ * @param {Function} [options.onValidationError] Called for client and mapped server errors.
  * @returns {Object} Form context.
  */
 export const useForm = ({
   initialValues = {},
   errorsToValidation = v => v,
+  onValidationError,
   ...veeOptions
 } = {}) => {
   const values = ref(initialValues);
@@ -407,10 +410,12 @@ export const useForm = ({
 
           return data;
         } catch (err) {
-          const wasSet = setFormErrors(errorsToValidation(err));
+          const validationErrors = errorsToValidation(err);
+          const wasSet = setFormErrors(validationErrors);
 
           if (wasSet) {
             scrollToFirstError();
+            onValidationError?.(validationErrors);
 
             return;
           }
@@ -424,6 +429,7 @@ export const useForm = ({
       },
       (...args) => {
         scrollToFirstError();
+        onValidationError?.(args[0]?.errors ?? args[0]);
         invalidCallback?.(...args);
       },
     );

@@ -456,6 +456,46 @@ describe('alarms-list', () => {
     });
   });
 
+  it('Correlation is disabled when it is absent from the query', async () => {
+    const queryWithoutCorrelationModule = {
+      ...queryModule,
+      getters: {
+        ...queryModule.getters,
+        getQueryById: () => () => omit(defaultQuery, ['correlation']),
+      },
+    };
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryWithoutCorrelationModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        serviceModule,
+        widgetModule,
+        activeViewModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USER_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    expect(selectVSwitch(wrapper).attributes('model-value')).toBe('false');
+  });
+
   it('Only bookmark updated after trigger filter by bookmark field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([

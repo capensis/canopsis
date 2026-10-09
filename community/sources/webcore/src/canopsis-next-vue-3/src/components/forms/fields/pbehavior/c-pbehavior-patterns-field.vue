@@ -35,10 +35,9 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 
 import {
-  MAX_LIMIT,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
   PBEHAVIOR_PATTERN_FIELDS,
@@ -48,7 +47,6 @@ import {
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 
 import { useI18n } from '@/hooks/i18n';
-import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -99,30 +97,14 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const {
-      fetchPbehaviorsListWithoutStore,
-      fetchPbehaviorReasonsListWithoutStore,
-      fetchPbehaviorTypesListWithoutStore,
-    } = usePbehavior();
-
-    const pbehaviors = ref([]);
-    const pbehaviorsPending = ref(false);
-
-    const pbehaviorReasons = ref([]);
-    const pbehaviorReasonsPending = ref(false);
-
-    const pbehaviorTypes = ref([]);
-    const pbehaviorTypesPending = ref(false);
 
     const nameOptions = computed(() => ({
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
-        is: 'c-select',
+        is: 'c-pbehavior-field',
         props: {
-          items: pbehaviors.value,
-          loading: pbehaviorsPending.value,
-          itemValue: '_id',
           itemTitle: 'name',
+          itemValue: '_id',
           ellipsis: true,
         },
       },
@@ -131,12 +113,8 @@ export default {
     const reasonOptions = computed(() => ({
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
-        is: 'c-select',
+        is: 'c-pbehavior-reason-field',
         props: {
-          items: pbehaviorReasons.value,
-          loading: pbehaviorReasonsPending.value,
-          itemValue: '_id',
-          itemTitle: 'name',
           ellipsis: true,
         },
       },
@@ -145,12 +123,8 @@ export default {
     const typeOptions = computed(() => ({
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
-        is: 'c-select',
+        is: 'c-pbehavior-type-field',
         props: {
-          items: pbehaviorTypes.value,
-          loading: pbehaviorTypesPending.value,
-          itemValue: '_id',
-          itemTitle: 'name',
           ellipsis: true,
         },
       },
@@ -206,45 +180,6 @@ export default {
     const showPatternEntitiesModal = () => {
       emit('show:entities');
     };
-
-    const fetchPbehaviors = async () => {
-      pbehaviorsPending.value = true;
-
-      const { data: items } = await fetchPbehaviorsListWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
-
-      pbehaviors.value = items;
-      pbehaviorsPending.value = false;
-    };
-
-    const fetchPbehaviorReasons = async () => {
-      pbehaviorReasonsPending.value = true;
-
-      const { data: reasons } = await fetchPbehaviorReasonsListWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
-
-      pbehaviorReasons.value = reasons;
-      pbehaviorReasonsPending.value = false;
-    };
-
-    const fetchPbehaviorTypes = async () => {
-      pbehaviorTypesPending.value = true;
-
-      const { data: types } = await fetchPbehaviorTypesListWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
-
-      pbehaviorTypes.value = types;
-      pbehaviorTypesPending.value = false;
-    };
-
-    onMounted(() => {
-      fetchPbehaviors();
-      fetchPbehaviorReasons();
-      fetchPbehaviorTypes();
-    });
 
     return {
       t,

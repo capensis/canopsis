@@ -143,7 +143,7 @@ describe('create-service', () => {
     expect($modals.hide).toHaveBeenCalledWith(modalId(wrapper));
   });
 
-  test('Errors added after trigger submit button with action errors', async () => {
+  test('Errors added and popup shown after trigger submit button with action errors', async () => {
     const formErrors = {
       name: 'Name error',
       category: 'Category error',
@@ -165,6 +165,9 @@ describe('create-service', () => {
     await wrapper.vm.submit();
 
     expect(action).toHaveBeenCalledWith(defaultService);
+    expect($popups.error).toHaveBeenCalledWith({
+      text: [...Object.values(formErrors), 'Error'].join('\n'),
+    });
     expect($modals.hide).not.toHaveBeenCalled();
   });
 
