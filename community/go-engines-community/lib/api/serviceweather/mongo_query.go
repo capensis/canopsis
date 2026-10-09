@@ -79,7 +79,7 @@ func (q *MongoQueryBuilder) clear() {
 
 	q.sort = bson.M{}
 	q.computedFields = bson.M{}
-	q.excludedFields = []string{"services"}
+	q.excludedFields = []string{"services", "pause.path", "latest_pause"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
@@ -562,10 +562,7 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 				"branches": append(
 					[]bson.M{
 						{
-							"case": bson.M{"$ne": bson.A{
-								bson.M{"$ifNull": bson.A{"$pause", nil}},
-								nil,
-							}},
+							"case": getIsPausedCond(),
 							"then": "pause",
 						},
 						{
@@ -590,10 +587,7 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 			"is_grey": bson.M{"$switch": bson.M{
 				"branches": []bson.M{
 					{
-						"case": bson.M{"$ne": bson.A{
-							bson.M{"$ifNull": bson.A{"$pause", nil}},
-							nil,
-						}},
+						"case": getIsPausedCond(),
 						"then": true,
 					},
 					{
@@ -711,10 +705,7 @@ func getListDependenciesComputedFields() bson.M {
 		},
 	}
 
-	isPaused := bson.M{"$ne": bson.A{
-		bson.M{"$ifNull": bson.A{"$pause", nil}},
-		nil,
-	}}
+	isPaused := getIsPausedCond()
 
 	return bson.M{
 		"is_grey": bson.M{"$or": []bson.M{
@@ -744,4 +735,11 @@ func getListDependenciesComputedFields() bson.M {
 			"default": defaultVal,
 		}},
 	}
+}
+
+func getIsPausedCond() bson.M {
+	return bson.M{"$ne": bson.A{
+		bson.M{"$ifNull": bson.A{"$pause", nil}},
+		nil,
+	}}
 }
