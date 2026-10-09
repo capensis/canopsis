@@ -32,6 +32,13 @@
         low_priority
       </v-icon>
     </template>
+    <template #actions="{ item }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
+        @click.stop="$emit('remove', item)"
+      />
+    </template>
   </c-advanced-data-table>
 </template>
 
@@ -58,7 +65,12 @@ export default {
       type: String,
       required: false,
     },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
   },
+  emits: ['remove'],
   setup(props) {
     const { t } = useI18n();
 
@@ -72,6 +84,12 @@ export default {
         props.parentAlarmId && { text: t('alarm.metaAlarm'), value: 'metaalarm' },
         { text: t('common.author'), value: 'a' },
         { text: t('common.comment'), value: 'ticket_comment' },
+        props.removable && {
+          text: t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+          width: 80,
+        },
       ].filter(Boolean),
     );
 

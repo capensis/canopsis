@@ -5,6 +5,7 @@
       :items="associatedTickets"
       :label="t('modals.removeAssociatedTicketEvent.associatedTicketLabel')"
       :hint="t('modals.removeAssociatedTicketEvent.associatedTicketHint')"
+      :disabled="ticketDisabled"
       item-text="text"
       item-value="value"
       name="ticket"
@@ -42,6 +43,10 @@ export default {
     items: {
       type: Array,
       default: () => [],
+    },
+    ticketDisabled: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -90,7 +90,7 @@ describe('alarm-column-cell', () => {
 
     const ellipsis = selectEllipsis(wrapper);
 
-    expect(ellipsis.attributes('text')).toBe('10/01/2022 4:49:13');
+    expect(ellipsis.attributes('text')).toBe('10/01/2022 04:49:13');
   });
 
   it.each([

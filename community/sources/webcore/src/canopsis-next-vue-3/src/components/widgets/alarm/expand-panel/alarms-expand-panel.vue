@@ -127,6 +127,8 @@
         <declared-tickets-list
           :tickets="alarm.v.tickets"
           :parent-alarm-id="parentAlarmId"
+          :removable="hasRemoveAssociatedTicketAccess"
+          @remove="showRemoveAssociatedTicketModal"
         />
       </c-window-expand-item>
 
@@ -261,6 +263,7 @@ import {
   ENTITY_TYPES,
   GRID_SIZES,
   JUNIT_ALARM_CONNECTOR,
+  MODALS,
   USER_PERMISSIONS,
 } from '@/constants';
 
@@ -333,6 +336,10 @@ export default {
     selectedTags: {
       type: Array,
       default: () => [],
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
 
@@ -520,6 +527,12 @@ export default {
       return this.checkDeleteAccess(USER_PERMISSIONS.technical.exploitation.pbehavior);
     },
 
+    hasRemoveAssociatedTicketAccess() {
+      return this.checkAccess(
+        USER_PERMISSIONS.business.alarmsList.actions.removeAssociatedTicket,
+      );
+    },
+
     moreInfosTemplateId() {
       return getAlarmWidgetMoreInfoTemplateId(this.widget._id);
     },
@@ -586,7 +599,29 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAlarmStore, ['fetchAlarmDetails', 'removeDetailsQuery']),
+    ...mapActions(useAlarmStore, [
+      'bulkCreateAlarmTicketremoveEvent',
+      'fetchAlarmDetails',
+      'removeDetailsQuery',
+    ]),
+
+    showRemoveAssociatedTicketModal(ticket) {
+      this.$modals.show({
+        name: MODALS.removeAssociatedTicketEvent,
+        config: {
+          items: [this.alarm],
+          ticket: ticket.ticket,
+          ticketDisabled: true,
+          action: async (event) => {
+            await this.bulkCreateAlarmTicketremoveEvent({
+              data: [{ ...event, _id: this.alarm._id }],
+            });
+
+            await Promise.all([this.refreshAlarmsList(), this.fetchList()]);
+          },
+        },
+      });
+    },
 
     updateChildrenQuery(children) {
       this.query = {

@@ -2,7 +2,13 @@ import { fakeAlarmDetails } from '@unit/data/alarm';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
-import { CANOPSIS_EDITION, ENTITY_TYPES, GRID_SIZES, USER_PERMISSIONS } from '@/constants';
+import {
+  CANOPSIS_EDITION,
+  ENTITY_TYPES,
+  GRID_SIZES,
+  MODALS,
+  USER_PERMISSIONS,
+} from '@/constants';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -137,5 +143,49 @@ describe('alarms-expand-panel', () => {
     });
 
     expect(wrapper.vm.moreInfosTemplateId).toBe('widget-id-moreInfoTemplate');
+  });
+
+  it('opens the remove-ticket modal for the selected declared ticket', async () => {
+    const ticket = { ticket: 'TICKET-123', ticket_system_name: 'Jira' };
+    const alarm = {
+      _id: 'alarm-id',
+      entity: { type: ENTITY_TYPES.resource, impacts_count: 0 },
+      v: { tickets: [ticket] },
+    };
+    const bulkCreateAlarmTicketremoveEvent = vi.fn();
+    const refreshAlarmsList = vi.fn();
+    const fetchList = vi.fn();
+    const show = vi.fn();
+
+    AlarmsExpandPanel.methods.showRemoveAssociatedTicketModal.call({
+      $modals: { show },
+      alarm,
+      bulkCreateAlarmTicketremoveEvent,
+      refreshAlarmsList,
+      fetchList,
+    }, ticket);
+
+    expect(show).toHaveBeenCalledWith({
+      name: MODALS.removeAssociatedTicketEvent,
+      config: {
+        items: [alarm],
+        ticket: ticket.ticket,
+        ticketDisabled: true,
+        action: expect.any(Function),
+      },
+    });
+
+    const [{ config }] = show.mock.calls[0];
+    await config.action({ ticket: ticket.ticket, comment: 'Created by mistake' });
+
+    expect(bulkCreateAlarmTicketremoveEvent).toHaveBeenCalledWith({
+      data: [{
+        _id: alarm._id,
+        ticket: ticket.ticket,
+        comment: 'Created by mistake',
+      }],
+    });
+    expect(refreshAlarmsList).toHaveBeenCalledOnce();
+    expect(fetchList).toHaveBeenCalledOnce();
   });
 });

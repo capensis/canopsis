@@ -17,6 +17,7 @@
             <remove-associated-ticket-event-form
               :form="values"
               :items="config.items"
+              :ticket-disabled="config.ticketDisabled"
               @update:form="updateForm"
             />
           </c-collapse-panel>
@@ -75,7 +76,7 @@ export default {
 
     const form = useForm({
       initialValues: {
-        ticket: null,
+        ticket: config.value.ticket ?? null,
         comment: '',
       },
     });
