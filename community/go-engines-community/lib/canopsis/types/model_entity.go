@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"slices"
 	"time"
 
@@ -107,8 +108,12 @@ type Entity struct {
 	Pause *Pause `bson:"pause,omitempty" json:"pause,omitempty"`
 	// LatestPause is the newest pause received, active or ended (End is set).
 	// It is used to order pause/resume events and reject late ones, not to check if the entity is paused.
-	LatestPause *LatestPause `bson:"latest_pause,omitempty" json:"-"`
+	LatestPause *LatestPause `bson:"latest_pause,omitempty" json:"latest_pause,omitempty"`
 }
+
+// MaxPausePathLength is the maximum number of the entities which a pause can be propagated through.
+// A real hierarchy never reaches it, so the pause is not propagated further to stop a propagation loop.
+const MaxPausePathLength = 100
 
 // LatestPause is a pause with its end, Source is always set (entity ID for its own pause).
 type LatestPause struct {
@@ -146,17 +151,21 @@ func (p LatestPause) CanApplyOver(o *LatestPause, entityID string) bool {
 // nil if the entity is not paused or if its pause is applied only to itself.
 // The own pause of the entity becomes a pause with the entity as a source, and the entity is added
 // to the pause path, so the dependencies know that the pause has passed through it.
-func (e Entity) InheritedPause() *LatestPause {
+func (e Entity) InheritedPause() (*LatestPause, error) {
 	if e.Pause == nil || !e.Pause.Inherited {
-		return nil
+		return nil, nil
 	}
 
 	pause := LatestPause{Pause: *e.Pause}
 	if pause.Source != "" && pause.Source != e.ID {
+		if len(pause.Path) >= MaxPausePathLength {
+			return nil, fmt.Errorf("the path of the pause of %s is longer than %d entities", e.ID, MaxPausePathLength)
+		}
+
 		// The pause of another entity passes through this one.
 		pause.Path = append(slices.Clone(pause.Path), e.ID)
 
-		return &pause
+		return &pause, nil
 	}
 
 	// The entity is the source of its own pause, so it's not in the path.
@@ -169,7 +178,7 @@ func (e Entity) InheritedPause() *LatestPause {
 		pause.Message += "\n" + OutputServicePrefix + e.Name
 	}
 
-	return &pause
+	return &pause, nil
 }
 
 type StateInfo struct {

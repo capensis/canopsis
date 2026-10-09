@@ -82,10 +82,10 @@ func (p *pauseProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	if processDepends {
-		err = p.processDepends(ctx, event, result)
+		p.processDepends(ctx, event, result)
 	}
 
-	return result, err
+	return result, nil
 }
 
 func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (Result, countersResult, bool, error) {
@@ -249,9 +249,9 @@ func (p *pauseProcessor) postProcess(
 	}
 }
 
-func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent, result Result) error {
+func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent, result Result) {
 	if !event.Parameters.Inherited {
-		return nil
+		return
 	}
 
 	entity := *event.Entity
@@ -276,7 +276,7 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 		}
 		label = types.OutputServicePrefix
 	default:
-		return nil
+		return
 	}
 
 	output := event.Parameters.Output
@@ -290,12 +290,21 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 		pauseSourceType = entity.Type
 		output += "\n" + label + entity.Name
 	} else {
+		if len(pausePath) >= types.MaxPausePathLength {
+			p.logger.Error().Str("entity", entity.ID).Int("path_length", len(pausePath)).
+				Msg("the pause path is too long, the pause is not propagated to the dependencies")
+
+			return
+		}
+
 		pausePath = append(slices.Clone(pausePath), entity.ID)
 	}
 
 	cursor, err := p.entityCollection.Find(ctx, filter)
 	if err != nil {
-		return err
+		p.logger.Err(err).Str("entity", entity.ID).Msg("cannot find dependencies")
+
+		return
 	}
 
 	defer cursor.Close(ctx)
@@ -323,19 +332,27 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 		dep := types.Entity{}
 		err = cursor.Decode(&dep)
 		if err != nil {
-			return err
+			p.logger.Err(err).Msg("cannot decode dependency")
+
+			continue
 		}
 
 		depEvent.Entity = &dep
 		depRes, countersRes, processDepends, err := p.processEvent(ctx, depEvent)
 		if err != nil {
-			return err
+			p.logger.Err(err).Str("entity", entity.ID).Str("dependency", dep.ID).
+				Msg("cannot process pause for dependency")
+
+			continue
 		}
 
 		if depRes.AlarmChange.Type == types.AlarmChangeTypePause {
 			te, err := p.eventGenerator.Generate(dep)
 			if err != nil {
-				return err
+				p.logger.Err(err).Str("entity", entity.ID).Str("dependency", dep.ID).
+					Msg("cannot generate event for dependency")
+
+				continue
 			}
 
 			te.Timestamp = depEvent.Parameters.Timestamp
@@ -344,25 +361,23 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 			te.AlarmID = depRes.Alarm.ID
 			err = p.sendEvent(ctx, te)
 			if err != nil {
-				return err
+				p.logger.Err(err).Str("entity", entity.ID).Str("dependency", dep.ID).
+					Msg("cannot send trigger event for dependency")
+
+				continue
 			}
 
 			p.postProcess(context.WithoutCancel(ctx), depEvent, depRes, countersRes)
 		}
 
 		if processDepends {
-			err = p.processDepends(ctx, depEvent, depRes)
-			if err != nil {
-				return err
-			}
+			p.processDepends(ctx, depEvent, depRes)
 		}
 	}
 
 	if err = cursor.Err(); err != nil {
-		return err
+		p.logger.Err(err).Str("entity", entity.ID).Msg("cannot fetch dependencies")
 	}
-
-	return err
 }
 
 func (p *pauseProcessor) sendEvent(ctx context.Context, event types.Event) error {
