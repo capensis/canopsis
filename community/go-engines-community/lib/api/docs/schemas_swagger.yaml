@@ -6504,6 +6504,8 @@ definitions:
     properties:
       acked:
         type: integer
+      acked_inactive:
+        type: integer
       acked_under_pbh:
         type: integer
       active:
@@ -6511,6 +6513,10 @@ definitions:
       all:
         type: integer
       depends:
+        type: integer
+      inactive_depends:
+        type: integer
+      paused:
         type: integer
       pbh_types:
         items:
@@ -6600,6 +6606,8 @@ definitions:
         $ref: '#/definitions/link.LinksByCategory'
       name:
         type: string
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
@@ -6706,6 +6714,8 @@ definitions:
         type: string
       output:
         type: string
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:

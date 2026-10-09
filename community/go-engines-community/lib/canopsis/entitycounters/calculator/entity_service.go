@@ -140,7 +140,9 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 			inherited = entitycounters.InheritedWith
 		}
 
-		curActive := depEnt.Entity.PbehaviorInfo.IsActive()
+		curPbhActive := depEnt.Entity.PbehaviorInfo.IsActive()
+		curPause := depEnt.Entity.Pause != nil
+		curActive := curPbhActive && !curPause
 		curPbhTypeID := depEnt.Entity.PbehaviorInfo.TypeID
 
 		curState := types.AlarmStateOK
@@ -151,13 +153,21 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 		isAcked := depEnt.Alarm.ID != "" && depEnt.Alarm.IsAck()
 
 		counters.Depends++
-		counters.IncrementState(curState, inherited)
 		if !curActive {
+			counters.InactiveDepends++
+		}
+
+		counters.IncrementState(curState, inherited)
+		if !curPbhActive {
 			counters.IncrementPbhCounters(curPbhTypeID)
 		}
 
 		if depEnt.Alarm.ID != "" {
-			counters.IncrementAlarmCounters(isAcked, curActive)
+			counters.IncrementAlarmCounters(isAcked, curActive, curPbhActive)
+		}
+
+		if curPause {
+			counters.Paused++
 		}
 	}
 
@@ -269,6 +279,10 @@ func (s *entityServiceCountersCalculator) CalculateCounters(
 	case types.AlarmChangeTypeEnabled:
 		// on toggle event when entity becomes enabled, nothing actually happens with an alarm, so it is basically the same as noChange strategy.
 		strategy = entityservice.NoChangeStrategy{}
+	case types.AlarmChangeTypePause:
+		strategy = entityservice.PauseStrategy{}
+	case types.AlarmChangeTypeResume:
+		strategy = entityservice.ResumeStrategy{}
 	default:
 		return false, nil, nil
 	}
@@ -296,8 +310,24 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 
 	var calcData entitycounters.EntityServiceCountersCalcData
 
-	calcData.PrevActive = alarmChange.PreviousPbehaviorCannonicalType == types.PbhCanonicalTypeActive || alarmChange.PreviousPbehaviorCannonicalType == ""
-	calcData.CurActive = entity.PbehaviorInfo.IsActive()
+	calcData.PrevPbhActive = alarmChange.PreviousPbehaviorCannonicalType == types.PbhCanonicalTypeActive ||
+		alarmChange.PreviousPbehaviorCannonicalType == ""
+	calcData.CurPbhActive = entity.PbehaviorInfo.IsActive()
+	calcData.CurPause = entity.Pause != nil
+
+	// The entity becomes paused on a pause event and resumed on a resume event, on any other event
+	// its pause doesn't change, so it was paused before if it's still paused.
+	switch alarmChange.Type {
+	case types.AlarmChangeTypePause:
+		calcData.PrevPause = false
+	case types.AlarmChangeTypeResume:
+		calcData.PrevPause = true
+	default:
+		calcData.PrevPause = calcData.CurPause
+	}
+
+	calcData.CurActive = calcData.CurPbhActive && !calcData.CurPause
+	calcData.PrevActive = calcData.PrevPbhActive && !calcData.PrevPause
 	calcData.CurPbhTypeID = entity.PbehaviorInfo.TypeID
 	calcData.PrevPbhTypeID = alarmChange.PreviousPbehaviorTypeID
 	calcData.EntityEnabled = entity.Enabled
