@@ -43,6 +43,9 @@ const localSystem = readonly({
   get timezone() {
     return parentSystem.timezone;
   },
+  get dateFormat() {
+    return parentSystem.dateFormat;
+  },
   get theme() {
     return theme.value;
   },

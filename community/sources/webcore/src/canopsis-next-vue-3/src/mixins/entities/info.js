@@ -30,6 +30,7 @@ const infoComputed = [
   'samlConfig',
   'oauthConfig',
   'timezone',
+  'dateFormat',
   'fileUploadMaxSize',
   'remediationJobConfigTypes',
   'maintenance',

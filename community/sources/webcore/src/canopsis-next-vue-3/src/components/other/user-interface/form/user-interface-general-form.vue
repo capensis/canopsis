@@ -26,6 +26,27 @@
       />
     </c-form-block-row>
 
+    <c-form-block-row :label="t('userInterface.dateFormat')">
+      <c-select
+        v-model="dateFormatField"
+        :items="dateFormats"
+        :label="t('userInterface.dateFormat')"
+        :disabled="disabled"
+        item-title="text"
+        item-value="value"
+        name="date_format"
+      >
+        <template #append>
+          <c-help-icon
+            :text="t('userInterface.tooltips.dateFormat')"
+            color="grey-darken-1"
+            icon="help"
+            left
+          />
+        </template>
+      </c-select>
+    </c-form-block-row>
+
     <c-form-block-row :label="t('common.timezone')">
       <c-timezone-field v-model="timezoneField" disabled />
     </c-form-block-row>
@@ -70,7 +91,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { MAX_ICON_SIZE_IN_KB } from '@/constants';
+import { MAX_ICON_SIZE_IN_KB, USER_INTERFACE_DATE_FORMATS } from '@/constants';
 
 import { objectToVariables, variableTemplatePreparer } from '@/helpers/variables';
 
@@ -99,6 +120,7 @@ export default {
       appTitleField,
       languageField,
       defaultColorThemeField,
+      dateFormatField,
       timezoneField,
       logoField,
       versionDescriptionField,
@@ -106,12 +128,19 @@ export default {
       appTitleField: 'app_title',
       languageField: 'language',
       defaultColorThemeField: 'default_color_theme',
+      dateFormatField: 'date_format',
       timezoneField: 'timezone',
       logoField: 'logo',
       versionDescriptionField: 'version_description',
     });
 
     const maxFileSize = MAX_ICON_SIZE_IN_KB;
+    const dateFormats = computed(() =>
+      Object.values(USER_INTERFACE_DATE_FORMATS).map(({ text, value }) => ({
+        text: t(text),
+        value,
+      })),
+    );
     const fileSelectorElement = ref(null);
     const variables = computed(() => objectToVariables({ env: templateVars.value }));
     const versionDescriptionVariables = computed(() => [
@@ -126,8 +155,10 @@ export default {
     return {
       t,
       maxFileSize,
+      dateFormats,
       fileSelectorElement,
       variables,
+      dateFormatField,
       versionDescriptionVariables,
       textEditorConfig,
       appTitleField,
