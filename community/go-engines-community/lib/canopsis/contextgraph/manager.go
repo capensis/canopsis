@@ -439,7 +439,11 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		return types.Entity{}, pauseChanges, fmt.Errorf("recompute service %s: can't get queries from patterns", serviceID)
 	}
 
-	pauseChanges.ServicePause = service.InheritedPause()
+	// The recompute is done even if the pause cannot be inherited, only the dependencies of the service are not paused.
+	pauseChanges.ServicePause, err = service.InheritedPause()
+	if err != nil {
+		m.logger.Err(err).Str("service", serviceID).Msg("dependencies of the service are not paused")
+	}
 
 	var entitiesToRemove []types.Entity
 

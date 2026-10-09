@@ -149,7 +149,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		// its alarm is resolved so it's not updated.
 		var resolvedAlarm types.Alarm
 		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
-			&entity, &resolvedAlarm, event.Parameters.Timestamp)
+			&entity, &resolvedAlarm, event.Parameters.Timestamp, p.logger)
 		if err != nil {
 			return err
 		}
