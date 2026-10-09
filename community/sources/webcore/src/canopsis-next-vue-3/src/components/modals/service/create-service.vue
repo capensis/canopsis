@@ -40,9 +40,10 @@ import { ENTITY_TYPES, MODALS } from '@/constants';
 import { formToService, serviceToForm } from '@/helpers/entities/service/form';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
+import { getSubmitErrorPopupText, useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
@@ -64,11 +65,15 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const modals = useModals();
+    const popups = usePopups();
     const config = computed(() => props.modal.config ?? {});
     const item = computed(() => config.value.item);
     const title = computed(() => config.value.title);
     const form = useForm({
       initialValues: serviceToForm(item.value),
+      onValidationError: errors => popups.error({
+        text: getSubmitErrorPopupText(errors, t('errors.default')),
+      }),
     });
     const { values, handleSubmit, isSubmitting: submitting } = form;
 

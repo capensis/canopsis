@@ -54,7 +54,14 @@ class Features {
     this.cache = {};
 
     const featureMap = Object.entries(featureEntries).reduce((acc, [path, module]) => {
-      const [, feature, ...rest] = path.replace('../features/', '').split('/');
+      // Vite glob keys are paths like "../features/<feature>/index.js".
+      // Webpack require.context keys were "./<feature>/index.js", and the first segment is skipped.
+      const contextKey = `./${path.replace(/\\/g, '/').split('/features/').pop()}`;
+      const [, feature, ...rest] = contextKey.split('/');
+
+      if (!feature) {
+        return acc;
+      }
 
       if (!acc[feature] || acc[feature].depth > rest.length) {
         acc[feature] = {

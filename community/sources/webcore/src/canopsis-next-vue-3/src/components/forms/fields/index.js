@@ -69,6 +69,7 @@ export { default as CEventFilterPatternsField } from './event-filter/c-event-fil
 export { default as CFilterField } from './pattern/c-filter-field.vue';
 export { default as CPatternField } from './pattern/c-pattern-field.vue';
 export { default as CPatternsField } from './pattern/c-patterns-field.vue';
+export { default as CPbehaviorField } from './pbehavior/c-pbehavior-field.vue';
 export { default as CPbehaviorPatternsField } from './pbehavior/c-pbehavior-patterns-field.vue';
 export { default as CPbehaviorReasonField } from './pbehavior/c-pbehavior-reason-field.vue';
 export { default as CPbehaviorTypeField } from './pbehavior/c-pbehavior-type-field.vue';

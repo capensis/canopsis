@@ -7,23 +7,20 @@ import { useValidationElementChildrenFields } from './validation-element-childre
 /**
  * Checks whether a registered form field currently shows a visible validation error.
  *
- * Prefers `errorMessages` from the Vue component instance (including `exposed` from `setup`)
- * because that is what the field actually renders. Falls back to the vee-validate `errors`
- * array when the instance does not expose `errorMessages`.
+ * Checks both `errorMessages` from the Vue component instance (including `exposed` from
+ * `setup`) and vee-validate's `errors` array. Some components expose an empty external
+ * `errorMessages` prop while rendering errors registered internally by vee-validate, so
+ * neither source may mask the other.
  *
  * @param {Object} [field={}] - Validator field state with its bound component instance.
  * @param {string[]} [field.errors] - Validation error messages from the form context.
  * @param {Object} [field.instance] - Vue component instance of the field.
  * @returns {boolean} `true` if the field has at least one visible error message.
  */
-const hasVisibleFieldError = ({ errors, instance } = {}) => {
+export const hasVisibleFieldError = ({ errors, instance } = {}) => {
   const errorMessages = unref(instance?.errorMessages ?? instance?.$?.exposed?.errorMessages);
 
-  if (Array.isArray(errorMessages)) {
-    return errorMessages.length > 0;
-  }
-
-  return errors?.length > 0;
+  return (Array.isArray(errorMessages) && errorMessages.length > 0) || errors?.length > 0;
 };
 
 /**

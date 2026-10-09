@@ -124,7 +124,9 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
   let hasAllItemsSelected = true;
 
   for (const { value, children } of treeViews) {
-    if (children) {
+    if (viewsMap[value]) {
+      result.push(value);
+    } else if (children) {
       const childrenViews = viewsFormToViews(viewsMap, children, true);
 
       if (childrenViews === true) {
@@ -133,8 +135,6 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
         result.push(...childrenViews);
         hasAllItemsSelected = false;
       }
-    } else if (viewsMap[value]) {
-      result.push(value);
     } else {
       hasAllItemsSelected = false;
     }

@@ -31,7 +31,7 @@
 
       <div v-if="hasAccessToCorrelation" class="alarms-list-widget__toolbar-cell">
         <c-enabled-field
-          :model-value="query.correlation"
+          :model-value="query.correlation ?? false"
           :label="$t('common.correlation')"
           class="mt-0"
           color="primary"
