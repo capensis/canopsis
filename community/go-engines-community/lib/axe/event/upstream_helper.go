@@ -186,7 +186,7 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 		// The entity has been added to or removed from services, so its pause
 		// and its alarm pause are updated.
 		change, err := updatePauseOnServicesChange(ctx, h.entityCollection, h.alarmCollection,
-			&entity, &alarm, event.Parameters.Timestamp)
+			&entity, &alarm, event.Parameters.Timestamp, h.logger)
 		if err != nil {
 			return err
 		}
