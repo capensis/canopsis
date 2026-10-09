@@ -3,6 +3,8 @@ import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
+import { resolveUserInterfaceDateFormat } from './date-format';
+
 /**
  * @typedef {Date | number | string | moment.Moment} LocalDate
  */
@@ -23,7 +25,9 @@ export const convertDateToMoment = (date, format) => {
   }
 
   if (format && isString(date)) {
-    return moment(date, format);
+    const preparedFormat = DATETIME_FORMATS[format] ?? format;
+
+    return moment(date, resolveUserInterfaceDateFormat(preparedFormat));
   }
 
   return moment(date);
@@ -267,7 +271,9 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
     return defaultValue ?? date;
   }
 
-  return dateObject.format(DATETIME_FORMATS[format] ?? format);
+  const preparedFormat = DATETIME_FORMATS[format] ?? format;
+
+  return dateObject.format(resolveUserInterfaceDateFormat(preparedFormat));
 };
 
 /**
@@ -463,7 +469,10 @@ export const convertDateToStringWithNewTimezone = (
   date,
   format = DATETIME_FORMATS.long,
   timezone = getLocalTimezone(),
-) => (date ? convertDateToMoment(date).tz(timezone).format(format) : '');
+) =>
+  date
+    ? convertDateToMoment(date).tz(timezone).format(resolveUserInterfaceDateFormat(format))
+    : '';
 
 /**
  * Check time unit is valid

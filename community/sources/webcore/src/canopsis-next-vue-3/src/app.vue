@@ -312,10 +312,6 @@ export default {
         this.appInfoLocalPending = true;
         await this.fetchAppInfo();
 
-        this.setSystemData({
-          timezone: this.timezone,
-        });
-
         this.setTitle();
       } catch (err) {
         if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {

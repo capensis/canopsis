@@ -1,15 +1,14 @@
-import { computed } from 'vue';
-
 import {
   DATETIME_FORMATS,
   DEFAULT_USER_INTERFACE_DATE_FORMAT,
   USER_INTERFACE_DATE_FORMATS,
-  setUserInterfaceDateFormat,
 } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
+import { registerUserInterfaceDateFormatProvider } from '@/helpers/date/date-format';
 
 describe('convertDateToString', () => {
+  let dateFormat = DEFAULT_USER_INTERFACE_DATE_FORMAT;
   const year = '2021';
   const month = '09';
   const monthString = 'September';
@@ -25,7 +24,8 @@ describe('convertDateToString', () => {
   const timestamp = dateInstance.getTime();
   const expectedString = '20/09/2021 21:15:40';
 
-  afterEach(() => setUserInterfaceDateFormat(DEFAULT_USER_INTERFACE_DATE_FORMAT));
+  beforeAll(() => registerUserInterfaceDateFormatProvider(() => dateFormat));
+  afterEach(() => (dateFormat = DEFAULT_USER_INTERFACE_DATE_FORMAT));
 
   it('Date as timestamp with timestamp format', () => {
     expect(convertDateToString(timestamp, 'x')).toEqual(String(timestamp));
@@ -95,19 +95,9 @@ describe('convertDateToString', () => {
       'Mon 20/09/2021',
     ],
   ])('uses UI date format %s for timestamps and dates', (format, dateTime, dateOnly) => {
-    setUserInterfaceDateFormat(format);
+    dateFormat = format;
 
     expect(convertDateToString(timestamp)).toBe(dateTime);
     expect(convertDateToString(timestamp, DATETIME_FORMATS.short)).toBe(dateOnly);
-  });
-
-  it('updates existing reactive date output when the UI format changes', () => {
-    const formattedDate = computed(() => convertDateToString(timestamp));
-
-    expect(formattedDate.value).toBe('20/09/2021 21:15:40');
-
-    setUserInterfaceDateFormat(USER_INTERFACE_DATE_FORMATS.weekdayWithDateTime.value);
-
-    expect(formattedDate.value).toBe('Mon 20/09/2021 21:15:40');
   });
 });

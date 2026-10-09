@@ -31,6 +31,7 @@ export const useAppInfoStore = defineStore('appInfo', () => {
   const description = computed(() => appInfo.value.login_page_description);
   const language = computed(() => appInfo.value.language);
   const timezone = computed(() => appInfo.value.timezone);
+  const dateFormat = computed(() => appInfo.value.date_format);
   const fileUploadMaxSize = computed(() => appInfo.value.file_upload_max_size ?? 0);
   const fileImportMaxSize = computed(() => appInfo.value.file_import_max_size ?? 0);
   const remediationJobConfigTypes = computed(
@@ -125,6 +126,7 @@ export const useAppInfoStore = defineStore('appInfo', () => {
     description,
     language,
     timezone,
+    dateFormat,
     fileUploadMaxSize,
     fileImportMaxSize,
     remediationJobConfigTypes,

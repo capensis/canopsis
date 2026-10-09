@@ -19,6 +19,7 @@ import {
   getNowTimestamp,
   subtractUnitFromDate,
 } from './date';
+import { resolveUserInterfaceDateFormat } from './date-format';
 
 /**
  * @typedef {Object} IntervalForm
@@ -90,7 +91,11 @@ export const formatNow = ({
 } = {}) =>
   convertStringToDateInterval(`now${offset}`, DATETIME_INTERVAL_TYPES.start)
     .tz(timezone)
-    .format(DATETIME_FORMATS[format] ?? format ?? DATETIME_FORMATS.long);
+    .format(
+      resolveUserInterfaceDateFormat(
+        DATETIME_FORMATS[format] ?? format ?? DATETIME_FORMATS.long,
+      ),
+    );
 
 /**
  * Parse date in every format to moment object.
@@ -107,7 +112,10 @@ export const convertDateIntervalToMoment = (
   format = DATETIME_FORMATS.datePicker,
   unit,
 ) => {
-  const momentDate = Number.isFinite(date) ? moment.unix(date) : moment(date, format, true);
+  const preparedFormat = DATETIME_FORMATS[format] ?? format;
+  const momentDate = Number.isFinite(date)
+    ? moment.unix(date)
+    : moment(date, resolveUserInterfaceDateFormat(preparedFormat), true);
 
   if (!momentDate.isValid()) {
     return convertStringToDateInterval(date, type);

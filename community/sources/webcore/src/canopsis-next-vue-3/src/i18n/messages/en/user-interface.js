@@ -22,6 +22,12 @@ export default {
   disabledTransitionsTooltip: 'It will help to improve application performance',
   autoSuggestPbehaviorName: 'Automatically suggest a pbehavior name',
   defaultTheme: 'Default theme',
+  dateFormat: 'Datetime format',
+  dateFormats: {
+    dateTime: '31/12/2000 00:00:00',
+    dateTimeWithWeekday: '31/12/2000 (Mon) 00:00:00',
+    weekdayWithDateTime: 'Mon 31/12/2000 00:00:00',
+  },
   versionDescriptionTooltip: 'Tooltip popup on version banner',
   defaultVersionDescription: `<div>
   <div>Edition:<strong> {'{{ edition }}'}</strong></div>
@@ -29,6 +35,7 @@ export default {
   <div>Version updated:<strong> {'{{ timestamp versionUpdated }}'}</strong></div>
 </div>`,
   tooltips: {
+    dateFormat: 'This will be applied to all datetime/timestamp columns and inputs in Canopsis',
     maxMatchedItems:
       'it need to warn user when number of items that match patterns is above this value',
     checkCountRequestTimeout:
