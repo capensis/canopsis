@@ -36,6 +36,11 @@ const TextEditorFieldStub = {
 const stubs = {
   'c-form-block': true,
   'c-form-block-row': true,
+  'c-select': {
+    name: 'CSelect',
+    props: ['items', 'name'],
+    template: '<select class="c-select" />',
+  },
   'c-language-field': true,
   'c-theme-field': true,
   'c-timezone-field': true,
@@ -67,8 +72,33 @@ const expectedVariables = [
 ];
 
 const selectTextEditorFields = wrapper => wrapper.findAllComponents({ name: 'TextEditorField' });
+const selectDateFormatField = wrapper => wrapper.findComponent({ name: 'CSelect' });
 
 describe('user-interface variables', () => {
+  test('shows the three localized date format choices', () => {
+    const factory = generateShallowRenderer(UserInterfaceGeneralForm, { stubs });
+    const wrapper = factory({
+      props: {
+        form: {},
+      },
+    });
+
+    expect(selectDateFormatField(wrapper).props('items')).toEqual([
+      {
+        text: '31/12/2000 00:00:00',
+        value: '02/01/2006 15:04:05',
+      },
+      {
+        text: '31/12/2000 (MO) 00:00:00',
+        value: '02/01/2006 (Mon) 15:04:05',
+      },
+      {
+        text: 'MO 31/12/2000 00:00:00',
+        value: 'Mon 02/01/2006 15:04:05',
+      },
+    ]);
+  });
+
   test('passes environment variables to the app title editor', () => {
     const factory = generateShallowRenderer(UserInterfaceGeneralForm, { stubs });
     const wrapper = factory({

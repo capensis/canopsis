@@ -184,6 +184,7 @@
               :hide-children="hideChildren"
               :search="query.search"
               :selected-tags="selectedTags"
+              :refresh-alarms-list="refreshAlarmsList"
               @select:tag="$emit('select:tag', $event)"
               @remove:tag="$emit('remove:tag', $event)"
             />

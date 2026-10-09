@@ -22,7 +22,7 @@ describe('nowHelper', () => {
   });
 
   test('Applies timezone without realtime', () => {
-    expect(nowHelper({ hash: { timezone: 'America/New_York' } })).toBe('07/10/2026 8:00:00');
+    expect(nowHelper({ hash: { timezone: 'America/New_York' } })).toBe('07/10/2026 08:00:00');
   });
 
   test('Applies offset without realtime', () => {
