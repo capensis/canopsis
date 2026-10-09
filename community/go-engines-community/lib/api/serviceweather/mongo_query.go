@@ -79,7 +79,7 @@ func (q *MongoQueryBuilder) clear() {
 
 	q.sort = bson.M{}
 	q.computedFields = bson.M{}
-	q.excludedFields = []string{"services"}
+	q.excludedFields = []string{"services", "pause.path", "latest_pause"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
@@ -562,6 +562,10 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 				"branches": append(
 					[]bson.M{
 						{
+							"case": getIsPausedCond(),
+							"then": "pause",
+						},
+						{
 							"case": bson.M{"$and": []bson.M{
 								{"$ifNull": bson.A{"$pbehavior_info", false}},
 								{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
@@ -570,8 +574,8 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 						},
 						{
 							"case": bson.M{"$and": []bson.M{
-								{"$gt": bson.A{"$counters.under_pbh", 0}},
-								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
+								{"$gt": bson.A{"$counters.inactive_depends", 0}},
+								{"$eq": bson.A{"$counters.inactive_depends", "$counters.depends"}},
 							}},
 							"then": "",
 						},
@@ -583,6 +587,10 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 			"is_grey": bson.M{"$switch": bson.M{
 				"branches": []bson.M{
 					{
+						"case": getIsPausedCond(),
+						"then": true,
+					},
+					{
 						"case": bson.M{"$and": []bson.M{
 							{"$ifNull": bson.A{"$pbehavior_info", false}},
 							{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
@@ -591,8 +599,8 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 					},
 					{
 						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$counters.under_pbh", 0}},
-							{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
+							{"$gt": bson.A{"$counters.inactive_depends", 0}},
+							{"$eq": bson.A{"$counters.inactive_depends", "$counters.depends"}},
 						}},
 						"then": true,
 					},
@@ -601,6 +609,10 @@ func getPbehaviorAlarmCountersLookup(authorProvider author.Provider) []bson.M {
 			}},
 			"secondary_icon": bson.M{"$switch": bson.M{
 				"branches": []bson.M{
+					{
+						"case": bson.M{"$gt": bson.A{"$counters.paused", 0}},
+						"then": "pause",
+					},
 					{
 						"case": bson.M{"$gt": bson.A{"$counters.under_pbh", 0}},
 						"then": bson.M{"$arrayElemAt": bson.A{
@@ -693,23 +705,41 @@ func getListDependenciesComputedFields() bson.M {
 		},
 	}
 
+	isPaused := getIsPausedCond()
+
 	return bson.M{
-		"is_grey": bson.M{"$and": []bson.M{
-			{"$ifNull": bson.A{"$pbehavior_info", false}},
-			{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+		"is_grey": bson.M{"$or": []bson.M{
+			isPaused,
+			{"$and": []bson.M{
+				{"$ifNull": bson.A{"$pbehavior_info", false}},
+				{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+			}},
 		}},
 		"icon": bson.M{"$switch": bson.M{
 			"branches": append(
-				[]bson.M{{
-					"case": bson.M{"$and": []bson.M{
-						{"$ifNull": bson.A{"$pbehavior_info", false}},
-						{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
-					}},
-					"then": "$pbehavior_info.icon_name",
-				}},
+				[]bson.M{
+					{
+						"case": isPaused,
+						"then": "pause",
+					},
+					{
+						"case": bson.M{"$and": []bson.M{
+							{"$ifNull": bson.A{"$pbehavior_info", false}},
+							{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+						}},
+						"then": "$pbehavior_info.icon_name",
+					},
+				},
 				stateVals...,
 			),
 			"default": defaultVal,
 		}},
 	}
+}
+
+func getIsPausedCond() bson.M {
+	return bson.M{"$ne": bson.A{
+		bson.M{"$ifNull": bson.A{"$pause", nil}},
+		nil,
+	}}
 }

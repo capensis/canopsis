@@ -2,7 +2,6 @@ package calculator_test
 
 import (
 	"context"
-	"maps"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
@@ -13,6 +12,7 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_entitycounters "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entitycounters"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -321,6 +321,53 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeNone(t *testing.T) {
 			countersCallDoNotExpected:         true,
 			cleanAddRemoveFieldsDoNotExpected: true,
 		},
+		// paused
+		{
+			name:  "given new not yet counted paused entity with a ko alarm and alarm change is none, should count it as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:                     true,
+				Name:                        "test-resource-1",
+				Type:                        types.EntityTypeResource,
+				ComponentStateSettings:      true,
+				ComponentStateSettingsToAdd: true,
+				Pause:                       &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: entitycounters.EntityCounters{},
+			expectedDiff: map[string]int{
+				"state.ok": 1,
+			},
+			expectedUpdated: false,
+			expectedState:   0,
+		},
+		{
+			name:  "given a paused entity to be removed from counters with a ko alarm and alarm change is none, should remove it from the ok counter",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                        true,
+				Name:                           "test-resource-1",
+				Type:                           types.EntityTypeResource,
+				ComponentStateSettingsToRemove: true,
+				Pause:                          &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok:    1,
+					Minor: 1,
+				},
+			},
+			expectedDiff: map[string]int{
+				"state.ok": -1,
+			},
+			expectedUpdated: false,
+			expectedState:   0,
+		},
 		// when entity should be removed from counters
 		// active
 		{
@@ -608,6 +655,53 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeState(t *testing.T) {
 
 	dataSets := []componentDataset{
 		// when entity should be added to counters
+		// paused
+		{
+			name:  "given counted paused entity with a state change from ok to ko alarm, shouldn't do any updates as it stays counted as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type:          types.AlarmChangeTypeStateIncrease,
+				PreviousState: types.AlarmStateOK,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given new not yet counted paused entity with a state change from ok to ko alarm, should count it as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:                     true,
+				Name:                        "test-resource-1",
+				Type:                        types.EntityTypeResource,
+				ComponentStateSettings:      true,
+				ComponentStateSettingsToAdd: true,
+				Pause:                       &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type:          types.AlarmChangeTypeStateIncrease,
+				PreviousState: types.AlarmStateOK,
+			},
+			counters: entitycounters.EntityCounters{},
+			expectedDiff: map[string]int{
+				"state.ok": 1,
+			},
+			expectedUpdated: false,
+			expectedState:   0,
+		},
 		// active
 		{
 			name:  "given new not yet counted entity with a state change from ok to ko alarm, should update counters and update component state",
@@ -1197,6 +1291,50 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeCreate(t *testing.T) {
 	componentService, entityHelper, countersHelper, entityCollection, countersCollection := prepareComponentTest(ctrl)
 
 	dataSets := []componentDataset{
+		// paused
+		{
+			name:  "given new not yet counted paused entity with a new alarm in ko state, should count it as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:                     true,
+				Name:                        "test-resource-1",
+				Type:                        types.EntityTypeResource,
+				ComponentStateSettings:      true,
+				ComponentStateSettingsToAdd: true,
+				Pause:                       &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeCreate,
+			},
+			counters: entitycounters.EntityCounters{},
+			expectedDiff: map[string]int{
+				"state.ok": 1,
+			},
+			expectedUpdated: false,
+			expectedState:   0,
+		},
+		{
+			name:  "given counted paused entity with a new alarm in ko state, shouldn't do any updates as it stays counted as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeCreate,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
 		// when entity should be added to counters
 		{
 			name:  "given new not yet counted entity with a new alarm in minor state, should update counters and update component state",
@@ -4265,6 +4403,30 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeResolve(t *testing.T) 
 
 	datasets := []componentDataset{
 		// when entity should be added to counters
+		// paused
+		{
+			name:  "given counted paused entity with a ko alarm when it resolves, shouldn't do any updates as it stays counted as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResolve,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
 		{
 			name:  "given new not yet counted entity with an alarm in ok state when resolves, should update counters and don't update component state",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
@@ -4673,6 +4835,328 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeResolve(t *testing.T) 
 	}
 }
 
+func TestComponentService_ProcessCounters_GivenAlarmChangePause(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	componentService, entityHelper, countersHelper, entityCollection, countersCollection := prepareComponentTest(ctrl)
+
+	datasets := []componentDataset{
+		// when already counted
+		{
+			name:  "given counted entity with a ko alarm and alarm change is pause, should count it as ok and update component state",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Critical: 1,
+				},
+			},
+			expectedDiff: map[string]int{
+				"state.critical": -1,
+				"state.ok":       1,
+			},
+			expectedUpdated:                   true,
+			expectedState:                     types.AlarmStateOK,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity with an ok alarm and alarm change is pause, shouldn't do any updates",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity without an alarm and alarm change is pause, shouldn't do any updates",
+			alarm: nil,
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity with a ko alarm in inactive pbh and alarm change is pause, shouldn't do any updates as it's already counted as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				Pause:                  &types.Pause{Source: "test-component-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePause,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		// when entity should be added to counters
+		{
+			name:  "given new not yet counted paused entity with a ko alarm and alarm change is pause, should count it as ok",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                     true,
+				Name:                        "test-resource-1",
+				Type:                        types.EntityTypeResource,
+				ComponentStateSettings:      true,
+				ComponentStateSettingsToAdd: true,
+				Pause:                       &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: entitycounters.EntityCounters{},
+			expectedDiff: map[string]int{
+				"state.ok": 1,
+			},
+			expectedUpdated: false,
+			expectedState:   0,
+		},
+		// when entity should be removed from counters
+		{
+			name:  "given a paused entity to be removed from counters with a ko alarm and alarm change is pause, should remove it from the ko counter",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                        true,
+				Name:                           "test-resource-1",
+				Type:                           types.EntityTypeResource,
+				ComponentStateSettingsToRemove: true,
+				Pause:                          &types.Pause{Source: "test-component-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok:       1,
+					Critical: 1,
+				},
+			},
+			expectedDiff: map[string]int{
+				"state.critical": -1,
+			},
+			expectedUpdated: true,
+			expectedState:   types.AlarmStateOK,
+		},
+	}
+
+	for _, dSet := range datasets {
+		t.Run(dSet.name, func(t *testing.T) {
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+		})
+	}
+}
+
+func TestComponentService_ProcessCounters_GivenAlarmChangeResume(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	componentService, entityHelper, countersHelper, entityCollection, countersCollection := prepareComponentTest(ctrl)
+
+	datasets := []componentDataset{
+		// when already counted
+		{
+			name:  "given counted paused entity with a ko alarm and alarm change is resume, should count its state again and update component state",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedDiff: map[string]int{
+				"state.ok":       -1,
+				"state.critical": 1,
+			},
+			expectedUpdated:                   true,
+			expectedState:                     types.AlarmStateCritical,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given counted paused entity with an ok alarm and alarm change is resume, shouldn't do any updates",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given counted paused entity without an alarm and alarm change is resume, shouldn't do any updates",
+			alarm: nil,
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		{
+			name:  "given counted paused entity with a ko alarm in inactive pbh and alarm change is resume, shouldn't do any updates as it stays inactive",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                true,
+				Name:                   "test-resource-1",
+				Type:                   types.EntityTypeResource,
+				ComponentStateSettings: true,
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypeResume,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			},
+			expectedUpdated:                   false,
+			expectedState:                     0,
+			countersCallDoNotExpected:         true,
+			cleanAddRemoveFieldsDoNotExpected: true,
+		},
+		// when entity should be added to counters
+		{
+			name:  "given new not yet counted resumed entity with a ko alarm and alarm change is resume, should count its state and update component state",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                     true,
+				Name:                        "test-resource-1",
+				Type:                        types.EntityTypeResource,
+				ComponentStateSettings:      true,
+				ComponentStateSettingsToAdd: true,
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: entitycounters.EntityCounters{},
+			expectedDiff: map[string]int{
+				"state.critical": 1,
+			},
+			expectedUpdated: true,
+			expectedState:   types.AlarmStateCritical,
+		},
+		// when entity should be removed from counters
+		{
+			name:  "given a resumed entity to be removed from counters with a ko alarm and alarm change is resume, should remove it from the ok counter",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:                        true,
+				Name:                           "test-resource-1",
+				Type:                           types.EntityTypeResource,
+				ComponentStateSettingsToRemove: true,
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: entitycounters.EntityCounters{
+				State: entitycounters.StateCounters{
+					Ok:    1,
+					Minor: 1,
+				},
+			},
+			expectedDiff: map[string]int{
+				"state.ok": -1,
+			},
+			expectedUpdated: false,
+			expectedState:   0,
+		},
+	}
+
+	for _, dSet := range datasets {
+		t.Run(dSet.name, func(t *testing.T) {
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+		})
+	}
+}
+
 func prepareComponentTest(ctrl *gomock.Controller) (
 	calculator.ComponentCountersCalculator,
 	*mock_mongo.MockSingleResultHelper,
@@ -4739,8 +5223,8 @@ func runComponentsDataset(
 					t.Fatal("wrong")
 				}
 
-				if !maps.Equal(inc, dSet.expectedDiff) {
-					t.Errorf("expected counters diff = %v, but got %v", dSet.expectedDiff, inc)
+				if diff := pretty.Compare(dSet.expectedDiff, inc); diff != "" {
+					t.Errorf("unexpected counters diff (-want +got):\n%s\n", diff)
 				}
 
 				return nil, nil

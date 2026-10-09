@@ -148,7 +148,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		// The entity has been added to or removed from services, its pause is updated,
 		// its alarm is resolved so it's not updated.
 		var resolvedAlarm types.Alarm
-		_, err = updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
 			&entity, &resolvedAlarm, event.Parameters.Timestamp, p.logger)
 		if err != nil {
 			return err
@@ -187,11 +187,12 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 			ctx,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
+			change,
 		)
 
 		return err

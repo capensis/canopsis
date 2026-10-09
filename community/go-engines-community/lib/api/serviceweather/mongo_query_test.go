@@ -40,7 +40,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
+		"services":     0,
+		"pause.path":   0,
+		"latest_pause": 0,
 	}})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
@@ -99,7 +101,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
+		"services":     0,
+		"pause.path":   0,
+		"latest_pause": 0,
 	}})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
@@ -160,7 +164,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
+		"services":     0,
+		"pause.path":   0,
+		"latest_pause": 0,
 	}})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
@@ -223,7 +229,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
+		"services":     0,
+		"pause.path":   0,
+		"latest_pause": 0,
 	}})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
@@ -278,7 +286,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
+		"services":     0,
+		"pause.path":   0,
+		"latest_pause": 0,
 	}})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "state.val", Value: -1}, {Key: "name", Value: 1}}})
 	expected := []bson.M{
@@ -357,7 +367,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoLastCommentLookup(author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop())))...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
+		"services":     0,
+		"pause.path":   0,
+		"latest_pause": 0,
 	}})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
