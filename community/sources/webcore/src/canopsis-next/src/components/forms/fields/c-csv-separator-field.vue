@@ -1,10 +1,9 @@
 <template>
-  <c-select
-    :model-value="value"
+  <c-select-field
+    v-field="value"
     :label="$t('common.separator')"
     :items="separators"
     :disabled="disabled"
-    @update:model-value="updateModel"
   />
 </template>
 
@@ -24,20 +23,11 @@ export default {
       default: false,
     },
   },
-
-  emits: ['input', 'update:value'],
-
-  setup(props, { emit }) {
+  setup() {
     const separators = computed(() => Object.values(CSV_SEPARATORS));
-
-    const updateModel = (value) => {
-      emit('update:value', value);
-      emit('input', value);
-    };
 
     return {
       separators,
-      updateModel,
     };
   },
 };

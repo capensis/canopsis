@@ -1,5 +1,8 @@
 <template>
-  <c-layout class="py-2" column>
+  <v-layout
+    class="py-2"
+    column
+  >
     <kpi-widget-filters
       :interval="query.interval"
       :min-interval-date="minAvailableDate"
@@ -10,66 +13,68 @@
       @update:sampling="updateQueryField('sampling', $event)"
       @update:interval="updateQueryField('interval', $event)"
     />
-    <c-layout class="pa-3" column>
+    <v-layout
+      class="pa-3"
+      column
+    >
       <chart-loader
         v-if="pending"
         :has-data="hasMetrics"
       />
       <component
         v-if="hasMetrics"
-        :is="component.is"
         v-bind="component"
+        :is="component.is"
         @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
       />
-    </c-layout>
-  </c-layout>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
-import { mapActions } from 'pinia';
 
 import { WIDGET_TYPES } from '@/constants';
 
-import { useMetricsStore } from '@/stores/modules/metrics';
-
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { convertWidgetToQuery } from '@/helpers/entities/widget/query';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { localQueryMixin } from '@/mixins/query/query';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
+import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 
-import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
+import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
-import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
+
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 
 export default {
   inject: ['$system'],
-
   components: {
-    BarChartMetrics,
     ChartLoader,
     KpiWidgetFilters,
+    BarChartMetrics,
     LineChartMetrics,
     NumbersMetrics,
   },
-
   mixins: [
     localQueryMixin,
     queryIntervalFilterMixin,
+    entitiesVectorMetricsMixin,
     widgetChartMetricsMap,
     widgetChartExportMixinCreator({
       createExport: 'createKpiAlarmExport',
       fetchExport: 'fetchMetricExport',
     }),
   ],
-
   props: {
     widget: {
       type: Object,
@@ -84,7 +89,6 @@ export default {
       default: () => [],
     },
   },
-
   data() {
     return {
       metrics: [],
@@ -92,7 +96,6 @@ export default {
       pending: false,
     };
   },
-
   computed: {
     hasMetrics() {
       return !!this.metrics.length;
@@ -114,6 +117,7 @@ export default {
 
         return {
           ...metric,
+
           color: parameters.color,
           label: parameters.label,
         };
@@ -154,12 +158,11 @@ export default {
       };
     },
   },
-
   watch: {
     minAvailableDate() {
       const { from } = this.getIntervalQuery();
 
-      if (this.minAvailableDate && from < this.minAvailableDate) {
+      if (from < this.minAvailableDate) {
         this.query = {
           ...this.query,
           interval: {
@@ -177,9 +180,11 @@ export default {
       },
     },
   },
-
+  created() {
+    this.setWidgetMetricsMap();
+  },
   methods: {
-    ...mapActions(useMetricsStore, {
+    ...mapMetricsActions({
       createKpiAlarmExport: 'createKpiAlarmExport',
       fetchMetricExport: 'fetchMetricExport',
       fetchEntityAlarmsMetricsWithoutStore: 'fetchEntityAlarmsMetricsWithoutStore',
@@ -190,8 +195,7 @@ export default {
       return {
         ...this.getIntervalQuery(),
         ...pick(this.query, ['sampling', 'with_history']),
-        parameters: (this.query.parameters ?? []).filter(({ metric }) => this.availableMetrics.includes(metric),
-        ),
+        parameters: this.query.parameters.filter(({ metric }) => this.availableMetrics.includes(metric)),
         entity: this.entity._id,
       };
     },
@@ -203,6 +207,7 @@ export default {
         const fetchList = this.isVectorChart
           ? this.fetchEntityAlarmsMetricsWithoutStore
           : this.fetchEntityAggregateMetricsWithoutStore;
+
         const { data, meta: { min_date: minDate } = {} } = await fetchList({ params: this.getQuery() });
 
         this.metrics = data;

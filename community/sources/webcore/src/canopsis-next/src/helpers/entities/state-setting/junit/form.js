@@ -1,10 +1,6 @@
 import { isNumber } from 'lodash';
 
-import {
-  ENTITY_TYPES,
-  JUNIT_STATE_SETTING_METHODS,
-  JUNIT_STATE_SETTING_THRESHOLDS_TYPES,
-} from '@/constants';
+import { JUNIT_STATE_SETTING_METHODS, JUNIT_STATE_SETTING_THRESHOLDS_TYPES } from '@/constants';
 
 /**
  * @typedef { 'worst' | 'worst_of_share' } JunitStateSettingMethod
@@ -80,7 +76,7 @@ const junitStateSettingThresholdsToForm = (thresholds = {}) => ({
 export const junitStateSettingToForm = (stateSetting = {}) => ({
   junit_thresholds: junitStateSettingThresholdsToForm(stateSetting.junit_thresholds),
   method: stateSetting.method || JUNIT_STATE_SETTING_METHODS.worstOfShare,
-  type: stateSetting.type || ENTITY_TYPES.component,
+  type: stateSetting.type || '',
 });
 
 /**
@@ -92,6 +88,5 @@ export const junitStateSettingToForm = (stateSetting = {}) => ({
 export const formToJunitStateSetting = form => ({
   ...form,
 
-  junit_thresholds:
-    form.method === JUNIT_STATE_SETTING_METHODS.worstOfShare ? form.junit_thresholds : undefined,
+  junit_thresholds: form.method === JUNIT_STATE_SETTING_METHODS.worstOfShare ? form.junit_thresholds : undefined,
 });

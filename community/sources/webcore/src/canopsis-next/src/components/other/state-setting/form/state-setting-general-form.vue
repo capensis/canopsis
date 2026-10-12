@@ -1,54 +1,58 @@
 <template>
-  <c-layout gap="3" column>
+  <v-layout class="gap-3" column>
     <c-name-field
-      v-model="title"
-      :label="t('common.title')"
+      v-field="form.title"
+      :label="$t('common.title')"
       name="title"
       autofocus
       required
     />
 
     <c-form-block>
-      <c-form-block-row :label="t('common.priority')">
-        <c-priority-field v-model="priority" required />
+      <c-form-block-row :label="$t('common.priority')">
+        <c-priority-field
+          v-field="form.priority"
+          required
+        />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('stateSetting.appliedForEntityType')">
-        <state-setting-type-field v-model="type" />
+      <c-form-block-row :label="$t('stateSetting.appliedForEntityType')">
+        <c-entity-type-field
+          v-field="form.type"
+          :label="$t('stateSetting.appliedForEntityType')"
+          :types="STATE_SETTING_ENTITY_TYPES"
+          required
+        />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('stateSetting.computeMethod')">
-        <state-setting-method-field v-model="method" />
+      <c-form-block-row :label="$t('stateSetting.computeMethod')" indented>
+        <state-setting-method-field v-field="form.method" />
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
+import { STATE_SETTING_ENTITY_TYPES } from '@/constants';
 
 import StateSettingMethodField from './fields/state-setting-method-field.vue';
-import StateSettingTypeField from './fields/state-setting-type-field.vue';
 
 export default {
-  components: { StateSettingMethodField, StateSettingTypeField },
-
+  inject: ['$validator'],
+  components: { StateSettingMethodField },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   setup() {
-    const { t } = useI18n();
-    const { title, priority, type, method } = useFormModels([
-      'title',
-      'priority',
-      'type',
-      'method',
-    ]);
-
     return {
-      t,
-      title,
-      priority,
-      type,
-      method,
+      STATE_SETTING_ENTITY_TYPES,
     };
   },
 };

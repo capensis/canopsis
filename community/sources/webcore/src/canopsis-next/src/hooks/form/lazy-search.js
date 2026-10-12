@@ -11,15 +11,22 @@ import {
   uniq,
   uniqBy,
 } from 'lodash';
-import { computed, ref, unref, watch, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  unref,
+  watch,
+  set,
+  onMounted,
+} from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
 import { deepKeyBy, mapIds } from '@/helpers/array';
 
-import { useModelField } from '@/hooks/form';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useModelField } from '@/hooks/form';
 
 /**
  * Custom hook for lazy searching and managing selected items with pagination and search capabilities.
@@ -50,22 +57,19 @@ import { usePendingWithLocalQuery } from '@/hooks/query/shared';
  * - `changeSelectedItems`: {Function} A function to update the selected items and emit changes.
  * - `updateSearch`: {Function} A function to update the search query and trigger a fetch.
  */
-export const useLazySearch = (
-  {
-    value,
-    idKey,
-    idParamsKey,
-    childrenKey = 'items',
-    fetchHandler,
-    addable,
-    multiple,
-    returnObject,
-    attachValue,
-    initialQuery = { page: 1, limit: PAGINATION_LIMIT, search: '' },
-    delay = 100,
-  },
-  emit,
-) => {
+export const useLazySearch = ({
+  value,
+  idKey,
+  idParamsKey,
+  childrenKey = 'items',
+  fetchHandler,
+  addable,
+  multiple,
+  returnObject,
+  attachValue,
+  initialQuery = { page: 1, limit: PAGINATION_LIMIT, search: '' },
+  delay = 100,
+}, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
   const itemsValues = ref([]);
@@ -77,9 +81,7 @@ export const useLazySearch = (
    * Computed property to get the list of items from the itemsByValue map.
    * @type {ComputedRef<Array>}
    */
-  const items = computed(() =>
-    itemsValues.value.map(itemValue => itemsByValue.value[itemValue]).filter(Boolean),
-  );
+  const items = computed(() => itemsValues.value.map(itemValue => itemsByValue.value[itemValue]).filter(Boolean));
 
   /**
    * Computed property to convert the value into an array format.
@@ -100,98 +102,55 @@ export const useLazySearch = (
   });
 
   /**
-   * Resolve an item identifier from a primitive value or an object.
-   *
-   * @param {*} item
-   * @returns {*}
+   * FETCH VALUE ITEMS
    */
-  const getValueId = (item) => {
-    const unwrappedIdKey = unref(idKey);
-
-    if (isObject(item) && !isArray(item)) {
-      return item[unwrappedIdKey] ?? item;
-    }
-
-    return item;
-  };
-
-  /**
-   * Keep selected items inside `items` so chips can reuse fetched fields (e.g. tag colors).
-   *
-   * @param {Array} itemsToAttach
-   */
-  const attachSelectedItems = (itemsToAttach = []) => {
-    if (!attachValue) {
+  const {
+    pending: valuesPending,
+    handler: initializeSelectedItems,
+  } = usePendingHandler(async () => {
+    if (!arrayValue.value.length && selectedItems.value.length) {
+      selectedItems.value = [];
       return;
     }
 
-    const unwrappedIdKey = unref(idKey);
+    const selectedItemsFromItemsByValue = arrayValue.value.map(item => itemsByValue.value[item]).filter(Boolean);
 
-    itemsToAttach.forEach((item) => {
-      const id = item?.[unwrappedIdKey];
+    if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
+      selectedItems.value = selectedItemsFromItemsByValue;
 
-      if (!id || item.noData) {
-        return;
-      }
+      return;
+    }
 
-      if (!itemsByValue.value[id] || itemsByValue.value[id].noData) {
-        itemsByValue.value[id] = item;
-      }
+    const { data } = await unref(fetchHandler)({
+      params: {
+        limit: arrayValue.value.length,
+        [unref(idParamsKey)]: arrayValue.value,
+      },
     });
+    const unwrappedIdKey = unref(idKey);
+    const unwrappedChildrenKey = unref(childrenKey);
 
-    itemsValues.value = uniq([
-      ...itemsValues.value,
-      ...itemsToAttach.map(item => item?.[unwrappedIdKey]).filter(Boolean),
-    ]);
-  };
+    const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
-  /**
-   * FETCH VALUE ITEMS
-   */
-  const { pending: valuesPending, handler: initializeSelectedItems } = usePendingHandler(
-    async () => {
-      if (!arrayValue.value.length && selectedItems.value.length) {
-        selectedItems.value = [];
-        return;
-      }
+    selectedItems.value = arrayValue.value.map(item => (
+      dataById[item[unwrappedIdKey] ?? item]
+        ?? (isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true }))
+    ));
 
-      const arrayValueIds = arrayValue.value.map(getValueId);
-      const selectedItemsFromItemsByValue = arrayValueIds
-        .map(id => itemsByValue.value[id])
-        .filter(item => item && !item.noData);
+    if (attachValue) {
+      selectedItems.value.forEach((item) => {
+        const id = item[unwrappedIdKey];
 
-      if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
-        selectedItems.value = selectedItemsFromItemsByValue;
-        attachSelectedItems(selectedItems.value);
-
-        return;
-      }
-
-      const { data } = await unref(fetchHandler)({
-        params: {
-          limit: arrayValue.value.length,
-          [unref(idParamsKey)]: arrayValueIds,
-        },
+        if (id && !itemsByValue.value[id]) {
+          set(itemsByValue.value, id, item);
+        }
       });
-      const unwrappedIdKey = unref(idKey);
-      const unwrappedChildrenKey = unref(childrenKey);
-
-      const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
-
-      selectedItems.value = arrayValue.value.map(
-        item =>
-          dataById[getValueId(item)] ??
-          (isObject(item) && !isArray(item) ? item : { [unwrappedIdKey]: item, noData: true }),
-      );
-
-      attachSelectedItems(selectedItems.value);
-    },
-    true,
-  );
+    }
+  }, true);
 
   /**
-   * MAIN FETCH LOGIC
-   */
+     * MAIN FETCH LOGIC
+     */
   const {
     pending,
     query,
@@ -210,10 +169,14 @@ export const useLazySearch = (
       pageCount.value = meta.page_count;
 
       /**
-       * We need to use it for saving order of items
-       */
+      * We need to use it for saving order of items
+      */
       itemsValues.value = uniq([
-        ...(params.page && params.page !== 1 ? itemsValues.value : []),
+        ...(
+          params.page && params.page !== 1
+            ? itemsValues.value
+            : []
+        ),
         ...data.map(item => item[unwrappedIdKey]),
         ...selectedItems.value.map(item => item[unwrappedIdKey]),
       ]);
@@ -221,7 +184,7 @@ export const useLazySearch = (
       itemsByValue.value = {
         ...(params.page && params.page !== 1 ? itemsByValue.value : {}),
         ...keyBy(data, unwrappedIdKey),
-        ...pick(itemsByValue.value, arrayValue.value.map(getValueId)),
+        ...pick(itemsByValue.value, arrayValue.value),
       };
     },
   });
@@ -290,19 +253,23 @@ export const useLazySearch = (
     }
 
     selectedItems.value = uniqBy(
-      (unwrappedAddable
-        ? preparedNewSelectedItems
-        : preparedNewSelectedItems.filter(item => !(isString(item) && !itemsByValue.value[item]))
-      ).map(item =>
-        isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item, noData: true } : item,
-      ),
+      (
+        unwrappedAddable
+          ? preparedNewSelectedItems
+          : preparedNewSelectedItems.filter(item => !(isString(item) && !itemsByValue.value[item]))
+      ).map(item => (
+        isUndefined(item[unwrappedIdKey])
+          ? { [unwrappedIdKey]: item, noData: true }
+          : item)),
       unwrappedIdKey,
     );
 
-    attachSelectedItems(selectedItems.value);
-
     if (unwrappedReturnObject) {
-      updateModel(unwrappedMultiple ? selectedItems.value : selectedItems.value[0]);
+      updateModel(
+        unwrappedMultiple
+          ? selectedItems.value
+          : selectedItems.value[0],
+      );
 
       return;
     }
@@ -323,8 +290,9 @@ export const useLazySearch = (
    *
    * @param {number} index - The index of the item to be removed from the `selectedItems` array.
    */
-  const removeItemFromSelectedItemsByIndex = index =>
-    changeSelectedItems(selectedItems.value.filter((item, itemIndex) => itemIndex !== index));
+  const removeItemFromSelectedItemsByIndex = index => (
+    changeSelectedItems(selectedItems.value.filter((item, itemIndex) => itemIndex !== index))
+  );
 
   watch(value, () => initializeSelectedItems());
   watch(selectedItems, newSelectedItems => emit('update:selected-items', newSelectedItems));

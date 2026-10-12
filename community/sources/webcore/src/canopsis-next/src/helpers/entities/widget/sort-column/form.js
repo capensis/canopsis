@@ -17,21 +17,20 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
  */
 
 /**
- * Convert widget sort column to form.
+ * Convert widget sort column to form
  *
- * @param {WidgetSortColumn} [sortColumn={}]
+ * @param {WidgetSortColumn} [sortColumn = {}]
  * @returns {WidgetSortColumnForm}
  */
-export const widgetSortColumnToForm = (sortColumn = {}) =>
-  addKeyInEntity({
-    sort_by: sortColumn.sort_by ?? '',
-    sort: (sortColumn.sort ?? SORT_ORDERS.asc).toUpperCase(),
-  });
+export const widgetSortColumnToForm = (sortColumn = {}) => addKeyInEntity({
+  sort_by: sortColumn.sort_by ?? '',
+  sort: (sortColumn.sort ?? SORT_ORDERS.asc).toUpperCase(),
+});
 
 /**
- * Convert widget sort columns array to form array.
+ * Convert widget sort columns array to form array
  *
- * @param {WidgetSortColumn[]|WidgetSortColumn} [sortColumns=[]]
+ * @param {WidgetSortColumn[]} [sortColumns = []]
  * @returns {WidgetSortColumnForm[]}
  */
 export const widgetSortColumnsToForm = (sortColumns = []) => {
@@ -47,13 +46,13 @@ export const widgetSortColumnsToForm = (sortColumns = []) => {
 };
 
 /**
- * Convert form array to widget sort columns array.
+ * Convert form array to widget sort columns array
  *
- * @param {WidgetSortColumnForm[]} [sortColumns=[]]
+ * @param {WidgetSortColumnForm[]} [sortColumns = []]
  * @returns {WidgetSortColumn[]}
  */
-export const formToWidgetSortColumns = (sortColumns = []) =>
-  sortColumns.map(sortColumn => ({
-    ...removeKeyFromEntity(sortColumn),
-    sort: sortColumn.sort.toLowerCase(),
-  }));
+export const formToWidgetSortColumns = (sortColumns = []) => sortColumns.map(sortColumn => ({
+  ...removeKeyFromEntity(sortColumn),
+
+  sort: sortColumn.sort.toLowerCase(),
+}));

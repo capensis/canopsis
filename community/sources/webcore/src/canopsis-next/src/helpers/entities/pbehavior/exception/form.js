@@ -1,10 +1,21 @@
-import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import {
-  convertDateToDateObjectByTimezone,
   convertDateToTimestampByTimezone,
   getLocalTimezone,
+  convertDateToDateObjectByTimezone,
   isStartOfDay,
 } from '@/helpers/date/date';
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
+
+/**
+ * @typedef {Object} PbehaviorException
+ * @property {string} _id
+ * @property {number} created
+ * @property {boolean} deletable
+ * @property {string} description
+ * @property {string} name
+ * @property {boolean} hidden
+ * @property {PbehaviorExdate[]} exdates
+ */
 
 /**
  * @typedef {ObjectKey} PbehaviorExceptionForm
@@ -24,21 +35,21 @@ import {
  * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorExceptionForm}
  */
-export const pbehaviorExceptionToForm = (exception = {}, timezone = getLocalTimezone()) => ({
-  name: exception.name ?? '',
-  description: exception.description ?? '',
-  visible: !(exception.hidden ?? false),
-  exdates: exception.exdates
-    ? addKeyInEntities(
-        exception.exdates.map(({ begin, end, type }) => ({
-          begin: convertDateToDateObjectByTimezone(begin, timezone),
-          end: convertDateToDateObjectByTimezone(isStartOfDay(end) ? end - 1 : end, timezone),
-          type: { ...type },
-        })),
-      )
-    : [],
-  _id: exception._id,
-});
+export function pbehaviorExceptionToForm(exception = {}, timezone = getLocalTimezone()) {
+  return {
+    name: exception.name ?? '',
+    description: exception.description ?? '',
+    visible: !(exception.hidden ?? false),
+    exdates: exception.exdates
+      ? addKeyInEntities(exception.exdates.map(({ begin, end, type }) => ({
+        begin: convertDateToDateObjectByTimezone(begin, timezone),
+        end: convertDateToDateObjectByTimezone(isStartOfDay(end) ? end - 1 : end, timezone),
+        type: { ...type },
+      })))
+      : [],
+    _id: exception._id,
+  };
+}
 
 /**
  * Convert pbehavior exception data to date exception form
@@ -46,23 +57,12 @@ export const pbehaviorExceptionToForm = (exception = {}, timezone = getLocalTime
  * @param {Object} [exceptionImport = {}]
  * @return {Object}
  */
-export const pbehaviorExceptionImportToForm = (exceptionImport = {}) => ({
-  name: exceptionImport.name ?? '',
-  type: exceptionImport.type ?? '',
-  file: exceptionImport.file,
-});
-
-/**
- * Convert pbehavior exception import form to request data.
- *
- * @param {Object} [exceptionImportForm = {}]
- * @return {Object}
- */
-export const formToPbehaviorExceptionImport = (exceptionImportForm = {}) => ({
-  name: exceptionImportForm.name,
-  type: exceptionImportForm.type?._id ?? exceptionImportForm.type,
-  file: exceptionImportForm.file,
-});
+export function pbehaviorExceptionImportToForm(exceptionImport = {}) {
+  return {
+    name: exceptionImport.name ?? '',
+    type: exceptionImport.type ?? '',
+  };
+}
 
 /**
  * Convert exception form to pbehavior exception data
@@ -71,7 +71,7 @@ export const formToPbehaviorExceptionImport = (exceptionImportForm = {}) => ({
  * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorException}
  */
-export const formToPbehaviorException = (exceptionForm = {}, timezone = getLocalTimezone()) => {
+export function formToPbehaviorException(exceptionForm = {}, timezone = getLocalTimezone()) {
   const { exdates, visible, ...form } = exceptionForm;
 
   return {
@@ -83,4 +83,4 @@ export const formToPbehaviorException = (exceptionForm = {}, timezone = getLocal
     hidden: !visible,
     ...form,
   };
-};
+}

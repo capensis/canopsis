@@ -75,8 +75,6 @@
       y="26"
       fill="currentColor"
       font-size="14px"
-    >
-      Text
-    </text>
+    >Text</text>
   </svg>
 </template>

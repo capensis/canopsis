@@ -1,15 +1,25 @@
 <template>
-  <c-layout align="center" justify-space-between>
-    <v-chip color="info darken-1" small>
+  <v-layout
+    justify-space-between
+    align-center
+  >
+    <v-chip
+      color="info darken-1"
+      small
+    >
       <strong>{{ $t('pattern.suggestions') }}</strong>
     </v-chip>
-    <v-btn color="error" outlined @click="rejectAll">
+    <v-btn
+      color="error"
+      outlined
+      @click="rejectAll"
+    >
       <v-icon class="mr-2">
         close
       </v-icon>
       {{ $t('pattern.rejectAllSuggestions') }}
     </v-btn>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>

@@ -1,21 +1,21 @@
 <template>
-  <c-tooltip :disabled="isApproved" location="top">
-    <template #activator="{ props: activatorProps }">
-      <span v-bind="activatorProps">
-        <c-icon :color="iconData.color">
+  <v-tooltip
+    :disabled="isApproved"
+    top="top"
+  >
+    <template #activator="{ on }">
+      <span v-on="on">
+        <v-icon :color="iconData.color">
           {{ iconData.name }}
-        </c-icon>
+        </v-icon>
       </span>
     </template>
     {{ iconData.tooltip }}
-  </c-tooltip>
+  </v-tooltip>
 </template>
 
 <script>
-import {
-  isInstructionApproved,
-  isInstructionDismissed,
-} from '@/helpers/entities/remediation/instruction/form';
+import { isInstructionApproved, isInstructionDismissed } from '@/helpers/entities/remediation/instruction/form';
 
 export default {
   props: {
@@ -24,7 +24,6 @@ export default {
       required: true,
     },
   },
-
   computed: {
     isDismissed() {
       return isInstructionDismissed(this.instruction);

@@ -1,4 +1,4 @@
-import { inject, onBeforeUnmount } from 'vue';
+import { inject, set, onBeforeUnmount } from 'vue';
 
 import { PATTERNS_FIELDS } from '@/constants';
 
@@ -35,9 +35,7 @@ const waitCollapsePanelTransitionEnd = (parentElement) => {
 
   return new Promise((resolve) => {
     const onEnd = (event) => {
-      if (event.target !== element) {
-        return;
-      }
+      if (event.target !== element) return;
 
       element.removeEventListener('transitionend', onEnd);
       resolve();
@@ -53,10 +51,6 @@ const waitCollapsePanelTransitionEnd = (parentElement) => {
  * @param {HTMLElement} element - Target node (e.g. a `.c-collapse-panel` root)
  */
 const scrollToElement = async (element) => {
-  if (!element) {
-    return;
-  }
-
   await waitCollapsePanelTransitionEnd(element);
 
   element.scrollIntoView({ behavior: 'smooth' });
@@ -71,7 +65,6 @@ const scrollToElement = async (element) => {
  */
 export const usePatternsFieldExpand = ({ wrapperElement, expanded }) => {
   const aiChat = inject('$aiChat', {});
-  const expandedValue = expanded.value;
 
   /**
    * Expands the pattern sub-panels for the given field keys, then scrolls to the first field's section.
@@ -86,14 +79,12 @@ export const usePatternsFieldExpand = ({ wrapperElement, expanded }) => {
     fields.forEach((field) => {
       const expandedKey = PATTERNS_FIELDS_TO_EXPANDED_KEYS[field];
 
-      if (!expandedValue[expandedKey]) {
-        expandedValue[expandedKey] = true;
+      if (!expanded.value[expandedKey]) {
+        set(expanded.value, expandedKey, true);
       }
     });
 
-    scrollToElement(
-      wrapperElement.value?.querySelector(`.${firstClass}`)?.closest('.c-collapse-panel'),
-    );
+    scrollToElement(wrapperElement.value.querySelector(`.${firstClass}`).closest('.c-collapse-panel'));
   };
 
   aiChat?.registerExpandFunction?.(expandPatternsByFields);

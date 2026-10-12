@@ -22,8 +22,7 @@ import { isNumber, uniq } from 'lodash';
  * @param {GridLayout} [layout = []]
  * @returns {number}
  */
-export const calculateLayoutBottom = (layout = []) =>
-  layout.reduce((acc, item) => Math.max(acc, item.y + item.h), 0);
+export const calculateLayoutBottom = (layout = []) => layout.reduce((acc, item) => Math.max(acc, item.y + item.h), 0);
 
 /**
  * Calculate count of the unique rows with content
@@ -40,14 +39,13 @@ export const calculateLayoutRowsCount = (layout = []) => uniq(layout.map(({ y })
  * @param {GridLayoutItem} second
  * @returns {boolean}
  */
-const collides = (first, second) =>
-  !(
-    first.i === second.i ||
-    first.x + first.w <= second.x ||
-    first.x >= second.x + second.w ||
-    first.y + first.h <= second.y ||
-    first.y >= second.y + second.h
-  );
+const collides = (first, second) => !(
+  first.i === second.i // same element
+  || first.x + first.w <= second.x // first is left of second
+  || first.x >= second.x + second.w // first is right of second
+  || first.y + first.h <= second.y // first is above second
+  || first.y >= second.y + second.h // first is below second
+);
 
 /**
  * Get all collisions for layout
@@ -56,7 +54,7 @@ const collides = (first, second) =>
  * @param {GridLayoutItem} layoutItem
  * @returns {GridLayout}
  */
-const getAllCollisions = (layout, layoutItem) => layout.filter(item => collides(layoutItem, item));
+const getAllCollisions = (layout, layoutItem) => layout.filter(l => collides(layoutItem, l));
 
 /**
  * Get first collision for the item in the layout
@@ -73,8 +71,9 @@ const getFirstCollision = (layout, layoutItem) => layout.find(item => collides(i
  * @param {GridLayout} layout
  * @returns {GridLayout}
  */
-const getSortedLayout = (layout = []) =>
-  [...layout].sort((a, b) => Number(a.y > b.y || (a.y === b.y && a.x > b.x)) || -1);
+const getSortedLayout = (layout = []) => (
+  [...layout].sort((a, b) => Number(a.y > b.y || (a.y === b.y && a.x > b.x)) || -1)
+);
 
 /**
  * Replace the layout item in the layout
@@ -83,8 +82,9 @@ const getSortedLayout = (layout = []) =>
  * @param {GridLayoutItem} layoutItem
  * @returns {GridLayout}
  */
-export const replaceLayoutItemInLayout = (layout = [], layoutItem) =>
-  layout.map(item => (item.i === layoutItem?.i ? layoutItem : item));
+export const replaceLayoutItemInLayout = (layout = [], layoutItem) => (
+  layout.map(item => (item.i === layoutItem?.i ? layoutItem : item))
+);
 
 /**
  * Immutable move item in the layout
@@ -105,6 +105,11 @@ export const moveLayoutItem = (layout, layoutItem, x, y, isUserAction) => {
   };
   const newLayout = replaceLayoutItemInLayout(layout, newLayoutItem);
   const movingUp = y && layoutItem.y > y;
+
+  // If this collides with anything, move it.
+  // When doing this comparison, we have to sort the items we compare with
+  // to ensure, in the case of multiple collisions, that we're getting the
+  // nearest collision.
   const sorted = getSortedLayout(newLayout);
 
   if (movingUp) {
@@ -113,11 +118,13 @@ export const moveLayoutItem = (layout, layoutItem, x, y, isUserAction) => {
 
   const collisions = getAllCollisions(sorted, newLayoutItem);
 
+  // Move each item that collides away from this element.
   return collisions.reduce((acc, collision) => {
     if (collision.moved) {
       return acc;
     }
 
+    // This makes it feel a bit more precise by waiting to swap for just a bit when moving up.
     if (newLayoutItem.y > collision.y && newLayoutItem.y - collision.y > collision.h / 4) {
       return acc;
     }
@@ -154,11 +161,9 @@ const compactLayoutItem = (compareWith, layoutItem) => {
     newLayoutItem.y -= 1;
   }
 
-  for (
-    let collision = getFirstCollision(compareWith, newLayoutItem);
-    collision;
-    collision = getFirstCollision(compareWith, newLayoutItem)
-  ) {
+  let collision;
+
+  while (collision = getFirstCollision(compareWith, newLayoutItem)) {
     newLayoutItem.y = collision.y + collision.h;
   }
 
@@ -178,7 +183,7 @@ export const compactLayout = (layout = []) => {
     return acc;
   }, {});
 
-  const newLayout = Array.from({ length: layout.length });
+  const newLayout = new Array(layout.length);
   const sortedLayout = getSortedLayout(layout);
   const compareWith = [];
 
@@ -205,7 +210,9 @@ export const compactLayout = (layout = []) => {
  * @returns {*}
  */
 export const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
-  const sortedByYLayout = layout.filter(({ y }) => y < itemY).sort((a, b) => b.y - a.y);
+  const sortedByYLayout = layout
+    .filter(({ y }) => y < itemY)
+    .sort((a, b) => b.y - a.y);
 
   let count = 0;
   let x = itemX;
@@ -217,8 +224,10 @@ export const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
       continue;
     }
 
-    const diff = x + w - (item.x + item.w);
-    const isInteraction = diff > 0 ? diff < w : Math.abs(diff) < item.w;
+    const diff = (x + w) - (item.x + item.w);
+    const isInteraction = diff > 0
+      ? diff < w
+      : Math.abs(diff) < item.w;
 
     if (item.y < y && isInteraction) {
       count += 1;
@@ -240,8 +249,11 @@ export const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
  * @param {number} y
  * @returns {{ deltaX: number, deltaY: number }}
  */
-export const getItemDelta = (prevX, prevY, x, y) =>
-  !isNumber(prevX) ? { deltaX: 0, deltaY: 0 } : { deltaX: x - prevX, deltaY: y - prevY };
+export const getItemDelta = (prevX, prevY, x, y) => (
+  !isNumber(prevX)
+    ? { deltaX: 0, deltaY: 0 }
+    : { deltaX: x - prevX, deltaY: y - prevY }
+);
 
 /**
  * Get control position by event and layout HTML element

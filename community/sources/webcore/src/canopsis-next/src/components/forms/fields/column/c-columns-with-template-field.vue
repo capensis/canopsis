@@ -1,16 +1,19 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-widget-template-field
-      :model-value="template"
+      :value="template"
       :templates="templates"
       :pending="templatesPending"
-      @update:model-value="updateTemplate"
+      @input="updateTemplate"
     />
     <span class="text-body-2 my-2">
-      {{ $t('common.column', 2) }}
+      {{ $tc('common.column', 2) }}
     </span>
-    <c-columns-field v-bind="$attrs" :model-value="modelValue" @update:model-value="updateValue" />
-  </c-layout>
+    <c-columns-field
+      v-bind="$attrs"
+      @input="updateValue"
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -18,12 +21,11 @@ import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
 export default {
   inheritAttrs: false,
-
+  model: {
+    prop: 'columns',
+    event: 'input',
+  },
   props: {
-    modelValue: {
-      type: Array,
-      default: () => [],
-    },
     template: {
       type: [String, Symbol],
       required: false,
@@ -37,9 +39,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:modelValue', 'update:template'],
-
   setup(props, { emit }) {
     const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'columns', emit);
 

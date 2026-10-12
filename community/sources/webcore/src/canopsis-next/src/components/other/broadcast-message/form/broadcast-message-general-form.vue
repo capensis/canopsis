@@ -1,78 +1,63 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="t('common.priority')">
-      <c-priority-field v-model="priorityField" required>
-        <template #append>
-          <c-help-icon
-            :text="t('broadcastMessage.priorityHelp')"
-            max-width="250"
-            icon="help"
-            left
-          />
-        </template>
-      </c-priority-field>
-    </c-form-block-row>
-
-    <c-form-block-row :label="t('common.message')">
+    <c-form-block-row :label="$t('common.message')" indented>
       <text-editor-field
-        v-model="messageField"
-        :label="t('common.message')"
+        v-field="form.message"
+        v-validate="'required'"
+        :label="$t('common.message')"
+        :error-messages="errors.collect('message')"
         name="message"
         autofocus
         public
-        required
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('common.period')">
-      <v-row>
-        <v-col cols="6">
+    <c-form-block-row :label="$t('common.period')">
+      <v-layout class="gap-4">
+        <v-flex xs6>
           <date-time-picker-field
-            v-model:value="startField"
-            :label="t('common.start')"
-            :rules="startRules"
-            control-variant="modal"
+            v-validate="startRules"
+            :value="form.start"
+            :label="$t('common.start')"
+            :error-message="errors.collect('start')"
             name="start"
+            @input="updateField('start', $event)"
           >
-            <template #append>
-              <c-icon>calendar_today</c-icon>
+            <template #append-outer>
+              <v-btn icon>
+                <v-icon>
+                  calendar_today
+                </v-icon>
+              </v-btn>
             </template>
           </date-time-picker-field>
-        </v-col>
-        <v-col cols="6">
+        </v-flex>
+        <v-flex xs6>
           <date-time-picker-field
-            v-model:value="endField"
-            :label="t('common.end')"
-            :rules="endRules"
-            control-variant="modal"
+            v-validate="endRules"
+            :value="form.end"
+            :label="$t('common.end')"
+            :error-message="errors.collect('end')"
             name="end"
+            @input="updateField('end', $event)"
           >
-            <template #append>
-              <c-icon>calendar_today</c-icon>
+            <template #append-outer>
+              <v-btn icon>
+                <v-icon>
+                  calendar_today
+                </v-icon>
+              </v-btn>
             </template>
           </date-time-picker-field>
-        </v-col>
-      </v-row>
+        </v-flex>
+      </v-layout>
     </c-form-block-row>
 
-    <c-form-block-row :label="t('broadcastMessage.closable')" align-center>
-      <v-switch v-model="closableField" color="primary" hide-details>
-        <template #label>
-          {{ t('broadcastMessage.closable') }}
-        </template>
-        <template #append>
-          <c-help-icon
-            :text="t('broadcastMessage.closableHelp')"
-            max-width="250"
-            icon="help"
-            left
-          />
-        </template>
-      </v-switch>
-    </c-form-block-row>
-
-    <c-form-block-row :label="t('common.color')" align-center>
-      <c-color-picker-field v-model="colorField" hide-details />
+    <c-form-block-row
+      :label="$t('common.color')"
+      align-center
+    >
+      <c-color-picker-field v-field="form.color" />
     </c-form-block-row>
   </c-form-block>
 </template>
@@ -84,33 +69,26 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
-  components: { DateTimePickerField, TextEditorField },
-
-  setup() {
-    const { t } = useI18n();
-
-    const {
-      priorityField,
-      messageField,
-      startField,
-      endField,
-      closableField,
-      colorField,
-    } = useFormModels({
-      priorityField: 'priority',
-      messageField: 'message',
-      startField: 'start',
-      endField: 'end',
-      closableField: 'closable',
-      colorField: 'color',
-    });
+  inject: ['$validator'],
+  components: { TextEditorField, DateTimePickerField },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
 
     const startRules = computed(() => ({
       required: true,
@@ -119,22 +97,18 @@ export default {
 
     const endRules = computed(() => ({
       required: true,
-      after: [convertDateToString(startField.value, DATETIME_FORMATS.dateTimePicker)],
+      after: [convertDateToString(props.form.start, DATETIME_FORMATS.dateTimePicker)],
       date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
     }));
 
     return {
-      t,
-
-      priorityField,
-      messageField,
-      startField,
-      endField,
-      closableField,
-      colorField,
-
       startRules,
       endRules,
+
+      /**
+       * We need to use updateField function instead of v-field to avoid problem with Date objects
+       */
+      updateField,
     };
   },
 };

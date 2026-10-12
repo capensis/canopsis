@@ -1,4 +1,4 @@
-import { cloneDeep, isBoolean } from 'lodash';
+import { isBoolean, cloneDeep } from 'lodash';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -45,24 +45,3 @@ export const formToPlaylist = (form = {}) => ({
 
   tabs_list: form.tabs_list.map(tab => tab._id),
 });
-
-/**
- * Get view tabs from groups by ids, keeping tabIds order
- *
- * @param {ViewGroupWithViews[]} [groups = []]
- * @param {TabsList} [tabIds = []]
- * @returns {ViewTab[]}
- */
-export const getTabsFromGroupsByIds = (groups = [], tabIds = []) => {
-  const tabsById = groups.reduce((acc, group) => {
-    group.views?.forEach((view) => {
-      view.tabs?.forEach((tab) => {
-        acc[tab._id] = tab;
-      });
-    });
-
-    return acc;
-  }, {});
-
-  return tabIds.map(id => tabsById[id]).filter(Boolean);
-};

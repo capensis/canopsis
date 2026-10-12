@@ -1,100 +1,42 @@
 import { get, isEmpty, isEqual } from 'lodash';
-import { computed, onBeforeUnmount, ref, unref, watch } from 'vue';
+import {
+  computed,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
 
 import { MODALS, TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
+import { uid } from '@/helpers/uid';
+import { formToService } from '@/helpers/entities/service/form';
+import { formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
+import { formToLinkRule } from '@/helpers/entities/link/form';
+import { formToScenario } from '@/helpers/entities/scenario/form';
+import { formToWidget } from '@/helpers/entities/widget/form';
 import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
 import { formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
-import { formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
-import { formToExternalAuthToken } from '@/helpers/entities/external-auth-token/form';
-import { formToLinkRule } from '@/helpers/entities/link/form';
-import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
 import { formToRemediationInstructionRequest } from '@/helpers/entities/remediation/instruction/form';
 import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
-import { formToScenario } from '@/helpers/entities/scenario/form';
-import { formToService } from '@/helpers/entities/service/form';
+import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
+import { formToExternalAuthToken } from '@/helpers/entities/external-auth-token/form';
 import {
   formToTemplateTestingTestValidateForm,
   getChangesForValidateForm,
   formToTemplateTestingTestValidate,
   templateTestingTestValidateToForm,
 } from '@/helpers/entities/template-testing-test/form';
-import { formToWidget } from '@/helpers/entities/widget/form';
-import { uid } from '@/helpers/uid';
 
-import { getServerFieldErrors } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
+import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
-import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
-
-/**
- * Extracts template validation errors belonging to the rule form.
- *
- * @param {*} errors
- * @param {Object} [form={}] Rule form containing stable keys for array items.
- * @returns {Object<string, string|string[]>}
- */
-export const getTemplateRuleValidationErrors = (errors, form = {}) =>
-  Object.entries(getServerFieldErrors(errors)).reduce((result, [key, value]) => {
-    if (!key.startsWith('rule.')) {
-      return result;
-    }
-
-    const field = key
-      .slice('rule.'.length)
-      .split('.')
-      .reduce(
-        ({ path, value: formValue }, segment) => {
-          if (Array.isArray(formValue) && /^\d+$/.test(segment)) {
-            const item = formValue[Number(segment)];
-
-            return {
-              path: [...path, item?.key ?? segment],
-              value: item,
-            };
-          }
-
-          return {
-            path: [...path, segment],
-            value: formValue?.[segment],
-          };
-        },
-        { path: [], value: unref(form) },
-      )
-      .path.join('.');
-
-    return {
-      ...result,
-      [field]: value,
-    };
-  }, {});
-
-/**
- * Maps template validation result errors to registered template field names.
- *
- * `resultKey` is the API response key for fields whose form path differs from
- * the result path. Only configured template fields are returned.
- *
- * @param {Object} [result={}] Template validation result.
- * @param {TemplateTestingTestValidateForm} [fields=[]] Configured template fields.
- * @returns {Object<string, string>}
- */
-export const getTemplateFieldsValidationErrors = (result = {}, fields = []) =>
-  fields.reduce((errors, field) => {
-    const resultKey = field.resultKey ?? field.key;
-    const error = result[resultKey]?.err;
-
-    if (!error) {
-      return errors;
-    }
-
-    return {
-      ...errors,
-      [`templateTesting.${resultKey}`]: `${error.line}|${error.message}`,
-    };
-  }, {});
+import { useValidator } from '@/hooks/validator/validator';
+import { useTemplateTest } from '@/hooks/store/modules/template-test';
+import { useTemplateValidation } from '@/hooks/store/modules/template-validation';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 /**
  * Hook for managing template testing validation form
@@ -103,6 +45,14 @@ export const getTemplateFieldsValidationErrors = (result = {}, fields = []) =>
  * @param {Object} props.generalForm - The general form data
  * @param {string} props.type - The type of template testing
  * @returns {Object} Validation form state and methods
+ * @returns {import('vue').Ref<Array>} returns.validationForm - Reactive validation form array
+ * @returns {import('vue').Ref<Object>} returns.selectedTest - Reactive selected test object
+ * @returns {import('vue').Ref<Object>} returns.lastRunVariables - Reactive last run variables object
+ * @returns {Function} returns.setFormErrors - Function to set form validation errors
+ * @returns {Function} returns.getValidationFormData - Function to get validation form data
+ * @returns {Function} returns.updateSelectedTest - Function to update selected test
+ * @returns {Function} returns.resetLastRunVariables - Function to reset last run variables
+ * @returns {Function} returns.setLastRunVariables - Function to set last run variables
  */
 export const useTemplateTestingValidationForm = (props) => {
   const originalValidationForm = ref([]);
@@ -115,41 +65,33 @@ export const useTemplateTestingValidationForm = (props) => {
 
   const hasSelectedTest = computed(() => !isEmpty(selectedTest.value));
   const isEmptyValidationForm = computed(() => validationForm.value.every(item => !item.value));
-  const isEqualValidationForm = computed(() =>
-    isEqual(originalValidationForm.value, validationForm.value),
-  );
+  const isEqualValidationForm = computed(() => isEqual(originalValidationForm.value, validationForm.value));
 
-  watch(
-    () => props.active,
-    (newActive) => {
-      if (!newActive) {
-        return;
+  const { setFormErrors } = useValidationFormErrors(validationForm);
+
+  watch(() => props.active, (newActive) => {
+    if (!newActive) {
+      return;
+    }
+
+    const newValidationForm = formToTemplateTestingTestValidateForm(props.generalForm, props.type);
+
+    const { added, removed } = getChangesForValidateForm(newValidationForm, validationForm.value);
+
+    validationForm.value = validationForm.value
+      .filter(item => !removed.some(removedItem => removedItem.key === item.key));
+    validationForm.value.push(...added);
+
+    validationForm.value.forEach((_, index) => {
+      if (newValidationForm[index]) {
+        validationForm.value[index] = {
+          ...validationForm.value[index],
+          index: newValidationForm[index].index,
+          params: newValidationForm[index].params,
+        };
       }
-
-      const newValidationForm = formToTemplateTestingTestValidateForm(
-        props.generalForm,
-        props.type,
-      );
-
-      const { added, removed } = getChangesForValidateForm(newValidationForm, validationForm.value);
-
-      validationForm.value = validationForm.value.filter(
-        item => !removed.some(removedItem => removedItem.key === item.key),
-      );
-      validationForm.value.push(...added);
-
-      validationForm.value.forEach((_, index) => {
-        if (newValidationForm[index]) {
-          validationForm.value[index] = {
-            ...validationForm.value[index],
-            index: newValidationForm[index].index,
-            params: newValidationForm[index].params,
-          };
-        }
-      });
-    },
-    { immediate: true },
-  );
+    });
+  }, { immediate: true });
 
   /**
    * Gets the validation form data in the proper format for API requests
@@ -163,25 +105,24 @@ export const useTemplateTestingValidationForm = (props) => {
    *
    * @param {Object} newSelectedTest - The new selected test object to set
    */
-  const setSelectedTest = newSelectedTest => (selectedTest.value = newSelectedTest);
+  const setSelectedTest = newSelectedTest => selectedTest.value = newSelectedTest;
 
   /**
    * Resets the selected test to a shallow copy of the current selected test
+   * This preserves the current test data while creating a new object reference
    */
-  const resetSelectedTest = () => setSelectedTest({ ...selectedTest.value });
+  const resetSelectedTest = () => setSelectedTest({ ...(selectedTest.value || {}) });
 
   /**
    * Applies a new selected test and updates the validation form with the test data
    *
    * @param {Object} newSelectedTest - The new selected test object
+   * @param {Object} newSelectedTest.data - The test data to be used for validation form
    */
   const applyNewSelectedTest = (newSelectedTest) => {
     setSelectedTest(newSelectedTest);
 
-    originalValidationForm.value = templateTestingTestValidateToForm(
-      validationForm.value,
-      newSelectedTest.data,
-    );
+    originalValidationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
     validationForm.value = originalValidationForm.value;
   };
 
@@ -189,6 +130,7 @@ export const useTemplateTestingValidationForm = (props) => {
    * Updates the selected test and syncs the validation form with test data
    *
    * @param {Object} newSelectedTest - The new selected test object
+   * @param {Object} newSelectedTest.data - The test data
    */
   const updateSelectedTest = (newSelectedTest) => {
     if (!newSelectedTest) {
@@ -217,11 +159,12 @@ export const useTemplateTestingValidationForm = (props) => {
   };
 
   /**
-   * Resets last run variables with a non-string value so every template is marked as not run.
+   * Resets last run variables by replacing all values with unique symbols
+   * This forces Vue reactivity to detect changes when the same values are set again
    */
   const resetLastRunVariables = () => {
     lastRunVariables.value = Object.fromEntries(
-      Object.keys(lastRunVariables.value).map(key => [key, null]),
+      Object.keys(lastRunVariables.value).map(key => [key, Symbol('lastRunVariables')]),
     );
   };
 
@@ -238,9 +181,12 @@ export const useTemplateTestingValidationForm = (props) => {
     validationForm,
     selectedTest,
     lastRunVariables,
+
     hasSelectedTest,
     isEmptyValidationForm,
     isEqualValidationForm,
+
+    setFormErrors,
     getValidationFormData,
     updateSelectedTest,
     resetLastRunVariables,
@@ -252,20 +198,31 @@ export const useTemplateTestingValidationForm = (props) => {
  * Hook for managing template test save actions
  *
  * @param {Object} props - Component props
+ * @param {string} props.ruleId - The rule ID if editing an existing rule
+ * @param {string} props.type - The type of template testing
  * @returns {Object} Test actions state and methods
+ * @returns {import('vue').Ref<Object|null>} returns.templateTestRequestData - Reactive template test request data
+ * @returns {Function} returns.save - Function to save a test
+ * @returns {Function} returns.saveAsNew - Function to save a test as new
+ * @returns {Function} returns.getTemplateTestRequestData - Function to get template test request data
+ * @returns {Function} returns.createTemplateTestFromRequestData - Function to create template test from request data
+ * @returns {Function} returns.clearTemplateTestRequestData - Function to clear template test request data
  */
-export const useTemplateTestActions = (props, { testFormContext, testDataFormContext }) => {
+export const useTemplateTestActions = (props) => {
   const templateTestRequestData = ref(null);
 
   const { t } = useI18n();
   const popups = usePopups();
   const modals = useModals();
-  const { createTemplateTestingTest, updateTemplateTestingTest } = useTemplateTesting();
+  const validator = useValidator();
+
+  const { createTemplateTest, updateTemplateTest } = useTemplateTest();
 
   /**
    * Saves a template test either by updating existing or preparing for later creation
    *
    * @param {Object} selectedTest - The selected test object
+   * @param {string} selectedTest._id - The test ID
    * @param {Function} getValidationFormData - Function to get validation form data
    * @returns {Promise<void>}
    */
@@ -275,19 +232,19 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
       data: getValidationFormData(),
     };
 
-    const isValid = await Promise.all([
-      testFormContext.validateForSubmit(),
-      testDataFormContext.validateForSubmit(),
-    ]).then(results => results.every(Boolean));
+    const [isNameValid, isDataValid] = await Promise.all([
+      validator.validateAll('test-name'),
+      validator.validateAll('test-data'),
+    ]);
 
-    if (!isValid) {
+    if (!isNameValid || !isDataValid) {
       return;
     }
 
     if (props.ruleId) {
       data.rule = props.ruleId;
 
-      await updateTemplateTestingTest({ data, id: selectedTest._id });
+      await updateTemplateTest({ data, id: selectedTest._id });
 
       popups.success({ text: t('templateTesting.testSaved') });
 
@@ -304,10 +261,10 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
    *
    * @param {Function} getValidationFormData - Function to get validation form data
    * @param {Function} [onTestCreated] - Optional callback when test is created
-  * @returns {Promise<void>}
-  */
+   * @returns {Promise<void>}
+   */
   const saveAsNew = async (getValidationFormData, onTestCreated) => {
-    const isValid = await testDataFormContext.validateForSubmit();
+    const isValid = await validator.validateAll('test-data');
 
     if (!isValid) {
       return;
@@ -334,7 +291,7 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
         if (props.ruleId) {
           data.rule = props.ruleId;
 
-          const newTest = await createTemplateTestingTest({ data });
+          const newTest = await createTemplateTest({ data });
 
           popups.success({ text: t('templateTesting.testSaved') });
 
@@ -370,8 +327,32 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
     });
   };
 
+  /**
+   * Gets the current template test request data
+   *
+   * @returns {Object|null} The template test request data or null
+   */
   const getTemplateTestRequestData = () => templateTestRequestData.value;
 
+  /**
+   * Creates a template test from stored request data and clears it
+   *
+   * @returns {Promise<Object|null>} The created test or null if no request data
+   */
+  const createTemplateTestFromRequestData = async () => {
+    if (!templateTestRequestData.value) {
+      return null;
+    }
+
+    const newTest = await createTemplateTest({ data: templateTestRequestData.value });
+    templateTestRequestData.value = null;
+
+    return newTest;
+  };
+
+  /**
+   * Clears the template test request data
+   */
   const clearTemplateTestRequestData = () => {
     templateTestRequestData.value = null;
   };
@@ -381,6 +362,7 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
     save,
     saveAsNew,
     getTemplateTestRequestData,
+    createTemplateTestFromRequestData,
     clearTemplateTestRequestData,
   };
 };
@@ -389,76 +371,89 @@ export const useTemplateTestActions = (props, { testFormContext, testDataFormCon
  * Hook for managing template test execution
  *
  * @param {Object} props - Component props
+ * @param {string} props.type - The type of template testing
+ * @param {Object} props.generalForm - The general form data
+ * @param {Array} props.variablesFields - Array of variable fields
  * @returns {Object} Test runner state and methods
+ * @returns {import('vue').Ref<Object>} returns.testResult - Reactive test result object
+ * @returns {Function} returns.createRunTestHandler - Function to create a test run handler
  */
-export const useTemplateTestRunner = (props, { mainFormContext, testDataFormContext }) => {
+export const useTemplateTestRunner = (props) => {
   const testResult = ref({});
 
+  const validator = useValidator();
+
   const {
-    validateEntityServicesVariables,
-    validateEventFilterRulesVariables,
-    validateLinkRulesVariables,
-    validateScenariosVariables,
-    validateWidgetsVariables,
-    validateDeclareTicketRulesVariables,
-    validateDynamicInfosVariables,
-    validateInstructionsVariables,
-    validateJobsVariables,
-    validateMetaAlarmRulesVariables,
-    validateWebhookTokenRulesVariables,
-  } = useTemplateTesting();
+    validateEntityServices,
+    validateEventFilters,
+    validateScenarios,
+    validateLinkRules,
+    validateWidgets,
+    validateDeclareTicketRules,
+    validateDynamicInfos,
+    validateInstructions,
+    validateJobs,
+    validateMetaAlarmRules,
+    validateWebhookTokenRules,
+  } = useTemplateValidation();
 
-  const validateHandler = computed(
-    () =>
-      ({
-        [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: validateEventFilterRulesVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.linkRule]: validateLinkRulesVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.scenario]: validateScenariosVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.widget]: validateWidgetsVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: validateDeclareTicketRulesVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: validateDynamicInfosVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.instruction]: validateInstructionsVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.job]: validateJobsVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: validateMetaAlarmRulesVariables,
-        [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: validateWebhookTokenRulesVariables,
-      })[props.type] ?? validateEntityServicesVariables,
-  );
+  const validateHandler = computed(() => ({
+    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: validateEventFilters,
+    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: validateLinkRules,
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: validateScenarios,
+    [TEMPLATE_TESTING_TEST_TYPES.widget]: validateWidgets,
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: validateDeclareTicketRules,
+    [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: validateDynamicInfos,
+    [TEMPLATE_TESTING_TEST_TYPES.instruction]: validateInstructions,
+    [TEMPLATE_TESTING_TEST_TYPES.job]: validateJobs,
+    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: validateMetaAlarmRules,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: validateWebhookTokenRules,
+  })[props.type] ?? validateEntityServices);
 
-  const formToRequest = computed(
-    () =>
-      ({
-        [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: formToEventFilter,
-        [TEMPLATE_TESTING_TEST_TYPES.linkRule]: formToLinkRule,
-        [TEMPLATE_TESTING_TEST_TYPES.scenario]: formToScenario,
-        [TEMPLATE_TESTING_TEST_TYPES.widget]: formToWidget,
-        [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: formToDeclareTicketRule,
-        [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: formToDynamicInfo,
-        [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstructionRequest,
-        [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
-        [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
-        [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: formToExternalAuthToken,
-      })[props.type] ?? formToService,
-  );
+  const formToRequest = computed(() => ({
+    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: formToEventFilter,
+    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: formToLinkRule,
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: formToScenario,
+    [TEMPLATE_TESTING_TEST_TYPES.widget]: formToWidget,
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: formToDeclareTicketRule,
+    [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: formToDynamicInfo,
+    [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstructionRequest,
+    [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
+    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: formToExternalAuthToken,
+  })[props.type] ?? formToService);
 
+  /**
+   * Creates a test run handler with validation and error handling
+   *
+   * @param {Function} getValidationFormData - Function to get validation form data
+   * @param {Function} setFormErrors - Function to set form validation errors
+   * @param {Function} [onValidationStateChange] - Optional callback for validation state changes
+   * @param {Function} [onLastRunVariablesChange] - Optional callback for last run variables changes
+   * @returns {Object} Test run handler object
+   * @returns {import('vue').Ref<boolean>} returns.running - Reactive running state
+   * @returns {Function} returns.runTest - Function to run the test
+   */
   const createRunTestHandler = (
     getValidationFormData,
+    setFormErrors,
     onValidationStateChange,
     onLastRunVariablesChange,
   ) => {
     const { pending: running, handler: runTest } = usePendingHandler(async () => {
-      unref(testDataFormContext)?.resetErrors?.();
+      validator.errors.clear('test-data');
+      validator.errors.clear('test-result');
 
-      const [isMainFormValid, isTestDataFormValid] = await Promise.all([
-        unref(mainFormContext)?.validateForSubmit?.() ?? true,
-        unref(testDataFormContext)?.validateForSubmit?.() ?? true,
+      const [isParentValid, isValid] = await Promise.all([
+        validator.validateAll(),
+        validator.validateAll('test-data'),
       ]);
-      const isValid = isMainFormValid && isTestDataFormValid;
 
       if (onValidationStateChange) {
-        onValidationStateChange(isMainFormValid);
+        onValidationStateChange(isParentValid);
       }
 
-      if (!isValid || !validateHandler.value || !formToRequest.value) {
+      if (!isParentValid || !isValid) {
         return;
       }
 
@@ -470,9 +465,17 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
           },
         });
 
-        unref(testDataFormContext)?.setFormErrors?.(
-          getTemplateFieldsValidationErrors(testResult.value, props.variablesFields),
-        );
+        Object.entries(testResult.value).forEach(([key, { err }]) => {
+          if (!err) {
+            return;
+          }
+
+          validator.errors.add({
+            field: key,
+            scope: 'test-result',
+            msg: `${err.line}|${err.message}`,
+          });
+        });
 
         const newLastRunVariables = props.variablesFields.reduce((acc, field) => {
           const { key } = field;
@@ -486,14 +489,22 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
           onLastRunVariablesChange(newLastRunVariables);
         }
       } catch (err) {
-        const mainFormErrors = getTemplateRuleValidationErrors(err, props.generalForm);
+        const { mainFormErrors, testDataErrors } = Object.entries(err).reduce((acc, [key, value]) => {
+          if (key.startsWith('rule.')) {
+            acc.mainFormErrors[key.replace('rule.', '')] = value;
+          } else {
+            acc.testDataErrors[key] = value;
+          }
+
+          return acc;
+        }, { mainFormErrors: {}, testDataErrors: {} });
 
         if (!isEmpty(mainFormErrors) && onValidationStateChange) {
           onValidationStateChange(false);
         }
 
-        unref(mainFormContext)?.setFormErrors?.(mainFormErrors);
-        unref(testDataFormContext)?.setFormErrors?.(err);
+        setFormErrors(mainFormErrors);
+        setFormErrors(testDataErrors, 'test-data');
       }
     });
 
@@ -508,11 +519,67 @@ export const useTemplateTestRunner = (props, { mainFormContext, testDataFormCont
 
 /**
  * Hook for handling post-submission logic when creating template tests
+ * Manages the afterSubmit observer registration and handles test creation after form submission
  *
- * @returns {Object}
+ * @param {Object} config - Configuration object
+ * @param {Function} config.getTemplateTestRequestData - Function that returns template test request data
+ * @param {Object} props - Component props
+ * @param {string} [props.ruleId] - Optional rule ID that determines if observer should be registered
+ * @returns {Object} An object containing the afterSubmitObserver
+ * @property {Object} afterSubmitObserver - The observer instance for post-submission handling
  */
-export const useTemplateTestAfterSubmit = () => {
-  onBeforeUnmount(() => {});
+export const useTemplateTestAfterSubmit = ({ getTemplateTestRequestData }, props) => {
+  const afterSubmitObserver = inject('$afterSubmitObserver');
 
-  return {};
+  const { t } = useI18n();
+  const popups = usePopups();
+
+  const { createTemplateTest } = useTemplateTest();
+
+  /**
+   * Handles post-submission logic for creating template tests
+   *
+   * @param {Object} [rule] - The rule object if available
+   * @param {string} [rule._id] - The rule ID
+   * @returns {Promise<void>}
+   */
+  const afterSubmit = async (rule) => {
+    /**
+     * Capture the translation string before the component is destroyed
+     * vue-i18n provides a proxy object that is destroyed when the component is destroyed
+     * so we need to capture the translation string before the component is destroyed
+     */
+    const testSavedMessage = t('templateTesting.testSaved');
+
+    const templateTestRequestData = getTemplateTestRequestData();
+
+    if (!templateTestRequestData) {
+      return;
+    }
+
+    if (rule) {
+      templateTestRequestData.rule = rule._id;
+    }
+
+    await createTemplateTest({ data: templateTestRequestData });
+
+    popups.success({ text: testSavedMessage });
+  };
+
+  onMounted(() => {
+    if (props.ruleId) {
+      return;
+    }
+
+    afterSubmitObserver.register(afterSubmit);
+  });
+
+  /**
+   * Unregister the afterSubmit observer after a timeout to avoid race condition
+   */
+  onBeforeUnmount(() => setTimeout(() => afterSubmitObserver.unregister(afterSubmit), 0));
+
+  return {
+    afterSubmitObserver,
+  };
 };

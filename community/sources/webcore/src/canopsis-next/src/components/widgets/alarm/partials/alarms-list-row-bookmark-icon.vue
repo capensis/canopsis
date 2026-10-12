@@ -1,13 +1,13 @@
 <template>
-  <c-tooltip :content="$t('alarm.hasBookmark')" top>
-    <template #activator="{ props }">
+  <c-simple-tooltip :content="$t('alarm.hasBookmark')" top>
+    <template #activator="{ on }">
       <v-icon
         class="cursor-default"
-        size="20"
-        v-bind="props"
+        size="22"
+        v-on="on"
       >
         bookmark
       </v-icon>
     </template>
-  </c-tooltip>
+  </c-simple-tooltip>
 </template>

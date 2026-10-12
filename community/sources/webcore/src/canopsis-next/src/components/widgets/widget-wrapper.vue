@@ -1,103 +1,70 @@
 <template>
-  <widget-theme-provider :widget="widget">
-    <div :style="widgetWrapperStyles" class="widget-wrapper">
-      <template v-if="widget.title || activeViewEditing">
-        <v-card-title class="widget-title pa-2">
-          <c-layout justify="space-between" align="center">
-            <div>
-              <h4 class="widget-title__text ml-2">
-                {{ widget.title }}
-              </h4>
-            </div>
-
-            <v-spacer />
-          </c-layout>
-        </v-card-title>
-
-        <v-divider />
-      </template>
-
-      <v-card-text v-if="component" class="pa-0 position-relative">
-        <component
-          :is="component"
-          v-bind="widgetSpecificProps"
-          :widget="preparedWidget"
-          :tab-id="tab._id"
-          :visible="visible"
-        />
-      </v-card-text>
-
-      <v-card-text v-else class="widget-placeholder pa-3">
-        <div class="widget-placeholder__content">
-          <v-icon class="widget-placeholder__icon" icon="widgets" size="32" />
-
-          <div class="widget-placeholder__body">
-            <div class="widget-placeholder__title">
-              {{ placeholderTitle }}
-            </div>
-
-            <div class="widget-placeholder__meta">
-              {{ widget.type }}
-            </div>
-
-            <div v-if="widget._id" class="widget-placeholder__id">
-              {{ widget._id }}
-            </div>
-          </div>
-        </div>
-      </v-card-text>
-    </div>
-  </widget-theme-provider>
+  <div :style="widgetWrapperStyles">
+    <template v-if="widget.title || activeViewEditing">
+      <v-card-title class="widget-title pa-2">
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <v-flex>
+            <h4 class="ml-2 font-weight-regular">
+              {{ widget.title }}
+            </h4>
+          </v-flex>
+          <v-spacer />
+        </v-layout>
+      </v-card-title>
+      <v-divider />
+    </template>
+    <v-card-text class="pa-0 position-relative">
+      <component
+        v-bind="widgetProps"
+        :is="widgetProps.is"
+        :widget="preparedWidget"
+        :tab-id="tab._id"
+        :visible="visible"
+      />
+    </v-card-text>
+  </div>
 </template>
 
 <script>
-import {
-  COMPONENTS_BY_WIDGET_TYPES,
-  FEATURES_SERVICE_KEYS,
-  WIDGET_COLORS_MODES,
-  WIDGET_GRID_ROW_HEIGHT,
-  WIDGET_TYPES,
-} from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT, COMPONENTS_BY_WIDGET_TYPES } from '@/constants';
 
 import { featuresService } from '@/services/features';
 
-import { normalizeFeatureComponents } from '@/helpers/component';
-import { themeTableColorsToForm, themeWidgetColorsToForm } from '@/helpers/entities/theme/form';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
-import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
 import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
 import { prepareServiceWeatherWidget } from '@/helpers/entities/widget/forms/service-weather';
-import { prepareStatsCalendarWidget } from '@/helpers/entities/widget/forms/stats-calendar';
+import { prepareStatsCalendarAndCounterWidget } from '@/helpers/entities/widget/forms/stats-calendar';
+import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
+import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
 
-import { activeViewMixin } from '@/mixins/active-view';
 import { authMixin } from '@/mixins/auth';
+import { activeViewMixin } from '@/mixins/active-view';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
-import AvailabilityWidget from './availability/availability-widget.vue';
+import EntitiesListWidget from './context/entities-list.vue';
+import ServiceWeatherWidget from './service-weather/service-weather.vue';
+import TestingWeatherWidget from './testing-weather/testing-weather.vue';
+import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
+import TextWidget from './text/text.vue';
+import CounterWidget from './counter/counter.vue';
+import MapWidget from './map/map.vue';
 import BarChartWidget from './chart/bar-chart-widget.vue';
 import LineChartWidget from './chart/line-chart-widget.vue';
-import NumbersWidget from './chart/numbers-widget.vue';
 import PieChartWidget from './chart/pie-chart-widget.vue';
-import ClockWidget from './clock/clock-widget.vue';
-import EntitiesListWidget from './context/entities-list.vue';
-import CounterWidget from './counter/counter.vue';
-import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
-import MapWidget from './map/map.vue';
-import WidgetThemeProvider from './partials/widget-theme-provider.vue';
-import ServiceWeatherWidget from './service-weather/service-weather.vue';
-import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
+import NumbersWidget from './chart/numbers-widget.vue';
 import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
-import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
-import TestingWeatherWidget from './testing-weather/testing-weather.vue';
-import TextWidget from './text/text.vue';
+import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
+import AvailabilityWidget from './availability/availability-widget.vue';
+import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
 
-const featureWidgetComponents = normalizeFeatureComponents(
-  featuresService.get(FEATURES_SERVICE_KEYS.components.widgetWrapper.components, {}),
-);
+const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
-  inject: ['$system'],
-
   provide() {
     return {
       $widget: this.widget,
@@ -105,25 +72,23 @@ export default {
   },
   components: {
     AlarmsListWidget,
-    AvailabilityWidget,
-    BarChartWidget,
-    ClockWidget,
-    CounterWidget,
     EntitiesListWidget,
-    ExternalDataTableWidget,
-    LineChartWidget,
-    MapWidget,
-    NumbersWidget,
-    PieChartWidget,
     ServiceWeatherWidget,
-    StatsCalendarWidget,
     TestingWeatherWidget,
+    StatsCalendarWidget,
     TextWidget,
-    WidgetThemeProvider,
-    AlarmStatisticsWidget,
+    CounterWidget,
+    MapWidget,
+    BarChartWidget,
+    LineChartWidget,
+    PieChartWidget,
+    NumbersWidget,
     UserStatisticsWidget,
+    AlarmStatisticsWidget,
+    AvailabilityWidget,
+    ExternalDataTableWidget,
 
-    ...featureWidgetComponents,
+    ...featuresService.get('components.widgetWrapper.components', {}),
   },
   mixins: [authMixin, activeViewMixin],
   props: {
@@ -141,87 +106,7 @@ export default {
     },
   },
   computed: {
-    placeholderTitle() {
-      return this.widget.title || this.$t('common.widget');
-    },
-
-    component() {
-      const coreComponent = {
-        [WIDGET_TYPES.alarmList]: AlarmsListWidget,
-        [WIDGET_TYPES.barChart]: BarChartWidget,
-        [WIDGET_TYPES.context]: EntitiesListWidget,
-        [WIDGET_TYPES.clock]: ClockWidget,
-        [WIDGET_TYPES.text]: TextWidget,
-        [WIDGET_TYPES.counter]: CounterWidget,
-        [WIDGET_TYPES.statsCalendar]: StatsCalendarWidget,
-        [WIDGET_TYPES.map]: MapWidget,
-        [WIDGET_TYPES.externalDataTable]: ExternalDataTableWidget,
-        [WIDGET_TYPES.lineChart]: LineChartWidget,
-        [WIDGET_TYPES.pieChart]: PieChartWidget,
-        [WIDGET_TYPES.numbers]: NumbersWidget,
-        [WIDGET_TYPES.serviceWeather]: ServiceWeatherWidget,
-        [WIDGET_TYPES.userStatistics]: UserStatisticsWidget,
-        [WIDGET_TYPES.alarmStatistics]: AlarmStatisticsWidget,
-        [WIDGET_TYPES.availability]: AvailabilityWidget,
-        [WIDGET_TYPES.testingWeather]: TestingWeatherWidget,
-      }[this.widget.type];
-
-      const componentName = COMPONENTS_BY_WIDGET_TYPES[this.widget.type];
-
-      return featureWidgetComponents[componentName] ?? coreComponent;
-    },
-
-    preparedWidget() {
-      const preparer = featuresService.get(
-        FEATURES_SERVICE_KEYS.components.widgetWrapper.computed.preparedWidget,
-      );
-
-      if (preparer) {
-        return preparer.call(this);
-      }
-
-      if (this.widget.type === WIDGET_TYPES.alarmList) {
-        return prepareAlarmListWidget(this.widget);
-      }
-
-      if (this.widget.type === WIDGET_TYPES.context) {
-        return prepareContextWidget(this.widget);
-      }
-
-      if (this.widget.type === WIDGET_TYPES.serviceWeather) {
-        return prepareServiceWeatherWidget(this.widget);
-      }
-
-      if (this.widget.type === WIDGET_TYPES.statsCalendar) {
-        return prepareStatsCalendarWidget(this.widget);
-      }
-
-      if (this.widget.type === WIDGET_TYPES.availability) {
-        return prepareAvailabilityWidget(this.widget);
-      }
-
-      return this.widget;
-    },
-
-    widgetSpecificProps() {
-      let props = {};
-
-      if (this.activeViewIsKioskScreenMode) {
-        props = {
-          ...this.preparedWidget.parameters?.kiosk,
-        };
-      }
-
-      if (!this.hasCurrentViewActionsAccess) {
-        props = {
-          ...props,
-          hideActions: true,
-          hideMassSelection: true,
-        };
-      }
-
-      return props;
-    },
+    ...mapGetters(['edition']),
 
     /**
      * Height is multiplying on 2 for loader correct displaying
@@ -229,36 +114,80 @@ export default {
      * @returns {{minHeight: string}}
      */
     widgetWrapperStyles() {
-      const widgetColors = this.widgetColors.widget ?? {};
-      const tableColors = this.widgetColors.table ?? {};
-
-      return {
-        minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px`,
-        '--widget-title-background': widgetColors.title_background,
-        '--c-table-background': tableColors.background,
-        '--c-table-row-color': tableColors.row_color,
-        '--c-table-shift-row-color': tableColors.shift_row?.enabled
-          ? tableColors.shift_row.color
-          : tableColors.row_color,
-        '--c-table-hover-row-color': tableColors.hover_row?.enabled
-          ? tableColors.hover_row.color
-          : tableColors.row_color,
-        overflow: 'hidden',
-      };
+      return { minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px` };
     },
 
-    widgetColors() {
-      const themeColors = this.$system?.theme?.colors ?? {};
-      const widgetColors = this.widget.parameters?.colors;
+    preparedWidget() {
+      switch (this.widget.type) {
+        case WIDGET_TYPES.alarmList:
+          return prepareAlarmListWidget(this.widget);
 
-      if (widgetColors?.mode !== WIDGET_COLORS_MODES.custom) {
-        return themeColors;
+        case WIDGET_TYPES.context:
+          return prepareContextWidget(this.widget);
+
+        case WIDGET_TYPES.serviceWeather:
+          return prepareServiceWeatherWidget(this.widget);
+
+        case WIDGET_TYPES.statsCalendar:
+        case WIDGET_TYPES.counter:
+          return prepareStatsCalendarAndCounterWidget(this.widget);
+
+        case WIDGET_TYPES.map:
+          return prepareMapWidget(this.widget);
+
+        case WIDGET_TYPES.availability:
+          return prepareAvailabilityWidget(this.widget);
+      }
+
+      const preparer = featuresService.get('components.widgetWrapper.computed.preparedWidget');
+
+      return preparer ? preparer.call(this) : this.widget;
+    },
+
+    widgetProps() {
+      const { type } = this.widget;
+      const widgetComponentsMap = { ...COMPONENTS_BY_WIDGET_TYPES };
+      let widgetSpecificsProp = {};
+
+      if (this.activeViewIsKioskScreenMode) {
+        widgetSpecificsProp = {
+          ...this.widget.parameters.kiosk,
+        };
+      }
+
+      if (!this.hasCurrentViewActionsAccess) {
+        widgetSpecificsProp = {
+          hideActions: true,
+          hideMassSelection: true,
+        };
+      }
+
+      Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
+        if (rule.edition !== this.edition) {
+          widgetComponentsMap[key] = 'c-alert-overlay';
+          widgetSpecificsProp = {
+            ...widgetSpecificsProp,
+
+            message: this.$t('errors.statsWrongEditionError'),
+            value: true,
+          };
+        }
+      });
+
+      const component = widgetComponentsMap[type];
+
+      if (!component) {
+        return {
+          is: 'c-alert-overlay',
+          message: this.$t('errors.unknownWidgetType', { type }),
+          value: true,
+        };
       }
 
       return {
-        ...themeColors,
-        table: themeTableColorsToForm(widgetColors.table),
-        widget: themeWidgetColorsToForm(widgetColors.widget),
+        ...widgetSpecificsProp,
+
+        is: component,
       };
     },
   },
@@ -268,58 +197,5 @@ export default {
 <style lang="scss" scoped>
 .widget-title {
   height: 37px;
-  background-color: var(--widget-title-background);
-}
-
-.widget-title__text {
-  overflow: hidden;
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 500;
-  line-height: 1.75rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.widget-placeholder {
-  display: flex;
-  min-height: 100px;
-  height: 100%;
-  border: 1px dashed rgba(var(--v-theme-on-surface), 0.28);
-  background: rgba(var(--v-theme-primary), 0.05);
-}
-
-.widget-placeholder__content {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-width: 0;
-}
-
-.widget-placeholder__icon {
-  flex: 0 0 auto;
-  color: rgba(var(--v-theme-primary), 0.62);
-}
-
-.widget-placeholder__body {
-  min-width: 0;
-  margin-left: 12px;
-}
-
-.widget-placeholder__title {
-  overflow: hidden;
-  font-weight: 500;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.widget-placeholder__meta,
-.widget-placeholder__id {
-  overflow: hidden;
-  color: rgba(var(--v-theme-on-surface), 0.62);
-  font-size: 12px;
-  line-height: 18px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 </style>

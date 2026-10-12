@@ -14,15 +14,18 @@
 <script>
 import { toRef } from 'vue';
 
-import { useRemediationInstructionStatsRate } from '@/components/other/remediation/instruction-stats/hooks/remediation-instruction-stats';
+import {
+  useRemediationInstructionStatsRate,
+} from '@/components/other/remediation/instruction-stats/hooks/remediation-instruction-stats';
 
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
 
 import { useNotificationActiveId } from './hooks/notifications';
 
 export default {
-  components: { RemediationInstructionStatsList },
-
+  components: {
+    RemediationInstructionStatsList,
+  },
   props: {
     items: {
       type: Array,
@@ -34,26 +37,24 @@ export default {
     },
     meta: {
       type: Object,
-      default: () => ({}),
+      default: () => {},
     },
     options: {
       type: Object,
-      default: () => ({}),
+      default: () => {},
     },
     interval: {
       type: Object,
-      default: () => ({}),
+      default: () => {},
     },
     activeId: {
       type: String,
       required: false,
     },
   },
-
-  emits: ['update:options', 'refresh'],
-
   setup(props, { emit }) {
     const refresh = () => emit('refresh');
+
     const { showRateInstructionModal } = useRemediationInstructionStatsRate(refresh);
 
     useNotificationActiveId({
@@ -62,7 +63,9 @@ export default {
       action: showRateInstructionModal,
     });
 
-    return { showRateInstructionModal };
+    return {
+      showRateInstructionModal,
+    };
   },
 };
 </script>

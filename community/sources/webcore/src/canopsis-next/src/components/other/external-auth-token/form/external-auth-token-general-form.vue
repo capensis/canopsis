@@ -1,40 +1,36 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-name-field
-      v-model="name"
-      :label="t('externalAuthToken.tokenName')"
+      v-field="form.name"
+      :label="$t('externalAuthToken.tokenName')"
       name="name"
       autofocus
       required
     />
-    <c-description-field v-model="description" />
+    <c-description-field v-field="form.description" />
 
     <c-form-block>
       <request-form
-        :form="request"
+        v-field="form.request"
         :url-variables="templateVars.request"
         :headers-variables="templateVars.request"
         :payload-variables="templateVars.request"
-        :url-help-text="t('externalAuthToken.urlHelp')"
+        :url-help-text="$t('externalAuthToken.urlHelp')"
         name="request"
-        indented-rows
-        align-skip-verify
-        @update:form="request = $event"
       />
 
-      <c-form-block-row :label="t('common.token')" top-border indented>
+      <c-form-block-row :label="$t('common.token')" top-border>
         <c-payload-text-field
-          v-if="allowVariables"
-          :value="template"
-          :label="t('common.token')"
+          v-if="form.allow_variables"
+          v-field="form.template"
+          :label="$t('common.token')"
           :variables="templateVars.template"
           name="response_field"
           required
-          @update:value="template = $event"
         >
-          <template #append-inner>
+          <template #append="">
             <c-help-icon
-              :text="t('externalAuthToken.tokenExpirationHelpText')"
+              :text="$t('externalAuthToken.tokenExpirationHelpText')"
               icon="help"
               color="grey darken-1"
               top
@@ -42,84 +38,60 @@
           </template>
         </c-payload-text-field>
 
-        <c-text-field
+        <v-text-field
           v-else
-          v-model="responseField"
-          :label="t('common.token')"
+          v-field="form.response_field"
+          v-validate="'required'"
+          :label="$t('common.token')"
+          :error-messages="errors.collect('response_field')"
           name="response_field"
-          required
         >
-          <template #append-inner>
+          <template #append="">
             <c-help-icon
-              :text="t('externalAuthToken.tokenExpirationHelpText')"
+              :text="$t('externalAuthToken.tokenExpirationHelpText')"
               icon="help"
               color="grey darken-1"
               top
             />
           </template>
-        </c-text-field>
+        </v-text-field>
 
-        <c-enabled-field v-model="allowVariables" :label="t('externalAuthToken.allowVariables')" />
+        <c-enabled-field
+          v-field="form.allow_variables"
+          :label="$t('externalAuthToken.allowVariables')"
+        />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('externalAuthToken.tokenExpirationTime')">
+      <c-form-block-row :label="$t('externalAuthToken.tokenExpirationTime')">
         <c-duration-field
-          v-model:duration="expirationDuration"
-          name="expiration_duration"
+          v-field="form.expiration_duration"
           required
           same-width
         />
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-
 import RequestForm from '@/components/forms/request/request-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { RequestForm },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     templateVars: {
       type: Object,
       default: () => ({}),
     },
-  },
-
-  setup() {
-    const { t } = useI18n();
-    const {
-      name,
-      description,
-      request,
-      template,
-      responseField,
-      allowVariables,
-      expirationDuration,
-    } = useFormModels({
-      name: 'name',
-      description: 'description',
-      request: 'request',
-      template: 'template',
-      responseField: 'response_field',
-      allowVariables: 'allow_variables',
-      expirationDuration: 'expiration_duration',
-    });
-
-    return {
-      t,
-      name,
-      description,
-      request,
-      template,
-      responseField,
-      allowVariables,
-      expirationDuration,
-    };
   },
 };
 </script>

@@ -11,7 +11,7 @@
 </template>
 
 <style lang="scss" scoped>
-.priority-help-icon :deep(.v-icon) {
+.priority-help-icon ::v-deep .v-icon {
   opacity: 1 !important;
   transform: none !important;
 }

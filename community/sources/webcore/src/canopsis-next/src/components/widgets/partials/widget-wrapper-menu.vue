@@ -1,83 +1,58 @@
 <template>
-  <v-menu>
-    <template #activator="{ props }">
+  <v-menu offset-y>
+    <template #activator="{ on }">
       <v-btn
-        size="small"
-        variant="text"
         icon
-        v-bind="props"
+        small
+        v-on="on"
       >
-        <v-icon size="small">
+        <v-icon small>
           more_horiz
         </v-icon>
       </v-btn>
     </template>
-
-    <v-list density="compact">
-      <v-list-item v-if="hasSettingsSidebar" @click="showSettings">
-        <v-list-item-title>
-          {{ $t('common.edit') }}
-        </v-list-item-title>
+    <v-list dense>
+      <v-list-item @click="showSettings">
+        <div>{{ $t('common.edit') }}</div>
       </v-list-item>
-
-      <v-list-item v-if="hasSettingsSidebar" @click="showSelectViewTabModal">
-        <v-list-item-title>
-          {{ $t('common.duplicate') }}
-        </v-list-item-title>
+      <v-list-item @click="showSelectViewTabModal">
+        <div>{{ $t('common.duplicate') }}</div>
       </v-list-item>
-
-      <v-list-item @click="copyWidgetId">
-        <v-list-item-title>
-          {{ $t('view.copyWidgetId') }}
-        </v-list-item-title>
+      <v-list-item
+        v-clipboard:copy="widget._id"
+        v-clipboard:success="addWidgetIdCopiedSuccessPopup"
+        v-clipboard:error="addWidgetIdCopiedErrorPopup"
+        @click.stop=""
+      >
+        <div>{{ $t('view.copyWidgetId') }}</div>
       </v-list-item>
-
       <v-list-item @click="showDeleteWidgetModal">
-        <v-list-item-title class="text-error">
+        <div class="error--text">
           {{ $t('common.delete') }}
-        </v-list-item-title>
+        </div>
       </v-list-item>
     </v-list>
   </v-menu>
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import { MODALS, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES } from '@/constants';
-
-import { useViewStore } from '@/stores/modules/view';
-import { useWidgetStore } from '@/stores/modules/widget';
-
-import { writeTextToClipboard } from '@/helpers/clipboard';
 import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
 import { setSeveralFields } from '@/helpers/immutable';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
-
-const MIGRATED_SETTINGS_WIDGET_TYPES = [
-  WIDGET_TYPES.alarmList,
-  WIDGET_TYPES.context,
-  WIDGET_TYPES.text,
-  WIDGET_TYPES.counter,
-  WIDGET_TYPES.clock,
-  WIDGET_TYPES.map,
-  WIDGET_TYPES.externalDataTable,
-  WIDGET_TYPES.serviceWeather,
-  WIDGET_TYPES.statsCalendar,
-  WIDGET_TYPES.barChart,
-  WIDGET_TYPES.lineChart,
-  WIDGET_TYPES.pieChart,
-  WIDGET_TYPES.numbers,
-  WIDGET_TYPES.userStatistics,
-  WIDGET_TYPES.alarmStatistics,
-  WIDGET_TYPES.availability,
-  WIDGET_TYPES.testingWeather,
-];
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
-  mixins: [activeViewMixin, viewRouterMixin],
+  mixins: [
+    activeViewMixin,
+    viewRouterMixin,
+    entitiesWidgetMixin,
+    entitiesViewTabMixin,
+  ],
   props: {
     widget: {
       type: Object,
@@ -88,41 +63,22 @@ export default {
       required: true,
     },
   },
-  computed: {
-    hasSettingsSidebar() {
-      return MIGRATED_SETTINGS_WIDGET_TYPES.includes(this.widget.type);
-    },
-  },
   methods: {
-    ...mapActions(useWidgetStore, {
-      removeWidget: 'remove',
-    }),
-    ...mapActions(useViewStore, {
-      fetchViewTab: 'fetchViewTab',
-    }),
-
     showSettings() {
       this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[this.widget.type],
         config: {
-          widget: {
-            ...this.widget,
-            tab: this.tab._id,
-          },
+          widget: { ...this.widget, tab: this.tab._id },
         },
       });
     },
 
     /**
-     * Copy a widget parameters and open corresponding settings sidebar.
-     *
-     * @param {Object} payload
-     * @param {string} payload.viewId
-     * @param {string} payload.tabId
-     * @returns {Promise<void>}
+     * Copy a widget's parameters, and open corresponding settings panel
      */
     async cloneWidget({ viewId, tabId }) {
       const tab = await this.fetchViewTab({ id: tabId });
+
       const { mobile, tablet, desktop } = calculateNewWidgetGridParametersY(tab.widgets);
       const newWidget = setSeveralFields(this.widget, {
         tab: tabId,
@@ -143,7 +99,7 @@ export default {
     },
 
     /**
-     * Show select view tab modal window.
+     * Show select view tab modal window
      */
     showSelectViewTabModal() {
       this.$modals.show({
@@ -171,18 +127,17 @@ export default {
     },
 
     /**
-     * Copy widget id to clipboard.
+     * Add success popup for widgetId copying
      */
-    async copyWidgetId() {
-      try {
-        await writeTextToClipboard(this.widget._id);
+    addWidgetIdCopiedSuccessPopup() {
+      this.$popups.success({ text: this.$t('success.widgetIdCopied') });
+    },
 
-        this.$popups.success({ text: this.$t('success.widgetIdCopied') });
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
+    /**
+     * Add error popup for widgetId copying
+     */
+    addWidgetIdCopiedErrorPopup() {
+      this.$popups.error({ text: this.$t('errors.default') });
     },
   },
 };

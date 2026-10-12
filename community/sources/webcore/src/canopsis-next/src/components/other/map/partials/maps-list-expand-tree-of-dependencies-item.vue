@@ -2,8 +2,6 @@
   <tree-of-dependencies-preview
     :map="map"
     :columns="columns"
-    :pbehavior-enabled="map.parameters?.entities_under_pbehavior_enabled"
-    :pause-enabled="map.parameters?.entities_under_pause_enabled"
     class="tree-of-dependencies-expand-panel"
   />
 </template>
@@ -13,7 +11,6 @@ import TreeOfDependenciesPreview from './tree-of-dependencies-preview.vue';
 
 export default {
   components: { TreeOfDependenciesPreview },
-
   props: {
     map: {
       type: Object,

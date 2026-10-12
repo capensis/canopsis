@@ -1,16 +1,21 @@
 <template>
-  <c-layout class="pattern-field-suggestions-wrapper" gap="3" column>
+  <v-layout
+    class="pattern-field-suggestions-wrapper gap-3"
+    column
+  >
     <div
-      :class="{
-        'pattern-field-suggestions-wrapper__content--has-suggestions': !!suggestions.length,
-      }"
+      :class="{ 'pattern-field-suggestions-wrapper__content--has-suggestions': !!suggestions.length }"
       class="pattern-field-suggestions-wrapper__content"
     >
-      <c-layout v-if="suggestions.length" class="mb-3" align="center">
+      <v-layout
+        v-if="suggestions.length"
+        class="mb-3"
+        align-center
+      >
         <v-chip class="pattern-field-suggestions-wrapper__current" small>
           <strong>{{ $t('common.current') }}</strong>
         </v-chip>
-      </c-layout>
+      </v-layout>
       <slot />
     </div>
     <pattern-suggestions
@@ -23,7 +28,7 @@
       @reject:all="rejectAllSuggestions"
       @show:entities-comparison="showEntitiesComparisonModal"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -87,7 +92,7 @@ export default {
 
   &__current {
     background-color: var(--pattern-suggestions-border-color) !important;
-    color: var(--v-text-dark-primary, #ffffff) !important;
+    color: var(--v-text-dark-primary, #FFFFFF) !important;
   }
 }
 </style>

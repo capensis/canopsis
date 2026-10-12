@@ -1,5 +1,5 @@
-import HandlebarsLib from 'handlebars';
 import promisedHandlebars from 'promised-handlebars';
+import HandlebarsLib from 'handlebars';
 
 /**
  * Creates a new Handlebars instance with promise support.

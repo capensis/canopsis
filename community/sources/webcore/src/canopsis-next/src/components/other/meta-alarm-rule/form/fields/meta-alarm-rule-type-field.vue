@@ -1,134 +1,111 @@
 <template>
-  <div class="meta-alarm-rule-type-field">
-    <v-tabs
-      v-model="activeTab"
-      bg-color="transparent"
-      color="primary"
-      class="meta-alarm-rule-type-field__tabs"
-      fixed-tabs
-      hide-slider
-    >
-      <v-tab :value="TYPE_TABS.existing" class="meta-alarm-rule-type-field__tab">
-        <v-btn class="meta-alarm-rule-type-field__tab-btn" variant="flat" block>
-          {{ t('metaAlarmRule.groupingTabs.existing') }}
-        </v-btn>
-      </v-tab>
-      <v-tab :value="TYPE_TABS.createNew" class="meta-alarm-rule-type-field__tab">
-        <v-btn class="meta-alarm-rule-type-field__tab-btn" variant="flat" block>
-          {{ t('metaAlarmRule.groupingTabs.createNew') }}
-        </v-btn>
-      </v-tab>
-    </v-tabs>
+  <v-tabs
+    v-model="activeTab"
+    class="meta-alarm-rule-type-field"
+    fixed-tabs
+    hide-slider
+  >
+    <v-tab :value="META_ALARMS_TYPE_TABS.existing">
+      <v-btn depressed>
+        {{ $t('metaAlarmRule.groupingTabs.existing') }}
+      </v-btn>
+    </v-tab>
+    <v-tab-item>
+      <c-label :label="$t('metaAlarmRule.groupingLabels.groupUnder')" />
+      <v-radio-group v-field="value" hide-details>
+        <v-radio
+          v-for="option in firstTabOptions"
+          :key="option.value"
+          :label="option.label"
+          :value="option.value"
+          color="primary"
+        />
+      </v-radio-group>
+    </v-tab-item>
 
-    <v-window v-model="activeTab" touchless>
-      <v-window-item :value="TYPE_TABS.existing">
-        <c-layout class="pa-4" gap="2" column>
-          <c-label :label="t('metaAlarmRule.groupingLabels.groupUnder')" />
-          <c-radio-group
-            :model-value="modelValue"
-            name="meta_alarm_rule_type_existing"
-            hide-details
-            @update:model-value="updateModel"
-          >
-            <v-radio
-              v-for="option in existingOptions"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
-          </c-radio-group>
-        </c-layout>
-      </v-window-item>
-
-      <v-window-item :value="TYPE_TABS.createNew">
-        <c-layout class="pa-4" gap="2" column>
-          <c-label :label="t('metaAlarmRule.groupingLabels.groupBy')" />
-          <c-radio-group
-            :model-value="modelValue"
-            name="meta_alarm_rule_type_create_new"
-            hide-details
-            @update:model-value="updateModel"
-          >
-            <v-radio
-              v-for="option in createNewOptions"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
-          </c-radio-group>
-        </c-layout>
-      </v-window-item>
-    </v-window>
-  </div>
+    <v-tab :value="META_ALARMS_TYPE_TABS.createNew">
+      <v-btn depressed>
+        {{ $t('metaAlarmRule.groupingTabs.createNew') }}
+      </v-btn>
+    </v-tab>
+    <v-tab-item>
+      <c-label :label="$t('metaAlarmRule.groupingLabels.groupBy')" />
+      <v-radio-group v-field="value" hide-details>
+        <v-radio
+          v-for="option in secondTabOptions"
+          :key="option.value"
+          :label="option.label"
+          :value="option.value"
+          color="primary"
+        />
+      </v-radio-group>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
-const TYPE_TABS = {
-  existing: 'existing',
-  createNew: 'createNew',
+export const META_ALARMS_TYPE_TABS = {
+  existing: 0,
+  createNew: 1,
 };
 
-const EXISTING_TYPES = [
-  META_ALARMS_RULE_TYPES.relation,
-  META_ALARMS_RULE_TYPES.corel,
-];
-
-const CREATE_NEW_TYPES = [
-  META_ALARMS_RULE_TYPES.timebased,
-  META_ALARMS_RULE_TYPES.attribute,
-  META_ALARMS_RULE_TYPES.complex,
-  META_ALARMS_RULE_TYPES.valuegroup,
-];
-
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: META_ALARMS_RULE_TYPES.relation,
     },
   },
+  setup(props) {
+    const { t, te } = useI18n();
 
-  emits: ['update:modelValue'],
+    const activeTab = ref(META_ALARMS_TYPE_TABS.existing);
 
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const activeTab = ref(TYPE_TABS.existing);
+    const prepareOption = (type) => {
+      const messageKey = `metaAlarmRule.types.${type}`;
+      const { label } = te(messageKey) ? t(messageKey) : {};
 
-    const prepareOption = type => ({
-      value: type,
-      label: t(`metaAlarmRule.types.${type}.label`),
-    });
-
-    const existingOptions = computed(() => EXISTING_TYPES.map(prepareOption));
-    const createNewOptions = computed(() => CREATE_NEW_TYPES.map(prepareOption));
-
-    const updateActiveTab = (type) => {
-      activeTab.value = CREATE_NEW_TYPES.includes(type)
-        ? TYPE_TABS.createNew
-        : TYPE_TABS.existing;
+      return {
+        value: type,
+        label,
+      };
     };
 
-    const updateModel = value => emit('update:modelValue', value);
+    const firstTabOptions = computed(() => [
+      META_ALARMS_RULE_TYPES.relation,
+      META_ALARMS_RULE_TYPES.corel,
+    ].map(prepareOption));
 
-    watch(
-      () => props.modelValue,
-      updateActiveTab,
-      { immediate: true },
-    );
+    const secondTabOptions = computed(() => [
+      META_ALARMS_RULE_TYPES.timebased,
+      META_ALARMS_RULE_TYPES.attribute,
+      META_ALARMS_RULE_TYPES.complex,
+      META_ALARMS_RULE_TYPES.valuegroup,
+    ].map(prepareOption));
+
+    onMounted(() => {
+      if (secondTabOptions.value.some(option => option.value === props.value)) {
+        activeTab.value = META_ALARMS_TYPE_TABS.createNew;
+      }
+    });
 
     return {
-      TYPE_TABS,
-      t,
+      META_ALARMS_TYPE_TABS,
+
       activeTab,
-      existingOptions,
-      createNewOptions,
-      updateModel,
+
+      firstTabOptions,
+      secondTabOptions,
     };
   },
 };
@@ -136,72 +113,66 @@ export default {
 
 <style lang="scss" scoped>
 .meta-alarm-rule-type-field {
-  --meta-alarm-rule-type-field-background: var(--v-application-background-darken1);
+  --tab-background-color-light: var(--v-application-background-darken1);
+  --tab-background-color-dark: var(--v-application-background-lighten1);
 
-  overflow: hidden;
-  border: thin solid var(--meta-alarm-rule-type-field-background);
   border-radius: 4px 4px 0 0;
+  border: thin solid var(--tab-background-color-light);
 
-  :deep(.meta-alarm-rule-type-field__tabs) {
-    height: 44px;
+  .theme--dark & {
+    border-color: var(--tab-background-color-dark);
   }
 
-  :deep(.v-slide-group) {
-    height: 44px;
-    background: var(--meta-alarm-rule-type-field-background);
-  }
-
-  :deep(.v-slide-group__container),
-  :deep(.v-slide-group__content) {
-    width: 100%;
-    height: 44px;
-  }
-
-  :deep(.v-tab) {
-    flex: 1 1 0;
-    align-items: center;
-    justify-content: center;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: 44px;
-    padding: 0 2px;
-    text-transform: none;
-  }
-
-  :deep(.v-tab > .v-btn__content) {
-    width: 100%;
-  }
-
-  :deep(.v-tab__slider) {
-    display: none;
-  }
-
-  :deep(.v-tab--selected) {
-    color: rgb(var(--v-theme-primary));
-
-    .meta-alarm-rule-type-field__tab-btn {
-      border-color: currentColor;
-      background: rgb(var(--v-theme-surface));
-      color: rgb(var(--v-theme-primary));
+  ::v-deep {
+    > .v-tabs-items {
+      > .v-window__container > .v-window-item {
+        padding: 16px;
+      }
     }
-  }
 
-  &__tab-btn {
-    width: 100%;
-    height: 36px;
-    min-width: 0;
-    max-width: none;
-    margin: 0;
-    border: thin solid transparent;
-    border-radius: 4px;
-    background: var(--meta-alarm-rule-type-field-background);
-    color: rgba(var(--v-theme-on-surface), 0.87);
-  }
+    > .v-tabs-bar {
+      height: 44px;
 
-  :deep(.meta-alarm-rule-type-field__tab-btn),
-  :deep(.meta-alarm-rule-type-field__tab-btn .v-btn__content) {
-    letter-spacing: 0;
-    text-transform: none !important;
+      .theme--light & {
+        background-color: var(--tab-background-color-light);
+      }
+
+      .theme--dark & {
+        background-color: var(--tab-background-color-dark);
+      }
+
+      .v-tab {
+        padding: 0 4px;
+
+        .v-btn {
+          width: 100%;
+          border-radius: 4px;
+          text-transform: none;
+
+          .theme--light & {
+            background-color: var(--tab-background-color-light);
+          }
+
+          .theme--dark & {
+            background-color: var(--tab-background-color-dark);
+          }
+        }
+
+        &.v-tab--active .v-btn {
+          border:thin solid currentColor;
+          color: var(--v-primary-base) !important;
+          caret-color: var(--v-primary-base) !important;
+
+          &.theme--light {
+            background-color: var(--v-background-base, #FFFFFF);
+          }
+
+          &.theme--dark {
+            background-color: var(--v-background-base, #1E1E1E);
+          }
+        }
+      }
+    }
   }
 }
 </style>

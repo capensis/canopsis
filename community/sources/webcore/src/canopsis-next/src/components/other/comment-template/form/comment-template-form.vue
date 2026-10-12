@@ -1,39 +1,35 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-name-field
-      v-model="name"
-      :label="t('common.name')"
-      :max-length="FORM_MAX_STRING_LENGTH"
+      v-field="form.name"
+      :label="$t('common.name')"
+      :max-length="255"
       name="name"
       required
     />
-
-    <c-layout class="mt-3" column>
-      <comment-template-fields-form />
-    </c-layout>
-  </c-layout>
+    <v-layout
+      class="mt-3"
+      column
+    >
+      <comment-template-fields-form v-field="form.fields" />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import { FORM_MAX_STRING_LENGTH } from '@/constants';
-
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-
 import CommentTemplateFieldsForm from './comment-template-fields-form.vue';
 
 export default {
   components: { CommentTemplateFieldsForm },
-
-  setup() {
-    const { t } = useI18n();
-    const { name } = useFormModels(['name']);
-
-    return {
-      t,
-      FORM_MAX_STRING_LENGTH,
-      name,
-    };
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      required: true,
+    },
   },
 };
 </script>

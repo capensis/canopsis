@@ -1,9 +1,9 @@
 <template>
-  <v-row>
-    <v-col cols="12">
+  <v-layout>
+    <v-flex xs12>
       <test-suite-details :test-suite="testSuite" />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

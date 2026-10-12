@@ -9,68 +9,69 @@
     expand
     select-all
     advanced-pagination
-    @update:options="$emit('update:options', $event)"
+    @update:options="updateOptions"
   >
     <template #toolbar>
       <v-expand-transition>
-        <c-layout v-if="resending" gap="4" align="center">
+        <v-layout v-if="resending" class="gap-4" align-center>
           <span class="font-italic">
-            {{ t('eventsRecord.resendingInProgress') }}
+            {{ $t('eventsRecord.resendingInProgress') }}
           </span>
-          <v-progress-circular color="primary" width="3" indeterminate />
-          <c-action-btn
-            :tooltip="t('eventsRecord.stopResending')"
-            icon="stop"
+          <v-progress-circular
             color="primary"
-            @click="$emit('stop:resending')"
+            width="3"
+            indeterminate
           />
-        </c-layout>
+          <c-action-btn
+            :tooltip="$t('eventsRecord.stopResending')"
+            icon="stop"
+            color="blue darken-3"
+            top
+            @click="stopResending"
+          />
+        </v-layout>
       </v-expand-transition>
     </template>
-
-    <template #mass-actions="{ selected, selectedKeys, count, clearSelected }">
-      <c-layout align="center">
-        <c-action-btn
-          :tooltip="t('eventsRecord.resendEvents', count)"
-          :disabled="resendingDisabled || resending"
-          icon="play_arrow"
-          color="primary"
-          @click="startSelectedResending(selectedKeys, clearSelected)"
-        />
-        <events-record-download-btn
-          :events-record-id="eventsRecordId"
-          :event-ids="selectedKeys"
-          icon
-          @exported="clearSelected"
-        />
-        <c-action-btn type="delete" @click="removeSelected(selected, clearSelected)" />
-      </c-layout>
+    <template #mass-actions="{ selected, selectedKeys, count }">
+      <c-action-btn
+        :tooltip="$tc('eventsRecord.resendEvents', count)"
+        :disabled="resendingDisabled || resending"
+        icon="play_arrow"
+        color="#134A9F"
+        @click="startResending(selectedKeys)"
+      />
+      <events-record-download-btn :events-record-id="eventsRecordId" :event-ids="selectedKeys" icon />
+      <c-action-btn
+        type="delete"
+        @click="removeSelected(selected)"
+      />
     </template>
-
     <template #timestamp="{ item }">
-      {{ formatDate(item.timestamp) }}
+      {{ item.timestamp | date }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout align="center">
+      <v-layout align-center>
         <c-action-btn
-          :tooltip="t('eventsRecord.resendEvents', 1)"
+          :tooltip="$tc('eventsRecord.resendEvents', 1)"
           :disabled="resendingDisabled || resending"
           icon="play_arrow"
-          color="primary"
-          @click="$emit('start:resending', [item._id])"
+          color="blue darken-3"
+          @click="startResending([item._id])"
         />
         <c-copy-btn
-          :value="stringify(item)"
-          :tooltip="t('eventsRecord.copyEvent')"
+          :value="item | json"
+          :tooltip="$t('eventsRecord.copyEvent')"
+          bottom
           @success="showCopySuccessPopup"
           @error="showCopyErrorPopup"
         />
         <events-record-download-btn :events-record-id="eventsRecordId" :event-id="item._id" icon />
-        <c-action-btn type="delete" @click="$emit('remove', item)" />
-      </c-layout>
+        <c-action-btn
+          type="delete"
+          @click="remove(item)"
+        />
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <events-record-events-list-expand-panel :event="item" />
     </template>
@@ -80,20 +81,17 @@
 <script>
 import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 
-import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue';
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
   components: {
     EventsRecordEventsListExpandPanel,
     EventsRecordDownloadBtn,
   },
-
   props: {
     eventsRecordId: {
       type: String,
@@ -104,6 +102,10 @@ export default {
       required: true,
     },
     pending: {
+      type: Boolean,
+      default: false,
+    },
+    downloading: {
       type: Boolean,
       default: false,
     },
@@ -124,45 +126,89 @@ export default {
       required: true,
     },
   },
-
-  emits: ['update:options', 'remove', 'remove:selected', 'start:resending', 'stop:resending'],
-
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const popups = usePopups();
 
     const headers = computed(() => [
-      { text: t('common.timestamp'), value: 'timestamp', sortable: false },
-      { text: t('common.eventType'), value: 'event_type', sortable: false },
-      { text: t('common.sourceType'), value: 'source_type', sortable: false },
-      { text: t('common.connector'), value: 'connector', sortable: false },
-      { text: t('common.connectorName'), value: 'connector_name', sortable: false },
-      { text: t('common.component'), value: 'component', sortable: false },
-      { text: t('common.resource'), value: 'resource', sortable: false },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+      {
+        text: t('common.timestamp'),
+        value: 'timestamp',
+        sortable: false,
+      },
+      {
+        text: t('common.eventType'),
+        value: 'event_type',
+        sortable: false,
+      },
+      {
+        text: t('common.sourceType'),
+        value: 'source_type',
+        sortable: false,
+      },
+      {
+        text: t('common.connector'),
+        value: 'connector',
+        sortable: false,
+      },
+      {
+        text: t('common.connectorName'),
+        value: 'connector_name',
+        sortable: false,
+      },
+      {
+        text: t('common.component'),
+        value: 'component',
+        sortable: false,
+      },
+      {
+        text: t('common.resource'),
+        value: 'resource',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
     ]);
 
-    const formatDate = date => convertDateToString(date);
-    const stringify = item => JSON.stringify(item);
+    /**
+     * RESEND
+     */
+    const startResending = eventsIds => emit('start:resending', eventsIds);
+    const stopResending = () => emit('stop:resending');
+
+    /**
+     * REMOVE
+     */
+    const remove = event => emit('remove', event);
+    const removeSelected = eventsIds => emit('remove:selected', eventsIds);
+
+    /**
+     * OPTIONS
+     */
+    const updateOptions = options => emit('update:options', options);
+
+    /**
+     * COPY
+     */
     const showCopySuccessPopup = () => popups.success({ text: t('eventsRecord.eventCopied') });
     const showCopyErrorPopup = () => popups.error({ text: t('errors.default') });
-    const startSelectedResending = (selectedKeys, clearSelected) => {
-      emit('start:resending', selectedKeys);
-      clearSelected();
-    };
-    const removeSelected = (selected, clearSelected) => {
-      emit('remove:selected', selected, clearSelected);
-    };
 
     return {
-      t,
       headers,
-      formatDate,
-      stringify,
+
+      startResending,
+      stopResending,
+
+      remove,
+      removeSelected,
+
+      updateOptions,
+
       showCopySuccessPopup,
       showCopyErrorPopup,
-      startSelectedResending,
-      removeSelected,
     };
   },
 };
@@ -172,10 +218,20 @@ export default {
 .events-record-events-list {
   table {
     table-layout: fixed;
-  }
 
-  .v-data-table__expand-icon {
-    margin-left: 8px;
+    .v-data-table-header th {
+      &:nth-child(1) {
+        width: 56px !important;
+      }
+
+      &:nth-child(2) {
+        width: 32px !important;
+      }
+
+      &:last-child {
+        width: 220px !important;
+      }
+    }
   }
 }
 </style>

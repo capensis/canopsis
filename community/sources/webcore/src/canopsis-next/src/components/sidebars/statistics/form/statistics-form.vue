@@ -1,48 +1,47 @@
 <template>
-  <c-layout column>
-    <field-title v-model="localForm.title" />
-    <field-periodic-refresh v-model="localForm.parameters.periodic_refresh" />
+  <v-layout column>
+    <field-title v-field="form.title" />
+    <field-periodic-refresh v-field="form.parameters" />
     <field-main-parameter
-      v-model="localForm.parameters.mainParameter"
+      v-field="form.parameters.mainParameter"
       :type="type"
       :widget-id="widget._id"
     />
-    <field-statistics-columns v-model="localForm.parameters.widgetColumns" :type="type" />
+    <field-statistics-columns
+      v-field="form.parameters.widgetColumns"
+      :type="type"
+    />
     <widget-settings-group :title="$t('settings.advancedSettings')">
       <field-title
-        v-model="localForm.parameters.table_title"
-        :label="$t('common.header')"
+        v-field="form.parameters.table_title"
+        :label="$tc('common.header')"
         :placeholder="$t('settings.headerTitle')"
-        name="table_title"
       />
-      <field-quick-date-interval-type
-        v-model="localForm.parameters.default_time_range"
-        :ranges="metricsRanges"
-      />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" :ranges="metricsRanges" />
       <field-filters
         v-if="showFilter"
-        v-model="localForm.parameters.mainFilter"
-        :filters="localForm.filters"
+        v-field="form.parameters.mainFilter"
+        :filters="form.filters"
         :widget-id="widget._id"
         addable
         editable
         with-entity
-        @update:filters="localForm.filters = $event"
+        @update:filters="updateField('filters', $event)"
       />
     </widget-settings-group>
-    <widget-colors-form v-model="localForm.parameters.colors" with-table />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { KPI_RATING_SETTINGS_TYPES, METRICS_QUICK_RANGES } from '@/constants';
 
-import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
-import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
+import { formMixin } from '@/mixins/form';
+
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 
 import FieldMainParameter from './fields/main-parameter.vue';
 import FieldStatisticsColumns from './fields/statistics-columns.vue';
@@ -56,11 +55,14 @@ export default {
     FieldFilters,
     FieldMainParameter,
     FieldStatisticsColumns,
-    WidgetColorsForm,
   },
-
+  mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    form: {
       type: Object,
       required: true,
     },
@@ -76,24 +78,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    showInterval: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['update:modelValue'],
-
   computed: {
-    localForm: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
-
     metricsRanges() {
       return METRICS_QUICK_RANGES;
     },

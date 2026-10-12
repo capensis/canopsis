@@ -1,32 +1,28 @@
 <template>
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
-    <test-suite-historical-data-months-field
-      :model-value="query.months"
-      @update:model-value="updateMonths"
-    />
+    <test-suite-historical-data-months-field v-model="query.months" />
     <junit-gantt-chart
       :items="ganttIntervals"
       :historical="historical"
       :total-items="meta.total_count"
-      :query="query"
+      :query.sync="query"
       :width="840"
-      @update:query="query = $event"
     />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { TEST_SUITE_STATUSES } from '@/constants';
 
-import { useTestSuiteStore } from '@/stores/modules/test-suite';
-
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
 import TestSuiteHistoricalDataMonthsField from './test-suite-historical-data-months-field.vue';
+
+const { mapActions } = createNamespacedHelpers('testSuite');
 
 export default {
   components: { JunitGanttChart, TestSuiteHistoricalDataMonthsField },
@@ -61,17 +57,9 @@ export default {
     this.fetchList();
   },
   methods: {
-    ...mapActions(useTestSuiteStore, {
+    ...mapActions({
       fetchTestSuiteItemGanttIntervalsWithoutStore: 'fetchItemGanttIntervalsWithoutStore',
     }),
-
-    updateMonths(months) {
-      this.query = {
-        ...this.query,
-        months,
-        page: 1,
-      };
-    },
 
     async fetchList() {
       try {

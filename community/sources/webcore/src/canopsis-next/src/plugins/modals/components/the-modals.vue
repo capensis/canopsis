@@ -4,47 +4,44 @@
     :style="{ zIndex }"
     class="modals-wrapper"
   >
-    <modal-base v-for="modal in modals" :key="modal.id" :modal="modal" />
-
+    <modal-base
+      v-for="modal in modals"
+      :key="modal.id"
+      :modal="modal"
+    />
     <div class="pbehavior-calendar-event-menu" />
   </div>
 </template>
 
-<script setup>
-import { storeToRefs } from 'pinia';
-import { computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
-
-import { useModalsStore } from '../stores';
-
-const route = useRoute();
-const modalsStore = useModalsStore();
-
-const { modals } = storeToRefs(modalsStore);
-
-const zIndex = computed(() => modals.value.length * 1010);
-
+<script>
 /**
- * Hide all non-minimized modals.
+ * Wrapper for all modal windows
  */
-const hideOpenedModals = () => {
-  modals.value.forEach((modal) => {
-    if (!modal.minimized) {
-      modalsStore.hide({ id: modal.id });
-    }
-  });
-};
+export default {
+  computed: {
+    modals() {
+      return this.$store.getters[`${this.$modals.moduleName}/modals`];
+    },
 
-watch(
-  () => route.path,
-  (newPath, prevPath) => {
-    if (newPath === prevPath || !modals.value.length) {
-      return;
-    }
-
-    hideOpenedModals();
+    zIndex() {
+      return this.modals.length * 300;
+    },
   },
-);
+  watch: {
+    $route: {
+      handler(newValue, prevValue) {
+        if (newValue.path === prevValue.path) {
+          return;
+        }
+
+        if (this.modals && this.modals.length) {
+          this.modals.forEach(modal => !modal.minimized && this.$modals.hide({ id: modal.id }));
+        }
+      },
+      deep: true,
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -73,8 +70,42 @@ $minimizedDialogMaxWidth: 360px;
     align-content: flex-start;
     z-index: 300;
 
-    :deep(.v-overlay__content) {
-      pointer-events: auto;
+    & ::v-deep {
+      .v-menu__content {
+        pointer-events: auto;
+      }
+
+      .v-dialog__content {
+        &--minimized {
+          margin: 8px 8px 0 8px;
+          position: relative;
+          height: auto;
+          max-width: $minimizedDialogMaxWidth;
+          pointer-events: all;
+          z-index: inherit !important;
+          padding: 0 !important;
+
+          .v-dialog {
+            margin: 0;
+            box-shadow: none;
+            transition: none;
+
+            .v-card {
+              &.fill-min-height {
+                min-height: auto;
+              }
+
+              &__title {
+                padding: 0 10px;
+
+                .headline {
+                  font-size: 16px !important;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

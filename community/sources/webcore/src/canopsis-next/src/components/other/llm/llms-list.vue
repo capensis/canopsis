@@ -21,48 +21,43 @@
         @refresh="$emit('refresh')"
       />
     </template>
-
     <template #name="{ item }">
       {{ item.name }}
     </template>
-
     <template #type="{ item }">
-      <span v-if="item.type && te(`llm.modelTypes.${item.type}`)">
-        {{ t(`llm.modelTypes.${item.type}`) }}
-      </span>
-      <span v-else>
-        {{ item.type ?? item.model_type }}
-      </span>
+      {{ item.type ?? item.model_type }}
     </template>
-
     <template #thinking_level="{ item }">
-      <span v-if="item.thinking_level && te(`llm.thinkingLevels.${item.thinking_level}`)">
-        {{ t(`llm.thinkingLevels.${item.thinking_level}`) }}
+      <span v-if="item.thinking_level && $te(`llm.thinkingLevels.${item.thinking_level}`)">
+        {{ $t(`llm.thinkingLevels.${item.thinking_level}`) }}
       </span>
       <span v-else>
         {{ item.thinking_level }}
       </span>
     </template>
-
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
-
     <template #default="{ item }">
       <c-enabled :value="item.default" />
     </template>
-
     <template #last_used="{ item }">
-      {{ formatDate(item.last_used) }}
+      {{ item.last_used | date('long', '-') }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout align="center">
-        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
-        <c-action-btn v-if="removable" type="delete" @click.stop="$emit('remove', item)" />
-      </c-layout>
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item)"
+        />
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <llms-list-expand-panel :llm="item" />
     </template>
@@ -72,8 +67,6 @@
 <script>
 import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import LlmsListExpandPanel from './partials/llms-list-expand-panel.vue';
@@ -82,7 +75,6 @@ export default {
   components: {
     LlmsListExpandPanel,
   },
-
   props: {
     llms: {
       type: Array,
@@ -109,11 +101,8 @@ export default {
       default: false,
     },
   },
-
-  emits: ['edit', 'remove', 'refresh', 'update:options'],
-
   setup() {
-    const { t, te } = useI18n();
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
@@ -126,14 +115,8 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const formatDate = value => convertDateToString(value, 'long', '-');
-
     return {
-      t,
-      te,
       headers,
-
-      formatDate,
     };
   },
 };

@@ -1,42 +1,36 @@
 <template>
-  <v-menu v-if="action.items?.length" location="bottom" offset="4">
-    <template #activator="{ props: activatorProps }">
+  <v-menu v-if="action.items?.length" bottom offset-y>
+    <template #activator="{ on }">
       <c-action-btn
         :tooltip="action.title"
         :disabled="action.disabled"
-        :disabled-button="action.disabledButton"
         :loading="action.loading"
         :icon="action.icon"
-        :icon-size="action.iconSize"
         :color="action.iconColor"
-        :small="small"
-        v-bind="activatorProps"
+        :badge-value="action.badgeValue"
+        :badge-tooltip="action.badgeTooltip"
+        v-on="on"
       />
     </template>
-
-    <v-list density="compact">
+    <v-list>
       <v-list-item
         v-for="subAction in action.items"
         :key="subAction.title"
         @click="subAction.method"
       >
-        <template #title>
-          {{ subAction.title }}
-        </template>
+        <v-list-item-title>{{ subAction.title }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
-
   <c-action-btn
     v-else
     :tooltip="action.title"
     :disabled="action.disabled"
-    :disabled-button="action.disabledButton"
     :loading="action.loading"
     :icon="action.icon"
-    :icon-size="action.iconSize"
     :color="action.iconColor"
-    :small="small"
+    :badge-value="action.badgeValue"
+    :badge-tooltip="action.badgeTooltip"
     @click="action.method"
   />
 </template>
@@ -47,10 +41,6 @@ export default {
     action: {
       type: Object,
       required: true,
-    },
-    small: {
-      type: Boolean,
-      default: false,
     },
   },
 };

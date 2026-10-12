@@ -1,7 +1,7 @@
 import { isObject, isString } from 'lodash';
 
-import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
 import { uid } from '@/helpers/uid';
+import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
 
 export const copyPasteShapesMixin = {
   methods: {
@@ -10,9 +10,7 @@ export const copyPasteShapesMixin = {
         const shape = this.data[id];
 
         /* Clear connections */
-        const connections = shape.connections.filter(connection =>
-          this.selectedIds.includes(connection.shapeId),
-        );
+        const connections = shape.connections.filter(connection => this.selectedIds.includes(connection.shapeId));
         const connectedTo = shape.connectedTo.filter(shapeId => this.selectedIds.includes(shapeId));
 
         acc[id] = {
@@ -40,40 +38,40 @@ export const copyPasteShapesMixin = {
         return;
       }
 
-      Object.entries(shapes).forEach(([id, shape]) => {
-        /* Check if id not exist in current shapes */
-        if (!this.data[id] && !shapes[id]) {
-          return;
-        }
+      Object.entries(shapes)
+        .forEach(([id, shape]) => {
+          /* Check if id not exist in current shapes */
+          if (!this.data[id] && !shapes[id]) {
+            return;
+          }
 
-        const newId = uid();
+          const newId = uid();
 
-        /* Change id in connected shapes */
-        shape.connectedTo.forEach((connectedShapeId) => {
-          const connectedShape = shapes[connectedShapeId];
+          /* Change id in connected shapes */
+          shape.connectedTo.forEach((connectedShapeId) => {
+            const connectedShape = shapes[connectedShapeId];
 
-          connectedShape.connections = connectedShape.connections.map(connection => ({
-            ...connection,
-            shapeId: connection.shapeId === id ? newId : connection.shapeId,
-          }));
+            connectedShape.connections = connectedShape.connections.map(connection => ({
+              ...connection,
+              shapeId: connection.shapeId === id ? newId : connection.shapeId,
+            }));
+          });
+
+          /* Change id in connected shapes */
+          shape.connections.forEach(({ shapeId: connectingShapeId }) => {
+            const connectingShape = shapes[connectingShapeId];
+
+            connectingShape.connectedTo = connectingShape.connectedTo
+              .map(shapeId => (shapeId === id ? newId : shapeId));
+          });
+
+          delete shapes[id];
+
+          shapes[newId] = {
+            ...shape,
+            _id: newId,
+          };
         });
-
-        /* Change id in connected shapes */
-        shape.connections.forEach(({ shapeId: connectingShapeId }) => {
-          const connectingShape = shapes[connectingShapeId];
-
-          connectingShape.connectedTo = connectingShape.connectedTo.map(shapeId =>
-            shapeId === id ? newId : shapeId,
-          );
-        });
-
-        delete shapes[id];
-
-        shapes[newId] = {
-          ...shape,
-          _id: newId,
-        };
-      });
 
       this.data = {
         ...this.data,

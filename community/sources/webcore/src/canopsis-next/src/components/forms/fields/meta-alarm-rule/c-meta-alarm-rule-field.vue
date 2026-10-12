@@ -1,6 +1,6 @@
 <template>
   <c-lazy-search-field
-    :value="value"
+    v-field="value"
     :label="$t('metaAlarmRule.field.title')"
     :loading="pending"
     :items="rules"
@@ -14,7 +14,7 @@
     clearable
     autocomplete
     with-type
-    @update:value="clearQuerySearch"
+    @input="clearQuerySearch"
     @fetch="fetchRules"
     @fetch:more="fetchMoreRules"
     @update:search="updateQuerySearch"
@@ -30,7 +30,6 @@ import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 
 export default {
-  emits: ['update:value', 'update:modelValue'],
   props: {
     value: {
       type: [Array, String, Object],
@@ -61,13 +60,15 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const rulesById = ref({});
     const meta = ref({});
 
     const rules = computed(() => Object.values(rulesById.value));
 
-    const { fetchMetaAlarmRulesListWithoutStore } = useMetaAlarmRule();
+    const {
+      fetchMetaAlarmRulesListWithoutStore,
+    } = useMetaAlarmRule();
 
     const {
       pending,
@@ -97,14 +98,7 @@ export default {
 
     const fetchMoreRules = () => updateQueryPage(query.value.page + 1);
 
-    const clearQuerySearch = (value) => {
-      emit('update:value', value);
-      emit('update:modelValue', value);
-
-      if (!value) {
-        updateQuerySearch('');
-      }
-    };
+    const clearQuerySearch = value => !value && updateQuerySearch('');
 
     onMounted(fetchRules);
 
@@ -113,6 +107,7 @@ export default {
       meta,
       pending,
       hasMore,
+
       fetchRules,
       fetchMoreRules,
       clearQuerySearch,

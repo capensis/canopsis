@@ -1,20 +1,18 @@
 <template>
-  <c-layout>
-    <c-select
-      :model-value="onSuccess"
+  <v-layout>
+    <v-select
+      v-field="form.config.on_success"
       :label="$t('eventFilter.onSuccess')"
       :items="eventFilterAfterTypes"
       class="mr-3"
-      @update:model-value="emit('update:on-success', $event)"
     />
-    <c-select
-      :model-value="onFailure"
+    <v-select
+      v-field="form.config.on_failure"
       :label="$t('eventFilter.onFailure')"
       :items="eventFilterAfterTypes"
       class="ml-3"
-      @update:model-value="emit('update:on-failure', $event)"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -23,20 +21,18 @@ import { computed } from 'vue';
 import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES } from '@/constants';
 
 export default {
-  emits: ['update:on-success', 'update:on-failure'],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
-    onSuccess: {
-      type: String,
-      default: undefined,
-    },
-    onFailure: {
-      type: String,
-      default: undefined,
+    form: {
+      type: Object,
+      default: () => ({}),
     },
   },
   setup() {
-    const eventFilterAfterTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES),
-    );
+    const eventFilterAfterTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES));
 
     return {
       eventFilterAfterTypes,

@@ -1,85 +1,18 @@
-const DEFAULT_RAF_DURATION = 8;
+import { chunk } from 'lodash';
 
 /**
- * Processes items in animation frames without exceeding the time budget where possible.
+ * A recursive function that calls the provided callback function using requestAnimationFrame.
  *
- * At least one item is processed per frame. An async callback can include Vue's DOM flush in the measured work.
- *
- * @param {Array} [items = []] - Items to process.
- * @param {Function} [callback] - A callback invoked for every item.
- * @param {Object} [options = {}]
- * @param {number} [options.duration = 8] - Work budget for one frame, in milliseconds.
- * @param {Function} [options.onComplete] - A callback invoked after all items are processed.
- * @returns {Function} Function that cancels the scheduled work.
+ * @param {Function} [callback] - The callback function to be called recursively.
+ * @param {number} [depth = 0] - The depth of recursion.
  */
-export const recursiveRaf = (
-  items = [],
-  callback,
-  { duration = DEFAULT_RAF_DURATION, onComplete } = {},
-) => {
-  const queuedItems = [...items];
-  const normalizedDuration = Math.max(0, duration);
-  let animationFrameId;
-  let currentIndex = 0;
-  let cancelled = false;
-
-  const cancel = () => {
-    cancelled = true;
-
-    if (animationFrameId !== undefined) {
-      window.cancelAnimationFrame(animationFrameId);
-    }
-  };
-
-  if (!queuedItems.length || !callback) {
-    onComplete?.();
-
-    return cancel;
-  }
-
-  const processFrame = async () => {
-    const startedAt = performance.now();
-
-    do {
-      await callback?.(queuedItems[currentIndex], currentIndex, queuedItems);
-      currentIndex += 1;
-
-      if (cancelled) {
-        return;
-      }
-    } while (
-      currentIndex < queuedItems.length &&
-      performance.now() - startedAt < normalizedDuration
-    );
-
-    if (currentIndex < queuedItems.length) {
-      animationFrameId = window.requestAnimationFrame(processFrame);
-
-      return;
-    }
-
-    onComplete?.();
-  };
-
-  animationFrameId = window.requestAnimationFrame(processFrame);
-
-  return cancel;
-};
-
-/**
- * Calls a callback after the requested number of animation frames.
- *
- * @param {Function} [callback]
- * @param {number} [frames = 1]
- */
-export const callAfterAnimationFrames = (callback, frames = 1) => {
-  if (frames <= 0) {
+export const recursiveRaf = (callback, depth = 0) => {
+  if (depth <= 0) {
     callback?.();
-
     return;
   }
 
-  window.requestAnimationFrame(() => callAfterAnimationFrames(callback, frames - 1));
+  window.requestAnimationFrame(() => recursiveRaf(callback, depth - 1));
 };
 
 /**
@@ -106,28 +39,26 @@ export const getNearestViewportIndexesBound = ({
   }
 
   const itemsPerViewport = Math.round(window.innerHeight / height);
-  const batchSize = Math.round(itemsPerViewport + itemsPerViewport * threshold * 2);
+  const batchSize = Math.round(itemsPerViewport + (itemsPerViewport * threshold * 2));
   const halfBatchSize = Math.round(batchSize / 2);
 
   end = Math.min(batchSize, end);
 
-  const originalMiddleOfVisible = window.scrollY + window.innerHeight / 2;
+  const originalMiddleOfVisible = window.scrollY + (window.innerHeight / 2);
   let middleOfVisible = originalMiddleOfVisible;
 
   const { top: wrapperTop } = wrapperEl.getBoundingClientRect();
 
   wrapperEl.querySelectorAll('.v-data-table__expanded__content').forEach((element) => {
-      const { height: expandPanelHeight, top: expandPanelTop } = element.getBoundingClientRect();
+    const { height: expandPanelHeight, top: expandPanelTop } = element.getBoundingClientRect();
 
-      if (expandPanelTop < originalMiddleOfVisible) {
-        middleOfVisible -= expandPanelHeight;
-      }
-    });
+    if (expandPanelTop < originalMiddleOfVisible) {
+      middleOfVisible -= expandPanelHeight;
+    }
+  });
 
   if (wrapperTop < window.scrollY) {
-    const middleItemIndex = Math.abs(
-      Math.round((middleOfVisible - (wrapperTop + window.scrollY)) / height),
-    );
+    const middleItemIndex = Math.abs(Math.round((middleOfVisible - (wrapperTop + window.scrollY)) / height));
 
     const startDiff = middleItemIndex - halfBatchSize;
 
@@ -148,7 +79,11 @@ export const getNearestViewportIndexesBound = ({
  * @returns {{ nearest: Array<string | number>, farthest: Array<string | number> }} An object containing nearest and
  * farthest indexes.
  */
-export const getNearestAndFarthestIndexes = ({ start = 0, end = 0, ids = [] } = {}) => {
+export const getNearestAndFarthestIndexes = ({
+  start = 0,
+  end = 0,
+  ids = [],
+} = {}) => {
   const { length } = ids;
   const nearest = [];
   const farthest = [];
@@ -162,10 +97,19 @@ export const getNearestAndFarthestIndexes = ({ start = 0, end = 0, ids = [] } = 
       farthest.push(ids[i]);
     }
 
-    if (j < length) {
+    if (j <= length) {
       farthest.push(ids[j]);
     }
   }
 
   return { nearest, farthest };
 };
+
+/**
+ * Splits an array of ids into chunks of a specified length.
+ *
+ * @param {Array} [ids = []] - The array of ids to split into chunks.
+ * @param {number} [length = 10] - The length of each chunk.
+ * @returns {Array} An array of chunks containing the ids.
+ */
+export const splitIdsToChunk = (ids = [], length = 10) => chunk(ids, length);

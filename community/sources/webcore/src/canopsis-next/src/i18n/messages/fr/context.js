@@ -17,10 +17,6 @@ export default {
       editEntity: 'Éditer l\'entité',
       duplicateEntity: 'Dupliquer l\'entité',
       deleteEntity: 'Supprimer l\'entité',
-      pause: 'Mettre en pause',
-      unpause: 'Réactiver',
-      inheritedPause: 'La pause est héritée',
-      inheritedPauses: 'Les pauses sélectionnées sont héritées et ne peuvent pas être supprimées',
       pbehavior: 'Comportement périodique',
       variablesHelp: 'Liste des variables disponibles',
       massEnable: 'Activer les entités',
@@ -32,8 +28,7 @@ export default {
     addService: 'Ajouter une nouvelle entité de service',
   },
   popups: {
-    massDeleteWarning:
-      'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
+    massDeleteWarning: 'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
     exportFailed: 'Échec de l\'exportation des entités au format CSV',
   },
 };

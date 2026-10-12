@@ -1,55 +1,62 @@
 <template>
-  <v-form v-click-outside.zIndex="clickOutsideDirective" @submit.prevent.stop="submit">
+  <v-form
+    v-click-outside.zIndex="showConfirmationModal"
+    @submit.prevent.stop="submit"
+  >
     <v-card width="400">
-      <v-card-title class="bg-primary text-white px-3 py-2">
-        <c-layout class="w-100" align="center" justify="space-between">
-          <h4 class="text-subtitle-1 ma-0">
-            {{ title }}
-          </h4>
+      <v-card-title class="primary pa-2 white--text">
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <h4>{{ title }}</h4>
           <v-btn
-            class="ma-0"
-            size="x-small"
-            variant="text"
+            class="ma-0 ml-3"
             icon
+            small
             @click="close"
           >
             <v-icon color="white">
               close
             </v-icon>
           </v-btn>
-        </c-layout>
+        </v-layout>
       </v-card-title>
-      <v-card-text class="pt-4">
+      <v-card-text>
         <point-form
-          :form="form"
+          v-model="form"
           :coordinates="coordinates"
           :exists-entities="existsEntities"
-          @update:form="updateForm"
-          @fly:coordinates="emit('fly:coordinates', $event)"
+          @fly:coordinates="$emit('fly:coordinates', $event)"
         />
       </v-card-text>
-      <v-card-actions class="justify-end">
-        <v-btn :disabled="isSubmitting" variant="text" @click="close">
-          {{ t('common.cancel') }}
+      <v-card-actions class="v-layout justify-end">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           v-if="editing"
-          :disabled="isSubmitting"
+          :disabled="submitting"
+          :outlined="$system.dark"
           color="error"
-          variant="text"
-          @click.stop="emit('remove')"
+          depressed
+          text
+          @click.stop="$emit('remove')"
         >
-          {{ t('common.delete') }}
+          {{ $t('common.delete') }}
         </v-btn>
         <v-btn
           :disabled="isDisabled"
-          :loading="isSubmitting"
-          color="primary"
-          variant="elevated"
-          type="button"
-          @click.stop="submit"
+          :loading="submitting"
+          class="primary"
+          type="submit"
         >
-          {{ t('common.submit') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -58,18 +65,22 @@
 
 <script>
 import { isEqual } from 'lodash';
-import { computed, watch } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import PointForm from './point-form.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
+  inject: ['$system'],
   components: { PointForm },
+  mixins: [
+    submittableMixinCreator(),
+  ],
   props: {
     point: {
       type: Object,
@@ -88,37 +99,42 @@ export default {
       default: () => [],
     },
   },
-  emits: ['cancel', 'submit', 'remove', 'fly:coordinates'],
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const {
-      values: form,
-      validate,
-      isSubmitting,
-      reset,
-    } = useForm({
-      initialValues: { ...props.point },
-    });
-
-    const isDisabled = computed(() => !form.value.entity && !form.value.map);
-    const title = computed(() => (props.editing ? t('map.editPoint') : t('map.addPoint')));
-
-    const close = () => emit('cancel');
-    const updateForm = value => (form.value = value);
-
-    const submit = async () => {
-      const { valid } = await validate();
-
-      if (valid && !isDisabled.value) {
-        emit('submit', { ...form.value });
-      }
+  data() {
+    return {
+      form: { ...this.point },
     };
+  },
+  computed: {
+    title() {
+      if (this.editing) {
+        return this.$t('map.editPoint');
+      }
 
-    const showConfirmationModal = () => {
-      if (!isEqual(props.point, form.value)) {
-        modals.show({
-          id: props.point._id,
+      return this.$t('map.addPoint');
+    },
+  },
+  watch: {
+    point(point) {
+      this.form = { ...point };
+    },
+  },
+  methods: {
+    close() {
+      this.$emit('cancel');
+    },
+
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        this.$emit('submit', this.form);
+      }
+    },
+
+    showConfirmationModal() {
+      if (!isEqual(this.point, this.form)) {
+        this.$modals.show({
+          id: this.point._id,
           name: MODALS.clickOutsideConfirmation,
           dialogProps: {
             persistent: true,
@@ -126,41 +142,17 @@ export default {
           config: {
             action: (confirmed) => {
               if (confirmed) {
-                return submit();
+                return this.submit();
               }
 
-              return close();
+              return this.close();
             },
           },
         });
       } else {
-        close();
+        this.close();
       }
-    };
-
-    const clickOutsideDirective = computed(() => ({
-      handler: showConfirmationModal,
-      include: () => [...document.querySelectorAll('.v-overlay__content')],
-      closeConditional: () => true,
-    }));
-
-    watch(
-      () => props.point,
-      point => reset({ ...point }),
-    );
-
-    return {
-      t,
-      emit,
-      form,
-      title,
-      isDisabled,
-      isSubmitting,
-      clickOutsideDirective,
-      close,
-      submit,
-      updateForm,
-    };
+    },
   },
 };
 </script>

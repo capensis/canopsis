@@ -1,39 +1,31 @@
 <template>
-  <c-text-field
-    :model-value="value"
+  <v-text-field
+    v-field="value"
+    v-validate="rules"
     :label="$t('declareTicket.ticketID')"
+    :error-messages="errors.collect(name)"
     :name="name"
     :disabled="disabled"
-    :required="required"
-    :validation-rules="validationRules"
     class="declare-ticket-rule-ticket-id-text-field"
-    @update:model-value="$emit('update:value', $event)"
   >
-    <template #append-inner>
+    <template #append="">
       <c-help-icon
+        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') })"
         icon="help"
         color="grey darken-1"
         left
-      >
-        <div>
-          {{ $t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') }) }}
-        </div>
-        <template v-if="ticketFormats.length">
-          <div class="mt-2">{{ $t('declareTicket.allowedTicketFormats') }}</div>
-          <code
-            v-for="(format, index) in ticketFormats"
-            :key="`${format}-${index}`"
-            class="d-block"
-          >{{ format }}</code>
-        </template>
-      </c-help-icon>
+      />
     </template>
-  </c-text-field>
+  </v-text-field>
 </template>
 
 <script>
 export default {
-  emits: ['update:value'],
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: String,
@@ -51,13 +43,12 @@ export default {
       type: Boolean,
       default: false,
     },
-    validationRules: {
-      type: Array,
-      default: () => [],
-    },
-    ticketFormats: {
-      type: Array,
-      default: () => [],
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };

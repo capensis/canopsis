@@ -1,30 +1,30 @@
 <template>
-  <div class="w-100">
-    <c-layout align="center">
+  <div>
+    <v-layout align-center>
       <span>{{ message }}</span>
       <v-btn
-        class="ml-2"
-        density="compact"
-        size="small"
-        variant="text"
         icon
+        small
         @click="toggleDescriptionOpened"
       >
         <v-icon>help</v-icon>
       </v-btn>
-    </c-layout>
+    </v-layout>
     <v-expand-transition>
       <v-card v-show="opened" class="mt-2 pa-4 event-filter-enrichment-action-form-type-info-card">
-        <c-layout column>
-          <div v-html="description" class="pre-wrap" />
+        <v-layout column>
+          <div
+            v-html="description"
+            class="pre-wrap"
+          />
           <img
             v-if="image"
             :src="image"
             class="my-2"
             alt=""
             @click="showImageViewerModal"
-          />
-        </c-layout>
+          >
+        </v-layout>
       </v-card>
     </v-expand-transition>
   </div>
@@ -92,18 +92,16 @@ img {
 
   table {
     border-spacing: 0;
-    width: 100%;
 
     th {
       background-color: var(--v-background-darken2, #b1b1b1);
     }
 
     td {
-      background-color: var(--v-background-base, #ffffff);
+      background-color: var(--v-background-base, #FFFFFF);
     }
 
-    td,
-    th {
+    td, th {
       border: 1px solid var(--v-background-darken3, #b1b1b1);
     }
   }

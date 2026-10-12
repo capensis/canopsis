@@ -1,10 +1,10 @@
 <template>
-  <c-layout class="gap-3" column>
+  <v-layout class="gap-3" column>
     <availability-widget-filters
       :query="query"
-      :searches="searches"
+      :columns="widget.parameters.widget_columns"
       :widget-id="widget._id"
-      :user-filters="userPreferenceFilters"
+      :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
       :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToUserFilter"
@@ -19,10 +19,7 @@
       @update:type="updateShowType"
       @update:display-parameter="updateDisplayParameter"
       @update:value-filter="updateValueFilter"
-      @submit:search="updateSearch"
-      @reset:search="resetSearch"
-      @toggle-pin:search="togglePinSearch"
-      @remove:search="removeSearch"
+      @update:query="updateWidgetQuery"
     />
 
     <availability-list
@@ -34,12 +31,11 @@
       :active-alarms-columns="widget.parameters.active_alarms_columns"
       :resolved-alarms-columns="widget.parameters.resolved_alarms_columns"
       :show-type="query.showType"
-      :options="options"
+      :options.sync="options"
       :interval="interval"
       :show-trend="query.showTrend"
-      @update:options="updateOptions"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -52,8 +48,7 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import { isOmitEqual } from '@/helpers/collection';
-import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
 import { toSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
 import {
@@ -61,64 +56,56 @@ import {
   prepareAvailabilityWidgetColumnValue,
 } from '@/helpers/entities/availability/query';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
-import { convertFiltersToQuery, convertSortToRequest } from '@/helpers/entities/shared/query';
+import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { isOmitEqual } from '@/helpers/collection';
 
-import { entitiesAvailabilityMixin } from '@/mixins/entities/availability';
-import { permissionsWidgetsAvailabilityExport } from '@/mixins/permissions/widgets/availability/export';
-import { permissionsWidgetsAvailabilityFilters } from '@/mixins/permissions/widgets/availability/filters';
-import { permissionsWidgetsAvailabilityInterval } from '@/mixins/permissions/widgets/availability/interval';
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
-import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/saved-items';
-import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { permissionsWidgetsAvailabilityFilters } from '@/mixins/permissions/widgets/availability/filters';
+import { permissionsWidgetsAlarmStatisticsInterval } from '@/mixins/permissions/widgets/availability/interval';
+import { exportMixinCreator } from '@/mixins/widget/export';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { entitiesAvailabilityMixin } from '@/mixins/entities/availability';
+import { widgetOptionsMixin } from '@/mixins/widget/options';
+import { permissionsWidgetsAvailabilityExport } from '@/mixins/permissions/widgets/availability/export';
 
-import AvailabilityList from '@/components/other/availability/availability-list.vue';
 import AvailabilityWidgetFilters from '@/components/widgets/availability/partials/availability-widget-filters.vue';
+import AvailabilityList from '@/components/other/availability/availability-list.vue';
 
 export default {
   inject: ['$system'],
-
   components: { AvailabilityList, AvailabilityWidgetFilters },
-
   mixins: [
     widgetPeriodicRefreshMixin,
     widgetFilterSelectMixin,
     widgetFetchQueryMixin,
-    widgetAdvancedSearchSavedItemsMixin,
     permissionsWidgetsAvailabilityFilters,
-    permissionsWidgetsAvailabilityInterval,
+    permissionsWidgetsAlarmStatisticsInterval,
     permissionsWidgetsAvailabilityExport,
     queryIntervalFilterMixin,
     entitiesAvailabilityMixin,
+    widgetOptionsMixin,
     exportMixinCreator({
       createExport: 'createAvailabilityExport',
       fetchExport: 'fetchAvailabilityExport',
     }),
   ],
-
   props: {
     widget: {
       type: Object,
       required: true,
-    },
-    tabId: {
-      type: String,
-      default: '',
     },
     hideActions: {
       type: Boolean,
       default: false,
     },
   },
-
   data() {
     return {
       exporting: false,
     };
   },
-
   computed: {
     interval() {
       return this.getIntervalQuery();
@@ -131,12 +118,7 @@ export default {
 
       return this.interval.to - this.interval.from;
     },
-
-    userPreferenceFilters() {
-      return this.userPreference?.filters ?? [];
-    },
   },
-
   methods: {
     customQueryCondition(query, oldQuery) {
       const omitFields = [];
@@ -202,6 +184,10 @@ export default {
       this.updateQueryField('valueFilter', value);
     },
 
+    updateWidgetQuery(newQuery) {
+      this.query = newQuery;
+    },
+
     getQuery() {
       const {
         sortBy = [],
@@ -227,10 +213,7 @@ export default {
       };
 
       if (valueFilter) {
-        query.value_filter_parameter = getAvailabilityFieldByDisplayParameterAndShowType(
-          displayParameter,
-          showType,
-        );
+        query.value_filter_parameter = getAvailabilityFieldByDisplayParameterAndShowType(displayParameter, showType);
         query.value_filter_value = valueFilter.value;
         query.value_filter_method = valueFilter.method;
       }
@@ -255,10 +238,11 @@ export default {
         export_settings: {
           widget_export_columns: widgetExportColumns,
           export_csv_separator: exportCsvSeparator,
-        } = {},
+        },
       } = this.widget.parameters;
 
       const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
+
       const { displayParameter, showType } = this.query;
       const valueField = getAvailabilityFieldByDisplayParameterAndShowType(
         displayParameter,
@@ -289,7 +273,7 @@ export default {
         });
 
         this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
-      } catch {
+      } catch (err) {
         this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {
         this.exporting = false;

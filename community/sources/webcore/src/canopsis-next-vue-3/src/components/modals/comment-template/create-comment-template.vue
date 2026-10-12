@@ -1,0 +1,99 @@
+<template>
+  <v-form @submit.prevent="submit">
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ title }}</span>
+      </template>
+
+      <template #text>
+        <comment-template-form />
+      </template>
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
+        </v-btn>
+
+        <v-btn
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
+          type="submit"
+        >
+          {{ submitLabel }}
+        </v-btn>
+      </template>
+    </c-modal-wrapper>
+  </v-form>
+</template>
+
+<script>
+import { computed } from 'vue';
+
+import { MODALS } from '@/constants';
+
+import {
+  commentTemplateToForm,
+  formToCommentTemplate,
+} from '@/helpers/entities/comment-template/form';
+
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+
+import CommentTemplateForm from '@/components/other/comment-template/form/comment-template-form.vue';
+
+export default {
+  name: MODALS.createCommentTemplate,
+
+  components: { CommentTemplateForm },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+
+    const config = computed(() => props.modal.config ?? {});
+    const close = () => modals.hide({ id: props.modal.id });
+
+    const form = useForm({
+      initialValues: commentTemplateToForm(config.value.template),
+    });
+    const { handleSubmit, isSubmitting: submitting } = form;
+
+    const title = computed(
+      () => config.value.title || t('modals.createCommentTemplate.create.title'),
+    );
+    const submitLabel = computed(() => t(config.value.template?._id ? 'common.save' : 'common.create'),
+    );
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToCommentTemplate(form.values.value));
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({
+      form: form.values,
+      submit,
+      close,
+    });
+
+    return {
+      t,
+      title,
+      submitting,
+      submitLabel,
+      submit,
+      close,
+    };
+  },
+};
+</script>

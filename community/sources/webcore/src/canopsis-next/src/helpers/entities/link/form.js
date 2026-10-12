@@ -8,12 +8,9 @@ import {
   LINK_RULE_ACTIONS,
 } from '@/constants';
 
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import {
-  externalDataToForm,
-  formToExternalData,
-} from '@/helpers/entities/shared/external-data/form';
 import { uid } from '@/helpers/uid';
+import { externalDataToForm, formToExternalData } from '@/helpers/entities/shared/external-data/form';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 /**
  * @typedef {'alarm' | 'entity'} LinkRuleType
@@ -99,9 +96,9 @@ export const linkRuleToForm = (linkRule = {}) => ({
  * @param {string} [code = '']
  * @returns {boolean}
  */
-export const isDefaultSourceCode = (code = '') =>
-  !code ||
-  [LINK_RULE_DEFAULT_ALARM_SOURCE_CODE, LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE].includes(code);
+export const isDefaultSourceCode = (code = '') => (
+  !code || [LINK_RULE_DEFAULT_ALARM_SOURCE_CODE, LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE].includes(code)
+);
 
 /**
  * Convert link rule link to form
@@ -111,8 +108,11 @@ export const isDefaultSourceCode = (code = '') =>
  * @param {LinkRuleType} type
  * @returns {LinkRuleLink}
  */
-export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) =>
-  type === LINK_RULE_TYPES.entity ? omit(form, ['single', 'hide_in_menu']) : form;
+export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) => (
+  type === LINK_RULE_TYPES.entity
+    ? omit(form, ['single', 'hide_in_menu'])
+    : form
+);
 
 /**
  * Convert form to link rule
@@ -124,20 +124,12 @@ export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alar
  * @param {LinkRuleForm} form
  * @returns {LinkRule}
  */
-export const formToLinkRule = ({
-  patterns,
-  links,
-  source_code: sourceCode,
-  external_data: externalData,
-  ...form
-}) => {
+export const formToLinkRule = ({ patterns, links, source_code: sourceCode, external_data: externalData, ...form }) => {
   const linkRule = {
     ...form,
     ...formFilterToPatterns(
       patterns,
-      form.type === LINK_RULE_TYPES.entity
-        ? [PATTERNS_FIELDS.entity]
-        : [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+      form.type === LINK_RULE_TYPES.entity ? [PATTERNS_FIELDS.entity] : [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
     ),
     external_data: formToExternalData(externalData),
   };

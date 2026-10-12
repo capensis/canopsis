@@ -1,30 +1,35 @@
 <template>
-  <v-row align="stretch" class="pattern-group-field my-0" density="compact">
-    <v-col cols="auto" class="pattern-group-field__operator">
+  <v-layout>
+    <v-flex class="pa-2 mr-2">
       <pattern-operator-information>{{ $t('common.and') }}</pattern-operator-information>
-    </v-col>
-    <v-col class="pattern-group-field__rules">
-      <pattern-rules-field
-        :rules="group.rules"
-        :attributes="attributes"
-        :disabled="disabled"
-        :readonly="readonly"
-        @update:rules="updateRules"
-      />
-    </v-col>
-  </v-row>
+    </v-flex>
+    <v-flex xs11>
+      <v-layout column>
+        <pattern-rules-field
+          :rules="group.rules"
+          :attributes="attributes"
+          :disabled="disabled"
+          :readonly="readonly"
+          @input="updateRules"
+        />
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
 import { formMixin } from '@/mixins/form';
 
-import PatternOperatorInformation from './pattern-operator-information.vue';
 import PatternRulesField from './pattern-rules-field.vue';
+import PatternOperatorInformation from './pattern-operator-information.vue';
 
 export default {
-  emits: ['update:group', 'remove'],
   components: { PatternOperatorInformation, PatternRulesField },
   mixins: [formMixin],
+  model: {
+    prop: 'group',
+    event: 'input',
+  },
   props: {
     group: {
       type: Object,
@@ -54,18 +59,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pattern-group-field {
-  width: 100%;
-
-  &__operator {
-    display: flex;
-    align-items: center;
-  }
-
-  &__rules {
-    min-width: 0;
-  }
-}
-</style>

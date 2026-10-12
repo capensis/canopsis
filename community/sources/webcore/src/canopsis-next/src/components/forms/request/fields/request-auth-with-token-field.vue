@@ -1,10 +1,9 @@
 <template>
-  <c-layout gap="2" column>
-    <c-radio-group
-      :model-value="value.type"
+  <v-layout class="gap-2" column>
+    <v-radio-group
+      v-field="value.type"
       :disabled="disabled"
       column
-      @update:model-value="updateField('type', $event)"
     >
       <v-radio
         v-for="type in types"
@@ -12,30 +11,28 @@
         :label="type.label"
         :value="type.value"
       />
-    </c-radio-group>
-    <c-layout v-if="isCredentialsType" gap="2">
+    </v-radio-group>
+    <v-layout v-if="isCredentialsType" class="gap-2">
       <c-name-field
-        :model-value="value.username"
+        v-field="value.username"
         :label="$t('common.username')"
         :name="`${name}.username`"
         :disabled="disabled"
-        @update:model-value="updateField('username', $event)"
       />
       <c-password-field
-        :model-value="value.password"
+        v-field="value.password"
         :name="`${name}.password`"
         :disabled="disabled"
-        @update:model-value="updateField('password', $event)"
       />
-    </c-layout>
+    </v-layout>
     <request-auth-token-field
       v-if="isTokenType"
       :value="authToken"
       :name="`${name}.token`"
       :disabled="disabled"
-      @update:value="updateAuthToken"
+      @input="updateAuthToken"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -43,14 +40,16 @@ import { computed } from 'vue';
 
 import { REQUEST_AUTH_TYPES } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
 import RequestAuthTokenField from '@/components/forms/request/fields/request-auth-token-field.vue';
 
 export default {
-  emits: ['update:value', 'update:auth-token'],
   components: { RequestAuthTokenField },
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
@@ -75,21 +74,19 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { updateField } = useModelField(props, emit);
 
     const types = computed(() => Object.values(REQUEST_AUTH_TYPES).reduce((acc, type) => {
-        if (props.onlyCredentials && type === REQUEST_AUTH_TYPES.token) {
-          return acc;
-        }
-
-        acc.push({
-          value: type,
-          label: t(`request.authTypes.${type}`),
-        });
-
+      if (props.onlyCredentials && type === REQUEST_AUTH_TYPES.token) {
         return acc;
-      }, []),
-    );
+      }
+
+      acc.push({
+        value: type,
+        label: t(`request.authTypes.${type}`),
+      });
+
+      return acc;
+    }, []));
 
     const isCredentialsType = computed(() => props.value.type === REQUEST_AUTH_TYPES.credentials);
     const isTokenType = computed(() => props.value.type === REQUEST_AUTH_TYPES.token);
@@ -105,7 +102,6 @@ export default {
       types,
       isCredentialsType,
       isTokenType,
-      updateField,
       updateAuthToken,
     };
   },

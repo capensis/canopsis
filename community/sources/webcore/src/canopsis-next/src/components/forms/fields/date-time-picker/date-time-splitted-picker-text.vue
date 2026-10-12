@@ -1,29 +1,28 @@
 <template>
-  <c-layout class="date-time-splitted-field" column>
-    <c-layout :style="rowStyle" gap="2">
-      <div class="date-time-splitted-field__date">
+  <v-layout
+    class="date-time-splitted-field"
+    column
+  >
+    <v-layout :reverse="reverse">
+      <v-flex class="date-time-splitted-field__date">
         <date-picker-text
-          :value="dateValue"
+          :value="value | date('vuetifyDatePicker', null)"
           :label="!reverse || fullDay ? label : ''"
           hide-details
         />
-      </div>
+      </v-flex>
       <time-picker-text
         v-if="!fullDay"
-        :value="timeValue"
+        :value="value | date('timePicker', null)"
         :label="reverse ? label : ''"
         class="date-time-splitted-field__time"
         hide-details
       />
-    </c-layout>
-  </c-layout>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
-
 import DatePickerText from './date-picker-text.vue';
 import TimePickerText from './time-picker-text.vue';
 
@@ -45,21 +44,6 @@ export default {
     reverse: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    dateValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.vuetifyDatePicker, null);
-    },
-
-    timeValue() {
-      return convertDateToString(this.value, DATETIME_FORMATS.timePicker, null);
-    },
-
-    rowStyle() {
-      return {
-        flexDirection: this.reverse ? 'row-reverse' : undefined,
-      };
     },
   },
 };

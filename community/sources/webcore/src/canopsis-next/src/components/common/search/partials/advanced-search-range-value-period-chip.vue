@@ -1,34 +1,32 @@
 <template>
   <v-chip
-    :closable="closable"
+    :close="closable"
     :color="color"
     class="c-advanced-search__chip c-advanced-search__array-chip"
-    @click.prevent="$emit('click')"
+    @click.prevent=""
     @click:close="close"
-    @focusout="$emit('focusout')"
   >
     <v-menu
       v-for="chip in chips"
       :key="chip.key"
       :close-on-content-click="true"
       max-width="290"
-      location="bottom"
+      offset-y
     >
-      <template #activator="{ props: activatorProps }">
+      <template #activator="{ on }">
         <v-chip
           class="c-advanced-search__chip"
-          v-bind="activatorProps"
+          v-on="on"
         >
-          <span class="font-italic text-medium-emphasis">
+          <span class="font-italic grey--text">
             {{ chip.label }}:
           </span>
           {{ chip.valueText }}
         </v-chip>
       </template>
       <variables-list
-        :value="chipValue[chip.key]"
+        v-field="chips[chip.key]"
         :items="chip.items"
-        @update:value="updateField(chip.key, $event)"
       />
     </v-menu>
   </v-chip>
@@ -37,7 +35,6 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useQuickDateIntervalRange } from '@/hooks/form/quick-date-interval-range';
 import { useI18n } from '@/hooks/i18n';
 
@@ -47,11 +44,8 @@ export default {
   components: {
     VariablesList,
   },
-
-  inheritAttrs: false,
-
   props: {
-    modelValue: {
+    value: {
       type: Object,
       default: () => ({ from: '', to: '' }),
     },
@@ -68,14 +62,8 @@ export default {
       default: () => [],
     },
   },
-
-  emits: ['update:modelValue', 'click', 'focusout', 'close'],
-
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { updateField } = useModelField(props, emit);
-
-    const chipValue = computed(() => props.modelValue ?? { from: '', to: '' });
 
     const {
       fromQuickRanges,
@@ -85,7 +73,7 @@ export default {
     } = useQuickDateIntervalRange({
       fromRanges: toRef(props, 'intervalRanges'),
       toRanges: toRef(props, 'intervalRanges'),
-      value: chipValue,
+      value: toRef(props, 'value'),
     });
 
     const chipConfigs = computed(() => ({
@@ -93,35 +81,42 @@ export default {
       to: { ranges: toQuickRanges, itemDisabled: itemToDisabled },
     }));
 
-    const chips = computed(() => Object.entries(chipConfigs.value).map(([key, config]) => {
-      const chipRanges = config.ranges.value;
-      const value = chipValue.value?.[key];
+    /**
+     * Computed chips for 'from' and 'to' with all attributes needed for rendering.
+     *
+     * @returns {Array<Object>} Chips with key, label, value, valueText, items, updateValue.
+     */
+    const chips = computed(() => (
+      Object.entries(chipConfigs.value).map(([key, { ranges, itemDisabled }]) => {
+        const chipRanges = ranges.value;
+        const chipValue = props.value?.[key];
 
-      const valueText = !value
-        ? '---------'
-        : (chipRanges.find(item => item.value === value)?.text ?? t(`quickRanges.types.${value}`));
+        const valueText = !chipValue
+          ? '---------'
+          : (chipRanges.find(v => v.value === chipValue)?.text ?? t(`quickRanges.types.${chipValue}`));
 
-      const items = chipRanges.map(item => ({
-        ...item,
-        disabled: config.itemDisabled(item),
-      }));
+        const items = chipRanges.map(item => ({
+          ...item,
+          disabled: itemDisabled(item),
+        }));
 
-      return {
-        key,
-        label: t(`common.${key}`),
-        value,
-        valueText,
-        items,
-      };
-    }));
+        return {
+          key,
+          label: t(`common.${key}`),
+          value: chipValue,
+          valueText,
+          items,
+        };
+      })
+    ));
 
+    /**
+     * Emits the close event when the chip is closed.
+     */
     const close = () => emit('close');
 
     return {
-      chipValue,
       chips,
-
-      updateField,
       close,
     };
   },

@@ -1,6 +1,6 @@
-import { mapActions, mapStores } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useUserPreferenceStore } from '@/stores/modules/user-preference';
+const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 
 export const entitiesUserPreferenceMixin = {
   props: {
@@ -9,17 +9,17 @@ export const entitiesUserPreferenceMixin = {
       default: false,
     },
   },
-
   computed: {
-    ...mapStores(useUserPreferenceStore),
+    ...mapGetters({
+      getUserPreferenceByWidgetId: 'getItemByWidgetId',
+    }),
 
     userPreference() {
-      return this.userPreferenceStore.getItemByWidgetId(this.widget._id);
+      return this.getUserPreferenceByWidgetId(this.widget._id);
     },
   },
-
   methods: {
-    ...mapActions(useUserPreferenceStore, {
+    ...mapActions({
       fetchUserPreferenceItem: 'fetchItem',
       fetchUserPreferenceWithoutStore: 'fetchItemWithoutStore',
       updateUserPreference: 'update',
@@ -27,7 +27,7 @@ export const entitiesUserPreferenceMixin = {
     }),
 
     fetchUserPreference(data) {
-      if (this.localWidget || this.config?.localWidget) {
+      if (this.localWidget) {
         return Promise.resolve();
       }
 
@@ -35,10 +35,9 @@ export const entitiesUserPreferenceMixin = {
     },
 
     updateContentInUserPreference(content = {}) {
-      const method =
-        this.localWidget || this.config?.localWidget
-          ? this.updateLocalUserPreference
-          : this.updateUserPreference;
+      const method = this.localWidget
+        ? this.updateLocalUserPreference
+        : this.updateUserPreference;
 
       return method({
         data: {

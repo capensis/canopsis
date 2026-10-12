@@ -1,32 +1,38 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <external-data-table-database-field
-      :value="type"
+      v-field="form.type"
       :disabled="!isNew"
       required
-      @update:value="type = $event"
     />
     <c-name-field
-      v-model="name"
+      v-field="form.name"
       :regex="nameRegex"
-      :tooltip="t('externalData.tableNameTooltip')"
+      :tooltip="$t('externalData.tableNameTooltip')"
       :disabled="fromConfig"
       required
     />
-    <c-text-field v-model="description" :label="t('common.description')" :max-length="500" />
-  </c-layout>
+    <v-text-field
+      v-field="form.description"
+      :label="$t('common.description')"
+    />
+  </v-layout>
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-
 import ExternalDataTableDatabaseField from './fields/exterrnal-data-table-database-field.vue';
 
 export default {
   components: { ExternalDataTableDatabaseField },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     isNew: {
       type: Boolean,
       default: false,
@@ -36,19 +42,10 @@ export default {
       default: false,
     },
   },
-
   setup() {
-    const { t } = useI18n();
-
-    const { type, name, description } = useFormModels(['type', 'name', 'description']);
-
     const nameRegex = /^[a-z_][\w_]*$/i;
 
     return {
-      t,
-      type,
-      name,
-      description,
       nameRegex,
     };
   },

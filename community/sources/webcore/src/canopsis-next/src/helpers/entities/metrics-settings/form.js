@@ -10,10 +10,10 @@
  */
 
 /**
- * Convert metrics settings object to form.
+ * Convert data storage object to data storage form
  *
- * @param {Object} [metricsSettings={}]
- * @returns {Object}
+ * @param {MetricsSettings} metricsSettings
+ * @return {MetricsSettingsForm}
  */
 export const metricsSettingsToForm = (metricsSettings = {}) => ({
   enabled_instructions: metricsSettings.enabled_instructions ?? false,

@@ -10,22 +10,27 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #updated="{ item }">
-      {{ formatDate(item.updated) }}
+      {{ item.updated | date }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout>
-        <c-action-btn v-if="editable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn v-if="deletable" type="delete" @click="$emit('remove', item._id)" />
-      </c-layout>
+      <v-layout>
+        <c-action-btn
+          v-if="editable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="deletable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -56,9 +61,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'remove'],
-
   setup() {
     const { t } = useI18n();
 
@@ -86,7 +88,6 @@ export default {
     ]);
 
     return {
-      formatDate: convertDateToString,
       headers,
     };
   },

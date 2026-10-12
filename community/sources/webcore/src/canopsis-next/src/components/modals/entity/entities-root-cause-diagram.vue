@@ -1,9 +1,9 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
+  <modal-wrapper close>
+    <template #title="">
       {{ title }}
     </template>
-    <template #text>
+    <template #text="">
       <state-settings-summary
         :entity="config.entity"
         :pending="pending"
@@ -16,46 +16,38 @@
         :color-indicator="config.colorIndicator"
       />
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import { useEntityStore } from '@/stores/modules/entity';
+import { modalInnerMixin } from '@/mixins/modal/inner';
 
 import EntityDependenciesByStateSettings from '@/components/other/entity/entity-dependencies-by-state-settings.vue';
 import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
+
 export default {
   name: MODALS.entitiesRootCauseDiagram,
-
   components: {
-    EntityDependenciesByStateSettings,
     StateSettingsSummary,
+    ModalWrapper,
+    EntityDependenciesByStateSettings,
   },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-
+  mixins: [modalInnerMixin],
   data() {
     return {
       pending: true,
       stateSetting: undefined,
     };
   },
-
   computed: {
-    config() {
-      return this.modal.config ?? {};
-    },
-
     entity() {
       return this.config.entity ?? {};
     },
@@ -66,13 +58,11 @@ export default {
       });
     },
   },
-
   mounted() {
     this.fetchEntityStateSetting();
   },
-
   methods: {
-    ...mapActions(useEntityStore, {
+    ...mapEntityActions({
       fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
     }),
 

@@ -1,5 +1,5 @@
 import { keyBy } from 'lodash';
-import { computed, ref, unref, watch } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -7,33 +7,22 @@ import { usePendingHandler } from '@/hooks/query/pending';
 import { useLlm } from '@/hooks/store/modules/llm';
 
 /**
- * Fetches LLM model options for a select field by LLM type.
+ * Fetches LLM model options for a select field and loads them on mount.
  *
- * @param {import('vue').Ref<string>|string} type - LLM model type
  * @returns {Object}
  */
-export const useLlmModelsListForSelect = (type) => {
+export const useLlmModelsListForSelect = () => {
   const items = ref([]);
 
   const { fetchModelsListWithoutStore } = useLlm();
 
   const { pending, handler: fetchList } = usePendingHandler(async () => {
-    const typeValue = unref(type);
-
-    if (!typeValue) {
-      items.value = [];
-
-      return;
-    }
-
-    items.value = await fetchModelsListWithoutStore({
-      params: { limit: MAX_LIMIT, type: typeValue },
-    });
+    items.value = await fetchModelsListWithoutStore({ params: { limit: MAX_LIMIT } });
   });
 
   const itemsByName = computed(() => keyBy(items.value, 'name'));
 
-  watch(() => unref(type), fetchList, { immediate: true });
+  onMounted(fetchList);
 
   return {
     items,

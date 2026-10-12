@@ -18,11 +18,13 @@
  * @param {PbehaviorReason} [reason = {}]
  * @return {PbehaviorReasonForm}
  */
-export const pbehaviorReasonToForm = (reason = {}) => ({
-  name: reason.name ?? '',
-  description: reason.description ?? '',
-  visible: !(reason.hidden ?? false),
-});
+export function pbehaviorReasonToForm(reason = {}) {
+  return {
+    name: reason.name ?? '',
+    description: reason.description ?? '',
+    visible: !reason.hidden,
+  };
+}
 
 /**
  * Convert pbehavior reason form to pbehavior reason
@@ -32,6 +34,5 @@ export const pbehaviorReasonToForm = (reason = {}) => ({
  */
 export const formToPbehaviorReason = (form = {}) => ({
   ...form,
-
   hidden: !form.visible,
 });

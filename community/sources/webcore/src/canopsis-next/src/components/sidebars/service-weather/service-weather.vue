@@ -6,14 +6,13 @@
     @submit="submit"
   >
     <field-title v-model="form.title" />
-    <field-periodic-refresh v-model="form.parameters.periodic_refresh" />
+    <field-periodic-refresh v-model="form.parameters" />
     <field-filters
       v-if="hasAccessToFilter"
       v-model="form.parameters.mainFilter"
-      v-model:filters="form.filters"
+      :filters.sync="form.filters"
       :widget-id="widget._id"
-      :widget-type="form.type"
-      :entity-types="[ENTITY_TYPES.service]"
+      :entity-types="[$constants.ENTITY_TYPES.service]"
       addable
       editable
       with-entity
@@ -21,331 +20,257 @@
       entity-counters-type
     />
     <alarms-list-modal-form
-      v-model:value="form.parameters.alarmsList"
+      v-model="form.parameters.alarmsList"
       :templates="preparedWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
     />
-    <widget-settings-item :title="t('settings.limit')">
-      <c-number-field v-model="form.parameters.limit" />
-    </widget-settings-item>
-    <widget-settings-item :title="t('settings.colorIndicator.title')">
-      <c-color-indicator-field v-model="form.parameters.colorIndicator" hide-details />
-    </widget-settings-item>
-    <widget-settings-group :title="t('context.treeOfDependencies')">
+    <field-number
+      v-model="form.parameters.limit"
+      :title="$t('settings.limit')"
+    />
+    <field-color-indicator v-model="form.parameters.colorIndicator" />
+    <widget-settings-group :title="$t('context.treeOfDependencies')">
       <field-columns
         v-model="form.parameters.serviceDependenciesColumns"
         :template="form.parameters.serviceDependenciesColumnsTemplate"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="t('settings.columnNames')"
-        :type="ENTITIES_TYPES.entity"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
         with-color-indicator
-        @update:template="updateServiceDependenciesColumnsTemplate"
+        @input="updateWidgetColumnsTemplate"
       />
-      <field-tree-of-dependencies-settings v-model="form.parameters.treeOfDependenciesShowType" />
+      <field-tree-of-dependencies-settings
+        v-model="form.parameters.treeOfDependenciesShowType"
+        :label="$t('common.settings')"
+      />
     </widget-settings-group>
-    <widget-settings-group :title="t('settings.advancedSettings')">
-      <field-default-sort-column
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-sort-column
         v-model="form.parameters.sort"
         :columns="sortColumns"
-        :columns-label="t('settings.orderBy')"
-        item-title="label"
-        item-value="value"
       />
       <field-default-elements-per-page
         v-model="form.parameters.modalItemsPerPage"
-        :sub-title="t('settings.modal')"
+        :sub-title="$t('settings.modal')"
       />
       <field-root-cause-settings v-model="form.parameters" />
       <field-text-editor-with-template
-        v-model="form.parameters.blockTemplate"
+        :value="form.parameters.blockTemplate"
         :template="form.parameters.blockTemplateTemplate"
         :templates="weatherItemWidgetTemplates"
-        :widget-template-type="WIDGET_TEMPLATES_TYPES.weatherItem"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.weatherItem"
         :variables="blockTemplateVariables"
-        :title="t('settings.weatherTemplate')"
-        @update:template="updateBlockTemplate"
+        :title="$t('settings.weatherTemplate')"
+        @input="updateBlockTemplate"
       />
       <field-text-editor-with-template
-        v-model="form.parameters.modalTemplate"
+        :value="form.parameters.modalTemplate"
         :template="form.parameters.modalTemplateTemplate"
         :templates="weatherModalWidgetTemplates"
-        :widget-template-type="WIDGET_TEMPLATES_TYPES.weatherModal"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.weatherModal"
         :variables="blockTemplateVariables"
-        :title="t('settings.modalTemplate')"
-        @update:template="updateModalTemplate"
+        :title="$t('settings.modalTemplate')"
+        @input="updateModalTemplate"
       />
       <field-text-editor-with-template
-        v-model="form.parameters.entityTemplate"
+        :value="form.parameters.entityTemplate"
         :template="form.parameters.entityTemplateTemplate"
         :templates="weatherEntityWidgetTemplates"
-        :widget-template-type="WIDGET_TEMPLATES_TYPES.weatherEntity"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.weatherEntity"
         :variables="entityTemplateVariables"
-        :title="t('settings.entityTemplate')"
-        @update:template="updateEntityTemplate"
+        :title="$t('settings.entityTemplate')"
+        @input="updateEntityTemplate"
       />
       <field-grid-size
         v-model="form.parameters.columnMobile"
-        :title="t('settings.columnMobile')"
+        :title="$t('settings.columnMobile')"
         mobile
       />
       <field-grid-size
         v-model="form.parameters.columnTablet"
-        :title="t('settings.columnTablet')"
+        :title="$t('settings.columnTablet')"
         tablet
       />
       <field-grid-size
         v-model="form.parameters.columnDesktop"
-        :title="t('settings.columnDesktop')"
+        :title="$t('settings.columnDesktop')"
       />
       <margins-form v-model="form.parameters.margin" />
       <field-slider
         v-model="form.parameters.heightFactor"
-        :title="t('settings.height')"
+        :title="$t('settings.height')"
         :min="1"
         :max="20"
       />
-      <field-counters-selector v-model="form.parameters.counters" />
+      <field-counters-selector
+        v-model="form.parameters.counters"
+        :title="$t('settings.counters')"
+      />
       <field-switcher
         v-model="form.parameters.isPriorityEnabled"
-        :title="t('settings.isPriorityEnabled')"
+        :title="$t('settings.isPriorityEnabled')"
       />
       <field-switcher
         v-model="form.parameters.isHideGrayEnabled"
-        :title="t('settings.isHideGrayEnabled')"
+        :title="$t('settings.isHideGrayEnabled')"
       />
       <field-switcher
         v-model="form.parameters.isSecondaryIconEnabled"
-        :title="t('settings.isSecondaryIconEnabled')"
+        :title="$t('settings.isSecondaryIconEnabled')"
       />
       <field-switcher
         v-model="form.parameters.defaultInheritedPbehavior"
-        :title="t('settings.defaultInheritedPbehavior')"
+        :title="$t('settings.defaultInheritedPbehavior')"
       />
       <field-modal-type v-model="form.parameters.modalType" />
-      <widget-settings-group :title="t('settings.stateSettings')">
+      <widget-settings-group :title="$t('settings.stateSettings')">
         <field-action-required-settings v-model="form.parameters.actionRequiredSettings" />
         <field-no-action-required-settings v-model="form.parameters.noActionRequiredSettings" />
       </widget-settings-group>
       <v-divider />
       <field-switcher
         v-model="form.parameters.entitiesActionsInQueue"
-        :title="t('settings.entitiesActionsInQueue')"
+        :title="$t('settings.entitiesActionsInQueue')"
       />
     </widget-settings-group>
-    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
-<script setup>
-import { computed, onMounted, ref, toRef } from 'vue';
+<script>
+import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
-import {
-  ENTITIES_TYPES,
-  ENTITY_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_TEMPLATE_FIELDS,
-  ENTITY_TYPES,
-  MAX_LIMIT,
-  SIDE_BARS,
-  USER_PERMISSIONS,
-  VARIABLES_STEP_FIELDS,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
+import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
+import { entityVariablesMixin } from '@/mixins/widget/variables';
+import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 
-import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
+import FieldTreeOfDependenciesSettings from '../form/fields/tree-of-dependencies-settings.vue';
+import FieldTitle from '../form/fields/title.vue';
+import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
+import FieldFilters from '../form/fields/filters.vue';
+import FieldColumns from '../form/fields/columns.vue';
+import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
+import FieldGridSize from '../form/fields/grid-size.vue';
+import FieldSlider from '../form/fields/slider.vue';
+import FieldSwitcher from '../form/fields/switcher.vue';
+import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-page.vue';
+import FieldNumber from '../form/fields/number.vue';
+import FieldColorIndicator from '../form/fields/color-indicator.vue';
+import AlarmsListModalForm from '../alarm/form/alarms-list-modal.vue';
+import MarginsForm from '../form/margins.vue';
+import WidgetSettings from '../partials/widget-settings.vue';
+import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
-import { useCanPermission } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-import { useInfos } from '@/hooks/store/modules/infos';
-import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
-import { useWidgetSettings } from '@/hooks/widget/settings';
-
-import AlarmsListModalForm from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
-import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
-import FieldDefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldGridSize from '@/components/sidebars/form/fields/grid-size.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
-import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause-settings.vue';
-import FieldSlider from '@/components/sidebars/form/fields/slider.vue';
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
-import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
-import FieldTreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
-import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
-import MarginsForm from '@/components/sidebars/form/margins.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
-
-import FieldActionRequiredSettings from './form/fields/action-required-settings.vue';
 import FieldCountersSelector from './form/fields/counters-selector.vue';
+import FieldSortColumn from './form/fields/sort-column.vue';
 import FieldModalType from './form/fields/modal-type.vue';
-import FieldNoActionRequiredSettings from './form/fields/no-action-required-settings.vue';
+import FieldActionRequiredSettings from './form/fields/field-action-required-settings.vue';
+import FieldNoActionRequiredSettings from './form/fields/field-no-action-required-settings.vue';
 
-defineOptions({
+export default {
   name: SIDE_BARS.serviceWeatherSettings,
-});
-
-const props = defineProps({
-  sidebar: {
-    type: Object,
-    required: true,
+  components: {
+    FieldTreeOfDependenciesSettings,
+    FieldTitle,
+    FieldSortColumn,
+    FieldPeriodicRefresh,
+    FieldFilters,
+    FieldColumns,
+    FieldTextEditorWithTemplate,
+    FieldGridSize,
+    FieldSlider,
+    FieldSwitcher,
+    FieldModalType,
+    FieldDefaultElementsPerPage,
+    FieldNumber,
+    FieldCountersSelector,
+    FieldColorIndicator,
+    AlarmsListModalForm,
+    MarginsForm,
+    FieldActionRequiredSettings,
+    FieldNoActionRequiredSettings,
+    WidgetSettings,
+    WidgetSettingsGroup,
+    FieldRootCauseSettings,
   },
-});
+  mixins: [
+    widgetSettingsMixin,
+    entitiesInfosMixin,
+    widgetTemplatesMixin,
+    entityVariablesMixin,
+    permissionsWidgetsServiceWeatherFilters,
+  ],
+  computed: {
+    sortColumns() {
+      return [
+        { label: this.$t('common.name'), value: ENTITY_FIELDS.name },
+        { label: this.$t('common.state'), value: ENTITY_FIELDS.state },
+      ];
+    },
 
-const { t } = useI18n();
-const { hasAccess: hasAccessToFilter } = useCanPermission(
-  USER_PERMISSIONS.business.serviceWeather.actions.filter,
-);
-const sidebar = toRef(props, 'sidebar');
-const widgetTemplates = ref([]);
-const widgetTemplatesPending = ref(false);
-const { entityInfos, fetchInfos } = useInfos();
-const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
+    blockTemplateVariables() {
+      const excludeFields = [
+        ENTITY_TEMPLATE_FIELDS.ticket,
+        ENTITY_TEMPLATE_FIELDS.statsKo,
+        ENTITY_TEMPLATE_FIELDS.statsOk,
+        ENTITY_TEMPLATE_FIELDS.alarmDisplayName,
+        ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
+      ];
 
-const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({
-  sidebar,
-});
+      return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
+    },
 
-const sortColumns = computed(() => [
-  { label: t('common.name'), value: ENTITY_FIELDS.name },
-  { label: t('common.state'), value: ENTITY_FIELDS.state },
-]);
+    entityTemplateVariables() {
+      return [
+        ...this.entityVariables,
 
-const infosSubVariables = computed(() => [
-  {
-    text: t('common.value'),
-    value: VARIABLES_STEP_FIELDS.value,
+        {
+          value: ENTITY_TEMPLATE_FIELDS.sourceType,
+          text: this.$t(ENTITY_FIELDS_TO_LABELS_KEYS[ENTITY_FIELDS.sourceType]),
+        },
+      ];
+    },
   },
-  {
-    text: t('common.description'),
-    value: 'description',
+  mounted() {
+    this.fetchInfos();
   },
-]);
+  methods: {
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
 
-const infosVariables = computed(() => entityInfos.value.map(({ value }) => ({
-    text: value,
-    value,
-    variables: infosSubVariables.value,
-  })),
-);
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
 
-const entityVariables = computed(() => [
-  { value: ENTITY_TEMPLATE_FIELDS.id },
-  { value: ENTITY_TEMPLATE_FIELDS.name },
-  {
-    value: ENTITY_TEMPLATE_FIELDS.infos,
-    variables: infosVariables.value.length ? infosVariables.value : undefined,
+    updateBlockTemplate(text, template) {
+      this.$set(this.form.parameters, 'blockTemplate', text);
+
+      if (template && template !== this.form.parameters.blockTemplateTemplate) {
+        this.$set(this.form.parameters, 'blockTemplateTemplate', template);
+      }
+    },
+
+    updateModalTemplate(text, template) {
+      this.$set(this.form.parameters, 'modalTemplate', text);
+
+      if (template && template !== this.form.parameters.modalTemplateTemplate) {
+        this.$set(this.form.parameters, 'modalTemplateTemplate', template);
+      }
+    },
+
+    updateEntityTemplate(text, template) {
+      this.$set(this.form.parameters, 'entityTemplate', text);
+
+      if (template && template !== this.form.parameters.entityTemplateTemplate) {
+        this.$set(this.form.parameters, 'entityTemplateTemplate', template);
+      }
+    },
   },
-  { value: ENTITY_TEMPLATE_FIELDS.connector },
-  { value: ENTITY_TEMPLATE_FIELDS.connectorName },
-  { value: ENTITY_TEMPLATE_FIELDS.component },
-  { value: ENTITY_TEMPLATE_FIELDS.resource },
-  { value: ENTITY_TEMPLATE_FIELDS.state },
-  { value: ENTITY_TEMPLATE_FIELDS.status },
-  { value: ENTITY_TEMPLATE_FIELDS.snooze },
-  { value: ENTITY_TEMPLATE_FIELDS.ack },
-  { value: ENTITY_TEMPLATE_FIELDS.lastUpdateDate },
-  { value: ENTITY_TEMPLATE_FIELDS.impactLevel },
-  { value: ENTITY_TEMPLATE_FIELDS.impactState },
-  { value: ENTITY_TEMPLATE_FIELDS.categoryName },
-  { value: ENTITY_TEMPLATE_FIELDS.pbehaviorInfo },
-  { value: ENTITY_TEMPLATE_FIELDS.alarmCreationDate },
-  { value: ENTITY_TEMPLATE_FIELDS.ticket },
-  { value: ENTITY_TEMPLATE_FIELDS.statsOk },
-  { value: ENTITY_TEMPLATE_FIELDS.statsKo },
-  { value: ENTITY_TEMPLATE_FIELDS.alarmDisplayName },
-  { value: ENTITY_TEMPLATE_FIELDS.links },
-].map(variable => ({
-  ...variable,
-  text: t(ENTITY_FIELDS_TO_LABELS_KEYS[variable.value.replace('entity.', '')], 2),
-})));
-
-const blockTemplateVariables = computed(() => {
-  const excludeFields = [
-    ENTITY_TEMPLATE_FIELDS.ticket,
-    ENTITY_TEMPLATE_FIELDS.statsKo,
-    ENTITY_TEMPLATE_FIELDS.statsOk,
-    ENTITY_TEMPLATE_FIELDS.alarmDisplayName,
-    ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
-  ];
-
-  return entityVariables.value.filter(({ value }) => !excludeFields.includes(value));
-});
-
-const entityTemplateVariables = computed(() => [
-  ...entityVariables.value,
-  {
-    value: ENTITY_TEMPLATE_FIELDS.sourceType,
-    text: t(ENTITY_FIELDS_TO_LABELS_KEYS[ENTITY_FIELDS.sourceType]),
-  },
-]);
-
-const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
-
-const weatherItemWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
-    ({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherItem,
-  ),
-);
-const weatherModalWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
-    ({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherModal,
-  ),
-);
-const weatherEntityWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
-    ({ type }) => type === WIDGET_TEMPLATES_TYPES.weatherEntity,
-  ),
-);
-const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
-    ({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns,
-  ),
-);
-
-const updateServiceDependenciesColumnsTemplate = (template, columns) => {
-  form.value.parameters.serviceDependenciesColumnsTemplate = template;
-  form.value.parameters.serviceDependenciesColumns = columns;
 };
-
-const updateBlockTemplate = (template) => {
-  if (template && template !== form.value.parameters.blockTemplateTemplate) {
-    form.value.parameters.blockTemplateTemplate = template;
-  }
-};
-
-const updateModalTemplate = (template) => {
-  if (template && template !== form.value.parameters.modalTemplateTemplate) {
-    form.value.parameters.modalTemplateTemplate = template;
-  }
-};
-
-const updateEntityTemplate = (template) => {
-  if (template && template !== form.value.parameters.entityTemplateTemplate) {
-    form.value.parameters.entityTemplateTemplate = template;
-  }
-};
-
-const fetchWidgetTemplates = async () => {
-  try {
-    widgetTemplatesPending.value = true;
-
-    const { data } = await fetchWidgetTemplatesListWithoutStore({ params: { limit: MAX_LIMIT } });
-
-    widgetTemplates.value = data;
-  } catch (err) {
-    console.warn(err);
-  } finally {
-    widgetTemplatesPending.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchInfos();
-  fetchWidgetTemplates();
-});
-
-defineExpose({
-  close,
-});
 </script>

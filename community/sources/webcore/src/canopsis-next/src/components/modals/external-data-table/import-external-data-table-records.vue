@@ -1,11 +1,10 @@
 <template>
   <v-form class="import-external-data-table-records-form" @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
-        <span>{{ title }}</span>
+    <modal-wrapper close>
+      <template #title="">
+        {{ title }}
       </template>
-
-      <template #text>
+      <template #text="">
         <external-data-table-general-info-form :form="config.externalDataTable" />
         <import-file-upload-section
           :separator="separator"
@@ -17,74 +16,94 @@
         />
         <import-preview-section
           v-if="activeImportFileId"
-          :form="form"
+          v-model="form"
           :original-form="originalForm"
           :records="records"
           :pending="pending"
           :options="options"
           :total-items="meta.total_count"
           :separator="separator"
-          @update:form="updateForm"
           @input="validate"
           @update:options="updateOptions"
         />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           :disabled="!activeImportFileId || submitButton.loading || submitting"
-          :loading="submitButton.loading"
-          color="primary"
+          class="primary"
           type="submit"
         >
           {{ submitButton.text }}
+          <v-progress-circular
+            v-if="submitButton.loading"
+            class="ml-2"
+            size="24"
+            indeterminate
+          />
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
 import { computed } from 'vue';
 
+import { MODALS, VALIDATION_DELAY } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
-import { useExternalDataTableImportFile } from '@/components/other/external-data-table/hooks/external-data-table-import-file';
+import {
+  useExternalDataTableImportFile,
+} from '@/components/other/external-data-table/hooks/external-data-table-import-file';
 
-import ExternalDataTableGeneralInfoForm from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
+import ExternalDataTableGeneralInfoForm
+  from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
 import ImportFileUploadSection from '@/components/other/external-data-table/partials/import-file-upload-section.vue';
 import ImportPreviewSection from '@/components/other/external-data-table/partials/import-preview-section.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
+  name: MODALS.importExternalDataTableRecords,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     ExternalDataTableGeneralInfoForm,
     ImportFileUploadSection,
     ImportPreviewSection,
+    ModalWrapper,
   },
-
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
+    const { config, close } = useInnerModal(props);
 
     const {
-      formContext,
+      validator,
       separator,
       activeImportFileId,
       form,
       originalForm,
       needPreview,
+      hasErrors,
       records,
       meta,
       pending,
@@ -97,29 +116,26 @@ export default {
       validate,
     } = useExternalDataTableImportFile({ config });
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
+    const { submit, submitting } = useSubmittableForm({
+      form: separator,
+      method: async () => {
+        const isValid = await validator.validateAll();
 
-    const submitting = computed(() => pending.value || uploading.value);
+        if (isValid) {
+          if (needPreview.value) {
+            await updatePreview();
 
-    const submit = async () => {
-      const { valid } = await formContext.validate();
+            return;
+          }
 
-      if (valid) {
-        if (needPreview.value) {
-          await updatePreview();
+          await completeImport(config.value.afterSubmit);
 
-          return;
+          close();
         }
+      },
+    });
 
-        await completeImport(config.value.afterSubmit);
-
-        closeModal();
-      }
-    };
-
-    const title = computed(
-      () => config.value.title || t('modals.importExternalDataTableRecords.title'),
-    );
+    const title = computed(() => config.value.title || t('modals.createExternalDataTableRecord.create.title'));
 
     const submitButton = computed(() => {
       if (needPreview.value) {
@@ -132,6 +148,7 @@ export default {
 
         return {
           text: t('externalData.updatePreview'),
+          disabled: hasErrors.value,
         };
       }
 
@@ -141,12 +158,7 @@ export default {
       };
     });
 
-    const updateForm = (newForm) => {
-      form.value = newForm;
-    };
-
     return {
-      t,
       config,
       separator,
       activeImportFileId,
@@ -161,11 +173,11 @@ export default {
       updateOptions,
       title,
       submitButton,
+      updatePreview,
       uploading,
-      closeModal,
+      close,
       chooseFile,
       validate,
-      updateForm,
     };
   },
 };

@@ -1,8 +1,4 @@
-import {
-  AVAILABILITY_DISPLAY_PARAMETERS,
-  AVAILABILITY_FIELDS,
-  AVAILABILITY_SHOW_TYPE,
-} from '@/constants';
+import { AVAILABILITY_DISPLAY_PARAMETERS, AVAILABILITY_FIELDS, AVAILABILITY_SHOW_TYPE } from '@/constants';
 
 /**
  * @typedef {Object} Availability
@@ -15,11 +11,11 @@ import {
  */
 
 /**
- * Return field name by parameter and show type.
+ * Return field name by parameter and show type
  *
  * @param {number} displayParameter
  * @param {number} showType
- * @returns {string}
+ * @return {string}
  */
 export const getAvailabilityFieldByDisplayParameterAndShowType = (displayParameter, showType) => {
   const isPercentType = showType === AVAILABILITY_SHOW_TYPE.percent;
@@ -32,12 +28,45 @@ export const getAvailabilityFieldByDisplayParameterAndShowType = (displayParamet
 };
 
 /**
- * Return trend field name by display parameter.
+ * Return trend field name by parameter and show type
  *
  * @param {number} displayParameter
- * @returns {string}
+ * @return {string}
  */
-export const getAvailabilityTrendFieldByDisplayParameter = displayParameter =>
+export const getAvailabilityTrendFieldByDisplayParameter = displayParameter => (
   displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime
     ? AVAILABILITY_FIELDS.uptimeShareHistory
-    : AVAILABILITY_FIELDS.downtimeShareHistory;
+    : AVAILABILITY_FIELDS.downtimeShareHistory
+);
+
+/**
+ * Convert infos to common infos structure
+ *
+ * @param {Object.<string, string | string[]>[]} infos
+ * @return {InfosObject}
+ */
+const prepareAvailabilityInfos = infos => (infos
+  ? Object.entries(infos).reduce((acc, [name, value]) => {
+    acc[name] = {
+      value,
+      name,
+    };
+
+    return acc;
+  }, {})
+  : {});
+
+/**
+ * Convert infos to common infos structure
+ *
+ * @param {Availability[]} data
+ * @return {Availability[]}
+ */
+export const prepareAvailabilitiesResponse = ({ data }) => data.map(availability => ({
+  ...availability,
+  entity: {
+    ...availability.entity,
+    infos: prepareAvailabilityInfos(availability.entity.infos),
+    component_infos: prepareAvailabilityInfos(availability.entity.component_infos),
+  },
+}));

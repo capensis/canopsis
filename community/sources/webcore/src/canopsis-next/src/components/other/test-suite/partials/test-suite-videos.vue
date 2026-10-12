@@ -1,10 +1,14 @@
 <template>
-  <v-container class="pa-0" fluid>
-    <v-row density="compact">
-      <v-col
+  <v-container
+    class="pa-0"
+    fluid
+    grid-list-sm
+  >
+    <v-layout wrap>
+      <v-flex
         v-for="video in videoSources"
         :key="video"
-        cols="6"
+        xs6
       >
         <video
           :src="video"
@@ -14,8 +18,8 @@
         >
           <source :src="video">
         </video>
-      </v-col>
-    </v-row>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 

@@ -1,31 +1,32 @@
 <template>
-  <c-autocomplete
+  <v-autocomplete
+    v-field="value"
     v-bind="$attrs"
-    :model-value="modelValue"
     :items="timezones"
-    :label="label || t('common.timezone')"
+    :label="label || $t('common.timezone')"
     :disabled="disabled"
     :name="name"
-    item-title="text"
-    item-value="value"
-    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
 import { uniqBy } from 'lodash';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 
-import { formatTimezoneLabel, getLocalTimezone, getTimezones } from '@/helpers/date/date';
+import { getLocalTimezone, getTimezones } from '@/helpers/date/date';
 
-import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
+  inject: ['$validator'],
   inheritAttrs: false,
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: getLocalTimezone(),
     },
@@ -46,25 +47,19 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:modelValue'],
-
   setup(props) {
+    const system = inject('$system');
+
     const { t } = useI18n();
-    const { timezone: systemTimezone, userTimezones } = useInfo();
+    const { userTimezones } = useInfo();
 
     const timezones = computed(() => {
       if (!props.server) {
-        return getTimezones().map(timezone => ({
-          text: formatTimezoneLabel(timezone),
-          value: timezone,
-        }));
+        return getTimezones();
       }
 
-      const serverTimezone = systemTimezone.value || getLocalTimezone();
       const preparedUserTimezones = userTimezones.value.map((timezone) => {
-        const label = formatTimezoneLabel(timezone);
-        const text = timezone === serverTimezone ? `${label} (${t('common.server')})` : label;
+        const text = timezone === system.timezone ? `${timezone} (${t('common.server')})` : timezone;
 
         return {
           text,
@@ -72,26 +67,16 @@ export default {
         };
       });
 
-      const localTimezone = getLocalTimezone();
+      const localeTimezone = getLocalTimezone();
 
-      return uniqBy(
-        [
-          {
-            text: `${formatTimezoneLabel(localTimezone)} (${t('common.local')})`,
-            value: localTimezone,
-          },
-          {
-            text: `${formatTimezoneLabel(serverTimezone)} (${t('common.server')})`,
-            value: serverTimezone,
-          },
-          ...preparedUserTimezones,
-        ],
-        'value',
-      );
+      return uniqBy([
+        { text: `${localeTimezone} (${t('common.local')})`, value: localeTimezone },
+        { text: `${system.timezone} (${t('common.server')})`, value: system.timezone },
+        ...preparedUserTimezones,
+      ], 'value');
     });
 
     return {
-      t,
       timezones,
     };
   },

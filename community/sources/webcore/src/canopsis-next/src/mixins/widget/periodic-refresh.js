@@ -20,10 +20,6 @@ export const widgetPeriodicRefreshMixin = {
 
       return toSeconds(value, unit);
     },
-
-    isPeriodicRefreshVisible() {
-      return this.visible !== false;
-    },
   },
   watch: {
     'widget.parameters.periodic_refresh': {
@@ -32,7 +28,7 @@ export const widgetPeriodicRefreshMixin = {
         const periodicRefresh = value;
         const oldPeriodicRefresh = oldValue ?? {};
 
-        if (this.activeViewPeriodicRefreshPaused || !this.isPeriodicRefreshVisible) {
+        if (this.activeViewPeriodicRefreshPaused) {
           return;
         }
 
@@ -58,10 +54,6 @@ export const widgetPeriodicRefreshMixin = {
     },
 
     activeViewPeriodicRefreshPaused(value) {
-      if (!this.isPeriodicRefreshVisible) {
-        return;
-      }
-
       if (value) {
         this.pausePriodicRefresh();
 
@@ -70,59 +62,22 @@ export const widgetPeriodicRefreshMixin = {
 
       this.resumePriodicRefresh();
     },
-
-    visible(value) {
-      if (value === false) {
-        this.stopPeriodicRefresh();
-
-        return;
-      }
-
-      if (
-        this.activeViewPeriodicRefreshPaused ||
-        !this.periodicRefreshEnabled ||
-        !this.periodicRefreshSeconds
-      ) {
-        return;
-      }
-
-      this.startPeriodicRefresh();
-    },
   },
-  beforeUnmount() {
+  beforeDestroy() {
     this.stopPeriodicRefresh();
   },
   methods: {
     startPeriodicRefresh() {
-      if (
-        !this.isPeriodicRefreshVisible ||
-        !this.periodicRefreshEnabled ||
-        !this.periodicRefreshSeconds
-      ) {
-        return;
-      }
-
       if (this.periodicRefreshInterval) {
         this.stopPeriodicRefresh();
       }
 
-      this.periodicRefreshInterval = setInterval(
-        this.fetchList,
-        this.periodicRefreshSeconds * 1000,
-      );
+      this.periodicRefreshInterval = setInterval(this.fetchList, this.periodicRefreshSeconds * 1000);
 
       this.intervalStartedAt = Date.now();
     },
 
     resumePriodicRefresh() {
-      if (
-        !this.isPeriodicRefreshVisible ||
-        !this.periodicRefreshEnabled ||
-        !this.periodicRefreshSeconds
-      ) {
-        return;
-      }
-
       setTimeout(() => {
         this.fetchList();
         this.startPeriodicRefresh();
@@ -130,14 +85,9 @@ export const widgetPeriodicRefreshMixin = {
     },
 
     pausePriodicRefresh() {
-      if (!this.periodicRefreshInterval) {
-        return;
-      }
-
       clearInterval(this.periodicRefreshInterval);
 
-      this.intervalDelay =
-        this.periodicRefreshSeconds * 1000 - (Date.now() - this.intervalStartedAt);
+      this.intervalDelay = (this.periodicRefreshSeconds * 1000) - (Date.now() - this.intervalStartedAt);
     },
 
     stopPeriodicRefresh() {

@@ -1,25 +1,35 @@
 <template>
   <c-advanced-data-table
-    :items="changes"
+    :items="remediationInstructionChanges"
     :headers="headers"
     :loading="pending"
-    :options="options"
+    :options.sync="options"
     :total-items="totalItems"
     advanced-pagination
-    @update:options="updateOptions"
   >
+    <template #headerCell="{ header }">
+      <span class="c-table-header__text--multiline">
+        {{ header.text }}
+      </span>
+    </template>
     <template #modified_on="{ item }">
-      <span>{{ dateToString(item.modified_on) }}</span>
+      <span>{{ item.modified_on | date }}</span>
     </template>
     <template #avg_complete_time="{ item }">
-      <span v-if="item.execution_count">{{ durationToString(item.avg_complete_time) }}</span>
-      <span v-else>{{ t('common.notAvailable') }}</span>
+      <span v-if="item.execution_count">
+        {{ item.avg_complete_time | duration }}
+      </span>
+      <span v-else>
+        {{ $t('common.notAvailable') }}
+      </span>
     </template>
     <template #avg_alarm_ok_timeout="{ item }">
-      <span v-if="item.avg_alarm_ok_timeout">{{
-        durationToString(item.avg_alarm_ok_timeout)
-      }}</span>
-      <span v-else>{{ t('common.notAvailable') }}</span>
+      <span v-if="item.avg_alarm_ok_timeout">
+        {{ item.avg_alarm_ok_timeout | duration }}
+      </span>
+      <span v-else>
+        {{ $t('common.notAvailable') }}
+      </span>
     </template>
     <template #avg_successful="{ item }">
       <span>{{ item.avg_successful }}%</span>
@@ -28,7 +38,10 @@
       <span>{{ item.avg_successful_state_ok }}%</span>
     </template>
     <template #alarm_states="{ item }">
-      <affect-alarm-states v-if="item.execution_count" :alarm-states="item.alarm_states" />
+      <affect-alarm-states
+        v-if="item.execution_count"
+        :alarm-states="item.alarm_states"
+      />
       <template v-else>
         -
       </template>
@@ -45,105 +58,92 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
-import { convertDurationToString } from '@/helpers/date/duration';
-
-import { useI18n } from '@/hooks/i18n';
-import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
-import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
+import { localQueryMixin } from '@/mixins/query/query';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import AffectAlarmStates from './affect-alarm-states.vue';
 
 export default {
   components: { AffectAlarmStates },
-
+  mixins: [localQueryMixin, entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstruction: {
       type: Object,
       default: () => ({}),
     },
   },
-
-  setup(props) {
-    const { t } = useI18n();
-    const { fetchRemediationInstructionStatsChangesWithoutStore } =
-      useRemediationInstructionStats();
-    const totalItems = ref(0);
-
-    const {
-      data: changes,
-      meta,
-      pending,
-      options,
-      updateOptions,
-      fetchList,
-    } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsChangesWithoutStore({
-          id: props.remediationInstruction._id,
-          params,
-        }),
-    });
-
-    watch(meta, (value) => {
-      totalItems.value = value?.total_count ?? 0;
-    });
-
-    const headers = computed(() => [
-      { text: t('remediation.instructionStat.modifiedOn'), value: 'modified_on', sortable: false },
-      {
-        text: t('remediation.instructionStat.averageCompletionTime'),
-        value: 'avg_complete_time',
-        sortable: false,
-      },
-      {
-        text: t('remediation.instructionStat.averageAlarmOkTimeout'),
-        value: 'avg_alarm_ok_timeout',
-        sortable: false,
-      },
-      {
-        text: t('remediation.instructionStat.executionCount'),
-        value: 'execution_count',
-        sortable: false,
-      },
-      {
-        text: t('remediation.instructionStat.averageSuccessfulAll'),
-        value: 'avg_successful',
-        sortable: false,
-      },
-      {
-        text: t('remediation.instructionStat.averageSuccessfulOk'),
-        value: 'avg_successful_state_ok',
-        sortable: false,
-      },
-      {
-        text: t('remediation.instructionStat.alarmStates'),
-        value: 'alarm_states',
-        sortable: false,
-      },
-      {
-        text: t('remediation.instructionStat.okAlarmStates'),
-        value: 'ok_alarm_states',
-        sortable: false,
-      },
-    ]);
-    const dateToString = value => convertDateToString(value);
-    const durationToString = value => convertDurationToString(value);
-
-    onMounted(fetchList);
-
+  data() {
     return {
-      t,
-      changes,
-      pending,
-      options,
-      totalItems,
-      headers,
-      updateOptions,
-      dateToString,
-      durationToString,
+      remediationInstructionChanges: [],
+      totalItems: 0,
+      pending: false,
     };
+  },
+  computed: {
+    headers() {
+      return [
+        {
+          text: this.$t('remediation.instructionStat.modifiedOn'),
+          value: 'modified_on',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageCompletionTime'),
+          value: 'avg_complete_time',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageAlarmOkTimeout'),
+          value: 'avg_alarm_ok_timeout',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.executionCount'),
+          value: 'execution_count',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageSuccessfulAll'),
+          value: 'avg_successful',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageSuccessfulOk'),
+          value: 'avg_successful_state_ok',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.alarmStates'),
+          value: 'alarm_states',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.okAlarmStates'),
+          value: 'ok_alarm_states',
+          sortable: false,
+        },
+      ];
+    },
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    async fetchList() {
+      this.pending = true;
+
+      const {
+        data: remediationInstructionChanges,
+        meta,
+      } = await this.fetchRemediationInstructionStatsChangesListWithoutStore({
+        id: this.remediationInstruction._id,
+        params: this.getQuery(),
+      });
+
+      this.remediationInstructionChanges = remediationInstructionChanges;
+      this.totalItems = meta.total_count;
+      this.pending = false;
+    },
   },
 };
 </script>

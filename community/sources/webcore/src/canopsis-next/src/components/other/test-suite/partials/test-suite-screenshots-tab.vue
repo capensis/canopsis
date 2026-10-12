@@ -1,7 +1,7 @@
 <template>
-  <c-layout>
+  <v-layout>
     <test-suite-screenshots :screenshots="testSuite.screenshots" />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>

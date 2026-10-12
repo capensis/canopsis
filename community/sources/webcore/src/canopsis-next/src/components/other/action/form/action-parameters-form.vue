@@ -1,8 +1,9 @@
 <template>
   <component
-    :is="componentName"
-    v-bind="componentBind"
-    @update:model-value="$emit('update:modelValue', $event)"
+    v-if="bindProps.is"
+    v-bind="bindProps"
+    :is="bindProps.is"
+    v-field="value"
   />
 </template>
 
@@ -13,38 +14,37 @@ import { ACTION_TYPES } from '@/constants';
 
 import ActionAssocticketForm from './action-assocticket-form.vue';
 import ActionNoteForm from './action-note-form.vue';
-import ActionPauseForm from './action-pause-form.vue';
 import ActionPbehaviorForm from './action-pbehavior-form.vue';
 import ActionSnoozeForm from './action-snooze-form.vue';
 import ActionWebhookForm from './action-webhook-form.vue';
 
-const ACTION_COMPONENTS = {
+const ACTION_COMPONENT_BY_TYPE = {
+  [ACTION_TYPES.changeState]: 'c-change-state-field',
   [ACTION_TYPES.snooze]: 'action-snooze-form',
   [ACTION_TYPES.unsnooze]: 'action-note-form',
   [ACTION_TYPES.pbehavior]: 'action-pbehavior-form',
-  [ACTION_TYPES.pbehaviorRemove]: 'action-note-form',
+  [ACTION_TYPES.assocticket]: 'action-assocticket-form',
   [ACTION_TYPES.ack]: 'action-note-form',
   [ACTION_TYPES.ackremove]: 'action-note-form',
   [ACTION_TYPES.cancel]: 'action-note-form',
-  [ACTION_TYPES.assocticket]: 'action-assocticket-form',
-  [ACTION_TYPES.changeState]: 'c-change-state-field',
   [ACTION_TYPES.webhook]: 'action-webhook-form',
-  [ACTION_TYPES.pause]: 'action-pause-form',
-  [ACTION_TYPES.resume]: 'action-note-form',
 };
 
 export default {
+  inject: ['$validator'],
   components: {
     ActionAssocticketForm,
     ActionNoteForm,
     ActionPbehaviorForm,
-    ActionPauseForm,
     ActionSnoozeForm,
     ActionWebhookForm,
   },
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: Object,
       default: () => ({}),
     },
@@ -56,10 +56,6 @@ export default {
       type: String,
       default: 'parameters',
     },
-    depth: {
-      type: Number,
-      default: 0,
-    },
     hasPreviousWebhook: {
       type: Boolean,
       default: false,
@@ -68,35 +64,34 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    depth: {
+      type: Number,
+      default: 0,
+    },
   },
-
-  emits: ['update:modelValue'],
-
   setup(props) {
-    const componentName = computed(() => ACTION_COMPONENTS[props.type] || 'action-note-form');
-    const componentBind = computed(() => {
-      const bind = {
-        modelValue: props.modelValue,
+    const bindProps = computed(() => {
+      const childProps = {
+        is: ACTION_COMPONENT_BY_TYPE[props.type],
         name: props.name,
         depth: props.depth,
       };
 
       if (props.type === ACTION_TYPES.webhook) {
-        bind.hasPrevious = props.hasPreviousWebhook;
+        childProps.hasPrevious = props.hasPreviousWebhook;
       }
 
       if (props.type === ACTION_TYPES.changeState) {
-        bind.variables = props.templateVars?.output;
+        childProps.variables = props.templateVars?.output;
       } else {
-        bind.templateVars = props.templateVars;
+        childProps.templateVars = props.templateVars;
       }
 
-      return bind;
+      return childProps;
     });
 
     return {
-      componentName,
-      componentBind,
+      bindProps,
     };
   },
 };

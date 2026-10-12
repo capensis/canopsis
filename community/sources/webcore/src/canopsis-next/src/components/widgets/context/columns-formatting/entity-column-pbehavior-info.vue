@@ -1,11 +1,18 @@
 <template>
-  <c-tooltip v-if="pbehaviorInfo && icon" :content="pbehaviorInfo.name" top>
-    <template #activator="{ props: activatorProps }">
-      <v-icon v-bind="activatorProps" color="primary">
+  <v-tooltip
+    v-if="pbehaviorInfo && icon"
+    top
+  >
+    <template #activator="{ on }">
+      <v-icon
+        color="primary"
+        v-on="on"
+      >
         {{ icon }}
       </v-icon>
     </template>
-  </c-tooltip>
+    <span>{{ pbehaviorInfo.name }}</span>
+  </v-tooltip>
 </template>
 
 <script>
@@ -18,7 +25,6 @@ export default {
       required: false,
     },
   },
-
   computed: {
     icon() {
       return WEATHER_ICONS[this.pbehaviorInfo?.canonical_type];

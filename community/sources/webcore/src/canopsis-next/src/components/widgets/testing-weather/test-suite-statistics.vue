@@ -1,9 +1,9 @@
 <template>
-  <v-row>
-    <v-col cols="4">
+  <v-layout>
+    <v-flex xs4>
       {{ $t('common.tests') }}
-    </v-col>
-    <v-col cols="8">
+    </v-flex>
+    <v-flex xs8>
       <test-suite-statistic-row
         :label="$t('common.total')"
         :count="testSuite.total"
@@ -20,8 +20,8 @@
         :label="$t('common.skipped')"
         :count="testSuite.skipped"
       />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

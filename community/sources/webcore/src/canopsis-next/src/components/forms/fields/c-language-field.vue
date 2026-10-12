@@ -1,29 +1,27 @@
 <template>
-  <c-select
-    :model-value="modelValue"
+  <v-select
+    v-field="value"
     :items="languages"
     :disabled="disabled"
     :label="label"
-    :name="name"
     :menu-props="menuProps"
-    @update:model-value="updateModel"
   />
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import { LOCALES } from '@/config';
+import { useComponentInstance } from '@/hooks/vue';
 
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
-      type: String,
-      default: '',
-    },
     value: {
       type: String,
-      default: undefined,
+      required: true,
     },
     label: {
       type: String,
@@ -38,21 +36,17 @@ export default {
       default: 'language',
     },
   },
-
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
+  setup() {
     const menuProps = { offsetY: true };
-    const languages = computed(() => Object.values(LOCALES));
 
-    const updateModel = (value) => {
-      emit('update:modelValue', value);
-    };
+    const instance = useComponentInstance();
+
+    const languages = computed(() => Object.keys(instance.$i18n.messages));
 
     return {
       menuProps,
+
       languages,
-      updateModel,
     };
   },
 };

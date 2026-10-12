@@ -1,38 +1,70 @@
 <template>
   <widget-settings-item :title="$t('settings.criticityLevels')">
-    <c-layout gap="2" column>
-      <c-layout
-        v-for="level in levels"
-        :key="level"
-        align="center"
-        justify="space-around"
-      >
-        <div>{{ $t(`settings.colorsSelector.statsCriticity.${level}`) }} :</div>
-
-        <div class="criticity-levels__field">
-          <c-number-field
-            :value="modelValue[level]"
-            :min="mins[level]"
-            :name="level"
-            required
-            @update:value="updateLevel(level, $event)"
-          />
-        </div>
-      </c-layout>
-    </c-layout>
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-layout
+          align-center
+          justify-space-around
+        >
+          <div>{{ $t('settings.colorsSelector.statsCriticity.minor') }} :</div>
+          <v-flex xs3>
+            <c-number-field
+              v-field="levels.minor"
+              :min="0"
+              name="minor"
+              required
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex xs12>
+        <v-layout
+          align-center
+          justify-space-around
+        >
+          <div>{{ $t('settings.colorsSelector.statsCriticity.major') }} :</div>
+          <v-flex xs3>
+            <c-number-field
+              v-field="levels.major"
+              :min="levels.minor + 1"
+              name="major"
+              required
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex xs12>
+        <v-layout
+          align-center
+          justify-space-around
+        >
+          <div>{{ $t('settings.colorsSelector.statsCriticity.critical') }} :</div>
+          <v-flex xs3>
+            <c-number-field
+              v-field="levels.critical"
+              :min="levels.major + 1"
+              name="critical"
+              required
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
   </widget-settings-item>
 </template>
 
 <script>
-import { STATS_CRITICITY } from '@/constants';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
+  inject: ['$validator'],
   components: { WidgetSettingsItem },
-
+  model: {
+    prop: 'levels',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    levels: {
       type: Object,
       default: () => ({
         minor: 20,
@@ -41,37 +73,5 @@ export default {
       }),
     },
   },
-
-  emits: ['update:modelValue'],
-
-  computed: {
-    levels() {
-      return [STATS_CRITICITY.minor, STATS_CRITICITY.major, STATS_CRITICITY.critical];
-    },
-
-    mins() {
-      return {
-        [STATS_CRITICITY.minor]: 0,
-        [STATS_CRITICITY.major]: (this.modelValue.minor ?? 0) + 1,
-        [STATS_CRITICITY.critical]: (this.modelValue.major ?? 0) + 1,
-      };
-    },
-  },
-
-  methods: {
-    updateLevel(level, value) {
-      this.$emit('update:modelValue', {
-        ...this.modelValue,
-        [level]: value,
-      });
-    },
-  },
 };
 </script>
-
-<style lang="scss" scoped>
-.criticity-levels__field {
-  width: 25%;
-  min-width: 84px;
-}
-</style>

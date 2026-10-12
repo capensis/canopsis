@@ -1,64 +1,62 @@
 <template>
   <c-list
+    v-field="value"
     v-bind="$attrs"
-    :value="value"
     :items="items"
     :children-key="childrenKey"
     :item-value="itemValue"
     :item-text="itemText"
     :show-value="showValue"
     :hide-empty-value="hideEmptyValue"
-    :dense="dense"
-    :return-object="returnObject"
-    :clickable-parent="clickableParent"
-    @update:value="$emit('update:value', $event)"
-    @fetch:more="$emit('fetch:more')"
+    v-on="listenersWithoutInput"
   >
     <template v-if="$slots['no-data']" #no-data>
       <slot name="no-data" />
     </template>
-
-    <template v-if="$slots.prepend" #prepend="{ items: prependItems }">
-      <slot :items="prependItems" name="prepend" />
+    <template v-if="$scopedSlots.prepend" #prepend>
+      <slot :items="items" name="prepend" />
     </template>
-
     <template #item-title="{ item }">
-      <c-layout gap="4" justify="space-between">
-        <c-layout v-if="item[itemText] || item.alias" align="center">
+      <v-layout class="gap-4" justify-space-between>
+        <v-layout v-if="item[itemText] || item.alias" align-center>
           <v-list-item-mask v-if="item[itemText]" :text="item[itemText]" :mask="search" />
-
-          <c-icon
+          <v-icon
             v-if="item.alias"
             class="ml-1"
             color="primary"
-            size="small"
+            small
           >
             alternate_email
-          </c-icon>
-        </c-layout>
-
+          </v-icon>
+        </v-layout>
         <span
-          v-if="showValue && (!hideEmptyValue || item[itemValue] !== undefined)"
-          class="text-medium-emphasis"
+          v-if="showValue && (!hideEmptyValue || !isUndefined(item[itemValue]))"
+          class="grey--text lighten-1"
         >
           {{ item[itemValue] }}
         </span>
-
-        <span v-if="item.defined" class="text-medium-emphasis">
+        <span
+          v-if="item.defined"
+          class="grey--text lighten-1"
+        >
           {{ $t('common.defined') }}
         </span>
-      </c-layout>
+      </v-layout>
     </template>
   </c-list>
 </template>
-
 <script>
-export default {
-  inheritAttrs: false,
+import { omit, isUndefined } from 'lodash';
+import { computed } from 'vue';
 
+export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
-      type: [Array, String, Number, Object, Boolean],
+      type: [Array, String, Number],
       default: () => [],
     },
     search: {
@@ -89,20 +87,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    dense: {
-      type: Boolean,
-      default: false,
-    },
-    returnObject: {
-      type: Boolean,
-      default: false,
-    },
-    clickableParent: {
-      type: Boolean,
-      default: false,
-    },
   },
+  setup(props, { listeners }) {
+    const listenersWithoutInput = computed(() => omit(listeners ?? {}, ['input']));
 
-  emits: ['update:value', 'fetch:more'],
+    return {
+      isUndefined,
+      listenersWithoutInput,
+    };
+  },
 };
 </script>

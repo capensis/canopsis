@@ -26,7 +26,7 @@
       v-else-if="isJunit"
       :color="stepColor"
     >
-      <span class="text-white">
+      <span class="white--text">
         {{ $t('alarm.timeline.junit') }}
       </span>
     </c-alarm-extra-details-chip>
@@ -41,31 +41,27 @@
 import { computed } from 'vue';
 
 import { formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
+import { getAlarmStepIcon, getAlarmStepColor } from '@/helpers/entities/alarm/step/formatting';
 import {
-  isAckStepType,
-  isActivateStepType,
-  isAssocTicketStepType,
-  isAutoInstructionStepType,
-  isChangeStatusStepType,
-  isCommentStepType,
-  isDeclareTicketChangeTicketStatusStepType,
-  isDeclareTicketStepType,
-  isInstructionStepType,
-  isJunitStepType,
-  isMetaAlarmStepType,
-  isPauseStepType,
-  isPbehaviorStepType,
-  isResolveStepType,
-  isSnoozeStepType,
   isStateCounterStepType,
+  isChangeStatusStepType,
+  isResolveStepType,
+  isActivateStepType,
+  isCommentStepType,
+  isAssocTicketStepType,
+  isAckStepType,
+  isSnoozeStepType,
   isStateStepType,
-  isTicketRemoveStepType,
+  isJunitStepType,
+  isPbehaviorStepType,
+  isInstructionStepType,
+  isAutoInstructionStepType,
+  isDeclareTicketStepType,
+  isDeclareTicketChangeTicketStatusStepType,
   isWebhookStepType,
+  isMetaAlarmStepType,
+  isTicketRemoveStepType,
 } from '@/helpers/entities/alarm/step/entity';
-import {
-  getAlarmStepColor,
-  getAlarmStepIcon,
-} from '@/helpers/entities/alarm/step/formatting';
 
 import DeclareTicketRuleTicketStatusChip from '@/components/other/declare-ticket/declare-ticket-rule-ticket-status-chip.vue';
 
@@ -73,38 +69,34 @@ export default {
   components: {
     DeclareTicketRuleTicketStatusChip,
   },
-
   props: {
     step: {
       type: Object,
       default: () => ({}),
     },
   },
-
   setup(props) {
     const isStateCounter = computed(() => isStateCounterStepType(props.step._t));
     const isState = computed(() => isStateStepType(props.step._t));
     const isChangeStatus = computed(() => isChangeStatusStepType(props.step._t));
     const isJunit = computed(() => isJunitStepType(props.step._t));
     const isPbehavior = computed(() => isPbehaviorStepType(props.step._t));
-    const isDeclareTicketChangeStatus = computed(() => isDeclareTicketChangeTicketStatusStepType(props.step._t),
-    );
+    const isDeclareTicketChangeStatus = computed(() => isDeclareTicketChangeTicketStatusStepType(props.step._t));
 
-    const isDefaultStepIcon = computed(
-      () => isResolveStepType(props.step._t) ||
-        isActivateStepType(props.step._t) ||
-        isAckStepType(props.step._t) ||
-        isSnoozeStepType(props.step._t) ||
-        isPauseStepType(props.step._t) ||
-        isCommentStepType(props.step._t) ||
-        isMetaAlarmStepType(props.step._t) ||
-        isAssocTicketStepType(props.step._t) ||
-        isWebhookStepType(props.step._t) ||
-        isDeclareTicketStepType(props.step._t) ||
-        isInstructionStepType(props.step._t) ||
-        isAutoInstructionStepType(props.step._t) ||
-        isTicketRemoveStepType(props.step._t),
-    );
+    const isDefaultStepIcon = computed(() => (
+      isResolveStepType(props.step._t)
+      || isActivateStepType(props.step._t)
+      || isAckStepType(props.step._t)
+      || isSnoozeStepType(props.step._t)
+      || isCommentStepType(props.step._t)
+      || isMetaAlarmStepType(props.step._t)
+      || isAssocTicketStepType(props.step._t)
+      || isWebhookStepType(props.step._t)
+      || isDeclareTicketStepType(props.step._t)
+      || isInstructionStepType(props.step._t)
+      || isAutoInstructionStepType(props.step._t)
+      || isTicketRemoveStepType(props.step._t)
+    ));
 
     const status = computed(() => formatAlarmStatus(props.step.val));
     const stepIcon = computed(() => getAlarmStepIcon(props.step._t));

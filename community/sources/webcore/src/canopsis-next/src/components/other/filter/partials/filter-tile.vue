@@ -1,24 +1,29 @@
 <template>
-  <v-list-item class="filter-tile pa-0">
-    <c-layout class="filter-tile__content" align="center">
-      <c-layout class="filter-tile__title" align="center">
+  <v-list-item class="pa-0">
+    <v-layout align-center>
+      <v-layout align-center>
         <v-icon
           v-if="editable"
           class="draggable ml-0 mr-3 action-drag-handler"
-          icon="drag_indicator"
-          size="small"
-        />
-
-        <v-list-item-title>{{ filter.title }}</v-list-item-title>
-      </c-layout>
-
-      <template v-if="editable">
-        <c-layout class="filter-tile__actions" align="center">
-          <c-action-btn type="edit" @click="$emit('edit')" />
-          <c-action-btn type="delete" @click="$emit('delete')" />
-        </c-layout>
-      </template>
-    </c-layout>
+          small
+        >
+          drag_indicator
+        </v-icon>
+        <v-list-item-content>{{ filter.title }}</v-list-item-content>
+      </v-layout>
+      <v-list-item-action v-if="editable">
+        <v-layout align-center>
+          <c-action-btn
+            type="edit"
+            @click="$emit('edit')"
+          />
+          <c-action-btn
+            type="delete"
+            @click="$emit('delete')"
+          />
+        </v-layout>
+      </v-list-item-action>
+    </v-layout>
   </v-list-item>
 </template>
 
@@ -34,27 +39,5 @@ export default {
       default: false,
     },
   },
-
-  emits: ['edit', 'delete'],
 };
 </script>
-
-<style lang="scss" scoped>
-.filter-tile {
-  width: 100%;
-
-  &__content {
-    width: 100%;
-  }
-
-  &__title {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  &__actions {
-    flex: 0 0 auto;
-    margin-left: auto;
-  }
-}
-</style>

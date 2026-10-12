@@ -1,12 +1,17 @@
 <template>
-  <c-tooltip :content="tooltipContent" html top>
-    <template #activator="{ props: activatorProps }">
-      <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" theme-color="comment" />
+  <c-simple-tooltip
+    :content="tooltipContent"
+    top
+    clickable
+  >
+    <template #activator="{ on }">
+      <c-alarm-extra-details-chip :icon="icon" :color="color" v-on="on" />
     </template>
-  </c-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
+import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
@@ -20,14 +25,16 @@ export default {
       required: true,
     },
   },
-
   setup(props) {
     const { tooltipContent } = useExtraDetailsLastCommentTooltip(props);
 
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.comment);
+    const color = COLORS.alarmExtraDetails.comment;
+
     return {
-      icon,
       tooltipContent,
+      icon,
+      color,
     };
   },
 };

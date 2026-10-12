@@ -3,32 +3,6 @@ import { TIME_UNITS } from '@/constants';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
- * Convert data storage server error paths to form field paths.
- *
- * Duration fields are represented in the form as objects, while the API
- * returns an error for the duration itself (`alarm.delete_after`). The
- * validation field is registered for its value (`alarm.delete_after.value`).
- *
- * @param {Object} [errors={}] Server error payload.
- * @param {Object} [form={}] Data storage form values.
- * @returns {Object}
- */
-export const mapStorageSettingsErrors = (errors = {}, form = {}) => {
-  const fieldErrors = errors?.errors ?? errors;
-
-  return Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => {
-    const value = field.split('.').reduce((result, key) => result?.[key], form);
-
-    return [
-      value?.value !== undefined
-        ? `${field}.value`
-        : field,
-      message,
-    ];
-  }));
-};
-
-/**
  * @typedef {Object} DataStorageJunitConfig
  * @property {DurationWithEnabled} delete_after
  */
@@ -95,7 +69,6 @@ export const mapStorageSettingsErrors = (errors = {}, form = {}) => {
 /**
  * @typedef {Object} DataStorageLlmChatConfig
  * @property {DurationWithEnabled} delete_after
- * @property {DurationWithEnabled} delete_token_usage_after
  */
 
 /**
@@ -325,9 +298,6 @@ export const dataStorageLlmChatToForm = (llmChat = {}) => ({
   delete_after: llmChat.delete_after
     ? durationWithEnabledToForm(llmChat.delete_after)
     : { value: 1, unit: TIME_UNITS.month, enabled: false },
-  delete_token_usage_after: llmChat.delete_token_usage_after
-    ? durationWithEnabledToForm(llmChat.delete_token_usage_after)
-    : { value: 3, unit: TIME_UNITS.month, enabled: false },
 });
 
 /**

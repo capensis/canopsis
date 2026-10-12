@@ -2,8 +2,8 @@ import { isArray } from 'lodash';
 
 import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
 
+import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/array';
 import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
-import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} DynamicInfoInformation
@@ -24,34 +24,22 @@ import { uid } from '@/helpers/uid';
 /**
  * Converts a dynamic info information object to form data structure
  *
- * @param {Object} [info={}] - The dynamic info information object
- * @returns {Object} The form data structure with name and value fields
+ * @param {DynamicInfoInformation} [info={}] - The dynamic info information object
+ * @returns {DynamicInfoInformationForm} The form data structure with name and value fields
  */
-export const dynamicInfoInformationToForm = (info = {}) => {
-  const value = info.value ?? '';
-
-  return {
-    key: info.key ?? uid('dynamic-info-information'),
-    name: info.name ?? '',
-    type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
-    value: isArray(value) ? primitiveArrayToForm(value) : value,
-  };
-};
+export const dynamicInfoInformationToForm = (info = {}) => addKeyInEntity({
+  name: info.name ?? '',
+  type: info.type ?? DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
+  value: isArray(info.value) ? primitiveArrayToForm(info.value) : info.value ?? '',
+});
 
 /**
  * Converts a dynamic info information form object to a dynamic info information object
  *
- * @param {Object} [form={}] - The dynamic info information form object
- * @returns {Object} The dynamic info information object
+ * @param {DynamicInfoInformationForm} [form={}] - The dynamic info information form object
+ * @returns {DynamicInfoInformation} The dynamic info information object
  */
-export const formToDynamicInfoInformation = (form = {}) => {
-  const dynamicInfo = { ...form };
-
-  delete dynamicInfo.key;
-
-  if (isArray(dynamicInfo.value)) {
-    dynamicInfo.value = formToPrimitiveArray(dynamicInfo.value);
-  }
-
-  return dynamicInfo;
-};
+export const formToDynamicInfoInformation = (form = {}) => removeKeyFromEntity({
+  ...form,
+  value: isArray(form.value) ? formToPrimitiveArray(form.value) : form.value ?? '',
+});

@@ -49,8 +49,7 @@ export const ENTITY_FIELDS = {
   snooze: 'snooze',
 };
 
-export const EVENT_ENTITY_TYPES = {
-  // TODO: remove it in the future
+export const EVENT_ENTITY_TYPES = { // TODO: remove it in the future
   ack: 'ack', // TODO: ServiceWeather
   fastAck: 'fastAck', // TODO: ServiceWeather
   ackRemove: 'ackremove', // TODO: ServiceWeather, EventPattern
@@ -76,8 +75,7 @@ export const EVENT_ENTITY_TYPES = {
   executeInstruction: 'executeInstruction', // TODO: ServiceWeather
 };
 
-export const ENTITY_INFOS_TYPE = {
-  // TODO: move to alarm
+export const ENTITY_INFOS_TYPE = { // TODO: move to alarm
   state: 'state',
   status: 'status',
   action: 'action',
@@ -123,11 +121,10 @@ export const WEATHER_ACTIONS_TYPES = {
   executeInstruction: 'executeInstruction',
 };
 
-export const EVENT_ENTITY_ICONS_BY_TYPE = {
-  // TODO: remove it
+export const EVENT_ENTITY_ICONS_BY_TYPE = { // TODO: remove it
   [EVENT_ENTITY_TYPES.ack]: 'check',
   [EVENT_ENTITY_TYPES.fastAck]: 'done_all',
-  [EVENT_ENTITY_TYPES.pbehaviorList]: '$vuetify.icons.pbehavior',
+  [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
   [EVENT_ENTITY_TYPES.ackRemove]: 'remove_done',
   [EVENT_ENTITY_TYPES.declareTicket]: 'note_add',
   [EVENT_ENTITY_TYPES.declareTicketFail]: 'report_problem',
@@ -199,7 +196,6 @@ export const AVAILABLE_COUNTERS = {
   total: 'total',
   total_active: 'total_active',
   snooze: 'snooze',
-  pause: 'pause',
   ack: 'ack',
   unack: 'unack',
   ticket: 'ticket',
@@ -237,7 +233,10 @@ export const COLOR_INDICATOR_TYPES_WITH_STATUS = {
   status: 'status',
 };
 
-export const STATE_SETTING_ENTITY_TYPES = [ENTITY_TYPES.component, ENTITY_TYPES.service];
+export const STATE_SETTING_ENTITY_TYPES = [
+  ENTITY_TYPES.component,
+  ENTITY_TYPES.service,
+];
 
 export const STATE_SETTING_METHODS = {
   inherited: 'inherited',
@@ -275,8 +274,6 @@ export const CONTEXT_ACTIONS_TYPES = {
   editEntity: 'editEntity',
   duplicateEntity: 'duplicateEntity',
   deleteEntity: 'deleteEntity',
-  pause: 'pause',
-  resume: 'resume',
   pbehaviorAdd: 'pbehaviorAdd',
   pbehaviorList: 'pbehaviorList',
   pbehaviorDelete: 'pbehaviorDelete',
@@ -294,7 +291,10 @@ export const COUNTER_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
 };
 
-export const ENTITY_INFOS_FIELDS = [ENTITY_FIELDS.infos, ENTITY_FIELDS.componentInfos];
+export const ENTITY_INFOS_FIELDS = [
+  ENTITY_FIELDS.infos,
+  ENTITY_FIELDS.componentInfos,
+];
 
 export const INFOS_COLUMN_PREFIX = 'entity.infos';
 
@@ -336,7 +336,10 @@ export const CONTEXT_WIDGET_GROUPED_COLUMNS = {
     ENTITY_FIELDS.idleSince,
     ENTITY_FIELDS.imported,
   ],
-  [WIDGET_COLUMNS_GROUPS.counters]: [ENTITY_FIELDS.koEvents, ENTITY_FIELDS.okEvents],
+  [WIDGET_COLUMNS_GROUPS.counters]: [
+    ENTITY_FIELDS.koEvents,
+    ENTITY_FIELDS.okEvents,
+  ],
   [WIDGET_COLUMNS_GROUPS.other]: [
     ENTITY_FIELDS.pbehaviorInfo,
     ENTITY_FIELDS.enabled,
@@ -369,9 +372,6 @@ export const ENTITY_PATTERN_FIELDS = {
   lastEventDate: ENTITY_FIELDS.lastEventDate,
   lastAlarmUpdateDate: ENTITY_FIELDS.lastAlarmUpdateDate,
   enabled: ENTITY_FIELDS.enabled,
-  pause: 'pause',
-  pauseAuthor: 'pause.author',
-  pauseInitiator: 'pause.initiator',
 };
 
 export const ENTITY_TEMPLATE_FIELDS = {
@@ -439,9 +439,6 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.tags]: 'common.tag',
   [ENTITY_FIELDS.lastComment]: 'common.lastComment',
   [ENTITY_FIELDS.sourceType]: 'common.sourceType',
-  [ENTITY_PATTERN_FIELDS.pause]: 'entity.fields.pause',
-  [ENTITY_PATTERN_FIELDS.pauseAuthor]: 'entity.fields.pauseAuthor',
-  [ENTITY_PATTERN_FIELDS.pauseInitiator]: 'entity.fields.pauseInitiator',
 
   /**
    * OBJECTS
@@ -453,7 +450,10 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
 };
 
-export const ENTITY_UNSORTABLE_FIELDS = [ENTITY_FIELDS.links, ENTITY_FIELDS.pbehaviorInfo];
+export const ENTITY_UNSORTABLE_FIELDS = [
+  ENTITY_FIELDS.links,
+  ENTITY_FIELDS.pbehaviorInfo,
+];
 
 export const ENTITY_PAYLOADS_VARIABLES = {
   entity: '.Entity',

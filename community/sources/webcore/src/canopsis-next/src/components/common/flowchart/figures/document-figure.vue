@@ -1,5 +1,8 @@
 <template>
-  <path :d="path" v-bind="$attrs" />
+  <path
+    :d="path"
+    v-on="$listeners"
+  />
 </template>
 
 <script>

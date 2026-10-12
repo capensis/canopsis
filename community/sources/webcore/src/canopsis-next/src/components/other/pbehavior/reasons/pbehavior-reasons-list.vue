@@ -8,7 +8,6 @@
     :is-disabled-item="isDisabledReason"
     :select-all="removable || updatable"
     :hide-mass-actions="!active"
-    expand-content-class="secondary lighten-2"
     expand
     search
     advanced-pagination
@@ -21,28 +20,28 @@
         :hideable="updatable"
         :unhideable="updatable"
         pbehavior-reason
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-
-    <template #hidden="{ item }">
+    <template #visible="{ item }">
       <c-enabled :value="!item.hidden" />
     </template>
-
     <template #actions="{ item }">
-      <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn
-          v-if="removable"
-          :disabled="!item.deletable"
-          :tooltip="item.deletable ? t('common.delete') : t('pbehavior.reasons.usingReason')"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
-      </c-layout>
+      <c-action-btn
+        v-if="updatable"
+        type="edit"
+        @click="$emit('edit', item)"
+      />
+      <c-action-btn
+        v-if="removable"
+        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.reasons.usingReason')"
+        :disabled="!item.deletable"
+        type="delete"
+        @click="$emit('remove', item._id)"
+      />
     </template>
-
     <template #expand="{ item }">
       <pbehavior-reasons-list-expand-panel :pbehavior-reason="item" />
     </template>
@@ -60,7 +59,6 @@ export default {
   components: {
     PbehaviorReasonsListExpandPanel,
   },
-
   props: {
     pbehaviorReasons: {
       type: Array,
@@ -91,27 +89,32 @@ export default {
       default: true,
     },
   },
-
-  emits: ['update:options', 'edit', 'remove', 'refresh'],
-
   setup() {
     const { t } = useI18n();
 
     const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      /**
-       * The column displays visibility, but uses the hidden field supported by the API for sorting.
-       */
-      { text: t('pbehavior.visible'), value: 'hidden' },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('pbehavior.visible'),
+        value: 'visible',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
     ]);
 
     const isDisabledReason = ({ deletable }) => !deletable;
 
     return {
       headers,
+
       isDisabledReason,
-      t,
     };
   },
 };

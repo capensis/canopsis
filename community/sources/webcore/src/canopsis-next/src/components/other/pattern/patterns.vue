@@ -5,9 +5,9 @@
     :total-items="patternsMeta.total_count"
     :pending="patternsPending"
     @update:options="updateOptions"
-    @edit="$emit('edit', $event)"
-    @remove="$emit('remove', $event)"
-    @remove-selected="$emit('remove-selected', $event)"
+    @edit="$listeners.edit"
+    @remove="$listeners.remove"
+    @remove-selected="$listeners['remove-selected']"
   />
 </template>
 
@@ -16,8 +16,8 @@ import { onMounted } from 'vue';
 
 import { convertQueryToRequest } from '@/helpers/query';
 
-import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { usePattern } from '@/hooks/store/modules/pattern';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 
 import PatternsList from './patterns-list.vue';
 
@@ -25,11 +25,13 @@ export default {
   components: {
     PatternsList,
   },
-
-  emits: ['edit', 'remove', 'remove-selected'],
-
   setup() {
-    const { patternsMeta, patternsPending, patterns, fetchPatternsList } = usePattern();
+    const {
+      patternsMeta,
+      patternsPending,
+      patterns,
+      fetchPatternsList,
+    } = usePattern();
 
     const {
       options,
@@ -37,11 +39,11 @@ export default {
       handler: fetchList,
     } = useLocalQueryWithOptions({
       onUpdate: fetchQuery => fetchPatternsList({
-          params: {
-            ...convertQueryToRequest(fetchQuery),
-            corporate: false,
-          },
-        }),
+        params: {
+          ...convertQueryToRequest(fetchQuery),
+          corporate: false,
+        },
+      }),
     });
 
     onMounted(fetchList);

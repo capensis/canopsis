@@ -1,105 +1,109 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
-        <span>{{ title }}</span>
+    <modal-wrapper close>
+      <template #title="">
+        {{ title }}
       </template>
-
-      <template #text>
-        <external-data-table-record-form :external-data-table="config.externalDataTable" />
+      <template #text="">
+        <external-data-table-record-form
+          v-model="form"
+          :external-data-table="config.externalDataTable"
+        />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
-
         <v-btn
           :disabled="submitting"
           :loading="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import {
   externalDataTableRecordToForm,
   formToExternalDataTableRecord,
 } from '@/helpers/entities/external-data-table/record/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import ExternalDataTableRecordForm from '@/components/other/external-data-table/form/external-data-table-record-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
+  name: MODALS.createExternalDataTableRecord,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     ExternalDataTableRecordForm,
+    ModalWrapper,
   },
-
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
+    const { config, close } = useInnerModal(props);
+
     const columnConfigs = computed(() => config.value.externalDataTable.column_configs ?? []);
-    const externalDataTableRecord = computed(() => config.value.externalDataTableRecord);
-    const isNew = computed(() => !externalDataTableRecord.value?._id);
-    const title = computed(
-      () => config.value.title || t('modals.createExternalDataTableRecord.create.title'),
-    );
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const form = useForm({
-      initialValues: externalDataTableRecordToForm(
-        externalDataTableRecord.value,
-        columnConfigs.value,
-      ),
-    });
-    const { values, handleSubmit, submitting } = form;
+    const form = ref(externalDataTableRecordToForm(
+      config.value.externalDataTableRecord,
+      columnConfigs.value,
+    ));
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
+    const { submit, submitting, submitLabel } = useSubmittableForm({
+      form,
+      item: config.value.externalDataTableRecord,
+      method: async () => {
+        await config.value.action?.(formToExternalDataTableRecord(form.value, columnConfigs.value));
 
-    const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(
-        formToExternalDataTableRecord(values.value, columnConfigs.value),
-      );
-
-      closeModal();
-
-      return result;
+        close();
+      },
     });
 
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    const title = computed(() => config.value.title || t('modals.createExternalDataTableRecord.create.title'));
 
     return {
-      t,
       config,
+
+      form,
+
       submitting,
+
       title,
+
       submitLabel,
       submit,
-      closeModal,
+      close,
     };
   },
 };

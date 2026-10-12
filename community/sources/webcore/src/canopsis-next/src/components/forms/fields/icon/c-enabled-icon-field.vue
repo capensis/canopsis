@@ -1,57 +1,53 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-enabled-field
       v-model="enabled"
       :label="label"
       color="primary"
-      @update:model-value="updateIcon"
+      @input="updateIcon"
     />
     <c-icon-field
       v-if="enabled"
-      :model-value="modelValue"
-      :label="$t('common.icon', 1)"
+      v-field="icon"
+      :label="$tc('common.icon', 1)"
       :name="name"
       required
-      @update:model-value="$emit('update:modelValue', $event)"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
+import { formBaseMixin } from '@/mixins/form';
+
 export default {
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'icon',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    icon: {
       type: String,
-      default: '',
+      required: false,
     },
     label: {
       type: String,
-      default: '',
+      required: false,
     },
     name: {
       type: String,
       default: 'icon',
     },
   },
-
-  emits: ['update:modelValue'],
-
   data() {
     return {
-      enabled: !!this.modelValue,
+      enabled: !!this.icon,
     };
   },
-
-  watch: {
-    modelValue(value) {
-      this.enabled = !!value;
-    },
-  },
-
   methods: {
     updateIcon(value) {
       if (!value) {
-        this.$emit('update:modelValue', '');
+        this.updateModel('');
       }
     },
   },

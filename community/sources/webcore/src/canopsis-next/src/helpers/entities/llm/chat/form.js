@@ -1,8 +1,4 @@
-import {
-  LLM_SOCKET_CONTEXTS,
-  PATTERNS_FIELDS,
-  STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
-} from '@/constants';
+import { LLM_SOCKET_CONTEXTS, PATTERNS_FIELDS, STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD } from '@/constants';
 
 /**
  * Builds a single-key `patterns` map for corporate shared filters: `{ [field]: form }` when the block has groups.
@@ -11,8 +7,9 @@ import {
  * @param {string} field - API pattern field name (e.g. `PATTERNS_FIELDS.alarm`).
  * @returns {Object<string, Object>} Map with at most one entry, or `{}` if there are no groups.
  */
-export const aiChatFormToPatternsField = (form = {}, field) =>
-  form.groups.length ? { [field]: form } : {};
+export const aiChatFormToPatternsField = (form = {}, field) => (
+  form.groups.length ? { [field]: form } : {}
+);
 
 /**
  * Collects every pattern block on a filter-style form that uses `PATTERNS_FIELDS` keys and non-empty `groups`.
@@ -38,12 +35,11 @@ export const aiChatFormToPatternsDefault = (form = {}) => {
  * @param {Object[]} [form=[]] - Array of form fragments, each passed through `aiChatFormToPatternsDefault`.
  * @returns {Object} Same length as `form`; each element is a `patterns`-shaped object.
  */
-export const aiChatFormToPatternsItems = (form = []) =>
-  form.reduce((acc, item) => {
-    acc[item.key] = aiChatFormToPatternsDefault(item);
+export const aiChatFormToPatternsItems = (form = []) => form.reduce((acc, item) => {
+  acc[item.key] = aiChatFormToPatternsDefault(item);
 
-    return acc;
-  }, {});
+  return acc;
+}, {});
 
 /**
  * Builds the AI chat sidebar `patterns` object for state-settings modals: one entry per block (`entity_pattern`
@@ -74,15 +70,18 @@ export const aiChatFormToPatternsStateSettings = (form = {}) => ({
  * @param {string} [params.context] - `LLM_SOCKET_CONTEXTS` value driving the mapping strategy.
  * @returns {Object|Object[]} `patterns` value for sidebar config (object or array of objects).
  */
-export const aiChatFormToPatterns = ({ form, field, context } = {}) => {
+export const aiChatFormToPatterns = ({
+  form,
+  field,
+  context,
+} = {}) => {
   const method = {
     [LLM_SOCKET_CONTEXTS.scenario]: () => aiChatFormToPatternsItems(form),
     [LLM_SOCKET_CONTEXTS.stateSettings]: () => aiChatFormToPatternsStateSettings(form),
     [LLM_SOCKET_CONTEXTS.corporateAlarmPattern]: () => aiChatFormToPatternsField(form, field),
     [LLM_SOCKET_CONTEXTS.corporateEntityPattern]: () => aiChatFormToPatternsField(form, field),
     [LLM_SOCKET_CONTEXTS.corporatePbehaviorPattern]: () => aiChatFormToPatternsField(form, field),
-    [LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern]: () =>
-      aiChatFormToPatternsField(form, field),
+    [LLM_SOCKET_CONTEXTS.corporateWeatherServicePattern]: () => aiChatFormToPatternsField(form, field),
   }[context];
 
   return (method ?? (() => aiChatFormToPatternsDefault(form)))();

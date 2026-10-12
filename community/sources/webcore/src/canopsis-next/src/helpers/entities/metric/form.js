@@ -1,9 +1,9 @@
 import {
   ALARM_METRIC_PARAMETERS,
   EXTERNAL_METRIC_UNITS,
-  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
   KPI_RATING_USER_CRITERIA,
   USER_METRIC_PARAMETERS,
+  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
 } from '@/constants';
 
 import { uid } from '@/helpers/uid';
@@ -56,44 +56,58 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * Check metric is time-based.
+ * Check metric is time
  *
  * @param {string} metric
  * @returns {boolean}
  */
-export const isTimeMetric = metric =>
-  [
-    USER_METRIC_PARAMETERS.totalUserActivity,
-    USER_METRIC_PARAMETERS.minUserSession,
-    USER_METRIC_PARAMETERS.maxUserSession,
-    USER_METRIC_PARAMETERS.averageUserSession,
-    ALARM_METRIC_PARAMETERS.averageAck,
-    ALARM_METRIC_PARAMETERS.averageResolve,
-    ALARM_METRIC_PARAMETERS.timeToAck,
-    ALARM_METRIC_PARAMETERS.timeToResolve,
-    ALARM_METRIC_PARAMETERS.minAck,
-    ALARM_METRIC_PARAMETERS.maxAck,
-    ALARM_METRIC_PARAMETERS.minResolve,
-    ALARM_METRIC_PARAMETERS.maxResolve,
-  ].includes(metric);
+export const isTimeMetric = metric => [
+  USER_METRIC_PARAMETERS.totalUserActivity,
+  USER_METRIC_PARAMETERS.minUserSession,
+  USER_METRIC_PARAMETERS.maxUserSession,
+  USER_METRIC_PARAMETERS.averageUserSession,
+  ALARM_METRIC_PARAMETERS.averageAck,
+  ALARM_METRIC_PARAMETERS.averageResolve,
+  ALARM_METRIC_PARAMETERS.timeToAck,
+  ALARM_METRIC_PARAMETERS.timeToResolve,
+  ALARM_METRIC_PARAMETERS.minAck,
+  ALARM_METRIC_PARAMETERS.maxAck,
+  ALARM_METRIC_PARAMETERS.minResolve,
+  ALARM_METRIC_PARAMETERS.maxResolve,
+].includes(metric);
 
 /**
- * Check metric is percentage/ratio-based.
+ * Check metric is ratio
  *
  * @param {string} metric
  * @returns {boolean}
  */
-export const isRatioMetric = metric =>
-  [
-    ALARM_METRIC_PARAMETERS.ratioCorrelation,
-    ALARM_METRIC_PARAMETERS.ratioInstructions,
-    ALARM_METRIC_PARAMETERS.ratioTickets,
-    ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
-    ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms,
-  ].includes(metric);
+export const isRatioMetric = metric => [
+  ALARM_METRIC_PARAMETERS.ratioCorrelation,
+  ALARM_METRIC_PARAMETERS.ratioInstructions,
+  ALARM_METRIC_PARAMETERS.ratioTickets,
+  ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
+  ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms,
+].includes(metric);
 
 /**
- * Check is external percent metric unit.
+ * Check is user criteria
+ *
+ * @param {string} criteria
+ * @returns {boolean}
+ */
+export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
+
+/**
+ * Check is custom criteria
+ *
+ * @param {string} criteria
+ * @returns {boolean}
+ */
+export const isCustomCriteria = criteria => criteria === KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA;
+
+/**
+ * Check is external percent metric unit
  *
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
@@ -101,38 +115,36 @@ export const isRatioMetric = metric =>
 export const isExternalPercentMetricUnit = unit => unit === EXTERNAL_METRIC_UNITS.percent;
 
 /**
- * Check is external time metric unit.
+ * Check is external time metric unit
  *
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
  */
-export const isExternalTimeMetricUnit = unit =>
-  [
-    EXTERNAL_METRIC_UNITS.microsecond,
-    EXTERNAL_METRIC_UNITS.millisecond,
-    EXTERNAL_METRIC_UNITS.second,
-  ].includes(unit);
+export const isExternalTimeMetricUnit = unit => [
+  EXTERNAL_METRIC_UNITS.microsecond,
+  EXTERNAL_METRIC_UNITS.millisecond,
+  EXTERNAL_METRIC_UNITS.second,
+].includes(unit);
 
 /**
- * Check is external data size metric unit.
+ * Check is external data size metric unit
  *
  * @param {ExternalMetricUnit} [unit]
  * @returns {boolean}
  */
-export const isExternalDataSizeMetricUnit = unit =>
-  [
-    EXTERNAL_METRIC_UNITS.continuousCounter,
-    EXTERNAL_METRIC_UNITS.byte,
-    EXTERNAL_METRIC_UNITS.kilobyte,
-    EXTERNAL_METRIC_UNITS.megabyte,
-    EXTERNAL_METRIC_UNITS.gigabyte,
-    EXTERNAL_METRIC_UNITS.terabyte,
-  ].includes(unit);
+export const isExternalDataSizeMetricUnit = unit => [
+  EXTERNAL_METRIC_UNITS.continuousCounter,
+  EXTERNAL_METRIC_UNITS.byte,
+  EXTERNAL_METRIC_UNITS.kilobyte,
+  EXTERNAL_METRIC_UNITS.megabyte,
+  EXTERNAL_METRIC_UNITS.gigabyte,
+  EXTERNAL_METRIC_UNITS.terabyte,
+].includes(unit);
 
 /**
- * Converts one metric preset to its editable form representation.
+ * Convert metric preset to form
  *
- * @param {MetricPreset} [preset={}]
+ * @param {MetricPreset} preset
  * @returns {MetricPresetForm}
  */
 export const metricPresetToForm = (preset = {}) => ({
@@ -146,29 +158,21 @@ export const metricPresetToForm = (preset = {}) => ({
 });
 
 /**
- * Converts metric presets to editable form items.
+ * Convert metric presets to form
  *
- * @param {MetricPresets} [presets=[]]
+ * @param {MetricPresets} presets
  * @returns {MetricPresetsForm}
  */
 export const metricPresetsToForm = (presets = []) => presets.map(metricPresetToForm);
 
 /**
- * Converts editable metric preset form item to widget value.
+ * Convert metric preset form object to API compatible object
  *
  * @param {MetricPresetForm} form
  * @returns {MetricPreset}
  */
 export const formToMetricPreset = (form) => {
-  const {
-    key,
-    color,
-    aggregate_func: aggregateFunc,
-    label,
-    auto,
-    external,
-    ...metricPreset
-  } = form;
+  const { key, color, aggregate_func: aggregateFunc, label, auto, external, ...metricPreset } = form;
 
   if (color) {
     metricPreset.color = color;
@@ -194,25 +198,9 @@ export const formToMetricPreset = (form) => {
 };
 
 /**
- * Converts editable metric preset form items to widget values.
+ * Convert metric preset form object to API compatible object
  *
  * @param {MetricPresetsForm} form
  * @returns {MetricPresets}
  */
 export const formToMetricPresets = form => form.map(formToMetricPreset);
-
-/**
- * Check criteria belongs to user rating.
- *
- * @param {string} criteria
- * @returns {boolean}
- */
-export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
-
-/**
- * Check is custom criteria
- *
- * @param {string} criteria
- * @returns {boolean}
- */
-export const isCustomCriteria = criteria => criteria === KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA;

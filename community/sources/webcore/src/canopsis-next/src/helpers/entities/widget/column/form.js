@@ -1,9 +1,4 @@
-import {
-  ALARM_FIELDS,
-  ALARM_INFOS_FIELDS,
-  ALARM_LIST_WIDGET_COLUMNS,
-  ENTITY_INFOS_FIELDS,
-} from '@/constants';
+import { ALARM_FIELDS, ALARM_INFOS_FIELDS, ALARM_LIST_WIDGET_COLUMNS, ENTITY_INFOS_FIELDS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
@@ -41,48 +36,42 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * Check if column is infos.
+ * Check if column is infos
  *
- * @param {string} [value='']
- * @returns {string|undefined}
+ * @param {string} [value = '']
+ * @returns {string}
  */
-export const getInfosWidgetColumn = (value = '') =>
-  [...ALARM_INFOS_FIELDS, ...ENTITY_INFOS_FIELDS].find(constantField =>
-    value.startsWith(constantField),
-  );
+export const getInfosWidgetColumn = (value = '') => [
+  ...ALARM_INFOS_FIELDS,
+  ...ENTITY_INFOS_FIELDS,
+].find(constantField => value.startsWith(constantField));
+
+export const isAlarmTicketDataWidgetColumn = (value = '') => value.startsWith(ALARM_FIELDS.ticketData);
 
 /**
- * Check if column is alarm ticket data.
+ * Check if column is links
  *
- * @param {string} [value='']
+ * @param {string} [value = '']
  * @returns {boolean}
  */
-export const isAlarmTicketDataWidgetColumn = (value = '') =>
-  value.startsWith(ALARM_FIELDS.ticketData);
+export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
- * Check if column is links.
+ * Convert widget column value to form
  *
- * @param {string} [value='']
- * @returns {boolean}
- */
-export const isLinksWidgetColumn = (value = '') =>
-  value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
-
-/**
- * Convert widget column value to form.
- *
- * @param {string} [value='']
+ * @param {string} [value = '']
  * @returns {WidgetColumnForm}
  */
 export const widgetColumnValueToForm = (value = '') => {
   const result = {};
+
   const infosColumn = getInfosWidgetColumn(value);
   const isAlarmTicketData = isAlarmTicketDataWidgetColumn(value);
 
   if (infosColumn === ALARM_FIELDS.infos) {
-    const [rule, dictionary] =
-      value === ALARM_FIELDS.infos ? ['', ''] : value.replace(`${infosColumn}.`, '').split('.');
+    const [rule, dictionary] = value === ALARM_FIELDS.infos
+      ? ['', '']
+      : value.replace(`${infosColumn}.`, '').split('.');
 
     result.column = infosColumn;
     result.rule = rule;
@@ -109,9 +98,13 @@ export const widgetColumnValueToForm = (value = '') => {
 };
 
 /**
- * Convert widget column to form.
+ * Convert widget column to form
  *
- * @param {WidgetColumn} [column={}]
+ * @param {string} [value = '']
+ * @param {string} [label = '']
+ * @param {boolean} [onlyIcon = false]
+ * @param {boolean} [withHtml = true]
+ * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
  * @returns {WidgetColumnForm}
  */
 export const widgetColumnToForm = ({
@@ -119,14 +112,17 @@ export const widgetColumnToForm = ({
   label = '',
   onlyIcon = false,
   isHtml = false,
+
   ...rest
 } = {}) => {
   const result = {
     ...rest,
+
     isHtml,
     label,
     key: uid(),
     column: value,
+
     ...widgetColumnValueToForm(value),
   };
 
@@ -138,31 +134,23 @@ export const widgetColumnToForm = ({
 };
 
 /**
- * Convert widget columns array to form array.
+ * Convert widget columns array to form array
  *
- * @param {WidgetColumn[]} [columns=[]]
+ * @param {WidgetColumn[]} columns
  * @returns {WidgetColumnForm[]}
  */
 export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToForm);
 
 /**
- * Convert form column to widget column.
+ * Convert form column to widget column
  *
  * @param {WidgetColumnForm} form
  * @returns {WidgetColumn}
  */
-export const formToWidgetColumn = ({
-  key,
-  column,
-  dictionary,
-  field,
-  onlyIcon,
-  linksInRowCount,
-  rule,
-  ...rest
-}) => {
+export const formToWidgetColumn = ({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
   const result = {
     ...rest,
+
     value: column,
   };
 
@@ -188,9 +176,9 @@ export const formToWidgetColumn = ({
 };
 
 /**
- * Convert form array to widget columns array.
+ * Convert form array to widget columns array
  *
- * @param {WidgetColumnForm[]} [form=[]]
+ * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}
  */
 export const formToWidgetColumns = (form = []) => form.map(formToWidgetColumn);

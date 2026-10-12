@@ -1,9 +1,15 @@
 <template>
-  <div class="pattern-rule-field">
-    <v-row class="pattern-rule-field__row" density="compact">
-      <v-col :cols="firstColumnCols" class="pattern-rule-field__col">
-        <v-row class="pattern-rule-field__row" density="compact">
-          <v-col :cols="attributeColumnCols" class="pattern-rule-field__col">
+  <v-layout class="gap-3" column>
+    <v-layout class="gap-3">
+      <v-flex
+        :xs5="isAnyInfosRule"
+        :xs4="!isAnyInfosRule"
+      >
+        <v-layout class="gap-3">
+          <v-flex
+            :xs4="!isObjectRule && isAnyInfosRule"
+            :xs6="isObjectRule"
+          >
             <pattern-attribute-field
               :value="rule.attribute"
               :items="attributes"
@@ -11,72 +17,89 @@
               :disabled="disabled || disabledField"
               return-object
               required
-              @update:value="updateAttribute"
+              @input="updateAttribute"
             />
-          </v-col>
-          <v-col v-if="isAnyInfosRule" cols="8" class="pattern-rule-field__col">
+          </v-flex>
+          <v-flex
+            v-if="isAnyInfosRule"
+            xs8
+          >
             <c-infos-attribute-field
-              :value="rule"
+              v-field="rule"
               :items="infos"
               :name="name"
               :disabled="disabled"
               :combobox="isInfosRule"
               row
-              @update:value="updateModel"
             />
-          </v-col>
-          <v-col v-else-if="isObjectRule" cols="6" class="pattern-rule-field__col">
-            <c-text-field
-              :model-value="rule.dictionary"
+          </v-flex>
+          <v-flex
+            v-else-if="isObjectRule"
+            xs6
+          >
+            <v-text-field
+              v-field="rule.dictionary"
+              v-validate="'required'"
               :name="objectDictionaryName"
               :disabled="disabled"
               :label="$t('common.dictionary')"
-              required
-              @update:model-value="updateField('dictionary', $event)"
+              :error-messages="errors.collect(objectDictionaryName)"
             />
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col v-if="rule.attribute" :cols="secondColumnCols" class="pattern-rule-field__col">
-        <v-row class="pattern-rule-field__row flex-nowrap" density="compact">
-          <v-col v-if="isInfosValueField" class="pattern-rule-field__input-type-col">
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex
+        v-if="rule.attribute"
+        :xs8="!isAnyInfosRuleOrAlias"
+        :xs7="isAnyInfosRuleOrAlias"
+      >
+        <v-layout class="gap-3">
+          <v-flex
+            v-if="isInfosValueField"
+            xs1
+          >
             <c-input-type-field
-              :value="rule.fieldType"
+              v-field="rule.fieldType"
               :label="$t('common.type')"
               :types="inputTypesWithDefinedType"
               :disabled="disabled"
-              :name="inputTypeFieldName"
-              @update:value="updateField('fieldType', $event)"
+              :name="name"
             />
-          </v-col>
-          <v-col v-if="shownOperatorField" :cols="operatorCols" class="pattern-rule-field__col">
+          </v-flex>
+          <v-flex
+            v-if="shownOperatorField"
+            v-bind="operatorFlexSizeAttrs"
+          >
             <pattern-operator-field
-              :value="rule.operator"
+              v-field="rule.operator"
               :operators="operators"
               :disabled="disabled || disabledOperator"
               :name="operatorFieldName"
               required
-              @update:value="updateField('operator', $event)"
             />
-          </v-col>
-          <v-col
+          </v-flex>
+          <v-flex
             v-if="rule.operator && operatorHasValue"
-            :cols="valueCols"
-            :class="valueColumnClasses"
+            v-bind="valueFlexSizeAttrs"
           >
-            <component :is="valueComponent.is" v-bind="valueComponent.props" />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row v-if="notDefinedType && !disabled" class="pattern-rule-field__row" density="compact">
-      <v-col cols="12" class="pattern-rule-field__col">
-        <c-alert type="warning">
-          {{ $t('pattern.notDefinedType') }}
-        </c-alert>
-      </v-col>
-    </v-row>
-  </div>
+            <component
+              v-bind="valueComponent.props"
+              :is="valueComponent.is"
+              v-on="valueComponent.on"
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+    <v-layout>
+      <c-alert
+        v-if="notDefinedType && !disabled"
+        type="warning"
+      >
+        {{ $t('pattern.notDefinedType') }}
+      </c-alert>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -109,7 +132,7 @@ import PatternOperatorField from './pattern-operator-field.vue';
 import PatternRuleFieldDateValue from './pattern-rule-field-date-value.vue';
 
 export default {
-  emits: ['update:rule'],
+  inject: ['$validator'],
   components: {
     DateTimePickerTextField,
     PatternAttributeField,
@@ -117,6 +140,10 @@ export default {
     PatternRuleFieldDateValue,
   },
   mixins: [formMixin],
+  model: {
+    prop: 'rule',
+    event: 'input',
+  },
   props: {
     rule: {
       type: Object,
@@ -168,10 +195,6 @@ export default {
     },
   },
   computed: {
-    inputTypeFieldName() {
-      return `${this.name}.fieldType`;
-    },
-
     operatorFieldName() {
       return `${this.name}.operator`;
     },
@@ -217,11 +240,7 @@ export default {
     },
 
     isNumberRule() {
-      return isNumberRuleType(this.type) || this.rule.fieldType === PATTERN_FIELD_TYPES.number;
-    },
-
-    isBooleanRule() {
-      return this.rule.fieldType === PATTERN_FIELD_TYPES.boolean;
+      return isNumberRuleType(this.type);
     },
 
     inputTypesWithDefinedType() {
@@ -242,13 +261,14 @@ export default {
     valueComponent() {
       const valueProps = {
         value: this.rule.value,
-        modelValue: this.rule.value,
         required: true,
         disabled: this.disabled,
         name: this.valueFieldName,
         label: this.$t('common.value'),
-        'onUpdate:value': this.updateValue,
-        'onUpdate:modelValue': this.updateValue,
+      };
+
+      const valueHandlers = {
+        input: this.updateValue,
       };
 
       if (this.isDateRule) {
@@ -259,7 +279,9 @@ export default {
             operator: this.rule.operator,
             disabled: this.disabled,
             name: this.valueFieldName,
-            'onUpdate:value': this.updateRange,
+          },
+          on: {
+            input: this.updateRange,
           },
         };
       }
@@ -277,8 +299,12 @@ export default {
           is: this.valueField.is,
           props: {
             disabled: this.disabled,
+
             ...valueProps,
             ...valueFieldProps,
+          },
+          on: {
+            ...valueHandlers,
             ...valueFieldOn,
           },
         };
@@ -292,7 +318,9 @@ export default {
             disabled: this.disabled,
             name: this.valueFieldName,
             medium: true,
-            'onUpdate:duration': this.updateDuration,
+          },
+          on: {
+            input: this.updateDuration,
           },
         };
       }
@@ -301,16 +329,7 @@ export default {
         return {
           is: 'c-number-field',
           props: valueProps,
-        };
-      }
-
-      if (this.isBooleanRule) {
-        return {
-          is: 'c-enabled-field',
-          props: {
-            ...valueProps,
-            label: this.$t(this.rule.value ? 'common.true' : 'common.false'),
-          },
+          on: valueHandlers,
         };
       }
 
@@ -321,6 +340,7 @@ export default {
           types: this.inputTypes,
           ...valueProps,
         },
+        on: valueHandlers,
       };
     },
 
@@ -342,54 +362,24 @@ export default {
       return `${this.name}.dictionary`;
     },
 
-    firstColumnCols() {
-      return this.isAnyInfosRule ? 5 : 4;
-    },
-
-    secondColumnCols() {
-      return this.isAnyInfosRuleOrAlias ? 7 : 8;
-    },
-
-    attributeColumnCols() {
-      if (!this.isObjectRule && this.isAnyInfosRule) {
-        return 4;
-      }
-
-      if (this.isObjectRule) {
-        return 6;
-      }
-
-      return 12;
-    },
-
-    operatorCols() {
+    operatorFlexSizeAttrs() {
       if (this.isDateRule) {
-        return 5;
+        return { xs5: true };
       }
 
       if (this.isAnyInfosRule) {
-        return 4;
+        return { xs4: true };
       }
 
-      return 6;
+      return { xs6: true };
     },
 
-    valueCols() {
+    valueFlexSizeAttrs() {
       if (this.isAnyInfosRule || this.isDateRule) {
-        return 7;
+        return { xs7: true };
       }
 
-      return 6;
-    },
-
-    valueColumnClasses() {
-      return [
-        'pattern-rule-field__col',
-        {
-          'pattern-rule-field__value-col--with-input-type':
-            this.isAnyInfosRule && this.isInfosValueField,
-        },
-      ];
+      return { xs6: true };
     },
 
     definedType() {
@@ -397,12 +387,7 @@ export default {
     },
 
     notDefinedType() {
-      return (
-        this.isInfosValueField &&
-        this.rule.fieldType &&
-        this.definedType &&
-        this.definedType.value !== this.rule.fieldType
-      );
+      return this.rule.fieldType && this.definedType && this.definedType.value !== this.rule.fieldType;
     },
   },
   methods: {
@@ -416,8 +401,11 @@ export default {
 
         attribute: attribute?.value,
         alias: attribute?.alias ?? false,
-        fieldType: attribute?.definedType ?? PATTERN_FIELD_TYPES.string,
       };
+
+      if (attribute?.definedType) {
+        newRule.fieldType = attribute.definedType;
+      }
 
       this.updateModel(newRule);
     },
@@ -436,30 +424,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pattern-rule-field {
-  min-width: 0;
-  width: 100%;
-
-  &__col {
-    flex-grow: 0;
-    flex-shrink: 0;
-
-    > * {
-      width: 100%;
-    }
-  }
-
-  &__input-type-col {
-    flex: 0 0 40px;
-    max-width: 40px;
-    width: 40px;
-  }
-
-  &__value-col--with-input-type {
-    flex: 1 1 0;
-    max-width: none;
-  }
-}
-</style>

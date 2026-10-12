@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    :value="form"
+    v-field="form"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
@@ -9,17 +9,19 @@
     with-alarm
     with-entity
     some-required
-    @update:value="$emit('update:form', $event)"
   />
 </template>
 
 <script>
-import {
-  usePatternsFields,
-  usePatternsFieldsFetching,
-} from '@/hooks/store/modules/patterns-fields';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -30,18 +32,21 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:form'],
-
   setup(props) {
     const { fetchAlarmTagPatternFields } = usePatternsFields();
+    const { hasAnyError } = useValidationHeader();
 
-    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
-      fetchAlarmTagPatternFields,
-      props.readonly,
-    );
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchAlarmTagPatternFields, props.readonly);
 
     return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
       pending,
       alarmAttributes,
       entityAttributes,

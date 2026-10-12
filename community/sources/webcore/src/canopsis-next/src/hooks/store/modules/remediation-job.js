@@ -1,35 +1,38 @@
-import { storeToRefs } from 'pinia';
-
-import { useRemediationJobStore } from '@/stores/modules/remediation-job';
+import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Remediation job store facade.
+ * Hook to use the Remediation Job Store Module.
  *
- * @returns {Object}
+ * @returns {Object} An object containing getters and actions for the remediation job.
+ */
+const useRemediationJobStoreModule = () => useStoreModuleHooks('remediationJob');
+
+/**
+ * Hook to access remediation job store.
+ *
+ * @returns {Object} An object containing getters and actions for remediation jobs.
  */
 export const useRemediationJob = () => {
-  const remediationJobStore = useRemediationJobStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(remediationJobStore);
+  const { useGetters, useActions } = useRemediationJobStoreModule();
 
-  // TODO: Ask backend to add a dedicated bulk route for remediation jobs.
-  const bulkRemoveRemediationJobs = async ({ data = [] } = {}) => {
-    await Promise.all(data.map(({ _id: id }) => remediationJobStore.remove({ id })));
+  const getters = useGetters({
+    remediationJobs: 'items',
+    remediationJobsPending: 'pending',
+    remediationJobsMeta: 'meta',
+  });
 
-    return [];
-  };
+  const actions = useActions({
+    fetchRemediationJobsList: 'fetchList',
+    fetchRemediationJobsListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchRemediationJobsListWithoutStore: 'fetchListWithoutStore',
+    createRemediationJob: 'create',
+    updateRemediationJob: 'update',
+    removeRemediationJob: 'remove',
+    bulkRemoveRemediationJobs: 'bulkRemove',
+  });
 
   return {
-    remediationJobs: items,
-    remediationJobsMeta: meta,
-    remediationJobsPending: pending,
-    remediationJobsFetchingParams: fetchingParams,
-
-    fetchRemediationJobsList: remediationJobStore.fetchList,
-    fetchRemediationJobsListWithPreviousParams: remediationJobStore.fetchListWithPreviousParams,
-    fetchRemediationJobsListWithoutStore: remediationJobStore.fetchListWithoutStore,
-    createRemediationJob: remediationJobStore.create,
-    updateRemediationJob: remediationJobStore.update,
-    removeRemediationJob: remediationJobStore.remove,
-    bulkRemoveRemediationJobs,
+    ...getters,
+    ...actions,
   };
 };

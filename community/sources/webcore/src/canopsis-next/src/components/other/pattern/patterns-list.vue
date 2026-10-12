@@ -11,32 +11,35 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #mass-actions="{ selected }">
-      <c-action-btn type="delete" small @click="$emit('remove-selected', selected)" />
+      <c-action-btn
+        type="delete"
+        small
+        @click="$emit('remove-selected', selected)"
+      />
     </template>
-
     <template #type="{ item }">
       <span>{{ $t(`pattern.types.${item.type}`) }}</span>
     </template>
-
     <template #updated="{ item }">
-      <span>{{ dateToString(item.updated) }}</span>
+      <span>{{ item.updated | date }}</span>
     </template>
-
     <template #actions="{ item }">
-      <c-layout>
-        <c-action-btn type="edit" @click="$emit('edit', item)" />
-        <c-action-btn type="delete" @click="$emit('remove', item._id)" />
-      </c-layout>
+      <v-layout>
+        <c-action-btn
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
-import { convertDateToString } from '@/helpers/date/date';
-
 export default {
-  emits: ['update:options', 'edit', 'remove', 'remove-selected'],
-
   props: {
     patterns: {
       type: Array,
@@ -59,31 +62,26 @@ export default {
       default: false,
     },
   },
-
   computed: {
     headers() {
       const headers = [
-        { title: this.$t('common.title'), key: 'title' },
-        { title: this.$t('common.type'), key: 'type' },
-        { title: this.$t('common.lastModifiedOn'), key: 'updated' },
+        { text: this.$t('common.title'), value: 'title' },
+        { text: this.$t('common.type'), value: 'type', sortable: false },
+        { text: this.$t('common.lastModifiedOn'), value: 'updated' },
       ];
 
       if (this.corporate) {
-        headers.push({ title: this.$t('common.lastModifiedBy'), key: 'author.display_name' });
+        headers.push({ text: this.$t('common.lastModifiedBy'), value: 'author.display_name' });
       }
 
       headers.push({
-        title: this.$t('common.actionsLabel'),
-        key: 'actions',
+        text: this.$t('common.actionsLabel'),
+        value: 'actions',
         sortable: false,
       });
 
       return headers;
     },
-  },
-
-  methods: {
-    dateToString: convertDateToString,
   },
 };
 </script>

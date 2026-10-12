@@ -1,19 +1,12 @@
-import { inject } from 'vue';
-
-import { createPopupsApi } from '@/plugins/popups';
-import { usePopupsStore } from '@/plugins/popups/stores';
+import { useComponentInstance } from './vue';
 
 /**
- * Get popups API.
+ * Hook to access popup management methods and properties from the Vue instance.
  *
- * @return {Object}
+ * @returns {Object} An object containing popup management methods and properties.
  */
 export const usePopups = () => {
-  const providedPopups = inject('$popups', null);
+  const vm = useComponentInstance();
 
-  if (providedPopups) {
-    return providedPopups;
-  }
-
-  return createPopupsApi(usePopupsStore());
+  return vm.$popups;
 };

@@ -1,13 +1,12 @@
 <template>
   <widget-settings-item :title="title">
     <v-slider
-      :model-value="modelValue"
+      v-field="value"
       :max="max"
       :min="min"
-      color="primary"
-      show-ticks="always"
+      ticks="always"
+      always-dirty
       thumb-label
-      @update:model-value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
@@ -17,13 +16,12 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-
   props: {
     title: {
       type: String,
       required: true,
     },
-    modelValue: {
+    value: {
       type: Number,
       required: true,
     },
@@ -36,7 +34,5 @@ export default {
       default: 5,
     },
   },
-
-  emits: ['update:modelValue'],
 };
 </script>

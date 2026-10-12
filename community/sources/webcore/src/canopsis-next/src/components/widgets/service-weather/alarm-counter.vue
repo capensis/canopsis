@@ -1,18 +1,23 @@
 <template>
-  <c-layout align="center" justify="space-around" v-bind="$attrs">
-    <v-icon :color="color" size="18">
+  <v-layout
+    justify-space-around
+    align-center
+    v-on="$listeners"
+  >
+    <v-icon
+      :style="{ color, caretColor: color }"
+      size="18"
+    >
       {{ icon }}
     </v-icon>
-    <span class="text-caption text-white">
+    <span class="text-caption white--text">
       {{ count }}
     </span>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 export default {
-  inheritAttrs: false,
-
   props: {
     icon: {
       type: String,

@@ -1,37 +1,51 @@
 <template>
-  <c-layout gap="3" column>
-    <c-enabled-field v-model="enabled" with-background />
-
+  <v-layout class="gap-3" column>
+    <c-enabled-field v-field="form.enabled" with-background />
     <c-form-general-patterns-tabs
-      :form="formValues"
-      :patterns-label="t('common.condition', 2)"
-      :additional-label="t('stateSetting.steps.targetEntities')"
+      :form="form"
+      :patterns-label="$tc('common.condition', 2)"
+      :additional-label="$t('stateSetting.steps.targetEntities')"
       :ai-chat-expand-tab-keys="aiChatExpandTabKeys"
     >
       <template #general="{ setRef }">
-        <state-setting-general-form :ref="setRef" />
+        <state-setting-general-form
+          v-field="form"
+          :ref="setRef"
+        />
       </template>
 
       <template #additional="{ setRef }">
-        <c-layout gap="4" column>
+        <v-layout class="gap-4" column>
           <c-alert type="info">
             {{ methodMessage }}
           </c-alert>
-          <state-setting-entity-patterns-form :ref="setRef" :entity-types="patternEntityTypes" />
-        </c-layout>
+          <state-setting-entity-patterns-form
+            v-field="form.entity_pattern"
+            :ref="setRef"
+            :entity-types="patternEntityTypes"
+          />
+        </v-layout>
       </template>
 
       <template #patterns="{ setRef }">
-        <c-layout gap="4" column>
+        <v-layout class="gap-4" column>
           <c-alert type="info">
             {{ methodMessage }}
           </c-alert>
-          <state-setting-inherited-entity-pattern-step v-if="isInheritedMethod" :ref="setRef" />
-          <state-setting-thresholds-step v-else :ref="setRef" />
-        </c-layout>
+          <state-setting-inherited-entity-pattern-step
+            v-if="isInheritedMethod"
+            v-field="form.inherited_entity_pattern"
+            :ref="setRef"
+          />
+          <state-setting-thresholds-step
+            v-else
+            v-field="form.state_thresholds"
+            :ref="setRef"
+          />
+        </v-layout>
       </template>
     </c-form-general-patterns-tabs>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -39,16 +53,15 @@ import { computed } from 'vue';
 
 import {
   FORM_GENERAL_PATTERNS_TABS,
-  PATTERNS_FIELDS,
   STATE_SETTING_METHODS,
+  PATTERNS_FIELDS,
   STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
 } from '@/constants';
 
-import { useFormContext, useFormModel } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
-import StateSettingEntityPatternsForm from './state-setting-entity-patterns-form.vue';
 import StateSettingGeneralForm from './state-setting-general-form.vue';
+import StateSettingEntityPatternsForm from './state-setting-entity-patterns-form.vue';
 import StateSettingInheritedEntityPatternStep from './steps/state-setting-inherited-entity-pattern-step.vue';
 import StateSettingThresholdsStep from './steps/state-setting-thresholds-step.vue';
 
@@ -59,27 +72,31 @@ const AI_CHAT_EXPAND_TAB_KEYS = {
 
 export default {
   components: {
-    StateSettingEntityPatternsForm,
     StateSettingGeneralForm,
+    StateSettingEntityPatternsForm,
     StateSettingInheritedEntityPatternStep,
     StateSettingThresholdsStep,
   },
-
-  setup() {
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  setup(props) {
     const { t } = useI18n();
-    const form = useFormContext();
-    const enabled = useFormModel('enabled');
-    const method = useFormModel('method');
-    const type = useFormModel('type');
 
-    const isInheritedMethod = computed(() => method.value === STATE_SETTING_METHODS.inherited);
-    const methodMessage = computed(() => t(`stateSetting.methods.${method.value}.stepTitle`));
-    const patternEntityTypes = computed(() => [type.value]);
+    const isInheritedMethod = computed(() => props.form.method === STATE_SETTING_METHODS.inherited);
+
+    const methodMessage = computed(() => t(`stateSetting.methods.${props.form.method}.stepTitle`));
+
+    const patternEntityTypes = computed(() => [props.form.type]);
 
     return {
-      t,
-      formValues: form.values,
-      enabled,
       aiChatExpandTabKeys: AI_CHAT_EXPAND_TAB_KEYS,
       isInheritedMethod,
       methodMessage,

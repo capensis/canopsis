@@ -1,25 +1,25 @@
 <template>
   <v-autocomplete
-    :model-value="value"
+    v-field="value"
     :items="filters"
     :label="label || $t('common.filters')"
     :loading="filtersPending"
     :disabled="disabled"
     :name="name"
-    item-title="name"
+    item-text="name"
     item-value="_id"
     hide-details
     clearable
-    @update:model-value="$emit('update:value', $event)"
   />
 </template>
 
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import { useFilter } from '@/hooks/store/modules/filter';
+import { entitiesFilterMixin } from '@/mixins/entities/filter';
 
 export default {
+  mixins: [entitiesFilterMixin],
   props: {
     value: {
       type: [Object, String],
@@ -37,16 +37,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  emits: ['update:value'],
-  setup() {
-    const { filters, filtersPending, fetchFiltersList } = useFilter();
-
-    return {
-      filters,
-      filtersPending,
-      fetchFiltersList,
-    };
   },
   mounted() {
     this.fetchList();

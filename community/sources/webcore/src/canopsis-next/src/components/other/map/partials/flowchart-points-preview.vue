@@ -2,7 +2,7 @@
   <g class="flowchart-points-preview">
     <component
       v-for="{ point, x, y } in nonShapesIcons"
-      :is="'foreignObject'"
+      is="foreignObject"
       :key="point._id"
       :x="x"
       :y="y"
@@ -16,12 +16,11 @@
         :size="iconSize"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
-        :pause-enabled="pauseEnabled"
       />
     </component>
     <component
       v-for="{ point, x, y } in shapesIcons"
-      :is="'foreignObject'"
+      is="foreignObject"
       :key="point._id"
       :height="iconSize"
       :width="iconSize"
@@ -35,10 +34,12 @@
         :size="iconSize"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
-        :pause-enabled="pauseEnabled"
       />
     </component>
-    <component :is="'foreignObject'" style="overflow: visible">
+    <component
+      is="foreignObject"
+      style="overflow: visible;"
+    >
       <point-popup-dialog
         v-if="activePoint"
         :point="activePoint"
@@ -56,8 +57,8 @@
 </template>
 
 <script>
-import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
 import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
+import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
 
 import PointIcon from './point-icon.vue';
 import PointPopupDialog from './point-popup-dialog.vue';

@@ -6,8 +6,7 @@ import { WEBHOOK_EXECUTION_STATUSES } from '@/constants';
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isWebhookExecutionWaiting = execution =>
-  execution?.status === WEBHOOK_EXECUTION_STATUSES.waiting;
+export const isWebhookExecutionWaiting = execution => execution?.status === WEBHOOK_EXECUTION_STATUSES.waiting;
 
 /**
  * Check webhook execution status is running
@@ -15,8 +14,7 @@ export const isWebhookExecutionWaiting = execution =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isWebhookExecutionRunning = execution =>
-  execution?.status === WEBHOOK_EXECUTION_STATUSES.running;
+export const isWebhookExecutionRunning = execution => execution?.status === WEBHOOK_EXECUTION_STATUSES.running;
 
 /**
  * Check webhook execution status is succeeded
@@ -24,8 +22,7 @@ export const isWebhookExecutionRunning = execution =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isWebhookExecutionSucceeded = execution =>
-  execution?.status === WEBHOOK_EXECUTION_STATUSES.succeeded;
+export const isWebhookExecutionSucceeded = execution => execution?.status === WEBHOOK_EXECUTION_STATUSES.succeeded;
 
 /**
  * Check webhook execution status is failed
@@ -33,8 +30,7 @@ export const isWebhookExecutionSucceeded = execution =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isWebhookExecutionFailed = execution =>
-  execution?.status === WEBHOOK_EXECUTION_STATUSES.failed;
+export const isWebhookExecutionFailed = execution => execution?.status === WEBHOOK_EXECUTION_STATUSES.failed;
 
 /**
  * Check webhook execution is finished
@@ -42,5 +38,5 @@ export const isWebhookExecutionFailed = execution =>
  * @param {Object} execution
  * @returns {boolean}
  */
-export const isWebhookExecutionFinished = execution =>
-  !!execution && (isWebhookExecutionSucceeded(execution) || isWebhookExecutionFailed(execution));
+export const isWebhookExecutionFinished = execution => !!execution
+  && (isWebhookExecutionSucceeded(execution) || isWebhookExecutionFailed(execution));

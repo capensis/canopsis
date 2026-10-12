@@ -1,36 +1,55 @@
 <template>
   <v-menu
     class="group-item"
-    content-class="group-v-menu-content bg-secondary"
-    location="bottom"
+    content-class="group-v-menu-content secondary"
+    close-delay="0"
     open-on-hover
+    offset-y
+    bottom
+    dark
   >
-    <template #activator="{ props }">
+    <template #activator="{ on }">
       <v-btn
-        v-bind="props"
         :class="{ 'group-item__active': isActiveGroup }"
         class="group-item__dropdown-btn"
-        variant="text"
-        color="white"
-        @click.stop
+        text
+        dark
+        v-on="on"
       >
-        <span class="text-none">{{ group.title }}</span>
-        <c-icon v-if="group.is_private" size="16">lock</c-icon>
+        <span>{{ group.title }}</span>
+        <v-icon
+          v-if="group.is_private"
+          color="white"
+          small
+        >
+          lock
+        </v-icon>
         <v-btn
           v-show="isNavigationEditingMode"
-          class="ml-1"
-          variant="text"
-          size="small"
+          depressed
+          small
           icon
           @click.stop="showEditGroupModal"
         >
-          <c-icon size="16">edit</c-icon>
+          <v-icon small>
+            edit
+          </v-icon>
         </v-btn>
-        <c-icon class="ml-1">arrow_drop_down</c-icon>
+        <v-icon
+          class="ml-0"
+          right
+          dark
+        >
+          arrow_drop_down
+        </v-icon>
       </v-btn>
     </template>
-    <v-list class="bg-secondary">
-      <groups-top-bar-group-view v-for="view in group.views" :key="view._id" :view="view" />
+    <v-list>
+      <groups-top-bar-group-view
+        v-for="view in group.views"
+        :key="view._id"
+        :view="view"
+      />
     </v-list>
   </v-menu>
 </template>
@@ -46,17 +65,11 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .group-item {
-  flex: 0 0 auto;
-
   &__dropdown-btn {
-    margin: 6px 2px;
+    margin: 6px;
     text-transform: none;
-  }
-
-  &__active {
-    background: rgb(var(--v-theme-primary));
   }
 }
 </style>

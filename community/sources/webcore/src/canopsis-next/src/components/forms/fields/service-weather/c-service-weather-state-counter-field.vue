@@ -1,32 +1,31 @@
 <template>
-  <c-select
-    :model-value="modelValue"
+  <v-select
+    v-field="value"
+    v-validate="rules"
+    :label="$t('common.state')"
     :items="availableCounters"
-    :label="t('common.state')"
     :name="name"
+    :error-messages="errors.collect(name)"
+    :item-disabled="isItemDisabled"
     :disabled="disabled"
-    :required="required"
-    :item-props="getItemProps"
     chips
-    closable-chips
+    deletable-chips
+    small-chips
     multiple
-    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import {
-  SERVICE_WEATHER_MAX_STATE_COUNTERS,
-  SERVICE_WEATHER_STATE_COUNTERS,
-} from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
+import { SERVICE_WEATHER_STATE_COUNTERS, SERVICE_WEATHER_MAX_STATE_COUNTERS } from '@/constants';
 
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: Array,
       default: () => [],
     },
@@ -47,32 +46,26 @@ export default {
       default: SERVICE_WEATHER_MAX_STATE_COUNTERS,
     },
   },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
 
-  emits: ['update:modelValue'],
-
-  setup(props) {
-    const { t, tm } = useI18n();
-
-    const availableCounters = computed(() => {
-      const messages = tm('serviceWeather.stateCounters');
+    availableCounters() {
+      const messages = this.$t('serviceWeather.stateCounters');
 
       return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(value => ({
         value,
-        title: messages[value],
+        text: messages[value],
       }));
-    });
-
-    const getItemProps = item => ({
-      disabled: props.modelValue.includes(item.value)
-        ? false
-        : props.modelValue.length >= props.max,
-    });
-
-    return {
-      t,
-      availableCounters,
-      getItemProps,
-    };
+    },
+  },
+  methods: {
+    isItemDisabled({ value }) {
+      return this.value.includes(value) ? false : this.value.length >= this.max;
+    },
   },
 };
 </script>

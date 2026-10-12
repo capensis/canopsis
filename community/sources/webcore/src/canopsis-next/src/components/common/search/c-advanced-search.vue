@@ -1,18 +1,13 @@
 <template>
   <c-advanced-search-field
-    v-model:rules="rules"
+    v-model="rules"
     :searches="searches"
     :attributes="attributes"
     :pending="pending"
     :allow-or="allowOr"
     :alarm-pattern="alarmPattern"
     :with-history="withHistory"
-    :name="name"
-    :disabled="disabled"
-    @submit="$emit('submit', $event)"
-    @reset="$emit('reset')"
-    @remove:search="$emit('remove:search', $event)"
-    @toggle-pin:search="$emit('toggle-pin:search', $event)"
+    v-on="$listeners"
   />
 </template>
 
@@ -47,18 +42,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    name: {
-      type: String,
-      default: 'advancedSearch',
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['submit', 'reset', 'remove:search', 'toggle-pin:search'],
-
   setup() {
     const rules = ref([advancedSearchRuleItemToFormItem()]);
 

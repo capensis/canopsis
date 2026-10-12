@@ -1,26 +1,26 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
-      <span>{{ config.pbehavior?.name }}</span>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ config.pbehavior.name }}</span>
     </template>
-
-    <template #text>
+    <template #text="">
       <pbehavior-recurrence-rule-calendar :pbehavior="config.pbehavior" />
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
-<script setup>
-import { computed } from 'vue';
+<script>
+import { MODALS } from '@/constants';
+
+import { modalInnerMixin } from '@/mixins/modal/inner';
 
 import PbehaviorRecurrenceRuleCalendar from '@/components/other/pbehavior/calendar/pbehavior-recurrence-rule-calendar.vue';
 
-const props = defineProps({
-  modal: {
-    type: Object,
-    required: true,
-  },
-});
+import ModalWrapper from '../modal-wrapper.vue';
 
-const config = computed(() => props.modal.config ?? {});
+export default {
+  name: MODALS.pbehaviorRecurrenceRule,
+  components: { PbehaviorRecurrenceRuleCalendar, ModalWrapper },
+  mixins: [modalInnerMixin],
+};
 </script>

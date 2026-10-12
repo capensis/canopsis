@@ -4,7 +4,7 @@ export default {
   withAuth: 'Do you need auth fields?',
   key: 'Key',
   declareTicket: 'Declare ticket',
-  workflow: 'Workflow if this action didn\'t match',
+  workflow: 'Workflow if this action didn\'t match:',
   workflowInCaseOfSuccess: 'Workflow in case of success',
   workflowInCaseOfFailure: 'Workflow in case of failure',
   caseFailure: 'In case of failure',
@@ -14,27 +14,24 @@ export default {
   remainingStep: 'Continue with remaining steps',
   addAction: 'Add action',
   emptyActions: 'No actions added yet',
-  output: 'Output format',
+  output: 'Output action format',
   forwardAuthor: 'Forward author to the next step',
   skip: 'Skip',
   skipForChild: 'Skip for meta alarm children',
   skipForInstruction: 'Skip if event triggered an auto instruction',
-  outputHelp:
-    '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-    '<i>For example:</i>' +
-    '<pre>Resource - {\'{{ .Alarm.Value.Resource }}\'}. Entity - {\'{{ .Entity.ID }}\'}.</pre>',
-  payloadHelp:
-    '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
-    '<i>For example:</i>' +
-    '<pre>{\n' +
-    '  resource: "{\'{{ .Alarm.Value.Resource }}\'}",\n' +
-    '  entity: "{\'{{ .Entity.ID }}\'}",\n' +
-    '  children_count: "{\'{{ len .Children }}\'}",\n' +
-    '  children: {\'{{ range .Children }}\'}{\'{{ .ID }}\'}{\'{{ end }}\'}\n' +
-    '}</pre>',
+  outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+    + '<i>For example:</i>'
+    + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
+  payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+    + '<i>For example:</i>'
+    + '<pre>{\n'
+    + '  resource: "{{ .Alarm.Value.Resource }}",\n'
+    + '  entity: "{{ .Entity.ID }}",\n'
+    + '  children_count: "{{ len .Children }}",\n'
+    + '  children: {{ range .Children }}{{ .ID }}{{ end }}\n'
+    + '}</pre>',
   allowMultipleUrls: 'Allow multiple URLs',
-  allowMultipleUrlsTooltip:
-    'If turned on, URL field can contain multiple URLs, it will be parsed and request will be sent to all of them.\nComma should be used as delimiter.\nFor example, URL could contain: {\'{{ range $link := .Alarm.Value.Infos }}\'}{\'{{ if (eq $link.type "webhook") }}\'}{\'{{ $link.webhookURL }}\'},{\'{{ end }}\'}{\'{{ end }}\'}',
+  allowMultipleUrlsTooltip: 'If turned on, URL field can contain multiple URLs, it will be parsed and request will be sent to all of them.\nComma should be used as delimiter.\nFor example, URL could contain: {{ range $link := .Alarm.Value.Infos }}{{ if (eq $link.type "webhook") }}{{ $link.webhookURL }},{{ end }}{{ end }}',
   massRemove: 'Remove scenarios',
   massEnable: 'Enable scenarios',
   massDisable: 'Disable scenarios',
@@ -49,21 +46,17 @@ export default {
     [ACTION_TYPES.assocticket]: 'Associate ticket',
     [ACTION_TYPES.cancel]: 'Cancel',
     [ACTION_TYPES.webhook]: 'Webhook',
-    [ACTION_TYPES.pause]: 'Pause',
-    [ACTION_TYPES.resume]: 'Resume',
   },
   tabs: {
     pattern: 'Pattern',
   },
   errors: {
     actionRequired: 'Please add at least one action',
-    deprecatedTriggerExist:
-      'This scenario is not supported anymore due to its old format and thus disabled. \n' +
-      'Please update the scenario triggers or create a new ticket declaration rule.',
+    deprecatedTriggerExist: 'This scenario is not supported anymore due to its old format and thus disabled. \n'
+      + 'Please update the scenario triggers or create a new ticket declaration rule.',
     testQueryRequireSteps: 'Test query is unavailable: no webhooks were added to the scenario',
   },
   tooltips: {
-    pbehaviorActionsNamePrefix:
-      'Name is going to be `{\'{{prefix}}\'} {\'{{entity_id}}\'} {\'{{start}}\'}-{\'{{stop}}\'}`',
+    pbehaviorActionsNamePrefix: 'Name is going to be `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
   },
 };

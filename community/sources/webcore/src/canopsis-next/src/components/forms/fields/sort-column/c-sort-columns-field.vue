@@ -1,45 +1,41 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-card-iterator-field
-      :data="modelValue"
+      v-field="sortColumns"
       :class="{ empty: isSortColumnsEmpty }"
       :handle="`.${dragItemHandleClass}`"
       item-key="key"
-      @update:data="$emit('update:modelValue', $event)"
     >
       <template #item="{ item: sortColumn, index }">
         <sort-column-field
+          v-field="sortColumns[index]"
           :key="sortColumn.key"
-          :model-value="modelValue[index]"
-          :name="`${name}.${sortColumn.key}`"
+          :name="sortColumn.key"
           :drag-handle-class="dragItemHandleClass"
           :items="items"
           class="mb-3"
-          @update:model-value="updateItemInArray(index, $event)"
           @remove="remove(index)"
         />
       </template>
     </c-card-iterator-field>
-
-    <c-layout justify="end">
-      <c-tooltip location="left">
-        <template #activator="{ props }">
+    <v-layout justify-end>
+      <v-tooltip left>
+        <template #activator="{ on }">
           <v-btn
             class="mt-3"
             color="primary"
-            size="small"
-            variant="outlined"
-            icon
-            v-bind="props"
+            fab
+            small
+            v-on="on"
             @click.prevent="add"
           >
             <v-icon>add</v-icon>
           </v-btn>
         </template>
         <span>{{ $t('common.add') }}</span>
-      </c-tooltip>
-    </c-layout>
-  </c-layout>
+      </v-tooltip>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -52,12 +48,16 @@ import { useArrayModelField } from '@/hooks/form/array-model-field';
 import SortColumnField from './partials/sort-column-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     SortColumnField,
   },
-
+  model: {
+    prop: 'sortColumns',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    sortColumns: {
       type: Array,
       default: () => [],
     },
@@ -65,21 +65,14 @@ export default {
       type: Array,
       required: false,
     },
-    name: {
-      type: String,
-      default: 'sort_columns',
-    },
   },
-
-  emits: ['update:modelValue'],
-
   setup(props, { emit }) {
     const dragItemHandleClass = 'sort-column-drag-handler';
-    const isSortColumnsEmpty = computed(() => !props.modelValue?.length);
-    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(
-      props,
-      emit,
-    );
+
+    const isSortColumnsEmpty = computed(() => !props.sortColumns?.length);
+
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
     const add = () => addItemIntoArray(widgetSortColumnToForm());
 
     return {
@@ -87,7 +80,6 @@ export default {
       isSortColumnsEmpty,
       add,
       remove: removeItemFromArray,
-      updateItemInArray,
     };
   },
 };

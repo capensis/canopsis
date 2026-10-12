@@ -1,8 +1,9 @@
 <template>
   <div
     :style="{ background: color }"
-    :class="{ 'cursor-pointer': clickable }"
-    class="c-engine-chip text-white font-weight-bold"
+    :class="{ 'cursor-pointer': !!$listeners.click }"
+    class="c-engine-chip white--text font-weight-bold"
+    v-on="$listeners"
   >
     <slot />
   </div>
@@ -10,31 +11,25 @@
 
 <script>
 export default {
-  name: 'CEngineChip',
-
   props: {
     color: {
       type: String,
-      default: undefined,
-    },
-    clickable: {
-      type: Boolean,
-      default: false,
+      required: false,
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .c-engine-chip {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   border: 1px solid white;
   border-radius: 20px;
-  display: inline-flex;
-  font-size: 12px;
   height: 30px;
-  justify-content: center;
-  min-width: 60px;
   padding: 3px 7px;
+  font-size: 12px;
+  min-width: 60px;
 }
 </style>

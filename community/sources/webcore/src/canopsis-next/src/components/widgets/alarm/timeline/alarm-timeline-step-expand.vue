@@ -1,13 +1,13 @@
 <template>
   <v-expand-transition>
-    <c-layout v-if="expanded" gap="2" column>
+    <v-layout v-if="expanded" class="gap-2" column>
       <alarm-timeline-step
         v-for="childrenStep in childrenSteps"
-        :key="childrenStep.key"
+        :key="childrenStep._id"
         :step="childrenStep"
         deep
       />
-    </c-layout>
+    </v-layout>
   </v-expand-transition>
 </template>
 
@@ -20,7 +20,6 @@ import AlarmTimelineStep from './alarm-timeline-step.vue';
 
 export default {
   components: { AlarmTimelineStep },
-
   props: {
     step: {
       type: Object,
@@ -31,7 +30,6 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const childrenSteps = computed(() => addKeyInEntities(props.step.steps ?? []));
 

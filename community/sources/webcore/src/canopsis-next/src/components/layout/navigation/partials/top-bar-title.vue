@@ -1,26 +1,34 @@
 <template>
-  <v-toolbar-title class="text-white font-weight-regular top-bar-title">
-    <c-compiled-template :template="title" parent-element="span" />
-
-    <div v-if="showBadge" class="badge-wrapper">
-      <c-tooltip location="right">
-        <template #activator="{ props }">
+  <v-toolbar-title class="white--text font-weight-regular top-bar-title">
+    <c-compiled-template
+      :template="title"
+      parent-element="span"
+    />
+    <div
+      v-if="showBadge"
+      class="badge-wrapper"
+    >
+      <v-tooltip right>
+        <template #activator="{ on, attrs }">
           <v-btn
             class="badge-button"
+            v-bind="attrs"
             color="error"
-            size="x-small"
             icon
-            v-bind="props"
+            small
+            v-on="on"
             @click="showInfoModal"
           >
-            <v-icon color="white" size="12px">
+            <v-icon
+              color="white"
+              size="12px"
+            >
               priority_high
             </v-icon>
           </v-btn>
         </template>
-
         <span>{{ $t('modals.webSocketError.title') }}</span>
-      </c-tooltip>
+      </v-tooltip>
     </div>
   </v-toolbar-title>
 </template>
@@ -34,28 +42,23 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   mixins: [entitiesInfoMixin],
-
   props: {
     title: {
       type: String,
       default: '',
     },
   },
-
   data() {
     return {
       showBadge: false,
     };
   },
-
   created() {
     this.$socket.on(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler);
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     this.$socket.off(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler);
   },
-
   methods: {
     socketNetworkErrorHandler() {
       this.showBadge = true;
@@ -78,10 +81,8 @@ export default {
 
 <style lang="scss">
 .top-bar-title {
-  flex: 0 0 auto;
-  overflow: visible;
   position: relative;
-  white-space: nowrap;
+  overflow: visible;
 
   .badge-wrapper {
     position: absolute;

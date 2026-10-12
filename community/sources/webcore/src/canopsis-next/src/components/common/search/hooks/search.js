@@ -1,4 +1,4 @@
-import { ref, unref, watch } from 'vue';
+import { ref, unref } from 'vue';
 
 import { prepareSearchForSubmit } from '@/helpers/search/search';
 
@@ -16,12 +16,7 @@ import { prepareSearchForSubmit } from '@/helpers/search/search';
 export const useSearchLocalValue = ({ value, fields, onSubmit }, emit) => {
   const localValue = ref(unref(value));
 
-  watch(value, (nextValue = '') => {
-    localValue.value = nextValue;
-  });
-
   const submit = () => {
-    emit('update:modelValue', localValue.value ?? '');
     emit('submit', prepareSearchForSubmit(localValue.value ?? '', unref(fields)));
     onSubmit(localValue.value);
   };
@@ -29,7 +24,6 @@ export const useSearchLocalValue = ({ value, fields, onSubmit }, emit) => {
   const clear = () => {
     localValue.value = '';
 
-    emit('update:modelValue', '');
     emit('submit', '');
   };
 

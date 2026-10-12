@@ -14,7 +14,6 @@ export default {
   components: {
     ServiceDependencies,
   },
-
   props: {
     item: {
       type: Object,

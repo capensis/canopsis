@@ -1,6 +1,7 @@
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
-import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
+import { uid } from '@/helpers/uid';
+import { removeKeyFromEntities } from '@/helpers/array';
 
 /**
  * @typedef {Object} SnmpRuleModuleMib
@@ -144,7 +145,11 @@ export const snmpRuleStateToForm = (state = {}) => {
  * @param {SnmpRuleModuleMib} [tag={}] - The list of SNMP rule tags.
  * @returns {SnmpRuleModuleTagForm}
  */
-export const snmpRuleTagToForm = (tag = {}) => addKeyInEntity(snmpRuleModuleMibToForm(tag));
+export const snmpRuleTagToForm = (tag = {}) => ({
+  ...snmpRuleModuleMibToForm(tag),
+
+  key: uid(),
+});
 
 /**
  * Convert snmp rule tags to form format
@@ -160,11 +165,11 @@ export const snmpRuleTagsToForm = (tags = []) => (tags ?? []).map(snmpRuleTagToF
  * @param {SnmpRuleModuleExtra} [extraItem={}] - The list of SNMP rule extra data.
  * @returns {SnmpRuleModuleExtraForm}
  */
-export const snmpRuleExtraItemToForm = (extraItem = {}) =>
-  addKeyInEntity({
-    name: extraItem.name ?? '',
-    value: snmpRuleModuleMibToForm(extraItem.value),
-  });
+export const snmpRuleExtraItemToForm = (extraItem = {}) => ({
+  key: uid(),
+  name: extraItem.name ?? '',
+  value: snmpRuleModuleMibToForm(extraItem.value),
+});
 
 /**
  * Convert snmp rule extra data to form format
@@ -195,22 +200,22 @@ export const snmpRuleToForm = (snmpRule = {}) => ({
 /**
  * Convert oid form to snmp rule oid field
  *
- * @param {SnmpRuleOidForm} [form={}]
+ * @param {SnmpRuleOidForm} form
  * @returns {SnmpRuleOid}
  */
-export const snmpRuleFormToOid = (form = {}) => ({
-  oid: form.mib?.oid ?? '',
-  mibName: form.mib?.name ?? '',
+export const snmpRuleFormToOid = form => ({
+  oid: form.mib.oid,
+  mibName: form.mib.name,
   moduleName: form.moduleName,
 });
 
 /**
  * Convert form to snmp rule
  *
- * @param {SnmpRuleForm} [form={}]
+ * @param {SnmpRuleForm} form
  * @returns {SnmpRule}
  */
-export const formToSnmpRule = (form = {}) => ({
+export const formToSnmpRule = form => ({
   ...form,
 
   oid: snmpRuleFormToOid(form.oid),

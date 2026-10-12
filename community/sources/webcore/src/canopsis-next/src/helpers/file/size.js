@@ -17,5 +17,5 @@ export const convertFileSizeToUnit = (fileSize = 0, unit = EXTERNAL_METRIC_UNITS
     [EXTERNAL_METRIC_UNITS.byte]: 0,
   }[unit];
 
-  return fileSize / 1024 ** degree;
+  return fileSize / (1024 ** degree);
 };

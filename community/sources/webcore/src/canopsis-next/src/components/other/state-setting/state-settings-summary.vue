@@ -1,7 +1,7 @@
 <template>
-  <c-layout class="text-subtitle-1" column>
+  <v-layout class="text-subtitle-1" column>
     <span>
-      {{ t('stateSetting.computeMethod') }}:
+      {{ $t('stateSetting.computeMethod') }}:
       <v-progress-circular
         v-if="pending"
         class="ml-1"
@@ -17,60 +17,68 @@
     <v-expand-transition>
       <div v-if="!pending && stateMethodSummaryText">
         <p v-if="isInheritedMethod">
-          <i18n-t keypath="stateSetting.stateIsInheritFrom" tag="span">
-            <template #name>
-              <b>{{ entity.name }}</b>
-            </template>
-          </i18n-t>
+          <i18n path="stateSetting.stateIsInheritFrom" tag="span">
+            <b place="name">
+              {{ entity.name }}
+            </b>
+          </i18n>
           <v-btn
-            :aria-label="t('stateSetting.seeFilterPattern')"
             class="ml-2"
             color="primary"
-            variant="outlined"
-            size="small"
+            outlined
+            small
             @click="showStateSettingsPatterns"
           >
-            {{ t('stateSetting.seeFilterPattern') }}
+            {{ $t('stateSetting.seeFilterPattern') }}
           </v-btn>
         </p>
-        <c-layout v-else-if="isDependenciesMethod" column>
-          <span class="mb-2">
-            {{
-              t('stateSetting.entityThresholdSummary', {
-                name: entity.name,
-                state: entityStateString,
-                method: currentCondition.method,
-                condition: conditionMethodSummary,
-                dependenciesEntitiesState: currentCondition.state,
-                value: conditionValue,
-              })
-            }}
-          </span>
-          <c-layout
+        <v-layout v-else-if="isDependenciesMethod" column>
+          <i18n class="mb-2" path="stateSetting.entityThresholdSummary">
+            <b place="name">
+              {{ entity.name }}
+            </b>
+            <b place="state">
+              {{ entityStateString }}
+            </b>
+            <span place="method">
+              {{ currentCondition.method }}
+            </span>
+            <span place="condition">
+              {{ conditionMethodSummary }}
+            </span>
+            <b place="dependenciesEntitiesState">
+              {{ currentCondition.state }}
+            </b>
+            <b place="value">
+              {{ conditionValue }}
+            </b>
+          </i18n>
+          <v-layout
             v-for="{ message, count } in counts"
             :key="message"
             class="text-body-2 font-weight-regular"
-            align="center"
+            align-center
           >
-            <div class="state-settings-summary__count-label">
+            <v-flex
+              lg3
+              md4
+              sm5
+              xs6
+            >
               {{ message }}:
-            </div>
-            <b>{{ count }}</b>
-          </c-layout>
-        </c-layout>
+            </v-flex>
+            <v-flex><b>{{ count }}</b></v-flex>
+          </v-layout>
+        </v-layout>
       </div>
     </v-expand-transition>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import isUndefined from 'lodash/isUndefined';
-import { computed } from 'vue';
+import { isUndefined } from 'lodash';
 
 import { ALARM_STATES, MODALS, STATE_SETTING_METHODS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
 
 export default {
   props: {
@@ -87,116 +95,121 @@ export default {
       required: false,
     },
   },
+  computed: {
+    isInheritedMethod() {
+      return this.stateSetting?.method === STATE_SETTING_METHODS.inherited;
+    },
 
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
+    isDependenciesMethod() {
+      return this.stateSetting?.method === STATE_SETTING_METHODS.dependencies;
+    },
 
-    const isInheritedMethod = computed(() => props.stateSetting?.method === STATE_SETTING_METHODS.inherited);
+    entityState() {
+      return this.entity.state;
+    },
 
-    const isDependenciesMethod = computed(
-      () => props.stateSetting?.method === STATE_SETTING_METHODS.dependencies,
-    );
+    entityStateString() {
+      return this.$t(`common.stateTypes.${this.entityState}`);
+    },
 
-    const entityState = computed(() => props.entity.state);
-
-    const entityStateString = computed(() => t(`common.stateTypes.${entityState.value}`));
-
-    const currentCondition = computed(() => {
-      const { ok, minor, major, critical } = props.stateSetting?.state_thresholds ?? {};
+    currentCondition() {
+      const {
+        ok,
+        minor,
+        major,
+        critical,
+      } = this.stateSetting.state_thresholds ?? {};
 
       return {
         [ALARM_STATES.ok]: ok,
         [ALARM_STATES.minor]: minor,
         [ALARM_STATES.major]: major,
         [ALARM_STATES.critical]: critical,
-      }[entityState.value];
-    });
+      }[this.entityState];
+    },
 
-    const isConditionShareMethod = computed(
-      () => currentCondition.value?.method === STATE_SETTING_THRESHOLDS_METHODS.share,
-    );
+    isConditionShareMethod() {
+      return this.currentCondition.method === STATE_SETTING_THRESHOLDS_METHODS.share;
+    },
 
-    const conditionMethodSummary = computed(() => t(`stateSetting.thresholdConditions.${currentCondition.value.cond}`).toLowerCase(),
-    );
+    conditionMethodSummary() {
+      return this.$t(`stateSetting.thresholdConditions.${this.currentCondition.cond}`).toLowerCase();
+    },
 
-    const conditionValue = computed(
-      () => `${currentCondition.value.value}${isConditionShareMethod.value ? '%' : ''}`,
-    );
+    conditionValue() {
+      return `${this.currentCondition.value}${this.isConditionShareMethod ? '%' : ''}`;
+    },
 
-    const stateMethodName = computed(() => props.stateSetting?.title || t('common.event', 2));
+    stateMethodName() {
+      return this.stateSetting?.title || this.$tc('common.event', 2);
+    },
 
-    const stateMethodSummaryText = computed(() => {
-      if (!props.stateSetting) {
+    stateMethodSummaryText() {
+      if (!this.stateSetting) {
         return '';
       }
 
-      if (isInheritedMethod.value) {
-        return t('stateSetting.stateIsInheritFrom');
+      if (this.isInheritedMethod) {
+        return this.$t('stateSetting.stateIsInheritFrom');
       }
 
-      if (!currentCondition.value) {
+      const {
+        ok,
+        minor,
+        major,
+        critical,
+      } = this.stateSetting.state_thresholds ?? {};
+
+      const currentCondition = {
+        [ALARM_STATES.ok]: ok,
+        [ALARM_STATES.minor]: minor,
+        [ALARM_STATES.major]: major,
+        [ALARM_STATES.critical]: critical,
+      }[this.entityState];
+
+      if (!currentCondition) {
         return '';
       }
 
-      return t('stateSetting.entityThresholdSummary', {
-        state: entityStateString.value,
-        method: currentCondition.value.method,
-        condition: conditionMethodSummary.value,
-        dependenciesEntitiesState: currentCondition.value.state,
-        value: conditionValue.value,
+      return this.$t('stateSetting.entityThresholdSummary', {
+        state: this.entityStateString,
+        method: currentCondition.method,
+        condition: this.$t(`stateSetting.thresholdConditions.${currentCondition.cond}`).toLowerCase(),
+        dependenciesEntitiesState: currentCondition.state,
+        value: `${currentCondition.value}${this.isConditionShareMethod ? '%' : ''}`,
       });
-    });
+    },
 
-    const counts = computed(() => {
+    counts() {
       const {
         depends_count: dependsCount,
         threshold_state_depends_count: thresholdStateDependsCount,
         threshold_state: thresholdState,
-      } = props.stateSetting ?? {};
+      } = this.stateSetting;
 
       return isUndefined(dependsCount)
         ? []
         : [
-            {
-              message: t('stateSetting.dependsCount'),
-              count: dependsCount,
-            },
-            {
-              message: t('stateSetting.stateDependsCount', { state: thresholdState }),
-              count: thresholdStateDependsCount,
-            },
-          ];
-    });
-
-    const showStateSettingsPatterns = () => {
-      modals.show({
+          {
+            message: this.$t('stateSetting.dependsCount'),
+            count: dependsCount,
+          },
+          {
+            message: this.$t('stateSetting.stateDependsCount', { state: thresholdState }),
+            count: thresholdStateDependsCount,
+          },
+        ];
+    },
+  },
+  methods: {
+    showStateSettingsPatterns() {
+      this.$modals.show({
         name: MODALS.stateSettingInheritedEntityPattern,
         config: {
-          pattern: props.stateSetting.inherited_entity_pattern,
+          pattern: this.stateSetting.inherited_entity_pattern,
         },
       });
-    };
-
-    return {
-      t,
-      isInheritedMethod,
-      isDependenciesMethod,
-      entityStateString,
-      currentCondition,
-      conditionMethodSummary,
-      conditionValue,
-      stateMethodName,
-      stateMethodSummaryText,
-      counts,
-      showStateSettingsPatterns,
-    };
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.state-settings-summary__count-label {
-  width: 250px;
-}
-</style>

@@ -1,30 +1,29 @@
 <template>
-  <c-select
-    :model-value="value"
+  <v-select
+    v-field="value"
+    v-validate="rules"
     :items="items"
-    :label="label || $t('common.map')"
+    :label="label || $tc('common.map')"
     :loading="pending"
     :disabled="disabled"
     :name="name"
+    :error-messages="errors.collect(name)"
     :hide-details="hideDetails"
-    :required="required"
-    item-title="name"
+    item-text="name"
     item-value="_id"
     clearable
-    @update:model-value="updateModel"
   />
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MAX_LIMIT } from '@/constants';
 
-import { useMapStore } from '@/stores/modules/map';
-
-import { formBaseMixin } from '@/mixins/form';
+const { mapActions } = createNamespacedHelpers('map');
 
 export default {
-  mixins: [formBaseMixin],
-  emits: ['input', 'update:value'],
+  inject: ['$validator'],
   props: {
     value: {
       type: [Object, String],
@@ -57,16 +56,25 @@ export default {
       items: [],
     };
   },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+  },
   mounted() {
     this.fetchList();
   },
   methods: {
+    ...mapActions({
+      fetchMapsListWithoutStore: 'fetchListWithoutStore',
+    }),
+
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await useMapStore().fetchListWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
+      const { data: items } = await this.fetchMapsListWithoutStore({ params: { limit: MAX_LIMIT } });
 
       this.items = items;
       this.pending = false;

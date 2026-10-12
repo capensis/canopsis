@@ -2,13 +2,16 @@ import { debounce } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import {
-  findSelectedVariable,
-  matchPayloadOperators,
-  matchPayloadVariables,
-} from '@/helpers/payload-json';
+import { findSelectedVariable, matchPayloadOperators, matchPayloadVariables } from '@/helpers/payload-json';
+
+import { formBaseMixin } from '@/mixins/form';
 
 export const payloadFieldMixin = {
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: String,
@@ -19,15 +22,11 @@ export const payloadFieldMixin = {
       default: () => [],
     },
   },
-
-  emits: ['update:value', 'blur'],
-
   data() {
     return {
       selectionVariableStart: 0,
       selectionVariableEnd: 0,
       variableGroup: undefined,
-      operatorGroup: undefined,
       newVariableGroup: undefined,
       variablesShown: false,
       variablesMenuPosition: {
@@ -36,10 +35,9 @@ export const payloadFieldMixin = {
       },
     };
   },
-
   computed: {
     variablesMenuValue() {
-      return this.variableGroup?.[0] ?? '';
+      return this.variableGroup?.[0];
     },
 
     valueVariables() {
@@ -50,35 +48,16 @@ export const payloadFieldMixin = {
       return matchPayloadOperators(this.value);
     },
   },
-
   created() {
     this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 300);
   },
-
   mounted() {
     document.addEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
-
   methods: {
-    getInputElement() {
-      return this.$refs.field?.$el?.querySelector('input, textarea');
-    },
-
-    getVariableElement() {
-      const variable = this.$refs.variable;
-
-      return Array.isArray(variable) ? variable[0] : variable;
-    },
-
-    updateModel(value) {
-      this.$emit('update:value', value ?? '');
-      this.$nextTick(this.onSelectionChange);
-    },
-
     setVariableSelection(start, end) {
       this.selectionVariableStart = start;
       this.selectionVariableEnd = end;
@@ -96,39 +75,28 @@ export const payloadFieldMixin = {
     },
 
     pasteVariable(variable) {
-      const cursorPosition = this.selectionVariableStart + variable.length;
-      const nextValue = `${this.value.slice(0, this.selectionVariableStart)}${variable}${this.value.slice(this.selectionVariableEnd)}`;
+      const newValue = `${this.value.slice(0, this.selectionVariableStart)}${variable}${this.value.slice(this.selectionVariableEnd)}`;
 
-      this.updateModel(nextValue);
+      this.updateModel(newValue);
       this.resetVariableSelection();
       this.hideVariablesMenu();
 
-      this.$nextTick(() => {
-        const input = this.getInputElement();
-
-        if (!input) {
-          return;
-        }
-
-        input.focus();
-        input.setSelectionRange(cursorPosition, cursorPosition);
-      });
+      if (this.errors && this.name) {
+        this.errors.remove(this.name);
+      }
     },
 
     showVariablesMenu() {
       this.variablesShown = true;
 
       this.$nextTick(() => {
-        const variableElement = this.getVariableElement();
+        if (this.$refs.variable) {
+          const [variableElement] = this.$refs.variable;
+          const { top, left, height } = variableElement.getBoundingClientRect();
 
-        if (!variableElement) {
-          return;
+          this.variablesMenuPosition.x = left;
+          this.variablesMenuPosition.y = top + height;
         }
-
-        const { top, left, height } = variableElement.getBoundingClientRect();
-
-        this.variablesMenuPosition.x = left;
-        this.variablesMenuPosition.y = top + height;
       });
     },
 
@@ -140,26 +108,35 @@ export const payloadFieldMixin = {
       const { index, groups } = this.operatorGroup;
 
       return (
-        this.newVariableGroup.index > index + groups.open.length &&
-        this.newVariableGroup.index < index + groups.variable.length - groups.close.length
+        this.newVariableGroup.index > index + groups.open.length
+        && this.newVariableGroup.index < index + groups.variable.length - groups.close.length
       );
     },
 
     onSelectionChange() {
-      const input = this.getInputElement();
-
-      if (!input || !this.$el.contains(document.activeElement)) {
+      if (!this.$el.contains(document.activeElement)) {
         return;
       }
 
-      const { selectionStart, selectionEnd } = input;
+      const { selectionStart, selectionEnd } = this.$refs.field.$refs.input;
 
-      this.variableGroup = findSelectedVariable(this.valueVariables, selectionStart, selectionEnd);
-      this.operatorGroup = findSelectedVariable(this.valueOperators, selectionStart, selectionEnd);
+      this.variableGroup = findSelectedVariable(
+        this.valueVariables,
+        selectionStart,
+        selectionEnd,
+      );
+      this.operatorGroup = findSelectedVariable(
+        this.valueOperators,
+        selectionStart,
+        selectionEnd,
+      );
       this.newVariableGroup = this.value.slice(0, selectionStart).match(/({{){1,2}$/);
 
       if (this.newVariableGroup && !this.variableGroup) {
-        if (!this.operatorGroup || this.isVariableCreatingInsideOperatorContent()) {
+        if (
+          !this.operatorGroup
+          || this.isVariableCreatingInsideOperatorContent()
+        ) {
           this.setVariableSelection(this.newVariableGroup.index, selectionEnd);
           this.showVariablesMenu();
           return;
@@ -176,15 +153,13 @@ export const payloadFieldMixin = {
       this.resetVariableSelection();
     },
 
-    handleBlur(event) {
+    handleBlur() {
       setTimeout(() => {
         this.hideVariablesMenu();
         this.resetVariableSelection();
       }, VUETIFY_ANIMATION_DELAY);
 
-      this.$emit('blur', event);
+      this.$emit('blur');
     },
   },
 };
-
-export default payloadFieldMixin;

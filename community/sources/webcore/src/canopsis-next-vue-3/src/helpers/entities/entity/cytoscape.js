@@ -1,0 +1,199 @@
+import {
+  ENTITY_TYPES_ICONS_FOR_CYTOSCAPE,
+  ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE,
+  ROOT_CAUSE_DIAGRAM_NODE_SIZE,
+} from '@/constants';
+
+import { getMapEntityText } from '@/helpers/entities/map/list';
+
+/**
+ * Create vuetify icon element
+ *
+ * @param {string} name
+ * @param {string} [color]
+ * @return {HTMLElement}
+ */
+export const getIconElement = (name, color) => {
+  const badgeIconEl = document.createElement('i');
+  badgeIconEl.classList.add('v-icon', 'material-icons');
+
+  if (color) {
+    badgeIconEl.classList.add(`text-${color}`);
+  }
+
+  badgeIconEl.textContent = name;
+
+  badgeIconEl.style.display = 'inline-flex';
+  badgeIconEl.style.alignItems = 'center';
+  badgeIconEl.style.justifyContent = 'center';
+  badgeIconEl.style.lineHeight = '1';
+  badgeIconEl.style.borderRadius = '50%';
+
+  return badgeIconEl;
+};
+
+/**
+ * Create vuetify badge element
+ *
+ * @return {HTMLSpanElement}
+ */
+export const getBadgeElement = () => {
+  const badgeEl = document.createElement('span');
+  badgeEl.classList.add(
+    'v-badge__badge',
+    'd-inline-flex',
+    'justify-center',
+    'align-center',
+    'bg-grey-darken-1',
+    'cursor-pointer',
+    'pa-0',
+  );
+  badgeEl.style.position = 'absolute';
+  badgeEl.style.width = '20px';
+  badgeEl.style.height = '20px';
+  badgeEl.style.minWidth = '20px';
+
+  return badgeEl;
+};
+
+/**
+ * Create icon by entity for state settings
+ *
+ * @return {HTMLSpanElement}
+ */
+export const getStateSettingsNodeIconElement = (node) => {
+  const { isEvents, entity } = node;
+  const size = `${isEvents ? 20 : 30}px`;
+
+  let icon = ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity';
+
+  if (isEvents) {
+    icon = 'textsms';
+  } else if (entity.pause) {
+    icon = 'pause';
+  }
+
+  const element = getIconElement(icon);
+
+  element.classList.add('entity-network-graph__node-icon');
+  element.style.fontSize = size;
+  element.style.width = size;
+  element.style.height = size;
+  element.style.minWidth = size;
+
+  const svgElement = element.querySelector('svg');
+
+  if (svgElement) {
+    svgElement.style.width = size;
+    svgElement.style.height = size;
+  }
+
+  return element;
+};
+
+/**
+ * Create vuetify progress element
+ *
+ * @return {HTMLDivElement}
+ */
+export const getProgressElement = () => {
+  const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  progressContentCircleEl.classList.add('v-progress-circular__overlay');
+  progressContentCircleEl.setAttribute('fill', 'transparent');
+  progressContentCircleEl.setAttribute('cx', '45.714285714285715');
+  progressContentCircleEl.setAttribute('cy', '45.714285714285715');
+  progressContentCircleEl.setAttribute('r', '15');
+  progressContentCircleEl.setAttribute('stroke-width', '3');
+  progressContentCircleEl.setAttribute('stroke-dasharray', '125.664');
+  progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
+
+  const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  progressContentEl.setAttribute(
+    'viewBox',
+    '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715',
+  );
+  progressContentEl.appendChild(progressContentCircleEl);
+
+  const progressEl = document.createElement('div');
+  progressEl.appendChild(progressContentEl);
+  progressEl.classList.add(
+    'v-progress-circular',
+    'v-progress-circular--indeterminate',
+    'v-progress-circular--visible',
+    'text-white',
+    'position-relative',
+  );
+
+  progressEl.style.width = '20px';
+  progressEl.style.height = '20px';
+
+  return progressEl;
+};
+
+/**
+ * Create entity node button html
+ *
+ * @property {Object} node
+ * @return {HTMLDivElement}
+ */
+export const getEntityNodeElement = (node) => {
+  const { entity, isEvents } = node;
+
+  const nodeSize = isEvents ? ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE : ROOT_CAUSE_DIAGRAM_NODE_SIZE;
+
+  const nodeLabelEl = document.createElement('div');
+  nodeLabelEl.classList.add('position-absolute', 'entity-network-graph__node-label');
+  nodeLabelEl.style.position = 'absolute';
+  nodeLabelEl.style.top = `${nodeSize}px`;
+  nodeLabelEl.style.left = '50%';
+  nodeLabelEl.style.transform = 'translateX(-50%)';
+  nodeLabelEl.style.color = '#000000';
+  nodeLabelEl.style.whiteSpace = 'nowrap';
+  nodeLabelEl.style.lineHeight = 'normal';
+  nodeLabelEl.style.fontSize = '12px';
+
+  if (!isEvents) {
+    nodeLabelEl.textContent = getMapEntityText(entity);
+  }
+
+  const nodeEl = document.createElement('div');
+  nodeEl.classList.add(
+    'v-btn__content',
+    'position-relative',
+    'rounded-circle',
+    'entity-network-graph__node',
+  );
+  nodeEl.style.position = 'relative';
+  nodeEl.style.display = 'flex';
+  nodeEl.style.alignItems = 'center';
+  nodeEl.style.justifyContent = 'center';
+  nodeEl.style.width = `${nodeSize}px`;
+  nodeEl.style.height = `${nodeSize}px`;
+  nodeEl.style.lineHeight = '1';
+  nodeEl.style.overflow = 'visible';
+  nodeEl.style.boxSizing = 'border-box';
+  nodeEl.style.borderRadius = '50%';
+
+  nodeEl.appendChild(getStateSettingsNodeIconElement(node));
+  nodeEl.appendChild(nodeLabelEl);
+
+  return nodeEl;
+};
+
+/**
+ * Create vuetify button html
+ *
+ * @property {Object} node
+ * @return {string}
+ */
+export const getButtonHTML = (text) => {
+  const btnContentEl = document.createElement('div');
+  btnContentEl.classList.add('v-btn__content');
+  btnContentEl.textContent = text;
+
+  const btnEl = document.createElement('button');
+  btnEl.classList.add('v-btn', 'v-btn--rounded');
+  btnEl.appendChild(btnContentEl);
+
+  return btnEl.outerHTML;
+};

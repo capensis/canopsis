@@ -1,137 +1,116 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <playlist-form :groups="playlistGroups" :tabs-pending="tabsPending" />
+      <template #text="">
+        <playlist-form
+          v-model="form"
+          :groups="playlistGroups"
+          :tabs-pending="tabsPending"
+        />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="submitting"
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
           :loading="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ t('common.saveChanges') }}
+          {{ $t('common.saveChanges') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT } from '@/constants';
+import { MAX_LIMIT, MODALS } from '@/constants';
 
-import {
-  formToPlaylist,
-  getTabsFromGroupsByIds,
-  playlistToForm,
-} from '@/helpers/entities/playlist/form';
+import { playlistToForm, formToPlaylist } from '@/helpers/entities/playlist/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { useView } from '@/hooks/store/modules/view';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 
-export default {
-  components: { PlaylistForm },
+import ModalWrapper from '../modal-wrapper.vue';
 
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
+
+export default {
+  name: MODALS.createPlaylist,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: { PlaylistForm, ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    entitiesViewGroupMixin,
+    permissionsEntitiesPlaylistTabMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    return {
+      playlistGroups: [],
+      tabsPending: true,
+      form: playlistToForm(this.modal.config.playlist),
+    };
+  },
+  computed: {
+    ...mapEntitiesGetters(['getList']),
+
+    title() {
+      return this.config.title || this.$t('modals.createPlaylist.create.title');
     },
   },
+  mounted() {
+    this.fetchGroups();
+  },
+  methods: {
+    async fetchGroups() {
+      const { playlist } = this.config;
 
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const { fetchViewGroupsListWithoutStore } = useView();
-    const config = computed(() => props.modal.config ?? {});
-    const playlist = computed(() => config.value.playlist);
-    const isNew = computed(() => !playlist.value?._id || config.value.duplicating);
-    const title = computed(() => {
-      const mode = config.value.duplicating ? 'duplicate' : isNew.value ? 'create' : 'edit';
+      this.tabsPending = true;
 
-      return config.value.title || t(`modals.createPlaylist.${mode}.title`);
-    });
-    const playlistGroups = ref([]);
-    const tabsPending = ref(false);
+      const { data: groups } = await this.fetchGroupsListWithoutStore({
+        params: { limit: MAX_LIMIT, with_views: true, with_tabs: true },
+      });
 
-    const form = useForm({
-      initialValues: playlistToForm(playlist.value),
-    });
-    const { values, handleSubmit, submitting, reset } = form;
+      this.playlistGroups = groups;
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(formToPlaylist(values.value));
-
-      await config.value.afterSubmit?.(result);
-
-      closeModal();
-
-      return result;
-    });
-
-    const { updateOriginalForm } = useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
-
-    const fetchGroups = async () => {
-      try {
-        tabsPending.value = true;
-
-        const { data = [] } = await fetchViewGroupsListWithoutStore({
-          params: {
-            limit: MAX_LIMIT,
-            with_views: true,
-            with_tabs: true,
-          },
-        });
-
-        playlistGroups.value = data;
-
-        if (playlist.value?.tabs_list?.length) {
-          reset({
-            ...values.value,
-
-            tabs_list: getTabsFromGroupsByIds(data, playlist.value.tabs_list),
-          });
-          updateOriginalForm();
-        }
-      } finally {
-        tabsPending.value = false;
+      if (playlist && playlist.tabs_list.length) {
+        this.form.tabs_list = this.getAvailableTabsByIds(playlist.tabs_list);
       }
-    };
 
-    onMounted(fetchGroups);
+      this.tabsPending = false;
+    },
 
-    return {
-      t,
-      title,
-      playlistGroups,
-      tabsPending,
-      submitting,
-      closeModal,
-      submit,
-    };
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(formToPlaylist(this.form));
+        }
+
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

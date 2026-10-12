@@ -1,0 +1,367 @@
+import { TIME_UNITS } from '@/constants';
+
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
+
+/**
+ * Convert data storage server error paths to form field paths.
+ *
+ * Duration fields are represented in the form as objects, while the API
+ * returns an error for the duration itself (`alarm.delete_after`). The
+ * validation field is registered for its value (`alarm.delete_after.value`).
+ *
+ * @param {Object} [errors={}] Server error payload.
+ * @param {Object} [form={}] Data storage form values.
+ * @returns {Object}
+ */
+export const mapStorageSettingsErrors = (errors = {}, form = {}) => {
+  const fieldErrors = errors?.errors ?? errors;
+
+  return Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => {
+    const value = field.split('.').reduce((result, key) => result?.[key], form);
+
+    return [
+      value?.value !== undefined
+        ? `${field}.value`
+        : field,
+      message,
+    ];
+  }));
+};
+
+/**
+ * @typedef {Object} DataStorageJunitConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageRemediationConfig
+ * @property {DurationWithEnabled} delete_after
+ * @property {DurationWithEnabled} delete_stats_after
+ * @property {DurationWithEnabled} delete_mod_stats_after
+ */
+
+/**
+ * @typedef {Object} DataStorageAlarmConfig
+ * @property {DurationWithEnabled} archive_after
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageUnlinkedEntityConfig
+ * @property {DurationWithEnabled} archive_after
+ */
+
+/**
+ * @typedef {Object} DataStoragePbehaviorConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageHealthCheckConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageWebhookConfig
+ * @property {DurationWithEnabled} delete_after
+ * @property {boolean} log_credentials
+ */
+
+/**
+ * @typedef {Object} DataStorageMetricsConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageEventFilterFailureConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageAlarmExternalTagConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageEventsRecordsConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageEntityInfosLogConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageLlmChatConfig
+ * @property {DurationWithEnabled} delete_after
+ * @property {DurationWithEnabled} delete_token_usage_after
+ */
+
+/**
+ * @typedef {Object} DataStorageConnectorAnomaliesConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
+ * @typedef {Object} DataStorageConfig
+ * @property {DataStorageJunitConfig} junit
+ * @property {DataStorageRemediationConfig} remediation
+ * @property {DataStorageAlarmConfig} alarm
+ * @property {DataStorageUnlinkedEntityConfig} [entity]
+ * @property {DataStoragePbehaviorConfig} pbehavior
+ * @property {DataStorageHealthCheckConfig} health_check
+ * @property {DataStorageWebhookConfig} webhook
+ * @property {DataStorageMetricsConfig} metrics
+ * @property {DataStorageMetricsConfig} perf_data_metrics
+ * @property {DataStorageEventFilterFailureConfig} event_filter_failure
+ * @property {DataStorageAlarmExternalTagConfig} alarm_external_tag
+ * @property {DataStorageEventsRecordsConfig} event_records
+ * @property {DataStorageEntityInfosLogConfig} entity_infos_log
+ * @property {DataStorageLlmChatConfig} llm_chat
+ * @property {DataStorageConnectorAnomaliesConfig} connector_anomalies
+ */
+
+/**
+ * @typedef {Object} HistoryWithCount
+ * @property {number} archived
+ * @property {number} deleted
+ * @property {number} time
+ */
+
+/**
+ * @typedef {Object} DataStorageHistory
+ * @property {number} junit
+ * @property {number} remediation
+ * @property {HistoryWithCount} alarm
+ * @property {HistoryWithCount} entity
+ * @property {number} health_check
+ * @property {number} event_filter_failure
+ */
+
+/**
+ * @typedef {Object} DataStorage
+ * @property {DataStorageConfig} config
+ * @property {DataStorageHistory} history
+ */
+
+/**
+ * @typedef {Object} DataStorageRequest
+ * @property {DataStorageJunitConfig} junit
+ */
+
+/**
+ * Convert data storage junit config to junit form object
+ *
+ * @param {DataStorageJunitConfig} [junitConfig = {}]
+ * @return {DataStorageJunitConfig}
+ */
+export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
+  delete_after: junitConfig.delete_after
+    ? durationWithEnabledToForm(junitConfig.delete_after)
+    : { value: 1, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
+ * Convert data storage remediation config to remediation form object
+ *
+ * @param {DataStorageRemediationConfig} remediationConfig
+ * @return {DataStorageRemediationConfig}
+ */
+export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => ({
+  delete_after: remediationConfig.delete_after
+    ? durationWithEnabledToForm(remediationConfig.delete_after)
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
+  delete_stats_after: remediationConfig.delete_stats_after
+    ? durationWithEnabledToForm(remediationConfig.delete_stats_after)
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
+  delete_mod_stats_after: remediationConfig.delete_mod_stats_after
+    ? durationWithEnabledToForm(remediationConfig.delete_mod_stats_after)
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
+ * Convert data storage alarm config to alarm form object
+ *
+ * @param {DataStorageAlarmConfig} alarmConfig
+ * @return {DataStorageAlarmConfig}
+ */
+export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
+  archive_after: alarmConfig.archive_after
+    ? durationWithEnabledToForm(alarmConfig.archive_after)
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
+  delete_after: alarmConfig.delete_after
+    ? durationWithEnabledToForm(alarmConfig.delete_after)
+    : { value: 2, unit: TIME_UNITS.year, enabled: false },
+});
+
+/**
+ * Convert data storage pbehavior config to pbehavior form object
+ *
+ * @param {DataStoragePbehaviorConfig} pbehaviorConfig
+ * @return {DataStoragePbehaviorConfig}
+ */
+export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
+  delete_after: pbehaviorConfig.delete_after
+    ? durationWithEnabledToForm(pbehaviorConfig.delete_after)
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
+});
+
+/**
+ * Convert data storage unlinked entity config to unlinked entity form object
+ *
+ * @param {DataStorageUnlinkedEntityConfig} unlinkedEntityConfig
+ * @return {DataStorageUnlinkedEntityConfig}
+ */
+export const dataStorageEntityUnlinkedSettingsToForm = (unlinkedEntityConfig = {}) => ({
+  archive_after: unlinkedEntityConfig.archive_after
+    ? durationWithEnabledToForm(unlinkedEntityConfig.archive_after)
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
+});
+
+/**
+ * Convert data storage health check config to health check form object
+ *
+ * @param {DataStorageHealthCheckConfig} healthCheckConfig
+ * @return {DataStorageHealthCheckConfig}
+ */
+export const dataStorageHealthCheckSettingsToForm = (healthCheckConfig = {}) => ({
+  delete_after: healthCheckConfig.delete_after
+    ? durationWithEnabledToForm(healthCheckConfig.delete_after)
+    : { value: 6, unit: TIME_UNITS.month, enabled: false },
+});
+
+/**
+ * Convert data storage health check config to health check form object
+ *
+ * @param {DataStorageWebhookConfig} webhook
+ * @return {DataStorageWebhookConfig}
+ */
+export const dataStorageWebhookSettingsToForm = (webhook = {}) => ({
+  delete_after: webhook.delete_after
+    ? durationWithEnabledToForm(webhook.delete_after)
+    : { value: 60, unit: TIME_UNITS.day, enabled: false },
+  log_credentials: webhook.log_credentials ?? false,
+});
+
+/**
+ * Convert data storage metrics config to metrics form object
+ *
+ * @param {DataStorageMetricsConfig} metrics
+ * @return {DataStorageMetricsConfig}
+ */
+export const dataStorageMetricsToForm = (metrics = {}) => ({
+  delete_after: metrics.delete_after
+    ? durationWithEnabledToForm(metrics.delete_after)
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
+});
+
+/**
+ * Convert data storage perf data metrics config to perf data metrics form object
+ *
+ * @param {DataStorageMetricsConfig} perfDataMetrics
+ * @return {DataStorageMetricsConfig}
+ */
+export const dataStoragePerfDataMetricsToForm = (perfDataMetrics = {}) => ({
+  delete_after: perfDataMetrics.delete_after
+    ? durationWithEnabledToForm(perfDataMetrics.delete_after)
+    : { value: 180, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
+ * Convert data storage event filter failure config to errors form object
+ *
+ * @param {DataStorageEventFilterFailureConfig} errors
+ * @return {DataStorageEventFilterFailureConfig}
+ */
+export const dataStorageEventFilterFailureToForm = (errors = {}) => ({
+  delete_after: errors.delete_after
+    ? durationWithEnabledToForm(errors.delete_after)
+    : { value: 30, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
+ * Convert data storage alarm external tag config to form object
+ *
+ * @param {DataStorageAlarmExternalTagConfig} alarmExternalTag
+ * @return {DataStorageAlarmExternalTagConfig}
+ */
+export const dataStorageAlarmExternalTagToForm = (alarmExternalTag = {}) => ({
+  delete_after: alarmExternalTag.delete_after
+    ? durationWithEnabledToForm(alarmExternalTag.delete_after)
+    : { value: 30, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
+ * Convert data storage alarm external tag config to form object
+ *
+ * @param {DataStorageEventsRecordsConfig} eventsRecords
+ * @return {DataStorageEventsRecordsConfig}
+ */
+export const dataStorageEventsRecordsToForm = (eventsRecords = {}) => ({
+  delete_after: eventsRecords.delete_after
+    ? durationWithEnabledToForm(eventsRecords.delete_after)
+    : { value: 180, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
+ * Convert data storage entity infos log config to form object
+ *
+ * @param {DataStorageEntityInfosLogConfig} entityInfosLog
+ * @return {DataStorageEntityInfosLogConfig}
+ */
+export const dataStorageEntityInfosLogToForm = (entityInfosLog = {}) => ({
+  delete_after: entityInfosLog.delete_after
+    ? durationWithEnabledToForm(entityInfosLog.delete_after)
+    : { value: 7, unit: TIME_UNITS.day, enabled: true },
+});
+
+/** Convert data storage LLM chat config to form object
+ *
+ * @param {DataStorageLlmChatConfig} [llmChat = {}]
+ * @return {DataStorageLlmChatConfig}
+ */
+export const dataStorageLlmChatToForm = (llmChat = {}) => ({
+  delete_after: llmChat.delete_after
+    ? durationWithEnabledToForm(llmChat.delete_after)
+    : { value: 1, unit: TIME_UNITS.month, enabled: false },
+  delete_token_usage_after: llmChat.delete_token_usage_after
+    ? durationWithEnabledToForm(llmChat.delete_token_usage_after)
+    : { value: 3, unit: TIME_UNITS.month, enabled: false },
+});
+
+/**
+ * Convert data storage event anomaly config to form object
+ *
+ * @param {DataStorageConnectorAnomaliesConfig} connectorAnomaliesConfig
+ * @return {DataStorageConnectorAnomaliesConfig}
+ */
+export const dataStorageConnectorAnomaliesSettingsToForm = (connectorAnomaliesConfig = {}) => ({
+  delete_after: connectorAnomaliesConfig.delete_after
+    ? durationWithEnabledToForm(connectorAnomaliesConfig.delete_after)
+    : { value: 1, unit: TIME_UNITS.month, enabled: true },
+});
+
+/**
+ * Convert data storage object to data storage form
+ *
+ * @param {DataStorageConfig} dataStorage
+ * @return {DataStorageConfig}
+ */
+export const dataStorageSettingsToForm = (dataStorage = {}) => ({
+  junit: dataStorageJunitSettingsToForm(dataStorage.junit),
+  remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
+  alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
+  entity: dataStorageEntityUnlinkedSettingsToForm(dataStorage.entity),
+  pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
+  health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
+  webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
+  metrics: dataStorageMetricsToForm(dataStorage.metrics),
+  perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
+  event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.event_filter_failure),
+  alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
+  event_records: dataStorageEventsRecordsToForm(dataStorage.event_records),
+  entity_infos_log: dataStorageEntityInfosLogToForm(dataStorage.entity_infos_log),
+  llm_chat: dataStorageLlmChatToForm(dataStorage.llm_chat),
+  connector_anomalies: dataStorageConnectorAnomaliesSettingsToForm(dataStorage.connector_anomalies),
+});

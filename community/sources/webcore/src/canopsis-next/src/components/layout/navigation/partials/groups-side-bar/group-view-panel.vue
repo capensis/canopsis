@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    :class="['group-view-panel', 'secondary', isViewActive ? 'lighten-3' : 'lighten-1']"
-    elevation="0"
-  >
+  <v-card :color="cardColor">
     <v-card-text class="panel-item-content">
       <div :class="['panel-item-content__title pl-2', { 'text-truncate': ellipsis }]">
         <slot name="title">
@@ -11,38 +8,41 @@
       </div>
 
       <div class="panel-item-content__actions">
-        <c-icon v-if="view.is_private" size="18">
+        <v-icon
+          v-if="view.is_private"
+          small
+        >
           lock
-        </c-icon>
+        </v-icon>
         <template v-if="editable || duplicable">
           <v-btn
             v-if="editable"
             :disabled="isOrderChanged"
-            size="small"
-            variant="text"
+            depressed
+            small
             icon
             @click.prevent="$emit('change')"
           >
-            <c-icon size="18">
+            <v-icon small>
               edit
-            </c-icon>
+            </v-icon>
           </v-btn>
           <v-btn
             v-if="duplicable"
             :disabled="isOrderChanged"
-            size="small"
-            variant="text"
+            depressed
+            small
             icon
             @click.prevent="$emit('duplicate')"
           >
-            <c-icon size="18">
+            <v-icon small>
               file_copy
-            </c-icon>
+            </v-icon>
           </v-btn>
         </template>
       </div>
     </v-card-text>
-    <v-divider class="group-view-panel__divider" />
+    <v-divider />
   </v-card>
 </template>
 
@@ -70,27 +70,19 @@ export default {
       default: false,
     },
   },
-
-  emits: ['change', 'duplicate'],
-
   computed: {
+    cardColor() {
+      return `secondary ${this.isViewActive ? 'lighten-3' : 'lighten-1'}`;
+    },
+
     ellipsis() {
-      return !this.$slots.title;
+      return !this.$slots.title && !this.$scopedSlots.title;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.group-view-panel {
-  border-radius: 0;
-
-  &__divider {
-    border-color: rgba(0, 0, 0, 0.12) !important;
-    opacity: 1;
-  }
-}
-
 .panel-item-content {
   display: flex;
   cursor: pointer;
@@ -111,7 +103,7 @@ export default {
     align-items: center;
   }
 
-  :deep(.v-btn:not(:last-child)) {
+  & ::v-deep .v-btn:not(:last-child) {
     margin-right: 0;
   }
 }

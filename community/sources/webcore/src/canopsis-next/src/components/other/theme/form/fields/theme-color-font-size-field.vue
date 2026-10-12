@@ -1,27 +1,29 @@
 <template>
-  <c-radio-group
-    :model-value="modelValue"
+  <v-radio-group
+    v-field="value"
     class="mt-0"
     hide-details
-    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
-      v-for="{ value, text } in availableSizes"
-      :key="value"
-      :value="value"
+      v-for="{ value: size, text } in availableSizes"
+      :key="size"
+      :value="size"
       :label="text"
       color="primary"
     />
-  </c-radio-group>
+  </v-radio-group>
 </template>
 
 <script>
 import { THEME_FONT_SIZES } from '@/constants/theme';
 
 export default {
-  emits: ['update:modelValue'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: Number,
       default: THEME_FONT_SIZES.medium,
     },

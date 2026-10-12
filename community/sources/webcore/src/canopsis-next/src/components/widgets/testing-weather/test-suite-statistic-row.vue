@@ -1,12 +1,15 @@
 <template>
-  <v-row>
-    <v-col cols="6">
+  <v-layout>
+    <v-flex xs6>
       {{ count }}
-    </v-col>
-    <v-col class="text-lowercase" cols="6">
+    </v-flex>
+    <v-flex
+      class="text-lowercase"
+      xs6
+    >
       {{ label }}
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

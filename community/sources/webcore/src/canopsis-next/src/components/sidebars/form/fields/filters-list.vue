@@ -1,11 +1,10 @@
 <template>
   <filters-list
-    :filters="filters"
+    v-field="filters"
     :addable="addable"
     :editable="editable"
     :name="name"
     :required="required"
-    @update:filters="$emit('update:filters', $event)"
     @add="showCreateFilterModal"
     @edit="showEditFilterModal"
     @delete="showDeleteFilterModal"
@@ -14,22 +13,27 @@
 
 <script>
 import { pick } from 'lodash';
+import { computed, inject } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { uid } from '@/helpers/uid';
+import { uuid } from '@/helpers/uuid';
+
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import FiltersList from '@/components/other/filter/filters-list.vue';
 
 export default {
+  inject: ['$sidebar'],
   components: { FiltersList },
-
+  model: {
+    prop: 'filters',
+    event: 'input',
+  },
   props: {
     widgetId: {
-      type: String,
-      required: false,
-    },
-    widgetType: {
       type: String,
       required: false,
     },
@@ -78,84 +82,83 @@ export default {
       default: false,
     },
   },
+  setup(props, { emit }) {
+    const sidebar = inject('$sidebar');
 
-  emits: ['update:filters'],
+    const { t } = useI18n();
+    const modals = useModals();
 
-  computed: {
-    modalConfig() {
-      return {
-        ...pick(this, [
-          'withAlarm',
-          'withEntity',
-          'withPbehavior',
-          'withServiceWeather',
-          'entityTypes',
-          'entityCountersType',
-        ]),
+    const {
+      addItemIntoArray,
+      updateItemInArray,
+      removeItemFromArray,
+    } = useArrayModelField(props, emit);
 
-        widgetType: this.widgetType,
-        withTitle: true,
-        withoutLink: true,
-      };
-    },
-  },
+    const modalConfig = computed(() => ({
+      ...pick(props, [
+        'withAlarm',
+        'withEntity',
+        'withPbehavior',
+        'withServiceWeather',
+        'entityTypes',
+        'entityCountersType',
+      ]),
 
-  methods: {
-    updateFilters(filters) {
-      this.$emit('update:filters', filters);
-    },
+      widgetType: sidebar?.config?.widget?.type,
+      withTitle: true,
+      withoutLink: true,
+    }));
 
-    showCreateFilterModal() {
-      this.$modals.show({
+    const showCreateFilterModal = () => {
+      modals.show({
         name: MODALS.createFilter,
         config: {
-          ...this.modalConfig,
+          ...modalConfig.value,
 
-          title: this.$t('modals.createFilter.create.title'),
-          action: newFilter => this.updateFilters([
-              ...this.filters,
-              {
-                ...newFilter,
-                _id: uid('filter'),
-                widget: this.widgetId,
-                is_user_preference: false,
-              },
-            ]),
+          title: t('modals.createFilter.create.title'),
+          action: newFilter => addItemIntoArray({
+            ...newFilter,
+
+            _id: uuid('filter'),
+            widget: props.widgetId,
+            is_user_preference: false,
+          }),
         },
       });
-    },
+    };
 
-    showEditFilterModal(filter, index) {
-      this.$modals.show({
+    const showEditFilterModal = (filter, index) => {
+      modals.show({
         name: MODALS.createFilter,
         config: {
-          ...this.modalConfig,
+          ...modalConfig.value,
 
           filter,
-          title: this.$t('modals.createFilter.edit.title'),
-          action: (newFilter) => {
-            const filters = [...this.filters];
+          title: t('modals.createFilter.edit.title'),
+          action: newFilter => updateItemInArray(index, {
+            ...newFilter,
 
-            filters[index] = {
-              ...newFilter,
-              widget: this.widgetId,
-              _id: filter._id,
-            };
-
-            this.updateFilters(filters);
-          },
+            widget: props.widgetId,
+            _id: filter._id,
+          }),
         },
       });
-    },
+    };
 
-    showDeleteFilterModal(filter, index) {
-      this.$modals.show({
+    const showDeleteFilterModal = (filter, index) => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.updateFilters(this.filters.filter((_, filterIndex) => filterIndex !== index)),
+          action: () => removeItemFromArray(index),
         },
       });
-    },
+    };
+
+    return {
+      showCreateFilterModal,
+      showEditFilterModal,
+      showDeleteFilterModal,
+    };
   },
 };
 </script>

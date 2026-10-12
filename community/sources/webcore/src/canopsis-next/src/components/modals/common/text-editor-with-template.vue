@@ -1,104 +1,97 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
+      <template #text="">
         <text-editor-with-template-field
           v-model="form"
           :templates="config.templates"
           :variables="config.variables"
-          :required="required"
+          :rules="config.rules"
           :label="config.label"
           :sanitize-options="config.sanitizeOptions"
           autofocus
         />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="close">
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
           {{ $t('common.cancel') }}
         </v-btn>
-
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
+import { CUSTOM_WIDGET_TEMPLATE, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import TextEditorWithTemplateField from '@/components/common/text-editor/text-editor-with-template.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
-  components: { TextEditorWithTemplateField },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
+  name: MODALS.textEditorWithTemplate,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
   },
-
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const title = computed(() => config.value.title ?? t('modals.textEditor.title'));
-    const required = computed(() => (
-      config.value.rules?.required ||
-      config.value.rules?.includes?.('required') ||
-      config.value.required
-    ));
-
-    const formContext = useForm({
-      initialValues: {
-        text: config.value.text ?? '',
-        template: config.value.template ?? CUSTOM_WIDGET_TEMPLATE,
-      },
-    });
-    const { values: form, isSubmitting } = formContext;
-    const close = () => modals.hide({ id: props.modal.id });
-    const submit = formContext.handleSubmit(async () => {
-      await config.value.action?.({
-        ...form.value,
-
-        text: normalizeHandlebarsNbsp(form.value.text),
-      });
-
-      close();
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
+  components: { TextEditorWithTemplateField, ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    const { text = '', template = CUSTOM_WIDGET_TEMPLATE } = this.modal.config;
 
     return {
-      config,
-      title,
-      required,
-      form,
-      isSubmitting,
-      close,
-      submit,
+      form: {
+        text,
+        template,
+      },
     };
+  },
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.textEditor.title');
+    },
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action({
+            ...this.form,
+
+            text: normalizeHandlebarsNbsp(this.form.text),
+          });
+        }
+
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

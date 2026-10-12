@@ -11,15 +11,11 @@ export class TableIntersectionObserver {
   }
 
   connect(options = DEFAULT_TABLE_INTERSECTION_OBSERVER_OPTIONS) {
-    this.observer = new IntersectionObserver(
-      entries =>
-        entries.forEach((entry) => {
-          const { id } = entry.target.dataset;
+    this.observer = new IntersectionObserver(entries => entries.forEach((entry) => {
+      const { id } = entry.target.dataset;
 
-          this.targets[id].callback?.(entry);
-        }),
-      options,
-    );
+      this.targets[id].callback?.(entry);
+    }), options);
 
     Object.values(this.targets).forEach(({ element }) => this.observer.observe(element));
   }

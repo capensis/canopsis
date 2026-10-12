@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash';
 
-import { DEFAULT_WEATHER_LIMIT, PAGINATION_LIMIT } from '@/config';
 import {
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
@@ -17,13 +16,14 @@ import {
   SORT_ORDERS,
   TREE_OF_DEPENDENCIES_SHOW_TYPES,
 } from '@/constants';
+import { DEFAULT_WEATHER_LIMIT, PAGINATION_LIMIT } from '@/config';
 
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { setSeveralFields } from '@/helpers/immutable';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 
 import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
@@ -33,10 +33,8 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
 
 /**
  * @typedef {Object} ServiceWeatherWidgetCounters
- * @property {boolean} pbehavior_enabled
- * @property {string[]} pbehavior_types
- * @property {boolean} state_enabled
- * @property {string[]} state_types
+ * @property {boolean} enabled
+ * @property {string[]} types
  */
 
 /**
@@ -74,7 +72,6 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {boolean} isSecondaryIconEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
- * @property {ServiceWeatherActionRequiredSettings} noActionRequiredSettings
  * @property {boolean} entitiesActionsInQueue
  * @property {number} treeOfDependenciesShowType
  * @property {boolean} showRootCauseByStateClick
@@ -91,7 +88,7 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
 /**
  * Convert service weather widget action settings to form
  *
- * @param {ServiceWeatherActionRequiredSettings} [actionRequiredSettings = {}]
+ * @param {ServiceWeatherActionRequiredSettings} actionRequiredSettings
  * @returns {ServiceWeatherActionRequiredSettings}
  */
 export const actionRequiredSettingsToForm = (actionRequiredSettings = {}) => ({
@@ -101,10 +98,10 @@ export const actionRequiredSettingsToForm = (actionRequiredSettings = {}) => ({
 });
 
 /**
- * Convert service weather widget no-action-required settings to form
+ * Convert service weather widget acked settings to form
  *
- * @param {ServiceWeatherActionRequiredSettings} [noActionRequiredSettings = {}]
- * @returns {ServiceWeatherActionRequiredSettings}
+ * @param {ServiceWeathernoActionRequiredSettings} noActionRequiredSettings
+ * @returns {ServiceWeathernoActionRequiredSettings}
  */
 export const noActionRequiredSettingsToForm = (noActionRequiredSettings = {}) => ({
   color: noActionRequiredSettings.color ?? '',
@@ -118,9 +115,7 @@ export const noActionRequiredSettingsToForm = (noActionRequiredSettings = {}) =>
  * @return {ServiceWeatherWidgetParametersForm}
  */
 export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(
-    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
-  ),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   mainFilter: parameters.mainFilter ?? null,
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   blockTemplateTemplate: widgetTemplateValueToForm(parameters.blockTemplateTemplate),
@@ -134,13 +129,12 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   columnDesktop: parameters.columnDesktop ?? 4,
   limit: parameters.limit ?? DEFAULT_WEATHER_LIMIT,
   colorIndicator: parameters.colorIndicator ?? COLOR_INDICATOR_TYPES.state,
-  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(
-    parameters.serviceDependenciesColumnsTemplate,
-  ),
-  serviceDependenciesColumns: widgetColumnsToForm(
-    parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
-  ),
-  margin: parameters.margin ? { ...parameters.margin } : { ...DEFAULT_WIDGET_MARGIN },
+  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(parameters.serviceDependenciesColumnsTemplate),
+  serviceDependenciesColumns:
+    widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  margin: parameters.margin
+    ? { ...parameters.margin }
+    : { ...DEFAULT_WIDGET_MARGIN },
   heightFactor: parameters.heightFactor ?? 6,
   modalType: parameters.modalType ?? SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
   modalItemsPerPage: parameters.modalItemsPerPage ?? PAGINATION_LIMIT,
@@ -148,19 +142,18 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   counters: parameters.counters
     ? cloneDeep(parameters.counters)
     : {
-        pbehavior_enabled: false,
-        pbehavior_types: [],
-        state_enabled: false,
-        state_types: [],
-      },
+      pbehavior_enabled: false,
+      pbehavior_types: [],
+      state_enabled: false,
+      state_types: [],
+    },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
   isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
   isSecondaryIconEnabled: parameters.isSecondaryIconEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
   noActionRequiredSettings: noActionRequiredSettingsToForm(parameters.noActionRequiredSettings),
   entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
-  treeOfDependenciesShowType:
-    parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
+  treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   defaultInheritedPbehavior: parameters.defaultInheritedPbehavior ?? false,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
@@ -178,9 +171,7 @@ export const formToServiceWeatherWidgetParameters = form => ({
   blockTemplateTemplate: formToWidgetTemplateValue(form.blockTemplateTemplate),
   modalTemplateTemplate: formToWidgetTemplateValue(form.modalTemplateTemplate),
   entityTemplateTemplate: formToWidgetTemplateValue(form.entityTemplateTemplate),
-  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(
-    form.serviceDependenciesColumnsTemplate,
-  ),
+  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
   serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
   alarmsList: formToAlarmListBaseParameters(form.alarmsList),
 });
@@ -191,21 +182,22 @@ export const formToServiceWeatherWidgetParameters = form => ({
  * @param {Object} widget
  * @returns {Object}
  */
-export const prepareServiceWeatherWidget = (widget = {}) =>
-  setSeveralFields(widget, {
-    'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) =>
-      columns.map(column => ({
-        ...column,
+export const prepareServiceWeatherWidget = (widget = {}) => setSeveralFields(widget, {
+  'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) => (
+    columns.map(column => ({
+      ...column,
 
-        sortable: false,
-        text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      })),
+      sortable: false,
+      text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+    }))
+  ),
 
-    'parameters.alarmsList.widgetColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
-      columns.map(column => ({
-        ...column,
+  'parameters.alarmsList.widgetColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => (
+    columns.map(column => ({
+      ...column,
 
-        sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
-        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-      })),
-  });
+      sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+      text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+    }))
+  ),
+});

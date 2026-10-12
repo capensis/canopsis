@@ -1,11 +1,11 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
+  <modal-wrapper close>
+    <template #title="">
       <span>{{ $t('modals.entitiesComparison.title') }}</span>
     </template>
-    <template #text>
-      <c-layout class="gap-4" column>
-        <c-alert type="warning">
+    <template #text="">
+      <v-layout class="gap-4" column>
+        <c-alert :value="true" type="warning">
           <div v-html="$t('modals.entitiesComparison.infoMessage')" class="pre-wrap" />
         </c-alert>
         <entity-comparison-list
@@ -16,9 +16,9 @@
           :title="$t('modals.entitiesComparison.foundInSuggestion')"
           :initial-query="suggestionOnlyTableInitialQuery"
         />
-      </c-layout>
+      </v-layout>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -31,20 +31,20 @@ import { useInnerModal } from '@/hooks/modals';
 
 import EntityComparisonList from '@/components/other/entity/partials/entity-comparison-list.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.entitiesComparison,
-
   components: {
+    ModalWrapper,
     EntityComparisonList,
   },
-
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const { config } = useInnerModal(props);
 

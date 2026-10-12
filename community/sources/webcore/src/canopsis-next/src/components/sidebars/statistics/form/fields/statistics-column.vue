@@ -1,53 +1,48 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <kpi-rating-metric-field
-      :model-value="modelValue.metric"
+      v-field="column.metric"
       :metrics="availableMetrics"
       :type="type"
-      :label="t('common.column', 1)"
+      :label="$tc('common.column')"
       :name="`${name}.column`"
       required
-      @update:model-value="updateColumnField('metric', $event)"
     />
     <c-enabled-field
       v-model="customLabel"
-      :label="t('settings.columns.customLabel')"
+      :label="$t('settings.columns.customLabel')"
       class="pa-0 my-2"
       hide-details
-      @update:model-value="updateCustomLabel"
+      @change="updateCustomLabel"
     />
-    <c-text-field
+    <v-text-field
       v-if="customLabel"
-      :model-value="modelValue.label"
-      :label="t('common.label')"
+      v-field="column.label"
+      v-validate="'required'"
+      :label="$t('common.label')"
+      :error-messages="errors.collect(`${name}.label`)"
       :name="`${name}.label`"
-      required
-      @update:model-value="updateColumnField('label', $event)"
     />
     <c-enabled-field
-      :model-value="modelValue.split"
-      :label="t('settings.statisticsWidgetColumn.split')"
+      v-field="column.split"
+      :label="$t('settings.statisticsWidgetColumn.split')"
       :disabled="!hasPossibilityToSplit"
       hide-details
-      @update:model-value="updateColumnField('split', $event)"
     />
-    <c-select
-      v-if="modelValue.split"
-      :model-value="modelValue.criteria"
+    <c-select-field
+      v-if="column.split"
+      v-field="column.criteria"
       :items="ratingSettings"
-      :label="t('common.infos')"
+      :label="$t('common.infos')"
       :name="`${name}.infos`"
-      item-title="label"
+      item-text="label"
       item-value="id"
       required
-      @update:model-value="updateColumnField('criteria', $event)"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
-
 import {
   KPI_RATING_SETTINGS_TYPES,
   STATISTICS_WIDGETS_ENTITY_METRICS,
@@ -55,18 +50,24 @@ import {
   STATISTICS_WIDGETS_USER_METRICS_WITH_ENTITY_TYPE,
 } from '@/constants';
 
-import { useModelField } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
+import { formMixin } from '@/mixins/form';
 
+import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
 import KpiRatingMetricField from '@/components/other/kpi/charts/form/fields/kpi-rating-metric-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
+    CEnabledField,
     KpiRatingMetricField,
   },
-
+  mixins: [formMixin],
+  model: {
+    prop: 'column',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    column: {
       type: Object,
       default: () => ({}),
     },
@@ -83,25 +84,18 @@ export default {
       default: () => [],
     },
   },
+  data() {
+    return {
+      customLabel: !!this.column.label,
+    };
+  },
+  computed: {
+    hasPossibilityToSplit() {
+      return STATISTICS_WIDGETS_USER_METRICS_WITH_ENTITY_TYPE.includes(this.column?.metric);
+    },
 
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
-    const { t, te } = useI18n();
-    const { updateField } = useModelField(props, emit);
-    const customLabel = ref(!!props.modelValue.label);
-
-    const isEntityType = computed(() => props.type === KPI_RATING_SETTINGS_TYPES.entity);
-
-    const hasColumnSelected = computed(() => !!props.modelValue?.metric);
-
-    const hasPossibilityToSplit = computed(
-      () => hasColumnSelected.value &&
-        STATISTICS_WIDGETS_USER_METRICS_WITH_ENTITY_TYPE.includes(props.modelValue?.metric),
-    );
-
-    const availableMetrics = computed(() => {
-      const metrics = isEntityType.value
+    availableMetrics() {
+      const metrics = this.isEntityType
         ? STATISTICS_WIDGETS_ENTITY_METRICS
         : STATISTICS_WIDGETS_USER_METRICS;
 
@@ -111,75 +105,39 @@ export default {
 
         let text;
 
-        if (te(kpiKey)) {
-          text = t(kpiKey);
-        } else if (te(alarmKey)) {
-          text = t(alarmKey);
+        if (this.$te(kpiKey)) {
+          text = this.$t(kpiKey);
+        } else if (this.$te(alarmKey)) {
+          text = this.$t(alarmKey);
         }
 
         return {
           value,
-          text: text ?? t(`user.metrics.${value}`),
+          text: text ?? this.$t(`user.metrics.${value}`),
         };
       });
-    });
+    },
+  },
+  watch: {
+    hasPossibilityToSplit(value) {
+      if (!value) {
+        this.updateModel({
+          ...this.column,
 
-    const updateColumnField = (field, value) => {
-      if (field === 'split') {
-        if (props.modelValue.split === value) {
-          return;
-        }
-
-        updateField('split', value);
-
-        return;
+          split: false,
+          criteria: '',
+        });
       }
-
-      const nextValue = value ?? '';
-
-      if (props.modelValue[field] === nextValue) {
-        return;
-      }
-
-      if (field === 'metric' && !props.modelValue.metric && !nextValue) {
-        return;
-      }
-
-      updateField(field, nextValue);
-    };
-
-    const updateCustomLabel = (checked) => {
+    },
+  },
+  methods: {
+    updateCustomLabel(checked) {
       if (checked) {
         return;
       }
 
-      updateColumnField('label', '');
-    };
-
-    watch(
-      hasPossibilityToSplit,
-      (value) => {
-        if (value || (!props.modelValue.split && !props.modelValue.criteria)) {
-          return;
-        }
-
-        emit('update:modelValue', {
-          ...props.modelValue,
-          split: false,
-          criteria: '',
-        });
-      },
-      { flush: 'post' },
-    );
-
-    return {
-      t,
-      customLabel,
-      hasPossibilityToSplit,
-      availableMetrics,
-      updateColumnField,
-      updateCustomLabel,
-    };
+      this.updateField('label', '');
+    },
   },
 };
 </script>

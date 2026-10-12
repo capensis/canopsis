@@ -1,12 +1,14 @@
 <template>
   <widget-settings-item :title="$t('settings.contextTypeOfEntities.title')">
-    <c-checkbox
+    <v-checkbox
       v-for="entityType in entitiesTypes"
       :key="entityType.value"
-      :model-value="isSelected(entityType.value)"
+      :input-value="value"
       :label="entityType.label"
+      :value="entityType.value"
+      color="primary"
       hide-details
-      @update:model-value="updateType(entityType.value, $event)"
+      @change="$listeners.input"
     />
   </widget-settings-item>
 </template>
@@ -19,22 +21,18 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 /**
  * Component to select entities type to filter on entities-list
  *
- * @prop {Array} [modelValue] - Array of selected entities types values to filter on
+ * @prop {Array} [value] - Array of selected entities types values to filter on
  *
- * @event modelValue#update:modelValue
+ * @event value#input
  */
 export default {
   components: { WidgetSettingsItem },
-
   props: {
-    modelValue: {
+    value: {
       type: Array,
       default: () => [],
     },
   },
-
-  emits: ['update:modelValue'],
-
   computed: {
     entitiesTypes() {
       return [
@@ -46,20 +44,6 @@ export default {
         label: this.$t(`settings.contextTypeOfEntities.fields.${type}`),
         value: type,
       }));
-    },
-  },
-
-  methods: {
-    isSelected(type) {
-      return this.modelValue.includes(type);
-    },
-
-    updateType(type, selected) {
-      const nextValue = selected
-        ? [...this.modelValue, type]
-        : this.modelValue.filter(selectedType => selectedType !== type);
-
-      this.$emit('update:modelValue', nextValue);
     },
   },
 };

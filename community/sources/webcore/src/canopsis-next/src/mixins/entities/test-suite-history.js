@@ -1,12 +1,12 @@
-import { mapActions, mapState } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useTestSuiteStore } from '@/stores/modules/test-suite';
+const { mapGetters, mapActions } = createNamespacedHelpers('testSuite/history');
 
 export const entitiesTestSuiteHistoryMixin = {
   computed: {
-    ...mapState(useTestSuiteStore, {
-      getTestSuiteHistoryListByTestSuiteId: 'getHistoryListByTestSuiteId',
-      getTestSuiteHistoryPendingByTestSuiteId: 'getHistoryPendingByTestSuiteId',
+    ...mapGetters({
+      getTestSuiteHistoryListByTestSuiteId: 'getListByTestSuiteId',
+      getTestSuiteHistoryPendingByTestSuiteId: 'getPendingByTestSuiteId',
     }),
 
     testSuiteHistory() {
@@ -18,8 +18,8 @@ export const entitiesTestSuiteHistoryMixin = {
     },
   },
   methods: {
-    ...mapActions(useTestSuiteStore, {
-      fetchTestSuiteHistorySummaryList: 'fetchHistoryList',
+    ...mapActions({
+      fetchTestSuiteHistorySummaryList: 'fetchList',
     }),
   },
 };

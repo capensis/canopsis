@@ -1,16 +1,15 @@
-import { mapActions, mapState, mapStores } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useNavigationStore } from '@/stores/modules/navigation';
+const { mapActions, mapGetters } = createNamespacedHelpers('navigation');
 
 export const layoutNavigationEditingModeMixin = {
   computed: {
-    ...mapStores(useNavigationStore),
-    ...mapState(useNavigationStore, {
+    ...mapGetters({
       isNavigationEditingMode: 'isEditingMode',
     }),
   },
   methods: {
-    ...mapActions(useNavigationStore, {
+    ...mapActions({
       toggleNavigationEditingMode: 'toggleEditingMode',
     }),
   },

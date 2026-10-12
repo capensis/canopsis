@@ -1,14 +1,13 @@
 <template>
   <v-list-item class="widget-settings-flat-item">
-    <template #title>
-      <slot name="title">{{ title }}</slot>
-    </template>
-
-    <template #append>
-      <div class="mr-3">
-        <slot name="actions" />
-      </div>
-    </template>
+    <v-list-item-content>
+      <v-list-item-title>
+        {{ title }}
+      </v-list-item-title>
+    </v-list-item-content>
+    <v-list-item-action class="mr-3">
+      <slot name="actions" />
+    </v-list-item-action>
   </v-list-item>
 </template>
 
@@ -25,7 +24,7 @@ export default {
 
 <style lang="scss">
 .widget-settings-flat-item {
-  .v-list-item-title {
+  .v-list-item__title {
     white-space: unset;
   }
 }

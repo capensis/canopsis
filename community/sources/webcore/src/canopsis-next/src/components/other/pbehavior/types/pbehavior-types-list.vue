@@ -8,7 +8,6 @@
     :is-disabled-item="isDisabledType"
     :select-all="removable || updatable"
     :hide-mass-actions="!active"
-    expand-content-class="secondary lighten-2"
     expand
     search
     advanced-pagination
@@ -21,38 +20,44 @@
         :hideable="updatable"
         :unhideable="updatable"
         pbehavior-type
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-
     <template #icon_name="{ item }">
-      <v-chip :style="getIconStyle(item.color)" class="pbehavior-type-icon">
-        <v-icon :color="getIconColor(item.color)" :icon="item.icon_name" size="18" />
+      <v-chip
+        :color="item.color"
+        class="pbehavior-type-icon"
+      >
+        <v-icon
+          :color="getIconColor(item.color)"
+          size="18"
+        >
+          {{ item.icon_name }}
+        </v-icon>
       </v-chip>
     </template>
-
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
-
-    <template #hidden="{ item }">
+    <template #visible="{ item }">
       <c-enabled :value="!item.hidden" />
     </template>
-
     <template #actions="{ item }">
-      <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+      <v-layout>
         <c-action-btn
-          v-if="removable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
           :disabled="!item.deletable"
-          :tooltip="item.deletable ? t('common.delete') : t('pbehavior.types.usingType')"
+          :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.types.usingType')"
           type="delete"
           @click="$emit('remove', item._id)"
         />
-      </c-layout>
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <pbehavior-types-list-expand-panel :pbehavior-type="item" />
     </template>
@@ -72,7 +77,6 @@ export default {
   components: {
     PbehaviorTypesListExpandPanel,
   },
-
   props: {
     pbehaviorTypes: {
       type: Array,
@@ -103,43 +107,51 @@ export default {
       default: true,
     },
   },
-
-  emits: ['update:options', 'edit', 'remove', 'refresh'],
-
   setup() {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
 
     const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      { text: t('common.icon'), value: 'icon_name', sortable: false },
-      { text: t('common.priority'), value: 'priority' },
-      /**
-       * The column displays visibility, but uses the hidden field supported by the API for sorting.
-       */
-      { text: t('pbehavior.visible'), value: 'hidden' },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: tc('common.icon', 1),
+        value: 'icon_name',
+        sortable: false,
+      },
+      {
+        text: t('common.priority'),
+        value: 'priority',
+      },
+      {
+        text: t('pbehavior.visible'),
+        value: 'visible',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
     ]);
 
     const isDisabledType = ({ deletable }) => !deletable;
-    const getIconStyle = color => ({
-      backgroundColor: color,
-    });
+
     const getIconColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
     return {
       headers,
       isDisabledType,
-      getIconStyle,
       getIconColor,
-      t,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.pbehavior-type-icon {
-  width: 42px;
-  height: 24px;
-}
+  .pbehavior-type-icon {
+    width: 42px;
+    height: 24px;
+  }
 </style>

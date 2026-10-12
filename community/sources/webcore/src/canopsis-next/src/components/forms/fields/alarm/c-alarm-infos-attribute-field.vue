@@ -1,29 +1,34 @@
 <template>
-  <c-layout column>
-    <c-combobox
-      :model-value="rule"
+  <v-layout column>
+    <v-combobox
+      v-model="rule"
+      v-validate="ruleRules"
       :items="rules"
       :disabled="disabled"
-      :label="label || $t('common.rule')"
+      :label="label || $tc('common.rule')"
       :name="ruleName"
+      :error-messages="errors.collect(ruleName)"
       :loading="pending"
       :clearable="!required"
-      item-title="name"
+      item-text="name"
       item-value="_id"
       return-object
-      @update:model-value="rule = $event"
     />
-    <c-combobox
-      :model-value="value.dictionary"
+    <v-combobox
+      v-field="value.dictionary"
+      v-validate="dictionaryRules"
       :items="infosName"
       :disabled="disabled"
       :label="label || $t('common.dictionary')"
+      :return-object="false"
       :name="dictionaryName"
+      :error-messages="errors.collect(dictionaryName)"
       :loading="pending"
       :clearable="!required"
-      @update:model-value="updateField('dictionary', $event)"
+      item-text="value"
+      item-value="value"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -32,8 +37,12 @@ import { keyBy, map } from 'lodash';
 import { formMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formMixin],
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
@@ -57,16 +66,13 @@ export default {
     },
     pending: {
       type: Boolean,
-      default: false,
+      required: false,
     },
     required: {
       type: Boolean,
-      default: false,
+      required: false,
     },
   },
-
-  emits: ['update:value'],
-
   computed: {
     rulesById() {
       return keyBy(this.rules, '_id');
@@ -88,6 +94,18 @@ export default {
 
     dictionaryName() {
       return `${this.name}.dictionary`;
+    },
+
+    ruleRules() {
+      return {
+        required: this.required || Boolean(this.value.dictionary),
+      };
+    },
+
+    dictionaryRules() {
+      return {
+        required: this.required || Boolean(this.rule),
+      };
     },
 
     infosName() {

@@ -1,21 +1,24 @@
 <template>
   <v-btn
     :loading="loading"
-    :size="size"
-    variant="text"
     icon
-    @click="$emit('update:modelValue', !modelValue)"
+    small
+    @click="$emit('expand', !expanded)"
   >
-    <c-icon :color="color" :size="iconSize">
-      {{ modelValue ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
-    </c-icon>
+    <v-icon :color="color">
+      {{ expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+    </v-icon>
   </v-btn>
 </template>
 
 <script>
 export default {
+  model: {
+    prop: 'expanded',
+    event: 'expand',
+  },
   props: {
-    modelValue: {
+    expanded: {
       type: Boolean,
       default: false,
     },
@@ -27,16 +30,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    size: {
-      type: [Number, String],
-      default: 'small',
-    },
-    iconSize: {
-      type: [Number, String],
-      default: undefined,
-    },
   },
-
-  emits: ['update:modelValue'],
 };
 </script>

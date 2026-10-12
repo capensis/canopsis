@@ -1,0 +1,40 @@
+<template>
+  <div>
+    <c-tooltip :content="tooltipContent" html top>
+      <template #activator="{ props: activatorProps }">
+        <c-alarm-extra-details-chip
+          v-bind="activatorProps"
+          :icon="icon"
+          theme-color="canceled"
+        />
+      </template>
+    </c-tooltip>
+  </div>
+</template>
+
+<script>
+import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+
+import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
+
+import { useExtraDetailsCanceledTooltip } from '../../hooks/extra-details-tooltips';
+
+export default {
+  props: {
+    canceled: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const { tooltipContent } = useExtraDetailsCanceledTooltip(props);
+
+    const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.fastCancel);
+    return {
+      icon,
+      tooltipContent,
+    };
+  },
+};
+</script>

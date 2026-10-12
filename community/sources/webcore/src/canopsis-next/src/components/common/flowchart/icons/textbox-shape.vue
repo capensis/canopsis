@@ -76,16 +76,12 @@
       fill="currentColor"
       font-size="9px"
       font-weight="bold"
-    >
-      Header
-    </text>
+    >Header</text>
     <text
       x="7"
       y="32"
       fill="currentColor"
       font-size="8px"
-    >
-      Text
-    </text>
+    >Text</text>
   </svg>
 </template>

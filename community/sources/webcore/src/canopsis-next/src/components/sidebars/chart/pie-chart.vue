@@ -15,46 +15,24 @@
 </template>
 
 <script>
-import { toRef } from 'vue';
-
 import { SIDE_BARS } from '@/constants';
 
-import { usePieChartFiltersPermissions } from '@/hooks/permissions/widgets/chart/filters';
-import { useWidgetSettings } from '@/hooks/widget/settings';
+import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
 
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
+import WidgetSettings from '../partials/widget-settings.vue';
 
 import PieChartWidgetForm from './form/pie-chart-widget-form.vue';
 
 export default {
   name: SIDE_BARS.pieChartSettings,
-
   components: {
-    PieChartWidgetForm,
     WidgetSettings,
+    PieChartWidgetForm,
   },
-
-  props: {
-    sidebar: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    const sidebar = toRef(props, 'sidebar');
-    const { form, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
-    const { hasAccessToFilter } = usePieChartFiltersPermissions();
-
-    return {
-      form,
-      hasChanges,
-      submitting,
-      hasAccessToFilter,
-
-      close,
-      submit,
-    };
-  },
+  mixins: [
+    widgetSettingsMixin,
+    permissionsWidgetsPieChartFilters,
+  ],
 };
 </script>

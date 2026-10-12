@@ -1,28 +1,31 @@
 <template>
-  <v-row align="center">
-    <v-col cols="12">
-      <c-enabled-field
-        v-model="needApprove"
-        :label="t('remediation.instruction.requestApproval')"
-        :disabled="disabled || required"
-        hide-details
-      />
-    </v-col>
+  <v-layout column>
+    <c-enabled-field
+      v-model="needApprove"
+      :label="$t('remediation.instruction.requestApproval')"
+      :disabled="disabled || required"
+      hide-details
+    />
     <template v-if="needApprove">
-      <v-col v-if="disabled" cols="12">
-        <span class="text-subtitle-1 text-grey my-4"> {{ assignLabel }}: {{ assignValue }} </span>
-      </v-col>
-      <template v-else>
-        <v-col>
+      <v-layout v-if="disabled">
+        <span class="text-subtitle-1 grey--text my-4">
+          {{ assignLabel }}: {{ assignValue }}
+        </span>
+      </v-layout>
+      <v-layout
+        v-else
+        align-center
+      >
+        <v-flex xs6>
           <remediation-instruction-approval-type-field
-            v-model="typeField"
-            @update:model-value="resetErrors"
+            v-field="approval.type"
+            @input="resetErrors"
           />
-        </v-col>
-        <v-col>
+        </v-flex>
+        <v-flex xs5>
           <c-role-field
             v-show="isRoleType"
-            v-model="roleField"
+            v-field="approval.role"
             :required="isRoleType"
             :name="roleFieldName"
             :permission="approvePermission"
@@ -30,26 +33,25 @@
           />
           <c-user-picker-field
             v-show="!isRoleType"
-            v-model="userField"
+            v-field="approval.user"
             :required="!isRoleType"
             :name="userFieldName"
-            :label="t('common.user')"
+            :label="$tc('common.user')"
             :permission="approvePermission"
             return-object
           />
-        </v-col>
-      </template>
-      <v-col cols="12">
-        <c-textarea
-          v-model="commentField"
-          :label="t('common.comment')"
-          :disabled="disabled"
-          name="comment"
-          required
-        />
-      </v-col>
+        </v-flex>
+      </v-layout>
+      <v-textarea
+        v-field="approval.comment"
+        v-validate="'required'"
+        :label="$tc('common.comment')"
+        :error-messages="errors.collect('comment')"
+        :disabled="disabled"
+        name="comment"
+      />
     </template>
-  </v-row>
+  </v-layout>
 </template>
 
 <script>
@@ -57,14 +59,23 @@ import { ref, computed } from 'vue';
 
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
-import { useFormContext, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { RemediationInstructionApprovalTypeField },
+  model: {
+    prop: 'approval',
+    event: 'input',
+  },
   props: {
+    approval: {
+      type: Object,
+      default: () => ({}),
+    },
     name: {
       type: String,
       default: 'approval',
@@ -79,36 +90,28 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
-    const form = useFormContext();
-    const { typeField, roleField, userField, commentField } = useFormModels({
-      typeField: 'approval.type',
-      roleField: 'approval.role',
-      userField: 'approval.user',
-      commentField: 'approval.comment',
-    });
+    const { tc } = useI18n();
+    const validator = useValidator();
 
-    const needApprove = ref(!!commentField.value || props.required);
+    const needApprove = ref(!!(props.approval && props.approval.comment) || props.required);
 
-    const approvePermission = computed(
-      () => USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove,
-    );
+    const approvePermission = computed(() => USER_PERMISSIONS.technical.exploitation.remediationInstructionApprove);
 
-    const isRoleType = computed(
-      () => typeField.value === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
-    );
+    const isRoleType = computed(() => (
+      props.approval
+      && props.approval.type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role
+    ));
 
     const roleFieldName = computed(() => `${props.name}.role`);
     const userFieldName = computed(() => `${props.name}.user`);
 
-    const assignLabel = computed(() => (isRoleType.value ? t('common.role') : t('common.user')));
+    const assignLabel = computed(() => (isRoleType.value ? tc('common.role') : tc('common.user')));
 
     const assignValue = computed(() => {
       if (isRoleType.value) {
-        return roleField.value?.name ?? '';
+        return props.approval && props.approval.role ? props.approval.role.name : '';
       }
-
-      return userField.value?.display_name ?? '';
+      return props.approval && props.approval.user ? props.approval.user.display_name : '';
     });
 
     /**
@@ -122,21 +125,17 @@ export default {
      * @returns {void}
      */
     const resetErrors = (type) => {
-      const removingField =
-        type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role
-          ? userFieldName.value
-          : roleFieldName.value;
+      const removingField = type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role
+        ? userFieldName.value
+        : roleFieldName.value;
 
-      form.setFieldError(removingField, undefined);
+      if (validator.errors && typeof validator.errors.remove === 'function') {
+        validator.errors.remove(removingField);
+      }
     };
 
     return {
-      t,
       needApprove,
-      typeField,
-      roleField,
-      userField,
-      commentField,
       approvePermission,
       isRoleType,
       roleFieldName,

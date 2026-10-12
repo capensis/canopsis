@@ -1,21 +1,19 @@
 <template>
-  <c-form-general-patterns-tabs :form="form" :with-template-testing="false">
+  <c-form-general-patterns-tabs>
     <template #general="{ setRef }">
       <tag-general-form
+        v-field="form"
         :ref="setRef"
-        :form="form"
         :is-imported="isImported"
         :is-new="isNew"
         :max-tag-name-length="maxTagNameLength"
-        @update:form="updateModel"
       />
     </template>
 
     <template v-if="!isImported" #patterns="{ setRef }">
       <tag-patterns-form
+        v-field="form.patterns"
         :ref="setRef"
-        :form="form.patterns"
-        @update:form="updateField('patterns', $event)"
       />
     </template>
   </c-form-general-patterns-tabs>
@@ -24,17 +22,15 @@
 <script>
 import { MAX_TAG_NAME_LENGTH } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
-
 import TagGeneralForm from './tag-general-form.vue';
 import TagPatternsForm from './tag-patterns-form.vue';
 
 export default {
-  components: {
-    TagGeneralForm,
-    TagPatternsForm,
+  components: { TagGeneralForm, TagPatternsForm },
+  model: {
+    prop: 'form',
+    event: 'input',
   },
-
   props: {
     form: {
       type: Object,
@@ -52,17 +48,6 @@ export default {
       type: Number,
       default: MAX_TAG_NAME_LENGTH,
     },
-  },
-
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
-    const { updateModel, updateField } = useModelField(props, emit);
-
-    return {
-      updateModel,
-      updateField,
-    };
   },
 };
 </script>

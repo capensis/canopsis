@@ -1,25 +1,27 @@
 <template>
-  <c-combobox
-    :model-value="value"
+  <v-combobox
+    v-field="value"
     :label="$t('view.groupTags')"
     append-icon=""
+    tags
     clearable
     multiple
     chips
-    closable-chips
-    @update:model-value="$emit('update:value', $event)"
+    deletable-chips
   />
 </template>
 
 <script>
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Array,
       default: () => [],
     },
   },
-
-  emits: ['update:value'],
 };
 </script>

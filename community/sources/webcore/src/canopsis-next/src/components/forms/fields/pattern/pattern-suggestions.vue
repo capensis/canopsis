@@ -1,5 +1,8 @@
 <template>
-  <c-layout class="pattern-suggestions__wrapper pa-3" gap="2" column>
+  <v-layout
+    class="pattern-suggestions__wrapper gap-2 pa-3"
+    column
+  >
     <pattern-suggestions-header @reject:all="rejectAll" />
 
     <pattern-suggestions-list
@@ -9,7 +12,7 @@
       @apply="applySuggestion"
       @show:entities-comparison="showEntitiesComparisonModal"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>

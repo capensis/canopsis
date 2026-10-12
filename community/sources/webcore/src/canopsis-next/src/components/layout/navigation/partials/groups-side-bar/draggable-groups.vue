@@ -1,23 +1,24 @@
 <template>
   <c-draggable-list-field
-    :model-value="groups"
+    v-field="groups"
     :class="{ empty: isGroupsEmpty }"
     :component-data="draggableComponentData"
     :group="draggableGroup"
     class="groups-panel secondary"
     component="v-expansion-panels"
-    @update:model-value="$emit('change', $event)"
   >
-    <template #item="{ element: group, index: groupIndex }">
-      <group-panel :group="group">
-        <draggable-group-views
-          :views="group.views"
-          :put="viewPut"
-          :pull="viewPull"
-          @change="changeViewsHandler(groupIndex, $event)"
-        />
-      </group-panel>
-    </template>
+    <group-panel
+      v-for="(group, groupIndex) in groups"
+      :key="group._id"
+      :group="group"
+    >
+      <draggable-group-views
+        :views="group.views"
+        :put="viewPut"
+        :pull="viewPull"
+        @change="changeViewsHandler(groupIndex, $event)"
+      />
+    </group-panel>
   </c-draggable-list-field>
 </template>
 
@@ -27,6 +28,10 @@ import GroupPanel from './group-panel.vue';
 
 export default {
   components: { DraggableGroupViews, GroupPanel },
+  model: {
+    prop: 'groups',
+    event: 'change',
+  },
   props: {
     groups: {
       type: Array,
@@ -49,9 +54,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['change', 'change:group'],
-
   computed: {
     draggableGroupName() {
       return 'groups';
@@ -71,9 +73,13 @@ export default {
 
     draggableComponentData() {
       return {
-        multiple: true,
-        flat: true,
-        tile: true,
+        props: {
+          multiple: true,
+          dark: true,
+          accordion: true,
+          flat: true,
+          tile: true,
+        },
       };
     },
   },
@@ -88,23 +94,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.groups-panel {
-  cursor: move;
-
-  :deep(.v-expansion-panel-title) {
+  .groups-panel {
     cursor: move;
-  }
 
-  &.empty {
-    &:after {
-      content: '';
-      display: block;
-      height: 48px;
-      width: 100%;
-      border: 4px dashed #3c5365;
-      border-radius: 5px;
-      position: relative;
+    & ::v-deep .v-expansion-panel__header {
+      cursor: move;
+    }
+
+    &.empty {
+      &:after {
+        content: '';
+        display: block;
+        height: 48px;
+        width: 100%;
+        border: 4px dashed #3c5365;
+        border-radius: 5px;
+        position: relative;
+      }
     }
   }
-}
 </style>

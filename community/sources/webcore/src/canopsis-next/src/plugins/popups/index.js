@@ -1,41 +1,30 @@
+import popupsStoreModule from './store';
 import ThePopups from './components/the-popups.vue';
-import { usePopupsStore } from './stores';
 
-/**
- * Creates public popups API.
- *
- * @param {ReturnType<typeof usePopupsStore>} store
- * @return {Object}
- */
-export const createPopupsApi = store => ({
-  add: popup => store.add(popup),
-  remove: popup => store.remove(popup),
-  success: popup => store.success(popup),
-  info: popup => store.info(popup),
-  warning: popup => store.warning(popup),
-  error: popup => store.error(popup),
-  setDefaultCloseTime: popup => store.setDefaultCloseTime(popup),
-});
-
-/**
- * Popups plugin.
- */
 export default {
-  /**
-   * Install popups plugin.
-   *
-   * @param {import('vue').App} app
-   * @param {Object} options
-   * @param {string} [options.componentName]
-   */
-  install(app, { componentName = 'the-popups' } = {}) {
-    const popupsStore = usePopupsStore();
-    const popupsApi = createPopupsApi(popupsStore);
+  install(Vue, { store, moduleName = 'popups', componentName = 'the-popups' } = {}) {
+    if (!store) {
+      throw new Error('Missing store option');
+    }
 
-    app.component(componentName, ThePopups);
+    Vue.component(componentName, ThePopups);
 
-    app.config.globalProperties.$popups = popupsApi;
+    store.registerModule(moduleName, popupsStoreModule);
 
-    app.provide('$popups', popupsApi);
+    Object.defineProperty(Vue.prototype, '$popups', {
+      get() {
+        return {
+          moduleName,
+
+          add: popup => store.dispatch(`${moduleName}/add`, popup),
+          remove: popup => store.dispatch(`${moduleName}/remove`, popup),
+          success: popup => store.dispatch(`${moduleName}/success`, popup),
+          info: popup => store.dispatch(`${moduleName}/info`, popup),
+          warning: popup => store.dispatch(`${moduleName}/warning`, popup),
+          error: popup => store.dispatch(`${moduleName}/error`, popup),
+          setDefaultCloseTime: popup => store.dispatch(`${moduleName}/setDefaultCloseTime`, popup),
+        };
+      },
+    });
   },
 };

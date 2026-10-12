@@ -3,17 +3,20 @@
     :class="{ 'pattern-suggestions__tab--difference': hasDifference }"
     class="pattern-suggestions__tab"
   >
-    <c-layout class="fill-height" align="center">
-      <c-layout class="pattern-suggestions__tab__number" align="center">
+    <v-layout
+      class="fill-height"
+      align-center
+    >
+      <v-layout
+        class="pattern-suggestions__tab__number"
+        align-center
+      >
         {{ number }}
-      </c-layout>
+      </v-layout>
       <v-expand-x-transition>
         <div v-show="active" class="pattern-suggestions__tab__found">
-          <c-layout class="px-2" gap="2" align="center">
-            <span
-              v-html="$t('pattern.foundEntities', { count: entitiesCount })"
-              class="font-weight-regular"
-            />
+          <v-layout class="gap-2 px-2" align-center>
+            <span v-html="$t('pattern.foundEntities', { count: entitiesCount })" class="font-weight-regular" />
             <v-btn
               v-if="hasDifference"
               plain
@@ -25,10 +28,10 @@
             <strong v-else class="primary--text">
               {{ $t('pattern.sameEntities') }}
             </strong>
-          </c-layout>
+          </v-layout>
         </div>
       </v-expand-x-transition>
-    </c-layout>
+    </v-layout>
   </v-tab>
 </template>
 
@@ -74,14 +77,13 @@ export default {
   padding: 0;
   overflow: hidden;
   border-bottom: 2px solid var(--v-primary-base) !important;
-  opacity: 0.6;
+  opacity: .6;
 
   .pattern-suggestions--active-difference & {
     border-bottom-color: var(--v-info-base) !important;
   }
 
-  &,
-  &:before {
+  &, &:before {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
@@ -95,10 +97,8 @@ export default {
     height: 100%;
     padding: 0 16px;
     background-color: var(--v-success-base);
-    transition:
-      background-color 0.3s ease,
-      opacity 0.3s ease;
-    color: var(--v-text-dark-primary, #ffffff);
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    color: var(--v-text-dark-primary, #FFFFFF);
 
     .pattern-suggestions__tab--difference & {
       background-color: var(--v-info-base);
@@ -113,7 +113,7 @@ export default {
     }
 
     .theme--dark & {
-      color: var(--v-text-dark-primary, #ffffff);
+      color: var(--v-text-dark-primary, #FFFFFF);
     }
   }
 
@@ -124,7 +124,7 @@ export default {
 
     .pattern-suggestions__tab__number {
       background-color: var(--v-primary-base);
-      color: var(--v-text-dark-primary, #ffffff);
+      color: var(--v-text-dark-primary, #FFFFFF);
       margin-left: -2px;
     }
   }
@@ -135,7 +135,7 @@ export default {
 
     &.v-tab--active .pattern-suggestions__tab__number {
       background-color: var(--v-info-base) !important;
-      color: var(--v-text-dark-primary, #ffffff);
+      color: var(--v-text-dark-primary, #FFFFFF);
       margin-left: -2px;
     }
   }

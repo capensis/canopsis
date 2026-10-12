@@ -1,76 +1,77 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
-      <span>{{ t('common.filters') }}</span>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('common.filters') }}</span>
     </template>
-
-    <template #text>
+    <template #text="">
       <c-progress-overlay :pending="pending" />
-
       <filters-list-component
         :filters="filters"
         :pending="pending"
         :addable="config.addable"
         :editable="config.editable"
-        @update:filters="updateFiltersPositions"
+        @input="updateFiltersPositions"
         @add="showCreateFilterModal"
         @edit="showEditFilterModal"
         @delete="showDeleteFilterModal"
       />
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
+import { ref, computed, watch, onMounted } from 'vue';
 import { pick } from 'lodash';
-import { computed, onMounted, ref, watch } from 'vue';
 
 import { MODALS } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useInnerModal, useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
+import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
-import {
-  usePatternsFields,
-  usePatternsFieldsFetching,
-} from '@/hooks/store/modules/patterns-fields';
-import { useUserPreference } from '@/hooks/store/modules/user-preference';
 import { useWidget } from '@/hooks/store/modules/widget';
+import { useUserPreference } from '@/hooks/store/modules/user-preference';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
+/**
+ * Confirmation modal
+ */
 export default {
   name: MODALS.filtersList,
-
-  components: { FiltersListComponent },
-
+  components: { FiltersListComponent, ModalWrapper },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const filters = ref([]);
 
     const { t } = useI18n();
     const modals = useModals();
     const popups = usePopups();
-    const config = computed(() => props.modal.config ?? {});
+    const { config } = useInnerModal(props);
     const {
       createWidgetFilter,
       updateWidgetFilter,
       removeWidgetFilter,
       updateWidgetFiltersPositions,
     } = useWidget();
-    const { getUserPreferenceByWidgetId, fetchUserPreference } = useUserPreference();
+    const {
+      getUserPreferenceByWidgetId,
+      fetchUserPreferenceItem,
+    } = useUserPreference();
 
     const widgetId = computed(() => config.value.widget?._id);
     const widgetType = computed(() => config.value.widget?.type);
+
     const userPreference = computed(() => getUserPreferenceByWidgetId.value(widgetId.value));
 
     const { fetchWidgetFilterPatternFields } = usePatternsFields();
@@ -102,103 +103,104 @@ export default {
     }));
 
     /**
-     * Sets the filters array with new filter values.
+     * Sets the filters array with new filter values
      *
-     * @param {Array} [newFilters=[]] - Array of filter objects to set.
+     * @param {Array} [newFilters=[]] - Array of filter objects to set
      */
-    const setFilters = (newFilters = []) => {
-      filters.value = newFilters;
-    };
+    const setFilters = (newFilters = []) => filters.value = newFilters;
 
     /**
-     * Refreshes filters by fetching user preference data.
+     * Refreshes filters by fetching user preference data
      */
-    const { pending, handler: refreshFilters } = usePendingHandler(
-      async () => Promise.all([fetchUserPreference({ id: widgetId.value }), fetchPatternsFields()]),
-      true,
-    );
+    const {
+      pending,
+      handler: refreshFilters,
+    } = usePendingHandler(async () => Promise.all([
+      fetchUserPreferenceItem({ id: widgetId.value }),
+      fetchPatternsFields(),
+    ]), true);
 
     const combinedPending = computed(() => pending.value || patternsFieldsPending.value);
 
     /**
-     * Shows modal for creating a new filter.
+     * Shows modal for creating a new filter
      */
     const showCreateFilterModal = () => modals.show({
-        name: MODALS.createFilter,
-        config: {
-          ...modalConfig.value,
+      name: MODALS.createFilter,
+      config: {
+        ...modalConfig.value,
 
-          title: t('modals.createFilter.create.title'),
-          corporate: true,
-          action: async (newFilter) => {
-            const result = await createWidgetFilter({
-              data: {
-                ...newFilter,
+        title: t('modals.createFilter.create.title'),
+        corporate: true,
+        action: async (newFilter) => {
+          const result = await createWidgetFilter({
+            data: {
+              ...newFilter,
 
-                widget: widgetId.value,
-                is_user_preference: true,
-              },
-            });
+              widget: widgetId.value,
+              is_user_preference: true,
+            },
+          });
 
-            refreshFilters();
+          refreshFilters();
 
-            return result;
-          },
+          return result;
         },
-      });
+      },
+    });
 
     /**
-     * Shows modal for editing an existing filter.
+     * Shows modal for editing an existing filter
      *
-     * @param {Object} filter - Filter object to edit.
+     * @param {Object} filter - Filter object to edit
      */
     const showEditFilterModal = filter => modals.show({
-        name: MODALS.createFilter,
-        config: {
-          ...modalConfig.value,
+      name: MODALS.createFilter,
+      config: {
+        ...modalConfig.value,
 
-          filter,
-          title: t('modals.createFilter.edit.title'),
-          corporate: true,
-          action: async (newFilter) => {
-            const result = await updateWidgetFilter({
-              id: filter._id,
-              data: {
-                ...newFilter,
+        filter,
+        title: t('modals.createFilter.edit.title'),
+        corporate: true,
+        action: async (newFilter) => {
+          const result = await updateWidgetFilter({
+            id: filter._id,
+            data: {
+              ...newFilter,
 
-                widget: widgetId.value,
-              },
-            });
+              widget: widgetId.value,
+            },
+          });
 
-            refreshFilters();
+          refreshFilters();
 
-            return result;
-          },
+          return result;
         },
-      });
+      },
+    });
 
     /**
-     * Shows confirmation modal for deleting a filter.
+     * Shows confirmation modal for deleting a filter
      *
-     * @param {Object} filter - Filter object to delete.
+     * @param {Object} filter - Filter object to delete
      */
     const showDeleteFilterModal = filter => modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await removeWidgetFilter({
-              id: filter._id,
-            });
+      name: MODALS.confirmation,
+      config: {
+        action: async () => {
+          await removeWidgetFilter({
+            id: filter._id,
+          });
 
-            return refreshFilters();
-          },
+          return refreshFilters();
         },
-      });
+      },
+    });
 
     /**
-     * Updates the positions of filters and refreshes user preference.
+     * Updates the positions of filters and refreshes user preference
      *
-     * @param {Array} newFilters - Array of filters with updated positions.
+     * @param {Array} newFilters - Array of filters with updated positions
      */
     const updateFiltersPositions = async (newFilters) => {
       const oldFilters = filters.value;
@@ -210,7 +212,7 @@ export default {
           data: mapIds(newFilters),
         });
 
-        await fetchUserPreference({ id: widgetId.value });
+        await fetchUserPreferenceItem({ id: widgetId.value });
       } catch (err) {
         console.error(err);
 
@@ -230,7 +232,6 @@ export default {
     onMounted(refreshFilters);
 
     return {
-      t,
       pending: combinedPending,
       filters,
       config,

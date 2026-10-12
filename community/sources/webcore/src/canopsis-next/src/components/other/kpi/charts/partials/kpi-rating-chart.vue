@@ -10,8 +10,7 @@
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
-        @export:csv="$emit('export:csv')"
-        @export:png="$emit('export:png', $event)"
+        v-on="$listeners"
       />
     </template>
   </bar-chart>
@@ -19,19 +18,10 @@
 
 <script>
 import { COLORS } from '@/config';
-import {
-  DATETIME_FORMATS,
-  KPI_SLI_GRAPH_BAR_PERCENTAGE,
-  TIME_UNITS,
-  USER_METRIC_PARAMETERS,
-} from '@/constants';
+import { DATETIME_FORMATS, KPI_SLI_GRAPH_BAR_PERCENTAGE, TIME_UNITS, USER_METRIC_PARAMETERS } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
-import {
-  convertDurationToMaxUnitDuration,
-  convertDurationToString,
-  fromSeconds,
-} from '@/helpers/date/duration';
+import { convertDurationToMaxUnitDuration, convertDurationToString, fromSeconds } from '@/helpers/date/duration';
 import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
@@ -39,12 +29,7 @@ import ChartExportActions from '@/components/common/chart/chart-export-actions.v
 
 export default {
   inject: ['$system'],
-
-  components: {
-    BarChart,
-    ChartExportActions,
-  },
-
+  components: { ChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -63,16 +48,13 @@ export default {
       default: false,
     },
   },
-
-  emits: ['export:csv', 'export:png'],
-
   computed: {
     labels() {
       return this.metrics.map(({ label }) => label);
     },
 
     maxValue() {
-      return Math.max(...this.metrics.map(({ value }) => value), 0);
+      return Math.max.apply(null, this.metrics.map(({ value }) => value));
     },
 
     maxDuration() {
@@ -83,13 +65,11 @@ export default {
     },
 
     datasets() {
-      return [
-        {
-          backgroundColor: colorToRgba(COLORS.kpi.uptime),
-          barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-          data: this.metrics.map(({ value }) => this.convertValueByMetric(value)),
-        },
-      ];
+      return [{
+        backgroundColor: colorToRgba(COLORS.kpi.uptime),
+        barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
+        data: this.metrics.map(({ value }) => this.convertValueByMetric(value)),
+      }];
     },
 
     isTimeMetric() {
@@ -151,7 +131,6 @@ export default {
       };
     },
   },
-
   methods: {
     convertValueByMetric(value) {
       if (!this.isTimeMetric) {

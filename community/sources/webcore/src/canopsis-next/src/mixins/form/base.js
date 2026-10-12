@@ -24,6 +24,9 @@ export const formBaseMixin = {
   },
 };
 
-export { modelPropKeyComputed, modelEventKeyComputed };
+export {
+  modelPropKeyComputed,
+  modelEventKeyComputed,
+};
 
 export default formBaseMixin;

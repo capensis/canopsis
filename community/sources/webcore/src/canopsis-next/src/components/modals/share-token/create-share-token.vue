@@ -1,86 +1,80 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <share-token-form />
+      <template #text="">
+        <share-token-form v-model="form" />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="submitting"
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
           :loading="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ t('common.create') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToShareToken, shareTokenToForm } from '@/helpers/entities/share-ticket/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ShareTokenForm from '@/components/other/share-token/form/share-token-form.vue';
 
-export default {
-  components: { ShareTokenForm },
+import ModalWrapper from '../modal-wrapper.vue';
 
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+export default {
+  name: MODALS.createShareToken,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
+  components: { ShareTokenForm, ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    return {
+      form: shareTokenToForm(this.modal.config.shareToken),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createShareToken.create.title');
     },
   },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
 
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const title = computed(() => config.value.title ?? t('modals.createShareToken.create.title'));
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(formToShareToken(this.form));
+        }
 
-    const form = useForm({
-      initialValues: shareTokenToForm(config.value.shareToken),
-    });
-    const { values, handleSubmit, submitting } = form;
-
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(formToShareToken(values.value));
-
-      closeModal();
-    });
-
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
-
-    return {
-      t,
-      title,
-      submit,
-      submitting,
-      closeModal,
-    };
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

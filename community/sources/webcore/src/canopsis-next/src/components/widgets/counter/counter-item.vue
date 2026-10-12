@@ -1,47 +1,50 @@
 <template>
   <card-with-see-alarms-btn
     :class="itemClasses"
-    :show-button="!hideActions && hasAlarmsListAccess"
     :style="itemStyle"
+    :show-button="!hideActions && hasAlarmsListAccess"
     class="counter-item"
-    variant="flat"
     tile
     @show:alarms="showAlarmListModal"
   >
     <v-btn
       v-if="!hideActions && hasVariablesHelpAccess"
       class="counter-item__help-btn ma-0"
-      icon="help"
-      size="small"
-      variant="text"
+      icon
+      small
       @click.stop="showVariablesHelpModal"
-    />
-
-    <c-layout class="counter-item__content" align="start">
-      <v-icon :icon="icon" class="counter-item__icon px-3 py-2" size="2em" />
-
-      <c-compiled-template
-        :template="widget.parameters.blockTemplate"
-        :context="templateContext"
-        class="counter-item__template pt-3"
-      />
-    </c-layout>
+    >
+      <v-icon>help</v-icon>
+    </v-btn>
+    <div>
+      <v-layout justify-start>
+        <v-icon
+          class="px-3 py-2"
+          size="2em"
+        >
+          {{ icon }}
+        </v-icon>
+        <c-compiled-template
+          :template="widget.parameters.blockTemplate"
+          :context="templateContext"
+          class="counter-item__template pt-3"
+        />
+      </v-layout>
+    </div>
   </card-with-see-alarms-btn>
 </template>
 
 <script>
 import { invert, omit } from 'lodash';
-import { mapActions } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
 import {
-  ALARM_STATES,
-  COUNTER_EXPORT_FILE_NAME_PREFIX,
-  COUNTER_STATES_ICONS,
   MODALS,
   USER_PERMISSIONS,
+  ALARM_STATES,
+  COUNTER_STATES_ICONS,
+  COUNTER_EXPORT_FILE_NAME_PREFIX,
 } from '@/constants';
-
-import { useAlarmStore } from '@/stores/modules/alarm';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -50,13 +53,13 @@ import { authMixin } from '@/mixins/auth';
 
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
+const { mapActions } = createNamespacedHelpers('alarm');
+
 const INVERTED_ALARM_STATES = invert(ALARM_STATES);
 
 export default {
   components: { CardWithSeeAlarmsBtn },
-
   mixins: [authMixin],
-
   props: {
     counter: {
       type: Object,
@@ -75,7 +78,6 @@ export default {
       default: false,
     },
   },
-
   computed: {
     templateContext() {
       return {
@@ -85,15 +87,18 @@ export default {
     },
 
     state() {
-      const { counter, values } = this.widget.parameters.levels;
+      const {
+        counter,
+        values,
+      } = this.widget.parameters.levels;
 
       const count = this.counter[counter];
 
-      return (
-        [ALARM_STATES.critical, ALARM_STATES.major, ALARM_STATES.minor].find(
-          state => count >= values?.[INVERTED_ALARM_STATES[state]],
-        ) || ALARM_STATES.ok
-      );
+      return [
+        ALARM_STATES.critical,
+        ALARM_STATES.major,
+        ALARM_STATES.minor,
+      ].find(state => count >= values?.[INVERTED_ALARM_STATES[state]]) || ALARM_STATES.ok;
     },
 
     hasVariablesHelpAccess() {
@@ -134,9 +139,8 @@ export default {
       };
     },
   },
-
   methods: {
-    ...mapActions(useAlarmStore, {
+    ...mapActions({
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
@@ -188,11 +192,6 @@ export default {
 
 <style lang="scss">
 .counter-item {
-  &__icon {
-    display: inline-flex;
-    align-self: center;
-  }
-
   &__template {
     width: 100%;
     overflow: hidden;
@@ -202,18 +201,13 @@ export default {
 
   &__help-btn {
     position: absolute;
-    top: 0;
     right: 0.2em;
+    top: 0;
     z-index: 1;
 
-    &:hover,
-    &:focus {
+    &:hover, &:focus {
       position: absolute;
     }
-  }
-
-  h2 {
-    margin: 0;
   }
 }
 </style>

@@ -1,12 +1,14 @@
 <template>
-  <ticket-status-jobs-table
-    :headers="headers"
-    :items="ticketStatusJobs"
-    :pending="ticketStatusJobsPending"
-    :total-items="ticketStatusJobsMeta.total_count"
-    :options="options"
-    @update:options="updateOptions"
-  />
+  <v-card-text>
+    <ticket-status-jobs-table
+      :headers="headers"
+      :items="ticketStatusJobs"
+      :pending="ticketStatusJobsPending"
+      :total-items="ticketStatusJobsMeta.total_count"
+      :options="options"
+      @update:options="updateOptions"
+    />
+  </v-card-text>
 </template>
 
 <script>
@@ -21,20 +23,16 @@ import { useI18n } from '@/hooks/i18n';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
 
-import TicketStatusJobsTable from './ticket-status-jobs-table.vue';
+import TicketStatusJobsTable from '@/components/other/ticket-status-job/ticket-status-jobs-table.vue';
 
 export default {
-  components: {
-    TicketStatusJobsTable,
-  },
-
+  components: { TicketStatusJobsTable },
   props: {
     tabId: {
       type: String,
       required: true,
     },
   },
-
   setup(props) {
     const { t } = useI18n();
     const {
@@ -44,27 +42,19 @@ export default {
       fetchTicketStatusJobsList,
     } = useTicketStatusJob();
 
+    const label = computed(() => ({
+      [JOBS_TABS.ticketStatus]: t('jobs.tabs.ticketStatus'),
+    })[props.tabId] ?? '');
+
     const headers = computed(() => {
       const isTicketStatusTab = props.tabId === JOBS_TABS.ticketStatus;
 
       return [
         { value: 'rule_name', text: t('jobs.ruleName'), sortable: true },
         { value: 'rule_type', text: t('jobs.ruleType'), sortable: true },
-        isTicketStatusTab && {
-          value: 'ticket_system_name',
-          text: t('jobs.ticketSystemName'),
-          sortable: true,
-        },
-        isTicketStatusTab && {
-          value: 'ticket_id',
-          text: t('jobs.ticketNumber'),
-          sortable: true,
-        },
-        isTicketStatusTab && {
-          value: 'status',
-          text: t('jobs.activeState'),
-          sortable: true,
-        },
+        isTicketStatusTab && { value: 'ticket_system_name', text: t('jobs.ticketSystemName'), sortable: true },
+        isTicketStatusTab && { value: 'ticket_id', text: t('jobs.ticketNumber'), sortable: true },
+        isTicketStatusTab && { value: 'status', text: t('jobs.activeState'), sortable: true },
         { value: 'last_run_status', text: t('jobs.lastStatus'), sortable: true },
         { value: 'created_at', text: t('jobs.startDate'), sortable: true },
         { value: 'checked_at', text: t('jobs.finishDate'), sortable: true },
@@ -82,10 +72,13 @@ export default {
     };
 
     const fetchList = (fetchQuery = initialQuery) => fetchTicketStatusJobsList({
-        params: convertQueryToRequest(fetchQuery),
-      });
+      params: convertQueryToRequest(fetchQuery),
+    });
 
-    const { options, updateOptions } = useLocalQueryWithOptions({
+    const {
+      options,
+      updateOptions,
+    } = useLocalQueryWithOptions({
       initialQuery,
       onUpdate: fetchList,
     });
@@ -96,8 +89,9 @@ export default {
       ticketStatusJobs,
       ticketStatusJobsMeta,
       ticketStatusJobsPending,
-      headers,
       options,
+      label,
+      headers,
       updateOptions,
     };
   },

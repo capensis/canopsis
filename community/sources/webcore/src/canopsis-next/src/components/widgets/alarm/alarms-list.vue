@@ -1,13 +1,13 @@
 <template>
-  <div class="alarms-list-widget">
-    <c-layout
-      v-if="isToolbarShown"
-      :class="['alarms-list-widget__toolbar px-4', { 'mb-4': !dense }]"
-      align="end"
-      justify="start"
+  <div class="alarms-list">
+    <v-layout
+      v-if="!hideToolbar"
+      :class="['alarms-list__toolbar gap-4 px-4', { 'mb-4': !dense }]"
       wrap
+      justify-space-between
+      align-end
     >
-      <div class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--advanced-search">
+      <v-flex>
         <c-alarm-advanced-search
           :searches="searches"
           @submit="updateSearch"
@@ -15,221 +15,204 @@
           @toggle-pin:search="togglePinSearch"
           @remove:search="removeSearch"
         />
-      </div>
-
-      <div
-        v-if="hasAccessToCategory"
-        class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--category"
-      >
+      </v-flex>
+      <v-flex v-if="hasAccessToCategory">
         <c-entity-category-field
           :category="query.category"
           class="ma-0"
           hide-details
-          @update:category="updateCategory"
+          @input="updateCategory"
         />
-      </div>
-
-      <div v-if="hasAccessToCorrelation" class="alarms-list-widget__toolbar-cell">
-        <c-enabled-field
-          :model-value="query.correlation ?? false"
+      </v-flex>
+      <v-flex v-if="hasAccessToCorrelation">
+        <v-switch
+          :value="query.correlation"
           :label="$t('common.correlation')"
           class="mt-0"
           color="primary"
           hide-details
-          inline
-          no-margin
-          @update:model-value="updateCorrelation"
+          @change="updateCorrelation"
         />
-      </div>
-
-      <c-layout
-        v-if="hasAccessToUserFilter"
-        class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--filter"
-        align="end"
-      >
-        <filter-selector
-          :model-value="query.filter"
-          :locked-value="query.lockedFilter"
-          :label="$t('settings.selectAFilter')"
-          :filters="userPreferenceFilters"
-          :locked-filters="widget.filters"
-          :clearable="preparedWidget.parameters.clearFilterEnabled"
-          hide-details
-          @update:model-value="updateSelectedFilter"
-        />
-
-        <filters-list-btn
-          :widget-id="widget._id"
-          addable
-          editable
-          private
-          with-alarm
-          with-entity
-          with-pbehavior
-        />
-      </c-layout>
-
-      <div v-if="hasAccessToFilterByBookmark" class="alarms-list-widget__toolbar-cell">
-        <c-enabled-field
-          :model-value="query.only_bookmarks"
+      </v-flex>
+      <v-flex>
+        <v-layout
+          v-if="hasAccessToUserFilter"
+          align-end
+        >
+          <filter-selector
+            :value="query.filter"
+            :locked-value="query.lockedFilter"
+            :label="$t('settings.selectAFilter')"
+            :filters="userPreference.filters"
+            :locked-filters="widget.filters"
+            :clearable="widget.parameters.clearFilterEnabled"
+            hide-details
+            @input="updateSelectedFilter"
+          />
+          <filters-list-btn
+            :widget-id="widget._id"
+            addable
+            editable
+            private
+            with-alarm
+            with-entity
+            with-pbehavior
+          />
+        </v-layout>
+      </v-flex>
+      <v-flex v-if="hasAccessToFilterByBookmark">
+        <v-switch
+          :value="query.only_bookmarks"
           :label="$t('alarm.filterByBookmark')"
           class="mt-0"
           color="primary"
           hide-details
-          inline
-          no-margin
-          @update:model-value="updateOnlyBookmarks"
+          @change="updateOnlyBookmarks"
         />
-      </div>
-
-      <div class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--tags">
+      </v-flex>
+      <v-flex xs3>
         <c-alarm-tag-field
           :value="query.tags"
-          :label="$t('common.tag')"
+          :label="$tc('common.tag', 2)"
           :show-count="2"
           multiple
           combobox
-          @update:value="updateTags"
+          @input="updateTags"
         />
-      </div>
-
-      <div
+      </v-flex>
+      <alarms-list-remediation-instructions-filter
         v-if="hasAccessToUserRemediationInstructionsFilter"
-        class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--instructions"
-      >
-        <alarms-list-remediation-instructions-filter
-          :model-value="query.instructionsFilter"
-          @update:model-value="updateRemediationInstructionsFilters"
-        />
-      </div>
-
-      <c-layout class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--live-reporting">
-        <c-chip
+        :filter="query.instructionsFilter"
+        @input="updateRemediationInstructionsFilters"
+      />
+      <v-flex>
+        <v-chip
           v-if="activeRange"
-          color="primary"
-          title=""
-          class="px-2"
-          closable
-          @close="removeHistoryFilter"
+          class="primary white--text"
+          close
+          label
+          @click:close="removeHistoryFilter"
         >
           {{ $t(`quickRanges.types.${activeRange.value}`) }}
-        </c-chip>
-
+        </v-chip>
         <c-action-btn
           :tooltip="$t('alarm.liveReporting')"
           :color="activeRange ? 'primary' : ''"
           icon="schedule"
           @click="showEditLiveReportModal"
         />
-      </c-layout>
-
-      <div
-        v-if="hasAccessToExportAsCsv"
-        class="alarms-list-widget__toolbar-cell alarms-list-widget__toolbar-cell--export"
-      >
+      </v-flex>
+      <v-flex v-if="hasAccessToExportAsCsv">
         <c-action-btn
           :loading="downloading"
           :tooltip="$t('settings.exportAsCsv')"
           icon="cloud_download"
           @click="exportAlarmsList"
         />
-      </div>
-    </c-layout>
-
-    <alarms-list-table-with-pagination
-      :widget="preparedWidget"
+      </v-flex>
+    </v-layout>
+    <alarms-list-table
+      ref="alarmsTable"
+      :widget="widget"
       :alarms="alarms"
-      :columns="columns"
-      :columns-settings="columnsSettings"
-      :meta="alarmsMeta"
-      :query="query"
-      :parent-alarm="parentAlarm"
+      :total-items="alarmsMeta.total_count"
+      :options.sync="options"
       :loading="alarmsPending"
-      :hide-actions="hideActions"
-      :selected-tags="query.tags"
-      :densable="isTableControlsShown"
+      :hide-children="!query.correlation"
+      :columns="widget.parameters.widgetColumns"
+      :sticky-header="widget.parameters.sticky_header"
+      :sticky-horizontal-scroll="widget.parameters.sticky_horizontal_scroll"
       :dense="dense"
-      :sticky-header="preparedWidget.parameters.sticky_header"
-      :sticky-horizontal-scroll="preparedWidget.parameters.sticky_horizontal_scroll"
-      :widget-grid-parameters="widgetGridParameters"
-      :default-keep-selected-after-action="defaultKeepSelectedAfterAction"
       :refresh-alarms-list="fetchList"
-      :selectable="selectable"
+      :selected-tags="query.tags"
+      :search="query.search"
+      :selectable="!hideMassSelection"
+      :hide-actions="hideActions"
+      :resizable-column="resizableColumn"
+      :draggable-column="draggableColumn"
+      :cells-content-behavior="cellsContentBehavior"
+      :columns-settings="columnsSettings"
+      :parent-alarm="parentAlarm"
       class="mt-2"
       expandable
-      @update:query="updateTableQuery"
-      @update:columns-settings="updateColumnsSettings"
-      @update:dense="updateDense"
+      densable
       @select:tag="selectTag"
+      @update:dense="updateDense"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+      @update:columns-settings="updateColumnsSettings"
+      @update:pagination-options="updatePaginationOptions"
       @remove:tag="removeTag"
     />
   </div>
 </template>
 
 <script>
-import { isEqual, isObject, omit, pick } from 'lodash';
-import { mapActions, mapStores } from 'pinia';
+import { omit, pick, isObject, isEqual } from 'lodash';
 
-import {
-  LIVE_REPORTING_QUICK_RANGES,
-  MODALS,
-  USER_PERMISSIONS,
-  DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP,
-  WIDGET_GRID_SIZES_KEYS,
-} from '@/constants';
-
-import { useAlarmStore } from '@/stores/modules/alarm';
-import { useWidgetStore } from '@/stores/modules/widget';
+import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
-import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
-import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
-import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 import { setSeveralFields } from '@/helpers/immutable';
+import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
+import { authMixin } from '@/mixins/auth';
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { exportMixinCreator } from '@/mixins/widget/export';
+import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/saved-items';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
+import {
+  widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
+} from '@/mixins/widget/handlebars/alarms-list-precompile-templates';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
+import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListBookmark } from '@/mixins/permissions/widgets/alarms-list/bookmark';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
-import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
-import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/saved-items';
-import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
-import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
+import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsListRemediationInstructionsFilter from './partials/alarms-list-remediation-instructions-filter.vue';
-import AlarmsListTableWithPagination from './partials/alarms-list-table-with-pagination.vue';
-
 /**
- * Alarm-list widget runtime foundation.
+ * Alarm-list component
  *
- * The dedicated table, alarm query state and actions are migrated in the next
- * AlarmsList stages; this component already consumes prepared widget
- * parameters so create/edit/duplicate flows use the final settings payload.
+ * @module alarm
+ *
+ * @prop {Object} widget - Object representing the widget
+ *
+ * @event openSettings#click
  */
 export default {
   components: {
-    AlarmsListRemediationInstructionsFilter,
-    AlarmsListTableWithPagination,
     FilterSelector,
     FiltersListBtn,
+    AlarmsListTable,
+    AlarmsListRemediationInstructionsFilter,
   },
-
   mixins: [
+    authMixin,
     widgetFetchQueryMixin,
     widgetAdvancedSearchSavedItemsMixin,
+    widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
-    permissionsWidgetsAlarmsListBookmark,
+    widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
+    entitiesWidgetMixin,
+    entitiesAlarmMixin,
+    entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
+    permissionsWidgetsAlarmsListBookmark,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
     exportMixinCreator({
@@ -237,11 +220,14 @@ export default {
       fetchExport: 'fetchAlarmsListExport',
     }),
   ],
-
   props: {
     widget: {
       type: Object,
       required: true,
+    },
+    tabId: {
+      type: String,
+      default: '',
     },
     hideActions: {
       type: Boolean,
@@ -260,90 +246,17 @@ export default {
       default: null,
     },
   },
-
   data() {
     return {
       downloading: false,
     };
   },
   computed: {
-    ...mapStores(useAlarmStore),
-
-    preparedWidget() {
-      return prepareAlarmListWidget(this.widget);
-    },
-
-    columns() {
-      return (this.preparedWidget.parameters?.widgetColumns ?? []).map(column => ({
-        ...column,
-        popupTemplate: this.infoPopupsMap[column.value] ?? this.infoPopupsMap[`alarm.${column.value}`],
-      }));
-    },
-
-    infoPopupsMap() {
-      return (this.preparedWidget.parameters?.infoPopups ?? []).reduce((acc, { column, template }) => {
-        acc[column] = template;
-
-        return acc;
-      }, {});
-    },
-
-    selectable() {
-      return !this.hideMassSelection;
-    },
-
-    columnsSettings() {
-      return this.userPreference.content?.columns_settings;
-    },
-
-    alarms() {
-      return this.alarmStore.getListByWidgetId(this.widget._id);
-    },
-
-    alarmsMeta() {
-      return this.alarmStore.getMetaByWidgetId(this.widget._id);
-    },
-
-    alarmsPending() {
-      return this.alarmStore.getPendingByWidgetId(this.widget._id);
-    },
-
-    selectedAlarms() {
-      return [];
-    },
-
-    defaultKeepSelectedAfterAction() {
-      return this.preparedWidget.parameters.keepSelectedAfterAction ?? false;
-    },
-
-    displayGridSize() {
-      return DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$vuetify.display.name] ?? WIDGET_GRID_SIZES_KEYS.desktop;
-    },
-
-    widgetGridParameters() {
-      const gridParameters = this.widget.grid_parameters ?? {};
-
-      return pick(gridParameters[this.displayGridSize] ?? gridParameters, ['x', 'y', 'w', 'h']);
-    },
-
-    alarmsFetchingParams() {
-      return this.alarmStore.getFetchingParamsByWidgetId(this.widget._id);
-    },
-
-    dense() {
-      return this.userPreference.content.dense ?? this.preparedWidget.parameters.dense;
-    },
-
     activeRange() {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findQuickRangeValue(
-          tstart,
-          tstop,
-          LIVE_REPORTING_QUICK_RANGES,
-          LIVE_REPORTING_QUICK_RANGES.custom,
-        );
+        return findQuickRangeValue(tstart, tstop, LIVE_REPORTING_QUICK_RANGES, LIVE_REPORTING_QUICK_RANGES.custom);
       }
 
       return null;
@@ -353,68 +266,54 @@ export default {
       return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
 
-    isToolbarShown() {
-      return !this.hideToolbar;
+    dense() {
+      return this.userPreference.content.dense ?? this.widget.parameters.dense;
     },
 
-    isTableControlsShown() {
-      return !!this.columns.length;
+    columnsSettings() {
+      return this.userPreference.content.columns_settings;
     },
 
-    userPreferenceFilters() {
-      return this.userPreference.filters ?? [];
+    resizableColumn() {
+      return !!this.widget.parameters?.columns?.resizable;
+    },
+
+    cellsContentBehavior() {
+      return this.widget.parameters?.columns?.cells_content_behavior;
+    },
+
+    draggableColumn() {
+      return !!this.widget.parameters?.columns?.draggable;
     },
   },
-
   created() {
     this.actualizeUsedProperties();
   },
-
   methods: {
-    ...mapActions(useAlarmStore, {
-      fetchAlarmsList: 'fetchList',
-      fetchAlarmsDetailsList: 'fetchAlarmDetailsList',
-      fetchAlarmsListExport: 'fetchAlarmsListExport',
-      createAlarmsListExport: 'createAlarmsListExport',
-    }),
-    ...mapActions(useWidgetStore, {
-      updateWidget: 'update',
-    }),
-
-    async fetchList() {
-      if (!this.columns.length) {
+    refreshExpanded() {
+      if (!this.$refs.alarmsTable?.expanded?.length) {
         return;
       }
 
-      const params = this.getQuery();
-
-      this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
-
-      if (this.alarmsPending && isEqual(params, this.alarmsFetchingParams)) {
-        return;
-      }
-
-      await this.fetchAlarmsList({
-        widgetId: this.widget._id,
-        params,
-      });
+      this.$set(
+        this.$refs.alarmsTable,
+        'expanded',
+        this.$refs.alarmsTable.expanded.filter(({ _id: id }) => this.alarms.some(alarm => alarm._id === id)),
+      );
     },
 
-    actualizeUsedProperties() {
-      const activeColumns = convertAlarmWidgetParametersToActiveColumns(
-        this.preparedWidget.parameters,
-      );
+    updateRemediationInstructionsFilters(instructionsFilter) {
+      this.updateContentInUserPreference({ instructionsFilter });
 
-      if (isEqual(activeColumns, this.preparedWidget.parameters.usedAlarmProperties)) {
-        return;
-      }
+      this.query = {
+        ...this.query,
 
-      this.updateWidget({
-        id: this.widget._id,
-        data: setSeveralFields(this.widget, {
-          'parameters.usedAlarmProperties': activeColumns,
-        }),
-      });
+        instructionsFilter,
+      };
+    },
+
+    updateColumnsSettings(columnsSettings) {
+      this.updateContentInUserPreference({ columns_settings: columnsSettings });
     },
 
     updateCorrelation(correlation) {
@@ -422,6 +321,7 @@ export default {
 
       this.query = {
         ...this.query,
+
         page: 1,
         correlation,
       };
@@ -432,6 +332,7 @@ export default {
 
       this.query = {
         ...this.query,
+
         page: 1,
         tags,
       };
@@ -445,71 +346,61 @@ export default {
       this.updateTags((this.query.tags || []).filter(queryTag => queryTag !== tag));
     },
 
-    updateDense(dense) {
-      this.updateContentInUserPreference({ dense });
-    },
-
-    updateColumnsSettings(columnsSettings) {
-      this.updateContentInUserPreference({ columns_settings: columnsSettings });
-    },
-
-    updateTableQuery(query) {
-      if (query.itemsPerPage !== this.query.itemsPerPage) {
-        this.updateContentInUserPreference({ itemsPerPage: query.itemsPerPage });
-      }
-
-      this.query = {
-        ...query,
-      };
-    },
-
     updateOnlyBookmarks(onlyBookmarks) {
       this.updateContentInUserPreference({ onlyBookmarks });
 
       this.query = {
         ...this.query,
+
         page: 1,
         only_bookmarks: onlyBookmarks,
       };
     },
 
     updateCategory(category) {
-      const categoryId = category?._id;
+      const categoryId = category && category._id;
 
       this.updateContentInUserPreference({ category: categoryId });
 
       this.query = {
         ...this.query,
+
         page: 1,
         category: categoryId,
       };
     },
 
-    updateSelectedFilter(filter) {
-      this.updateContentInUserPreference({ mainFilter: filter });
+    updateItemsPerPage(itemsPerPage) {
+      this.updateContentInUserPreference({ itemsPerPage });
 
       this.query = {
         ...this.query,
-        page: 1,
-        filter,
+
+        itemsPerPage,
       };
     },
 
-    updateRemediationInstructionsFilters(instructionsFilter) {
-      this.updateContentInUserPreference({ instructionsFilter });
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.updateContentInUserPreference({ itemsPerPage });
 
       this.query = {
         ...this.query,
-        page: 1,
-        instructionsFilter,
+
+        page,
+        itemsPerPage,
       };
+    },
+
+    updateDense(dense) {
+      this.updateContentInUserPreference({ dense });
     },
 
     removeHistoryFilter() {
-      this.query = {
-        ...omit(this.query, ['tstart', 'tstop']),
-        page: 1,
-      };
+      const newQuery = omit(this.query, ['tstart', 'tstop']);
+
+      newQuery.page = 1;
+
+      this.query = newQuery;
     },
 
     showEditLiveReportModal() {
@@ -517,20 +408,40 @@ export default {
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop', 'time_field']),
-          action: (params) => {
-            this.query = {
-              ...this.query,
-              ...params,
-              page: 1,
-            };
+          action: params => this.query = {
+            ...this.query,
+            ...params,
+
+            page: 1,
           },
         },
       });
     },
 
+    async fetchList() {
+      if (this.widget.parameters.widgetColumns.length) {
+        const params = this.getQuery();
+
+        this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
+
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
+          await this.fetchAlarmsList({
+            widgetId: this.widget._id,
+            params,
+          });
+
+          this.refreshExpanded();
+        }
+      }
+    },
+
     getExportQuery() {
       const query = this.getQuery();
-      const { exportCsvSeparator, exportCsvDatetimeFormat } = this.preparedWidget.parameters;
+      const {
+        exportCsvSeparator,
+        exportCsvDatetimeFormat,
+      } = this.widget.parameters;
+      const { selected = [] } = this.$refs.alarmsTable;
 
       return {
         ...pick(query, [
@@ -550,7 +461,7 @@ export default {
           'pbehavior_pattern',
         ]),
 
-        fields: widgetToExportQueryColumns(this.preparedWidget),
+        fields: widgetToExportQueryColumns(this.widget),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**
@@ -559,7 +470,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
-        search: selectedToQuery(this.selectedAlarms, query.search),
+        search: selectedToQuery(selected, query.search),
       };
     },
 
@@ -573,54 +484,35 @@ export default {
         });
 
         this.downloadFile(getAlarmListExportDownloadFileUrl(fileData._id));
-      } catch {
+      } catch (err) {
         this.$popups.error({ text: this.$t('alarm.popups.exportFailed') });
       } finally {
         this.downloading = false;
       }
     },
+
+    actualizeUsedProperties() {
+      const unwatch = this.$watch(() => this.query.active_columns, (activeColumns) => {
+        if (!isEqual(activeColumns, this.widget.parameters.usedAlarmProperties)) {
+          this.updateWidget({
+            id: this.widget._id,
+            data: setSeveralFields(this.widget, {
+              'parameters.usedAlarmProperties': activeColumns,
+            }),
+          });
+        }
+
+        unwatch();
+      });
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.alarms-list-widget {
-  height: 100%;
-}
-
-.alarms-list-widget__toolbar {
-  gap: 16px;
-}
-
-.alarms-list-widget__toolbar-cell--category {
-  min-width: 180px;
-}
-
-.alarms-list-widget__toolbar-cell--advanced-search {
-  flex: 1 1 auto;
-  max-width: 100%;
-  min-width: 320px;
-}
-
-.alarms-list-widget__toolbar-cell--filter {
-  min-width: 260px;
-}
-
-.alarms-list-widget__toolbar-cell--tags {
-  flex: 0 1 25%;
-  min-width: 280px;
-}
-
-.alarms-list-widget__toolbar-cell--instructions {
-  min-width: 280px;
-}
-
-.alarms-list-widget__toolbar-cell--live-reporting {
-  display: flex;
-  min-width: auto;
-}
-
-.alarms-list-widget__toolbar-cell--export {
-  min-width: auto;
+<style lang="scss">
+.alarms-list {
+  &__toolbar {
+    z-index: 3;
+  }
 }
 </style>

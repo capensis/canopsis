@@ -1,18 +1,19 @@
 <template>
   <c-information-block :title="$t('storageSetting.entityInfosLog.title')">
     <c-enabled-duration-field
-      :duration="form.delete_after"
+      v-field="form.delete_after"
       :label="$t('storageSetting.entityInfosLog.deleteAfter')"
       :name="name"
-      @update:duration="updateField('delete_after', $event)"
     />
   </c-information-block>
 </template>
 
 <script>
-import { useModelField } from '@/hooks/form';
-
 export default {
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -23,16 +24,11 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
+  setup() {
     const name = 'entity_infos_log.delete_after';
-    const { updateField } = useModelField(props, emit);
 
     return {
       name,
-      updateField,
     };
   },
 };

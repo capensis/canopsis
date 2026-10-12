@@ -1,33 +1,28 @@
 <template>
-  <c-select
-    :model-value="value"
+  <c-select-field
+    v-field="value"
     :items="items"
-    :label="label || t('templateTesting.filterByRuleType')"
+    :label="label || $t('templateTesting.filterByRuleType')"
     :name="name"
     :clearable="clearable"
     :required="required"
     :disabled="disabled"
-    :hide-details="hideDetails"
-    density="compact"
-    class="template-testing-test-type-field"
-    item-title="text"
-    item-value="value"
-    @update:model-value="$emit('update:value', $event)"
   />
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import {
-  TEMPLATE_TESTING_TEST_TYPES,
-  TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS,
-} from '@/constants';
+import { TEMPLATE_TESTING_TEST_TYPES, TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS } from '@/constants';
 
-import { useCurrentUserPermissions } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
+import { useCurrentUserPermissions } from '@/hooks/auth';
 
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Number,
@@ -53,34 +48,21 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
   },
-  emits: ['update:value'],
   setup() {
-    const { t } = useI18n();
+    const { tc } = useI18n();
     const { checkReadAccess } = useCurrentUserPermissions();
 
     const items = computed(() => Object.values(TEMPLATE_TESTING_TEST_TYPES)
-        .filter(type => checkReadAccess(TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS[type]))
-        .map(type => ({
-          value: type,
-          text: t(`templateTesting.testTypes.${type}`),
-        })),
-    );
+      .filter(type => checkReadAccess(TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS[type]))
+      .map(type => ({
+        value: type,
+        text: tc(`templateTesting.testTypes.${type}`),
+      })));
 
     return {
-      t,
       items,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.template-testing-test-type-field {
-  min-width: 200px;
-}
-</style>

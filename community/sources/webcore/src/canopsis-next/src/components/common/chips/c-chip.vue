@@ -2,20 +2,19 @@
   <v-chip
     :class="chipClass"
     :color="color"
-    :variant="outlined ? 'outlined' : 'flat'"
-    :closable="false"
+    :text-color="textColor"
+    :outlined="outlined"
     class="c-chip"
-    size="small"
+    small
+    v-on="$listeners"
   >
-    <span :class="textColorClass" :style="textStyle" class="c-chip__text">
+    <span class="c-chip__text">
       <slot />
     </span>
     <v-icon
       v-if="closable"
-      :class="textColorClass"
-      :style="textStyle"
       class="cursor-pointer ml-2"
-      size="small"
+      small
       @click.stop="$emit('close', $event)"
     >
       cancel
@@ -24,8 +23,9 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
-  emits: ['close'],
   props: {
     color: {
       type: String,
@@ -52,36 +52,16 @@ export default {
       default: 'white',
     },
   },
-  computed: {
-    chipClass() {
-      return {
-        'c-chip--closable': this.closable,
-        'c-chip--small': this.small,
-        'c-chip--rounded': this.rounded,
-      };
-    },
+  setup(props) {
+    const chipClass = computed(() => ({
+      'c-chip--closable': props.closable,
+      'c-chip--small': props.small,
+      'c-chip--rounded': props.rounded,
+    }));
 
-    isCssTextColor() {
-      return /^(#|rgb|hsl|var\()/i.test(this.textColor);
-    },
-
-    textColorClass() {
-      if (!this.textColor || this.isCssTextColor) {
-        return undefined;
-      }
-
-      return `text-${this.textColor.replace(/\s+/g, '-')}`;
-    },
-
-    textStyle() {
-      if (!this.textColor || !this.isCssTextColor) {
-        return undefined;
-      }
-
-      return {
-        color: this.textColor,
-      };
-    },
+    return {
+      chipClass,
+    };
   },
 };
 </script>
@@ -123,7 +103,7 @@ export default {
   }
 
   .v-data-table thead th.column.sortable & .v-icon {
-    opacity: 0.6;
+    opacity: .6;
   }
 
   .v-icon {

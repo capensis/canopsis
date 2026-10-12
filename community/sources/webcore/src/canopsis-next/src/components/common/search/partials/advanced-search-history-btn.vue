@@ -1,39 +1,54 @@
 <template>
   <v-menu
-    v-model="menu"
     :min-width="listMinWidth"
+    :nudge-bottom="1"
     :transition="false"
     content-class="c-advanced-search__history-menu"
-    location="bottom"
-    offset="1"
-    @update:model-value="handleMenuToggle"
+    bottom
+    offset-y
+    @input="handleMenuToggle"
   >
-    <template #activator="{ props }">
+    <template #activator="{ on }">
       <c-action-btn
         :tooltip="$t('common.search')"
         :disabled="!searches.length"
         icon="history"
-        v-bind="props"
+        v-on="on"
       />
     </template>
-    <div ref="scrollContainerElement" class="c-advanced-search__history-list">
-      <v-list class="pa-0" density="compact">
+    <div
+      ref="scrollContainerElement"
+      class="c-advanced-search__history-list"
+    >
+      <v-list
+        class="pa-0"
+        dense
+      >
         <div
           v-for="search in items"
           :key="search._id"
           :ref="setItemRef(search._id)"
           class="c-advanced-search__history-item"
         >
-          <v-list-item v-if="isItemVisible(search._id)" @click="select(search)">
-            <div class="c-advanced-search__history-item-content">
-              <advanced-search-rules :rules="search.rules" :attributes="attributes" disabled />
+          <v-list-item
+            v-if="isItemVisible(search._id)"
+            @click="select(search)"
+          >
+            <v-list-item-content class="pa-0">
+              <advanced-search-rules
+                :rules="search.rules"
+                :attributes="attributes"
+                disabled
+              />
+            </v-list-item-content>
+            <v-list-item-action>
               <advanced-search-history-item-btns
                 :id="search._id"
                 :pinned="search.pinned"
                 @remove="remove"
                 @toggle-pin="togglePin"
               />
-            </div>
+            </v-list-item-action>
           </v-list-item>
           <div
             v-else
@@ -41,14 +56,16 @@
             class="c-advanced-search__history-item__placeholder"
           />
         </div>
-        <div ref="appendItemElement" class="c-advanced-search__history-list__append-item" />
+        <div
+          ref="appendItemElement"
+          class="c-advanced-search__history-list__append-item"
+        />
       </v-list>
     </div>
   </v-menu>
 </template>
-
 <script>
-import { nextTick, ref, toRef } from 'vue';
+import { computed, nextTick } from 'vue';
 
 import { useAdvancedSearchHistory } from '../hooks/advanced-search-history';
 
@@ -57,7 +74,6 @@ import AdvancedSearchRules from './advanced-search-rules.vue';
 
 export default {
   components: { AdvancedSearchHistoryItemBtns, AdvancedSearchRules },
-
   props: {
     searches: {
       type: Array,
@@ -68,11 +84,7 @@ export default {
       default: () => [],
     },
   },
-
-  emits: ['select', 'remove', 'toggle-pin'],
-
   setup(props, { emit }) {
-    const menu = ref(false);
     const {
       items,
       scrollContainerElement,
@@ -82,7 +94,7 @@ export default {
       getItemPlaceholderStyle,
       listMinWidth,
       updateListWidth,
-    } = useAdvancedSearchHistory(toRef(props, 'searches'));
+    } = useAdvancedSearchHistory(computed(() => props.searches));
 
     /**
      * Recalculates list width after the menu content is mounted.
@@ -99,12 +111,28 @@ export default {
       });
     };
 
+    /**
+     * Emits a 'select' event with the specified search configuration.
+     *
+     * @param {Object} search - The search configuration object to be selected.
+     */
     const select = search => emit('select', search);
+
+    /**
+     * Emits a 'remove' event with the specified identifier.
+     *
+     * @param {string} id - The unique identifier of the item to be removed.
+     */
     const remove = id => emit('remove', id);
+
+    /**
+     * Emits a 'toggle-pin' event with the specified identifier.
+     *
+     * @param {string} id - The unique identifier of the item whose pin status is to be toggled.
+     */
     const togglePin = id => emit('toggle-pin', id);
 
     return {
-      menu,
       items,
       scrollContainerElement,
       appendItemElement,
@@ -113,6 +141,7 @@ export default {
       getItemPlaceholderStyle,
       listMinWidth,
       handleMenuToggle,
+
       select,
       remove,
       togglePin,
@@ -127,13 +156,6 @@ export default {
   overflow-y: hidden !important;
   width: max-content;
   min-width: max-content;
-  background: rgb(var(--v-theme-surface));
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
-  border-radius: 4px;
-  box-shadow:
-    0 5px 5px -3px rgba(0, 0, 0, 0.2),
-    0 8px 10px 1px rgba(0, 0, 0, 0.14),
-    0 3px 14px 2px rgba(0, 0, 0, 0.12);
 
   @media (min-width: 1264px) {
     max-width: 95vw;
@@ -148,15 +170,6 @@ export default {
 }
 
 .c-advanced-search__history-item {
-  width: max-content;
-  min-width: 100%;
-}
-
-.c-advanced-search__history-item-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   width: max-content;
   min-width: 100%;
 }

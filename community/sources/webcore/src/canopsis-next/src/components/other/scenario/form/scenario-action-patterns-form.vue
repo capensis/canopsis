@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    :value="modelValue"
+    v-field="patterns"
     :name="name"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
@@ -8,21 +8,20 @@
     some-required
     with-alarm
     with-entity
-    @update:value="updateModel"
   />
 </template>
 
 <script>
-import { useModelField } from '@/hooks/form/model-field';
-import {
-  usePatternsFields,
-  usePatternsFieldsFetching,
-} from '@/hooks/store/modules/patterns-fields';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
+  model: {
+    prop: 'patterns',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    patterns: {
       type: Object,
       default: () => ({}),
     },
@@ -31,24 +30,21 @@ export default {
       default: 'patterns',
     },
   },
-
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
+  setup() {
     const { fetchScenarioPatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
-    const { updateModel } = useModelField(props, emit);
 
-    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
-      fetchScenarioPatternFields,
-    );
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchScenarioPatternFields);
 
     return {
       /**
-       * It's using in the parent component to display the validation header color for tabs.
+       * It's using in the parent component to display the validation header color for tabs
        */
       hasAnyError,
-      updateModel,
       pending,
       alarmAttributes,
       entityAttributes,

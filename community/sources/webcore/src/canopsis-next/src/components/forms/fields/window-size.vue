@@ -1,17 +1,19 @@
 <template>
   <v-btn-toggle
-    :model-value="modelValue"
+    v-field="value"
     class="window-size transparent"
-    variant="text"
-    mandatory
+    light
+    tile
     group
-    @update:model-value="$emit('update:modelValue', $event)"
+    mandatory
   >
     <v-btn
       v-for="size in availableSizes"
       :key="size.value"
       :ripple="false"
       :value="size.value"
+      :dark="dark"
+      :light="light"
       icon
     >
       <v-icon :color="color">
@@ -25,17 +27,28 @@
 import { WIDGET_GRID_SIZES_STYLES, WIDGET_GRID_SIZES_KEYS } from '@/constants';
 
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: WIDGET_GRID_SIZES_KEYS.desktop,
+    },
+    dark: {
+      type: Boolean,
+      required: false,
+    },
+    light: {
+      type: Boolean,
+      required: false,
     },
     color: {
       type: String,
       required: false,
     },
   },
-  emits: ['update:modelValue'],
   computed: {
     availableSizes() {
       return [
@@ -49,7 +62,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.window-size {
-  border: none;
-}
+  .window-size {
+    border: none;
+  }
 </style>

@@ -2,8 +2,28 @@ import { omit } from 'lodash';
 
 import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
+import { uuid } from '@/helpers/uuid';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-import { uid } from '@/helpers/uid';
+
+/**
+ * @typedef {Object} ViewTab
+ * @property {string} _id
+ * @property {string} title
+ * @property {Widget[]} widgets
+ */
+
+/**
+ * @typedef {Object} ViewGroupRequest
+ * @property {string} author
+ * @property {string} title
+ */
+
+/**
+ * @typedef {ViewGroupRequest} ViewGroup
+ * @property {string} _id
+ * @property {number} created
+ * @property {number} updated
+ */
 
 /**
  * @typedef {Object} ViewForm
@@ -27,6 +47,17 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
+ * @typedef {ViewGroup} ViewGroupWithViews
+ * @property {View[]} views
+ */
+
+/**
+ * @typedef {Object} ViewGroupWithViewsPosition
+ * @property {string} _id
+ * @property {string[]} views
+ */
+
+/**
  * @typedef {Object} ExportedViewRequest
  * @property {string} _id
  */
@@ -42,40 +73,9 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {ViewGroup} ViewGroupWithViews
- * @property {View[]} views
- */
-
-/**
  * @typedef {ViewGroup} ImportedViewGroupWithViews
  * @property {boolean} imported
  * @property {ImportedView[] | View[]} views
- */
-
-/**
- * @typedef {Object} ViewTab
- * @property {string} _id
- * @property {string} title
- * @property {Widget[]} widgets
- */
-
-/**
- * @typedef {Object} ViewGroupRequest
- * @property {string} author
- * @property {string} title
- */
-
-/**
- * @typedef {ViewGroupRequest} ViewGroup
- * @property {string} _id
- * @property {number} created
- * @property {number} updated
- */
-
-/**
- * @typedef {Object} ViewGroupWithViewsPosition
- * @property {string} _id
- * @property {string[]} views
  */
 
 /**
@@ -110,10 +110,9 @@ export const viewToRequest = view => ({
  * Convert view group to request
  *
  * @param {ViewGroup} group
- * @returns {ViewGroupRequest}
+ * @returns {ViewRequest}
  */
-export const groupToRequest = group =>
-  omit(group, ['_id', 'views', 'created', 'deletable', 'updated']);
+export const groupToRequest = group => omit(group, ['_id', 'views', 'created', 'deletable', 'updated']);
 
 /**
  * Convert view groups with views to view group with view positions
@@ -121,10 +120,7 @@ export const groupToRequest = group =>
  * @param {ViewGroupWithViews | {}} [group = {}]
  * @return {ViewGroupWithViewsPosition}
  */
-export const groupWithViewsToPositions = (group = {}) => ({
-  _id: group._id,
-  views: group.views.map(view => view._id),
-});
+export const groupWithViewsToPositions = (group = {}) => ({ _id: group._id, views: group.views.map(view => view._id) });
 
 /**
  * Convert view groups with views to view group with view positions
@@ -181,12 +177,11 @@ export const exportedGroupsAndViewsToRequest = ({ groups, views }) => {
  * @param {ViewGroupWithViews[]} groups
  * @return {View[]}
  */
-export const getAllViewsFromGroups = (groups = []) =>
-  groups.reduce((acc, { views = [] }) => {
-    acc.push(...views);
+export const getAllViewsFromGroups = groups => groups.reduce((acc, { views }) => {
+  acc.push(...views);
 
-    return acc;
-  }, []);
+  return acc;
+}, []);
 
 /**
  * Prepare current groups for importing process
@@ -194,8 +189,9 @@ export const getAllViewsFromGroups = (groups = []) =>
  * @param {ViewGroupWithViews[]} groups
  * @return {ViewGroupWithViews[]}
  */
-export const prepareCurrentGroupsForImporting = groups =>
-  groups.map(group => ({ ...group, views: [...(group.views ?? [])] }));
+export const prepareCurrentGroupsForImporting = groups => (
+  groups.map(group => ({ ...group, views: [...group.views] }))
+);
 
 /**
  * Prepare imported views
@@ -203,13 +199,12 @@ export const prepareCurrentGroupsForImporting = groups =>
  * @param {View[]} views
  * @return {ImportedView[]}
  */
-export const prepareImportedViews = views =>
-  views.map(view => ({
-    ...view,
+export const prepareImportedViews = views => views.map(view => ({
+  ...view,
 
-    imported: true,
-    _id: uid(),
-  }));
+  imported: true,
+  _id: uuid(),
+}));
 
 /**
  * Prepare imported groups
@@ -217,17 +212,19 @@ export const prepareImportedViews = views =>
  * @param {ViewGroupWithViews[]} groups
  * @return {ImportedViewGroupWithViews[]}
  */
-export const prepareImportedGroups = groups =>
-  groups.map(({ views, ...group }) => ({
-    ...group,
+export const prepareImportedGroups = groups => groups.map(({ views, ...group }) => ({
+  ...group,
 
-    imported: true,
-    _id: uid(),
-    views: prepareImportedViews(views),
-  }));
+  imported: true,
+  _id: uuid(),
+  views: prepareImportedViews(views),
+}));
 
-export const prepareViewsForImportRequest = views =>
-  views.map(view => (view.imported ? omit(view, ['_id', 'imported']) : view));
+export const prepareViewsForImportRequest = views => views.map(view => (
+  view.imported
+    ? omit(view, ['_id', 'imported'])
+    : view
+));
 
 /**
  * Prepare imported groups
@@ -235,17 +232,16 @@ export const prepareViewsForImportRequest = views =>
  * @param {ImportedViewGroupWithViews[] | ViewGroupWithViews[]} groups
  * @return {ViewGroupWithViews[]}
  */
-export const prepareViewGroupsForImportRequest = groups =>
-  groups.map((group) => {
-    let preparedGroup = group;
+export const prepareViewGroupsForImportRequest = groups => groups.map((group) => {
+  let preparedGroup = group;
 
-    if (group.imported) {
-      preparedGroup = omit(group, ['_id', 'imported']);
-    }
+  if (group.imported) {
+    preparedGroup = omit(group, ['_id', 'imported']);
+  }
 
-    return {
-      ...preparedGroup,
+  return {
+    ...preparedGroup,
 
-      views: prepareViewsForImportRequest(group.views),
-    };
-  });
+    views: prepareViewsForImportRequest(group.views),
+  };
+});

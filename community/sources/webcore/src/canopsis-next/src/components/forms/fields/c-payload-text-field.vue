@@ -1,54 +1,50 @@
 <template>
-  <c-text-field
+  <v-combobox
+    v-validate="rules"
     ref="field"
-    :model-value="value"
-    :label="label || $t('common.payload')"
+    :value="value"
+    :search-input="value"
+    :label="label ?? $t('common.payload')"
+    :items="variables"
     :disabled="disabled"
+    :return-object="false"
+    :menu-props="menuProps"
+    :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"
-    :required="required"
-    :max-length="maxLength"
-    class="c-payload-text-field"
+    no-filter
     @blur="handleBlur"
-    @click="onSelectionChange"
-    @keyup="onSelectionChange"
-    @update:model-value="updateModel"
+    @update:search-input="onSearchInputChange"
   >
-    <template v-if="$slots.append || $slots['append-inner'] || variables.length" #append-inner>
+    <template #append="">
       <slot name="append" />
-      <slot name="append-inner" />
-
-      <variables-menu
-        v-if="variables.length"
-        :items="variables"
-        :visible="variablesShown"
+    </template>
+    <template #append-outer="">
+      <slot name="append-outer" />
+    </template>
+    <template #list="">
+      <variables-list
         :value="variablesMenuValue"
-        :position-x="variablesMenuPosition.x"
-        :position-y="variablesMenuPosition.y"
-        :location="variablesMenuLocation"
-        ignore-click-outside
+        :items="variables"
+        children-key="variables"
         show-value
         hide-empty-value
         clickable-parent
-        @update:value="pasteVariable"
-        @close="hideVariablesMenu"
+        @input="pasteVariable"
       />
     </template>
-    <template v-if="$slots['append-outer']" #append>
-      <slot name="append-outer" />
-    </template>
-  </c-text-field>
+  </v-combobox>
 </template>
 
 <script>
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
-import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 export default {
-  components: { VariablesMenu },
+  inject: ['$validator'],
+  components: { VariablesList },
   mixins: [payloadFieldMixin],
-
   props: {
     name: {
       type: String,
@@ -70,38 +66,82 @@ export default {
       type: Boolean,
       default: false,
     },
-    maxLength: {
-      type: Number,
-      required: false,
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
+    hasValidationRules() {
+      return Object.values(this.rules).some(rule => !!rule);
+    },
+
+    errorMessages() {
+      return this.errors.collect(this.name).map((message = '') => (
+        message.includes('|') ? message.split('|')[1] : message
+      ));
+    },
+
+    menuProps() {
+      return {
+        value: !!this.variables.length && this.variablesShown,
+        offsetY: true,
+        closeOnContentClick: false,
+        minWidth: 200,
+      };
     },
   },
-  data() {
-    return {
-      variablesMenuLocation: 'bottom start',
-    };
+  watch: {
+    required(value) {
+      if (value) {
+        this.$validator.validate(this.name);
+      } else {
+        this.errors.remove(this.name);
+      }
+    },
   },
   methods: {
-    showVariablesMenu() {
-      this.variablesShown = true;
+    /**
+     * v-combobox syncs `search-input` on mount/update and emits `update:search-input`
+     * even when the decoded value is unchanged. That used to propagate through v-field /
+     * VeeValidate's `$watch(value)` and run `required` immediately for new rows.
+     */
+    onSearchInputChange(value) {
+      this.debouncedOnSelectionChange();
 
-      this.$nextTick(() => {
-        const input = this.getInputElement();
+      const nextValue = value ?? '';
 
-        if (!input) {
-          return;
+      if (nextValue === this.value) {
+        if (this.errorMessages?.length) {
+          this.$nextTick(() => {
+            if (this.hasValidationRules) {
+              this.$validator.validate(this.name);
+
+              return;
+            }
+
+            this.errors.remove(this.name);
+          });
         }
 
-        const menuMaxHeight = 300;
-        const offset = 8;
-        const { top, bottom, left } = input.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - bottom;
-        const spaceAbove = top;
-        const showBelow = spaceBelow >= menuMaxHeight || spaceBelow >= spaceAbove;
+        return;
+      }
 
-        this.variablesMenuPosition.x = left;
-        this.variablesMenuPosition.y = showBelow ? bottom + offset : top - offset;
-        this.variablesMenuLocation = showBelow ? 'bottom start' : 'top start';
-      });
+      this.updateModel(nextValue);
+
+      if (this.errorMessages?.length) {
+        this.$nextTick(() => {
+          if (this.hasValidationRules) {
+            this.$validator.validate(this.name);
+
+            return;
+          }
+
+          this.errors.remove(this.name);
+        });
+      }
     },
   },
 };

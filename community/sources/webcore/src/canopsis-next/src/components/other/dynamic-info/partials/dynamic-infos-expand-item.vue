@@ -1,33 +1,50 @@
 <template>
-  <div>
-    <v-tabs
-      v-model="activeTab"
-      bg-color="secondary-lighten-1"
-      color="primary"
-      align-tabs="center"
-    >
-      <v-tab value="information">
-        {{ $t('common.information', 2) }}
-      </v-tab>
-      <v-tab value="patterns">
-        {{ $t('common.pattern', 2) }}
-      </v-tab>
-    </v-tabs>
-
-    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
-      <c-window-expand-item value="information">
-        <v-data-table
-          :items="info.infos"
-          :headers="infosTableHeaders"
-          :no-data-text="$t('common.noData')"
-        />
-      </c-window-expand-item>
-
-      <c-window-expand-item value="patterns" cols="8">
-        <dynamic-info-patterns-form :form="patterns" readonly />
-      </c-window-expand-item>
-    </v-window>
-  </div>
+  <v-tabs
+    background-color="secondary lighten-1"
+    slider-color="primary"
+    dark
+    centered
+  >
+    <v-tab>{{ $tc('common.information', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout class="py-3 secondary lighten-2">
+        <v-flex
+          xs12
+          md8
+          offset-md2
+        >
+          <v-card>
+            <v-card-text>
+              <v-data-table
+                :items="info.infos"
+                :headers="infosTableHeaders"
+                :no-data-text="$t('common.noData')"
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout class="py-3 secondary lighten-2">
+        <v-flex
+          xs12
+          md8
+          offset-md2
+        >
+          <v-card>
+            <v-card-text>
+              <dynamic-info-patterns-form
+                :form="patterns"
+                readonly
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>
@@ -47,11 +64,6 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      activeTab: 'information',
-    };
-  },
   computed: {
     patterns() {
       return filterPatternsToForm(this.info, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
@@ -59,8 +71,8 @@ export default {
 
     infosTableHeaders() {
       return [
-        { title: this.$t('common.name'), key: 'name' },
-        { title: this.$t('common.value'), key: 'value' },
+        { text: this.$t('common.name'), value: 'name' },
+        { text: this.$t('common.value'), value: 'value' },
       ];
     },
   },

@@ -15,46 +15,24 @@
 </template>
 
 <script>
-import { toRef } from 'vue';
-
 import { SIDE_BARS } from '@/constants';
 
-import { useNumbersChartFiltersPermissions } from '@/hooks/permissions/widgets/chart/filters';
-import { useWidgetSettings } from '@/hooks/widget/settings';
+import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
 
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
+import WidgetSettings from '../partials/widget-settings.vue';
 
 import NumbersWidgetForm from './form/numbers-widget-form.vue';
 
 export default {
   name: SIDE_BARS.numbersSettings,
-
   components: {
-    NumbersWidgetForm,
     WidgetSettings,
+    NumbersWidgetForm,
   },
-
-  props: {
-    sidebar: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    const sidebar = toRef(props, 'sidebar');
-    const { form, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
-    const { hasAccessToFilter } = useNumbersChartFiltersPermissions();
-
-    return {
-      form,
-      hasChanges,
-      submitting,
-      hasAccessToFilter,
-
-      close,
-      submit,
-    };
-  },
+  mixins: [
+    widgetSettingsMixin,
+    permissionsWidgetsNumbersFilters,
+  ],
 };
 </script>

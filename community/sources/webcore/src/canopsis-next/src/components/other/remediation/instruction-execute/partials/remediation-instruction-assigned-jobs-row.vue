@@ -1,13 +1,13 @@
 <template>
-  <tr class="jobs-assigned-table__row">
-    <td>
-      <c-layout align="center">
+  <tr>
+    <td class="pa-0">
+      <v-layout align-center>
         <v-btn
           v-if="executable"
           :disabled="isRunningJob || isFailedJob"
-          color="primary"
-          size="small"
+          class="primary"
           rounded
+          small
           block
           @click="$emit('execute-job', job)"
         >
@@ -19,20 +19,19 @@
         >
           {{ job.name }}
         </span>
-        <c-tooltip
+        <v-tooltip
           v-if="isFailedJob || isCompletedJob"
           :disabled="!hasStatusMessage"
           max-width="400"
-          location="end"
+          right
         >
-          <template #activator="{ props: activatorProps }">
+          <template #activator="{ on }">
             <v-btn
-              v-bind="activatorProps"
               :loading="outputPending"
               class="mr-1"
-              size="small"
-              variant="text"
               icon
+              small
+              v-on="on"
               @click="toggleExpanded"
             >
               <v-icon :color="isFailedJob ? 'error' : 'success'">
@@ -41,36 +40,38 @@
             </v-btn>
           </template>
           <div v-if="job.fail_reason">
-            <span>{{ t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;</span>
-            <span v-html="job.fail_reason" class="pre-wrap" />
+            <span>{{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;</span>
+            <span
+              v-html="job.fail_reason"
+              class="pre-wrap"
+            />
           </div>
-        </c-tooltip>
-        <c-tooltip
+        </v-tooltip>
+        <v-tooltip
           v-if="cancelable && isRunningJob && hasJobsInQueue"
-          location="top"
+          top
         >
-          <template #activator="{ props: activatorProps }">
+          <template #activator="{ on }">
             <v-btn
-              v-bind="activatorProps"
-              color="error"
-              class="ml-2"
-              size="small"
+              class="error ml-2"
               rounded
+              small
               block
+              v-on="on"
               @click="$emit('cancel-job-execution', job)"
             >
-              {{ t('common.cancel') }}
+              {{ $t('common.cancel') }}
             </v-btn>
           </template>
           <span>{{ queueNumberTooltip }}</span>
-        </c-tooltip>
-      </c-layout>
+        </v-tooltip>
+      </v-layout>
     </td>
     <td
       v-if="rowMessage"
       colspan="3"
     >
-      <div class="text-error text-center">
+      <div class="error--text text-center">
         {{ rowMessage }}
       </div>
     </td>
@@ -80,40 +81,36 @@
         class="text-center"
       >
         <span v-if="!isCancelledJob">
-          {{ convertDateToString(job.started_at, 'long', '-') }}
+          {{ job.started_at | date('long', '-') }}
         </span>
       </progress-cell>
       <progress-cell
         :pending="shownLaunchedPendingJob"
         class="text-center"
       >
-        <span>{{ convertDateToString(job.launched_at, 'long', '-') }}</span>
+        <span>{{ job.launched_at | date('long', '-') }}</span>
       </progress-cell>
       <progress-cell
         :pending="shownCompletedPendingJob"
         class="text-center"
       >
-        <span>{{ convertDateToString(job.completed_at, 'long', '-') }}</span>
+        <span>{{ job.completed_at | date('long', '-') }}</span>
       </progress-cell>
     </template>
   </tr>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { createNamespacedHelpers } from 'vuex';
 
-import { convertDateToString } from '@/helpers/date/date';
 import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/entities/remediation/job/form';
-
-import { useI18n } from '@/hooks/i18n';
-import { usePopups } from '@/hooks/popups';
-import { useRemediationJobExecution } from '@/hooks/store/modules/remediation-job-execution';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
 
+const { mapActions } = createNamespacedHelpers('remediationJobExecution');
+
 export default {
   components: { ProgressCell },
-
   props: {
     job: {
       type: Object,
@@ -132,89 +129,107 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      outputPending: false,
+    };
+  },
+  computed: {
+    isRunningJob() {
+      return isJobExecutionRunning(this.job);
+    },
 
-  emits: ['execute-job', 'cancel-job-execution', 'update:expanded'],
+    isCancelledJob() {
+      return isJobExecutionCancelled(this.job);
+    },
 
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const popups = usePopups();
-    const { fetchRemediationJobExecutionOutput } = useRemediationJobExecution();
-    const outputPending = ref(false);
+    isStartedJob() {
+      return !!this.job.started_at;
+    },
 
-    const isRunningJob = computed(() => isJobExecutionRunning(props.job));
-    const isCancelledJob = computed(() => isJobExecutionCancelled(props.job));
-    const isStartedJob = computed(() => !!props.job.started_at);
-    const isLaunchedJob = computed(() => !!props.job.launched_at);
-    const isCompletedJob = computed(() => !!props.job.completed_at);
-    const isFailedJob = computed(() => !!props.job.fail_reason);
-    const shownLaunchedPendingJob = computed(() => !isCancelledJob.value
-      && !isFailedJob.value
-      && !isLaunchedJob.value
-      && isStartedJob.value,
-    );
-    const shownCompletedPendingJob = computed(() => !isCancelledJob.value
-      && !isFailedJob.value
-      && !isCompletedJob.value
-      && isStartedJob.value
-      && isLaunchedJob.value,
-    );
-    const hasStatusMessage = computed(() => props.job.fail_reason);
-    const hasJobsInQueue = computed(() => props.job.queue_number > 0);
-    const statusIcon = computed(() => (isFailedJob.value ? 'warning' : 'check'));
-    const queueNumberTooltip = computed(() => t('remediation.instructionExecute.queueNumber', {
-      number: props.job.queue_number,
-      name: props.job.name,
-    }));
-    const rowMessage = computed(() => {
-      if (props.job.queue_number > 0) {
-        return t('remediation.instructionExecute.queueNumber', {
-          number: props.job.queue_number,
-          name: props.job.name,
+    isLaunchedJob() {
+      return !!this.job.launched_at;
+    },
+
+    isCompletedJob() {
+      return !!this.job.completed_at;
+    },
+
+    isFailedJob() {
+      return !!this.job.fail_reason;
+    },
+
+    shownLaunchedPendingJob() {
+      return !this.isCancelledJob
+        && !this.isFailedJob
+        && !this.isLaunchedJob
+        && this.isStartedJob;
+    },
+
+    shownCompletedPendingJob() {
+      return !this.isCancelledJob
+        && !this.isFailedJob
+        && !this.isCompletedJob
+        && this.isStartedJob
+        && this.isLaunchedJob;
+    },
+
+    hasStatusMessage() {
+      return this.job.fail_reason;
+    },
+
+    hasJobsInQueue() {
+      return this.job.queue_number > 0;
+    },
+
+    statusIcon() {
+      return this.isFailedJob ? 'warning' : 'check';
+    },
+
+    queueNumberTooltip() {
+      return this.$t('remediation.instructionExecute.queueNumber', {
+        number: this.job.queue_number,
+        name: this.job.name,
+      });
+    },
+
+    rowMessage() {
+      if (this.job.queue_number > 0) {
+        return this.$t('remediation.instructionExecute.queueNumber', {
+          number: this.job.queue_number,
+          name: this.job.name,
         });
       }
 
-      if (isCancelledJob.value) {
-        return t('remediation.instructionExecute.jobs.stopped');
+      if (this.isCancelledJob) {
+        return this.$t('remediation.instructionExecute.jobs.stopped');
       }
 
       return '';
-    });
+    },
+  },
+  methods: {
+    ...mapActions(['fetchOutput']),
 
-    const toggleExpanded = async () => {
-      if (!props.expanded) {
+    async toggleExpanded() {
+      if (!this.expanded) {
         try {
-          outputPending.value = true;
+          this.outputPending = true;
 
-          await fetchRemediationJobExecutionOutput({ id: props.job._id });
+          await this.fetchOutput({ id: this.job._id });
         } catch (err) {
           console.error(err);
 
-          popups.error({ text: err.message || err.description || t('errors.default') });
+          this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
+
+          console.warn(err);
         } finally {
-          outputPending.value = false;
+          this.outputPending = false;
         }
       }
 
-      emit('update:expanded', !props.expanded);
-    };
-
-    return {
-      t,
-      outputPending,
-      isRunningJob,
-      isCancelledJob,
-      isCompletedJob,
-      isFailedJob,
-      shownLaunchedPendingJob,
-      shownCompletedPendingJob,
-      hasStatusMessage,
-      hasJobsInQueue,
-      statusIcon,
-      queueNumberTooltip,
-      rowMessage,
-      convertDateToString,
-      toggleExpanded,
-    };
+      this.$emit('update:expanded', !this.expanded);
+    },
   },
 };
 </script>

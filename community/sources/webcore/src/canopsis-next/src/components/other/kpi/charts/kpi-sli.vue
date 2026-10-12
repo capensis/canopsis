@@ -1,7 +1,10 @@
 <template>
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
-    <kpi-sli-filters :query="query" :min-date="minDate" @update:query="query = $event" />
+    <kpi-sli-filters
+      v-model="query"
+      :min-date="minDate"
+    />
     <kpi-sli-chart
       :metrics="sliMetrics"
       :data-type="query.type"
@@ -17,82 +20,47 @@
 </template>
 
 <script>
-import { EXPORT_FETCHING_INTERVAL, KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
-import {
-  DATETIME_FORMATS,
-  EXPORT_STATUSES,
-  KPI_SLI_GRAPH_DATA_TYPE,
-  QUICK_RANGES,
-  SAMPLINGS,
-} from '@/constants';
+import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
+import { QUICK_RANGES, SAMPLINGS, KPI_SLI_GRAPH_DATA_TYPE, DATETIME_FORMATS } from '@/constants';
 
-import {
-  convertDateToStartOfDayTimestampByTimezone,
-  convertDateToString,
-} from '@/helpers/date/date';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
-import {
-  convertMetricsIntervalToTimestamp,
-  isMetricsQueryChanged,
-} from '@/helpers/entities/metric/query';
-import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
-import { saveFile } from '@/helpers/file/files';
-import { openUrlInNewTab } from '@/helpers/url';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
-import { useFilePolling } from '@/hooks/polling';
-import { useMetrics } from '@/hooks/store/modules/metrics';
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query/query';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
-import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
-import KpiSliChart from './partials/kpi-sli-chart.vue';
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
+import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
+
+const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-sli-chart.vue');
 
 export default {
   inject: ['$system'],
-
-  components: {
-    KpiErrorOverlay,
-    KpiSliChart,
-    KpiSliFilters,
-  },
-
-  mixins: [localQueryMixin, queryIntervalFilterMixin],
-
+  components: { KpiErrorOverlay, KpiSliFilters, KpiSliChart },
+  mixins: [
+    entitiesMetricsMixin,
+    localQueryMixin,
+    queryIntervalFilterMixin,
+    metricsExportMixinCreator({
+      createExport: 'createKpiSliExport',
+      fetchExport: 'fetchMetricExport',
+    }),
+  ],
   props: {
     unavailable: {
       type: Boolean,
       default: false,
     },
   },
-
-  setup() {
-    const { createKpiSliExport, fetchMetricExport, fetchSliMetricsWithoutStore } = useMetrics();
-
-    const { poll: generateFile } = useFilePolling({
-      createHandler: async (...args) => {
-        const { _id: id } = await createKpiSliExport(...args);
-
-        return { id };
-      },
-      fetchHandler: fetchMetricExport,
-      completedStatus: EXPORT_STATUSES.completed,
-      failedStatus: EXPORT_STATUSES.failed,
-      interval: EXPORT_FETCHING_INTERVAL,
-    });
-
-    return {
-      fetchSliMetricsWithoutStore,
-      generateFile,
-    };
-  },
-
   data() {
     return {
       sliMetrics: [],
       pending: false,
       fetchError: false,
-      downloading: false,
       minDate: null,
       query: {
         sampling: SAMPLINGS.day,
@@ -105,7 +73,14 @@ export default {
       },
     };
   },
-
+  computed: {
+    interval() {
+      return convertMetricIntervalToTimestamp({
+        interval: this.query.interval,
+        timezone: this.$system.timezone,
+      });
+    },
+  },
   watch: {
     unavailable: {
       immediate: true,
@@ -116,14 +91,13 @@ export default {
       },
     },
   },
-
   methods: {
     customQueryCondition(query, oldQuery) {
       return isMetricsQueryChanged(query, oldQuery, this.minDate);
     },
 
     getFileName() {
-      const { from, to } = this.getPreparedIntervalQuery();
+      const { from, to } = this.getIntervalQuery();
 
       const fromTime = convertDateToString(from, DATETIME_FORMATS.short);
       const toTime = convertDateToString(to, DATETIME_FORMATS.short);
@@ -133,15 +107,12 @@ export default {
 
     getQuery() {
       return {
-        ...this.getPreparedIntervalQuery(),
+        ...this.getIntervalQuery(),
+
         in_percents: this.query.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
         sampling: this.query.sampling,
         filter: this.query.filter,
       };
-    },
-
-    getPreparedIntervalQuery() {
-      return convertMetricsIntervalToTimestamp(this.query.interval, this.$system.timezone);
     },
 
     async fetchList() {
@@ -163,38 +134,9 @@ export default {
           this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
         }
       } catch (err) {
-        console.error(err);
-
         this.fetchError = true;
       } finally {
         this.pending = false;
-      }
-    },
-
-    async exportMetricsAsPng(blob) {
-      try {
-        await saveFile(blob, this.getFileName());
-      } catch (err) {
-        console.error(err);
-        this.$popups.error({ text: err.message || this.$t('errors.default') });
-      }
-    },
-
-    async exportMetricsAsCsv() {
-      try {
-        this.downloading = true;
-
-        const fileData = await this.generateFile({
-          data: this.getQuery(),
-        });
-
-        openUrlInNewTab(getExportMetricDownloadFileUrl(fileData._id ?? fileData.id));
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
-      } finally {
-        this.downloading = false;
       }
     },
   },

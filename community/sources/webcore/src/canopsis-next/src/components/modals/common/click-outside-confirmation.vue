@@ -1,82 +1,66 @@
 <template>
-  <c-modal-wrapper>
-    <template #title>
-      <span>{{ t('modals.clickOutsideConfirmation.title') }}</span>
+  <modal-wrapper>
+    <template #title="">
+      <span>{{ $t('modals.clickOutsideConfirmation.title') }}</span>
     </template>
-
-    <template #text>
+    <template #text="">
       <span class="text-subtitle-1">
-        {{ t('modals.clickOutsideConfirmation.text') }}
+        {{ $t('modals.clickOutsideConfirmation.text') }}
       </span>
     </template>
-
-    <template #actions>
-      <v-btn variant="text" @click="close">
-        {{ t('modals.clickOutsideConfirmation.buttons.backToForm') }}
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('modals.clickOutsideConfirmation.buttons.backToForm') }}
       </v-btn>
-
       <v-btn
         :loading="submitting"
-        :disabled="submitting"
+        :disabled="isDisabled"
         color="primary"
-        variant="outlined"
+        outlined
         @click.prevent="submit(false)"
       >
-        {{ t('modals.clickOutsideConfirmation.buttons.dontSave') }}
+        {{ $t('modals.clickOutsideConfirmation.buttons.dontSave') }}
       </v-btn>
-
       <v-btn
         :loading="submitting"
-        :disabled="submitting"
+        :disabled="isDisabled"
         color="primary"
         @click.prevent="submit(true)"
       >
-        {{ t('modals.clickOutsideConfirmation.buttons.save') }}
+        {{ $t('modals.clickOutsideConfirmation.buttons.save') }}
       </v-btn>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { MODALS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
+/**
+ * Click outside confirmation modal
+ */
 export default {
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+  name: MODALS.clickOutsideConfirmation,
+  components: { ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+  ],
+  methods: {
+    async submit(confirmed) {
+      await this.config.action(confirmed);
+
+      this.$modals.hide();
     },
-  },
-
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const submitting = ref(false);
-    const config = computed(() => props.modal.config ?? {});
-
-    const close = () => modals.hide({ id: props.modal.id });
-
-    const submit = async (confirmed) => {
-      submitting.value = true;
-
-      try {
-        await config.value.action?.(confirmed);
-
-        close();
-      } finally {
-        submitting.value = false;
-      }
-    };
-
-    return {
-      t,
-      submitting,
-      close,
-      submit,
-    };
   },
 };
 </script>

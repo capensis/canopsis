@@ -1,42 +1,43 @@
 import {
-  KPI_CHART_DEFAULT_HEIGHT,
-  MAX_METRICS_DISPLAY_COUNT,
-  TIME_UNITS,
   X_AXES_IDS,
   Y_AXES_IDS,
+  MAX_METRICS_DISPLAY_COUNT,
+  TIME_UNITS,
+  KPI_CHART_DEFAULT_HEIGHT,
 } from '@/constants';
 
+import { fromSeconds } from '@/helpers/date/duration';
+import {
+  isRatioMetric,
+  isTimeMetric,
+  isExternalDataSizeMetricUnit,
+  isExternalPercentMetricUnit,
+  isExternalTimeMetricUnit,
+} from '@/helpers/entities/metric/form';
+import {
+  convertDataSizeValueToTickString,
+  getDateLabelBySampling,
+  getMaxTimeDurationForMetrics,
+  hasHistoryData,
+  convertMetricValueToString,
+} from '@/helpers/entities/metric/list';
 import {
   convertDateToEndOfUnitTimestamp,
   convertDateToStartOfDayTimestamp,
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
-import { fromSeconds } from '@/helpers/date/duration';
-import {
-  isExternalDataSizeMetricUnit,
-  isExternalPercentMetricUnit,
-  isExternalTimeMetricUnit,
-  isRatioMetric,
-  isTimeMetric,
-} from '@/helpers/entities/metric/form';
-import {
-  convertDataSizeValueToTickString,
-  convertMetricValueToString,
-  getDateLabelBySampling,
-  getMaxTimeDurationForMetrics,
-  hasHistoryData,
-} from '@/helpers/entities/metric/list';
 
 export const chartMetricsOptionsMixin = {
   inject: ['$system'],
-
   computed: {
     hasHistoryData() {
       return hasHistoryData(this.metrics);
     },
 
     maxMetricsCount() {
-      return this.hasHistoryData ? MAX_METRICS_DISPLAY_COUNT / 2 : MAX_METRICS_DISPLAY_COUNT;
+      return this.hasHistoryData
+        ? MAX_METRICS_DISPLAY_COUNT / 2
+        : MAX_METRICS_DISPLAY_COUNT;
     },
 
     preparedMetrics() {
@@ -46,7 +47,9 @@ export const chartMetricsOptionsMixin = {
     realMetricsCount() {
       const length = this.metrics?.length ?? 0;
 
-      return this.hasHistoryData ? length * 2 : length;
+      return this.hasHistoryData
+        ? length * 2
+        : length;
     },
 
     tooltipBodyFontSize() {
@@ -102,6 +105,7 @@ export const chartMetricsOptionsMixin = {
           color: 'gray',
           font: {
             ...this.labelsFont,
+
             style: 'italic',
           },
         };
@@ -114,16 +118,14 @@ export const chartMetricsOptionsMixin = {
       return {
         [X_AXES_IDS.default]: {
           type: 'time',
-          min:
-            convertDateToTimestampByTimezone(
-              convertDateToStartOfDayTimestamp(this.interval.from),
-              this.$system.timezone,
-            ) * 1000,
-          max:
-            convertDateToTimestampByTimezone(
-              convertDateToEndOfUnitTimestamp(this.interval.to, TIME_UNITS.day),
-              this.$system.timezone,
-            ) * 1000,
+          min: convertDateToTimestampByTimezone(
+            convertDateToStartOfDayTimestamp(this.interval.from),
+            this.$system.timezone,
+          ) * 1000,
+          max: convertDateToTimestampByTimezone(
+            convertDateToEndOfUnitTimestamp(this.interval.to, TIME_UNITS.day),
+            this.$system.timezone,
+          ) * 1000,
           ticks: {
             min: this.minDate * 1000,
             max: Date.now(),
@@ -181,14 +183,10 @@ export const chartMetricsOptionsMixin = {
       };
     },
   },
-
   methods: {
     getChartTooltipLabel({ raw, dataset }) {
-      const value = convertMetricValueToString({
-        value: raw.y,
-        metric: dataset.metric,
-        unit: dataset.unit,
-      });
+      const value = convertMetricValueToString({ value: raw.y, metric: dataset.metric, unit: dataset.unit });
+
       const messageKey = `kpi.metrics.tooltip.${dataset.metric}`;
 
       return this.$te(messageKey)

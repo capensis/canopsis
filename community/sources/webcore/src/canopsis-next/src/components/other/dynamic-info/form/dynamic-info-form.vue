@@ -1,32 +1,29 @@
 <template>
-  <c-layout gap="2" column>
-    <c-enabled-field v-model="enabledField" :label="$t('common.enabled')" with-background />
-
+  <v-layout class="gap-2" column>
+    <c-enabled-field v-field="form.enabled" with-background />
     <c-form-general-patterns-tabs
-      :form="formValues"
+      v-field="form"
       :rule-id="ruleId"
       :type="type"
     >
       <template #general="{ setRef, templateVars, copyVars }">
         <dynamic-info-general-form
+          v-field="form"
           :ref="setRef"
+          :copy-vars="copyVars"
           :is-disabled-id-field="isDisabledIdField"
           :template-vars="templateVars"
-          :copy-vars="copyVars"
         />
       </template>
-
       <template #patterns="{ setRef }">
-        <dynamic-info-patterns-form :ref="setRef" />
+        <dynamic-info-patterns-form v-field="form.patterns" :ref="setRef" />
       </template>
     </c-form-general-patterns-tabs>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
-
-import { useFormContext } from '@/hooks/form';
 
 import DynamicInfoGeneralForm from './dynamic-info-general-form.vue';
 import DynamicInfoPatternsForm from './dynamic-info-patterns-form.vue';
@@ -36,8 +33,15 @@ export default {
     DynamicInfoGeneralForm,
     DynamicInfoPatternsForm,
   },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     ruleId: {
       type: String,
       default: undefined,
@@ -47,17 +51,10 @@ export default {
       default: false,
     },
   },
-
   setup() {
-    const form = useFormContext();
-    const enabledField = form.model('enabled');
     const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
 
-    return {
-      formValues: form.values,
-      enabledField,
-      type,
-    };
+    return { type };
   },
 };
 </script>

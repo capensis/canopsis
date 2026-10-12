@@ -11,45 +11,41 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #type="{ item }">
-      {{ t(`remediation.instruction.types.${item.type}`) }}
+      {{ $t(`remediation.instruction.types.${item.type}`) }}
     </template>
     <template #started_at="{ item }">
-      {{ dateToString(item.started_at) }}
+      {{ item.started_at | date('long', '-') }}
     </template>
     <template #completed_at="{ item }">
-      {{ dateToString(item.completed_at) }}
+      {{ item.completed_at | date('long', '-') }}
     </template>
     <template #status="{ item }">
       <remediation-instruction-execution-status-icon :status="item.status" />
     </template>
     <template #expand="{ item }">
-      <v-card class="tab-item-card" variant="flat">
-        <v-card-text>
-          <remediation-instruction-executions-expand-panel :steps="item.steps" />
-        </v-card-text>
-      </v-card>
+      <v-layout class="pa-3 secondary lighten-1">
+        <v-flex xs12>
+          <v-card class="tab-item-card">
+            <v-card-text>
+              <remediation-instruction-executions-expand-panel :steps="item.steps" />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { DATETIME_FORMATS } from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
-
 import RemediationInstructionExecutionStatusIcon from './partials/remediation-instruction-execution-status-icon.vue';
-import RemediationInstructionExecutionsExpandPanel from './partials/remediation-instruction-executions-expand-panel.vue';
+import RemediationInstructionExecutionsExpandPanel
+  from './partials/remediation-instruction-executions-expand-panel.vue';
 
 export default {
   components: {
     RemediationInstructionExecutionStatusIcon,
     RemediationInstructionExecutionsExpandPanel,
   },
-
   props: {
     executions: {
       type: Array,
@@ -68,27 +64,17 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options'],
-
-  setup() {
-    const { t } = useI18n();
-
-    const headers = computed(() => [
-      { text: t('remediation.instruction.name'), value: 'name' },
-      { text: t('common.type'), value: 'type' },
-      { text: t('remediation.instructionExecute.jobs.launchedAt'), value: 'started_at' },
-      { text: t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at' },
-      { text: t('common.author'), value: 'author.display_name' },
-      { text: t('common.status'), value: 'status' },
-    ]);
-    const dateToString = date => convertDateToString(date, DATETIME_FORMATS.long, '-');
-
-    return {
-      dateToString,
-      headers,
-      t,
-    };
+  computed: {
+    headers() {
+      return [
+        { text: this.$t('remediation.instruction.name'), value: 'name' },
+        { text: this.$t('common.type'), value: 'type' },
+        { text: this.$t('remediation.instructionExecute.jobs.launchedAt'), value: 'started_at' },
+        { text: this.$t('remediation.instructionExecute.jobs.completedAt'), value: 'completed_at' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
+        { text: this.$t('common.status'), value: 'status' },
+      ];
+    },
   },
 };
 </script>

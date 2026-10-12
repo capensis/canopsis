@@ -1,0 +1,91 @@
+<template>
+  <c-layout align="center" justify-space-between>
+    <v-label>{{ label }}</v-label>
+    <v-col cols="3">
+      <v-select
+        :model-value="value"
+        :items="types"
+        class="mt-0 pt-0"
+        hide-details
+        @update:model-value="updateModel"
+      >
+        <template v-for="slotName in ['selection', 'item']" :key="slotName" #[slotName]="{ item }">
+          <svg viewBox="0 0 50 40" width="30" height="30">
+            <points-line-path
+              :points="points"
+              :type="getItemValue(item)"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+        </template>
+      </v-select>
+    </v-col>
+  </c-layout>
+</template>
+
+<script>
+import { LINE_TYPES } from '@/constants';
+
+import { formBaseMixin } from '@/mixins/form';
+
+import PointsLinePath from '@/components/common/flowchart/common/points-line-path.vue';
+
+export default {
+  components: { PointsLinePath },
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
+  emits: ['input', 'update:value'],
+  props: {
+    value: {
+      type: String,
+      required: false,
+    },
+    label: {
+      type: String,
+      required: false,
+    },
+    averagePoints: {
+      type: Array,
+      required: false,
+    },
+  },
+  computed: {
+    points() {
+      const maxY = 39;
+      const maxX = 49;
+
+      const startPoint = { x: 1, y: 1 };
+      const endPoint = { x: maxX, y: maxY };
+
+      if (this.averagePoints) {
+        const [start, end] = this.averagePoints;
+
+        if (start.y > end.y) {
+          startPoint.y = maxY;
+          endPoint.y = 1;
+        }
+
+        if (start.x > end.x) {
+          startPoint.x = maxX;
+          endPoint.x = 1;
+        }
+      }
+
+      return [startPoint, endPoint];
+    },
+
+    types() {
+      return Object.values(LINE_TYPES);
+    },
+  },
+  methods: {
+    getItemValue(item) {
+      return item?.raw ?? item?.value ?? item;
+    },
+  },
+};
+</script>

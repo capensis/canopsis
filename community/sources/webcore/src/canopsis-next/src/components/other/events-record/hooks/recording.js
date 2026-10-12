@@ -2,36 +2,52 @@ import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useEventsRecord } from '@/hooks/store/modules/events-record';
+import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
 
+/**
+ * Hook to manage event recording functionality.
+ *
+ * @param {Function} [fetchListHandler = () => {}] - A function to fetch the list of events records.
+ * @returns {Object} An object containing methods to start and stop event recording.
+ */
 export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
   const { t } = useI18n();
   const modals = useModals();
 
-  const { startCurrentEventsRecord, stopCurrentEventsRecord } = useEventsRecord();
+  const { startEventsRecordCurrent, stopEventsRecordCurrent } = useEventsRecordCurrent();
 
-  const startRecording = () =>
-    modals.show({
-      name: MODALS.applyEventFilter,
-      config: {
-        title: t('eventsRecord.launchEventRecording'),
-        required: false,
-        action: eventPattern => startCurrentEventsRecord({ data: { event_pattern: eventPattern } }),
-        afterSubmit: fetchListHandler,
+  /**
+   * Start recording events based on a specified event pattern.
+   */
+  const startRecording = () => modals.show({
+    name: MODALS.applyEventFilter,
+    config: {
+      title: t('eventsRecord.launchEventRecording'),
+      required: false,
+      action: async (eventPattern) => {
+        const result = await startEventsRecordCurrent({ data: { event_pattern: eventPattern } });
+
+        return result;
       },
-    });
+      afterSubmit: fetchListHandler,
+    },
+  });
 
-  const stopRecording = recordingId =>
-    modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          await stopCurrentEventsRecord({ id: recordingId });
+  /**
+   * Stop the event recording by id.
+   *
+   * @param {string} [recordingId] - ID of the recording to stop. Required when multiple recordings exist.
+   */
+  const stopRecording = recordingId => modals.show({
+    name: MODALS.confirmation,
+    config: {
+      action: async () => {
+        await stopEventsRecordCurrent({ id: recordingId });
 
-          return fetchListHandler();
-        },
+        return fetchListHandler();
       },
-    });
+    },
+  });
 
   return {
     startRecording,

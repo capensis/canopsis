@@ -1,14 +1,14 @@
 <template>
-  <c-layout class="mb-3 remediation-instruction-stats-summary-row">
-    <div class="remediation-instruction-stats-summary-row--label">
+  <v-layout class="mb-3 remediation-instruction-stats-summary-row">
+    <v-flex class="remediation-instruction-stats-summary-row--label">
       <span class="font-weight-bold">
         {{ label }}
       </span>
-    </div>
-    <div>
+    </v-flex>
+    <v-flex>
       <slot>{{ value }}</slot>
-    </div>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -30,7 +30,6 @@ export default {
 .remediation-instruction-stats-summary-row {
   &--label {
     max-width: 200px;
-    width: 200px;
   }
 }
 </style>

@@ -3,8 +3,10 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
 /**
  * @typedef {Object} HealthcheckNode
  * @property {string} name
- * @property {'healthy'|'degraded'|'unhealthy'} status
- * @property {string[]} [issues]
+ * @property {boolean} is_running
+ * @property {boolean} [is_queue_overflown]
+ * @property {boolean} [is_too_few_instances]
+ * @property {boolean} [is_diff_instances_config]
  * @property {boolean} [is_unknown]
  * @property {number} [nodes]
  * @property {number} [running_nodes]
@@ -31,10 +33,9 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
  * @param {number} factor
  * @returns {number}
  */
-export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) =>
-  HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace *
-  HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor *
-  factor;
+export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) => HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace
+  * HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor
+  * factor;
 
 /**
  * Get HTML div element for healthcheck network graph info label
@@ -43,5 +44,4 @@ export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) =>
  * @param {boolean} [hasError=false]
  * @returns {string}
  */
-export const getHealthcheckInfoDiv = (message, hasError = false) =>
-  `<div class="text-body-1 text-medium-emphasis pre-wrap ${hasError ? 'text-error' : ''}">${message}</div>`;
+export const getHealthcheckInfoDiv = (message, hasError = false) => `<div class="body-1 grey--text darken-3 pre-wrap ${hasError ? 'error--text' : ''}">${message}</div>`;

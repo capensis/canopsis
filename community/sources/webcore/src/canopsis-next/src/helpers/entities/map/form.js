@@ -3,9 +3,9 @@ import { keyBy, omit } from 'lodash';
 import { COLORS } from '@/config';
 import { MAP_TYPES, MERMAID_THEMES, TREE_OF_DEPENDENCIES_TYPES } from '@/constants';
 
-import { addKeyInEntities, mapIds, removeKeyFromEntities } from '@/helpers/array';
+import { uuid } from '@/helpers/uuid';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
-import { uid as uuid } from '@/helpers/uid';
+import { addKeyInEntities, mapIds, removeKeyFromEntities } from '@/helpers/array';
 
 /**
  * @typedef {Object} MapCommonFields
@@ -166,7 +166,7 @@ import { uid as uuid } from '@/helpers/uid';
 export const mermaidPointToForm = (point = {}) => ({
   x: point.x,
   y: point.y,
-  entity: point.entity ?? '',
+  entity: point.entity?._id ?? '',
   map: point.map?._id,
   _id: point._id ?? uuid(),
 });
@@ -180,7 +180,7 @@ export const mermaidPointToForm = (point = {}) => ({
 export const flowchartPointToForm = (point = {}) => ({
   x: point.x,
   y: point.y,
-  entity: point.entity ?? '',
+  entity: point.entity?._id ?? '',
   shape: point.shape ?? '',
   map: point.map?._id,
   _id: point._id ?? uuid(),
@@ -206,7 +206,7 @@ export const geomapPointToForm = (point = {}) => ({
     lng: 0,
   },
   is_entity_coordinates: !!point.entity?.coordinates,
-  entity: point.entity ?? '',
+  entity: point.entity?._id ?? '',
   map: point.map?._id,
   _id: point._id ?? uuid(),
 });
@@ -275,13 +275,12 @@ export const mapMermaidParametersToForm = (parameters = {}) => ({
  * @param {MapTreeOfDependenciesEntity[] | [{}]} entities
  * @returns {MapTreeOfDependenciesEntityForm[]}
  */
-export const mapTreeOfDependenciesParametersEntitiesToForm = (entities = [{}]) =>
-  addKeyInEntities(
-    entities.map(({ entity, pinned_entities: pinned = [] }) => ({
-      entity,
-      pinned,
-    })),
-  );
+export const mapTreeOfDependenciesParametersEntitiesToForm = (entities = [{}]) => (
+  addKeyInEntities(entities.map(({ entity, pinned_entities: pinned = [] }) => ({
+    entity,
+    pinned,
+  })))
+);
 
 /**
  * Convert map mermaid parameters object to form
@@ -325,11 +324,12 @@ export const mapToForm = (map = {}) => {
  * @param {MapTreeOfDependenciesEntityForm[]} entities
  * @returns {MapTreeOfDependenciesEntityRequest[]}
  */
-export const formToMapTreeOfDependenciesParametersEntities = (entities = []) =>
+export const formToMapTreeOfDependenciesParametersEntities = (entities = []) => (
   removeKeyFromEntities(entities).map(({ entity, pinned }) => ({
     entity: entity._id,
     pinned_entities: mapIds(pinned),
-  }));
+  }))
+);
 
 /**
  * Convert form to tree of dependencies map
@@ -341,9 +341,7 @@ export const formToMapTreeOfDependenciesParametersEntities = (entities = []) =>
 export const formToMapTreeOfDependenciesParameters = ({ impact, ...form }) => ({
   ...form,
 
-  type: impact
-    ? TREE_OF_DEPENDENCIES_TYPES.impactChain
-    : TREE_OF_DEPENDENCIES_TYPES.treeOfDependencies,
+  type: impact ? TREE_OF_DEPENDENCIES_TYPES.impactChain : TREE_OF_DEPENDENCIES_TYPES.treeOfDependencies,
   entities: formToMapTreeOfDependenciesParametersEntities(form.entities),
 });
 
@@ -353,11 +351,12 @@ export const formToMapTreeOfDependenciesParameters = ({ impact, ...form }) => ({
  * @param {MapFlowchartPointForm[]} points
  * @returns {MapFlowchartPoint[]}
  */
-export const formPointsToMapFlowchartPoints = points =>
-  points.map(point => ({
-    ...omit(point, point.shape ? ['x', 'y'] : ['shape']),
-    entity: point.entity?._id ?? point.entity,
-  }));
+export const formPointsToMapFlowchartPoints = points => points.map(
+  point => omit(
+    point,
+    point.shape ? ['x', 'y'] : ['shape'],
+  ),
+);
 
 /**
  * Convert form parameters to flowchart map parameters
@@ -381,25 +380,7 @@ export const formToMapFlowchartParameters = form => ({
 export const formToMapGeomapParameters = form => ({
   ...form,
 
-  points: form.points.map(point => ({
-    ...omit(point, ['is_entity_coordinates']),
-    entity: point.entity?._id ?? point.entity,
-  })),
-});
-
-/**
- * Convert form parameters to mermaid parameters
- *
- * @param {MapMermaidParametersForm} form
- * @returns {MapMermaidParameters}
- */
-export const formToMapMermaidParameters = form => ({
-  ...form,
-
-  points: form.points.map(point => ({
-    ...point,
-    entity: point.entity?._id ?? point.entity,
-  })),
+  points: form.points.map(point => omit(point, ['is_entity_coordinates'])),
 });
 
 /**
@@ -412,7 +393,6 @@ export const formToMap = (form) => {
   const prepare = {
     [MAP_TYPES.geo]: formToMapGeomapParameters,
     [MAP_TYPES.flowchart]: formToMapFlowchartParameters,
-    [MAP_TYPES.mermaid]: formToMapMermaidParameters,
     [MAP_TYPES.treeOfDependencies]: formToMapTreeOfDependenciesParameters,
   }[form.type];
 

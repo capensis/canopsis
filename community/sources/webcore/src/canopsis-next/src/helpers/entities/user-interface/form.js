@@ -1,5 +1,7 @@
 import { DEFAULT_APP_TITLE, DEFAULT_LOCALE, POPUP_AUTO_CLOSE_DELAY } from '@/config';
-import { DEFAULT_USER_INTERFACE_DATE_FORMAT, TIME_UNITS } from '@/constants';
+import { TIME_UNITS } from '@/constants';
+
+import i18n from '@/i18n';
 
 import { durationToForm } from '@/helpers/date/duration';
 
@@ -16,7 +18,6 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} footer
  * @property {string} login_page_description
  * @property {string} timezone
- * @property {string} date_format
  * @property {boolean} allow_change_severity_to_info
  * @property {boolean} show_header_on_kiosk_mode
  * @property {boolean} required_instruction_approve
@@ -72,12 +73,11 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   show_header_on_kiosk_mode: userInterface.show_header_on_kiosk_mode ?? false,
   required_instruction_approve: userInterface.required_instruction_approve ?? false,
   timezone: userInterface.timezone ?? '',
-  date_format: userInterface.date_format ?? DEFAULT_USER_INTERFACE_DATE_FORMAT,
   max_matched_items: userInterface.max_matched_items ?? '',
   check_count_request_timeout: userInterface.check_count_request_timeout ?? '',
   popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
   disabled_transitions: userInterface.disabled_transitions ?? false,
   auto_suggest_pbehavior_name: userInterface.auto_suggest_pbehavior_name ?? false,
   default_color_theme: userInterface.default_color_theme?._id ?? '',
-  version_description: userInterface.version_description ?? '',
+  version_description: userInterface.version_description || i18n.t('userInterface.defaultVersionDescription'),
 });

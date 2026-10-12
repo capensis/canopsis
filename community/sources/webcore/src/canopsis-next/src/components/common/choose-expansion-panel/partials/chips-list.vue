@@ -1,31 +1,36 @@
 <template>
-  <c-layout align="center" wrap>
-    <div class="flex-grow-1">
+  <v-layout
+    wrap
+    align-center
+  >
+    <v-flex xs11>
       <v-chip
         v-for="entity in entities"
         :key="getEntityKey(entity)"
-        :closable="!isDisabledEntity(entity)"
-        :class="{ 'bg-error text-white': isEntityExists(entity) }"
+        :close="!isDisabledEntity(entity)"
+        :class="{ 'error white--text': isEntityExists(entity) }"
         @click:close="$emit('remove', entity)"
       >
         {{ contentKey ? entity[contentKey] : entity }}
       </v-chip>
-    </div>
-    <div v-if="clearable && removableEntities.length">
+    </v-flex>
+    <v-flex
+      v-if="clearable && removableEntities.length"
+      xs1
+    >
       <c-action-btn
         :tooltip="$t('common.deleteAll')"
         type="delete"
         color="red"
-        size="small"
+        small
         @click="clear"
       />
-    </div>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
 export default {
-  emits: ['remove', 'clear'],
   props: {
     entities: {
       type: Array,

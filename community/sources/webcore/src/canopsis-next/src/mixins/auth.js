@@ -1,36 +1,27 @@
-import { mapActions, mapState, mapStores } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
-import {
-  GROUPS_NAVIGATION_TYPES,
-  CRUD_ACTIONS,
-  ROUTES_NAMES,
-  VIEW_USER_PERMISSIONS_NAMES,
-} from '@/constants';
+import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES, ROUTES_NAMES, VIEW_USER_PERMISSIONS_NAMES } from '@/constants';
 
-import { useAuthStore } from '@/stores/modules/auth';
+import { checkUserAccess } from '@/helpers/entities/permissions/list';
 
-import { checkUserAccess } from '@/helpers/permission';
+const { mapGetters, mapActions } = createNamespacedHelpers('auth');
 
 export const authMixin = {
   computed: {
-    ...mapStores(useAuthStore),
-    ...mapState(useAuthStore, {
-      isLoggedIn: 'isLoggedIn',
-      currentUser: 'currentUser',
+    ...mapGetters(['isLoggedIn', 'currentUser', 'currentUserPermissionsById', 'currentUserViewPermissionsByViewId']),
+    ...mapGetters({
       currentUserPending: 'pending',
-      currentUserPermissionsById: 'currentUserPermissionsById',
-      currentUserViewPermissionsByViewId: 'currentUserViewPermissionsByViewId',
     }),
 
-    isShownGroupsTopBar() {
-      return this.currentUser?.ui_groups_navigation_type === GROUPS_NAVIGATION_TYPES.topBar;
-    },
-
+    /**
+     * Show groups side-bar only for ui_groups_navigation_type='side-bar' or for mobile and tablet
+     *
+     * @returns {boolean|*}
+     */
     isShownGroupsSideBar() {
-      const groupsNavigationType = this.currentUser?.ui_groups_navigation_type;
+      const { ui_groups_navigation_type: groupsNavigationType } = this.currentUser;
       const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
-      const isMobileOrTablet = this.$vuetify.display.width < MEDIA_QUERIES_BREAKPOINTS.t;
+      const isMobileOrTablet = this.$options.filters.mq(this.$mq, { m: true, l: false });
 
       return isSelectedSideBar || isMobileOrTablet || !this.isShownGroupsTopBar;
     },
@@ -48,9 +39,8 @@ export const authMixin = {
       );
     },
   },
-
   methods: {
-    ...mapActions(useAuthStore, [
+    ...mapActions([
       'login',
       'applyAccessToken',
       'logout',

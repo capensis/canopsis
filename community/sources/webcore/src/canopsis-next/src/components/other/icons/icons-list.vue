@@ -11,32 +11,31 @@
     <template #icon="{ item }">
       <custom-icon :content="item.content" />
     </template>
-
     <template #updated="{ item }">
-      {{ formatDate(item.updated) }}
+      {{ item.updated | date }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout>
-        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
-        <c-action-btn v-if="removable" type="delete" @click.stop="$emit('remove', item)" />
-      </c-layout>
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click.stop="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click.stop="$emit('remove', item)"
+        />
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
-
 import CustomIcon from './partials/custom-icon.vue';
 
 export default {
   components: { CustomIcon },
-
   props: {
     options: {
       type: Object,
@@ -67,49 +66,29 @@ export default {
       default: false,
     },
   },
-
-  emits: ['edit', 'remove', 'update:options'],
-
-  setup() {
-    const { t } = useI18n();
-    const formatDate = value => convertDateToString(value);
-
-    const headers = computed(() => [
-      {
-        text: t('common.icon', 1),
-        value: 'icon',
-        sortable: false,
-        cellProps: {
-          class: 'icons-list__icon-cell',
+  computed: {
+    headers() {
+      return [
+        {
+          text: this.$tc('common.icon', 1),
+          value: 'icon',
+          sortable: false,
         },
-      },
-      {
-        text: t('common.title'),
-        value: 'title',
-      },
-      {
-        text: t('common.lastModifiedOn'),
-        value: 'updated',
-      },
-      {
-        text: t('common.actionsLabel'),
-        value: 'actions',
-        sortable: false,
-      },
-    ]);
-
-    return {
-      headers,
-      formatDate,
-    };
+        {
+          text: this.$t('common.title'),
+          value: 'title',
+        },
+        {
+          text: this.$t('common.lastModifiedOn'),
+          value: 'updated',
+        },
+        {
+          text: this.$t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+        },
+      ];
+    },
   },
 };
 </script>
-
-<style lang="scss">
-.icons-list__icon-cell {
-  max-width: 24px;
-  max-height: 24px;
-  overflow: hidden;
-}
-</style>

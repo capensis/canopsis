@@ -1,128 +1,128 @@
 <template>
-  <div :class="{ 'view-fab-btns__fullscreen': isFullscreen }" class="view-fab-btns fab ma-2">
-    <c-layout gap="3">
+  <div
+    :class="{ 'view-fab-btns__fullscreen': isFullscreen }"
+    class="view-fab-btns fab ma-2"
+  >
+    <v-layout class="gap-3">
       <view-scroll-top-btn />
       <view-executions-btn v-if="hasAccessToExecuteInstruction" />
       <view-periodic-refresh-btn />
       <view-screen-mode-btn
         v-if="isFullscreen"
         :value="activeViewScreenMode"
-        large
         top
         @input="changeScreenMode"
       />
       <c-speed-dial
         v-else
-        :close-on-content-click="false"
-        location="top center"
+        direction="top"
+        transition="slide-y-reverse-transition"
+        eager
       >
-        <template #activator="{ props: activatorProps, isActive }">
+        <template #activator="{ bind }">
           <v-btn
-            v-bind="activatorProps"
-            :class="{ 'c-speed-dial__btn--active': isActive }"
-            class="c-speed-dial__btn"
+            v-bind="bind"
             color="primary"
-            size="x-large"
-            icon
+            dark
+            fab
           >
-            <v-icon icon="menu" />
-            <v-icon icon="close" />
+            <v-icon>menu</v-icon>
+            <v-icon>close</v-icon>
           </v-btn>
         </template>
-
-        <div v-if="sharable" key="share">
-          <view-share-link-btn :view="view" :tab="activeTab" />
-        </div>
-
-        <div key="screen-mode">
-          <view-screen-mode-btn :value="activeViewScreenMode" left @input="changeScreenMode" />
-        </div>
-
-        <div v-if="updatable" key="editing">
-          <view-editing-btn />
-        </div>
-
-        <div v-if="updatable" key="add-widget">
-          <c-tooltip location="left">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                class="view-fab-btns__add-widget-btn"
-                size="default"
-                icon
-                @click.stop="showCreateWidgetModal"
-              >
-                <v-icon icon="add" size="small" />
-              </v-btn>
-            </template>
-            <span>{{ $t('common.addWidget') }}</span>
-          </c-tooltip>
-        </div>
-
-        <div v-if="updatable" key="add-tab">
-          <c-tooltip location="left">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="green"
-                size="default"
-                icon
-                @click.stop="showCreateTabModal"
-              >
-                <v-icon icon="add" size="small" />
-              </v-btn>
-            </template>
-            <span>{{ $t('common.addTab') }}</span>
-          </c-tooltip>
-        </div>
+        <view-share-link-btn
+          v-if="sharable"
+          :view="view"
+          :tab="activeTab"
+        />
+        <view-screen-mode-btn
+          :value="activeViewScreenMode"
+          left
+          small
+          @input="changeScreenMode"
+        />
+        <view-editing-btn v-if="updatable" />
+        <v-tooltip left>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="updatable"
+              class="view-fab-btns__add-widget-btn"
+              fab
+              dark
+              small
+              v-on="on"
+              @click.stop="showCreateWidgetModal"
+            >
+              <v-icon small>
+                add
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('common.addWidget') }}</span>
+        </v-tooltip>
+        <v-tooltip left>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="updatable"
+              color="green"
+              fab
+              dark
+              small
+              v-on="on"
+              @click.stop="showCreateTabModal"
+            >
+              <v-icon small>
+                add
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('common.addTab') }}</span>
+        </v-tooltip>
       </c-speed-dial>
-    </c-layout>
+    </v-layout>
   </div>
 </template>
 
 <script>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 import {
-  FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
-  KEYS_TO_VIEW_SCREEN_MODES,
   MODALS,
-  ROUTES_NAMES,
-  USER_PERMISSIONS,
+  KEYS_TO_VIEW_SCREEN_MODES,
   VIEW_SCREEN_MODES,
+  FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
+  USER_PERMISSIONS,
 } from '@/constants';
 
-import { useCanPermission } from '@/hooks/auth';
-import { useFullscreen } from '@/hooks/fullscreen';
+import { useActiveView } from '@/hooks/store/modules/active-view';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
-import { useActiveView } from '@/hooks/store/modules/active-view';
-import { useInfo } from '@/hooks/store/modules/info';
+import { useFullscreen } from '@/hooks/fullscreen';
 import { useView } from '@/hooks/store/modules/view';
 import { useViewRouter } from '@/hooks/view/router';
+import { useCanPermission } from '@/hooks/auth';
 
-import ViewEditingBtn from './view-editing-btn.vue';
-import ViewExecutionsBtn from './view-executions-btn.vue';
-import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
-import ViewScreenModeBtn from './view-screen-mode-btn.vue';
-import ViewScrollTopBtn from './view-scroll-top-btn.vue';
 import ViewShareLinkBtn from './view-share-link-btn.vue';
+import ViewEditingBtn from './view-editing-btn.vue';
+import ViewScrollTopBtn from './view-scroll-top-btn.vue';
+import ViewScreenModeBtn from './view-screen-mode-btn.vue';
+import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
+import ViewExecutionsBtn from './view-executions-btn.vue';
 
 export default {
   components: {
-    ViewEditingBtn,
-    ViewExecutionsBtn,
-    ViewPeriodicRefreshBtn,
-    ViewScreenModeBtn,
     ViewShareLinkBtn,
+    ViewEditingBtn,
     ViewScrollTopBtn,
+    ViewScreenModeBtn,
+    ViewPeriodicRefreshBtn,
+    ViewExecutionsBtn,
   },
   props: {
     activeTab: {
       type: Object,
       required: false,
-      default: null,
     },
     updatable: {
       type: Boolean,
@@ -141,55 +141,47 @@ export default {
     const popups = usePopups();
     const fullscreen = useFullscreen();
     const { route, redirectToFirstTab } = useViewRouter();
+
     const { createViewTab } = useView();
-    const { showHeaderOnKioskMode } = useInfo();
-    const { view, activeViewScreenMode, fetchActiveView, toggleEditing, setActiveViewScreenMode } =
-      useActiveView();
-    const { hasAccess: hasAccessToExecuteInstruction } = useCanPermission(
-      USER_PERMISSIONS.business.alarmsList.actions.executeInstruction,
-    );
+    const {
+      view,
+      activeViewScreenMode,
+      fetchActiveView,
+      toggleEditing,
+      setActiveViewScreenMode,
+    } = useActiveView();
 
-    const isHeaderShown = () => {
-      if (
-        [VIEW_SCREEN_MODES.fullscreen, VIEW_SCREEN_MODES.kioskFullscreen].includes(
-          activeViewScreenMode.value,
-        )
-      ) {
-        return false;
-      }
+    const {
+      hasAccess: hasAccessToExecuteInstruction,
+    } = useCanPermission(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
 
-      if (
-        [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(
-          activeViewScreenMode.value,
-        ) ||
-        route.name === ROUTES_NAMES.viewKiosk
-      ) {
-        return showHeaderOnKioskMode.value;
-      }
-
-      return !route.meta?.hideHeader;
-    };
-
+    /**
+     * Requests fullscreen on the app root (`[data-app]`), toggles `view-fullscreen` on the active tab
+     * container, and maps exit fullscreen back to a default screen mode when applicable.
+     */
     const enterFullscreen = () => {
       if (!props.activeTab) {
         popups.warning({ text: t('view.errors.emptyTabs') });
         return;
       }
 
-      const element = document.querySelector('[data-app]') ?? document.getElementById('app');
+      const element = document.querySelector('[data-app]');
       const viewElement = document.getElementById(`view-tab-${props.activeTab._id}`);
 
-      if (!element || !viewElement) {
+      if (!element) {
         return;
       }
 
       fullscreen.request(element, {
         fullscreenClass: 'full-screen',
         callback: (value) => {
-          viewElement.classList.toggle('view-fullscreen', value);
-          viewElement.classList.toggle('view-fullscreen--with-top-bar', value && isHeaderShown());
-          isFullscreen.value = value;
+          if (value) {
+            viewElement.classList.add('view-fullscreen');
+          } else {
+            viewElement.classList.remove('view-fullscreen');
+          }
 
+          isFullscreen.value = value;
           const newMode = FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[activeViewScreenMode.value];
 
           if (!value && newMode) {
@@ -199,8 +191,16 @@ export default {
       });
     };
 
+    /**
+     * Leaves browser fullscreen if active.
+     */
     const exitFullscreen = () => fullscreen.exit();
 
+    /**
+     * Updates the active view screen mode; enters fullscreen for fullscreen/kiosk modes and exits otherwise.
+
+     * @param {string} newMode - One of `VIEW_SCREEN_MODES` values.
+     */
     const changeScreenMode = (newMode) => {
       setActiveViewScreenMode(newMode);
 
@@ -215,13 +215,22 @@ export default {
       }
     };
 
+    /**
+     * Handles global shortcuts: Ctrl+E toggles view editing when `updatable`; Alt/Meta + Shift + number
+     * keys switch screen mode via `KEYS_TO_VIEW_SCREEN_MODES`.
+
+     * @param {KeyboardEvent} event
+     */
     const keyDownListener = (event) => {
-      if (event.code === 'KeyE' && (event.ctrlKey || event.metaKey) && props.updatable) {
+      if (event.key === 'e' && event.ctrlKey && props.updatable) {
         toggleEditing();
         event.preventDefault();
         return;
       }
 
+      /**
+       * Check if Alt (Windows/Linux) or Command (Mac) + Shift + number keys are pressed
+       */
       if ((event.altKey || event.metaKey) && event.shiftKey) {
         const newMode = KEYS_TO_VIEW_SCREEN_MODES[event.code];
 
@@ -232,6 +241,9 @@ export default {
       }
     };
 
+    /**
+     * Opens the create-widget modal for the current tab, or shows a warning when there is no active tab.
+     */
     const showCreateWidgetModal = () => {
       if (!props.activeTab) {
         popups.warning({ text: t('view.errors.emptyTabs') });
@@ -246,6 +258,10 @@ export default {
       });
     };
 
+    /**
+     * Opens the text-field editor to create a view tab; on submit creates the tab, refreshes the active view,
+     * and redirects to the first tab when the route has no `tabId` query.
+     */
     const showCreateTabModal = () => {
       modals.show({
         name: MODALS.textFieldEditor,
@@ -254,17 +270,15 @@ export default {
           field: {
             name: 'text',
             label: t('modals.viewTab.fields.title'),
-            validationRules: {
-              required: true,
-            },
+            validationRules: 'required',
           },
           action: async (title) => {
-            await createViewTab({
-              data: {
-                view: view.value._id,
-                title,
-              },
-            });
+            const data = {
+              view: view.value._id,
+              title,
+            };
+
+            await createViewTab({ data });
             await fetchActiveView();
 
             if (!route.query.tabId) {
@@ -283,10 +297,10 @@ export default {
     });
 
     return {
+      hasAccessToExecuteInstruction,
       isFullscreen,
       view,
       activeViewScreenMode,
-      hasAccessToExecuteInstruction,
       changeScreenMode,
       showCreateWidgetModal,
       showCreateTabModal,
@@ -300,11 +314,20 @@ export default {
   &__add-widget-btn {
     border-color: #3f51b5 !important;
     background-color: #3f51b5 !important;
-    color: #fff !important;
 
-    .v-theme--dark & {
-      border-color: #2196f3 !important;
-      background-color: #2196f3 !important;
+    .theme--dark & {
+      border-color: #2196F3 !important;
+      background-color: #2196F3 !important;
+    }
+  }
+
+  &__add-edit-btn, &__add-fullscreen-btn  {
+    border-color: #3f51b5 !important;
+    background-color: #3f51b5 !important;
+
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
     }
   }
 
@@ -316,12 +339,17 @@ export default {
 .view-fullscreen {
   overflow: auto;
   position: fixed;
-  inset: 0;
-  z-index: 7;
-  background: rgb(var(--v-theme-surface));
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
-  &--with-top-bar {
-    top: 48px;
+  z-index: 7;
+
+  background: white;
+
+  .theme--dark & {
+    background: #424242;
   }
 }
 </style>

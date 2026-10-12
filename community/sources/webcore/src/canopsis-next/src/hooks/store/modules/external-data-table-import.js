@@ -1,4 +1,6 @@
-import { useExternalDataTableStore } from '@/stores/modules/external-data-table';
+import { useStoreModuleHooks } from '@/hooks/store';
+
+const useExternalDataTableImportStoreModule = () => useStoreModuleHooks('externalDataTable/import');
 
 /**
  * Provides actions for interacting with the external data table import module.
@@ -10,13 +12,17 @@ import { useExternalDataTableStore } from '@/stores/modules/external-data-table'
  * - `completeExternalDataTableImport`: Function to mark a specific external data table import as complete.
  */
 export const useExternalDataTableImport = () => {
-  const externalDataTableStore = useExternalDataTableStore();
+  const { useActions } = useExternalDataTableImportStoreModule();
+
+  const actions = useActions({
+    createExternalDataTableImport: 'create',
+    fetchExternalDataTableImportData: 'fetchData',
+    fetchExternalDataTableImportStatus: 'fetchStatus',
+    previewExternalDataTableImport: 'preview',
+    completeExternalDataTableImport: 'complete',
+  });
 
   return {
-    createExternalDataTableImport: externalDataTableStore.createImport,
-    fetchExternalDataTableImportData: externalDataTableStore.fetchImportData,
-    fetchExternalDataTableImportStatus: externalDataTableStore.fetchImportStatus,
-    previewExternalDataTableImport: externalDataTableStore.previewImport,
-    completeExternalDataTableImport: externalDataTableStore.completeImport,
+    ...actions,
   };
 };

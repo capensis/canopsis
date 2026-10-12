@@ -1,124 +1,134 @@
 <template>
-  <c-layout class="position-relative" gap="2" column>
+  <v-layout class="position-relative gap-2" column>
     <c-progress-overlay :pending="templateVarsPending" />
-    <c-enabled-field v-model="enabledField" with-background />
-    <v-tabs v-model="activeTab" slider-color="primary" fixed-tabs>
-      <v-tab
-        :value="LINK_RULE_FORM_TABS.general"
-        :class="tabTabClass(LINK_RULE_FORM_TABS.general)"
-      >
+    <c-enabled-field v-field="form.enabled" with-background />
+    <v-tabs
+      v-model="activeTab"
+      slider-color="primary"
+      fixed-tabs
+    >
+      <v-tab :class="{ 'error--text': hasGeneralError }">
         {{ $t('common.general') }}
       </v-tab>
-      <v-tab
-        :value="LINK_RULE_FORM_TABS.patterns"
-        :class="tabTabClass(LINK_RULE_FORM_TABS.patterns)"
-      >
-        {{ $t('common.pattern', 2) }}
+      <v-tab :class="{ 'error--text': hasPatternsError }">
+        {{ $tc('common.pattern') }}
       </v-tab>
       <v-tab
-        :value="LINK_RULE_FORM_TABS.simple"
-        :class="tabTabClass(LINK_RULE_FORM_TABS.simple)"
+        :class="{ 'error--text': hasSimpleError || errors.has('links') }"
         :disabled="sourceCodeWasChanged"
       >
         {{ $t('linkRule.simpleMode') }}
       </v-tab>
-      <v-tab
-        :value="LINK_RULE_FORM_TABS.advanced"
-        :class="tabTabClass(LINK_RULE_FORM_TABS.advanced)"
-      >
+      <v-tab :class="{ 'error--text': hasAdvancedError || errors.has('links') }">
         {{ $t('linkRule.advancedMode') }}
       </v-tab>
-      <template-testing-test-variables-tab
-        v-if="hasAccess"
-        :value="LINK_RULE_FORM_TABS.testing"
-        :error="hasTestingError"
-        :disabled="isEmptyVariablesFields"
-      />
-    </v-tabs>
+      <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
-    <v-window v-model="activeTab">
-      <v-window-item :value="LINK_RULE_FORM_TABS.general" class="mt-3" eager>
+      <v-tab-item
+        class="mt-3"
+        eager
+      >
         <link-rule-general-form
-          :ref="setGeneralRef"
+          v-field="form"
+          ref="generalElement"
           :template-vars="templateVars"
           class="mt-2"
         />
-      </v-window-item>
+      </v-tab-item>
 
-      <v-window-item :value="LINK_RULE_FORM_TABS.patterns" class="mt-3" eager>
-        <link-rule-patterns-form :ref="setPatternsRef" :is-alarm-type="isAlarmType" />
-      </v-window-item>
+      <v-tab-item
+        class="mt-3"
+        eager
+      >
+        <link-rule-patterns-form
+          v-field="form.patterns"
+          ref="patternsElement"
+          :is-alarm-type="isAlarmType"
+        />
+      </v-tab-item>
 
-      <v-window-item :value="LINK_RULE_FORM_TABS.simple" class="mt-3" eager>
+      <v-tab-item
+        class="mt-3"
+        eager
+      >
         <link-rule-simple-form
-          :ref="setSimpleRef"
-          :type="typeField"
+          v-field="form.links"
+          ref="simpleElement"
+          :type="form.type"
           :template-vars="templateVars"
           :error-messages="linksErrorMessages"
-          @change="resetRequiredRule"
+          @input="resetRequiredRule"
         />
-      </v-window-item>
-      <v-window-item :value="LINK_RULE_FORM_TABS.advanced" class="mt-3" eager>
-        <link-rule-advanced-form
-          :ref="setAdvancedRef"
-          :type="typeField"
-          :error-messages="linksErrorMessages"
-          @change="resetRequiredRule"
-        />
-      </v-window-item>
-
-      <v-window-item
-        v-if="hasAccess"
-        :value="LINK_RULE_FORM_TABS.testing"
-        :disabled="isEmptyVariablesFields"
+      </v-tab-item>
+      <v-tab-item
+        class="mt-3"
+        eager
       >
+        <link-rule-advanced-form
+          v-field="form.source_code"
+          ref="advancedElement"
+          :type="form.type"
+          :error-messages="linksErrorMessages"
+          @input="resetRequiredRule"
+        />
+      </v-tab-item>
+
+      <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
         <template-testing-test-variables
-          :ref="setTestingRef"
-          :general-form="formValues"
+          :general-form="form"
           :variables-fields="variablesFields"
           :template-vars="templateVars"
           :rule-id="ruleId"
           :type="type"
           :active="isActiveTestingTab"
         />
-      </v-window-item>
-    </v-window>
-  </c-layout>
+      </v-tab-item>
+    </v-tabs>
+  </v-layout>
 </template>
 
 <script>
-import { computed, ref, onBeforeUnmount, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  toRef,
+  watch,
+  onBeforeUnmount,
+  onMounted,
+} from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES, LINK_RULE_TYPES } from '@/constants';
 
 import { isDefaultSourceCode } from '@/helpers/entities/link/form';
 
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
-import { useFormContext, useFormErrorsMap, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
+import { useValidator } from '@/hooks/validator/validator';
 import { useTemplateVarsList } from '@/hooks/vars/template';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
 
-import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
+import {
+  useTestVariablesTabData,
+} from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
 
-import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 
-import LinkRuleAdvancedForm from './link-rule-advanced-form.vue';
 import LinkRuleGeneralForm from './link-rule-general-form.vue';
-import LinkRulePatternsForm from './link-rule-patterns-form.vue';
 import LinkRuleSimpleForm from './link-rule-simple-form.vue';
+import LinkRuleAdvancedForm from './link-rule-advanced-form.vue';
+import LinkRulePatternsForm from './link-rule-patterns-form.vue';
 
 const LINK_RULE_FORM_TABS = {
-  general: 'general',
-  patterns: 'patterns',
-  simple: 'simple',
-  advanced: 'advanced',
-  testing: 'testing',
+  general: 0,
+  patterns: 1,
+  simple: 2,
+  advanced: 3,
+  testing: 4,
 };
 
 export default {
+  inject: ['$validator'],
   components: {
     TemplateTestingTestVariables,
     TemplateTestingTestVariablesTab,
@@ -128,56 +138,48 @@ export default {
     LinkRuleSimpleForm,
     LinkRuleAdvancedForm,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     ruleId: {
       type: String,
       required: false,
     },
   },
-
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
-    const { hasError } = useFormErrorsMap();
-    const form = useFormContext();
+    const { errors } = useValidator();
 
     const activeTab = ref(LINK_RULE_FORM_TABS.general);
 
     const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
 
+    const hasGeneralError = ref(false);
+    const hasPatternsError = ref(false);
+    const hasSimpleError = ref(false);
+    const hasAdvancedError = ref(false);
+
     const generalElement = ref(null);
     const patternsElement = ref(null);
     const simpleElement = ref(null);
     const advancedElement = ref(null);
-    const testingElement = ref(null);
-
-    const setGeneralRef = refElement => (generalElement.value = refElement);
-    const setPatternsRef = refElement => (patternsElement.value = refElement);
-    const setSimpleRef = refElement => (simpleElement.value = refElement);
-    const setAdvancedRef = refElement => (advancedElement.value = refElement);
-    const setTestingRef = refElement => (testingElement.value = refElement);
-
-    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
-    const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
-    const { hasChildrenError: hasSimpleError } = useValidationElementChildren(simpleElement);
-    const { hasChildrenError: hasAdvancedError } = useValidationElementChildren(advancedElement);
-    const { hasChildrenError: hasTestingError } = useValidationElementChildren(testingElement);
-
-    const { enabledField, typeField, sourceCodeField, linksField } = useFormModels({
-      enabledField: 'enabled',
-      typeField: 'type',
-      sourceCodeField: 'source_code',
-      linksField: 'links',
-    });
 
     const isActiveTestingTab = computed(() => activeTab.value === LINK_RULE_FORM_TABS.testing);
-    const isAlarmType = computed(() => typeField.value === LINK_RULE_TYPES.alarm);
-    const hasLinksError = computed(() => hasError('links') || !!form.errors.value?.links);
+    const isAlarmType = computed(() => props.form.type === LINK_RULE_TYPES.alarm);
 
-    const linksErrorMessages = computed(() => hasLinksError.value ? [t('linkRule.linksEmptyError')] : [],
-    );
+    const linksErrorMessages = computed(() => (errors.has('links') ? [t('linkRule.linksEmptyError')] : []));
 
-    const { attachRequiredRule, detachRequiredRule, resetRequiredRule } =
-      useValidationAttachRequired('links');
+    const {
+      attachRequiredRule,
+      detachRequiredRule,
+      resetRequiredRule,
+    } = useValidationAttachRequired('links');
 
     const {
       vars: templateVars,
@@ -185,28 +187,17 @@ export default {
       fetchList: fetchTemplateVarsList,
     } = useTemplateVarsList({
       type,
-      form: form.values,
+      form: toRef(props, 'form'),
     });
-
-    const testingProps = {
-      get form() {
-        return form.values.value;
-      },
-    };
-    const emitTestingUpdate = (event, value) => {
-      if (event === 'input') {
-        form.values.value = value;
-      }
-    };
 
     const {
       hasAccess,
 
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesTabData(testingProps, type, emitTestingUpdate);
+    } = useTestVariablesTabData(props, type, emit);
 
-    const sourceCodeWasChanged = computed(() => !isDefaultSourceCode(sourceCodeField.value));
+    const sourceCodeWasChanged = computed(() => !isDefaultSourceCode(props.form.source_code));
 
     /**
      * Getter function for validation rule that checks if links are required.
@@ -214,17 +205,12 @@ export default {
      *
      * @returns {boolean} True if links field should be considered valid (has links or custom source code)
      */
-    const requiredRuleGetter = () => !!linksField.value.length || !isDefaultSourceCode(sourceCodeField.value);
+    const requiredRuleGetter = () => !!props.form.links.length || !isDefaultSourceCode(props.form.source_code);
 
-    const tabHasError = tab => (tab === LINK_RULE_FORM_TABS.general && hasGeneralError.value) ||
-      (tab === LINK_RULE_FORM_TABS.patterns && hasPatternsError.value) ||
-      (tab === LINK_RULE_FORM_TABS.simple && (hasSimpleError.value || hasLinksError.value)) ||
-      (tab === LINK_RULE_FORM_TABS.advanced && (hasAdvancedError.value || hasLinksError.value)) ||
-      (tab === LINK_RULE_FORM_TABS.testing && hasTestingError.value);
-
-    const tabTabClass = tab => ({
-      'text-error': tabHasError(tab),
-    });
+    watch(() => generalElement.value?.hasAnyError, value => hasGeneralError.value = value);
+    watch(() => patternsElement.value?.hasAnyError, value => hasPatternsError.value = value);
+    watch(() => simpleElement.value?.hasAnyError, value => hasSimpleError.value = value);
+    watch(() => advancedElement.value?.hasAnyError, value => hasAdvancedError.value = value);
 
     useAiChatExpand({ activeTab, neededTab: LINK_RULE_FORM_TABS.general });
 
@@ -242,29 +228,18 @@ export default {
       isActiveTestingTab,
       isAlarmType,
       linksErrorMessages,
-      hasLinksError,
 
       type,
-      formValues: form.values,
-      enabledField,
-      typeField,
 
       hasGeneralError,
       hasPatternsError,
       hasSimpleError,
       hasAdvancedError,
-      hasTestingError,
 
       generalElement,
       patternsElement,
       simpleElement,
       advancedElement,
-      testingElement,
-      setGeneralRef,
-      setPatternsRef,
-      setSimpleRef,
-      setAdvancedRef,
-      setTestingRef,
 
       hasAccess,
       variablesFields,
@@ -275,7 +250,6 @@ export default {
 
       sourceCodeWasChanged,
 
-      tabTabClass,
       resetRequiredRule,
     };
   },

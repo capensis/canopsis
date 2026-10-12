@@ -1,23 +1,33 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
+  <modal-wrapper close>
+    <template #title="">
       <span>{{ $t('modals.selectView.title') }}</span>
     </template>
-
-    <template #text>
+    <template #text="">
       <v-fade-transition>
-        <c-layout v-if="pending" justify="center">
-          <v-progress-circular color="primary" indeterminate />
-        </c-layout>
-
-        <c-layout v-else>
-          <v-expansion-panels>
-            <v-expansion-panel v-for="group in publicGroups" :key="group._id" class="secondary">
-              <v-expansion-panel-title>
+        <v-layout
+          v-if="pending"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <v-layout v-else>
+          <v-expansion-panels
+            accordion
+            dark
+          >
+            <v-expansion-panel
+              v-for="group in groups"
+              :key="group._id"
+              class="secondary"
+            >
+              <v-expansion-panel-header>
                 {{ group.title }}
-              </v-expansion-panel-title>
-
-              <v-expansion-panel-text>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content ripple>
                 <v-list class="py-0 px-2 secondary">
                   <v-list-item
                     v-for="view in group.views"
@@ -31,71 +41,49 @@
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
-              </v-expansion-panel-text>
+              </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
-        </c-layout>
+        </v-layout>
       </v-fade-transition>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { MODALS } from '@/constants';
 
-import { MAX_LIMIT } from '@/constants';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
-import { useViewStore } from '@/stores/modules/view';
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
+  name: MODALS.selectView,
+  components: { ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    entitiesViewGroupMixin,
+  ],
   data() {
     return {
       pending: true,
     };
   },
-  computed: {
-    ...mapState(useViewStore, {
-      groups: 'items',
-    }),
-
-    config() {
-      return this.modal.config ?? {};
-    },
-
-    publicGroups() {
-      return this.groups.filter(group => !group.is_private);
-    },
-  },
   async mounted() {
     this.pending = true;
 
-    await this.fetchViewGroupsList({
-      params: {
-        limit: MAX_LIMIT,
-        page: 1,
-        with_views: true,
-      },
-    });
+    await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
     this.pending = false;
   },
   methods: {
-    ...mapActions(useViewStore, {
-      fetchViewGroupsList: 'fetchList',
-    }),
-
     async selectView(viewId) {
       if (this.config.action) {
         await this.config.action(viewId);
       }
 
-      this.$modals.hide({ id: this.modal.id });
+      this.$modals.hide();
     },
   },
 };

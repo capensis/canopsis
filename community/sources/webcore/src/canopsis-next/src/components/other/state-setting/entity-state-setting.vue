@@ -1,19 +1,19 @@
 <template>
-  <c-layout column>
-    <c-text-field
-      :model-value="stateSetting?.title"
+  <v-layout column>
+    <v-text-field
+      :value="stateSetting?.title"
       :loading="stateSettingPending"
       disabled
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { debounce, pick } from 'lodash';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
-import { usePendingHandler } from '@/hooks/query/pending';
 import { useEntity } from '@/hooks/store/modules/entity';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 export default {
   props: {
@@ -26,11 +26,10 @@ export default {
       default: () => d => d,
     },
   },
-
   setup(props) {
     const stateSetting = ref();
 
-    const { checkEntityStateSetting } = useEntity();
+    const { checkStateSetting: checkEntityStateSetting } = useEntity();
 
     const {
       pending: stateSettingPending,

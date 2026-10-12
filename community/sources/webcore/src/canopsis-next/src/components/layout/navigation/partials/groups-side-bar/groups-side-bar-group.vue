@@ -9,15 +9,18 @@
   >
     <c-draggable-list-field
       :class="{ 'views-panel--empty': isGroupEmpty }"
-      :model-value="group.views"
+      :value="group.views"
       :disabled="!isNavigationEditingMode"
-      class="views-panel"
+      class="views-panel secondary lighten-1"
       group="views"
-      @update:model-value="changeViewsOrdering"
+      @input="changeViewsOrdering"
     >
-      <template #item="{ element: view }">
-        <groups-side-bar-group-view :view="view" :is-groups-order-changed="isGroupsOrderChanged" />
-      </template>
+      <groups-side-bar-group-view
+        v-for="view in group.views"
+        :key="view._id"
+        :view="view"
+        :is-groups-order-changed="isGroupsOrderChanged"
+      />
     </c-draggable-list-field>
   </group-panel>
 </template>
@@ -25,8 +28,8 @@
 <script>
 import { layoutNavigationGroupsBarGroupMixin } from '@/mixins/layout/navigation/groups-bar-group';
 
-import GroupPanel from './group-panel.vue';
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
+import GroupPanel from './group-panel.vue';
 
 export default {
   components: { GroupPanel, GroupsSideBarGroupView },
@@ -37,14 +40,15 @@ export default {
       default: false,
     },
   },
-  emits: ['update:group'],
   computed: {
     isGroupEmpty() {
       return this.group.views && this.group.views.length === 0;
     },
 
     hasViewGroupEditAccess() {
-      return this.group.is_private || this.hasDeleteAnyViewAccess || this.hasUpdateAnyViewAccess;
+      return this.group.is_private
+        || this.hasDeleteAnyViewAccess
+        || this.hasUpdateAnyViewAccess;
     },
   },
   methods: {
@@ -57,8 +61,6 @@ export default {
 
 <style lang="scss" scoped>
 .views-panel {
-  background-color: var(--v-secondary-lighten1);
-
   &--empty {
     &:after {
       content: '';

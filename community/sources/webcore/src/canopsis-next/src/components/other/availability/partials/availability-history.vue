@@ -1,22 +1,19 @@
 <template>
-  <c-layout gap="5" column>
+  <v-layout class="gap-5" column>
     <availability-history-filters
       :sampling="query.sampling"
-      :show-type="showType"
+      :show-type.sync="showType"
       :min-interval-date="minDate"
       @update:sampling="$emit('update:sampling', $event)"
-      @update:show-type="showType = $event"
     />
     <availability-line-chart
       :availabilities="availabilities"
       :sampling="query.sampling"
       :display-parameter="displayParameter"
       :show-type="showType"
-      :downloading="downloading"
-      @export:csv="$emit('export:csv')"
-      @export:png="$emit('export:png', $event)"
+      v-on="$listeners"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -29,7 +26,6 @@ import AvailabilityLineChart from '@/components/other/availability/partials/avai
 
 export default {
   components: { AvailabilityLineChart, AvailabilityHistoryFilters },
-
   props: {
     availabilities: {
       type: Array,
@@ -51,14 +47,7 @@ export default {
       type: Number,
       default: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
     },
-    downloading: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['update:sampling', 'export:csv', 'export:png'],
-
   setup(props) {
     const showType = ref(props.defaultShowType);
 

@@ -1,107 +1,250 @@
 <template>
-  <div class="theme-form">
-    <c-name-field v-model="nameField" autofocus required />
-
-    <v-tabs v-model="activeTab" color="primary" align-tabs="center">
-      <v-tab value="main">{{ t('theme.tabs.mainColors') }}</v-tab>
-      <v-tab value="widget-table">{{ t('theme.tabs.widgetTable') }}</v-tab>
-      <v-tab value="severity">{{ t('theme.tabs.severity') }}</v-tab>
-      <v-tab value="font-size">{{ t('theme.tabs.fontSize') }}</v-tab>
-      <v-tab value="extra-details">{{ t('theme.tabs.extraDetails') }}</v-tab>
-    </v-tabs>
-
-    <v-window v-model="activeTab" :touchless="true" class="theme-form__window">
-      <v-window-item value="main">
-        <theme-main-colors-form />
-      </v-window-item>
-      <v-window-item value="widget-table">
-        <theme-widget-table-colors-form />
-      </v-window-item>
-      <v-window-item value="severity">
-        <theme-severity-colors-form />
-      </v-window-item>
-      <v-window-item value="font-size">
-        <theme-font-size-form />
-      </v-window-item>
-      <v-window-item value="extra-details">
-        <theme-extra-details-colors-form />
-      </v-window-item>
-    </v-window>
-  </div>
+  <v-layout
+    class="theme-form"
+    column
+  >
+    <c-name-field v-field="form.name" autofocus required />
+    <c-information-block :title="$t('theme.main.title')">
+      <v-layout
+        class="theme-form__colors"
+        column
+      >
+        <theme-color-picker-field
+          v-field="form.colors.main.primary"
+          :label="$t('theme.main.primary')"
+          :help-text="$t('theme.main.primaryHelpText')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.secondary"
+          :label="$t('theme.main.secondary')"
+          :help-text="$t('theme.main.secondaryHelpText')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.accent"
+          :label="$t('theme.main.accent')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.error"
+          :label="$t('theme.main.error')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.error_background"
+          :label="$t('theme.main.errorBackground')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.warning"
+          :label="$t('theme.main.warning')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.warning_background"
+          :label="$t('theme.main.warningBackground')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.success"
+          :label="$t('theme.main.success')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.success_background"
+          :label="$t('theme.main.successBackground')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.info"
+          :label="$t('theme.main.info')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.info_background"
+          :label="$t('theme.main.infoBackground')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.active_color"
+          :label="$t('theme.main.activeColor')"
+          :help-text="$t('theme.main.activeColorHelpText')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.background"
+          :label="$t('theme.main.background')"
+        />
+      </v-layout>
+    </c-information-block>
+    <c-information-block :title="$t('theme.fontSize.title')">
+      <v-layout
+        class="theme-form__colors"
+        column
+      >
+        <theme-color-font-size-field v-field="form.font_size" />
+      </v-layout>
+    </c-information-block>
+    <c-information-block :title="$t('theme.table.title')">
+      <v-layout
+        class="theme-form__colors"
+        column
+      >
+        <theme-color-picker-field
+          v-field="form.colors.table.background"
+          :label="$t('theme.table.background')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.table.row_color"
+          :label="$t('theme.table.rowColor')"
+        />
+        <theme-enabled-color-picker-field
+          v-field="form.colors.table.shift_row"
+          :enable-label="$t('theme.table.shiftRowEnable')"
+          :enable-help-text="$t('theme.table.shiftRowEnableHelpText')"
+          :label="$t('theme.table.shiftRowColor')"
+        />
+        <theme-enabled-color-picker-field
+          v-field="form.colors.table.hover_row"
+          :enable-label="$t('theme.table.hoverRowEnable')"
+          :label="$t('theme.table.hoverRowColor')"
+        />
+        <theme-colors-preview-list :items="tableColors" />
+      </v-layout>
+    </c-information-block>
+    <c-information-block :title="$t('theme.state.title')">
+      <v-layout
+        class="theme-form__colors"
+        column
+      >
+        <theme-color-picker-field
+          v-field="form.colors.state.ok"
+          :label="$t('theme.state.ok')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.state.minor"
+          :label="$t('theme.state.minor')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.state.major"
+          :label="$t('theme.state.major')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.state.critical"
+          :label="$t('theme.state.critical')"
+        />
+        <theme-colors-preview-list :items="stateColors" />
+      </v-layout>
+    </c-information-block>
+  </v-layout>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed } from 'vue';
 
-import { useFormModels } from '@/hooks/form';
+import { THEME_FONT_PIXEL_SIZES } from '@/constants';
+
+import { getMostReadableTextColor } from '@/helpers/color';
+
 import { useI18n } from '@/hooks/i18n';
 
-import ThemeExtraDetailsColorsForm from './theme-extra-details-colors-form.vue';
-import ThemeFontSizeForm from './theme-font-size-form.vue';
-import ThemeMainColorsForm from './theme-main-colors-form.vue';
-import ThemeSeverityColorsForm from './theme-severity-colors-form.vue';
-import ThemeWidgetTableColorsForm from './theme-widget-table-colors-form.vue';
+import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
+import ThemeColorFontSizeField from '@/components/other/theme/form/fields/theme-color-font-size-field.vue';
+
+import ThemeColorsPreviewList from '../partials/theme-colors-preview-list.vue';
+
+import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
-    ThemeFontSizeForm,
-    ThemeExtraDetailsColorsForm,
-    ThemeMainColorsForm,
-    ThemeSeverityColorsForm,
-    ThemeWidgetTableColorsForm,
+    ThemeColorFontSizeField,
+    ThemeColorsPreviewList,
+    ThemeEnabledColorPickerField,
+    ThemeColorPickerField,
   },
-
-  setup() {
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  setup(props) {
     const { t } = useI18n();
-    const { nameField } = useFormModels({ nameField: 'name' });
-    const activeTab = ref('main');
 
-    return { t, nameField, activeTab };
+    const fontSize = computed(() => THEME_FONT_PIXEL_SIZES[props.form.font_size]);
+
+    const attachFontSizeAndActiveColor = items => (
+      items.map(item => ({ color: props.form.colors.main.active_color, fontSize: fontSize.value, ...item }))
+    );
+
+    const tableColors = computed(() => {
+      const result = [
+        {
+          backgroundColor: props.form.colors.table.background,
+          text: t('theme.table.background'),
+        },
+        {
+          backgroundColor: props.form.colors.table.row_color,
+          text: t('theme.table.rowColor'),
+        },
+      ];
+
+      if (props.form.colors.table.shift_row?.enabled) {
+        result.push({
+          backgroundColor: props.form.colors.table.shift_row.color,
+          text: t('theme.table.shiftRowColor'),
+        });
+      }
+
+      if (props.form.colors.table.hover_row_color?.enabled) {
+        result.push({
+          backgroundColor: props.form.colors.table.hover_row_color.color,
+          text: t('theme.table.hoverRowColor'),
+        });
+      }
+
+      return attachFontSizeAndActiveColor(result);
+    });
+
+    const stateColors = computed(() => attachFontSizeAndActiveColor([
+      {
+        backgroundColor: props.form.colors.state.ok,
+        text: t('theme.state.ok'),
+        color: getMostReadableTextColor(props.form.colors.state.ok),
+      },
+      {
+        backgroundColor: props.form.colors.state.minor,
+        text: t('theme.state.minor'),
+        color: getMostReadableTextColor(props.form.colors.state.minor),
+      },
+      {
+        backgroundColor: props.form.colors.state.major,
+        text: t('theme.state.major'),
+        color: getMostReadableTextColor(props.form.colors.state.major),
+      },
+      {
+        backgroundColor: props.form.colors.state.critical,
+        text: t('theme.state.critical'),
+        color: getMostReadableTextColor(props.form.colors.state.critical),
+      },
+    ]));
+
+    return {
+      tableColors,
+      stateColors,
+    };
   },
 };
 </script>
 
 <style lang="scss">
 .theme-form {
-  min-width: 0;
-
-  &__window {
-    overflow: visible;
-  }
-
-  &__columns {
-    margin: 0 -8px;
-    padding: 16px 0 24px;
-  }
+  --item-divider-border: 1px solid var(--v-divider-border-color);
 
   &__colors {
-    width: 100%;
-    padding: 16px 0 24px;
-
-    .theme-color-picker-field,
-    .theme-enabled-color-picker-field {
-      align-items: center;
-      width: 100%;
-      flex: 0 0 100%;
-      padding: 12px 0 12px 16px;
-
-      &:not(:last-of-type) {
-        border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-      }
-    }
-  }
-
-  &__column {
-    padding: 0 8px;
+    padding: 16px 0 24px 0;
 
     & > * {
       padding: 10px 0 10px 16px;
 
-      &:not(:last-child) {
-        border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+      &:not(:last-of-type) {
+        border-bottom: var(--item-divider-border);
       }
     }
   }
-
 }
 </style>

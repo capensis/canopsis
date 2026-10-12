@@ -1,5 +1,8 @@
 <template>
-  <v-list :density="dense ? 'compact' : 'default'" class="pa-0 c-list">
+  <v-list
+    :dense="dense"
+    class="pa-0 c-list"
+  >
     <v-fade-transition>
       <v-progress-linear
         v-if="pending"
@@ -8,45 +11,48 @@
         indeterminate
       />
     </v-fade-transition>
-
     <slot :items="items" name="prepend" />
-
-    <template v-for="item in items" :key="item.header || item[itemValue]">
-      <v-list-subheader v-if="item.header" class="c-list__subheader">
+    <template v-for="item in items">
+      <v-subheader
+        v-if="item.header"
+        :key="item.header"
+      >
         {{ item.header }}
-      </v-list-subheader>
-
+      </v-subheader>
       <v-list-item
         v-else
-        :active="isActiveItem(item)"
+        :key="item.value"
+        :input-value="isActiveItem(item)"
         :disabled="item.disabled || item.loading || item[childrenKey]?.length === 0"
         @click="selectItem(item)"
         @mouseenter="handleMouseEnter(item, $event)"
       >
-        <template #title>
-          <slot :item="item" name="item-title">
-            {{ item[itemText] }}
-          </slot>
-        </template>
-
-        <template v-if="item[childrenKey]" #append>
-          <c-icon>arrow_right</c-icon>
-        </template>
+        <v-list-item-content>
+          <v-list-item-title>
+            <slot :item="item" name="item-title">
+              {{ item[itemText] }}
+            </slot>
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action v-if="item[childrenKey]">
+          <v-icon>arrow_right</v-icon>
+        </v-list-item-action>
       </v-list-item>
     </template>
-
-    <div ref="appendElement" class="c-list__append-item" />
-
+    <div
+      ref="appendElement"
+      class="c-list__append-item"
+    />
     <slot v-if="!items.length" name="no-data" />
-
     <v-menu
       v-if="subItemsShown"
       v-model="subItemsShown"
-      :target="[subItemsPosition.x, subItemsPosition.y]"
+      :position-x="subItemsPosition.x"
+      :position-y="subItemsPosition.y"
       :z-index="zIndex"
       :close-on-content-click="clickableParent"
-      location="bottom start"
-      submenu
+      offset-x
+      right
     >
       <c-list
         :value="value"
@@ -59,27 +65,33 @@
         :children-key="childrenKey"
         :return-object="returnObject"
         :clickable-parent="clickableParent"
-        @update:value="selectSubItem"
+        @input="selectSubItem"
       />
     </v-menu>
   </v-list>
 </template>
-
 <script>
 import {
   uniq,
   uniqBy,
   isObject,
   isArray,
+  isUndefined,
 } from 'lodash';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
-  name: 'CList',
-
+  /**
+   * We need it for recursive use
+   */
+  name: 'c-list',
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
-      type: [Array, String, Number, Object, Boolean],
+      type: [Array, String, Number],
       default: () => [],
     },
     items: {
@@ -120,7 +132,7 @@ export default {
     },
     zIndex: {
       type: Number,
-      default: 2000,
+      required: false,
     },
     returnObject: {
       type: Boolean,
@@ -135,16 +147,11 @@ export default {
       default: false,
     },
   },
-
-  emits: ['input', 'update:value', 'fetch:more'],
-
   setup(props, { emit }) {
     const appendElement = ref(null);
     const subItemsShown = ref(false);
     const parentItem = ref(undefined);
     const subItemsPosition = ref({ x: 0, y: 0 });
-
-    let observer;
 
     /**
      * Prepares an item for use based on the component's configuration.
@@ -177,23 +184,17 @@ export default {
      * @param {Object} [item={}] - The item to check for activity status. Defaults to an empty object.
      * @returns {boolean} - Returns `true` if the item is active, otherwise `false`.
      */
-    const isActiveItem = (item = {}) => props.value === item[props.itemValue] ||
-      (isArray(props.value) &&
-        props.value.find?.((selectedItem) => {
-          const selectedValue = String(getValue(selectedItem) ?? '');
-          const value = String(getValue(item) ?? '');
+    const isActiveItem = (item = {}) => props.value === item[props.itemValue]
+      || (isArray(props.value) && props.value.find?.((selectedItem) => {
+        const selectedValue = String(getValue(selectedItem) ?? '');
+        const value = String(getValue(item) ?? '');
 
-          if (selectedValue.length > value.length) {
-            return selectedValue.startsWith(`${value}.`);
-          }
+        if (selectedValue.length > value.length) {
+          return selectedValue.startsWith(`${value}.`);
+        }
 
-          return selectedValue === value;
-        }));
-
-    const emitValue = (value) => {
-      emit('input', value);
-      emit('update:value', value);
-    };
+        return selectedValue === value;
+      }));
 
     /**
      * Emits an 'input' event with the selected item(s) based on the component's configuration.
@@ -210,15 +211,14 @@ export default {
       let newValue = prepareItem(item);
 
       if (props.multiple) {
-        const currentValue = isArray(props.value) ? props.value : [];
-        const newValueBeforeUniq = [...currentValue, item];
+        const newValueBeforeUniq = [...props.value, item];
 
         newValue = props.returnObject
           ? uniqBy(newValueBeforeUniq, props.itemValue)
           : uniq(newValueBeforeUniq);
       }
 
-      emitValue(newValue);
+      emit('input', newValue);
     };
 
     /**
@@ -229,12 +229,18 @@ export default {
      *                        properties that can be identified by the `props.itemValue`.
      */
     const selectSubItem = (item) => {
+      /**
+       * We are replacing /\s*}}/ for correct parent prefix checking for payloads.
+       * If parent value is not set, we are not adding parent prefix.
+       * @example detect {{ .LastChild.Alarm.Value }} in {{ .LastChild.Alarm.Value.Infos.something.Value }}
+       */
       const hasParentValue = !!parentItem.value[props.itemValue];
       const parentValue = String(parentItem.value[props.itemValue]).replace(/\s*}}$/, '');
 
       const value = getValue(item);
-      const newValue =
-        String(value).startsWith(parentValue) || !hasParentValue ? value : `${parentValue}.${value}`;
+      const newValue = String(value).startsWith(parentValue) || !hasParentValue
+        ? value
+        : `${parentValue}.${value}`;
 
       if (props.returnObject) {
         selectItem({
@@ -262,7 +268,7 @@ export default {
       }
 
       if (item[props.childrenKey]) {
-        const { left, top, width } = event.currentTarget.getBoundingClientRect();
+        const { left, top, width } = event.target.getBoundingClientRect();
 
         subItemsPosition.value.x = left + width;
         subItemsPosition.value.y = top;
@@ -289,20 +295,12 @@ export default {
       }
     };
 
-    onMounted(() => {
-      observer = new IntersectionObserver(intersectionHandler);
+    const observer = new IntersectionObserver(intersectionHandler);
 
-      if (appendElement.value) {
-        observer.observe(appendElement.value);
-      }
-    });
-
+    onMounted(() => observer.observe(appendElement.value));
     onBeforeUnmount(() => {
-      if (appendElement.value) {
-        observer?.unobserve(appendElement.value);
-      }
-
-      observer?.disconnect();
+      observer.unobserve(appendElement.value);
+      observer.disconnect();
     });
 
     return {
@@ -316,6 +314,8 @@ export default {
       isActiveItem,
       selectItem,
       selectSubItem,
+
+      isUndefined,
     };
   },
 };
@@ -325,7 +325,7 @@ export default {
 .c-list {
   position: relative;
 
-  &__subheader {
+  .v-subheader {
     font-size: 16px;
     font-weight: 700;
     color: inherit;
@@ -340,9 +340,9 @@ export default {
 
   &__append-item {
     position: absolute;
-    right: 0;
     bottom: 0;
     left: 0;
+    right: 0;
     width: 100%;
     height: 48px;
     pointer-events: none;

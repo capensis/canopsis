@@ -1,14 +1,13 @@
 <template>
-  <c-layout class="pbehaviors-simple-list" column>
-    <c-layout align="center" justify="space-between">
-      <c-timezone-field
-        v-if="shownUserTimezone"
-        v-model="timezone"
-        class="pbehaviors-simple-list__timezone"
-        server
-      />
-
-      <c-layout gap="2" justify="end" class="ml-auto">
+  <v-layout column>
+    <v-layout justify-space-between align-center>
+      <v-flex v-if="shownUserTimezone" xs5>
+        <c-timezone-field
+          v-model="timezone"
+          server
+        />
+      </v-flex>
+      <v-layout class="gap-2" justify-end>
         <c-action-fab-btn
           v-if="addable"
           :tooltip="$t('modals.createPbehavior.create.title')"
@@ -24,17 +23,13 @@
           left
           @click="showPbehaviorsCalendarModal"
         />
-      </c-layout>
-    </c-layout>
-
+      </v-layout>
+    </v-layout>
     <c-advanced-data-table
       :items="pbehaviors"
       :headers="headers"
       :loading="pending"
-      :density="dense ? 'compact' : 'default'"
-      class="pbehaviors-simple-list__table"
-      hide-actions
-      no-pagination
+      :dense="dense"
     >
       <template #enabled="{ item }">
         <c-enabled :value="item.enabled" />
@@ -49,16 +44,17 @@
         {{ formatRruleEndDate(item) }}
       </template>
       <template #rrule="{ item }">
-        <v-icon :icon="item.rrule ? 'check' : 'clear'" />
+        <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
       </template>
       <template #icon="{ item }">
-        <v-icon :icon="item.type?.icon_name" color="primary" />
+        <v-icon color="primary">
+          {{ item.type.icon_name }}
+        </v-icon>
       </template>
       <template #status="{ item }">
-        <v-icon
-          :color="item.is_active_status ? 'primary' : 'error'"
-          icon="$vuetify.icons.settings_sync"
-        />
+        <v-icon :color="item.is_active_status ? 'primary' : 'error'">
+          $vuetify.icons.settings_sync
+        </v-icon>
       </template>
       <template #actions="{ item }">
         <pbehavior-actions
@@ -70,11 +66,17 @@
         />
       </template>
     </c-advanced-data-table>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import {
+  computed,
+  ref,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -82,10 +84,10 @@ import Observer from '@/services/observer';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
-import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+import { useI18n } from '@/hooks/i18n';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
@@ -93,7 +95,6 @@ import PbehaviorActions from './partials/pbehavior-actions.vue';
 
 export default {
   components: { PbehaviorActions },
-
   props: {
     entity: {
       type: Object,
@@ -128,13 +129,18 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const modals = useModals();
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
     const { fetchPbehaviorsByEntityIdWithoutStore } = usePbehavior();
-    const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } =
-      usePbehaviorDateFormat();
+    const {
+      timezone,
+      shownUserTimezone,
+      formatIntervalDate,
+      formatRruleEndDate,
+    } = usePbehaviorDateFormat();
+
+    inject('$system');
 
     const periodicRefresh = inject('$periodicRefresh', new Observer());
 
@@ -142,30 +148,33 @@ export default {
 
     const headers = computed(() => {
       const result = [
-        { title: t('common.name'), value: 'name' },
-        { title: t('common.author'), value: 'author.display_name' },
-        { title: t('pbehavior.isEnabled'), value: 'enabled' },
-        { title: t('pbehavior.begins'), value: 'tstart' },
-        { title: t('pbehavior.ends'), value: 'tstop' },
-        { title: t('pbehavior.rruleEnd'), value: 'rrule_end' },
-        { title: t('common.recurrence'), value: 'rrule' },
-        { title: t('common.type'), value: 'type.name' },
-        { title: t('common.reason'), value: 'reason.name' },
-        { title: t('common.icon', 1), value: 'icon' },
+        { text: t('common.name'), value: 'name' },
+        { text: t('common.author'), value: 'author.display_name' },
+        { text: t('pbehavior.isEnabled'), value: 'enabled' },
+        { text: t('pbehavior.begins'), value: 'tstart' },
+        { text: t('pbehavior.ends'), value: 'tstop' },
+        { text: t('pbehavior.rruleEnd'), value: 'rrule_end' },
+        { text: t('common.recurrence'), value: 'rrule' },
+        { text: t('common.type'), value: 'type.name' },
+        { text: t('common.reason'), value: 'reason.name' },
+        { text: tc('common.icon', 1), value: 'icon' },
       ];
 
       if (props.withActiveStatus) {
-        result.push({ title: t('common.status'), value: 'status', sortable: false });
+        result.push({ text: t('common.status'), value: 'status', sortable: false });
       }
 
       if (props.updatable || props.removable) {
-        result.push({ title: t('common.actionsLabel'), value: 'actions', sortable: false });
+        result.push({ text: t('common.actionsLabel'), value: 'actions', sortable: false });
       }
 
       return result;
     });
 
-    const { pending, fetchHandlerWithQuery: fetchList } = usePendingWithLocalQuery({
+    const {
+      pending,
+      fetchHandlerWithQuery: fetchList,
+    } = usePendingWithLocalQuery({
       fetchHandler: async () => {
         try {
           pbehaviors.value = await fetchPbehaviorsByEntityIdWithoutStore({
@@ -180,30 +189,33 @@ export default {
       },
     });
 
-    const showPbehaviorsCalendarModal = () => {
-      modals.show({
-        name: MODALS.pbehaviorsCalendar,
-        config: {
-          title: t('modals.pbehaviorsCalendar.entity.title', { name: props.entity.name }),
-          entityId: props.entity._id,
-          defaultInherited: props.defaultInherited,
-          withInherited: props.withInherited,
-        },
-      });
-    };
+    /**
+     * Opens the pbehaviors calendar modal for a specific entity.
+     */
+    const showPbehaviorsCalendarModal = () => modals.show({
+      name: MODALS.pbehaviorsCalendar,
+      config: {
+        title: t('modals.pbehaviorsCalendar.entity.title', { name: props.entity.name }),
+        entityId: props.entity._id,
+        defaultInherited: props.defaultInherited,
+        withInherited: props.withInherited,
+      },
+    });
 
-    const showCreatePbehaviorModal = () => {
-      modals.show({
-        name: MODALS.pbehaviorPlanning,
-        config: {
-          entityPattern: createEntityIdPatternByValue(props.entity._id),
-          entities: [props.entity],
-          defaultInherited: props.defaultInherited,
-          withInherited: props.withInherited,
-          afterSubmit: fetchList,
-        },
-      });
-    };
+    /**
+     * Opens the creation pbehavior modal with pre-configured entity settings.
+     * Automatically refreshes the pbehavior list after successful submission.
+     */
+    const showCreatePbehaviorModal = () => modals.show({
+      name: MODALS.pbehaviorPlanning,
+      config: {
+        entityPattern: createEntityIdPatternByValue(props.entity._id),
+        entities: [props.entity],
+        defaultInherited: props.defaultInherited,
+        withInherited: props.withInherited,
+        afterSubmit: fetchList,
+      },
+    });
 
     onMounted(() => {
       fetchList();
@@ -229,19 +241,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pbehaviors-simple-list {
-  max-width: 100%;
-  min-width: 0;
-}
-
-.pbehaviors-simple-list__table {
-  max-width: 100%;
-  min-width: 0;
-}
-
-.pbehaviors-simple-list__timezone {
-  max-width: 420px;
-}
-</style>

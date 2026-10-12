@@ -1,129 +1,126 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper text-class="position-relative" close>
-      <c-progress-overlay :pending="pendingPriority" />
-
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
+      <template #text="">
         <pbehavior-type-form
+          v-model="form"
           :only-color="onlyColor"
           :pending-priority="pendingPriority"
-          :sync-original-form="updateOriginalForm"
         />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="submitting || pendingPriority"
+          :disabled="submitting"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="submitting"
           :loading="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
-import { formToPbehaviorType, pbehaviorTypeToForm } from '@/helpers/entities/pbehavior/type/form';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
+import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/entities/pbehavior/type/form';
+
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { usePendingHandler } from '@/hooks/query/pending';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue';
 
-export default {
-  components: { PbehaviorTypeForm },
+import ModalWrapper from '../modal-wrapper.vue';
 
+export default {
+  name: MODALS.createPbehaviorType,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
+  components: {
+    ModalWrapper,
+    PbehaviorTypeForm,
+  },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
+    const { close, config } = useInnerModal(props);
     const { fetchNextPbehaviorTypePriority } = usePbehaviorType();
-    const config = computed(() => props.modal.config ?? {});
-    const pbehaviorType = computed(() => config.value.pbehaviorType ?? config.value.type);
+
+    const form = ref(pbehaviorTypeToForm(config.value.pbehaviorType));
+
+    const pbehaviorType = computed(() => config.value.pbehaviorType);
+    const onlyColor = computed(() => pbehaviorType.value?.default);
     const isNew = computed(() => !pbehaviorType.value?._id);
-    const onlyColor = computed(() => !!pbehaviorType.value?.default);
-    const title = computed(
-      () => config.value.title ||
-        t(`modals.createPbehaviorType.${isNew.value ? 'create' : 'edit'}.title`),
-    );
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
-    const pendingPriority = ref(false);
 
-    const form = useForm({
-      initialValues: pbehaviorTypeToForm(pbehaviorType.value),
-    });
-    const { values, handleSubmit, submitting, reset } = form;
+    const title = computed(() => (
+      config.value.title || t(isNew.value
+        ? 'modals.createPbehaviorType.create.title'
+        : 'modals.createPbehaviorType.edit.title')
+    ));
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
+    const {
+      pending: pendingPriority,
+      handler: setMinimalPriority,
+    } = usePendingHandler(async () => {
+      const { priority } = await fetchNextPbehaviorTypePriority();
 
-    const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(formToPbehaviorType(values.value));
-
-      await config.value.afterSubmit?.(result);
-
-      closeModal();
-
-      return result;
+      form.value.priority = priority;
     });
 
-    const { updateOriginalForm } = useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
+    const { submit, submitting, submitLabel } = useSubmittableForm({
+      form,
+      item: config.value.pbehaviorType,
+      method: async () => {
+        if (config.value.action) {
+          await config.value.action(formToPbehaviorType(form.value));
+        }
+
+        close();
+      },
     });
 
-    onMounted(async () => {
-      if (!isNew.value) {
-        return;
-      }
+    useFormConfirmableCloseModal({ form, submit, close });
 
-      try {
-        pendingPriority.value = true;
-
-        const { priority } = await fetchNextPbehaviorTypePriority();
-
-        reset({
-          ...values.value,
-
-          priority,
-        });
-        updateOriginalForm();
-      } finally {
-        pendingPriority.value = false;
+    onMounted(() => {
+      if (isNew.value) {
+        setMinimalPriority();
       }
     });
 
     return {
-      t,
+      close,
+      form,
       title,
-      submitLabel,
-      onlyColor,
       pendingPriority,
+      onlyColor,
       submitting,
-      updateOriginalForm,
-      closeModal,
+      submitLabel,
       submit,
     };
   },

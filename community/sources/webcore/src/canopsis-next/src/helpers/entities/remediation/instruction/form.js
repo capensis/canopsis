@@ -9,11 +9,11 @@ import {
   WORKFLOW_TYPES,
 } from '@/constants';
 
-import { durationToForm } from '@/helpers/date/duration';
-import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/filter/form';
-import { flattenErrorMap } from '@/helpers/entities/shared/form';
+import { uuid } from '@/helpers/uuid';
 import { getLetterByIndex } from '@/helpers/string';
-import { uid } from '@/helpers/uid';
+import { durationToForm } from '@/helpers/date/duration';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
+import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 /**
  * @typedef {
@@ -156,11 +156,10 @@ import { uid } from '@/helpers/uid';
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isApproveRequested = instruction =>
-  [
-    REMEDIATION_INSTRUCTION_STATUSES.createdAndApproveRequested,
-    REMEDIATION_INSTRUCTION_STATUSES.updatedAndApproveRequested,
-  ].includes(instruction.status);
+export const isApproveRequested = instruction => [
+  REMEDIATION_INSTRUCTION_STATUSES.createdAndApproveRequested,
+  REMEDIATION_INSTRUCTION_STATUSES.updatedAndApproveRequested,
+].includes(instruction.status);
 
 /**
  * Check instruction status is approved
@@ -168,8 +167,7 @@ export const isApproveRequested = instruction =>
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isInstructionApproved = instruction =>
-  instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
+export const isInstructionApproved = instruction => instruction.status === REMEDIATION_INSTRUCTION_STATUSES.approved;
 
 /**
  * Check instruction status is dismissed
@@ -177,11 +175,10 @@ export const isInstructionApproved = instruction =>
  * @param {RemediationInstruction} instruction
  * @returns {boolean}
  */
-export const isInstructionDismissed = instruction =>
-  [
-    REMEDIATION_INSTRUCTION_STATUSES.createdAndDismissed,
-    REMEDIATION_INSTRUCTION_STATUSES.updatedAndDismissed,
-  ].includes(instruction.status);
+export const isInstructionDismissed = instruction => [
+  REMEDIATION_INSTRUCTION_STATUSES.createdAndDismissed,
+  REMEDIATION_INSTRUCTION_STATUSES.updatedAndDismissed,
+].includes(instruction.status);
 
 /**
  * Check instruction type is auto
@@ -205,8 +202,7 @@ export const isInstructionTypeManual = type => type === REMEDIATION_INSTRUCTION_
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeSimpleManual = type =>
-  type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
+export const isInstructionTypeSimpleManual = type => type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
  * Check instruction type is any manual
@@ -214,8 +210,9 @@ export const isInstructionTypeSimpleManual = type =>
  * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionTypeAnySimpleManual = type =>
-  isInstructionTypeManual(type) || isInstructionTypeSimpleManual(type);
+export const isInstructionTypeAnySimpleManual = type => (
+  isInstructionTypeManual(type) || isInstructionTypeSimpleManual(type)
+);
 
 /**
  * Convert a remediation instruction step operation to form
@@ -226,11 +223,9 @@ export const isInstructionTypeAnySimpleManual = type =>
 export const remediationInstructionStepOperationToForm = (operation = {}) => ({
   name: operation.name || '',
   description: operation.description || '',
-  time_to_complete: durationToForm(
-    operation.time_to_complete ?? { value: 1, unit: TIME_UNITS.minute },
-  ),
+  time_to_complete: durationToForm(operation.time_to_complete ?? { value: 1, unit: TIME_UNITS.minute }),
   jobs: operation.jobs ? cloneDeep(operation.jobs) : [],
-  key: uid(),
+  key: uuid(),
 });
 
 /**
@@ -239,8 +234,8 @@ export const remediationInstructionStepOperationToForm = (operation = {}) => ({
  * @param {RemediationInstructionStepOperation[]} [operations = [undefined]]
  * @returns {Array}
  */
-const remediationInstructionStepOperationsToForm = (operations = [undefined]) =>
-  operations.map(remediationInstructionStepOperationToForm);
+const remediationInstructionStepOperationsToForm = (operations = [undefined]) => operations
+  .map(remediationInstructionStepOperationToForm);
 
 /**
  * Convert a remediation instruction step to form
@@ -253,7 +248,7 @@ export const remediationInstructionStepToForm = (step = {}) => ({
   name: step.name || '',
   stop_on_fail: !isUndefined(step.stop_on_fail) ? step.stop_on_fail : WORKFLOW_TYPES.stop,
   operations: remediationInstructionStepOperationsToForm(step.operations),
-  key: uid(),
+  key: uuid(),
 });
 
 /**
@@ -262,8 +257,7 @@ export const remediationInstructionStepToForm = (step = {}) => ({
  * @param {RemediationInstructionStep[]} [steps = [undefined]]
  * @returns {RemediationInstructionStepForm[]}
  */
-const remediationInstructionStepsToForm = (steps = [undefined]) =>
-  steps.map(remediationInstructionStepToForm);
+const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(remediationInstructionStepToForm);
 
 /**
  * Convert a remediation instruction approval to form
@@ -289,7 +283,7 @@ const remediationInstructionApprovalToForm = (approval = {}) => ({
 export const remediationInstructionJobToForm = (job = {}) => ({
   job: job.job,
   stop_on_fail: !isUndefined(job.stop_on_fail) ? job.stop_on_fail : WORKFLOW_TYPES.stop,
-  key: uid(),
+  key: uuid(),
 });
 
 /**
@@ -298,8 +292,7 @@ export const remediationInstructionJobToForm = (job = {}) => ({
  * @param {RemediationInstructionJob[]} [jobs = [undefined]]
  * @returns {RemediationInstructionJobForm[]}
  */
-const remediationInstructionJobsToForm = (jobs = [undefined]) =>
-  jobs.map(remediationInstructionJobToForm);
+const remediationInstructionJobsToForm = (jobs = [undefined]) => jobs.map(remediationInstructionJobToForm);
 
 /**
  * Convert a remediation instruction object to form object
@@ -353,10 +346,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => {
 export const remediationInstructionToFullForm = (remediationInstruction = {}) => ({
   ...remediationInstructionToForm(remediationInstruction),
   patterns: {
-    ...filterPatternsToForm(remediationInstruction, [
-      PATTERNS_FIELDS.alarm,
-      PATTERNS_FIELDS.entity,
-    ]),
+    ...filterPatternsToForm(remediationInstruction, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
 
     active_on_pbh: remediationInstruction?.active_on_pbh ?? [],
     disabled_on_pbh: remediationInstruction?.disabled_on_pbh ?? [],
@@ -369,12 +359,11 @@ export const remediationInstructionToFullForm = (remediationInstruction = {}) =>
  * @param {RemediationInstructionJobForm[]} jobs
  * @returns {RemediationInstructionJob[]}
  */
-const formJobsToRemediationInstructionJobs = (jobs = []) =>
-  jobs.map(job => ({
-    ...omit(job, ['key']),
+const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
+  ...omit(job, ['key']),
 
-    job: job.job._id,
-  }));
+  job: job.job._id,
+}));
 
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
@@ -382,12 +371,11 @@ const formJobsToRemediationInstructionJobs = (jobs = []) =>
  * @param {RemediationInstructionStepOperationForm[]} operations
  * @returns {RemediationInstructionStepOperation[]}
  */
-const formOperationsToRemediationInstructionOperations = operations =>
-  operations.map(operation => ({
-    ...omit(operation, ['key']),
+const formOperationsToRemediationInstructionOperations = operations => operations.map(operation => ({
+  ...omit(operation, ['key']),
 
-    jobs: operation.jobs.map(({ _id }) => _id),
-  }));
+  jobs: operation.jobs.map(({ _id }) => _id),
+}));
 
 /**
  * Convert a remediation instruction steps form array to a API compatible array
@@ -395,12 +383,11 @@ const formOperationsToRemediationInstructionOperations = operations =>
  * @param {RemediationInstructionStepForm[]} steps
  * @returns {RemediationInstructionStep[]}
  */
-const formStepsToRemediationInstructionSteps = steps =>
-  steps.map(step => ({
-    ...omit(step, ['key']),
+const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
+  ...omit(step, ['key']),
 
-    operations: formOperationsToRemediationInstructionOperations(step.operations),
-  }));
+  operations: formOperationsToRemediationInstructionOperations(step.operations),
+}));
 
 /**
  * Convert a remediation instruction approval form
@@ -480,21 +467,20 @@ export const formToRemediationInstruction = (form) => {
  * @param {RemediationInstructionForm} form
  * @return {FlattenErrors}
  */
-export const remediationInstructionErrorsToForm = (errors, form) =>
-  flattenErrorMap(errors, (errorsObject) => {
-    const { jobs, ...errorMessages } = errorsObject;
+export const remediationInstructionErrorsToForm = (errors, form) => flattenErrorMap(errors, (errorsObject) => {
+  const { jobs, ...errorMessages } = errorsObject;
 
-    if (jobs) {
-      errorMessages.jobs = jobs.reduce((acc, messages, index) => {
-        const job = form.jobs[index];
-        acc[job.key] = messages;
+  if (jobs) {
+    errorMessages.jobs = jobs.reduce((acc, messages, index) => {
+      const job = form.jobs[index];
+      acc[job.key] = messages;
 
-        return acc;
-      }, {});
-    }
+      return acc;
+    }, {});
+  }
 
-    return errorMessages;
-  });
+  return errorMessages;
+});
 
 /**
  * Convert a remediation instruction form object to an API request compatible object

@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/modules/auth';
+import store from '@/store';
 
 import { Handlebars } from './handlebars';
 import { normalizeHandlebarsNbsp } from './normalize';
@@ -12,12 +12,10 @@ import { normalizeHandlebarsNbsp } from './normalize';
  * @returns {Promise<string>}
  */
 export async function compile(template, context = {}, instance = Handlebars) {
-  const authStore = useAuthStore();
-
   const handleBarFunction = instance.compile(normalizeHandlebarsNbsp(template ?? ''));
   const preparedContext = {
-    //env: store.getters['template/vars/items'] ?? {}, // TODO: continue
-    user: authStore.currentUser ?? {},
+    env: store.getters['template/vars/items'] ?? {},
+    user: store.getters['auth/currentUser'] ?? {},
 
     ...context,
   };

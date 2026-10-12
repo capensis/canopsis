@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <entity-chart-widget
       v-for="(chart, index) in filteredCharts"
       :key="index"
@@ -7,7 +7,7 @@
       :entity="entity"
       :available-metrics="availableMetrics"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -15,7 +15,6 @@ import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vu
 
 export default {
   components: { EntityChartWidget },
-
   props: {
     charts: {
       type: Array,
@@ -30,12 +29,11 @@ export default {
       default: () => [],
     },
   },
-
   computed: {
     filteredCharts() {
-      return this.charts.filter(({ parameters }) =>
-        parameters.metrics?.some(({ metric }) => this.availableMetrics.includes(metric)
-      ));
+      return this.charts.filter(
+        ({ parameters }) => parameters.metrics.some(({ metric }) => this.availableMetrics.includes(metric)),
+      );
     },
   },
 };

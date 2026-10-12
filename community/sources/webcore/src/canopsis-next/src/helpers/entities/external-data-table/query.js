@@ -2,7 +2,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
 
 /**
- * This function converts widget with type 'ExternalDataTable' to query Object
+ * This function converts widget with type 'AlarmsList' to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -26,10 +26,11 @@ export const convertExternalDataTableWidgetToQuery = (widget = {}) => {
 };
 
 /**
- * This function converts userPreference with widget type 'ExternalDataTable' to query Object
+ * This function converts userPreference with widget type 'AlarmsList' to query Object
  *
  * @param {Object} [userPreference]
  * @returns {{}}
  */
-export const convertExternalDataTableUserPreferenceToQuery = ({ content } = {}) =>
-  content.itemsPerPage ? { itemsPerPage: content.itemsPerPage } : {};
+export const convertExternalDataTableUserPreferenceToQuery = ({ content } = {}) => (
+  content.itemsPerPage ? { itemsPerPage: content.itemsPerPage } : {}
+);

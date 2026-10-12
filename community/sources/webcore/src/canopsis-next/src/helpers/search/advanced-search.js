@@ -1,4 +1,13 @@
-import { cloneDeep, isEmpty, isString, isNaN, isUndefined, mapKeys, pick, omit } from 'lodash';
+import {
+  cloneDeep,
+  isEmpty,
+  isString,
+  isNaN,
+  isUndefined,
+  mapKeys,
+  pick,
+  omit,
+} from 'lodash';
 
 import {
   ALARM_ADVANCED_SEARCH_CHIP_TYPES,
@@ -23,7 +32,7 @@ import {
   PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES,
 } from '@/constants';
 
-import { isPickEqual } from '@/helpers/collection';
+import { uuid } from '@/helpers/uuid';
 import {
   formRuleToPatternRule,
   isArrayOperator,
@@ -34,8 +43,8 @@ import {
   isValueInfosPatternRuleField,
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
+import { isPickEqual } from '@/helpers/collection';
 import { formToPrimitiveArray } from '@/helpers/entities/shared/form';
-import { uid } from '@/helpers/uid';
 
 /**
  * Adds prefix to all keys of an attributes map.
@@ -44,8 +53,9 @@ import { uid } from '@/helpers/uid';
  * @param {string} [prefix = ''] - The prefix to add to each key.
  * @returns {Object} - New object with prefixed keys.
  */
-export const addPrefixToAttributesMap = (attributesMap = {}, prefix = '') =>
-  mapKeys(attributesMap, (value, key) => `${prefix}${key}`);
+export const addPrefixToAttributesMap = (attributesMap = {}, prefix = '') => (
+  mapKeys(attributesMap, (value, key) => `${prefix}${key}`)
+);
 
 /**
  * @typedef {'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern'} AdvancedSearchRuleItemPosition
@@ -113,9 +123,7 @@ export const getInitialFormItemType = (item, union = false) => {
     return null;
   }
 
-  return union
-    ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union
-    : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute;
+  return union ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute;
 };
 
 /**
@@ -124,11 +132,10 @@ export const getInitialFormItemType = (item, union = false) => {
  * @param {string} value - The operator of the item.
  * @returns {AdvancedSearchChipType} The type of range value item.
  */
-export const getRangeValueItemType = value =>
-  ({
-    [PATTERN_OPERATORS.inRangeDates]: ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValueDate,
-    [PATTERN_OPERATORS.inRangePeriod]: ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValuePeriod,
-  })[value];
+export const getRangeValueItemType = value => ({
+  [PATTERN_OPERATORS.inRangeDates]: ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValueDate,
+  [PATTERN_OPERATORS.inRangePeriod]: ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValuePeriod,
+}[value]);
 
 /**
  * Determines the next chip type for an advanced search form item based on the current type and attributes.
@@ -147,10 +154,7 @@ export const getNextForFormItemType = (
   { attribute, fieldType, operator, text, alias } = {},
   type = null,
 ) => {
-  if (
-    text ||
-    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union, ALARM_ADVANCED_SEARCH_CHIP_TYPES.text].includes(type)
-  ) {
+  if (text || [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union, ALARM_ADVANCED_SEARCH_CHIP_TYPES.text].includes(type)) {
     return null;
   }
 
@@ -337,8 +341,7 @@ export const advancedSearchToForm = ({ search = '', positions = [], ...patterns 
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isAlarmEntityPatternField = (field = '') =>
-  field.startsWith(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity);
+export const isAlarmEntityPatternField = (field = '') => field.startsWith(ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity);
 
 /**
  * Checks if a given field is a pbehavior pattern field.
@@ -346,8 +349,7 @@ export const isAlarmEntityPatternField = (field = '') =>
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isPbehaviorPatternField = (field = '', prefix = '') =>
-  field.startsWith(`${prefix}${PBEHAVIOR_PATTERN_PREFIX}`);
+export const isPbehaviorPatternField = (field = '', prefix = '') => field.startsWith(`${prefix}${PBEHAVIOR_PATTERN_PREFIX}`);
 
 /**
  * Checks if a given field is an alarm pattern field.
@@ -355,8 +357,7 @@ export const isPbehaviorPatternField = (field = '', prefix = '') =>
  * @param {string} [field = ''] - The field string to be checked.
  * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
  */
-export const isAlarmPatternField = (field = '') =>
-  field && !isAlarmEntityPatternField(field) && !isPbehaviorPatternField(field);
+export const isAlarmPatternField = (field = '') => field && !isAlarmEntityPatternField(field) && !isPbehaviorPatternField(field);
 
 /**
  * Transforms a form structure into an advanced search pattern structure.
@@ -369,82 +370,79 @@ export const isAlarmPatternField = (field = '') =>
 export const formToAdvancedSearch = (form = [], alarmPattern = false) => {
   let firstPatternKey = null;
 
-  return form.reduce(
-    (acc, { union, range, text, ...item }) => {
-      if (text) {
-        acc.search = text;
-
-        return acc;
-      }
-
-      if (union === ADVANCED_SEARCH_UNION_CONDITIONS.and || (!union && !item.attribute)) {
-        return acc;
-      }
-
-      if (union === ADVANCED_SEARCH_UNION_CONDITIONS.or) {
-        acc[firstPatternKey].push([]);
-
-        return acc;
-      }
-
-      let preparedItem = omit(item, ['filled', 'rangeValueDate', 'rangeValuePeriod']);
-
-      if (range) {
-        const rangeValueKey = getRangeValueItemType(item.operator);
-
-        preparedItem.range = {
-          type: range,
-
-          ...item[rangeValueKey],
-        };
-      }
-
-      const pbehaviorPrefix = alarmPattern ? ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX : '';
-
-      let key = alarmPattern ? ADVANCED_SEARCH_FIELDS.alarm : ADVANCED_SEARCH_FIELDS.search;
-
-      if (alarmPattern) {
-        if (isAlarmEntityPatternField(preparedItem.attribute) || item?.alias) {
-          key = ADVANCED_SEARCH_FIELDS.entity;
-          preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
-        } else if (isPbehaviorPatternField(preparedItem.attribute, pbehaviorPrefix)) {
-          key = ADVANCED_SEARCH_FIELDS.pbehavior;
-          preparedItem.attribute = preparedItem.attribute.replace(pbehaviorPrefix, '');
-        }
-      }
-
-      if (isInfosPatternRuleField(preparedItem.attribute)) {
-        const splittedAttribute = preparedItem.attribute.split('.');
-        const field = splittedAttribute.pop();
-
-        preparedItem.attribute = splittedAttribute.join('.');
-        preparedItem.field = field;
-      }
-
-      preparedItem = formRuleToPatternRule(preparedItem);
-
-      if (!firstPatternKey) {
-        firstPatternKey = key;
-      }
-
-      if (!acc[key].length) {
-        acc[key].push([]);
-      }
-
-      acc[key][acc[key].length - 1].push(preparedItem);
-      acc.positions.push(key);
+  return form.reduce((acc, { union, range, filled, text, ...item }) => {
+    if (text) {
+      acc.search = text;
 
       return acc;
-    },
-    {
-      search: '',
-      positions: [],
-      [ADVANCED_SEARCH_FIELDS.alarm]: [],
-      [ADVANCED_SEARCH_FIELDS.entity]: [],
-      [ADVANCED_SEARCH_FIELDS.pbehavior]: [],
-      [ADVANCED_SEARCH_FIELDS.search]: [],
-    },
-  );
+    }
+
+    if (union === ADVANCED_SEARCH_UNION_CONDITIONS.and || (!union && !item.attribute)) {
+      return acc;
+    }
+
+    if (union === ADVANCED_SEARCH_UNION_CONDITIONS.or) {
+      acc[firstPatternKey].push([]);
+
+      return acc;
+    }
+
+    let preparedItem = omit(item, ['rangeValueDate', 'rangeValuePeriod']);
+
+    if (range) {
+      const rangeValueKey = getRangeValueItemType(item.operator);
+
+      preparedItem.range = {
+        type: range,
+
+        ...item[rangeValueKey],
+      };
+    }
+
+    const pbehaviorPrefix = alarmPattern ? ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX : '';
+
+    let key = alarmPattern ? ADVANCED_SEARCH_FIELDS.alarm : ADVANCED_SEARCH_FIELDS.search;
+
+    if (alarmPattern) {
+      if (isAlarmEntityPatternField(preparedItem.attribute) || item?.alias) {
+        key = ADVANCED_SEARCH_FIELDS.entity;
+        preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
+      } else if (isPbehaviorPatternField(preparedItem.attribute, pbehaviorPrefix)) {
+        key = ADVANCED_SEARCH_FIELDS.pbehavior;
+        preparedItem.attribute = preparedItem.attribute.replace(pbehaviorPrefix, '');
+      }
+    }
+
+    if (isInfosPatternRuleField(preparedItem.attribute)) {
+      const splittedAttribute = preparedItem.attribute.split('.');
+      const field = splittedAttribute.pop();
+
+      preparedItem.attribute = splittedAttribute.join('.');
+      preparedItem.field = field;
+    }
+
+    preparedItem = formRuleToPatternRule(preparedItem);
+
+    if (!firstPatternKey) {
+      firstPatternKey = key;
+    }
+
+    if (!acc[key].length) {
+      acc[key].push([]);
+    }
+
+    acc[key][acc[key].length - 1].push(preparedItem);
+    acc.positions.push(key);
+
+    return acc;
+  }, {
+    search: '',
+    positions: [],
+    [ADVANCED_SEARCH_FIELDS.alarm]: [],
+    [ADVANCED_SEARCH_FIELDS.entity]: [],
+    [ADVANCED_SEARCH_FIELDS.pbehavior]: [],
+    [ADVANCED_SEARCH_FIELDS.search]: [],
+  });
 };
 
 /**
@@ -453,8 +451,11 @@ export const formToAdvancedSearch = (form = [], alarmPattern = false) => {
  * @param {AdvancedSearch} [search = {}] - The alarm search object to evaluate.
  * @returns {boolean} - Returns true if all specified fields in the search object are empty, otherwise false.
  */
-export const isEmptyAdvancedSearch = (search = {}) =>
-  Object.values(pick(search, ADVANCED_SEARCH_FIELDS_TO_COMPARISON)).map(isEmpty).every(Boolean);
+export const isEmptyAdvancedSearch = (search = {}) => (
+  Object.values(pick(search, ADVANCED_SEARCH_FIELDS_TO_COMPARISON))
+    .map(isEmpty)
+    .every(Boolean)
+);
 
 /**
  * Checks if an advanced search pattern is empty.
@@ -509,9 +510,10 @@ export const prepareQueryWithoutAdvancedSearch = (query = {}) => ({
  * @param {AdvancedSearch & { _id: string }} secondSearch - The second alarm search object to compare.
  * @returns {boolean} - Returns true if the searches are equal based on their IDs or specified fields, otherwise false.
  */
-export const isEqualAdvancedSearches = (firstSearch, secondSearch) =>
-  firstSearch?._id === secondSearch?._id ||
-  isPickEqual(firstSearch, secondSearch, ADVANCED_SEARCH_FIELDS_TO_COMPARISON);
+export const isEqualAdvancedSearches = (firstSearch, secondSearch) => (
+  firstSearch?._id === secondSearch?._id
+  || isPickEqual(firstSearch, secondSearch, ADVANCED_SEARCH_FIELDS_TO_COMPARISON)
+);
 
 /**
  * Merges a search into the saved searches array: updates existing equal search or prepends the new one.
@@ -552,7 +554,7 @@ export const createAdvancedSearchFromAlarmFieldValue = (field, value) => {
   const pattern = [[{ field: preparedField, cond: { value, type: PATTERN_CONDITIONS.equal } }]];
 
   return {
-    _id: uid('advanced-search'),
+    _id: uuid(),
     pinned: false,
     rules: advancedSearchToForm({
       positions: [patternField],
@@ -568,13 +570,16 @@ export const createAdvancedSearchFromAlarmFieldValue = (field, value) => {
  * @param {AdvancedSearchChipType} type - The type of the rule to check against.
  * @returns {boolean} - Returns true if the rule is of a number value type, otherwise false.
  */
-export const isNumberValueType = (rule, type) =>
-  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value &&
-  PATTERN_NUMBER_OPERATORS.includes(rule.operator) &&
-  (rule.fieldType === PATTERN_FIELD_TYPES.number ||
-    ALARM_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute) ||
-    ENTITY_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute) ||
-    PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute));
+export const isNumberValueType = (rule, type) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value
+  && PATTERN_NUMBER_OPERATORS.includes(rule.operator)
+  && (
+    rule.fieldType === PATTERN_FIELD_TYPES.number
+    || ALARM_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
+    || ENTITY_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
+    || PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
+  )
+);
 
 /**
  * Checks if the given type and value represent an array item.
@@ -583,8 +588,9 @@ export const isNumberValueType = (rule, type) =>
  * @param {string} value - The value of the item.
  * @returns {boolean} True if the type is 'operator' and the value is an array condition, otherwise false.
  */
-export const isArrayItem = (type, value) =>
-  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayOperator(value);
+export const isArrayItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayOperator(value)
+);
 
 /**
  * Checks if the given type and value represent a range for date item.
@@ -593,8 +599,9 @@ export const isArrayItem = (type, value) =>
  * @param {string} value - The value of the item.
  * @returns {boolean} True if the type is 'range' and the value is an interval date operator, otherwise false.
  */
-export const isRangeItem = (type, value) =>
-  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && PATTERN_DATE_OPERATORS.includes(value);
+export const isRangeItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && PATTERN_DATE_OPERATORS.includes(value)
+);
 
 /**
  * Checks if the given type and value represent a duration item.
@@ -603,8 +610,9 @@ export const isRangeItem = (type, value) =>
  * @param {string} value - The value of the item.
  * @returns {boolean} True if the type is 'operator' and the value is a duration operator, otherwise false.
  */
-export const isDurationItem = (type, value) =>
-  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && PATTERN_DURATION_OPERATORS.includes(value);
+export const isDurationItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && PATTERN_DURATION_OPERATORS.includes(value)
+);
 
 /**
  * Filters a list of items based on a specified condition, including the last header item before each matching item.
@@ -659,6 +667,6 @@ export const getNumberMinValueAttributes = (min = 0) => ({
 
     const num = Number(value);
 
-    return isNaN(num) || num < min ? min : num;
+    return (isNaN(num) || num < min) ? min : num;
   },
 });

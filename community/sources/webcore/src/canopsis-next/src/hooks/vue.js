@@ -1,4 +1,3 @@
-import { camelCase } from 'lodash';
 import { getCurrentInstance, watch } from 'vue';
 
 /**
@@ -29,14 +28,11 @@ export const useComponentOptions = () => {
  * @return {Object}
  */
 export const useComponentModel = () => {
-  const { emits } = useComponentOptions();
-  const componentEmits = Array.isArray(emits) ? emits : Object.keys(emits ?? {});
-  const modelEvent = componentEmits.find(emit => emit.startsWith('update:'));
-  const modelProp = modelEvent?.replace('update:', '');
+  const { model } = useComponentOptions();
 
   return {
-    event: modelEvent ?? 'input',
-    prop: modelProp ? camelCase(modelProp) : 'value',
+    event: model?.event ?? 'input',
+    prop: model?.prop ?? 'value',
   };
 };
 
@@ -49,15 +45,11 @@ export const useComponentModel = () => {
  * @return {Function} Cleanup function that stops the watcher
  */
 export const watchOnce = (value, comparator = v => v, options = {}) => {
-  const unwatch = watch(
-    value,
-    (newValue, oldValue) => {
-      if (comparator(newValue, oldValue)) {
-        unwatch();
-      }
-    },
-    options,
-  );
+  const unwatch = watch(value, (newValue, oldValue) => {
+    if (comparator(newValue, oldValue)) {
+      unwatch();
+    }
+  }, options);
 
   return () => unwatch();
 };

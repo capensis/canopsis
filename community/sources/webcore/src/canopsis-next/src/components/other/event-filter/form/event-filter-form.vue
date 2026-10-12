@@ -1,38 +1,36 @@
 <template>
-  <c-layout gap="3" column>
-    <c-enabled-field v-model="enabledField" with-background />
+  <v-layout class="gap-3" column>
+    <c-enabled-field v-field="form.enabled" with-background />
 
     <c-form-general-patterns-tabs
-      :form="formValues"
+      v-field="form"
       :rule-id="ruleId"
       :type="type"
       reverse
     >
       <template #general="{ setRef, templateVars, copyVars }">
         <event-filter-general-form
+          v-field="form"
           :ref="setRef"
           :template-vars="templateVars"
           :copy-vars="copyVars"
           :is-disabled-id-field="isDisabledIdField"
         />
       </template>
-
       <template #patterns="{ setRef }">
         <event-filter-patterns-form
+          v-field="form"
           :ref="setRef"
-          :form="formValues"
           :event-attributes="eventAttributes"
           :attributes-pending="attributesPending"
         />
       </template>
     </c-form-general-patterns-tabs>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
-
-import { useFormContext } from '@/hooks/form';
 
 import EventFilterGeneralForm from './event-filter-general-form.vue';
 import EventFilterPatternsForm from './event-filter-patterns-form.vue';
@@ -42,7 +40,15 @@ export default {
     EventFilterGeneralForm,
     EventFilterPatternsForm,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     ruleId: {
       type: String,
       default: undefined,
@@ -61,17 +67,9 @@ export default {
     },
   },
   setup() {
-    const form = useFormContext();
-
-    const enabledField = form.model('enabled');
-
     const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
 
-    return {
-      formValues: form.values,
-      enabledField,
-      type,
-    };
+    return { type };
   },
 };
 </script>

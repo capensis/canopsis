@@ -1,25 +1,25 @@
 <template>
-  <td class="permissions-table-cell">
-    <c-tooltip
+  <td>
+    <v-tooltip
       v-for="(checkbox, index) in checkboxes"
       :key="index"
       :disabled="!checkbox.tooltip"
-      location="top"
+      top
     >
-      <template #activator="{ props: activatorProps }">
-        <span v-bind="activatorProps" class="permissions-table-cell__checkbox">
-          <c-light-checkbox
+      <template #activator="{ on, attrs }">
+        <span v-bind="attrs" v-on="on">
+          <v-checkbox
+            v-bind="checkbox.bind"
             :disabled="disabled || !role.editable || checkbox.disabled"
-            :indeterminate="checkbox.indeterminate"
-            :label="checkbox.label"
-            :model-value="checkbox.modelValue"
-            @update:model-value="checkbox.onChange"
+            class="ma-0 pa-0"
+            color="primary"
+            hide-details
+            v-on="checkbox.on"
           />
         </span>
       </template>
-
       <span>{{ checkbox.tooltip }}</span>
-    </c-tooltip>
+    </v-tooltip>
   </td>
 </template>
 
@@ -47,25 +47,25 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:permission'],
-
   setup(props, { emit }) {
     const { t } = useI18n();
 
     const checkboxes = computed(() => props.permission.actions.map((action) => {
-        const checkboxProps = getPermissionCheckboxProps(props.role, props.permission, action);
+      const checkboxProps = getPermissionCheckboxProps(props.role, props.permission, action);
 
-        return {
+      return {
+        bind: {
           label: action !== CRUD_ACTIONS.can ? action : undefined,
-          modelValue: checkboxProps.inputValue,
+          inputValue: checkboxProps.inputValue,
           indeterminate: checkboxProps.indeterminate,
-          disabled: checkboxProps.disabled,
-          tooltip: checkboxProps.tooltipKey ? t(checkboxProps.tooltipKey) : undefined,
-          onChange: value => emit('update:permission', value, props.role, props.permission, action),
-        };
-      }),
-    );
+        },
+        disabled: checkboxProps.disabled,
+        tooltip: checkboxProps.tooltipKey ? t(checkboxProps.tooltipKey) : undefined,
+        on: {
+          change: value => emit('input', value, props.role, props.permission, action),
+        },
+      };
+    }));
 
     return {
       checkboxes,
@@ -73,17 +73,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.permissions-table-cell {
-  white-space: nowrap;
-
-  &__checkbox {
-    display: block;
-
-    & + & {
-      margin-top: 4px;
-    }
-  }
-}
-</style>

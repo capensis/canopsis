@@ -15,36 +15,38 @@
       <c-table-mass-actions-panel
         :items="selected"
         :removable="removable"
+        small
         role
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-
     <template #auth_config.inactivity_interval="{ item }">
-      {{ durationToString(item.auth_config?.inactivity_interval) }}
+      {{ durationToString(item.auth_config.inactivity_interval) }}
     </template>
-
     <template #auth_config.expiration_interval="{ item }">
-      {{ durationToString(item.auth_config?.expiration_interval) }}
+      {{ durationToString(item.auth_config.expiration_interval) }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout gap="1">
+      <v-layout>
         <c-action-btn
           v-if="updatable"
-          :disabled-button="!item.editable"
+          :disabled="!item.editable"
           type="edit"
-          @click.stop="$emit('edit', item)"
+          @click="$emit('edit', item)"
         />
-        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
         <c-action-btn
           v-if="removable"
-          :disabled-button="!item.deletable"
+          :disabled="!item.deletable"
           type="delete"
-          @click.stop="$emit('remove', item)"
+          @click="$emit('remove', item._id)"
         />
-      </c-layout>
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
@@ -52,15 +54,13 @@
 <script>
 import { computed } from 'vue';
 
-import { convertDurationToString } from '@/helpers/date/duration';
-
 import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
     roles: {
       type: Array,
-      default: () => [],
+      required: true,
     },
     pending: {
       type: Boolean,
@@ -68,11 +68,11 @@ export default {
     },
     options: {
       type: Object,
-      required: true,
+      required: false,
     },
     totalItems: {
       type: Number,
-      default: 0,
+      required: false,
     },
     removable: {
       type: Boolean,
@@ -87,9 +87,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
-
   setup() {
     const { t } = useI18n();
 
@@ -115,7 +112,16 @@ export default {
       },
     ]);
 
-    const durationToString = duration => duration ? convertDurationToString(duration) : t('common.notAvailable');
+    /**
+     * Convert duration to string
+     */
+    const durationToString = duration => (
+      duration ? `${duration.value}${duration.unit}` : t('common.notAvailable')
+    );
+
+    /**
+     * Check if role is disabled
+     */
     const isDisabledRole = ({ deletable = true }) => !deletable;
 
     return {

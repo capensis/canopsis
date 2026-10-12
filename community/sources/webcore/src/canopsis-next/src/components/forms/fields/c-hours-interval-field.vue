@@ -1,12 +1,10 @@
 <template>
-  <c-select
-    :model-value="value"
+  <c-select-field
+    v-field="value"
     :items="intervals"
-    :label="label || t('common.period')"
-    :name="name"
-    item-title="text"
+    :label="label || $t('common.period')"
+    item-text="text"
     item-value="value"
-    @update:model-value="updateValue"
   />
 </template>
 
@@ -20,6 +18,10 @@ import { getNowIntervalValueForHours } from '@/helpers/date/date-intervals';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: String,
@@ -29,46 +31,31 @@ export default {
       type: String,
       default: '',
     },
-    name: {
-      type: String,
-      default: 'interval',
-    },
   },
-
-  emits: ['input', 'update:value'],
-
-  setup(props, { emit }) {
+  setup() {
     const { t } = useI18n();
 
     const intervals = computed(() => {
       const result = [];
       const nowHours = (new Date()).getHours();
 
-      for (let index = 0; index < 24; index += 1) {
-        const calculatedHours = nowHours - index;
+      for (let i = 0; i < 24; i += 1) {
+        const calculatedHours = nowHours - i;
         const hours = calculatedHours >= 0 ? calculatedHours : 24 + calculatedHours;
-        const isYesterday = nowHours < index;
+        const slotValue = getNowIntervalValueForHours(i, TIME_UNITS.hour);
+        const isYesterday = nowHours < i;
 
         result.push({
-          value: getNowIntervalValueForHours(index, TIME_UNITS.hour),
-          text: `${hours}:00 - ${hours}:59${
-            isYesterday ? ` (${t('common.yesterday').toLowerCase()})` : ''
-          }`,
+          value: slotValue,
+          text: `${hours}:00 - ${hours}:59${isYesterday ? ` (${t('common.yesterday').toLowerCase()})` : ''}`,
         });
       }
 
       return result;
     });
 
-    const updateValue = (value) => {
-      emit('input', value);
-      emit('update:value', value);
-    };
-
     return {
-      t,
       intervals,
-      updateValue,
     };
   },
 };

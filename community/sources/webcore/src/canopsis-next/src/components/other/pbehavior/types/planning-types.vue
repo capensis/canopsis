@@ -1,125 +1,109 @@
 <template>
-  <pbehavior-types-list
-    :pbehavior-types="pbehaviorTypes"
-    :pending="pbehaviorTypesPending"
-    :total-items="pbehaviorTypesMeta.total_count"
-    :options="options"
-    :removable="hasDeleteAccess"
-    :updatable="hasUpdateAccess"
-    :active="active"
-    @edit="showEditPbehaviorTypeModal"
-    @remove="showRemovePbehaviorTypeModal"
-    @refresh="fetchList"
-    @update:options="updateOptions"
-  />
+  <v-card-text>
+    <planning-types-list
+      :pbehavior-types="pbehaviorTypes"
+      :pending="pbehaviorTypesPending"
+      :total-items="pbehaviorTypesMeta.total_count"
+      :options.sync="options"
+      :removable="hasDeleteAnyPbehaviorTypeAccess"
+      :updatable="hasUpdateAnyPbehaviorTypeAccess"
+      :active="active"
+      @remove-selected="showRemoveSelectedPbehaviorTypeModal"
+      @remove="showRemovePbehaviorTypeModal"
+      @edit="showEditPbehaviorTypeModal"
+      @refresh="fetchList"
+    />
+  </v-card-text>
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { MODALS } from '@/constants';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants';
+import { permissionsTechnicalPbehaviorTypesMixin } from '@/mixins/permissions/technical/pbehavior-types';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { localQueryMixin } from '@/mixins/query/query';
 
-import { convertQueryToRequest } from '@/helpers/query';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useLocalQueryWithOptions } from '@/hooks/query/shared';
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-
-import PbehaviorTypesList from './pbehavior-types-list.vue';
+import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
 
 export default {
-  components: {
-    PbehaviorTypesList,
-  },
-
+  components: { PlanningTypesList },
+  mixins: [
+    permissionsTechnicalPbehaviorTypesMixin,
+    entitiesPbehaviorTypeMixin,
+    localQueryMixin,
+  ],
   props: {
+    params: {
+      type: Object,
+      default: () => ({}),
+    },
     active: {
       type: Boolean,
       default: true,
     },
   },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    fetchList() {
+      const params = this.getQuery();
+      params.with_flags = true;
+      params.with_hidden = true;
 
-  setup() {
-    const {
-      pbehaviorTypes,
-      pbehaviorTypesPending,
-      pbehaviorTypesMeta,
-      fetchPbehaviorTypesList,
-      updatePbehaviorType,
-      removePbehaviorType,
-    } = usePbehaviorType();
+      this.fetchPbehaviorTypesList({ params });
+    },
 
-    const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
-      USER_PERMISSIONS.technical.planningType,
-    );
-
-    const modals = useModals();
-    const popups = usePopups();
-    const { t } = useI18n();
-
-    const {
-      options,
-      handler: fetchList,
-      updateOptions,
-    } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery => fetchPbehaviorTypesList({
-          params: {
-            ...convertQueryToRequest(fetchQuery),
-            with_flags: true,
-            with_hidden: true,
-          },
-        }),
-    });
-
-    const tryRemovePbehaviorType = async (id) => {
+    async tryRemovePbehaviorType(pbehaviorTypeId) {
       try {
-        await removePbehaviorType({ id });
+        await this.removePbehaviorType({ id: pbehaviorTypeId });
       } catch (err) {
-        popups.error({ text: err.error || t('errors.default') });
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
-    };
+    },
 
-    const showRemovePbehaviorTypeModal = id => modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await tryRemovePbehaviorType(id);
-            await fetchList();
-          },
-        },
-      });
-
-    const showEditPbehaviorTypeModal = pbehaviorType => modals.show({
+    showEditPbehaviorTypeModal(pbehaviorType) {
+      this.$modals.show({
         name: MODALS.createPbehaviorType,
         config: {
           pbehaviorType,
-          action: async (data) => {
-            await updatePbehaviorType({
+          action: async (newPbehaviorType) => {
+            await this.updatePbehaviorType({
+              data: newPbehaviorType,
               id: pbehaviorType._id,
-              data,
             });
-            await fetchList();
+            await this.fetchList();
           },
         },
       });
+    },
 
-    onMounted(fetchList);
+    showRemovePbehaviorTypeModal(pbehaviorTypeId) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.tryRemovePbehaviorType(pbehaviorTypeId);
+            await this.fetchList();
+          },
+        },
+      });
+    },
 
-    return {
-      pbehaviorTypes,
-      pbehaviorTypesPending,
-      pbehaviorTypesMeta,
-      options,
-      hasUpdateAccess,
-      hasDeleteAccess,
-      fetchList,
-      updateOptions,
-      showEditPbehaviorTypeModal,
-      showRemovePbehaviorTypeModal,
-    };
+    showRemoveSelectedPbehaviorTypeModal(selected) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorType(id)));
+
+            await this.fetchList();
+          },
+        },
+      });
+    },
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
-  <c-layout>
+  <v-layout>
     <test-suite-videos :videos="testSuite.videos" />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>

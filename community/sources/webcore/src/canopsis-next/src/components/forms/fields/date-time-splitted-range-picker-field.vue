@@ -1,46 +1,43 @@
 <template>
-  <c-layout class="date-time-splitted-range-picker-field">
-    <div class="date-time-splitted-range-picker-field__start">
+  <v-layout class="date-time-splitted-range-picker-field">
+    <v-flex class="date-time-splitted-range-picker-field__start">
       <date-time-splitted-picker-field
+        v-validate="startRules"
         :value="start"
         :full-day="fullDay"
         :disabled="disabled"
-        :control-variant="controlVariant"
         :label="startLabel"
         :name="`${name}_start`"
-        :rules="startRules"
-        :hide-details="hideDetails"
-        @update:value="$emit('update:start', $event)"
+        @input="$emit('update:start', $event)"
       />
-    </div>
+    </v-flex>
     <template v-if="!noEnding">
       <div class="date-time-splitted-range-picker-field__time-dash">
-        -
+        –
       </div>
-      <div class="date-time-splitted-range-picker-field__end">
+      <v-flex class="date-time-splitted-range-picker-field__end">
         <date-time-splitted-picker-field
+          v-validate="endRules"
           :value="end"
           :full-day="fullDay"
           :disabled="disabled"
-          :control-variant="controlVariant"
           :label="endLabel"
           :name="`${name}_end`"
           :min="endMin"
           :max="endMax"
-          :rules="endRules"
-          :hide-details="hideDetails"
           reverse
-          @update:value="$emit('update:end', $event)"
+          @input="$emit('update:end', $event)"
         />
-      </div>
+      </v-flex>
     </template>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     DateTimeSplittedPickerField,
   },
@@ -85,10 +82,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    controlVariant: {
-      type: String,
-      default: undefined,
-    },
     endMin: {
       type: String,
       required: false,
@@ -96,10 +89,6 @@ export default {
     endMax: {
       type: String,
       required: false,
-    },
-    hideDetails: {
-      type: Boolean,
-      default: false,
     },
   },
 };
@@ -115,8 +104,7 @@ export default {
     text-align: center;
   }
 
-  &__start,
-  &__end {
+  &__start, &__end {
     width: calc(50% - calc(var(--dash-width) / 2));
     max-width: calc(50% - calc(var(--dash-width) / 2));
   }

@@ -5,14 +5,15 @@
     <limited-time-line-chart
       :datasets="datasets"
       :options="lastHourChartOptions"
-      class="text-primary"
+      :dark="$system.dark"
+      class="text--primary"
     >
       <template #actions="{ chart }">
         <chart-export-actions
           :chart="chart"
           class="mt-4"
           hide-csv
-          @export:png="$emit('export:png', $event)"
+          v-on="$listeners"
         />
       </template>
     </limited-time-line-chart>
@@ -25,14 +26,17 @@ import { DATETIME_FORMATS, HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR } from '@/c
 
 import { colorToRgba } from '@/helpers/color';
 
+import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
+import { localQueryMixin } from '@/mixins/query/query';
+
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
+
+const LimitedTimeLineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/limited-time-line-chart.vue');
 
 export default {
-  components: {
-    ChartExportActions,
-    LimitedTimeLineChart,
-  },
+  inject: ['$system'],
+  components: { ChartExportActions, LimitedTimeLineChart },
+  mixins: [entitiesMessageRateStatsMixin, localQueryMixin],
   props: {
     messagesRates: {
       type: Array,
@@ -47,38 +51,29 @@ export default {
       required: true,
     },
   },
-
-  emits: ['export:png'],
-
   computed: {
     suggestedMax() {
-      return (
-        Math.max(0, ...this.messagesRates.map(({ rate }) => rate)) *
-        HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR
-      );
+      return Math.max.apply(null, this.messagesRates.map(({ rate }) => rate))
+        * HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR;
     },
 
     datasets() {
-      return [
-        {
-          backgroundColor: colorToRgba(COLORS.primary, 0.7),
-          fill: true,
-          data: this.messagesRates.map(({ time, rate }) => ({
-            x: time * 1000,
-            y: rate,
-          })),
-        },
-      ];
+      return [{
+        backgroundColor: colorToRgba(COLORS.primary, 0.7),
+        fill: true,
+        data: this.messagesRates.map(({ time, rate }) => ({
+          x: time * 1000,
+          y: rate,
+        })),
+      }];
     },
 
     lastHourChartOptions() {
       return {
         animation: false,
-        parsing: false,
         scales: {
           x: {
             time: {
-              unit: 'minute',
               tooltipFormat: DATETIME_FORMATS.timePicker,
               displayFormats: {
                 minute: DATETIME_FORMATS.timePicker,
@@ -96,7 +91,7 @@ export default {
             },
           },
           limit: {
-            enabled: Number.isFinite(this.maxMessagesPerMinute),
+            enabled: true,
             scaleID: 'x',
             value: this.maxMessagesPerMinute,
             backgroundColor: COLORS.healthcheck.error,

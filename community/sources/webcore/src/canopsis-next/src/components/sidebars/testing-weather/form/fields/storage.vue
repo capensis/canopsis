@@ -5,13 +5,10 @@
     hide-on-disabled
   >
     <c-storage-field
-      :model-value="modelValue"
+      v-field="storage"
       :required="required"
       :disabled="disabled"
-      :name="name"
-      @add="$emit('add')"
-      @edit="$emit('edit', $event)"
-      @remove="$emit('remove')"
+      v-on="$listeners"
     />
   </widget-settings-item>
 </template>
@@ -20,10 +17,14 @@
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
+  inject: ['$validator'],
   components: { WidgetSettingsItem },
-
+  model: {
+    prop: 'storage',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    storage: {
       type: String,
       default: '',
     },
@@ -37,14 +38,8 @@ export default {
     },
     required: {
       type: Boolean,
-      default: true,
-    },
-    name: {
-      type: String,
-      default: 'parameters.directory',
+      default: false,
     },
   },
-
-  emits: ['update:modelValue', 'add', 'edit', 'remove'],
 };
 </script>

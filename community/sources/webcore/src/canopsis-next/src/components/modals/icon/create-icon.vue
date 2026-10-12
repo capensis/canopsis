@@ -1,88 +1,85 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <icon-form />
+      <template #text="">
+        <icon-form v-model="form" />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
         >
-          {{ t('common.submit') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { iconToForm, formToRequest } from '@/helpers/entities/icon/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { authMixin } from '@/mixins/auth';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import IconForm from '@/components/other/icons/form/icon-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
+  name: MODALS.createIcon,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     IconForm,
+    ModalWrapper,
   },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+  mixins: [
+    modalInnerMixin,
+    authMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    return {
+      form: iconToForm(this.modal.config.icon),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.createIcon.create.title');
     },
   },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
 
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const title = computed(() => config.value.title || t('modals.createIcon.create.title'));
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(formToRequest(this.form));
+        }
 
-    const form = useForm({
-      initialValues: iconToForm(config.value.icon),
-    });
-    const { values, handleSubmit, isSubmitting } = form;
-
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(formToRequest(values.value));
-
-      closeModal();
-    });
-
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
-
-    return {
-      t,
-      title,
-      isSubmitting,
-      submit,
-      closeModal,
-    };
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

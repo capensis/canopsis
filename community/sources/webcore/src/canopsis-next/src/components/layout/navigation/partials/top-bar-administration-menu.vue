@@ -1,8 +1,8 @@
 <template>
   <top-bar-menu
+    :title="$t('common.administration')"
     :links="administrationLinks"
     :permissions-with-default-type="permissionsWithDefaultType"
-    title="Administration"
     content-class="topbar-menu-administration__content"
     without-sort
   />
@@ -11,26 +11,20 @@
 <script>
 import { computed } from 'vue';
 
-import {
-  GROUPED_USER_PERMISSIONS,
-  GROUPED_USER_PERMISSIONS_KEYS,
-  ROUTES_NAMES,
-  USER_PERMISSIONS,
-} from '@/constants';
+import { USER_PERMISSIONS, ROUTES_NAMES, GROUPED_USER_PERMISSIONS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
 import { useI18n } from '@/hooks/i18n';
 
-import { useMaintenanceActions } from './hooks/maintenance-actions';
 import { useUserInterfaceActions } from './hooks/user-interface-actions';
+import { useMaintenanceActions } from './hooks/maintenance-actions';
 import TopBarMenu from './top-bar-menu.vue';
 
 export default {
   components: { TopBarMenu },
-
   setup() {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
     const { showToggleMaintenanceModeModal } = useMaintenanceActions();
     const { showUserInterfaceModal } = useUserInterfaceActions();
 
@@ -44,7 +38,7 @@ export default {
       USER_PERMISSIONS.technical.viewImportExport,
       USER_PERMISSIONS.technical.notification.common,
       USER_PERMISSIONS.technical.jobManagement,
-    ].filter(Boolean);
+    ];
 
     const accessLinks = [
       {
@@ -62,11 +56,6 @@ export default {
         icon: 'people',
         permission: USER_PERMISSIONS.technical.user,
       },
-      {
-        route: { name: ROUTES_NAMES.adminApiAccessTokens },
-        icon: 'key',
-        title: t(`pageHeaders.${ROUTES_NAMES.adminApiAccessTokens}.title`),
-      },
     ];
 
     const maintenanceLinks = [
@@ -78,7 +67,6 @@ export default {
       {
         route: { name: ROUTES_NAMES.adminPlanning },
         icon: 'event_note',
-        title: t(`pageHeaders.${GROUPED_USER_PERMISSIONS_KEYS.planning}.title`),
         permission: GROUPED_USER_PERMISSIONS.planning,
       },
     ];
@@ -119,12 +107,12 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminAnomalyMonitoredConnectors },
-        icon: 'account_tree',
+        icon: 'steppers',
         permission: USER_PERMISSIONS.technical.anomalyMonitoredConnector,
       },
       {
         route: { name: ROUTES_NAMES.adminJobsManagement },
-        icon: 'confirmation_number',
+        icon: '$vuetify.icons.ticket_status_job',
         permission: USER_PERMISSIONS.technical.jobManagement,
       },
     ];
@@ -137,7 +125,7 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
-        icon: 'storage',
+        icon: 'database',
         permission: USER_PERMISSIONS.technical.externalDataTable,
       },
       {
@@ -147,8 +135,8 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsIcons },
-        icon: 'category',
-        title: t('common.icon', 2),
+        icon: 'square_circle',
+        title: tc('common.icon', 2),
         permission: USER_PERMISSIONS.technical.icon,
       },
       {
@@ -163,7 +151,7 @@ export default {
       },
       {
         route: { name: ROUTES_NAMES.adminCustomObjectsLlms },
-        icon: 'smart_toy',
+        icon: '$vuetify.icons.robot',
         permission: USER_PERMISSIONS.technical.llm,
       },
     ]);
@@ -206,39 +194,60 @@ export default {
       },
     ]);
 
-    const administrationLinks = computed(() => {
-      const otherLinksWithChildren = [
-        {
-          icon: 'local_offer',
-          title: t('layout.topbar.customObjects'),
-          links: customObjectsLinks.value,
-        },
-        { icon: 'settings', title: t('common.settings'), links: settingsLinks.value },
-      ];
+    const otherLinksWithChildren = [
+      {
+        icon: 'local_offer',
+        title: t('layout.topbar.customObjects'),
+        links: customObjectsLinks.value,
+      },
+      {
+        icon: 'settings',
+        title: t('common.settings'),
+        links: settingsLinks.value,
+      },
+    ];
 
-      return [
-        { title: t('common.access'), links: accessLinks },
-        { title: t('common.maintenance'), links: maintenanceLinks },
-        { title: t('common.communication', 2), links: communicationsLinks },
-        { title: t('common.other'), links: otherLinks },
-        { links: otherLinksWithChildren },
-      ].reduce((acc, group) => {
-        if (!group.links.length) {
-          return acc;
-        }
-
-        if (group.title) {
-          acc.push({ title: group.title, header: true });
-        }
-
-        acc.push(...group.links, { divider: true, key: uid() });
-
+    const administrationLinks = computed(() => [
+      {
+        title: t('common.access'),
+        links: accessLinks,
+      },
+      {
+        title: t('common.maintenance'),
+        links: maintenanceLinks,
+      },
+      {
+        title: tc('common.communication', 2),
+        links: communicationsLinks,
+      },
+      {
+        title: t('common.other'),
+        links: otherLinks,
+      },
+      {
+        links: otherLinksWithChildren,
+      },
+    ].reduce((acc, group) => {
+      if (!group.links.length) {
         return acc;
-      }, []);
-    });
+      }
+
+      if (group.title) {
+        acc.push({ title: group.title, header: true });
+      }
+
+      acc.push(
+        ...group.links,
+
+        { divider: true, key: uid() },
+      );
+
+      return acc;
+    }, []));
 
     return {
       permissionsWithDefaultType,
+
       administrationLinks,
     };
   },
@@ -247,7 +256,7 @@ export default {
 
 <style lang="scss">
 .topbar-menu-administration__content {
-  .v-list-subheader {
+  .v-subheader {
     text-transform: uppercase;
     font-weight: 500 !important;
     font-size: 1rem !important;

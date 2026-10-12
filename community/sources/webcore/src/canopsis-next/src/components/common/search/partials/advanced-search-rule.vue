@@ -1,12 +1,7 @@
 <template>
-  <c-layout
-    :class="{
-      'c-advanced-search__rule--union': union,
-      'c-advanced-search__rule--error': hasRuleError,
-    }"
+  <v-layout
+    :class="{ 'c-advanced-search__rule--union': union }"
     class="c-advanced-search__rule"
-    align="center"
-    gap="1"
   >
     <component
       v-for="chip in chips"
@@ -15,12 +10,18 @@
       :key="chip.key"
       v-on="chip.on"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { uniq, pick, isFunction } from 'lodash';
-import { computed, ref, watch, nextTick, toRef } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  nextTick,
+  toRef,
+} from 'vue';
 
 import {
   ALARM_ADVANCED_SEARCH_CHIP_TYPES,
@@ -40,18 +41,15 @@ import {
   getRangeValueItemType,
 } from '@/helpers/search/advanced-search';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 
-import {
-  useAdvancedSearchRuleActiveItems,
-  useAttachAdvancedSearchRuleValidator,
-} from '../hooks/advanced-search';
+import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/advanced-search';
 
 import AdvancedSearchChip from './advanced-search-chip.vue';
-import AdvancedSearchDurationChip from './advanced-search-duration-chip.vue';
 import AdvancedSearchRangeValueDateChip from './advanced-search-range-value-date-chip.vue';
 import AdvancedSearchRangeValuePeriodChip from './advanced-search-range-value-period-chip.vue';
+import AdvancedSearchDurationChip from './advanced-search-duration-chip.vue';
 
 export default {
   components: {
@@ -59,6 +57,10 @@ export default {
     AdvancedSearchRangeValueDateChip,
     AdvancedSearchRangeValuePeriodChip,
     AdvancedSearchDurationChip,
+  },
+  model: {
+    prop: 'rule',
+    event: 'input',
   },
   props: {
     rule: {
@@ -98,9 +100,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:rule', 'make:active', 'reset:active', 'next', 'remove'],
-
   setup(props, { emit }) {
     const { t } = useI18n();
 
@@ -118,24 +117,27 @@ export default {
       allowOr: toRef(props, 'allowOr'),
     });
 
-    const { hasError } = useAttachAdvancedSearchRuleValidator();
-    const hasRuleError = computed(() => hasError(props.rule.key));
+    const { validator } = useAttachAdvancedSearchRuleValidator({
+      isFinishedRule,
+      rule: toRef(props, 'rule'),
+      disabled: toRef(props, 'disabled'),
+    });
 
     /**
      * Navigates to the next form item type, optionally skipping the current type.
      *
      * @param {boolean} [skipType = false] - Whether to skip the current type and move to the next one.
      */
-    const goToNextType = (skipType = false, rule = props.rule) => {
-      inputType.value = getNextForFormItemType(rule, inputType.value);
+    const goToNextType = (skipType = false) => {
+      inputType.value = getNextForFormItemType(props.rule, inputType.value);
 
       if (skipType) {
-        goToNextType(false, rule);
+        goToNextType();
 
         return;
       }
 
-      if (isFinishedRule.value && !rule.text) {
+      if (isFinishedRule.value && !props.rule.text) {
         emit('next');
       }
     };
@@ -145,7 +147,7 @@ export default {
      *
      * @param {string} type - The type of input to be set (e.g., 'attribute', 'operator').
      */
-    const setInputType = type => (inputType.value = type);
+    const setInputType = type => inputType.value = type;
 
     /**
      * Determines if the given value is considered text based on the current attribute and attributes map.
@@ -208,17 +210,12 @@ export default {
         }
       }
 
-      const newRule = {
+      updateModel({
         ...preparedRule,
-        ...pick(
-          advancedSearchRuleItemToFormItem(),
-          oldFilled.filter(field => !filled.includes(field)),
-        ),
+        ...pick(advancedSearchRuleItemToFormItem(), oldFilled.filter(field => !filled.includes(field))),
         [type]: value,
         filled: uniq(filled),
-      };
-
-      updateModel(newRule);
+      });
 
       if (
         [
@@ -234,7 +231,7 @@ export default {
       setInputType(type);
 
       if (!isFinishedRule.value) {
-        nextTick(() => goToNextType(skipType, newRule));
+        nextTick(() => goToNextType(skipType));
       }
     };
 
@@ -281,15 +278,13 @@ export default {
         }
       }
 
-      const newRule = {
+      updateModel({
         ...preparedRule,
         filled: uniq(filled),
         [inputType.value]: value,
-      };
+      });
 
-      updateModel(newRule);
-
-      nextTick(() => goToNextType(skipType, newRule));
+      nextTick(() => goToNextType(skipType));
     };
 
     /**
@@ -330,7 +325,12 @@ export default {
      * @returns {Object} - An object containing the key, component type, binding attributes,
      *                     and event handlers for the chip.
      */
-    const getChipAttributes = ({ input, first, closable, type = inputType.value }) => {
+    const getChipAttributes = ({
+      input,
+      first,
+      closable,
+      type = inputType.value,
+    }) => {
       const items = itemsByType.value[type];
       const key = `${props.rule.key}.${type}`;
       let multiple = false;
@@ -373,9 +373,7 @@ export default {
         focusOnMount: props.focusOnMount,
       };
 
-      let on = {
-        'update:modelValue': updateItem,
-      };
+      let on = { input: updateItem };
 
       if (input) {
         bind.alwaysActive = true;
@@ -391,18 +389,18 @@ export default {
           bind.tooltip = t('advancedSearch.definedDifferent');
         }
 
-        if (hasRuleError.value) {
+        if (validator.errors.has(props.rule.key)) {
           bind.color = 'error';
         }
 
-        bind.modelValue = value;
+        bind.value = value;
         bind.alwaysActive = multiple && !props.rule[type]?.length;
         bind.active = isActiveType(type);
         bind.closable = closable;
         bind.multiple = multiple;
 
         on = {
-          'update:modelValue': newValue => updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
+          input: newValue => updateChipItem(newValue, isText(newValue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
           click: () => clickChip(type),
           focusout: () => focusOutChip(type),
           close: remove,
@@ -430,31 +428,25 @@ export default {
     };
 
     const chips = computed(() => {
-      const filled = props.rule.filled ?? [];
-      const result = filled.map((type, index) => getChipAttributes({
-          type,
-          first: props.first && index === 0,
-          closable: index === filled.length - 1,
-        }),
-      );
+      const result = (props.rule.filled ?? []).map((type, index, filled) => getChipAttributes({
+        type,
+        first: props.first && index === 0,
+        closable: index === filled.length - 1,
+      }));
 
-      if (!isFinishedRule.value && !filled.includes(inputType.value)) {
+      if (!isFinishedRule.value && !props.rule.filled.includes(inputType.value)) {
         result.push(getChipAttributes({ input: true, first: props.first && !result.length }));
       }
 
       return result;
     });
 
-    watch(
-      () => props.union,
-      union => (inputType.value = union
-          ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union
-          : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute),
-    );
+    watch(() => props.union, union => (
+      inputType.value = union ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute
+    ));
 
     return {
       chips,
-      hasRuleError,
       remove,
       clickChip,
     };
@@ -464,16 +456,31 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-search__rule {
-  &:hover :deep(.v-chip::before) {
-    opacity: 0.04;
+  &:hover ::v-deep {
+    .theme--light.v-chip:before {
+      opacity: 0.04;
+    }
+    .theme--dark.v-chip:before {
+      opacity: 0.08;
+    }
   }
 
-  &--union :deep(.v-chip) {
-    border: 1px solid rgba(var(--v-theme-on-surface), 0.87);
-  }
+  &--union ::v-deep {
+    .v-chip {
+      background: var(--v-application-background-base) !important;
 
-  &--union.c-advanced-search__rule--error :deep(.v-chip) {
-    border-color: rgb(var(--v-theme-error));
+      &.theme--light {
+        border: 1px solid var(--v-text-light-primary, rgba(0, 0, 0, 0.87));
+      }
+
+      &.theme--dark {
+        border: 1px solid var(--v-text-dark-primary, #FFFFFF);
+      }
+
+      &.error {
+        color: var(--v-error-base, red);
+      }
+    }
   }
 }
 </style>

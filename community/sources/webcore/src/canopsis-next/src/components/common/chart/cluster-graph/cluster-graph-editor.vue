@@ -1,21 +1,20 @@
 <template>
-  <c-layout class="cluster-graph-editor">
-    <v-col class="cluster-graph-editor__sidebar pa-0">
+  <v-layout class="cluster-graph-editor">
+    <v-flex class="cluster-graph-editor__sidebar">
       <cluster-graph-entities-type
-        :impact="form.impact"
+        v-field="form.impact"
         class="mb-3"
-        @update:impact="updateImpact"
+        @change="clearPinnedEntities"
       />
       <cluster-graph-entities-list
-        :entities="form.entities"
+        v-field="form.entities"
         :impact="form.impact"
-        @update:entities="updateField('entities', $event)"
         @remove="removeEntity"
         @update:entity="updateEntity"
         @update:pinned="updatePinnedEntities"
       />
-    </v-col>
-    <v-col class="cluster-graph-editor__content pa-0">
+    </v-flex>
+    <v-flex class="cluster-graph-editor__content">
       <c-zoom-overlay>
         <network-graph
           ref="networkGraph"
@@ -25,8 +24,8 @@
           ctrl-wheel-zoom
         />
       </c-zoom-overlay>
-    </v-col>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -43,23 +42,27 @@ import { formMixin } from '@/mixins/form';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
-import ClusterGraphEntitiesList from './partials/cluster-graph-entities-list.vue';
 import ClusterGraphEntitiesType from './partials/cluster-graph-entities-type.vue';
+import ClusterGraphEntitiesList from './partials/cluster-graph-entities-list.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     NetworkGraph,
     ClusterGraphEntitiesType,
     ClusterGraphEntitiesList,
   },
   mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
       required: true,
     },
   },
-  emits: ['update:form'],
   computed: {
     notEmptyEntities() {
       return this.form.entities.filter(({ entity }) => entity);
@@ -124,10 +127,12 @@ export default {
 
     entitiesElements() {
       return this.notEmptyEntities.reduce((acc, { entity, pinned = [] }) => {
-        acc.push({
-          group: 'nodes',
-          data: { id: entity._id, entity },
-        });
+        acc.push(
+          {
+            group: 'nodes',
+            data: { id: entity._id, entity },
+          },
+        );
 
         pinned.forEach((pinnedEntity) => {
           acc.push(
@@ -181,11 +186,6 @@ export default {
     },
   },
   methods: {
-    updateImpact(impact) {
-      this.updateField('impact', impact);
-      this.clearPinnedEntities();
-    },
-
     /**
      * Run 'cise' layout for rerender clusters
      */
@@ -197,13 +197,11 @@ export default {
       }
 
       try {
-        this.$refs.networkGraph.$cy
-          .layout({
-            ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+        this.$refs.networkGraph.$cy.layout({
+          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
 
-            clusters: this.cytoscapeClusters,
-          })
-          .run();
+          clusters: this.cytoscapeClusters,
+        }).run();
       } catch (err) {
         console.warn(err);
       }
@@ -252,13 +250,10 @@ export default {
         return;
       }
 
-      const nodesForRemove = elements
-        .filter(({ _id: id }) => !this.allEntitiesById[id])
+      const nodesForRemove = elements.filter(({ _id: id }) => !this.allEntitiesById[id])
         .map(({ _id: id }) => `node[id = "${id}"]`);
 
-      const edgesForRemove = elements.map(
-        ({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`,
-      );
+      const edgesForRemove = elements.map(({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`);
       const elementsForRemoveSelector = [...nodesForRemove, ...edgesForRemove].join(',');
 
       this.$refs.networkGraph.$cy.elements(elementsForRemoveSelector).remove();
@@ -330,7 +325,7 @@ export default {
       }
 
       /**
-       * @desc We've added nextTick to avoid problem with legacy model update timing
+       * @desc We've added nextTick to avoid problem with v-field usage
        */
       await this.$nextTick();
 
@@ -347,7 +342,7 @@ export default {
      */
     async updateEntity(newEntityItem, oldEntityItem) {
       /**
-       * @desc We've added nextTick to avoid problem with legacy model update timing
+       * @desc We've added nextTick to avoid problem with v-field usage
        */
       await this.$nextTick();
 
@@ -383,7 +378,7 @@ export default {
      */
     async updatePinnedEntities(newEntityItem, oldEntityItem) {
       /**
-       * @desc We've added nextTick to avoid problem with legacy model update timing
+       * @desc We've added nextTick to avoid problem with v-field usage
        */
       await this.$nextTick();
 
@@ -407,7 +402,7 @@ export default {
      */
     async clearPinnedEntities() {
       /**
-       * @desc We've added nextTick to avoid problem with legacy model update timing
+       * @desc We've added nextTick to avoid problem with v-field usage
        */
       await this.$nextTick();
 
@@ -434,8 +429,7 @@ $contentWidth: 800px;
 $borderColor: #e5e5e5;
 
 .cluster-graph-editor {
-  &__sidebar,
-  &__content {
+  &__sidebar, &__content {
     height: $height;
     border: 1px solid $borderColor;
   }

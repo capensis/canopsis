@@ -6,7 +6,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
 /**
  * @typedef {Object} BarChartWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {MetricPresets} metrics
+ * @property {MetricPreset[]} metrics
  * @property {boolean} stacked
  * @property {string} chart_title
  * @property {string} default_time_range
@@ -16,27 +16,17 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
  */
 
 /**
- * @typedef {Object} BarChartWidgetParametersForm
- * @property {DurationWithEnabled} periodic_refresh
- * @property {MetricPresetsForm} metrics
- * @property {boolean} stacked
- * @property {string} chart_title
- * @property {string} default_time_range
- * @property {Sampling} default_sampling
- * @property {boolean} comparison
- * @property {string | null} mainFilter
+ * @typedef {BarChartWidgetParameters} BarChartWidgetParametersForm
  */
 
 /**
- * Convert bar chart widget parameters to form.
+ * Convert bar chart widget parameters to form
  *
- * @param {BarChartWidgetParameters} [parameters={}]
+ * @param {BarChartWidgetParameters} parameters
  * @return {BarChartWidgetParametersForm}
  */
 export const barChartWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(
-    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
-  ),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   metrics: metricPresetsToForm(parameters.metrics),
   stacked: parameters.stacked ?? false,
   chart_title: parameters.chart_title ?? '',
@@ -47,12 +37,13 @@ export const barChartWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to bar chart widget parameters.
+ * Convert form to bar chart widget parameters
  *
  * @param {BarChartWidgetParametersForm} form
  * @return {BarChartWidgetParameters}
  */
 export const formToBarChartWidgetParameters = form => ({
   ...form,
+
   metrics: formToMetricPresets(form.metrics),
 });

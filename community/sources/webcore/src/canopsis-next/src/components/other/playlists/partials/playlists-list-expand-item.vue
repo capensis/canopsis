@@ -1,83 +1,60 @@
 <template>
-  <div>
-    <v-tabs
-      v-model="activeTab"
-      class="secondary lighten-1"
-      color="primary"
-      align-tabs="center"
-    >
-      <v-tab>{{ t('common.information', 1) }}</v-tab>
-    </v-tabs>
+  <v-tabs
+    v-model="activeTab"
+    background-color="secondary lighten-1"
+    slider-color="primary"
+    dark
+    centered
+  >
+    <v-tab>{{ $tc('common.information') }}</v-tab>
 
-    <v-window v-model="activeTab" mandatory>
-      <c-window-expand-item>
-        <c-progress-overlay :pending="pending" />
-        <draggable-playlist-tabs :tabs="availableTabs" :groups="groups" disabled />
-      </c-window-expand-item>
-    </v-window>
-  </div>
+    <v-tabs-items
+      v-model="activeTab"
+      mandatory
+    >
+      <v-tab-item>
+        <v-layout class="pa-3">
+          <v-flex xs12>
+            <v-card class="pa-3">
+              <v-layout column>
+                <draggable-playlist-tabs
+                  :tabs="availableTabs"
+                  disabled
+                />
+              </v-layout>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-tabs>
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
 
-import { MAX_LIMIT } from '@/constants';
-
-import { getTabsFromGroupsByIds } from '@/helpers/entities/playlist/form';
-
-import { useI18n } from '@/hooks/i18n';
-import { useView } from '@/hooks/store/modules/view';
-
-import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
+import DraggablePlaylistTabs from '../form/fields/draggable-playlist-tabs.vue';
 
 export default {
   components: { DraggablePlaylistTabs },
-
+  mixins: [permissionsEntitiesPlaylistTabMixin],
   props: {
     playlist: {
       type: Object,
       required: true,
     },
   },
-
-  setup(props) {
-    const { t } = useI18n();
-    const { fetchViewGroupsListWithoutStore } = useView();
-
-    const activeTab = ref(0);
-    const groups = ref([]);
-    const pending = ref(false);
-
-    const availableTabs = computed(() => getTabsFromGroupsByIds(groups.value, props.playlist.tabs_list ?? []),
-    );
-
-    const fetchGroups = async () => {
-      try {
-        pending.value = true;
-
-        const { data = [] } = await fetchViewGroupsListWithoutStore({
-          params: {
-            limit: MAX_LIMIT,
-            with_views: true,
-            with_tabs: true,
-          },
-        });
-
-        groups.value = data;
-      } finally {
-        pending.value = false;
-      }
-    };
-
-    onMounted(fetchGroups);
-
+  data() {
     return {
-      t,
-      activeTab,
-      groups,
-      pending,
-      availableTabs,
+      activeTab: 0,
     };
+  },
+  computed: {
+    availableTabs() {
+      const tabsIds = (this.playlist && this.playlist.tabs_list) || [];
+
+      return this.getAvailableTabsByIds(tabsIds);
+    },
   },
 };
 </script>

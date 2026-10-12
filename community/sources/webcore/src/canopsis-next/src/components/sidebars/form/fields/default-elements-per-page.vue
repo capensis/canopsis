@@ -3,12 +3,14 @@
     :title="$t('settings.defaultNumberOfElementsPerPage')"
     :sub-title="subTitle"
   >
-    <c-items-per-page-field
-      :model-value="modelValue"
+    <v-select
+      v-field="value"
       :label="$t('settings.elementsPerPage')"
-      class="default-elements-per-page__field"
+      :items="$config.PAGINATION_PER_PAGE_VALUES"
+      class="select"
       hide-details
-      @update:model-value="$emit('update:modelValue', $event)"
+      single-line
+      dense
     />
   </widget-settings-item>
 </template>
@@ -20,25 +22,15 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-
   props: {
-    modelValue: {
+    value: {
       type: Number,
       default: PAGINATION_LIMIT,
     },
     subTitle: {
       type: String,
-      default: '',
+      required: false,
     },
   },
-
-  emits: ['update:modelValue'],
 };
 </script>
-
-<style lang="scss" scoped>
-.default-elements-per-page__field {
-  width: 100%;
-  max-width: none;
-}
-</style>

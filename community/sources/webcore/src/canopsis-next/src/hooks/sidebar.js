@@ -1,17 +1,12 @@
-import { useSidebarStore } from '@/stores/modules/sidebar';
+import { useComponentInstance } from './vue';
 
 /**
- * Sidebar store facade.
+ * Hook to access sidebar management methods and properties from the Vue instance.
  *
- * @returns {Object}
+ * @returns {Object} An object containing sidebar management methods and properties.
  */
 export const useSidebar = () => {
-  const sidebarStore = useSidebarStore();
+  const vm = useComponentInstance();
 
-  return {
-    moduleName: 'sidebar',
-    show: sidebarStore.show,
-    hide: sidebarStore.hide,
-    updateConfig: sidebarStore.updateConfig,
-  };
+  return vm.$sidebar;
 };

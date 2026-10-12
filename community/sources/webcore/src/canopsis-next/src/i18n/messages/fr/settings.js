@@ -16,7 +16,6 @@ export default {
     [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
     [SIDE_BARS.textSettings]: 'Paramètres du widget texte',
     [SIDE_BARS.counterSettings]: 'Paramètres du widget compteur',
-    [SIDE_BARS.clockSettings]: 'Paramètres du widget horloge',
     [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
     [SIDE_BARS.mapSettings]: 'Paramètres du widget de cartographie',
     [SIDE_BARS.barChartSettings]: 'Paramètres du graphique à barres',
@@ -36,13 +35,11 @@ export default {
   advancedSettings: 'Paramètres avancés',
   entityDisplaySettings: 'Paramètres d\'affichage des entités',
   entitiesUnderPbehaviorEnabled: 'Entités sous type PBh inactives, Pause, Maintenance',
-  entitiesUnderPauseEnabled: 'Afficher les entités en pause',
   widgetTitle: 'Titre du widget',
   columnName: 'Nom de la colonne',
   defaultSortColumn: 'Colonne de tri par défaut',
   defaultSortColumns: 'Colonnes de tri par défaut',
-  defaultSortColumnsHasAnotherColumns:
-    'Le modèle sélectionné contient des colonnes de tri qui ne sont pas présentes dans les colonnes du tableau actuel. Vous ne pourrez pas modifier le tri sur ces champs.',
+  defaultSortColumnsHasAnotherColumns: 'Le modèle sélectionné contient des colonnes de tri qui ne sont pas présentes dans les colonnes du tableau actuel. Vous ne pourrez pas modifier le tri sur ces champs.',
   missingColumns: 'Colonnes manquantes',
   sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
   columnNames: 'Nom des colonnes',
@@ -53,8 +50,7 @@ export default {
   treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
-  pausePeriodicRefreshOnExpandPanel:
-    'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
+  pausePeriodicRefreshOnExpandPanel: 'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
@@ -63,19 +59,10 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Ack - champ de note obligatoire',
   isSnoozeNoteRequired: 'Snooze - champ de note obligatoire',
-  isRemoveAlarmsFromMetaAlarmCommentRequired:
-    'Supprimer les alarmes de la méta-alarme manuelle - champ de commentaire requis',
+  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Supprimer les alarmes de la méta-alarme manuelle - champ de commentaire requis',
   isUncancelAlarmsCommentRequired: 'Annuler - champ de commentaire obligatoire',
   isMultiAckEnabled: 'Acquittements multiples',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
-  associateTicket: {
-    title: 'Associer un ticket',
-    ticketFormats: 'Formats de ticket',
-    description: 'Ajouter des expressions régulières pour valider l\'ID du ticket',
-    formatsHelp:
-      'Exemples d\'expressions régulières valides :<br><code>\\b[0-9]{4}[A-Za-z][0-9]{5}\\b</code><br><code>^S[0-9]{9}$</code>',
-    emptyTemplate: 'Ce modèle est vide',
-  },
   isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK',
   isVirtualScrollEnabled: 'Rendre les éléments lors du défilement',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
@@ -88,17 +75,7 @@ export default {
   openExpandPanelByDoubleClick: 'Ouvrir le panneau extensible au double clic sur l\'alarme',
   isCorrelationEnabled: 'Corrélation activée ?',
   fastPbehavior: 'Comportement périodique rapide',
-  fastPbehaviorDescription:
-    'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
-  pause: {
-    pauseAction: 'Action Pause',
-    recommended: 'recommandée',
-    pbehavior: 'PBehavior de type Pause',
-    types: 'Types de pause',
-    pbehaviorTypes: 'Types de PBehavior rapides',
-    typesDescription: 'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Pause',
-    propagate: 'Propager la pause à toutes les dépendances',
-  },
+  fastPbehaviorDescription: 'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
   duration: 'Durée',
   tstop: 'Date de fin',
   periodsNumber: 'Nombre d\'étapes',
@@ -111,8 +88,7 @@ export default {
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
   clearFilterEnabled: 'Ne pas autoriser l\'effacement des filtres selectionés',
-  showRootCauseByStateClick:
-    'Afficher le diagramme de cause racine à partir de la colonne Criticité',
+  showRootCauseByStateClick: 'Afficher le diagramme de cause racine à partir de la colonne Criticité',
   rootCauseSettings: 'Paramètres du diagramme de cause racine',
   entitiesColorIndicator: 'Indicateur de couleur des entités',
   alarmsColumns: 'Colonnes de la liste des alarmes',
@@ -144,11 +120,6 @@ export default {
       [STATS_CRITICITY.major]: 'majeur',
       [STATS_CRITICITY.critical]: 'critique',
     },
-  },
-  colors: {
-    title: 'Couleurs',
-    theme: 'Couleurs du thème',
-    custom: 'Couleurs personnalisées',
   },
   infoPopup: {
     title: 'Fenêtre d\'information pour la colonne',
@@ -210,8 +181,7 @@ export default {
     onlyIcon: 'Afficher uniquement les icônes de liens',
     inlineLinksCount: 'Nombre de liens en ligne',
     linksInRowCount: 'Nombre de liens dans la ligne',
-    linksInRowCountTooltip:
-      'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
+    linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
     filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
@@ -253,13 +223,12 @@ export default {
   },
   screenshotMask: {
     title: 'Règle de nommage des fichiers capture d\'écran',
-    helpText:
-      '<dl>' +
-      '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
-      '<dd>- nom du cas de test %test_case%</dd>\n' +
-      '<dd>- date (YYYY, MM, DD)</dd>\n' +
-      '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
-      '</dl>',
+    helpText: '<dl>'
+      + '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n'
+      + '<dd>- nom du cas de test %test_case%</dd>\n'
+      + '<dd>- date (YYYY, MM, DD)</dd>\n'
+      + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+      + '</dl>',
   },
   videoDirectories: {
     title: 'Paramètres de stockage vidéo',
@@ -267,24 +236,22 @@ export default {
   },
   videoMask: {
     title: 'Règle de nommage des fichiers vidéo',
-    helpText:
-      '<dl>' +
-      '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
-      '<dd>- nom du cas de test %test_case%</dd>\n' +
-      '<dd>- date (YYYY, MM, DD)</dd>\n' +
-      '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
-      '</dl>',
+    helpText: '<dl>'
+      + '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n'
+      + '<dd>- nom du cas de test %test_case%</dd>\n'
+      + '<dd>- date (YYYY, MM, DD)</dd>\n'
+      + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+      + '</dl>',
   },
   stickyHeader: 'En-tête collant',
   stickyHorizontalScroll: 'Défilement horizontal fixe',
   reportFileRegexp: {
     title: 'Masque de fichier de rapport',
-    helpText:
-      '<dl>' +
-      '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n' +
-      '<dd>Par exemple:</dd>\n' +
-      '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
-      '</dl>',
+    helpText: '<dl>'
+      + '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n'
+      + '<dd>Par exemple:</dd>\n'
+      + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
+      + '</dl>',
   },
   density: {
     title: 'Densité de table par défaut',

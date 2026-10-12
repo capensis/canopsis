@@ -6,7 +6,7 @@
       v-if="isTrendEnabled"
       :class="{
         'availability-list-column-value__trend': true,
-        'availability-list-column-value__trend--up': trendUp,
+        'availability-list-column-value__trend--up': trendUp
       }"
       :color="trendUp ? 'success' : 'error'"
       size="16"
@@ -46,27 +46,31 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
-    const valueField = computed(
-      () => getAvailabilityFieldByDisplayParameterAndShowType(props.displayParameter, props.showType),
-    );
-    const trendValueField = computed(() => getAvailabilityTrendFieldByDisplayParameter(props.displayParameter),
-    );
+    const valueField = computed(() => getAvailabilityFieldByDisplayParameterAndShowType(
+      props.displayParameter,
+      props.showType,
+    ));
+    const trendValueField = computed(() => getAvailabilityTrendFieldByDisplayParameter(props.displayParameter));
 
     const targetValue = computed(() => props.availability[valueField.value]);
     const targetTrendValue = computed(() => props.availability[trendValueField.value]);
 
-    const trendUp = computed(() => targetValue.value > targetTrendValue.value);
+    const trendUp = computed(
+      () => targetValue.value > targetTrendValue.value,
+    );
     const isTrendEnabled = computed(
-      () => props.showTrend &&
-        isPercentType.value &&
-        targetTrendValue.value &&
-        targetValue.value !== targetTrendValue.value,
+      () => props.showTrend
+        && isPercentType.value
+        && targetTrendValue.value
+        && targetValue.value !== targetTrendValue.value,
     );
 
-    const value = computed(() => isPercentType.value ? `${targetValue.value}%` : convertDurationToString(targetValue.value),
+    const value = computed(
+      () => (isPercentType.value
+        ? `${targetValue.value}%`
+        : convertDurationToString(targetValue.value)),
     );
 
     return {
@@ -82,7 +86,7 @@ export default {
 .availability-list-column-value {
   &__trend {
     transform: rotate(0deg);
-    transition: transform linear 0.3s;
+    transition: transform linear .3s;
 
     &--up {
       transform: rotate(180deg);

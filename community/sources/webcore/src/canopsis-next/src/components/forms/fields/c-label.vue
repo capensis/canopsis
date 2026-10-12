@@ -1,9 +1,12 @@
 <template>
   <!-- eslint-disable-next-line vue/multiline-html-element-content-newline -->
-  <v-label :class="labelClasses" class="c-label">
-    <span v-if="required && label" class="text-error mr-1">*</span>{{ label ?? '' }}<slot />
+  <v-label :aria-required="required" :class="labelClasses">{{ label ?? '' }}<slot />
     <span v-if="helpText" class="ml-1">
-      <c-help-icon :text="helpText" icon="help" left />
+      <c-help-icon
+        :text="helpText"
+        icon="help"
+        left
+      />
     </span>
   </v-label>
 </template>
@@ -30,7 +33,6 @@ export default {
       required: false,
     },
   },
-
   setup(props) {
     const labelClasses = computed(() => ({
       'error--text': props.error,
@@ -43,9 +45,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-label {
-  font-size: 0.75em;
-}
-</style>

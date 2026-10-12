@@ -1,12 +1,11 @@
 <template>
-  <c-radio-group
-    :model-value="modelValue"
+  <v-radio-group
+    v-field="value"
     class="mt-0"
     name="opened"
     hide-details
     mandatory
-    inline
-    @update:model-value="$emit('update:modelValue', $event)"
+    row
   >
     <v-radio
       v-for="type in types"
@@ -15,7 +14,7 @@
       :value="type.value"
       color="primary"
     />
-  </c-radio-group>
+  </v-radio-group>
 </template>
 
 <script>
@@ -23,14 +22,11 @@ import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 export default {
   props: {
-    modelValue: {
+    value: {
       type: Number,
       default: TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies,
     },
   },
-
-  emits: ['update:modelValue'],
-
   computed: {
     types() {
       return [

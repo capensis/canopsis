@@ -5,8 +5,11 @@
         {{ title }}
       </span>
     </template>
-
-    <v-data-table :headers="headers" :items="items" :row-props="rowProps" />
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      :item-class="itemClass"
+    />
   </c-collapse-panel>
 </template>
 
@@ -27,48 +30,40 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
 
     const title = computed(() => {
       const count = props.items.length === 1 ? '' : ` (${props.items.length})`;
 
-      return `${t('common.alarm', props.items.length)}${count}`;
+      return `${tc('common.alarm', props.items.length)}${count}`;
     });
 
     const headers = computed(() => [
       {
-        title: t('common.author'),
-        key: 'v.state.a',
+        text: t('common.author'),
+        value: 'v.state.a',
         sortable: false,
       },
       {
-        title: t('common.connector'),
-        key: 'v.connector',
+        text: t('common.connector'),
+        value: 'v.connector',
         sortable: false,
       },
       {
-        title: t('common.component'),
-        key: 'v.component',
+        text: t('common.component'),
+        value: 'v.component',
         sortable: false,
       },
       {
-        title: t('common.resource'),
-        key: 'v.resource',
+        text: t('common.resource'),
+        value: 'v.resource',
         sortable: false,
       },
     ]);
 
-    const rowProps = ({ item }) => {
-      const rowItem = item?.raw ?? item;
-      const itemClass = props.itemClass ? rowItem?.[props.itemClass] : undefined;
-
-      return itemClass ? { class: itemClass } : undefined;
-    };
-
     return {
       title,
       headers,
-      rowProps,
     };
   },
 };

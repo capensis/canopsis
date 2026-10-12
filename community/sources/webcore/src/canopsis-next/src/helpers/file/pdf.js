@@ -1,20 +1,20 @@
-import { Visitor, parseWithoutProcessing } from 'handlebars';
 import JsPDF from 'jspdf';
+import { Visitor, parseWithoutProcessing } from 'handlebars';
 
 import {
   ALARM_EXPORT_PDF_FIELDS,
   ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
+  DATETIME_FORMATS,
   ALARM_STATES,
   ALARM_STATUSES,
-  DATETIME_FORMATS,
 } from '@/constants';
 
-import { convertDateToStringWithNewTimezone } from '@/helpers/date/date';
-import { convertDurationToString } from '@/helpers/date/duration';
-import { compile } from '@/helpers/handlebars';
-import { createInstanceWithHelpers } from '@/helpers/handlebars/alarm-export-pdf-helper';
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
+import { compile } from '../handlebars';
+import { createInstanceWithHelpers } from '../handlebars/alarm-export-pdf-helpers';
+import { convertDateToStringWithNewTimezone } from '../date/date';
+import { convertDurationToString } from '../date/duration';
 
 /**
  * @typedef {Object} AlarmExport
@@ -27,11 +27,14 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?
  * @property {string} resource
  * @property {string} initial_output
  * @property {string} output
+ * @property {string} output
+ * @property {number} events_count
  * @property {number} events_count
  * @property {string} duration
  * @property {string} current_date
  * @property {string} creation_date
  * @property {string} last_event_date
+ * @property {string} last_update_date
  * @property {string} last_update_date
  * @property {string} acknowledge_date
  * @property {string} resolved
@@ -56,6 +59,7 @@ class AlarmExportToPdfVisitor extends Visitor {
     this.mutating = true;
   }
 
+  /* eslint-disable-next-line class-methods-use-this */
   PathExpression(path) {
     const { parts = [] } = path;
     const lastItem = parts.at(-1);
@@ -68,34 +72,32 @@ class AlarmExportToPdfVisitor extends Visitor {
 }
 
 /**
- * Prepare alarm state for exporting
+ * Prepare alarm state fpr exporting
  *
  * @param {number} state
  * @returns {string}
  */
-export const prepareAlarmStateForExport = state =>
-  ({
-    [ALARM_STATES.ok]: '0 - OK',
-    [ALARM_STATES.minor]: '1 - Minor',
-    [ALARM_STATES.major]: '2 - Major',
-    [ALARM_STATES.critical]: '3 - Critical',
-  })[state] ?? `Invalid value (${state})`;
+export const prepareAlarmStateForExport = state => ({
+  [ALARM_STATES.ok]: '0 - OK',
+  [ALARM_STATES.minor]: '1 - Minor',
+  [ALARM_STATES.major]: '2 - Major',
+  [ALARM_STATES.critical]: '3 - Critical',
+}[state] ?? `Invalid value (${state})`);
 
 /**
- * Prepare alarm status for exporting
+ * Prepare alarm status fpr exporting
  *
  * @param {number} status
  * @returns {string}
  */
-const prepareAlarmStatusForExport = status =>
-  ({
-    [ALARM_STATUSES.closed]: 'Closed',
-    [ALARM_STATUSES.ongoing]: 'Ongoing',
-    [ALARM_STATUSES.flapping]: 'Flapping',
-    [ALARM_STATUSES.stealthy]: 'Stealth',
-    [ALARM_STATUSES.cancelled]: 'Canceled',
-    [ALARM_STATUSES.noEvents]: 'No events',
-  })[status] ?? `Invalid value (${status})`;
+const prepareAlarmStatusForExport = status => ({
+  [ALARM_STATUSES.closed]: 'Closed',
+  [ALARM_STATUSES.ongoing]: 'Ongoing',
+  [ALARM_STATUSES.flapping]: 'Flapping',
+  [ALARM_STATUSES.stealthy]: 'Stealth',
+  [ALARM_STATUSES.cancelled]: 'Canceled',
+  [ALARM_STATUSES.noEvents]: 'No events',
+}[status] ?? `Invalid value (${status})`);
 
 /**
  * Prepare alarm for exporting
@@ -123,61 +125,38 @@ const prepareAlarmForExport = (alarm = {}, timezone) => {
     [ALARM_EXPORT_PDF_FIELDS.output]: v.output,
     [ALARM_EXPORT_PDF_FIELDS.eventsCount]: v.events_count,
     [ALARM_EXPORT_PDF_FIELDS.duration]: convertDurationToString(v.duration),
-    [ALARM_EXPORT_PDF_FIELDS.currentDate]: convertDateToStringWithNewTimezone(
-      new Date(),
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
-    [ALARM_EXPORT_PDF_FIELDS.creationDate]: convertDateToStringWithNewTimezone(
-      alarm.t,
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
-    [ALARM_EXPORT_PDF_FIELDS.lastEventDate]: convertDateToStringWithNewTimezone(
-      v.last_event_date,
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
-    [ALARM_EXPORT_PDF_FIELDS.lastUpdateDate]: convertDateToStringWithNewTimezone(
-      v.last_update_date,
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
-    [ALARM_EXPORT_PDF_FIELDS.acknowledgeDate]: convertDateToStringWithNewTimezone(
-      v.ack?.t,
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
-    [ALARM_EXPORT_PDF_FIELDS.resolved]: convertDateToStringWithNewTimezone(
-      v.resolved,
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
-    [ALARM_EXPORT_PDF_FIELDS.activationDate]: convertDateToStringWithNewTimezone(
-      v.activation_date,
-      DATETIME_FORMATS.longWithTimezone,
-      timezone,
-    ),
+    [ALARM_EXPORT_PDF_FIELDS.currentDate]:
+      convertDateToStringWithNewTimezone(new Date(), DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.creationDate]:
+      convertDateToStringWithNewTimezone(alarm.t, DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.lastEventDate]:
+      convertDateToStringWithNewTimezone(v.last_event_date, DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.lastUpdateDate]:
+      convertDateToStringWithNewTimezone(v.last_update_date, DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.acknowledgeDate]:
+      convertDateToStringWithNewTimezone(v.ack?.t, DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.resolved]:
+      convertDateToStringWithNewTimezone(v.resolved, DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.activationDate]:
+      convertDateToStringWithNewTimezone(v.activation_date, DATETIME_FORMATS.longWithTimezone, timezone),
     [ALARM_EXPORT_PDF_FIELDS.infos]: alarm.infos,
     [ALARM_EXPORT_PDF_FIELDS.ticket]: v.ticket,
     [ALARM_EXPORT_PDF_FIELDS.tags]: alarm.tags,
     [ALARM_EXPORT_PDF_FIELDS.links]: alarm.links,
     [ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo]: v.pbehavior_info
       ? {
-          ...v.pbehavior_info,
+        ...v.pbehavior_info,
 
-          timestamp: convertDateToStringWithNewTimezone(
-            v.pbehavior_info.timestamp,
-            DATETIME_FORMATS.longWithTimezone,
-            timezone,
-          ),
-        }
+        timestamp:
+          convertDateToStringWithNewTimezone(v.pbehavior_info.timestamp, DATETIME_FORMATS.longWithTimezone, timezone),
+      }
       : null,
     [ALARM_EXPORT_PDF_FIELDS.comments]: alarm.comments?.map(comment => ({
       ...comment,
 
       t: convertDateToStringWithNewTimezone(comment.t, DATETIME_FORMATS.longWithTimezone, timezone),
     })),
+
   };
 };
 
@@ -189,11 +168,7 @@ const prepareAlarmForExport = (alarm = {}, timezone) => {
  * @param {string} [timezone]
  * @returns {Promise<unknown>}
  */
-export const exportAlarmToPdf = async (
-  template = ALARM_EXPORT_PDF_TEMPLATE,
-  alarm = {},
-  timezone,
-) => {
+export const exportAlarmToPdf = async (template = ALARM_EXPORT_PDF_TEMPLATE, alarm = {}, timezone) => {
   const doc = new JsPDF();
   const handlebars = createInstanceWithHelpers();
   const ast = parseWithoutProcessing(template ?? ALARM_EXPORT_PDF_TEMPLATE);
@@ -204,20 +179,15 @@ export const exportAlarmToPdf = async (
     handlebars,
   );
 
-  return doc
-    .html(html, {
-      margin: [5, 5, 5, 5],
-      autoPaging: 'text',
-      x: 0,
-      y: 0,
-      width: 200,
-      windowWidth: 1000,
-      html2canvas: {
-        logging: false,
-        ignoreElements: element =>
-          element.parentElement === document.body &&
-          !element.classList.contains('html2pdf__overlay'),
-      },
-    })
-    .save(`alarm-${alarm?._id}.pdf`);
+  return doc.html(html, {
+    margin: [5, 5, 5, 5],
+    autoPaging: 'text',
+    x: 0,
+    y: 0,
+    width: 200,
+    windowWidth: 1000,
+    html2canvas: {
+      logging: false,
+    },
+  }).save(`alarm-${alarm?._id}.pdf`);
 };

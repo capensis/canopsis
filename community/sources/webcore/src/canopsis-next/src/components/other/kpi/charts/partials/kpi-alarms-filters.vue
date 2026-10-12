@@ -1,29 +1,30 @@
 <template>
   <div class="kpi-alarms-toolbar">
-    <c-layout class="ml-4 my-4" gap="3" wrap>
+    <v-layout
+      class="ml-4 my-4"
+      wrap
+    >
       <c-quick-date-interval-field
-        :interval="query.interval"
+        v-field="query.interval"
         :min="minFromTimestamp"
         :quick-ranges="quickRanges"
-        @update:interval="updateQueryField('interval', $event)"
+        class="mr-4"
       />
       <c-sampling-field
         :value="query.sampling"
-        class="kpi-alarms-toolbar__sampling"
-        @update:value="updateSampling"
+        class="mr-4 kpi-alarms-toolbar__sampling"
+        @input="updateSampling"
       />
       <c-filter-field
-        :value="query.filter"
-        class="kpi-alarms-toolbar__filters"
-        @update:value="updateQueryField('filter', $event)"
+        v-field="query.filter"
+        class="mr-4 kpi-alarms-toolbar__filters"
       />
-      <kpi-alarm-metric-parameters-field
-        :value="query.parameters"
+      <c-alarm-metric-parameters-field
+        v-field="query.parameters"
         class="kpi-alarms-toolbar__parameters"
         hide-details
-        @update:value="updateQueryField('parameters', $event)"
       />
-    </c-layout>
+    </v-layout>
   </div>
 </template>
 
@@ -36,17 +37,17 @@ import {
 } from '@/constants';
 
 import { getDiffBetweenDates, subtractUnitFromDate } from '@/helpers/date/date';
-import {
-  convertStartDateIntervalToTimestamp,
-  convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { fromSeconds } from '@/helpers/date/duration';
 
-import KpiAlarmMetricParametersField from '../form/fields/kpi-alarm-metric-parameters-field.vue';
+import { formMixin } from '@/mixins/form';
 
 export default {
-  components: { KpiAlarmMetricParametersField },
-
+  mixins: [formMixin],
+  model: {
+    prop: 'query',
+    event: 'input',
+  },
   props: {
     query: {
       type: Object,
@@ -57,9 +58,6 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:query'],
-
   computed: {
     quickRanges() {
       return Object.values(METRICS_QUICK_RANGES);
@@ -77,7 +75,6 @@ export default {
       return this.minDate;
     },
   },
-
   methods: {
     isHourSampling(sampling) {
       return sampling === SAMPLINGS.hour;
@@ -105,17 +102,10 @@ export default {
         : interval;
     },
 
-    updateQueryField(field, value) {
-      this.$emit('update:query', {
-        ...this.query,
-        [field]: value,
-      });
-    },
-
     updateSampling(sampling) {
       const { interval } = this.query;
 
-      this.$emit('update:query', {
+      this.updateModel({
         ...this.query,
         interval: this.isHourSampling(sampling)
           ? this.getIntervalWithMaxYearRange(interval)

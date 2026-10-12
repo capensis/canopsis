@@ -1,8 +1,7 @@
 <template>
-  <c-layout
-    class="anomaly-monitored-connector-history-summary-stats mb-4"
-    gap="3"
-    justify="center"
+  <v-layout
+    class="anomaly-monitored-connector-history-summary-stats gap-3 mb-4"
+    justify-center
     wrap
   >
     <v-sheet
@@ -11,14 +10,14 @@
       :color="tile.color"
       class="anomaly-monitored-connector-history-summary-stats__tile pa-4 text-center"
     >
-      <div class="text-medium-emphasis text-body-1">
+      <div class="text--secondary text-body-1">
         {{ tile.label }}
       </div>
       <div class="text-subtitle-1 font-weight-medium">
         {{ tile.value }}
       </div>
     </v-sheet>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -33,42 +32,26 @@ export default {
       default: () => ({}),
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
-
-    const averageEvents = computed(() => {
-      const value = Math.round(props.history.average_events);
-
-      return Number.isFinite(value) ? value : '-';
-    });
-
-    const interval = computed(() => {
-      if (!props.history.interval_minutes) {
-        return '-';
-      }
-
-      return `${props.history.interval_minutes} ${t(
-        'common.times.minute',
-        props.history.interval_minutes,
-      )}`;
-    });
+    const { t, tc } = useI18n();
 
     const tiles = computed(() => [
       {
         value: props.history.total_anomalies ?? '-',
         label: t('healthcheck.connectorsBlocks.anomaliesDetected'),
-        color: 'error-lighten-5',
+        color: 'error lighten-5',
       },
       {
-        value: averageEvents.value,
+        value: Math.round(props.history.average_events) ?? '-',
         label: t('healthcheck.connectorsBlocks.averageEvents'),
-        color: 'info-lighten-4',
+        color: 'info lighten-4',
       },
       {
-        value: interval.value,
+        value: props.history.interval_minutes
+          ? `${props.history.interval_minutes} ${tc('common.times.minute', props.history.interval_minutes)}`
+          : '-',
         label: t('common.interval'),
-        color: 'grey-lighten-2',
+        color: 'grey lighten-2',
       },
     ]);
 

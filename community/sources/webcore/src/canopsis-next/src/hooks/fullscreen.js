@@ -1,61 +1,16 @@
-import { ref } from 'vue';
-
-const isFullscreen = ref(false);
-let cleanupClass = null;
-let fullscreenCallback = null;
-
-const updateFullscreenState = () => {
-  const value = Boolean(document.fullscreenElement);
-
-  isFullscreen.value = value;
-  fullscreenCallback?.(value);
-
-  if (!value && cleanupClass) {
-    cleanupClass();
-    cleanupClass = null;
-    fullscreenCallback = null;
-  }
-};
-
-document.addEventListener('fullscreenchange', updateFullscreenState);
+import { useComponentInstance } from './vue';
 
 /**
  * Hook that provides access to fullscreen functionality.
  *
- * @returns {Object}
+ * @returns {Object} The fullscreen service object with methods to control fullscreen mode
+ * @returns {Function} returns.enter - Method to enter fullscreen mode
+ * @returns {Function} returns.exit - Method to exit fullscreen mode
+ * @returns {Function} returns.toggle - Method to toggle fullscreen mode
+ * @returns {boolean} returns.isFullscreen - Current fullscreen state
  */
 export const useFullscreen = () => {
-  const request = async (element, { fullscreenClass, callback } = {}) => {
-    if (!element) {
-      return;
-    }
+  const instance = useComponentInstance();
 
-    fullscreenCallback = callback;
-
-    if (fullscreenClass) {
-      element.classList.add(fullscreenClass);
-      cleanupClass = () => element.classList.remove(fullscreenClass);
-    }
-
-    await element.requestFullscreen?.();
-    updateFullscreenState();
-  };
-
-  const exit = async () => {
-    if (!document.fullscreenElement) {
-      return;
-    }
-
-    await document.exitFullscreen?.();
-    updateFullscreenState();
-  };
-
-  const toggle = (element, options) => (isFullscreen.value ? exit() : request(element, options));
-
-  return {
-    isFullscreen,
-    request,
-    exit,
-    toggle,
-  };
+  return instance.$fullscreen;
 };

@@ -6,7 +6,6 @@
       :loading="pending"
       :timezone="timezone"
       :no-timezone="!shownUserTimezone"
-      :readonly="readOnly"
       color="primary"
       @update:timezone="handleUpdateTimezone"
       @change:event="handleUpdateEvent"
@@ -28,7 +27,7 @@
         />
       </template>
 
-      <template #menu-right>
+      <template #menu-right="">
         <pbehavior-planning-calendar-legend :exception-types="exceptionTypes" />
       </template>
     </c-calendar>
@@ -37,36 +36,39 @@
 
 <script>
 import { debounce, get, omit, uniqBy } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { CSS_COLORS_VARS } from '@/config';
 
+import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
+import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import {
-  convertDateToDateObject,
-  convertDateToDateObjectByTimezone,
   convertDateToTimestampByTimezone,
+  convertDateToDateObjectByTimezone,
+  convertDateToDateObject,
   getDiffBetweenDates,
   getLocalTimezone,
 } from '@/helpers/date/date';
-import { getPbehaviorColor, isFullDayEvent } from '@/helpers/entities/pbehavior/form';
-import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
-import { uid } from '@/helpers/uid';
+import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useInfo } from '@/hooks/store/modules/info';
-import { usePbehaviorTimespan } from '@/hooks/store/modules/pbehavior-timespan';
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
+
+const { mapGetters: infoMapGetters } = createNamespacedHelpers('info');
+const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
   components: {
     PbehaviorCreateEvent,
     PbehaviorPlanningCalendarLegend,
   },
-
+  mixins: [
+    entitiesPbehaviorTimespansMixin,
+  ],
   props: {
     pbehaviorsById: {
       type: Object,
@@ -105,14 +107,6 @@ export default {
       default: getLocalTimezone(),
     },
   },
-
-  emits: [
-    'update:addedPbehaviorsById',
-    'update:removedPbehaviorsById',
-    'update:changedPbehaviorsById',
-    'update:timezone',
-  ],
-
   data() {
     return {
       pending: false,
@@ -121,24 +115,9 @@ export default {
       defaultTypes: [],
     };
   },
-
-  setup() {
-    const { shownUserTimezone } = useInfo();
-    const modals = useModals();
-    const popups = usePopups();
-    const { fetchPbehaviorTimespansListWithoutStore } = usePbehaviorTimespan();
-    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
-
-    return {
-      shownUserTimezone,
-      modals,
-      popups,
-      fetchPbehaviorTimespansListWithoutStore,
-      fetchPbehaviorTypesFieldList,
-    };
-  },
-
   computed: {
+    ...infoMapGetters(['shownUserTimezone']),
+
     allPbehaviorsById() {
       return {
         ...this.pbehaviorsById,
@@ -148,12 +127,10 @@ export default {
     },
 
     allPbehaviorsAvailable() {
-      return Object.values(this.allPbehaviorsById).filter(
-        pbehavior => !this.removedPbehaviorsById[pbehavior._id],
-      );
+      return Object.values(this.allPbehaviorsById)
+        .filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
   },
-
   watch: {
     pbehaviorsById: {
       immediate: true,
@@ -163,19 +140,20 @@ export default {
     },
     timezone: 'fetchEvents',
   },
-
   created() {
     this.debouncedFetchEvents = debounce(this.fetchEvents, 300);
   },
-
   mounted() {
     this.debouncedFetchEvents();
     this.fetchDefaultTypes();
   },
-
   methods: {
+    ...pbehaviorTypesMapActions({
+      fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
+    }),
+
     /**
-     * Set calendar view to min event date.
+     * Set calendar view to min event date
      */
     setCalendarView() {
       const startTimestamps = Object.values(this.allPbehaviorsById).map(({ tstart }) => tstart);
@@ -191,13 +169,15 @@ export default {
     },
 
     /**
-     * Fetch timespans and convert that into events for every pbehavior from data.
+     * Fetch timespans and convert that into events for every pbehavior from data
+     *
+     * @returns {Promise<void>}
      */
     async fetchEvents() {
       this.pending = true;
 
-      const promises = this.allPbehaviorsAvailable.map(pbehavior => this.fetchEventsForPbehavior(pbehavior),
-      );
+      const promises = this.allPbehaviorsAvailable
+        .map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
 
       await Promise.all(promises);
 
@@ -205,10 +185,10 @@ export default {
     },
 
     /**
-     * Fetch timespans for a pbehavior.
+     * Fetch timespans for a pbehavior
      *
      * @param {Object} pbehavior
-     * @returns {Promise<Array>}
+     * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
       const { start, end } = this.$refs.calendar.filled;
@@ -222,17 +202,20 @@ export default {
         to,
       });
 
-      return this.fetchPbehaviorTimespansListWithoutStore({ data: timespan });
+      return this.fetchTimespansListWithoutStore({ data: timespan });
     },
 
     /**
-     * Convert pbehavior timespans to events.
+     * Convert pbehavior timespans to events
      *
      * @param {Object} pbehavior
      * @param {Object[]} timespans
      * @returns {Object[]}
      */
-    convertTimespansToEvents({ pbehavior, timespans }) {
+    convertTimespansToEvents({
+      pbehavior,
+      timespans,
+    }) {
       const isTimed = !isFullDayEvent(
         convertDateToDateObjectByTimezone(pbehavior.tstart, this.timezone),
         pbehavior.tstop && convertDateToDateObjectByTimezone(pbehavior.tstop, this.timezone),
@@ -240,8 +223,13 @@ export default {
 
       return timespans.map((timespan, index) => {
         const type = timespan.type ?? pbehavior.type;
-        const color = getPbehaviorColor(pbehavior, type);
+
+        /**
+         * If there is `type` field in timespan it means that timespan is exception date with a `type`
+         */
+        const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
         const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+
         const start = convertDateToDateObjectByTimezone(timespan.from, this.timezone);
         const end = convertDateToDateObjectByTimezone(timespan.to, this.timezone);
 
@@ -266,9 +254,10 @@ export default {
     },
 
     /**
-     * Fetch calendar event for pbehavior.
+     * Fetch calendar event for pbehavior
      *
      * @param {Object} pbehavior
+     * @returns {Promise<void>}
      */
     async fetchEventsForPbehavior(pbehavior) {
       const timespans = await this.fetchTimespansForPbehavior(pbehavior);
@@ -288,7 +277,7 @@ export default {
     },
 
     /**
-     * Remove pbehavior from events.
+     * Remove pbehavior from events
      *
      * @param {Object} pbehavior
      */
@@ -302,23 +291,17 @@ export default {
         });
 
         if (this.changedPbehaviorsById[pbehavior._id]) {
-          this.$emit(
-            'update:changedPbehaviorsById',
-            omit(this.changedPbehaviorsById, [pbehavior._id]),
-          );
+          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [pbehavior._id]));
         }
       }
 
-      this.events = this.events.filter(
-        event => get(event.data, 'pbehavior._id') !== pbehavior._id,
-      );
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
     },
 
     /**
-     * Apply changes for the pbehavior.
+     * Apply changes for the pbehavior
      *
      * @param {Object} event
-     * @param {Function} close
      */
     async addEventWithClose(event, close) {
       const { pbehavior } = event;
@@ -331,13 +314,13 @@ export default {
     },
 
     /**
-     * Apply changes for selected event only.
+     * Apply changes for selected event only (on pbehavior)
      *
      * @param {Object} event
-     * @returns {Promise<Array>}
      */
     applyEventChangesForSelectedHandler({ data, start, oldStart, end, oldEnd }) {
       const { pbehavior } = data;
+
       const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
       const timezone = pbehavior.timezone || this.timezone;
       const tstart = convertDateToTimestampByTimezone(start, timezone);
@@ -352,7 +335,10 @@ export default {
       const mainPbehavior = {
         ...originalPbehavior,
 
-        exdates: [...(originalPbehavior.exdates || []), exdate],
+        exdates: [
+          ...(originalPbehavior.exdates || []),
+          exdate,
+        ],
       };
 
       const newPbehavior = {
@@ -364,18 +350,23 @@ export default {
         tstop,
       };
 
-      return Promise.all([this.updatePbehavior(mainPbehavior), this.updatePbehavior(newPbehavior)]);
+      return Promise.all([
+        this.updatePbehavior(mainPbehavior),
+        this.updatePbehavior(newPbehavior),
+      ]);
     },
 
     /**
-     * Apply event changes for all events.
+     * Apply event changes for all events (on pbehavior)
      *
      * @param {Object} event
      * @returns {Promise<void>}
      */
     applyEventChangesForAllHandler({ data, start, oldStart, end, oldEnd }) {
       const { pbehavior } = data;
+
       const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
+
       const tstart = originalPbehavior.tstart + getDiffBetweenDates(start, oldStart);
       const tstop = pbehavior.tstop
         ? originalPbehavior.tstop + getDiffBetweenDates(end, oldEnd)
@@ -396,12 +387,12 @@ export default {
     },
 
     /**
-     * Show modal window for recurrent changes confirmation.
+     * Show modal window for recurrent changes confirmation
      *
      * @param {Object} event
      */
     showPbehaviorRecurrentChangesConfirmationModal(event) {
-      this.modals.show({
+      this.$modals.show({
         name: MODALS.pbehaviorRecurrentChangesConfirmation,
         config: {
           action: async (type) => {
@@ -416,9 +407,7 @@ export default {
             } catch (err) {
               console.error(err);
 
-              this.popups.error({
-                text: err.description || err.message || this.$t('errors.default'),
-              });
+              this.$popups.error({ text: err.description || err.message || this.$t('errors.default') });
               this.closePopoverForEvent(event);
             }
           },
@@ -428,9 +417,10 @@ export default {
     },
 
     /**
-     * Changed event handler.
+     * Changed event handler
      *
      * @param {Object} event
+     * @returns {Promise<void>}
      */
     async handleUpdateEvent(event) {
       const { pbehavior } = event.data;
@@ -457,21 +447,18 @@ export default {
     },
 
     /**
-     * Update pbehavior in the data and fetch timespans for that.
+     * Update pbehavior in the data and fetch timespans for that
      *
      * @param {Object} pbehavior
+     * @returns {Promise<void>}
      */
     async updatePbehavior(pbehavior) {
       this.pending = true;
 
-      const hasPbehaviorInList =
-        this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id];
+      const hasPbehaviorInList = this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id];
 
       if (hasPbehaviorInList) {
-        this.$emit('update:changedPbehaviorsById', {
-          ...this.changedPbehaviorsById,
-          [pbehavior._id]: pbehavior,
-        });
+        this.$emit('update:changedPbehaviorsById', { ...this.changedPbehaviorsById, [pbehavior._id]: pbehavior });
       } else {
         this.$emit('update:addedPbehaviorsById', {
           ...this.addedPbehaviorsById,
@@ -485,10 +472,12 @@ export default {
     },
 
     /**
-     * Fetch default pbehavior types.
+     * Fetch default pbehavior types
+     *
+     * @return {Promise<void>}
      */
     async fetchDefaultTypes() {
-      const { data } = await this.fetchPbehaviorTypesFieldList({
+      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
         params: { default: true },
       });
 
@@ -496,10 +485,10 @@ export default {
     },
 
     /**
-     * Get opposite pbehavior type for default exdate.
+     * Get opposite pbehavior type for default exdate
      *
      * @param {Object} [pbehaviorType = {}]
-     * @returns {Object|undefined}
+     * @return {Object|undefined}
      */
     getOppositePbehaviorType(pbehaviorType = {}) {
       const TYPES_MAP = {

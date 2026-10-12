@@ -1,46 +1,53 @@
 <template>
   <v-menu
-    :location="location"
-    :offset="10"
+    :left="left"
+    :top="top"
+    :offset-x="left"
+    :offset-y="top"
+    :nudge-left="left ? 10 : 0"
+    :nudge-top="top ? 10 : 0"
     class="view-screen-mode-btn"
-    attach
   >
-    <template #activator="{ props: activatorProps }">
+    <template #activator="{ on }">
       <v-btn
-        v-bind="activatorProps"
-        :size="large ? 'x-large' : 'default'"
-        class="view-screen-mode-btn__button"
-        icon
+        :small="small"
+        class="view-fullscreen-btn__button"
+        fab
+        dark
+        v-on="on"
       >
-        <v-icon :icon="icon" :size="large ? 'default' : 'small'" />
+        <v-icon :small="small">
+          {{ icon }}
+        </v-icon>
       </v-btn>
     </template>
-
-    <v-list class="view-screen-mode-btn__list bg-grey-darken-3 pa-0">
-      <c-tooltip
+    <v-list class="view-screen-mode-btn__list grey darken-3 pa-0" dark>
+      <v-tooltip
         v-for="item in availableScreenModes"
         :key="`tooltip-${item.key}`"
-        location="left"
-        attach
+        left
       >
-        <template #activator="{ props }">
+        <template #activator="{ on: tooltipOn }">
           <v-list-item
-            v-bind="props"
-            :active="item.active"
+            v-bind="item.bind"
             active-class="view-screen-mode-btn__item--active"
-            @click="item.click"
+            v-on="{ ...item.on, ...tooltipOn }"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </template>
         <span>{{ item.tooltip }}</span>
-      </c-tooltip>
+      </v-tooltip>
     </v-list>
   </v-menu>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { VIEW_SCREEN_MODES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -48,7 +55,7 @@ export default {
       type: String,
       default: VIEW_SCREEN_MODES.default,
     },
-    large: {
+    small: {
       type: Boolean,
       default: false,
     },
@@ -61,65 +68,60 @@ export default {
       default: false,
     },
   },
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-  emits: ['input', 'update:value'],
-
-  computed: {
-    location() {
-      if (this.left) {
-        return 'left center';
-      }
-
-      return this.top ? 'top center' : 'bottom center';
-    },
-
-    availableScreenModes() {
-      return Object.values(VIEW_SCREEN_MODES).map(mode => ({
-        key: mode,
-        title: this.$t(`view.screenMode.${mode}.title`),
-        tooltip: this.$t(`view.screenMode.${mode}.tooltip`),
-        active: this.value === mode,
-        click: () => this.changeMode(mode),
-      }));
-    },
-
-    icon() {
-      return [VIEW_SCREEN_MODES.fullscreen, VIEW_SCREEN_MODES.kioskFullscreen].includes(this.value)
-        ? 'fullscreen_exit'
-        : 'fullscreen';
-    },
-  },
-
-  methods: {
-    changeMode(newMode) {
-      if (newMode === this.value) {
+    const changeMode = (newMode) => {
+      if (newMode === props.value) {
         return;
       }
 
-      this.$emit('input', newMode);
-      this.$emit('update:value', newMode);
-    },
+      emit('input', newMode);
+    };
+
+    const availableScreenModes = computed(() => Object.values(VIEW_SCREEN_MODES).map(mode => ({
+      key: mode,
+      title: t(`view.screenMode.${mode}.title`),
+      tooltip: t(`view.screenMode.${mode}.tooltip`),
+      bind: {
+        inputValue: props.value === mode,
+      },
+      on: {
+        click: () => changeMode(mode),
+      },
+    })));
+
+    const icon = computed(() => ([
+      VIEW_SCREEN_MODES.fullscreen,
+      VIEW_SCREEN_MODES.kioskFullscreen,
+    ].includes(props.value)
+      ? 'fullscreen_exit'
+      : 'fullscreen'));
+
+    return {
+      availableScreenModes,
+      icon,
+    };
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.view-screen-mode-btn__button {
-  border-color: #212121 !important;
-  background-color: #212121 !important;
-  color: #fff !important;
+<style lang="scss">
+.view-screen-mode-btn {
+  &__button  {
+    border-color: #212121 !important;
+    background-color: #212121 !important;
 
-  .v-theme--dark & {
-    border-color: #979797 !important;
-    background-color: #979797 !important;
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
   }
-}
 
-.view-screen-mode-btn__list {
-  color: #fff;
-
-  :deep(.view-screen-mode-btn__item--active) {
-    background-color: rgb(var(--v-theme-primary));
+  &__list {
+    .view-screen-mode-btn__item--active {
+      background-color: var(--v-primary-darken1);
+    }
   }
 }
 </style>

@@ -8,11 +8,7 @@ import {
   DEFAULT_WIDGET_MARGIN,
 } from '@/constants';
 
-import {
-  alarmListBaseParametersToForm,
-  formToAlarmListBaseParameters,
-  openedToForm,
-} from './alarm';
+import { openedToForm, alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {Object} CounterWidgetLevels
@@ -32,12 +28,12 @@ import {
  * @property {number} heightFactor
  * @property {boolean} isCorrelationEnabled
  * @property {CounterWidgetLevels} levels
- * @property {Object} alarmsList
+ * @property {AlarmListBaseParameters} alarmsList
  */
 
 /**
  * @typedef {Object} CounterWidgetParametersForm
- * @property {Object} alarmsList
+ * @property {AlarmListBaseParametersForm} alarmsList
  */
 
 /**
@@ -53,15 +49,17 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({
   columnTablet: parameters.columnTablet ?? 3,
   columnDesktop: parameters.columnDesktop ?? 4,
   heightFactor: parameters.heightFactor ?? 6,
-  margin: parameters.margin ? { ...parameters.margin } : { ...DEFAULT_WIDGET_MARGIN },
+  margin: parameters.margin
+    ? { ...parameters.margin }
+    : { ...DEFAULT_WIDGET_MARGIN },
   isCorrelationEnabled: parameters.isCorrelationEnabled ?? false,
   levels: parameters.levels
     ? cloneDeep(parameters.levels)
     : {
-        counter: AVAILABLE_COUNTERS.total,
-        colors: { ...ALARM_LEVELS_COLORS },
-        values: { ...ALARM_LEVELS },
-      },
+      counter: AVAILABLE_COUNTERS.total,
+      colors: { ...ALARM_LEVELS_COLORS },
+      values: { ...ALARM_LEVELS },
+    },
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
 });
 
@@ -72,6 +70,7 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({
  * @return {CounterWidgetParameters}
  */
 export const formToCounterWidgetParameters = form => ({
-  ...cloneDeep(form),
+  ...form,
+
   alarmsList: formToAlarmListBaseParameters(form.alarmsList),
 });

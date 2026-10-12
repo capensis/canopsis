@@ -1,5 +1,5 @@
-import { EVENT_TYPES } from './event';
 import { PATTERN_CONDITIONS, PATTERNS_FIELDS } from './pattern';
+import { EVENT_TYPES } from './event';
 
 export const EVENT_FILTER_TYPES = {
   drop: 'drop',
@@ -86,7 +86,7 @@ export const EVENT_FILTER_SET_TAGS_FIELDS = [
 
 export const EVENT_FILTER_SET_TAGS_VALUE_PREFIXES = {
   [EVENT_FILTER_PATTERN_FIELDS.output]: 'Event.Output',
-  [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Event.ExtraInfos.',
+  [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Event.ExtraInfo.',
 };
 
 export const EVENT_FILTER_SET_TAGS_REGEX = /<value>.*<name>|<name>.*<value>/;
@@ -102,15 +102,13 @@ export const EVENT_FILTER_EXPAND_PANEL_TABS = {
 };
 
 export const EVENT_FILTER_DEFAULT_PATTERN = {
-  [PATTERNS_FIELDS.event]: [
-    [
-      {
-        field: EVENT_FILTER_PATTERN_FIELDS.eventType,
-        cond: {
-          value: EVENT_TYPES.check,
-          type: PATTERN_CONDITIONS.equal,
-        },
+  [PATTERNS_FIELDS.event]: [[
+    {
+      field: EVENT_FILTER_PATTERN_FIELDS.eventType,
+      cond: {
+        value: EVENT_TYPES.check,
+        type: PATTERN_CONDITIONS.equal,
       },
-    ],
-  ],
+    },
+  ]],
 };

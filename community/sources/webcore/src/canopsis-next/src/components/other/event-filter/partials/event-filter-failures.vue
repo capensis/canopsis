@@ -1,12 +1,15 @@
 <template>
-  <v-row class="flex-grow-0" no-gutters>
-    <v-col cols="3">
+  <v-layout wrap>
+    <v-flex xs3>
       <event-filter-failure-type-field
         :value="query.type"
-        @update:model-value="updateQueryField('type', $event)"
+        @input="updateQueryField('type', $event)"
       />
-    </v-col>
-    <v-col v-if="eventFilter.unread_failures_count" cols="12">
+    </v-flex>
+    <v-flex
+      v-if="eventFilter.unread_failures_count"
+      xs12
+    >
       <v-btn
         :loading="markAsReadPending"
         class="v-btn-legacy-m--y"
@@ -18,26 +21,21 @@
         </v-icon>
         <span>{{ $t('eventFilter.markAsRead') }}</span>
       </v-btn>
-    </v-col>
-    <v-col cols="12">
+    </v-flex>
+    <v-flex xs12>
       <event-filter-failures-list
         :failures="eventFilterFailures"
-        :options="options"
+        :options.sync="options"
         :total-items="eventFilterFailuresMeta.total_count"
         :pending="eventFilterFailuresPending"
-        @update:options="updateOptions"
       />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-import { onMounted, ref, watch } from 'vue';
-
-import { convertQueryToRequest } from '@/helpers/query';
-
-import { useLocalQueryWithOptions } from '@/hooks/query/shared';
-import { useEventFilter } from '@/hooks/store/modules/event-filter';
+import { localQueryMixin } from '@/mixins/query/query';
+import { entitiesEventFilterMixin } from '@/mixins/entities/event-filter';
 
 import EventFilterFailureTypeField from '../form/fields/event-filter-failure-type-field.vue';
 
@@ -45,80 +43,71 @@ import EventFilterFailuresList from './event-filter-failures-list.vue';
 
 export default {
   components: { EventFilterFailureTypeField, EventFilterFailuresList },
-  emits: ['refresh'],
+  mixins: [localQueryMixin, entitiesEventFilterMixin],
   props: {
     eventFilter: {
       type: Object,
       default: () => ({}),
     },
   },
-  setup(props, { emit }) {
-    const { fetchEventFilterFailuresListWithoutStore, markNewEventFilterFailuresAsRead } =
-      useEventFilter();
-
-    const eventFilterFailures = ref([]);
-    const eventFilterFailuresMeta = ref({});
-    const eventFilterFailuresPending = ref(false);
-    const markAsReadPending = ref(false);
-
-    const {
-      query,
-      updateQueryField,
-      options,
-      updateOptions,
-      handler: fetchList,
-    } = useLocalQueryWithOptions({
-      initialQuery: {
+  data() {
+    return {
+      query: {
         type: undefined,
       },
-      onUpdate: async (fetchQuery) => {
-        eventFilterFailuresPending.value = true;
-
-        try {
-          const { data, meta } = await fetchEventFilterFailuresListWithoutStore({
-            id: props.eventFilter._id,
-            params: convertQueryToRequest(fetchQuery),
-          });
-
-          eventFilterFailures.value = data;
-          eventFilterFailuresMeta.value = meta;
-        } catch (err) {
-          console.error(err);
-        } finally {
-          eventFilterFailuresPending.value = false;
-        }
+      eventFilterFailures: [],
+      eventFilterFailuresMeta: {},
+      eventFilterFailuresPending: false,
+      markAsReadPending: false,
+    };
+  },
+  watch: {
+    'eventFilter.failures_count': {
+      handler() {
+        this.fetchList();
       },
-    });
-
-    const markNewFailuresAsRead = async () => {
-      markAsReadPending.value = true;
+    },
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    async markNewFailuresAsRead() {
+      this.markAsReadPending = true;
 
       try {
-        await markNewEventFilterFailuresAsRead({ id: props.eventFilter._id });
+        await this.markNewEventFilterFailuresAsRead({ id: this.eventFilter._id });
 
-        fetchList();
-        emit('refresh');
+        this.fetchList();
+        this.$emit('refresh');
       } catch (err) {
         console.error(err);
       } finally {
-        markAsReadPending.value = false;
+        this.markAsReadPending = false;
       }
-    };
+    },
 
-    watch(() => props.eventFilter.failures_count, fetchList);
-    onMounted(fetchList);
+    async fetchList() {
+      this.eventFilterFailuresPending = true;
 
-    return {
-      query,
-      options,
-      updateOptions,
-      updateQueryField,
-      eventFilterFailures,
-      eventFilterFailuresMeta,
-      eventFilterFailuresPending,
-      markAsReadPending,
-      markNewFailuresAsRead,
-    };
+      try {
+        const params = this.getQuery();
+
+        params.type = this.query.type;
+
+        const { data, meta } = await this.fetchEventFilterFailuresListWithoutStore({
+          id: this.eventFilter._id,
+          params,
+        });
+
+        this.eventFilterFailures = data;
+        this.eventFilterFailuresMeta = meta;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.eventFilterFailuresPending = false;
+      }
+    },
   },
 };
 </script>

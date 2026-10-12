@@ -3,28 +3,46 @@ import { computed, unref } from 'vue';
 import { convertDateToTimestamp } from '@/helpers/date/date';
 
 /**
- * Returns date-range guards for from/to date pickers.
+ * Hook providing date range validation for "from" and "to" date fields.
+ * Returns validator functions that ensure "from" is before "to" and "to" is after "from".
  *
- * @param {Object|import('vue').Ref<Object>} value
- * @returns {{ isAllowedFromDate: Function, isAllowedToDate: Function }}
+ * @param {Object|Ref} value - The date range value { from, to } (reactive ref, computed, or plain).
+ * @returns {Object} Object with isAllowedFromDate and isAllowedToDate validator functions.
  */
 export const useDateRangeAllowedDates = (value) => {
-  const fromTimestamp = computed(() => {
-    const unwrappedValue = unref(value);
+  const fromTimestamp = computed(
+    () => {
+      const val = unref(value);
 
-    return unwrappedValue?.from ? convertDateToTimestamp(unwrappedValue.from) : null;
-  });
+      return val?.from ? convertDateToTimestamp(val.from) : null;
+    },
+  );
 
-  const toTimestamp = computed(() => {
-    const unwrappedValue = unref(value);
+  const toTimestamp = computed(
+    () => {
+      const val = unref(value);
 
-    return unwrappedValue?.to ? convertDateToTimestamp(unwrappedValue.to) : null;
-  });
+      return val?.to ? convertDateToTimestamp(val.to) : null;
+    },
+  );
 
-  const isAllowedFromDate = date =>
-    !toTimestamp.value || convertDateToTimestamp(date) < toTimestamp.value;
-  const isAllowedToDate = date =>
-    !fromTimestamp.value || convertDateToTimestamp(date) > fromTimestamp.value;
+  /**
+   * Validates if a given date is allowed as a "from" date.
+   * A date is allowed if there's no upper bound (toTimestamp) or if the date is before the upper bound.
+   *
+   * @param {Date|string|number} date - The date to validate
+   * @returns {boolean} True if the date is allowed as a "from" date, false otherwise
+   */
+  const isAllowedFromDate = date => !toTimestamp.value || convertDateToTimestamp(date) < toTimestamp.value;
+
+  /**
+   * Validates if a given date is allowed as a "to" date.
+   * A date is allowed if there's no lower bound (fromTimestamp) or if the date is after the lower bound.
+   *
+   * @param {Date|string|number} date - The date to validate
+   * @returns {boolean} True if the date is allowed as a "to" date, false otherwise
+   */
+  const isAllowedToDate = date => !fromTimestamp.value || convertDateToTimestamp(date) > fromTimestamp.value;
 
   return {
     isAllowedFromDate,

@@ -1,125 +1,107 @@
 <template>
-  <pbehavior-exceptions-list
-    :pbehavior-exceptions="pbehaviorExceptions"
-    :pending="pbehaviorExceptionsPending"
-    :total-items="pbehaviorExceptionsMeta.total_count"
-    :options="options"
-    :removable="hasDeleteAccess"
-    :updatable="hasUpdateAccess"
-    :active="active"
-    @edit="showEditPbehaviorExceptionModal"
-    @remove="showRemovePbehaviorExceptionModal"
-    @refresh="fetchList"
-    @update:options="updateOptions"
-  />
+  <v-card-text>
+    <planning-exceptions-list
+      :pbehavior-exceptions="pbehaviorExceptions"
+      :pending="pbehaviorExceptionsPending"
+      :total-items="pbehaviorExceptionsMeta.total_count"
+      :options.sync="options"
+      :removable="hasDeleteAnyPbehaviorExceptionAccess"
+      :updatable="hasUpdateAnyPbehaviorExceptionAccess"
+      :active="active"
+      @remove-selected="showRemoveSelectedPbehaviorExceptionModal"
+      @remove="showRemovePbehaviorExceptionModal"
+      @edit="showEditPbehaviorExceptionModal"
+      @refresh="fetchList"
+    />
+  </v-card-text>
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { MODALS } from '@/constants';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants';
+import { localQueryMixin } from '@/mixins/query/query';
+import { entitiesPbehaviorExceptionMixin } from '@/mixins/entities/pbehavior/exceptions';
+import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
 
-import { convertQueryToRequest } from '@/helpers/query';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useLocalQueryWithOptions } from '@/hooks/query/shared';
-import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
-
-import PbehaviorExceptionsList from './pbehavior-exceptions-list.vue';
+import PlanningExceptionsList from './pbehavior-exceptions-list.vue';
 
 export default {
-  components: {
-    PbehaviorExceptionsList,
-  },
-
+  components: { PlanningExceptionsList },
+  mixins: [
+    localQueryMixin,
+    entitiesPbehaviorExceptionMixin,
+    permissionsTechnicalPbehaviorExceptionsMixin,
+  ],
   props: {
     active: {
       type: Boolean,
       default: true,
     },
   },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    fetchList() {
+      const params = this.getQuery();
+      params.with_flags = true;
+      params.with_hidden = true;
 
-  setup() {
-    const {
-      pbehaviorExceptions,
-      pbehaviorExceptionsPending,
-      pbehaviorExceptionsMeta,
-      fetchPbehaviorExceptionsList,
-      updatePbehaviorException,
-      removePbehaviorException,
-    } = usePbehaviorException();
+      this.fetchPbehaviorExceptionsList({ params });
+    },
 
-    const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
-      USER_PERMISSIONS.technical.planningExceptions,
-    );
-
-    const modals = useModals();
-    const popups = usePopups();
-    const { t } = useI18n();
-
-    const {
-      options,
-      handler: fetchList,
-      updateOptions,
-    } = useLocalQueryWithOptions({
-      onUpdate: fetchQuery => fetchPbehaviorExceptionsList({
-          params: {
-            ...convertQueryToRequest(fetchQuery),
-            with_flags: true,
-            with_hidden: true,
-          },
-        }),
-    });
-
-    const tryRemovePbehaviorException = async (id) => {
+    async tryRemovePbehaviorException(pbehavioExceptionId) {
       try {
-        await removePbehaviorException({ id });
+        await this.removePbehaviorException({ id: pbehavioExceptionId });
       } catch (err) {
-        popups.error({ text: err.error || t('errors.default') });
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
-    };
+    },
 
-    const showRemovePbehaviorExceptionModal = id => modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await tryRemovePbehaviorException(id);
-            await fetchList();
-          },
-        },
-      });
-
-    const showEditPbehaviorExceptionModal = pbehaviorException => modals.show({
+    showEditPbehaviorExceptionModal(pbehaviorException) {
+      this.$modals.show({
         name: MODALS.createPbehaviorException,
         config: {
           pbehaviorException,
-          action: async (data) => {
-            await updatePbehaviorException({
+          action: async (newPbehaviorException) => {
+            await this.updatePbehaviorException({
+              data: newPbehaviorException,
               id: pbehaviorException._id,
-              data,
             });
-            await fetchList();
+
+            return this.fetchList();
           },
         },
       });
+    },
 
-    onMounted(fetchList);
+    showRemovePbehaviorExceptionModal(pbehaviorExceptionId) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.tryRemovePbehaviorException(pbehaviorExceptionId);
 
-    return {
-      pbehaviorExceptions,
-      pbehaviorExceptionsPending,
-      pbehaviorExceptionsMeta,
-      options,
-      hasUpdateAccess,
-      hasDeleteAccess,
-      fetchList,
-      updateOptions,
-      showEditPbehaviorExceptionModal,
-      showRemovePbehaviorExceptionModal,
-    };
+            return this.fetchList();
+          },
+        },
+      });
+    },
+
+    showRemoveSelectedPbehaviorExceptionModal(selected) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorException(id)));
+
+            return this.fetchList();
+          },
+        },
+      });
+    },
   },
 };
 </script>

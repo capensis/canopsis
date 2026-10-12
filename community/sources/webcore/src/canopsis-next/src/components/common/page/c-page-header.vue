@@ -1,32 +1,37 @@
 <template>
   <div>
-    <h1 class="text-center text-h4 font-weight-medium mt-4 mb-2">
+    <h2 class="text-center text-h4 font-weight-medium mt-4 mb-2">
       <slot>{{ $t(`pageHeaders.${pageName}.title`) }}</slot>
-
       <v-btn
         v-if="hasMessage"
         class="ml-2 my-2"
-        variant="text"
-        size="small"
         icon
         @click="toggleMessageVisibility"
       >
-        <c-icon color="info" no-fill>
-          help
-        </c-icon>
+        <v-icon color="info">
+          help_outline
+        </v-icon>
       </v-btn>
-    </h1>
-
+    </h2>
     <v-expand-transition>
-      <div v-if="hasMessage" v-show="shownMessage">
-        <c-layout class="pb-2" justify="center">
+      <div
+        v-if="hasMessage"
+        v-show="shownMessage"
+      >
+        <v-layout
+          class="pb-2"
+          justify-center
+        >
           <c-compiled-template
             :template="message"
             class="text-subtitle-1 page-header__message pre-wrap"
           />
-        </c-layout>
-
-        <c-layout v-if="!messageWasHidden" class="pb-2" justify="center">
+        </v-layout>
+        <v-layout
+          v-if="!messageWasHidden"
+          class="pb-2"
+          justify-center
+        >
           <v-btn
             :loading="isHidePending"
             class="my-2"
@@ -35,7 +40,7 @@
           >
             {{ $t('pageHeaders.hideMessage') }}
           </v-btn>
-        </c-layout>
+        </v-layout>
       </div>
     </v-expand-transition>
   </div>
@@ -44,7 +49,7 @@
 <script>
 import { isFunction } from 'lodash';
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router/composables';
 
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
@@ -52,7 +57,7 @@ import { DOCUMENTATION_LINKS } from '@/constants';
 import { removeTrailingSlashes } from '@/helpers/url';
 
 import { useI18n } from '@/hooks/i18n';
-import { useTourBase } from '@/hooks/tour-base';
+import { useTourBase } from '@/hooks/tour/tour-base';
 
 export default {
   props: {
@@ -61,7 +66,6 @@ export default {
       default: undefined,
     },
   },
-
   setup(props) {
     const route = useRoute();
     const { t, te } = useI18n();
@@ -104,7 +108,9 @@ export default {
     const message = computed(() => {
       const key = pageName.value;
 
-      const baseMessage = hasMessage.value && key ? t(`pageHeaders.${key}.message`) : '';
+      const baseMessage = hasMessage.value && key
+        ? t(`pageHeaders.${key}.message`)
+        : '';
 
       return learMoreMessage.value ? `${baseMessage}\n${learMoreMessage.value}` : baseMessage;
     });
@@ -113,13 +119,20 @@ export default {
       shownMessage.value = true;
     }
 
-    const toggleMessageVisibility = () => (shownMessage.value = !shownMessage.value);
+    /**
+     * Toggles the expanded/collapsed state of the page header help message block (help icon target).
+     */
+    const toggleMessageVisibility = () => shownMessage.value = !shownMessage.value;
 
+    /**
+     * Hides the message panel: if the user has not dismissed this page tour yet, persists completion
+     * via `finishTourByName` for `pageName`, then clears the loading state and collapses the message.
+     */
     const hideMessage = async () => {
       isHidePending.value = true;
 
       if (!messageWasHidden.value) {
-        await finishTourByName(pageName.value);
+        finishTourByName(pageName.value);
       }
 
       isHidePending.value = false;

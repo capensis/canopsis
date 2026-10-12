@@ -1,0 +1,384 @@
+import {
+  STATS_CRITICITY,
+  ENTITY_TYPES,
+  SIDE_BARS,
+  ALARMS_OPENED_VALUES,
+  CHART_WIDGET_PRESET_TYPES,
+  RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  WIDGET_COLUMNS_GROUPS,
+} from '@/constants';
+
+export default {
+  titles: {
+    [SIDE_BARS.alarmSettings]: 'Alarm list settings',
+    [SIDE_BARS.contextSettings]: 'Context table settings',
+    [SIDE_BARS.serviceWeatherSettings]: 'Service weather settings',
+    [SIDE_BARS.statsCalendarSettings]: 'Stats calendar settings',
+    [SIDE_BARS.textSettings]: 'Text settings',
+    [SIDE_BARS.counterSettings]: 'Counter settings',
+    [SIDE_BARS.clockSettings]: 'Clock settings',
+    [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+    [SIDE_BARS.mapSettings]: 'Mapping widget settings',
+    [SIDE_BARS.barChartSettings]: 'Bar chart settings',
+    [SIDE_BARS.lineChartSettings]: 'Line chart settings',
+    [SIDE_BARS.pieChartSettings]: 'Pie chart settings',
+    [SIDE_BARS.numbersSettings]: 'Numbers settings',
+    [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
+    [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
+    [SIDE_BARS.availabilitySettings]: 'Availability settings',
+    [SIDE_BARS.externalDataTableSettings]: 'External data settings',
+  },
+  openedTypes: {
+    [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
+    [ALARMS_OPENED_VALUES.resolved]: 'All resolved alarms',
+    [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
+  },
+  advancedSettings: 'Advanced settings',
+  entityDisplaySettings: 'Entity display settings',
+  entitiesUnderPbehaviorEnabled: 'Entities under PBh type inactive, Pause, Maintenance display',
+  entitiesUnderPauseEnabled: 'Entities under Pause display',
+  widgetTitle: 'Widget title',
+  columnName: 'Column name',
+  defaultSortColumn: 'Default sort column',
+  defaultSortColumns: 'Default sort columns',
+  defaultSortColumnsHasAnotherColumns:
+    'The selected template contains sort columns that are not present in the current table columns. You will not be able to change sorting on these fields.',
+  missingColumns: 'Missing columns',
+  sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
+  columnNames: 'Column names',
+  exportColumnNames: 'Export column names',
+  groupColumnNames: 'Column names for meta alarms',
+  trackColumnNames: 'Column names for alarm track source',
+  treeOfDependenciesColumnNames: 'Column names for tree of dependencies',
+  treeOfDependenciesSettings: 'Tree of dependencies settings',
+  orderBy: 'Order by',
+  periodicRefresh: 'Periodic refresh',
+  pausePeriodicRefreshOnExpandPanel: 'Pause periodic refresh when expand panel is open',
+  defaultNumberOfElementsPerPage: 'Default number of elements/page',
+  elementsPerPage: 'Elements per page',
+  filterOnOpenResolved: 'Filter on Open/Resolved',
+  open: 'Open',
+  filters: 'Filters',
+  filterEditor: 'Filter',
+  isAckNoteRequired: 'Ack - note field required',
+  isSnoozeNoteRequired: 'Snooze - note field required',
+  isRemoveAlarmsFromMetaAlarmCommentRequired:
+    'Remove alarms from manual meta alarm - comment field required',
+  isUncancelAlarmsCommentRequired: 'Uncancel - comment field required',
+  isMultiAckEnabled: 'Multiple ack',
+  isMultiDeclareTicketEnabled: 'Multiple declare ticket',
+  associateTicket: {
+    title: 'Associate ticket',
+    ticketFormats: 'Ticket formats',
+    description: 'Add regexp formats to validate ticket ID',
+    formatsHelp:
+      'Examples of valid regular expressions:<br><code>\\b[0-9]{4}[A-Za-z][0-9]{5}\\b</code><br><code>^S[0-9]{9}$</code>',
+    emptyTemplate: 'This template is empty',
+  },
+  isActionsAllowWithOkState: 'Actions allowed when state OK',
+  isVirtualScrollEnabled: 'Render elements on scroll',
+  fastAckOutput: 'Fast-ack output',
+  fastCancelOutput: 'Fast-cancel output',
+  commentTemplates: {
+    title: 'Comment templates',
+    description: 'First template in the list will be default.',
+  },
+  isHtmlEnabledOnTimeLine: 'HTML enabled on timeline',
+  openExpandPanelByDoubleClick: 'Open expandable panel on double click alarm',
+  isCorrelationEnabled: 'Is correlation enabled?',
+  fastPbehavior: 'Fast pbehavior',
+  fastPbehaviorDescription: 'User will be able to select from these types on click Fast pbehavior',
+  pause: {
+    pauseAction: 'Pause action',
+    recommended: 'recommended',
+    pbehavior: 'PBehavior of type Pause',
+    types: 'Pause types',
+    pbehaviorTypes: 'Fast pbehavior types',
+    typesDescription: 'User will be able to select from these types on click Pause',
+    propagate: 'Propagate pause on all dependencies',
+  },
+  duration: 'Duration',
+  tstop: 'End date',
+  periodsNumber: 'Number of steps',
+  yesNoMode: 'Yes/No mode',
+  selectAFilter: 'Select a filter',
+  lockedFilter: 'Filter locked in widget settings',
+  exportAsCsv: 'Export widget as csv file',
+  criticityLevels: 'Criticity levels',
+  isPriorityEnabled: 'Show priority',
+  isHideGrayEnabled: 'Show hide gray',
+  isSecondaryIconEnabled: 'Show secondary icon',
+  clearFilterEnabled: 'Clear of selected filter allowed',
+  showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
+  rootCauseSettings: 'Root cause diagram settings',
+  entitiesColorIndicator: 'Entities color indicator',
+  alarmsColumns: 'Alarm list columns',
+  resolvedAlarmsColumns: 'Column names for resolved alarms',
+  activeAlarmsColumns: 'Column names for active alarms',
+  entitiesColumns: 'Context explorer columns',
+  entityInfoPopup: 'Entity info popup',
+  modal: '(Modal)',
+  headerTitle: 'Header title',
+  defaultSampling: 'Default sampling',
+  defaultTimeRange: 'Default time range',
+  liveWatching: 'Live watching',
+  liveWatchingTooltip:
+    'If enabled, the information about changes in alarms are retrieved using websockets',
+  defaultInheritedPbehavior: 'Apply pbehavior on dependencies too',
+  expandPanel: {
+    title: 'Expandable panel',
+  },
+  exportCsv: {
+    title: 'Export CSV',
+    fields: {
+      datetimeFormat: 'Datetime format',
+    },
+  },
+  colorsSelector: {
+    title: 'Colors selector',
+    statsCriticity: {
+      [STATS_CRITICITY.ok]: 'ok',
+      [STATS_CRITICITY.minor]: 'minor',
+      [STATS_CRITICITY.major]: 'major',
+      [STATS_CRITICITY.critical]: 'critical',
+    },
+  },
+  colors: {
+    title: 'Colors',
+    theme: 'Theme colors',
+    custom: 'Custom colors',
+  },
+  infoPopup: {
+    title: 'Info popup for column',
+    fields: {
+      column: 'Column',
+    },
+  },
+  rowGridSize: {
+    title: 'Widget\'s size',
+    noData: 'No row corresponding. Press <kbd>enter</kbd> to create a new one',
+    fields: {
+      row: 'Row',
+    },
+  },
+  moreInfosModal: '"More Infos" Popup',
+  exportPdfTemplate: 'Export PDF template',
+  expandGridRangeSize: 'Expand card (more infos) width',
+  weatherTemplate: 'Template - Weather item',
+  modalTemplate: 'Template - Modal',
+  entityTemplate: 'Template - Entities',
+  blockTemplate: 'Template - Tile',
+  columnMobile: 'Columns - Mobile',
+  columnTablet: 'Columns - Tablet',
+  columnDesktop: 'Columns - Desktop',
+  limit: 'Limit',
+  height: 'Height',
+  margin: {
+    title: 'Block margins',
+    top: 'Margin - Top',
+    right: 'Margin - Right',
+    bottom: 'Margin - Bottom',
+    left: 'Margin - Left',
+  },
+  contextTypeOfEntities: {
+    title: 'Type of entities',
+    fields: {
+      [ENTITY_TYPES.component]: 'Component',
+      [ENTITY_TYPES.connector]: 'Connector Type',
+      [ENTITY_TYPES.resource]: 'Resource',
+      [ENTITY_TYPES.service]: 'Service',
+    },
+  },
+  considerPbehaviors: {
+    title: 'Consider pbehaviors',
+  },
+  serviceWeatherModalTypes: {
+    title: 'Type of the weather modal window',
+    fields: {
+      moreInfo: 'More info',
+      alarmList: 'Alarm list',
+      both: 'Both',
+    },
+  },
+  columns: {
+    customLabel: 'Custom label',
+    isHtml: 'Is it HTML?',
+    withTemplate: 'Custom template',
+    isState: 'Displayed as severity?',
+    onlyIcon: 'Show only links icons',
+    inlineLinksCount: 'Inline links count',
+    linksInRowCount: 'Count of links in row',
+    linksInRowCountTooltip:
+      'This count of links always will be displayed in the one row includes more links (`...`) button',
+    filterOnClick: 'Filter on click',
+  },
+  liveReporting: {
+    title: 'Time filter',
+    field: 'Set a custom date range',
+  },
+  counterLevels: {
+    title: 'Levels',
+    fields: {
+      counter: 'Counter',
+    },
+  },
+  counters: 'Counters',
+  pbehaviorCounters: 'Pbehavior counters',
+  entityStateCounters: 'Entity states counters',
+  remediationInstructionsFilters: 'Instructions filters',
+  colorIndicator: {
+    title: 'Color indicator',
+    fields: {
+      displayAsSeverity: 'Display as severity',
+      displayAsPriority: 'Display as priority',
+    },
+  },
+  receiveByApi: 'Receive by the API',
+  serverStorage: 'Server storage',
+  filenameRecognition: 'Filename recognition',
+  resultDirectory: 'Test results storage',
+  screenshotDirectories: {
+    title: 'Screenshots storage settings',
+    helpText: 'Define where screenshots are stored',
+  },
+  screenshotMask: {
+    title: 'Screenshots filename mask',
+    helpText:
+      '<dl>' +
+      '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n' +
+      '<dd>- test case name %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- time of execution (hh, mm, ss)</dd>' +
+      '</dl>',
+  },
+  videoDirectories: {
+    title: 'Video storage settings',
+    helpText: 'Define where video are stored',
+  },
+  videoMask: {
+    title: 'Videos filename mask',
+    helpText:
+      '<dl>' +
+      '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n' +
+      '<dd>- test case name %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- time of execution (hh, mm, ss)</dd>' +
+      '</dl>',
+  },
+  stickyHeader: 'Sticky header',
+  stickyHorizontalScroll: 'Sticky horizontal scroll',
+  reportFileRegexp: {
+    title: 'Report file mask',
+    helpText:
+      '<dl>' +
+      '<dt>Define the filename regexp of which report:<dt>\n' +
+      '<dd>For example:</dd>\n' +
+      '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+      '</dl>',
+  },
+  density: {
+    title: 'Default table density',
+    comfort: 'Comfort view',
+    compact: 'Compact view',
+    ultraCompact: 'Ultra compact view',
+  },
+  showTrend: 'Show trend',
+
+  chart: {
+    graphType: 'Graph type',
+    separateBars: 'Separate bars',
+    stackedBars: 'Stacked bars',
+    selectMetrics: 'Select metrics',
+    sharesType: 'Shares type',
+    showComparison: 'Show comparison',
+    preset: 'Preset',
+    metricsDisplay: 'Metrics display',
+    fontSize: 'Font size adjustment',
+    auto: 'Auto',
+    manual: 'Manual',
+    presets: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Tickets statistics',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Ack cancellation',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Acks activity',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Not acked alarms statistics',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Non-displayed alarms statistics',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Manual instruction execution',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
+    },
+    presetChartHeaders: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistics of alarm acknowledges',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Tickets statistics',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Acknowledge cancel actions statistics',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Acknowledge actions statistics',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistics of not acknowledged alarms',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistics of non-displayed alarms',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Manual instruction execution',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
+    },
+  },
+  actionRequiredSettings: {
+    title: 'Action required state settings',
+    isBlinking: 'Blinking on',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
+  noActionRequiredSettings: {
+    title: 'No action required state settings',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
+  stateSettings: 'State settings',
+  kioskMode: 'Kiosk mode',
+  kiosk: {
+    hideActions: 'Hide actions',
+    hideMassSelection: 'Hide mass selection',
+    hideToolbar: 'Hide toolbar',
+  },
+  columnsGroups: {
+    [WIDGET_COLUMNS_GROUPS.basic]: 'Basic',
+    [WIDGET_COLUMNS_GROUPS.messages]: 'Messages',
+    [WIDGET_COLUMNS_GROUPS.dates]: 'Dates',
+    [WIDGET_COLUMNS_GROUPS.counters]: 'Counters',
+    [WIDGET_COLUMNS_GROUPS.other]: 'Other',
+
+    [WIDGET_COLUMNS_GROUPS.entityParameters]: 'Entity parameters',
+    [WIDGET_COLUMNS_GROUPS.ticketParameters]: 'Ticket parameters',
+  },
+  columnsSettings: {
+    title: 'Columns settings',
+    dragging: 'Drag columns',
+    resizing: 'Resize columns',
+    cellsContentBehavior: 'Cells content',
+    cellsContentBehaviors: {
+      [RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Wrapped',
+      [RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Truncated',
+    },
+  },
+  mainParameter: {
+    title: 'Main parameter',
+    custom: {
+      label: 'Custom filtered data',
+      tooltip: 'Show reports for filtered sets of alarms',
+    },
+  },
+  statisticsWidgetColumn: {
+    split: 'Split data by value path',
+  },
+  entitiesActionsInQueue: 'Stack entities actions and apply simultaneously',
+  availability: {
+    graphSettings: 'Availability graph settings',
+    defaultAvailabilityDisplay: 'Default availability display',
+    defaultParameterToDisplay: 'Default parameter to display',
+  },
+  quickActions: {
+    title: 'Quick actions',
+    description: 'These actions will be shown, remaining actions will be hidden under more button',
+  },
+  quickMassActions: {
+    title: 'Quick massive actions',
+    hideSwitcher: 'Hide massive actions under more button',
+  },
+};

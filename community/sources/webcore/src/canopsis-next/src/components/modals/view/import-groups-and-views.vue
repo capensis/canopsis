@@ -1,190 +1,156 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
-      <span>{{ t('modals.importExportViews.title') }}</span>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.importExportViews.title') }}</span>
     </template>
-
-    <template #text>
-      <c-layout class="import-groups-and-views__content" align="start">
-        <div class="import-groups-and-views__column px-1">
-          <div class="text-center mb-2">
-            {{ t('modals.importExportViews.groups') }}
-          </div>
+    <template #text="">
+      <v-layout>
+        <v-flex
+          class="pl-1 pr-1"
+          xs4
+        >
+          <v-flex class="text-center mb-2">
+            {{ $t('modals.importExportViews.groups') }}
+          </v-flex>
           <draggable-groups
-            :groups="importedGroups"
+            v-model="importedGroups"
             pull
             view-pull
             view-put
-            @change="importedGroups = $event"
             @change:group="changeImportedGroupHandler"
           />
-        </div>
-
-        <div class="import-groups-and-views__column px-1">
-          <div class="text-center mb-2">
-            {{ t('modals.importExportViews.views') }}
-          </div>
-          <draggable-group-views :views="importedViews" pull @change="importedViews = $event" />
-        </div>
-
-        <v-divider class="mx-1 secondary align-self-stretch" vertical />
-
-        <div class="import-groups-and-views__column">
-          <div class="text-center mb-2">
-            {{ t('common.result') }}
-          </div>
+        </v-flex>
+        <v-flex
+          class="pl-1"
+          xs4
+        >
+          <v-flex class="text-center mb-2">
+            {{ $t('modals.importExportViews.views') }}
+          </v-flex>
+          <draggable-group-views
+            v-model="importedViews"
+            pull
+          />
+        </v-flex>
+        <v-divider
+          class="ml-1 mr-1 secondary"
+          vertical
+        />
+        <v-flex xs4>
+          <v-flex class="text-center mb-2">
+            {{ $t('common.result') }}
+          </v-flex>
           <draggable-groups
-            :groups="currentGroups"
+            v-model="currentGroups"
             put
             pull
             view-put
-            @change="currentGroups = $event"
             @change:group="changeCurrentGroupHandler"
           />
-        </div>
-      </c-layout>
+        </v-flex>
+      </v-layout>
     </template>
-
-    <template #actions>
-      <v-btn variant="text" @click="close">
-        {{ t('common.cancel') }}
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.cancel') }}
       </v-btn>
-
       <v-btn
         :loading="submitting"
-        :disabled="submitting"
-        color="primary"
+        class="primary"
+        type="submit"
         @click="submit"
       >
-        {{ t('common.saveChanges') }}
+        {{ $t('common.saveChanges') }}
       </v-btn>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-
-import { MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import {
-  prepareCurrentGroupsForImporting,
-  prepareImportedGroups,
   prepareImportedViews,
+  prepareImportedGroups,
+  prepareCurrentGroupsForImporting,
   prepareViewGroupsForImportRequest,
 } from '@/helpers/entities/view/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useView } from '@/hooks/store/modules/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { authMixin } from '@/mixins/auth';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import DraggableGroupViews from '@/components/layout/navigation/partials/groups-side-bar/draggable-group-views.vue';
 import DraggableGroups from '@/components/layout/navigation/partials/groups-side-bar/draggable-groups.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
+  name: MODALS.importExportViews,
   components: {
     DraggableGroupViews,
     DraggableGroups,
+    ModalWrapper,
   },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+  mixins: [
+    authMixin,
+    modalInnerMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
+    submittableMixinCreator(),
+  ],
+  data() {
+    return {
+      importedViews: [],
+      importedGroups: [],
+      currentGroups: [],
+    };
+  },
+  watch: {
+    groups: {
+      immediate: true,
+      handler() {
+        this.setDefaultValues();
+      },
     },
   },
+  methods: {
+    changeImportedGroupHandler(groupIndex, group) {
+      this.importedGroups.splice(groupIndex, 1, group);
+    },
 
-  setup(props) {
-    const { t } = useI18n();
-    const route = useRoute();
-    const modals = useModals();
-    const popups = usePopups();
-    const { viewGroups, fetchViewGroupsList, importViewWithoutStore } = useView();
+    changeCurrentGroupHandler(groupIndex, group) {
+      this.currentGroups.splice(groupIndex, 1, group);
+    },
 
-    const importedViews = ref([]);
-    const importedGroups = ref([]);
-    const currentGroups = ref([]);
-    const submitting = ref(false);
+    setDefaultValues() {
+      const { importedGroups, importedViews } = this.config;
 
-    const config = computed(() => props.modal.config ?? {});
-    const close = () => modals.hide({ id: props.modal.id });
-    const isViewsImportExportPage = computed(
-      () => route.name === ROUTES_NAMES.adminSettingsViewsImportExport,
-    );
+      this.importedViews = prepareImportedViews(importedViews);
+      this.importedGroups = prepareImportedGroups(importedGroups);
+      this.currentGroups = prepareCurrentGroupsForImporting(this.groups.filter(group => !group.is_private));
+    },
 
-    const setDefaultValues = () => {
-      const { importedGroups: nextImportedGroups = [], importedViews: nextImportedViews = [] } =
-        config.value;
-
-      importedViews.value = prepareImportedViews(nextImportedViews);
-      importedGroups.value = prepareImportedGroups(nextImportedGroups);
-      currentGroups.value = prepareCurrentGroupsForImporting(
-        viewGroups.value.filter(group => !group.is_private),
-      );
-    };
-
-    const fetchGroups = () => {
-      if (!isViewsImportExportPage.value) {
-        return fetchViewGroupsList();
-      }
-
-      return fetchViewGroupsList({
-        params: {
-          limit: MAX_LIMIT,
-          page: 1,
-          with_views: true,
-        },
-      });
-    };
-
-    const changeImportedGroupHandler = (groupIndex, group) => importedGroups.value.splice(groupIndex, 1, group);
-
-    const changeCurrentGroupHandler = (groupIndex, group) => currentGroups.value.splice(groupIndex, 1, group);
-
-    const submit = async () => {
+    async submit() {
       try {
-        submitting.value = true;
-
-        await importViewWithoutStore({
-          data: prepareViewGroupsForImportRequest(currentGroups.value),
+        await this.importViewsWithoutStore({
+          data: prepareViewGroupsForImportRequest(this.currentGroups),
         });
       } catch (err) {
         console.error(err);
 
-        popups.error({ text: err.description || t('errors.default') });
+        this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
-        await fetchGroups();
-        submitting.value = false;
-        close();
+        await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+        this.$modals.hide();
       }
-    };
-
-    watch(viewGroups, setDefaultValues, { immediate: true });
-
-    return {
-      t,
-      importedViews,
-      importedGroups,
-      currentGroups,
-      submitting,
-      close,
-      submit,
-      changeImportedGroupHandler,
-      changeCurrentGroupHandler,
-    };
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.import-groups-and-views__content {
-  flex-wrap: nowrap;
-}
-
-.import-groups-and-views__column {
-  flex: 1 1 0;
-  min-width: 0;
-}
-</style>

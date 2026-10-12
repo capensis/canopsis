@@ -1,25 +1,27 @@
 <template>
-  <v-row v-show="totalItems" align="center" no-gutters>
-    <v-col cols="10">
+  <v-layout
+    v-show="totalItems"
+    align-center
+  >
+    <v-flex xs10>
       <c-pagination
         :page="page"
         :limit="itemsPerPage"
         :total="totalItems"
-        :total-visible="totalVisible"
-        @update:page="updatePage"
+        @input="updatePage"
       />
-    </v-col>
+    </v-flex>
     <v-spacer />
-    <v-col cols="2">
+    <v-flex xs2>
       <c-items-per-page-field
-        :model-value="itemsPerPage"
+        :value="itemsPerPage"
         :items="items"
         class="pa-0"
         hide-details
-        @update:model-value="updateItemsPerPage"
+        @input="updateItemsPerPage"
       />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -47,21 +49,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    totalVisible: {
-      type: Number,
-      required: false,
-    },
   },
-
-  emits: ['update:page', 'update:items-per-page', 'update:pagination'],
-
   setup(props, { emit }) {
     const updatePage = page => emit('update:page', page);
     const updateItemsPerPage = (itemsPerPage) => {
       const page = getPageForNewItemsPerPage(itemsPerPage, props.itemsPerPage, props.page);
 
       if (page !== props.page) {
-        return emit('update:pagination', { page, itemsPerPage });
+        return emit('input', { page, itemsPerPage });
       }
 
       return emit('update:items-per-page', itemsPerPage);

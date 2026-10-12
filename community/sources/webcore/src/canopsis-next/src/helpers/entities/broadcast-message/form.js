@@ -2,11 +2,10 @@ import { keyBy } from 'lodash';
 
 import {
   DEFAULT_BROADCAST_MESSAGE_COLOR,
-  BROADCAST_MESSAGE_PAGES_VIEW_VALUES,
   BROADCAST_MESSAGE_VIEWS,
   BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS,
+  BROADCAST_MESSAGE_PAGES_VIEW_VALUES,
   DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM,
-  MIN_PRIORITY,
 } from '@/constants';
 
 import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
@@ -19,18 +18,16 @@ import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/
  */
 
 /**
- * @typedef {Object} BroadcastMessage
+ * @typedef {Object} Broadcast
  * @property {string} message
  * @property {string} color
- * @property {number} priority
- * @property {boolean} closable
  * @property {number} start
  * @property {number} end
  * @property {string[]} views
  */
 
 /**
- * @typedef {BroadcastMessage} BroadcastMessageForm
+ * @typedef {Broadcast} BroadcastForm
  * @property {Date} start
  * @property {Date} end
  * @property {BroadcastMessageViewsForm} views
@@ -40,11 +37,10 @@ import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/
  * @param {Object[]} treeViews
  * @returns {string[]}
  */
-const flattenTreeValues = (treeViews = []) =>
-  treeViews.flatMap(({ value, children }) => [
-    value,
-    ...(children ? flattenTreeValues(children) : []),
-  ]);
+const flattenTreeValues = (treeViews = []) => treeViews.flatMap(({ value, children }) => [
+  value,
+  ...(children ? flattenTreeValues(children) : []),
+]);
 
 /**
  * @param {string[]} views
@@ -58,7 +54,7 @@ const filterViewsByTree = (views = [], treeViews = []) => {
 };
 
 /**
- * Convert views array to views form object.
+ * Convert views array to views form object
  *
  * @param {string[]} views
  * @param {Object} [treeItems={}]
@@ -90,29 +86,27 @@ export const viewsArrayToViewsForm = (views = [], treeItems = {}) => {
 };
 
 /**
- * Convert broadcast message entity to form data.
+ * Convert broadcast object to broadcast form
  *
- * @param {BroadcastMessage} broadcastMessage
- * @return {BroadcastMessageForm}
+ * @param {Broadcast} broadcastMessage
+ * @return {BroadcastForm}
  */
 export const messageToForm = (broadcastMessage = {}) => ({
   message: broadcastMessage?.message || '',
   color: broadcastMessage?.color || DEFAULT_BROADCAST_MESSAGE_COLOR,
-  priority: broadcastMessage?.priority ?? MIN_PRIORITY,
-  closable: broadcastMessage?.closable ?? true,
   start: convertDateToDateObject(broadcastMessage?.start),
   end: convertDateToDateObject(broadcastMessage?.end),
   views: broadcastMessage?.views?.length
     ? viewsArrayToViewsForm(broadcastMessage.views)
     : {
-        pages: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.pages],
-        views: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.views],
-        playlists: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.playlists],
-      },
+      pages: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.pages],
+      views: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.views],
+      playlists: [...DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM.playlists],
+    },
 });
 
 /**
- * Convert views form block to optimized views array.
+ * Convert views form to optimized views array
  *
  * @param {Object} viewsMap
  * @param {Object[]} treeViews
@@ -124,9 +118,7 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
   let hasAllItemsSelected = true;
 
   for (const { value, children } of treeViews) {
-    if (viewsMap[value]) {
-      result.push(value);
-    } else if (children) {
+    if (children) {
       const childrenViews = viewsFormToViews(viewsMap, children, true);
 
       if (childrenViews === true) {
@@ -135,32 +127,37 @@ export const viewsFormToViews = (viewsMap = {}, treeViews = [], isChildren = fal
         result.push(...childrenViews);
         hasAllItemsSelected = false;
       }
+    } else if (viewsMap[value]) {
+      result.push(value);
     } else {
       hasAllItemsSelected = false;
     }
   }
 
-  return isChildren && hasAllItemsSelected ? true : result;
+  return isChildren && hasAllItemsSelected
+    ? true
+    : result;
 };
 
 /**
- * Convert views form object to views array.
+ * Convert views form object to views array
  *
  * @param {BroadcastMessageViewsForm} viewsForm
  * @param {Object} treeItems
  * @returns {string[]}
  */
-export const viewsFormToMessage = (viewsForm = {}, treeItems = {}) =>
-  Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).flatMap(block =>
-    viewsFormToViews(keyBy(viewsForm[block] || []), treeItems[block] || []),
-  );
+export const viewsFormToMessage = (viewsForm = {}, treeItems = {}) => (
+  Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).flatMap(block => (
+    viewsFormToViews(keyBy(viewsForm[block] || []), treeItems[block] || [])
+  ))
+);
 
 /**
- * Convert form data to broadcast message entity.
+ * Convert broadcast form to broadcast object
  *
- * @param {BroadcastMessageForm} form
+ * @param {BroadcastForm} form
  * @param {Object} treeItems
- * @return {BroadcastMessage}
+ * @return {Broadcast}
  */
 export const formToMessage = (form = {}, treeItems = {}) => ({
   ...form,
@@ -171,7 +168,7 @@ export const formToMessage = (form = {}, treeItems = {}) => ({
 });
 
 /**
- * Get selected views with all their children from tree structure.
+ * Get selected views with all their children from tree structure
  *
  * @param {Object} viewsMap
  * @param {Object[]} treeViews
@@ -194,15 +191,19 @@ export const getViewsWithChildren = (viewsMap = {}, treeViews = []) => {
 };
 
 /**
- * Prepare views form by getting all children for each block.
+ * Prepare views form by getting all children for each block
  *
  * @param {BroadcastMessageViewsForm} viewsForm
  * @param {Object} treeItems
  * @return {BroadcastMessageViewsForm}
  */
-export const prepareMessageViews = (viewsForm = {}, treeItems = {}) =>
+export const prepareMessageViews = (viewsForm = {}, treeItems = {}) => (
   Object.values(BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS).reduce((acc, block) => {
-    acc[block] = getViewsWithChildren(keyBy(viewsForm[block] || []), treeItems[block] || []);
+    acc[block] = getViewsWithChildren(
+      keyBy(viewsForm[block] || []),
+      treeItems[block] || [],
+    );
 
     return acc;
-  }, {});
+  }, {})
+);

@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item :title="label" :eager="false">
     <c-columns-with-template-field
-      :model-value="modelValue"
+      v-field="columns"
       :type="type"
       :template="template"
       :templates="templates"
@@ -12,7 +12,6 @@
       :with-filter-on-click="withFilterOnClick"
       :items="items"
       :excluded-columns="excludedColumns"
-      @update:model-value="$emit('update:modelValue', $event)"
       @update:template="updateTemplate"
     />
   </widget-settings-item>
@@ -23,12 +22,11 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-
+  model: {
+    prop: 'columns',
+    event: 'input',
+  },
   props: {
-    modelValue: {
-      type: Array,
-      default: () => [],
-    },
     label: {
       type: String,
       required: true,
@@ -36,6 +34,10 @@ export default {
     type: {
       type: String,
       required: false,
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
     template: {
       type: [String, Symbol],
@@ -74,9 +76,6 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:modelValue', 'update:template'],
-
   methods: {
     updateTemplate(...args) {
       this.$emit('update:template', ...args);

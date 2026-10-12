@@ -1,46 +1,67 @@
 <template>
-  <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+  <v-form
+    data-test="createRoleModal"
+    @submit.prevent="submit"
+  >
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <role-form :with-template="config.withTemplate" :is-new="isNew" />
+      <template #text="">
+        <role-form
+          v-model="form"
+          :with-template="config.withTemplate"
+          :is-new="isNew"
+        />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="submitting"
+          :loading="submitting"
+          class="primary white--text"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
+
+import { MODALS } from '@/constants';
 
 import { roleToForm, formToRole } from '@/helpers/entities/role/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import RoleForm from '@/components/other/role/form/role-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
-  components: { RoleForm },
+  name: MODALS.createRole,
+
+  $_veeValidate: {
+    validator: 'new',
+  },
+
+  components: {
+    RoleForm,
+    ModalWrapper,
+  },
 
   props: {
     modal: {
@@ -51,37 +72,34 @@ export default {
 
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(roleToForm(config.value.role));
 
     const isNew = computed(() => !config.value.role?._id);
-    const title = computed(() => config.value.title || t('modals.createRole.create.title'));
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const title = computed(() => (config.value.title || t('modals.createRole.create.title')));
 
-    const form = useForm({
-      initialValues: roleToForm(config.value.role),
-    });
-    const { handleSubmit, isSubmitting, values } = form;
+    const { submit, submitting, submitLabel } = useSubmittableForm({
+      form,
+      item: config.value.role,
+      method: async () => {
+        await config.value.action(formToRole(form.value));
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(formToRole(values.value));
-
-      closeModal();
+        close();
+      },
     });
 
-    useFormConfirmableCloseModal({ form: values, submit, close: closeModal });
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      t,
-      config,
+      form,
       isNew,
       title,
+      submitting,
       submitLabel,
-      isSubmitting,
-      closeModal,
       submit,
+      close,
+      config,
     };
   },
 };

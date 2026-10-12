@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-information-block-row
       :label="$t('testSuite.xmlFeed')"
       :value="testSuite.xml_feed"
@@ -13,15 +13,15 @@
       :value="testSuite.hostname"
     />
     <c-information-block-row :label="$t('testSuite.lastUpdate')">
-      {{ convertDateToString(testSuite.last_update, 'testSuiteFormat') }}
+      {{ testSuite.last_update | date('testSuiteFormat') }}
     </c-information-block-row>
     <c-information-block-row :label="$t('common.timeTaken')">
       <span v-if="testSuite.time">
-        {{ convertNumberToFixedString(testSuite.time) }}{{ $constants.TIME_UNITS.second }}
+        {{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}
       </span>
     </c-information-block-row>
-    <v-row class="mt-4">
-      <c-layout column>
+    <v-layout class="mt-4">
+      <v-layout column>
         <c-information-block-row
           :label="$t('testSuite.totalTests')"
           :value="testSuite.total"
@@ -46,20 +46,18 @@
           :total="testSuite.total"
           :count="testSuite.skipped"
         />
-      </c-layout>
-      <v-col cols="4">
+      </v-layout>
+      <v-flex xs4>
         <test-suite-status-pie-chart :statuses="testSuiteStatuses" />
-      </v-col>
-    </v-row>
-  </c-layout>
+      </v-flex>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import { convertDateToString } from '@/helpers/date/date';
-import { convertNumberToFixedString } from '@/helpers/string';
-
-import TestSuiteStatusPieChart from './test-suite-status-pie-chart.vue';
 import TestSuiteSummaryStatusRow from './test-suite-summary-status-row.vue';
+
+const TestSuiteStatusPieChart = () => import(/* webpackChunkName: "Charts" */ './test-suite-status-pie-chart.vue');
 
 export default {
   components: {
@@ -89,10 +87,6 @@ export default {
         passed: this.passed,
       };
     },
-  },
-  methods: {
-    convertDateToString,
-    convertNumberToFixedString,
   },
 };
 </script>

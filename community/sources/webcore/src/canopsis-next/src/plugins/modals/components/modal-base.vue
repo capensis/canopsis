@@ -1,27 +1,33 @@
 <template>
   <modal-wrapper :modal="modal">
-    <component :is="modalComponent" :modal="modal" />
+    <component
+      :is="modal.name"
+      :modal="modal"
+    />
   </modal-wrapper>
 </template>
 
-<script setup>
-import { computed, inject, provide } from 'vue';
-
+<script>
 import ClickOutside from '@/services/click-outside';
 
 import ModalWrapper from './modal-wrapper.vue';
 
-const props = defineProps({
-  modal: {
-    type: Object,
-    required: true,
+export default {
+  provide() {
+    return {
+      $clickOutside: this.$clickOutside,
+      $modal: this.modal,
+    };
   },
-});
-
-const modalComponents = inject('$modalComponents', {});
-
-const modalComponent = computed(() => modalComponents[props.modal.name]);
-
-provide('$clickOutside', new ClickOutside());
-provide('$modal', props.modal);
+  components: { ModalWrapper },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  beforeCreate() {
+    this.$clickOutside = new ClickOutside();
+  },
+};
 </script>

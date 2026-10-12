@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <c-pattern-field
       v-if="withType"
       :value="patterns.id"
@@ -8,34 +8,23 @@
       class="mb-2"
       return-object
       required
-      @update:value="updatePattern"
+      @input="updatePattern"
     />
     <v-tabs
       v-if="!withType || patterns.id"
       v-model="activeTab"
-      align-tabs="center"
-      color="primary"
+      slider-color="primary"
+      centered
     >
       <v-tab
         :disabled="!isSimpleTab && hasJsonError"
-        :value="$constants.PATTERN_EDITOR_TABS.simple"
+        :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
       >
         {{ $t('pattern.simpleEditor') }}
       </v-tab>
-
-      <v-tab :value="$constants.PATTERN_EDITOR_TABS.advanced">
-        {{ $t('pattern.advancedEditor') }}
-      </v-tab>
-    </v-tabs>
-
-    <v-window
-      v-if="!withType || patterns.id"
-      v-model="activeTab"
-      class="pattern-editor-field__window"
-    >
-      <v-window-item :value="$constants.PATTERN_EDITOR_TABS.simple">
+      <v-tab-item :value="$constants.PATTERN_EDITOR_TABS.simple">
         <pattern-groups-field
-          :groups="patterns.groups"
+          v-field="patterns.groups"
           :disabled="formDisabled"
           :readonly="readonly"
           :name="patternGroupsFieldName"
@@ -43,21 +32,26 @@
           :required="required"
           :attributes="attributes"
           class="mt-2"
-          @update:groups="updateField('groups', $event)"
         />
-      </v-window-item>
-      <v-window-item :value="$constants.PATTERN_EDITOR_TABS.advanced">
+      </v-tab-item>
+      <v-tab :href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`">
+        {{ $t('pattern.advancedEditor') }}
+      </v-tab>
+      <v-tab-item :value="$constants.PATTERN_EDITOR_TABS.advanced">
         <pattern-advanced-editor-field
           :value="patternsJson"
           :disabled="readonly || disabled || !isCustomPattern"
           :attributes="attributes"
           :name="patternJsonFieldName"
-          @update:value="updateGroupsFromPatterns"
+          @input="updateGroupsFromPatterns"
         />
-      </v-window-item>
-    </v-window>
+      </v-tab-item>
+    </v-tabs>
     <template v-if="!readonly">
-      <c-layout align="center" justify="end">
+      <v-layout
+        align-center
+        justify-end
+      >
         <v-btn
           v-if="withType && !isCustomPattern"
           :disabled="disabled"
@@ -67,50 +61,69 @@
         >
           {{ $t('common.edit') }}
         </v-btn>
-        <c-layout
+        <v-layout
           v-if="checked"
-          gap="2"
-          align="center"
-          justify="end"
+          class="gap-2"
+          align-center
+          justify-end
         >
-          <pattern-count-message :alarm-counter="alarmCounter" :entity-counter="entityCounter" />
+          <pattern-count-message
+            :alarm-counter="alarmCounter"
+            :entity-counter="entityCounter"
+          />
           <slot name="append-count" />
-        </c-layout>
-      </c-layout>
-      <div class="mt-2">
-        <v-alert v-if="errorMessage" class="pre-wrap" type="error">
+        </v-layout>
+      </v-layout>
+      <v-flex class="mt-2">
+        <v-alert
+          :value="!!errorMessage"
+          class="pre-wrap"
+          type="error"
+          transition="fade-transition"
+        >
           {{ errorMessage }}
         </v-alert>
-        <v-alert v-if="overLimit" type="warning">
+        <v-alert
+          :value="overLimit"
+          type="warning"
+          transition="fade-transition"
+        >
           <span>{{ $t('pattern.errors.countOverLimit', { count }) }}</span>
         </v-alert>
-      </div>
+      </v-flex>
     </template>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 import { isEqual, isEmpty } from 'lodash';
-import { ref, computed, toRef, watch } from 'vue';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
-import {
-  formGroupsToPatternRules,
-  patternsToGroups,
-  patternToForm,
-} from '@/helpers/entities/pattern/form';
+import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/entities/pattern/form';
 
-import { useFieldError, useFormContext } from '@/hooks/form';
 import { useModelField } from '@/hooks/form/model-field';
+import { useValidator } from '@/hooks/validator/validator';
+import { useComponentInstance } from '@/hooks/vue';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
-import PatternCountMessage from './pattern-count-message.vue';
 import PatternGroupsField from './pattern-groups-field.vue';
+import PatternCountMessage from './pattern-count-message.vue';
 
 export default {
+  inject: ['$validator'],
   components: { PatternCountMessage, PatternGroupsField, PatternAdvancedEditorField },
-  emits: ['update:patterns'],
+  model: {
+    prop: 'patterns',
+    event: 'input',
+  },
   props: {
     patterns: {
       type: Object,
@@ -118,7 +131,7 @@ export default {
     },
     attributes: {
       type: Array,
-      default: () => [],
+      required: true,
     },
     disabled: {
       type: Boolean,
@@ -162,8 +175,10 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const validator = useValidator();
+    const { errors } = validator;
+    const vm = useComponentInstance();
     const { updateModel, updateField } = useModelField(props, emit);
-    const formContext = useFormContext();
 
     const activeTab = ref(PATTERN_EDITOR_TABS.simple);
     const patternsJson = ref([]);
@@ -171,21 +186,16 @@ export default {
     const patternGroupsFieldName = computed(() => `${props.name}.groups`);
     const patternJsonFieldName = computed(() => `${props.name}.json`);
 
-    const jsonErrorMessage = useFieldError(patternJsonFieldName);
-    const errorMessage = useFieldError(toRef(props, 'name'));
-    const hasJsonError = computed(() => !!jsonErrorMessage.value);
+    const hasJsonError = computed(() => errors.has(patternJsonFieldName.value));
+    const errorMessage = computed(() => errors.collect(props.name)?.join('\n'));
 
     const isSimpleTab = computed(() => activeTab.value === PATTERN_EDITOR_TABS.simple);
     const isCustomPattern = computed(() => props.patterns.id === PATTERN_CUSTOM_ITEM_VALUE);
-    const formDisabled = computed(
-      () => props.disabled || (props.withType && !isCustomPattern.value),
-    );
+    const formDisabled = computed(() => props.disabled || (props.withType && !isCustomPattern.value));
 
     const checked = computed(() => !isEmpty(props.alarmCounter) || !isEmpty(props.entityCounter));
     const count = computed(() => props.alarmCounter?.count ?? props.entityCounter?.count ?? 0);
-    const overLimit = computed(
-      () => props.alarmCounter?.over_limit || props.entityCounter?.over_limit || false,
-    );
+    const overLimit = computed(() => props.alarmCounter?.over_limit || props.entityCounter?.over_limit || false);
 
     /**
      * Watches for changes in pattern groups and removes validation errors when groups change.
@@ -197,7 +207,7 @@ export default {
       () => props.patterns.groups,
       (groups, oldGroups) => {
         if (hasJsonError.value) {
-          formContext.setFieldError(patternJsonFieldName.value, undefined);
+          errors.remove(`${props.name}.json`);
 
           if (activeTab.value === PATTERN_EDITOR_TABS.advanced) {
             patternsJson.value = formGroupsToPatternRules(groups);
@@ -205,7 +215,7 @@ export default {
         }
 
         if (!isEqual(groups, oldGroups)) {
-          formContext.setFieldError(props.name, undefined);
+          errors.remove(props.name);
         }
       },
     );
@@ -248,6 +258,14 @@ export default {
       patternsJson.value = patterns;
     };
 
+    onMounted(() => validator.attach({
+      name: props.name,
+      getter: () => props.patterns.length,
+      vm,
+    }));
+
+    onBeforeUnmount(() => validator.detach(props.name));
+
     return {
       activeTab,
       patternsJson,
@@ -261,7 +279,6 @@ export default {
       checked,
       count,
       overLimit,
-      updateField,
       updatePattern,
       updatePatternToCustom,
       updateGroupsFromPatterns,
@@ -269,11 +286,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pattern-editor-field {
-  &__window {
-    padding-top: 8px;
-  }
-}
-</style>

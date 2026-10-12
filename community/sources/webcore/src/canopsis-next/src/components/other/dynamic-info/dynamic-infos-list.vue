@@ -20,31 +20,40 @@
         :enablable="updatable"
         :disablable="updatable"
         dynamic-info
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
     <template #created="{ item }">
-      {{ formatDate(item.created) }}
+      {{ item.created | date }}
     </template>
-
     <template #updated="{ item }">
-      {{ formatDate(item.updated) }}
+      {{ item.updated | date }}
     </template>
-
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
-
     <template #actions="{ item }">
-      <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
         <c-db-export-btn :id="item._id" dynamic-info />
-        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
-      </c-layout>
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <dynamic-infos-list-expand-item :info="item" />
     </template>
@@ -53,8 +62,6 @@
 
 <script>
 import { computed } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -66,7 +73,6 @@ export default {
   components: {
     DynamicInfosListExpandItem,
   },
-
   props: {
     dynamicInfos: {
       type: Array,
@@ -97,30 +103,26 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
-
   setup() {
     const { t } = useI18n();
+
     const { attributes: advancedSearchAttributes } = useDynamicInfoAdvancedSearchAttributes();
 
     const headers = computed(() => [
       { text: t('common.id'), value: '_id' },
       { text: t('common.name'), value: 'name' },
       { text: t('common.description'), value: 'description', sortable: false },
-      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
       { text: t('common.author'), value: 'author.display_name' },
       { text: t('common.created'), value: 'created' },
       { text: t('common.updated'), value: 'updated' },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const formatDate = convertDateToString;
-
     return {
       advancedSearchAttributes,
+
       headers,
-      formatDate,
     };
   },
 };

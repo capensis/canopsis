@@ -1,10 +1,10 @@
 <template>
   <c-form-block-row :label="$t('declareTicket.ticketStatusMapping')" :depth="1" indented>
-    <c-layout gap="3" column>
+    <v-layout class="gap-3" column>
       <c-label
         :label="$t('declareTicket.ticketStatusMapping')"
         :help-text="$t('declareTicket.ticketStatusMappingHelpText')"
-        :error="hasError(name)"
+        :error="errors.has(name)"
         required
       />
 
@@ -13,7 +13,7 @@
       </span>
 
       <c-text-pairs-field
-        :items="value"
+        v-field="value"
         :name="name"
         :disabled="disabled"
         :value-items="canopsisValueItems"
@@ -23,9 +23,8 @@
         :required-error-message="$t('declareTicket.ticketStatusMappingHelpText')"
         text-required
         value-required
-        @update:items="updateModel"
       />
-    </c-layout>
+    </v-layout>
   </c-form-block-row>
 </template>
 
@@ -36,13 +35,16 @@ import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN } from '@/con
 
 import { textPairToForm } from '@/helpers/text-pairs';
 
-import { useFormErrorsMap } from '@/hooks/form';
-import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useValidationAttachRequiredForField } from '@/hooks/validator/validation-attach-required';
 
 export default {
-  emits: ['update:value'],
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Array,
@@ -59,15 +61,14 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { hasError } = useFormErrorsMap();
-    const { updateModel, addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-    const canopsisValueItems = computed(() => Object.values(DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN)
-      .map(value => ({
+    const canopsisValueItems = computed(() => (
+      Object.values(DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN).map(value => ({
         value,
         text: t(`declareTicket.status.${value}`),
-      })),
-    );
+      }))
+    ));
 
     /**
      * Appends an empty mapping pair (text/value) to the ticket status mapping array.
@@ -79,31 +80,22 @@ export default {
      *
      * @returns {boolean}
      */
-    const hasClosedItem = () => props.value.some(
-        item => item.value === DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN.closed,
-      );
-
-    const { asyncValidateRequiredRule } = useValidationAttachRequiredForField(
-      props.name,
-      hasClosedItem,
-      false,
+    const hasClosedItem = () => (
+      props.value.some(item => item.value === DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES_WITHOUT_UNKNOWN.closed)
     );
 
-    watch(
-      () => props.value,
-      (newValue = [], oldValue = []) => {
-        if (newValue.length && newValue.length !== oldValue.length) {
-          return;
-        }
+    const { asyncValidateRequiredRule } = useValidationAttachRequiredForField(props.name, hasClosedItem, false);
 
-        asyncValidateRequiredRule();
-      },
-    );
+    watch(() => props.value, (newValue = [], oldValue = []) => {
+      if (newValue.length && newValue.length !== oldValue.length) {
+        return;
+      }
+
+      asyncValidateRequiredRule();
+    });
 
     return {
-      hasError,
       canopsisValueItems,
-      updateModel,
       addMappingPair,
       removeItemFromArray,
     };

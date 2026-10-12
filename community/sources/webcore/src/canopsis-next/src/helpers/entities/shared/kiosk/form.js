@@ -6,9 +6,9 @@
  */
 
 /**
- * Converts kiosk widget settings to form values.
+ * Convert alarm list widget kiosk parameters to form
  *
- * @param {WidgetKioskParameters} [parameters={}]
+ * @param {WidgetKioskParameters} [parameters = {}]
  * @returns {WidgetKioskParameters}
  */
 export const kioskParametersToForm = (parameters = {}) => ({

@@ -12,7 +12,6 @@
 <script>
 import { computed } from 'vue';
 
-import { getIdFromEntity } from '@/helpers/array';
 import { saveFile } from '@/helpers/file/files';
 
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -85,8 +84,6 @@ export default {
       default: false,
     },
   },
-  emits: ['refresh'],
-
   setup(props, { emit }) {
     const {
       exportPbehaviorsDb,
@@ -103,31 +100,28 @@ export default {
       exportJobConfigsDb,
     } = useDbExport();
 
-    const action = computed(
-      () => ({
-          [props.pbehavior]: exportPbehaviorsDb,
-          [props.eventFilter]: exportEventFiltersDb,
-          [props.linkRule]: exportLinkRulesDb,
-          [props.idleRule]: exportIdleRulesDb,
-          [props.flappingRule]: exportFlappingRulesDb,
-          [props.scenario]: exportScenariosDb,
-          [props.dynamicInfo]: exportDynamicInfosDb,
-          [props.declareTicket]: exportDeclareTicketsDb,
-          [props.metaAlarmRule]: exportMetaAlarmRulesDb,
-          [props.instruction]: exportInstructionsDb,
-          [props.job]: exportJobsDb,
-          [props.jobConfig]: exportJobConfigsDb,
-        }).true,
-    );
-    const normalizedIds = computed(() =>
-      (props.id ? [props.id] : props.ids).map(getIdFromEntity).filter(Boolean),
-    );
+    const action = computed(() => ({
+      [props.pbehavior]: exportPbehaviorsDb,
+      [props.eventFilter]: exportEventFiltersDb,
+      [props.linkRule]: exportLinkRulesDb,
+      [props.idleRule]: exportIdleRulesDb,
+      [props.flappingRule]: exportFlappingRulesDb,
+      [props.scenario]: exportScenariosDb,
+      [props.dynamicInfo]: exportDynamicInfosDb,
+      [props.declareTicket]: exportDeclareTicketsDb,
+      [props.metaAlarmRule]: exportMetaAlarmRulesDb,
+      [props.instruction]: exportInstructionsDb,
+      [props.job]: exportJobsDb,
+      [props.jobConfig]: exportJobConfigsDb,
+    }.true));
 
-    const { pending, handler: download } = usePendingHandler(async () => {
-      const { headers = {}, data } =
-        (await action.value?.({
-          ids: normalizedIds.value,
-        })) ?? {};
+    const {
+      pending,
+      handler: download,
+    } = usePendingHandler(async () => {
+      const { headers = {}, data } = await action.value?.({
+        ids: props.id ? [props.id] : props.ids,
+      }) ?? {};
 
       const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');
 

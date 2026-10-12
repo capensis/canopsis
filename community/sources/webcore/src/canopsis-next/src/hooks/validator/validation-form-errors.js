@@ -1,55 +1,86 @@
-import { unref } from 'vue';
+import { computed, unref } from 'vue';
+import { has, keyBy } from 'lodash';
 
-import { useFormContext } from '@/hooks/form';
-import { getMatchedServerFieldErrors } from '@/hooks/form/server-errors';
+import { useValidator } from './validator';
 
 /**
- * Provides utilities for mapping server errors onto the current form context.
+ * Provides utilities for managing form validation errors using a validator object.
+ * This function encapsulates methods to set and manage errors based on a given form structure.
  *
- * @param {Object|import('vue').Ref<Object>} [form] Form values used to match server fields.
- * @param {Object|import('vue').Ref<Object>} [providedFormContext] Form context used to set field errors.
- * @returns {Object} An object containing a method to set form errors.
+ * @param {Object} form - The form object which contains the fields to validate.
+ * @returns {Object} An object containing the validator instance and a method to set form errors.
  *
  * @example
- * const form = { username: '', password: '' };
- * const { setFormErrors } = useValidationFormErrors(form);
+ * // Assuming `form` is an object that represents your form fields
+ * const form = {
+ *   username: '',
+ *   password: ''
+ * };
  *
- * const hasErrors = setFormErrors({
+ * // Using the useValidationFormErrors function
+ * const { validator, setFormErrors } = useValidationFormErrors(form);
+ *
+ * // Example error object that might be returned from a server on form submission
+ * const errorsFromServer = {
  *   username: 'Username is required',
- *   password: 'Password must be at least 6 characters',
- * });
+ *   password: 'Password must be at least 6 characters'
+ * };
+ *
+ * // Setting form errors and checking if there are any
+ * const hasErrors = setFormErrors(errorsFromServer);
+ * if (hasErrors) {
+ *   console.log('There are errors in the form');
+ * }
  */
-export const useValidationFormErrors = (form, providedFormContext) => {
-  const defaultFormContext = useFormContext();
+export const useValidationFormErrors = (form) => {
+  const validator = useValidator();
+
+  const fieldsByName = computed(() => keyBy(validator.fields.items, 'name'));
 
   /**
-   * Set form errors from a server response and returns true if any field errors were applied.
+   * Get errors for exists fields in current form
    *
-   * @param {Object} [errors={}]
+   * @param {any} errors
+   * @returns {[string, string][]}
+   */
+  const getExistsFieldsErrors = errors => Object.entries(errors)
+    .filter(([field]) => fieldsByName.value[field] || has(unref(form), field));
+
+  /**
+   * Add exists fields errors to validator errors
+   *
+   * @param {[string, string][]} existsFieldsErrors
    * @param {string} [scope]
-   * @returns {boolean}
+   */
+  const addExistsFieldsErrors = (existsFieldsErrors, scope) => {
+    validator.errors.add(existsFieldsErrors.map(([field, msg]) => ({ field, msg, scope })));
+  };
+
+  /**
+   * Set form errors from response error and returns true if form errors exists
+   *
+   * @param {any} [errors = {}]
+   * @param {string} [scope]
+   * @return {boolean}
    */
   const setFormErrors = (errors = {}, scope) => {
-    const formContext = unref(providedFormContext) ?? defaultFormContext;
-    const { addError, values } = formContext;
-
-    const existingFieldErrors = getMatchedServerFieldErrors(errors, {
-      formValues: form ?? values,
-      formContext,
-    });
-
-    if (!existingFieldErrors.length) {
+    if (!validator) {
       return false;
     }
 
-    existingFieldErrors.forEach(([field, msg]) => {
-      addError(scope ? `${scope}.${field}` : field, msg);
-    });
+    const existFieldErrors = getExistsFieldsErrors(errors);
 
-    return true;
+    if (existFieldErrors.length) {
+      addExistsFieldsErrors(existFieldErrors, scope);
+
+      return true;
+    }
+
+    return false;
   };
 
   return {
+    validator,
     setFormErrors,
   };
 };

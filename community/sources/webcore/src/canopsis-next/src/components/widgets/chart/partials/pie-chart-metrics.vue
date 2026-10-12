@@ -1,12 +1,19 @@
 <template>
-  <c-layout class="kpi-widget" align="center" column>
+  <v-layout
+    class="kpi-widget"
+    column
+    align-center
+  >
     <h4 class="kpi-widget__title">
       {{ title }}
     </h4>
     <pie-chart
+      :chart-id="chartId"
       :datasets="datasets"
       :labels="labels"
       :options="chartOptions"
+      :width="700"
+      :height="400"
       class="pie-chart-metrics__chart kpi-widget__chart"
     >
       <template v-if="!hideActions" #actions="{ chart }">
@@ -14,12 +21,11 @@
           :downloading="downloading"
           :chart="chart"
           class="mt-4"
-          @export:csv="$emit('export:csv')"
-          @export:png="$emit('export:png', $event)"
+          v-on="$listeners"
         />
       </template>
     </pie-chart>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -33,16 +39,18 @@ import { convertNumberToRoundedPercentString } from '@/helpers/string';
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-import PieChart from '@/components/common/chart/pie-chart.vue';
+
+const PieChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/pie-chart.vue');
 
 export default {
   inject: ['$system'],
-
   components: { ChartExportActions, PieChart },
-
   mixins: [chartMetricsOptionsMixin],
-
   props: {
+    chartId: {
+      type: String,
+      required: false,
+    },
     metrics: {
       type: Array,
       default: () => [],
@@ -72,9 +80,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['export:csv', 'export:png'],
-
   computed: {
     totalDataValue() {
       return this.metrics.reduce((acc, metric) => acc + metric.value, 0);
@@ -145,7 +150,6 @@ export default {
       };
     },
   },
-
   methods: {
     getMetricLabel(metric) {
       const metricMessageKey = `alarm.metrics.${metric}`;
@@ -165,6 +169,7 @@ export default {
 
     formatTooltipLabel({ label, raw }) {
       const percent = convertNumberToRoundedPercentString(raw / this.totalDataValue);
+
       const value = this.isPercentMode
         ? `${percent} (${raw})`
         : `${raw} (${percent})`;
@@ -177,8 +182,8 @@ export default {
 
 <style lang="scss">
 .pie-chart-metrics {
-  &__chart {
-    width: 100%;
+  &__chart #pie-chart {
+    height: 400px !important;
   }
 }
 </style>

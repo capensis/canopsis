@@ -1,54 +1,69 @@
 <template>
-  <v-input :error-messages="errorMessage ? [errorMessage] : []" :hide-details="hideDetails">
-    <c-layout class="date-time-splitted-field" column>
-      <c-layout :style="rowStyle" gap="2">
-        <div class="date-time-splitted-field__date">
-          <c-date-picker-field
-            :value="dateValue"
-            :label="!reverse || fullDay ? label : ''"
-            :placeholder="placeholder"
-            :error="!!errorMessage"
-            :disabled="disabled"
-            :control-variant="controlVariant"
-            :min="min"
-            :max="max"
-            header-color="primary"
-            hide-details
-            @update:value="updateDate"
-          />
-        </div>
-        <time-picker-field
-          v-if="!fullDay"
-          :value="timeValue"
-          :label="reverse ? label : ''"
-          :error="!!errorMessage"
+  <v-layout
+    class="date-time-splitted-field"
+    column
+  >
+    <v-layout :reverse="reverse">
+      <v-flex class="date-time-splitted-field__date">
+        <c-date-picker-field
+          :value="value | date('vuetifyDatePicker', null)"
+          :label="!reverse || fullDay ? label : ''"
+          :placeholder="placeholder"
+          :error="errors.has(name)"
           :disabled="disabled"
-          class="date-time-splitted-field__time"
+          :min="min"
+          :max="max"
           hide-details
-          @update:value="updateTime"
+          @input="updateDate"
         />
-      </c-layout>
-    </c-layout>
-  </v-input>
+      </v-flex>
+      <time-picker-field
+        v-if="!fullDay"
+        :value="value | date('timePicker', null)"
+        :label="reverse ? label : ''"
+        :error="errors.has(name)"
+        :disabled="disabled"
+        class="date-time-splitted-field__time"
+        hide-details
+        @input="updateTime"
+      />
+    </v-layout>
+    <div class="v-text-field__details mt-2">
+      <v-messages
+        :value="errors.collect(name)"
+        color="error"
+      />
+    </div>
+  </v-layout>
 </template>
 
 <script>
-import { computed, toRef, watch } from 'vue';
+import { TIME_UNITS } from '@/constants';
 
-import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
-
-import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
+import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
 import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
 
-import { useField } from '@/hooks/form';
+import { formBaseMixin } from '@/mixins/form';
 
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 
-import { createDateTimeValidationRules } from './validation-rules';
-
 export default {
-  emits: ['update:value'],
+  $_veeValidate: {
+    value() {
+      if (!this.value) {
+        return this.value;
+      }
+
+      return convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute);
+    },
+
+    name() {
+      return this.name;
+    },
+  },
+  inject: ['$validator'],
   components: { TimePickerField },
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: Date,
@@ -86,106 +101,33 @@ export default {
       type: String,
       required: false,
     },
-    rules: {
-      type: Object,
-      default: () => ({}),
-    },
-    controlVariant: {
-      type: String,
-      default: undefined,
-    },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
   },
-  setup(props, { emit }) {
-    const fieldName = toRef(props, 'name');
-    const getValidatedValue = (value) => {
-      if (!value) {
-        return value;
-      }
+  methods: {
+    updateTime(time) {
+      this.updateModel(getDateObjectByTime(this.value, time));
+    },
 
-      return convertDateToString(
-        convertDateToStartOfUnitDateObject(value, TIME_UNITS.minute),
-        DATETIME_FORMATS.dateTimePicker,
-      );
-    };
-
-    const validateValue = (value) => {
-      if (props.rules.required && !value) {
-        return 'Field is required';
-      }
-
-      const validatedValue = getValidatedValue(value);
-      const validationRules = createDateTimeValidationRules(props.rules);
-      const failedRule = validationRules.find((validationRule) => {
-        const result = validationRule(validatedValue);
-
-        return result !== true;
-      });
-
-      return failedRule ? failedRule(validatedValue) : true;
-    };
-
-    const { errorMessage, setValue } = useField(fieldName, validateValue, {
-      initialValue: props.value,
-      validateOnMount: false,
-      validateOnValueUpdate: true,
-    });
-
-    const dateValue = computed(() => convertDateToString(props.value, DATETIME_FORMATS.vuetifyDatePicker, null),
-    );
-    const timeValue = computed(() => convertDateToString(props.value, DATETIME_FORMATS.timePicker, null),
-    );
-    const rowStyle = computed(() => ({
-      flexDirection: props.reverse ? 'row-reverse' : undefined,
-    }));
-
-    const updateModel = (value) => {
-      setValue(value);
-      emit('update:value', value);
-    };
-
-    const updateTime = time => updateModel(getDateObjectByTime(props.value, time));
-    const updateDate = date => updateModel(getDateObjectByDate(props.value, date));
-
-    watch(
-      () => props.value,
-      value => setValue(value, false),
-    );
-
-    return {
-      dateValue,
-      timeValue,
-      errorMessage,
-      rowStyle,
-      updateTime,
-      updateDate,
-    };
+    updateDate(date) {
+      this.updateModel(getDateObjectByDate(this.value, date));
+    },
   },
 };
 </script>
 
 <style lang="scss">
 .date-time-splitted-field {
+  & > .layout {
+    gap: 4px;
+  }
+
   &__date {
     flex: 1;
     min-width: 90px;
   }
 
   &__time {
-    align-self: end;
     width: 50px;
     max-width: 50px;
-
-    .v-field {
-      font-size: 16px !important;
-
-      .v-field__input {
-        padding: 0;
-      }
-    }
   }
 }
 </style>

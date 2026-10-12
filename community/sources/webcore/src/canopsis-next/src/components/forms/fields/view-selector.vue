@@ -1,47 +1,35 @@
 <template>
-  <c-select
-    :model-value="modelValue"
+  <c-select-field
+    v-field="value"
     :items="viewItems"
-    :label="label || t('role.defaultView')"
+    :label="label || $t('role.defaultView')"
     :name="name"
-    :loading="viewGroupsPending"
+    :loading="groupsPending"
     :menu-props="menuProps"
-    item-title="title"
-    item-value="value"
     clearable
-    @update:model-value="updateModel"
+    ellipsis
   >
-    <template #selection>
+    <template #selection="">
       <span class="text-truncate">
         {{ selectedViewLabel }}
       </span>
     </template>
-
-    <template #subheader="{ props: subheaderProps }">
-      <v-list-subheader v-bind="subheaderProps" />
-    </template>
-
-    <template #item="{ props: itemProps, item }">
-      <v-list-item v-bind="itemProps" class="view-selector-menu__item">
-        <template #title>
-          {{ item?.title }}
-        </template>
-      </v-list-item>
-    </template>
-  </c-select>
+  </c-select-field>
 </template>
 
 <script>
 import { computed, onMounted } from 'vue';
 
-import { MAX_LIMIT } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useView } from '@/hooks/store/modules/view';
+import { useViewGroup } from '@/hooks/store/modules/view';
 
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
@@ -54,55 +42,51 @@ export default {
       default: 'defaultview',
     },
   },
+  setup(props) {
+    const {
+      groups,
+      groupsPending,
+      getViewById,
+      fetchAllGroupsListWithWidgets,
+    } = useViewGroup();
 
-  emits: ['update:modelValue'],
+    const menuProps = { offsetY: true };
 
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { viewGroups, viewGroupsPending, getViewById, fetchViewGroupsList } = useView();
-    const menuProps = {
-      contentClass: 'view-selector-menu',
-    };
-
-    const viewItems = computed(() => (viewGroups.value ?? []).reduce((acc, group) => {
+    const viewItems = computed(() => (
+      (groups.value ?? []).reduce((acc, group) => {
         const views = group.views ?? [];
 
         if (!views.length) {
           return acc;
         }
 
-        const groupTitle = group.title || group.name;
-
-        acc.push({
-          type: 'subheader',
-          title: groupTitle,
-        });
+        acc.push({ header: group.title || group.name });
 
         views.forEach((view) => {
           acc.push({
             value: view._id,
-            title: view.title || view.name,
-            groupTitle,
+            text: view.title || view.name,
+            groupTitle: group.title || group.name,
           });
         });
 
         return acc;
-      }, []),
-    );
+      }, [])
+    ));
 
     const selectedViewLabel = computed(() => {
-      if (!props.modelValue) {
+      if (!props.value) {
         return '';
       }
 
-      const selectedItem = viewItems.value.find(({ value }) => value === props.modelValue);
+      const selectedItem = viewItems.value.find(({ value }) => value === props.value);
 
       if (selectedItem) {
-        return `${selectedItem.groupTitle} / ${selectedItem.title}`;
+        return `${selectedItem.groupTitle} / ${selectedItem.text}`;
       }
 
       try {
-        const view = getViewById(props.modelValue);
+        const view = getViewById.value(props.value);
 
         return view?.title ?? '';
       } catch (error) {
@@ -112,28 +96,13 @@ export default {
       }
     });
 
-    const updateModel = value => emit('update:modelValue', value);
-
-    onMounted(() => fetchViewGroupsList({
-        params: {
-          limit: MAX_LIMIT,
-          page: 1,
-          with_views: true,
-          with_tabs: true,
-          with_widgets: true,
-          with_flags: true,
-          with_private: true,
-        },
-      }),
-    );
+    onMounted(fetchAllGroupsListWithWidgets);
 
     return {
-      t,
       menuProps,
       viewItems,
+      groupsPending,
       selectedViewLabel,
-      viewGroupsPending,
-      updateModel,
     };
   },
 };

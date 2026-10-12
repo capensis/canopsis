@@ -25,6 +25,5 @@ export default {
 
   searchForThisText: 'Press <kbd>enter</kbd> to search for this text',
   searchByText: 'Search by text',
-  listDisabledMessage:
-    'Not possible to combine patterns\n(alarm, entity and pbehavior) with OR (only AND)',
+  listDisabledMessage: 'Not possible to combine patterns\n(alarm, entity and pbehavior) with OR (only AND)',
 };

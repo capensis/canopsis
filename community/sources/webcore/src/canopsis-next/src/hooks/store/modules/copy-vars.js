@@ -1,15 +1,24 @@
-import { useCopyVarsStore } from '@/stores/modules/copy-vars';
+import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Hook for accessing copy variables actions.
+ * Creates a store module hook for copy vars store module
+ */
+const useCopyVarsStoreModule = () => useStoreModuleHooks('copy/vars');
+
+/**
+ * Hook that provides access to copy vars store actions
  *
- * @returns {Object}
+ * @returns {Object} Object containing copy vars actions
+ * @returns {Function} returns.fetchEventFiltersCopyVarsWithoutStore - Fetches event filters copy vars without store
+ * @returns {Function} returns.fetchDynamicInfosCopyVarsWithoutStore - Fetches dynamic infos copy vars without store
  */
 export const useCopyVars = () => {
-  const copyVarsStore = useCopyVarsStore();
+  const { useActions } = useCopyVarsStoreModule();
 
-  return {
-    fetchEventFiltersCopyVarsWithoutStore: copyVarsStore.fetchEventFiltersCopyVarsWithoutStore,
-    fetchDynamicInfosCopyVarsWithoutStore: copyVarsStore.fetchDynamicInfosCopyVarsWithoutStore,
-  };
+  const actions = useActions({
+    fetchEventFiltersCopyVarsWithoutStore: 'fetchEventFiltersVarsWithoutStore',
+    fetchDynamicInfosCopyVarsWithoutStore: 'fetchDynamicInfosVarsWithoutStore',
+  });
+
+  return actions;
 };

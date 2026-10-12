@@ -1,20 +1,25 @@
 <template>
-  <v-progress-linear
+  <v-fade-transition
     v-if="hasData"
-    class="progress-linear-absolute--top"
-    height="2"
-    indeterminate
-  />
-  <c-layout
+    key="progress"
+    mode="out-in"
+  >
+    <v-progress-linear
+      class="progress-linear-absolute--top"
+      height="2"
+      indeterminate
+    />
+  </v-fade-transition>
+  <v-layout
     v-else
     class="pa-4"
-    justify="center"
+    justify-center
   >
     <v-progress-circular
       color="primary"
       indeterminate
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>

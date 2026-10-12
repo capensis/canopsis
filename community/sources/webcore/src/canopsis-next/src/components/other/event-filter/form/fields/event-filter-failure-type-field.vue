@@ -1,13 +1,13 @@
 <template>
-  <c-select
+  <v-select
+    v-field="value"
     :label="$t('common.filterByType')"
-    :model-value="value"
     :items="types"
+    :error-messages="errors.collect(name)"
     :name="name"
-    item-title="text"
+    item-text="text"
     item-value="value"
     clearable
-    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
@@ -15,7 +15,11 @@
 import { EVENT_FILTER_FAILURE_TYPES } from '@/constants';
 
 export default {
-  emits: ['update:modelValue'],
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Number,

@@ -12,7 +12,6 @@ import { MODALS } from '@/constants';
 
 export default {
   inject: ['$widget'],
-
   props: {
     widgetId: {
       type: String,
@@ -59,7 +58,6 @@ export default {
       default: false,
     },
   },
-
   methods: {
     showFiltersListModal() {
       this.$modals.show({

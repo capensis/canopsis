@@ -1,0 +1,386 @@
+import {
+  STATS_CRITICITY,
+  ENTITY_TYPES,
+  SIDE_BARS,
+  ALARMS_OPENED_VALUES,
+  CHART_WIDGET_PRESET_TYPES,
+  RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  WIDGET_COLUMNS_GROUPS,
+} from '@/constants';
+
+export default {
+  titles: {
+    [SIDE_BARS.alarmSettings]: 'Paramètres du bac à alarmes',
+    [SIDE_BARS.contextSettings]: 'Paramètres de l\'explorateur de contexte',
+    [SIDE_BARS.serviceWeatherSettings]: 'Paramètres de la météo des services',
+    [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
+    [SIDE_BARS.textSettings]: 'Paramètres du widget texte',
+    [SIDE_BARS.counterSettings]: 'Paramètres du widget compteur',
+    [SIDE_BARS.clockSettings]: 'Paramètres du widget horloge',
+    [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
+    [SIDE_BARS.mapSettings]: 'Paramètres du widget de cartographie',
+    [SIDE_BARS.barChartSettings]: 'Paramètres du graphique à barres',
+    [SIDE_BARS.lineChartSettings]: 'Paramètres du graphique en courbes',
+    [SIDE_BARS.pieChartSettings]: 'Paramètres du graphique à secteurs',
+    [SIDE_BARS.numbersSettings]: 'Paramètres des nombres',
+    [SIDE_BARS.userStatisticsSettings]: 'Paramètres des statistiques utilisateur',
+    [SIDE_BARS.alarmStatisticsSettings]: 'Paramètres des statistiques d\'alarme',
+    [SIDE_BARS.availabilitySettings]: 'Paramètres de disponibilité',
+    [SIDE_BARS.externalDataTableSettings]: 'Paramètres des données externes',
+  },
+  openedTypes: {
+    [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
+    [ALARMS_OPENED_VALUES.resolved]: 'Alarmes résolues',
+    [ALARMS_OPENED_VALUES.all]: 'Alarmes ouvertes et récemment résolues',
+  },
+  advancedSettings: 'Paramètres avancés',
+  entityDisplaySettings: 'Paramètres d\'affichage des entités',
+  entitiesUnderPbehaviorEnabled: 'Entités sous type PBh inactives, Pause, Maintenance',
+  entitiesUnderPauseEnabled: 'Afficher les entités en pause',
+  widgetTitle: 'Titre du widget',
+  columnName: 'Nom de la colonne',
+  defaultSortColumn: 'Colonne de tri par défaut',
+  defaultSortColumns: 'Colonnes de tri par défaut',
+  defaultSortColumnsHasAnotherColumns:
+    'Le modèle sélectionné contient des colonnes de tri qui ne sont pas présentes dans les colonnes du tableau actuel. Vous ne pourrez pas modifier le tri sur ces champs.',
+  missingColumns: 'Colonnes manquantes',
+  sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
+  columnNames: 'Nom des colonnes',
+  exportColumnNames: 'Nom des colonnes à exporter',
+  groupColumnNames: 'Nom des colonnes des méta-alarmes',
+  trackColumnNames: 'Noms des colonnes pour la source de suivi des alarmes',
+  treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
+  treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
+  orderBy: 'Trier par',
+  periodicRefresh: 'Rafraichissement périodique',
+  pausePeriodicRefreshOnExpandPanel:
+    'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
+  defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
+  elementsPerPage: 'Élements par page',
+  filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
+  open: 'Ouverte',
+  filters: 'Filtres',
+  filterEditor: 'Éditeur de filtre',
+  isAckNoteRequired: 'Ack - champ de note obligatoire',
+  isSnoozeNoteRequired: 'Snooze - champ de note obligatoire',
+  isRemoveAlarmsFromMetaAlarmCommentRequired:
+    'Supprimer les alarmes de la méta-alarme manuelle - champ de commentaire requis',
+  isUncancelAlarmsCommentRequired: 'Annuler - champ de commentaire obligatoire',
+  isMultiAckEnabled: 'Acquittements multiples',
+  isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
+  associateTicket: {
+    title: 'Associer un ticket',
+    ticketFormats: 'Formats de ticket',
+    description: 'Ajouter des expressions régulières pour valider l\'ID du ticket',
+    formatsHelp:
+      'Exemples d\'expressions régulières valides :<br><code>\\b[0-9]{4}[A-Za-z][0-9]{5}\\b</code><br><code>^S[0-9]{9}$</code>',
+    emptyTemplate: 'Ce modèle est vide',
+  },
+  isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK',
+  isVirtualScrollEnabled: 'Rendre les éléments lors du défilement',
+  fastAckOutput: 'Commentaire d\'acquittement rapide',
+  fastCancelOutput: 'Commentaire d\'annulation rapide',
+  commentTemplates: {
+    title: 'Modèles de commentaires',
+    description: 'Le premier modèle de la liste sera par défaut.',
+  },
+  isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie',
+  openExpandPanelByDoubleClick: 'Ouvrir le panneau extensible au double clic sur l\'alarme',
+  isCorrelationEnabled: 'Corrélation activée ?',
+  fastPbehavior: 'Comportement périodique rapide',
+  fastPbehaviorDescription:
+    'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Comportement périodique rapide',
+  pause: {
+    pauseAction: 'Action Pause',
+    recommended: 'recommandée',
+    pbehavior: 'PBehavior de type Pause',
+    types: 'Types de pause',
+    pbehaviorTypes: 'Types de PBehavior rapides',
+    typesDescription: 'L\'utilisateur pourra sélectionner parmi ces types en cliquant sur Pause',
+    propagate: 'Propager la pause à toutes les dépendances',
+  },
+  duration: 'Durée',
+  tstop: 'Date de fin',
+  periodsNumber: 'Nombre d\'étapes',
+  yesNoMode: 'Mode Oui/Non',
+  selectAFilter: 'Sélectionner un filtre',
+  lockedFilter: 'Filtre verrouillé dans les paramètres du widget',
+  exportAsCsv: 'Exporter les données du widget en csv',
+  criticityLevels: 'Niveaux de criticité',
+  isPriorityEnabled: 'Afficher la priorité',
+  isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
+  isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
+  clearFilterEnabled: 'Ne pas autoriser l\'effacement des filtres selectionés',
+  showRootCauseByStateClick:
+    'Afficher le diagramme de cause racine à partir de la colonne Criticité',
+  rootCauseSettings: 'Paramètres du diagramme de cause racine',
+  entitiesColorIndicator: 'Indicateur de couleur des entités',
+  alarmsColumns: 'Colonnes de la liste des alarmes',
+  resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
+  activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',
+  entitiesColumns: 'Colonnes de l\'explorateur de contexte',
+  entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
+  modal: '(Modale)',
+  headerTitle: 'Titre de l\'en-tête',
+  defaultSampling: 'Echantillonnage par défaut',
+  defaultTimeRange: 'Plage horaire par défaut',
+  liveWatching: 'Mises à jour en direct',
+  liveWatchingTooltip: 'Si activé, les alarmes sont mises à jour en direct à l\'aide de websockets',
+  defaultInheritedPbehavior: 'Appliquer pbehavior également aux dépendances',
+  expandPanel: {
+    title: 'Panneau dépliable',
+  },
+  exportCsv: {
+    title: 'Exporter CSV',
+    fields: {
+      datetimeFormat: 'Format date/heure',
+    },
+  },
+  colorsSelector: {
+    title: 'Sélecteur de couleur',
+    statsCriticity: {
+      [STATS_CRITICITY.ok]: 'ok',
+      [STATS_CRITICITY.minor]: 'mineur',
+      [STATS_CRITICITY.major]: 'majeur',
+      [STATS_CRITICITY.critical]: 'critique',
+    },
+  },
+  colors: {
+    title: 'Couleurs',
+    theme: 'Couleurs du thème',
+    custom: 'Couleurs personnalisées',
+  },
+  infoPopup: {
+    title: 'Fenêtre d\'information pour la colonne',
+    fields: {
+      column: 'Colonne',
+    },
+  },
+  rowGridSize: {
+    title: 'Taille du widget',
+    noData: 'Aucune ligne correspondante. Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
+    fields: {
+      row: 'Ligne',
+    },
+  },
+  moreInfosModal: 'Fenêtre "Plus d\'infos"',
+  exportPdfTemplate: 'Modèle pour l\'export PDF',
+  expandGridRangeSize: 'Largeur-position "Plus d\'infos"',
+  weatherTemplate: 'Template - Tuiles',
+  modalTemplate: 'Template - Modale',
+  entityTemplate: 'Template - Entités',
+  blockTemplate: 'Template - Tuiles',
+  columnMobile: 'Colonnes - Mobiles',
+  columnTablet: 'Colonnes - Tablette',
+  columnDesktop: 'Colonnes - Bureau',
+  limit: 'Limite',
+  height: 'Hauteur',
+  margin: {
+    title: 'Marges',
+    top: 'Marge - Haut',
+    right: 'Marge - Droite',
+    bottom: 'Marge - Bas',
+    left: 'Marge - Gauche',
+  },
+  contextTypeOfEntities: {
+    title: 'Type d\'entité',
+    fields: {
+      [ENTITY_TYPES.component]: 'Composant',
+      [ENTITY_TYPES.connector]: 'Type de connecteur',
+      [ENTITY_TYPES.resource]: 'Ressource',
+      [ENTITY_TYPES.service]: 'Service',
+    },
+  },
+  considerPbehaviors: {
+    title: 'Prendre en compte les comportements périodiques ?',
+  },
+  serviceWeatherModalTypes: {
+    title: 'Type de modale',
+    fields: {
+      moreInfo: 'Plus d\'infos',
+      alarmList: 'Bac à alarmes',
+      both: 'Les deux',
+    },
+  },
+  columns: {
+    customLabel: 'Étiquette personnalisée',
+    isHtml: 'Est-ce du HTML ?',
+    withTemplate: 'Modèle personnalisé',
+    isState: 'Affiché comme une criticité ?',
+    onlyIcon: 'Afficher uniquement les icônes de liens',
+    inlineLinksCount: 'Nombre de liens en ligne',
+    linksInRowCount: 'Nombre de liens dans la ligne',
+    linksInRowCountTooltip:
+      'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
+    filterOnClick: 'Filtrer au clic',
+  },
+  liveReporting: {
+    title: 'Filtre temporel',
+    field: 'Définir un intervalle de dates',
+  },
+  counterLevels: {
+    title: 'Niveaux',
+    fields: {
+      counter: 'Compteur',
+    },
+  },
+  counters: 'Compteurs',
+  pbehaviorCounters: 'Compteurs de pbehavior',
+  entityStateCounters: 'Compteurs d\'états d\'entité',
+  remediationInstructionsFilters: 'Filtres de consignes',
+  colorIndicator: {
+    title: 'Indicateur de couleur',
+    fields: {
+      displayAsSeverity: 'Afficher comme sévérité',
+      displayAsPriority: 'Afficher comme priorité',
+    },
+  },
+  receiveByApi: 'Réponse de l\'API',
+  serverStorage: 'Stockage serveur',
+  filenameRecognition: 'Reconnaissance du nom de fichier',
+  resultDirectory: 'Stockage des résultats de test',
+  quickActions: {
+    title: 'Actions rapides',
+    description: 'Ces actions seront affichées, les autres seront cachées sous le bouton plus',
+  },
+  quickMassActions: {
+    title: 'Actions massives rapides',
+    hideSwitcher: 'Masquer les actions massives sous le bouton plus',
+  },
+  screenshotDirectories: {
+    title: 'Paramètres de stockage des captures d\'écran',
+    helpText: 'Définir où les captures d\'écran sont stockées',
+  },
+  screenshotMask: {
+    title: 'Règle de nommage des fichiers capture d\'écran',
+    helpText:
+      '<dl>' +
+      '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
+      '<dd>- nom du cas de test %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
+      '</dl>',
+  },
+  videoDirectories: {
+    title: 'Paramètres de stockage vidéo',
+    helpText: 'Définir où la vidéo est stockée',
+  },
+  videoMask: {
+    title: 'Règle de nommage des fichiers vidéo',
+    helpText:
+      '<dl>' +
+      '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
+      '<dd>- nom du cas de test %test_case%</dd>\n' +
+      '<dd>- date (YYYY, MM, DD)</dd>\n' +
+      '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
+      '</dl>',
+  },
+  stickyHeader: 'En-tête collant',
+  stickyHorizontalScroll: 'Défilement horizontal fixe',
+  reportFileRegexp: {
+    title: 'Masque de fichier de rapport',
+    helpText:
+      '<dl>' +
+      '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n' +
+      '<dd>Par exemple:</dd>\n' +
+      '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
+      '</dl>',
+  },
+  density: {
+    title: 'Densité de table par défaut',
+    comfort: 'Vue confort',
+    compact: 'Vue compacte',
+    ultraCompact: 'Vue ultra compacte',
+  },
+  showTrend: 'Afficher la tendance',
+
+  chart: {
+    graphType: 'Type de graphique',
+    separateBars: 'Barres séparées',
+    stackedBars: 'Barres empilées',
+    selectMetrics: 'Select metrics',
+    sharesType: 'Type d\'actions',
+    showComparison: 'Afficher la comparaison',
+    preset: 'Préréglé',
+    metricsDisplay: 'Affichage des métriques',
+    fontSize: 'Taille de la police',
+    auto: 'Auto',
+    manual: 'Manuel',
+    presets: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Statistiques des tickets',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Statistiques des acquittements annulés',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Statistiques des alarmes actives acquittées',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistiques des alarmes non acquittées',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistiques des alarmes non affichées',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
+    },
+    presetChartHeaders: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements d\'alarme',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Statistiques des tickets',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Statistiques des acquittements annulés',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Statistiques des alarmes actives acquittées',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistiques des alarmes non acquittées',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistiques des alarmes non affichées',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
+    },
+  },
+  actionRequiredSettings: {
+    title: 'Paramètres lorsqu\'une action est requise',
+    isBlinking: 'Clignotement de la tuile ?',
+    customColor: 'Couleur personnalisée',
+    customIcon: 'Icône personnalisée',
+  },
+  noActionRequiredSettings: {
+    title: 'Paramètres lorsqu\'aucune action n\'est requise',
+    customColor: 'Couleur personnalisée',
+    customIcon: 'Icône personnalisée',
+  },
+  stateSettings: 'Paramètres d\'état',
+  kioskMode: 'Mode kiosque',
+  kiosk: {
+    hideActions: 'Masquer les actions',
+    hideMassSelection: 'Masquer la sélection en masse',
+    hideToolbar: 'Masquer la barre de tâches',
+  },
+  columnsGroups: {
+    [WIDGET_COLUMNS_GROUPS.basic]: 'Basique',
+    [WIDGET_COLUMNS_GROUPS.messages]: 'Messages',
+    [WIDGET_COLUMNS_GROUPS.dates]: 'Dates',
+    [WIDGET_COLUMNS_GROUPS.counters]: 'Compteurs',
+    [WIDGET_COLUMNS_GROUPS.other]: 'Autre',
+
+    [WIDGET_COLUMNS_GROUPS.entityParameters]: 'Paramètres d\'entité',
+    [WIDGET_COLUMNS_GROUPS.ticketParameters]: 'Paramètres du ticket',
+  },
+  columnsSettings: {
+    title: 'Paramètres des colonnes',
+    dragging: 'Glisser/déposer les colonnes',
+    resizing: 'Redimensionner les colonnes',
+    cellsContentBehavior: 'Contenu des cellules',
+    cellsContentBehaviors: {
+      [RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Enveloppé',
+      [RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Tronquée',
+    },
+  },
+  mainParameter: {
+    title: 'Paramètre principal',
+    custom: {
+      label: 'Données filtrées personnalisées',
+      tooltip: 'Afficher les rapports pour les ensembles d\'alarmes filtrés',
+    },
+  },
+  statisticsWidgetColumn: {
+    split: 'Diviser les données par chemin de valeur',
+  },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
+  availability: {
+    graphSettings: 'Paramètres du graphique de disponibilité',
+    defaultAvailabilityDisplay: 'Affichage de disponibilité par défaut',
+    defaultParameterToDisplay: 'Paramètre par défaut à afficher',
+  },
+};

@@ -1,32 +1,29 @@
-import { storeToRefs } from 'pinia';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import { usePbehaviorExceptionStore } from '@/stores/modules/pbehavior-exception';
+const usePbehaviorExceptionStoreModule = () => useStoreModuleHooks('pbehaviorExceptions');
 
 /**
- * Pbehavior exception store hook.
+ * Hook for accessing pbehavior exception store module actions
  *
- * @returns {Object}
+ * @returns {Object} An object containing pbehavior exception actions
  */
 export const usePbehaviorException = () => {
-  const pbehaviorExceptionStore = usePbehaviorExceptionStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorExceptionStore);
+  const { useActions } = usePbehaviorExceptionStoreModule();
+
+  const actions = useActions({
+    fetchPbehaviorExceptionsList: 'fetchList',
+    fetchPbehaviorExceptionsListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchPbehaviorExceptionsListWithoutStore: 'fetchListWithoutStore',
+    createPbehaviorException: 'create',
+    updatePbehaviorException: 'update',
+    removePbehaviorException: 'remove',
+    importPbehaviorException: 'import',
+    bulkHidePbehaviorExceptions: 'bulkHide',
+    bulkUnhidePbehaviorExceptions: 'bulkUnhide',
+    bulkRemovePbehaviorExceptions: 'bulkRemove',
+  });
 
   return {
-    pbehaviorExceptions: items,
-    pbehaviorExceptionsMeta: meta,
-    pbehaviorExceptionsPending: pending,
-    pbehaviorExceptionsFetchingParams: fetchingParams,
-
-    fetchPbehaviorExceptionsList: pbehaviorExceptionStore.fetchList,
-    fetchPbehaviorExceptionsListWithPreviousParams:
-      pbehaviorExceptionStore.fetchListWithPreviousParams,
-    fetchPbehaviorExceptionsListWithoutStore: pbehaviorExceptionStore.fetchListWithoutStore,
-    createPbehaviorException: pbehaviorExceptionStore.create,
-    updatePbehaviorException: pbehaviorExceptionStore.update,
-    removePbehaviorException: pbehaviorExceptionStore.remove,
-    importPbehaviorException: pbehaviorExceptionStore.import,
-    bulkHidePbehaviorExceptions: pbehaviorExceptionStore.bulkHide,
-    bulkUnhidePbehaviorExceptions: pbehaviorExceptionStore.bulkUnhide,
-    bulkRemovePbehaviorExceptions: pbehaviorExceptionStore.bulkRemove,
+    ...actions,
   };
 };

@@ -2,26 +2,6 @@ import * as helpers from '@/helpers/handlebars/helpers';
 
 import { Handlebars } from './handlebars';
 
-const helperRegistrationsByInstance = new WeakMap();
-
-/**
- * Returns the helper registration map for a Handlebars instance.
- * Creates and stores an empty map when the instance has none yet.
- *
- * @param {Handlebars} instance - The Handlebars instance to look up
- * @returns {Map<string, {count: number, owned: boolean}>} Registrations keyed by helper name
- */
-const getHelperRegistrations = (instance) => {
-  let registrations = helperRegistrationsByInstance.get(instance);
-
-  if (!registrations) {
-    registrations = new Map();
-    helperRegistrationsByInstance.set(instance, registrations);
-  }
-
-  return registrations;
-};
-
 /**
  * Register handlebars helper
  *
@@ -30,24 +10,11 @@ const getHelperRegistrations = (instance) => {
  * @returns {*}
  */
 export function registerHelper(name, helper, instance = Handlebars) {
-  const registrations = getHelperRegistrations(instance);
-  const registration = registrations.get(name);
-
-  if (registration) {
-    registration.count += 1;
-
-    return instance.helpers[name];
+  if (instance.helpers[name]) {
+    return;
   }
 
-  const owned = !instance.helpers[name];
-
-  if (owned) {
-    instance.registerHelper(name, helper);
-  }
-
-  registrations.set(name, { count: 1, owned });
-
-  return instance.helpers[name];
+  instance.registerHelper(name, helper);
 }
 
 /**
@@ -57,30 +24,7 @@ export function registerHelper(name, helper, instance = Handlebars) {
  * @returns {*}
  */
 export function unregisterHelper(name, instance = Handlebars) {
-  const registrations = helperRegistrationsByInstance.get(instance);
-  const registration = registrations?.get(name);
-
-  if (!registration) {
-    instance.unregisterHelper(name);
-
-    return;
-  }
-
-  registration.count -= 1;
-
-  if (registration.count > 0) {
-    return;
-  }
-
-  registrations.delete(name);
-
-  if (!registrations.size) {
-    helperRegistrationsByInstance.delete(instance);
-  }
-
-  if (registration.owned) {
-    instance.unregisterHelper(name);
-  }
+  instance.unregisterHelper(name);
 }
 
 /**
@@ -115,7 +59,6 @@ export const registerAllHelpers = (instance = Handlebars) => {
   registerHelper('state', helpers.alarmStateHelper, instance);
   registerHelper('request', helpers.requestHelper, instance);
   registerHelper('timestamp', helpers.timestampHelper, instance);
-  registerHelper('now', helpers.nowHelper, instance);
   registerHelper('internal-link', helpers.internalLinkHelper, instance);
   registerHelper('compare', helpers.compareHelper, instance);
   registerHelper('concat', helpers.concatHelper, instance);

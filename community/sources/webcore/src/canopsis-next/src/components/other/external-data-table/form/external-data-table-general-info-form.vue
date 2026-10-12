@@ -1,35 +1,36 @@
 <template>
-  <c-layout gap="2">
-    <div class="w-50">
-      <external-data-table-database-field :value="form.type" disabled />
-    </div>
-    <div class="w-50">
-      <c-text-field :model-value="form.name" :label="t('common.name')" disabled />
-    </div>
-  </c-layout>
+  <v-layout class="gap-2">
+    <v-flex xs6>
+      <external-data-table-database-field
+        :value="form.type"
+        disabled
+      />
+    </v-flex>
+    <v-flex xs6>
+      <v-text-field
+        :value="form.name"
+        :label="$t('common.name')"
+        disabled
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n';
-
-import ExternalDataTableDatabaseField from '@/components/other/external-data-table/form/fields/exterrnal-data-table-database-field.vue';
+import ExternalDataTableDatabaseField
+  from '@/components/other/external-data-table/form/fields/exterrnal-data-table-database-field.vue';
 
 export default {
   components: { ExternalDataTableDatabaseField },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
       required: true,
     },
-  },
-
-  setup() {
-    const { t } = useI18n();
-
-    return {
-      t,
-    };
   },
 };
 </script>

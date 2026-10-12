@@ -1,62 +1,54 @@
 <template>
-  <v-card class="fill-height">
-    <v-card-title class="bg-primary text-white">
-      <c-layout align="center" justify="space-between">
+  <v-card>
+    <v-card-title class="primary white--text">
+      <v-layout align-center justify-space-between>
         <span class="text-h6 font-weight-regular">
           {{ $t('remediation.instruction.manualInstructionsProgress') }}
         </span>
         <v-btn
-          size="small"
-          variant="text"
           icon
+          small
           @click="minimize"
         >
           <v-icon color="white">
             minimize
           </v-icon>
         </v-btn>
-      </c-layout>
+      </v-layout>
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="activeTab" fixed-tabs>
-        <v-tab
-          v-for="type in types"
-          :key="type"
-          :value="type"
-        >
-          <span>{{ $t(`remediation.instruction.types.${type}`) }}</span>
-          <c-circle-badge
-            :outlined="activeTab !== type"
-            class="ml-2"
-            color="primary"
-          >
-            {{ executionsByType[type]?.length ?? 0 }}
-          </c-circle-badge>
-        </v-tab>
-      </v-tabs>
-      <v-window v-model="activeTab">
-        <v-window-item
-          v-for="type in types"
-          :key="`${type}-item`"
-          :value="type"
-        >
-          <v-list>
-            <div
-              v-if="!executionsByType[type]?.length"
-              class="text-center text-grey font-italic"
+        <template v-for="(type, index) in types">
+          <v-tab :key="type">
+            <span>{{ $t(`remediation.instruction.types.${type}`) }}</span>
+            <c-circle-badge
+              :outlined="activeTab !== index"
+              class="ml-2"
+              color="primary"
             >
-              {{ $t('common.noData') }}
-            </div>
-            <template v-for="execution in executionsByType[type]" :key="execution._id">
-              <active-remediation-executions-item
-                :execution="execution"
-                @refresh="refresh"
-              />
-              <v-divider />
-            </template>
-          </v-list>
-        </v-window-item>
-      </v-window>
+              {{ executionsByType[type]?.length ?? 0 }}
+            </c-circle-badge>
+          </v-tab>
+          <v-tab-item :key="`${type}-item`">
+            <v-list>
+              <div
+                v-if="!executionsByType[type]?.length"
+                class="text-center grey--text font-italic"
+              >
+                {{ $t('common.noData') }}
+              </div>
+              <template v-for="execution in executionsByType[type]">
+                <active-remediation-executions-item
+                  :key="execution._id"
+                  :execution="execution"
+                  @refresh="refresh"
+                />
+                <v-divider :key="`${execution._id}-divider`" />
+              </template>
+            </v-list>
+          </v-tab-item>
+        </template>
+      </v-tabs>
     </v-card-text>
   </v-card>
 </template>
@@ -78,7 +70,6 @@ export default {
       default: () => [],
     },
   },
-  emits: ['refresh', 'minimize'],
   setup(props, { emit }) {
     const activeTab = ref(REMEDIATION_INSTRUCTION_TYPES.manual);
 
@@ -94,8 +85,14 @@ export default {
 
     const types = computed(() => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.simpleManual]);
 
+    /**
+     * Emits refresh event to parent component
+     */
     const refresh = () => emit('refresh');
 
+    /**
+     * Emits minimize event to parent component to minimize the modal
+     */
     const minimize = () => emit('minimize');
 
     return {

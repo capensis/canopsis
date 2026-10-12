@@ -1,27 +1,18 @@
-import { mapActions, mapStores } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useEntityStore } from '@/stores/modules/entity';
+const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 
-import { entityPauseMixin } from '@/mixins/entities/entity-pause';
-
+/**
+ * @mixin Helpers' for context store
+ */
 export const entitiesContextEntityMixin = {
-  mixins: [entityPauseMixin],
-
   computed: {
-    ...mapStores(useEntityStore),
-
-    getContextEntitiesListByWidgetId() {
-      return this.entityStore.getListByWidgetId;
-    },
-    getContextEntitiesMetaByWidgetId() {
-      return this.entityStore.getMetaByWidgetId;
-    },
-    getContextEntitiesPendingByWidgetId() {
-      return this.entityStore.getPendingByWidgetId;
-    },
-    getContextEntitiesFetchingParamsByWidgetId() {
-      return this.entityStore.getFetchingParamsByWidgetId;
-    },
+    ...mapGetters({
+      getContextEntitiesListByWidgetId: 'getListByWidgetId',
+      getContextEntitiesMetaByWidgetId: 'getMetaByWidgetId',
+      getContextEntitiesPendingByWidgetId: 'getPendingByWidgetId',
+      getContextEntitiesFetchingParamsByWidgetId: 'getFetchingParamsByWidgetId',
+    }),
 
     contextEntities() {
       return this.getContextEntitiesListByWidgetId(this.widget._id);
@@ -34,7 +25,7 @@ export const entitiesContextEntityMixin = {
     },
   },
   methods: {
-    ...mapActions(useEntityStore, {
+    ...mapActions({
       fetchContextEntitiesList: 'fetchList',
       removeContextEntity: 'remove',
       updateContextEntity: 'update',
@@ -48,25 +39,10 @@ export const entitiesContextEntityMixin = {
       archiveDisabledEntitiesData: 'archiveDisabledEntitiesData',
       archiveUnlinkedEntitiesData: 'archiveUnlinkedEntitiesData',
       cleanArchivedEntitiesData: 'cleanArchivedEntitiesData',
+      cleanEntitiesData: 'cleanEntitiesData',
       bulkEnableEntities: 'bulkEnable',
       bulkDisableEntities: 'bulkDisable',
     }),
-
-    pauseContextEntity(...args) {
-      return this.pauseEntity(...args);
-    },
-
-    resumeContextEntity(...args) {
-      return this.resumeEntity(...args);
-    },
-
-    bulkPauseContextEntities(...args) {
-      return this.bulkPauseEntities(...args);
-    },
-
-    bulkResumeContextEntities(...args) {
-      return this.bulkResumeEntities(...args);
-    },
 
     async updateContextEntityWithPopup({ data, id }) {
       await this.updateContextEntity({ data, id });

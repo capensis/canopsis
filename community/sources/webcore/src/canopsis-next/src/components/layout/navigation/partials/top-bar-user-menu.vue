@@ -2,32 +2,30 @@
   <top-bar-menu
     :title="userName"
     :links="links"
-    content-class="top-bar-user-menu__content"
     without-sort
   />
 </template>
 
 <script>
 import { computed, inject } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router/composables';
 
 import { MODALS, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import { useAuth } from '@/hooks/auth';
+import { useUser } from '@/hooks/store/modules/user';
+import { useInfo } from '@/hooks/store/modules/info';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
-import { useInfo } from '@/hooks/store/modules/info';
-import { useUser } from '@/hooks/store/modules/user';
 
 import { useTopBarMenu } from './hooks/top-bar-menu';
 import TopBarMenu from './top-bar-menu.vue';
 
 export default {
   components: { TopBarMenu },
-
   setup() {
-    const $system = inject('$system', null);
+    const $system = inject('$system');
     const router = useRouter();
 
     const { t } = useI18n();
@@ -38,8 +36,13 @@ export default {
     const { defaultColorTheme } = useInfo();
     const { filterLinks } = useTopBarMenu();
 
-    const userName = computed(() => currentUser.value.display_name || currentUser.value._id || '');
+    const userName = computed(() => currentUser.value.display_name || currentUser.value._id);
 
+    /**
+     * Opens the user profile modal for editing user preferences.
+     * After successful update, shows a success popup, refreshes the current user data,
+     * and applies the updated theme.
+     */
     const showEditUserModal = () => {
       modals.show({
         name: MODALS.createUser,
@@ -52,21 +55,27 @@ export default {
 
             popups.success({ text: t('success.default', data.ui_language) });
 
-            $system?.setTheme(currentUser.value.ui_theme_colors);
+            $system.setTheme(currentUser.value.ui_theme_colors);
           },
         },
       });
     };
 
+    /**
+     * Handles user logout.
+     * Logs out the current user, redirects to the login page,
+     * and resets the theme to the default color theme.
+     */
     const logoutHandler = async () => {
       await logout({
-        redirect: () => router.replace({ name: ROUTES_NAMES.login }),
+        redirect: () => router.replaceAsync({ name: ROUTES_NAMES.login }),
       });
 
-      $system?.setTheme(defaultColorTheme.value);
+      $system.setTheme(defaultColorTheme.value);
     };
 
-    const links = computed(() => filterLinks([
+    const links = computed(() => {
+      const rawLinks = [
         {
           icon: 'person',
           title: t('user.seeProfile'),
@@ -90,8 +99,14 @@ export default {
           title: t('common.logout'),
           handler: logoutHandler,
         },
-      ]),
-    );
+      ].map(link => ({
+        ...link,
+
+        class: [link.class, 'text-uppercase text-body-2'].filter(Boolean).join(' '),
+      }));
+
+      return filterLinks(rawLinks);
+    });
 
     return {
       userName,
@@ -103,17 +118,10 @@ export default {
 
 <style lang="scss">
 .top-bar-user-menu {
-  --btn-error-color: rgba(255, 82, 82, 0.1);
-
-  &__content {
-    .v-list-item-title {
-      text-transform: uppercase;
-    }
-  }
+  --btn-error-color: rgba(255, 82, 82, .1);
 
   &__logout-btn {
-    &:hover,
-    &:active {
+    &:hover, &:active {
       background: var(--btn-error-color);
     }
   }

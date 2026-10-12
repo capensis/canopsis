@@ -1,22 +1,27 @@
 <template>
-  <c-layout class="kpi-sli-toolbar ml-4 my-4" gap="3" wrap>
+  <v-layout
+    class="kpi-sli-toolbar ml-4 my-4"
+    wrap
+  >
     <c-quick-date-interval-field
-      :interval="query.interval"
+      v-field="query.interval"
       :min="minDate"
       :quick-ranges="quickRanges"
-      @update:interval="updateQueryField('interval', $event)"
+      class="mr-4"
     />
     <c-sampling-field
-      :value="query.sampling"
-      class="kpi-sli-toolbar__sampling"
-      @update:value="updateQueryField('sampling', $event)"
+      v-field="query.sampling"
+      class="mr-4 kpi-sli-toolbar__sampling"
     />
     <kpi-sli-show-mode-field
-      :value="query.type"
-      class="kpi-sli-toolbar__show-mode"
-      @update:value="updateQueryField('type', $event)"
+      v-field="query.type"
+      class="mr-4 kpi-sli-toolbar__show-mode"
     />
-  </c-layout>
+    <c-filter-field
+      v-field="query.filter"
+      class="kpi-sli-toolbar__filters"
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -25,10 +30,11 @@ import { METRICS_QUICK_RANGES } from '@/constants';
 import KpiSliShowModeField from '../form/fields/kpi-sli-show-mode-field.vue';
 
 export default {
-  components: {
-    KpiSliShowModeField,
+  components: { KpiSliShowModeField },
+  model: {
+    prop: 'query',
+    event: 'input',
   },
-
   props: {
     query: {
       type: Object,
@@ -39,21 +45,9 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:query'],
-
   computed: {
     quickRanges() {
       return Object.values(METRICS_QUICK_RANGES);
-    },
-  },
-
-  methods: {
-    updateQueryField(field, value) {
-      this.$emit('update:query', {
-        ...this.query,
-        [field]: value,
-      });
     },
   },
 };
@@ -67,6 +61,10 @@ export default {
 
   &__show-mode {
     max-width: 150px;
+  }
+
+  &__filters {
+    max-width: 200px;
   }
 }
 </style>

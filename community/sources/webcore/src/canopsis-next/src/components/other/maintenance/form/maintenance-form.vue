@@ -1,40 +1,44 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="$t('maintenance.message')">
+    <c-form-block-row
+      :label="$t('maintenance.message')"
+      indented
+    >
       <text-editor-field
-        v-model="messageField"
+        v-field="form.message"
+        v-validate="'required'"
         :label="$t('maintenance.message')"
+        :error-messages="errors.collect('message')"
         name="message"
         autofocus
         public
-        required
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="$t('common.color')" align-center>
-      <c-color-picker-field v-model="colorField" hide-details />
+    <c-form-block-row
+      :label="$t('common.color')"
+      align-center
+    >
+      <c-color-picker-field v-field="form.color" />
     </c-form-block-row>
   </c-form-block>
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
-
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { TextEditorField },
-
-  setup() {
-    const { messageField, colorField } = useFormModels({
-      messageField: 'message',
-      colorField: 'color',
-    });
-
-    return {
-      messageField,
-      colorField,
-    };
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 };
 </script>

@@ -1,30 +1,28 @@
 <template>
-  <c-layout align="center" justify-space-between>
+  <v-layout
+    justify-space-between
+    align-center
+  >
     <v-label>{{ label }}</v-label>
-    <v-col cols="3">
+    <v-flex xs3>
       <v-select
-        :model-value="value"
+        v-field="value"
         :items="numbers"
         class="mt-0 pt-0"
         hide-details
-        @update:model-value="updateModel"
       />
-    </v-col>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
 import { range } from 'lodash';
 
-import { formBaseMixin } from '@/mixins/form';
-
 export default {
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
   },
-  emits: ['input', 'update:value'],
   props: {
     value: {
       type: Number,

@@ -1,16 +1,14 @@
 <template>
   <div>
-    <c-layout
+    <v-layout
       v-if="serviceEntities.length"
-      align="center"
-      class="d-inline-flex my-1 gap-2"
+      class="d-inline-flex my-1"
+      align-center
     >
-      <v-checkbox
+      <v-simple-checkbox
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"
         class="ml-4 my-2"
-        density="compact"
-        hide-details
       />
       <v-fade-transition mode="out-in">
         <span
@@ -26,13 +24,14 @@
           @apply="applyActionForSelected"
         />
       </v-fade-transition>
-    </c-layout>
+    </v-layout>
     <div
       v-for="serviceEntity in serviceEntities"
       :key="serviceEntity.key"
       class="mt-2"
     >
       <service-entity
+        :service-id="service._id"
         :entity="serviceEntity"
         :last-action-unavailable="hasActionError(serviceEntity)"
         :entity-name-field="entityNameField"
@@ -42,29 +41,28 @@
         @add:action="addAction"
         @update:selected="updateSelected(serviceEntity, $event)"
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)"
-        @refresh="$emit('refresh', $event)"
+        @refresh="$listeners.refresh"
       />
     </div>
     <c-table-pagination
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
-      :total-visible="5"
       class="mt-1"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
-      @update:pagination="updatePaginationOptions"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
 
 <script>
-import { filterById, mapIds } from '@/helpers/array';
 import {
   getAvailableActionsByEntities,
   getAvailableEntityActionsTypes,
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
+import { filterById, mapIds } from '@/helpers/array';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -107,7 +105,6 @@ export default {
       default: () => [],
     },
   },
-  emits: ['add:action', 'refresh', 'update:options'],
   data() {
     return {
       selectedEntities: [],

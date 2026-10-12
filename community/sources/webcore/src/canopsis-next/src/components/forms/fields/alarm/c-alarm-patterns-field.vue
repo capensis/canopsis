@@ -1,6 +1,6 @@
 <template>
   <pattern-editor-field
-    :patterns="patterns"
+    v-field="patterns"
     :disabled="disabled"
     :readonly="readonly"
     :name="name"
@@ -10,14 +10,13 @@
     :with-type="withType"
     :alarm-counter="alarmCounter"
     class="c-alarm-patterns-field"
-    @update:patterns="updatePatterns"
   >
     <template #append-count="">
       <v-btn
         v-if="alarmCounter && alarmCounter.count"
-        variant="text"
+        text
         small
-        @click="showPatternAlarmsModal"
+        @click="showPatternAlarmsModal()"
       >
         {{ $t('common.seeAlarms') }}
       </v-btn>
@@ -27,10 +26,10 @@
 
 <script>
 import { isArray, keyBy } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import {
   ALARM_EVENT_INITIATORS,
-  ALARM_FIELDS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ALARM_STATES,
@@ -47,15 +46,19 @@ import {
 
 import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 
-import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
+const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
+
 export default {
   components: { PatternEditorField },
   mixins: [entitiesInfoMixin],
-  emits: ['update:patterns', 'show:alarms'],
+  model: {
+    prop: 'patterns',
+    event: 'input',
+  },
   props: {
     patterns: {
       type: Object,
@@ -210,7 +213,10 @@ export default {
 
     statusOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+        ],
         defaultValue: ALARM_STATUSES.ongoing,
         valueField: {
           is: 'c-alarm-status-field',
@@ -245,19 +251,27 @@ export default {
 
     ackOptions() {
       return {
-        operators: [PATTERN_OPERATORS.acked, PATTERN_OPERATORS.notAcked],
+        operators: [
+          PATTERN_OPERATORS.acked,
+          PATTERN_OPERATORS.notAcked,
+        ],
       };
     },
 
     existsOptions() {
       return {
-        operators: [...PATTERN_EXISTS_OPERATORS],
+        operators: [
+          ...PATTERN_EXISTS_OPERATORS,
+        ],
       };
     },
 
     canceledOptions() {
       return {
-        operators: [PATTERN_OPERATORS.canceled, PATTERN_OPERATORS.notCanceled],
+        operators: [
+          PATTERN_OPERATORS.canceled,
+          PATTERN_OPERATORS.notCanceled,
+        ],
       };
     },
 
@@ -282,7 +296,10 @@ export default {
 
     snoozeOptions() {
       return {
-        operators: [PATTERN_OPERATORS.snoozed, PATTERN_OPERATORS.notSnoozed],
+        operators: [
+          PATTERN_OPERATORS.snoozed,
+          PATTERN_OPERATORS.notSnoozed,
+        ],
       };
     },
 
@@ -322,7 +339,10 @@ export default {
 
     activatedOptions() {
       return {
-        operators: [PATTERN_OPERATORS.activated, PATTERN_OPERATORS.inactive],
+        operators: [
+          PATTERN_OPERATORS.activated,
+          PATTERN_OPERATORS.inactive,
+        ],
       };
     },
 
@@ -352,15 +372,15 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
-          is: 'c-select',
+          is: 'c-select-field',
           props: (rule) => {
             const isMultiple = isArray(rule?.value);
 
             return {
               items: Object.values(ALARM_EVENT_INITIATORS),
-              chips: isMultiple,
               multiple: isMultiple,
-              closableChips: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
             };
           },
         },
@@ -477,6 +497,10 @@ export default {
           options: this.snoozeOptions,
         },
         {
+          value: ALARM_PATTERN_FIELDS.snooze,
+          options: this.snoozeOptions,
+        },
+        {
           value: ALARM_PATTERN_FIELDS.snoozeAuthor,
           options: this.stringWithOneOfOptions,
         },
@@ -547,7 +571,7 @@ export default {
       ].map(variable => ({
         ...variable,
 
-        text: this.$t(ALARM_FIELDS_TO_LABELS_KEYS[variable.value], 2),
+        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[variable.value], 2),
       }));
     },
 
@@ -560,11 +584,7 @@ export default {
     },
 
     availableAlarmAttributes() {
-      const externalAttributes = this.attributes.filter(
-        attribute => attribute.value !== ALARM_FIELDS.failedTicket,
-      );
-
-      return mergePatternAttributes(this.alarmAttributes, externalAttributes);
+      return mergePatternAttributes(this.alarmAttributes, this.attributes);
     },
   },
   mounted() {
@@ -573,16 +593,14 @@ export default {
     }
   },
   methods: {
-    updatePatterns(patterns) {
-      this.$emit('update:patterns', patterns);
-    },
+    ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
     showPatternAlarmsModal() {
       this.$emit('show:alarms');
     },
 
     async fetchInfos() {
-      const { fetchDynamicInfosKeysWithoutStore } = useDynamicInfo();
-      const { data: infos } = await fetchDynamicInfosKeysWithoutStore({
+      const { data: infos } = await this.fetchDynamicInfosKeysWithoutStore({
         params: { limit: MAX_LIMIT },
       });
 

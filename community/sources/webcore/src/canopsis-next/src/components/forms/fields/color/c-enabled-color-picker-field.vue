@@ -1,42 +1,43 @@
 <template>
-  <c-layout
-    :class="{ 'c-enabled-color-picker-field--column': column }"
-    :column="column"
-    :gap="column ? '2' : undefined"
-    class="c-enabled-color-picker-field"
-    align="center"
-  >
-    <div :class="{ 'w-100': column }" class="c-enabled-color-picker-field__switch">
+  <v-layout :column="column">
+    <v-flex
+      :xs12="column"
+      xs6
+    >
       <c-enabled-field
         v-model="enabled"
         :label="label"
         color="primary"
-        hide-details
-        @update:model-value="updateColor"
+        @input="updateColor"
       />
-    </div>
-
+    </v-flex>
     <v-fade-transition>
       <c-color-picker-field
         v-if="enabled"
-        :model-value="modelValue"
+        v-field="color"
         :disabled="!enabled"
         :required="enabled"
         :name="name"
         :justify-end="justifyEnd"
-        class="c-enabled-color-picker-field__picker"
-        @update:model-value="$emit('update:modelValue', $event)"
       />
     </v-fade-transition>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
+import { formBaseMixin } from '@/mixins/form';
+
 export default {
+  inject: ['$validator'],
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'color',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    color: {
       type: String,
-      default: '',
+      required: false,
     },
     label: {
       type: String,
@@ -55,63 +56,17 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:modelValue'],
-
   data() {
     return {
-      enabled: !!this.modelValue,
+      enabled: !!this.color,
     };
   },
-
-  watch: {
-    modelValue(value) {
-      this.enabled = !!value;
-    },
-  },
-
   methods: {
     updateColor(value) {
       if (!value) {
-        this.$emit('update:modelValue', '');
+        this.updateModel('');
       }
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-enabled-color-picker-field {
-  width: 100%;
-
-  &__switch {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-
-  &__picker {
-    display: flex;
-    align-items: center;
-    flex: 0 0 50%;
-    max-width: 50%;
-    min-width: 0;
-
-    :deep(.v-input) {
-      width: 100%;
-    }
-
-    :deep(.v-input__control) {
-      align-self: center;
-    }
-  }
-
-  &--column {
-    .c-enabled-color-picker-field__switch,
-    .c-enabled-color-picker-field__picker {
-      flex: 0 1 auto;
-      max-width: 100%;
-      width: 100%;
-    }
-  }
-}
-</style>

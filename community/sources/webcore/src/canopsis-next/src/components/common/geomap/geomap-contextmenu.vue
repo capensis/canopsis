@@ -1,9 +1,14 @@
 <template>
   <v-menu
     v-model="shown"
-    :target="[pageX, pageY]"
+    :position-x="pageX"
+    :position-y="pageY"
     :close-on-content-click="false"
     :disabled="disabled"
+    ignore-click-upper-outside
+    offset-overflow
+    offset-x
+    absolute
   >
     <v-list dense>
       <v-list-item
@@ -11,16 +16,18 @@
         :key="action.text"
         @click="applyAction(action)"
       >
-        <v-list-item-title>{{ action.text }}</v-list-item-title>
+        <v-list-item-content>
+          <v-list-item-title>{{ action.text }}</v-list-item-title>
+        </v-list-item-content>
       </v-list-item>
     </v-list>
   </v-menu>
 </template>
 
 <script>
-export default {
-  inject: ['geomapRoot'],
+import { findRealParent } from 'vue2-leaflet';
 
+export default {
   props: {
     items: {
       type: Array,
@@ -55,13 +62,15 @@ export default {
     },
   },
   mounted() {
-    this.mapObject = this.geomapRoot.mapObject;
+    this.parentContainer = findRealParent(this.$parent);
+
+    this.mapObject = this.parentContainer.mapObject;
 
     this.mapObject.on('contextmenu', this.open);
   },
 
-  beforeUnmount() {
-    this.mapObject?.off('contextmenu', this.open);
+  beforeDestroy() {
+    this.mapObject.off('contextmenu', this.open);
   },
 
   methods: {

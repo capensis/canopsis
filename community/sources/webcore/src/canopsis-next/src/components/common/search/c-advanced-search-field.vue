@@ -1,23 +1,19 @@
 <template>
-  <c-layout class="c-advanced-search__wrapper" align="end">
+  <v-layout class="c-advanced-search__wrapper" align-end>
     <div
-      :class="[
-        'c-advanced-search mt-0 pt-2 v-input v-input--hide-details',
-        'v-text-field v-text-field--single-line v-select v-autocomplete',
-        { 'v-input--is-loading': pending },
-      ]"
+      :class="[themeClasses, { 'v-input--is-loading': pending }]"
+      class="c-advanced-search mt-0 pt-2 v-input v-input--hide-details theme--light
+    v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
     >
       <div class="v-input__control">
         <div class="v-input__slot pb-1">
-          <div class="v-text-field__slot" @mouseup="focusSearchInput">
+          <div class="v-text-field__slot">
             <advanced-search-rules
-              ref="rulesElement"
-              :rules="rules"
+              v-field="rules"
               :attributes="attributes"
               :allow-or="allowOr"
               :allow-focus-on-mount="allowFocusOnMount"
-              :disabled="disabled"
-              @update:rules="inputSearch"
+              @input="inputSearch"
             />
           </div>
         </div>
@@ -29,7 +25,7 @@
         />
       </div>
     </div>
-    <c-layout>
+    <v-layout>
       <advanced-search-history-btn
         v-if="withHistory"
         :searches="searches"
@@ -38,28 +34,50 @@
         @remove="removeSearch"
         @toggle-pin="togglePinForSearch"
       />
-      <c-action-btn :tooltip="$t('common.search')" icon="search" @click="submit" />
-      <c-action-btn :tooltip="$t('common.clearSearch')" icon="clear" @click="reset" />
-    </c-layout>
-  </c-layout>
+      <c-action-btn
+        :tooltip="$t('common.search')"
+        icon="search"
+        @click="submit"
+      />
+      <c-action-btn
+        :tooltip="$t('common.clearSearch')"
+        icon="clear"
+        @click="reset"
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import { ref, toRef, inject, onMounted, onBeforeUnmount } from 'vue';
-
 import {
-  advancedSearchRuleItemToFormItem,
-  formToAdvancedSearch,
-} from '@/helpers/search/advanced-search';
-import { uid } from '@/helpers/uid';
+  ref,
+  toRef,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
+import Themeable from 'vuetify/lib/mixins/themeable';
+
+import { uuid } from '@/helpers/uuid';
+import { advancedSearchRuleItemToFormItem, formToAdvancedSearch } from '@/helpers/search/advanced-search';
+
+import { useValidator } from '@/hooks/validator/validator';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import { useAdvancedSearchValidator } from './hooks/advanced-search';
-import AdvancedSearchHistoryBtn from './partials/advanced-search-history-btn.vue';
 import AdvancedSearchRules from './partials/advanced-search-rules.vue';
+import AdvancedSearchHistoryBtn from './partials/advanced-search-history-btn.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: { AdvancedSearchHistoryBtn, AdvancedSearchRules },
-
+  mixins: [Themeable],
+  model: {
+    prop: 'rules',
+    event: 'input',
+  },
   props: {
     rules: {
       type: Array,
@@ -89,26 +107,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    name: {
-      type: String,
-      default: 'advancedSearch',
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['update:rules', 'submit', 'reset', 'remove:search', 'toggle-pin:search'],
-
   setup(props, { emit }) {
-    const { validateAll, errors } = useAdvancedSearchValidator({
-      rules: toRef(props, 'rules'),
-      name: toRef(props, 'name'),
-      disabled: toRef(props, 'disabled'),
-    });
+    const validator = useValidator();
+    const { updateModel } = useArrayModelField(props, emit);
     const allowFocusOnMount = ref(true);
-    const rulesElement = ref(null);
 
     let activeSearch = null;
 
@@ -118,30 +121,26 @@ export default {
     const runToggleAllowFocusOnMount = () => {
       allowFocusOnMount.value = false;
 
-      setTimeout(() => (allowFocusOnMount.value = true), 1000);
-    };
-
-    const updateModel = (rules) => {
-      emit('update:rules', rules);
+      setTimeout(() => allowFocusOnMount.value = true, 1000);
     };
 
     /**
      * Submits the current advanced search configuration.
      */
     const submit = async () => {
-      const isValid = await validateAll();
+      const isValid = await validator.validateAll();
 
       if (isValid) {
         const newSearch = formToAdvancedSearch(props.rules, props.alarmPattern);
 
-        newSearch._id = activeSearch?._id ?? uid('advanced-search');
+        newSearch._id = activeSearch?._id ?? uuid();
         newSearch.pinned = activeSearch?.pinned ?? false;
 
         emit('submit', newSearch);
       }
     };
 
-    const resetActiveSearch = () => (activeSearch = null);
+    const resetActiveSearch = () => activeSearch = null;
 
     const inputSearch = (newRules) => {
       resetActiveSearch();
@@ -153,7 +152,7 @@ export default {
     };
 
     const reset = () => {
-      errors.clear();
+      validator.errors.clear();
       updateModel([advancedSearchRuleItemToFormItem()]);
 
       resetActiveSearch();
@@ -172,13 +171,8 @@ export default {
 
     const removeSearch = id => emit('remove:search', id);
     const togglePinForSearch = id => emit('toggle-pin:search', id);
-    const focusSearchInput = (event) => {
-      if (props.disabled || event.target.closest('button, input, .v-chip, .v-list-item')) {
-        return;
-      }
 
-      rulesElement.value?.focusLastInput?.();
-    };
+    useAdvancedSearchValidator({ rules: toRef(props, 'rules') });
 
     const registerSelectAdvancedSearch = inject('$registerSelectAdvancedSearch', () => {});
 
@@ -186,7 +180,6 @@ export default {
     onBeforeUnmount(() => registerSelectAdvancedSearch(null));
 
     return {
-      rulesElement,
       allowFocusOnMount,
 
       select,
@@ -195,7 +188,6 @@ export default {
       removeSearch,
       togglePinForSearch,
       inputSearch,
-      focusSearchInput,
     };
   },
 };
@@ -209,71 +201,16 @@ export default {
 .c-advanced-search {
   --input-min-inline-size: 30ch;
 
-  flex: 1 1 auto;
-  min-width: 280px;
-  font-size: 16px;
-
-  .v-input__control,
-  .v-input__slot,
-  .v-text-field__slot {
-    width: 100%;
-  }
-
-  .v-input__control {
-    display: block;
-    grid-area: auto;
-  }
-
-  .v-input__slot {
-    display: flex;
-    align-items: flex-end;
-    min-height: 40px;
-    cursor: text;
-    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.42);
-  }
-
-  .v-text-field__slot {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-  }
-
   & &__rule {
-    max-width: 100%;
-    min-width: 0;
-
-    > span,
-    > span > span {
-      display: inline-flex;
-      max-width: 100%;
-      min-width: 0;
-    }
-
     input {
       flex: 0 1 auto;
       field-sizing: content;
-      max-inline-size: 100%;
       min-inline-size: var(--input-min-inline-size);
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: currentColor;
-
-      &::placeholder {
-        color: rgba(var(--v-theme-on-surface), 0.6);
-        opacity: 1;
-      }
     }
   }
 
-  &__wrapper {
-    width: 100%;
-  }
-
   &__groups-wrapper {
-    &,
-    .layout,
-    .c-layout {
+    &, .layout {
       gap: var(--advanced-search-chip-gap);
     }
   }
@@ -292,14 +229,7 @@ export default {
     margin: 0;
 
     .v-chip__content {
-      display: inline-flex;
-      align-items: center;
       gap: var(--advanced-search-chip-gap);
-    }
-
-    > .v-chip__content > span {
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     &:has(> .v-chip__content > .v-chip) {
@@ -313,7 +243,14 @@ export default {
     .v-chip {
       height: 24px;
       margin: 0;
-      background: rgb(var(--v-theme-background));
+
+      &.theme--light {
+        background: var(--v-application-background-base, #FFFFFF);
+      }
+
+      &.theme--dark {
+        background: var(--v-application-background-base, #121212);
+      }
     }
   }
 }

@@ -1,71 +1,65 @@
-import { isArray, sortBy } from 'lodash';
-import { computed, unref } from 'vue';
+import { sortBy, isArray } from 'lodash';
+import { unref } from 'vue';
 
 import { groupedPermissionToPermission } from '@/helpers/permission';
 
 import { useCurrentUserPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
+import { useI18n } from '@/hooks/i18n';
 
+/**
+ * Hook for top bar menu functionality
+ * Provides methods to filter and prepare menu links based on user permissions
+ *
+ * @param {Object} options - Configuration options
+ * @param {Array} [options.permissionsWithDefaultType=[]] - List of permissions that use default type checking
+ * @param {boolean} [options.withoutSort=true] - Whether to sort links by title
+ * @returns {Object} An object containing methods to prepare menu links
+ */
 export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = true } = {}) => {
-  const { currentUserPermissionsById, checkAccess, checkReadAccess } = useCurrentUserPermissions();
+  const { checkAccess, checkReadAccess } = useCurrentUserPermissions();
   const { checkAppInfoAccessByPermission } = useInfo();
-  const { t, te, tm } = useI18n();
+  const { t } = useI18n();
 
-  const hasLoadedPermissions = computed(
-    () => Object.keys(currentUserPermissionsById.value ?? {}).length > 0,
-  );
+  /**
+   * Check if user has whole access to a permission
+   *
+   * @param {string|Array} permission - Permission or array of permissions to check
+   * @returns {boolean} Whether the user has access
+   */
+  const checkWholeAccess = (permission) => {
+    if (checkAppInfoAccessByPermission(permission)) {
+      return unref(permissionsWithDefaultType).includes(permission)
+        ? checkAccess(permission)
+        : checkReadAccess(permission);
+    }
 
-  const checkPermissionAccess = (permission) => {
-    if (!hasLoadedPermissions.value) {
+    return false;
+  };
+
+  /**
+   * Filter links based on user permissions
+   *
+   * @param {Array} [links=[]] - Array of link objects
+   * @returns {Array} Filtered array of links
+   */
+  const filterLinks = (links = []) => links.filter(({ permission }) => {
+    if (!permission) {
       return true;
     }
 
-    return unref(permissionsWithDefaultType).includes(permission)
-      ? checkAccess(permission)
-      : checkReadAccess(permission);
-  };
+    const arrayPermissions = isArray(permission) ? permission : [permission];
 
-  const checkWholeAccess = (permission) => {
-    if (!checkAppInfoAccessByPermission(permission)) {
-      return false;
-    }
+    return arrayPermissions.some(checkWholeAccess);
+  });
 
-    if (isArray(permission)) {
-      return permission.some(checkPermissionAccess);
-    }
-
-    return checkPermissionAccess(permission);
-  };
-
-  const filterLinks = (links = []) =>
-    links.filter(({ permission }) => {
-      if (!permission) {
-        return true;
-      }
-
-      return checkWholeAccess(permission);
-    });
-
-  const getPageHeader = (permission) => {
-    if (!permission) {
-      return {};
-    }
-
-    return tm(`pageHeaders.${permission}`) || {};
-  };
-
-  const getPermissionTitle = (permission) => {
-    if (!permission) {
-      return '';
-    }
-
-    const key = `permission.title.${permission}`;
-
-    return te(key) ? t(key) : '';
-  };
-
-  const prepareLinks = (links = []) => {
+  /**
+   * Prepare links by filtering and adding translated titles
+   *
+   * @param {Array} links - Array of link objects
+   * @returns {Array} Prepared and sorted array of links
+   */
+  const prepareLinks = (links) => {
     const preparedLinks = filterLinks(links)
       .map((link) => {
         if (link.links) {
@@ -81,28 +75,23 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = t
           };
         }
 
-        if (link.divider || link.header) {
+        if (link.divider) {
           return link;
         }
 
         const permissionName = isArray(link.permission)
           ? groupedPermissionToPermission(link.permission)
           : link.permission;
-        const { topbarTitle, title } = getPageHeader(permissionName);
+
+        const { topbarTitle, title } = t(`pageHeaders.${permissionName}`);
 
         return {
           ...link,
-          title:
-            link.title ||
-            topbarTitle ||
-            title ||
-            getPermissionTitle(permissionName) ||
-            link.route?.name ||
-            '',
+          title: link.title || topbarTitle || title,
         };
       })
       .filter(Boolean)
-      .filter((link, index, currentLinks) => {
+      .filter((link, index, currentLinks) => { // Remove headers and dividers that are adjacent to each other
         if (link.header) {
           const nextLink = currentLinks[index + 1];
 
@@ -115,7 +104,7 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = t
           return !prevLink?.header && !prevLink?.divider;
         }
 
-        return true;
+        return link;
       });
 
     return unref(withoutSort) ? preparedLinks : sortBy(preparedLinks, 'title');

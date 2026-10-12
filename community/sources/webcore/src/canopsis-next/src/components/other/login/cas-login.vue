@@ -1,42 +1,48 @@
 <template>
-  <third-party-login :title="t('login.loginWithCAS')" :links="links" />
+  <third-party-login
+    :title="$t('login.loginWithCAS')"
+    :links="links"
+  />
 </template>
 
-<script setup>
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+<script>
+import qs from 'qs';
+import { get } from 'lodash';
 
-import { API_HOST, API_ROUTES, APP_HOST } from '@/config';
+import { APP_HOST, API_HOST, API_ROUTES } from '@/config';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { useInfo } from '@/hooks/store/modules/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import ThirdPartyLogin from './third-party-login.vue';
+import ThirdPartyLogin from './partials/third-party-login.vue';
 
-const route = useRoute();
-const { t } = useI18n();
-const { casConfig } = useInfo();
+export default {
+  components: { ThirdPartyLogin },
+  mixins: [entitiesInfoMixin],
+  computed: {
+    title() {
+      return get(this.casConfig, 'title', this.$t('login.loginWithCAS'));
+    },
 
-const title = computed(() => casConfig.value?.title ?? t('login.loginWithCAS'));
+    casHref() {
+      const { redirect = '' } = this.$route.query;
 
-const redirect = computed(() => route.query.redirect ?? '');
+      const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.login}`);
+      const query = qs.stringify({
+        redirect: removeTrailingSlashes(`${APP_HOST}${redirect}`),
+        service: removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.loggedin}`),
+      });
 
-const casHref = computed(() => {
-  const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.login}`);
-  const query = new URLSearchParams({
-    redirect: removeTrailingSlashes(`${APP_HOST}${redirect.value}`),
-    service: removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.loggedin}`),
-  });
+      return `${loginUrl}?${query}`;
+    },
 
-  return `${loginUrl}?${query}`;
-});
-
-const links = computed(() => [
-  {
-    title: title.value,
-    href: casHref.value,
+    links() {
+      return [{
+        title: this.title,
+        href: this.casHref,
+      }];
+    },
   },
-]);
+};
 </script>

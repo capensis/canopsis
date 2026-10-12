@@ -11,26 +11,28 @@
   >
     <template #name="{ item }">
       <span>{{ item.name }}</span>
-      <c-tooltip v-if="item.removed_from_config" location="bottom">
-        <template #activator="{ props: tooltipProps }">
-          <v-icon v-bind="tooltipProps" class="ml-2" color="error">
+      <v-tooltip v-if="item.removed_from_config" bottom>
+        <template #activator="{ on }">
+          <v-icon class="ml-2" color="error" v-on="on">
             warning
           </v-icon>
         </template>
         <span
-          v-html="t('externalData.tableRemovedFromConfig', { rules: item.linkedRulesTooltip })"
+          v-html="$t('externalData.tableRemovedFromConfig', { rules: item.linkedRulesTooltip })"
           class="pre-wrap"
         />
-      </c-tooltip>
+      </v-tooltip>
     </template>
-
     <template #type="{ item }">
-      {{ t(`externalData.tableTypes.${item.type}`) }}
+      {{ $t(`externalData.tableTypes.${item.type}`) }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout align="center">
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+      <v-layout align-center>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
         <c-action-btn
           v-if="removable"
           :disabled-button="!!item.deleteTooltip"
@@ -38,9 +40,8 @@
           type="delete"
           @click="remove(item)"
         />
-      </c-layout>
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <external-data-tables-list-expand-panel :external-data-table="item" />
     </template>
@@ -55,18 +56,10 @@ import { useLinkedRulesTooltips } from '@/hooks/table/linked-rules-tooltips';
 
 import ExternalDataTablesListExpandPanel from './partials/external-data-tables-list-expand-panel.vue';
 
-const htmlToTooltipText = (html = '') => html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/(li|ul)>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/\n\s*\n/g, '\n')
-    .trim();
-
 export default {
   components: {
     ExternalDataTablesListExpandPanel,
   },
-
   props: {
     externalDataTables: {
       type: Array,
@@ -93,9 +86,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['edit', 'remove', 'update:options'],
-
   setup(props, { emit }) {
     const { t } = useI18n();
     const { getLinkedRulesMessage } = useLinkedRulesTooltips();
@@ -121,26 +111,23 @@ export default {
     ]);
 
     const preparedExternalDataTables = computed(() => props.externalDataTables.map((table) => {
-        const linkedRulesTooltip = getLinkedRulesMessage(table.linked_rules);
+      const linkedRulesTooltip = getLinkedRulesMessage(table.linked_rules);
 
-        let deleteTooltip = '';
+      let deleteTooltip = '';
 
-        if (table.from_config) {
-          deleteTooltip = t('externalData.tableCanBeDeletedInConfig');
-        } else if (linkedRulesTooltip) {
-          deleteTooltip = t('externalData.tableCanBeDeletedAfter', {
-            rules: htmlToTooltipText(linkedRulesTooltip),
-          });
-        }
+      if (table.from_config) {
+        deleteTooltip = t('externalData.tableCanBeDeletedInConfig');
+      } else if (linkedRulesTooltip) {
+        deleteTooltip = t('externalData.tableCanBeDeletedAfter', { rules: linkedRulesTooltip });
+      }
 
-        return {
-          ...table,
+      return {
+        ...table,
 
-          linkedRulesTooltip,
-          deleteTooltip,
-        };
-      }),
-    );
+        linkedRulesTooltip,
+        deleteTooltip: deleteTooltip ? `<span class="pre-wrap">${deleteTooltip}</span>` : '',
+      };
+    }));
 
     /**
      * Emits a remove event for the specified external data table
@@ -152,12 +139,11 @@ export default {
     /**
      * Updates the table options and emits the changes to the parent component
      *
-     * @param {Object} newOptions - The updated options object
+     * @param {Object} options - The updated options object
      */
-    const updateOptions = newOptions => emit('update:options', newOptions);
+    const updateOptions = options => emit('update:options', options);
 
     return {
-      t,
       headers,
       preparedExternalDataTables,
 

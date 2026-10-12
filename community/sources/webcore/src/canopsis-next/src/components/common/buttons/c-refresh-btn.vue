@@ -1,32 +1,15 @@
 <template>
-  <c-tooltip location="left">
-    <template #activator="{ props: activatorProps }">
+  <v-tooltip left>
+    <template #activator="{ on }">
       <v-btn
         color="secondary"
-        size="x-large"
-        icon
-        v-bind="activatorProps"
+        fab
+        v-on="on"
         @click.stop="$emit('click', $event)"
       >
-        <c-icon>refresh</c-icon>
+        <v-icon>refresh</v-icon>
       </v-btn>
     </template>
-    <span>{{ t('common.refresh') }}</span>
-  </c-tooltip>
+    <span>{{ $t('common.refresh') }}</span>
+  </v-tooltip>
 </template>
-
-<script>
-import { useI18n } from '@/hooks/i18n';
-
-export default {
-  emits: ['click'],
-
-  setup() {
-    const { t } = useI18n();
-
-    return {
-      t,
-    };
-  },
-};
-</script>

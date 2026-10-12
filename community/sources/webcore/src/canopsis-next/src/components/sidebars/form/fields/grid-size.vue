@@ -1,40 +1,36 @@
 <template>
   <widget-settings-item>
-    <template #title>
-      <c-layout align="center" gap="2">
+    <template #title="">
+      <v-layout align-center>
         <span>{{ title }}</span>
-        <v-icon :icon="sizeIcon" />
-      </c-layout>
+        <v-icon class="ml-2">
+          {{ sizeIcon }}
+        </v-icon>
+      </v-layout>
     </template>
-
     <c-column-size-field
-      :model-value="modelValue"
-      :name="fieldName"
+      v-field="value"
       :mobile="mobile"
       :tablet="tablet"
-      @update:model-value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
-
   props: {
-    modelValue: {
+    value: {
       type: Number,
       required: false,
     },
     title: {
       type: String,
       required: true,
-    },
-    name: {
-      type: String,
-      default: '',
     },
     mobile: {
       type: Boolean,
@@ -45,37 +41,22 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:modelValue'],
-
-  computed: {
-    sizeIcon() {
-      if (this.mobile) {
+  setup(props) {
+    const sizeIcon = computed(() => {
+      if (props.mobile) {
         return 'phone_android';
       }
 
-      if (this.tablet) {
+      if (props.tablet) {
         return 'tablet';
       }
 
       return 'laptop';
-    },
+    });
 
-    fieldName() {
-      if (this.name) {
-        return this.name;
-      }
-
-      if (this.mobile) {
-        return 'columnMobile';
-      }
-
-      if (this.tablet) {
-        return 'columnTablet';
-      }
-
-      return 'columnDesktop';
-    },
+    return {
+      sizeIcon,
+    };
   },
 };
 </script>

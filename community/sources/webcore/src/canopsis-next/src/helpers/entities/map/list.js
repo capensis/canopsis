@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { ENTITY_TYPES } from '@/constants';
 
-import { createEdgeElement, createNodeElement } from '@/helpers/cytoscape/elements';
+import { createNodeElement, createEdgeElement } from '@/helpers/cytoscape/elements';
 
 /**
  * Get icon data by geo map point
@@ -23,9 +23,23 @@ export const getGeomapMarkerIconOptions = (point, size) => {
       maxHeight: 'unset',
     },
     size,
-    anchor: point.entity ? [halfIconSize, size] : [halfIconSize, halfIconSize],
+    anchor: point.entity
+      ? [halfIconSize, size]
+      : [halfIconSize, halfIconSize],
   };
 };
+
+/**
+ * Get text for displaying in map components for entity
+ *
+ * @param {Entity} entity
+ * @returns {string}
+ */
+export const getMapEntityText = entity => (
+  entity.type === ENTITY_TYPES.resource
+    ? entity._id
+    : entity.name
+);
 
 /**
  * @typedef {Object} TreeOfDependenciesMapEntity
@@ -34,23 +48,11 @@ export const getGeomapMarkerIconOptions = (point, size) => {
  */
 
 /**
- * Get text for displaying in map components for entity.
- *
- * @param {Object} entity
- * @returns {string}
- */
-export const getMapEntityText = entity =>
-  entity?.type === ENTITY_TYPES.resource ? entity._id : entity?.name;
-
-/**
  *
  * @param {Entity[]} [entities = []]
  * @returns {Object<string, TreeOfDependenciesMapEntity>}
  */
-export const normalizeTreeOfDependenciesMapEntities = (
-  entities = [],
-  childrenKey = 'dependencies',
-) =>
+export const normalizeTreeOfDependenciesMapEntities = (entities = [], childrenKey = 'dependencies') => (
   entities.reduce((acc, { entity, pinned_entities: pinnedEntities }) => {
     const newEntity = {
       entity: cloneDeep(entity),
@@ -72,7 +74,8 @@ export const normalizeTreeOfDependenciesMapEntities = (
     acc[entity._id] = newEntity;
 
     return acc;
-  }, {});
+  }, {})
+);
 
 /**
  * Get entity children elements for cytoscape
@@ -121,7 +124,10 @@ export const getEntityChildrenElements = ({
         getShowMoreElements,
       });
 
-      elements.push(createNodeElement(childId, child, hasChildren), ...childChildrenElements);
+      elements.push(
+        createNodeElement(childId, child, hasChildren),
+        ...childChildrenElements,
+      );
     }
 
     elements.push(createEdgeElement(childId, entity._id));

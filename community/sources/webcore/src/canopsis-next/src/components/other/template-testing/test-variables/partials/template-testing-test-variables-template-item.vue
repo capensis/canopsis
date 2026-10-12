@@ -1,64 +1,55 @@
 <template>
-  <c-layout class="template-item" column>
+  <v-layout class="template-item" column>
     <span class="text-subtitle-2 mb-3">
       {{ title }}
     </span>
-
-    <v-row
-      :class="statusProps.headerClass"
-      class="template-item__header flex-grow-0"
-      align="stretch"
-      no-gutters
-    >
-      <v-col class="template-item__header-section" cols="6">
-        <span>{{ t('common.input') }}</span>
-      </v-col>
-
-      <v-col class="template-item__header-section" cols="6">
-        <c-layout justify="space-between" align="center">
-          <c-layout align="center">
-            <span>{{ t('common.output') }}</span>
-
-            <v-chip :color="statusProps.chipColor" class="ml-2" size="small">
+    <v-layout :class="statusProps.headerClass" class="template-item__header" align-stretch>
+      <v-flex class="template-item__header-section" xs6>
+        <span>{{ $t('common.input') }}</span>
+      </v-flex>
+      <v-flex class="template-item__header-section" xs6>
+        <v-layout justify-space-between align-center>
+          <v-layout align-center>
+            <span>{{ $t('common.output') }}</span>
+            <v-chip
+              :color="statusProps.chipColor"
+              class="ml-2"
+              text-color="white"
+              small
+            >
               {{ statusProps.chipText }}
             </v-chip>
-          </c-layout>
-
+          </v-layout>
           <c-enabled-field
             v-model="isJson"
-            :label="t('templateTesting.formatJson')"
+            :label="$t('templateTesting.formatJson')"
             class="mt-0"
             hide-details
           />
-        </c-layout>
-      </v-col>
-    </v-row>
-
-    <v-row class="template-item__content flex-grow-0" no-gutters>
-      <v-col class="template-item__input-section" cols="6">
+        </v-layout>
+      </v-flex>
+    </v-layout>
+    <v-layout class="template-item__content">
+      <v-flex class="template-item__input-section" xs6>
         <c-payload-textarea-field
           v-if="textarea"
-          :value="template"
+          v-field="template"
           :variables="variables"
           :name="name"
           wrap="off"
           rows="2"
           class="template-item__input-editor"
-          @update:value="updateTemplate"
         />
-
         <c-payload-text-field
           v-else
-          :value="template"
+          v-field="template"
           :variables="variables"
           :name="name"
           label=""
           class="template-item__input-editor"
-          @update:value="updateTemplate"
         />
-      </v-col>
-
-      <v-col class="template-item__output-section" cols="6">
+      </v-flex>
+      <v-flex class="template-item__output-section" xs6>
         <simple-code-editor
           :value="formattedOutput"
           :language="isJson ? 'json' : 'plaintext'"
@@ -66,14 +57,14 @@
           class="template-item__output-editor"
           readonly
         />
-      </v-col>
-    </v-row>
-  </c-layout>
+      </v-flex>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
 import { isUndefined } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 import {
   TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
@@ -88,6 +79,10 @@ import SimpleCodeEditor from '@/components/common/code-editor/simple-code-editor
 
 export default {
   components: { SimpleCodeEditor },
+  model: {
+    prop: 'template',
+    event: 'input',
+  },
   props: {
     template: {
       type: String,
@@ -118,23 +113,20 @@ export default {
       default: '',
     },
   },
-
-  emits: ['update:template'],
-
-  setup(props, { emit }) {
+  setup(props) {
     const { t } = useI18n();
 
+    const isRunning = ref(false);
     const isJson = ref(false);
 
     const editorHeight = ref(
-      TEMPLATE_TESTING_TEST_VARIABLES_MIN_EDITOR_LINES *
-        TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
+      TEMPLATE_TESTING_TEST_VARIABLES_MIN_EDITOR_LINES * TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
     );
 
     const statusProps = computed(() => {
       const { err, is_valid: isValid } = props.result;
 
-      if (props.lastRunValue !== props.template && !isUndefined(isValid)) {
+      if (props.lastRunValue !== props.template && !isUndefined(isValid)) { // WARNING
         return {
           headerClass: 'template-item__header--warning',
           chipColor: 'warning',
@@ -142,7 +134,7 @@ export default {
         };
       }
 
-      if (err) {
+      if (err) { // ERROR
         return {
           headerClass: 'template-item__header--error',
           chipColor: 'error',
@@ -150,7 +142,7 @@ export default {
         };
       }
 
-      if (isValid) {
+      if (isValid) { // SUCCESS
         return {
           headerClass: 'template-item__header--success',
           chipColor: 'success',
@@ -167,33 +159,25 @@ export default {
     const formattedOutput = computed(() => {
       if (isJson.value) {
         try {
-          return JSON.stringify(JSON.parse(props.result.result), null, 2) || '';
+          return JSON.stringify(JSON.parse(props.result.result), null, 2);
         } catch {
-          return props.result.result || '';
+          return props.result.result;
         }
       }
 
-      return props.result.result || '';
+      return props.result.result;
     });
 
-    const updateTemplate = value => emit('update:template', value);
-
-    watch(formattedOutput, (value = '') => {
-      editorHeight.value = Math.max(
-        getStringLinesCount(value) * TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
-        TEMPLATE_TESTING_TEST_VARIABLES_MIN_EDITOR_LINES *
-          TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
-      );
+    watch(formattedOutput, (value) => {
+      editorHeight.value = getStringLinesCount(value) * TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT;
     });
 
     return {
-      t,
       statusProps,
       editorHeight,
       isJson,
       formattedOutput,
-      TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
-      updateTemplate,
+      isRunning,
     };
   },
 };
@@ -202,13 +186,16 @@ export default {
 <style lang="scss" scoped>
 .template-item {
   --paddings: 8px;
+
   --border-color: var(--v-application-background-darken2);
+  --border-color-dark: var(--v-application-background-lighten3);
+
   --header-background-color: var(--v-application-background-darken1);
   --header-background-color-success: var(--v-success-background-base);
   --header-background-color-warning: var(--v-warning-background-base);
   --header-background-color-error: var(--v-error-background-base);
 
-  &__header {
+  .template-item__header {
     background-color: var(--header-background-color);
     border: 1px solid var(--border-color);
 
@@ -233,7 +220,7 @@ export default {
     }
   }
 
-  &__content {
+  .template-item__content {
     .template-item__input-section,
     .template-item__output-section {
       padding: var(--paddings);
@@ -243,12 +230,44 @@ export default {
 
     .template-item__input-section {
       border-left: 1px solid var(--border-color);
+
+      & ::v-deep .v-text-field__slot {
+        max-width: 100%;
+
+        textarea {
+          overflow-x: auto;
+        }
+      }
+    }
+
+    .template-item__input-editor {
+      &, & ::v-deep textarea {
+        min-height: 40px;
+      }
+    }
+
+    .template-item__output-editor {
+      min-height: 100%;
     }
   }
+}
 
-  &__input-editor,
-  &__output-editor {
-    min-height: 40px;
+.theme--dark {
+  .template-item {
+    border-color: var(--border-color-dark);
+
+    .template-item__header {
+      background-color: var(--header-background-color-dark);
+      border-bottom-color: var(--border-color-dark);
+
+      &-section:first-child {
+        border-right-color: var(--border-color-dark);
+      }
+    }
+
+    .template-item__input-section {
+      border-right-color: var(--border-color-dark);
+    }
   }
 }
 </style>

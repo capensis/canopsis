@@ -1,34 +1,32 @@
 <template>
   <v-chip
-    :closable="closable && !disabled"
+    :close="closable && !disabled"
     :color="color"
     class="c-advanced-search__chip c-advanced-search__array-chip"
-    @click.prevent="$emit('click')"
+    @click.prevent=""
     @click:close="close"
-    @focusout="$emit('focusout')"
   >
     <v-chip>
       <span v-if="disabled">
-        {{ chipValue.value }}
+        {{ value.value }}
       </span>
       <input
         v-else
-        :value="chipValue.value"
+        :value="value.value"
         :placeholder="$t('common.duration')"
         type="number"
         @input="updateValue"
-      />
+      >
     </v-chip>
-    <v-menu :disabled="disabled" location="bottom">
-      <template #activator="{ props: activatorProps }">
-        <v-chip v-bind="activatorProps">
+    <v-menu :disabled="disabled" bottom>
+      <template #activator="{ on }">
+        <v-chip v-on="on">
           <span>{{ unitText }}</span>
         </v-chip>
       </template>
       <variables-list
-        :value="chipValue.unit"
+        v-field="value.unit"
         :items="units"
-        @update:value="updateUnit"
       />
     </v-menu>
   </v-chip>
@@ -37,15 +35,10 @@
 <script>
 import { computed } from 'vue';
 
-import {
-  AVAILABLE_TIME_UNITS,
-  MEDIUM_AVAILABLE_TIME_UNITS,
-  SHORT_AVAILABLE_TIME_UNITS,
-  TIME_UNITS,
-} from '@/constants';
+import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS, TIME_UNITS, MEDIUM_AVAILABLE_TIME_UNITS } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 
 import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
@@ -53,11 +46,12 @@ export default {
   components: {
     VariablesList,
   },
-
-  inheritAttrs: false,
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: Object,
       default: () => ({ value: 1, unit: TIME_UNITS.second }),
     },
@@ -71,25 +65,20 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default: false,
+      required: false,
     },
     long: {
       type: Boolean,
-      default: false,
+      required: false,
     },
     middle: {
       type: Boolean,
-      default: false,
+      required: false,
     },
   },
-
-  emits: ['update:modelValue', 'click', 'focusout', 'close'],
-
   setup(props, { emit }) {
-    const { t } = useI18n();
+    const { tc } = useI18n();
     const { updateField } = useModelField(props, emit);
-
-    const chipValue = computed(() => props.modelValue ?? { value: 1, unit: TIME_UNITS.second });
 
     const units = computed(() => {
       const preparedUnits = {
@@ -100,25 +89,23 @@ export default {
 
       return Object.values(preparedUnits).map(({ value, text }) => ({
         value,
-        text: t(text, chipValue.value.value || 0),
+        text: tc(text, props.value.value || 0),
       }));
     });
 
     const unitText = computed(() => (
-      units.value.find(({ value }) => value === chipValue.value.unit)?.text || chipValue.value.unit
+      units.value.find(({ value }) => value === props.value.unit)?.text || props.value.unit
     ));
 
     const updateValue = event => updateField('value', Number(event.target.value) || 1);
-    const updateUnit = unit => updateField('unit', unit);
+
     const close = () => emit('close');
 
     return {
-      chipValue,
       units,
       unitText,
 
       updateValue,
-      updateUnit,
       close,
     };
   },

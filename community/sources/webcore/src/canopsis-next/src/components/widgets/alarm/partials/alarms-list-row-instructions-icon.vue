@@ -1,16 +1,16 @@
 <template>
-  <c-tooltip :content="iconTooltip" html top>
-    <template #activator="{ props }">
+  <c-simple-tooltip :content="iconTooltip" top>
+    <template #activator="{ on }">
       <v-icon
         :class="iconClass"
         class="instruction-icon"
         size="22"
-        v-bind="props"
+        v-on="on"
       >
         {{ iconName }}
       </v-icon>
     </template>
-  </c-tooltip>
+  </c-simple-tooltip>
 </template>
 
 <script>
@@ -19,11 +19,11 @@ import { computed } from 'vue';
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import {
-  hasInstructionWithoutAnyExecution,
   isInstructionExecutionIconFailed,
   isInstructionExecutionIconInProgress,
   isInstructionExecutionIconSuccess,
   isInstructionExecutionManual,
+  hasInstructionWithoutAnyExecution,
 } from '@/helpers/entities/remediation/instruction-execution/form';
 
 import { useI18n } from '@/hooks/i18n';
@@ -35,31 +35,32 @@ export default {
       required: true,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
 
-    const alarmInstructionExecutionIcon = computed(
-      () => props.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable,
-    );
+    const alarmInstructionExecutionIcon = computed(() => (
+      props.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable
+    ));
 
-    const hasRunningInstruction = computed(
-      () => isInstructionExecutionIconInProgress(alarmInstructionExecutionIcon.value),
-    );
+    const hasRunningInstruction = computed(() => (
+      isInstructionExecutionIconInProgress(alarmInstructionExecutionIcon.value)
+    ));
 
-    const someOneInstructionIsFailed = computed(
-      () => isInstructionExecutionIconFailed(alarmInstructionExecutionIcon.value),
-    );
+    const someOneInstructionIsFailed = computed(() => (
+      isInstructionExecutionIconFailed(alarmInstructionExecutionIcon.value)
+    ));
 
-    const someOneInstructionIsSuccessful = computed(
-      () => isInstructionExecutionIconSuccess(alarmInstructionExecutionIcon.value),
-    );
+    const someOneInstructionIsSuccessful = computed(() => (
+      isInstructionExecutionIconSuccess(alarmInstructionExecutionIcon.value)
+    ));
 
-    const isManualInstructionIcon = computed(() => isInstructionExecutionManual(alarmInstructionExecutionIcon.value),
-    );
+    const isManualInstructionIcon = computed(() => (
+      isInstructionExecutionManual(alarmInstructionExecutionIcon.value)
+    ));
 
-    const withoutAnyExecution = computed(() => hasInstructionWithoutAnyExecution(alarmInstructionExecutionIcon.value),
-    );
+    const withoutAnyExecution = computed(() => (
+      hasInstructionWithoutAnyExecution(alarmInstructionExecutionIcon.value)
+    ));
 
     const iconName = computed(() => {
       if (withoutAnyExecution.value) {
@@ -111,9 +112,11 @@ export default {
         successfulAutoInstructions,
       }).reduce((acc, [key, instructions]) => {
         if (instructions?.length) {
-          acc.push(t(`alarm.tooltips.${key}`, instructions.length, {
-            title: instructions.join(', '),
-          }));
+          acc.push(tc(
+            `alarm.tooltips.${key}`,
+            instructions.length,
+            { title: instructions.join(', ') },
+          ));
         }
 
         return acc;
@@ -122,7 +125,7 @@ export default {
       if (withoutAnyExecution.value) {
         tooltips.push(t('alarm.tooltips.withoutAnyExecution'));
       } else if (assignedInstructions?.length) {
-        tooltips.push(t('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
+        tooltips.push(tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
       }
 
       return `<span class="pre-wrap">${tooltips.join('\n')}</span>`;
@@ -139,35 +142,37 @@ export default {
 
 <style lang="scss">
 .instruction-icon {
+  box-sizing: content-box;
+  border-width: 1px;
   border-color: transparent;
   border-style: solid;
-  border-width: 1px;
-  box-sizing: content-box;
 
-  &.v-icon {
+  .theme--dark &, .theme--light & {
     color: grey;
   }
 
-  &--completed.v-icon {
-    color: rgb(var(--v-theme-primary));
+  &--completed.theme--light.v-icon,
+  &--completed.theme--dark.v-icon {
+    color: var(--v-primary-base);
   }
 
-  &--failed.v-icon {
-    color: rgb(var(--v-theme-error));
+  &--failed.theme--light.v-icon,
+  &--failed.theme--dark.v-icon {
+    color: var(--v-error-base);
   }
 
   &--dotted {
-    border-color: currentColor;
     border-style: dotted;
+    border-color: currentColor;
   }
 
   &--with-manual-available {
-    border-color: currentColor;
     border-style: dashed;
+    border-color: currentColor;
   }
 
   &--warning svg {
-    color: rgb(var(--v-theme-warning));
+    color: var(--v-warning-base);
   }
 }
 </style>

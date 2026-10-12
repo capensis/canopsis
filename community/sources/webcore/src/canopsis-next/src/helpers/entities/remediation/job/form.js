@@ -2,8 +2,8 @@ import { omit } from 'lodash';
 
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
 
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} RemediationJob
@@ -44,8 +44,7 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionRunning = job =>
-  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
+export const isJobExecutionRunning = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
 
 /**
  * Check job status is succeeded
@@ -53,8 +52,7 @@ export const isJobExecutionRunning = job =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionSucceeded = job =>
-  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.succeeded;
+export const isJobExecutionSucceeded = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.succeeded;
 
 /**
  * Check job status is failed
@@ -70,8 +68,7 @@ export const isJobExecutionFailed = job => job.status === REMEDIATION_JOB_EXECUT
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobExecutionCancelled = job =>
-  job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
+export const isJobExecutionCancelled = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
 
 /**
  * Check job is finished
@@ -79,12 +76,11 @@ export const isJobExecutionCancelled = job =>
  * @param {RemediationJobExecution} job
  * @returns {boolean}
  */
-export const isJobFinished = job =>
-  [
-    REMEDIATION_JOB_EXECUTION_STATUSES.canceled,
-    REMEDIATION_JOB_EXECUTION_STATUSES.failed,
-    REMEDIATION_JOB_EXECUTION_STATUSES.succeeded,
-  ].includes(job.status);
+export const isJobFinished = job => [
+  REMEDIATION_JOB_EXECUTION_STATUSES.canceled,
+  REMEDIATION_JOB_EXECUTION_STATUSES.failed,
+  REMEDIATION_JOB_EXECUTION_STATUSES.succeeded,
+].includes(job.status);
 
 /**
  * Convert remediation job entity to form object
@@ -114,14 +110,7 @@ export const remediationJobToForm = (remediationJob = {}) => ({
  * @return {RemediationJob}
  */
 export const formToRemediationJob = (form) => {
-  const {
-    job_wait_interval: jobWaitInterval,
-    config,
-    payload,
-    query,
-    configType,
-    ...remediationJob
-  } = form;
+  const { job_wait_interval: jobWaitInterval, config, payload, query, configType, ...remediationJob } = form;
 
   if (configType?.with_body) {
     remediationJob.payload = payload;

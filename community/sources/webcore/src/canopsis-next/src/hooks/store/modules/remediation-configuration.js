@@ -1,37 +1,33 @@
-import { storeToRefs } from 'pinia';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import { useRemediationConfigurationStore } from '@/stores/modules/remediation-configuration';
+const useRemediationConfigurationStoreModule = () => useStoreModuleHooks('remediationConfiguration');
 
 /**
- * Remediation configuration store facade.
+ * Hook to access remediation configuration store.
  *
- * @returns {Object}
+ * @returns {Object} An object containing getters and actions for remediation configurations.
  */
 export const useRemediationConfiguration = () => {
-  const remediationConfigurationStore = useRemediationConfigurationStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(remediationConfigurationStore);
+  const { useGetters, useActions } = useRemediationConfigurationStoreModule();
 
-  // TODO: Ask backend to add a dedicated bulk route for remediation configurations.
-  const bulkRemoveRemediationConfigurations = async ({ data = [] } = {}) => {
-    await Promise.all(data.map(({ _id: id }) => remediationConfigurationStore.remove({ id })));
+  const getters = useGetters({
+    remediationConfigurations: 'items',
+    remediationConfigurationsPending: 'pending',
+    remediationConfigurationsMeta: 'meta',
+  });
 
-    return [];
-  };
+  const actions = useActions({
+    fetchRemediationConfigurationsList: 'fetchList',
+    fetchRemediationConfigurationsListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchRemediationConfigurationsListWithoutStore: 'fetchListWithoutStore',
+    createRemediationConfiguration: 'create',
+    updateRemediationConfiguration: 'update',
+    removeRemediationConfiguration: 'remove',
+    bulkRemoveRemediationConfigurations: 'bulkRemove',
+  });
 
   return {
-    remediationConfigurations: items,
-    remediationConfigurationsMeta: meta,
-    remediationConfigurationsPending: pending,
-    remediationConfigurationsFetchingParams: fetchingParams,
-
-    fetchRemediationConfigurationsList: remediationConfigurationStore.fetchList,
-    fetchRemediationConfigurationsListWithPreviousParams:
-      remediationConfigurationStore.fetchListWithPreviousParams,
-    fetchRemediationConfigurationsListWithoutStore:
-      remediationConfigurationStore.fetchListWithoutStore,
-    createRemediationConfiguration: remediationConfigurationStore.create,
-    updateRemediationConfiguration: remediationConfigurationStore.update,
-    removeRemediationConfiguration: remediationConfigurationStore.remove,
-    bulkRemoveRemediationConfigurations,
+    ...getters,
+    ...actions,
   };
 };

@@ -1,30 +1,36 @@
 <template>
-  <div class="events-records-header pa-3 ga-3 d-flex flex-column align-center">
-    <h3>{{ t('eventsRecord.subheader') }}</h3>
-
-    <c-layout
+  <v-layout class="pa-3 gap-3" column align-center>
+    <h3>{{ $t('eventsRecord.subheader') }}</h3>
+    <v-layout
       v-for="message in messages"
       :key="message"
-      gap="4"
-      align="center"
+      class="gap-4"
+      align-center
     >
       <span class="font-italic">
         {{ message }}
       </span>
-      <v-progress-circular color="primary" width="3" indeterminate />
-    </c-layout>
-
-    <div>
-      <v-btn :disabled="isLaunchDisabled" color="warning" @click="$emit('start:recording')">
-        {{ t('eventsRecord.launch') }}
+      <v-progress-circular
+        color="primary"
+        width="3"
+        indeterminate
+      />
+    </v-layout>
+    <v-flex>
+      <v-btn
+        key="start"
+        :disabled="isLaunchDisabled"
+        color="warning"
+        @click="startRecording"
+      >
+        {{ $t('eventsRecord.launch') }}
       </v-btn>
-    </div>
-
-    <span class="text-caption text-medium-emphasis">
-      <strong>{{ t('common.limit') }}:</strong>&nbsp;
-      {{ t('eventsRecord.concurrentRecordings', { limit }) }}
+    </v-flex>
+    <span class="text-caption grey--text text--darken-1">
+      <strong>{{ $t('common.limit') }}:</strong>&nbsp;
+      {{ $t('eventsRecord.concurrentRecordings', { limit }) }}
     </span>
-  </div>
+  </v-layout>
 </template>
 
 <script>
@@ -44,14 +50,12 @@ export default {
     },
     limit: {
       type: Number,
-      default: 0,
+      default: 1,
     },
   },
-
-  emits: ['start:recording'],
-
-  setup(props) {
+  setup(props, { emit }) {
     const { t } = useI18n();
+
     const messages = computed(() => {
       const result = [];
 
@@ -66,22 +70,15 @@ export default {
       return result;
     });
 
-    const isLaunchDisabled = computed(
-      () => !props.limit || props.recordings?.length >= props.limit,
-    );
+    const isLaunchDisabled = computed(() => !props.limit || props.recordings?.length >= props.limit);
+
+    const startRecording = () => emit('start:recording');
 
     return {
-      t,
       messages,
       isLaunchDisabled,
+      startRecording,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.events-records-header {
-  width: 100%;
-  text-align: center;
-}
-</style>

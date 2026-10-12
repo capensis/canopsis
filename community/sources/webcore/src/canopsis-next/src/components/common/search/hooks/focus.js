@@ -10,7 +10,7 @@ export const useLastInputFocus = (key) => {
 
   const focusRegister = {
     register: focus => inputFocuses.push(focus),
-    unregister: focus => (inputFocuses = inputFocuses.filter(f => f !== focus)),
+    unregister: focus => inputFocuses = inputFocuses.filter(f => f !== focus),
     call: () => inputFocuses.at(-1)?.(),
   };
 

@@ -1,5 +1,5 @@
-import { flatten } from 'flat';
 import { isArray, isObject, zipObjectDeep } from 'lodash';
+import flatten from 'flat';
 
 import { uid } from '@/helpers/uid';
 
@@ -46,8 +46,9 @@ export const flattenErrorMap = (errors = {}, map = v => v) => {
  * @param {string} [valueKey = 'value']
  * @returns {{ key: string, [valueKey]: any }[]}
  */
-export const primitiveArrayToForm = (array, valueKey = 'value') =>
-  array.map(value => ({ [valueKey]: value, key: uid() }));
+export const primitiveArrayToForm = (array, valueKey = 'value') => (
+  array.map(value => ({ [valueKey]: value, key: uid() }))
+);
 
 /**
  * Convert form object to array with primitive values
@@ -56,8 +57,9 @@ export const primitiveArrayToForm = (array, valueKey = 'value') =>
  * @param {string} [valueKey = 'value']
  * @returns {Array}
  */
-export const formToPrimitiveArray = (array, valueKey = 'value') =>
-  (isArray(array) ? array : [array]).map(item => (isObject(item) ? item[valueKey] : item));
+export const formToPrimitiveArray = (array, valueKey = 'value') => (
+  (isArray(array) ? array : [array]).map(item => (isObject(item) ? item[valueKey] : item))
+);
 
 /**
  * Default item creator for primitive array
@@ -72,8 +74,7 @@ export const defaultPrimitiveArrayItemCreator = () => ({ value: '', key: uid() }
  * @param {InfosObject} infos
  * @return {Infos[]}
  */
-export const infosToArray = (infos = {}) =>
-  Object.entries(infos).map(([name, info]) => ({
-    name,
-    ...info,
-  }));
+export const infosToArray = (infos = {}) => Object.entries(infos).map(([name, info]) => ({
+  name,
+  ...info,
+}));

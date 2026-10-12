@@ -1,18 +1,15 @@
 import { isEqual } from 'lodash';
-import { mapActions, mapState } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
-
-import { useAlarmStore } from '@/stores/modules/alarm';
 
 import { mapIds } from '@/helpers/array';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 
-import { activeViewMixin } from '@/mixins/active-view';
+const { mapActions: mapAlarmsActions } = createNamespacedHelpers('alarm');
+const { mapGetters: mapAlarmDetailsGetters, mapActions: mapAlarmDetailsActions } = createNamespacedHelpers('alarm/details');
 
 export const widgetAlarmsSocketMixin = {
-  mixins: [activeViewMixin],
-
   props: {
     widget: {
       type: Object,
@@ -20,10 +17,8 @@ export const widgetAlarmsSocketMixin = {
     },
   },
   computed: {
-    ...mapState(useAlarmStore, {
-      allAlarmDetailsQueries(store) {
-        return store.getQueriesByWidgetId(this.widget._id);
-      },
+    ...mapAlarmDetailsGetters({
+      getAlarmDetailsQueries: 'getQueries',
     }),
 
     alarmsSocketRoom() {
@@ -34,21 +29,21 @@ export const widgetAlarmsSocketMixin = {
       return `${SOCKET_ROOMS.alarmDetails}/${this.widget._id}`;
     },
 
+    allAlarmDetailsQueries() {
+      return this.getAlarmDetailsQueries(this.widget._id);
+    },
+
     alarmDetailsSocketPayload() {
-      return this.allAlarmDetailsQueries.filter(Boolean).map(convertAlarmDetailsQueryToRequest);
+      return this.allAlarmDetailsQueries.map(convertAlarmDetailsQueryToRequest);
     },
 
     liveWatching() {
       return this.widget.parameters.liveWatching;
     },
-
-    editing() {
-      return this.activeViewEditing;
-    },
   },
   watch: {
     alarms(alarms, prevAlarms) {
-      if (!this.liveWatching || !this.visible) {
+      if (!this.liveWatching) {
         return;
       }
 
@@ -59,7 +54,7 @@ export const widgetAlarmsSocketMixin = {
     },
 
     alarmDetailsSocketPayload(payload, prevPayload) {
-      if (!this.liveWatching || this.editing || !this.visible) {
+      if (!this.liveWatching || this.editing) {
         return;
       }
 
@@ -79,35 +74,30 @@ export const widgetAlarmsSocketMixin = {
 
     liveWatching: 'toggleSubscription',
     visible: 'toggleSubscription',
-    editing: 'toggleSubscription',
   },
-  beforeUnmount() {
+  beforeDestroy() {
     this.leaveAlarmsSocketRoom();
     this.leaveAlarmDetailsSocketRoom();
   },
   methods: {
-    ...mapActions(useAlarmStore, {
+    ...mapAlarmsActions({
       updateAlarmInStore: 'updateItemInStore',
-      updateAlarmDetailsInStore: 'updateDetailsItemInStore',
     }),
 
-    handleAlarmDetailsSocketUpdate(alarmDetails) {
-      this.updateAlarmDetailsInStore({
-        widgetId: this.widget._id,
-        details: alarmDetails,
-      });
-    },
+    ...mapAlarmDetailsActions({
+      updateAlarmDetailsInStore: 'updateItemInStore',
+    }),
 
     joinToAlarmsSocketRoom(alarms) {
-      if (!alarms?.length) {
-        return;
-      }
-
-      this.$socket.join(this.alarmsSocketRoom, mapIds(alarms)).addListener(this.updateAlarmInStore);
+      this.$socket
+        .join(this.alarmsSocketRoom, mapIds(alarms))
+        .addListener(this.updateAlarmInStore);
     },
 
     leaveAlarmsSocketRoom() {
-      this.$socket.leave(this.alarmsSocketRoom).removeListener(this.updateAlarmInStore);
+      this.$socket
+        .leave(this.alarmsSocketRoom)
+        .removeListener(this.updateAlarmInStore);
     },
 
     joinToAlarmDetailsSocketRoom(payload) {
@@ -117,28 +107,30 @@ export const widgetAlarmsSocketMixin = {
 
       this.$socket
         .join(this.alarmDetailsSocketRoom, payload)
-        .addListener(this.handleAlarmDetailsSocketUpdate);
+        .addListener(this.updateAlarmDetailsInStore);
     },
 
     leaveAlarmDetailsSocketRoom() {
       this.$socket
         .leave(this.alarmDetailsSocketRoom)
-        .removeListener(this.handleAlarmDetailsSocketUpdate);
+        .removeListener(this.updateAlarmDetailsInStore);
     },
 
     toggleSubscription() {
-      this.leaveAlarmsSocketRoom();
-      this.leaveAlarmDetailsSocketRoom();
+      if (this.visible && this.liveWatching) {
+        this.joinToAlarmsSocketRoom(this.alarms);
 
-      if (!this.visible || !this.liveWatching) {
+        if (this.alarmDetailsSocketPayload.length) {
+          this.joinToAlarmDetailsSocketRoom(this.alarmDetailsSocketPayload);
+        } else {
+          this.leaveAlarmDetailsSocketRoom();
+        }
+
         return;
       }
 
-      this.joinToAlarmsSocketRoom(this.alarms);
-
-      if (this.alarmDetailsSocketPayload.length) {
-        this.joinToAlarmDetailsSocketRoom(this.alarmDetailsSocketPayload);
-      }
+      this.leaveAlarmsSocketRoom();
+      this.leaveAlarmDetailsSocketRoom();
     },
   },
 };

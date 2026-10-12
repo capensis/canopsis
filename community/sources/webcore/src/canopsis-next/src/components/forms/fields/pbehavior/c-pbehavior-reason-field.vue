@@ -1,40 +1,34 @@
 <template>
-  <c-lazy-search-field
-    :value="selectedItem"
+  <v-select
+    v-field="reason"
+    v-validate="rules"
+    :label="$t('common.reason')"
+    :loading="pending"
     :items="items"
-    :label="label || t('common.reason')"
-    :loading="wholePending"
-    :has-more="hasMoreItems"
+    :error-messages="errors.collect(name)"
     :name="name"
-    :required="required"
-    :disabled="disabled"
+    :return-object="returnObject"
     :clearable="clearable"
     item-text="name"
     item-value="_id"
-    autocomplete
-    return-object
-    @update:value="changeSelectedItems"
-    @fetch="fetchItems"
-    @fetch:more="fetchMoreItems"
-    @update:search="updateSearch"
   />
 </template>
 
 <script>
-import { toRef } from 'vue';
+import { MAX_LIMIT } from '@/constants';
 
-import { useLazySearch } from '@/hooks/form/lazy-search';
-import { useI18n } from '@/hooks/i18n';
-import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
+import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
 
 export default {
+  inject: ['$validator'],
+  mixins: [entitiesPbehaviorReasonMixin],
+  model: {
+    prop: 'reason',
+    event: 'input',
+  },
   props: {
-    modelValue: {
-      type: [String, Object],
-      default: '',
-    },
-    label: {
-      type: String,
+    reason: {
+      type: [Object, String],
       default: '',
     },
     name: {
@@ -42,10 +36,6 @@ export default {
       default: 'reason',
     },
     required: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
       type: Boolean,
       default: false,
     },
@@ -58,53 +48,33 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      items: [],
+      pending: false,
+    };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    async fetchList() {
+      this.pending = true;
 
-  emits: ['update:modelValue', 'update:selected-items'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { fetchPbehaviorReasonsListWithoutStore } = usePbehaviorReason();
-
-    const fetchHandler = ({ params }) =>
-      fetchPbehaviorReasonsListWithoutStore({
-        params: {
-          ...params,
-          with_hidden: true,
-        },
+      const { data: reasons } = await this.fetchPbehaviorReasonsListWithoutStore({
+        params: { limit: MAX_LIMIT },
       });
 
-    const {
-      selectedItem,
-      items,
-      wholePending,
-      hasMoreItems,
-      fetchItems,
-      fetchMoreItems,
-      changeSelectedItems,
-      updateSearch,
-    } = useLazySearch(
-      {
-        value: toRef(props, 'modelValue'),
-        idKey: '_id',
-        idParamsKey: 'ids',
-        fetchHandler,
-        returnObject: toRef(props, 'returnObject'),
-        attachValue: true,
-      },
-      emit,
-    );
-
-    return {
-      t,
-      selectedItem,
-      items,
-      wholePending,
-      hasMoreItems,
-      fetchItems,
-      fetchMoreItems,
-      changeSelectedItems,
-      updateSearch,
-    };
+      this.items = reasons;
+      this.pending = false;
+    },
   },
 };
 </script>

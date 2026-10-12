@@ -1,27 +1,33 @@
 <template>
-  <c-select
-    :model-value="value"
+  <v-select
+    v-field="value"
+    v-validate="rules"
     :items="types"
     :label="label || $t('common.type')"
     :name="name"
-    :required="required"
-    :hide-details="hideDetails"
-    class="entity-info-property-type-field"
-    item-title="text"
-    item-value="value"
+    :error-messages="errors.collect(name)"
     clearable
-    @update:model-value="$emit('update:value', $event)"
   />
 </template>
 
 <script>
 import { computed } from 'vue';
+import { Validator } from 'vee-validate';
 
 import { ENTITY_INFO_PROPERTY_TYPES, ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
 export default {
+  inject: {
+    $validator: {
+      default: new Validator(),
+    },
+  },
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Number,
@@ -39,32 +45,23 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['update:value'],
-
-  setup() {
+  setup(props) {
     const { t } = useI18n();
 
+    const rules = computed(() => ({
+      required: props.required,
+    }));
+
     const types = computed(() => Object.values(ENTITY_INFO_PROPERTY_TYPES).map(value => ({
-        text: t(ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS[value]),
-        value,
-      })),
-    );
+      text: t(ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS[value]),
+      value,
+    })));
 
     return {
+      rules,
       types,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.entity-info-property-type-field {
-  min-width: 200px;
-}
-</style>

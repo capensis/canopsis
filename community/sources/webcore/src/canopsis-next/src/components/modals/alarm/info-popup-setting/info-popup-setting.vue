@@ -1,44 +1,35 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ $t('modals.infoPopupSetting.title') }}</span>
       </template>
-
-      <template #text>
-        <c-layout justify="end">
-          <c-tooltip location="left">
-            <template #activator="{ props }">
-              <v-btn
-                color="primary"
-                size="small"
-                variant="outlined"
-                icon
-                v-bind="props"
-                @click="addPopup"
-              >
-                <v-icon>add</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('modals.infoPopupSetting.add') }}</span>
-          </c-tooltip>
-        </c-layout>
-
-        <c-layout column>
+      <template #text="">
+        <v-layout justify-end>
+          <v-btn
+            color="secondary"
+            fab
+            small
+            @click="addPopup"
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+        </v-layout>
+        <v-layout column>
           <v-card
             v-for="(popup, index) in form.popups"
-            :key="`${popup.column}-${index}`"
-            class="my-1 bg-secondary text-white"
-            variant="flat"
+            :key="index"
+            class="my-1"
+            color="secondary white--text"
+            flat
           >
             <v-card-title>
-              <c-layout justify="space-between" align="center">
+              <v-layout justify-space-between>
                 <div>{{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}</div>
-                <c-layout>
+                <div>
                   <v-btn
-                    size="small"
-                    variant="text"
                     icon
+                    small
                     @click="deletePopup(index)"
                   >
                     <v-icon color="error">
@@ -46,127 +37,114 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    size="small"
-                    variant="text"
                     icon
+                    small
                     @click="editPopup(index, popup)"
                   >
                     <v-icon color="primary">
                       edit
                     </v-icon>
                   </v-btn>
-                </c-layout>
-              </c-layout>
+                </div>
+              </v-layout>
             </v-card-title>
             <v-card-text>
-              <p>{{ $t('common.template', 1) }}:</p>
-              <c-textarea :model-value="popup.template" disabled />
+              <p>{{ $tc('common.template', 1) }}:</p>
+              <v-textarea
+                :value="popup.template"
+                disabled
+                dark
+              />
             </v-card-text>
           </v-card>
-        </c-layout>
+        </v-layout>
       </template>
-
-      <template #actions>
-        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :loading="isSubmitting"
-          :disabled="isSubmitting"
-          color="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
-import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+
+import ModalWrapper from '../../modal-wrapper.vue';
 
 export default {
   name: MODALS.infoPopupSetting,
+  components: { ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    const { infoPopups = [] } = this.modal.config;
 
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const formContext = useForm({
-      initialValues: {
-        form: {
-          popups: cloneDeep(config.value.infoPopups ?? []),
-        },
+    return {
+      form: {
+        popups: cloneDeep(infoPopups),
       },
-    });
-    const { handleSubmit, isSubmitting, model, values } = formContext;
-    const form = model('form');
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const addPopup = () => {
-      modals.show({
+    };
+  },
+  methods: {
+    addPopup() {
+      this.$modals.show({
         name: MODALS.addInfoPopup,
         config: {
-          columns: config.value.columns,
-          variables: config.value.variables,
-          action: popup => form.value.popups.push(popup),
+          columns: this.config.columns,
+          variables: this.config.variables,
+          action: popup => this.form.popups.push(popup),
         },
       });
-    };
+    },
 
-    const deletePopup = (index) => {
-      form.value.popups.splice(index, 1);
-    };
+    deletePopup(index) {
+      this.$delete(this.form.popups, index);
+    },
 
-    const editPopup = (index, popup) => {
-      modals.show({
+    editPopup(index, popup) {
+      this.$modals.show({
         name: MODALS.addInfoPopup,
         config: {
-          columns: config.value.columns,
-          variables: config.value.variables,
+          columns: this.config.columns,
+          variables: this.config.variables,
           popup,
           action: (editedPopup) => {
-            form.value.popups.splice(index, 1, editedPopup);
+            this.$set(this.form.popups, index, editedPopup);
           },
         },
       });
-    };
+    },
 
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(values.value.form.popups);
+    async submit() {
+      if (this.config.action) {
+        await this.config.action(this.form.popups);
+      }
 
-      closeModal();
-    });
-
-    useFormConfirmableCloseModal({
-      form,
-      submit,
-      close: closeModal,
-    });
-
-    return {
-      form,
-      isSubmitting,
-      addPopup,
-      deletePopup,
-      editPopup,
-      submit,
-      closeModal,
-    };
+      this.$modals.hide();
+    },
   },
 };
 </script>

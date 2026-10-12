@@ -1,14 +1,14 @@
 <template>
-  <c-layout class="mb-3 c-idle-rules-summary-row">
-    <div class="c-idle-rules-summary-row__label">
+  <v-layout class="mb-3 c-idle-rules-summary-row">
+    <v-flex class="c-idle-rules-summary-row--label">
       <span class="font-weight-bold">
         {{ label }}
       </span>
-    </div>
-    <div class="c-idle-rules-summary-row__value">
+    </v-flex>
+    <v-flex>
       <slot>{{ value }}</slot>
-    </div>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -26,14 +26,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.c-idle-rules-summary-row__label {
-  flex: 0 0 200px;
-  max-width: 200px;
-}
-
-.c-idle-rules-summary-row__value {
-  flex: 1 1 auto;
-  min-width: 0;
+<style lang="scss">
+.c-idle-rules-summary-row {
+  &--label {
+    max-width: 200px;
+  }
 }
 </style>

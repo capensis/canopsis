@@ -1,34 +1,35 @@
 <template>
-  <v-row class="mb-3" align="start" density="compact">
-    <v-col cols="4">
+  <v-layout
+    class="mb-3"
+    align-top
+  >
+    <v-flex xs5>
       <c-enabled-field
-        :model-value="periodicRefresh.enabled"
+        v-field="periodicRefresh.enabled"
         :label="label"
         hide-details
-        @update:model-value="updateEnabled"
+        @input="validateDuration"
       />
-    </v-col>
-
-    <v-col cols="8">
+    </v-flex>
+    <v-flex xs7>
       <c-duration-field
-        :duration="periodicRefresh"
+        v-field="periodicRefresh"
         :disabled="!periodicRefresh.enabled"
         :required="periodicRefresh.enabled"
         :name="name"
         :min="1"
-        @update:duration="updateModel"
       />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-/**
- * Field for editing view periodic refresh interval.
- *
- * @prop {Object} [periodicRefresh={}] - Periodic refresh form value.
- */
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'periodicRefresh',
+    event: 'input',
+  },
   props: {
     periodicRefresh: {
       type: Object,
@@ -43,21 +44,9 @@ export default {
       default: 'periodic_refresh',
     },
   },
-
-  emits: ['update:periodicRefresh'],
-
   methods: {
-    updateModel(periodicRefresh) {
-      this.$emit('update:periodicRefresh', periodicRefresh);
-    },
-
-    updateEnabled(enabled) {
-      this.updateModel({
-        ...this.periodicRefresh,
-        enabled,
-      });
-
-      this.$nextTick(() => this.$validator?.validate?.(`${this.name}.value`));
+    validateDuration() {
+      this.$nextTick(() => this.$validator.validate(`${this.name}.value`));
     },
   },
 };

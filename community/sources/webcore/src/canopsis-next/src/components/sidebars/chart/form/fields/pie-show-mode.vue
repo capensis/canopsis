@@ -1,11 +1,10 @@
 <template>
   <widget-settings-item :title="$t('settings.chart.sharesType')">
-    <c-radio-group
-      :model-value="modelValue"
+    <v-radio-group
+      v-field="value"
       :name="name"
       :label="label"
       class="mt-0"
-      @update:model-value="$emit('update:modelValue', $event)"
     >
       <v-radio
         v-for="showMode in showModes"
@@ -14,7 +13,7 @@
         :value="showMode.value"
         color="primary"
       />
-    </c-radio-group>
+    </v-radio-group>
   </widget-settings-item>
 </template>
 
@@ -25,9 +24,12 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       required: true,
     },
@@ -40,19 +42,16 @@ export default {
       default: 'show_mode',
     },
   },
-
-  emits: ['update:modelValue'],
-
   computed: {
     showModes() {
       return [
         {
           value: KPI_PIE_CHART_SHOW_MODS.numbers,
-          label: this.$t('common.number', 2),
+          label: this.$tc('common.number', 2),
         },
         {
           value: KPI_PIE_CHART_SHOW_MODS.percent,
-          label: this.$t('common.percent', 2),
+          label: this.$tc('common.percent', 2),
         },
       ];
     },

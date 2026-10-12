@@ -1,12 +1,15 @@
 <template>
-  <bar-chart :datasets="datasets" :options="sliChartOptions" :dark="$system.dark">
+  <bar-chart
+    :datasets="datasets"
+    :options="sliChartOptions"
+    :dark="$system.dark"
+  >
     <template #actions="{ chart }">
       <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
-        @export:csv="$emit('export:csv')"
-        @export:png="$emit('export:png', $event)"
+        v-on="$listeners"
       />
     </template>
   </bar-chart>
@@ -17,9 +20,9 @@ import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
   KPI_SLI_GRAPH_BAR_PERCENTAGE,
+  SAMPLINGS,
   KPI_SLI_GRAPH_DATA_TYPE,
   MAX_TIME_VALUE_BY_SAMPLING,
-  SAMPLINGS,
   TIME_UNITS_BY_SAMPLING,
 } from '@/constants';
 
@@ -32,12 +35,7 @@ import ChartExportActions from '@/components/common/chart/chart-export-actions.v
 
 export default {
   inject: ['$system'],
-
-  components: {
-    BarChart,
-    ChartExportActions,
-  },
-
+  components: { ChartExportActions, BarChart },
   props: {
     metrics: {
       type: Array,
@@ -64,9 +62,6 @@ export default {
       required: false,
     },
   },
-
-  emits: ['export:csv', 'export:png'],
-
   computed: {
     maxValueBySampling() {
       return MAX_TIME_VALUE_BY_SAMPLING[this.sampling];
@@ -93,46 +88,39 @@ export default {
     },
 
     datasets() {
-      const { downtime, maintenance, uptime } = this.metrics.reduce(
-        (acc, metric) => {
-          const x = metric.timestamp * 1000;
+      const { downtime, maintenance, uptime } = this.metrics.reduce((acc, metric) => {
+        const x = metric.timestamp * 1000;
 
-          acc.downtime.push({ x, y: this.convertValueBySamplingUnit(metric.downtime) });
-          acc.maintenance.push({ x, y: this.convertValueBySamplingUnit(metric.maintenance) });
-          acc.uptime.push({ x, y: this.convertValueBySamplingUnit(metric.uptime) });
+        acc.downtime.push({ x, y: this.convertValueBySamplingUnit(metric.downtime) });
+        acc.maintenance.push({ x, y: this.convertValueBySamplingUnit(metric.maintenance) });
+        acc.uptime.push({ x, y: this.convertValueBySamplingUnit(metric.uptime) });
 
-          return acc;
-        },
-        {
-          downtime: [],
-          maintenance: [],
-          uptime: [],
-        },
-      );
+        return acc;
+      }, {
+        downtime: [],
+        maintenance: [],
+        uptime: [],
+      });
 
-      return [
-        {
-          backgroundColor: colorToRgba(COLORS.kpi.uptime),
-          barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-          label: this.$t('common.uptime'),
-          order: 1,
-          data: uptime,
-        },
-        {
-          backgroundColor: colorToRgba(COLORS.kpi.downtime),
-          barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-          label: this.$t('common.downtime'),
-          order: 2,
-          data: downtime,
-        },
-        {
-          backgroundColor: colorToRgba(COLORS.kpi.maintenance),
-          barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
-          label: this.$t('common.maintenance'),
-          order: 3,
-          data: maintenance,
-        },
-      ];
+      return [{
+        backgroundColor: colorToRgba(COLORS.kpi.uptime),
+        barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
+        label: this.$t('common.uptime'),
+        order: 1,
+        data: uptime,
+      }, {
+        backgroundColor: colorToRgba(COLORS.kpi.downtime),
+        barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
+        label: this.$t('common.downtime'),
+        order: 2,
+        data: downtime,
+      }, {
+        backgroundColor: colorToRgba(COLORS.kpi.maintenance),
+        barPercentage: KPI_SLI_GRAPH_BAR_PERCENTAGE,
+        label: this.$t('common.maintenance'),
+        order: 3,
+        data: maintenance,
+      }];
     },
 
     sliChartOptions() {
@@ -191,7 +179,6 @@ export default {
       };
     },
   },
-
   methods: {
     getChartValueTickLabel(value) {
       return `${value}${this.unit}`;
@@ -212,6 +199,7 @@ export default {
 
     getChartTooltipLabel(tooltip) {
       const { raw, dataset } = tooltip;
+
       const label = dataset.label.toLowerCase();
 
       if (this.dataType === KPI_SLI_GRAPH_DATA_TYPE.percent) {

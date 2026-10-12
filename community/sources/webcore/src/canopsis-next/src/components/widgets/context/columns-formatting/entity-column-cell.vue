@@ -1,15 +1,15 @@
 <template>
-  <component
-    :is="component.is"
+  <div
     v-bind="component.bind"
-    v-on="componentOn"
+    :is="component.bind.is"
+    v-on="component.on"
   />
 </template>
 
 <script>
 import { get } from 'lodash';
 
-import { ENTITY_FIELDS, ENTITY_INFOS_TYPE } from '@/constants';
+import { ENTITY_INFOS_TYPE, ENTITY_FIELDS } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { hasStateSetting } from '@/helpers/entities/entity/entity';
@@ -26,11 +26,7 @@ export default {
     EntityColumnPbehaviorInfo,
     EntityColumnState,
   },
-
   mixins: [widgetColumnsFiltersMixin],
-
-  emits: ['click:state'],
-
   props: {
     entity: {
       type: Object,
@@ -40,12 +36,15 @@ export default {
       type: Object,
       required: true,
     },
+    columnsFilters: {
+      type: Array,
+      default: () => [],
+    },
     showRootCauseByStateClick: {
       type: Boolean,
       default: false,
     },
   },
-
   computed: {
     columnsFiltersMap() {
       return this.columnsFilters.reduce((acc, { column, filter, attributes = [] }) => {
@@ -75,8 +74,8 @@ export default {
 
     stateCellProperties() {
       const component = {
-        is: EntityColumnState,
         bind: {
+          is: 'entity-column-state',
           type: ENTITY_INFOS_TYPE.state,
           value: this.value,
         },
@@ -96,41 +95,42 @@ export default {
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
         enabled: {
-          is: 'c-enabled',
           bind: {
+            is: 'c-enabled',
             value: this.value,
           },
         },
         idle_since: {
-          is: 'c-no-events-icon',
           bind: {
+            is: 'c-no-events-icon',
             value: Number(this.value),
             top: true,
             color: 'error',
           },
         },
         ko_events: {
-          is: EntityColumnEventStatistics,
           bind: {
+            is: 'entity-column-event-statistics',
             entity: this.entity,
           },
         },
         ok_events: {
-          is: EntityColumnEventStatistics,
           bind: {
+            is: 'entity-column-event-statistics',
             entity: this.entity,
           },
         },
         pbehavior_info: {
-          is: EntityColumnPbehaviorInfo,
           bind: {
+            is: 'entity-column-pbehavior-info',
             pbehaviorInfo: this.entity.pbehavior_info,
           },
         },
         state: this.stateCellProperties,
         links: {
-          is: 'c-links-chips',
           bind: {
+            is: 'c-links-chips',
+
             links: this.entity.links,
             onlyIcon: this.column.onlyIcon,
             inlineCount: this.column.inlineLinksCount,
@@ -148,8 +148,9 @@ export default {
         const category = this.column.value.replace('links.', '');
 
         return {
-          is: 'c-links-chips',
           bind: {
+            is: 'c-links-chips',
+
             category,
             links: this.entity.links,
             onlyIcon: this.column.onlyIcon,
@@ -159,15 +160,11 @@ export default {
       }
 
       return {
-        is: 'c-ellipsis',
         bind: {
+          is: 'c-ellipsis',
           text: String(this.value),
         },
       };
-    },
-
-    componentOn() {
-      return this.component.on ?? {};
     },
   },
 };

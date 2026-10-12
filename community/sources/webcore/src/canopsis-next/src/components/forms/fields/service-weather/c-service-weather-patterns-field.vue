@@ -1,6 +1,6 @@
 <template>
   <pattern-editor-field
-    :patterns="patterns"
+    v-field="patterns"
     :disabled="disabled"
     :name="name"
     :required="required"
@@ -9,23 +9,22 @@
     :with-type="withType"
     :counter="counter"
     class="c-service-weather-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
   />
 </template>
 
 <script>
 import { keyBy, merge } from 'lodash';
-import { computed } from 'vue';
 
-import { ALARM_STATES, PATTERN_OPERATORS, SERVICE_WEATHER_PATTERN_FIELDS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
+import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ALARM_STATES } from '@/constants';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
   components: { PatternEditorField },
-
+  model: {
+    prop: 'patterns',
+    event: 'input',
+  },
   props: {
     patterns: {
       type: Object,
@@ -56,63 +55,77 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:patterns', 'update:value'],
-
-  setup(props) {
-    const { t } = useI18n();
-
-    const availableServiceWeatherAttributes = computed(() => {
-      const greyOptions = {
-        operators: [PATTERN_OPERATORS.isGrey, PATTERN_OPERATORS.isNotGrey],
+  computed: {
+    greyOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.isGrey,
+          PATTERN_OPERATORS.isNotGrey,
+        ],
       };
+    },
 
-      const stateOptions = {
+    stateOptions() {
+      return {
         operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: ALARM_STATES.ok,
         valueField: {
           is: 'c-alarm-state-field',
         },
       };
+    },
 
-      const iconOptions = {
+    iconOptions() {
+      return {
         operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         valueField: {
           is: 'c-service-weather-icon-field',
         },
       };
+    },
 
-      const entityAttributes = [
+    entityAttributes() {
+      return [
         {
-          text: t('serviceWeather.grey'),
+          text: this.$t('serviceWeather.grey'),
           value: SERVICE_WEATHER_PATTERN_FIELDS.grey,
-          options: greyOptions,
+          options: this.greyOptions,
         },
         {
-          text: t('serviceWeather.primaryIcon'),
+          text: this.$t('serviceWeather.primaryIcon'),
           value: SERVICE_WEATHER_PATTERN_FIELDS.primaryIcon,
-          options: iconOptions,
+          options: this.iconOptions,
         },
         {
-          text: t('serviceWeather.secondaryIcon'),
+          text: this.$t('serviceWeather.secondaryIcon'),
           value: SERVICE_WEATHER_PATTERN_FIELDS.secondaryIcon,
-          options: iconOptions,
+          options: this.iconOptions,
         },
         {
-          text: t('common.state'),
+          text: this.$t('common.state'),
           value: SERVICE_WEATHER_PATTERN_FIELDS.state,
-          options: stateOptions,
+          options: this.stateOptions,
         },
       ];
+    },
 
-      return Object.values(
-        merge({}, keyBy(entityAttributes, 'value'), keyBy(props.attributes, 'value')),
+    availableAttributesByValue() {
+      return keyBy(this.entityAttributes, 'value');
+    },
+
+    externalAttributesByValue() {
+      return keyBy(this.attributes, 'value');
+    },
+
+    availableServiceWeatherAttributes() {
+      const mergedAttributes = merge(
+        {},
+        this.availableAttributesByValue,
+        this.externalAttributesByValue,
       );
-    });
 
-    return {
-      availableServiceWeatherAttributes,
-    };
+      return Object.values(mergedAttributes);
+    },
   },
 };
 </script>

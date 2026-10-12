@@ -1,22 +1,43 @@
 <template>
   <div>
     <template v-if="source">
-      <c-layout v-for="field in fields" :key="field" align="center">
-        <v-chip class="chip-small" color="info">
+      <v-layout
+        v-for="field in fields"
+        :key="field"
+      >
+        <v-chip
+          class="chip-small va-middle"
+          color="info"
+          text-color="white"
+        >
           <span>{{ field }}</span>
         </v-chip>
-        <v-icon>arrow_right_alt</v-icon>
-        <v-chip v-show="source[field]" class="chip-small" color="warning">
+        <v-icon class="va-middle">
+          arrow_right_alt
+        </v-icon>
+        <v-chip
+          v-show="source[field]"
+          class="chip-small va-middle"
+          color="warning"
+          text-color="white"
+        >
           <span>{{ source[field] }}</span>
         </v-chip>
-      </c-layout>
+      </v-layout>
     </template>
     <template v-else>
-      <c-layout v-for="field in fields" :key="field" align="center">
-        <v-chip class="chip-small" color="info">
+      <v-layout
+        v-for="field in fields"
+        :key="field"
+      >
+        <v-chip
+          class="chip-small va-middle"
+          color="info"
+          text-color="white"
+        >
           <span>{{ field }}</span>
         </v-chip>
-      </c-layout>
+      </v-layout>
     </template>
   </div>
 </template>
@@ -37,16 +58,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chip-small {
-  height: 20px;
-
-  :deep(.v-chip__content) {
-    padding: 0 5px;
+  .va-middle {
+    vertical-align: middle;
   }
 
-  span {
-    font-size: 0.75em;
-    font-weight: 500;
+  .chip-small {
+    height: 20px;
+
+    & ::v-deep .v-chip__content {
+      padding: 0 5px;
+    }
+
+    span {
+      font-size: .75em;
+      font-weight: 500;
+    }
   }
-}
 </style>

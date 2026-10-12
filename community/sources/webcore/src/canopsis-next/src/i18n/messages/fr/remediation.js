@@ -53,8 +53,7 @@ export default {
     repeatTriggers: 'Répéter les déclencheurs',
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui/Non',
-      enabledRepeatTriggerTooltip:
-        'Répéter lors du déclenchement si l\'exécution précédente\na échoué (résultat - état de l\'alarme non OK)',
+      enabledRepeatTriggerTooltip: 'Répéter lors du déclenchement si l\'exécution précédente\na échoué (résultat - état de l\'alarme non OK)',
     },
     table: {
       rating: 'Évaluation',
@@ -71,7 +70,7 @@ export default {
   configuration: {
     usingConfiguration: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     host: 'Hôte',
-    clientId: 'ID client',
+    massRemove: 'Supprimer les configurations sélectionnées',
   },
 
   instructionExecute: {
@@ -86,8 +85,7 @@ export default {
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
-      connectionError:
-        'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
       wasAborted: '{instructionName} a été abandonnée',
       wasPaused: 'La consigne {instructionName} a été mise en pause.',
       wasFinished: 'La consigne {instructionName} s\'est terminée.',
@@ -121,8 +119,7 @@ export default {
     },
     stepsTitles: {
       [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual]: {
-        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]:
-          'L\'étape {name} est en cours d\'exécution',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]: 'L\'étape {name} est en cours d\'exécution',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: 'L\'étape {name} est terminée',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: 'L\'étape {name} a échoué',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: 'L\'étape {name} est abandonnée',
@@ -208,15 +205,15 @@ export default {
     jobId: 'Identifiant de la tâche',
     addJobs: 'Ajouter {count} tâche | Ajouter {count} tâches',
     usingJob: 'La tâche ne peut être supprimée, car elle est en cours d\'utilisation',
+    massRemove: 'Supprimer les tâches sélectionnées',
     query: 'Requête',
     multipleExecutions: 'Autoriser l\'exécution parallèle',
     jobWaitInterval: 'Intervalle d\'attente des tâches',
     addPayload: 'Ajouter un payload',
     deletePayload: 'Supprimer le payload',
-    payloadHelp:
-      '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i>' +
-      '<pre>{\'{\'}\n  resource: "{\'{{ .Alarm.Value.Resource }}\'}",\n  entity: "{\'{{ .Entity.ID }}\'}"\n{\'}\'}</pre>',
+    payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     errors: {
       invalidJSON: 'JSON non valide',
     },

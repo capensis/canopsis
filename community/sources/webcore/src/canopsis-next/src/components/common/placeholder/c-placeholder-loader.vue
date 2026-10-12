@@ -1,6 +1,9 @@
-<template>
-  <div :style="{ height: `${height}px` }" class="c-placeholder-loader">
-    <div class="c-placeholder-loader__background" />
+<template functional>
+  <div
+    :style="{ height: `${props.height}px` }"
+    class="placeholder"
+  >
+    <div class="placeholder__background" />
   </div>
 </template>
 
@@ -16,29 +19,29 @@ export default {
 </script>
 
 <style lang="scss">
-@keyframes c-placeholder-loader-glow {
+@keyframes placeholder-glow {
   50% {
     opacity: 1;
   }
 }
 
-.c-placeholder-loader {
+.placeholder {
   --c-placeholder-loader-background: darkgray;
 
+  width: 100%;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
-  width: 100%;
 
   &__background {
-    position: relative;
+    opacity: .4;
+    transform: translate3d(-50%, -50%, 0);
     top: 50%;
     left: 50%;
     height: 86%;
+    position: relative;
     background: var(--c-placeholder-loader-background);
-    opacity: .4;
-    transform: translate3d(-50%, -50%, 0);
   }
 }
 </style>

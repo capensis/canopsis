@@ -1,33 +1,32 @@
 <template>
   <widget-settings-item :title="$t('settings.filters')">
-    <c-layout gap="2" column>
+    <v-layout column>
       <filter-selector
         v-if="!hideSelector"
-        :model-value="modelValue"
+        v-field="value"
         :label="$t('filter.selector.defaultFilter')"
         :filters="filters"
         hide-multiply
-        @update:model-value="$emit('update:modelValue', $event)"
       />
-
       <field-filters-list
         v-bind="listProps"
         :filters="filters"
         :addable="addable"
         :editable="editable"
-        @update:filters="updateFilters"
+        @input="updateFilters"
       />
-    </c-layout>
+    </v-layout>
   </widget-settings-item>
 </template>
 
 <script>
 import { pick } from 'lodash';
 
-import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { formBaseMixin } from '@/mixins/form';
 
-import FieldFiltersList from './filters-list.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FieldFiltersList from '@/components/sidebars/form/fields/filters-list.vue';
 
 export default {
   components: {
@@ -35,13 +34,9 @@ export default {
     FilterSelector,
     FieldFiltersList,
   },
-
+  mixins: [formBaseMixin],
   props: {
     widgetId: {
-      type: String,
-      required: false,
-    },
-    widgetType: {
       type: String,
       required: false,
     },
@@ -49,7 +44,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    modelValue: {
+    value: {
       type: String,
       default: null,
     },
@@ -90,9 +85,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:modelValue', 'update:filters'],
-
   computed: {
     listProps() {
       return pick(this, [
@@ -102,16 +94,13 @@ export default {
         'withServiceWeather',
         'entityTypes',
         'entityCountersType',
-        'widgetId',
-        'widgetType',
       ]);
     },
   },
-
   methods: {
     updateFilters(filters) {
-      if (this.modelValue && !filters.some(filter => filter._id === this.modelValue)) {
-        this.$emit('update:modelValue', null);
+      if (this.value && !filters.some(filter => filter._id === this.value)) {
+        this.updateModel(null);
       }
 
       this.$emit('update:filters', filters);
