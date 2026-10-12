@@ -1,0 +1,322 @@
+package view
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/binding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"github.com/gin-gonic/gin"
+)
+
+type API interface {
+	Create(c *gin.Context)
+	Get(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
+	Copy(c *gin.Context)
+	UpdatePositions(c *gin.Context)
+	Import(c *gin.Context)
+	Export(c *gin.Context)
+}
+
+type api struct {
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder response.ErrorResponder
+}
+
+func NewApi(
+	store Store,
+	enforcer security.Enforcer,
+	errorResponder response.ErrorResponder,
+) API {
+	return &api{
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
+	}
+}
+
+// Get
+// @Success 200 {object} Response
+func (a *api) Get(c *gin.Context) {
+	view, err := a.store.GetOneBy(c, c.Param("id"))
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if view == nil {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, view)
+}
+
+// Create
+// @Param body body EditRequest true "body"
+// @Success 201 {object} Response
+func (a *api) Create(c *gin.Context) {
+	request := EditRequest{}
+	if err := binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	view, err := a.store.Insert(c, request, true)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.JSON(http.StatusCreated, view)
+}
+
+// Update
+// @Param body body EditRequest true "body"
+// @Success 200 {object} Response
+func (a *api) Update(c *gin.Context) {
+	request := EditRequest{
+		ID: c.Param("id"),
+	}
+
+	if err := binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	view, err := a.store.Update(c, request)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if view == nil {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, view)
+}
+
+func (a *api) Delete(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if !ok {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// Copy
+// @Param body body EditRequest true "body"
+// @Success 201 {object} Response
+func (a *api) Copy(c *gin.Context) {
+	request := EditRequest{}
+	if err := binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	view, err := a.store.Copy(c, c.Param("id"), request)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if view == nil {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.JSON(http.StatusCreated, view)
+}
+
+// UpdatePositions
+// @Param body body []EditPositionItemRequest true "body"
+func (a *api) UpdatePositions(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	request := EditPositionRequest{}
+
+	if err := binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	for _, item := range request.Items {
+		for _, view := range item.Views {
+			ok, err := a.enforcer.Enforce(userID, view, model.PermissionUpdate)
+			if err != nil {
+				a.errorResponder.Respond(c, err)
+
+				return
+			}
+			if !ok {
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
+				return
+			}
+		}
+	}
+
+	ok, err := a.store.UpdatePositions(c, request)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	if !ok {
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// Import
+// @Param body body []ImportItemRequest true "body"
+func (a *api) Import(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	request := ImportRequest{}
+
+	if err := binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	for _, group := range request.Items {
+		if group.Views == nil {
+			continue
+		}
+		for _, view := range group.Views {
+			if view.ID == "" {
+				continue
+			}
+			ok, err := a.enforcer.Enforce(userID, view.ID, model.PermissionUpdate)
+			if err != nil {
+				a.errorResponder.Respond(c, err)
+
+				return
+			}
+			if !ok {
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
+				return
+			}
+		}
+	}
+
+	err = a.store.Import(c, request, userID)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// Export
+// @Param body body ExportRequest true "body"
+// @Success 200 {object} ExportResponse
+func (a *api) Export(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	request := ExportRequest{}
+
+	if err := binding.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	for _, group := range request.Groups {
+		for _, view := range group.Views {
+			ok, err := a.enforcer.Enforce(userID, view, model.PermissionRead)
+			if err != nil {
+				a.errorResponder.Respond(c, err)
+
+				return
+			}
+			if !ok {
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
+				return
+			}
+		}
+	}
+	for _, view := range request.Views {
+		ok, err := a.enforcer.Enforce(userID, view, model.PermissionRead)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
+			return
+		}
+		if !ok {
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
+			return
+		}
+	}
+
+	response, err := a.store.Export(c, request)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fmt.Sprintf("views-%s.json", time.Now().Format("2006-01-02T15-04-05"))))
+
+	c.JSON(http.StatusOK, response)
+}
