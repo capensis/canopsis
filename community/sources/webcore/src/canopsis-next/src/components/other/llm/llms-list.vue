@@ -31,7 +31,9 @@
       <span v-if="item.thinking_level && $te(`llm.thinkingLevels.${item.thinking_level}`)">
         {{ $t(`llm.thinkingLevels.${item.thinking_level}`) }}
       </span>
-      <span v-else>{{ item.thinking_level }}</span>
+      <span v-else>
+        {{ item.thinking_level }}
+      </span>
     </template>
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />

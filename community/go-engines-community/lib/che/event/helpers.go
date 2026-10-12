@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -85,6 +86,55 @@ func updateMetaAlarmInfos(
 	}
 
 	return nil
+}
+
+// runEventFilters runs the event filter service for the event,
+// records its metrics on res and handles the asynchronous external-data suspension uniformly across processors.
+// The returned bool is true when processing was suspended to fetch external data:
+// res.EventFilterResult is then populated for the resume and the caller must stop and return res as is.
+// The input result carries the accumulated state when an event is being resumed.
+func runEventFilters(
+	ctx context.Context,
+	service eventfilter.Service,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
+	event *types.Event,
+	res *ProcessorResult,
+	partialRes *ProcessorResult,
+) (eventfilter.ServiceResult, bool, error) {
+	input := eventfilter.ServiceResult{}
+	var preFilterEvent *types.Event
+	if partialRes != nil {
+		input = partialRes.EventFilterResult
+		preFilterEvent = partialRes.PreFilterEvent
+	} else {
+		b, err := encoder.Encode(event)
+		if err != nil {
+			return eventfilter.ServiceResult{}, false, err
+		}
+
+		err = decoder.Decode(b, &preFilterEvent)
+		if err != nil {
+			return eventfilter.ServiceResult{}, false, err
+		}
+	}
+
+	efr, err := service.ProcessEvent(ctx, event, input)
+	if err != nil {
+		return efr, false, err
+	}
+
+	res.EventMetric.ExecutedEnrichRules = efr.ExecutedEnrichRuleCount
+	res.EventMetric.ExternalRequests = efr.ExternalRequestCount
+
+	if efr.ExternalDataRequest != nil {
+		res.EventFilterResult = efr
+		res.PreFilterEvent = preFilterEvent
+
+		return efr, true, nil
+	}
+
+	return efr, false, nil
 }
 
 func logInfosUpdate(metricsSender metrics.EntityInfosUpdateSender, entityID string, updatedInfos map[string]eventfilter.UpdatedValue) {

@@ -17,6 +17,7 @@
         :enablable="updatable"
         :disablable="updatable"
         link-rule
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
@@ -39,12 +40,12 @@
           type="duplicate"
           @click="$emit('duplicate', item)"
         />
+        <c-db-export-btn :id="item._id" link-rule />
         <c-action-btn
           v-if="removable"
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <c-db-export-btn :id="item._id" link-rule />
       </v-layout>
     </template>
   </c-advanced-data-table>

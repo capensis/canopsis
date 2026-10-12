@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"strings"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -214,7 +215,7 @@ func runWithReconnect(
 
 	spawnWorkers := func(d <-chan amqp.Delivery, generation uint64) {
 		for i := 0; i < workers; i++ {
-			g.Go(newWorker(gctx, d, ackCh, process, generation))
+			g.Go(newWorker(gctx, d, ackCh, process, generation, logger))
 		}
 	}
 
@@ -285,7 +286,14 @@ loop:
 	return errors.Join(setupErr, g.Wait())
 }
 
-func newWorker(ctx context.Context, deliveries <-chan amqp.Delivery, ackCh chan ackOp, process ProcessFunc, generation uint64) func() error {
+func newWorker(
+	ctx context.Context,
+	deliveries <-chan amqp.Delivery,
+	ackCh chan ackOp,
+	process ProcessFunc,
+	generation uint64,
+	logger zerolog.Logger,
+) func() error {
 	return func() (resErr error) {
 		defer func() {
 			if r := recover(); r != nil {
@@ -295,7 +303,8 @@ func newWorker(ctx context.Context, deliveries <-chan amqp.Delivery, ackCh chan 
 					err = fmt.Errorf("%v", r)
 				}
 
-				resErr = fmt.Errorf("consumer recovered from panic: %w", err)
+				logger.Err(err).Msgf("consume worker recovered from panic\n%s\n", debug.Stack())
+				resErr = fmt.Errorf("consume worker recovered from panic: %w", err)
 			}
 		}()
 

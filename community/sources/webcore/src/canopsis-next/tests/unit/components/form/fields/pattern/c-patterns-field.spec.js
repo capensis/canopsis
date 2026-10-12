@@ -22,6 +22,7 @@ import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 import CPatternsField from '@/components/forms/fields/pattern/c-patterns-field.vue';
 
 const stubs = {
+  'c-label': true,
   'c-collapse-panel': true,
   'c-alarm-patterns-field': true,
   'c-service-weather-patterns-field': true,

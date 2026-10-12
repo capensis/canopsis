@@ -7,7 +7,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-var ErrNoRule = errors.New("rule not found")
 var ErrNotMatchedAlarm = errors.New("alarms aren't matched to rule")
 
 type Generator interface {

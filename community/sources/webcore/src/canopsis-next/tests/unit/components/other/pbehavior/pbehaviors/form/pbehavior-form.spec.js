@@ -1,11 +1,13 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 const stubs = {
   'c-enabled-field': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
   'pbehavior-general-form': true,
   'pbehavior-patterns-form': true,
 };
@@ -30,6 +32,20 @@ describe('pbehavior-form', () => {
         $system: {},
       },
     },
+  });
+
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          name: Faker.datatype.string(),
+          patterns: {},
+          comments: [],
+        },
+      },
+    });
+
+    expect(selectPbehaviorGeneralForm(wrapper).exists()).toBe(true);
   });
 
   test('General options updated after trigger general pbehavior form', () => {
@@ -103,7 +119,6 @@ describe('pbehavior-form', () => {
           patterns: {},
           comments: [],
         },
-        noPattern: true,
         noEnabled: true,
         noComments: true,
         withStartOnTrigger: true,

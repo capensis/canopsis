@@ -140,8 +140,7 @@ func (p *ldapProvider) validateUser(
 	err = l.Bind(entry.DN, password)
 	if err != nil {
 		// Return nil if password verification failed.
-		var ldapErr *ldap.Error
-		if errors.As(err, &ldapErr) {
+		if ldapErr, ok := errors.AsType[*ldap.Error](err); ok {
 			if ldapErr.ResultCode == ldap.LDAPResultInvalidCredentials {
 				return nil, nil
 			}

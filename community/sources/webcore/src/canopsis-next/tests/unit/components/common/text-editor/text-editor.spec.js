@@ -11,6 +11,7 @@ import TextEditor from '@/components/common/text-editor/text-editor.vue';
 jest.mock('@/plugins/vuetify/components/icons', () => ({}));
 
 const stubs = {
+  'c-label': true,
   'variables-menu': true,
 };
 

@@ -1,6 +1,6 @@
 <template>
-  <v-layout align-center>
-    <template v-if="splitted">
+  <v-layout class="gap-3" justify-center column>
+    <v-layout v-if="splitted" align-center justify-space-between>
       <v-btn
         key="splitted"
         :disabled="disabled"
@@ -8,7 +8,7 @@
         small
         @click="showColorPickerModal"
       >
-        {{ label }}
+        {{ displayLabel }}
       </v-btn>
       <div
         :style="style"
@@ -16,44 +16,37 @@
       >
         {{ color }}
       </div>
-    </template>
-    <v-btn
-      v-else
-      key="not-splitted"
-      :style="style"
-      :disabled="disabled"
-      @click="showColorPickerModal"
+    </v-layout>
+    <v-layout
+      :justify-end="justifyEnd"
+      class="color-picker__button__wrapper"
+      align-center
     >
-      {{ label }}
-    </v-btn>
-    <v-messages
-      v-if="errors.has(name)"
-      :value="errors.collect(name)"
-      color="error"
-    />
+      <v-btn
+        :style="style"
+        :disabled="disabled"
+        @click="showColorPickerModal"
+      >
+        {{ displayLabel }}
+      </v-btn>
+    </v-layout>
   </v-layout>
 </template>
 
 <script>
-import { Validator } from 'vee-validate';
+import { computed, watch, nextTick, onBeforeUnmount } from 'vue';
 
 import { MODALS } from '@/constants';
 
 import { getMostReadableTextColor } from '@/helpers/color';
 
-import { formBaseMixin } from '@/mixins/form';
-import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+import { useValidator } from '@/hooks/validator/validator';
 
 export default {
-  inject: {
-    $validator: {
-      default: new Validator(),
-    },
-  },
-  mixins: [
-    formBaseMixin,
-    validationAttachRequiredMixin,
-  ],
   model: {
     prop: 'color',
     event: 'input',
@@ -61,9 +54,7 @@ export default {
   props: {
     label: {
       type: String,
-      default() {
-        return this.$t('common.selectColor');
-      },
+      required: false,
     },
     color: {
       type: String,
@@ -89,49 +80,65 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    style() {
-      return {
-        backgroundColor: this.color,
-        color: getMostReadableTextColor(this.color, { level: 'AA', size: 'large' }),
-      };
+    justifyEnd: {
+      type: Boolean,
+      default: false,
     },
   },
-  watch: {
-    required: {
-      immediate: true,
-      handler(required) {
-        if (required && !this.disabled) {
-          this.attachRequiredRule();
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateModel } = useModelField(props, emit);
+    const modals = useModals();
+    const validator = useValidator();
+    const { errors } = validator;
+    const { attachRequiredRule, detachRequiredRule } = useValidationAttachRequired(props.name);
 
-          return;
-        }
+    const displayLabel = computed(() => props.label ?? t('common.selectColor'));
 
-        this.detachRequiredRule();
-      },
-    },
-  },
-  beforeDestroy() {
-    this.detachRequiredRule();
-  },
-  methods: {
-    showColorPickerModal() {
-      this.$modals.show({
+    const style = computed(() => ({
+      backgroundColor: props.color,
+      color: getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
+      ...(errors.has(props.name) && { outline: '2px solid var(--v-error-base)' }),
+    }));
+
+    /**
+     * Opens the color picker modal for the current value. On confirm, emits the new color and
+     * re-validates the field when it is required.
+     */
+    const showColorPickerModal = () => {
+      modals.show({
         name: MODALS.colorPicker,
         config: {
-          color: this.color,
-          type: this.type,
-          action: (color) => {
-            this.updateModel(color);
+          color: props.color,
+          type: props.type,
+          action: (newColor) => {
+            updateModel(newColor);
 
-            if (this.required) {
-              this.$nextTick(() => this.$validator.validate(this.name));
+            if (props.required) {
+              nextTick(() => validator.validate(props.name));
             }
           },
         },
       });
-    },
+    };
+
+    watch(() => props.required, (required) => {
+      if (required && !props.disabled) {
+        attachRequiredRule(() => props.color);
+
+        return;
+      }
+
+      detachRequiredRule();
+    }, { immediate: true });
+
+    onBeforeUnmount(detachRequiredRule);
+
+    return {
+      displayLabel,
+      style,
+      showColorPickerModal,
+    };
   },
 };
 </script>

@@ -6,6 +6,7 @@
   >
     <template #activator="{ on }">
       <v-btn
+        :small="small"
         icon
         v-on="on"
       >
@@ -56,6 +57,10 @@ export default {
     actions: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {

@@ -1,88 +1,76 @@
 <template>
-  <v-tabs
-    v-model="activeTab"
-    slider-color="primary"
-    fixed-tabs
-  >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
-    <v-tab :class="{ 'error--text': hasPatternsError }">
-      {{ $tc('common.pattern', 2) }}
-    </v-tab>
+  <v-layout class="gap-3" column>
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="disabledCommon"
+      with-background
+    />
 
-    <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
+    <c-form-general-patterns-tabs
+      v-field="form"
+      :rule-id="ruleId"
+      :type="type"
+      :additional-label="additionalLabel"
+    >
+      <template #general="{ setRef, templateVars }">
+        <remediation-instruction-general-form
+          v-field="form"
+          :ref="setRef"
+          :disabled="disabled"
+          :disabled-common="disabledCommon"
+          :is-new="isNew"
+          :required-approve="requiredApprove"
+          :template-vars="templateVars"
+        />
+      </template>
 
-    <v-tab-item eager>
-      <remediation-instruction-general-form
-        v-field="form"
-        ref="generalElement"
-        :disabled="disabled"
-        :is-new="isNew"
-        :required-approve="requiredApprove"
-        :template-vars="templateVars"
-        class="mt-3"
-      />
-    </v-tab-item>
-    <v-tab-item eager>
-      <remediation-instruction-patterns-form
-        v-field="form.patterns"
-        ref="patternsElement"
-        class="mt-3"
-      />
-    </v-tab-item>
-    <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
-      <template-testing-test-variables
-        :general-form="form"
-        :variables-fields="variablesFields"
-        :template-vars="templateVars"
-        :rule-id="ruleId"
-        :type="type"
-        :active="isActiveTestingTab"
-      />
-    </v-tab-item>
-  </v-tabs>
+      <template #additional="{ setRef, templateVars }">
+        <div :ref="setRef">
+          <remediation-instruction-steps-form
+            v-if="isManualType"
+            v-field="form.steps"
+            :disabled="disabled"
+            :template-vars="templateVars"
+            class="mt-3"
+          />
+          <remediation-instruction-jobs-form
+            v-else
+            v-field="form.jobs"
+            :disabled="disabled"
+            class="mt-3"
+          />
+        </div>
+      </template>
+
+      <template #patterns="{ setRef }">
+        <remediation-instruction-patterns-form
+          v-field="form.patterns"
+          :ref="setRef"
+        />
+      </template>
+    </c-form-general-patterns-tabs>
+  </v-layout>
 </template>
 
 <script>
-import {
-  computed,
-  ref,
-  toRef,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { computed } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+import { TEMPLATE_TESTING_TEST_TYPES, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
-import { useTemplateVarsList } from '@/hooks/vars/template';
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
-
-import {
-  useTestVariablesTabData,
-} from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
-
-import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
-import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
+import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
 import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';
-
-const REMEDIATION_INSTRUCTION_FORM_TABS = {
-  general: 0,
-  patterns: 1,
-  testing: 2,
-};
+import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
+import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    TemplateTestingTestVariables,
-    TemplateTestingTestVariablesTab,
-
     RemediationInstructionGeneralForm,
     RemediationInstructionPatternsForm,
+    RemediationInstructionStepsForm,
+    RemediationInstructionJobsForm,
   },
   model: {
     prop: 'form',
@@ -114,73 +102,20 @@ export default {
       required: false,
     },
   },
-  setup(props, { emit }) {
-    const activeTab = ref(REMEDIATION_INSTRUCTION_FORM_TABS.general);
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.instruction;
 
-    const hasGeneralError = ref(false);
-    const hasPatternsError = ref(false);
+    const { t, tc } = useI18n();
 
-    const generalElement = ref(null);
-    const patternsElement = ref(null);
+    const isManualType = computed(() => props.form.type === REMEDIATION_INSTRUCTION_TYPES.manual);
 
-    const type = ref(TEMPLATE_TESTING_TEST_TYPES.instruction);
-
-    const isActiveTestingTab = computed(() => activeTab.value === REMEDIATION_INSTRUCTION_FORM_TABS.testing);
-
-    const { vars: templateVars, fetchList } = useTemplateVarsList({
-      type,
-      form: toRef(props, 'form'),
-    });
-
-    const {
-      hasAccess,
-
-      items: variablesFields,
-      isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesTabData(props, type, emit);
-
-    let unwatchGeneralTabErrors = null;
-    let unwatchPatternsTabErrors = null;
-
-    const watchTabsErrors = () => {
-      unwatchGeneralTabErrors = watch(() => generalElement.value?.hasAnyError, (value) => {
-        hasGeneralError.value = value;
-      });
-
-      unwatchPatternsTabErrors = watch(() => patternsElement.value?.hasAnyError, (value) => {
-        hasPatternsError.value = value;
-      });
-    };
-
-    const unwatchTabsErrors = () => {
-      unwatchGeneralTabErrors?.();
-      unwatchPatternsTabErrors?.();
-    };
-
-    useAiChatExpand({ activeTab, neededTab: REMEDIATION_INSTRUCTION_FORM_TABS.patterns });
-
-    onMounted(() => {
-      watchTabsErrors();
-      fetchList();
-    });
-
-    onBeforeUnmount(unwatchTabsErrors);
+    const additionalLabel = computed(() => (isManualType.value ? tc('common.step', 2) : t('remediation.tabs.jobs')));
 
     return {
-      activeTab,
-      isActiveTestingTab,
-
-      generalElement,
-      patternsElement,
-      hasGeneralError,
-      hasPatternsError,
-
-      hasAccess,
-      variablesFields,
-      isEmptyVariablesFields,
-
-      templateVars,
       type,
+
+      isManualType,
+      additionalLabel,
     };
   },
 };

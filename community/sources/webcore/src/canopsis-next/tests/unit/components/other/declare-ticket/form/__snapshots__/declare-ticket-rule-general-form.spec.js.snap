@@ -2,38 +2,33 @@
 
 exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with empty form 1`] = `
 <div
-  class="layout gap-2 column"
+  class="layout gap-5 column"
 >
-  <c-enabled-field-stub
-    class="pa-2"
-    hide-details=""
-    label="Emit trigger"
-  />
   <div
-    class="layout gap-3"
+    class="layout gap-4"
   >
-    <div
-      class="flex xs8"
-    >
-      <c-name-field-stub
-        autofocus=""
-        required=""
-        value=""
-      />
-    </div>
-    <div
-      class="flex xs4"
-    >
-      <c-name-field-stub
-        label="System name"
-        name="system_name"
-        value=""
-      />
-    </div>
+    <c-name-field-stub
+      autofocus=""
+      required=""
+      value=""
+    />
+    <c-name-field-stub
+      label="System name"
+      name="system_name"
+      value=""
+    />
   </div>
   <c-enabled-field-stub
-    label="Emit trigger"
-    name="emit_trigger"
+    hide-details=""
+    label="Emit trigger on success"
+    name="emit_trigger_success"
+    no-margin=""
+  />
+  <c-enabled-field-stub
+    hide-details=""
+    label="Emit trigger on failure"
+    name="emit_trigger_fail"
+    no-margin=""
   />
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
@@ -45,38 +40,33 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
 
 exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with filled form 1`] = `
 <div
-  class="layout gap-2 column"
+  class="layout gap-5 column"
 >
-  <c-enabled-field-stub
-    class="pa-2"
-    hide-details=""
-    label="Emit trigger"
-  />
   <div
-    class="layout gap-3"
+    class="layout gap-4"
   >
-    <div
-      class="flex xs8"
-    >
-      <c-name-field-stub
-        autofocus=""
-        required=""
-        value="name"
-      />
-    </div>
-    <div
-      class="flex xs4"
-    >
-      <c-name-field-stub
-        label="System name"
-        name="system_name"
-        value="system-name"
-      />
-    </div>
+    <c-name-field-stub
+      autofocus=""
+      required=""
+      value="name"
+    />
+    <c-name-field-stub
+      label="System name"
+      name="system_name"
+      value="system-name"
+    />
   </div>
   <c-enabled-field-stub
-    label="Emit trigger"
-    name="emit_trigger"
+    hide-details=""
+    label="Emit trigger on success"
+    name="emit_trigger_success"
+    no-margin=""
+  />
+  <c-enabled-field-stub
+    hide-details=""
+    label="Emit trigger on failure"
+    name="emit_trigger_fail"
+    no-margin=""
   />
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"

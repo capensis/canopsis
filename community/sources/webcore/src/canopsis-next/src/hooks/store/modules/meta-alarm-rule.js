@@ -28,6 +28,7 @@ const useMetaAlarmRuleStoreModule = () => useStoreModuleHooks('metaAlarmRule');
  * @property {Function} bulkEnableMetaAlarmRules - Action to bulk enable meta alarm rules
  * @property {Function} bulkDisableMetaAlarmRules - Action to bulk disable meta alarm rules
  * @property {Function} bulkRemoveMetaAlarmRules - Action to bulk remove meta alarm rules
+ * @property {Function} checkPatternsAlarmsCount - Action to check the count of alarms matching patterns
  *
  * @example
  * // Usage in a component
@@ -52,6 +53,7 @@ export const useMetaAlarmRule = () => {
     bulkEnableMetaAlarmRules: 'bulkEnable',
     bulkDisableMetaAlarmRules: 'bulkDisable',
     bulkRemoveMetaAlarmRules: 'bulkRemove',
+    checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
   });
 
   return {

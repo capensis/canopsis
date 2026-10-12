@@ -19,7 +19,9 @@
         v-if="bodyJsonObject"
         :json-object="bodyJsonObject"
       />
-      <pre v-else class="text-break pre-wrap">{{ parsedRaw.body }}</pre>
+      <pre v-else class="text-break pre-wrap">
+{{ parsedRaw.body }}
+</pre>
     </div>
   </c-collapse-panel>
 </template>

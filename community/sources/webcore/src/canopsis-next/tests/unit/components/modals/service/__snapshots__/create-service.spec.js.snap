@@ -45,7 +45,7 @@ exports[`create-service Renders \`create-service\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -99,7 +99,7 @@ exports[`create-service Renders \`create-service\` with pbehavior 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>

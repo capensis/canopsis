@@ -4,10 +4,13 @@
       v-for="action in preparedActions.inline"
       :key="action.title"
       :action="action"
+      small
     />
     <actions-panel-menu
+      v-if="preparedActions.dropDown.length"
       key="dropdown-menu"
       :actions="preparedActions.dropDown"
+      small
     />
   </v-layout>
 </template>

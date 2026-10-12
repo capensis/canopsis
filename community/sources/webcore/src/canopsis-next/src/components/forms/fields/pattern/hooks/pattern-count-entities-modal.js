@@ -46,7 +46,7 @@ export const usePatternCountEntitiesModal = (props) => {
       [PATTERNS_FIELDS.entity]: true,
       [PATTERNS_FIELDS.pbehavior]: props.withPbehavior,
       [PATTERNS_FIELDS.event]: props.eventName,
-      [PATTERNS_FIELDS.totalEntity]: props.totalEntityName,
+      [PATTERNS_FIELDS.totalEntity]: props.withTotalEntity,
       [PATTERNS_FIELDS.serviceWeather]: props.serviceWeatherName,
     };
 

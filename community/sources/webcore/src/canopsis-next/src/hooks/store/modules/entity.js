@@ -27,6 +27,7 @@ const useEntityStoreModule = () => useStoreModuleHooks('entity');
  * @property {Function} archiveDisabledEntitiesData - Archives disabled entities data
  * @property {Function} archiveUnlinkedEntitiesData - Archives unlinked entities data
  * @property {Function} cleanArchivedEntitiesData - Cleans archived entities data
+ * @property {Function} checkStateSetting - Checks the state setting for an entity
  */
 export const useEntity = () => {
   const { useActions } = useEntityStoreModule();
@@ -37,6 +38,7 @@ export const useEntity = () => {
     archiveDisabledEntitiesData: 'archiveDisabledEntitiesData',
     archiveUnlinkedEntitiesData: 'archiveUnlinkedEntitiesData',
     cleanArchivedEntitiesData: 'cleanArchivedEntitiesData',
+    checkStateSetting: 'checkStateSetting',
   }); // TODO: add another actions and getters
 
   return {

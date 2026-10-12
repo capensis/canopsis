@@ -52,7 +52,7 @@ import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
-import DynamicInfoPatternsForm from '../form/fields/dynamic-info-patterns-form.vue';
+import DynamicInfoPatternsForm from '../form/dynamic-info-patterns-form.vue';
 
 export default {
   components: {

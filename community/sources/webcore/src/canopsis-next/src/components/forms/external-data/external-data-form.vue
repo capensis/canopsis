@@ -1,48 +1,34 @@
 <template>
-  <v-layout column>
-    <c-alert
-      :value="!form.length"
-      type="info"
-    >
-      {{ $t('externalData.empty') }}
-    </c-alert>
-    <external-data-item-form
-      v-for="(item, index) in form"
-      v-field="form[index]"
-      :key="item.key"
-      :name="`${name}.${item.key}`"
-      :server-error-name="`${name}.${index}`"
-      :disabled="disabled"
-      :types="types"
-      :variables="variables"
-      :optionally="optionally"
-      class="mb-3"
-      @remove="removeItemFromArray(index)"
-    />
-    <v-flex v-if="!disabled">
-      <v-btn
-        class="ml-0 my-0"
-        color="primary"
-        outlined
-        @click="addItem"
-      >
-        {{ $t('externalData.add') }}
-      </v-btn>
-    </v-flex>
-  </v-layout>
+  <c-form-block-array-field
+    v-field="form"
+    :item-to-form="externalDataItemToForm"
+    :label="$t('eventFilter.externalData')"
+    :disabled="disabled"
+    :add-button-label="$t('externalData.add')"
+  >
+    <template #item="{ item, index, remove }">
+      <external-data-item-form
+        v-field="form[index]"
+        :name="`${name}.${item.key}`"
+        :server-error-name="`${name}.${index}`"
+        :disabled="disabled"
+        :types="types"
+        :variables="variables"
+        :optionally="optionally"
+        @remove="remove"
+      />
+    </template>
+  </c-form-block-array-field>
 </template>
 
 <script>
 import { externalDataItemToForm } from '@/helpers/entities/shared/external-data/form';
-
-import { formArrayMixin } from '@/mixins/form';
 
 import ExternalDataItemForm from './external-data-item-form.vue';
 
 export default {
   inject: ['$validator'],
   components: { ExternalDataItemForm },
-  mixins: [formArrayMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -73,10 +59,10 @@ export default {
       default: false,
     },
   },
-  methods: {
-    addItem() {
-      this.addItemIntoArray(externalDataItemToForm());
-    },
+  setup() {
+    return {
+      externalDataItemToForm,
+    };
   },
 };
 </script>

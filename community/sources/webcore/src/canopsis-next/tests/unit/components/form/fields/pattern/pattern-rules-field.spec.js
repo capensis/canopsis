@@ -444,6 +444,34 @@ describe('pattern-rules-field', () => {
     expect(ruleProps.disabled).toBe(true);
   });
 
+  test('String rule props include one-of operators and keep opened value', () => {
+    const rule = {
+      attribute: 'string-attribute',
+      operator: PATTERN_OPERATORS.isOneOf,
+      value: ['first value', 'second value'],
+      fieldType: PATTERN_FIELD_TYPES.string,
+      key: 'string-key',
+    };
+    const wrapper = factory({
+      propsData: {
+        rules: [rule],
+        attributes: [{ value: rule.attribute }],
+      },
+    });
+
+    const ruleField = selectPatternRuleFieldByIndex(wrapper, 0);
+    const props = ruleField.props();
+
+    expect(props.operators).toEqual(expect.arrayContaining([
+      PATTERN_OPERATORS.isOneOf,
+      PATTERN_OPERATORS.isNotOneOf,
+    ]));
+    expect(props.rule).toMatchObject({
+      operator: PATTERN_OPERATORS.isOneOf,
+      value: rule.value,
+    });
+  });
+
   test('rulesMap computed property maps attributes correctly', () => {
     const attributesWithOptions = [
       {

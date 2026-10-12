@@ -1,0 +1,70 @@
+package api
+
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternvalidation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator/v10/non-standard/validators"
+)
+
+func RegisterValidators(secConfig security.Config) (*validator.Validate, *ut.UniversalTranslator, error) {
+	v := validator.New()
+	v.SetTagName("binding")
+	trans, err := libvalidator.NewTranslator(v, "")
+	if err != nil {
+		return v, nil, err
+	}
+
+	err = registerTagValidations(v)
+	if err != nil {
+		return v, nil, err
+	}
+
+	registerStructValidations(v, secConfig)
+
+	return v, trans, nil
+}
+
+func registerTagValidations(v *validator.Validate) error {
+	var tagValidations = map[string]validator.Func{
+		"notblank":          validators.NotBlank,
+		"oneoforempty":      validation.ValidateOneOfOrEmpty,
+		"iscolororempty":    validation.ValidateColorOrEmpty,
+		"time_format":       validation.ValidateTimeFormat,
+		"event_pattern":     patternvalidation.ValidateEventPattern,
+		"alarm_pattern":     patternvalidation.ValidateAlarmPattern,
+		"entity_pattern":    patternvalidation.ValidateEntityPattern,
+		"pbehavior_pattern": patternvalidation.ValidatePbehaviorPattern,
+	}
+	for tag, f := range tagValidations {
+		err := v.RegisterValidation(tag, f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func registerStructValidations(v *validator.Validate, secConfig security.Config) {
+	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
+
+	v.RegisterStructValidation(alarm.ValidateStepRequest, alarm.StepRequest{})
+
+	v.RegisterStructValidation(exdate.ValidateExdateRequest, exdate.Request{})
+
+	v.RegisterStructValidation(pbehavior.ValidateEditRequest, pbehavior.EditRequest{})
+	v.RegisterStructValidation(pbehavior.ValidatePatchRequest, pbehavior.PatchRequest{})
+	v.RegisterStructValidation(pbehavior.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
+	v.RegisterStructValidation(pbehavior.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
+
+	v.RegisterStructValidation(user.NewValidator(secConfig).ValidateCreateRequest, user.CreateRequest{})
+}

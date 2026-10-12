@@ -42,16 +42,16 @@ func (m *MockGetter) EXPECT() *MockGetterMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockGetter) Get(ctx context.Context, parameters externaldata.ParsedRefParameters, templateParameters any) (any, error) {
+func (m *MockGetter) Get(ctx context.Context, rule externaldata.Rule, tplData any) (externaldata.GetterResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", ctx, parameters, templateParameters)
-	ret0, _ := ret[0].(any)
+	ret := m.ctrl.Call(m, "Get", ctx, rule, tplData)
+	ret0, _ := ret[0].(externaldata.GetterResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockGetterMockRecorder) Get(ctx, parameters, templateParameters any) *gomock.Call {
+func (mr *MockGetterMockRecorder) Get(ctx, rule, tplData any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockGetter)(nil).Get), ctx, parameters, templateParameters)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockGetter)(nil).Get), ctx, rule, tplData)
 }

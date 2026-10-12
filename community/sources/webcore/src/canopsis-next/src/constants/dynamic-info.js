@@ -6,6 +6,11 @@ export const DYNAMIC_INFO_INFORMATION_TYPES = {
   copyToInfo: 'copy_to_info',
 };
 
+export const DYNAMIC_INFOS_PAGE_TABS = {
+  dynamicInfos: 'dynamic-infos',
+  templates: 'dynamic-info-templates',
+};
+
 export const DYNAMIC_INFO_FIELDS = {
   id: '_id',
   name: 'name',

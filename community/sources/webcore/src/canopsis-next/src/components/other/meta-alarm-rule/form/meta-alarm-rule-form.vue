@@ -1,99 +1,41 @@
 <template>
-  <v-stepper v-model="activeStepComputed">
-    <v-stepper-header>
-      <v-stepper-step
-        :complete="activeStep > META_ALARMS_FORM_STEPS.general"
-        :step="META_ALARMS_FORM_STEPS.general"
-        :rules="[() => !hasGeneralError]"
-        class="py-0"
-        editable
-      >
-        {{ $t('metaAlarmRule.steps.basics') }}
-        <small v-if="hasGeneralError">{{ $t('errors.invalid') }}</small>
-      </v-stepper-step>
-      <v-divider />
-      <v-stepper-step
-        :complete="activeStep > META_ALARMS_FORM_STEPS.type"
-        :step="META_ALARMS_FORM_STEPS.type"
-        :rules="[() => !hasTypeError]"
-        class="py-0"
-        editable
-      >
-        {{ $t('metaAlarmRule.steps.defineType') }}
-        <small v-if="hasTypeError">{{ $t('errors.invalid') }}</small>
-      </v-stepper-step>
-      <v-divider />
-      <v-stepper-step
-        :complete="activeStep > META_ALARMS_FORM_STEPS.parameters"
-        :step="META_ALARMS_FORM_STEPS.parameters"
-        :rules="[() => !hasParametersError]"
-        class="py-0"
-        editable
-      >
-        {{ $t('metaAlarmRule.steps.addParameters') }}
-        <small v-if="hasParametersError">{{ $t('errors.invalid') }}</small>
-      </v-stepper-step>
-    </v-stepper-header>
-
-    <v-stepper-items>
-      <v-stepper-content
-        ref="generalStepElement"
-        :step="META_ALARMS_FORM_STEPS.general"
-        class="pa-0"
-      >
+  <v-layout class="gap-3" column>
+    <c-enabled-field v-field="form.enabled" hide-details with-background />
+    <c-form-general-patterns-tabs
+      v-field="form"
+      :rule-id="ruleId"
+      :type="type"
+      :patterns-label="$t('metaAlarmRule.patternsTabLabel')"
+    >
+      <template #general="{ setRef, templateVars }">
         <meta-alarm-rule-general-form
           v-field="form"
+          :ref="setRef"
           :disabled-id-field="disabledIdField"
-          :variables="templateVars.output"
-          class="pa-4"
+          :template-vars="templateVars"
         />
-      </v-stepper-content>
-      <v-stepper-content
-        ref="typeStepElement"
-        :step="META_ALARMS_FORM_STEPS.type"
-        class="pa-0"
-      >
-        <div class="pa-4">
-          <meta-alarm-rule-type-form
-            v-field="form"
-            :variables="templateVars.entity"
-          />
-        </div>
-      </v-stepper-content>
-      <v-stepper-content
-        ref="parametersStepElement"
-        :step="META_ALARMS_FORM_STEPS.parameters"
-        class="pa-0"
-      >
-        <c-information-block
-          :title="$t(`metaAlarmRule.parametersTitle.${form.type}`)"
-          class="pa-4"
-        >
-          <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
-          <meta-alarm-rule-parameters-form v-field="form" :template-vars="templateVars" />
-        </c-information-block>
-      </v-stepper-content>
-    </v-stepper-items>
-  </v-stepper>
+      </template>
+      <template #patterns="{ setRef, templateVars }">
+        <meta-alarm-rule-parameters-form
+          v-field="form"
+          :ref="setRef"
+          :template-vars="templateVars"
+        />
+      </template>
+    </c-form-general-patterns-tabs>
+  </v-layout>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
-import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
-
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
-
-import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
-import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
-import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
+import MetaAlarmRuleGeneralForm from './meta-alarm-rule-general-form.vue';
+import MetaAlarmRuleParametersForm from './meta-alarm-rule-parameters-form.vue';
 
 export default {
   components: {
-    MetaAlarmRuleParametersForm,
-    MetaAlarmRuleTypeForm,
     MetaAlarmRuleGeneralForm,
+    MetaAlarmRuleParametersForm,
   },
   model: {
     prop: 'form',
@@ -102,80 +44,21 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => ({
-        type: META_ALARMS_RULE_TYPES.attribute,
-      }),
+      default: () => ({}),
+    },
+    ruleId: {
+      type: String,
+      default: undefined,
     },
     disabledIdField: {
       type: Boolean,
       default: false,
     },
-    activeStep: {
-      type: Number,
-      default: META_ALARMS_FORM_STEPS.general,
-    },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
-    },
   },
-  setup(props, { expose, emit }) {
-    const generalStepElement = ref(null);
-    const typeStepElement = ref(null);
-    const parametersStepElement = ref(null);
+  setup() {
+    const type = TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule;
 
-    const {
-      hasChildrenError: hasGeneralError,
-      validateChildren: validateGeneralChildren,
-    } = useValidationElementChildren(generalStepElement);
-
-    const {
-      hasChildrenError: hasTypeError,
-      validateChildren: validateTypeChildren,
-    } = useValidationElementChildren(typeStepElement);
-
-    const {
-      hasChildrenError: hasParametersError,
-      validateChildren: validateParametersChildren,
-    } = useValidationElementChildren(parametersStepElement);
-
-    const activeStepComputed = computed({
-      get: () => props.activeStep,
-      set: value => emit('update:active-step', value),
-    });
-
-    useAiChatExpand({ activeTab: activeStepComputed, neededTab: META_ALARMS_FORM_STEPS.parameters });
-
-    expose({
-      hasGeneralError,
-      hasTypeError,
-      hasParametersError,
-      validateGeneralChildren,
-      validateTypeChildren,
-      validateParametersChildren,
-    });
-
-    return {
-      META_ALARMS_FORM_STEPS,
-
-      activeStepComputed,
-
-      generalStepElement,
-      typeStepElement,
-      parametersStepElement,
-
-      hasGeneralError,
-      hasParametersError,
-      hasTypeError,
-    };
+    return { type };
   },
 };
 </script>

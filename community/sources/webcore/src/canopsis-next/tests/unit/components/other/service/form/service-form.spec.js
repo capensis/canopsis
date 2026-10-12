@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
+import { getFormGeneralPatternsTabsStub } from '@unit/stubs/form';
 import { createMockedStoreModules, createPatternsFieldsModule } from '@unit/utils/store';
 
 import { ALARM_STATES, ENTITY_PATTERN_FIELDS, PATTERN_CONDITIONS } from '@/constants';
@@ -12,28 +13,17 @@ import { infosToArray } from '@/helpers/entities/shared/form';
 import ServiceForm from '@/components/other/service/form/service-form.vue';
 
 const stubs = {
-  'c-name-field': true,
-  'c-entity-category-field': true,
-  'c-alarm-state-field': true,
-  'c-impact-level-field': true,
-  'c-coordinates-field': true,
-  'text-editor-field': true,
   'c-enabled-field': true,
-  'entity-state-setting': true,
-  'c-patterns-field': true,
-  'manage-infos': true,
+  'service-general-form': true,
+  'service-entity-patterns-form': true,
+  'service-manage-infos-form': true,
+  'c-form-general-patterns-tabs': getFormGeneralPatternsTabsStub(),
 };
 
-const selectNameField = wrapper => wrapper.find('c-name-field-stub');
-const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
-const selectAlarmStateField = wrapper => wrapper.find('c-alarm-state-field-stub');
-const selectImpactLevelField = wrapper => wrapper.find('c-impact-level-field-stub');
-const selectCoordinatesField = wrapper => wrapper.find('c-coordinates-field-stub');
-const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
-const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
-const selectManageInfosField = wrapper => wrapper.find('manage-infos-stub');
-const selectEntityStateSettingField = wrapper => wrapper.find('entity-state-setting-stub');
+const selectServiceGeneralForm = wrapper => wrapper.find('service-general-form-stub');
+const selectServiceEntityPatternsForm = wrapper => wrapper.find('service-entity-patterns-form-stub');
+const selectServiceManageInfosForm = wrapper => wrapper.find('service-manage-infos-form-stub');
 
 describe('service-form', () => {
   const { patternsFieldsModule, fetchServicePatternFields } = createPatternsFieldsModule();
@@ -57,7 +47,37 @@ describe('service-form', () => {
 
   const defaultServiceForm = serviceToForm();
 
-  test('Name changed after trigger name field', () => {
+  test('General form is rendered in general tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: defaultServiceForm,
+      },
+    });
+
+    expect(selectServiceGeneralForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Entity patterns form is rendered in additional tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: defaultServiceForm,
+      },
+    });
+
+    expect(selectServiceEntityPatternsForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Manage infos form is rendered in patterns tab', () => {
+    const wrapper = factory({
+      propsData: {
+        form: defaultServiceForm,
+      },
+    });
+
+    expect(selectServiceManageInfosForm(wrapper).exists()).toBe(true);
+  });
+
+  test('Name changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -66,7 +86,10 @@ describe('service-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectNameField(wrapper).triggerCustomEvent('input', newName);
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultServiceForm,
+      name: newName,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -74,7 +97,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Category changed after trigger category field', () => {
+  test('Category changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -85,7 +108,10 @@ describe('service-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectCategoryField(wrapper).triggerCustomEvent('input', newCategory);
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultServiceForm,
+      category: newCategory,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -93,7 +119,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Available state changed after trigger alarm state field', () => {
+  test('Available state changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -102,7 +128,10 @@ describe('service-form', () => {
 
     const newState = ALARM_STATES.minor;
 
-    selectAlarmStateField(wrapper).triggerCustomEvent('input', newState);
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultServiceForm,
+      sli_avail_state: newState,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -110,7 +139,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Impact level changed after trigger impact level field', () => {
+  test('Impact level changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -119,7 +148,10 @@ describe('service-form', () => {
 
     const newImpactLevel = ALARM_STATES.minor;
 
-    selectImpactLevelField(wrapper).triggerCustomEvent('input', newImpactLevel);
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultServiceForm,
+      impact_level: newImpactLevel,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -127,7 +159,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Coordinates changed after trigger coordinates field', () => {
+  test('Coordinates changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -139,7 +171,10 @@ describe('service-form', () => {
       lng: Faker.datatype.number(),
     };
 
-    selectCoordinatesField(wrapper).triggerCustomEvent('input', newCoordinates);
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultServiceForm,
+      coordinates: newCoordinates,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -147,7 +182,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Output template changed after trigger text editor field', () => {
+  test('Output template changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -156,7 +191,10 @@ describe('service-form', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    selectTextEditorField(wrapper).triggerCustomEvent('input', newTemplate);
+    selectServiceGeneralForm(wrapper).triggerCustomEvent('input', {
+      ...defaultServiceForm,
+      output_template: newTemplate,
+    });
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -181,7 +219,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Prepare function passed to state setting', () => {
+  test('Prepare function passed to general form', () => {
     const prepareStateSettingForm = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -190,12 +228,10 @@ describe('service-form', () => {
       },
     });
 
-    expect(
-      selectEntityStateSettingField(wrapper).vm.preparer,
-    ).toBe(prepareStateSettingForm);
+    expect(selectServiceGeneralForm(wrapper).props('prepareStateSettingForm')).toBe(prepareStateSettingForm);
   });
 
-  test('Patterns changed after trigger patterns field', () => {
+  test('Patterns changed after trigger entity patterns form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -214,7 +250,7 @@ describe('service-form', () => {
       ]],
     });
 
-    selectPatternsField(wrapper).triggerCustomEvent('input', newPatterns);
+    selectServiceEntityPatternsForm(wrapper).triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,
@@ -222,7 +258,7 @@ describe('service-form', () => {
     });
   });
 
-  test('Infos changed after trigger manage infos field', () => {
+  test('Infos changed after trigger manage infos form', () => {
     const wrapper = factory({
       propsData: {
         form: defaultServiceForm,
@@ -236,7 +272,7 @@ describe('service-form', () => {
       },
     });
 
-    selectManageInfosField(wrapper).triggerCustomEvent('input', newInfos);
+    selectServiceManageInfosForm(wrapper).triggerCustomEvent('input', newInfos);
 
     expect(wrapper).toEmitInput({
       ...defaultServiceForm,

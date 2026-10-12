@@ -7,7 +7,9 @@
     @click:close="close"
   >
     <v-chip>
-      <span v-if="disabled">{{ value.value }}</span>
+      <span v-if="disabled">
+        {{ value.value }}
+      </span>
       <input
         v-else
         :value="value.value"

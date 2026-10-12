@@ -33,7 +33,7 @@ jest.mock('@/helpers/async', () => ({
 }));
 
 const stubs = {
-  'new-mass-actions-panel': {
+  'mass-actions-panel': {
     props: ['actions'],
     template: `
       <div class="shared-actions-panel">
@@ -981,7 +981,7 @@ describe('mass-actions-panel', () => {
 
     const changeStateEvent = {
       state: Faker.datatype.number(),
-      comment: Faker.datatype.string(),
+      output: Faker.datatype.string(),
     };
 
     await config.action(changeStateEvent);
@@ -989,7 +989,11 @@ describe('mass-actions-panel', () => {
     expect(bulkCreateAlarmChangestateEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
-        data: [{ _id: alarmWithAck._id, ...changeStateEvent }],
+        data: [{
+          _id: alarmWithAck._id,
+          state: changeStateEvent.state,
+          comment: changeStateEvent.output,
+        }],
       },
     );
 

@@ -9,7 +9,7 @@
           <h4>{{ item.name }}</h4>
           <c-action-btn
             type="delete"
-            @click="removeItemFromArray(index)"
+            @click="removeItem(index)"
           />
         </v-layout>
         <c-advanced-data-table
@@ -32,10 +32,12 @@
 </template>
 
 <script>
-import { formArrayMixin } from '@/mixins/form';
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 export default {
-  mixins: [formArrayMixin],
   model: {
     prop: 'exceptions',
     event: 'input',
@@ -46,14 +48,21 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    exdatesHeaders() {
-      return [
-        { value: 'begin', text: this.$t('common.start'), sortable: false },
-        { value: 'end', text: this.$t('common.end'), sortable: false },
-        { value: 'type', text: this.$t('common.type'), sortable: false },
-      ];
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const exdatesHeaders = computed(() => [
+      { value: 'begin', text: t('common.start'), sortable: false },
+      { value: 'end', text: t('common.end'), sortable: false },
+      { value: 'type', text: t('common.type'), sortable: false },
+    ]);
+
+    const { removeItemFromArray } = useArrayModelField(props, emit);
+
+    return {
+      exdatesHeaders,
+      removeItem: removeItemFromArray,
+    };
   },
 };
 </script>

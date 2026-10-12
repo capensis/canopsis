@@ -11,10 +11,14 @@
         v-on="chip.on"
       >
         <template #selection-empty>
-          <span class="grey--text">{{ chip.selectionEmpty }}</span>
+          <span class="grey--text">
+            {{ chip.selectionEmpty }}
+          </span>
         </template>
         <template #selection-prefix>
-          <span class="grey--text">{{ chip.selectionPrefix }}:</span>
+          <span class="grey--text">
+            {{ chip.selectionPrefix }}:
+          </span>
         </template>
       </c-select-chip>
     </v-flex>

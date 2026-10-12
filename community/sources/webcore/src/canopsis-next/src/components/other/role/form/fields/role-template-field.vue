@@ -17,7 +17,9 @@
   >
     <template #item="{ item }">
       <v-layout justify-space-between>
-        {{ item.name }}<span class="role-template-field__item-description">{{ item.description }}</span>
+        {{ item.name }}<span class="role-template-field__item-description">
+          {{ item.description }}
+        </span>
       </v-layout>
     </template>
   </v-select>

@@ -24,15 +24,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
         class="ma-0"
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -2675,15 +2667,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
         class="ma-0"
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand v-data-table--selectable"
@@ -5316,15 +5300,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
         class="ma-0"
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"
@@ -5873,15 +5849,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
         class="ma-0"
       />
     </div>
-    <div
-      class="flex xs12"
-    >
-      <transition-stub
-        name="expand-transition"
-      >
-        <!---->
-      </transition-stub>
-    </div>
+    <!---->
   </div>
   <div
     class="v-data-table theme--light v-data-table--expand"

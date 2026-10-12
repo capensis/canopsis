@@ -1,5 +1,12 @@
-import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
-import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import {
+  ackAction,
+  deleteAction,
+  editAction,
+  fakeAction,
+} from '@unit/data/actions-panel';
+
+import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
 
 import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
@@ -36,20 +43,22 @@ describe('mass-actions-panel', () => {
   const factory = generateShallowRenderer(MassActionsPanel, { stubs });
   const snapshotFactory = generateRenderer(MassActionsPanel, { stubs: snapshotStubs });
 
-  it('Method into list called after trigger click on action item button. On the large size.', () => {
+  it('Method into list called after trigger click on action item button. Size \'xl\'', async () => {
     const actions = [
       fakeAction(),
       fakeAction(),
     ];
+
     const wrapper = factory({
       propsData: {
         actions,
       },
       mocks: {
-        $mq: 'l+',
+        $mq: 'xl',
       },
     });
 
+    await flushPromises();
     const actionElements = wrapper.findAll('button.actions-panel-btn');
 
     expect(actionElements).toHaveLength(actions.length);
@@ -59,10 +68,10 @@ describe('mass-actions-panel', () => {
     secondActionElement.trigger('click');
 
     const [, secondAction] = actions;
-    expect(secondAction.method).toHaveBeenCalledTimes(1);
+    expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Method into dropdown called after trigger click on action item button. On the tablet size.', () => {
+  it('Method into dropdown called after trigger click on action item button. Size \'m\'', async () => {
     const actions = [
       fakeAction(),
       fakeAction(),
@@ -72,43 +81,62 @@ describe('mass-actions-panel', () => {
         actions,
       },
       mocks: {
-        $mq: 't',
-      },
-    });
-
-    const dropdownActionElements = wrapper.findAll('button.actions-panel-menu-item');
-
-    expect(dropdownActionElements).toHaveLength(actions.length);
-
-    const secondActionElement = dropdownActionElements.at(1);
-    secondActionElement.trigger('click');
-
-    const [, secondAction] = actions;
-    expect(secondAction.method).toBeCalledTimes(1);
-  });
-
-  it('Renders `mass-actions-panel` with actions on the large size', async () => {
-    const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'l+',
-      },
-      propsData: {
-        actions: [editAction, deleteAction],
+        $mq: 'm',
       },
     });
 
     await flushPromises();
 
-    expect(wrapper).toMatchSnapshot();
+    const dropdownActionElements = wrapper.findAll('button.actions-panel-menu-item');
+
+    expect(dropdownActionElements).toHaveLength(actions.length);
+
+    const secondDropdownActionElement = dropdownActionElements.at(1);
+
+    secondDropdownActionElement.trigger('click');
+
+    const [, secondAction] = actions;
+    expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Renders `mass-actions-panel` with actions correctly on the tablet size', async () => {
-    const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 't',
+  it('Method into dropdown called after trigger click on action item button. Size \'xl\'', async () => {
+    const inlineCount = 2;
+    const actions = [
+      fakeAction(),
+      fakeAction(),
+      fakeAction(),
+    ];
+    const wrapper = factory({
+      propsData: {
+        actions,
+        inlineCount,
       },
+      mocks: {
+        $mq: 'xl',
+      },
+    });
+
+    await flushPromises();
+
+    const dropdownActionElements = wrapper.findAll('button.actions-panel-menu-item');
+
+    expect(dropdownActionElements).toHaveLength(actions.length - inlineCount + 1);
+
+    const firstDropdownActionElement = dropdownActionElements.at(0);
+
+    firstDropdownActionElement.trigger('click');
+
+    const [, secondAction] = actions;
+    expect(secondAction.method).toBeCalledTimes(1);
+  });
+
+  it('Renders `mass-actions-panel` with actions correctly. Size \'xl\'', async () => {
+    const wrapper = snapshotFactory({
       propsData: {
         actions: [editAction, deleteAction],
+      },
+      mocks: {
+        $mq: 'xl',
       },
     });
 
@@ -120,13 +148,35 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `mass-actions-panel` with actions correctly on the mobile size', async () => {
+  it.each(
+    Object.keys(MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP),
+  )('Renders `mass-actions-panel` with three actions and 3 inlineCount correctly. Size \'%s\'', async ($mq) => {
     const wrapper = snapshotFactory({
-      mocks: {
-        $mq: 'm',
-      },
       propsData: {
-        actions: [editAction, deleteAction],
+        inlineCount: 3,
+        actions: [editAction, deleteAction, ackAction],
+      },
+      mocks: {
+        $mq,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with three actions and 2 inlineCount. Size \'xl\'', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        inlineCount: 2,
+        actions: [editAction, deleteAction, ackAction],
+      },
+      mocks: {
+        $mq: 'xl',
       },
     });
 

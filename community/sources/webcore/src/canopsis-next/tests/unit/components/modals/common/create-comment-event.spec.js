@@ -270,7 +270,7 @@ describe('create-comment-event', () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.submitting).toBe(true);
-    expect(wrapper.vm.isDisabled).toBe(true);
+    expect(submitButton.attributes('disabled')).toBe('disabled');
   });
 
   test('Templates from config are passed to component', () => {

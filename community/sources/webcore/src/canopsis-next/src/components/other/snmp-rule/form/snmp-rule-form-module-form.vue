@@ -1,6 +1,5 @@
 <template>
   <div>
-    <snmp-rule-form-field-title :label="$t('snmpRule.oid')" />
     <v-layout wrap>
       <v-flex
         class="pr-1"
@@ -64,11 +63,8 @@ import { usePendingHandler } from '@/hooks/query/pending';
 import { useSnmpMib } from '@/hooks/store/modules/snmp-mib';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
-import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
-
 export default {
   inject: ['$validator'],
-  components: { SnmpRuleFormFieldTitle },
   model: {
     prop: 'form',
     event: 'input',

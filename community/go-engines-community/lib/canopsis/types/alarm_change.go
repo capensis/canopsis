@@ -79,6 +79,9 @@ const (
 
 	AlarmChangeTypeMetaAlarmChildActivate   AlarmChangeType = "metaalarmchildactivate"
 	AlarmChangeTypeMetaAlarmChildDeactivate AlarmChangeType = "metaalarmchilddeactivate"
+
+	AlarmChangeTypeChangedOutput     AlarmChangeType = "changedoutput"
+	AlarmChangeTypeChangedLongOutput AlarmChangeType = "changedlongoutput"
 )
 
 const MinimalEventsCountThreshold = 2
@@ -97,6 +100,9 @@ type AlarmChange struct {
 	PreviousPbehaviorCannonicalType string            `json:"PreviousPbehaviorCannonicalType"`
 
 	EventsCount int `json:"EventsCount"`
+
+	ChangedOutput     bool `json:"ChangedOutput"`
+	ChangedLongOutput bool `json:"ChangedLongOutput"`
 }
 
 func NewAlarmChange() AlarmChange {
@@ -151,11 +157,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 	case AlarmChangeTypeWebhookStart,
 		AlarmChangeTypeWebhookComplete,
 		AlarmChangeTypeWebhookFail,
-		AlarmChangeTypeDeclareTicketWebhookFail,
 		AlarmChangeTypeAutoWebhookStart,
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
-		AlarmChangeTypeAutoDeclareTicketWebhookFail,
 		AlarmChangeTypeAutoInstructionActivate,
 		AlarmChangeTypeMetaAlarmChildActivate,
 		AlarmChangeTypeMetaAlarmChildDeactivate:
@@ -163,11 +167,22 @@ func (ac *AlarmChange) GetTriggers() []string {
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:
 		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhook))
+	case AlarmChangeTypeDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoDeclareTicketWebhookFail:
+		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhookFail))
 	default:
 		trigger := string(ac.Type)
 		if trigger != "" {
 			triggers = append(triggers, trigger)
 		}
+	}
+
+	if ac.ChangedOutput {
+		triggers = append(triggers, string(AlarmChangeTypeChangedOutput))
+	}
+
+	if ac.ChangedLongOutput {
+		triggers = append(triggers, string(AlarmChangeTypeChangedLongOutput))
 	}
 
 	return triggers

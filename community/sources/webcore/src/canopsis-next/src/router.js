@@ -41,7 +41,6 @@ const AdminCustomObjectsIcons = () => import(/* webpackChunkName: "Icons" */ '@/
 const AdminCustomObjectsMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/custom-objects/maps.vue');
 const AdminCustomObjectsTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/custom-objects/tags.vue');
 const AdminCustomObjectsLlms = () => import(/* webpackChunkName: "Llms" */ '@/views/admin/custom-objects/llms.vue');
-const AdminSettingsUserInterface = () => import(/* webpackChunkName: "UserInterface" */ '@/views/admin/settings/user-interface.vue');
 const AdminSettingsViewsImportExport = () => import(/* webpackChunkName: "ViewsImportExport" */ '@/views/admin/settings/views-import-export.vue');
 const AdminSettingsNotifications = () => import(/* webpackChunkName: "NotificationsSettings" */ '@/views/admin/settings/notifications-settings.vue');
 const AdminSettingsCommentTemplates = () => import(/* webpackChunkName: "CommentTemplates" */ '@/views/admin/settings/comment-templates.vue');
@@ -334,17 +333,6 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminSettingsUserInterface,
-    name: ROUTES_NAMES.adminSettingsUserInterface,
-    component: AdminSettingsUserInterface,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.parameters,
-      },
-    },
-  },
-  {
     path: ROUTES.adminSettingsViewsImportExport,
     name: ROUTES_NAMES.adminSettingsViewsImportExport,
     component: AdminSettingsViewsImportExport,
@@ -609,10 +597,6 @@ const routes = [
   {
     path: OLD_ROUTES.entityInfosProperties,
     redirect: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
-  },
-  {
-    path: OLD_ROUTES.parameters,
-    redirect: { name: ROUTES_NAMES.adminSettingsUserInterface },
   },
 
   {

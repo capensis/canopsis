@@ -1,5 +1,7 @@
 <template>
-  <span class="text-subtitle-2">{{ title }}</span>
+  <span class="text-subtitle-2">
+    {{ title }}
+  </span>
 </template>
 
 <script>

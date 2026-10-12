@@ -1,11 +1,11 @@
 import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 export default {
-  ticketUrlAndId: 'URL et identifiant du ticket',
   ticketUrlAndIdHelpText: 'L\'URL du ticket reçue de la réponse de l\'API peut être ajoutée aux informations dynamiques de l\'alarme.',
   dataFromOneStepAttention: 'Les données de la réponse de l\'API ne peuvent être extraites que d\'une étape d\'une règle.',
   ticketID: 'ID de ticket',
   ticketURL: 'URL du ticket',
+  ticketUrlAndId: 'URL et ID du ticket',
   ticketURLTitle: 'Titre de l\'URL du ticket',
   ticketURLTitleHelp: 'TCe titre s\'affichera dans le corps de la balise de lien : <strong>&lt;a href=&quot;{URL}&quot;&gt;{TITLE}&lt;/a&gt;</strong>',
   ticketSystemName: 'Nom du système de ticket',
@@ -17,7 +17,6 @@ export default {
   emptyResponse: 'Réponse vide',
   isRegexp: 'La valeur peut être une expression régulière',
   addWebhook: 'Ajouter un webhook',
-  emptyFields: 'Aucun champ ajouté pour le moment',
   emptyWebhooks: 'Aucun webhook ajouté pour le moment',
   workflowIfStepFails: 'Si cette étape échoue',
   continueWithNextStep: 'Continuer avec les étapes suivantes',
@@ -41,9 +40,10 @@ export default {
   massDisable: 'Désactiver les règles de déclaration de ticket',
   checkTicketStatus: 'Vérifier le statut du ticket',
   checkTicketStatusHelpText: 'Activer pour vérifier que le ticket existe dans le système de tickets avant d\'exécuter les étapes suivantes.',
+  ticketStatusEndpoint: 'Point de terminaison du statut du ticket',
   ticketStatusMapping: 'Correspondance des statuts de ticket',
   ticketStatusMappingHelpText: 'Au moins une valeur source doit être mappée vers la valeur Canopsis « Fermé ».',
-  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Inconnu ».',
+  ticketStatusMappingUnmappedToOpen: 'Toutes les valeurs sources non mappées seront mappées au statut Canopsis « Ouvert ».',
   sourceValue: 'Valeur source',
   canopsisValue: 'Valeur Canopsis',
   addMappingPair: 'Ajouter une paire de correspondance',

@@ -17,6 +17,7 @@
         :items="selected"
         :removable="removable"
         map
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />

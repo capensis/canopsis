@@ -1,7 +1,9 @@
 <template>
   <v-container>
     <v-layout class="gap-2" column>
-      <span class="text-body-2">{{ $t('settings.quickActions.title') }}</span>
+      <span class="text-body-2">
+        {{ $t('settings.quickActions.title') }}
+      </span>
       <span>{{ $t('settings.quickActions.description') }}</span>
       <c-widget-template-field
         :value="template"

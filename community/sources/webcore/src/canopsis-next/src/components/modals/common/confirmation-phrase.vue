@@ -16,7 +16,9 @@
         </c-alert>
         <div class="my-3">
           <p v-html="sanitizedPhraseText" class="mb-2" />
-          <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>
+          <pre class="black--text grey lighten-2 d-inline pa-1">
+{{ originalPhrase }}
+</pre>
         </div>
         <v-text-field
           v-model="phrase"
@@ -39,7 +41,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled || !phrasesEqual"
+          :disabled="submitting || !phrasesEqual"
           class="primary"
           type="submit"
         >
@@ -88,7 +90,7 @@ export default {
     const phrasesEqual = computed(() => phrase.value === originalPhrase.value);
     const sanitizedPhraseText = computed(() => sanitizeHtml(config.value.phraseText || ''));
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
+    const { submitting, submit } = useSubmittableForm({
       form: { phrase },
       method: async () => {
         if (phrasesEqual.value) {
@@ -107,7 +109,6 @@ export default {
       phrasesEqual,
       sanitizedPhraseText,
       submitting,
-      isDisabled,
       submit,
     };
   },

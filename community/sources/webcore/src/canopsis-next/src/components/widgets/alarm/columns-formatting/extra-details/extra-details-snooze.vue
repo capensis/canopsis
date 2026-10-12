@@ -9,7 +9,9 @@
           <v-icon color="white" small>
             {{ icon }}
           </v-icon>
-          <strong v-if="hasInactivePbehavior" class="ml-2 white--text">!</strong>
+          <strong v-if="hasInactivePbehavior" class="ml-2 white--text">
+            !
+          </strong>
         </c-alarm-extra-details-chip>
       </template>
     </c-simple-tooltip>

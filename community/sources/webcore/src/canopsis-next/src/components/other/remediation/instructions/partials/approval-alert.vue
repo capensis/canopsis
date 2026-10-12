@@ -10,10 +10,14 @@
         <v-layout column>
           <v-layout>
             <strong>{{ userName }}</strong>
-            <span class="ml-1">{{ statusText }}</span>
+            <span class="ml-1">
+              {{ statusText }}
+            </span>
           </v-layout>
           <v-layout class="mt-3">
-            <span class="grey--text text--darken-2">{{ $tc('common.comment', 1) }}:</span>
+            <span class="grey--text text--darken-2">
+              {{ $tc('common.comment', 1) }}:
+            </span>
           </v-layout>
           <v-layout class="mt-3">
             <span>{{ comment }}</span>

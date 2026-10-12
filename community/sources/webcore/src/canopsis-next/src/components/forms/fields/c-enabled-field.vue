@@ -2,7 +2,7 @@
   <div :class="wrapperClass" class="c-enabled-field">
     <v-switch
       v-field="value"
-      :class="{ 'ma-0': withBackground }"
+      :class="{ 'ma-0': withBackground || noMargin, 'pa-0': noMargin }"
       :label="label || $t('common.enabled')"
       :color="color"
       :disabled="disabled"
@@ -57,6 +57,10 @@ export default {
       default: false,
     },
     withBackground: {
+      type: Boolean,
+      default: false,
+    },
+    noMargin: {
       type: Boolean,
       default: false,
     },

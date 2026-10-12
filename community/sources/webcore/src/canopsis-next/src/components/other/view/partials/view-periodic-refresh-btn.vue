@@ -23,7 +23,9 @@
           color="white"
           button
         >
-          <span class="refresh-btn">{{ periodicRefreshProgress | maxDurationByUnit }}</span>
+          <span class="refresh-btn">
+            {{ periodicRefreshProgress | maxDurationByUnit }}
+          </span>
         </v-progress-circular>
       </v-btn>
     </template>

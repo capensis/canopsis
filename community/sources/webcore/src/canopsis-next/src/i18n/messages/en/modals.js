@@ -1,4 +1,4 @@
-import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -14,7 +14,7 @@ export default {
       title: 'Create an entity',
     },
     edit: {
-      title: 'Edit an entity',
+      title: 'Edit entity',
     },
     duplicate: {
       title: 'Duplicate an entity',
@@ -27,13 +27,13 @@ export default {
   },
   createService: {
     create: {
-      title: 'Create a service',
+      title: 'Create service',
     },
     edit: {
-      title: 'Edit a service',
+      title: 'Edit service',
     },
     duplicate: {
-      title: 'Duplicate a service',
+      title: 'Duplicate service',
     },
     success: {
       create: 'Service successfully created!',
@@ -43,7 +43,7 @@ export default {
   },
   createEntityInfo: {
     create: {
-      title: 'Add an information',
+      title: 'Add infos',
     },
     edit: {
       title: 'Edit an information',
@@ -113,7 +113,7 @@ export default {
   createChangeStateEvent: {
     title: 'Change severity',
     states: {
-      ok: 'Info',
+      ok: 'Ok',
       minor: 'Minor',
       major: 'Major',
       critical: 'Critical',
@@ -147,6 +147,7 @@ export default {
           noEnding: 'No ending',
           startOnTrigger: 'Start on trigger',
           inherited: 'Apply for all dependant entities',
+          reasonAndType: 'Reason and type',
         },
       },
       filter: {
@@ -432,6 +433,11 @@ export default {
     errors: {
       emptyInfos: 'At least one info must be added.',
     },
+    infosSection: {
+      title: 'Information',
+      addInfos: 'Add infos',
+      addInfosFromTemplate: 'Add infos from template',
+    },
     steps: {
       infos: {
         title: 'Informations',
@@ -444,31 +450,32 @@ export default {
       },
     },
   },
-  createDynamicInfoInformation: {
-    create: {
-      title: 'Add an information to the dynamic information rule',
-    },
-  },
-  dynamicInfoTemplatesList: {
-    title: 'Dynamic info templates',
-  },
   createDynamicInfoTemplate: {
     create: {
-      title: 'Create dynamic info template',
+      title: 'Create dynamic information template',
     },
     edit: {
-      title: 'Edit dynamic info template',
+      title: 'Edit dynamic information template',
     },
     fields: {
       names: 'Names',
     },
     buttons: {
-      addName: 'Add new name',
+      addName: 'Add name',
     },
     errors: {
       noNames: 'You have to add at least 1 name',
     },
     emptyNames: 'No names added yet',
+  },
+  addDynamicInfoInfosFromTemplate: {
+    title: 'Add infos from template',
+    fields: {
+      template: 'Template',
+    },
+    actions: {
+      addInfos: 'Add infos',
+    },
   },
   importExportViews: {
     title: 'Import/Export views',
@@ -536,8 +543,13 @@ export default {
     title: 'Create recurrence rule',
   },
   createPbehaviorType: {
-    title: 'Create type',
-    iconNameHint: 'Enter a name of an icon from material.io',
+    create: {
+      title: 'Create type',
+    },
+    edit: {
+      title: 'Edit type',
+    },
+    iconNamePlaceholder: 'Icon name in material.io',
     errors: {
       iconName: 'The name is invalid',
     },
@@ -563,20 +575,29 @@ export default {
     },
   },
   createPbehaviorReason: {
-    title: 'Create reason',
+    create: {
+      title: 'Create reason',
+    },
+    edit: {
+      title: 'Edit reason',
+    },
     fields: {
       name: 'Name',
       description: 'Description',
     },
   },
   createPbehaviorException: {
-    title: 'Create date of exception',
+    create: {
+      title: 'Create exception dates',
+    },
+    edit: {
+      title: 'Edit exception dates',
+    },
     addDate: 'Add date',
     fields: {
       name: 'Name',
       description: 'Description',
     },
-    emptyExdates: 'No exdates added yet',
   },
   linkToMetaAlarm: {
     title: 'Link to a meta alarm',
@@ -1019,6 +1040,18 @@ export default {
     edit: {
       title: 'Edit widget template',
     },
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Alarm columns',
+      [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Alarm default sort columns',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Entity columns',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'More infos',
+      [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Quick actions (single alarm)',
+      [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Quick actions (massive)',
+      [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export to PDF',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Tile template',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modal template',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Entity template',
+    },
   },
   selectWidgetTemplateType: {
     title: 'Select widget template type',
@@ -1135,10 +1168,10 @@ export default {
   },
   createTag: {
     create: {
-      title: 'Create a tag',
+      title: 'Create tag',
     },
     edit: {
-      title: 'Edit a tag',
+      title: 'Edit tag',
     },
     duplicate: {
       title: 'Duplicate a tag',
@@ -1181,7 +1214,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Add record',
+      title: 'Import records',
     },
     edit: {
       title: 'Edit record',

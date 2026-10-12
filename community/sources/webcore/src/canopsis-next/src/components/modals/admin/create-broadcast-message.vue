@@ -29,11 +29,11 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="primary white--text"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -108,8 +108,8 @@ export default {
       }));
     });
 
-    const treeItems = computed(() => [
-      {
+    const treeItems = computed(() => ({
+      pages: [{
         value: BROADCAST_MESSAGE_VIEWS.login,
         name: t('common.login'),
       },
@@ -128,21 +128,22 @@ export default {
       {
         value: BROADCAST_MESSAGE_VIEWS.profile,
         name: t('common.profile'),
-      },
-      {
+      }],
+      views: [{
         value: BROADCAST_MESSAGE_VIEWS.allViews,
         name: t('broadcastMessage.allViews'),
         children: viewGroupsTree.value,
-      },
-      {
+      }],
+      playlists: [{
         value: BROADCAST_MESSAGE_VIEWS.allPlaylists,
         name: t('broadcastMessage.allPlaylists'),
         children: playlistsTree.value,
-      },
-    ]);
+      }],
+    }));
 
-    const { submit, isDisabled } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.message,
       method: async () => {
         await config.value.action?.(formToMessage(form.value, treeItems.value));
 
@@ -150,11 +151,13 @@ export default {
       },
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    const { updateOriginalFormField } = useFormConfirmableCloseModal({ form, submit, close });
 
-    watch(treeItems, (newTreeItems) => {
-      form.value.views = prepareMessageViews(form.value.views, newTreeItems);
-    });
+    watch(treeItems, () => {
+      form.value.views = prepareMessageViews(form.value.views, treeItems.value);
+
+      updateOriginalFormField('views', form.value.views);
+    }, { immediate: true });
 
     onMounted(async () => {
       try {
@@ -171,9 +174,10 @@ export default {
       form,
       title,
       message,
-      isDisabled,
+      submitting,
       treeItems,
 
+      submitLabel,
       submit,
       close,
     };

@@ -45,7 +45,8 @@ type Action struct {
 	Comment                  string     `bson:"comment" json:"comment"`
 	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters"`
 	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
-	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
+	EmitTriggerSuccess       bool       `bson:"emit_trigger_success" json:"emit_trigger_success"`
+	EmitTriggerFail          bool       `bson:"emit_trigger_fail" json:"emit_trigger_fail"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

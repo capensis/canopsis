@@ -8,7 +8,9 @@
         v-on="on"
         @click="$emit('click')"
       >
-        <span v-if="$vuetify.breakpoint.mdAndUp">{{ $t('calendar.today') }}</span>
+        <span v-if="$vuetify.breakpoint.mdAndUp">
+          {{ $t('calendar.today') }}
+        </span>
         <v-icon v-else>
           today
         </v-icon>

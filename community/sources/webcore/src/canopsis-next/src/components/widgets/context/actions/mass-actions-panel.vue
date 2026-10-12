@@ -1,7 +1,8 @@
 <template>
-  <shared-mass-actions-panel
+  <mass-actions-panel
     v-show="items.length"
     :actions="actions"
+    :small="small"
   />
 </template>
 
@@ -13,7 +14,7 @@ import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
-import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
+import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
 /**
  * Panel regrouping mass actions icons
@@ -23,7 +24,7 @@ import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actio
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  components: { SharedMassActionsPanel },
+  components: { MassActionsPanel },
   mixins: [widgetActionsPanelContextMixin],
   props: {
     items: {
@@ -31,6 +32,10 @@ export default {
       default: () => [],
     },
     defaultInheritedPbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    small: {
       type: Boolean,
       default: false,
     },

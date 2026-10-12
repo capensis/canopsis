@@ -5,7 +5,9 @@
         <v-card class="c-mass-actions-panel__card">
           <v-card-text class="pa-1">
             <v-layout class="gap-4 pa-3" align-center>
-              <span class="c-mass-actions-panel__message mr-1">{{ message }}</span>
+              <span class="c-mass-actions-panel__message mr-1">
+                {{ message }}
+              </span>
               <v-divider vertical />
               <c-enabled-field
                 v-field="value"

@@ -8,15 +8,21 @@
         <v-layout class="gap-2" column>
           <span>{{ execution.alarm?.display_name }}</span>
           <v-layout v-if="hasJobs" align-center>
-            <strong class="mr-2">{{ $tc('remediation.instruction.job', 2) }}: </strong>
+            <strong class="mr-2">
+              {{ $tc('remediation.instruction.job', 2) }}:
+            </strong>
             <active-remediation-executions-item-jobs :jobs="execution.jobs" />
           </v-layout>
           <span v-if="execution.current_operation">
-            <strong class="mr-2">{{ $t('common.step') }} {{ stepFullNumber }}:</strong>
+            <strong class="mr-2">
+              {{ $tc('common.step') }} {{ stepFullNumber }}:
+            </strong>
             <span>{{ execution.current_operation.name }}</span>
           </span>
           <span v-if="timeToComplete" class="mt-1 grey--text">
-            <v-icon class="mr-2" color="grey" small>timer</v-icon>
+            <v-icon class="mr-2" color="grey" small>
+              timer
+            </v-icon>
             <span>{{ $t('remediation.instructionExecute.timeToComplete', { duration: timeToComplete }) }}</span>
           </span>
         </v-layout>

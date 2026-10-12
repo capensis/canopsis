@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
+	"reflect"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -20,16 +24,42 @@ const (
 	StatusAborted
 )
 
+const (
+	RuleTypeScenario RuleType = iota
+	RuleTypeDeclareTicket
+	RuleTypeEventFilter
+)
+
 const MultipleURLsDelimiter = ","
+
+type RuleType int
+
+func (rk RuleType) String() string {
+	switch rk {
+	case RuleTypeScenario:
+		return "scenario"
+	case RuleTypeDeclareTicket:
+		return "declare_ticket_rule"
+	case RuleTypeEventFilter:
+		return "event_filter"
+	default:
+		return "unknown"
+	}
+}
 
 type History struct {
 	BaseHistory `bson:",inline"`
 
-	Execution         string   `bson:"execution" json:"execution"`
-	Alarms            []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
-	Scenario          string   `bson:"scenario,omitempty" json:"scenario,omitempty"`
-	DeclareTicketRule string   `bson:"declare_ticket_rule,omitempty" json:"declare_ticket_rule,omitempty"`
-	Name              string   `bson:"name" json:"name"`
+	Execution string   `bson:"execution" json:"execution"`
+	Alarms    []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
+	Rule      string   `bson:"rule" json:"rule"`
+	RuleType  RuleType `bson:"rule_type" json:"rule_type"`
+	Name      string   `bson:"name" json:"name"`
+	// ReplyTo is the name of the engine that emitted this webhook execution.
+	// It is recorded when the execution is created and used to
+	// route the result back to the emitting engine - including for chained and
+	// abandoned executions, which are re-issued without an AMQP reply-to.
+	ReplyTo string `bson:"reply_to,omitempty" json:"reply_to,omitempty"`
 
 	Index              int64  `bson:"index" json:"index"`
 	NextExec           string `bson:"next_exec,omitempty" json:"next_exec,omitempty"`
@@ -38,28 +68,81 @@ type History struct {
 	MultipleURLs       bool   `bson:"multiple_urls,omitempty" json:"multiple_urls,omitempty"`
 	ResolvedRequestURL string `bson:"resolved_request_url,omitempty" json:"resolved_request_url,omitempty"`
 
-	SystemName      string                    `bson:"system_name,omitempty" json:"system_name,omitempty"`
-	EmitTrigger     bool                      `bson:"emit_trigger,omitempty" json:"emit_trigger,omitempty"`
-	Comment         string                    `bson:"comment,omitempty" json:"comment,omitempty"`
-	AuthToken       *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
-	DeclareTicket   *DeclareTicket            `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
-	TicketResources bool                      `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
-	UserID          string                    `bson:"user,omitempty" json:"user,omitempty"`
-	Username        string                    `bson:"username,omitempty" json:"username,omitempty"`
-	Initiator       string                    `bson:"initiator,omitempty" json:"initiator,omitempty"`
-	EventInitiator  string                    `bson:"event_initiator,omitempty" json:"event_initiator,omitempty"`
-	EventOutput     string                    `bson:"event_output,omitempty" json:"event_output,omitempty"`
-	Trigger         string                    `bson:"trigger,omitempty" json:"trigger,omitempty"`
+	SystemName         string                    `bson:"system_name,omitempty" json:"system_name,omitempty"`
+	EmitTriggerSuccess bool                      `bson:"emit_trigger_success,omitempty" json:"emit_trigger_success,omitempty"`
+	EmitTriggerFail    bool                      `bson:"emit_trigger_fail,omitempty" json:"emit_trigger_fail,omitempty"`
+	Comment            string                    `bson:"comment,omitempty" json:"comment,omitempty"`
+	AuthToken          *request.WebhookAuthToken `bson:"auth_token,omitempty" json:"auth_token,omitempty"`
+	DeclareTicket      *DeclareTicket            `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
+	TicketResources    bool                      `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
+	UserID             string                    `bson:"user,omitempty" json:"user,omitempty"`
+	Username           string                    `bson:"username,omitempty" json:"username,omitempty"`
+	Initiator          string                    `bson:"initiator,omitempty" json:"initiator,omitempty"`
+	EventInitiator     string                    `bson:"event_initiator,omitempty" json:"event_initiator,omitempty"`
+	EventOutput        string                    `bson:"event_output,omitempty" json:"event_output,omitempty"`
+	Trigger            string                    `bson:"trigger,omitempty" json:"trigger,omitempty"`
 
 	ResponseCode   int64             `bson:"response_code,omitempty" json:"response_code,omitempty"`
 	ResponseHeader map[string]string `bson:"response_header,omitempty" json:"response_header,omitempty"`
-	ResponseBody   map[string]any    `bson:"response_body,omitempty" json:"response_body,omitempty"`
+	ResponseBody   any               `bson:"response_body,omitempty" json:"response_body,omitempty"`
 
 	TicketID   string            `bson:"ticket_id,omitempty" json:"ticket_id,omitempty"`
 	TicketURL  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
 	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 
 	IsTest bool `bson:"is_test,omitempty" json:"is_test,omitempty"`
+}
+
+func (h History) CloneForURL(url string) History {
+	return History{
+		ID:        utils.NewID(),
+		Status:    StatusCreated,
+		Request:   h.Request,
+		Execution: h.Execution,
+		Alarms:    h.Alarms,
+		Rule:      h.Rule,
+		RuleType:  h.RuleType,
+		Name:      h.Name,
+		IsTest:    h.IsTest,
+
+		Index:              h.Index,
+		StopOnFail:         h.StopOnFail,
+		StopOnSuccess:      h.StopOnSuccess,
+		MultipleURLs:       h.MultipleURLs,
+		ResolvedRequestURL: url,
+
+		SystemName:         h.SystemName,
+		EmitTriggerSuccess: h.EmitTriggerSuccess,
+		EmitTriggerFail:    h.EmitTriggerFail,
+		Comment:            h.Comment,
+		AuthToken:          h.AuthToken,
+		DeclareTicket:      h.DeclareTicket,
+		TicketResources:    h.TicketResources,
+		UserID:             h.UserID,
+		Username:           h.Username,
+		Initiator:          h.Initiator,
+		EventInitiator:     h.EventInitiator,
+		EventOutput:        h.EventOutput,
+		Trigger:            h.Trigger,
+	}
+}
+
+func (h History) TicketInfo() types.TicketInfo {
+	ticketInfo := types.TicketInfo{
+		Ticket:           h.TicketID,
+		TicketURL:        h.TicketURL,
+		TicketData:       h.TicketData,
+		TicketComment:    h.Comment,
+		TicketSystemName: h.SystemName,
+		TicketRuleName:   h.Name,
+		TicketRuleID:     h.Rule,
+	}
+
+	if h.DeclareTicket != nil {
+		ticketInfo.TicketURLTitle = h.DeclareTicket.TicketURLTitle
+	}
+
+	return ticketInfo
 }
 
 type TplAlarm struct {
@@ -306,7 +389,7 @@ type CheckTicketStatus struct {
 
 type CheckTicketStatusJob struct {
 	ID                     string            `bson:"_id"`
-	RuleType               int               `bson:"rule_type"`
+	RuleType               RuleType          `bson:"rule_type"`
 	RuleName               string            `bson:"rule_name"`
 	Status                 int               `bson:"status"`
 	HistoryID              string            `bson:"history_id"`
@@ -330,7 +413,32 @@ type CheckTicketStatusJob struct {
 }
 
 type ResponseTplVars struct {
-	Header      map[string]string
-	Response    map[string]any
-	ResponseMap map[string]any
+	Header       map[string]string
+	Response     map[string]any
+	ResponseMap  map[string]any
+	LastResponse map[string]any
+}
+
+// AddResponse adds the response headers and string-keyed response fields from h to the template variables.
+// Non-map response bodies and maps with non-string keys are ignored.
+// Header, Response, and ResponseMap must be initialized before calling AddResponse.
+// LastResponse is replaced on each call.
+func (tv *ResponseTplVars) AddResponse(idx int, h *History) {
+	maps.Copy(tv.Header, h.ResponseHeader)
+
+	tv.LastResponse = make(map[string]any)
+
+	responseCountStr := strconv.Itoa(idx)
+	rv := reflect.ValueOf(h.ResponseBody)
+	if !rv.IsValid() || rv.Kind() != reflect.Map || rv.Type().Key().Kind() != reflect.String {
+		return
+	}
+
+	for mi := rv.MapRange(); mi.Next(); {
+		key := mi.Key().String()
+		val := mi.Value().Interface()
+		tv.Response[key] = val
+		tv.ResponseMap[responseCountStr+"."+key] = val
+		tv.LastResponse[key] = val
+	}
 }
