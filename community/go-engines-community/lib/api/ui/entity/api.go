@@ -387,7 +387,7 @@ func (a *api) Pause(c *gin.Context) {
 	}
 
 	r := PauseRequest{}
-	if err = validation.Bind(c, &r); err != nil {
+	if err = binding.Bind(c, &r); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -421,7 +421,7 @@ func (a *api) Resume(c *gin.Context) {
 	}
 
 	r := ResumeRequest{}
-	if err = validation.Bind(c, &r); err != nil {
+	if err = binding.Bind(c, &r); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
