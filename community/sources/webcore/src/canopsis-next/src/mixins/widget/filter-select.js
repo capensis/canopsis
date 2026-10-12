@@ -1,7 +1,4 @@
-import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
-
 export const widgetFilterSelectMixin = {
-  mixins: [entitiesWidgetMixin],
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
       if (this.hasAccessToUserFilter) {

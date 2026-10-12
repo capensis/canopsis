@@ -1,8 +1,8 @@
 <template>
   <label>
-    <v-layout
-      class="images-viewer white"
-      align-center
+    <c-layout
+      align="center"
+      class="images-viewer bg-white"
     >
       <v-window v-model="activeImageIndex">
         <v-window-item
@@ -14,7 +14,7 @@
         >
           <div
             v-if="image.name"
-            class="images-viewer__img-title white--text ml-1"
+            class="images-viewer__img-title text-white ml-1"
           >
             {{ image.name }}
           </div>
@@ -25,43 +25,45 @@
           >
         </v-window-item>
       </v-window>
-      <v-layout
+
+      <c-layout
         v-if="images.length"
+        justify="space-between"
         class="images-viewer__actions"
-        justify-space-between
-        reverse
       >
         <v-btn
           color="white"
+          variant="text"
           icon
-          text
-          @click="nextImage"
-        >
-          <v-icon :size="32">
-            chevron_right
-          </v-icon>
-        </v-btn>
-        <v-btn
-          color="white"
-          icon
-          text
           @click="prevImage"
         >
-          <v-icon :size="32">
+          <c-icon :size="32">
             chevron_left
-          </v-icon>
+          </c-icon>
         </v-btn>
-      </v-layout>
-      <v-layout
+
+        <v-btn
+          color="white"
+          variant="text"
+          icon
+          @click="nextImage"
+        >
+          <c-icon :size="32">
+            chevron_right
+          </c-icon>
+        </v-btn>
+      </c-layout>
+
+      <c-layout
         v-if="images.length"
+        justify="space-between"
         class="images-viewer__image-count"
-        justify-space-between
       >
-        <span class="white--text pl-1">
+        <span class="text-white pl-1">
           {{ activeImageIndex + 1 }}/{{ images.length }}
         </span>
-      </v-layout>
-    </v-layout>
+      </c-layout>
+    </c-layout>
   </label>
 </template>
 
@@ -98,6 +100,7 @@ export default {
       default: 'src',
     },
   },
+
   data() {
     return {
       directionToNext: true,
@@ -106,17 +109,21 @@ export default {
         : 0,
     };
   },
+
   computed: {
     transition() {
       return this.directionToNext ? 'v-window-x-transition' : 'v-window-x-reverse-transition';
     },
   },
+
   mounted() {
     document.addEventListener('keydown', this.keyDownListener);
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     document.removeEventListener('keydown', this.keyDownListener);
   },
+
   methods: {
     keyDownListener(event) {
       switch (event.key) {

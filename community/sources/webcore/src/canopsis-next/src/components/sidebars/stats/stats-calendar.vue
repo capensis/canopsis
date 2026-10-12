@@ -6,15 +6,18 @@
     @submit="submit"
   >
     <field-title v-model="form.title" />
+
     <alarms-list-modal-form
-      v-model="form.parameters.alarmsList"
+      v-model:value="form.parameters.alarmsList"
       :templates="preparedWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
     />
-    <widget-settings-group :title="$t('settings.advancedSettings')">
+
+    <widget-settings-group :title="t('settings.advancedSettings')">
       <field-filters
-        :filters.sync="form.filters"
+        v-model:filters="form.filters"
         :widget-id="widget._id"
+        :widget-type="form.type"
         addable
         editable
         with-alarm
@@ -22,64 +25,116 @@
         with-pbehavior
         hide-selector
       />
+
       <field-opened-resolved-filter v-model="form.parameters.opened" />
+
       <field-switcher
         v-model="form.parameters.considerPbehaviors"
-        :title="$t('settings.considerPbehaviors.title')"
+        :title="t('settings.considerPbehaviors.title')"
       />
+
       <field-criticity-levels v-model="form.parameters.criticityLevels" />
+
       <field-levels-colors-selector
         v-model="form.parameters.criticityLevelsColors"
         color-type="hex"
         hide-suffix
       />
     </widget-settings-group>
+    <widget-colors-form v-model="form.parameters.colors" />
   </widget-settings>
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { computed, onMounted, ref, toRef } from 'vue';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { formValidationHeaderMixin } from '@/mixins/form';
-import { entitiesInfosMixin } from '@/mixins/entities/infos';
-import { widgetTemplatesMixin } from '@/mixins/widget/templates';
+import { MAX_LIMIT, SIDE_BARS } from '@/constants';
 
-import FieldTitle from '../form/fields/title.vue';
-import FieldFilters from '../form/fields/filters.vue';
-import FieldSwitcher from '../form/fields/switcher.vue';
-import AlarmsListModalForm from '../alarm/form/alarms-list-modal.vue';
-import WidgetSettings from '../partials/widget-settings.vue';
-import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
-import FieldOpenedResolvedFilter from '../alarm/form/fields/opened-resolved-filter.vue';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
+
+import { useI18n } from '@/hooks/i18n';
+import { useInfos } from '@/hooks/store/modules/infos';
+import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
+import { useWidgetSettings } from '@/hooks/widget/settings';
+
+import AlarmsListModalForm from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
+import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
 import FieldCriticityLevels from './form/fields/criticity-levels.vue';
 import FieldLevelsColorsSelector from './form/fields/levels-colors-selector.vue';
 
-/**
- * Component to regroup the entities list settings fields
- */
 export default {
   name: SIDE_BARS.statsCalendarSettings,
+
   components: {
-    WidgetSettingsGroup,
-    WidgetSettings,
-    FieldTitle,
-    FieldOpenedResolvedFilter,
-    FieldFilters,
-    FieldSwitcher,
-    FieldCriticityLevels,
-    FieldLevelsColorsSelector,
     AlarmsListModalForm,
+    FieldCriticityLevels,
+    FieldFilters,
+    FieldLevelsColorsSelector,
+    FieldOpenedResolvedFilter,
+    FieldSwitcher,
+    FieldTitle,
+    WidgetColorsForm,
+    WidgetSettings,
+    WidgetSettingsGroup,
   },
-  mixins: [
-    widgetSettingsMixin,
-    formValidationHeaderMixin,
-    entitiesInfosMixin,
-    widgetTemplatesMixin,
-  ],
-  mounted() {
-    this.fetchInfos();
+
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const sidebar = toRef(props, 'sidebar');
+    const widgetTemplates = ref([]);
+    const widgetTemplatesPending = ref(false);
+    const { fetchInfos } = useInfos();
+    const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
+
+    const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+
+    const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
+
+    const fetchWidgetTemplates = async () => {
+      try {
+        widgetTemplatesPending.value = true;
+
+        const { data } = await fetchWidgetTemplatesListWithoutStore({ params: { limit: MAX_LIMIT } });
+
+        widgetTemplates.value = data;
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        widgetTemplatesPending.value = false;
+      }
+    };
+
+    onMounted(() => {
+      fetchInfos();
+      fetchWidgetTemplates();
+    });
+
+    return {
+      form,
+      hasChanges,
+      preparedWidgetTemplates,
+      submitting,
+      t,
+      widget,
+      widgetTemplatesPending,
+
+      close,
+      submit,
+    };
   },
 };
 </script>

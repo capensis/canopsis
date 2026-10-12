@@ -1,7 +1,7 @@
 <template>
   <div class="dynamic-info-templates-list-root">
     <c-advanced-data-table
-      :options.sync="options"
+      :options="options"
       :items="paginatedTemplates"
       :loading="pending"
       :headers="headers"
@@ -11,6 +11,7 @@
       advanced-pagination
       expand
       hide-actions
+      @update:options="updateOptions"
     >
       <template #mass-actions="{ selected, clearSelected }">
         <c-table-mass-actions-panel
@@ -25,36 +26,23 @@
         <v-container>
           <v-card>
             <v-card-text>
-              <v-data-iterator :items="item.names">
-                <template #item="nameProps">
-                  <v-card>
-                    <v-card-title>{{ nameProps.item }}</v-card-title>
-                  </v-card>
-                </template>
-              </v-data-iterator>
+              <dynamic-info-template-names-expand :names="item.names" />
             </v-card-text>
           </v-card>
         </v-container>
       </template>
+
       <template #actions="{ item }">
-        <v-layout>
+        <c-layout gap="1">
           <c-action-btn
             v-if="usable"
             :tooltip="$t('dynamicInfo.createFromTemplateTooltip')"
             icon="assignment"
             @click="$emit('use', item)"
           />
-          <c-action-btn
-            v-if="updatable"
-            type="edit"
-            @click="$emit('edit', item)"
-          />
-          <c-action-btn
-            v-if="removable"
-            type="delete"
-            @click="$emit('remove', item._id)"
-          />
-        </v-layout>
+          <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+          <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+        </c-layout>
       </template>
     </c-advanced-data-table>
   </div>
@@ -69,7 +57,12 @@ import { getMaxPageForItemsCount } from '@/helpers/pagination';
 import { useI18n } from '@/hooks/i18n';
 import { useLocalQueryWithOptions } from '@/hooks/query/shared';
 
+import DynamicInfoTemplateNamesExpand from './partials/dynamic-info-template-names-expand.vue';
+
 export default {
+  components: {
+    DynamicInfoTemplateNamesExpand,
+  },
   props: {
     templates: {
       type: Array,
@@ -92,6 +85,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['use', 'edit', 'remove', 'refresh'],
+
   setup(props) {
     const { t } = useI18n();
 
@@ -130,7 +126,6 @@ export default {
         text: t('common.actionsLabel'),
         value: 'actions',
         sortable: false,
-        align: 'end',
         width: '1%',
       },
     ]);
@@ -142,8 +137,9 @@ export default {
         return props.templates;
       }
 
-      const [sortKey] = sortBy;
-      const [isDesc] = sortDesc;
+      const [sortItem] = sortBy;
+      const sortKey = sortItem.key ?? sortItem;
+      const isDesc = sortItem.order === 'desc' || sortDesc[0];
 
       return orderBy(
         props.templates,
@@ -163,6 +159,7 @@ export default {
 
     return {
       options,
+      updateOptions,
       headers,
       itemsPerPageItems,
       totalItems,

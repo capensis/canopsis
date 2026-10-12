@@ -1,33 +1,30 @@
 <template>
-  <v-layout
-    class="geomap-map-form"
-    column
-  >
+  <c-layout class="geomap-map-form" column>
     <c-name-field
-      v-field="form.name"
+      :model-value="form.name"
       autofocus
       required
+      @update:model-value="updateField('name', $event)"
     />
-    <flowchart-editor v-field="form.parameters" />
-  </v-layout>
+    <flowchart-editor :form="form.parameters" @update:form="updateField('parameters', $event)" />
+  </c-layout>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 import FlowchartEditor from './fields/flowchart-editor.vue';
 
 export default {
-  inject: ['$validator'],
   components: { FlowchartEditor },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
   props: {
     form: {
       type: Object,
       required: true,
     },
   },
+  emits: ['update:form'],
 };
 </script>
 

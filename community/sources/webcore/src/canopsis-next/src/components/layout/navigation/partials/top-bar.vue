@@ -1,82 +1,80 @@
 <template>
   <v-app-bar
-    :height="$config.TOP_BAR_HEIGHT"
+    :height="TOP_BAR_HEIGHT"
     :class="{ 'top-bar--with-extension': isShownGroupsTopBar }"
-    class="top-bar primary"
-    dense
-    fixed
+    class="top-bar bg-primary"
     app
   >
     <v-app-bar-nav-icon
       v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation"
-      class="ml-0 white--text"
+      class="ml-0 text-white"
+      size="large"
       @click="$emit('toggle:sideBar')"
     />
-    <v-layout
-      v-else
-      fill-height
-      align-center
-    >
+
+    <c-layout v-else class="top-bar__brand fill-height" align="center">
       <app-logo class="canopsis-logo mr-2" />
-      <v-layout
-        class="version ml-1"
-        fill-height
-        align-end
-      >
+
+      <c-layout class="version ml-1 fill-height" align="end">
         <logged-users-count badge-color="secondary" />
         <app-version />
-      </v-layout>
-    </v-layout>
+      </c-layout>
+    </c-layout>
+
     <top-bar-title :title="appTitle" />
-    <healthcheck-chips-list v-if="isProVersion && hasAccessToHealthcheckStatus" />
-    <v-spacer v-else />
-    <portal-target :name="$constants.PORTALS_NAMES.additionalTopBarItems" />
+
+    <healthcheck-chips-list
+      v-if="isProVersion && hasAccessToHealthcheckStatus"
+      class="top-bar__healthcheck-chips"
+    />
+
+    <v-spacer />
+
+    <div :data-teleport-target="TELEPORTS_NAMES.additionalTopBarItems" />
     <the-mass-actions-panels />
-    <v-toolbar-items v-if="!$route.meta.simpleNavigation">
+
+    <c-layout
+      v-if="!$route.meta.simpleNavigation"
+      class="top-bar__menus fill-height"
+      align="center"
+      gap="0"
+    >
       <top-bar-exploitation-menu />
       <top-bar-administration-menu />
       <top-bar-notifications-menu />
       <top-bar-user-menu />
-    </v-toolbar-items>
-    <template
-      v-if="isShownGroupsTopBar"
-      #extension=""
-    >
+    </c-layout>
+
+    <template v-if="isShownGroupsTopBar" #extension>
       <groups-top-bar />
     </template>
   </v-app-bar>
 </template>
 
 <script>
-import { USER_PERMISSIONS } from '@/constants';
+import { TOP_BAR_HEIGHT } from '@/config';
+import { TELEPORTS_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import { useAuth, useCanPermission } from '@/hooks/auth';
 import { useInfo } from '@/hooks/store/modules/info';
 
 import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
-import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
-import LoggedUsersCount from './logged-users-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
-import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
+import LoggedUsersCount from './logged-users-count.vue';
 import TopBarAdministrationMenu from './top-bar-administration-menu.vue';
+import TopBarExploitationMenu from './top-bar-exploitation-menu.vue';
 import TopBarNotificationsMenu from './top-bar-notifications-menu.vue';
-import TopBarUserMenu from './top-bar-user-menu.vue';
 import TopBarTitle from './top-bar-title.vue';
+import TopBarUserMenu from './top-bar-user-menu.vue';
 
-/**
- * Component for the top bar of the application
- *
- * @event toggleSideBar#click
- */
 export default {
   components: {
-    HealthcheckChipsList,
-    TheMassActionsPanels,
     AppLogo,
     AppVersion,
+    HealthcheckChipsList,
     LoggedUsersCount,
     GroupsTopBar,
     TopBarExploitationMenu,
@@ -85,16 +83,29 @@ export default {
     TopBarUserMenu,
     TopBarTitle,
   },
+
+  props: {
+    sideBarOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  emits: ['toggle:sideBar'],
+
   setup() {
     const { isShownGroupsTopBar, isShownGroupsSideBar } = useAuth();
     const { isProVersion, appTitle } = useInfo();
-
-    const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(USER_PERMISSIONS.technical.healthcheckStatus);
+    const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(
+      USER_PERMISSIONS.technical.healthcheckStatus,
+    );
 
     return {
-      isProVersion,
+      TOP_BAR_HEIGHT,
+      TELEPORTS_NAMES,
       appTitle,
       hasAccessToHealthcheckStatus,
+      isProVersion,
       isShownGroupsSideBar,
       isShownGroupsTopBar,
     };
@@ -113,31 +124,43 @@ export default {
   font-size: 0.7em;
   position: relative;
 
-  & ::v-deep .logged-users-count {
+  :deep(.logged-users-count) {
     left: -8px;
   }
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  width: 250px;
-  height: 100%;
-
-  img {
-    margin: auto;
-  }
-}
-
 .top-bar {
-  &.top-bar--with-extension ::v-deep .v-toolbar__content {
+  &.top-bar--with-extension :deep(.v-toolbar__content) {
     z-index: 1;
   }
 
-  & ::v-deep {
-    .v-toolbar__content, .v-toolbar__extension {
-      padding: 0;
+  :deep(.v-toolbar__content),
+  :deep(.v-toolbar__extension) {
+    padding: 0;
+    overflow: visible;
+  }
+
+  :deep(.v-toolbar__content) {
+    height: 48px !important;
+  }
+
+  &__brand {
+    flex: 0 0 auto;
+    min-width: 250px;
+  }
+
+  &__healthcheck-chips {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__menus {
+    flex: 0 0 auto;
+    height: 48px;
+    min-width: 0;
+
+    :deep(.v-btn) {
+      align-self: stretch;
     }
   }
 }

@@ -22,7 +22,8 @@ export const isAutoInstructionType = type => type === REMEDIATION_INSTRUCTION_TY
  * @param {number} type - The instruction type to check.
  * @returns {boolean} True if the instruction type is 'simpleManual', otherwise false.
  */
-export const isSimpleManualInstructionType = type => type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
+export const isSimpleManualInstructionType = type =>
+  type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
  * Checks if the instruction is of any manual type ('manual' or 'simpleManual').
@@ -30,6 +31,5 @@ export const isSimpleManualInstructionType = type => type === REMEDIATION_INSTRU
  * @param {number} type - The instruction type to check.
  * @returns {boolean} True if the instruction type is 'manual' or 'simpleManual', otherwise false.
  */
-export const isAnyManualInstructionType = type => (
-  isManualInstructionType(type) || isSimpleManualInstructionType(type)
-);
+export const isAnyManualInstructionType = type =>
+  isManualInstructionType(type) || isSimpleManualInstructionType(type);

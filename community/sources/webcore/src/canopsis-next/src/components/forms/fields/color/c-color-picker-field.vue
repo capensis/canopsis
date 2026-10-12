@@ -1,62 +1,84 @@
 <template>
-  <v-layout class="gap-3" justify-center column>
-    <v-layout v-if="splitted" align-center justify-space-between>
-      <v-btn
-        key="splitted"
-        :disabled="disabled"
-        class="mr-3"
-        small
-        @click="showColorPickerModal"
-      >
-        {{ displayLabel }}
-      </v-btn>
-      <div
-        :style="style"
-        class="pa-1 text-center"
-      >
-        {{ color }}
-      </div>
-    </v-layout>
-    <v-layout
-      :justify-end="justifyEnd"
-      class="color-picker__button__wrapper"
-      align-center
+  <v-input :hide-details="hideDetails">
+    <div
+      :class="[
+        'd-flex flex-column align-stretch',
+        justifyEnd ? 'justify-end' : 'justify-center',
+        { 'w-100': fillWidth },
+      ]"
     >
-      <v-btn
-        :style="style"
-        :disabled="disabled"
-        @click="showColorPickerModal"
+      <div v-if="splitted" class="d-flex align-center justify-space-between">
+        <v-btn :disabled="disabled" class="mr-3" @click="shown = true">
+          {{ displayLabel }}
+        </v-btn>
+
+        <div :style="style" class="pa-1 text-center">
+          {{ colorValue }}
+        </div>
+      </div>
+
+      <div
+        :class="[
+          'color-picker__button__wrapper d-flex align-center',
+          justifyEnd ? 'justify-end' : 'justify-center',
+          { 'w-100': fillWidth },
+        ]"
       >
-        {{ displayLabel }}
-      </v-btn>
-    </v-layout>
-  </v-layout>
+        <v-menu v-model="shown" :close-on-content-click="false" location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <slot
+              :props="activatorProps"
+              :color="colorValue"
+              :label="displayLabel"
+              :style="style"
+              :disabled="disabled"
+              name="activator"
+            >
+              <c-btn-with-error
+                v-bind="activatorProps"
+                :error="buttonError"
+                :size="size"
+                :style="style"
+                :disabled="disabled"
+              >
+                <v-icon v-if="icon">{{ icon }}</v-icon>
+                <span v-else-if="!hideLabel">{{ displayLabel }}</span>
+              </c-btn-with-error>
+            </slot>
+          </template>
+
+          <v-card>
+            <v-color-picker v-model="colorValue" :mode="type" show-swatches />
+          </v-card>
+        </v-menu>
+      </div>
+    </div>
+  </v-input>
 </template>
 
 <script>
-import { computed, watch, nextTick, onBeforeUnmount } from 'vue';
-
-import { MODALS } from '@/constants';
+import { computed, ref, watch } from 'vue';
 
 import { getMostReadableTextColor } from '@/helpers/color';
 
-import { useModelField } from '@/hooks/form/model-field';
+import { useField } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-import { useValidator } from '@/hooks/validator/validator';
 
 export default {
-  model: {
-    prop: 'color',
-    event: 'input',
-  },
   props: {
+    modelValue: {
+      type: String,
+      default: undefined,
+    },
     label: {
       type: String,
       required: false,
     },
     color: {
+      type: String,
+      default: '',
+    },
+    icon: {
       type: String,
       default: '',
     },
@@ -84,60 +106,84 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideLabel: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    size: {
+      type: String,
+      default: undefined,
+    },
+    fillWidth: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['update:modelValue', 'update:color'],
+
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { updateModel } = useModelField(props, emit);
-    const modals = useModals();
-    const validator = useValidator();
-    const { errors } = validator;
-    const { attachRequiredRule, detachRequiredRule } = useValidationAttachRequired(props.name);
+    const shown = ref(false);
+    const fieldName = computed(() => props.name || props.label || 'color');
+    const fieldRules = computed(() => ({
+      required: props.required,
+    }));
+    const { value, errors, setValue, validate } = useField(fieldName, fieldRules, {
+      initialValue: props.modelValue ?? props.color,
+      validateOnMount: false,
+      validateOnValueUpdate: false,
+    });
+
+    const colorValue = computed({
+      get: () => props.modelValue ?? props.color ?? value.value,
+      set: (value) => {
+        setValue(value, false);
+        emit('update:modelValue', value);
+        emit('update:color', value);
+      },
+    });
 
     const displayLabel = computed(() => props.label ?? t('common.selectColor'));
+    const buttonError = computed(() => errors.value[0] ?? '');
 
     const style = computed(() => ({
-      backgroundColor: props.color,
-      color: getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
-      ...(errors.has(props.name) && { outline: '2px solid var(--v-error-base)' }),
+      backgroundColor: colorValue.value,
+      color: getMostReadableTextColor(
+        colorValue.value,
+        props.icon ? { level: 'AA', size: 'large' } : undefined,
+      ),
     }));
 
-    /**
-     * Opens the color picker modal for the current value. On confirm, emits the new color and
-     * re-validates the field when it is required.
-     */
-    const showColorPickerModal = () => {
-      modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          color: props.color,
-          type: props.type,
-          action: (newColor) => {
-            updateModel(newColor);
+    watch(
+      () => props.modelValue,
+      (nextValue) => {
+        if (nextValue !== undefined) {
+          setValue(nextValue, false);
+        }
+      },
+    );
 
-            if (props.required) {
-              nextTick(() => validator.validate(props.name));
-            }
-          },
-        },
-      });
-    };
-
-    watch(() => props.required, (required) => {
-      if (required && !props.disabled) {
-        attachRequiredRule(() => props.color);
-
-        return;
-      }
-
-      detachRequiredRule();
-    }, { immediate: true });
-
-    onBeforeUnmount(detachRequiredRule);
+    watch(
+      () => props.color,
+      (nextValue) => {
+        if (props.modelValue === undefined) {
+          setValue(nextValue, false);
+        }
+      },
+    );
 
     return {
+      shown,
+      colorValue,
       displayLabel,
       style,
-      showColorPickerModal,
+      buttonError,
+      validate,
     };
   },
 };

@@ -3,7 +3,7 @@
     <div class="text-body-2 font-weight-medium text-center mb-4">
       {{ $t('llm.chat.tryLabel') }}
     </div>
-    <v-layout class="ai-chat-suggestions gap-2 mt-2" justify-space-between>
+    <c-layout class="ai-chat-suggestions mt-2" gap="2" justify="space-between">
       <c-chip
         v-for="suggestion in suggestions"
         :key="suggestion.type"
@@ -14,18 +14,18 @@
         rounded
         @click="selectSuggestion(suggestion.type)"
       >
-        <v-layout align-center>
+        <c-layout align="center">
           <v-icon
             v-if="suggestion.icon"
             class="mr-1"
-            small
+            size="small"
           >
             {{ suggestion.icon }}
           </v-icon>
           <span>{{ suggestion.label }}</span>
-        </v-layout>
+        </c-layout>
       </c-chip>
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
@@ -38,6 +38,7 @@ import { LLM_AI_CHAT_SUGGESTION_TYPES } from '@/constants';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
+  emits: ['select'],
   setup(props, { emit }) {
     const { t } = useI18n();
     const colors = COLORS.aiChat;

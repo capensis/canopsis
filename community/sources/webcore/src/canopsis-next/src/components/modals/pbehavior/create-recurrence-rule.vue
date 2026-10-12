@@ -1,98 +1,83 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createRrule.title') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createRrule.title') }}</span>
       </template>
-      <template #text="">
-        <v-layout
-          class="gap-2"
-          column
-        >
+
+      <template #text>
+        <c-layout gap="2" column>
           <recurrence-rule-form
-            v-model="form"
+            :form="values"
             :with-exdate-type="config.withExdateType"
+            @update:form="updateForm"
           />
-        </v-layout>
+        </c-layout>
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
           :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
-<script>
-import { ref } from 'vue';
-
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+<script setup>
+import { computed } from 'vue';
 
 import {
-  recurrenceRuleModalConfigToForm,
   formToReccurenceRuleModalConfig,
+  recurrenceRuleModalConfigToForm,
 } from '@/helpers/entities/shared/recurrence-rule/form';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
-export default {
-  name: MODALS.createRecurrenceRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  components: {
-    RecurrenceRuleForm,
-    ModalWrapper,
-  },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { config, close } = useInnerModal(props);
+});
 
-    const form = ref(recurrenceRuleModalConfigToForm(config.value));
+const { t } = useI18n();
+const modals = useModals();
+const config = computed(() => props.modal.config ?? {});
 
-    const { submit, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToReccurenceRuleModalConfig(form.value));
+const form = useForm({
+  initialValues: recurrenceRuleModalConfigToForm(config.value),
+});
+const { values, handleSubmit, submitting } = form;
 
-        close();
-      },
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    return {
-      form,
-      config,
-      close,
-      submit,
-      submitting,
-    };
-  },
+const closeModal = () => modals.hide({ id: props.modal.id });
+const updateForm = (value) => {
+  values.value = value;
 };
+
+const submit = handleSubmit(async () => {
+  await config.value.action?.(formToReccurenceRuleModalConfig(values.value));
+
+  closeModal();
+});
+
+useFormConfirmableCloseModal({
+  form: values,
+  submit,
+  close: closeModal,
+});
 </script>

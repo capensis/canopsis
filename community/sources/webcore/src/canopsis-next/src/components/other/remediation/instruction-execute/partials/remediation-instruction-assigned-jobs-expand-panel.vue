@@ -1,26 +1,21 @@
 <template>
-  <v-sheet class="remediation-instruction-assigned-jobs-expand-panel px-3 py-2">
+  <v-sheet class="remediation-instruction-assigned-jobs-expand-panel px-3 py-2 text-white">
     <div v-if="isFailedJob">
-      {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
-      <span
-        v-html="job.fail_reason"
-        class="pre-wrap"
-      />
+      {{ t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
+      <span v-html="job.fail_reason" class="pre-wrap" />
     </div>
     <div>
-      {{ $t('common.output') }}:&nbsp;
-      <span
-        v-html="output"
-        class="pre-wrap"
-      />
+      {{ t('common.output') }}:&nbsp;
+      <span v-html="output" class="pre-wrap" />
     </div>
   </v-sheet>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed } from 'vue';
 
-const { mapGetters } = createNamespacedHelpers('remediationJobExecution');
+import { useI18n } from '@/hooks/i18n';
+import { useRemediationJobExecution } from '@/hooks/store/modules/remediation-job-execution';
 
 export default {
   props: {
@@ -29,16 +24,19 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    ...mapGetters(['getOutputById']),
 
-    output() {
-      return this.getOutputById(this.job._id);
-    },
+  setup(props) {
+    const { t } = useI18n();
+    const { getRemediationJobExecutionOutputById } = useRemediationJobExecution();
 
-    isFailedJob() {
-      return !!this.job.fail_reason;
-    },
+    const output = computed(() => getRemediationJobExecutionOutputById.value(props.job._id));
+    const isFailedJob = computed(() => !!props.job.fail_reason);
+
+    return {
+      t,
+      output,
+      isFailedJob,
+    };
   },
 };
 </script>
@@ -46,5 +44,6 @@ export default {
 <style lang="scss">
 .v-sheet.remediation-instruction-assigned-jobs-expand-panel {
   background: var(--v-background-darken1);
+  color: white;
 }
 </style>

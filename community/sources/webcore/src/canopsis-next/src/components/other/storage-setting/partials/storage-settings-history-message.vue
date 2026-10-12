@@ -52,15 +52,19 @@ export default {
       ];
 
       if (!props.hideDeleted && isNumber(deleted)) {
-        result.push(t(props.deletedCountMessageKey, {
-          count: deleted,
-        }));
+        result.push(
+          t(props.deletedCountMessageKey, {
+            count: deleted,
+          }),
+        );
       }
 
       if (!props.hideArchived && isNumber(archived)) {
-        result.push(t(props.archivedCountMessageKey, {
-          count: archived,
-        }));
+        result.push(
+          t(props.archivedCountMessageKey, {
+            count: archived,
+          }),
+        );
       }
 
       return result.join(' ');

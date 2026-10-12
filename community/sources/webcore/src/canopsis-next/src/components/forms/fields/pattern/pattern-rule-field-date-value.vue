@@ -1,48 +1,53 @@
 <template>
   <c-date-time-interval-field
     v-if="isDateRange"
-    v-field="value"
+    :value="value"
     :name="name"
     :disabled="disabled"
     :is-allowed-from-date="isAllowedFromDate"
     :is-allowed-to-date="isAllowedToDate"
     :label="$t('common.value')"
+    @update:value="updateModel"
   />
   <c-quick-date-interval-type-field
     v-else-if="isInterval"
-    v-field="value.type"
+    :value="value.type"
     :name="name"
     :disabled="disabled"
     :ranges="typeQuickRanges"
     :label="$t('common.value')"
+    @update:value="updateField('type', $event)"
   />
   <c-quick-date-interval-type-range-field
     v-else-if="isIntervalRange"
-    v-field="value"
+    :value="value"
     :name="name"
     :disabled="disabled"
     :from-ranges="fromQuickRanges"
     :to-ranges="toQuickRanges"
     :label="$t('common.value')"
+    @update:value="updateModel"
   />
 </template>
 
 <script>
 import { computed, watch, toRef } from 'vue';
 
-import { PATTERN_OPERATORS, PATTERN_QUICK_RANGES_WITHOUT_CUSTOM, QUICK_RANGES, TIME_UNITS } from '@/constants';
+import {
+  PATTERN_OPERATORS,
+  PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
+  QUICK_RANGES,
+  TIME_UNITS,
+} from '@/constants';
 
 import { getDefaultDateFormRange, isIntervalDateOperator } from '@/helpers/entities/pattern/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
 import { useDateRangeAllowedDates } from '@/hooks/form/date-range-allowed-dates';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: Object,
@@ -66,11 +71,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t, tc } = useI18n();
-    const { updateModel } = useModelField(props, emit);
+    const { t } = useI18n();
+    const { updateModel, updateField } = useModelField(props, emit);
 
-    const isDateRange = computed(() => (props.operator === PATTERN_OPERATORS.inRangeDates));
-    const isIntervalRange = computed(() => (props.operator === PATTERN_OPERATORS.inRangePeriod));
+    const isDateRange = computed(() => props.operator === PATTERN_OPERATORS.inRangeDates);
+    const isIntervalRange = computed(() => props.operator === PATTERN_OPERATORS.inRangePeriod);
     const isInterval = computed(() => isIntervalDateOperator(props.operator));
 
     /**
@@ -86,11 +91,12 @@ export default {
     const getCustomRangeItem = (duration = {}) => {
       const { value, unit } = duration;
 
-      const [unitKey] = Object.entries(TIME_UNITS).find(([, unitValue]) => unitValue === unit) ?? [];
+      const [unitKey] =
+        Object.entries(TIME_UNITS).find(([, unitValue]) => unitValue === unit) ?? [];
 
       return {
         value: QUICK_RANGES.custom.value,
-        text: `${t('common.last')} ${value} ${tc(`common.times.${unitKey}`, value)}`,
+        text: `${t('common.last')} ${value} ${t(`common.times.${unitKey}`, value)}`,
         start: `now-${duration.value}${duration.unit}`,
         stop: 'now',
       };
@@ -109,10 +115,7 @@ export default {
         return props.intervalRanges;
       }
 
-      return [
-        ...props.intervalRanges,
-        getCustomRangeItem(props.value[`${key}Custom`]),
-      ];
+      return [...props.intervalRanges, getCustomRangeItem(props.value[`${key}Custom`])];
     };
 
     const typeQuickRanges = computed(() => getQuickRangesWithCustom());
@@ -141,6 +144,8 @@ export default {
       isAllowedToDate,
 
       clearRange,
+      updateModel,
+      updateField,
     };
   },
 };

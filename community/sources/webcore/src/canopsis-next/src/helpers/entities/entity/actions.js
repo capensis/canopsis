@@ -1,16 +1,15 @@
 import { isNull, uniq } from 'lodash';
 
-import { ALARM_STATES, ALARM_STATUSES, ENTITY_EVENT_BY_ACTION_TYPE, WEATHER_ACTIONS_TYPES } from '@/constants';
+import {
+  ALARM_STATES,
+  ALARM_STATUSES,
+  ENTITY_EVENT_BY_ACTION_TYPE,
+  WEATHER_ACTIONS_TYPES,
+} from '@/constants';
 
-import { getEntityEventIcon } from './icons';
 import { getEntityEventColor } from './color';
-
-/**
- * @typedef {Object} EntityAction
- * @property {string} actionType
- * @property {Entity[]} entities
- * @property {Object} payload
- */
+import { getEntityEventIcon } from './icons';
+import { isEntityPaused, isResumeAvailableForEntity } from './pause';
 
 /**
  * Check is action available for the entity
@@ -27,10 +26,9 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     alarm_id: alarmId,
     alarm_display_name: alarmDisplayName,
     assigned_instructions: assignedInstructions,
-    pbh_origin_icon: pbhOriginIcon,
   } = entity;
 
-  const paused = pbhOriginIcon !== '';
+  const isPaused = isEntityPaused(entity);
   const stateIsOk = state?.val === ALARM_STATES.ok;
   const statusIsCancelled = status?.val === ALARM_STATUSES.cancelled;
   const hasAlarm = !!alarmId;
@@ -53,10 +51,10 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
       return !stateIsOk && alarmDisplayName && (!status || !statusIsCancelled) && hasAlarm;
 
     case WEATHER_ACTIONS_TYPES.entityPlay:
-      return paused;
+      return isResumeAvailableForEntity(entity);
 
     case WEATHER_ACTIONS_TYPES.entityPause:
-      return !paused;
+      return !isPaused;
 
     case WEATHER_ACTIONS_TYPES.executeInstruction:
       return !stateIsOk && !!assignedInstructions?.length && hasAlarm;
@@ -117,8 +115,8 @@ const convertEntityActionTypeToAction = (type) => {
  * @param {Entity} entity
  * @returns {Object[]}
  */
-export const getAvailableActionsByEntity = entity => getAvailableEntityActionsTypes(entity)
-  .map(convertEntityActionTypeToAction);
+export const getAvailableActionsByEntity = entity =>
+  getAvailableEntityActionsTypes(entity).map(convertEntityActionTypeToAction);
 
 /**
  * Get all available actions for entities
@@ -158,7 +156,11 @@ export const getAvailableActionsByEntities = (
  * @param {string} actionType
  * @returns {boolean}
  */
-export const isDisabledActionForEntityByActionsRequests = (entityId, actionType, actionsRequests) => {
+export const isDisabledActionForEntityByActionsRequests = (
+  entityId,
+  actionType,
+  actionsRequests,
+) => {
   switch (actionType) {
     case WEATHER_ACTIONS_TYPES.entityDeclareTicket:
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
@@ -166,8 +168,9 @@ export const isDisabledActionForEntityByActionsRequests = (entityId, actionType,
     case WEATHER_ACTIONS_TYPES.executeInstruction:
       return false;
     default:
-      return actionsRequests.some(({ actionType: requestActionType, entitiesIds: requestEntitiesIds }) => (
-        requestActionType === actionType && requestEntitiesIds.includes(entityId)
-      ));
+      return actionsRequests.some(
+        ({ actionType: requestActionType, entitiesIds: requestEntitiesIds }) =>
+          requestActionType === actionType && requestEntitiesIds.includes(entityId),
+      );
   }
 };

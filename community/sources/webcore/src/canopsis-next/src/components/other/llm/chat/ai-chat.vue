@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="ai-chat" column>
+  <c-layout class="ai-chat" column>
     <ai-chat-info-alert
       v-if="hasPatternItem && !emptyChat"
       :pattern-item="patternItem"
@@ -18,13 +18,13 @@
         @restore:version="restoreVersion"
       />
     </div>
-    <v-layout
-      :justify-end="!emptyChat"
+    <c-layout
+      :justify="!emptyChat ? 'end' : undefined"
       :class="{ 'pa-4': emptyChat }"
-      class="gap-6 pt-0"
+      class="ai-chat__footer pt-0"
+      gap="6"
       column
     >
-      <v-spacer />
       <ai-chat-pattern-item-field
         v-if="hasPatternItem && emptyChat"
         v-model="patternItem"
@@ -33,40 +33,38 @@
       />
       <ai-chat-textarea
         v-model="prompt"
+        v-model:llm="llm"
         ref="textareaElement"
-        :llm.sync="llm"
         :llms="llms"
         :llms-pending="llmsPending"
         :error-message="errorMessage"
         :empty-chat="emptyChat"
         :thinking="!!thinkingMessage"
-        :disabled="needRestart"
+        :disabled="needRestart || patternItemMissing"
         @ask="ask"
         @stop="stop"
       />
 
       <ai-chat-suggestions v-if="emptyChat" @select="applySuggestion" />
-    </v-layout>
-  </v-layout>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
 import { toRefs } from 'vue';
 
 import { useAiChat } from '@/hooks/ai/ai-chat';
+import { useForm } from '@/hooks/form';
 
-import AiChatMessagesList from '@/components/other/llm/chat/ai-chat-messages-list.vue';
 import AiChatGreeting from '@/components/other/llm/chat/ai-chat-greeting.vue';
+import AiChatInfoAlert from '@/components/other/llm/chat/ai-chat-info-alert.vue';
+import AiChatMessagesList from '@/components/other/llm/chat/ai-chat-messages-list.vue';
+import AiChatPatternItemField from '@/components/other/llm/chat/ai-chat-pattern-item-field.vue';
 import AiChatSuggestions from '@/components/other/llm/chat/ai-chat-suggestions.vue';
 import AiChatTextarea from '@/components/other/llm/chat/ai-chat-textarea.vue';
-import AiChatInfoAlert from '@/components/other/llm/chat/ai-chat-info-alert.vue';
-import AiChatPatternItemField from '@/components/other/llm/chat/ai-chat-pattern-item-field.vue';
 import AiChatWarningAlert from '@/components/other/llm/chat/ai-chat-warning-alert.vue';
 
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     AiChatMessagesList,
     AiChatGreeting,
@@ -76,6 +74,7 @@ export default {
     AiChatPatternItemField,
     AiChatWarningAlert,
   },
+  emits: ['update:patterns', 'update:pending', 'update:json-string'],
   props: {
     patterns: {
       type: [Object, Array],
@@ -103,6 +102,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    useForm();
+
     return useAiChat(toRefs(props), emit);
   },
 };
@@ -110,10 +111,14 @@ export default {
 
 <style lang="scss" scoped>
 .ai-chat {
-  --header-height: 64px;
-  height: calc(100% - var(--header-height));
-  overflow-y: auto;
+  height: 100%;
   min-height: 0;
+  overflow: hidden;
+
+  > :deep(.v-alert),
+  > .ai-chat__footer {
+    flex: 0 0 auto;
+  }
 
   &__body {
     flex: 1 1 auto;

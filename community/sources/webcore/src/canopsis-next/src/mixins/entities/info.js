@@ -1,83 +1,83 @@
-import { createNamespacedHelpers } from 'vuex';
-import { isMatch, isArray } from 'lodash';
-
 import { DEFAULT_APP_TITLE } from '@/config';
-import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
-import { sanitizeHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
-import { groupedPermissionToPermission } from '@/helpers/permission';
+import { sanitizeHtml } from '@/helpers/html';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('info');
+import { useInfo } from '@/hooks/store/modules/info';
 
-/**
- * TODO: use hook useInfo instead of mixins
- */
+const infoComputed = [
+  'appInfoPending',
+  'appInfo',
+  'version',
+  'logo',
+  'appTitle',
+  'popupTimeout',
+  'maxMatchedItems',
+  'checkCountRequestTimeout',
+  'footer',
+  'edition',
+  'description',
+  'language',
+  'allowChangeSeverityToInfo',
+  'showHeaderOnKioskMode',
+  'requiredInstructionApprove',
+  'isBasicAuthEnabled',
+  'isLDAPAuthEnabled',
+  'isCASAuthEnabled',
+  'isSAMLAuthEnabled',
+  'isOauthAuthEnabled',
+  'casConfig',
+  'samlConfig',
+  'oauthConfig',
+  'timezone',
+  'dateFormat',
+  'fileUploadMaxSize',
+  'remediationJobConfigTypes',
+  'maintenance',
+  'defaultColorTheme',
+  'eventsCountTriggerDefaultThreshold',
+  'disabledTransitions',
+  'autoSuggestPbehaviorName',
+  'userTimezones',
+  'shownUserTimezone',
+  'isProVersion',
+].reduce((acc, key) => {
+  acc[key] = () => useInfo()[key].value;
+
+  return acc;
+}, {});
+
 export const entitiesInfoMixin = {
-  computed: {
-    ...mapGetters({
-      appInfoPending: 'pending',
-      appInfo: 'appInfo',
-      version: 'version',
-      logo: 'logo',
-      appTitle: 'appTitle',
-      popupTimeout: 'popupTimeout',
-      maxMatchedItems: 'maxMatchedItems',
-      checkCountRequestTimeout: 'checkCountRequestTimeout',
-      footer: 'footer',
-      edition: 'edition',
-      description: 'description',
-      language: 'language',
-      allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
-      showHeaderOnKioskMode: 'showHeaderOnKioskMode',
-      requiredInstructionApprove: 'requiredInstructionApprove',
-      isBasicAuthEnabled: 'isBasicAuthEnabled',
-      isLDAPAuthEnabled: 'isLDAPAuthEnabled',
-      isCASAuthEnabled: 'isCASAuthEnabled',
-      isSAMLAuthEnabled: 'isSAMLAuthEnabled',
-      isOauthAuthEnabled: 'isOauthAuthEnabled',
-      casConfig: 'casConfig',
-      samlConfig: 'samlConfig',
-      oauthConfig: 'oauthConfig',
-      timezone: 'timezone',
-      fileUploadMaxSize: 'fileUploadMaxSize',
-      remediationJobConfigTypes: 'remediationJobConfigTypes',
-      maintenance: 'maintenance',
-      defaultColorTheme: 'defaultColorTheme',
-      eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
-      disabledTransitions: 'disabledTransitions',
-      autoSuggestPbehaviorName: 'autoSuggestPbehaviorName',
-      userTimezones: 'userTimezones',
-      shownUserTimezone: 'shownUserTimezone',
-    }),
+  computed: infoComputed,
 
-    isProVersion() {
-      return this.edition === CANOPSIS_EDITION.pro;
-    },
-  },
   methods: {
-    ...mapActions(['fetchAppInfo', 'updateUserInterface']),
+    fetchAppInfo(...args) {
+      return useInfo().fetchAppInfo(...args);
+    },
 
-    checkAppInfoAccessByPermission(permission) {
-      const preparedPermission = isArray(permission) ? groupedPermissionToPermission(permission) : permission;
-      const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[preparedPermission];
+    updateUserInterface(...args) {
+      return useInfo().updateUserInterface(...args);
+    },
 
-      if (!permissionAppInfoRules) {
-        return true;
-      }
+    updateMaintenanceMode(...args) {
+      return useInfo().updateMaintenanceMode(...args);
+    },
 
-      const appInfo = { edition: this.edition };
-
-      return isMatch(appInfo, permissionAppInfoRules);
+    checkAppInfoAccessByPermission(...args) {
+      return useInfo().checkAppInfoAccessByPermission(...args);
     },
 
     async setTitle() {
       document.title = this.appTitle
-        ? await compile(sanitizeHtml(this.appTitle, {
-          allowedTags: [],
-          allowedAttributes: {},
-        }))
+        ? await compile(
+            sanitizeHtml(this.appTitle, {
+              ALLOWED_TAGS: [],
+              ALLOWED_ATTR: [],
+            }),
+          )
         : DEFAULT_APP_TITLE;
     },
   },
 };
+
+export default entitiesInfoMixin;

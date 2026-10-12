@@ -1,28 +1,20 @@
 <template>
-  <v-layout
-    :class="layoutClasses"
-    class="c-form-block-row"
-    align-start
-  >
-    <v-flex
-      :style="labelFlexStyle"
-      class="c-form-block-row__label text-break"
-    >
+  <c-layout :class="layoutClasses" class="c-form-block-row" align="start">
+    <div :style="labelStyle" class="c-form-block-row__label text-break">
       <h4 class="c-form-block-row__title text-subtitle-1 text-break">
         {{ label }}
       </h4>
-    </v-flex>
-    <v-flex
-      :class="fieldClasses"
-      class="c-form-block-row__field text-break"
-    >
+    </div>
+
+    <div :class="fieldClasses" class="text-break">
       <slot />
-    </v-flex>
-  </v-layout>
+    </div>
+  </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
+import { useTheme } from 'vuetify';
 
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
@@ -61,42 +53,41 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
+    const theme = useTheme();
     const { hasChildrenError } = useValidationChildren();
+    const depth = computed(() => Number(props.depth) || 0);
 
     const layoutClasses = computed(() => ({
-      [`c-form-block-row--depth-${props.depth}`]: !!props.depth,
+      [`c-form-block-row--depth-${props.depth}`]: !!depth.value,
+      'c-form-block-row--depth-more': depth.value > 2,
       'c-form-block-row--top-border': !!props.topBorder,
       'c-form-block-row--bottom-border': !!props.bottomBorder,
       'c-form-block-row--error': hasChildrenError.value || props.error,
+      'c-form-block-row--dark': theme.current.value.dark,
+      'c-form-block-row--light': !theme.current.value.dark,
     }));
 
     const fieldClasses = computed(() => ({
+      'c-form-block-row__field': true,
       'py-3': props.indented,
       'c-form-block-row__field--align-center': props.alignCenter,
     }));
 
-    const labelFlexStyle = computed(() => {
-      if (typeof props.width === 'number') {
-        const px = `${props.width}px`;
+    const labelWidth = computed(() => Number.isFinite(props.width) ? `${props.width}px` : props.width,
+    );
 
-        return {
-          flex: `0 0 ${px}`,
-          maxWidth: px,
-          minWidth: px,
-        };
-      }
-
-      return {
-        flex: `0 0 ${props.width}`,
-        minWidth: props.width,
-      };
-    });
+    const labelStyle = computed(() => ({
+      flex: `0 0 ${labelWidth.value}`,
+      minWidth: labelWidth.value,
+      maxWidth: labelWidth.value,
+    }));
 
     return {
       layoutClasses,
-      labelFlexStyle,
       fieldClasses,
+      labelStyle,
     };
   },
 };
@@ -104,14 +95,17 @@ export default {
 
 <style lang="scss">
 :root {
-  --c-form-block-row-label-background-color-light: #EAEAEA;
-  --c-form-block-row-label-background-color-light-depth-1: #F0F0F0;
-  --c-form-block-row-label-background-color-light-depth-2: #F5F5F5;
+  --c-form-block-row-label-background-color-light: #eaeaea;
+  --c-form-block-row-label-background-color-light-depth-1: #f4f4f4;
+  --c-form-block-row-label-background-color-light-depth-2: #fafafa;
+  --c-form-block-row-label-background-color-light-depth-more: #ffffff;
 
   --c-form-block-row-label-background-color-dark: var(--v-application-background-lighten2);
-  --c-form-block-row-label-background-color-dark-depth-1: #3A3A3A;
-  --c-form-block-row-label-background-color-dark-depth-2: #474747;
+  --c-form-block-row-label-background-color-dark-depth-1: #404040;
+  --c-form-block-row-label-background-color-dark-depth-2: #505050;
+  --c-form-block-row-label-background-color-dark-depth-more: #606060;
 }
+
 .c-form-block-row {
   &:not(:last-child) {
     border-bottom: 1px solid var(--v-application-background-darken2);
@@ -137,6 +131,10 @@ export default {
     padding-left: 56px;
   }
 
+  &--depth-more .c-form-block-row__label {
+    padding-left: 72px;
+  }
+
   &__label {
     align-self: stretch;
     display: flex;
@@ -149,7 +147,7 @@ export default {
 
   &__title {
     margin: 0;
-    font-weight: 600;
+    font-weight: 400;
     word-break: break-word;
     overflow-wrap: anywhere;
     max-width: 100%;
@@ -176,40 +174,56 @@ export default {
   }
 }
 
-.theme--dark .c-form-block-row {
+.theme--light .c-form-block-row,
+.c-form-block-row--light {
+  .c-form-block-row__label {
+    background-color: var(--c-form-block-row-label-background-color-light);
+  }
+}
+
+.theme--light .c-form-block-row--depth-1 .c-form-block-row__label,
+.c-form-block-row--light.c-form-block-row--depth-1 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-light-depth-1);
+}
+
+.theme--light .c-form-block-row--depth-2 .c-form-block-row__label,
+.c-form-block-row--light.c-form-block-row--depth-2 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-light-depth-2);
+}
+
+.theme--light .c-form-block-row--depth-more .c-form-block-row__label,
+.c-form-block-row--light.c-form-block-row--depth-more .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-light-depth-more);
+}
+
+.theme--dark .c-form-block-row,
+.c-form-block-row--dark {
   &:not(:last-child) {
-    border-bottom-color: var(--v-application-background-lighten3);
+    border-color: var(--v-application-background-lighten3);
   }
 
   .c-form-block-row__label {
     background-color: var(--c-form-block-row-label-background-color-dark);
-    border-right-color: var(--v-application-background-lighten3);
+    border-color: var(--v-application-background-lighten3);
   }
 
   .c-form-block-row__title {
     color: var(--v-active-color-base);
   }
-
-  &--depth-1 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-dark-depth-1);
-  }
-
-  &--depth-2 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-dark-depth-2);
-  }
 }
 
-.theme--light .c-form-block-row {
-  .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light);
-  }
+.theme--dark .c-form-block-row--depth-1 .c-form-block-row__label,
+.c-form-block-row--dark.c-form-block-row--depth-1 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-dark-depth-1);
+}
 
-  &--depth-1 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light-depth-1);
-  }
+.theme--dark .c-form-block-row--depth-2 .c-form-block-row__label,
+.c-form-block-row--dark.c-form-block-row--depth-2 .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-dark-depth-2);
+}
 
-  &--depth-2 .c-form-block-row__label {
-    background-color: var(--c-form-block-row-label-background-color-light-depth-2);
-  }
+.theme--dark .c-form-block-row--depth-more .c-form-block-row__label,
+.c-form-block-row--dark.c-form-block-row--depth-more .c-form-block-row__label {
+  background-color: var(--c-form-block-row-label-background-color-dark-depth-more);
 }
 </style>

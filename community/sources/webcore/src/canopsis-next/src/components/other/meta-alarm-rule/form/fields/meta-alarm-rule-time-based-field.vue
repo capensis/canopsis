@@ -1,48 +1,45 @@
 <template>
-  <c-form-block-row :label="$t('metaAlarmRule.timeInterval')">
-    <v-layout class="gap-2">
+  <c-form-block-row :label="t('metaAlarmRule.timeInterval')">
+    <c-layout gap="2" align="center">
       <c-duration-field
-        :duration="duration"
-        :label="$t('metaAlarmRule.timeInterval')"
+        :duration="modelValue"
+        :label="t('metaAlarmRule.timeInterval')"
+        name="time_interval"
         required
-        @input="handleInput"
+        @update:duration="updateModel"
       />
       <c-help-icon
-        :text="$t('metaAlarmRule.timeIntervalHelpText')"
+        :text="t('metaAlarmRule.timeIntervalHelpText')"
         icon="help"
         max-width="300"
         left
       />
-    </v-layout>
+    </c-layout>
   </c-form-block-row>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { durationToForm } from '@/helpers/date/duration';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Object,
-      default: undefined,
+      default: () => durationToForm(),
     },
   },
-  setup(props, { emit }) {
-    const duration = computed(() => props.value ?? durationToForm());
 
-    const handleInput = (nextDuration) => {
-      emit('input', nextDuration);
-    };
+  emits: ['update:modelValue'],
+
+  setup(_, { emit }) {
+    const { t } = useI18n();
+    const updateModel = value => emit('update:modelValue', value);
 
     return {
-      duration,
-      handleInput,
+      t,
+      updateModel,
     };
   },
 };

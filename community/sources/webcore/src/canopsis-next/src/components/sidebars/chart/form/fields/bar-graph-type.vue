@@ -1,22 +1,18 @@
 <template>
   <widget-settings-item :title="$t('settings.chart.graphType')">
-    <v-radio-group
-      v-field="value"
-      :name="name"
-      class="pt-0 mt-0"
+    <c-radio-group
+      :model-value="modelValue"
       hide-details
+      @update:model-value="$emit('update:modelValue', $event)"
     >
       <v-radio
-        :value="false"
-        :label="$t('settings.chart.separateBars')"
+        v-for="item in items"
+        :key="String(item.value)"
+        :value="item.value"
+        :label="item.text"
         color="primary"
       />
-      <v-radio
-        :value="true"
-        :label="$t('settings.chart.stackedBars')"
-        color="primary"
-      />
-    </v-radio-group>
+    </c-radio-group>
   </widget-settings-item>
 </template>
 
@@ -25,18 +21,14 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
-  props: {
-    value: {
-      type: Boolean,
-      required: true,
-    },
-    name: {
-      type: String,
-      default: 'stacked',
+  props: { modelValue: { type: Boolean, default: false } },
+  emits: ['update:modelValue'],
+  computed: {
+    items() {
+      return [
+        { value: false, text: this.$t('settings.chart.separateBars') },
+        { value: true, text: this.$t('settings.chart.stackedBars') },
+      ];
     },
   },
 };

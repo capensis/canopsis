@@ -1,13 +1,9 @@
 <template>
   <div>
     <h6 class="my-2 text-h6 text-center">
-      {{ $tc('common.entity', 2) }}
+      {{ $t('common.entity', 2) }}
     </h6>
-    <v-card
-      v-for="(entityItem, index) in entities"
-      :key="entityItem.key"
-      class="ma-2"
-    >
+    <v-card v-for="(entityItem, index) in entities" :key="entityItem.key" class="ma-2">
       <v-card-text>
         <c-entity-field
           :value="entityItem.entity"
@@ -24,34 +20,26 @@
         <v-expand-transition>
           <v-combobox
             v-if="entityItem.entity"
-            :value="entityItem.pinned"
+            :model-value="entityItem.pinned"
             :items="pinnedListById[entityItem.entity._id]"
             :loading="pinnedPendingById[entityItem.entity._id]"
             :label="$t('modals.createTreeOfDependenciesMap.pinnedEntities')"
-            :item-text="getItemText"
+            :item-title="getItemText"
             item-value="_id"
             deletable-chips
             chips
             multiple
-            @change="updatePinned($event, index)"
+            @update:model-value="updatePinned($event, index)"
           />
         </v-expand-transition>
       </v-card-text>
       <v-card-actions>
-        <v-layout justify-end>
-          <c-action-btn
-            :disabled="entities.length === 1"
-            type="delete"
-            @click="remove(index)"
-          />
-        </v-layout>
+        <c-layout justify-end>
+          <c-action-btn :disabled="entities.length === 1" type="delete" @click="remove(index)" />
+        </c-layout>
       </v-card-actions>
     </v-card>
-    <v-btn
-      class="ml-2"
-      color="primary"
-      @click="add"
-    >
+    <v-btn class="ml-2" color="primary" @click="add">
       {{ $t('modals.createTreeOfDependenciesMap.addEntity') }}
     </v-btn>
   </div>
@@ -60,18 +48,14 @@
 <script>
 import { ENTITY_TYPES, MAX_LIMIT } from '@/constants';
 
-import { uid } from '@/helpers/uid';
 import { getMapEntityText } from '@/helpers/entities/map/list';
+import { uid } from '@/helpers/uid';
 
-import { formArrayMixin } from '@/mixins/form';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
   mixins: [formArrayMixin, entitiesEntityDependenciesMixin],
-  model: {
-    prop: 'entities',
-    event: 'input',
-  },
   props: {
     entities: {
       type: Array,
@@ -86,6 +70,7 @@ export default {
       default: () => [ENTITY_TYPES.service],
     },
   },
+  emits: ['update:entities', 'add', 'remove', 'update:entity', 'update:pinned'],
   data() {
     return {
       pinnedListById: {},
@@ -104,7 +89,7 @@ export default {
           return;
         }
 
-        this.$set(this.pinnedListById, entity._id, []);
+        this.pinnedListById[entity._id] = [];
 
         this.fetchPinnedEntitiesList(entity._id);
       });
@@ -163,12 +148,12 @@ export default {
     },
 
     async fetchPinnedEntitiesList(id, params = { limit: MAX_LIMIT }) {
-      this.$set(this.pinnedPendingById, id, true);
+      this.pinnedPendingById[id] = true;
 
       const { data } = await this.fetchDependenciesList({ id, params });
 
-      this.$set(this.pinnedListById, id, data);
-      this.$set(this.pinnedPendingById, id, false);
+      this.pinnedListById[id] = data;
+      this.pinnedPendingById[id] = false;
     },
   },
 };

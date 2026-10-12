@@ -18,12 +18,14 @@ export default {
   },
   entity: {
     title: 'Entities data storage',
-    titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
+    titleHelp:
+      'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
     archiveDependencies: 'Remove the impacting and dependent entities as well',
-    archiveDependenciesHelp: '<strong>For connectors:</strong>\n'
-      + '<ul><li>all impacting and dependent <strong class="font-italic">components</strong> and <strong class="font-italic">resources</strong> will be archived or deleted forever.</li></ul>\n'
-      + '<strong>For components:</strong>\n'
-      + '<ul><li>all dependent <strong class="font-italic">resources</strong> will be archived or deleted forever as well.</li></ul>',
+    archiveDependenciesHelp:
+      '<strong>For connectors:</strong>\n' +
+      '<ul><li>all impacting and dependent <strong class="font-italic">components</strong> and <strong class="font-italic">resources</strong> will be archived or deleted forever.</li></ul>\n' +
+      '<strong>For components:</strong>\n' +
+      '<ul><li>all dependent <strong class="font-italic">resources</strong> will be archived or deleted forever as well.</li></ul>',
     archiveDisabled: 'Archive disabled entities',
   },
   entityUnlinked: {
@@ -40,7 +42,8 @@ export default {
   pbehavior: {
     title: 'PBehavior',
     deleteAfter: 'Delete inactive PBehavior',
-    deleteAfterHelpText: 'Inactive PBehaviors will be deleted after the defined time period from the last event',
+    deleteAfterHelpText:
+      'Inactive PBehaviors will be deleted after the defined time period from the last event',
   },
   healthCheck: {
     title: 'Healthcheck',
@@ -50,9 +53,10 @@ export default {
     title: 'Webhooks',
     deleteAfter: 'Delete webhooks requests history',
     logCredentials: 'Display authentication data in logs (plaintext)',
-    logCredentialsHelpText: 'Affects how passwords, tokens and auth data are written in logs. \n'
-      + '<ul><li>enabled: in open way (not recommended)</li>'
-      + '<li>disabled: hidden with ***</li></ul>',
+    logCredentialsHelpText:
+      'Affects how passwords, tokens and auth data are written in logs. \n' +
+      '<ul><li>enabled: in open way (not recommended)</li>' +
+      '<li>disabled: hidden with ***</li></ul>',
   },
   metrics: {
     title: 'Internal metrics',
@@ -86,6 +90,7 @@ export default {
   llmChat: {
     title: 'AI chats',
     deleteHistory: 'Delete AI chats history',
+    deleteStats: 'Delete AI models stats',
   },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',

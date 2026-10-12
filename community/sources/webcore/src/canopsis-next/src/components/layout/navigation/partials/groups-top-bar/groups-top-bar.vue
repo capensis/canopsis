@@ -1,29 +1,18 @@
 <template>
-  <v-layout class="secondary groups-wrapper">
-    <v-tabs
-      ref="tabs"
-      background-color="secondary"
-      show-arrows
-      dark
-    >
-      <groups-top-bar-group
-        v-for="group in availableGroups"
-        :key="group._id"
-        :group="group"
-      />
+  <div class="groups-wrapper bg-secondary">
+    <div class="groups-wrapper__items">
+      <groups-top-bar-group v-for="group in availableGroups" :key="group._id" :group="group" />
       <groups-top-bar-playlists />
-    </v-tabs>
+    </div>
     <groups-settings-button
-      :wrapper-props="{ direction: 'bottom', absolute: true, right: true, bottom: true }"
-      :button-props="{ fab: true, dark: true, small: true }"
+      top-bar
       tooltip-left
-      @toggleEditingMode="toggleEditingMode"
+      @toggle-editing-mode="toggleNavigationEditingMode"
     />
-  </v-layout>
+  </div>
 </template>
 
 <script>
-import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 
@@ -33,63 +22,46 @@ import GroupsTopBarGroup from './groups-top-bar-group.vue';
 import GroupsTopBarPlaylists from './groups-top-bar-playlists.vue';
 
 export default {
+
   components: {
     GroupsSettingsButton,
     GroupsTopBarGroup,
     GroupsTopBarPlaylists,
   },
-  mixins: [
-    vuetifyTabsMixin,
-    entitiesViewGroupMixin,
-    layoutNavigationGroupsBarMixin,
-  ],
-  watch: {
-    filledGroups() {
-      this.$nextTick(this.callTabsOnResizeMethod);
-    },
-  },
-  methods: {
-    toggleEditingMode() {
-      this.toggleNavigationEditingMode();
 
-      this.$nextTick(this.callTabsOnResizeMethod);
-    },
-  },
+  mixins: [entitiesViewGroupMixin, layoutNavigationGroupsBarMixin],
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .groups-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1 1 100%;
   height: 48px;
+  min-width: 0;
+  position: relative;
+  width: 100%;
+  padding: 0 56px 0 4px;
 
-  .v-speed-dial--absolute {
-    &.v-speed-dial--bottom {
-      bottom: -10px;
-    }
+  &__items {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
 
-    &.v-speed-dial--right {
-      right: 25px;
-    }
-  }
-}
-
-.group-v-menu-content {
-  .v-list {
-    background-color: inherit;
-
-      .v-list-item__title {
-        height: 28px;
-        line-height: 28px;
-      }
-
-    .edit-view-button, .duplicate-view-button {
-      vertical-align: top;
-      margin: 0 0 0 8px;
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
-}
 
-.group-item .v-menu__activator .v-btn {
-  text-transform: none;
+  :deep(.groups-settings-button) {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+  }
 }
 </style>
