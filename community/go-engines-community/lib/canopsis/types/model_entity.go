@@ -247,6 +247,8 @@ func (e *Entity) GetStringField(f string) (string, bool) {
 		return e.Connector, true
 	case "component":
 		return e.Component, true
+	case "upstream":
+		return e.Upstream, true
 	default:
 		return "", false
 	}

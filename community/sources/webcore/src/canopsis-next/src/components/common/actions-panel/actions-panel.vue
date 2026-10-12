@@ -10,6 +10,7 @@
         :action="action"
       />
       <actions-panel-menu
+        v-if="preparedActions.dropDown.length > 0"
         key="dropdown-menu"
         :actions="preparedActions.dropDown"
       />

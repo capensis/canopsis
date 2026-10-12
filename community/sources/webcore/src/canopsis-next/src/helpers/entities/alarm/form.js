@@ -256,6 +256,17 @@ export const snoozeToForm = (snooze = {}) => ({
 });
 
 /**
+ * Convert change state form to event request.
+ *
+ * @param {Object} form
+ * @returns {Object}
+ */
+export const formToChangeStateEvent = (form = {}) => ({
+  state: form.state,
+  comment: form.output ?? form.comment ?? '',
+});
+
+/**
  * Maps an array of alarm objects to a unique list of their associated entities.
  *
  * This function takes an array of alarm objects and reduces it to a unique set of entities

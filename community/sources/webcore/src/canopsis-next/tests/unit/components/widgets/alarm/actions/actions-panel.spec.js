@@ -869,7 +869,7 @@ describe('actions-panel', () => {
 
     const changeStateEvent = {
       state: ALARM_STATES.critical,
-      comment: Faker.datatype.string(),
+      output: Faker.datatype.string(),
     };
 
     await config.action(changeStateEvent);
@@ -879,7 +879,8 @@ describe('actions-panel', () => {
       {
         data: [{
           _id: alarm._id,
-          ...changeStateEvent,
+          state: changeStateEvent.state,
+          comment: changeStateEvent.output,
         }],
       },
     );
