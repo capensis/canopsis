@@ -10,13 +10,17 @@
         width="3"
         indeterminate
       />
-      <b v-else>{{ stateMethodName }}</b>
+      <b v-else>
+        {{ stateMethodName }}
+      </b>
     </span>
     <v-expand-transition>
       <div v-if="!pending && stateMethodSummaryText">
         <p v-if="isInheritedMethod">
           <i18n path="stateSetting.stateIsInheritFrom" tag="span">
-            <b place="name">{{ entity.name }}</b>
+            <b place="name">
+              {{ entity.name }}
+            </b>
           </i18n>
           <v-btn
             class="ml-2"
@@ -30,12 +34,24 @@
         </p>
         <v-layout v-else-if="isDependenciesMethod" column>
           <i18n class="mb-2" path="stateSetting.entityThresholdSummary">
-            <b place="name">{{ entity.name }}</b>
-            <b place="state">{{ entityStateString }}</b>
-            <span place="method">{{ currentCondition.method }}</span>
-            <span place="condition">{{ conditionMethodSummary }}</span>
-            <b place="dependenciesEntitiesState">{{ currentCondition.state }}</b>
-            <b place="value">{{ conditionValue }}</b>
+            <b place="name">
+              {{ entity.name }}
+            </b>
+            <b place="state">
+              {{ entityStateString }}
+            </b>
+            <span place="method">
+              {{ currentCondition.method }}
+            </span>
+            <span place="condition">
+              {{ conditionMethodSummary }}
+            </span>
+            <b place="dependenciesEntitiesState">
+              {{ currentCondition.state }}
+            </b>
+            <b place="value">
+              {{ conditionValue }}
+            </b>
           </i18n>
           <v-layout
             v-for="{ message, count } in counts"

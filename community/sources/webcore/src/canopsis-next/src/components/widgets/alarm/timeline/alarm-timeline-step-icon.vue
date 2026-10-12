@@ -26,7 +26,9 @@
       v-else-if="isJunit"
       :color="stepColor"
     >
-      <span class="white--text">{{ $t('alarm.timeline.junit') }}</span>
+      <span class="white--text">
+        {{ $t('alarm.timeline.junit') }}
+      </span>
     </c-alarm-extra-details-chip>
     <declare-ticket-rule-ticket-status-chip
       v-else-if="isDeclareTicketChangeStatus"

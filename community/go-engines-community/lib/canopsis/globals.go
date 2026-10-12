@@ -70,10 +70,11 @@ const (
 	AxeDynamicInfosRPCClientQueueName = AxeQueuePrefix + "_dynamic_infos_rpc_client"
 	AxeRPCQueueServerName             = AxeQueuePrefix + "_rpc_server"
 
-	CheQueuePrefix       = "Engine_che"
-	CheExternalQueueName = CheQueuePrefix + "_external"
-	CheSystemQueueName   = CheQueuePrefix + "_system"
-	CheUserQueueName     = CheQueuePrefix + "_user"
+	CheQueuePrefix               = "Engine_che"
+	CheExternalQueueName         = CheQueuePrefix + "_external"
+	CheSystemQueueName           = CheQueuePrefix + "_system"
+	CheUserQueueName             = CheQueuePrefix + "_user"
+	CheWebhookRPCClientQueueName = CheQueuePrefix + "_webhook_rpc_client"
 
 	CorrelationQueuePrefix           = "Engine_correlation"
 	CorrelationExternalQueueName     = CorrelationQueuePrefix + "_external"
@@ -87,8 +88,9 @@ const (
 	DynamicInfosUserQueueName      = DynamicInfosQueuePrefix + "_user"
 	DynamicInfosRPCQueueServerName = DynamicInfosQueuePrefix + "_rpc_server"
 
-	FIFOQueueName    = "Engine_fifo"
-	FIFOAckQueueName = "FIFO_ack"
+	FIFOQueueName                 = "Engine_fifo"
+	FIFOAckQueueName              = "FIFO_ack"
+	FIFOWebhookRPCClientQueueName = "Engine_fifo_webhook_rpc_client"
 
 	PBehaviorRPCQueueServerName = "Engine_pbehavior_rpc_server"
 	PBehaviorQueueRecomputeName = "Engine_pbehavior_recompute"
@@ -99,6 +101,8 @@ const (
 	WebhookRPCQueueServerName = "Engine_webhook_rpc_server"
 
 	ApiWorkersQueueName = "api_workers"
+
+	PublicApiJobQueueName = "public_api_jobs"
 )
 
 // Consumers
@@ -116,6 +120,7 @@ const (
 	CheExternalConsumerName = "che_external"
 	CheSystemConsumerName   = "che_system"
 	CheUserConsumerName     = "che_user"
+	CheRPCConsumerName      = "che_rpc"
 
 	CorrelationExternalConsumerName = "correlation_external"
 	CorrelationSystemConsumerName   = "correlation_system"
@@ -129,6 +134,7 @@ const (
 
 	FIFOConsumerName    = "fifo"
 	FIFOAckConsumerName = "fifo_ack"
+	FIFORPCConsumerName = "fifo_rpc"
 
 	PBehaviorRPCConsumerName = "pbehavior_rpc"
 	PBehaviorConsumerName    = "pbehavior"
@@ -139,6 +145,8 @@ const (
 	RemediationRPCConsumerName = "remediation_rpc"
 
 	WebhookRPCConsumerName = "webhook_rpc"
+
+	PublicApiJobConsumerName = "public_api_jobs"
 )
 
 // Other
@@ -165,4 +173,8 @@ const (
 	SubDirJunit        = "junit-files"
 	SubDirJunitAPI     = "junit-api-files"
 	SubDirExDataImport = "exdataimport"
+
+	SubDirEntityImportPublic = "entity-import-public"
+	SubDirEntityExportPublic = "entity-export-public"
+	SubDirAlarmExportPublic  = "alarm-export-public"
 )

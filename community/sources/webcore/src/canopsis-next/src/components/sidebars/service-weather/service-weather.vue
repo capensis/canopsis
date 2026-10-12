@@ -1,7 +1,6 @@
 <template>
   <widget-settings
     :submitting="submitting"
-    :dirty="hasChanges"
     divider
     @submit="submit"
   >
@@ -59,6 +58,7 @@
         :value="form.parameters.blockTemplate"
         :template="form.parameters.blockTemplateTemplate"
         :templates="weatherItemWidgetTemplates"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.weatherItem"
         :variables="blockTemplateVariables"
         :title="$t('settings.weatherTemplate')"
         @input="updateBlockTemplate"
@@ -67,6 +67,7 @@
         :value="form.parameters.modalTemplate"
         :template="form.parameters.modalTemplateTemplate"
         :templates="weatherModalWidgetTemplates"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.weatherModal"
         :variables="blockTemplateVariables"
         :title="$t('settings.modalTemplate')"
         @input="updateModalTemplate"
@@ -75,6 +76,7 @@
         :value="form.parameters.entityTemplate"
         :template="form.parameters.entityTemplateTemplate"
         :templates="weatherEntityWidgetTemplates"
+        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.weatherEntity"
         :variables="entityTemplateVariables"
         :title="$t('settings.entityTemplate')"
         @input="updateEntityTemplate"

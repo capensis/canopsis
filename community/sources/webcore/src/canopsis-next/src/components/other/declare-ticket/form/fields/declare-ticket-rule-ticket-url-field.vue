@@ -1,23 +1,22 @@
 <template>
-  <v-layout class="gap-3">
-    <v-flex xs6>
-      <declare-ticket-rule-ticket-url-payload-text-field
-        v-if="form.template"
-        v-field="form.value"
-        :name="name"
-        :disabled="disabled"
-        :variables="variables"
-      />
-      <declare-ticket-rule-ticket-url-text-field
-        v-else
-        v-field="form.value"
-        :name="name"
-        :disabled="disabled"
-      />
-    </v-flex>
+  <v-layout class="gap-3" column>
+    <declare-ticket-rule-ticket-url-payload-text-field
+      v-if="form.template"
+      v-field="form.value"
+      :name="name"
+      :disabled="disabled"
+      :variables="variables"
+    />
+    <declare-ticket-rule-ticket-url-text-field
+      v-else
+      v-field="form.value"
+      :name="name"
+      :disabled="disabled"
+    />
     <c-enabled-field
       v-field="form.template"
       :label="$t('declareTicket.allowTicketURLTemplate')"
+      no-margin
     />
   </v-layout>
 </template>

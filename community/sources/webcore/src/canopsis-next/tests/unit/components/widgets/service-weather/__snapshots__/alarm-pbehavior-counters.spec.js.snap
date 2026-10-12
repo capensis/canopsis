@@ -21,7 +21,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       <span
         class="text-caption white--text"
       >
-        1
+    1
       </span>
     </div>
   </span>
@@ -42,7 +42,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       <span
         class="text-caption white--text"
       >
-        3
+    3
       </span>
     </div>
   </span>
@@ -63,7 +63,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       <span
         class="text-caption white--text"
       >
-        12
+    12
       </span>
     </div>
   </span>

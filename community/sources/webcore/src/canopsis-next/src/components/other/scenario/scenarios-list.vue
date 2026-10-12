@@ -18,12 +18,15 @@
         :enablable="updatable"
         :disablable="updatable"
         scenario
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
     <template #headerCell="{ header }">
-      <span class="pre-line header-text">{{ header.text }}</span>
+      <span class="pre-line header-text">
+        {{ header.text }}
+      </span>
     </template>
     <template #delay="{ item }">
       <span>{{ item.delay | duration }}</span>
@@ -62,12 +65,12 @@
           type="duplicate"
           @click="$emit('duplicate', item)"
         />
+        <c-db-export-btn :id="item._id" scenario />
         <c-action-btn
           v-if="removable"
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <c-db-export-btn :id="item._id" scenario />
       </v-layout>
     </template>
     <template #expand="{ item }">

@@ -1,4 +1,5 @@
 import { inject } from 'vue';
+import { Validator } from 'vee-validate';
 
 import { useComponentInstance } from '@/hooks/vue';
 
@@ -13,5 +14,5 @@ import { useComponentInstance } from '@/hooks/vue';
 export const useValidator = () => {
   const vm = useComponentInstance();
 
-  return vm.$validator || inject('$validator');
+  return vm.$validator || inject('$validator', new Validator());
 };

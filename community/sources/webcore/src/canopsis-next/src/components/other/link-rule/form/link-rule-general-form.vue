@@ -1,10 +1,14 @@
 <template>
-  <v-layout column>
-    <v-layout align-end>
-      <v-flex xs6>
-        <div class="text-subtitle-1">
-          {{ $t('linkRule.type') }}
-        </div>
+  <v-layout class="gap-3" column>
+    <c-name-field
+      v-field="form.name"
+      :max-length="255"
+      autofocus
+      required
+    />
+
+    <c-form-block>
+      <c-form-block-row :label="$t('linkRule.type')">
         <v-radio-group
           :value="form.type"
           row
@@ -19,34 +23,16 @@
             color="primary"
           />
         </v-radio-group>
-      </v-flex>
-    </v-layout>
-    <c-name-field
-      v-field="form.name"
-      class="mb-3"
-      autofocus
-      required
-    />
-    <c-patterns-field
-      v-field="form.patterns"
-      :alarm-attributes="alarmAttributes"
-      :entity-attributes="entityAttributes"
-      :pending="pending"
-      :with-alarm="isAlarmType"
-      :entity-counters-type="!isAlarmType"
-      some-required
-      with-entity
-    />
-    <c-collapse-panel
-      :title="$t('externalData.title')"
-      class="my-3"
-    >
-      <external-data-form
-        v-field="form.external_data"
-        :types="externalDataTypes"
-        :variables="templateVars.external_data"
-      />
-    </c-collapse-panel>
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('externalData.title')">
+        <external-data-form
+          v-field="form.external_data"
+          :types="externalDataTypes"
+          :variables="templateVars.external_data"
+        />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
@@ -57,7 +43,6 @@ import { EXTERNAL_DATA_TYPES, LINK_RULE_TYPES, LINK_RULE_TYPES_TO_DEFAULT_SOURCE
 
 import { useI18n } from '@/hooks/i18n';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
@@ -80,14 +65,7 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const { fetchLinkRulePatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
-
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchLinkRulePatternFields);
 
     const isAlarmType = computed(() => props.form.type === LINK_RULE_TYPES.alarm);
 
@@ -112,9 +90,6 @@ export default {
        * It's using in the parent component to display the validation header color for tabs
        */
       hasAnyError,
-      pending,
-      alarmAttributes,
-      entityAttributes,
       isAlarmType,
       types,
       externalDataTypes,

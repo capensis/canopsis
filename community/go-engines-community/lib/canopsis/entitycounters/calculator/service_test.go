@@ -17,6 +17,7 @@ import (
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_entitycounters "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entitycounters"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -28,17 +29,15 @@ type serviceDataset struct {
 	alarm                     *types.Alarm
 	entity                    types.Entity
 	alarmChange               types.AlarmChange
-	counters                  entitycounters.EntityCounters
-	expectedDiff              map[string]int
+	counters                  []entitycounters.EntityCounters
+	expectedDiff              []map[string]int
 	expectedStateServicesInfo map[string]entitycounters.UpdatedServicesInfo
-	countersCallDoNotExpected bool
+	expectedInheritedServices []string
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
 
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
@@ -55,13 +54,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -76,16 +75,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -100,16 +99,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -127,34 +126,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"state.major":           1,
 				"inherited_state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is none, should change service counters and update service",
@@ -168,16 +166,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        1,
 				"all":            1,
 				"active":         1,
 				"acked":          1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
@@ -199,15 +197,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -226,16 +224,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -254,16 +252,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -283,32 +281,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is none, should change service counters and update service",
@@ -326,22 +323,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when already counted
 		{
-			name:  "given counted entity without an alarm and alarm change is none, shouldn't check counters",
+			name:  "given counted entity without an alarm and alarm change is none, shouldn't change counters",
 			alarm: nil,
 			entity: types.Entity{
 				Enabled:  true,
@@ -351,13 +348,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters:                  entitycounters.EntityCounters{},
-			expectedDiff:              map[string]int{},
+			counters:                  []entitycounters.EntityCounters{{}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
-			name:  "given counted entity with an alarm and alarm change is none, shouldn't check counters",
+			name:  "given counted entity with an alarm and alarm change is none, shouldn't change counters",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
@@ -365,10 +361,167 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Services: []string{"service-1"},
 			},
 			alarmChange:               types.AlarmChange{Type: types.AlarmChangeTypeNone},
-			counters:                  entitycounters.EntityCounters{},
-			expectedDiff:              map[string]int{},
+			counters:                  []entitycounters.EntityCounters{{}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is none, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.critical": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is none, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "ops"},
+				},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is none, should not clean inherited service slice on second service check",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1", "service-2"},
+				InheritedServices: []string{"service-2"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: []entitycounters.EntityCounters{
+				{
+					ID: "service-1",
+					State: entitycounters.StateCounters{
+						Major: 1,
+					},
+					Rule: &statesetting.StateSetting{
+						Type:   statesetting.RuleTypeService,
+						Method: statesetting.MethodInherited,
+						InheritedEntityPattern: pattern.Entity{
+							{
+								{
+									Field:     "component_infos.team",
+									FieldType: pattern.FieldTypeString,
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+								},
+							},
+						},
+					},
+				},
+				{
+					ID: "service-2",
+					State: entitycounters.StateCounters{
+						Major: 1,
+					},
+					InheritedState: entitycounters.StateCounters{
+						Major: 1,
+					},
+					Rule: &statesetting.StateSetting{
+						Type:   statesetting.RuleTypeService,
+						Method: statesetting.MethodInherited,
+						InheritedEntityPattern: pattern.Entity{
+							{
+								{
+									Field:     "component_infos.team",
+									FieldType: pattern.FieldTypeString,
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "ops"),
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedDiff: []map[string]int{
+				{
+					"inherited_state.major": 1,
+				},
+				{
+					"inherited_state.major": -1,
+				},
+			},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+				"service-2": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// when entity should be removed from counters
 		// active
@@ -383,17 +536,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -407,7 +560,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -416,14 +569,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -437,7 +590,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -446,14 +599,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -462,15 +615,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is none, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -485,26 +639,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -520,7 +672,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:           "service-1",
 				Depends:      1,
 				All:          1,
@@ -529,14 +681,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        -1,
 				"all":            -1,
 				"active":         -1,
 				"acked":          -1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -557,7 +709,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
@@ -565,13 +717,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -589,7 +741,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -598,14 +750,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -623,7 +775,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -632,14 +784,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -654,11 +806,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
 				},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -673,26 +826,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -710,7 +861,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:                   "service-1",
 				Depends:              1,
 				All:                  1,
@@ -720,15 +871,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -744,19 +895,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -771,19 +922,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -800,7 +951,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -816,14 +967,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -838,7 +989,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -855,14 +1006,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -880,7 +1031,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				InheritedState: entitycounters.StateCounters{
 					Minor: 1,
@@ -888,25 +1039,23 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -922,7 +1071,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -933,29 +1082,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"inherited_state.major": 1,
 				"state.major":           1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none, shouldn't update output",
@@ -969,21 +1117,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -998,38 +1146,34 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeNone,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "2"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		// active
@@ -1046,16 +1190,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateOK,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -1074,34 +1218,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"state.major":           1,
 				"inherited_state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is stateinc, should change service counters and update service",
@@ -1116,16 +1259,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        1,
 				"all":            1,
 				"active":         1,
 				"acked":          1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
@@ -1143,16 +1286,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -1169,34 +1312,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"state.minor":           1,
 				"inherited_state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is statedec, should change service counters and update service",
@@ -1211,16 +1353,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateCritical,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -1238,19 +1380,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        1,
 				"all":            1,
 				"active":         1,
 				"unacked":        1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
@@ -1273,16 +1415,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateOK,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -1303,32 +1445,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
@@ -1347,17 +1488,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -1377,16 +1518,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -1407,32 +1548,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
@@ -1451,17 +1591,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateCritical,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -1481,19 +1621,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when already counted
@@ -1509,16 +1649,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateOK,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.minor": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -1527,16 +1667,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is stateinc, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -1544,24 +1685,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.major":           1,
 				"inherited_state.major": 1,
 				"state.minor":           -1,
 				"inherited_state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -1578,16 +1717,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.ok":    1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1596,16 +1735,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is statedec, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -1613,24 +1753,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.minor":           1,
 				"inherited_state.minor": 1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -1647,19 +1785,111 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.minor":    -1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is stateinc, should update service counters and update service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:          types.AlarmChangeTypeStateIncrease,
+				PreviousState: types.AlarmStateMajor,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"state.major":              -1,
+				"state.critical":           1,
+				"inherited_state.critical": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is statedec, should update service counters and update service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "ops"},
+				},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type:          types.AlarmChangeTypeStateDecrease,
+				PreviousState: types.AlarmStateMajor,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"state.major":           -1,
+				"state.minor":           1,
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		// inactive
 		{
@@ -1678,12 +1908,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateOK,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
 			name:  "given counted entity with a ko alarm in inactive pbh and alarm change is statedec, shouldn't check counters",
@@ -1701,12 +1930,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is changestate, shouldn't check counters",
@@ -1724,12 +1952,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		// when entity should be removed from counters
 		// active
@@ -1745,35 +1972,36 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateOK,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm and alarm change is stateinc, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -1784,26 +2012,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
 				"state.minor":           -1,
 				"inherited_state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1820,19 +2046,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"acked":       -1,
 				"state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1849,19 +2075,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1870,16 +2096,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm and alarm change is statedec, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -1890,26 +2117,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1926,19 +2151,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateCritical,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        -1,
 				"all":            -1,
 				"active":         -1,
 				"acked":          -1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1955,19 +2180,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -1989,26 +2214,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateOK,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -2018,31 +2244,29 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2061,17 +2285,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2090,26 +2314,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -2119,31 +2344,29 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateMajor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2162,17 +2385,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateCritical,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2191,19 +2414,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -2219,17 +2442,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 					Minor:    1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.critical": 1,
 				"state.minor":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2244,16 +2467,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.major": 1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -2270,7 +2493,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateCritical,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major:    1,
@@ -2287,11 +2510,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.major":    1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2306,7 +2529,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateDecrease,
 				PreviousState: types.AlarmStateCritical,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:       8,
@@ -2324,11 +2547,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.major":    1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -2346,7 +2569,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeChangeState,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				InheritedState: entitycounters.StateCounters{
 					Minor: 1,
@@ -2354,38 +2577,37 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.critical": 1,
 				"state.minor":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is changestate, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -2396,27 +2618,117 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"inherited_state.minor":    -1,
 				"state.minor":              -1,
 				"inherited_state.critical": 1,
 				"state.critical":           1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is stateinc, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:          types.AlarmChangeTypeStateIncrease,
+				PreviousState: types.AlarmStateMinor,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Minor: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"state.minor":              -1,
+				"state.critical":           1,
+				"inherited_state.critical": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is statedec, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "ops"},
+				},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type:          types.AlarmChangeTypeStateDecrease,
+				PreviousState: types.AlarmStateCritical,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Critical: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Critical: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"state.critical":           -1,
+				"state.minor":              1,
+				"inherited_state.critical": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		{
 			name:  "given counted entity with a major alarm and alarm change is stateinc, shouldn't update output",
@@ -2430,7 +2742,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor:    1,
@@ -2438,11 +2750,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.major": 1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2457,7 +2769,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				Type:          types.AlarmChangeTypeStateIncrease,
 				PreviousState: types.AlarmStateMinor,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -2465,28 +2777,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"state.major": 1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "2"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		{
@@ -2501,16 +2812,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -2528,34 +2839,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// when already counted
 		{
@@ -2569,17 +2879,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.minor": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -2588,33 +2898,32 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is create, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
 				Depends: 1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
@@ -2622,7 +2931,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				"inherited_state.major": 1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -2639,32 +2948,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is create, should change service counters and shouldn't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
@@ -2676,24 +2986,23 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":            -1,
 				"state.ok":           -1,
 				"inherited_state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// state and output changes
 		{
@@ -2707,20 +3016,20 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2734,21 +3043,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Ok:    1,
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -2764,7 +3073,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -2780,14 +3089,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2801,7 +3110,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -2819,14 +3128,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -2843,7 +3152,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
@@ -2854,40 +3163,39 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is create, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -2900,19 +3208,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
@@ -2920,10 +3226,104 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				"state.major":           1,
 				"inherited_state.ok":    -1,
 				"state.ok":              -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is create, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeCreate,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                   1,
+				"active":                1,
+				"unacked":               1,
+				"state.ok":              -1,
+				"state.major":           1,
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is create, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "ops"},
+				},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeCreate,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                1,
+				"active":             1,
+				"unacked":            1,
+				"state.ok":           -1,
+				"inherited_state.ok": -1,
+				"state.major":        1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create, shouldn't update output",
@@ -2936,7 +3336,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:       1,
@@ -2944,14 +3344,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -2965,7 +3365,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreate,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -2973,31 +3373,30 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "2"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		{
@@ -3015,16 +3414,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -3045,34 +3444,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is create with inactive pbh, should change service counters and don't update service",
@@ -3090,16 +3488,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3119,32 +3517,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// when already counted
 		{
@@ -3161,17 +3558,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.minor": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -3180,10 +3577,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is create with active pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -3191,25 +3589,23 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
 				Depends: 1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
@@ -3217,7 +3613,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				"inherited_state.major": 1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -3237,25 +3633,26 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is create with inactive pbh, should change service counters and don't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -3264,29 +3661,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
 				Depends: 1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when entity should be removed from counters
@@ -3304,27 +3699,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is create with active pbh, should change service counters and shouldn't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -3332,7 +3728,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
@@ -3344,23 +3740,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":            -1,
 				"state.ok":           -1,
 				"inherited_state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3378,27 +3772,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is create with inactive pbh, should change service counters and shouldn't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -3407,7 +3802,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
@@ -3419,23 +3814,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":            -1,
 				"state.ok":           -1,
 				"inherited_state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -3453,20 +3846,20 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3483,21 +3876,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Ok:    1,
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -3516,7 +3909,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -3532,14 +3925,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3556,7 +3949,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -3574,14 +3967,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -3601,7 +3994,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
@@ -3612,35 +4005,34 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is create with active pbh, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -3648,7 +4040,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -3661,19 +4053,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
@@ -3681,10 +4071,106 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				"state.major":           1,
 				"inherited_state.ok":    -1,
 				"state.ok":              -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is create with inactive pbh, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeCreateAndPbhEnter,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                   1,
+				"under_pbh":             1,
+				"pbehavior.maintenance": 1,
+				"inherited_state.ok":    1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is create with inactive pbh, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "ops"},
+				},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeCreateAndPbhEnter,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                   1,
+				"under_pbh":             1,
+				"pbehavior.maintenance": 1,
+				"inherited_state.ok":    -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh, shouldn't update output",
@@ -3700,7 +4186,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:       1,
@@ -3708,14 +4194,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3732,7 +4218,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeCreateAndPbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -3740,31 +4226,30 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
 				"state.ok":    -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "2"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		// active
@@ -3783,13 +4268,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3807,16 +4292,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3834,16 +4319,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -3863,16 +4348,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -3893,34 +4378,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// inactive
 		{
@@ -3939,15 +4423,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3966,16 +4450,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -3994,17 +4478,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4023,16 +4507,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4052,32 +4536,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// when already counted
 		// active
@@ -4095,12 +4578,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is pbhenter with active pbh, shouldn't check counters",
@@ -4116,12 +4598,103 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhenter with active pbh, should update counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePbhEnter,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhenter with active pbh, should update counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "prod"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePbhEnter,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		// inactive
 		{
@@ -4139,13 +4712,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4163,18 +4736,18 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4192,13 +4765,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"acked_under_pbh":       1,
 				"acked":                 -1,
@@ -4206,7 +4779,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"state.minor":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4226,20 +4799,20 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4248,10 +4821,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -4260,7 +4834,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -4271,19 +4845,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                   -1,
 				"state.ok":                 1,
 				"state.critical":           -1,
@@ -4292,7 +4864,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"under_pbh":                1,
 				"pbehavior.maintenance":    1,
 				"unacked":                  -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4312,16 +4884,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4338,19 +4910,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4367,19 +4939,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"acked":       -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4398,19 +4970,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4419,10 +4991,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -4430,7 +5003,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -4441,26 +5014,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  -1,
 				"all":                      -1,
 				"active":                   -1,
 				"unacked":                  -1,
 				"state.critical":           -1,
 				"inherited_state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4481,16 +5052,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4508,19 +5079,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4538,19 +5109,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"acked":       -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4570,19 +5141,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4591,10 +5162,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -4603,7 +5175,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -4614,26 +5186,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  -1,
 				"all":                      -1,
 				"active":                   -1,
 				"unacked":                  -1,
 				"state.critical":           -1,
 				"inherited_state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4654,22 +5224,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Major:    1,
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4687,22 +5257,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Minor: 1,
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -4722,7 +5292,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 3,
@@ -4738,15 +5308,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4764,7 +5334,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -4782,15 +5352,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -4811,7 +5381,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -4824,36 +5394,35 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhenter with inactive pbh, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -4862,7 +5431,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -4875,19 +5444,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
@@ -4896,10 +5463,114 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhenter with inactive pbh, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePbhEnter,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                -1,
+				"state.ok":              1,
+				"state.major":           -1,
+				"inherited_state.ok":    1,
+				"under_pbh":             1,
+				"pbehavior.maintenance": 1,
+				"unacked":               -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhenter with inactive pbh, should update inherited service counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "ops"},
+				},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePbhEnter,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                -1,
+				"state.ok":              1,
+				"state.major":           -1,
+				"inherited_state.major": -1,
+				"under_pbh":             1,
+				"pbehavior.maintenance": 1,
+				"unacked":               -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh, shouldn't update output",
@@ -4916,7 +5587,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:       1,
@@ -4924,15 +5595,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -4950,7 +5621,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypePbhEnter,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -4958,32 +5629,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "2",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "1"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		// active
@@ -5000,13 +5670,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5022,16 +5692,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5047,16 +5717,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -5074,16 +5744,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -5102,34 +5772,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// inactive
 		{
@@ -5145,13 +5814,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5167,16 +5836,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5192,16 +5861,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -5219,16 +5888,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -5247,34 +5916,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// when already counted
 		// active
@@ -5290,12 +5958,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is pbhleave from active pbh, shouldn't check counters",
@@ -5309,12 +5976,103 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhleave with active pbh, should update counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePbhLeave,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhleave with active pbh, should update counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "prod"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePbhLeave,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		// inactive
 		{
@@ -5330,13 +6088,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5352,18 +6110,18 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5379,13 +6137,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"acked_under_pbh":       -1,
 				"acked":                 1,
@@ -5393,7 +6151,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"state.minor":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -5411,26 +6169,76 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeave,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+				PreviousPbehaviorTypeID:         "maintenance",
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                   1,
+				"state.ok":                 -1,
+				"state.critical":           1,
+				"inherited_state.ok":       -1,
+				"inherited_state.critical": 1,
+				"under_pbh":                -1,
+				"pbehavior.maintenance":    -1,
+				"unacked":                  1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhleave from inactive pbh",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
@@ -5443,7 +6251,54 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                   1,
+				"state.ok":                 -1,
+				"state.critical":           1,
+				"inherited_state.critical": 1,
+				"under_pbh":                -1,
+				"pbehavior.maintenance":    -1,
+				"unacked":                  1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhleave from inactive pbh",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeave,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+				PreviousPbehaviorTypeID:         "maintenance",
+			},
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
@@ -5454,31 +6309,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
-				"active":                   1,
-				"state.ok":                 -1,
-				"state.critical":           1,
-				"inherited_state.ok":       -1,
-				"inherited_state.critical": 1,
-				"under_pbh":                -1,
-				"pbehavior.maintenance":    -1,
-				"unacked":                  1,
-			},
-			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
-				"service-1": {State: types.AlarmStateCritical},
-			},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                1,
+				"state.ok":              -1,
+				"inherited_state.ok":    -1,
+				"state.critical":        1,
+				"under_pbh":             -1,
+				"pbehavior.maintenance": -1,
+				"unacked":               1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// when entity should be removed from counters
 		{
@@ -5493,16 +6344,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5517,19 +6368,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5544,19 +6395,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"acked":       -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -5573,19 +6424,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -5594,16 +6445,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -5614,26 +6466,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  -1,
 				"all":                      -1,
 				"active":                   -1,
 				"unacked":                  -1,
 				"state.critical":           -1,
 				"inherited_state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -5652,18 +6502,18 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5679,19 +6529,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5707,20 +6557,20 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5736,36 +6586,37 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -5776,26 +6627,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -5812,22 +6661,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Major:    1,
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5843,22 +6692,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Ok:    1,
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -5876,7 +6725,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 2,
@@ -5892,15 +6741,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -5916,7 +6765,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    2,
@@ -5934,15 +6783,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -5961,7 +6810,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -5974,43 +6823,42 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from inactive pbh, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type:                            types.AlarmChangeTypePbhLeave,
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -6023,19 +6871,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
@@ -6044,7 +6890,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -6062,7 +6908,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:       1,
@@ -6070,15 +6916,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6094,7 +6940,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -6102,32 +6948,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "2",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "3"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		// active to active
@@ -6147,13 +6992,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6172,16 +7017,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6200,16 +7045,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -6230,16 +7075,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -6261,34 +7106,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// active to inactive
 		{
@@ -6308,15 +7152,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6336,16 +7180,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6365,17 +7209,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6395,16 +7239,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6425,32 +7269,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// inactive to active
 		{
@@ -6470,13 +7313,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6496,16 +7339,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6525,16 +7368,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -6556,16 +7399,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -6588,34 +7431,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  1,
 				"all":                      1,
 				"active":                   1,
 				"unacked":                  1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// inactive to inactive
 		{
@@ -6636,15 +7478,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6665,16 +7507,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6695,17 +7537,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6726,16 +7568,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6757,32 +7599,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		// when already counted
 		// active to active
@@ -6801,12 +7642,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhleaveandenter from active to active pbh, shouldn't do anything",
@@ -6823,12 +7663,105 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff:              map[string]int{},
+			}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhleaveandenter with active pbh, should update counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "core"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhleaveandenter with active pbh, should update counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+				ComponentInfos: map[string]types.Info{
+					"team": {Value: "prod"},
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "component_infos.team",
+								FieldType: pattern.FieldTypeString,
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "core"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		// active to inactive
 		{
@@ -6847,13 +7780,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6872,15 +7805,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6899,10 +7832,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"acked_under_pbh":       1,
 				"acked":                 -1,
@@ -6910,7 +7843,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.minor":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -6929,21 +7862,66 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                   -1,
+				"state.ok":                 1,
+				"state.critical":           -1,
+				"inherited_state.ok":       1,
+				"inherited_state.critical": -1,
+				"under_pbh":                1,
+				"pbehavior.maintenance":    1,
+				"unacked":                  -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhleaveandenter from active to inactive pbh",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
@@ -6959,34 +7937,85 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                -1,
+				"state.critical":        -1,
+				"state.ok":              1,
+				"inherited_state.ok":    1,
+				"under_pbh":             1,
+				"pbehavior.maintenance": 1,
+				"unacked":               -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhleaveandenter from active to inactive pbh",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
 			},
-			expectedDiff: map[string]int{
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Critical: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Critical: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                   -1,
-				"state.ok":                 1,
 				"state.critical":           -1,
-				"inherited_state.ok":       1,
 				"inherited_state.critical": -1,
+				"state.ok":                 1,
 				"under_pbh":                1,
 				"pbehavior.maintenance":    1,
 				"unacked":                  -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
 			},
-			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// inactive to active
 		{
@@ -7005,13 +8034,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7030,15 +8059,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7057,10 +8086,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"acked_under_pbh":       -1,
 				"acked":                 1,
@@ -7068,7 +8097,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.minor":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -7089,23 +8118,70 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+				PreviousPbehaviorTypeID:         "maintenance",
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                   1,
+				"state.ok":                 -1,
+				"state.critical":           1,
+				"inherited_state.ok":       -1,
+				"inherited_state.critical": 1,
+				"under_pbh":                -1,
+				"pbehavior.maintenance":    -1,
+				"unacked":                  1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhleaveandenter from inactive to active pbh",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
@@ -7121,36 +8197,88 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                   1,
 				"state.ok":                 -1,
 				"state.critical":           1,
-				"inherited_state.ok":       -1,
 				"inherited_state.critical": 1,
 				"under_pbh":                -1,
 				"pbehavior.maintenance":    -1,
 				"unacked":                  1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhleaveandenter from inactive to active pbh",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					CanonicalType: types.PbhCanonicalTypeActive,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+				PreviousPbehaviorTypeID:         "maintenance",
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"active":                1,
+				"state.ok":              -1,
+				"inherited_state.ok":    -1,
+				"state.critical":        1,
+				"under_pbh":             -1,
+				"pbehavior.maintenance": -1,
+				"unacked":               1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// inactive to inactive
 		{
@@ -7170,13 +8298,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"pbehavior.prev-maintenance": -1,
 				"pbehavior.maintenance":      1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7196,14 +8324,100 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"pbehavior.prev-maintenance": -1,
 				"pbehavior.maintenance":      1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is pbhleaveandenter from inactive to inactive pbh",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+				PreviousPbehaviorTypeID:         "prev-maintenance",
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.ok":         1,
+				"pbehavior.prev-maintenance": -1,
+				"pbehavior.maintenance":      1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is pbhleaveandenter from inactive to inactive pbh",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+				PreviousPbehaviorTypeID:         "prev-maintenance",
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.ok":         -1,
+				"pbehavior.prev-maintenance": -1,
+				"pbehavior.maintenance":      1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// when entity should be removed from counters
 		// active to active
@@ -7222,13 +8436,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7246,16 +8460,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7273,19 +8487,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"acked":       -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -7305,19 +8519,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -7326,10 +8540,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -7338,7 +8553,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -7349,26 +8564,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  -1,
 				"all":                      -1,
 				"active":                   -1,
 				"unacked":                  -1,
 				"state.critical":           -1,
 				"inherited_state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -7390,13 +8603,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7415,16 +8628,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7443,19 +8656,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"acked":       -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -7476,19 +8689,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -7497,10 +8710,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -7510,7 +8724,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -7521,26 +8735,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                  -1,
 				"all":                      -1,
 				"active":                   -1,
 				"unacked":                  -1,
 				"state.critical":           -1,
 				"inherited_state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -7562,15 +8774,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7589,16 +8801,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7617,17 +8829,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7646,26 +8858,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -7675,31 +8888,29 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// inactive to inactive
@@ -7720,15 +8931,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                    -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7748,16 +8959,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                    -1,
 				"all":                        -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7777,17 +8988,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                    -1,
 				"all":                        -1,
 				"acked_under_pbh":            -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7807,26 +9018,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                    -1,
 				"all":                        -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -7837,31 +9049,29 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":                    -1,
 				"all":                        -1,
 				"state.ok":                   -1,
 				"inherited_state.ok":         -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -7881,22 +9091,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Major:    1,
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7915,22 +9125,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Ok:    1,
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -7951,22 +9161,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
 					Major:    1,
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -7985,7 +9195,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 2,
 				State: entitycounters.StateCounters{
@@ -7993,15 +9203,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 					Minor: 1,
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -8022,7 +9232,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 2,
@@ -8038,15 +9248,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8062,7 +9272,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    2,
@@ -8080,15 +9290,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -8109,7 +9319,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 2,
@@ -8125,15 +9335,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -8154,7 +9364,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -8172,15 +9382,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -8202,7 +9412,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -8215,36 +9425,35 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from inactive to active pbh, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					CanonicalType: types.PbhCanonicalTypeActive,
 				},
@@ -8254,7 +9463,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -8267,19 +9476,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
@@ -8288,7 +9495,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -8310,7 +9517,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -8323,36 +9530,35 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.minor":           -1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from active to inactive pbh, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -8362,7 +9568,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Type:                            types.AlarmChangeTypePbhLeaveAndEnter,
 				PreviousPbehaviorCannonicalType: types.PbhCanonicalTypeActive,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -8375,19 +9581,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"state.ok":              1,
 				"state.minor":           -1,
@@ -8396,7 +9600,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -8414,7 +9618,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorTypeID:         "maintenance",
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:       1,
@@ -8422,15 +9626,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8450,7 +9654,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
 				PreviousPbehaviorTypeID:         "prev-maintenance",
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Ok:    1,
@@ -8461,28 +9665,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				},
 				OutputTemplate: "{{ .PbehaviorCounters }}",
 				Output:         "map[prev-maintenance:1]",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"pbehavior.prev-maintenance": -1,
 				"pbehavior.maintenance":      1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "map[maintenance:1 prev-maintenance:0]"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		// active
@@ -8498,13 +9701,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8519,13 +9722,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8541,29 +9744,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":            1,
 				"state.ok":           1,
 				"inherited_state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is resolve, should change service counters and update service",
@@ -8577,13 +9779,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// inactive
@@ -8603,15 +9805,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8630,15 +9832,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8658,31 +9860,30 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
@@ -8700,15 +9901,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when already counted
@@ -8723,14 +9924,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":     -1,
 				"active":  -1,
 				"unacked": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8744,19 +9945,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.minor": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -8765,15 +9966,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is resolve, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -8784,19 +9986,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
@@ -8804,10 +10004,98 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				"state.ok":              1,
 				"inherited_state.major": -1,
 				"inherited_state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is resolve",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResolve,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                -1,
+				"active":             -1,
+				"unacked":            -1,
+				"state.major":        -1,
+				"state.ok":           1,
+				"inherited_state.ok": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is resolve",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResolve,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                   -1,
+				"active":                -1,
+				"unacked":               -1,
+				"state.major":           -1,
+				"inherited_state.major": -1,
+				"state.ok":              1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		{
 			name:  "given counted entity with an acked alarm and alarm change is resolve, should change service counters and update service",
@@ -8820,19 +10108,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":            -1,
 				"active":         -1,
 				"acked":          -1,
 				"state.critical": -1,
 				"state.ok":       1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -8853,12 +10141,12 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8876,16 +10164,53 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResolve,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update with a ko alarm in inactive pbh and alarm change is resolve",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
@@ -8900,27 +10225,69 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
-				"all": -1,
-			},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                -1,
+				"inherited_state.ok": 1,
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update with a ko alarm in inactive pbh and alarm change is resolve",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResolve,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"all":                -1,
+				"inherited_state.ok": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		{
 			name:  "given counted entity with an acked alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
@@ -8937,13 +10304,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":             -1,
 				"acked_under_pbh": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when entity should be removed from counters
@@ -8959,7 +10326,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -8968,14 +10335,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -8989,7 +10356,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -8998,14 +10365,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -9014,15 +10381,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is resolve, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -9037,26 +10405,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -9072,7 +10438,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:           "service-1",
 				Depends:      1,
 				All:          1,
@@ -9081,14 +10447,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        -1,
 				"all":            -1,
 				"active":         -1,
 				"acked":          -1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -9109,7 +10475,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -9118,14 +10484,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9143,7 +10509,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -9152,24 +10518,25 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -9178,7 +10545,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -9193,26 +10560,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9230,7 +10595,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:                   "service-1",
 				Depends:              1,
 				All:                  1,
@@ -9240,15 +10605,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -9263,20 +10628,20 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major:    1,
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9290,20 +10655,20 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 					Major: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -9319,7 +10684,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 2,
@@ -9335,14 +10700,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9356,7 +10721,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -9373,14 +10738,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -9397,7 +10762,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -9409,40 +10774,39 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is resolve, when rule type is inherited, should update service, because the inherited worst state changed",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:  true,
-				Name:     "test-resource-1",
-				Type:     types.EntityTypeResource,
-				Services: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -9455,19 +10819,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
@@ -9475,7 +10837,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				"state.major":           -1,
 				"inherited_state.ok":    1,
 				"state.ok":              1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -9491,7 +10853,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
@@ -9499,14 +10861,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9520,38 +10882,37 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeResolve,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 2,
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "2",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.major": -1,
 				"state.ok":    1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "1"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// active
 		{
@@ -9567,34 +10928,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"acked":                 1,
 				"state.major":           1,
 				"inherited_state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is ack, should change service counters and update service",
@@ -9608,16 +10968,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        1,
 				"all":            1,
 				"active":         1,
 				"acked":          1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
@@ -9640,24 +11000,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
@@ -9665,8 +11023,9 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
 				"acked_under_pbh":       1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is ack, should change service counters and update service",
@@ -9684,17 +11043,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when already counted
@@ -9709,13 +11068,139 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"acked":   1,
 				"unacked": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is ack",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
 			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAck,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked":                 1,
+				"unacked":               -1,
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is ack",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAck,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked":                 1,
+				"unacked":               -1,
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
+		},
+		{
+			name:  "given counted entity with two services inherited and not inherited, should not increase inherited counters in not inherited service",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1", "service-2"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAck,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}, {
+				ID: "service-2",
+				State: entitycounters.StateCounters{
+					Major: 1,
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked":   1,
+				"unacked": -1,
+			}, {
+				"acked":   1,
+				"unacked": -1,
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// inactive
@@ -9734,13 +11219,93 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"acked_under_pbh": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update with an acked alarm in inactive pbh and alarm change is ack",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAck,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked_under_pbh":    1,
+				"inherited_state.ok": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update with an acked alarm in inactive pbh and alarm change is ack",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAck,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked_under_pbh":    1,
+				"inherited_state.ok": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// when entity should be removed from counters
 		// active
@@ -9748,15 +11313,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			name:  "given new not yet counted entity matched to inherited rule with an acked alarm and alarm change is ack, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -9767,26 +11333,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -9802,19 +11366,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        -1,
 				"all":            -1,
 				"active":         -1,
 				"unacked":        -1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -9824,10 +11388,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is ack, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -9836,31 +11401,29 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9878,16 +11441,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -9903,19 +11466,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9930,19 +11493,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -9959,7 +11522,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -9975,14 +11538,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -9997,7 +11560,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -10014,14 +11577,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -10039,7 +11602,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				InheritedState: entitycounters.StateCounters{
 					Minor: 1,
@@ -10047,25 +11610,23 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10081,7 +11642,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -10092,29 +11653,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"acked":                 1,
 				"inherited_state.major": 1,
 				"state.major":           1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack, shouldn't update output",
@@ -10128,21 +11688,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"acked":       1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10156,7 +11716,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAck,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -10164,28 +11724,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				NotAcknowledged: 1,
 				OutputTemplate:  "{{.NotAcknowledged}} {{.Acknowledged}}",
 				Output:          "1 0",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"acked":   1,
 				"unacked": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "0 1"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// active
 		{
@@ -10201,34 +11760,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"state.major":           1,
 				"inherited_state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an alarm and alarm change is ackremove, should change service counters and update service",
@@ -10242,16 +11800,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        1,
 				"all":            1,
 				"active":         1,
 				"unacked":        1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
@@ -10274,32 +11832,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
@@ -10317,16 +11874,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when already counted
@@ -10341,14 +11898,92 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"unacked": 1,
 				"acked":   -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is ackremove",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAckremove,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked":                 -1,
+				"unacked":               1,
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is ackremove",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAckremove,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked":                 -1,
+				"unacked":               1,
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
 		},
 		// inactive
 		{
@@ -10366,13 +12001,93 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"acked_under_pbh": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update with an alarm in inactive pbh and alarm change is ackremove",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAckremove,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked_under_pbh":    -1,
+				"inherited_state.ok": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update with an alarm in inactive pbh and alarm change is ackremove",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAckremove,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"acked_under_pbh":    -1,
+				"inherited_state.ok": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// when entity should be removed from counters
 		// active
@@ -10380,15 +12095,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			name:  "given new not yet counted entity matched to inherited rule with an alarm and alarm change is ackremove, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -10399,26 +12115,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"acked":                 -1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -10434,19 +12148,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        -1,
 				"all":            -1,
 				"active":         -1,
 				"acked":          -1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -10456,10 +12170,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -10468,24 +12183,22 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
@@ -10493,7 +12206,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
 				"acked_under_pbh":       -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10511,17 +12224,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
 				"acked_under_pbh":       -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -10537,19 +12250,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10564,19 +12277,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -10593,7 +12306,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -10609,14 +12322,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10631,7 +12344,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -10648,14 +12361,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -10673,7 +12386,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				InheritedState: entitycounters.StateCounters{
 					Minor: 1,
@@ -10681,25 +12394,23 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10715,7 +12426,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -10726,29 +12437,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"inherited_state.major": 1,
 				"state.major":           1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove, shouldn't update output",
@@ -10762,21 +12472,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10790,7 +12500,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeAckremove,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -10798,28 +12508,27 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				Acknowledged:   1,
 				OutputTemplate: "{{.NotAcknowledged}} {{.Acknowledged}}",
 				Output:         "0 1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"acked":   -1,
 				"unacked": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "1 0"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	componentService, entityHelper, countersCollection := prepareEntityServiceTest(ctrl)
-
 	dataSets := []serviceDataset{
 		// when entity should be added to counters
 		// active
@@ -10835,13 +12544,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10856,16 +12565,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  1,
 				"all":      1,
 				"active":   1,
 				"unacked":  1,
 				"state.ok": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -10880,16 +12589,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.minor": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMinor},
 			},
@@ -10907,34 +12616,33 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"state.major":           1,
 				"inherited_state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is enabled, should change service counters and update service",
@@ -10948,16 +12656,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        1,
 				"all":            1,
 				"active":         1,
 				"acked":          1,
 				"state.critical": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateCritical},
 			},
@@ -10979,15 +12687,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11006,16 +12714,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11034,16 +12742,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11063,32 +12771,31 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
@@ -11106,17 +12813,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// when already counted
@@ -11131,10 +12838,9 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters:                  entitycounters.EntityCounters{},
-			expectedDiff:              map[string]int{},
+			counters:                  []entitycounters.EntityCounters{{}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is enabled, shouldn't check counters",
@@ -11145,10 +12851,161 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Services: []string{"service-1"},
 			},
 			alarmChange:               types.AlarmChange{Type: types.AlarmChangeTypeEnabled},
-			counters:                  entitycounters.EntityCounters{},
-			expectedDiff:              map[string]int{},
+			counters:                  []entitycounters.EntityCounters{{}},
+			expectedDiff:              []map[string]int{},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
-			countersCallDoNotExpected: true,
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update and alarm change is enabled",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeEnabled,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateMajor},
+			},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update and alarm change is enabled",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeEnabled,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Major: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.major": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+			expectedInheritedServices: []string{},
+		},
+		{
+			name:  "given counted entity enters inherited rule by component info update with a ko alarm in inactive pbh and alarm change is enabled",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Name:     "test-resource-1",
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeEnabled,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.ok": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{"service-1"},
+		},
+		{
+			name:  "given counted entity leaves inherited rule by component info update with a ko alarm in inactive pbh and alarm change is enabled",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			entity: types.Entity{
+				Enabled:           true,
+				Name:              "test-resource-2",
+				Type:              types.EntityTypeResource,
+				Services:          []string{"service-1"},
+				InheritedServices: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeEnabled,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				InheritedState: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Rule: &statesetting.StateSetting{
+					Type:   statesetting.RuleTypeService,
+					Method: statesetting.MethodInherited,
+					InheritedEntityPattern: pattern.Entity{
+						{
+							{
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
+							},
+						},
+					},
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"inherited_state.ok": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+			expectedInheritedServices: []string{},
 		},
 		// when entity should be removed from counters
 		// active
@@ -11163,17 +13020,17 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11187,7 +13044,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -11196,14 +13053,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				State: entitycounters.StateCounters{
 					Ok: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":  -1,
 				"all":      -1,
 				"active":   -1,
 				"unacked":  -1,
 				"state.ok": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11217,7 +13074,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -11226,14 +13083,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     -1,
 				"all":         -1,
 				"active":      -1,
 				"unacked":     -1,
 				"state.minor": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -11242,15 +13099,16 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is enabled, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 			},
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:              "service-1",
 				Depends:         1,
 				All:             1,
@@ -11265,26 +13123,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"active":                -1,
 				"unacked":               -1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -11300,7 +13156,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:           "service-1",
 				Depends:      1,
 				All:          1,
@@ -11309,14 +13165,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":        -1,
 				"all":            -1,
 				"active":         -1,
 				"acked":          -1,
 				"state.critical": -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateOK},
 			},
@@ -11337,7 +13193,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				State: entitycounters.StateCounters{
@@ -11345,13 +13201,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11369,7 +13225,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -11378,14 +13234,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11403,7 +13259,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -11412,24 +13268,25 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
 			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
-				Enabled:          true,
-				Name:             "test-resource-1",
-				Type:             types.EntityTypeResource,
-				ServicesToRemove: []string{"service-1"},
+				Enabled:           true,
+				Name:              "test-resource-1",
+				Type:              types.EntityTypeResource,
+				ServicesToRemove:  []string{"service-1"},
+				InheritedServices: []string{"service-1"},
 				PbehaviorInfo: types.PbehaviorInfo{
 					TypeID:        "maintenance",
 					CanonicalType: pbehavior.TypeMaintenance,
@@ -11438,7 +13295,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:      "service-1",
 				Depends: 1,
 				All:     1,
@@ -11453,26 +13310,24 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11490,7 +13345,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID:                   "service-1",
 				Depends:              1,
 				All:                  1,
@@ -11500,15 +13355,15 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				},
 				PbehaviorCounters: map[string]int{"maintenance": 1},
 				UnderPbehavior:    1,
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		// state and output changes
@@ -11524,19 +13379,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11551,19 +13406,19 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -11580,7 +13435,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
@@ -11596,14 +13451,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11618,7 +13473,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -11635,14 +13490,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
@@ -11660,7 +13515,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				InheritedState: entitycounters.StateCounters{
 					Minor: 1,
@@ -11668,25 +13523,23 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11702,7 +13555,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Minor: 1,
@@ -11713,29 +13566,28 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				Rule: &statesetting.StateSetting{
 					Type:   statesetting.RuleTypeService,
 					Method: statesetting.MethodInherited,
-					InheritedEntityPatternFields: statesetting.InheritedEntityPatternFields{
-						InheritedEntityPattern: pattern.Entity{
+					InheritedEntityPattern: pattern.Entity{
+						{
 							{
-								{
-									Field:     "name",
-									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
-								},
+								Field:     "name",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource-1"),
 							},
 						},
 					},
 				},
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"all":                   1,
 				"active":                1,
 				"unacked":               1,
 				"inherited_state.major": 1,
 				"state.major":           1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
 				"service-1": {State: types.AlarmStateMajor},
 			},
+			expectedInheritedServices: []string{"service-1"},
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled, shouldn't update output",
@@ -11749,21 +13601,21 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Critical: 1,
 				},
 				OutputTemplate: "{{.State.Critical}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
 		{
@@ -11778,28 +13630,32 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			alarmChange: types.AlarmChange{
 				Type: types.AlarmChangeTypeEnabled,
 			},
-			counters: entitycounters.EntityCounters{
+			counters: []entitycounters.EntityCounters{{
 				ID: "service-1",
 				State: entitycounters.StateCounters{
 					Major: 1,
 				},
 				OutputTemplate: "{{.State.Major}}",
 				Output:         "1",
-			},
-			expectedDiff: map[string]int{
+			}},
+			expectedDiff: []map[string]int{{
 				"depends":     1,
 				"all":         1,
 				"active":      1,
 				"unacked":     1,
 				"state.major": 1,
-			},
+			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "2"}},
 		},
 	}
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, componentService, dSet)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
 		})
 	}
 }
@@ -11810,32 +13666,40 @@ func runServicesDataset(
 	t *testing.T,
 	entityHelper *mock_mongo.MockSingleResultHelper,
 	countersCollection *mock_mongo.MockDbCollection,
+	entityCollection *mock_mongo.MockDbCollection,
 	componentService calculator.EntityServiceCountersCalculator,
 	dSet serviceDataset) {
 	entityHelper.EXPECT().Decode(gomock.Any()).Do(func(v *entitycounters.ServicesInfo) {
 		*v = entitycounters.ServicesInfo{
-			Services:         dSet.entity.Services,
-			ServicesToAdd:    dSet.entity.ServicesToAdd,
-			ServicesToRemove: dSet.entity.ServicesToRemove,
+			Services:          dSet.entity.Services,
+			ServicesToAdd:     dSet.entity.ServicesToAdd,
+			ServicesToRemove:  dSet.entity.ServicesToRemove,
+			InheritedServices: dSet.entity.InheritedServices,
 		}
 	}).Return(nil)
 
-	if !dSet.countersCallDoNotExpected {
-		mockCursor := mock_mongo.NewMockCursor(ctrl)
+	mockCursor := mock_mongo.NewMockCursor(ctrl)
+	for i := range dSet.counters {
+		c := dSet.counters[i]
 		mockCursor.EXPECT().Next(gomock.Any()).Return(true)
-		mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 		mockCursor.EXPECT().Decode(gomock.Any()).Do(func(v *entitycounters.EntityCounters) {
-			*v = dSet.counters
+			*v = c
 		}).Return(nil)
-		mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
-
-		countersCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 	}
+	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
+	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
+	mockCursor.EXPECT().Err().Return(nil)
+
+	countersCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 
 	if len(dSet.expectedDiff) > 0 {
 		countersCollection.EXPECT().BulkWrite(gomock.Any(), gomock.Any()).DoAndReturn(
 			func(_ context.Context, models []mongo.WriteModel, _ ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error) {
-				for _, model := range models {
+				if len(models) != len(dSet.expectedDiff) {
+					t.Fatalf("expected %d write models, got %d", len(dSet.expectedDiff), len(models))
+				}
+
+				for i, model := range models {
 					updateOneModel, ok := model.(*mongo.UpdateOneModel)
 					if !ok {
 						t.Fatal("write models should be mongo.UpdateOneModel models")
@@ -11856,9 +13720,65 @@ func runServicesDataset(
 						t.Fatal("wrong")
 					}
 
-					if !maps.Equal(inc, dSet.expectedDiff) {
-						t.Errorf("expected counters diff = %v, but got %v", dSet.expectedDiff, inc)
+					if !maps.Equal(inc, dSet.expectedDiff[i]) {
+						t.Errorf("expected counters diff[%d] = %v, but got %v", i, dSet.expectedDiff[i], inc)
 					}
+				}
+
+				return nil, nil
+			},
+		)
+	}
+
+	if len(dSet.entity.ServicesToAdd) > 0 || len(dSet.entity.ServicesToRemove) > 0 || dSet.expectedInheritedServices != nil {
+		entityCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+			func(_ context.Context, filter any, update any, _ ...any) (*mongo.UpdateResult, error) {
+				filterDoc, ok := filter.(bson.M)
+				if !ok {
+					t.Fatal("filter should be a bson.M")
+				}
+
+				if filterDoc["_id"] != dSet.entity.ID {
+					t.Errorf("expected filter _id = %v, but got %v", dSet.entity.ID, filterDoc["_id"])
+				}
+
+				updateDoc, ok := update.(bson.M)
+				if !ok {
+					t.Fatal("update should be a bson.M")
+				}
+
+				setDoc, ok := updateDoc["$set"].(bson.M)
+				if !ok {
+					t.Fatal("update should contain $set as bson.M")
+				}
+
+				services, ok := setDoc["inherited_services"].([]string)
+				if !ok {
+					t.Fatal("$set should contain services as []string")
+				}
+
+				if len(services) != len(dSet.expectedInheritedServices) {
+					t.Errorf("expected inherited services = %v, but got %v", dSet.expectedInheritedServices, services)
+				} else {
+					for i, s := range services {
+						if s != dSet.expectedInheritedServices[i] {
+							t.Errorf("expected inherited services = %v, but got %v", dSet.expectedInheritedServices, services)
+							break
+						}
+					}
+				}
+
+				unsetDoc, ok := updateDoc["$unset"].(bson.M)
+				if !ok {
+					t.Fatal("update should contain $unset as bson.M")
+				}
+
+				if _, ok := unsetDoc["services_to_add"]; !ok {
+					t.Fatal("$unset should contain services_to_add")
+				}
+
+				if _, ok := unsetDoc["services_to_remove"]; !ok {
+					t.Fatal("$unset should contain services_to_remove")
 				}
 
 				return nil, nil
@@ -11880,12 +13800,12 @@ func prepareEntityServiceTest(ctrl *gomock.Controller) (
 	calculator.EntityServiceCountersCalculator,
 	*mock_mongo.MockSingleResultHelper,
 	*mock_mongo.MockDbCollection,
+	*mock_mongo.MockDbCollection,
 ) {
 	entityHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
 
 	entityCollection := mock_mongo.NewMockDbCollection(ctrl)
 	entityCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(entityHelper).AnyTimes()
-	entityCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, nil).AnyTimes()
 
 	countersCollection := mock_mongo.NewMockDbCollection(ctrl)
 
@@ -11902,5 +13822,5 @@ func prepareEntityServiceTest(ctrl *gomock.Controller) (
 
 	eventSender := mock_entitycounters.NewMockEventsSender(ctrl)
 
-	return calculator.NewEntityServiceCountersCalculator(dbClient, templateExecutor, eventSender), entityHelper, countersCollection
+	return calculator.NewEntityServiceCountersCalculator(dbClient, templateExecutor, eventSender, zerolog.Nop()), entityHelper, countersCollection, entityCollection
 }

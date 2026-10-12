@@ -7,9 +7,11 @@
     accordion
   >
     <v-expansion-panel class="c-collapse-panel__panel">
-      <v-expansion-panel-header :color="headerColor">
+      <v-expansion-panel-header :color="color">
         <slot name="header">
-          <span class="white--text">{{ title }}</span>
+          <span class="white--text">
+            {{ title }}
+          </span>
         </slot>
         <template #actions="">
           <slot name="actions">
@@ -39,6 +41,8 @@
 <script>
 import { ref, computed, watch } from 'vue';
 import { Validator } from 'vee-validate';
+
+import { CSS_COLORS_VARS } from '@/config';
 
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
@@ -83,17 +87,16 @@ export default {
 
     const { hasChildrenError } = useValidationChildren();
 
-    const panelStyle = computed(() => ({ outlineColor: props.outlineColor }));
     const panelContentStyle = computed(() => ({ backgroundColor: props.color }));
     const hasError = computed(() => props.error || hasChildrenError.value);
-    const headerColor = computed(() => (hasError.value ? 'error' : props.color));
+
+    const panelStyle = computed(() => ({ outlineColor: hasError.value ? CSS_COLORS_VARS.error : props.outlineColor }));
 
     watch(() => props.expanded, expanded => localExpanded.value = expanded ? 0 : null);
 
     return {
       localExpanded,
       panelStyle,
-      headerColor,
       panelContentStyle,
       hasError,
     };
@@ -105,7 +108,7 @@ export default {
 .c-collapse-panel {
   --c-collapse-panel-border-radius: 5px;
 
-  outline: 3px solid transparent;
+  outline: 2px solid transparent;
   border-radius: var(--c-collapse-panel-border-radius) !important;
 
   &__panel {

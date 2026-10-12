@@ -37,6 +37,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     title="\\"More Infos\\" Popup"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    widgettemplatetype="alarm_more_infos"
   />
   <field-text-editor-with-template-stub
     addable="true"
@@ -249,6 +250,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     title="Export PDF template"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    widgettemplatetype="alarm_export_to_pdf"
   />
   <field-root-cause-settings-stub
     parameters="[object Object]"
@@ -292,6 +294,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     title="\\"More Infos\\" Popup"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    widgettemplatetype="alarm_more_infos"
   />
   <field-text-editor-with-template-stub
     addable="true"
@@ -504,6 +507,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     title="Export PDF template"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    widgettemplatetype="alarm_export_to_pdf"
   />
   <field-root-cause-settings-stub
     parameters="[object Object]"

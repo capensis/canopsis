@@ -2,6 +2,8 @@ package action_test
 
 import (
 	"context"
+	"errors"
+	"sync"
 	"testing"
 	"time"
 
@@ -147,8 +149,8 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		Name: "test-scenario-1-name",
 		Actions: []action.Action{
 			{
-				Type:        "snooze",
-				EmitTrigger: true,
+				Type:               "snooze",
+				EmitTriggerSuccess: true,
 			},
 		},
 	}
@@ -237,8 +239,16 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), firstExecution.GetCacheKey()).Return(&firstExecution, nil)
 	mockExecutionStorage.EXPECT().Get(gomock.Any(), secondExecution.GetCacheKey()).Return(&secondExecution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), firstExecution.GetCacheKey()).Return(nil)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), secondExecution.GetCacheKey()).Return(nil)
+	var delWg sync.WaitGroup
+	delWg.Add(2)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), firstExecution.GetCacheKey()).DoAndReturn(func(context.Context, string) error {
+		delWg.Done()
+		return nil
+	})
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), secondExecution.GetCacheKey()).DoAndReturn(func(context.Context, string) error {
+		delWg.Done()
+		return nil
+	})
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
@@ -267,6 +277,139 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 			t.Errorf("expected no error but got %v", res.Err)
 		}
 
+		if res.Alarm.ID != task.Alarm.ID {
+			t.Errorf("expected alarm but got %v", res.Alarm)
+		}
+	case <-time.After(100 * time.Millisecond):
+		t.Errorf("expected result but got nothing")
+	}
+
+	delDone := make(chan struct{})
+	go func() {
+		delWg.Wait()
+		close(delDone)
+	}()
+
+	select {
+	case <-delDone:
+	case <-time.After(100 * time.Millisecond):
+		t.Errorf("expected both executions to be deleted")
+	}
+}
+
+func TestTaskManager_Run_GiveTaskWithEmitTriggerFail_ShouldEmitFailTriggerOnRpcError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	ctx := t.Context()
+
+	go func() {
+		deadlockTimer := time.NewTimer(5 * time.Second)
+
+		select {
+		case <-ctx.Done():
+			return
+		case <-deadlockTimer.C:
+			panic("workers or test are deadlocked")
+		}
+	}()
+
+	task := action.ExecuteScenariosTask{
+		Triggers: []string{"create"},
+		Entity:   types.Entity{ID: "test-entity"},
+		Alarm:    types.Alarm{ID: "test-alarm"},
+	}
+	scenario := action.Scenario{
+		ID:   "test-scenario",
+		Name: "test-scenario-name",
+		Actions: []action.Action{
+			{
+				Type:               types.ActionTypeWebhook,
+				EmitTriggerSuccess: true,
+				EmitTriggerFail:    true,
+			},
+		},
+	}
+	execution := action.ScenarioExecution{
+		ScenarioID: scenario.ID,
+		AlarmID:    task.Alarm.ID,
+		Entity:     task.Entity,
+		ActionExecutions: []action.Execution{
+			{
+				Action:   scenario.Actions[0],
+				Executed: false,
+			},
+		},
+	}
+	rpcResultCh := make(chan action.RpcResult)
+	defer close(rpcResultCh)
+	inputCh := make(chan action.ExecuteScenariosTask)
+	defer close(inputCh)
+	taskResultCh := make(chan action.TaskResult)
+	defer close(taskResultCh)
+	mockWorkerPool := mock_action.NewMockWorkerPool(ctrl)
+	mockWorkerPool.EXPECT().RunWorkers(gomock.Any(), gomock.Any()).
+		Do(func(_ context.Context, taskCh <-chan action.Task) {
+			go func() {
+				select {
+				case <-ctx.Done():
+					return
+				case task := <-taskCh:
+					taskResultCh <- action.TaskResult{
+						Source:            "test",
+						Alarm:             task.Alarm,
+						Step:              task.Step,
+						ExecutionCacheKey: task.ExecutionCacheKey,
+						AlarmChangeType:   types.AlarmChangeTypeAutoDeclareTicketWebhookFail,
+						Status:            action.TaskRpcError,
+						Err:               errors.New("rpc failed"),
+					}
+				}
+			}()
+		}).
+		Return(taskResultCh, nil)
+	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutedCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutedWebhookCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(0)), gomock.Eq(true)).
+		Return(int64(0), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutedWebhookCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(false)).
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().IncExecutingCount(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+		Return(int64(0), nil).Times(1)
+	mockExecutionStorage.EXPECT().DelExecutingCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().DelExecutedCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().DelExecutedWebhookCount(gomock.Any(), gomock.Any()).Return(int64(1), nil)
+	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(true, nil).Times(1)
+	mockExecutionStorage.EXPECT().Get(gomock.Any(), execution.GetCacheKey()).Return(&execution, nil)
+	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil).Times(1)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), execution.GetCacheKey()).Return(nil)
+	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
+	mockScenarioStorage.EXPECT().
+		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
+		Return(map[string][]action.Scenario{"create": {scenario}}, nil)
+	mockScenarioStorage.EXPECT().
+		GetTriggeredScenarios(gomock.Eq([]string{string(types.AlarmChangeTypeDeclareTicketWebhookFail)}), gomock.Eq(task.Alarm)).
+		Return(map[string][]action.Scenario{}, nil)
+	mockScenarioStorage.EXPECT().
+		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
+		Return(nil)
+	mockScenarioStorage.EXPECT().
+		RunDelayedScenarios(gomock.Any(), gomock.Eq([]string{string(types.AlarmChangeTypeDeclareTicketWebhookFail)}), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Any()).
+		Return(nil)
+	logger := zerolog.Logger{}
+	manager := action.NewTaskManager(mockWorkerPool, mockExecutionStorage, mockScenarioStorage, logger)
+	resultCh, err := manager.Run(ctx, rpcResultCh, inputCh)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	inputCh <- task
+
+	select {
+	case res := <-resultCh:
 		if res.Alarm.ID != task.Alarm.ID {
 			t.Errorf("expected alarm but got %v", res.Alarm)
 		}

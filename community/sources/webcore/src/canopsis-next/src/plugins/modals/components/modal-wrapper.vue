@@ -40,28 +40,35 @@ export default {
 
     const dialogProps = computed(() => {
       const defaultDialogProps = {
-        maxWidth: 700,
+        maxWidth: 900,
         attach: '.modals-wrapper',
         absolute: true,
         retainFocus: false,
       };
       const { dialogPropsMap = {} } = modals;
       const { name, dialogProps: modalDialogProps, minimized } = props.modal;
+      const { autoHeight, ...modalDialogPropsFromMap } = dialogPropsMap[name] ?? {};
 
       const merged = {
         ...defaultDialogProps,
-        ...dialogPropsMap[name],
+        ...modalDialogPropsFromMap,
         ...modalDialogProps,
 
         customCloseConditional: (...args) => clickOutside.call(...args),
       };
+      if (autoHeight) {
+        merged.contentWrapperClass = `${merged.class ?? ''} v-dialog__content--auto-height`.trim();
+      }
+
+      if (minimized) {
+        merged.contentWrapperClass = `${merged.contentWrapperClass ?? ''} v-dialog__content--minimized`.trim();
+      }
 
       return {
         ...merged,
 
         hideOverlay: merged.hideOverlay || minimized,
         ignoreClickOutside: merged.ignoreClickOutside || minimized,
-        contentWrapperClass: minimized ? 'v-dialog__content--minimized' : '',
       };
     });
 
@@ -76,11 +83,54 @@ export default {
 </script>
 
 <style lang="scss">
+.v-dialog__content--auto-height .v-dialog {
+  height: auto !important;
+
+  > .v-form {
+    height: auto;
+
+    > .v-card {
+      min-height: unset !important;
+      height: auto;
+      flex: 0 0 auto;
+    }
+  }
+
+  > .v-card {
+    min-height: unset !important;
+    height: auto;
+    flex: 0 0 auto;
+  }
+}
+
 .v-dialog {
+  height: 70vh;
+
+  &.v-dialog__pbehavior-planning {
+    height: 90vh;
+  }
+
+  &:not(.v-dialog--auto-height) > {
+    .v-form, .v-card {
+      min-height: 100%;
+    }
+  }
+
+  & > .v-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    & > .v-card {
+      flex: 1 1 0;
+      min-height: 0;
+    }
+  }
+
   .v-card__title {
     .headline {
       word-break: break-word;
     }
-}
+  }
 }
 </style>

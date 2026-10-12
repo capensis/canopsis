@@ -72,7 +72,9 @@ export default {
     },
     iconClass: {
       type: [String, Object],
-      required: false,
+      default() {
+        return this.color ? '' : 'text--secondary';
+      },
     },
   },
 };

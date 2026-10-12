@@ -1,24 +1,30 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { getFormBlockArrayFieldStub } from '@unit/stubs/form';
 
 import PbehaviorCommentsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-comments-field.vue';
 
 const stubs = {
+  'c-form-block-array-field': getFormBlockArrayFieldStub(),
   'pbehavior-comment-field': true,
 };
 
-const selectAddCommentButton = wrapper => wrapper.find('v-btn-stub');
+const snapshotStubs = {
+  'c-form-block-array-field': getFormBlockArrayFieldStub(),
+  'pbehavior-comment-field': true,
+};
+
+const selectAddCommentButton = wrapper => wrapper.find('button');
 const selectCommentFieldByIndex = (wrapper, index) => wrapper
   .findAll('pbehavior-comment-field-stub')
   .at(index);
 
 describe('pbehavior-comments-field', () => {
   const factory = generateShallowRenderer(PbehaviorCommentsField, {
-
     stubs,
   });
-  const snapshotFactory = generateRenderer(PbehaviorCommentsField, { stubs });
+  const snapshotFactory = generateRenderer(PbehaviorCommentsField, { stubs: snapshotStubs });
 
   test('Comment added after trigger create button', () => {
     const comments = [{ key: Faker.datatype.string(), message: Faker.datatype.string() }];
@@ -28,7 +34,7 @@ describe('pbehavior-comments-field', () => {
       },
     });
 
-    selectAddCommentButton(wrapper).triggerCustomEvent('click');
+    selectAddCommentButton(wrapper).trigger('click');
 
     expect(wrapper).toEmitInput([
       ...comments,
@@ -83,7 +89,9 @@ describe('pbehavior-comments-field', () => {
 
   test('Renders `pbehavior-comments-field` with default props', () => {
     const wrapper = snapshotFactory({
-      propsData: { comments: [] },
+      propsData: {
+        comments: [],
+      },
     });
 
     expect(wrapper).toMatchSnapshot();

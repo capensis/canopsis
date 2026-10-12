@@ -1,104 +1,44 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs8>
-        <c-id-field
-          v-field="form._id"
-          :disabled="isDisabledIdField"
-          :help-text="$t('eventFilter.idHelp')"
-          class="mr-3"
-          autofocus
-        />
-      </v-flex>
-      <v-flex xs4>
-        <c-event-filter-type-field
-          v-field="form.type"
-          :autofocus="isDisabledIdField"
-          class="ml-3"
-        />
-      </v-flex>
-    </v-layout>
-    <c-description-field
-      v-field="form.description"
-      required
-    />
-    <c-priority-field v-field="form.priority" />
-    <c-information-block :title="$t('eventFilter.duringPeriod')">
-      <event-filter-drop-intervals-field v-field="form" />
-    </c-information-block>
-    <pbehavior-recurrence-rule-field
+  <v-layout class="gap-3" column>
+    <c-enabled-field v-field="form.enabled" with-background />
+
+    <c-form-general-patterns-tabs
       v-field="form"
-      class="mb-3"
-    />
-    <c-patterns-field
-      v-field="form.patterns"
-      :some-required="!isChangeEntityType"
-      :required="isChangeEntityType"
-      :with-entity="!isChangeEntityType"
-      :event-attributes="eventAttributes"
-      :pending="attributesPending"
-      expanded-event
-      with-event
-      entity-counters-type
-    />
-    <template v-if="hasAdditionalOptions">
-      <v-divider class="my-3" />
-      <c-information-block
-        :title="
-          isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')
-        "
-      >
-        <c-collapse-panel
-          :title="$t('externalData.title')"
-          class="mb-2"
-        >
-          <external-data-form
-            v-field="form.external_data"
-            :variables="templateVars.external_data"
-            optionally
-          />
-        </c-collapse-panel>
-        <event-filter-enrichment-form
-          v-if="isEnrichmentType"
+      :rule-id="ruleId"
+      :type="type"
+      reverse
+    >
+      <template #general="{ setRef, templateVars, copyVars }">
+        <event-filter-general-form
           v-field="form"
-          :template-variables="templateVars.config"
-          :copy-variables="copyVars.config"
-          :set-tags-items="setTagsItems"
+          :ref="setRef"
+          :template-vars="templateVars"
+          :copy-vars="copyVars"
+          :is-disabled-id-field="isDisabledIdField"
         />
-        <event-filter-change-entity-form
-          v-else-if="isChangeEntityType"
-          v-field="form.config"
-          :variables="templateVars.config"
+      </template>
+      <template #patterns="{ setRef }">
+        <event-filter-patterns-form
+          v-field="form"
+          :ref="setRef"
+          :event-attributes="eventAttributes"
+          :attributes-pending="attributesPending"
         />
-      </c-information-block>
-    </template>
-  </div>
+      </template>
+    </c-form-general-patterns-tabs>
+  </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
-import {
-  isEnrichmentEventFilterRuleType,
-  isChangeEntityEventFilterRuleType,
-  getSetTagsItemsFromPattern,
-} from '@/helpers/entities/event-filter/rule/entity';
-
-import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
-import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
-
-import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
-import EventFilterChangeEntityForm from './fields/event-filter-change-entity-form.vue';
-import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-field.vue';
+import EventFilterGeneralForm from './event-filter-general-form.vue';
+import EventFilterPatternsForm from './event-filter-patterns-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
-    ExternalDataForm,
-    EventFilterDropIntervalsField,
-    PbehaviorRecurrenceRuleField,
-    EventFilterEnrichmentForm,
-    EventFilterChangeEntityForm,
+    EventFilterGeneralForm,
+    EventFilterPatternsForm,
   },
   model: {
     prop: 'form',
@@ -109,13 +49,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
-    },
-    copyVars: {
-      type: Object,
-      default: () => ({}),
+    ruleId: {
+      type: String,
+      default: undefined,
     },
     isDisabledIdField: {
       type: Boolean,
@@ -123,28 +59,17 @@ export default {
     },
     eventAttributes: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     attributesPending: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props) {
-    const isEnrichmentType = computed(() => isEnrichmentEventFilterRuleType(props.form.type));
+  setup() {
+    const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
 
-    const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(props.form.type));
-
-    const hasAdditionalOptions = computed(() => isEnrichmentType.value || isChangeEntityType.value);
-
-    const setTagsItems = computed(() => getSetTagsItemsFromPattern(props.form.patterns?.event_pattern));
-
-    return {
-      isEnrichmentType,
-      isChangeEntityType,
-      hasAdditionalOptions,
-      setTagsItems,
-    };
+    return { type };
   },
 };
 </script>

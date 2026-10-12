@@ -43,7 +43,7 @@ exports[`create-pattern Renders \`create-pattern\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -94,7 +94,7 @@ exports[`create-pattern Renders \`create-pattern\` with hidden title 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>
@@ -145,7 +145,7 @@ exports[`create-pattern Renders \`create-pattern\` with pattern 1`] = `
         <span
           class="v-btn__content"
         >
-        Submit
+        Create
         </span>
       </button>
     </div>

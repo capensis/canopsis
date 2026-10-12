@@ -6,7 +6,9 @@
       class="my-1"
       column
     >
-      <span class="grey--text my-2">{{ date }}</span>
+      <span class="grey--text my-2">
+        {{ date }}
+      </span>
       <alarm-timeline-steps :steps="steps" :is-html-enabled="isHtmlEnabled" />
     </v-layout>
   </v-layout>

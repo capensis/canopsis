@@ -6,7 +6,9 @@
       </template>
       <template #text="">
         <v-layout justify-center>
-          <span class="text-subtitle-1">{{ config.text }}</span>
+          <span class="text-subtitle-1">
+            {{ config.text }}
+          </span>
         </v-layout>
         <rate-form v-model="form" />
       </template>

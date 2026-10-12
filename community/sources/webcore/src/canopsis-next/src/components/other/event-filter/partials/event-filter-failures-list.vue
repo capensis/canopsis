@@ -27,7 +27,9 @@
       {{ $t(`eventFilter.failureTypes.${item.type}`) }}
     </template>
     <template #message="{ item }">
-      <span class="pre-wrap">{{ item.message }}</span>
+      <span class="pre-wrap">
+        {{ item.message }}
+      </span>
     </template>
     <template #expand="{ item }">
       <event-filter-failures-list-expand-panel :failure="item" />

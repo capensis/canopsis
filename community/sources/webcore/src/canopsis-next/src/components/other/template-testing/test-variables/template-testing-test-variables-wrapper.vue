@@ -1,7 +1,7 @@
 <template>
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
-    <v-tabs v-model="activeTab" fixed-tabs>
+    <v-tabs v-model="activeTab" centered>
       <v-tab>{{ $t('common.general') }}</v-tab>
       <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
@@ -36,6 +36,7 @@ import { useTestVariablesTabData } from './hooks/template-test-variables-wrapper
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
 
+// TODO: remove this component
 export default {
   components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },
   inheritAttrs: false,

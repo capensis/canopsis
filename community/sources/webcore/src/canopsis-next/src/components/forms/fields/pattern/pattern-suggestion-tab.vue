@@ -25,7 +25,9 @@
             >
               {{ $t('pattern.seeRecordsComparison') }}
             </v-btn>
-            <strong v-else class="primary--text">{{ $t('pattern.sameEntities') }}</strong>
+            <strong v-else class="primary--text">
+              {{ $t('pattern.sameEntities') }}
+            </strong>
           </v-layout>
         </div>
       </v-expand-x-transition>

@@ -2,7 +2,7 @@
 
 exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`] = `
 <div
-  class="v-card v-sheet theme--light fill-min-height"
+  class="modal-wrapper v-card v-sheet theme--light fill-min-height"
 >
   <div
     class="v-card__title white--text"
@@ -34,16 +34,20 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
       Text
     </div>
   </div>
-  <hr
-    aria-orientation="horizontal"
-    class="v-divider theme--light"
-    role="separator"
-  />
   <div
-    class="v-card__actions justify-end align-center px-2 py-3"
+    class="layout justify-end column"
   >
-    <div>
-      Actions
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <div
+      class="v-card__actions justify-end align-center pa-3"
+    >
+      <div>
+        Actions
+      </div>
     </div>
   </div>
 </div>
@@ -51,13 +55,13 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
 
 exports[`modal-wrapper Renders \`modal-wrapper\` with default props 1`] = `
 <div
-  class="v-card v-sheet theme--light"
+  class="modal-wrapper v-card v-sheet theme--light"
 />
 `;
 
 exports[`modal-wrapper Renders \`modal-wrapper\` with minimized modal 1`] = `
 <div
-  class="v-card v-sheet theme--light"
+  class="modal-wrapper v-card v-sheet theme--light"
 >
   <div
     class="v-card__title white--text"

@@ -41,11 +41,15 @@ export default {
   },
 
   exceptions: {
-    title: 'Dates d\'exception',
+    title: 'Listes de dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
     usingException: 'Ne peut pas être supprimé car il est en cours d\'utilisation.',
     emptyExceptions: 'Aucune exception ajoutée pour le moment.',
+  },
+
+  exdates: {
+    title: 'Dates d\'exception',
   },
 
   types: {

@@ -4,8 +4,12 @@
       <v-flex>
         <v-layout class="ai-chat-pattern__content grey--text" column>
           <strong>
-            <div class="ai-chat-pattern__patterns-text text-ucfirst">{{ patternsText }}</div>
-            <span v-if="originalVersionText">{{ originalVersionText }}</span>
+            <div class="ai-chat-pattern__patterns-text text-ucfirst">
+              {{ patternsText }}
+            </div>
+            <span v-if="originalVersionText">
+              {{ originalVersionText }}
+            </span>
           </strong>
           <span>{{ versionText }}</span>
           <div>
@@ -38,7 +42,9 @@
     <v-expand-transition>
       <div v-if="expanded">
         <div class="pt-3 text-caption">
-          <pre class="ai-chat-pattern__json pa-4">{{ parsedJson }}</pre>
+          <pre class="ai-chat-pattern__json pa-4">
+{{ parsedJson }}
+</pre>
         </div>
       </div>
     </v-expand-transition>

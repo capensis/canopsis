@@ -14,7 +14,8 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom props 1`] = `
     >
       <span
         class="white--text"
-      />
+      >
+      </span>
       <transition-stub
         name="fade-transition"
       >
@@ -71,7 +72,7 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom title 1`] = `
       <span
         class="white--text"
       >
-        Custom title
+          Custom title
       </span>
       <transition-stub
         name="fade-transition"
@@ -128,7 +129,8 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with default props 1`] = 
     >
       <span
         class="white--text"
-      />
+      >
+      </span>
       <transition-stub
         name="fade-transition"
       >
@@ -178,14 +180,14 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with errors 1`] = `
     class="v-expansion-panel c-collapse-panel__panel"
   >
     <button
-      class="v-expansion-panel-header error"
-      style=""
+      class="v-expansion-panel-header"
+      style="background-color: rgb(128, 128, 128); border-color: rgb(128, 128, 128);"
       type="button"
     >
       <span
         class="white--text"
       >
-        Custom title with errors
+          Custom title with errors
       </span>
       <transition-stub
         name="fade-transition"

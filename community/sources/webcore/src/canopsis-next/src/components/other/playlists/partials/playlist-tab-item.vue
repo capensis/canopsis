@@ -4,22 +4,22 @@
     xs12
   >
     <v-flex
-      class="tab-content-block secondary pa-2 white--text"
+      class="tab-content-block tab-content-block--group white--text"
       xs4
     >
-      {{ group.title }}
+      <span class="tab-content-block__text">{{ group.title }}</span>
     </v-flex>
     <v-flex
-      class="tab-content-block secondary lighten-1 pa-2 white--text"
+      class="tab-content-block tab-content-block--view white--text"
       xs4
     >
-      {{ view.title }}
+      <span class="tab-content-block__text">{{ view.title }}</span>
     </v-flex>
     <v-flex
-      class="tab-content-block pa-2 white--text"
+      class="tab-content-block tab-content-block--tab white--text"
       xs4
     >
-      {{ tab.title }}
+      <span class="tab-content-block__text">{{ tab.title }}</span>
     </v-flex>
   </v-layout>
 </template>
@@ -51,5 +51,36 @@ export default {
 .tab-content-block {
   display: flex;
   align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 28px;
+  border: 1px solid var(--v-application-background-darken2);
+  color: #fff;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+
+  &:not(:last-child) {
+    margin-right: -1px;
+  }
+
+  &--group {
+    background-color: #2b3e4f;
+  }
+
+  &--view {
+    background-color: #425567;
+  }
+
+  &--tab {
+    background-color: #5a6d80;
+  }
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>

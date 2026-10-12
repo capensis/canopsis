@@ -22,7 +22,9 @@
               top
             />
             <v-fade-transition>
-              <span v-if="suffix && !hideDuration" class="pr-2 pl-1 float-right text-lowercase">{{ suffix }}</span>
+              <span v-if="suffix && !hideDuration" class="pr-2 pl-1 float-right text-lowercase">
+                {{ suffix }}
+              </span>
             </v-fade-transition>
           </v-layout>
         </template>

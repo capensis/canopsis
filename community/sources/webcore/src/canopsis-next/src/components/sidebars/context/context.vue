@@ -1,7 +1,6 @@
 <template>
   <widget-settings
     :submitting="submitting"
-    :dirty="hasChanges"
     divider
     @submit="submit"
   >
@@ -79,6 +78,10 @@
       <field-switcher
         v-model="form.parameters.defaultInheritedPbehavior"
         :title="$t('settings.defaultInheritedPbehavior')"
+      />
+      <field-switcher
+        v-model="form.parameters.keepSelectedAfterAction"
+        :title="$t('common.massActionsPanel.keepSelectedAfterAction')"
       />
     </widget-settings-group>
     <charts-form v-model="form.parameters.charts" />

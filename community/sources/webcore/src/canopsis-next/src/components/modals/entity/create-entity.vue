@@ -2,10 +2,13 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        {{ title }}
+        {{ config.title || $t('modals.createEntity.create.title') }}
       </template>
       <template #text="">
-        <entity-form v-model="form" :prepare-state-setting-form="prepareStateSettingForm" />
+        <entity-form
+          v-model="form"
+          :prepare-state-setting-form="prepareStateSettingForm"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -17,12 +20,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
           class="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
     </modal-wrapper>
@@ -30,16 +33,15 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { entityToForm, formToEntity } from '@/helpers/entities/entity/form';
 
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
 
 import EntityForm from '@/components/other/entity/form/entity-form.vue';
 
@@ -63,12 +65,12 @@ export default {
   },
   setup(props) {
     const { config, close } = useInnerModal(props);
-    const { t } = useI18n();
 
     const form = ref(entityToForm(config.value.entity));
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
+    const { submit, submitting, submitLabel } = useSubmittableForm({
       form,
+      item: config.value.entity,
       method: async () => {
         await config.value.action?.(formToEntity(form.value));
 
@@ -78,8 +80,6 @@ export default {
 
     useFormConfirmableCloseModal({ form, submit, close });
 
-    const title = computed(() => config.value.title || t('modals.createEntity.create.title'));
-
     const prepareStateSettingForm = entity => ({
       ...formToEntity(entity),
       connector: config.value.entity.connector,
@@ -87,14 +87,13 @@ export default {
     });
 
     return {
-      title,
       config,
       form,
-      isDisabled,
       submitting,
 
       close,
       prepareStateSettingForm,
+      submitLabel,
       submit,
     };
   },

@@ -39,7 +39,9 @@
             class="ma-0"
             text-color="white"
           >
-            <span class="px-2 text-body-2 font-weight-bold">{{ item.entity.impact_state }}</span>
+            <span class="px-2 text-body-2 font-weight-bold">
+              {{ item.entity.impact_state }}
+            </span>
           </v-chip>
         </div>
       </template>

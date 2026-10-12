@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
@@ -39,7 +40,8 @@ func New(
 	reconnectTimeout time.Duration,
 	logger zerolog.Logger,
 ) (Connection, error) {
-	d, err := newDefaultDialer(amqp.Config{})
+	d, err := newDefaultDialer(amqp.Config{
+		TLSClientConfig: tls.CreateTLSConfigFromEnv(EnvCaCertFile, EnvInsecureSkipVerify, logger)})
 	if err != nil {
 		return nil, err
 	}
@@ -53,6 +55,9 @@ func NewConfig(
 	config amqp.Config,
 	logger zerolog.Logger,
 ) (Connection, error) {
+	if config.TLSClientConfig == nil {
+		config.TLSClientConfig = tls.CreateTLSConfigFromEnv(EnvCaCertFile, EnvInsecureSkipVerify, logger)
+	}
 	d, err := newDefaultDialer(config)
 	if err != nil {
 		return nil, err
@@ -133,11 +138,12 @@ func (c *connection) handleReconnect() {
 		default:
 		}
 
+		start := time.Now()
 		conn, err := c.dialer.Dial()
 		if err != nil {
 			attempt++
 
-			le := c.logger.Err(err)
+			le := c.logger.Err(err).Str("duration", time.Since(start).String())
 			if c.reconnectCount > 0 {
 				le = le.Str("retries", strconv.Itoa(attempt)+"/"+strconv.Itoa(c.reconnectCount))
 			}
@@ -191,6 +197,7 @@ func (c *connection) handleReconnect() {
 			return
 		}
 
+		c.logger.Debug().Str("duration", time.Since(start).String()).Msg("connected to amqp connection")
 		close(prevReconnNotify)
 
 		notifyClose := make(chan *amqp.Error, 1)
@@ -211,6 +218,8 @@ func (c *connection) handleReconnect() {
 
 			return
 		}
+
+		c.logger.Debug().Msg("amqp connection disconnected")
 	}
 }
 

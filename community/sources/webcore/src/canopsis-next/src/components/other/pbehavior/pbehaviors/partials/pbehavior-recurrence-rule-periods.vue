@@ -5,7 +5,9 @@
       align-center
     >
       <v-layout justify-center>
-        <span class="text-h6">{{ $t('common.periods') }}</span>
+        <span class="text-h6">
+          {{ $t('common.periods') }}
+        </span>
       </v-layout>
       <c-action-btn
         :tooltip="$t('pbehavior.periodsCalendar')"

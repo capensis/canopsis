@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-3" column>
     <role-template-field
       v-if="withTemplate"
       v-field="form.permissions"
@@ -10,46 +10,58 @@
       required
       autofocus
     />
-    <role-type-field v-field="form.type" :disabled="!isNew" />
-    <v-text-field
-      v-field="form.description"
-      :label="$t('common.description')"
-    />
-    <c-theme-field
-      v-if="isUiType"
-      v-field="form.ui_theme"
-      clearable
-    />
-    <c-information-block :title="$t('role.expirationSettings')">
-      <c-enabled-field
-        v-field="form.auth_config.intervals_enabled"
-        :label="form.auth_config.intervals_enabled ? $t('common.enabled') : $t('common.disabled')"
-      />
+    <c-form-block>
+      <c-form-block-row :label="$t('common.type')">
+        <role-type-field
+          v-field="form.type"
+          :disabled="!isNew"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field v-field="form.description" />
+      </c-form-block-row>
+
+      <c-form-block-row v-if="isUiType" :label="$tc('common.theme', 1)">
+        <c-theme-field v-field="form.ui_theme" clearable />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('role.expirationSettings')">
+        <c-enabled-field v-field="form.auth_config.intervals_enabled" />
+      </c-form-block-row>
+
       <v-expand-transition>
-        <v-layout v-if="form.auth_config.intervals_enabled">
-          <c-information-block
-            :title="$t('role.inactivityInterval')"
-            :help-text="$t('role.inactivityIntervalHelpText')"
-          >
-            <c-duration-field
-              v-field="form.auth_config.inactivity_interval"
-              long
-            />
-          </c-information-block>
-          <c-information-block
-            :title="$t('role.expirationInterval')"
-            :help-text="$t('role.expirationIntervalHelpText')"
-            class="ml-3"
-          >
-            <c-duration-field
-              v-field="form.auth_config.expiration_interval"
-              long
-            />
-          </c-information-block>
-        </v-layout>
+        <div v-if="form.auth_config.intervals_enabled">
+          <c-form-block-row v-if="isUiType" :label="$t('role.inactivityInterval')">
+            <c-duration-field v-field="form.auth_config.inactivity_interval" long>
+              <template #append="">
+                <c-help-icon
+                  :text="$t('role.inactivityIntervalHelpText')"
+                  icon="help"
+                  top
+                />
+              </template>
+            </c-duration-field>
+          </c-form-block-row>
+
+          <c-form-block-row :label="$t('role.expirationInterval')" bottom-border>
+            <c-duration-field v-field="form.auth_config.expiration_interval" long>
+              <template #append="">
+                <c-help-icon
+                  :text="$t('role.expirationIntervalHelpText')"
+                  icon="help"
+                  top
+                />
+              </template>
+            </c-duration-field>
+          </c-form-block-row>
+        </div>
       </v-expand-transition>
-    </c-information-block>
-    <view-selector v-field="form.defaultview" />
+
+      <c-form-block-row :label="$t('role.defaultView')">
+        <view-selector v-field="form.defaultview" />
+      </c-form-block-row>
+    </c-form-block>
   </v-layout>
 </template>
 
