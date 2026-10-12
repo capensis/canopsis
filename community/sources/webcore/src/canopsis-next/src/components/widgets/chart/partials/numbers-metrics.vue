@@ -1,9 +1,16 @@
 <template>
-  <c-layout class="kpi-widget" align="center" column>
+  <v-layout
+    class="kpi-widget"
+    column
+    align-center
+  >
     <h4 class="kpi-widget__title">
       {{ title }}
     </h4>
-    <c-layout class="kpi-widget__list w-100" wrap>
+    <v-layout
+      class="kpi-widget__list"
+      wrap
+    >
       <numbers-metrics-item
         v-for="metric in metrics"
         :key="metric.title"
@@ -11,33 +18,35 @@
         :show-trend="showTrend"
         :value-font-size="fontSize"
       />
-    </c-layout>
-    <c-layout
+    </v-layout>
+    <v-layout
       v-if="!hideActions"
       class="kpi-widget__actions mt-4"
-      justify="end"
+      justify-end
     >
       <v-btn
         :loading="downloading"
         color="primary"
-        size="small"
+        small
         @click="$emit('export:csv')"
       >
-        <v-icon class="mr-1" size="small">
+        <v-icon
+          small
+          left
+        >
           file_download
         </v-icon>
         <span>{{ $t('common.exportAsCsv') }}</span>
       </v-btn>
-    </c-layout>
-  </c-layout>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import NumbersMetricsItem from './numbers-metrics-item.vue';
+import NumbersMetricsItem from '@/components/widgets/chart/partials/numbers-metrics-item.vue';
 
 export default {
   components: { NumbersMetricsItem },
-
   props: {
     metrics: {
       type: Array,
@@ -64,7 +73,5 @@ export default {
       default: false,
     },
   },
-
-  emits: ['export:csv'],
 };
 </script>

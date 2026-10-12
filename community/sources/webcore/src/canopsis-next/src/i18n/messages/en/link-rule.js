@@ -4,10 +4,8 @@ export default {
   simpleMode: 'Simple mode',
   advancedMode: 'Advanced mode',
   addLink: 'Add link',
-  linksEmptyError:
-    'You should add at least 1 link in simple mode or edit source code in advanced mode',
-  sourceCodeAlert:
-    'Please, change this script only if you are completely aware of what you are doing',
+  linksEmptyError: 'You should add at least 1 link in simple mode or edit source code in advanced mode',
+  sourceCodeAlert: 'Please, change this script only if you are completely aware of what you are doing',
   type: 'Link type',
   single: 'Apply this link only to single alarm ?',
   hideInMenu: 'Hide this link from alarm actions ?',

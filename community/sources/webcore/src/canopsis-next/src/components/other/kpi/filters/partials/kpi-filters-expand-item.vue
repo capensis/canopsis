@@ -2,20 +2,36 @@
   <div>
     <v-tabs
       v-model="activeTab"
-      bg-color="secondary-lighten-1"
-      color="primary"
-      align-tabs="center"
+      background-color="secondary lighten-1"
+      slider-color="primary"
+      dark
+      centered
     >
-      <v-tab :value="0">
-        {{ $t('common.pattern', 2) }}
-      </v-tab>
+      <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
     </v-tabs>
-
-    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
-      <c-window-expand-item :value="0" cols="8">
-        <kpi-filter-patterns-form :form="patterns" readonly />
-      </c-window-expand-item>
-    </v-window>
+    <v-layout class="pa-3">
+      <v-flex xs12>
+        <v-card class="pa-3">
+          <v-tabs-items
+            v-model="activeTab"
+            class="pt-2"
+          >
+            <v-tab-item>
+              <v-flex
+                xs12
+                lg10
+                offset-lg1
+              >
+                <kpi-filter-patterns-form
+                  :form="patterns"
+                  readonly
+                />
+              </v-flex>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
@@ -28,20 +44,17 @@ import KpiFilterPatternsForm from '../form/kpi-filter-patterns-form.vue';
 
 export default {
   components: { KpiFilterPatternsForm },
-
   props: {
     filter: {
       type: Object,
       required: true,
     },
   },
-
   data() {
     return {
       activeTab: 0,
     };
   },
-
   computed: {
     patterns() {
       return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity]);

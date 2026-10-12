@@ -1,32 +1,26 @@
-import { storeToRefs } from 'pinia';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
+const usePbehaviorTypeStoreModule = () => useStoreModuleHooks('pbehaviorTypes');
 
-/**
- * Pbehavior type store hook.
- *
- * @returns {Object}
- */
+// TODO: add comments
 export const usePbehaviorType = () => {
-  const pbehaviorTypeStore = usePbehaviorTypeStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorTypeStore);
+  const { useActions } = usePbehaviorTypeStoreModule();
+
+  const actions = useActions({
+    fetchPbehaviorTypesList: 'fetchList',
+    fetchPbehaviorTypesListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
+    createPbehaviorType: 'create',
+    updatePbehaviorType: 'update',
+    removePbehaviorType: 'remove',
+    fetchNextPbehaviorTypePriority: 'fetchNextPriority',
+    fetchPbehaviorTypesFieldList: 'fetchFieldList',
+    bulkHidePbehaviorTypes: 'bulkHide',
+    bulkUnhidePbehaviorTypes: 'bulkUnhide',
+    bulkRemovePbehaviorTypes: 'bulkRemove',
+  });
 
   return {
-    pbehaviorTypes: items,
-    pbehaviorTypesMeta: meta,
-    pbehaviorTypesPending: pending,
-    pbehaviorTypesFetchingParams: fetchingParams,
-
-    fetchPbehaviorTypesList: pbehaviorTypeStore.fetchList,
-    fetchPbehaviorTypesListWithPreviousParams: pbehaviorTypeStore.fetchListWithPreviousParams,
-    fetchPbehaviorTypesListWithoutStore: pbehaviorTypeStore.fetchListWithoutStore,
-    fetchPbehaviorTypesFieldList: pbehaviorTypeStore.fetchListWithoutStore,
-    fetchNextPbehaviorTypePriority: pbehaviorTypeStore.fetchNextPriority,
-    createPbehaviorType: pbehaviorTypeStore.create,
-    updatePbehaviorType: pbehaviorTypeStore.update,
-    removePbehaviorType: pbehaviorTypeStore.remove,
-    bulkHidePbehaviorTypes: pbehaviorTypeStore.bulkHide,
-    bulkUnhidePbehaviorTypes: pbehaviorTypeStore.bulkUnhide,
-    bulkRemovePbehaviorTypes: pbehaviorTypeStore.bulkRemove,
+    ...actions,
   };
 };

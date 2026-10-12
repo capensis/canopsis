@@ -1,5 +1,10 @@
 <template>
-  <line-shape :shape="shape" :readonly="readonly" :marker-end="`url(#${shape._id}-end)`">
+  <line-shape
+    :shape="shape"
+    :readonly="readonly"
+    :marker-end="`url(#${shape._id}-end)`"
+    v-on="$listeners"
+  >
     <marker
       :id="`${shape._id}-end`"
       refX="20"

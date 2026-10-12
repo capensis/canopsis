@@ -1,97 +1,101 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ config.title }}</span>
       </template>
-
-      <template #text>
-        <c-text-field
+      <template #text="">
+        <v-text-field
           v-model="text"
+          v-validate="field.validationRules"
           v-bind="fieldProps"
-          :required="field.validationRules?.required"
+          :error-messages="errors.collect(field.name)"
           autofocus
         />
-
-        <c-alert v-if="config.alert" type="warning">
+        <c-alert
+          v-if="config.alert"
+          type="warning"
+        >
           {{ config.alert.text }}
         </c-alert>
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="submitting"
+          :loading="submitting"
+          class="primary"
           type="submit"
         >
-          {{ t('common.submit') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
 import { omit } from 'lodash';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 
+import { MODALS } from '@/constants';
+
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
+  name: MODALS.textFieldEditor,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: { ModalWrapper },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
+    const { modals, config, close } = useInnerModal(props);
+
+    const text = ref(config.value.field?.value ?? '');
+
+    const form = ref({ text: text.value });
+
     const field = computed(() => config.value.field ?? { name: 'text', label: 'Text' });
-    const fieldName = computed(() => field.value.name ?? 'text');
     const fieldProps = computed(() => omit(field.value, ['validationRules', 'value']));
 
-    const form = useForm({
-      initialValues: {
-        [fieldName.value]: field.value.value ?? field.value.text ?? '',
+    const { submitting, submit } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value?.action?.(text.value);
+
+        modals.hide();
       },
-    });
-    const { model, handleSubmit, isSubmitting } = form;
-    const text = model(fieldName);
-
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      await config.value?.action?.(text.value);
-
-      closeModal();
     });
 
     useFormConfirmableCloseModal({
       form: text,
       submit,
-      close: closeModal,
+      close,
     });
 
     return {
-      t,
       text,
       field,
       fieldProps,
       submit,
-      isSubmitting,
+      submitting,
       config,
-      closeModal,
     };
   },
 };

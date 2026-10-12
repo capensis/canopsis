@@ -1,13 +1,16 @@
 <template>
-  <v-menu offset-y @click.prevent.stop="">
-    <template #activator="{ props: menuProps }">
+  <v-menu
+    offset-y
+    @click.prevent.stop=""
+  >
+    <template #activator="{ on }">
       <v-btn
-        size="small"
-        variant="flat"
         depressed
-        v-bind="menuProps"
+        small
+        light
+        v-on="on"
       >
-        <v-icon :icon="icon" />
+        <v-icon>{{ icon }}</v-icon>
       </v-btn>
     </template>
     <v-list>
@@ -45,7 +48,6 @@ export default {
       default: () => [],
     },
   },
-  emits: ['execute'],
   computed: {
     hasRunningInstruction() {
       return isInstructionExecutionIconInProgress(this.entity.instruction_execution_icon);

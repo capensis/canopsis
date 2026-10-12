@@ -1,5 +1,3 @@
-import { isString } from 'lodash';
-
 /**
  * Decodes HTTP chunked transfer-encoding body.
  *
@@ -13,7 +11,6 @@ export const decodeChunkedBody = (body) => {
 
   while (cursor < body.length) {
     const lineEnd = body.indexOf('\r\n', cursor);
-
     if (lineEnd === -1) {
       throw new Error('Invalid chunked body: chunk size line not found');
     }
@@ -51,11 +48,14 @@ export const decodeChunkedBody = (body) => {
  * @throws {Error} When header/body separator is not found
  */
 export const parseRawHttp = (raw) => {
-  if (!isString(raw)) {
+  if (typeof raw !== 'string') {
     throw new TypeError('Raw HTTP data must be a string');
   }
 
-  const prepared = raw.includes('\\r\\n') ? raw.replace(/\\r\\n/g, '\r\n') : raw;
+  const prepared = raw.includes('\\r\\n')
+    ? raw.replace(/\\r\\n/g, '\r\n')
+    : raw;
+
   const separator = '\r\n\r\n';
   const separatorIndex = prepared.indexOf(separator);
 
@@ -65,15 +65,16 @@ export const parseRawHttp = (raw) => {
 
   const head = prepared.slice(0, separatorIndex);
   let body = prepared.slice(separatorIndex + separator.length);
-  const [startLine, ...headerLines] = head.split('\r\n');
+
+  const lines = head.split('\r\n');
+  const startLine = lines[0];
+  const headerLines = lines.slice(1);
+
   const headers = {};
 
-  headerLines.forEach((line) => {
+  for (const line of headerLines) {
     const index = line.indexOf(':');
-
-    if (index === -1) {
-      return;
-    }
+    if (index === -1) continue;
 
     const name = line.slice(0, index).trim();
     const value = line.slice(index + 1).trim();
@@ -85,11 +86,11 @@ export const parseRawHttp = (raw) => {
     } else {
       headers[name] = [headers[name], value];
     }
-  });
+  }
 
   if (
-    isString(headers['Transfer-Encoding']) &&
-    headers['Transfer-Encoding'].toLowerCase().includes('chunked')
+    typeof headers['Transfer-Encoding'] === 'string'
+    && headers['Transfer-Encoding'].toLowerCase().includes('chunked')
   ) {
     body = decodeChunkedBody(body);
   }
@@ -99,10 +100,12 @@ export const parseRawHttp = (raw) => {
     headers,
     body,
   };
+
   const requestMatch = startLine.match(/^([A-Z]+)\s+(\S+)\s+(HTTP\/\d+(?:\.\d+)?)$/);
 
   if (requestMatch) {
     const [, method, target, httpVersion] = requestMatch;
+
     let protocol = null;
     let host = null;
     let path = '';
@@ -123,18 +126,17 @@ export const parseRawHttp = (raw) => {
       path = target;
     }
 
-    return {
-      ...result,
-      type: 'request',
-      method,
-      httpVersion,
-      target,
-      protocol,
-      host,
-      path,
-      queryString,
-      query,
-    };
+    result.type = 'request';
+    result.method = method;
+    result.httpVersion = httpVersion;
+    result.target = target;
+    result.protocol = protocol;
+    result.host = host;
+    result.path = path;
+    result.queryString = queryString;
+    result.query = query;
+
+    return result;
   }
 
   const responseMatch = startLine.match(/^(HTTP\/\d+(?:\.\d+)?)\s+(\d{3})\s*(.*)$/);
@@ -142,17 +144,25 @@ export const parseRawHttp = (raw) => {
   if (responseMatch) {
     const [, httpVersion, statusCode, statusText] = responseMatch;
 
-    return {
-      ...result,
-      type: 'response',
-      httpVersion,
-      statusCode: Number(statusCode),
-      statusText,
-    };
+    result.type = 'response';
+    result.httpVersion = httpVersion;
+    result.statusCode = Number(statusCode);
+    result.statusText = statusText;
+
+    return result;
   }
 
-  return {
-    ...result,
-    type: 'unknown',
-  };
+  result.type = 'unknown';
+  return result;
 };
+
+/**
+ * Convert object to FormData object for requests
+ *
+ * @param {Object} obj
+ * @returns {FormData}
+ */
+export const convertObjectToFormData = (obj = {}) => Object.entries(obj).reduce((acc, [key, value]) => {
+  acc.append(key, value);
+  return acc;
+}, new FormData());

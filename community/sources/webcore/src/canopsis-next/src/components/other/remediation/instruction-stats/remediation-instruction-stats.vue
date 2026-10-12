@@ -3,12 +3,11 @@
     <remediation-instruction-stats-list
       :remediation-instruction-stats="remediationInstructionStats"
       :pending="remediationInstructionStatsPending"
+      :options.sync="options"
       :total-items="remediationInstructionStatsMeta.total_count"
       :accumulated-before="remediationInstructionStatsMeta.accumulated_before"
-      :options="options"
       :interval="queryInterval"
       @rate="showRateInstructionModal"
-      @update:options="updateOptions"
     />
   </div>
 </template>
@@ -23,17 +22,19 @@ import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals'
 import { useFetchListWithOptions } from '@/hooks/query/shared';
 import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
+import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
+
 import { useRemediationInstructionStatsRate } from './hooks/remediation-instruction-stats';
-import RemediationInstructionStatsList from './remediation-instruction-stats-list.vue';
 
 export default {
-  components: { RemediationInstructionStatsList },
-
+  components: {
+    RemediationInstructionStatsList,
+  },
   setup() {
     const {
       remediationInstructionStats,
-      remediationInstructionStatsMeta,
       remediationInstructionStatsPending,
+      remediationInstructionStatsMeta,
       fetchRemediationInstructionStatsList,
     } = useRemediationInstructionStats();
 
@@ -51,15 +52,16 @@ export default {
         },
       },
       fetchListHandler: ({ params }) => fetchRemediationInstructionStatsList({
-          params: {
-            ...params,
-            with_flags: true,
-          },
-        }),
+        params: {
+          ...params,
+          with_flags: true,
+        },
+      }),
     });
 
-    const queryInterval = computed(() => convertMetricIntervalToTimestamp({ interval: options.value.interval }),
-    );
+    const queryInterval = computed(() => (
+      convertMetricIntervalToTimestamp({ interval: options.value.interval })
+    ));
 
     const { showRateInstructionModal } = useRemediationInstructionStatsRate(fetchList);
 
@@ -67,11 +69,12 @@ export default {
 
     return {
       remediationInstructionStats,
-      remediationInstructionStatsMeta,
       remediationInstructionStatsPending,
+      remediationInstructionStatsMeta,
       options,
-      queryInterval,
       updateOptions,
+      queryInterval,
+      fetchList,
       showRateInstructionModal,
     };
   },

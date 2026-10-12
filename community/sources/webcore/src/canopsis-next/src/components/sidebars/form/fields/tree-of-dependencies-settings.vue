@@ -1,13 +1,12 @@
 <template>
   <widget-settings-item :title="label || $t('settings.treeOfDependenciesSettings')">
-    <c-layout>
-      <c-radio-group
-        :model-value="modelValue"
+    <v-layout>
+      <v-radio-group
+        v-field="value"
         class="mt-0"
         name="opened"
         hide-details
         mandatory
-        @update:model-value="$emit('update:modelValue', $event)"
       >
         <v-radio
           v-for="type in types"
@@ -16,8 +15,8 @@
           :value="type.value"
           color="primary"
         />
-      </c-radio-group>
-    </c-layout>
+      </v-radio-group>
+    </v-layout>
   </widget-settings-item>
 </template>
 
@@ -32,9 +31,8 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-
   props: {
-    modelValue: {
+    value: {
       type: Number,
       default: TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
     },
@@ -43,17 +41,13 @@ export default {
       default: '',
     },
   },
-
-  emits: ['update:modelValue'],
-
   setup() {
     const { t } = useI18n();
 
     const types = computed(() => Object.values(TREE_OF_DEPENDENCIES_SHOW_TYPES).map(value => ({
-        value,
-        label: t(`entity.treeOfDependenciesShowTypes.${value}`),
-      })),
-    );
+      value,
+      label: t(`entity.treeOfDependenciesShowTypes.${value}`),
+    })));
 
     return {
       types,

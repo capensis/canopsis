@@ -41,7 +41,6 @@ export default {
       default: 5,
     },
   },
-  emits: ['connected', 'connecting', 'unconnect'],
   data() {
     return {
       activeSide: undefined,

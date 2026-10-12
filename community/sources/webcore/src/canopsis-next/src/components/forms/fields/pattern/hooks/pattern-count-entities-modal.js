@@ -5,7 +5,7 @@ import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useEntity } from '@/hooks/store/modules/entity';
+import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
  * Hook for managing pattern count entities modal functionality.
@@ -17,7 +17,8 @@ import { useEntity } from '@/hooks/store/modules/entity';
 export const usePatternCountEntitiesModal = (props) => {
   const modals = useModals();
   const { t } = useI18n();
-  const { fetchContextEntitiesListWithoutStore } = useEntity();
+  const { useActions } = useStoreModuleHooks('entity');
+  const { fetchContextEntitiesListWithoutStore } = useActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' });
 
   /**
    * Shows a modal with entities filtered by the specified pattern names.
@@ -54,13 +55,7 @@ export const usePatternCountEntitiesModal = (props) => {
         return acc;
       }
 
-      const queryField =
-        {
-          [PATTERNS_FIELDS.entity]: 'search_pattern',
-          [PATTERNS_FIELDS.totalEntity]: 'entity_pattern',
-        }[patternName] ?? patternName;
-
-      acc[queryField] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
+      acc[patternName === PATTERNS_FIELDS.entity ? 'search_pattern' : patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
 
       return acc;
     }, {});
@@ -72,13 +67,12 @@ export const usePatternCountEntitiesModal = (props) => {
       config: {
         widget,
         title: t('pattern.patternEntities'),
-        fetchList: params =>
-          fetchContextEntitiesListWithoutStore({
-            params: {
-              ...params,
-              ...patterns,
-            },
-          }),
+        fetchList: params => fetchContextEntitiesListWithoutStore({
+          params: {
+            ...params,
+            ...patterns,
+          },
+        }),
       },
     });
   };

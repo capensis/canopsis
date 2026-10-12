@@ -1,32 +1,31 @@
 <template>
   <v-combobox
-    v-model:search="search"
     ref="combobox"
-    :model-value="value"
+    :value="value"
     :items="filteredItems"
     :menu-props="menuProps"
     :return-object="false"
-    :custom-filter="filter"
+    :filter="filter"
     :label="label"
     :disabled="disabled"
     :error="error"
-    :menu-icon="null"
     class="time-picker__select"
-    placeholder="--:--"
+    placeholder="−−:−−"
     append-icon=""
-    variant="underlined"
     hide-details
+    @change="change"
   />
 </template>
 
 <script>
-import { normalizeTimeString } from '@/helpers/date/date-time-picker';
-
 import { formBaseMixin } from '@/mixins/form';
 
 export default {
   mixins: [formBaseMixin],
-  emits: ['update:value'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: String,
@@ -57,33 +56,27 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      search: this.value,
-    };
-  },
   computed: {
     menuProps() {
       return {
+        auto: true,
         minWidth: 90,
         maxHeight: 200,
+        scrollCalculator: this.scrollCalculator,
       };
     },
 
     items() {
       if (this.roundHours) {
-        return Array.from(
-          { length: 24 },
-          (item, index) => `${index < 10 ? `0${index}` : index}:00`,
-        );
+        return new Array(24).fill(0).map((item, index) => `${index < 10 ? `0${index}` : index}:00`);
       }
 
       const { stepsInHours } = this;
       const minutesStep = Math.floor(60 / stepsInHours);
 
-      return Array.from({ length: 24 * stepsInHours }, (item, index) => {
+      return new Array(24 * stepsInHours).fill(0).map((item, index) => {
         const hoursIndex = Math.floor(index / stepsInHours);
-        const minutesIndex = index - hoursIndex * stepsInHours;
+        const minutesIndex = index - (hoursIndex * stepsInHours);
 
         const hours = hoursIndex < 10 ? `0${hoursIndex}` : hoursIndex;
         const minutes = minutesIndex === 0 ? '00' : minutesIndex * minutesStep;
@@ -93,44 +86,47 @@ export default {
     },
 
     filteredItems() {
-      return this.allowedTime ? this.items.filter(this.allowedTime) : this.items;
-    },
-  },
-  watch: {
-    value(value) {
-      if (value !== this.search) {
-        this.search = value;
-      }
-    },
-
-    search(value) {
-      this.change(value);
+      return this.allowedTime
+        ? this.items.filter(this.allowedTime)
+        : this.items;
     },
   },
   methods: {
-    isValidTime(value) {
-      return /^(([01][0-9])|(2[0-3])):([0-5][0-9])$/.test(value);
+    scrollCalculator(el) {
+      if (!this.value) {
+        return el.scrollTop;
+      }
+
+      const maxScrollTop = el.scrollHeight - el.offsetHeight;
+      const index = this.items.findIndex(item => item >= this.value);
+      const elements = el.querySelectorAll('.v-list-item');
+
+      const activeTile = elements[index === -1 ? elements.length - 1 : index];
+
+      const newScrollTop = (activeTile.offsetTop - (el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
+
+      return Math.min(maxScrollTop, Math.max(0, newScrollTop));
     },
 
     filter(item, queryText, itemText) {
-      const text = normalizeTimeString(itemText ?? item, '');
-
-      return text.toLocaleLowerCase().startsWith(String(queryText ?? '').toLocaleLowerCase());
+      return itemText.toLocaleLowerCase().startsWith(queryText.toLocaleLowerCase());
     },
 
     change(value) {
-      const nextValue = normalizeTimeString(value, '');
+      const result = value.match(/(([01][0-9])|(2[0-3])):([0-5][0-9])/);
+      let preparedValue = value;
 
-      if (!this.isValidTime(nextValue)) {
-        return;
-      }
-
-      let preparedValue = nextValue;
-
-      if (this.roundHours) {
-        const [hours] = nextValue.split(':');
+      if (result && this.roundHours) {
+        const [, hours] = result;
 
         preparedValue = `${hours}:00`;
+      } else if (!result) {
+        preparedValue = this.value;
+      }
+
+      if (value !== preparedValue) {
+        this.$refs.combobox.setValue(preparedValue);
+        this.$refs.combobox.setSearch('');
       }
 
       if (this.value !== preparedValue) {
@@ -147,30 +143,12 @@ export default {
   width: 56px;
   min-width: 56px;
 
-  .v-field__input {
-    flex-wrap: nowrap;
+  &.v-select--is-menu-active .v-input__slot {
+    background: #686868;
   }
 
-  .v-combobox__selection-text {
-    white-space: normal;
-    text-overflow: unset;
-    overflow: visible;
-  }
-
-  .v-field {
+  .v-input__slot {
     padding: 0 5px;
-    line-height: inherit;
-    font-size: inherit !important;
-    font-weight: inherit;
-  }
-
-  .v-field__input,
-  .v-field__input input,
-  .v-combobox__selection,
-  .v-combobox__selection-text {
-    line-height: inherit !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
   }
 }
 </style>

@@ -1,11 +1,15 @@
 <template>
-  <div class="healthcheck-history" @touchend.stop="">
+  <div
+    class="healthcheck-history"
+    @touchend.stop=""
+  >
     <healthcheck-history-filters
       :interval="query.interval"
-      :deleted-before="deletedBefore"
       :event-types="query.eventTypes"
       :connector-names="query.connectorNames"
-      @update:interval="updateQueryField('interval', $event)"
+      :deleted-before="deletedBefore"
+      class="ml-4 mb-4"
+      @update:interval="updateInterval"
       @update:event-types="updateQueryField('eventTypes', $event)"
       @update:connector-names="updateQueryField('connectorNames', $event)"
     />
@@ -16,7 +20,8 @@
         ref="chart"
         :datasets="datasets"
         :options="historyChartOptions"
-        class="text-primary"
+        :dark="$system.dark"
+        class="text--primary"
       >
         <template #actions="{ chart }">
           <chart-export-actions
@@ -27,17 +32,15 @@
           />
           <div class="healthcheck-history__zoom">
             <v-btn
-              :disabled="!chart"
-              size="small"
-              icon
+              fab
+              small
               @click="zoomIn(chart)"
             >
               <v-icon>add</v-icon>
             </v-btn>
             <v-btn
-              :disabled="!chart"
-              size="small"
-              icon
+              fab
+              small
               @click="zoomOut(chart)"
             >
               <v-icon>remove</v-icon>
@@ -52,7 +55,6 @@
 <script>
 import { debounce } from 'lodash';
 
-import { COLORS, HEALTHCHECK_HISTORY_FILENAME_PREFIX } from '@/config';
 import {
   DATETIME_FORMATS,
   HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR,
@@ -60,49 +62,38 @@ import {
   QUICK_RANGES,
   TIME_UNITS,
 } from '@/constants';
+import { COLORS, HEALTHCHECK_HISTORY_FILENAME_PREFIX } from '@/config';
 
-import { colorToRgba } from '@/helpers/color';
 import {
   convertDateToStartOfDayTimestamp,
   convertDateToStartOfUnitTimestamp,
   convertDateToString,
   getNowTimestamp,
 } from '@/helpers/date/date';
-import {
-  convertStartDateIntervalToTimestamp,
-  convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { convertUnit } from '@/helpers/date/duration';
+import { colorToRgba } from '@/helpers/color';
 import { saveFile } from '@/helpers/file/files';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
-import { useMessageRateStats } from '@/hooks/store/modules/message-rate-stats';
+import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
+import { localQueryMixin } from '@/mixins/query/query';
 
+import HealthcheckHistoryFilters from '@/components/other/healthcheck/partials/healthcheck-history-filters.vue';
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-import LimitedTimeLineChart from '@/components/common/chart/limited-time-line-chart.vue';
 
-import HealthcheckHistoryFilters from './healthcheck-history-filters.vue';
+const LimitedTimeLineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/limited-time-line-chart.vue');
 
 export default {
-  components: {
-    ChartExportActions,
-    HealthcheckHistoryFilters,
-    LimitedTimeLineChart,
-  },
+  inject: ['$system'],
+  components: { ChartExportActions, HealthcheckHistoryFilters, LimitedTimeLineChart },
+  mixins: [entitiesMessageRateStatsMixin, localQueryMixin],
   props: {
     maxMessagesPerMinute: {
       type: Number,
       required: true,
     },
   },
-
-  setup() {
-    const { fetchMessageRateStatsWithoutStore } = useMessageRateStats();
-
-    return {
-      fetchMessageRateStatsWithoutStore,
-    };
-  },
-
   data() {
     return {
       pending: false,
@@ -118,7 +109,6 @@ export default {
       },
     };
   },
-
   computed: {
     interval() {
       return {
@@ -143,7 +133,9 @@ export default {
         TIME_UNITS.day,
       );
 
-      return offsetDays > 1 ? MESSAGE_STATS_INTERVALS.hour : MESSAGE_STATS_INTERVALS.minute;
+      return offsetDays > 1
+        ? MESSAGE_STATS_INTERVALS.hour
+        : MESSAGE_STATS_INTERVALS.minute;
     },
 
     isMinuteSampling() {
@@ -155,37 +147,30 @@ export default {
     },
 
     suggestedMax() {
-      return (
-        Math.max(0, ...this.messagesStats.map(({ rate }) => rate)) *
-        HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR
-      );
+      return Math.max.apply(null, this.messagesStats.map(({ rate }) => rate))
+        * HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR;
     },
 
     datasets() {
-      return [
-        {
-          backgroundColor: colorToRgba(COLORS.healthcheck.edgeGray, 0.7),
-          fill: true,
-          data: this.messagesStats.map(({ time, rate }) => ({
-            x: time * 1000,
-            y: rate,
-          })),
-        },
-      ];
+      return [{
+        backgroundColor: colorToRgba(COLORS.healthcheck.edgeGray, 0.7),
+        fill: true,
+        data: this.messagesStats.map(({ time, rate }) => ({
+          x: time * 1000,
+          y: rate,
+        })),
+      }];
     },
 
     historyChartOptions() {
       return {
         animation: false,
-        parsing: false,
         scales: {
           x: {
             min: this.interval.from * 1000,
             max: this.interval.to * 1000,
             time: {
-              unit: this.isMinuteSampling
-                ? MESSAGE_STATS_INTERVALS.minute
-                : MESSAGE_STATS_INTERVALS.hour,
+              stepSize: 2,
             },
           },
           y: {
@@ -199,7 +184,7 @@ export default {
             },
           },
           limit: {
-            enabled: Number.isFinite(this.maxMessagesPerInterval),
+            enabled: true,
             scaleID: 'x',
             value: this.maxMessagesPerInterval,
             backgroundColor: COLORS.healthcheck.error,
@@ -231,29 +216,28 @@ export default {
                 enabled: true,
                 modifierKey: 'ctrl',
               },
-              onZoomComplete: this.updateChartInterval,
+              onZoom: this.updateChartInterval,
             },
           },
         },
       };
     },
   },
-
   created() {
     this.debouncedUpdateInterval = debounce(this.updateInterval, 300);
   },
-
   mounted() {
     this.fetchList();
   },
-
   methods: {
     formatTooltipMessage(tooltip) {
-      const suffix = this.$t(
-        `healthcheck.${this.isMinuteSampling ? 'messagesPerMinute' : 'messagesPerHour'}`,
-      );
+      const suffix = this.$t(`healthcheck.${this.isMinuteSampling ? 'messagesPerMinute' : 'messagesPerHour'}`);
 
       return `${tooltip.formattedValue} ${suffix}`;
+    },
+
+    customQueryCondition(query, oldQuery) {
+      return isMetricsQueryChanged(query, oldQuery, this.deletedBefore);
     },
 
     async exportChart(chartBlob) {
@@ -270,11 +254,11 @@ export default {
     },
 
     zoomOut(chart) {
-      chart?.zoom({ x: 0.9 });
+      chart.zoom({ x: 0.9 });
     },
 
     zoomIn(chart) {
-      chart?.zoom({ x: 1.1 });
+      chart.zoom({ x: 1.1 });
     },
 
     updateChartInterval({ chart }) {
@@ -288,14 +272,6 @@ export default {
 
     updateInterval(interval) {
       this.updateQueryField('interval', interval);
-    },
-
-    updateQueryField(field, value) {
-      this.query = {
-        ...this.query,
-        [field]: value,
-      };
-      this.fetchList();
     },
 
     getQuery() {
@@ -319,7 +295,7 @@ export default {
       this.pending = true;
 
       try {
-        const { data: messagesStats, meta = {} } = await this.fetchMessageRateStatsWithoutStore({
+        const { data: messagesStats, meta } = await this.fetchMessageRateStatsWithoutStore({
           params: this.getQuery(),
         });
 

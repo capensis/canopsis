@@ -1,119 +1,137 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper text-class="position-relative" close>
-      <template #title>
-        <span>{{ config.title ?? t('modals.applyEventFilter.title') }}</span>
+    <modal-wrapper text-class="position-relative" close>
+      <template #title="">
+        <span>{{ config.title ?? $t('modals.applyEventFilter.title') }}</span>
       </template>
-
-      <template #text>
+      <template #text="">
         <div class="position-relative">
           <c-progress-overlay :pending="eventPatternAttributesPending" />
           <v-alert v-if="config.infoAlert" class="mb-4" type="info">
             {{ config.infoAlert }}
           </v-alert>
           <c-event-filter-patterns-field
-            :patterns="values.patterns"
+            v-model="form"
             :attributes="eventPatternAttributes"
             :required="config.required ?? true"
             name="patterns"
-            @update:value="updatePatterns"
+            @input="errors.remove('patterns')"
           />
         </div>
+        <ai-chat-sidebar
+          v-if="chatShown"
+          v-bind="chatOptions.bind"
+          v-on="chatOptions.on"
+        />
       </template>
-
-      <template #actions>
-        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          :disabled="submitting || chatOptions.bind.pending"
+          :loading="submitting"
+          class="primary"
           type="submit"
         >
-          {{ t('common.submit') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref, toRef } from 'vue';
 
-import { MODALS } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
+import { promisedWait } from '@/helpers/async';
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
+import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import {
-  usePatternsFields,
-  usePatternsFieldsFetching,
-} from '@/hooks/store/modules/patterns-fields';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
-const promisedWait = delay => new Promise(resolve => setTimeout(resolve, delay));
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.applyEventFilter,
-
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
+  components: { ModalWrapper, AiChatSidebar },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
+    const { config, close } = useInnerModal(props);
 
-    const form = useForm({
-      initialValues: {
-        patterns: patternToForm({ event_pattern: config.value.eventPattern }),
-      },
-    });
-    const { values, handleSubmit, isSubmitting } = form;
+    const form = ref(patternToForm({ event_pattern: config.value.eventPattern }));
 
     const { fetchEventRecordPatternFields } = usePatternsFields();
 
-    const { pending: eventPatternAttributesPending, eventPatternAttributes } =
-      usePatternsFieldsFetching(fetchEventRecordPatternFields);
+    const {
+      pending: eventPatternAttributesPending,
+      eventPatternAttributes,
+    } = usePatternsFieldsFetching(fetchEventRecordPatternFields);
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
-    const updatePatterns = value => form.setValue('patterns', value);
+    const {
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
+      form,
 
-    const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(
-        formGroupsToPatternRules(values.value.patterns?.groups ?? []),
-      );
-
-      await promisedWait(3000);
-      await config.value.afterSubmit?.(result);
-      closeModal();
-
-      return result;
+      modal: toRef(props, 'modal'),
+      ruleId: props.modal.config?.eventsRecordId,
+      context: LLM_SOCKET_CONTEXTS.eventRecord,
+      field: PATTERNS_FIELDS.event,
     });
 
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
+    const { submit, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        const result = await config.value.action?.(formGroupsToPatternRules(form.value?.groups));
+
+        /**
+         * We've added that to avoiding problem with async on the backend side.
+         * There is 3000ms timeout on the backend side for sync
+         */
+        await promisedWait(3000);
+        await config.value.afterSubmit?.(result);
+        close();
+
+        return result;
+      },
     });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      t,
       config,
-      values,
-      isSubmitting,
+      form,
+      submitting,
+      chatShown,
+      chatOptions,
+
       eventPatternAttributes,
       eventPatternAttributesPending,
-      updatePatterns,
+
       submit,
-      closeModal,
+      close,
     };
   },
 };

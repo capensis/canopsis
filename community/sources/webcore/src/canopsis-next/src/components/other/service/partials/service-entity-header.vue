@@ -1,23 +1,27 @@
 <template>
-  <c-layout align="center" justify="space-between">
-    <div @click.stop="">
-      <v-checkbox
-        :model-value="selected"
+  <v-layout
+    justify-space-between
+    align-center
+  >
+    <v-flex @click.stop="">
+      <v-simple-checkbox
+        :value="selected"
         :disabled="!selectable"
         class="service-entity-header__checkbox ma-0 pa-0"
-        color="white"
-        density="compact"
-        hide-details
-        @update:model-value="$emit('update:selected', $event)"
+        dark
+        @input="$emit('update:selected', $event)"
       />
-    </div>
-    <div class="pa-2">
-      <v-icon class="color--inherit" size="small">
+    </v-flex>
+    <v-flex class="pa-2">
+      <v-icon class="color--inherit" small>
         {{ entity.icon }}
       </v-icon>
-    </div>
-    <div class="pl-1 white--text text-subtitle-1 flex-grow-1">
-      <c-layout align="center">
+    </v-flex>
+    <v-flex
+      class="pl-1 white--text text-subtitle-1"
+      xs12
+    >
+      <v-layout align-center>
         <div class="mr-1 service-entity-header__name">
           {{ entityName }}
         </div>
@@ -26,62 +30,62 @@
           :key="icon.icon"
           :style="{ backgroundColor: icon.color }"
           class="service-entity-header__extra-icon mx-1"
-          size="small"
+          small
           dark
           icon
         >
-          <v-icon size="small">
+          <v-icon small>
             {{ icon.icon }}
           </v-icon>
         </v-btn>
-        <c-tooltip
+        <c-simple-tooltip
           v-for="link in entityLinks"
           :key="link.rule_id"
           :content="link.label"
-          location="top"
+          top
         >
-          <template #activator="{ props: tooltipProps }">
+          <template #activator="{ on }">
             <v-btn
               :style="{ backgroundColor: linkIconBackgroundColor }"
               :aria-label="link.label"
               class="service-entity-header__extra-icon mx-1"
-              size="small"
+              small
               dark
               icon
-              v-bind="tooltipProps"
+              v-on="on"
               @click.stop="linkClick(link)"
             >
-              <v-icon size="small">
+              <v-icon small>
                 {{ link.icon_name }}
               </v-icon>
             </v-btn>
           </template>
-        </c-tooltip>
+        </c-simple-tooltip>
         <c-no-events-icon
           :value="entity.idle_since"
           color="white"
-          location="top"
+          top
         />
         <div @click.stop="">
           <v-alert
             v-if="lastActionUnavailable"
-            :model-value="lastActionUnavailable"
+            :value="lastActionUnavailable"
             class="service-entity-header__alert ma-0 px-2 py-1"
             color="black"
-            closable
-            @update:model-value="hideAlert"
+            dismissible
+            @input="hideAlert"
           >
             {{ $t('serviceWeather.cannotBeApplied') }}
           </v-alert>
         </div>
-      </c-layout>
-    </div>
-  </c-layout>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-import { get } from 'lodash';
 import { computed } from 'vue';
+import { get } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import {
@@ -123,7 +127,6 @@ export default {
       default: 'name',
     },
   },
-  emits: ['update:selected', 'remove:unavailable'],
   setup(props, { emit }) {
     const { t } = useI18n();
     const popups = usePopups();
@@ -159,7 +162,7 @@ export default {
       if (props.entity.status?.val === ALARM_STATUSES.cancelled) {
         icons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
-          color: CSS_COLORS_VARS.status.cancelled,
+          color: 'grey darken-1',
         });
       }
 
@@ -179,6 +182,11 @@ export default {
         : []
     ));
 
+    /**
+     * Runs link rule action: clipboard copy with popup feedback, otherwise opens URL in a new tab.
+     *
+     * @param {Object} link
+     */
     const linkClick = async (link) => {
       const action = link.action ?? LINK_RULE_ACTIONS.open;
 
@@ -199,6 +207,9 @@ export default {
       window.open(link.url, '_blank');
     };
 
+    /**
+     * Notifies parent to dismiss the last-action-unavailable alert.
+     */
     const hideAlert = () => emit('remove:unavailable');
 
     return {
@@ -223,7 +234,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.2) !important;
   border-radius: 5px;
 
-  & .v-alert__close .v-icon {
+  & ::v-deep .v-alert__dismissible .v-icon {
     margin-left: 0;
     font-size: 18px;
   }

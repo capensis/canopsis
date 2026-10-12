@@ -6,7 +6,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
 /**
  * @typedef {Object} LineChartWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {MetricPresets} metrics
+ * @property {MetricPreset[]} metrics
  * @property {string} chart_title
  * @property {string} default_time_range
  * @property {Sampling} default_sampling
@@ -15,26 +15,17 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
  */
 
 /**
- * @typedef {Object} LineChartWidgetParametersForm
- * @property {DurationWithEnabled} periodic_refresh
- * @property {MetricPresetsForm} metrics
- * @property {string} chart_title
- * @property {string} default_time_range
- * @property {Sampling} default_sampling
- * @property {boolean} comparison
- * @property {string | null} mainFilter
+ * @typedef {LineChartWidgetParameters} LineChartWidgetParametersForm
  */
 
 /**
- * Convert line chart widget parameters to form.
+ * Convert line chart widget parameters to form
  *
- * @param {LineChartWidgetParameters} [parameters={}]
+ * @param {LineChartWidgetParameters} parameters
  * @return {LineChartWidgetParametersForm}
  */
 export const lineChartWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(
-    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
-  ),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   metrics: metricPresetsToForm(parameters.metrics),
   chart_title: parameters.chart_title ?? '',
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
@@ -44,12 +35,13 @@ export const lineChartWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to line chart widget parameters.
+ * Convert form to line chart widget parameters
  *
  * @param {LineChartWidgetParametersForm} form
  * @return {LineChartWidgetParameters}
  */
 export const formToLineChartWidgetParameters = form => ({
   ...form,
+
   metrics: formToMetricPresets(form.metrics),
 });

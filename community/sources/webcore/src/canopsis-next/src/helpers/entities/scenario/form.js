@@ -1,15 +1,28 @@
-import { isNumber, omit } from 'lodash';
+import { omit, isNumber } from 'lodash';
 
 import { DEPRECATED_TRIGGERS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
-import { actionToForm, formToAction } from '@/helpers/entities/action/form';
+import { formToAction, actionToForm } from '@/helpers/entities/action';
+import { getLocalTimezone } from '@/helpers/date/date';
 import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {Object} Trigger
  * @property {string} type
  * @property {number} [threshold]
+ */
+
+/**
+ * @typedef {Object} Scenario
+ * @property {string} name
+ * @property {string} author
+ * @property {number} priority
+ * @property {boolean} enabled
+ * @property {Duration} delay
+ * @property {Trigger[]} triggers
+ * @property {DisableDuringPeriods[]} disable_during_periods
+ * @property {Action[]} actions
  */
 
 /**
@@ -24,47 +37,48 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  * @returns {boolean}
  */
 export const isDeprecatedTrigger = type => DEPRECATED_TRIGGERS.includes(type);
-
 /**
- * Convert scenario entity to form.
+ * Convert scenario to form
  *
- * @param {Object} [scenario={}]
- * @param {string} [timezone]
- * @returns {Object}
+ * @param {Scenario} [scenario = {}]
+ * @param {string} [timezone = getLocalTimezone()]
+ * @returns {ScenarioForm}
  */
-export const scenarioToForm = (scenario = {}, timezone) => ({
+export const scenarioToForm = (scenario = {}, timezone = getLocalTimezone()) => ({
   name: scenario.name || '',
   priority: scenario.priority,
   enabled: scenario.enabled ?? true,
-  delay: scenario.delay ? durationToForm(scenario.delay) : { value: undefined, unit: undefined },
+  delay: scenario.delay
+    ? durationToForm(scenario.delay)
+    : { value: undefined, unit: undefined },
   triggers: scenario.triggers ? [...scenario.triggers] : [],
-  disable_during_periods: scenario.disable_during_periods
-    ? [...scenario.disable_during_periods]
-    : [],
+  disable_during_periods: scenario.disable_during_periods ? [...scenario.disable_during_periods] : [],
   actions: scenario.actions
     ? scenario.actions.map(action => actionToForm(action, timezone))
     : [actionToForm(undefined, timezone)],
 });
 
 /**
- * Convert scenario form to API entity.
+ * Convert form to scenario
  *
- * @param {Object} form
- * @param {string} [timezone]
- * @returns {Object}
+ * @param {ScenarioForm} form
+ * @param {string} [timezone = getLocalTimezone()]
+ * @returns {Scenario}
  */
-export const formToScenario = (form = {}, timezone) => ({
+export const formToScenario = (form, timezone = getLocalTimezone()) => ({
   ...omit(form, ['delay', 'actions']),
-  delay: isNumber(form.delay?.value) ? form.delay : undefined,
+  delay: isNumber(form.delay?.value)
+    ? form.delay
+    : undefined,
   actions: form.actions.map(action => formToAction(action, timezone)),
 });
 
 /**
- * Convert server errors to scenario form paths.
+ * Convert error structure to form structure
  *
- * @param {Object} errors
- * @param {Object} form
- * @returns {Object}
+ * @param {FlattenErrors} errors
+ * @param {ScenarioForm} form
+ * @return {FlattenErrors}
  */
 export const scenarioErrorToForm = (errors, form) => {
   const prepareActionsErrors = (errorsObject) => {
@@ -73,7 +87,6 @@ export const scenarioErrorToForm = (errors, form) => {
     if (actions) {
       errorMessages.actions = actions.reduce((acc, messages, index) => {
         const action = form.actions[index];
-
         acc[action.key] = messages;
 
         return acc;

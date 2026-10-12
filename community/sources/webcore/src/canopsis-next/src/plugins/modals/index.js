@@ -1,67 +1,45 @@
-import ModalBase from './components/modal-base.vue';
+import { get } from 'lodash';
+
+import modalsStoreModule from './store';
 import TheModals from './components/the-modals.vue';
-import { useModalsStore } from './stores';
+import ModalBase from './components/modal-base.vue';
 
-/**
- * Create public modals API.
- *
- * @param {Object} options
- * @param {Object} options.store
- * @param {Object} [options.dialogPropsMap]
- * @param {Object} [options.modal]
- * @return {Object}
- */
-export const createModalsApi = ({ store, dialogPropsMap = {} }) => ({
-  dialogPropsMap,
-
-  isModalOpenedById: id => Boolean(store.byId[id]),
-
-  show: modalPayload => store.show(modalPayload),
-
-  hide: (payload = {}) => store.hide({ id: payload.id }),
-
-  updateDialogProps: (payload = {}) =>
-    store.updateDialogProps({
-      id: payload.id,
-      dialogProps: payload.dialogProps,
-    }),
-
-  updateModalConfig: (payload = {}) =>
-    store.updateModalConfig({
-      id: payload.id,
-      config: payload.config,
-    }),
-
-  minimize: (payload = {}) => store.minimize({ id: payload.id }),
-
-  maximize: (payload = {}) => store.maximize({ id: payload.id }),
-});
-
-/**
- * Modals plugin.
- */
 export default {
-  /**
-   * Install modals plugin.
-   *
-   * @param {import('vue').App} app
-   * @param {Object} options
-   * @param {Object} [options.components]
-   * @param {Object} [options.dialogPropsMap]
-   * @param {string} [options.componentName]
-   */
-  install(app, { components = {}, dialogPropsMap = {}, componentName = 'the-modals' } = {}) {
-    const modalsStore = useModalsStore();
+  install(Vue, {
+    store,
+    components = {},
+    dialogPropsMap = {},
+    moduleName = 'modals',
+    componentName = 'the-modals',
+  }) {
+    if (!store) {
+      throw new Error('Missing store option');
+    }
 
-    app.component(componentName, TheModals);
-    app.component('modal-base', ModalBase);
+    Vue.component(componentName, TheModals);
+    Vue.component('modal-base', {
+      components,
 
-    app.config.globalProperties.$modals = createModalsApi({
-      store: modalsStore,
-      dialogPropsMap,
+      extends: ModalBase,
     });
 
-    app.provide('$modalsOptions', { dialogPropsMap });
-    app.provide('$modalComponents', components);
+    store.registerModule(moduleName, modalsStoreModule);
+
+    Object.defineProperty(Vue.prototype, '$modals', {
+      get() {
+        return {
+          moduleName,
+          dialogPropsMap,
+
+          isModalOpenedById: id => Boolean(store.state[moduleName].byId[id]),
+          show: modal => store.dispatch(`${moduleName}/show`, modal),
+          hide: ({ id } = {}) => store.dispatch(`${moduleName}/hide`, { id: id || get(this.modal, 'id') }),
+          updateDialogProps: ({ id, dialogProps } = {}) => store.dispatch(`${moduleName}/updateDialogProps`, { id: id || get(this.modal, 'id'), dialogProps }),
+          updateModalConfig: ({ id, config } = {}) => store.dispatch(`${moduleName}/updateModalConfig`, { id: id || get(this.modal, 'id'), config }),
+          minimize: ({ id } = {}) => store.dispatch(`${moduleName}/minimize`, { id: id || get(this.modal, 'id') }),
+          maximize: ({ id } = {}) => store.dispatch(`${moduleName}/maximize`, { id: id || get(this.modal, 'id') }),
+        };
+      },
+    });
   },
 };

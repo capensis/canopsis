@@ -1,14 +1,14 @@
 <template>
-  <c-layout class="pt-2" align="center">
-    <div :style="labelStyles">
-      <div class="text-subtitle-1 font-weight-bold">
+  <v-layout class="pt-2">
+    <v-flex :style="labelStyles">
+      <h4 class="text-subtitle-1 font-weight-bold">
         {{ label }}
-      </div>
-    </div>
-    <div class="text-break">
+      </h4>
+    </v-flex>
+    <v-flex class="text-break">
       <slot>{{ value }}</slot>
-    </div>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

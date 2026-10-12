@@ -1,100 +1,108 @@
 <template>
-  <v-form @submit.prevent.stop="submit">
-    <c-layout column>
-      <div>
+  <v-form
+    class="gap-3"
+    @submit.prevent.stop="submit"
+  >
+    <v-layout class="gap-2" column>
+      <v-flex>
         <ldap-login-information v-if="isLDAPAuthEnabled" />
-      </div>
-      <login-form />
-
-      <div>
-        <div class="d-flex justify-space-between align-center">
-          <v-btn :loading="isSubmitting" type="submit" color="primary">
-            {{ t('common.connect') }}
+      </v-flex>
+      <login-form v-field.model="form" />
+      <v-flex>
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <v-btn
+            type="submit"
+            color="primary"
+          >
+            {{ $t('common.connect') }}
           </v-btn>
-
-          <div class="flex-grow-1 ml-4">
-            <c-alert v-if="serverErrorMessage" class="py-1 my-0 font-weight-bold" type="error">
+          <v-flex xs9>
+            <c-alert
+              :value="!!serverErrorMessage"
+              class="py-1 my-0 font-weight-bold"
+              type="error"
+            >
               {{ serverErrorMessage }}
             </c-alert>
-          </div>
-        </div>
-
+          </v-flex>
+        </v-layout>
         <template v-if="footer">
           <v-divider class="my-2" />
-
-          <div>
+          <v-layout>
             <c-compiled-template :template="footer" />
-          </div>
+          </v-layout>
         </template>
-      </div>
-    </c-layout>
+      </v-flex>
+    </v-layout>
   </v-form>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
-
+<script>
 import { ROUTES_NAMES, ROUTES, RESPONSE_STATUSES } from '@/constants';
 
-import { getDefaultViewId } from '@/helpers/entities/user/entity';
+import { authMixin } from '@/mixins/auth';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import { useAuth } from '@/hooks/auth';
-import { useForm } from '@/hooks/form';
-import { useInfo } from '@/hooks/store/modules/info';
+import LdapLoginInformation from './partials/ldap-login-information.vue';
+import LoginForm from './form/login-form.vue';
 
-import LdapLoginInformation from './ldap-login-information.vue';
-import LoginForm from './login-form.vue';
-
-const { currentUser, login } = useAuth();
-const { isLDAPAuthEnabled, footer } = useInfo();
-
-const route = useRoute();
-const router = useRouter();
-const { t } = useI18n();
-
-const serverErrorMessage = ref('');
-
-const form = useForm({
-  initialValues: {
-    username: '',
-    password: '',
+export default {
+  $_veeValidate: {
+    validator: 'new',
   },
-});
-const { handleSubmit, isSubmitting } = form;
+  components: {
+    LdapLoginInformation,
+    LoginForm,
+  },
+  mixins: [authMixin, entitiesInfoMixin],
+  data() {
+    return {
+      serverErrorMessage: '',
+      form: {
+        username: '',
+        password: '',
+      },
+    };
+  },
+  methods: {
+    async submit() {
+      try {
+        this.serverErrorMessage = '';
 
-const submit = handleSubmit(async () => {
-  try {
-    serverErrorMessage.value = '';
+        const formIsValid = await this.$validator.validateAll();
 
-    const { redirect } = route.query;
+        if (formIsValid) {
+          const { redirect } = this.$route.query;
+          const { defaultview: userDefaultView } = this.currentUser;
 
-    await login(form.values.value);
+          await this.login(this.form);
 
-    const { defaultview: userDefaultView } = currentUser.value ?? {};
-    const userDefaultViewId = getDefaultViewId(userDefaultView);
+          if (redirect && redirect !== ROUTES.home) {
+            this.$router.push(redirect);
+            return;
+          }
 
-    if (redirect && redirect !== ROUTES.home) {
-      await router.push(redirect);
-      return;
-    }
+          if (userDefaultView) {
+            this.$router.push({
+              name: ROUTES_NAMES.view,
+              params: { id: userDefaultView._id },
+            });
+            return;
+          }
 
-    if (userDefaultViewId) {
-      await router.push({
-        name: ROUTES_NAMES.view,
-        params: { id: userDefaultViewId },
-      });
-
-      return;
-    }
-
-    await router.push({ name: ROUTES_NAMES.home });
-  } catch (err) {
-    serverErrorMessage.value =
-      err?.status === RESPONSE_STATUSES.serviceUnavailable
-        ? t('login.errors.underMaintenance')
-        : t('login.errors.incorrectEmailOrPassword');
-  }
-});
+          this.$router.push({ name: ROUTES_NAMES.home });
+        }
+      } catch (err) {
+        if (err?.status === RESPONSE_STATUSES.serviceUnavailable) {
+          this.serverErrorMessage = this.$t('login.errors.underMaintenance');
+        } else {
+          this.serverErrorMessage = this.$t('login.errors.incorrectEmailOrPassword');
+        }
+      }
+    },
+  },
+};
 </script>

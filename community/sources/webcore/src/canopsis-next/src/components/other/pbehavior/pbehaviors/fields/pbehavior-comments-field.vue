@@ -1,15 +1,13 @@
 <template>
   <c-form-block-array-field
-    :form="comments"
+    v-field="comments"
     :item-to-form="pbehaviorCommentItemToForm"
     :add-button-label="$t('modals.createPbehavior.steps.comments.buttons.addComment')"
-    :label="$t('common.comment', 2)"
-    @update:form="$emit('update:comments', $event)"
+    :label="$tc('common.comment', 2)"
   >
     <template #item="{ index, remove }">
       <pbehavior-comment-field
-        :comment="comments[index]"
-        @update:comment="updateItemInArray(index, $event)"
+        v-field="comments[index]"
         @remove="remove"
       />
     </template>
@@ -19,28 +17,24 @@
 <script>
 import { pbehaviorCommentItemToForm } from '@/helpers/entities/pbehavior/form';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-
 import PbehaviorCommentField from './pbehavior-comment-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { PbehaviorCommentField },
-
+  model: {
+    prop: 'comments',
+    event: 'input',
+  },
   props: {
     comments: {
       type: Array,
       required: true,
     },
   },
-
-  emits: ['update:comments'],
-
-  setup(props, { emit }) {
-    const { updateItemInArray } = useArrayModelField(props, emit);
-
+  setup() {
     return {
       pbehaviorCommentItemToForm,
-      updateItemInArray,
     };
   },
 };

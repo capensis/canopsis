@@ -1,28 +1,26 @@
 <template>
-  <v-row>
-    <v-col cols="6">
+  <v-layout>
+    <v-flex xs6>
       <c-enabled-field
         v-model="oldMode"
         :label="$t('common.numberField')"
-        @update:model-value="updateOldMode"
+        @input="updateOldMode"
       />
-    </v-col>
-    <v-col cols="6">
+    </v-flex>
+    <v-flex xs6>
       <c-number-field
         v-if="oldMode"
-        :value="value"
+        v-field="value"
         :name="name"
         required
-        @update:value="updateModel"
       />
       <c-alarm-state-field
         v-else
-        :value="value"
+        v-field="value"
         :name="name"
-        @update:value="updateModel"
       />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -31,8 +29,11 @@ import { ALARM_STATES } from '@/constants';
 import { formBaseMixin } from '@/mixins/form';
 
 export default {
-  emits: ['update:value'],
   mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Number,

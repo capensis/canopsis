@@ -1,26 +1,27 @@
 <template>
-  <c-layout column>
-    <c-name-field
-      :model-value="form.name"
-      :unique="uniqueNames"
+  <v-layout column>
+    <v-text-field
+      v-field="form.name"
+      v-validate="nameRules"
+      :label="$t('common.name')"
+      :error-messages="errors.collect('name')"
       name="name"
       autofocus
-      required
-      @update:model-value="updateField('name', $event)"
     />
-    <c-description-field
-      :model-value="form.description"
-      required
-      @update:model-value="updateField('description', $event)"
+    <v-text-field
+      v-field="form.description"
+      v-validate="descriptionRules"
+      :label="$t('common.description')"
+      :error-messages="errors.collect('description')"
+      name="description"
     />
     <c-mixed-field
-      :value="form.value"
+      v-field="form.value"
       :label="$t('common.value')"
       :types="fieldTypes"
       required
-      @update:value="updateField('value', $event)"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -28,9 +29,12 @@ import { computed } from 'vue';
 
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
-
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -45,16 +49,20 @@ export default {
       default: () => [],
     },
   },
+  setup(props) {
+    const infosNames = computed(() => props.infos.map(({ name }) => name));
 
-  emits: ['update:form'],
+    const descriptionRules = computed(() => ({
+      required: true,
+    }));
 
-  setup(props, { emit }) {
-    const { updateField } = useModelField(props, emit);
-
-    const uniqueNames = computed(() => props.infos
-        .map(({ name }) => name)
-        .filter(name => name !== props.entityInfo?.name),
-    );
+    const nameRules = computed(() => ({
+      required: true,
+      unique: {
+        values: infosNames.value,
+        initialValue: props.entityInfo?.name,
+      },
+    }));
 
     const fieldTypes = computed(() => [
       { value: PATTERN_FIELD_TYPES.string },
@@ -64,9 +72,9 @@ export default {
     ]);
 
     return {
-      uniqueNames,
+      descriptionRules,
+      nameRules,
       fieldTypes,
-      updateField,
     };
   },
 };

@@ -1,107 +1,100 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
-        <span>{{ t('modals.createCommentEvent.title') }}</span>
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createCommentEvent.title') }}</span>
       </template>
-
-      <template #text>
-        <c-layout gap="4" column>
-          <alarm-general-table v-if="items.length" :items="items" />
-          <alarm-comment-template-form
-            :form="values"
-            :templates="templates"
-            @update:form="updateForm"
-          />
-        </c-layout>
+      <template #text="">
+        <v-layout class="gap-4" column>
+          <template v-if="items.length">
+            <alarm-general-table :items="items" />
+          </template>
+          <alarm-comment-template-form v-model="form" :templates="templates" />
+        </v-layout>
       </template>
-
-      <template #actions>
-        <v-btn :disabled="submitting" variant="text" @click="close">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
           :disabled="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ t('common.saveChanges') }}
+          {{ $t('common.saveChanges') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { MODALS } from '@/constants';
 
 import { createCommentFormToCreateCommentEvent } from '@/helpers/entities/widget/forms/alarm';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
-import AlarmCommentTemplateForm from '@/components/other/comment-template/form/alarm-comment-template-form.vue';
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
+import AlarmCommentTemplateForm from '@/components/other/comment-template/form/alarm-comment-template-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create comment an alarm
  */
 export default {
   name: MODALS.createCommentEvent,
-
-  components: { AlarmGeneralTable, AlarmCommentTemplateForm },
-
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: { AlarmGeneralTable, AlarmCommentTemplateForm, ModalWrapper },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
-    const form = useForm({
-      initialValues: {
-        template: config.value.templates?.length ? config.value.templates[0] : null,
-        comment: '',
-      },
+    const form = ref({
+      template: config.value.templates?.length ? config.value.templates[0] : null,
+      comment: '',
     });
-    const { values, handleSubmit, isSubmitting: submitting } = form;
 
     const items = computed(() => config.value.items ?? []);
     const templates = computed(() => config.value.templates ?? []);
 
-    const updateForm = (nextForm) => {
-      values.value = nextForm;
-    };
-
-    const submit = handleSubmit(async () => {
-      await config.value.action(createCommentFormToCreateCommentEvent(values.value));
-      close();
+    const { submitting, submit } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action(createCommentFormToCreateCommentEvent(form.value));
+        close();
+      },
     });
 
     useFormConfirmableCloseModal({
-      form: values,
+      form,
       submit,
       close,
     });
 
     return {
-      t,
-      values,
+      form,
       items,
       templates,
       submitting,
       submit,
-      close,
-      updateForm,
     };
   },
 };

@@ -1,0 +1,21 @@
+---
+description: Use form validation hooks only from @/hooks/form
+globs: **/*.{js,vue}
+alwaysApply: true
+---
+
+# Form hooks
+
+Do **not** import `useField`, `useFormContext`, `useFormErrors`, or `useFieldError` from `vee-validate`.
+
+Always import them from `@/hooks/form`.
+
+The only exception is `src/hooks/form/index.js`, which wraps vee-validate.
+
+```js
+// ❌ BAD
+import { useField, useFormContext, useFormErrors, useFieldError } from 'vee-validate';
+
+// ✅ GOOD
+import { useField, useFormContext, useFormErrors, useFieldError } from '@/hooks/form';
+```

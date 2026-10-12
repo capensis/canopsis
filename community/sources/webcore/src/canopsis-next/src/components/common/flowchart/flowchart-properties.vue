@@ -1,10 +1,10 @@
 <template>
-  <v-expansion-panels>
-    <v-expansion-panel>
-      <v-expansion-panel-title>
+  <v-expansion-panels color="grey">
+    <v-expansion-panel color="grey">
+      <v-expansion-panel-header>
         <span>{{ $t('flowchart.properties') }}</span>
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
         <v-divider />
         <v-card flat>
           <v-card-text>
@@ -14,7 +14,7 @@
               :value="fillValue"
               :palette="shapesColors"
               class="my-1"
-              @update:value="updateFill"
+              @input="updateFill"
             />
             <flowchart-color-field
               v-if="showStroke"
@@ -22,20 +22,20 @@
               :value="stroke"
               :palette="borderColors"
               class="my-1"
-              @update:value="updateStroke"
+              @input="updateStroke"
             />
             <template v-if="showStroke && isStrokeEnabled">
               <flowchart-number-field
                 :label="$t('flowchart.strokeWidth')"
                 :value="strokeWidth"
                 class="my-1"
-                @update:value="updateStrokeWidth"
+                @input="updateStrokeWidth"
               />
               <flowchart-stroke-type-field
                 :label="$t('flowchart.strokeType')"
                 :value="strokeType"
                 class="my-1"
-                @update:value="updateStrokeType"
+                @input="updateStrokeType"
               />
             </template>
             <flowchart-line-type-field
@@ -44,7 +44,7 @@
               :value="lineType"
               :average-points="lineAveragePoints"
               class="my-2"
-              @update:value="updateLineType"
+              @input="updateLineType"
             />
             <v-divider v-if="showLineType || showStroke || showFill" />
             <flowchart-color-field
@@ -52,24 +52,24 @@
               :value="textColor"
               :palette="textColors"
               class="my-1"
-              @update:value="updateTextColor"
+              @input="updateTextColor"
             />
             <flowchart-color-field
               :label="$t('flowchart.fontBackgroundColor')"
               :value="textBackgroundColor"
               :palette="backgroundColors"
               class="my-1"
-              @update:value="updateTextBackgroundColor"
+              @input="updateTextBackgroundColor"
             />
             <flowchart-number-field
               :label="$t('flowchart.fontSize')"
               :value="textFontSize"
               class="my-1"
-              @update:value="updateFontSize"
+              @input="updateFontSize"
             />
           </v-card-text>
         </v-card>
-      </v-expansion-panel-text>
+      </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
 </template>
@@ -80,15 +80,15 @@ import { merge } from 'lodash';
 import { COLORS } from '@/config';
 import { STROKE_TYPES } from '@/constants';
 
-import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 import { getPropertyValueByShapes } from '@/helpers/flowchart/shapes';
+import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 
 import { formBaseMixin } from '@/mixins/form';
 
 import FlowchartColorField from './fields/flowchart-color-field.vue';
-import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
 import FlowchartNumberField from './fields/flowchart-number-field.vue';
 import FlowchartStrokeTypeField from './fields/flowchart-stroke-type-field.vue';
+import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
 
 export default {
   components: {
@@ -102,7 +102,6 @@ export default {
     prop: 'shapes',
     event: 'input',
   },
-  emits: ['input', 'update:shapes'],
   props: {
     shapes: {
       type: Object,
@@ -199,7 +198,10 @@ export default {
     lineAveragePoints() {
       return this.shapesWithLineType.reduce((acc, { points }) => {
         if (acc.length) {
-          return acc.map((point, index) => calculateCenterBetweenPoint(acc[index], point));
+          return acc.map((point, index) => calculateCenterBetweenPoint(
+            acc[index],
+            point,
+          ));
         }
 
         return [...points];
@@ -208,18 +210,13 @@ export default {
   },
   methods: {
     updateSelectedShapes(shapeData) {
-      this.updateModel(
-        this.selected.reduce(
-          (acc, id) => {
-            const shape = this.shapes[id];
+      this.updateModel(this.selected.reduce((acc, id) => {
+        const shape = this.shapes[id];
 
-            acc[id] = merge({}, shape, shapeData);
+        acc[id] = merge({}, shape, shapeData);
 
-            return acc;
-          },
-          { ...this.shapes },
-        ),
-      );
+        return acc;
+      }, { ...this.shapes }));
     },
 
     updateSelectedShapesProperties(properties) {

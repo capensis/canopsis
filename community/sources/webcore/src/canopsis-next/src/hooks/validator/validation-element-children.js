@@ -1,27 +1,7 @@
-import { computed, unref } from 'vue';
-
-import { useFormContext } from '@/hooks/form';
+import { computed } from 'vue';
 
 import { useValidationElementChildrenFields } from './validation-element-children-fields';
-
-/**
- * Checks whether a registered form field currently shows a visible validation error.
- *
- * Checks both `errorMessages` from the Vue component instance (including `exposed` from
- * `setup`) and vee-validate's `errors` array. Some components expose an empty external
- * `errorMessages` prop while rendering errors registered internally by vee-validate, so
- * neither source may mask the other.
- *
- * @param {Object} [field={}] - Validator field state with its bound component instance.
- * @param {string[]} [field.errors] - Validation error messages from the form context.
- * @param {Object} [field.instance] - Vue component instance of the field.
- * @returns {boolean} `true` if the field has at least one visible error message.
- */
-export const hasVisibleFieldError = ({ errors, instance } = {}) => {
-  const errorMessages = unref(instance?.errorMessages ?? instance?.$?.exposed?.errorMessages);
-
-  return (Array.isArray(errorMessages) && errorMessages.length > 0) || errors?.length > 0;
-};
+import { useValidator } from './validator';
 
 /**
  * Provides validation functionalities for the children of a given parent component.
@@ -38,14 +18,18 @@ export const hasVisibleFieldError = ({ errors, instance } = {}) => {
  * validator is present, otherwise `undefined`.
  */
 export const useValidationElementChildren = (parent) => {
-  const formContext = useFormContext();
-
+  const validator = useValidator();
   const childrenFields = useValidationElementChildrenFields(parent);
 
-  const hasChildrenError = computed(() => childrenFields.value.some(hasVisibleFieldError));
+  const hasChildrenError = computed(() => {
+    if (validator && validator.errors.any()) {
+      return childrenFields.value.some(field => validator.errors.has(field.name));
+    }
 
-  const validateChildren = () =>
-    childrenFields.value.forEach(({ path } = {}) => formContext.validateField(path));
+    return false;
+  });
+
+  const validateChildren = () => validator?.validateAll?.(childrenFields.value);
 
   return {
     childrenFields,

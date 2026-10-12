@@ -1,115 +1,122 @@
 <template>
-  <c-layout gap="2" column>
+  <v-layout class="gap-2" column>
     <c-name-field
-      v-model="nameField"
-      :label="t('common.name')"
+      v-field="form.name"
+      :label="$t('common.name')"
       name="name"
       required
     />
 
     <c-form-block>
-      <c-form-block-row :label="t('common.description')" indented>
+      <c-form-block-row :label="$t('common.description')">
         <c-description-field
-          v-model="descriptionField"
-          :label="t('common.description')"
+          v-field="form.description"
+          :label="$t('common.description')"
           :max-length="500"
           name="description"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.type')">
+      <c-form-block-row :label="$t('common.type')">
         <template-testing-data-type-field
-          :value="typeField"
-          :label="t('common.type')"
+          v-field="form.type"
+          :label="$t('common.type')"
           :disabled="!isNew"
           name="type"
           required
-          @update:value="typeField = $event"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('templateTesting.testData')" indented>
+      <c-form-block-row :label="$t('templateTesting.testData')" indented>
         <c-json-field
+          v-field="form.body"
           ref="jsonFieldElement"
-          :value="bodyField"
-          :label="t('common.value')"
+          :label="$t('common.value')"
           name="value"
           rows="11"
           validate-on="button"
-          @update:value="bodyField = $event"
         >
           <template v-if="isEventType" #append>
-            <c-layout justify="end">
-              <v-btn color="primary" variant="outlined" @click="showSetPreFilledTemplateModal">
-                {{ t('templateTesting.usePreFilledTemplate') }}
+            <v-layout justify-end>
+              <v-btn
+                color="primary"
+                outlined
+                @click="showSetPreFilledTemplateModal"
+              >
+                {{ $t('templateTesting.usePreFilledTemplate') }}
               </v-btn>
-            </c-layout>
+            </v-layout>
           </template>
         </c-json-field>
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isEventType" :label="t('common.header', 2)">
+      <c-form-block-row v-if="!isEventType" :label="$tc('common.header', 2)" indented>
         <request-headers-field
-          :headers="headersField"
+          v-field="form.headers"
           name="headers"
-          @update:headers="headersField = $event"
         />
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, ref, nextTick } from 'vue';
 
-import {
-  MODALS,
-  TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE,
-  TEMPLATE_TESTING_DATA_TYPES,
-} from '@/constants';
+import { MODALS, TEMPLATE_TESTING_DATA_TYPES, TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE } from '@/constants';
 
-import { useFormModels, useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useModelField } from '@/hooks/form/model-field';
 
 import RequestHeadersField from '@/components/forms/request/fields/request-headers-field.vue';
 
 import TemplateTestingDataTypeField from './fields/template-testing-data-type-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     RequestHeadersField,
     TemplateTestingDataTypeField,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      required: true,
+    },
     isNew: {
       type: Boolean,
       default: false,
     },
   },
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const modals = useModals();
-    const form = useFormContext();
+    const { updateField } = useModelField(props, emit);
+
     const jsonFieldElement = ref(null);
 
-    const { nameField, descriptionField, typeField, bodyField, headersField } = useFormModels({
-      nameField: 'name',
-      descriptionField: 'description',
-      typeField: 'type',
-      bodyField: 'body',
-      headersField: 'headers',
-    });
+    const isEventType = computed(() => props.form.type === TEMPLATE_TESTING_DATA_TYPES.event);
 
-    const isEventType = computed(() => typeField.value === TEMPLATE_TESTING_DATA_TYPES.event);
-
+    /**
+     * Sets the pre-filled template data to the form body field and resets the JSON field
+     */
     const setPreFilledTemplate = () => {
-      form.setValue('body', TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE);
-      jsonFieldElement.value?.reset?.();
+      updateField('body', TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE);
+
+      nextTick(() => jsonFieldElement.value?.reset?.());
     };
 
+    /**
+     * Shows confirmation modal before setting pre-filled template if form has existing content,
+     * otherwise sets the template directly
+     */
     const showSetPreFilledTemplateModal = () => {
-      const bodyToCompare = bodyField.value?.trim?.();
+      const bodyToCompare = props.form.body?.trim?.();
 
       if (!bodyToCompare || bodyToCompare === '{}') {
         setPreFilledTemplate();
@@ -128,14 +135,10 @@ export default {
     };
 
     return {
-      t,
       jsonFieldElement,
-      nameField,
-      descriptionField,
-      typeField,
-      bodyField,
-      headersField,
+
       isEventType,
+
       showSetPreFilledTemplateModal,
     };
   },

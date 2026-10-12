@@ -1,68 +1,58 @@
 <template>
-  <c-autocomplete
-    :model-value="modelValue"
-    :items="items"
-    :label="label || t('common.icon')"
+  <v-autocomplete
+    v-field="value"
+    v-validate="rules"
+    :label="label"
+    :hint="hint"
     :placeholder="placeholder"
+    :items="allIcons"
     :name="name"
-    :required="required"
+    :error-messages="errors.collect(name)"
     :disabled="disabled"
-    item-title="text"
-    item-value="value"
-    class="c-icon-field"
-    hide-no-data
-    clearable
-    @update:model-value="$emit('update:modelValue', $event)"
+    :persistent-hint="!!hint"
   >
-    <template v-if="modelValue" #prepend-inner>
-      <span class="c-icon-field__icon">
-        <v-icon size="18">
-          {{ getItemIcon({ value: modelValue }) }}
-        </v-icon>
+    <template #selection="{ item }">
+      <v-icon>{{ item.value }}</v-icon>
+      <span class="ml-2">
+        {{ item.text }}
       </span>
     </template>
-
-    <template #item="{ props: itemProps, item }">
-      <v-divider v-if="isDividerItem(item)" />
-      <v-list-item v-else v-bind="itemProps">
-        <template #prepend>
-          <span class="c-icon-field__icon">
-            <v-icon size="18">
-              {{ getItemIcon(item) }}
-            </v-icon>
-          </span>
-        </template>
-        <template #title>
-          {{ getItemText(item) }}
-        </template>
-      </v-list-item>
+    <template #item="{ item }">
+      <v-icon>{{ item.value }}</v-icon>
+      <span class="ml-2">
+        {{ item.text }}
+      </span>
     </template>
-
-    <template v-if="$slots['append-outer']" #append-outer>
-      <slot name="append-outer" />
-    </template>
-
-    <template v-if="$slots['no-data']" #no-data>
+    <template #no-data="">
       <slot name="no-data" />
     </template>
-  </c-autocomplete>
+  </v-autocomplete>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
-import { useIcon } from '@/hooks/store/modules/icon';
+import { useModelField } from '@/hooks/form';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import materialIcons from '@/assets/material-icons/MaterialIcons.json';
+import materialIconsNames from '@/assets/material-icons/MaterialIcons.json';
 
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
     label: {
+      type: String,
+      default: '',
+    },
+    hint: {
       type: String,
       default: '',
     },
@@ -83,75 +73,48 @@ export default {
       default: false,
     },
   },
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+    const { useGetters } = useStoreModuleHooks('icon');
+    const { registeredIconsById } = useGetters(['registeredIconsById']);
 
-  emits: ['update:modelValue'],
+    const registeredIconsItems = computed(() => (
+      Object.values(registeredIconsById.value)
+        .map(({ title }) => ({ text: title, value: `$vuetify.icon.${title}` }))
+    ));
 
-  setup() {
-    const { t } = useI18n();
-    const { registeredIconsById } = useIcon();
+    const materialIconsItems = computed(() => (
+      materialIconsNames.map(name => ({ text: name, value: name }))
+    ));
 
-    const registeredIconsItems = computed(() => Object.values(registeredIconsById.value ?? {}).map(({ title }) => ({
-        text: title,
-        value: `$vuetify.icon.${title}`,
-      })),
-    );
-    const materialIconsItems = computed(() => materialIcons.map(icon => ({
-        text: icon,
-        value: icon,
-      })),
-    );
-    const items = computed(() => {
+    const allIcons = computed(() => {
       if (!registeredIconsItems.value.length) {
         return materialIconsItems.value;
       }
 
       return [
         ...registeredIconsItems.value,
-        { type: 'divider', divider: true, text: '', value: '__icon-divider__' },
+        { divider: true },
         ...materialIconsItems.value,
       ];
     });
 
-    const isDividerItem = item => item?.divider || item?.type === 'divider';
-    const getItemValue = item => item?.value ?? item?.raw?.value ?? '';
-    const getItemText = item => item?.text ?? item?.title ?? item?.raw?.text ?? getItemValue(item);
-    const getItemIcon = (item) => {
-      const value = getItemValue(item);
+    const rules = computed(() => ({
+      required: props.required,
+    }));
 
-      if (!value || isDividerItem(item)) {
-        return '';
+    watch(registeredIconsItems, (items) => {
+      if (!items.some(({ value }) => value === props.value)) {
+        updateModel('');
       }
-
-      if (value.startsWith('$vuetify.icon.')) {
-        return `canopsis:${value.slice('$vuetify.icon.'.length)}`;
-      }
-
-      return value;
-    };
+    });
 
     return {
-      t,
-      items,
-      isDividerItem,
-      getItemValue,
-      getItemText,
-      getItemIcon,
+      registeredIconsItems,
+      materialIconsItems,
+      allIcons,
+      rules,
     };
   },
 };
 </script>
-
-<style lang="scss">
-.c-icon-field {
-  .v-field__prepend-inner {
-    align-items: center;
-  }
-}
-
-.c-icon-field__icon {
-  display: inline-flex;
-  max-width: 24px;
-  max-height: 24px;
-  overflow: hidden;
-}
-</style>

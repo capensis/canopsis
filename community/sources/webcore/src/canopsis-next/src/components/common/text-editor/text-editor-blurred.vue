@@ -1,33 +1,44 @@
 <template>
-  <div class="text-editor-blurred" @click="$emit('click', $event)">
-    <v-input :error-messages="errorMessages" :hide-details="hideDetails">
-      <v-field
-        :label="label"
-        :dirty="Boolean(value)"
-        :disabled="disabled"
-        :error="errorMessages.length > 0"
-        variant="filled"
-        active
+  <div
+    :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }, themeClasses]"
+    class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active"
+  >
+    <div
+      class="v-input__control"
+      @click="$emit('click', $event)"
+    >
+      <div class="v-input__slot">
+        <div class="v-text-field__slot" @click="wrapperClickHandler">
+          <label
+            :class="[{ 'v-label--active': value }, themeClasses]"
+            class="v-label"
+          >{{ label }}</label>
+          <c-compiled-template
+            :template="value"
+            :class="{ 'v-text-field--input__disabled': disabled }"
+          />
+        </div>
+      </div>
+      <div
+        v-if="!hideDetails"
+        class="v-text-field__details"
       >
-        <template #default="{ props: fieldProps }">
-          <div v-bind="fieldProps" @click="wrapperClickHandler">
-            <c-compiled-template
-              :template="value"
-              :class="{ 'text-editor-blurred__disabled': disabled }"
-            />
-          </div>
-        </template>
-      </v-field>
-    </v-input>
+        <v-messages
+          :value="errorMessages"
+          color="error"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Themeable from 'vuetify/lib/mixins/themeable';
+
 import { MODALS } from '@/constants';
 
-import { useModals } from '@/hooks/modals';
-
 export default {
+  mixins: [Themeable], // TODO: rewrite it to composition in the future
   props: {
     value: {
       type: String,
@@ -50,53 +61,53 @@ export default {
       default: () => [],
     },
   },
-
-  emits: ['click'],
-
-  setup() {
-    const modals = useModals();
-
-    const wrapperClickHandler = (event) => {
-      if (event.target.tagName !== 'IMG') {
+  methods: {
+    wrapperClickHandler(e) {
+      if (e.target.tagName !== 'IMG') {
         return;
       }
 
-      event.preventDefault();
-      event.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
 
-      modals.show({
+      this.$modals.show({
         name: MODALS.imageViewer,
         config: {
-          src: event.target.getAttribute('src'),
+          src: e.target.getAttribute('src'),
         },
       });
-    };
-
-    return {
-      wrapperClickHandler,
-    };
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.text-editor-blurred {
-  :deep(.v-field__input) {
-    min-height: 150px;
-    align-items: flex-start;
-    overflow: auto;
-  }
-
-  :deep(img) {
-    cursor: pointer !important;
-  }
+.v-label {
+  left: 0;
+  right: auto;
+  position: absolute;
 }
 
-.text-editor-blurred__disabled {
-  color: rgba(var(--v-theme-on-surface), 0.38);
+.v-text-field {
+  padding-top: 28px !important;
 
-  :deep(img) {
-    pointer-events: all !important;
+  &__slot {
+    min-height: 150px;
+    max-width: 100%;
+
+    & ::v-deep img {
+      cursor: pointer !important;
+    }
+  }
+
+  &--input {
+    &__disabled {
+      color: rgba(0, 0, 0, 0.38);
+
+      & ::v-deep img {
+        pointer-events: all !important;
+      }
+    }
   }
 }
 </style>

@@ -49,13 +49,11 @@ const getVariablesFromNode = (node) => {
       return variables;
     }
     case 'Program':
-      return (
-        node.body?.reduce((acc, bodyNode) => {
-          acc.push(...getVariablesFromNode(bodyNode));
+      return node.body?.reduce((acc, bodyNode) => {
+        acc.push(...getVariablesFromNode(bodyNode));
 
-          return acc;
-        }, []) ?? []
-      );
+        return acc;
+      }, []) ?? [];
     case 'PathExpression':
       return node?.original ? [node.original] : [];
     case 'SubExpression':
@@ -77,7 +75,6 @@ const getVariablesFromNode = (node) => {
  * @param {string} template
  * @returns {string[]}
  */
-export const getTemplateVariables = template =>
-  getVariablesFromNode(Handlebars.parseWithoutProcessing(normalizeHandlebarsNbsp(template))).filter(
-    variable => !Handlebars.helpers[variable],
-  );
+export const getTemplateVariables = template => getVariablesFromNode(
+  Handlebars.parseWithoutProcessing(normalizeHandlebarsNbsp(template)),
+).filter(variable => !Handlebars.helpers[variable]);

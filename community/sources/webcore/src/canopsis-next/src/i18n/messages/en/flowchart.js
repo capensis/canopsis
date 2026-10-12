@@ -33,13 +33,12 @@ export default {
     image: 'Image',
   },
   panzoom: {
-    helpText:
-      'Useful shortcuts:\n' +
-      'Ctrl + mouse wheel - zoom in/out\n' +
-      'Ctrl + Left mouse click + drag - pan the area\n' +
-      'Middle mouse click + drag - pan the area\n' +
-      'Shift + mouse wheel - horizontal scroll\n' +
-      'Alt + mouse wheel - vertical scroll\n',
+    helpText: 'Useful shortcuts:\n'
+      + 'Ctrl + mouse wheel - zoom in/out\n'
+      + 'Ctrl + Left mouse click + drag - pan the area\n'
+      + 'Middle mouse click + drag - pan the area\n'
+      + 'Shift + mouse wheel - horizontal scroll\n'
+      + 'Alt + mouse wheel - vertical scroll\n',
   },
   errors: {
     pointsRequired: 'The points must be added',

@@ -10,7 +10,7 @@
       :columns="widget.parameters.widgetColumns"
       :entities="entities"
       :meta="meta"
-      :pending="pending"
+      :loading="pending"
       :query="query"
       selectable
       @update:query="updateQuery"
@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { ENTITY_FIELDS, WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES, ENTITY_FIELDS } from '@/constants';
 
-import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
 import { convertQueryToRequest } from '@/helpers/query';
+import { formToWidget, widgetToForm } from '@/helpers/entities/widget/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
@@ -37,7 +37,6 @@ export default {
   components: {
     EntitiesListTableWithPagination,
   },
-
   props: {
     title: {
       type: String,
@@ -48,30 +47,13 @@ export default {
       default: () => ({}),
     },
   },
-
   setup(props) {
     const { t } = useI18n();
-    const { fetchContextEntitiesListWithoutStore } = useEntity();
 
     const entities = ref([]);
     const meta = ref({});
 
-    const widget = computed(() => formToWidget(widgetToForm({
-      type: WIDGET_TYPES.context,
-      parameters: {
-        widgetColumns: [
-          {
-            value: ENTITY_FIELDS.name,
-            label: t('common.name'),
-          },
-          {
-            value: ENTITY_FIELDS.type,
-            label: t('common.type'),
-          },
-        ],
-      },
-    })));
-
+    const { fetchContextEntitiesListWithoutStore } = useEntity();
     const {
       pending,
       query,
@@ -94,16 +76,32 @@ export default {
       },
     });
 
+    const widget = computed(() => formToWidget(widgetToForm({
+      type: WIDGET_TYPES.context,
+      parameters: {
+        widgetColumns: [
+          {
+            value: ENTITY_FIELDS.name,
+            label: t('common.name'),
+          },
+          {
+            value: ENTITY_FIELDS.type,
+            label: t('common.type'),
+          },
+        ],
+      },
+    })));
+
     onMounted(() => fetchList());
 
     return {
       entities,
       meta,
+      widget,
       pending,
       query,
-      widget,
-
       updateQuery,
+      fetchList,
     };
   },
 };

@@ -1,119 +1,72 @@
 <template>
-  <div class="planning-expand-panel">
-    <v-tabs
-      v-model="activeTab"
-      color="primary"
-      class="secondary lighten-1"
-      align-tabs="center"
-    >
-      <v-tab :value="TABS.description">
-        {{ t('common.description') }}
-      </v-tab>
-      <v-tab :value="TABS.periods">
-        {{ t('common.periods') }}
-      </v-tab>
-    </v-tabs>
-
-    <v-window v-model="activeTab">
-      <c-window-expand-item :value="TABS.description">
-        <pre class="planning-expand-panel__pre">{{
-          pbehaviorException.description || '-'
-        }}</pre>
-      </c-window-expand-item>
-
-      <c-window-expand-item :value="TABS.periods">
-        <c-advanced-data-table
-          :items="pbehaviorException.exdates || []"
-          :headers="headers"
-          item-key="begin"
-          hide-actions
-          no-pagination
-        >
-          <template #begin="{ item }">
-            {{ formatDate(item.begin) }}
-          </template>
-          <template #end="{ item }">
-            {{ formatDate(item.end) }}
-          </template>
-          <template #type="{ item }">
-            <c-layout v-if="item.type" gap="2" align="center">
-              <v-chip
-                v-if="item.type.icon_name"
-                :color="item.type.color"
-                class="planning-expand-panel__type-chip"
-              >
-                <v-icon
-                  :color="getIconColor(item.type.color)"
-                  :icon="item.type.icon_name"
-                  size="18"
-                />
-              </v-chip>
-              <span>{{ item.type.name || item.type }}</span>
-            </c-layout>
-            <span v-else>-</span>
-          </template>
-        </c-advanced-data-table>
-      </c-window-expand-item>
-    </v-window>
-  </div>
+  <v-tabs
+    background-color="secondary lighten-1"
+    slider-color="primary"
+    dark
+    centered
+  >
+    <v-tab>{{ $t('common.description') }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="pa-3 secondary lighten-2"
+        column
+      >
+        <v-flex xs12>
+          <v-card>
+            <v-card-text>
+              <pre>{{ pbehaviorException.description }}</pre>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <v-tab>{{ $t('common.periods') }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="pa-3 secondary lighten-2"
+        column
+      >
+        <v-flex xs12>
+          <v-card>
+            <v-card-text>
+              <pbehavior-exceptions-field
+                :exdates="preparedPbehaviorExceptionExdates"
+                with-exdate-type
+                disabled
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { pbehaviorExceptionToForm } from '@/helpers/entities/pbehavior/exception/form';
 
-import { getMostReadableTextColor } from '@/helpers/color';
-import { convertDateToString } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
-
-const TABS = {
-  description: 'description',
-  periods: 'periods',
-};
+import PbehaviorExceptionsField from '../fields/pbehavior-exceptions-field.vue';
 
 export default {
+  components: { PbehaviorExceptionsField },
   props: {
     pbehaviorException: {
       type: Object,
       default: () => ({}),
     },
   },
+  setup(props) {
+    const preparedPbehaviorExceptionExdates = computed(() => {
+      const { exdates } = pbehaviorExceptionToForm(props.pbehaviorException);
 
-  setup() {
-    const { t } = useI18n();
-
-    const activeTab = ref(TABS.description);
-    const headers = computed(() => [
-      { value: 'begin', text: t('common.begin'), sortable: false },
-      { value: 'end', text: t('common.end'), sortable: false },
-      { value: 'type', text: t('common.type'), sortable: false },
-    ]);
-    const formatDate = value => convertDateToString(value, DATETIME_FORMATS.long);
-    const getIconColor = color => getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+      return exdates;
+    });
 
     return {
-      TABS,
-      activeTab,
-      headers,
-      formatDate,
-      getIconColor,
-      t,
+      preparedPbehaviorExceptionExdates,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.planning-expand-panel {
-  &__pre {
-    margin: 0;
-    white-space: pre-wrap;
-  }
-  &__type-chip {
-    width: 42px;
-    height: 24px;
-  }
-}
-</style>

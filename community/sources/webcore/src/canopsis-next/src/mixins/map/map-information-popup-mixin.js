@@ -20,12 +20,7 @@ export const mapInformationPopupMixin = {
       type: Boolean,
       default: false,
     },
-    pauseEnabled: {
-      type: Boolean,
-      default: false,
-    },
   },
-
   data() {
     return {
       positionX: 0,
@@ -33,7 +28,6 @@ export const mapInformationPopupMixin = {
       activePoint: undefined,
     };
   },
-
   methods: {
     openPopup(point, event) {
       const { top, left, width } = event.target.getBoundingClientRect();

@@ -19,7 +19,7 @@
 <script>
 import { nextTick, ref, toRef } from 'vue';
 
-import { EVENT_FILTER_EXPAND_PANEL_TABS, USER_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS, EVENT_FILTER_EXPAND_PANEL_TABS } from '@/constants';
 
 import { useCRUDPermissions } from '@/hooks/auth';
 
@@ -30,8 +30,9 @@ import EventFiltersList from '@/components/other/event-filter/event-filters-list
 import { useNotificationActiveId } from './hooks/notifications';
 
 export default {
-  components: { EventFiltersList },
-
+  components: {
+    EventFiltersList,
+  },
   props: {
     items: {
       type: Array,
@@ -43,22 +44,20 @@ export default {
     },
     meta: {
       type: Object,
-      default: () => ({}),
+      default: () => {},
     },
     options: {
       type: Object,
-      default: () => ({}),
+      default: () => {},
     },
     activeId: {
       type: String,
       required: false,
     },
   },
-
-  emits: ['update:options', 'refresh'],
-
   setup(props, { emit }) {
     const eventFiltersListEl = ref(null);
+
     const {
       hasCreateAccess: hasCreateAnyEventFilterAccess,
       hasUpdateAccess: hasUpdateAnyEventFilterAccess,
@@ -66,21 +65,37 @@ export default {
     } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.eventFilter);
 
     const refresh = () => emit('refresh');
-    const { showDuplicateRuleModal, showEditRuleModal, showDeleteRuleModal } =
-      useEventFilterActions(refresh);
 
+    const {
+      showDuplicateRuleModal,
+      showEditRuleModal,
+      showDeleteRuleModal,
+    } = useEventFilterActions(refresh);
+
+    /**
+     * Expands the given rule in the event filters list and switches the expand panel to the errors tab.
+     *
+     * @param {Object} rule - The rule object to expand. Defaults to an empty object.
+     * @sideEffect Manipulates refs to expand the rule and set the active tab.
+     */
     const showRuleExpandPanelErrorTab = (rule = {}) => {
+      /**
+       * Wait for the list and its child refs to render so advancedDataTable/dataTable
+       * exist before calling expand
+       */
       nextTick(() => {
-        eventFiltersListEl.value?.$refs?.advancedDataTable?.toggleExpand?.(rule);
+        eventFiltersListEl.value?.$refs?.advancedDataTable?.$refs?.dataTable?.expand?.(rule);
 
+        /**
+         * After expanding the row, wait one more tick for the expand panel to
+         * mount/update, then switch the expand panel to the errors tab
+         */
         nextTick(() => {
           if (
-            eventFiltersListEl.value?.$refs?.expandPanel?.activeTab &&
-            eventFiltersListEl.value.$refs.expandPanel.activeTab !==
-              EVENT_FILTER_EXPAND_PANEL_TABS.errors
+            eventFiltersListEl.value?.$refs?.expandPanel?.activeTab
+            && eventFiltersListEl.value.$refs.expandPanel.activeTab !== EVENT_FILTER_EXPAND_PANEL_TABS.errors
           ) {
-            eventFiltersListEl.value.$refs.expandPanel.activeTab =
-              EVENT_FILTER_EXPAND_PANEL_TABS.errors;
+            eventFiltersListEl.value.$refs.expandPanel.activeTab = EVENT_FILTER_EXPAND_PANEL_TABS.errors;
           }
         });
       });
@@ -94,13 +109,14 @@ export default {
 
     return {
       eventFiltersListEl,
+
       hasCreateAnyEventFilterAccess,
       hasUpdateAnyEventFilterAccess,
       hasDeleteAnyEventFilterAccess,
+
       showDuplicateRuleModal,
       showEditRuleModal,
       showDeleteRuleModal,
-      refresh,
     };
   },
 };

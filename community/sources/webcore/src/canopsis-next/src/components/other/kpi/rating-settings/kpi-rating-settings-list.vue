@@ -11,39 +11,45 @@
     hide-actions
     @update:options="$emit('update:options', $event)"
   >
-    <template #toolbar>
-      <v-col cols="12">
+    <template #toolbar="">
+      <v-flex xs12>
         <v-expand-transition>
-          <c-layout v-if="changedIds.length" class="mt-3">
-            <v-btn color="primary" variant="outlined" @click="resetEnabledRatingSettings">
+          <v-layout
+            v-if="changedIds.length"
+            class="mt-3"
+          >
+            <v-btn
+              color="primary"
+              outlined
+              @click="resetEnabledRatingSettings"
+            >
               {{ $t('common.cancel') }}
             </v-btn>
-            <v-btn class="ml-2" color="primary" @click="submit">
+            <v-btn
+              class="ml-2"
+              color="primary"
+              @click="submit"
+            >
               {{ $t('common.submit') }}
             </v-btn>
-          </c-layout>
+          </v-layout>
         </v-expand-transition>
-      </v-col>
+      </v-flex>
     </template>
-
     <template #enabled="{ item }">
-      <c-layout align="center">
-        <v-checkbox-btn
-          :model-value="isEnabledRatingSetting(item)"
+      <v-layout align-center>
+        <v-simple-checkbox
+          :value="isEnabledRatingSetting(item)"
           :disabled="!updatable"
           hide-details
-          @update:model-value="enableRatingSetting(item)"
+          @input="enableRatingSetting(item, $event)"
         />
-      </c-layout>
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { useI18n } from '@/hooks/i18n';
-
 export default {
   props: {
     ratingSettings: {
@@ -56,7 +62,7 @@ export default {
     },
     totalItems: {
       type: Number,
-      default: 0,
+      required: false,
     },
     pending: {
       type: Boolean,
@@ -67,47 +73,32 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'change-selected'],
-
-  setup() {
-    const { t } = useI18n();
-
-    const headers = computed(() => [
-      { value: 'enabled', width: 100, sortable: false },
-      { text: t('common.criteria'), value: 'label', sortable: false },
-    ]);
-
-    return {
-      headers,
-    };
-  },
-
   data() {
     return {
       changed: [],
     };
   },
-
   computed: {
     changedIds() {
       return this.changed.map(({ id }) => id);
     },
-  },
 
+    headers() {
+      return [
+        { value: 'enabled', width: 100, sortable: false },
+        { text: this.$t('common.criteria'), value: 'label', sortable: false },
+      ];
+    },
+  },
   watch: {
     ratingSettings: 'resetEnabledRatingSettings',
   },
-
   methods: {
     submit() {
-      this.$emit(
-        'change-selected',
-        this.changed.map(ratingSetting => ({
-          ...ratingSetting,
-          enabled: !ratingSetting.enabled,
-        })),
-      );
+      this.$emit('change-selected', this.changed.map(ratingSetting => ({
+        ...ratingSetting,
+        enabled: !ratingSetting.enabled,
+      })));
     },
 
     isRatingSettingChanged(ratingSetting) {

@@ -1,43 +1,44 @@
 <template>
-  <widget-settings-item :title="t('settings.serviceWeatherModalTypes.title')">
+  <widget-settings-item :title="$t('settings.serviceWeatherModalTypes.title')">
     <v-radio-group
-      :model-value="modelValue"
-      @update:model-value="$emit('update:modelValue', $event)"
+      v-field="value"
+      :name="name"
     >
       <v-radio
-        :value="SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo"
-        :label="t('settings.serviceWeatherModalTypes.fields.moreInfo')"
+        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo"
+        :label="$t('settings.serviceWeatherModalTypes.fields.moreInfo')"
         color="primary"
       />
       <v-radio
-        :value="SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList"
-        :label="t('settings.serviceWeatherModalTypes.fields.alarmList')"
+        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList"
+        :label="$t('settings.serviceWeatherModalTypes.fields.alarmList')"
         color="primary"
       />
       <v-radio
-        :value="SERVICE_WEATHER_WIDGET_MODAL_TYPES.both"
-        :label="t('settings.serviceWeatherModalTypes.fields.both')"
+        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.both"
+        :label="$t('settings.serviceWeatherModalTypes.fields.both')"
         color="primary"
       />
     </v-radio-group>
   </widget-settings-item>
 </template>
 
-<script setup>
+<script>
 import { SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
-defineProps({
-  modelValue: {
-    type: String,
-    default: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+export default {
+  components: { WidgetSettingsItem },
+  props: {
+    value: {
+      type: String,
+      default: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+    },
+    name: {
+      type: String,
+      default: 'modalType',
+    },
   },
-});
-
-defineEmits(['update:modelValue']);
-
-const { t } = useI18n();
+};
 </script>

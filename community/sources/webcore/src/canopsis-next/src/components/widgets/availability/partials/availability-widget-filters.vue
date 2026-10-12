@@ -1,12 +1,12 @@
 <template>
-  <c-layout class="availability-widget-filters col-gap-6 row-gap-3" wrap>
+  <v-layout class="availability-widget-filters col-gap-6 row-gap-3" wrap>
     <c-availability-advanced-search
       :searches="searches"
       class="mt-0 availability-widget-filters__search"
-      @submit="$emit('submit:search', $event)"
-      @reset="$emit('reset:search')"
-      @toggle-pin:search="$emit('toggle-pin:search', $event)"
-      @remove:search="$emit('remove:search', $event)"
+      @submit="updateSearch"
+      @reset="resetSearch"
+      @toggle-pin:search="togglePinSearchInUserPreferences"
+      @remove:search="removeSearchFromUserPreferences"
     />
     <c-quick-date-interval-field
       v-if="showInterval"
@@ -16,24 +16,24 @@
       short
       with-hours
       allow-future
-      @update:interval="$emit('update:interval', $event)"
+      @input="$emit('update:interval', $event)"
     />
-    <c-layout
+    <v-layout
       v-if="showFilter"
       class="availability-widget-filters__filter-wrapper"
-      align="end"
+      align-end
     >
       <filter-selector
         :label="$t('settings.selectAFilter')"
         :filters="userFilters"
         :locked-filters="widgetFilters"
         :locked-value="lockedFilter"
-        :model-value="filters"
+        :value="filters"
         :disabled="filterDisabled"
         class="availability-widget-filters__filter-selector mr-4"
         clearable
         hide-details
-        @update:model-value="$emit('update:filters', $event)"
+        @input="$emit('update:filters', $event)"
       />
       <filters-list-btn
         :widget-id="widgetId"
@@ -42,36 +42,32 @@
         private
         with-entity
       />
-    </c-layout>
+    </v-layout>
 
     <availability-display-parameter-field
-      :model-value="displayParameter"
+      :value="displayParameter"
       :label="$t('common.value')"
       class="availability-widget-filters__parameter"
-      @update:model-value="$emit('update:display-parameter', $event)"
+      @input="$emit('update:display-parameter', $event)"
     />
     <availability-show-type-field
-      :model-value="type"
+      :value="type"
       :label="$t('common.show')"
       class="availability-widget-filters__show-type"
-      @update:model-value="$emit('update:type', $event)"
+      @input="$emit('update:type', $event)"
     />
     <c-enabled-field
-      :model-value="trend"
+      :value="trend"
       :label="$t('settings.showTrend')"
-      class="mt-0"
-      color="primary"
       hide-details
-      inline
-      no-margin
-      @update:model-value="$emit('update:trend', $event)"
+      @input="$emit('update:trend', $event)"
     />
     <availability-value-filter-field
       v-model="localValueFilter"
       :show-type="type"
       :max-seconds="maxValueFilterSeconds"
       class="availability-widget-filters__value-filter"
-      @update:model-value="handleUpdateValueFilter"
+      @input="handleUpdateValueFilter"
     />
     <c-action-btn
       v-if="showExport"
@@ -80,20 +76,22 @@
       icon="cloud_download"
       @click="$emit('export')"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { debounce } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import { ref, toRef, computed, watch } from 'vue';
 
 import { AVAILABILITY_QUICK_RANGES } from '@/constants';
 
+import { useWidgetAdvancedSearchSavedItems } from '@/hooks/widget/advanced-search-saved-items';
+
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import AvailabilityDisplayParameterField from '@/components/other/availability/form/fields/availability-display-parameter-field.vue';
 import AvailabilityShowTypeField from '@/components/other/availability/form/fields/availability-show-type-field.vue';
 import AvailabilityValueFilterField from '@/components/other/availability/form/fields/availability-value-filter-field.vue';
-import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 export default {
   components: {
@@ -103,7 +101,6 @@ export default {
     FilterSelector,
     FiltersListBtn,
   },
-
   props: {
     widgetId: {
       type: String,
@@ -114,9 +111,9 @@ export default {
       required: false,
       default: () => ({}),
     },
-    searches: {
+    columns: {
       type: Array,
-      default: () => [],
+      required: false,
     },
     userFilters: {
       type: Array,
@@ -151,21 +148,6 @@ export default {
       required: false,
     },
   },
-
-  emits: [
-    'submit:search',
-    'reset:search',
-    'toggle-pin:search',
-    'remove:search',
-    'update:interval',
-    'update:filters',
-    'update:display-parameter',
-    'update:type',
-    'update:trend',
-    'update:value-filter',
-    'export',
-  ],
-
   setup(props, { emit }) {
     const localValueFilter = ref();
     const quickRanges = Object.values(AVAILABILITY_QUICK_RANGES);
@@ -177,6 +159,20 @@ export default {
     const type = computed(() => props.query?.showType);
     const trend = computed(() => props.query?.showTrend);
     const valueFilter = computed(() => props.query?.valueFilter);
+
+    const {
+      searches,
+      updateSearch,
+      resetSearch,
+      togglePinSearchInUserPreferences,
+      removeSearchFromUserPreferences,
+    } = useWidgetAdvancedSearchSavedItems(
+      {
+        widgetId: toRef(props, 'widgetId'),
+        query: toRef(props, 'query'),
+      },
+      emit,
+    );
 
     watch(
       valueFilter,
@@ -206,6 +202,12 @@ export default {
       displayParameter,
       type,
       trend,
+
+      searches,
+      updateSearch,
+      resetSearch,
+      togglePinSearchInUserPreferences,
+      removeSearchFromUserPreferences,
       handleUpdateValueFilter,
     };
   },
@@ -224,12 +226,9 @@ export default {
 
   &__search {
     min-width: 400px;
-    width: auto;
-    flex: 0 1 auto;
   }
 
-  &__show-type,
-  &__filter-selector {
+  &__show-type, &__filter-selector {
     width: 200px;
   }
 
@@ -241,8 +240,7 @@ export default {
     max-width: 400px;
   }
 
-  &__parameter,
-  &__value {
+  &__parameter, &__value {
     width: 150px;
   }
 }

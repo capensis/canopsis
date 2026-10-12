@@ -1,140 +1,91 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <span class="pl-4">
-      {{ t('kpi.filters.helpInformation') }}
+      {{ $t('kpi.filters.helpInformation') }}
     </span>
     <kpi-filters-list
-      :options="options"
+      :options.sync="options"
       :filters="filters"
-      :pending="pending"
-      :total-items="meta.total_count"
-      :duplicable="hasCreateAccess"
-      :removable="hasDeleteAccess"
-      :updatable="hasUpdateAccess"
+      :pending="filtersPending"
+      :total-items="filtersMeta.total_count"
+      :duplicable="hasCreateAnyKpiFiltersAccess"
+      :removable="hasDeleteAnyKpiFiltersAccess"
+      :updatable="hasUpdateAnyKpiFiltersAccess"
       @edit="showEditFilterModal"
       @duplicate="showDuplicateFilterModal"
       @remove="showDeleteFilterModal"
-      @update:options="updateOptions"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { omit } from 'lodash';
-import { onMounted } from 'vue';
 
-import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, USER_PERMISSIONS } from '@/constants';
+import { MODALS } from '@/constants';
 
-import { getQueryForList } from '@/helpers/entities/shared/query';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useLocalQueryWithOptions } from '@/hooks/query/shared';
-import { useFilter } from '@/hooks/store/modules/filter';
+import { entitiesFilterMixin } from '@/mixins/entities/filter';
+import { localQueryMixin } from '@/mixins/query/query';
+import { permissionsTechnicalKpiFiltersMixin } from '@/mixins/permissions/technical/kpi-filters';
 
 import KpiFiltersList from './kpi-filters-list.vue';
 
 export default {
   components: { KpiFiltersList },
+  mixins: [localQueryMixin, entitiesFilterMixin, permissionsTechnicalKpiFiltersMixin],
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    fetchList() {
+      this.fetchFiltersList({ params: this.getQuery() });
+    },
 
-  setup() {
-    const { t } = useI18n();
-    const modals = useModals();
-    const popups = usePopups();
-    const {
-      filters,
-      filtersMeta,
-      filtersPending,
-      fetchFiltersList,
-      createFilter,
-      updateFilter,
-      removeFilter,
-    } = useFilter();
-    const { hasCreateAccess, hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
-      USER_PERMISSIONS.technical.kpiFilters,
-    );
-
-    const {
-      options,
-      handler: fetchList,
-      updateOptions,
-    } = useLocalQueryWithOptions({
-      initialQuery: {
-        page: 1,
-        itemsPerPage: PAGINATION_LIMIT,
-        sortBy: [],
-        sortDesc: [],
-        search: '',
-      },
-      onUpdate: fetchQuery => fetchFiltersList({
-          params: getQueryForList(fetchQuery),
-        }),
-    });
-
-    const showEditFilterModal = filter => modals.show({
+    showEditFilterModal(filter) {
+      this.$modals.show({
         name: MODALS.createKpiFilter,
         config: {
           filter,
-          title: t('modals.createFilter.edit.title'),
+          title: this.$t('modals.createFilter.edit.title'),
           action: async (data) => {
-            const result = await updateFilter({ id: filter._id, data });
+            const result = await this.updateFilter({ id: filter._id, data });
 
-            popups.success({ text: t('success.default') });
-            await fetchList();
+            this.fetchFiltersListWithPreviousParams();
 
             return result;
           },
         },
       });
+    },
 
-    const showDuplicateFilterModal = filter => modals.show({
+    showDuplicateFilterModal(filter) {
+      this.$modals.show({
         name: MODALS.createKpiFilter,
         config: {
           filter: omit(filter, ['_id']),
-          title: t('modals.createFilter.duplicate.title'),
+          title: this.$t('modals.createFilter.duplicate.title'),
           action: async (data) => {
-            const result = await createFilter({ data });
+            const result = await this.createFilter({ data });
 
-            popups.success({ text: t('success.default') });
-            await fetchList();
+            this.fetchFiltersListWithPreviousParams();
 
             return result;
           },
         },
       });
+    },
 
-    const showDeleteFilterModal = id => modals.show({
+    showDeleteFilterModal(id) {
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await removeFilter({ id });
+            await this.removeFilter({ id });
 
-            popups.success({ text: t('success.default') });
-            await fetchList();
+            this.fetchFiltersListWithPreviousParams();
           },
         },
       });
-
-    onMounted(fetchList);
-
-    return {
-      t,
-      filters,
-      meta: filtersMeta,
-      pending: filtersPending,
-      options,
-      hasCreateAccess,
-      hasUpdateAccess,
-      hasDeleteAccess,
-      updateOptions,
-      fetchList,
-      showEditFilterModal,
-      showDuplicateFilterModal,
-      showDeleteFilterModal,
-    };
+    },
   },
 };
 </script>

@@ -1,63 +1,62 @@
 <template>
-  <c-lazy-search-field
-    :value="selectedItem"
+  <v-select
+    v-validate="rules"
+    v-field="category"
     :label="$t('common.category')"
-    :items="items"
-    :loading="wholePending || creating"
+    :loading="entityCategoriesPending || creating"
     :readonly="creating"
-    :has-more="hasMoreItems"
+    :items="entityCategories"
+    :error-messages="errors.collect(name)"
     :name="name"
     :hide-details="hideDetails"
-    :clearable="isClearable"
-    :required="required"
+    :clearable="!required"
     class="mt-0"
     item-text="name"
     item-value="_id"
-    autocomplete
     return-object
-    @update:value="changeSelectedItems"
-    @fetch="fetchItems"
-    @fetch:more="fetchMoreItems"
-    @update:search="updateSearch"
+    @keydown.enter.prevent="createCategory"
   >
-    <template v-if="addable" #prepend-item>
-      <div
-        class="c-entity-category-field__create-wrapper"
-        @mousedown.stop
-        @click.stop
-        @keydown.stop
+    <template
+      v-if="addable"
+      #append-item=""
+    >
+      <v-text-field
+        v-model.trim="newCategory"
+        v-validate="newCategoryRules"
+        ref="createField"
+        :label="$t('service.createCategory')"
+        :error-messages="errors.collect(newCategoryFieldName)"
+        :name="newCategoryFieldName"
+        class="pb-3 pt-1 px-3"
+        hide-details
+        @keyup.enter="createCategory"
+        @blur="clearCategory"
       >
-        <c-text-field
-          :model-value="newCategory"
-          :label="$t('service.createCategory')"
-          :placeholder="$t('service.createCategory')"
-          :name="newCategoryFieldName"
-          :unique="isCategoryNameUnique"
-          :disabled="creating"
-          class="c-entity-category-field__create px-3 pt-1 pb-3"
-          hide-details
-          hide-label
-          @update:model-value="newCategory = $event"
-          @keydown.enter.stop.prevent="createCategory"
-          @blur="clearCategory"
-        >
-          <template #append-inner>
-            <c-help-icon :text="$t('service.createCategoryHelp')" icon="help" left />
-          </template>
-        </c-text-field>
-      </div>
+        <template #append="">
+          <c-help-icon
+            :text="$t('service.createCategoryHelp')"
+            icon="help"
+            left
+          />
+        </template>
+      </v-text-field>
     </template>
-  </c-lazy-search-field>
+  </v-select>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { MAX_LIMIT } from '@/constants';
 
-import { useFormContext } from '@/hooks/form';
-import { useLazySearch } from '@/hooks/form/lazy-search';
-import { useEntityCategory } from '@/hooks/store/modules/entity-category';
+import { formBaseMixin } from '@/mixins/form';
+import entitiesEntityCategoryMixin from '@/mixins/entities/entity-category';
 
 export default {
+  inject: ['$validator'],
+  mixins: [formBaseMixin, entitiesEntityCategoryMixin],
+  model: {
+    prop: 'category',
+    event: 'input',
+  },
   props: {
     category: {
       type: [Object, String],
@@ -75,108 +74,77 @@ export default {
       type: Boolean,
       default: false,
     },
-    clearable: {
-      type: Boolean,
-      default: undefined,
-    },
     hideDetails: {
       type: Boolean,
       default: false,
     },
   },
-
-  emits: ['input', 'update:category', 'update:selected-items'],
-
-  setup(props, { emit }) {
-    const form = useFormContext();
-    const { createEntityCategory, fetchCategoriesListWithoutStore } = useEntityCategory();
-    const newCategory = ref('');
-    const creating = ref(false);
-    const {
-      selectedItem,
-      items,
-      wholePending,
-      hasMoreItems,
-      fetchItems,
-      fetchMoreItems,
-      changeSelectedItems,
-      updateSearch,
-    } = useLazySearch(
-      {
-        value: toRef(props, 'category'),
-        idKey: '_id',
-        idParamsKey: 'ids',
-        fetchHandler: fetchCategoriesListWithoutStore,
-        returnObject: true,
-        attachValue: true,
-      },
-      emit,
-    );
-
-    const newCategoryFieldName = computed(() => `${props.name}.create`);
-    const isClearable = computed(() => props.clearable ?? !props.required);
-    const categoryNames = computed(() =>
-      items.value
-        .map(({ name: categoryName = '' }) => categoryName.trim().toLowerCase())
-        .filter(Boolean),
-    );
-    const isCategoryNameUnique = value =>
-      !categoryNames.value.includes(String(value).trim().toLowerCase());
-
-    const clearCategory = () => {
-      if (creating.value) {
-        return;
-      }
-
-      newCategory.value = '';
-      form.resetField(newCategoryFieldName.value, { value: '' });
-    };
-
-    const createCategory = async () => {
-      const name = newCategory.value.trim();
-
-      if (!name || creating.value) {
-        return;
-      }
-
-      const { valid } = await form.validateField(newCategoryFieldName.value);
-
-      if (!valid) {
-        return;
-      }
-
-      creating.value = true;
-
-      try {
-        const category = await createEntityCategory({ data: { name } });
-
-        await fetchItems();
-
-        changeSelectedItems(category);
-        newCategory.value = '';
-        form.resetField(newCategoryFieldName.value, { value: '' });
-      } finally {
-        creating.value = false;
-      }
-    };
-
+  data() {
     return {
-      newCategory,
-      creating,
-      newCategoryFieldName,
-      isClearable,
-      selectedItem,
-      items,
-      wholePending,
-      hasMoreItems,
-      fetchItems,
-      fetchMoreItems,
-      changeSelectedItems,
-      updateSearch,
-      isCategoryNameUnique,
-      createCategory,
-      clearCategory,
+      newCategory: '',
+      creating: false,
     };
+  },
+  computed: {
+    newCategoryFieldName() {
+      return `${this.name}.create`;
+    },
+
+    categoriesNames() {
+      return this.entityCategories.map(({ name }) => name.toLowerCase());
+    },
+
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
+    newCategoryRules() {
+      return {
+        unique: {
+          values: this.categoriesNames,
+        },
+      };
+    },
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    async createCategory() {
+      const isValid = await this.$validator.validate(this.newCategoryFieldName);
+
+      if (!isValid || !this.newCategory) {
+        return;
+      }
+
+      this.creating = true;
+
+      const category = await this.createEntityCategory({
+        data: {
+          name: this.newCategory,
+        },
+      });
+
+      await this.fetchList();
+
+      this.creating = false;
+      this.clearCategory();
+
+      this.updateModel(category);
+    },
+
+    clearCategory() {
+      this.$refs.createField.blur();
+      this.newCategory = '';
+    },
+
+    fetchList() {
+      return this.fetchEntityCategoriesList({
+        params: { limit: MAX_LIMIT },
+      });
+    },
   },
 };
 </script>

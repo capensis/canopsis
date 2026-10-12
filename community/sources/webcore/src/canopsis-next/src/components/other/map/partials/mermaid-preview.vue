@@ -1,19 +1,24 @@
 <template>
-  <c-zoom-overlay skip-alt skip-shift>
+  <c-zoom-overlay
+    skip-alt
+    skip-shift
+  >
     <panzoom
       ref="panzoom"
       :style="containerStyles"
       :help-text="$t('mermaid.panzoom.helpText')"
       class="mermaid-preview"
     >
-      <mermaid-code-preview :value="map.parameters.code" class="mermaid-preview__preview" />
+      <mermaid-code-preview
+        :value="map.parameters.code"
+        class="mermaid-preview__preview"
+      />
       <mermaid-points-preview
         :points="map.parameters.points"
         :popup-template="popupTemplate"
         :popup-actions="popupActions"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
-        :pause-enabled="pauseEnabled"
         class="mermaid-preview__points"
         @show:map="$emit('show:map', $event)"
         @show:alarms="$emit('show:alarms', $event)"
@@ -25,16 +30,11 @@
 <script>
 import Panzoom from '@/components/common/panzoom/panzoom.vue';
 
-import MermaidCodePreview from './mermaid-code-preview.vue';
 import MermaidPointsPreview from './mermaid-points-preview.vue';
+import MermaidCodePreview from './mermaid-code-preview.vue';
 
 export default {
-  components: {
-    Panzoom,
-    MermaidPointsPreview,
-    MermaidCodePreview,
-  },
-
+  components: { Panzoom, MermaidPointsPreview, MermaidCodePreview },
   props: {
     map: {
       type: Object,
@@ -56,28 +56,17 @@ export default {
       type: Boolean,
       default: false,
     },
-    pauseEnabled: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['show:map', 'show:alarms'],
-
   computed: {
     containerStyles() {
       const points = this.map.parameters.points ?? [];
-      const minHeight = Math.max.apply(
-        null,
-        points.map(({ y }) => y),
-      );
+      const minHeight = Math.max.apply(null, points.map(({ y }) => y));
 
       return {
         minHeight: `${minHeight}px`,
       };
     },
   },
-
   watch: {
     map() {
       this.$refs.panzoom.reset();

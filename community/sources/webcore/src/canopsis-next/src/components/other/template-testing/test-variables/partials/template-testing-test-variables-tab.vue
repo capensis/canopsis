@@ -1,45 +1,27 @@
 <template>
-  <v-tab
-    :value="value"
-    :disabled="disabled"
-    :class="{ 'text-error': error }"
-    class="v-tab--tooltip"
-  >
-    <c-tooltip :disabled="!disabled" location="top">
-      <template #activator="{ props: activatorProps }">
-        <span v-bind="activatorProps" class="test-variables-tab__wrapper">
-          {{ t('templateTesting.testVariables') }}
+  <v-tab :disabled="disabled" class="v-tab--tooltip">
+    <v-tooltip :disabled="!disabled" top>
+      <template #activator="{ on }">
+        <span class="test-variables-tab__wrapper" v-on="on">
+          {{ $tc('templateTesting.testVariables') }}
         </span>
       </template>
-
-      <span>{{ t('templateTesting.testVariablesDisabledTooltip') }}</span>
-    </c-tooltip>
+      <span>{{ $t('templateTesting.testVariablesDisabledTooltip') }}</span>
+    </v-tooltip>
   </v-tab>
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n';
-
 export default {
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     disabled: {
       type: Boolean,
       default: false,
     },
-    value: {
-      type: [Number, String],
-      required: true,
-    },
-    error: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  setup() {
-    const { t } = useI18n();
-
-    return { t };
   },
 };
 </script>

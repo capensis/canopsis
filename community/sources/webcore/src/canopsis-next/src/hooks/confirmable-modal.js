@@ -5,8 +5,8 @@ import { MODALS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
-import { useRegisterClickOutsideHandler } from './click-outside';
 import { useModals } from './modals';
+import { useRegisterClickOutsideHandler } from './click-outside';
 
 /**
  * Hook to manage modal confirmation on unsaved form changes when attempting to close the modal.
@@ -19,16 +19,33 @@ import { useModals } from './modals';
  * @param {string} [options.modalName=MODALS.clickOutsideConfirmation] - Name of the modal to show for confirmation.
  * @param {Function} options.close - Function to call when the modal is closed without changes or after confirmation.
  * @param {Function} [options.comparator=isEqual] - Function used to compare the current form state with the original.
- * @returns {Object}
+ * @returns {void}
  *
  * @example
- * const form = ref({ name: '' });
+ * <template>
+ *   <form @submit.prevent="handleSubmit">
+ *     <input v-model="formData.name" type="text" />
+ *     <button type="submit">Submit</button>
+ *   </form>
+ * </template>
  *
- * useFormConfirmableCloseModal({
- *   form,
- *   submit,
- *   close,
- * });
+ * <script>
+ * import { ref } from 'vue';
+ * import { useFormConfirmableCloseModal, MODALS } from '@/hooks';
+ *
+ * export default {
+ *   setup() {
+ *     const formData = ref({ name: '' });
+ *     useFormConfirmableCloseModal({
+ *       form: formData,
+ *       submit: () => console.log('Form submitted'),
+ *       close: () => console.log('Modal closed'),
+ *     });
+ *
+ *     return { formData };
+ *   },
+ * };
+ * </script>
  */
 export const useFormConfirmableCloseModal = ({
   submit,
@@ -70,8 +87,8 @@ export const useFormConfirmableCloseModal = ({
     return equal;
   };
 
-  const updateOriginalForm = () => (originalForm.value = cloneDeep(unref(form)));
-  const updateOriginalFormField = (field, value) => (originalForm.value[field] = value);
+  const updateOriginalForm = () => originalForm.value = cloneDeep(unref(form));
+  const updateOriginalFormField = (field, value) => originalForm.value[field] = value;
 
   provide('$closeModal', () => {
     if (clickOutsideHandlerMethod()) {

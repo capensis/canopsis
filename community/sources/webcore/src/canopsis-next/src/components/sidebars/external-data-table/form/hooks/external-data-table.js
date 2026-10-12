@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 
-import { usePendingHandler } from '@/hooks/query/pending';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 /**
  * Provides reactive state and handler for fetching external data table columns.

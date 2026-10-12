@@ -11,9 +11,9 @@
 <script>
 import { onMounted } from 'vue';
 
-import { useChildObserver } from '@/hooks/observer';
-import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useEntity } from '@/hooks/store/modules/entity';
+import { usePeriodicRefreshChild } from '@/hooks/periodic-refresh';
+import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 
 import EntityInfosLogsList from '@/components/other/entity/entity-infos-logs-list.vue';
 
@@ -21,14 +21,12 @@ export default {
   components: {
     EntityInfosLogsList,
   },
-
   props: {
     alarm: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const { fetchEntityInfosLogsListWithoutStore } = useEntity();
 
@@ -41,30 +39,25 @@ export default {
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
       fetchListHandler: rest => fetchEntityInfosLogsListWithoutStore({
-          ...rest,
-          params: {
-            ...rest.params,
-            _id: props.alarm?.entity?._id,
-          },
-        }),
+        ...rest,
+
+        params: {
+          ...rest.params,
+
+          _id: props.alarm?.entity?._id,
+        },
+      }),
     });
 
-    const fetchListWithErrorHandling = async () => {
-      try {
-        await fetchList();
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    usePeriodicRefreshChild({ handler: fetchList });
 
-    useChildObserver({ key: '$periodicRefresh', handler: fetchListWithErrorHandling });
-    onMounted(fetchListWithErrorHandling);
+    onMounted(fetchList);
 
     return {
       items,
       meta,
-      options,
       pending,
+      options,
       updateOptions,
     };
   },

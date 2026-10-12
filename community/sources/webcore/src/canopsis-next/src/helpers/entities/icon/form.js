@@ -10,7 +10,6 @@
  * @typedef {Object} IconForm
  * @property {string} title
  * @property {boolean} fill_border
- * @property {string} [content]
  * @property {File} [file]
  */
 
@@ -27,7 +26,6 @@
 export const iconToForm = (icon = {}) => ({
   title: icon.title ?? '',
   fill_border: icon.fill_border ?? false,
-  content: icon.content ?? '',
   file: null,
 });
 
@@ -37,4 +35,8 @@ export const iconToForm = (icon = {}) => ({
  * @param {IconForm} form
  * @return {IconRequest}
  */
-export const formToRequest = ({ file, ...rest }) => (file ? { file, ...rest } : rest);
+export const formToRequest = ({ file, ...rest }) => (
+  file
+    ? { file, ...rest }
+    : rest
+);

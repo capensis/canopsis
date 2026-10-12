@@ -1,11 +1,13 @@
 <template>
   <v-menu
-    :model-value="visible"
-    :target="[positionX, positionY]"
+    ref="menu"
+    :value="visible"
+    :position-x="positionX"
+    :position-y="positionY"
     :close-on-content-click="false"
-    :location="location"
+    :ignore-click-outside="ignoreClickOutside"
     max-height="300"
-    @update:model-value="$emit('close')"
+    @input="$emit('close')"
   >
     <variables-list
       :items="items"
@@ -13,10 +15,10 @@
       :children-key="childrenKey"
       :value="value"
       :dense="dense"
+      :z-index="submenuZIndex"
       :show-value="showValue"
-      :hide-empty-value="hideEmptyValue"
       :clickable-parent="clickableParent"
-      @update:value="$emit('update:value', $event)"
+      @input="$emit('input', $event)"
     />
   </v-menu>
 </template>
@@ -26,7 +28,6 @@ import VariablesList from './variables-list.vue';
 
 export default {
   components: { VariablesList },
-
   props: {
     visible: {
       type: Boolean,
@@ -52,10 +53,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideEmptyValue: {
-      type: Boolean,
-      default: false,
-    },
     ignoreClickOutside: {
       type: Boolean,
       default: false,
@@ -76,12 +73,16 @@ export default {
       type: String,
       default: 'variables',
     },
-    location: {
-      type: String,
-      default: 'bottom start',
-    },
   },
-
-  emits: ['update:value', 'close'],
+  data() {
+    return {
+      submenuZIndex: undefined,
+    };
+  },
+  mounted() {
+    this.$watch(() => this.$refs.menu.activeZIndex, (zIndex) => {
+      this.submenuZIndex = zIndex + 1;
+    });
+  },
 };
 </script>

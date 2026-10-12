@@ -1,16 +1,22 @@
 <template>
-  <div class="junit-gantt-chart">
-    <div class="junit-gantt-chart__chart position-relative">
+  <div>
+    <v-layout
+      class="position-relative"
+      justify-center
+    >
       <horizontal-bar
         ref="horizontalBar"
         :labels="labels"
         :datasets="datasets"
         :options="options"
         :width="width"
-        :height="chartHeight"
+        :height="height"
       />
-      <div ref="tooltip" class="junit-gantt-chart__tooltip" />
-    </div>
+      <div
+        ref="tooltip"
+        class="v-tooltip__content menuable__content__active"
+      />
+    </v-layout>
     <c-table-pagination
       :total-items="totalItems"
       :items-per-page="query.itemsPerPage"
@@ -18,7 +24,7 @@
       :page="query.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
-      @update:pagination="updatePaginationOptions"
+      @input="updatePaginationOptions"
     />
   </div>
 </template>
@@ -30,8 +36,11 @@ import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 
-import HorizontalBar from './horizontal-bar.vue';
+const HorizontalBar = () => import(/* webpackChunkName: "Charts" */ './horizontal-bar.vue');
 
+/**
+ * Local constants
+ */
 const ICON_NAMES = {
   done: 'done',
   close: 'close',
@@ -52,12 +61,9 @@ const PASSED_STATUSES = [
 ];
 
 const MIN_SKIPPED_TO_SECTIONS_COUNT = 40;
-const ROW_HEIGHT = 32;
-const CHART_AXIS_HEIGHT = 48;
 
 export default {
   components: { HorizontalBar },
-
   props: {
     items: {
       type: Array,
@@ -84,9 +90,6 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:query'],
-
   computed: {
     itemsPerPageItems() {
       return [5, 10, 20];
@@ -96,14 +99,12 @@ export default {
       return this.items.map(({ name }) => name);
     },
 
-    chartHeight() {
-      if (this.height) {
-        return this.height;
-      }
-
-      return Math.max((this.items.length * ROW_HEIGHT) + CHART_AXIS_HEIGHT, 160);
-    },
-
+    /**
+     * We've using this value if test case was skipped with 0 time value.
+     * Otherwise we will not have possibility to see this test case in the chart.
+     *
+     * @returns {number}
+     */
     minSkippedTo() {
       const firstFrom = get(this.items, [0, 'from'], 0);
       const lastTo = get(this.items, [this.items.length - 1, 'to'], 0);
@@ -126,6 +127,7 @@ export default {
       const datasets = [
         {
           ...defaultDatasetParameters,
+
           backgroundColor: items.map(({ status }) => TEST_SUITE_COLORS[status]),
           data: items.map(({ from, time, to }) => [from, !time ? from + minSkippedTo : to]),
         },
@@ -134,6 +136,7 @@ export default {
       if (historical) {
         datasets.unshift({
           ...defaultDatasetParameters,
+
           backgroundColor: colorToRgba('#000', 0.2),
           data: items.map(({ from, avg_to: avgTo }) => [from, avgTo]),
         });
@@ -179,11 +182,12 @@ export default {
       };
     },
   },
-
   methods: {
     getTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
+
       const { time = 0, status, message } = this.items[dataPoint.dataIndex];
+
       const timeDiv = `<div>${time.toFixed(3)}s</div>`;
       const statusDiv = status !== TEST_SUITE_STATUSES.total
         ? `<div>${this.$t(`testSuite.statuses.${status}`)}${message ? `: ${message}` : ''}</div>`
@@ -217,7 +221,9 @@ export default {
       }
 
       if (icon) {
-        return `<i class="v-icon ${ICONS_COLORS[icon]}--text" style="font-size: 16px;">${icon}</i>`;
+        const iconClass = `v-icon material-icons ${ICONS_COLORS[icon]}--text`;
+
+        return `<i class="${iconClass}" style="font-size: 16px;">${icon}</i>`;
       }
 
       return '';
@@ -232,15 +238,20 @@ export default {
         avg_time: avgTime = 0,
         avg_status: avgStatus,
       } = item;
+
       const fixedTime = time.toFixed(3);
       const fixedAvgTime = avgTime.toFixed(3);
+
       const icon = `&nbsp;${this.getHistoricalTooltipIcon(item)}`;
+
       const statusMessage = status !== TEST_SUITE_STATUSES.total
         ? `${this.$t(`testSuite.statuses.${status}`)} `
         : '';
+
       const avgStatusMessage = avgStatus !== TEST_SUITE_STATUSES.total
         ? `${this.$t(`testSuite.statuses.${avgStatus}`)} `
         : '';
+
       const currentDiv = `<div>${this.$t('common.current')}: ${statusMessage}${fixedTime}s${icon}</div>`;
       const averageDiv = `<div>${this.$t('common.average')}: ${avgStatusMessage}${fixedAvgTime}s</div>`;
 
@@ -252,7 +263,6 @@ export default {
 
       if (tooltipModel.opacity === 0) {
         tooltipEl.style.opacity = 0;
-
         return;
       }
 
@@ -262,6 +272,7 @@ export default {
 
       const leftOffset = 10;
       const topOffset = 5;
+
       const position = horizontalBarEl.$refs.canvas.getBoundingClientRect();
       const tooltipPosition = tooltipEl.getBoundingClientRect();
       const top = (tooltipModel.caretY + (tooltipPosition.height / 2)) - topOffset;
@@ -286,29 +297,16 @@ export default {
     },
 
     updatePaginationOptions({ page, itemsPerPage }) {
-      this.$emit('update:query', { ...this.query, page, itemsPerPage });
+      this.$emit('input', { ...this.query, page, itemsPerPage });
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.junit-gantt-chart {
-  &__chart {
-    display: flex;
-    justify-content: center;
-  }
-
-  &__tooltip {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    padding: 5px 16px;
-    border-radius: 4px;
-    background: rgba(97, 97, 97, 0.9);
-    color: #fff;
-    font-size: 14px;
-    transition: all 0.2s linear;
-  }
+.v-tooltip__content {
+  position: absolute;
+  opacity: 0;
+  transition: all .2s linear;
 }
 </style>

@@ -49,24 +49,23 @@ import { indexesByKey } from '@/helpers/array';
  * @param {PatternFields | {}} [patternsFields = {}]
  * @return {PatternFieldsForm}
  */
-export const patternsFieldsToForm = (patternsFields = {}) =>
-  mapValues(patternsFields, fields =>
-    fields.map((field) => {
-      const formField = {
-        value: field.name,
-        alias: field.alias,
-        options: {
-          disabled: !field.enabled,
-        },
-      };
+export const patternsFieldsToForm = (patternsFields = {}) => mapValues(patternsFields, fields => (
+  fields.map((field) => {
+    const formField = {
+      value: field.name,
+      alias: field.alias,
+      options: {
+        disabled: !field.enabled,
+      },
+    };
 
-      if (field.only_absolute_time_cond) {
-        formField.options.operators = [PATTERN_OPERATORS.inRangeDates];
-      }
+    if (field.only_absolute_time_cond) {
+      formField.options.operators = [PATTERN_OPERATORS.inRangeDates];
+    }
 
-      return formField;
-    }),
-  );
+    return formField;
+  })
+));
 
 /**
  * Merge default pattern attributes with external attributes.
@@ -94,8 +93,11 @@ export const mergePatternAttributes = (defaultAttributes = [], externalAttribute
       return;
     }
 
-    mergedAttributes[index] = mergeWith({}, mergedAttributes[index], attribute, (a, b) =>
-      isArray(b) ? b : undefined,
+    mergedAttributes[index] = mergeWith(
+      {},
+      mergedAttributes[index],
+      attribute,
+      (a, b) => (isArray(b) ? b : undefined),
     );
   });
 

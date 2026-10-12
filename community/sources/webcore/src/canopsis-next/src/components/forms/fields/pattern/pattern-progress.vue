@@ -12,50 +12,45 @@
         error_outline
       </v-icon>
     </template>
-    <c-layout
-      v-if="failedReason"
-      class="mt-3"
-      gap="4"
-      column
-    >
+    <v-layout v-if="failedReason" class="gap-4 mt-3" column>
       <span class="error--text text-h6 font-weight-regular">
         {{ failedMessageText || $t('pattern.optimizationFailed', { reason: failedReason }) }}
       </span>
-      <c-layout gap="2" justify-center>
+      <v-layout class="gap-2" justify-center>
         <v-btn
           color="primary"
-          variant="outlined"
-          type="button"
+          outlined
           @click="close"
         >
           {{ closeButtonLabel || $t('common.close') }}
         </v-btn>
-        <v-btn color="primary" type="button" @click="tryAgain">
+        <v-btn
+          color="primary"
+          @click="tryAgain"
+        >
           {{ tryAgainButtonLabel || $t('common.tryAgain') }}
         </v-btn>
-      </c-layout>
-    </c-layout>
-    <c-layout
+      </v-layout>
+    </v-layout>
+    <v-layout
       v-else
-      class="mt-3"
-      gap="4"
+      class="gap-4 mt-3"
       justify-center
       column
     >
       <span class="primary--text text-h6 font-weight-regular">
         {{ inProgressText || $t('pattern.optimizationInProgress') }}
       </span>
-      <c-layout justify-center>
+      <v-layout justify-center>
         <v-btn
           color="primary"
-          variant="outlined"
-          type="button"
+          outlined
           @click="cancel"
         >
           {{ cancelButtonLabel || $t('pattern.cancelOptimization') }}
         </v-btn>
-      </c-layout>
-    </c-layout>
+      </v-layout>
+    </v-layout>
   </c-progress-overlay>
 </template>
 
@@ -102,7 +97,7 @@ export default {
 </script>
 
 <style lang="scss">
-.c-patterns-field__progress-overlay .c-progress-overlay__background {
-  outline: 3px solid var(--v-background-base);
-}
+  .c-patterns-field__progress-overlay .c-progress-overlay__background {
+    outline: 3px solid var(--v-background-base);
+  }
 </style>

@@ -1,80 +1,74 @@
 <template>
-  <c-layout gap="2" column>
+  <v-layout class="gap-2" column>
     <c-enabled-field
-      v-model="enabledField"
+      v-field="form.enabled"
       :disabled="onlyUserPrefs || isSelf"
       hide-details
       with-background
     />
 
     <c-id-field
-      v-model="idField"
+      v-field="form._id"
       :disabled="onlyUserPrefs || !isNew"
-      name="_id"
       autofocus
     />
 
     <c-name-field
-      v-model="nameField"
-      :label="t('common.username')"
-      :disabled="onlyUserPrefs || idpFieldsMap.name"
+      v-field="form.name"
+      :label="$t('common.username')"
+      :disabled="onlyUserPrefs || idpFieldsMap['name']"
       :autofocus="!isNew"
-      name="name"
       autocomplete="new-password"
       required
     />
 
     <c-form-block>
-      <c-form-block-row :label="t('user.email')">
-        <c-text-field
-          v-model="emailField"
-          :label="t('user.email')"
-          :disabled="onlyUserPrefs || idpFieldsMap.email"
+      <c-form-block-row :label="$t('user.firstName')">
+        <c-name-field
+          v-field="form.firstname"
+          :label="$t('user.firstName')"
+          :disabled="onlyUserPrefs || idpFieldsMap['firstname']"
+          name="firstname"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('user.lastName')">
+        <c-name-field
+          v-field="form.lastname"
+          :label="$t('user.lastName')"
+          :disabled="onlyUserPrefs || idpFieldsMap['lastname']"
+          name="lastname"
+        />
+      </c-form-block-row>
+
+      <c-form-block-row :label="$t('user.email')">
+        <v-text-field
+          v-field="form.email"
+          v-validate="'required|email'"
+          :label="$t('user.email')"
+          :disabled="onlyUserPrefs || idpFieldsMap['email']"
+          :error-messages="errors.collect('email')"
           name="email"
           autocomplete="new-password"
-          required
-          email
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('user.firstName')">
-        <c-text-field
-          v-model="firstNameField"
-          :label="t('user.firstName')"
-          :disabled="onlyUserPrefs || idpFieldsMap.firstname"
-          name="firstname"
-          autocomplete="new-password"
-        />
-      </c-form-block-row>
-
-      <c-form-block-row :label="t('user.lastName')">
-        <c-text-field
-          v-model="lastNameField"
-          :label="t('user.lastName')"
-          :disabled="onlyUserPrefs || idpFieldsMap.lastname"
-          name="lastname"
-          autocomplete="new-password"
-        />
-      </c-form-block-row>
-
-      <c-form-block-row :label="t('common.password')">
+      <c-form-block-row :label="$t('common.password')">
         <c-password-field
-          v-model="passwordField"
+          v-field="form.password"
           :required="isNew"
           :autofocus="onlyUserPrefs"
-          name="password"
           autocomplete="new-password"
           visibility
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.role', 2)">
+      <c-form-block-row :label="$tc('common.role', 2)">
         <c-role-field
-          v-model="rolesField"
-          :disabled="onlyUserPrefs || idpFieldsMap.roles"
-          :label="t('common.role', 2)"
+          v-field="form.roles"
+          :disabled="onlyUserPrefs || idpFieldsMap['roles']"
+          :label="$tc('common.role', 2)"
           :is-disabled-items="isDisabledRoleItem"
-          :show-count="3"
           name="roles"
           required
           multiple
@@ -82,65 +76,68 @@
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('user.language')">
+      <c-form-block-row :label="$t('user.language')">
         <c-language-field
-          v-model="uiLanguageField"
-          :label="t('user.language')"
-          name="ui_language"
+          v-field="form.ui_language"
+          :label="$t('user.language')"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('user.navigationType')">
-        <c-select
-          v-model="uiGroupsNavigationTypeField"
-          :label="t('user.navigationType')"
+      <c-form-block-row :label="$t('user.navigationType')">
+        <v-select
+          v-field="form.ui_groups_navigation_type"
+          :label="$t('user.navigationType')"
           :items="groupsNavigationItems"
           :menu-props="menuProps"
-          item-title="text"
-          item-value="value"
-          name="ui_groups_navigation_type"
           class="mt-0"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('common.theme', 2)">
-        <c-theme-field
-          v-model="uiThemeField"
-          name="ui_theme"
-          clearable
-        />
+      <c-form-block-row :label="$tc('common.theme', 1)">
+        <c-theme-field v-if="hasReadThemeAccess" v-field="form.ui_theme" clearable />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isNew" :label="t('common.authKey')" align-center>
+      <c-form-block-row
+        v-if="!isNew"
+        :label="$t('common.authKey')"
+        align-center
+      >
         <user-auth-key-field :value="user.authkey" />
       </c-form-block-row>
 
-      <c-form-block-row :label="t('role.defaultView')">
-        <view-selector v-model="defaultviewField" name="defaultview" />
+      <c-form-block-row :label="$t('role.defaultView')">
+        <view-selector v-field="form.defaultview" />
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import { GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES, USER_PERMISSIONS } from '@/constants';
 
-import { useAuth } from '@/hooks/auth';
-import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
+import { useAuth, useCRUDPermissions } from '@/hooks/auth';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 import UserAuthKeyField from '@/components/other/users/form/fields/user-auth-key-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     ViewSelector,
     UserAuthKeyField,
   },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     user: {
       type: Object,
       default: () => ({}),
@@ -154,75 +151,41 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const menuProps = { offsetY: true };
+
     const { t } = useI18n();
     const { currentUser } = useAuth();
+    const { hasReadAccess: hasReadThemeAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.profile.theme);
 
-    const {
-      enabledField,
-      idField,
-      nameField,
-      emailField,
-      firstNameField,
-      lastNameField,
-      passwordField,
-      rolesField,
-      uiLanguageField,
-      uiGroupsNavigationTypeField,
-      uiThemeField,
-      defaultviewField,
-    } = useFormModels({
-      enabledField: 'enabled',
-      idField: '_id',
-      nameField: 'name',
-      emailField: 'email',
-      firstNameField: 'firstname',
-      lastNameField: 'lastname',
-      passwordField: 'password',
-      rolesField: 'roles',
-      uiLanguageField: 'ui_language',
-      uiGroupsNavigationTypeField: 'ui_groups_navigation_type',
-      uiThemeField: 'ui_theme',
-      defaultviewField: 'defaultview',
-    });
+    const hasPassword = computed(() => (
+      Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(props.user?.source ?? '')
+    ));
 
     const groupsNavigationItems = computed(() => Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
-        text: t(`user.navigationTypes.${type}`),
-        value: type,
-      })),
-    );
+      text: t(`user.navigationTypes.${type}`),
+      value: type,
+    })));
 
     const idpFieldsMap = computed(() => (props.user?.idp_fields ?? []).reduce((acc, field) => {
-        acc[field] = true;
+      acc[field] = true;
 
-        return acc;
-      }, {}),
-    );
+      return acc;
+    }, {}));
 
-    const isSelf = computed(() => props.user._id === currentUser.value?._id);
+    const isSelf = computed(() => props.user._id === currentUser.value._id);
 
     const isDisabledRoleItem = item => (props.user?.idp_roles ?? []).includes(item._id);
 
     return {
-      t,
       menuProps,
-      enabledField,
-      idField,
-      nameField,
-      emailField,
-      firstNameField,
-      lastNameField,
-      passwordField,
-      rolesField,
-      uiLanguageField,
-      uiGroupsNavigationTypeField,
-      uiThemeField,
-      defaultviewField,
+
+      hasReadThemeAccess,
+      hasPassword,
       groupsNavigationItems,
       idpFieldsMap,
       isSelf,
+
       isDisabledRoleItem,
     };
   },

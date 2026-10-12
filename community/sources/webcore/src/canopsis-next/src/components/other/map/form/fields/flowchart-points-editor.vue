@@ -2,7 +2,7 @@
   <g class="flowchart-points-editor">
     <component
       v-for="{ point, x, y } in nonShapesIcons"
-      :is="'foreignObject'"
+      is="foreignObject"
       :key="point._id"
       :x="x"
       :y="y"
@@ -14,11 +14,14 @@
       @dblclick.stop="openEditPointByClick($event, point)"
       @mousedown.stop="startMoving(point)"
     >
-      <point-icon :size="iconSize" :entity="getPointIconEntity(point)" />
+      <point-icon
+        :size="iconSize"
+        :entity="point.entity"
+      />
     </component>
     <component
       v-for="{ point, x, y } in shapesIcons"
-      :is="'foreignObject'"
+      is="foreignObject"
       :key="point._id"
       :height="iconSize"
       :width="iconSize"
@@ -31,9 +34,15 @@
       @dblclick.stop="openEditPointByClick($event, point)"
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
     >
-      <point-icon :size="iconSize" :entity="getPointIconEntity(point)" />
+      <point-icon
+        :size="iconSize"
+        :entity="point.entity"
+      />
     </component>
-    <component :is="'foreignObject'" style="overflow: visible">
+    <component
+      is="foreignObject"
+      style="overflow: visible;"
+    >
       <point-form-dialog-menu
         :value="isDialogOpened"
         :position-x="clientX"
@@ -69,8 +78,8 @@ import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin
 
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
-import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 import PointFormDialogMenu from './point-form-dialog-menu.vue';
+import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 
 export default {
   inject: ['$flowchart'],
@@ -80,6 +89,10 @@ export default {
     PointIcon,
   },
   mixins: [formMixin, mapFlowchartPointsMixin],
+  model: {
+    prop: 'points',
+    event: 'input',
+  },
   props: {
     iconSize: {
       type: Number,
@@ -90,7 +103,6 @@ export default {
       default: false,
     },
   },
-  emits: ['input'],
   data() {
     return {
       pointsData: [],
@@ -108,7 +120,7 @@ export default {
   },
   computed: {
     existsEntities() {
-      return this.points.map(({ entity }) => entity?._id ?? entity);
+      return this.points.map(({ entity }) => entity);
     },
 
     isDialogOpened() {
@@ -161,7 +173,7 @@ export default {
     this.$flowchart.on('dblclick', this.openAddPointDialogByClick);
     this.$flowchart.on('contextmenu', this.handleContextmenu);
   },
-  beforeUnmount() {
+  beforeDestroy() {
     this.$flowchart.off('contextmenu', this.handleContextmenu);
     this.$flowchart.off('dblclick', this.openAddPointDialogByClick);
     this.$flowchart.off('mousedown', this.handleMouseDown);
@@ -169,7 +181,9 @@ export default {
   },
   methods: {
     updatePointInModel(data) {
-      this.updateModel(this.points.map(point => (point._id === data._id ? data : point)));
+      this.updateModel(
+        this.points.map(point => (point._id === data._id ? data : point)),
+      );
     },
 
     addPointToModel(data) {
@@ -177,11 +191,9 @@ export default {
     },
 
     removePointFromModel(data) {
-      this.updateModel(this.points.filter(point => data._id !== point._id));
-    },
-
-    getPointIconEntity(point) {
-      return point.entity?._id ?? point.entity;
+      this.updateModel(
+        this.points.filter(point => data._id !== point._id),
+      );
     },
 
     openContextmenu() {
@@ -202,11 +214,8 @@ export default {
 
     clearPointDialog() {
       this.addingPoint = undefined;
-      this.shapeId = undefined;
-    },
-
-    clearEditingPointDialog() {
       this.editingPoint = undefined;
+      this.shapeId = undefined;
     },
 
     async cancelPointDialog() {
@@ -238,8 +247,6 @@ export default {
         return;
       }
 
-      this.clearEditingPointDialog();
-
       if (shape) {
         const editingPoint = this.points.find(point => point.shape === shape._id);
 
@@ -269,10 +276,10 @@ export default {
     },
 
     openAddPointDialog() {
-      this.clearEditingPointDialog();
-
       this.addingPoint = flowchartPointToForm(
-        this.shapeId ? { shape: this.shapeId } : { x: this.pointX, y: this.pointY },
+        this.shapeId
+          ? { shape: this.shapeId }
+          : { x: this.pointX, y: this.pointY },
       );
 
       this.closeContextmenu();
@@ -291,9 +298,9 @@ export default {
 
     handleMouseUp({ event, cursor }) {
       if (
-        Math.abs(cursor.x - this.mouseDownCursorX) < FLOWCHART_MAX_POSITION_DIFF &&
-        Math.abs(cursor.y - this.mouseDownCursorY) < FLOWCHART_MAX_POSITION_DIFF &&
-        event.timeStamp - this.mouseDownTimestamp < FLOWCHART_MAX_TIMESTAMP_DIFF
+        Math.abs(cursor.x - this.mouseDownCursorX) < FLOWCHART_MAX_POSITION_DIFF
+        && Math.abs(cursor.y - this.mouseDownCursorY) < FLOWCHART_MAX_POSITION_DIFF
+        && (event.timeStamp - this.mouseDownTimestamp) < FLOWCHART_MAX_TIMESTAMP_DIFF
       ) {
         this.openAddPointDialogByClick({
           event,
@@ -335,7 +342,6 @@ export default {
     submitPointDialog(data) {
       if (this.editingPoint) {
         this.updatePointInModel(data);
-        this.editingPoint = data;
       } else {
         this.addPointToModel(data);
       }
@@ -355,7 +361,6 @@ export default {
 
             this.closePointDialog();
             this.clearPointDialog();
-            this.clearEditingPointDialog();
           },
         },
       });

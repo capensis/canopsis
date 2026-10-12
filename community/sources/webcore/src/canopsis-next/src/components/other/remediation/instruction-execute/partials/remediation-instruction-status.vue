@@ -1,23 +1,22 @@
 <template>
-  <c-layout
-    :class="{ 'text-error': isFailedStatus }"
+  <v-layout
+    :class="{ 'error--text': isFailedStatus }"
     class="my-2"
-    align="center"
+    align-center
   >
-    <v-icon :color="iconColor" class="mr-1">
+    <v-icon
+      :color="iconColor"
+      class="mr-1"
+    >
       alarm
     </v-icon>
     <span>{{ label }}</span>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString, toSeconds } from '@/helpers/date/duration';
-
-import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -38,46 +37,61 @@ export default {
       required: true,
     },
   },
+  computed: {
+    isFailedStatus() {
+      return !!this.failedAt;
+    },
 
-  setup(props) {
-    const { t } = useI18n();
+    iconColor() {
+      return this.isFailedStatus ? 'error' : '';
+    },
 
-    const isFailedStatus = computed(() => !!props.failedAt);
-    const iconColor = computed(() => (isFailedStatus.value ? 'error' : ''));
+    completedLabel() {
+      return this.$t('remediation.instructionExecute.completedAt', {
+        time: this.convertDate(this.completedAt),
+      });
+    },
 
-    const convertDate = date => convertDateToString(date, 'dateTimePicker');
+    startedLabel() {
+      return this.$t('remediation.instructionExecute.startedAt', {
+        time: this.convertDate(this.startedAt),
+      });
+    },
 
-    const label = computed(() => {
-      if (props.completedAt) {
-        return t('remediation.instructionExecute.completedAt', {
-          time: convertDate(props.completedAt),
-        });
-      }
+    failedLabel() {
+      return this.$t('remediation.instructionExecute.failedAt', {
+        time: this.convertDate(this.failedAt),
+      });
+    },
 
-      if (props.failedAt) {
-        return t('remediation.instructionExecute.failedAt', {
-          time: convertDate(props.failedAt),
-        });
-      }
+    timeToCompleteLabel() {
+      const { value, unit } = this.timeToComplete;
 
-      if (props.startedAt) {
-        return t('remediation.instructionExecute.startedAt', {
-          time: convertDate(props.startedAt),
-        });
-      }
-
-      const { value, unit } = props.timeToComplete ?? {};
-
-      return t('remediation.instructionExecute.timeToComplete', {
+      return this.$t('remediation.instructionExecute.timeToComplete', {
         duration: convertDurationToString(toSeconds(value, unit)),
       });
-    });
+    },
 
-    return {
-      isFailedStatus,
-      iconColor,
-      label,
-    };
+    label() {
+      if (this.completedAt) {
+        return this.completedLabel;
+      }
+
+      if (this.failedAt) {
+        return this.failedLabel;
+      }
+
+      if (this.startedAt) {
+        return this.startedLabel;
+      }
+
+      return this.timeToCompleteLabel;
+    },
+  },
+  methods: {
+    convertDate(date) {
+      return convertDateToString(date, 'dateTimePicker');
+    },
   },
 };
 </script>

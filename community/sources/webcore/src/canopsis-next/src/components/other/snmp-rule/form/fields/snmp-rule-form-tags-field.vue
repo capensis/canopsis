@@ -1,22 +1,23 @@
 <template>
   <c-form-block-array-field
-    :form="form"
+    v-field="form"
     :item-to-form="snmpRuleTagToForm"
-    :label="t('common.tag', 2)"
-    :add-button-label="t('common.addTag')"
-    @update:form="updateModel"
+    :label="$tc('common.tag', 2)"
+    :add-button-label="$t('common.addTag')"
   >
-    <template #item="{ item, index, remove }">
-      <c-layout align="center">
+    <template #item="{ index, remove }">
+      <v-layout align-center>
         <snmp-rule-form-module-mib-objects-form
-          :form="form[index]"
+          v-field="form[index]"
           :items="items"
-          :name="`tags.${item.key}`"
           large
-          @update:form="updateItemInArray(index, $event)"
         />
-        <c-action-btn class="mr-0 ml-0" type="delete" @click="remove" />
-      </c-layout>
+        <c-action-btn
+          class="mr-0 ml-0"
+          type="delete"
+          @click="remove"
+        />
+      </v-layout>
     </template>
   </c-form-block-array-field>
 </template>
@@ -24,14 +25,15 @@
 <script>
 import { snmpRuleTagToForm } from '@/helpers/entities/snmp-rule/form';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useI18n } from '@/hooks/i18n';
-
 import SnmpRuleFormModuleMibObjectsForm from '../snmp-rule-form-module-mib-objects-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { SnmpRuleFormModuleMibObjectsForm },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Array,
@@ -42,19 +44,26 @@ export default {
       default: () => [],
     },
   },
-
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
-
+  setup() {
     return {
-      t,
       snmpRuleTagToForm,
-      updateModel,
-      updateItemInArray,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-btn.active {
+  &:hover:before {
+    opacity: .16;
+  }
+
+  &:before {
+    background-color: currentColor;
+  }
+}
+
+.vars-input ::v-deep .v-input__slot {
+  height: 56px;
+}
+</style>

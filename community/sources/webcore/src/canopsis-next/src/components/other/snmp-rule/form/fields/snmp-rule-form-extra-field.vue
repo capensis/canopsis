@@ -1,31 +1,32 @@
 <template>
   <c-form-block-array-field
-    :form="form"
+    v-field="form"
     :item-to-form="snmpRuleExtraItemToForm"
-    :label="t('common.customField', 2)"
-    :add-button-label="t('common.addCustomField')"
-    @update:form="updateModel"
+    :label="$tc('common.customField', 2)"
+    :add-button-label="$t('common.addCustomField')"
   >
     <template #item="{ item, index, remove }">
       <v-card>
         <v-card-text>
-          <c-layout align="center">
-            <c-text-field
-              :model-value="form[index].name"
-              :label="t('common.name')"
+          <v-layout align-center>
+            <v-text-field
+              v-field="form[index].name"
+              v-validate="'required'"
+              :label="$t('common.name')"
               :name="`${item.key}.name`"
-              required
-              @update:model-value="updateFieldInArrayItem(index, 'name', $event)"
+              :error-messages="errors.collect(`${item.key}.name`)"
             />
 
-            <c-action-btn class="mr-0 ml-0" type="delete" @click="remove" />
-          </c-layout>
+            <c-action-btn
+              class="mr-0 ml-0"
+              type="delete"
+              @click="remove"
+            />
+          </v-layout>
           <snmp-rule-form-module-mib-objects-form
-            :form="form[index].value"
+            v-field="form[index].value"
             :items="items"
-            :name="`${item.key}.value`"
             large
-            @update:form="updateFieldInArrayItem(index, 'value', $event)"
           />
         </v-card-text>
       </v-card>
@@ -36,14 +37,15 @@
 <script>
 import { snmpRuleExtraItemToForm } from '@/helpers/entities/snmp-rule/form';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useI18n } from '@/hooks/i18n';
-
 import SnmpRuleFormModuleMibObjectsForm from '../snmp-rule-form-module-mib-objects-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { SnmpRuleFormModuleMibObjectsForm },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Array,
@@ -54,18 +56,9 @@ export default {
       default: () => [],
     },
   },
-
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { updateModel, updateFieldInArrayItem } = useArrayModelField(props, emit);
-
+  setup() {
     return {
-      t,
       snmpRuleExtraItemToForm,
-      updateModel,
-      updateFieldInArrayItem,
     };
   },
 };

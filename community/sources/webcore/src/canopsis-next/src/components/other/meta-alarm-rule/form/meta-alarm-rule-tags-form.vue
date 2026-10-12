@@ -1,22 +1,22 @@
 <template>
-  <c-layout column>
-    <c-label :label="t('common.tag', 2)" />
-    <c-layout>
+  <v-layout column>
+    <c-label :label="$tc('common.tag', 2)" />
+    <v-layout>
       <c-enabled-field
-        v-model="copyFromChildren"
-        :label="t('metaAlarmRule.copyTagsFromChildren')"
+        v-field="form.copy_from_children"
+        :label="$t('metaAlarmRule.copyTagsFromChildren')"
         hide-details
       />
-    </c-layout>
-    <c-layout v-if="copyFromChildren" gap="3" align="start">
+    </v-layout>
+    <v-layout v-if="form.copy_from_children" class="gap-3" align-start>
       <c-enabled-field
         v-model="filterByLabelEnabled"
-        :label="t('metaAlarmRule.filterByLabelEnabled')"
+        :label="$t('metaAlarmRule.filterByLabelEnabled')"
         hide-details
       >
         <template #append>
           <c-help-icon
-            :text="t('metaAlarmRule.filterByLabelEnabledTooltip')"
+            :text="$t('metaAlarmRule.filterByLabelEnabledTooltip')"
             icon="help"
             top
           />
@@ -25,8 +25,8 @@
       <v-expand-transition>
         <c-alarm-tag-field
           v-if="filterByLabelEnabled"
-          :value="filterByLabel"
-          :label="t('common.label')"
+          v-field="form.filter_by_label"
+          :label="$t('common.label')"
           name="filter_by_label"
           multiple
           addable
@@ -34,52 +34,44 @@
           required
           hide-selected
           only-labels
-          @update:value="updateField('filter_by_label', $event)"
         >
-          <template #no-data>
+          <template #no-data="">
             <v-list-item>
-              <v-list-item-title v-html="t('common.pressEnterToApply')" />
+              <v-list-item-content>
+                <v-list-item-title v-html="$t('common.pressEnterToApply')" />
+              </v-list-item-content>
             </v-list-item>
           </template>
         </c-alarm-tag-field>
       </v-expand-transition>
-    </c-layout>
-  </c-layout>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-
-import { useModelField } from '@/hooks/form/model-field';
-import { useI18n } from '@/hooks/i18n';
+import { ref } from 'vue';
 
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
       default: () => ({}),
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
   },
-
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { updateField } = useModelField(props, emit);
+  setup(props) {
     const filterByLabelEnabled = ref(!!props.form.filter_by_label?.length);
 
-    const copyFromChildren = computed({
-      get: () => props.form.copy_from_children,
-      set: value => updateField('copy_from_children', value),
-    });
-    const filterByLabel = computed(() => props.form.filter_by_label);
-
     return {
-      t,
-      copyFromChildren,
-      filterByLabel,
       filterByLabelEnabled,
-      updateField,
     };
   },
 };

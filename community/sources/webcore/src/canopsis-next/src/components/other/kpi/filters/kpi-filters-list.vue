@@ -12,17 +12,29 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #created="{ item }">
-      {{ convertDateToString(item.created) }}
+      {{ item.created | date }}
     </template>
     <template #updated="{ item }">
-      {{ convertDateToString(item.updated) }}
+      {{ item.updated | date }}
     </template>
     <template #actions="{ item }">
-      <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
-        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
-        <c-action-btn v-if="removable" type="delete" @click.stop="$emit('remove', item._id)" />
-      </c-layout>
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
     <template #expand="{ item }">
       <kpi-filters-expand-item :filter="item" />
@@ -31,17 +43,10 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
-
-import { useI18n } from '@/hooks/i18n';
-
 import KpiFiltersExpandItem from './partials/kpi-filters-expand-item.vue';
 
 export default {
   components: { KpiFiltersExpandItem },
-
   props: {
     filters: {
       type: Array,
@@ -53,7 +58,7 @@ export default {
     },
     totalItems: {
       type: Number,
-      default: 0,
+      required: false,
     },
     pending: {
       type: Boolean,
@@ -72,23 +77,15 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove'],
-
-  setup() {
-    const { t } = useI18n();
-
-    const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      { text: t('common.created'), value: 'created' },
-      { text: t('common.lastModifiedOn'), value: 'updated' },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-    ]);
-
-    return {
-      headers,
-      convertDateToString,
-    };
+  computed: {
+    headers() {
+      return [
+        { text: this.$t('common.name'), value: 'name' },
+        { text: this.$t('common.created'), value: 'created' },
+        { text: this.$t('common.lastModifiedOn'), value: 'updated' },
+        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
+      ];
+    },
   },
 };
 </script>

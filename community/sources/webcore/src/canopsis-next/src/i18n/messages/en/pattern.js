@@ -10,7 +10,7 @@ export default {
   advancedEditor: 'Advanced editor',
   simpleEditor: 'Simple editor',
   fixJsonWithAi: 'Fix JSON with AI',
-  noData: 'No pattern set. Click @:pattern.addGroup button to start adding fields to the pattern',
+  noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
   noDataDisabled: 'No pattern set.',
   alarmsCount: 'Found: <strong>{alarmsCount} alarms</strong>',
   entitiesCount: 'Found: <strong>{entitiesCount} entities</strong>',
@@ -38,8 +38,7 @@ export default {
   patternsMessage: '{patterns} pattern | {patterns} patterns',
   notDefinedType: 'Selected type differs from the type set in Entity infos',
   tryOptimization: 'Try optimization',
-  tryOptimizationHint:
-    'Try optimization of Regexp to speed up the query<br><span class="font-weight-regular">Regexp queries usually work slower than normal queries.</span>',
+  tryOptimizationHint: 'Try optimization of Regexp to speed up the query<br><span class="font-weight-regular">Regexp queries usually work slower than normal queries.</span>',
   optimizationInProgress: 'Optimization in progress...',
   optimizationFailed: 'Optimization failed : {reason}',
   cancelOptimization: 'Cancel optimization',
@@ -60,9 +59,8 @@ export default {
     ruleRequired: 'Please add at least one rule',
     groupRequired: 'Please add at least one group',
     invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
-    countOverLimit:
-      'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
+    countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
     existExcluded: 'The rules include excluded rule.',
-    required: 'Add at least one pattern',
+    required: 'At least one pattern has to be defined. Please define filter patterns for rule',
   },
 };

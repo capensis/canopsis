@@ -1,49 +1,53 @@
 <template>
-  <c-layout class="c-calendar" column>
-    <v-row class="c-calendar__toolbar py-3 flex-grow-0" no-gutters>
-      <v-col class="c-calendar__toolbar-column" cols="4">
-        <c-layout gap="2" align="center">
-          <calendar-today-btn class="c-calendar__today-btn" @click="setToday" />
-
+  <v-layout
+    class="c-calendar"
+    fill-height
+    column
+  >
+    <v-layout
+      class="c-calendar__toolbar py-3"
+      justify-space-around
+    >
+      <v-flex xs4>
+        <v-layout class="gap-2" align-center>
+          <calendar-today-btn
+            class="c-calendar__today-btn"
+            @click="setToday"
+          />
           <c-timezone-field
             v-if="!noTimezone"
             v-model="localTimezone"
-            class="c-timezone-field"
             server
             hide-details
-            @update:model-value="updateTimezone"
+            @input="updateTimezone"
           />
-        </c-layout>
-      </v-col>
-
-      <v-col class="c-calendar__toolbar-column" cols="4">
-        <c-layout justify="center">
+        </v-layout>
+      </v-flex>
+      <v-flex xs4>
+        <v-layout justify-center>
           <calendar-pagination
-            :focus="focus"
+            :focus.sync="focus"
             :type="internalType"
             class="c-calendar__pagination"
             @prev="prev"
             @next="next"
-            @update:focus="setFocusDate"
           />
-        </c-layout>
-      </v-col>
-
-      <v-col class="c-calendar__toolbar-column" cols="4">
-        <c-layout class="c-calendar__menu-right" justify="end">
+        </v-layout>
+      </v-flex>
+      <v-flex class="c-calendar__menu-right" xs4>
+        <v-layout justify-end>
           <calendar-view-mode v-model="internalType" />
-
           <slot name="menu-right" />
-        </c-layout>
-      </v-col>
-    </v-row>
+        </v-layout>
+      </v-flex>
+    </v-layout>
 
     <div class="position-relative">
       <v-calendar
         ref="calendar"
         v-bind="$attrs"
         :class="calendarClasses"
-        :model-value="focus"
+        :value="focus"
         :events="availableEvents"
         :type="internalType"
         :weekdays="weekdays"
@@ -52,45 +56,42 @@
         :interval-format="formatInterval"
         :event-margin-bottom="3"
         v-on="calendarListeners"
-        @update:model-value="setCalendarFocus"
-        @change="updateRange"
       >
-        <template #day-body="day">
+        <template #day-body="">
           <div
-            v-if="isCurrentTimeLineVisible && day.present"
+            v-if="isCurrentTimeLineVisible"
             :style="{ top: currentTimeYPixels }"
             class="c-calendar__current-time"
           />
         </template>
 
-        <template #day-label="day">
+        <template #day-label="event">
           <v-btn
-            :color="day.present ? 'primary' : 'transparent'"
-            variant="flat"
-            size="x-small"
-            icon
-            @click.stop.prevent="moveToDay(day)"
-            @mousedown.stop
+            :color="event.present ? 'primary' : 'transparent'"
+            fab
+            depressed
+            small
+            @click.stop.prevent="moveToDay(event)"
+            @mousedown.stop=""
           >
-            {{ day.day }}
+            {{ event.day }}
           </v-btn>
-
-          <template v-if="day.day === 1">
-            {{ formatMonth(day) }}
+          <template v-if="event.day === 1">
+            {{ formatMonth(event) }}
           </template>
         </template>
 
-        <template #day-label-header="day">
+        <template #day-label-header="event">
           <v-btn
-            :color="day.present ? 'primary' : 'transparent'"
+            :color="event.present ? 'primary' : 'transparent'"
             class="c-calendar__week-day-label-btn"
-            variant="flat"
-            size="x-small"
-            icon
-            @click.stop.prevent="moveToDay(day)"
-            @mousedown.stop
+            fab
+            depressed
+            small
+            @click.stop.prevent="moveToDay(event)"
+            @mousedown.stop=""
           >
-            {{ day.day }}
+            {{ event.day }}
           </v-btn>
         </template>
 
@@ -101,10 +102,9 @@
             :end="end"
             name="event"
           >
-            <c-layout
-              :class="['c-calendar__event-content pl-1', getMenuClassByCalendarEvent(event.id)]"
-              :style="getEventStyle(event)"
-              align="center"
+            <v-layout
+              :class="['pl-1', getMenuClassByCalendarEvent(event.id)]"
+              align-center
             >
               <v-icon
                 v-if="event.icon"
@@ -114,21 +114,19 @@
               >
                 {{ event.icon }}
               </v-icon>
-
               <span :style="{ color: event.iconColor }">
                 {{ event.name }}
               </span>
-
               <div
                 v-if="!readonly"
                 :class="[
                   'c-calendar__event-drag-bottom',
-                  { 'c-calendar__event-drag-bottom--right': isMonthType || !event.timed },
+                  { 'c-calendar__event-drag-bottom--right': isMonthType || !event.timed }
                 ]"
                 @mousedown.stop="startResize(event)"
                 @mouseup.stop="finishResizeEvent(event, $event)"
               />
-            </c-layout>
+            </v-layout>
           </slot>
         </template>
       </v-calendar>
@@ -141,16 +139,18 @@
     </div>
 
     <v-menu
-      v-model="popoverOpen"
+      :value="popoverOpen"
       :close-on-content-click="false"
-      :close-on-back="false"
-      :target="[positionX, positionY]"
+      :close-on-click="false"
+      :position-x="positionX"
+      :position-y="positionY"
       attach=".pbehavior-calendar-event-menu"
       content-class="c-calendar__popover-wrapper"
-      persistent
-      no-click-animation
     >
-      <v-card v-if="popoverOpen" class="c-calendar__popover-card">
+      <v-card
+        v-if="popoverOpen"
+        class="c-calendar__popover-card"
+      >
         <slot
           :close="clearPlaceholder"
           :event="newEvent || editEvent || popoverEvent"
@@ -160,39 +160,32 @@
         />
       </v-card>
     </v-menu>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { LOCALES } from '@/config';
-import {
-  CALENDAR_POPOVER_WIDTH,
-  CALENDAR_START_DRAG_DELAY,
-  CALENDAR_TYPES,
-  LLM_AI_CHAT_WIDTH,
-  TIME_UNITS,
-} from '@/constants';
+import { getStartOfWeek, getEndOfWeek } from 'vuetify/lib/components/VCalendar/util/timestamp';
 
-import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
-import { colorToRgba, getColorByHash, isValidColor } from '@/helpers/color';
+import { LOCALES } from '@/config';
+import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY, CALENDAR_POPOVER_WIDTH, LLM_AI_CHAT_WIDTH } from '@/constants';
+
 import {
-  convertDateToMoment,
   convertDateToEndOfDayDateObject,
   convertDateToStartOfDayDateObject,
-  getLocalTimezone,
   getWeekdayNumber,
   isDateBefore,
+  getLocalTimezone,
 } from '@/helpers/date/date';
-import { uid } from '@/helpers/uid';
+import { colorToRgba } from '@/helpers/color';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 
-import CalendarPagination from './partials/calendar-pagination.vue';
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
+import CalendarPagination from './partials/calendar-pagination.vue';
 
 export default {
   components: { CalendarPagination, CalendarViewMode, CalendarTodayBtn },
   inheritAttrs: false,
-
   props: {
     events: {
       type: Array,
@@ -223,27 +216,16 @@ export default {
       default: false,
     },
   },
-
-  emits: [
-    'update:type',
-    'update:timezone',
-    'change:pagination',
-    'click:event',
-    'move:event',
-    'resize:event',
-  ],
-
   data() {
     return {
-      ready: false,
       internalType: this.type,
       focus: new Date(),
       localTimezone: this.timezone,
       filled: {
         start: null,
-        end: null,
+        stop: null,
       },
-      currentTimeIntervalId: null,
+      currentTime: null,
       currentTimeYPixels: '-10px',
 
       popoverOpen: false,
@@ -252,7 +234,6 @@ export default {
       creating: false,
 
       dragStartTime: 0,
-      startDraggingTimerId: null,
 
       newEvent: null,
       popoverEvent: null,
@@ -264,14 +245,15 @@ export default {
       positionX: null,
     };
   },
-
   computed: {
     calendarElement() {
       return this.ready ? this.$refs.calendar : null;
     },
 
     weekdays() {
-      return this.$i18n.locale === LOCALES.en ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+      return this.$i18n.locale === LOCALES.en
+        ? [0, 1, 2, 3, 4, 5, 6]
+        : [1, 2, 3, 4, 5, 6, 0];
     },
 
     currentEditingEvent() {
@@ -284,21 +266,19 @@ export default {
 
     availableEvents() {
       if (this.editEvent) {
-        return this.events.map(event => event.id === this.editEvent.id ? this.editEvent : event,
-        );
+        return this.events.map(event => (event.id === this.editEvent.id ? this.editEvent : event));
       }
 
-      return this.newEvent ? [...this.events, this.newEvent] : this.events;
+      return this.newEvent
+        ? [...this.events, this.newEvent]
+        : this.events;
     },
 
     calendarClasses() {
-      const classes = [
-        'c-calendar__calendar',
-        {
-          'c-calendar__calendar--dragging': this.dragging,
-          'c-calendar__calendar--creating': this.creating,
-        },
-      ];
+      const classes = ['c-calendar__calendar', {
+        'c-calendar__calendar--dragging': this.dragging,
+        'c-calendar__calendar--creating': this.creating,
+      }];
 
       if (this.creating || this.resizing) {
         classes.push(
@@ -313,7 +293,10 @@ export default {
 
     calendarListeners() {
       const listeners = {
-        'click:event': this.handleClickEvent,
+        input: this.setCalendarFocus,
+        change: this.updateRange,
+
+        'click:event': this.showEventDetails,
       };
 
       if (this.readonly) {
@@ -321,21 +304,21 @@ export default {
       }
 
       if (!this.popoverOpen) {
-        listeners['mousedown:time'] = this.handleMouseDownTime;
-        listeners['mousedown:day'] = this.handleMouseDownDay;
+        listeners['mousedown:time'] = this.startCreateEvent;
+        listeners['mousedown:day'] = this.startCreateEvent;
       }
 
-      listeners['mousedown:event'] = this.handleMouseDownEvent;
+      listeners['mousedown:event'] = this.startDragEvent;
 
-      listeners['mouseup:time'] = this.handleMouseUpTimeFromCalendar;
-      listeners['mouseup:day'] = this.handleMouseUpDayFromCalendar;
+      listeners['mouseup:time'] = this.handleMouseUpTime;
+      listeners['mouseup:day'] = this.handleMouseUpTime;
 
       if (this.creating || this.resizing) {
-        listeners['mousemove:day'] = this.handleMouseMoveDay;
-        listeners['mousemove:time'] = this.handleMouseMoveTime;
+        listeners['mousemove:day'] = this.handleMouseMoveEvent;
+        listeners['mousemove:time'] = this.handleMouseMoveEvent;
       } else if (this.dragging) {
-        listeners['mousemove:day'] = this.handleMouseMoveDayDrag;
-        listeners['mousemove:time'] = this.handleMouseMoveTimeDrag;
+        listeners['mousemove:day'] = this.handleMouseMoveEventDrag;
+        listeners['mousemove:time'] = this.handleMouseMoveEventDrag;
       }
 
       return listeners;
@@ -345,17 +328,10 @@ export default {
       return !this.isMonthType;
     },
   },
-
   watch: {
     type(type) {
       if (type !== this.internalType) {
         this.internalType = type;
-      }
-    },
-
-    timezone(timezone) {
-      if (timezone !== this.localTimezone) {
-        this.localTimezone = timezone;
       }
     },
 
@@ -364,25 +340,22 @@ export default {
       this.$nextTick(this.updateCurrentTime);
     },
   },
-
   mounted() {
     this.ready = true;
     this.$refs.calendar.checkChange();
     this.startUpdateCurrentTime();
     this.updateCurrentTime();
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     this.stopUpdateCurrentTime();
   },
-
   methods: {
     getMenuClassByCalendarEvent,
 
     updateCurrentTime() {
       this.$refs.calendar.updateTimes();
 
-      const size = this.calendarElement?.timeToY?.(this.calendarElement.times.now);
+      const size = this.calendarElement.timeToY(this.calendarElement.times.now);
 
       if (size) {
         this.currentTimeYPixels = `${size}px`;
@@ -397,8 +370,8 @@ export default {
       clearInterval(this.currentTimeIntervalId);
     },
 
-    formatWeekday(day) {
-      const weekday = getWeekdayNumber(day.date);
+    formatWeekday(event) {
+      const weekday = getWeekdayNumber(event.date);
 
       return [
         this.$t('common.shortWeekDays.monday'),
@@ -411,7 +384,9 @@ export default {
       ][weekday - 1];
     },
 
-    formatMonth(day) {
+    formatMonth(event) {
+      const { month } = event;
+
       return [
         this.$t('common.shortMonths.january'),
         this.$t('common.shortMonths.february'),
@@ -425,53 +400,38 @@ export default {
         this.$t('common.shortMonths.october'),
         this.$t('common.shortMonths.november'),
         this.$t('common.shortMonths.december'),
-      ][day.month - 1];
+      ][month - 1];
     },
 
     formatInterval(interval) {
       return interval.time;
     },
 
-    getEventSource(event) {
-      return event?.input ?? event;
-    },
-
     getEventColor(event) {
-      const source = this.getEventSource(event);
-      const color = isValidColor(source.color)
-        ? source.color
-        : getColorByHash(source.id);
-
-      if (source.id === this.currentEditingEvent?.id) {
-        return colorToRgba(color, 0.75);
+      if (event.id === this.currentEditingEvent?.id) {
+        return colorToRgba(event.color, 0.75);
       }
 
-      const past = isDateBefore(source.start, new Date());
+      const past = isDateBefore(event.start, new Date());
 
       if (!past) {
-        return colorToRgba(color, 0.5);
+        return colorToRgba(event.color, 0.5);
       }
 
-      return color;
-    },
-
-    getEventStyle(event) {
-      return {
-        backgroundColor: this.getEventColor(event),
-      };
+      return event.color;
     },
 
     updateRange({ start, end }) {
-      const parsedStart = this.$refs.calendar.getStartOfWeek(start);
-      const parsedEnd = this.$refs.calendar.getEndOfWeek(end);
+      const parsedStart = getStartOfWeek(start, this.weekdays);
+      const parsedEnd = getEndOfWeek(end, this.weekdays);
       const newFilled = {
         start: convertDateToStartOfDayDateObject(parsedStart.date),
         end: convertDateToEndOfDayDateObject(parsedEnd.date),
       };
 
       if (
-        this.filled.start?.getTime() !== newFilled.start.getTime() ||
-        this.filled.end?.getTime() !== newFilled.end.getTime()
+        this.filled.start?.getTime() !== newFilled.start.getTime()
+        || this.filled.end?.getTime() !== newFilled.end.getTime()
       ) {
         this.filled = newFilled;
 
@@ -480,7 +440,7 @@ export default {
     },
 
     setFocusDate(date) {
-      this.focus = date instanceof Date ? date : new Date(date);
+      this.focus = date;
     },
 
     setToday() {
@@ -497,6 +457,7 @@ export default {
 
     setNewEvent(event) {
       const timed = !!event.hasTime;
+
       const eventDate = this.getDateByEvent(event);
       const start = this.getStartDate(eventDate, timed);
       const end = this.getEndDate(eventDate, timed);
@@ -510,7 +471,6 @@ export default {
         start,
         end,
         timed,
-        color: getColorByHash(uid()),
         data: {},
       };
     },
@@ -535,29 +495,17 @@ export default {
       this.setFocusDate(convertDateToStartOfDayDateObject(date));
     },
 
-    moveToDay(day) {
-      this.setCalendarFocus(day.date);
+    moveToDay(event) {
+      this.setCalendarFocus(event.date);
       this.internalType = CALENDAR_TYPES.day;
     },
 
-    getPaginationUnit() {
-      return {
-        [CALENDAR_TYPES.day]: TIME_UNITS.day,
-        [CALENDAR_TYPES.week]: TIME_UNITS.week,
-        [CALENDAR_TYPES.month]: TIME_UNITS.month,
-      }[this.internalType];
-    },
-
-    shiftFocus(value) {
-      this.setFocusDate(convertDateToMoment(this.focus).add(value, this.getPaginationUnit()).toDate());
-    },
-
     prev() {
-      this.shiftFocus(-1);
+      this.calendarElement.prev();
     },
 
     next() {
-      this.shiftFocus(1);
+      this.calendarElement.next();
     },
 
     showCreateEventPopover(event, target) {
@@ -566,8 +514,8 @@ export default {
       this.setPopoverEvent(event);
 
       const wrapperWidth = window.innerWidth * 0.95;
-      const wrapperWidthWithoutAiChat = wrapperWidth - LLM_AI_CHAT_WIDTH;
-      const left = (wrapperWidthWithoutAiChat - CALENDAR_POPOVER_WIDTH) / 2;
+      const wrapperWidthWidhoutAiChat = wrapperWidth - LLM_AI_CHAT_WIDTH;
+      const left = (wrapperWidthWidhoutAiChat - CALENDAR_POPOVER_WIDTH) / 2;
 
       this.positionX = left;
       this.positionY = top;
@@ -585,16 +533,13 @@ export default {
     showEventDetails(event) {
       event.nativeEvent.stopPropagation();
 
-      if (this.$attrs['onClick:event']) {
+      if (this.$listeners['click:event']) {
         this.$emit('click:event', event);
         return;
       }
 
       if (!this.hideDetailsMenu) {
-        this.showCreateEventPopover(
-          event.event,
-          event.nativeEvent.currentTarget || event.nativeEvent.target,
-        );
+        this.showCreateEventPopover(event.event, event.nativeEvent.target);
       }
     },
 
@@ -619,6 +564,7 @@ export default {
 
     handleMouseMoveEvent(event) {
       const timed = !!event.time;
+
       const eventDate = this.getDateByEvent(event);
       const newEnd = this.getEndDate(eventDate, timed);
       const newStart = this.getStartDate(eventDate, timed);
@@ -645,7 +591,7 @@ export default {
     },
 
     finishCreateEvent(event, nativeEvent) {
-      this.showCreateEventPopover(this.newEvent, nativeEvent.currentTarget || nativeEvent.target);
+      this.showCreateEventPopover(this.newEvent, nativeEvent.target);
 
       this.creating = false;
       this.movingEnd = true;
@@ -695,17 +641,15 @@ export default {
     },
 
     isEditingEventChanged() {
-      return (
-        this.currentEditingEvent.start.getTime() !== this.currentEditingEvent.oldStart.getTime() ||
-        this.currentEditingEvent.end.getTime() !== this.currentEditingEvent.oldEnd.getTime()
-      );
+      return this.currentEditingEvent.start.getTime() !== this.currentEditingEvent.oldStart.getTime()
+        || this.currentEditingEvent.end.getTime() !== this.currentEditingEvent.oldEnd.getTime();
     },
 
     finishDragEvent(event, nativeEvent) {
       nativeEvent.stopPropagation();
 
       if (this.newEvent) {
-        this.showCreateEventPopover(this.newEvent, nativeEvent.currentTarget || nativeEvent.target);
+        this.showCreateEventPopover(this.newEvent, nativeEvent.target);
       } else if (this.isEditingEventChanged()) {
         this.$emit('move:event', this.editEvent);
       } else {
@@ -730,7 +674,7 @@ export default {
 
     finishResizeEvent(event, nativeEvent) {
       if (this.newEvent) {
-        this.showCreateEventPopover(this.newEvent, nativeEvent.currentTarget || nativeEvent.target);
+        this.showCreateEventPopover(this.newEvent, nativeEvent.target);
       } else if (this.isEditingEventChanged()) {
         this.$emit('resize:event', this.editEvent);
       } else {
@@ -766,46 +710,6 @@ export default {
     updateTimezone(newTimezone) {
       this.$emit('update:timezone', newTimezone);
     },
-
-    handleClickEvent(nativeEvent, event) {
-      this.showEventDetails({ ...event, nativeEvent });
-    },
-
-    handleMouseDownTime(nativeEvent, event) {
-      return this.startCreateEvent(event);
-    },
-
-    handleMouseDownDay(nativeEvent, event) {
-      return this.startCreateEvent(event);
-    },
-
-    handleMouseDownEvent(nativeEvent, event) {
-      return this.startDragEvent(event, nativeEvent);
-    },
-
-    handleMouseUpTimeFromCalendar(nativeEvent, event) {
-      return this.handleMouseUpTime(event, nativeEvent);
-    },
-
-    handleMouseUpDayFromCalendar(nativeEvent, event) {
-      return this.handleMouseUpTime(event, nativeEvent);
-    },
-
-    handleMouseMoveDay(nativeEvent, event) {
-      return this.handleMouseMoveEvent(event);
-    },
-
-    handleMouseMoveTime(nativeEvent, event) {
-      return this.handleMouseMoveEvent(event);
-    },
-
-    handleMouseMoveDayDrag(nativeEvent, event) {
-      return this.handleMouseMoveEventDrag(event);
-    },
-
-    handleMouseMoveTimeDrag(nativeEvent, event) {
-      return this.handleMouseMoveEventDrag(event);
-    },
   },
 };
 </script>
@@ -826,28 +730,19 @@ export default {
     --c-calendar-present-day-background-color: rgba(255, 255, 255, 0.04);
   }
 
-  &__menu-right {
-    margin-left: auto;
-  }
-
   .v-event {
     font-weight: 700;
 
-    box-shadow:
-      0 2px 1px -1px rgba(0, 0, 0, 0.2),
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
       0px 1px 1px 0px rgba(0, 0, 0, 0.14),
       0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important;
   }
 
-  &__event-content {
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    overflow: hidden;
+  .v-calendar-weekly__head-weekday {
+    text-align: unset;
   }
 
   .v-calendar-weekly__head-weekday {
-    text-align: unset;
     text-transform: unset;
   }
 
@@ -899,12 +794,8 @@ export default {
       cursor: ns-resize;
     }
 
-    &--dragging,
-    &--creating,
-    &--resizing-bottom,
-    &--resizing-right {
-      .v-event,
-      .v-event-timed {
+    &--dragging, &--creating, &--resizing-bottom, &--resizing-right {
+      .v-event, .v-event-timed {
         pointer-events: none;
         user-select: none;
       }
@@ -915,7 +806,7 @@ export default {
     position: absolute;
     cursor: ns-resize;
     opacity: 0;
-    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition: .3s cubic-bezier(.25, .8, .5,1);
 
     &:hover {
       opacity: 1;
@@ -939,8 +830,7 @@ export default {
   }
 
   &__popover-wrapper {
-    height: fit-content !important;
-    max-height: 85vh;
+    max-height: 95%;
     max-width: 95% !important;
     width: var(--c-calendar-popover-width) !important;
     top: unset !important;
@@ -949,38 +839,32 @@ export default {
     position: relative !important;
     display: flex;
     flex-direction: column;
-    overflow: visible !important;
-    border-radius: 4px;
+    overflow: hidden !important;
   }
 
   &__popover-card {
     display: flex;
     flex-direction: column;
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     min-height: 0;
-    max-height: 85vh;
+    max-height: 100%;
     overflow: hidden;
-    box-shadow:
-      0 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
-      0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 
   &__week-day-label-btn {
-    font-size: 20px !important;
+    font-size: 25px !important;
   }
 
   .v-present > &__current-time {
     height: 3px;
-    background-color: rgb(var(--v-theme-secondary));
+    background-color: var(--v-secondary-base);
     position: absolute;
     left: -1px;
     right: 0;
     pointer-events: none;
   }
 
-  .v-calendar-monthly,
-  .v-calendar-weekly__week {
+  .v-calendar-monthly, .v-calendar-weekly__week {
     overflow: hidden;
   }
 }

@@ -1,31 +1,32 @@
 <template>
   <div class="fab ma-2">
-    <c-layout gap="3" column>
-      <c-refresh-btn @click="$emit('refresh')" />
-
+    <v-layout column>
+      <v-flex class="mb-3">
+        <c-refresh-btn @click="$emit('refresh')" />
+      </v-flex>
       <slot name="additional" />
-
-      <c-tooltip v-if="hasAccess && hasCreateListener" location="left">
-        <template #activator="{ props: activatorProps }">
+      <v-tooltip
+        v-if="hasAccess && $listeners.create"
+        left
+      >
+        <template #activator="{ on }">
           <v-btn
+            :dark="dark"
             color="primary"
-            size="x-large"
-            icon
-            v-bind="activatorProps"
-            @click.stop="$emit('create')"
+            fab
+            v-on="on"
+            @click.stop="$listeners.create"
           >
-            <c-icon>add</c-icon>
+            <v-icon>add</v-icon>
           </v-btn>
         </template>
         <slot />
-      </c-tooltip>
-    </c-layout>
+      </v-tooltip>
+    </v-layout>
   </div>
 </template>
 
 <script>
-import { computed, getCurrentInstance, onBeforeUpdate, ref } from 'vue';
-
 export default {
   props: {
     hasAccess: {
@@ -37,22 +38,9 @@ export default {
       default: false,
     },
   },
-
-  emits: ['refresh', 'create'],
-
-  setup() {
-    const instance = getCurrentInstance();
-    const updateTick = ref(0);
-
-    onBeforeUpdate(() => {
-      updateTick.value += 1;
-    });
-
-    const hasCreateListener = computed(() => Boolean(updateTick.value >= 0 && instance?.vnode.props?.onCreate),
-    );
-
+  data() {
     return {
-      hasCreateListener,
+      fab: false,
     };
   },
 };

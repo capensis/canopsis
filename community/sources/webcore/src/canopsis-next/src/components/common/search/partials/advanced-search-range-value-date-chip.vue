@@ -1,25 +1,22 @@
 <template>
   <v-chip
-    :closable="closable"
+    :close="closable"
     :color="color"
     class="c-advanced-search__chip c-advanced-search__array-chip"
-    @click.prevent="$emit('click')"
+    @click.prevent=""
     @click:close="close"
-    @focusout="$emit('focusout')"
   >
     <date-time-picker-menu
       v-for="chip in chips"
+      v-field="value[chip.key]"
       :key="chip.key"
-      :value="chipValue[chip.key]"
       :allowed-dates="chip.allowedDates"
-      @update:value="updateField(chip.key, $event)"
     >
-      <template #activator="{ props: activatorProps, value }">
-        <v-chip v-bind="activatorProps">
-          <span class="font-italic text-medium-emphasis">
+      <template #activator="{ on, value: chipValue }">
+        <v-chip v-on="on">
+          <span class="font-italic grey--text">
             {{ $t(`common.${chip.key}`) }}:
-          </span>
-          {{ formatDate(value) }}
+          </span> {{ chipValue | date('long', '--.--.---- --:--') }}
         </v-chip>
       </template>
     </date-time-picker-menu>
@@ -27,12 +24,9 @@
 </template>
 
 <script>
-import { computed, toRef } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
+import { toRef } from 'vue';
 
 import { useDateRangeAllowedDates } from '@/hooks/form/date-range-allowed-dates';
-import { useModelField } from '@/hooks/form/model-field';
 
 import DateTimePickerMenu from '@/components/forms/fields/date-time-picker/date-time-picker-menu.vue';
 
@@ -40,11 +34,8 @@ export default {
   components: {
     DateTimePickerMenu,
   },
-
-  inheritAttrs: false,
-
   props: {
-    modelValue: {
+    value: {
       type: Object,
       default: () => ({ from: 0, to: 0 }),
     },
@@ -57,31 +48,18 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:modelValue', 'click', 'focusout', 'close'],
-
   setup(props, { emit }) {
-    const { updateField } = useModelField(props, emit);
-    const { isAllowedFromDate, isAllowedToDate } = useDateRangeAllowedDates(
-      toRef(props, 'modelValue'),
-    );
-
-    const chipValue = computed(() => props.modelValue ?? { from: 0, to: 0 });
+    const { isAllowedFromDate, isAllowedToDate } = useDateRangeAllowedDates(toRef(props, 'value'));
 
     const chips = [
       { key: 'from', allowedDates: isAllowedFromDate },
       { key: 'to', allowedDates: isAllowedToDate },
     ];
 
-    const formatDate = value => convertDateToString(value, 'long', '--.--.---- --:--');
     const close = () => emit('close');
 
     return {
-      chipValue,
       chips,
-
-      updateField,
-      formatDate,
       close,
     };
   },

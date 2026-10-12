@@ -1,5 +1,3 @@
-import { cloneDeep } from 'lodash';
-
 import {
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
@@ -12,12 +10,12 @@ import {
   ENTITY_UNSORTABLE_FIELDS,
 } from '@/constants';
 
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { setSeveralFields } from '@/helpers/immutable';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 
 /**
  * @typedef {Object} MapWidgetParameters
@@ -26,7 +24,6 @@ import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../templat
  * @property {string} color_indicator
  * @property {string} entity_info_template
  * @property {boolean} entities_under_pbehavior_enabled
- * @property {boolean} entities_under_pause_enabled
  * @property {string | null} mainFilter
  * @property {string} alarmsColumnsTemplate
  * @property {string} entitiesColumnsTemplate
@@ -43,37 +40,35 @@ import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../templat
  */
 
 /**
- * Convert map widget parameters to form.
+ * Convert map widget parameters to form
  *
- * @param {MapWidgetParameters} [parameters={}]
+ * @param {MapWidgetParameters} parameters
  * @return {MapWidgetParametersForm}
  */
 export const mapWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(
-    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
-  ),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   map: parameters.map ?? '',
   color_indicator: parameters.color_indicator ?? COLOR_INDICATOR_TYPES.state,
   entities_under_pbehavior_enabled: parameters.entities_under_pbehavior_enabled ?? true,
-  entities_under_pause_enabled: parameters.entities_under_pause_enabled ?? true,
   mainFilter: parameters.mainFilter ?? null,
   entity_info_template: parameters.entity_info_template ?? DEFAULT_MAP_ENTITY_TEMPLATE,
   alarmsColumnsTemplate: widgetTemplateValueToForm(parameters.alarmsColumnsTemplate),
   entitiesColumnsTemplate: widgetTemplateValueToForm(parameters.entitiesColumnsTemplate),
-  alarmsColumns: widgetColumnsToForm(parameters.alarmsColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
-  entitiesColumns: widgetColumnsToForm(
-    parameters.entitiesColumns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS,
-  ),
+  alarmsColumns:
+    widgetColumnsToForm(parameters.alarmsColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  entitiesColumns:
+    widgetColumnsToForm(parameters.entitiesColumns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
 });
 
 /**
- * Convert form to map widget parameters.
+ * Convert form to map widget parameters
  *
  * @param {MapWidgetParametersForm} form
  * @return {MapWidgetParameters}
  */
 export const formToMapWidgetParameters = form => ({
-  ...cloneDeep(form),
+  ...form,
+
   alarmsColumnsTemplate: formToWidgetTemplateValue(form.alarmsColumnsTemplate),
   entitiesColumnsTemplate: formToWidgetTemplateValue(form.entitiesColumnsTemplate),
   alarmsColumns: formToWidgetColumns(form.alarmsColumns),
@@ -81,26 +76,27 @@ export const formToMapWidgetParameters = form => ({
 });
 
 /**
- * Prepared map widget for displaying.
+ * Prepared map widget for displaying
  *
- * @param {Object} [widget={}]
+ * @param {Object} widget
  * @returns {Object}
  */
-export const prepareMapWidget = (widget = {}) =>
-  setSeveralFields(widget, {
-    'parameters.alarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) =>
-      columns.map(column => ({
-        ...column,
+export const prepareMapWidget = (widget = {}) => setSeveralFields(widget, {
+  'parameters.alarmsColumns': (columns = DEFAULT_ALARMS_WIDGET_COLUMNS) => (
+    columns.map(column => ({
+      ...column,
 
-        sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
-        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-      })),
+      sortable: getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+      text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+    }))
+  ),
 
-    'parameters.entitiesColumns': (columns = DEFAULT_CONTEXT_WIDGET_COLUMNS) =>
-      columns.map(column => ({
-        ...column,
+  'parameters.entitiesColumns': (columns = DEFAULT_CONTEXT_WIDGET_COLUMNS) => (
+    columns.map(column => ({
+      ...column,
 
-        sortable: getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
-        text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      })),
-  });
+      sortable: getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
+      text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+    }))
+  ),
+});

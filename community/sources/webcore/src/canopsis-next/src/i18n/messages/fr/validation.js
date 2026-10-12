@@ -1,11 +1,10 @@
 export default {
   messages: {
-    _default: 'Le champ n\'est pas valide',
+    _default: "Le champ n'est pas valide",
     after: 'Le champ doit être postérieur à {1}',
     after_with_inclusion: 'Le champ doit être postérieur ou égal à {1}',
     alpha: 'Le champ ne peut contenir que des lettres',
-    alpha_dash:
-      'Le champ ne peut contenir que des caractères alpha-numériques, tirets ou soulignés',
+    alpha_dash: 'Le champ ne peut contenir que des caractères alpha-numériques, tirets ou soulignés',
     alpha_num: 'Le champ ne peut contenir que des caractères alpha-numériques',
     alpha_spaces: 'Le champ ne peut contenir que des lettres ou des espaces',
     before: 'Le champ doit être antérieur à {1}',
@@ -27,18 +26,17 @@ export default {
     ip: 'Le champ doit être une adresse IP',
     ip_or_fqdn: 'Le champ doit être une adresse IP ou un nom de domaine valide',
     length: 'Le champ doit contenir {1} caractères',
-    max: 'Le champ ne peut pas contenir plus de 0:{length} caractères',
-    max_value: 'La valeur doit être inférieure ou égale à 0:{max}',
+    max: 'Le champ ne peut pas contenir plus de {length} caractères',
+    max_value: 'La valeur doit être inférieure ou égale à {1}',
     mimes: 'Le champ doit avoir un type MIME valide',
     min: 'Le champ doit contenir au minimum {1} caractères',
-    min_value: 'La valeur doit être supérieure ou égale à 0:{min}',
+    min_value: 'La valeur doit être supérieure ou égale à {1}',
     numeric: 'Le champ ne peut contenir que des chiffres',
     regex: 'Le champ est invalide',
     required: 'Le champ est obligatoire',
     required_if: 'Le champ est obligatoire lorsque {1} possède cette valeur',
     size: 'Le champ doit avoir un poids inférieur à {1} Ko',
     url: 'Le champ n\'est pas une URL valide',
-    unique: 'Le champ doit être unique',
   },
   custom: {
     tstop: {

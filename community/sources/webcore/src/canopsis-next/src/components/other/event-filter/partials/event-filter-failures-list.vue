@@ -21,7 +21,7 @@
       </c-circle-badge>
     </template>
     <template #t="{ item }">
-      {{ dateToString(item.t) }}
+      {{ item.t | date }}
     </template>
     <template #type="{ item }">
       {{ $t(`eventFilter.failureTypes.${item.type}`) }}
@@ -38,8 +38,6 @@
 </template>
 
 <script>
-import { convertDateToString } from '@/helpers/date/date';
-
 import EventFilterFailuresListExpandPanel from './event-filter-failures-list-expand-panel.vue';
 
 export default {
@@ -73,10 +71,6 @@ export default {
     },
   },
   methods: {
-    dateToString(value) {
-      return convertDateToString(value);
-    },
-
     hasEvent(failure) {
       return !!failure.event;
     },

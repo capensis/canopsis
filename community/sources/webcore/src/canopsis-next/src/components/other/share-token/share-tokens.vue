@@ -2,106 +2,67 @@
   <share-tokens-list
     :share-tokens="shareTokens"
     :total-items="shareTokensMeta.total_count"
-    :options="options"
+    :options.sync="options"
     :pending="shareTokensPending"
-    :removable="hasDeleteAccess"
-    @update:options="updateOptions"
+    :removable="hasDeleteAnyShareTokenAccess"
     @remove="showRemoveShareTokenModal"
     @remove-selected="showRemoveSelectedShareTokensModal"
   />
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { MODALS } from '@/constants';
 
-import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, USER_PERMISSIONS } from '@/constants';
+import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
+import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
+import { localQueryMixin } from '@/mixins/query/query';
 
-import { getQueryForList } from '@/helpers/entities/shared/query';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useLocalQueryWithOptions } from '@/hooks/query/shared';
-import { useShareToken } from '@/hooks/store/modules/share-token';
-
-import ShareTokensList from './share-tokens-list.vue';
+import ShareTokensList from '@/components/other/share-token/share-tokens-list.vue';
 
 export default {
   components: {
     ShareTokensList,
   },
-
-  setup() {
-    const { t } = useI18n();
-    const modals = useModals();
-    const popups = usePopups();
-    const { shareTokens, shareTokensMeta, shareTokensPending, fetchShareTokensList, removeShareToken } =
-      useShareToken();
-    const { hasDeleteAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.shareToken);
-
-    const {
-      options,
-      handler: fetchList,
-      updateOptions,
-    } = useLocalQueryWithOptions({
-      initialQuery: {
-        page: 1,
-        itemsPerPage: PAGINATION_LIMIT,
-        sortBy: [],
-        sortDesc: [],
-        search: '',
-      },
-      onUpdate: fetchQuery => fetchShareTokensList({
-        params: getQueryForList(fetchQuery),
-      }),
-    });
-
-    const showRemoveShareTokenModal = (shareToken) => {
-      modals.show({
+  mixins: [
+    entitiesShareTokenMixin,
+    localQueryMixin,
+    permissionsTechnicalShareTokenMixin,
+  ],
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    showRemoveShareTokenModal(shareToken) {
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          text: t('shareToken.deleteConfirmation', { name: shareToken.description }),
           action: async () => {
-            await removeShareToken({ id: shareToken._id });
+            await this.removeShareToken({ id: shareToken._id });
 
-            popups.success({ text: t('success.default') });
-
-            await fetchList();
+            await this.fetchList();
           },
         },
       });
-    };
+    },
 
-    const showRemoveSelectedShareTokensModal = (selected) => {
-      modals.show({
+    showRemoveSelectedShareTokensModal(selected) {
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          text: t('shareToken.deleteSelectedConfirmation', { count: selected.length }),
           action: async () => {
-            await Promise.all(selected.map(({ _id }) => removeShareToken({ id: _id })));
+            await Promise.all(selected.map(({ _id }) => this.removeShareToken({ id: _id })));
 
-            popups.success({ text: t('success.default') });
+            this.$popups.success({ text: this.$t('success.default') });
 
-            await fetchList();
+            await this.fetchList();
           },
         },
       });
-    };
+    },
 
-    onMounted(fetchList);
-
-    return {
-      shareTokens,
-      shareTokensMeta,
-      shareTokensPending,
-      options,
-      hasDeleteAccess,
-      updateOptions,
-      showRemoveShareTokenModal,
-      showRemoveSelectedShareTokensModal,
-    };
+    fetchList() {
+      return this.fetchShareTokensList({ params: this.getQuery() });
+    },
   },
 };
 </script>

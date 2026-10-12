@@ -1,26 +1,25 @@
 <template>
   <v-list-item class="text-subtitle-1">
-    <c-layout gap="2" column>
-      <div class="text-subtitle-1">
-        <span class="font-weight-bold">
-          {{ label }}
-        </span>
-        <span v-if="value"> : </span>
-      </div>
-      <c-layout
-        v-if="value"
-        class="text-grey"
-        align="center"
-        gap="2"
-      >
-        <c-icon v-if="!hideIcon" color="grey">
-          {{ icon }}
-        </c-icon>
-        <span>
-          {{ value }}
-        </span>
-      </c-layout>
-    </c-layout>
+    <v-list-item-content>
+      <v-layout class="gap-2" column>
+        <div class="text-subtitle-1">
+          <span class="font-weight-bold">
+            {{ label }}
+          </span>
+          <span v-if="value">
+            :
+          </span>
+        </div>
+        <v-layout v-if="value" class="gap-2 grey--text" align-center>
+          <v-icon v-if="!hideIcon" color="grey">
+            {{ icon }}
+          </v-icon>
+          <span v-if="value">
+            {{ value }}
+          </span>
+        </v-layout>
+      </v-layout>
+    </v-list-item-content>
   </v-list-item>
 </template>
 

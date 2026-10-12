@@ -2,20 +2,16 @@
   <c-card-iterator-item
     :drag-handle-class="dragHandleClass"
     small
-    static-delete
     @remove="$emit('remove')"
   >
     <template #header>
-      <c-select
-        :model-value="modelValue"
+      <c-select-field
+        v-field="value"
         :items="availableActions"
-        :label="t('common.action', 1)"
-        :name="`${name}.value`"
-        item-title="text"
-        item-value="value"
+        :label="$tc('common.action', 1)"
+        :name="name"
         hide-details
         required
-        @update:model-value="$emit('update:modelValue', $event)"
       />
     </template>
   </c-card-iterator-item>
@@ -25,7 +21,6 @@
 import { computed } from 'vue';
 
 import {
-  FEATURES_SERVICE_KEYS,
   UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
   UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
 } from '@/constants';
@@ -36,9 +31,8 @@ import { useI18n } from '@/hooks/i18n';
 
 export default {
   name: 'QuickAlarmActionsFormItem',
-
   props: {
-    modelValue: {
+    value: {
       type: String,
       required: true,
     },
@@ -59,58 +53,61 @@ export default {
       default: () => [],
     },
   },
-
-  emits: ['update:modelValue', 'remove'],
-
   setup(props) {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
 
     const availableActions = computed(() => {
-      const { actions, featuresActionsKey } = props.massive
-        ? {
-            actions: UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
-            featuresActionsKey:
-              FEATURES_SERVICE_KEYS.components.alarmListMassActionsPanel.computed.actions,
-          }
-        : {
-            actions: UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
-            featuresActionsKey:
-              FEATURES_SERVICE_KEYS.components.alarmListActionPanel.computed.actions,
-          };
+      // Determine which set of actions to use based on whether it's a massive action or not
+      const { actions, featuresActionsKey } = {
+        [!props.massive]: {
+          // Use unique alarm list actions for non-massive operations
+          actions: UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
+          featuresActionsKey: 'components.alarmListActionPanel.computed.actions',
+        },
+        [props.massive]: {
+          // Use mass actions for massive operations
+          actions: UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
+          featuresActionsKey: 'components.alarmListMassActionsPanel.computed.actions',
+        },
+      }.true;
 
+      // Transform actions into a format suitable for display (value-text pairs)
       const preparedActions = Object.entries(actions).map(([value, textKey]) => ({
         value,
         text: t(textKey),
       }));
 
+      let featuresActions = [];
+
       try {
+        // Create context for feature switcher with necessary methods
         const contextForFeatureSwitcher = {
           checkAccess: () => true,
           $t: t,
-          $tc: t,
+          $tc: tc,
         };
 
-        const featuresActions = featuresService.has(featuresActionsKey)
-          ? featuresService.call(featuresActionsKey, contextForFeatureSwitcher, [])
-          : [];
+        // Check if feature exists and get its actions
+        featuresActions = featuresService.has(featuresActionsKey)
+        && featuresService.call(featuresActionsKey, contextForFeatureSwitcher, []);
 
+        // If feature actions exist, add them to the beginning of the actions list
         if (featuresActions?.length) {
-          preparedActions.unshift(
-            ...featuresActions.map(({ type, title }) => ({ value: type, text: title })),
-          );
+          const preparedFeaturesActions = featuresActions.map(({ type, title }) => ({ value: type, text: title }));
+
+          preparedActions.unshift(...preparedFeaturesActions);
         }
       } catch (err) {
         console.error(err);
       }
 
-      return preparedActions.filter(
-        preparedAction => preparedAction.value === props.modelValue ||
-          !props.selectedActions.some(action => action.value === preparedAction.value),
-      );
+      // Filter out actions that are already selected, except for the current value
+      return preparedActions.filter(preparedAction => (
+        preparedAction.value === props.value || !props.selectedActions.includes(preparedAction.value)
+      ));
     });
 
     return {
-      t,
       availableActions,
     };
   },

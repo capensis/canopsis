@@ -1,10 +1,10 @@
-import { mapActions, mapState } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useTestSuiteStore } from '@/stores/modules/test-suite';
+const { mapGetters, mapActions } = createNamespacedHelpers('testSuite');
 
 export const entitiesTestSuitesMixin = {
   computed: {
-    ...mapState(useTestSuiteStore, {
+    ...mapGetters({
       getTestSuitesListByWidgetId: 'getListByWidgetId',
       getTestSuitesPendingByWidgetId: 'getPendingByWidgetId',
       getTest: 'getItem',
@@ -19,7 +19,7 @@ export const entitiesTestSuitesMixin = {
     },
   },
   methods: {
-    ...mapActions(useTestSuiteStore, {
+    ...mapActions({
       fetchTestSuitesList: 'fetchList',
       validateTestSuitesDirectory: 'validateDirectory',
       fetchTestSuiteItemSummaryWithoutStore: 'fetchSummaryWithoutStore',

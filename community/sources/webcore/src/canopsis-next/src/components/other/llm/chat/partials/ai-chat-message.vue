@@ -1,60 +1,57 @@
 <template>
-  <c-layout
+  <v-layout
     :class="wrapperClass"
-    class="ai-chat-message"
-    gap="3"
+    class="ai-chat-message gap-3"
   >
-    <div class="ai-chat-message__content pa-4 flex-grow-1">
+    <v-flex class="ai-chat-message__content pa-4">
       <span
         v-if="message.thinking"
         class="primary--text ai-chat-message__thinking"
       >{{ $t('llm.chat.thinking') }}</span>
-      <c-layout
+      <v-layout
         v-else
-        class="ai-chat-message__body"
-        gap="2"
-        align="start"
+        class="gap-2"
+        align-start
       >
-        <c-layout
-          class="ai-chat-message__main"
-          gap="3"
-          align="start"
+        <v-layout
+          class="gap-3"
           column
+          align-start
         >
-          <div
+          <v-flex
             v-if="sanitizedPrompt"
             :class="{ 'ai-chat-message__text--collapsed': isCollapsible && !isExpanded }"
             class="ai-chat-message__text"
           >
             <span v-html="sanitizedPrompt" class="pre-wrap" />
-          </div>
-          <span v-if="message.timestamp" class="ai-chat-message__timestamp">
+          </v-flex>
+          <span v-if="message.timestamp" class="grey--text text--darken-1">
             {{ timestampString }}
           </span>
-        </c-layout>
+        </v-layout>
         <c-expand-btn
           v-if="isCollapsible"
           v-model="isExpanded"
           color="grey darken-1"
           class="ai-chat-message__expand-btn"
         />
-      </c-layout>
-    </div>
+      </v-layout>
+    </v-flex>
     <v-avatar v-if="!isNoRole" :color="isUserRole ? 'success' : 'primary'" size="40">
       <v-icon
         v-if="isUserRole"
-        color="white"
+        dark
       >
         person
       </v-icon>
       <v-icon
         v-else
-        color="white"
+        dark
       >
         $vuetify.icons.robot
       </v-icon>
     </v-avatar>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -62,8 +59,8 @@ import { computed, ref } from 'vue';
 
 import { DATETIME_FORMATS, LLM_AI_CHAT_MESSAGE_ROLES } from '@/constants';
 
-import { convertDateToString, convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { sanitizeHtml } from '@/helpers/html';
+import { convertDateToString, convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -158,7 +155,7 @@ export default {
   flex-direction: row;
   padding-left: 16px;
 
-  :deep(svg) {
+  ::v-deep svg {
     max-height: 24px;
   }
 
@@ -168,15 +165,6 @@ export default {
 
   &__content {
     border-radius: 8px;
-  }
-
-  &__body {
-    width: 100%;
-  }
-
-  &__main {
-    min-width: 0;
-    flex-grow: 1;
   }
 
   &__text {
@@ -192,12 +180,7 @@ export default {
     }
   }
 
-  &__timestamp {
-    color: var(--v-grey-darken1, #757575) !important;
-  }
-
   &__expand-btn {
-    margin-left: auto;
     opacity: .5;
   }
 

@@ -1,32 +1,35 @@
 <template>
-  <c-text-field
+  <v-text-field
+    v-field="value"
+    v-validate="rules"
     v-bind="$attrs"
-    :model-value="modelValue"
-    :label="label || t('common.name')"
+    :label="label || $t('common.name')"
+    :error-messages="errors.collect(name)"
     :name="name"
-    :required="required"
-    :max-length="maxLength"
-    :regex="regex"
-    @update:model-value="updateModel"
   >
-    <template v-if="tooltip" #append-inner>
-      <c-help-icon :text="tooltip" icon="help" left />
+    <template v-if="tooltip" #append>
+      <c-help-icon
+        :text="tooltip"
+        icon="help"
+        left
+      />
     </template>
-
-    <template v-if="$slots['append-outer']" #append>
+    <template #append-outer>
       <slot name="append-outer" />
     </template>
-  </c-text-field>
+  </v-text-field>
 </template>
 
 <script>
-import { useI18n } from '@/hooks/i18n';
-
 export default {
+  inject: ['$validator'],
   inheritAttrs: false,
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
@@ -55,20 +58,22 @@ export default {
       required: false,
     },
   },
+  computed: {
+    rules() {
+      const rules = {
+        required: this.required,
+      };
 
-  emits: ['update:modelValue'],
+      if (this.maxLength) {
+        rules.max = this.maxLength;
+      }
 
-  setup(props, { emit }) {
-    const { t } = useI18n();
+      if (this.regex) {
+        rules.regex = this.regex;
+      }
 
-    const updateModel = (value) => {
-      emit('update:modelValue', value);
-    };
-
-    return {
-      t,
-      updateModel,
-    };
+      return rules;
+    },
   },
 };
 </script>

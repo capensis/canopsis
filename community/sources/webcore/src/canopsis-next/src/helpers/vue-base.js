@@ -1,80 +1,52 @@
 import { isArray, isObject, difference } from 'lodash';
+import Vue from 'vue';
 
 /**
- * Check whether the value is a DOM node.
+ * Check if child component has parent component in the $parent
  *
- * @param {*} value
- * @returns {boolean}
- */
-const isNode = value => !!globalThis.Node && value instanceof globalThis.Node;
-
-/**
- * Resolve the parent Vue component instance from Options API or Composition API setup.
- *
- * @param {Object} component Vue component instance.
- * @returns {Object|undefined} Parent component instance, if available.
- */
-const getParentComponent = component => component?.$parent ?? component?.$.parent?.proxy;
-
-/**
- * Safely check whether an object has an own property.
- *
- * @param {Object} object
- * @param {string} property
- * @returns {boolean}
- */
-const hasOwnProperty = (object, property) => Object.prototype.hasOwnProperty.call(object, property);
-
-/**
- * Check whether a child component is a wrapper whose `_original` reference points to the parent.
- *
- * @param {Object} child
- * @param {Object} parent
- * @returns {boolean}
- */
-const isOriginalChild = (child, parent) =>
-  hasOwnProperty(child, '_original') && child._original === parent;
-
-/**
- * Check if child component has parent component in the $parent chain.
- *
- * @param {Object|HTMLElement} child
- * @param {Object|HTMLElement} parent
+ * @param {VueComponent} child
+ * @param {VueComponent} parent
  * @returns {boolean}
  */
 export function isParent(child, parent) {
-  if (!child || !parent) {
-    return false;
-  }
+  if (child) {
+    if (child === parent || child._original === parent || parent?.$el?.contains(child?.$el ?? child)) {
+      return true;
+    }
 
-  const childElement = child.$el ?? child;
-  const parentElement = parent.$el ?? parent;
-
-  if (
-    child === parent ||
-    isOriginalChild(child, parent) ||
-    (isNode(parentElement) && isNode(childElement) && parentElement.contains(childElement))
-  ) {
-    return true;
-  }
-
-  const childParent = getParentComponent(child);
-
-  if (childParent) {
-    return isParent(childParent, parent);
+    if (child.$parent) {
+      return isParent(child.$parent, parent);
+    }
   }
 
   return false;
 }
 
 /**
- * Merge changed properties into reactive object/array.
+ * Merges new data into old data, updating only the properties that have changed.
+ * This function is designed to work with Vue's reactivity system, ensuring updates
+ * are reactive. It can handle both arrays and objects, recursively merging nested
+ * structures. For arrays, it replaces the old array if the length differs, or
+ * merges each element. For objects, it updates existing properties, removes
+ * properties not present in the new data, and adds any new properties.
  *
- * In Vue 3 Vue.set/Vue.delete are not needed.
+ * @param {Object|Array} oldData - The original data to merge into. This data is modified in place.
+ * @param {Object|Array} newData - The new data to merge from. This data is not modified.
+ * @returns {Object|Array} The updated oldData with changes from newData merged in.
  *
- * @param {Object|Array} oldData
- * @param {Object|Array} newData
- * @returns {Object|Array}
+ * @example
+ * // For objects
+ * const oldObj = { a: 1, b: 2, c: 3 };
+ * const newObj = { b: 20, c: 30, d: 40 };
+ * mergeReactiveChangedProperties(oldObj, newObj);
+ * console.log(oldObj); // Output: { b: 20, c: 30, d: 40 }
+ *
+ * @example
+ * // For arrays
+ * const oldArr = [{ a: 1 }, { b: 2 }];
+ * const newArr = [{ a: 10 }, { b: 20 }];
+ * mergeReactiveChangedProperties(oldArr, newArr);
+ * console.log(oldArr); // Output: [{ a: 10 }, { b: 20 }]
  */
 export const mergeReactiveChangedProperties = (oldData, newData) => {
   if (isArray(newData) && isArray(oldData)) {
@@ -82,7 +54,12 @@ export const mergeReactiveChangedProperties = (oldData, newData) => {
       return newData;
     }
 
-    for (let index = 0; index < newData.length; index += 1) {
+    if (oldData.length === 0 && newData.length === 0) {
+      return oldData;
+    }
+
+    // eslint-disable-next-line no-plusplus
+    for (let index = 0; index < newData.length; index++) {
       // eslint-disable-next-line no-param-reassign
       oldData[index] = mergeReactiveChangedProperties(oldData[index], newData[index]);
     }
@@ -97,15 +74,21 @@ export const mergeReactiveChangedProperties = (oldData, newData) => {
   const oldKeys = Object.keys(oldData);
   const newKeys = Object.keys(newData);
 
-  difference(oldKeys, newKeys).forEach((key) => {
-    // eslint-disable-next-line no-param-reassign
-    delete oldData[key];
-  });
+  const removedKeys = difference(oldKeys, newKeys);
 
-  newKeys.forEach((key) => {
+  for (const removedKey of removedKeys) {
+    Vue.delete(oldData, removedKey);
+
     // eslint-disable-next-line no-param-reassign
-    oldData[key] = mergeReactiveChangedProperties(oldData[key], newData[key]);
-  });
+    delete oldData[removedKey];
+  }
+
+  for (const key of newKeys) {
+    const oldValue = oldData[key];
+    const newValue = newData[key];
+
+    Vue.set(oldData, key, mergeReactiveChangedProperties(oldValue, newValue));
+  }
 
   return oldData;
 };

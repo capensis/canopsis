@@ -1,74 +1,69 @@
 <template>
-  <table :class="{ 'permissions-table--collapsed-header': indent !== 0 }" class="permissions-table">
-    <thead>
+  <v-data-table
+    :items="preparedItems"
+    :headers="headers"
+    :items-per-page="preparedItems.length"
+    :expanded.sync="expanded"
+    :class="{ 'permissions-table--collapsed-header': indent !== 0 }"
+    class="permissions-table"
+    item-key="_id"
+    hide-default-footer
+  >
+    <template #item="{ item, isExpanded, expand }">
       <tr>
-        <th />
-        <th v-for="role in roles" :key="role._id">
-          {{ role.name }}
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <template v-for="item in preparedItems" :key="item._id">
-        <tr class="permissions-table__item-row">
-          <td :class="`pl-${indent * 3 + 2}`">
-            <c-expand-btn
-              v-if="item.children"
-              :model-value="isExpanded(item)"
-              class="mr-2"
-              @update:model-value="toggleExpanded(item)"
-            />
-
-            <span
-              :class="{ 'font-weight-medium cursor-pointer': item.children }"
-              @click="item.children && toggleExpanded(item)"
-            >
-              <mark v-if="item.hasMask && search">{{ item.title }}</mark>
-              <span v-else>{{ item.title }}</span>
-            </span>
-          </td>
-
-          <permissions-table-cell
-            v-for="role in roles"
-            :key="role._id"
-            :disabled="disabled"
-            :permission="item"
-            :role="role"
-            @update:permission="forwardInput"
+        <td :class="{ [`pl-${indent * 3 + 2}`]: true }">
+          <c-expand-btn
+            v-if="item.children"
+            :expanded="isExpanded"
+            class="mr-2"
+            @expand="expand"
           />
-        </tr>
-
-        <tr v-if="item.children && isExpanded(item)" class="permissions-table__nested-row">
-          <td :colspan="roles.length + 1" class="permissions-table__nested-cell">
-            <div class="permissions-table__nested-wrapper">
-              <permissions-table
-                :disabled="disabled"
-                :indent="indent + 1"
-                :items="item.children"
-                :roles="roles"
-                :search="search"
-                :search-depth="searchDepth"
-                @update:permission="forwardInput"
-              />
-            </div>
-          </td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
+          <span
+            :class="{ 'font-weight-medium': item.children, 'cursor-pointer': item.children }"
+            @click="item.children && expand(!isExpanded)"
+          >
+            <v-list-item-mask v-if="item.hasMask" :text="item.title" :mask="search" />
+            <span v-else>
+              {{ item.title }}
+            </span>
+          </span>
+        </td>
+        <td v-for="role in roles" :key="role.value">
+          <permissions-table-cell
+            :role="role"
+            :permission="item"
+            :disabled="disabled"
+            @input="$listeners.input"
+          />
+        </td>
+      </tr>
+    </template>
+    <template #expanded-item="{ item }">
+      <permissions-table
+        v-if="item.children"
+        :items="item.children"
+        :roles="roles"
+        :indent="indent + 1"
+        :search="search"
+        :search-depth="searchDepth"
+        @input="$listeners.input"
+      />
+    </template>
+  </v-data-table>
 </template>
 
 <script>
-import { computed, inject, ref, watch } from 'vue';
+import { computed, ref, inject, watch } from 'vue';
 
 import PermissionsTableCell from './permissions-table-cell.vue';
 
 export default {
   name: 'permissions-table',
-
   components: { PermissionsTableCell },
-
+  model: {
+    prop: 'items',
+    event: 'input',
+  },
   props: {
     items: {
       type: Array,
@@ -95,43 +90,42 @@ export default {
       required: false,
     },
   },
-
-  emits: ['update:permission'],
-
-  setup(props, { emit }) {
+  setup(props) {
     const preparedItems = computed(() => props.items.map(item => ({
-        ...item,
+      ...item,
 
-        hasMask:
-          props.search &&
-          (props.searchDepth === props.indent || (!props.searchDepth && !item.children)),
-      })),
-    );
+      hasMask: props.search
+      && (props.searchDepth === props.indent || (!props.searchDepth && !item.children)),
+    })));
 
-    const allExpandedCounter = inject('$allExpandedCounter', ref(0));
-    const expandedIds = ref([]);
+    const headers = computed(() => [
+      { text: '', sortable: false },
 
-    const isExpanded = item => expandedIds.value.includes(item._id);
-    const toggleExpanded = (item) => {
-      expandedIds.value = isExpanded(item)
-        ? expandedIds.value.filter(id => id !== item._id)
-        : [...expandedIds.value, item._id];
-    };
-    const checkExpanded = () => {
-      expandedIds.value =
-        allExpandedCounter.value > 0 ? preparedItems.value.map(({ _id: id }) => id) : [];
-    };
-    const forwardInput = (...args) => emit('update:permission', ...args);
+      ...props.roles.map(role => ({ text: role.name, value: role._id, sortable: false })),
+    ]);
 
-    watch(allExpandedCounter, () => window.requestAnimationFrame(checkExpanded), {
-      immediate: true,
-    });
+    /**
+     * Expand/collapse functionality for permissions table
+     * Listens to global allExpandedCounter from parent and updates expanded state accordingly
+     * Uses requestAnimationFrame for smooth UI updates based on indent level
+     */
+    const allExpandedCounter = inject('$allExpandedCounter', 0);
+
+    const expanded = ref([]);
+
+    /**
+     * Updates the expanded state based on allExpandedCounter value
+     * Expands all items if counter is positive, collapses all otherwise
+     */
+    const checkExpanded = () => expanded.value = allExpandedCounter.value > 0 ? [...preparedItems.value] : [];
+
+    watch(allExpandedCounter, () => window.requestAnimationFrame(checkExpanded, props.indent), { immediate: true });
 
     return {
+      expanded,
+
       preparedItems,
-      isExpanded,
-      toggleExpanded,
-      forwardInput,
+      headers,
     };
   },
 };
@@ -139,69 +133,70 @@ export default {
 
 <style lang="scss" scoped>
 .permissions-table {
-  --checkboxCellWidth: 112px;
-  --cellPadding: 8px;
-  --rowHeight: 48px;
+  &--collapsed-header ::v-deep thead {
+    visibility: collapse;
+
+    th {
+      position: relative !important;
+      top: 0 !important;
+    }
+  }
+
+  ::v-deep {
   --topBarHeight: 48px;
+  --checkboxCellWidth: 112px;
+  --cellPadding: 8px 8px;
 
-  border-collapse: separate;
-  border-spacing: 0;
-  table-layout: fixed;
-  width: 100%;
+  .v-data-table__wrapper {
+    overflow: unset !important;
+    padding-top: 0;
 
-  &--collapsed-header {
-    > thead {
-      display: none;
+    td, th {
+      padding: var(--cellPadding);
+
+      &:not(:first-child) {
+        width: var(--checkboxCellWidth);
+      }
+    }
+
+    th {
+      transition: none;
+      z-index: 1;
+
+      background: var(--v-table-background-base);
+
+      .theme--dark & {
+        background: var(--v-table-background-base);
+      }
+
+      .v-window__container:not(.v-window__container--is-active) & {
+        position: sticky;
+        top: calc((var(--topBarHeight) * 2) - 1px);
+
+        .v-app--side-bar-groups & {
+          top: calc(var(--topBarHeight) - 1px);
+        }
+      }
     }
   }
 
-  th,
-  td {
-    height: var(--rowHeight);
-    padding: var(--cellPadding);
-    text-align: left;
-    vertical-align: middle;
+  .v-expansion-panel__body {
+    overflow: auto;
+  }
 
-    &:not(:first-child) {
-      width: var(--checkboxCellWidth);
+  .v-input--selection-controls__input {
+    margin: 0;
+  }
+
+  &.v-data-table:not(.v-data-table--expand) tbody tr {
+    &:nth-of-type(2n + 1) {
+    background-color: transparent !important;
+
+    &:hover {
+      background: var(--v-table-hover-row-color-base, #eeeeee) !important;
     }
   }
-
-  th {
-    background: rgb(var(--v-theme-surface));
-    font-weight: 500;
-    position: sticky;
-    top: calc(var(--topBarHeight) - 1px);
-    transition: none;
-    z-index: 2;
   }
-
-  thead {
-    position: sticky;
-    top: calc(var(--topBarHeight) - 1px);
-    z-index: 2;
-  }
-
-  &__item-row {
-    background-color: transparent;
-  }
-
-  mark {
-    background: rgba(var(--v-theme-warning), 0.24);
-    color: inherit;
-  }
-
-  &__nested-cell {
-    padding: 4px 0 4px 24px !important;
-  }
-
-  &__nested-wrapper {
-    border-left: 1px solid rgba(var(--v-theme-on-surface), 0.12);
-    padding-left: 8px;
-  }
-
-  &__nested-row tr:last-of-type td {
-    border-bottom: none;
-  }
+}
 }
 </style>

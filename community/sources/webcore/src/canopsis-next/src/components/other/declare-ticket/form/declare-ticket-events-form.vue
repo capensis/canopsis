@@ -1,6 +1,9 @@
 <template>
-  <c-layout column>
-    <c-information-block v-if="!singleMode" :title="$t('declareTicket.applyRules')">
+  <v-layout column>
+    <c-information-block
+      v-if="!singleMode"
+      :title="$t('declareTicket.applyRules')"
+    >
       <declare-ticket-event-form
         :form="commonValue"
         :alarms="alarms"
@@ -8,7 +11,7 @@
         :hide-ticket-resource="hideTicketResource"
         autofocus
         hide-row-select
-        @update:form="updateCommonValue"
+        @input="updateCommonValue"
       />
     </c-information-block>
     <template v-else>
@@ -17,16 +20,16 @@
         :key="group.ticketId"
         :title="$t('declareTicket.applyRules')"
       >
-        <c-layout class="mt-2">
-          <c-checkbox
-            :model-value="group.everyEnabled"
+        <v-layout class="mt-2">
+          <v-checkbox
+            :input-value="group.everyEnabled"
             :indeterminate="group.someEnabled"
             :label="group.name"
             color="primary"
             hide-details
-            @update:model-value="updateEnabledTickets(group.ticketId)"
+            @change="updateEnabledTickets(group.ticketId)"
           />
-        </c-layout>
+        </v-layout>
         <declare-ticket-event-form
           :form="group.value"
           :alarms="group.alarms"
@@ -34,7 +37,7 @@
           :hide-ticket-resource="hideTicketResource"
           :autofocus="!index"
           hide-tickets
-          @update:form="updateGroup(group.ticketId, $event)"
+          @input="updateGroup(group.ticketId, $event)"
         />
       </c-information-block>
       <c-information-block
@@ -48,28 +51,31 @@
         />
       </c-information-block>
     </template>
-    <c-alert v-if="hasErrors" type="error">
+    <c-alert
+      v-if="hasErrors"
+      type="error"
+    >
       {{ $t('declareTicket.errors.ticketRequired') }}
     </c-alert>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { keyBy, pick } from 'lodash';
-import { computed, onBeforeUnmount, watch } from 'vue';
 
-import { useFormErrorsMap } from '@/hooks/form';
-import { useModelField } from '@/hooks/form/model-field';
-import { useValidationAttachRule } from '@/hooks/validator/validation-attach-rule';
+import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventForm from './declare-ticket-event-form.vue';
 import DeclareTicketEventAlarmsTicketsField from './fields/declare-ticket-event-alarms-tickets-field.vue';
 
-const DECLARE_TICKET_FIELD_NAME = 'declare_event';
-
 export default {
+  inject: ['$validator'],
   components: { DeclareTicketEventAlarmsTicketsField, DeclareTicketEventForm },
-  emits: ['update:form'],
+  mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -100,48 +106,48 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const { hasError } = useFormErrorsMap();
-    const { updateField, updateModel } = useModelField(props, emit);
-    const { attachRule, detachRule, validateRule } = useValidationAttachRule(
-      DECLARE_TICKET_FIELD_NAME,
-      'min_value:1',
-      () => Object.values(props.form.alarms_by_tickets).filter(alarms => alarms.length).length,
-    );
+  computed: {
+    declareTicketFieldName() {
+      return 'declare_event';
+    },
 
-    const declareTicketFieldName = DECLARE_TICKET_FIELD_NAME;
-    const hasErrors = computed(() => hasError(declareTicketFieldName));
-    const alarmsById = computed(() => keyBy(props.alarms, '_id'));
-    const alarmsByTicketId = computed(() =>
-      Object.entries(props.alarmsByTickets).reduce(
-        (acc, [ticketId, { alarms: alarmsIds }]) => {
-          acc[ticketId] = alarmsIds.map(id => alarmsById.value[id]);
+    hasErrors() {
+      return this.errors.has(this.declareTicketFieldName);
+    },
 
-          return acc;
-        },
-        {},
-      ),
-    );
+    alarmsById() {
+      return keyBy(this.alarms, '_id');
+    },
 
-    const alarmsWithoutTickets = computed(() =>
-      Object.keys(props.ticketsByAlarms).reduce((acc, alarmId) => {
-        if (props.ticketsByAlarms[alarmId].length === 0) {
-          acc.push(alarmsById.value[alarmId]);
+    alarmsByTicketId() {
+      return Object.entries(this.alarmsByTickets).reduce((acc, [ticketId, { alarms: alarmsIds }]) => {
+        acc[ticketId] = alarmsIds.map(id => this.alarmsById[id]);
+
+        return acc;
+      }, {});
+    },
+
+    alarmsWithoutTickets() {
+      return Object.keys(this.ticketsByAlarms).reduce((acc, alarmId) => {
+        if (this.ticketsByAlarms[alarmId].length === 0) {
+          acc.push(this.alarmsById[alarmId]);
         }
 
         return acc;
-      }, []),
-    );
+      }, []);
+    },
 
-    const commonValue = computed(() => ({
-      alarms_by_tickets: props.form.alarms_by_tickets,
-      comment: Object.values(props.form.comments_by_tickets)[0] ?? '',
-      ticket_resources: Object.values(props.form.ticket_resources_by_tickets)[0] ?? false,
-    }));
+    commonValue() {
+      return {
+        alarms_by_tickets: this.form.alarms_by_tickets,
+        comment: Object.values(this.form.comments_by_tickets)[0] ?? '',
+        ticket_resources: Object.values(this.form.ticket_resources_by_tickets)[0] ?? false,
+      };
+    },
 
-    const groups = computed(() =>
-      Object.entries(props.alarmsByTickets).map(([ticketId, { alarms: alarmsIds, name }]) => {
-        const selectedAlarms = props.form.alarms_by_tickets[ticketId];
+    groups() {
+      return Object.entries(this.alarmsByTickets).map(([ticketId, { alarms: alarmsIds, name }]) => {
+        const selectedAlarms = this.form.alarms_by_tickets[ticketId];
 
         const everyEnabled = selectedAlarms.length === alarmsIds.length;
         const someEnabled = !everyEnabled && selectedAlarms.length > 0;
@@ -151,99 +157,99 @@ export default {
           everyEnabled,
           someEnabled,
           value: {
-            alarms_by_tickets: pick(props.form.alarms_by_tickets, [ticketId]),
-            comment: props.form.comments_by_tickets[ticketId],
-            ticket_resources: props.form.ticket_resources_by_tickets[ticketId],
+            alarms_by_tickets: pick(this.form.alarms_by_tickets, [ticketId]),
+            comment: this.form.comments_by_tickets[ticketId],
+            ticket_resources: this.form.ticket_resources_by_tickets[ticketId],
           },
           name,
           ticketId,
-          alarms: alarmsByTicketId.value[ticketId],
+          alarms: this.alarmsByTicketId[ticketId],
           ticketsByAlarms: alarmsIds.reduce((acc, id) => {
             acc[id] = activeTickets;
 
             return acc;
           }, {}),
         };
-      }),
-    );
-
-    const updateEnabledTickets = (ticketId) => {
-      const { alarms } = props.alarmsByTickets[ticketId];
-      const selectedAlarms = props.form.alarms_by_tickets[ticketId];
-
-      updateField('alarms_by_tickets', {
-        ...props.form.alarms_by_tickets,
-        [ticketId]: selectedAlarms.length === alarms.length ? [] : alarms,
       });
-    };
+    },
+  },
+  watch: {
+    'form.alarms_by_tickets': {
+      handler() {
+        if (this.hasErrors) {
+          this.$validator.validate(this.name);
+        }
+      },
+    },
+  },
+  created() {
+    this.attachMinValueRule();
+  },
+  beforeDestroy() {
+    this.detachRules();
+  },
+  methods: {
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.declareTicketFieldName,
+        rules: 'min_value:1',
+        getter: () => Object.values(this.form.alarms_by_tickets).filter(alarms => alarms.length).length,
+        vm: this,
+      });
+    },
 
-    const updateCommonValue = ({
-      comment,
-      alarms_by_tickets: alarmsByTickets,
-      ticket_resources: ticketResources,
-    }) => {
-      updateModel({
-        alarms_by_tickets: alarmsByTickets,
-        ...Object.keys(props.form.comments_by_tickets).reduce(
-          (acc, ticketId) => {
+    detachRules() {
+      this.$validator.detach(this.declareTicketFieldName);
+    },
+
+    updateEnabledTickets(ticketId) {
+      const { alarms } = this.alarmsByTickets[ticketId];
+      const selectedAlarms = this.form.alarms_by_tickets[ticketId];
+
+      this.updateField(
+        'alarms_by_tickets',
+        {
+          ...this.form.alarms_by_tickets,
+          [ticketId]: selectedAlarms.length === alarms.length ? [] : alarms,
+        },
+      );
+    },
+
+    updateCommonValue({ comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources }) {
+      this.updateModel(
+        {
+          alarms_by_tickets: alarmsByTickets,
+          ...Object.keys(this.form.comments_by_tickets).reduce((acc, ticketId) => {
             acc.comments_by_tickets[ticketId] = comment;
             acc.ticket_resources_by_tickets[ticketId] = ticketResources;
 
             return acc;
-          },
-          {
+          }, {
             comments_by_tickets: {},
             ticket_resources_by_tickets: {},
+          }),
+        },
+      );
+    },
+
+    updateGroup(ticketId, { comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources }) {
+      this.updateModel(
+        {
+          alarms_by_tickets: {
+            ...this.form.alarms_by_tickets,
+            ...alarmsByTickets,
           },
-        ),
-      });
-    };
-
-    const updateGroup = (
-      ticketId,
-      { comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources },
-    ) => {
-      updateModel({
-        alarms_by_tickets: {
-          ...props.form.alarms_by_tickets,
-          ...alarmsByTickets,
+          comments_by_tickets: {
+            ...this.form.comments_by_tickets,
+            [ticketId]: comment,
+          },
+          ticket_resources_by_tickets: {
+            ...this.form.ticket_resources_by_tickets,
+            [ticketId]: ticketResources,
+          },
         },
-        comments_by_tickets: {
-          ...props.form.comments_by_tickets,
-          [ticketId]: comment,
-        },
-        ticket_resources_by_tickets: {
-          ...props.form.ticket_resources_by_tickets,
-          [ticketId]: ticketResources,
-        },
-      });
-    };
-
-    attachRule();
-
-    watch(
-      () => props.form.alarms_by_tickets,
-      () => {
-        if (hasErrors.value) {
-          validateRule();
-        }
-      },
-    );
-
-    onBeforeUnmount(detachRule);
-
-    return {
-      declareTicketFieldName,
-      hasErrors,
-      alarmsById,
-      alarmsByTicketId,
-      alarmsWithoutTickets,
-      commonValue,
-      groups,
-      updateEnabledTickets,
-      updateCommonValue,
-      updateGroup,
-    };
+      );
+    },
   },
 };
 </script>

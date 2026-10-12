@@ -1,68 +1,51 @@
 <template>
-  <c-radio-group
-    v-model="currentValue"
+  <v-radio-group
+    v-field="value"
     :label="label"
-    :name="name"
+    :disabled="disabled"
     class="mt-0"
+    hide-details
+    mandatory
   >
     <v-radio
-      v-for="item in items"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
+      v-for="type in types"
+      :key="type.value"
+      :label="type.label"
+      :value="type.value"
+      color="primary"
     />
-  </c-radio-group>
+  </v-radio-group>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { IDLE_RULE_ALARM_CONDITIONS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
-
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: IDLE_RULE_ALARM_CONDITIONS.lastEvent,
     },
-    value: {
-      type: String,
-      default: undefined,
-    },
     label: {
       type: String,
-      default: '',
+      required: true,
     },
-    name: {
-      type: String,
-      default: 'alarm_condition',
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
-
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-
-    const currentValue = computed({
-      get: () => props.modelValue ?? props.value,
-      set: (value) => {
-        emit('update:modelValue', value);
-      },
-    });
-
-    const items = computed(() => Object.values(IDLE_RULE_ALARM_CONDITIONS).map(value => ({
+  computed: {
+    types() {
+      return Object.values(IDLE_RULE_ALARM_CONDITIONS).map(value => ({
         value,
-        label: t(`idleRules.alarmConditions.${value}`),
-      })),
-    );
-
-    return {
-      currentValue,
-      items,
-    };
+        label: this.$t(`idleRules.alarmConditions.${value}`),
+      }));
+    },
   },
 };
 </script>

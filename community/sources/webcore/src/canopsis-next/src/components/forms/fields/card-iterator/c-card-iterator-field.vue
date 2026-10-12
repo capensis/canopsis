@@ -1,16 +1,17 @@
 <template>
   <c-draggable-list-field
-    :model-value="data"
+    v-field="data"
     :disabled="disabled"
     :group="draggableGroup"
     :handle="handle"
-    :item-key="itemKey"
     class="c-card-iterator-field"
     ghost-class="grey"
-    @update:model-value="$emit('update:data', $event)"
   >
-    <template #item="{ element: item, index }">
-      <v-card class="lighten-2">
+    <template v-for="(item, index) in data">
+      <v-card
+        :key="item[itemKey]"
+        class="lighten-2"
+      >
         <v-card-text>
           <slot
             :item="item"
@@ -26,6 +27,10 @@
 
 <script>
 export default {
+  model: {
+    prop: 'data',
+    event: 'input',
+  },
   props: {
     data: {
       type: Array,
@@ -48,7 +53,6 @@ export default {
       required: false,
     },
   },
-  emits: ['update:data'],
 };
 </script>
 

@@ -1,27 +1,23 @@
-import { storeToRefs } from 'pinia';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import { useCommentTemplateStore } from '@/stores/modules/comment-template';
+const useCommentTemplateStoreModule = () => useStoreModuleHooks('commentTemplate');
 
 /**
- * Comment template store facade.
+ * Custom hook for accessing actions related to comment templates from Vuex store module.
  *
- * @returns {Object}
+ * @returns {Object} An object containing functions to create, update, remove, and fetch comment templates list.
  */
-export const useCommentTemplate = () => {
-  const commentTemplateStore = useCommentTemplateStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(commentTemplateStore);
+export const useCommentTemplates = () => {
+  const { useActions } = useCommentTemplateStoreModule();
+
+  const actions = useActions({
+    createCommentTemplate: 'create',
+    updateCommentTemplate: 'update',
+    removeCommentTemplate: 'remove',
+    fetchCommentTemplatesListWithoutStore: 'fetchListWithoutStore',
+  });
 
   return {
-    commentTemplates: items,
-    commentTemplatesMeta: meta,
-    commentTemplatesPending: pending,
-    commentTemplatesFetchingParams: fetchingParams,
-
-    fetchCommentTemplatesList: commentTemplateStore.fetchList,
-    fetchCommentTemplatesListWithPreviousParams: commentTemplateStore.fetchListWithPreviousParams,
-    fetchCommentTemplatesListWithoutStore: commentTemplateStore.fetchListWithoutStore,
-    createCommentTemplate: commentTemplateStore.create,
-    updateCommentTemplate: commentTemplateStore.update,
-    removeCommentTemplate: commentTemplateStore.remove,
+    ...actions,
   };
 };

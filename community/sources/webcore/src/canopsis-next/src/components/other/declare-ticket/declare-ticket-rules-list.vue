@@ -26,26 +26,36 @@
       <c-enabled :value="item.enabled" />
     </template>
     <template #created="{ item }">
-      {{ dateToString(item.created) }}
+      {{ item.created | date }}
     </template>
     <template #updated="{ item }">
-      {{ dateToString(item.updated) }}
+      {{ item.updated | date }}
     </template>
     <template #actions="{ item }">
-      <c-layout>
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
         <c-db-export-btn :id="item._id" declare-ticket />
-        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
-      </c-layout>
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -80,9 +90,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
-
   setup() {
     const { t } = useI18n();
 
@@ -96,11 +103,8 @@ export default {
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },
     ]);
 
-    const dateToString = date => convertDateToString(date);
-
     return {
       headers,
-      dateToString,
     };
   },
 };

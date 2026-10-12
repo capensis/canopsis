@@ -1,7 +1,5 @@
 export const DEFAULT_COLOR_THEME = 'canopsis';
 
-export const DEFAULT_WIDGET_BORDER_RADIUS = 5;
-
 export const THEME_FONT_SIZES = {
   small: 1,
   medium: 2,

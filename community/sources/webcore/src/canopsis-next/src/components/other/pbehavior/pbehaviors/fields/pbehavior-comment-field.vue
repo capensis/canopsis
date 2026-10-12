@@ -1,40 +1,50 @@
 <template>
-  <c-layout gap="2" align="center">
-    <c-textarea
-      :model-value="comment.message"
-      :disabled="!!comment._id"
-      :label="$t('common.message')"
-      :name="messageFieldName"
-      :max-length="max"
-      required
-      @update:model-value="updateField('message', $event)"
-    />
-
-    <c-action-btn type="delete" @click="$emit('remove')" />
-  </c-layout>
+  <div>
+    <v-layout align-center>
+      <v-textarea
+        v-field="comment.message"
+        v-validate="rules"
+        :disabled="!!comment._id"
+        :label="$t('common.message')"
+        :error-messages="errors.collect(messageFieldName)"
+        :name="messageFieldName"
+      />
+      <c-action-btn
+        type="delete"
+        @click="$emit('remove')"
+      />
+    </v-layout>
+  </div>
 </template>
 
-<script setup>
-import { computed } from 'vue';
-
-import { FORM_MAX_STRING_LENGTH } from '@/constants';
-
-import { useModelField } from '@/hooks/form/model-field';
-
-const props = defineProps({
-  comment: {
-    type: Object,
-    required: true,
+<script>
+export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'comment',
+    event: 'input',
   },
-  max: {
-    type: Number,
-    default: FORM_MAX_STRING_LENGTH,
+  props: {
+    comment: {
+      type: Object,
+      required: true,
+    },
+    max: {
+      type: Number,
+      default: 255,
+    },
   },
-});
+  computed: {
+    rules() {
+      return {
+        required: true,
+        max: this.max,
+      };
+    },
 
-const emit = defineEmits(['update:comment', 'remove']);
-
-const { updateField } = useModelField(props, emit);
-
-const messageFieldName = computed(() => `${props.comment._id || props.comment.key}_message`);
+    messageFieldName() {
+      return `${this.comment._id || this.comment.key}_message`;
+    },
+  },
+};
 </script>

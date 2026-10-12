@@ -1,28 +1,32 @@
 <template>
-  <v-data-table :headers="headers" :items="alarmExecutions" hide-default-footer>
+  <v-data-table
+    :headers="headers"
+    :items="alarmExecutions"
+    hide-default-footer
+  >
     <template #item="{ item }">
       <tr>
         <td class="text-left pre-wrap">
-          {{ getExecutionItem(item).alarm.v.connector_name }}
+          {{ item.alarm.v.connector_name }}
         </td>
         <td class="text-left pre-wrap">
-          {{ getExecutionItem(item).alarm.v.connector }}
+          {{ item.alarm.v.connector }}
         </td>
         <td class="text-left pre-wrap">
-          {{ getExecutionItem(item).alarm.v.component }}
+          {{ item.alarm.v.component }}
         </td>
         <td class="text-left pre-wrap">
-          {{ getExecutionItem(item).alarm.v.resource }}
+          {{ item.alarm.v.resource }}
         </td>
         <template v-if="!isOneExecution">
           <td class="text-left pre-wrap">
-            {{ getExecutionItem(item).ruleName }}
+            {{ item.ruleName }}
           </td>
           <td class="text-left">
             <alarm-webhook-execution-status
-              :running="isExecutionRunning(getExecutionItem(item))"
-              :success="isExecutionSucceeded(getExecutionItem(item))"
-              :fail-reason="getExecutionItem(item).fail_reason"
+              :running="isExecutionRunning(item)"
+              :success="isExecutionSucceeded(item)"
+              :fail-reason="item.fail_reason"
             />
           </td>
         </template>
@@ -32,10 +36,7 @@
 </template>
 
 <script>
-import {
-  isWebhookExecutionRunning,
-  isWebhookExecutionSucceeded,
-} from '@/helpers/entities/webhook-execution/entity';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
 import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
@@ -55,44 +56,37 @@ export default {
     headers() {
       const headers = [
         {
-          title: this.$t('common.connectorName'),
+          text: this.$t('common.connectorName'),
           sortable: false,
         },
         {
-          title: this.$t('common.connector'),
+          text: this.$t('common.connector'),
           sortable: false,
         },
         {
-          title: this.$t('common.component'),
+          text: this.$t('common.component'),
           sortable: false,
         },
         {
-          title: this.$t('common.resource'),
+          text: this.$t('common.resource'),
           sortable: false,
         },
       ];
 
       if (!this.isOneExecution) {
-        headers.push(
-          {
-            title: this.$t('common.rule'),
-            sortable: false,
-          },
-          {
-            title: this.$t('common.status'),
-            sortable: false,
-          },
-        );
+        headers.push({
+          text: this.$tc('common.rule'),
+          sortable: false,
+        }, {
+          text: this.$t('common.status'),
+          sortable: false,
+        });
       }
 
       return headers;
     },
   },
   methods: {
-    getExecutionItem(item) {
-      return item.raw ?? item;
-    },
-
     isExecutionRunning(execution) {
       return isWebhookExecutionRunning(execution);
     },

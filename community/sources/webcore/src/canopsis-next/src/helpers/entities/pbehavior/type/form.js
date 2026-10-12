@@ -27,10 +27,11 @@ export const pbehaviorTypeToForm = (type = {}) => ({
   name: type.name ?? '',
   description: type.description ?? '',
   type: type.type ?? PBEHAVIOR_TYPE_TYPES.active,
+  /* 5 - next priority after default types */
   priority: type.priority ?? 5,
   icon_name: type.icon_name ?? '',
   color: type.color ?? '',
-  visible: !(type.hidden ?? false),
+  visible: !(type.hidden ?? false), // visible is the opposite of hidden
 });
 
 /**
@@ -41,6 +42,5 @@ export const pbehaviorTypeToForm = (type = {}) => ({
  */
 export const formToPbehaviorType = (form = {}) => ({
   ...form,
-
   hidden: !form.visible,
 });

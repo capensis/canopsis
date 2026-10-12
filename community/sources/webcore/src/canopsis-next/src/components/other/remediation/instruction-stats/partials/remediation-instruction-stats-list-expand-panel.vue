@@ -2,66 +2,84 @@
   <div>
     <v-tabs
       v-model="activeTab"
-      bg-color="secondary-lighten-1"
-      color="primary"
-      align-tabs="center"
+      background-color="secondary lighten-1"
+      slider-color="primary"
+      dark
+      centered
     >
-      <v-tab value="summary">{{ t('common.summary') }}</v-tab>
-      <v-tab value="statistics">{{ t('common.statistics') }}</v-tab>
-      <v-tab v-if="remediationInstructionStatsItem.has_executions" value="alarmsTimeline">
-        {{ t('remediation.instructionStat.alarmsTimeline') }}
+      <v-tab>{{ $t('common.summary') }}</v-tab>
+      <v-tab>{{ $t('common.statistics') }}</v-tab>
+      <v-tab v-if="remediationInstructionStatsItem.has_executions">
+        {{ $t('remediation.instructionStat.alarmsTimeline') }}
       </v-tab>
-      <v-tab value="rating">{{ t('common.rating') }}</v-tab>
+      <v-tab>{{ $tc('common.rating') }}</v-tab>
     </v-tabs>
-
-    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
-      <c-window-expand-item value="summary" cols="8">
-        <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction" />
-      </c-window-expand-item>
-      <c-window-expand-item value="statistics" cols="8">
-        <remediation-instruction-stats-statistics-tab
-          :remediation-instruction="remediationInstruction"
-          :interval="interval"
-        />
-      </c-window-expand-item>
-      <c-window-expand-item
-        v-if="remediationInstructionStatsItem.has_executions"
-        value="alarmsTimeline"
-      >
-        <remediation-instruction-stats-alarms-timeline-tab
-          :remediation-instruction="remediationInstruction"
-          :interval="interval"
-        />
-      </c-window-expand-item>
-      <c-window-expand-item value="rating" cols="8">
-        <remediation-instruction-stats-rating-tab
-          :remediation-instruction="remediationInstruction"
-          :interval="interval"
-        />
-      </c-window-expand-item>
-    </v-window>
+    <v-layout class="pa-3 secondary lighten-2">
+      <v-flex xs12>
+        <v-card class="pa-3">
+          <v-tabs-items
+            v-model="activeTab"
+            class="pt-2"
+          >
+            <v-tab-item>
+              <v-flex
+                offset-xs2
+                xs8
+              >
+                <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction" />
+              </v-flex>
+            </v-tab-item>
+            <v-tab-item>
+              <v-flex
+                offset-xs2
+                xs8
+              >
+                <remediation-instruction-stats-statistics-tab
+                  :remediation-instruction="remediationInstruction"
+                  :interval="interval"
+                />
+              </v-flex>
+            </v-tab-item>
+            <v-tab-item v-if="remediationInstructionStatsItem.has_executions">
+              <remediation-instruction-stats-alarms-timeline-tab
+                :remediation-instruction="remediationInstruction"
+                :interval="interval"
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <v-flex
+                offset-xs2
+                xs8
+              >
+                <remediation-instruction-stats-rating-tab
+                  :remediation-instruction="remediationInstruction"
+                  :interval="interval"
+                />
+              </v-flex>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
 <script>
-import { onMounted, ref, watch } from 'vue';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
-import { useI18n } from '@/hooks/i18n';
-import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
-
+import RemediationInstructionStatsSummaryTab from './remediation-instruction-stats-summary-tab.vue';
+import RemediationInstructionStatsStatisticsTab from './remediation-instruction-stats-statistics-tab.vue';
 import RemediationInstructionStatsAlarmsTimelineTab from './remediation-instruction-stats-alarms-timeline-tab.vue';
 import RemediationInstructionStatsRatingTab from './remediation-instruction-stats-rating-tab.vue';
-import RemediationInstructionStatsStatisticsTab from './remediation-instruction-stats-statistics-tab.vue';
-import RemediationInstructionStatsSummaryTab from './remediation-instruction-stats-summary-tab.vue';
 
 export default {
   components: {
+    RemediationInstructionStatsSummaryTab,
+    RemediationInstructionStatsStatisticsTab,
     RemediationInstructionStatsAlarmsTimelineTab,
     RemediationInstructionStatsRatingTab,
-    RemediationInstructionStatsStatisticsTab,
-    RemediationInstructionStatsSummaryTab,
   },
-
+  mixins: [entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstructionStatsItem: {
       type: Object,
@@ -72,28 +90,24 @@ export default {
       required: true,
     },
   },
-
-  setup(props) {
-    const { t } = useI18n();
-    const { fetchRemediationInstructionStatsSummaryWithoutStore } =
-      useRemediationInstructionStats();
-    const activeTab = ref('summary');
-    const remediationInstruction = ref({});
-
-    const fetchRemediationInstructionStatsSummary = async () => {
-      remediationInstruction.value = await fetchRemediationInstructionStatsSummaryWithoutStore({
-        id: props.remediationInstructionStatsItem._id,
-      });
-    };
-
-    watch(() => props.remediationInstructionStatsItem, fetchRemediationInstructionStatsSummary);
-    onMounted(fetchRemediationInstructionStatsSummary);
-
+  data() {
     return {
-      t,
-      activeTab,
-      remediationInstruction,
+      activeTab: 0,
+      remediationInstruction: {},
     };
+  },
+  watch: {
+    remediationInstructionStatsItem: 'fetchRemediationInstructionStatsSummary',
+  },
+  mounted() {
+    this.fetchRemediationInstructionStatsSummary();
+  },
+  methods: {
+    async fetchRemediationInstructionStatsSummary() {
+      this.remediationInstruction = await this.fetchRemediationInstructionStatsSummaryWithoutStore({
+        id: this.remediationInstructionStatsItem._id,
+      });
+    },
   },
 };
 </script>

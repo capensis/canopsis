@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { get } from 'lodash';
 
 import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { LOGOUT_RESPONSE_STATUSES } from '@/constants';
@@ -11,14 +12,6 @@ import localStorageService from '@/services/local-storage';
  * @type {{}}
  */
 const activeSources = {};
-
-/**
- * Check if error was caused by axios request cancellation
- *
- * @param {*} error
- * @returns {boolean}
- */
-export const isRequestCanceled = error => axios.isCancel(error);
 
 /**
  * Hook for cancelling of the requests by axios source
@@ -43,7 +36,7 @@ export async function useRequestCancelling(action, key) {
 
     return result;
   } catch (err) {
-    if (!isRequestCanceled(err)) {
+    if (!axios.isCancel(err)) {
       delete activeSources[key];
 
       throw err;
@@ -78,7 +71,7 @@ function successResponseHandler(response) {
     return response;
   }
 
-  if ((response?.data?.errors || []).length) {
+  if (get(response, 'data.errors', []).length) {
     return Promise.reject(response.data.errors);
   }
 
@@ -100,9 +93,8 @@ function errorResponseHandler(responseWithError) {
      */
     if (LOGOUT_RESPONSE_STATUSES.includes(response.status)) {
       const queryParams = new URLSearchParams(window.location.search);
-      const hasAccessToken =
-        localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY) ||
-        queryParams.has(ROUTER_ACCESS_TOKEN_KEY);
+      const hasAccessToken = localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
+        || queryParams.has(ROUTER_ACCESS_TOKEN_KEY);
 
       queryParams.delete(ROUTER_ACCESS_TOKEN_KEY);
       localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);

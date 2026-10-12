@@ -1,5 +1,12 @@
-import { cloneDeep, isObject, map, omit, uniq } from 'lodash';
+import {
+  cloneDeep,
+  isObject,
+  map,
+  omit,
+  uniq,
+} from 'lodash';
 
+import { COLORS } from '@/config';
 import {
   DATETIME_FORMATS,
   ENTITY_TYPES,
@@ -9,10 +16,9 @@ import {
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
 
-import { i18n } from '@/i18n';
+import i18n from '@/i18n';
 
-import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
-import { getColorByHash } from '@/helpers/color';
+import { uid } from '@/helpers/uid';
 import {
   convertDateToMoment,
   convertDateToDateObjectByTimezone,
@@ -25,8 +31,8 @@ import {
   isEndOfDay,
   isStartOfDay,
 } from '@/helpers/date/date';
+import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} PbehaviorReason
@@ -129,12 +135,11 @@ export const isPausedPbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_
  * @param {string} type
  * @returns {boolean}
  */
-export const isNotActivePbehaviorType = type =>
-  [
-    PBEHAVIOR_TYPE_TYPES.pause,
-    PBEHAVIOR_TYPE_TYPES.inactive,
-    PBEHAVIOR_TYPE_TYPES.maintenance,
-  ].includes(type);
+export const isNotActivePbehaviorType = type => [
+  PBEHAVIOR_TYPE_TYPES.pause,
+  PBEHAVIOR_TYPE_TYPES.inactive,
+  PBEHAVIOR_TYPE_TYPES.maintenance,
+].includes(type);
 
 /**
  * Check if pbehaviors have a paused type
@@ -172,12 +177,11 @@ export const pbehaviorExdateItemToForm = () => ({
  * @param {PbehaviorExdate[]} [exdates = []]
  * @return {PbehaviorExdateRequest[]}
  */
-export const exdatesToRequest = (exdates = []) =>
-  exdates.map(({ type, begin, end }) => ({
-    type: getIdFromEntity(type),
-    begin,
-    end,
-  }));
+export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
+  type: getIdFromEntity(type),
+  begin,
+  end,
+}));
 
 /**
  * Convert exdate to form
@@ -190,10 +194,7 @@ export const exdateToForm = (exdate, timezone = getLocalTimezone()) => ({
   ...exdate,
   key: uid(),
   begin: convertDateToDateObjectByTimezone(exdate.begin, timezone),
-  end: convertDateToDateObjectByTimezone(
-    isStartOfDay(exdate.end) ? exdate.end - 1 : exdate.end,
-    timezone,
-  ),
+  end: convertDateToDateObjectByTimezone(isStartOfDay(exdate.end) ? exdate.end - 1 : exdate.end, timezone),
 });
 
 /**
@@ -203,8 +204,9 @@ export const exdateToForm = (exdate, timezone = getLocalTimezone()) => ({
  * @param {string} timezone
  * @returns {PbehaviorExdateForm[]}
  */
-export const exdatesToForm = (exdates, timezone) =>
-  exdates ? exdates.map(exdate => exdateToForm(exdate, timezone)) : [];
+export const exdatesToForm = (exdates, timezone) => (
+  exdates ? exdates.map(exdate => exdateToForm(exdate, timezone)) : []
+);
 
 /**
  * Convert exdate form to exdate
@@ -225,8 +227,7 @@ export const formToExdate = (formExdate, timezone = getLocalTimezone()) => ({
  * @param {PbehaviorException[]} exceptions
  * @return {string[]}
  */
-export const exceptionsToRequest = (exceptions = []) =>
-  exceptions.map(exception => getIdFromEntity(exception));
+export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
 
 /**
  * Convert exceptions array to exceptions form array
@@ -244,7 +245,11 @@ export const exceptionsToForm = (exceptions = []) => addKeyInEntities(cloneDeep(
  * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorForm}
  */
-export const pbehaviorToForm = (pbehavior = {}, entityPattern, timezone = getLocalTimezone()) => {
+export const pbehaviorToForm = (
+  pbehavior = {},
+  entityPattern,
+  timezone = getLocalTimezone(),
+) => {
   let rrule = pbehavior.rrule ?? '';
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
@@ -252,7 +257,9 @@ export const pbehaviorToForm = (pbehavior = {}, entityPattern, timezone = getLoc
   }
 
   const patterns = filterPatternsToForm(
-    entityPattern ? { entity_pattern: entityPattern } : pbehavior,
+    entityPattern
+      ? { entity_pattern: entityPattern }
+      : pbehavior,
     [PATTERNS_FIELDS.entity],
   );
 
@@ -268,12 +275,8 @@ export const pbehaviorToForm = (pbehavior = {}, entityPattern, timezone = getLoc
     name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart
-      ? convertDateToDateObjectByTimezone(pbehavior.tstart, pbehaviorTimezone)
-      : null,
-    tstop: pbehavior.tstop
-      ? convertDateToDateObjectByTimezone(pbehavior.tstop, pbehaviorTimezone)
-      : null,
+    tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, pbehaviorTimezone) : null,
+    tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, pbehaviorTimezone) : null,
     comments: pbehavior.comments?.length ? pbehavior.comments.map(pbehaviorCommentItemToForm) : [],
     timezone: pbehaviorTimezone,
     exceptions: exceptionsToForm(pbehavior.exceptions),
@@ -305,8 +308,9 @@ export const formExceptionsToExceptions = exceptions => removeKeyFromEntities(ex
  * @param {string} timezone
  * @returns {PbehaviorExdate[]}
  */
-export const formExdatesToExdates = (exdates = [], timezone) =>
-  exdates.map(exdateForm => formToExdate(exdateForm, timezone));
+export const formExdatesToExdates = (exdates = [], timezone) => exdates.map(
+  exdateForm => formToExdate(exdateForm, timezone),
+);
 
 /**
  * Convert form to pbehavior entity.
@@ -464,28 +468,23 @@ export const createDowntimePbehavior = ({
   type,
   origin = PBEHAVIOR_ORIGINS.serviceWeather,
   prefix = WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
-}) =>
-  pbehaviorToRequest(
-    formToPbehavior({
-      reason,
-      type,
-      origin,
-      name: `${prefix}-${entity.name}-${uid()}`,
-      tstart: getNowTimestamp(),
-      comment,
-      entity: entity._id,
-    }),
-  );
+}) => pbehaviorToRequest(formToPbehavior({
+  reason,
+  type,
+  origin,
+  name: `${prefix}-${entity.name}-${uid()}`,
+  tstart: getNowTimestamp(),
+  comment,
+  entity: entity._id,
+}));
 
 /**
- * Get color for pbehavior calendar event
+ * Get color for pbehavior
  *
- * @param {Object} [pbehavior={}]
- * @param {Object} [type=pbehavior.type]
+ * @param pbehavior
  * @returns {string}
  */
-export const getPbehaviorColor = (pbehavior = {}, type = pbehavior.type) =>
-  pbehavior.color || type?.color || pbehavior.type?.color || getColorByHash(pbehavior._id);
+export const getPbehaviorColor = (pbehavior = {}) => pbehavior.color || pbehavior.type?.color || COLORS.secondary;
 
 /**
  * Generates a default name for a pbehavior based on the provided entities.
@@ -503,30 +502,26 @@ export const getPbehaviorNameByEntities = (entities = [], timezone = getLocalTim
     return '';
   }
 
-  const now = convertDateToTimezoneDateString(
-    new Date(),
-    timezone,
-    DATETIME_FORMATS.dateTimePicker,
-  );
+  const now = convertDateToTimezoneDateString(new Date(), timezone, DATETIME_FORMATS.dateTimePicker);
 
   if (entities.length === 1) {
     const [entity] = entities;
 
     if (entity.type === ENTITY_TYPES.resource) {
-      return i18n.global.t('pbehavior.defaultNameForSingleResourceEntity', {
+      return i18n.t('pbehavior.defaultNameForSingleResourceEntity', {
         component: entity.component,
         name: entity.name,
         datetime: now,
       });
     }
 
-    return i18n.global.t('pbehavior.defaultNameForSingleEntity', {
+    return i18n.t('pbehavior.defaultNameForSingleEntity', {
       name: entity.name,
       datetime: now,
     });
   }
 
-  return i18n.global.t('pbehavior.defaultNameForMultipleEntities', { datetime: now });
+  return i18n.t('pbehavior.defaultNameForMultipleEntities', { datetime: now });
 };
 
 /**

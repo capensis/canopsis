@@ -1,9 +1,10 @@
-import { throttle, isArray, isEmpty, set } from 'lodash';
+import { throttle, isArray, isEmpty } from 'lodash';
 import {
   computed,
   watch,
   ref,
   unref,
+  set,
   provide,
   inject,
   nextTick,
@@ -30,65 +31,14 @@ import { patternToForm } from '@/helpers/entities/pattern/form';
 import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
-import { useLlm } from '@/hooks/store/modules/llm';
+import { useValidator } from '@/hooks/validator/validator';
 import { useUser } from '@/hooks/store/modules/user';
+import { useLlm } from '@/hooks/store/modules/llm';
 
 import { useAiChatLlmModel } from './ai-chat';
 
 /** Throttle window for syncing `formPatterns` from the live form into sidebar props. */
 const THROTTLE_WAIT_MS = 1000;
-
-/**
- * Maps each pattern field to form shape: keeps values that already have `groups`, otherwise runs
- * `filterPatternsToForm` for that field.
- *
- * @param {Object<string, Object>} patterns - Pattern fields keyed by name (API or form shape).
- * @returns {Object<string, PatternGroupsForm>} Same keys with form-ready pattern values.
- */
-const normalizePatternsToForm = patterns =>
-  Object.entries(patterns).reduce((acc, [field, pattern]) => {
-    acc[field] = pattern?.groups
-      ? pattern
-      : filterPatternsToForm({ [field]: pattern }, [field])[field];
-
-    return acc;
-  }, {});
-
-/**
- * Unwraps the current form model: prefers vee-validate `form.values` when present.
- *
- * @param {import('vue').Ref|Object} form - Vue ref, vee-validate context, or plain form object/array.
- * @returns {Object|Array} Unwrapped form values.
- */
-const getFormValue = form => unref(form?.values ?? form);
-
-/**
- * Sets a nested path on the unwrapped form model (lodash `set`).
- *
- * @param {import('vue').Ref|Object} form - Same as `getFormValue`.
- * @param {string} path - Lodash path (e.g. `patterns.entity_pattern`).
- * @param {*} value - Value to write.
- * @returns {Object} The mutated form values object.
- */
-const setFormValue = (form, path, value) => set(getFormValue(form), path, value);
-
-/**
- * Clears the JSON validation error for a pattern field (`${field}.json`).
- *
- * @param {{ setFieldError?: function(string, string=) }} form - Vee-validate form context (optional chaining).
- * @param {string} field - Pattern field path (e.g. `entity_pattern` or `actions.<key>.entity_pattern`).
- */
-const clearFormFieldError = (form, field) => form?.setFieldError?.(`${field}.json`, undefined);
-
-/**
- * After the next Vue tick, invokes `callExpand` so pattern expand UI runs after form updates.
- *
- * @param {function(Object): *} callExpand - Expand observer notify (from `useAiChatForm`).
- * @param {{ key?: string, fields?: string[] }} callExpandOptions - Scenario action `key` and pattern field names.
- * @returns {Promise<void>}
- */
-const expandPatterns = (callExpand, callExpandOptions) =>
-  nextTick(() => callExpand(callExpandOptions)).catch(console.error);
 
 /**
  * Registers AI chat expand handler: switches to the `neededTab` when the chat expands.
@@ -140,19 +90,17 @@ export const useAiChatPatternsItems = ({ form, context } = {}) => {
   const { t } = useI18n();
 
   const contextToPatternsItems = {
-    [LLM_SOCKET_CONTEXTS.scenario]: () =>
-      getFormValue(form)?.map?.((formItem, index) => ({
-        text: `${index + 1} - ${t(`scenario.actions.${formItem.type}`)}`,
-        value: formItem.key,
-      })),
-    [LLM_SOCKET_CONTEXTS.stateSettings]: () =>
-      [
-        { text: t('common.entityPatterns'), value: PATTERNS_FIELDS.entity },
-        getFormValue(form)?.method === STATE_SETTING_METHODS.inherited && {
-          text: t('stateSetting.dependenciesEntityPattern'),
-          value: STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
-        },
-      ].filter(Boolean),
+    [LLM_SOCKET_CONTEXTS.scenario]: () => unref(form)?.map?.((formItem, index) => ({
+      text: `${index + 1} - ${t(`scenario.actions.${formItem.type}`)}`,
+      value: formItem.key,
+    })),
+    [LLM_SOCKET_CONTEXTS.stateSettings]: () => [
+      { text: t('common.entityPatterns'), value: PATTERNS_FIELDS.entity },
+      unref(form)?.method === STATE_SETTING_METHODS.inherited && {
+        text: t('stateSetting.dependenciesEntityPattern'),
+        value: STATE_SETTINGS_INHERITED_ENTITY_PATTERN_FIELD,
+      },
+    ].filter(Boolean),
   };
 
   const patternsItems = computed(() => contextToPatternsItems[unref(context)]?.(form) ?? []);
@@ -178,9 +126,7 @@ const useAiChatMinimized = ({ modal } = {}) => {
   const { currentUser } = useAuth();
   const { updateCurrentUserTours } = useUser();
 
-  const initialMinimized = computed(
-    () => currentUser.value?.ui_tours?.[LLM_AI_CHAT_TOURS.minimized],
-  );
+  const initialMinimized = computed(() => currentUser.value?.ui_tours?.[LLM_AI_CHAT_TOURS.minimized]);
 
   /**
    * Saves minimized state to the user profile and updates `contentWrapperStyle` on the host modal.
@@ -229,17 +175,13 @@ export const useAiChatPending = () => {
   const pending = ref(false);
   const creation = ref(false);
 
-  const pendingTexts = computed(() =>
-    creation.value
-      ? {
-          inProgress: t('pattern.patternsCreationInProgress'),
-          cancel: t('pattern.cancelPatternsCreation'),
-        }
-      : {
-          inProgress: t('pattern.patternsUpdateInProgress'),
-          cancel: t('pattern.cancelPatternsUpdate'),
-        },
-  );
+  const pendingTexts = computed(() => (creation.value ? {
+    inProgress: t('pattern.patternsCreationInProgress'),
+    cancel: t('pattern.cancelPatternsCreation'),
+  } : {
+    inProgress: t('pattern.patternsUpdateInProgress'),
+    cancel: t('pattern.cancelPatternsUpdate'),
+  }));
 
   /**
    * Mirrors `useAiChat` → `emit('update:pending', …)`: `newPending` is in-flight, second arg is
@@ -282,7 +224,7 @@ export const useAiChatJsonString = () => {
   const updateJsonString = (newJsonString) => {
     jsonString.value = newJsonString;
 
-    nextTick(() => (jsonString.value = ''));
+    nextTick(() => jsonString.value = '');
   };
 
   return {
@@ -309,6 +251,8 @@ export const useAiChatJsonString = () => {
  * }}
  */
 export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
+  const validator = useValidator();
+
   const patterns = ref({});
 
   /**
@@ -320,49 +264,46 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
    */
   const updateFormPatterns = (newPatterns, key) => {
     const formRef = form;
-    const formValue = getFormValue(formRef);
 
     if (key) {
-      const newPatternsForm = normalizePatternsToForm(newPatterns);
+      const newPatternsForm = filterPatternsToForm(newPatterns, Object.values(PATTERNS_FIELDS));
 
-      if (isArray(formValue)) {
-        const index = formValue.findIndex(item => item.key === key);
-        const formItem = formValue[index];
+      if (isArray(formRef.value)) {
+        const index = formRef.value.findIndex(item => item.key === key);
+        const formItem = formRef.value[index];
 
-        set(formItem, 'patterns', newPatternsForm);
+        set(formRef.value[index], 'patterns', newPatternsForm);
 
-        Object.keys(newPatterns).forEach(patternField =>
-          clearFormFieldError(formRef, `actions.${formItem.key}.${patternField}`),
-        );
+        Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`actions.${formItem.key}.${patternField}.json`));
       } else {
-        setFormValue(formRef, key, newPatternsForm);
+        set(formRef.value, key, newPatternsForm);
 
-        Object.keys(newPatterns).forEach(patternField =>
-          clearFormFieldError(formRef, `${key}.${patternField}`),
-        );
+        Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${key}.${patternField}.json`));
       }
 
-      updatePatterns();
-      expandPatterns(callExpand, { key, fields: Object.keys(newPatterns) });
+      callExpand({ key, fields: Object.keys(newPatterns) });
 
       return;
     }
     const newPatternsForm = unref(field)
-      ? patternToForm({ ...formValue, ...newPatterns })
-      : normalizePatternsToForm(newPatterns);
+      ? patternToForm({ ...formRef.value, ...newPatterns })
+      : filterPatternsToForm(newPatterns, Object.values(PATTERNS_FIELDS));
 
-    Object.entries(newPatternsForm).forEach(([patternField, patternForm]) => {
-      setFormValue(
-        formRef,
-        formValue.patterns ? `patterns.${patternField}` : patternField,
-        patternForm,
-      );
-    });
+    if (formRef.value.patterns) {
+      set(formRef.value, 'patterns', {
+        ...formRef.value.patterns,
+        ...newPatternsForm,
+      });
+    } else {
+      formRef.value = {
+        ...formRef.value,
+        ...newPatternsForm,
+      };
+    }
 
-    Object.keys(newPatterns).forEach(patternField => clearFormFieldError(formRef, patternField));
+    Object.keys(newPatterns).forEach(patternField => validator.errors.clear(`${patternField}.json`));
 
-    updatePatterns();
-    expandPatterns(callExpand, { fields: Object.keys(newPatterns) });
+    callExpand({ fields: Object.keys(newPatterns) });
   };
 
   /**
@@ -370,7 +311,7 @@ export const useAiChatFormPatterns = ({ form, field, context, callExpand }) => {
    */
   const updatePatterns = () => {
     patterns.value = aiChatFormToPatterns({
-      form: getFormValue(form),
+      form: unref(form),
       field: unref(field),
       context: unref(context),
     });
@@ -423,11 +364,11 @@ export const useAiChatShown = ({ form, throttledUpdatePatterns, disabled } = {})
 
     shown.value = true;
 
-    watch(() => getFormValue(form), throttledUpdatePatterns, { deep: true, immediate: true });
+    watch(form, throttledUpdatePatterns, { deep: true, immediate: true });
   };
 
   /** Hides the chat UI (does not tear down the `form` watcher started in `showChat`). */
-  const hideChat = () => (shown.value = false);
+  const hideChat = () => shown.value = false;
 
   return {
     llms,
@@ -499,7 +440,7 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
    *
    * @type {Function|undefined}
    */
-  const previousAfterSubmit = modal?.config?.afterSubmit;
+  const previousAfterSubmit = modal.config.afterSubmit;
 
   /**
    * Wraps the modal `afterSubmit` handler: runs `previousAfterSubmit` when defined, then links buffered LLM chat
@@ -510,7 +451,7 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
    * @returns {*} Result of `previousAfterSubmit(createdItems)` when that function exists; otherwise `createdItems`.
    */
   const newAfterSubmit = async (createdItems) => {
-    const result = (await previousAfterSubmit?.(createdItems)) ?? createdItems;
+    const result = await previousAfterSubmit?.(createdItems) ?? createdItems;
 
     if (isEmpty(result)) {
       return result;
@@ -530,14 +471,7 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
       return;
     }
 
-    if (!modal?.id) {
-      return;
-    }
-
-    modals.updateModalConfig({
-      id: modal.id,
-      config: { ...modal.config, afterSubmit: newAfterSubmit },
-    });
+    modals.updateModalConfig({ id: modal.id, config: { ...modal.config, afterSubmit: newAfterSubmit } });
   });
 
   return {
@@ -563,32 +497,40 @@ export const useAiChatLinkChats = ({ ruleId, withoutLink } = {}) => {
  * @param {boolean} [params.disabled] - Whether to disable the chat.
  * @returns {{
  *   shown: import('vue').Ref<boolean>,
- *   options: import('vue').ComputedRef<{ attrs: Object }>,
+ *   options: import('vue').ComputedRef<{ bind: Object, on: Object }>,
  * }}
  */
-export const useAiChatForm = ({ modal, form, ruleId, context, disabled, field, withoutLink }) => {
+export const useAiChatForm = ({
+  modal,
+  form,
+  ruleId,
+  context,
+  disabled,
+  field,
+  withoutLink,
+}) => {
   const expandFunctionsObserver = new Observer(true);
 
   const { patternsItems } = useAiChatPatternsItems({ form, context });
   const { initialMinimized, updateMinimized } = useAiChatMinimized({ modal });
   const { pending, pendingTexts, updatePending } = useAiChatPending();
   const { jsonString, updateJsonString } = useAiChatJsonString();
-  const { patterns, updateFormPatterns, throttledUpdatePatterns } = useAiChatFormPatterns({
+  const {
+    patterns,
+    updateFormPatterns,
+    throttledUpdatePatterns,
+  } = useAiChatFormPatterns({
     form,
     field,
     context,
     callExpand: expandFunctionsObserver.notifyInSeries.bind(expandFunctionsObserver),
   });
 
-  const { llms, shown, showChat, hideChat } = useAiChatShown({
-    form,
-    throttledUpdatePatterns,
-    disabled,
-  });
+  const { llms, shown, showChat, hideChat } = useAiChatShown({ form, throttledUpdatePatterns, disabled });
   const { chatIds, registerChatId } = useAiChatLinkChats({ ruleId, withoutLink });
 
   const options = computed(() => ({
-    attrs: {
+    bind: {
       initialMinimized: initialMinimized.value,
       patterns: patterns.value,
       jsonString: jsonString.value,
@@ -598,9 +540,11 @@ export const useAiChatForm = ({ modal, form, ruleId, context, disabled, field, w
       patternsItems: patternsItems.value,
       pending: pending.value,
       pendingTexts: pendingTexts.value,
-      'onUpdate:minimized': updateMinimized,
-      'onUpdate:patterns': updateFormPatterns,
-      'onUpdate:pending': updatePending,
+    },
+    on: {
+      'update:minimized': updateMinimized,
+      'update:patterns': updateFormPatterns,
+      'update:pending': updatePending,
     },
   }));
 

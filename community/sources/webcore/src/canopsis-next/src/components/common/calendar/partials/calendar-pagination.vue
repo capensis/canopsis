@@ -5,9 +5,11 @@
       icon="keyboard_arrow_left"
       @click="$emit('prev')"
     />
-
-    <calendar-period-picker :type="type" :focus="focus" @update:focus="selectPeriod" />
-
+    <calendar-period-picker
+      :type="type"
+      :focus="focus"
+      @input="selectPeriod"
+    />
     <calendar-pagination-arrow-btn
       :label="nextLabel"
       icon="keyboard_arrow_right"
@@ -19,12 +21,12 @@
 <script>
 import { lowerCase } from 'lodash';
 
-import CalendarPaginationArrowBtn from './calendar-pagination-arrow-btn.vue';
+import CalendarPaginationArrowBtn from '@/components/common/calendar/partials/calendar-pagination-arrow-btn.vue';
+
 import CalendarPeriodPicker from './calendar-period-picker.vue';
 
 export default {
   components: { CalendarPaginationArrowBtn, CalendarPeriodPicker },
-
   props: {
     focus: {
       type: Date,
@@ -35,23 +37,25 @@ export default {
       required: false,
     },
   },
-
-  emits: ['prev', 'next', 'update:focus'],
-
   computed: {
     typeString() {
       return lowerCase(this.$t(`calendar.${this.type}`));
     },
 
     prevLabel() {
-      return [this.$t('common.previous'), this.typeString].join(' ');
+      return [
+        this.$t('common.previous'),
+        this.typeString,
+      ].join(' ');
     },
 
     nextLabel() {
-      return [this.$t('common.next'), this.typeString].join(' ');
+      return [
+        this.$t('common.next'),
+        this.typeString,
+      ].join(' ');
     },
   },
-
   methods: {
     selectPeriod(value) {
       this.$emit('update:focus', value);

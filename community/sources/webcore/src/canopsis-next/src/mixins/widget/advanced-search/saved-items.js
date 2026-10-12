@@ -8,12 +8,14 @@ import {
   isEmptyAdvancedSearch,
 } from '@/helpers/search/advanced-search';
 import { sortPinnedSearches, sliceSavedSearches } from '@/helpers/search/sorting';
-import { uid } from '@/helpers/uid';
+import { uuid } from '@/helpers/uuid';
+
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 export const widgetAdvancedSearchSavedItemsMixin = {
   provide() {
     return {
-      $registerSelectAdvancedSearch: selectFunc => (this.$selectAdvancedSearch = selectFunc),
+      $registerSelectAdvancedSearch: selectFunc => this.$selectAdvancedSearch = selectFunc,
 
       /**
        * Creates a search from a field/value pair and passes it to the registered select function.
@@ -29,24 +31,20 @@ export const widgetAdvancedSearchSavedItemsMixin = {
       },
     };
   },
-
+  mixins: [entitiesUserPreferenceMixin],
   computed: {
     searches() {
-      return (this.userPreference?.content?.searches ?? []).map(search =>
-        search?._id
-          ? search
-          : {
-              ...search,
-              _id: uid('advanced-search'),
-            },
-      );
+      return (this.userPreference?.content?.searches ?? []).map(search => (search?._id ? search : {
+        ...search,
+
+        _id: uuid(),
+      }));
     },
 
     searchesById() {
       return keyBy(this.searches, '_id');
     },
   },
-
   methods: {
     updateSearch(search) {
       if (isEmptyAdvancedSearch(search)) {
@@ -54,16 +52,11 @@ export const widgetAdvancedSearchSavedItemsMixin = {
 
         return;
       }
-
       this.query = prepareQueryWithAdvancedSearch(this.query, search);
 
       this.updateContentInUserPreference({
         searches: sliceSavedSearches(
-          sortPinnedSearches(
-            mergeSearchIntoSavedSearches(this.searches, search),
-            search._id,
-            '_id',
-          ),
+          sortPinnedSearches(mergeSearchIntoSavedSearches(this.searches, search), search._id, '_id'),
         ),
       });
     },
@@ -77,9 +70,9 @@ export const widgetAdvancedSearchSavedItemsMixin = {
     },
 
     togglePinSearch(id) {
-      const searches = this.searches.map(search =>
-        search._id === id ? { ...search, pinned: !search.pinned } : search,
-      );
+      const searches = this.searches.map(search => (
+        search._id === id ? { ...search, pinned: !search.pinned } : search
+      ));
 
       this.updateContentInUserPreference({
         searches: sliceSavedSearches(sortPinnedSearches(searches, id, '_id')),

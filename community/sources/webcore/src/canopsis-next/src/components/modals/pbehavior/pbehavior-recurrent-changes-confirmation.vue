@@ -1,83 +1,78 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper :close="cancel">
-      <template #title>
+    <modal-wrapper :close="cancel">
+      <template #title="">
         <span>{{ $t('modals.pbehaviorRecurrentChangesConfirmation.title') }}</span>
       </template>
-
-      <template #text>
-        <c-radio-group v-model="type" hide-details>
+      <template #text="">
+        <v-radio-group
+          v-model="type"
+          hide-details
+          mandatory
+        >
           <v-radio
-            :value="PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected"
+            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected"
             :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.selected')"
             color="primary"
           />
           <v-radio
-            :value="PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.all"
+            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.all"
             :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.all')"
             color="primary"
           />
-        </c-radio-group>
+        </v-radio-group>
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="cancel">
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="cancel"
+        >
           {{ $t('common.cancel') }}
         </v-btn>
-
-        <v-btn color="primary" type="submit">
+        <v-btn
+          class="primary"
+          type="submit"
+        >
           {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
+import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
+  name: MODALS.pbehaviorRecurrentChangesConfirmation,
+  components: {
+    ModalWrapper,
   },
-
+  mixins: [modalInnerMixin],
   data() {
     return {
       type: PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected,
     };
   },
-
-  setup() {
-    const modals = useModals();
-
-    return {
-      modals,
-      PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES,
-    };
-  },
-
-  computed: {
-    config() {
-      return this.modal.config ?? {};
-    },
-  },
-
   methods: {
     submit() {
-      this.config.action?.(this.type);
+      if (this.config.action) {
+        this.config.action(this.type);
+      }
 
-      this.modals.hide({ id: this.modal.id });
+      this.$modals.hide();
     },
-
     cancel() {
-      this.config.cancel?.();
+      if (this.config.cancel) {
+        this.config.cancel();
+      }
 
-      this.modals.hide({ id: this.modal.id });
+      this.$modals.hide();
     },
   },
 };

@@ -1,8 +1,11 @@
 <template>
-  <c-layout class="py-2" column>
+  <v-layout
+    class="py-2"
+    column
+  >
     <kpi-widget-filters
       :widget-id="widget._id"
-      :user-filters="userPreferenceFilters"
+      :user-filters="userPreference.filters"
       :widget-filters="widget.filters"
       :locked-filters="query.lockedFilter"
       :filters="query.filter"
@@ -11,71 +14,73 @@
       :show-filter="hasAccessToUserFilter"
       :show-interval="hasAccessToInterval"
       :show-sampling="hasAccessToSampling"
-      class="mx-3"
+      class="px-3"
       @update:filters="updateSelectedFilter"
       @update:sampling="updateSampling"
       @update:interval="updateInterval"
     />
-
-    <c-layout class="pa-3" column>
+    <v-layout
+      class="pa-3"
+      column
+    >
       <chart-loader
         v-if="aggregatedMetricsPending"
         :has-data="hasMetrics"
       />
-
       <pie-chart-metrics
         v-if="hasMetrics"
+        :chart-id="widget._id"
         :metrics="preparedMetrics"
         :title="widget.parameters.chart_title"
         :show-mode="widget.parameters.show_mode"
         :downloading="downloading"
-        :hide-actions="hideActions"
         @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
       />
-    </c-layout>
-  </c-layout>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
-import { mapActions, mapState } from 'pinia';
 
-import { useMetricsStore } from '@/stores/modules/metrics';
-
-import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
 
-import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
-import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
-import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
-import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
-import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
+import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
+import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
+import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
 
-import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import PieChartMetrics from './partials/pie-chart-metrics.vue';
 
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
+
 export default {
   inject: ['$system'],
-
   components: {
-    ChartLoader,
     KpiWidgetFilters,
+    ChartLoader,
     PieChartMetrics,
   },
-
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     queryIntervalFilterMixin,
+    widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,
+    entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
     permissionsWidgetsPieChartFilters,
@@ -84,38 +89,26 @@ export default {
       fetchExport: 'fetchMetricExport',
     }),
   ],
-
   props: {
     widget: {
       type: Object,
       required: true,
+    },
+    tabId: {
+      type: String,
+      default: '',
     },
     hideActions: {
       type: Boolean,
       default: false,
     },
   },
-
   data() {
     return {
-      downloading: false,
+      widgetMetricsMap: {},
     };
   },
-
   computed: {
-    ...mapState(useMetricsStore, {
-      getAggregatedMetricsListByWidgetId: 'getListByWidgetId',
-      getAggregatedMetricsPendingByWidgetId: 'getPendingByWidgetId',
-    }),
-
-    aggregatedMetrics() {
-      return this.getAggregatedMetricsListByWidgetId(this.widget._id);
-    },
-
-    aggregatedMetricsPending() {
-      return this.getAggregatedMetricsPendingByWidgetId(this.widget._id);
-    },
-
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
@@ -132,31 +125,15 @@ export default {
         };
       });
     },
-
-    userPreferenceFilters() {
-      return this.userPreference?.filters ?? [];
-    },
   },
-
+  created() {
+    this.setWidgetMetricsMap();
+  },
   methods: {
-    ...mapActions(useMetricsStore, {
+    ...mapMetricsActions({
       createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
       fetchMetricExport: 'fetchMetricExport',
-      fetchAggregatedMetrics: 'fetchAggregatedMetrics',
     }),
-
-    customQueryCondition(query, oldQuery) {
-      return isMetricsQueryChanged(query, oldQuery);
-    },
-
-    updateSampling(sampling) {
-      this.updateContentInUserPreference({ sampling });
-
-      this.query = {
-        ...this.query,
-        sampling,
-      };
-    },
 
     getQuery() {
       return {
@@ -167,7 +144,7 @@ export default {
     },
 
     async fetchList() {
-      await this.fetchAggregatedMetrics({
+      await this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
         params: this.getQuery(),
       });

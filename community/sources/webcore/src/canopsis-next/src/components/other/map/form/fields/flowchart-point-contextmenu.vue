@@ -1,9 +1,11 @@
 <template>
   <v-menu
-    :model-value="value"
-    :target="[positionX, positionY]"
+    :value="value"
+    :position-x="positionX"
+    :position-y="positionY"
     :close-on-content-click="false"
-    @update:model-value="updateShown"
+    absolute
+    @input="$listeners.close"
   >
     <v-list dense>
       <v-list-item
@@ -12,7 +14,9 @@
         @click="item.action"
         @contextmenu.prevent.stop=""
       >
-        <v-list-item-title>{{ item.text }}</v-list-item-title>
+        <v-list-item-content>
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
+        </v-list-item-content>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -27,7 +31,7 @@ export default {
     },
     items: {
       type: Array,
-      default: () => [],
+      default: () => ([]),
     },
     positionX: {
       type: Number,
@@ -36,14 +40,6 @@ export default {
     positionY: {
       type: Number,
       required: true,
-    },
-  },
-  emits: ['close'],
-  methods: {
-    updateShown(value) {
-      if (!value) {
-        this.$emit('close');
-      }
     },
   },
 };

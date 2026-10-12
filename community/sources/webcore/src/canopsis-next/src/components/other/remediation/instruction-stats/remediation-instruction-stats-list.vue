@@ -12,29 +12,34 @@
       advanced-pagination
       @update:options="$emit('update:options', $event)"
     >
-      <template #toolbar>
-        <c-layout align="center">
+      <template #toolbar="">
+        <v-layout align-center>
           <c-quick-date-interval-field
             :interval="options.interval"
             :accumulated-before="accumulatedBefore"
             @input="updateInterval"
           />
-        </c-layout>
+        </v-layout>
+      </template>
+      <template #headerCell="{ header }">
+        <span class="c-table-header__text--multiline">
+          {{ header.text }}
+        </span>
       </template>
       <template #type="{ item }">
-        {{ t(`remediation.instruction.types.${item.type}`) }}
+        {{ $t(`remediation.instruction.types.${item.type}`) }}
       </template>
       <template #last_executed_on="{ item }">
-        {{ dateToString(item.last_executed_on) }}
+        {{ item.last_executed_on | date }}
       </template>
       <template #last_modified="{ item }">
-        {{ dateToString(item.last_modified) }}
+        {{ item.last_modified | date }}
       </template>
       <template #avg_complete_time="{ item }">
-        {{ durationToString(item.avg_complete_time) }}
+        {{ item.avg_complete_time | duration }}
       </template>
       <template #avg_alarm_ok_timeout="{ item }">
-        {{ durationToString(item.avg_alarm_ok_timeout) }}
+        {{ item.avg_alarm_ok_timeout | duration }}
       </template>
       <template #avg_successful="{ item }">
         {{ item.avg_successful }}% / {{ item.avg_successful_state_ok }}%
@@ -46,24 +51,27 @@
         <c-state-count-changes-chip>{{ item.ok_alarm_states }}</c-state-count-changes-chip>
       </template>
       <template #rating="{ item }">
-        <rating-field :model-value="item.rating" readonly />
+        <rating-field
+          :value="item.rating"
+          readonly
+        />
       </template>
       <template #actions="{ item }">
-        <c-layout justify="end">
+        <v-layout justify-end>
           <c-action-btn
             v-if="item.rate_notify"
-            :tooltip="t('remediation.instructionStat.actions.needRate')"
+            :tooltip="$t('remediation.instructionStat.actions.needRate')"
             icon="notification_important"
             color="error"
             @click="$emit('rate', item)"
           />
           <c-action-btn
-            :tooltip="t('remediation.instructionStat.actions.rate')"
-            :disabled-button="!item.ratable"
+            :tooltip="$t('remediation.instructionStat.actions.rate')"
+            :disabled="!item.ratable"
             icon="thumbs_up_down"
             @click="$emit('rate', item)"
           />
-        </c-layout>
+        </v-layout>
       </template>
       <template #expand="{ item }">
         <remediation-instruction-stats-list-expand-panel
@@ -76,15 +84,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { USER_PERMISSIONS } from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
-import { convertDurationToString } from '@/helpers/date/duration';
-
-import { useCRUDPermissions } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
@@ -93,11 +95,11 @@ import RemediationInstructionStatsListExpandPanel from './partials/remediation-i
 
 export default {
   components: {
-    AffectAlarmStates,
-    RatingField,
     RemediationInstructionStatsListExpandPanel,
+    RatingField,
+    AffectAlarmStates,
   },
-
+  mixins: [permissionsTechnicalRemediationInstructionMixin],
   props: {
     remediationInstructionStats: {
       type: Array,
@@ -124,81 +126,95 @@ export default {
       required: true,
     },
   },
-
-  emits: ['update:options', 'rate'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { hasCreateAccess } = useCRUDPermissions(
-      USER_PERMISSIONS.technical.exploitation.remediationInstruction,
-    );
-
-    const headers = computed(() => [
-        { text: t('common.name'), value: 'name', width: 150 },
-        hasCreateAccess.value && { text: t('common.type'), value: 'type', width: 100 },
+  computed: {
+    headers() {
+      return [
         {
-          text: t('remediation.instructionStat.lastExecutedOn'),
+          text: this.$t('common.name'),
+          value: 'name',
+          width: 150,
+        },
+
+        this.hasCreateAnyRemediationInstructionAccess && {
+          text: this.$t('common.type'),
+          value: 'type',
+          width: 100,
+        },
+
+        {
+          text: this.$t('remediation.instructionStat.lastExecutedOn'),
           value: 'last_executed_on',
           width: 160,
         },
-        { text: t('common.lastModifiedOn'), value: 'last_modified', width: 160 },
         {
-          text: t('remediation.instructionStat.averageCompletionTime'),
+          text: this.$t('common.lastModifiedOn'),
+          value: 'last_modified',
+          width: 160,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
+          sortable: false,
           width: 140,
         },
         {
-          text: t('remediation.instructionStat.averageAlarmOkTimeout'),
+          text: this.$t('remediation.instructionStat.averageAlarmOkTimeout'),
           value: 'avg_alarm_ok_timeout',
+          sortable: false,
           width: 100,
         },
         {
-          text: t('remediation.instructionStat.executionCount'),
+          text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
+          sortable: false,
           width: 100,
         },
         {
-          text: t('remediation.instructionStat.averageSuccessfulAllOk'),
+          text: this.$t('remediation.instructionStat.averageSuccessfulAllOk'),
           value: 'avg_successful',
+          sortable: false,
           width: 100,
         },
         {
-          text: t('remediation.instructionStat.alarmStates'),
+          text: this.$t('remediation.instructionStat.alarmStates'),
           value: 'alarm_states',
+          sortable: false,
           width: 300,
         },
         {
-          text: t('remediation.instructionStat.okAlarmStates'),
+          text: this.$t('remediation.instructionStat.okAlarmStates'),
           value: 'ok_alarm_states',
+          sortable: false,
           width: 90,
         },
-        { text: t('common.rating'), value: 'rating', sortable: false, width: 230 },
-        { text: t('common.actionsLabel'), value: 'actions', sortable: false, width: 80 },
-      ].filter(Boolean),
-    );
-
-    const updateInterval = interval => emit('update:options', {
-        ...props.options,
+        {
+          text: this.$tc('common.rating'),
+          value: 'rating',
+          sortable: false,
+          width: 230,
+        },
+        {
+          text: this.$t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+          width: 80,
+        },
+      ].filter(Boolean);
+    },
+  },
+  methods: {
+    updateInterval(interval) {
+      this.$emit('update:options', {
+        ...this.options,
         interval,
       });
-    const dateToString = value => convertDateToString(value);
-    const durationToString = value => convertDurationToString(value) || '-';
-
-    return {
-      t,
-      headers,
-      updateInterval,
-      dateToString,
-      durationToString,
-    };
+    },
   },
 };
 </script>
 
 <style lang="scss">
-.c-remediation-instruction-stats__table {
-  table {
-    table-layout: fixed !important;
-  }
+.c-remediation-instruction-stats__table > .v-data-table__wrapper > table {
+  table-layout: fixed !important;
 }
 </style>

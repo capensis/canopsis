@@ -1,0 +1,21 @@
+---
+description: Do not pass density="default" on Vuetify fields
+globs: **/*.vue
+alwaysApply: true
+---
+
+# Vuetify density
+
+Do **not** pass `density="default"` on fields or components. Vuetify already uses default density.
+
+If a field looks too compact, fix the component default. Do not override `density="default"` at the call site.
+
+```html
+<!-- ❌ BAD -->
+<c-lazy-search-field density="default" />
+<external-data-table-table-field density="default" />
+
+<!-- ✅ GOOD -->
+<c-lazy-search-field />
+<external-data-table-table-field />
+```

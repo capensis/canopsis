@@ -1,18 +1,20 @@
 <template>
-  <c-layout column>
-    <c-layout class="mb-4" align="center">
+  <v-layout column>
+    <v-layout
+      class="mb-4"
+      align-center
+    >
       <span class="text-subtitle-1 mr-5">
-        {{ t('remediation.instructionExecute.jobs.title') }}
+        {{ $t('remediation.instructionExecute.jobs.title') }}
       </span>
       <v-btn
-        v-if="!isFinished"
+        v-if="!isInstructionExecutionFinished"
         :loading="executing"
-        color="primary"
-        class="ma-0"
+        class="primary ma-0"
         @click="$emit('run:jobs')"
       >
-        <span>{{ t('remediation.instructionExecute.runJobs') }}</span>
-        <v-icon class="ml-1">
+        <span>{{ $t('remediation.instructionExecute.runJobs') }}</span>
+        <v-icon right>
           arrow_right
         </v-icon>
       </v-btn>
@@ -24,26 +26,21 @@
           {{ statusIcon.text }}
         </span>
       </template>
-    </c-layout>
+    </v-layout>
     <remediation-instruction-execute-jobs-table :jobs="jobs" />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import {
   isInstructionExecutionCompleted,
   isInstructionExecutionFinished,
 } from '@/helpers/entities/remediation/instruction-execution/form';
 
-import { useI18n } from '@/hooks/i18n';
-
 import RemediationInstructionExecuteJobsTable from './remediation-instruction-assigned-jobs-table.vue';
 
 export default {
   components: { RemediationInstructionExecuteJobsTable },
-
   props: {
     jobs: {
       type: Array,
@@ -58,36 +55,30 @@ export default {
       default: false,
     },
   },
-
-  emits: ['run:jobs'],
-
-  setup(props) {
-    const { t } = useI18n();
-
-    const isFinished = computed(() => isInstructionExecutionFinished(props.instructionExecution));
-    const isInstructionExecutionSucceeded = computed(() => isInstructionExecutionCompleted(props.instructionExecution),
-    );
-    const statusIcon = computed(() => {
-      if (isInstructionExecutionSucceeded.value) {
+  computed: {
+    statusIcon() {
+      if (this.isInstructionExecutionSucceeded) {
         return {
           name: 'check_circle',
           color: 'primary',
-          text: t('remediation.instructionExecute.jobs.instructionComplete'),
+          text: this.$t('remediation.instructionExecute.jobs.instructionComplete'),
         };
       }
 
       return {
         name: 'error',
         color: 'error',
-        text: t('remediation.instructionExecute.jobs.instructionFailed'),
+        text: this.$t('remediation.instructionExecute.jobs.instructionFailed'),
       };
-    });
+    },
 
-    return {
-      t,
-      isFinished,
-      statusIcon,
-    };
+    isInstructionExecutionFinished() {
+      return isInstructionExecutionFinished(this.instructionExecution);
+    },
+
+    isInstructionExecutionSucceeded() {
+      return isInstructionExecutionCompleted(this.instructionExecution);
+    },
   },
 };
 </script>

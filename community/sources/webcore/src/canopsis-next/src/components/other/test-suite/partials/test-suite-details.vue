@@ -1,29 +1,29 @@
 <template>
   <c-advanced-data-table
-    v-model:options="options"
     :items="detailsItems"
     :headers="headers"
     :loading="pending"
+    :options.sync="options"
     :total-items="totalItems"
     advanced-pagination
     expand
   >
     <template #status="{ item }">
-      <c-tooltip
+      <v-tooltip
         :disabled="!item.message"
-        location="bottom"
+        bottom
       >
-        <template #activator="{ props: activatorProps }">
+        <template #activator="{ on }">
           <c-test-suite-chip
             :value="item.status"
-            v-bind="activatorProps"
+            v-on="on"
           />
         </template>
         <span>{{ item.message }}</span>
-      </c-tooltip>
+      </v-tooltip>
     </template>
     <template #time="{ item }">
-      <span>{{ convertNumberToFixedString(item.time) }}{{ $constants.TIME_UNITS.second }}</span>
+      <span>{{ item.time | fixed }}{{ $constants.TIME_UNITS.second }}</span>
     </template>
     <template #expand="{ item }">
       <test-suite-details-expand-panel :test-suite-detail="item" />
@@ -32,10 +32,8 @@
 </template>
 
 <script>
-import { convertNumberToFixedString } from '@/helpers/string';
-
-import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 import { localQueryMixin } from '@/mixins/query/query';
+import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
 import TestSuiteDetailsExpandPanel from './test-suite-details-expand-panel.vue';
 
@@ -68,8 +66,6 @@ export default {
     this.fetchList();
   },
   methods: {
-    convertNumberToFixedString,
-
     async fetchList() {
       this.pending = true;
 

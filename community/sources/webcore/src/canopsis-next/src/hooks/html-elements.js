@@ -23,7 +23,6 @@ export const useHTMLElement = ({ parentElement, selector }) => {
     element,
   };
 };
-
 /**
  * Function to retrieve a specific elements within a table element.
  *

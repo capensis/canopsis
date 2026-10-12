@@ -1,6 +1,6 @@
 <template>
   <div class="compiled-template__wrapper background darken-1 pa-1">
-    {{ template }}
+    <c-compiled-template :template="template" />
   </div>
 </template>
 
@@ -18,6 +18,5 @@ export default {
 <style lang="scss" scoped>
 .compiled-template__wrapper {
   min-height: 5em;
-  white-space: pre-wrap;
 }
 </style>

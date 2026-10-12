@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+const fs = require('fs');
+const path = require('path');
 
-import ts from 'typescript';
+// eslint-disable-next-line import/no-extraneous-dependencies
+const ts = require('typescript');
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const DTS_FILE = path.resolve(dirname, '..', 'node_modules', 'material-symbols', 'index.d.ts');
+const DTS_FILE = path.resolve(__dirname, '..', 'node_modules', 'material-symbols', 'index.d.ts');
 const TYPE_NAME = 'MaterialSymbols';
-const OUTPUT_FILE = path.resolve(dirname, '..', 'src', 'assets', 'material-icons', 'MaterialIcons.json');
+const OUTPUT_FILE = path.resolve(__dirname, '..', 'src', 'assets', 'material-icons', 'MaterialIcons.json');
 
 const content = fs.readFileSync(DTS_FILE, 'utf8');
 
@@ -37,7 +35,7 @@ ts.forEachChild(source, (node) => {
 });
 
 if (!values) {
-  console.error(`Failed to find tuple type "${TYPE_NAME}" in file ${DTS_FILE}`);
+  console.error(`❌ Failed to find tuple type "${TYPE_NAME}" in file ${DTS_FILE}`);
   process.exit(1);
 }
 
@@ -45,4 +43,5 @@ const json = JSON.stringify(values, null, 2);
 
 fs.writeFileSync(OUTPUT_FILE, json);
 
-console.log(`JSON successfully generated: ${OUTPUT_FILE}`);
+// eslint-disable-next-line no-console
+console.log(`✅ JSON successfully generated: ${OUTPUT_FILE}`);

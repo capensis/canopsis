@@ -1,10 +1,10 @@
 <template>
-  <c-layout column>
-    <field-title v-model="localForm.title" />
-    <field-periodic-refresh v-model="localForm.parameters.periodic_refresh" />
+  <v-layout column>
+    <field-title v-field="form.title" />
+    <field-periodic-refresh v-field="form.parameters" />
     <field-columns
-      v-model="localForm.parameters.widget_columns"
-      :template="localForm.parameters.widget_columns_template"
+      v-field="form.parameters.widget_columns"
+      :template="form.parameters.widget_columns_template"
       :templates="entityColumnsWidgetTemplates"
       :templates-pending="entityColumnsWidgetTemplatesPending"
       :label="$t('settings.columnNames')"
@@ -14,8 +14,8 @@
     />
     <widget-settings-group :title="$t('settings.advancedSettings')">
       <field-columns
-        v-model="localForm.parameters.active_alarms_columns"
-        :template="localForm.parameters.active_alarms_columns_template"
+        v-field="form.parameters.active_alarms_columns"
+        :template="form.parameters.active_alarms_columns_template"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="alarmColumnsWidgetTemplatesPending"
         :label="$t('settings.activeAlarmsColumns')"
@@ -23,8 +23,8 @@
         @update:template="updateActiveAlarmsColumnsTemplate"
       />
       <field-columns
-        v-model="localForm.parameters.resolved_alarms_columns"
-        :template="localForm.parameters.resolved_alarms_columns_template"
+        v-field="form.parameters.resolved_alarms_columns"
+        :template="form.parameters.resolved_alarms_columns_template"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="alarmColumnsWidgetTemplatesPending"
         :label="$t('settings.resolvedAlarmsColumns')"
@@ -33,24 +33,24 @@
       />
       <field-quick-date-interval-type
         v-if="showInterval"
-        v-model="localForm.parameters.default_time_range"
+        v-field="form.parameters.default_time_range"
         :ranges="availabilityRanges"
       />
-      <field-availability-display-parameter v-model="localForm.parameters.default_display_parameter" />
-      <field-availability-display-show-type v-model="localForm.parameters.default_show_type" />
+      <field-availability-display-parameter v-field="form.parameters.default_display_parameter" />
+      <field-availability-display-show-type v-field="form.parameters.default_show_type" />
       <field-filters
         v-if="showFilter"
-        v-model="localForm.parameters.mainFilter"
-        :filters="localForm.filters"
+        v-field="form.parameters.mainFilter"
+        :filters="form.filters"
         :widget-id="widgetId"
         addable
         editable
         with-entity
-        @update:filters="localForm.filters = $event"
+        @update:filters="updateField('filters', $event)"
       />
       <export-csv-form
         v-if="showExport"
-        v-model="localForm.parameters.export_settings"
+        v-field="form.parameters.export_settings"
         :type="$constants.ENTITIES_TYPES.entity"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="entityColumnsWidgetTemplatesPending"
@@ -58,26 +58,27 @@
         without-infos-attributes
       />
     </widget-settings-group>
-    <widget-colors-form v-model="localForm.parameters.colors" with-table />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
 import { omit } from 'lodash';
 
 import { AVAILABILITY_QUICK_RANGES, CONTEXT_WIDGET_COLUMNS } from '@/constants';
 
-import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
-import ExportCsvForm from '@/components/sidebars/form/export-csv.vue';
-import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
-import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import { formMixin } from '@/mixins/form';
 
-import FieldAvailabilityDisplayParameter from './fields/availability-display-parameter.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
+import ExportCsvForm from '@/components/sidebars/form/export-csv.vue';
+
 import FieldAvailabilityDisplayShowType from './fields/availability-display-show-type.vue';
+import FieldAvailabilityDisplayParameter from './fields/availability-display-parameter.vue';
 
 export default {
   components: {
@@ -90,11 +91,14 @@ export default {
     FieldColumns,
     FieldTitle,
     FieldPeriodicRefresh,
-    WidgetColorsForm,
   },
-
+  mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    form: {
       type: Object,
       required: true,
     },
@@ -131,59 +135,43 @@ export default {
       default: false,
     },
   },
+  setup(props, { emit }) {
+    const availabilityRanges = computed(() => AVAILABILITY_QUICK_RANGES);
+    const excludedWidgetColumns = computed(() => Object.values(
+      omit(CONTEXT_WIDGET_COLUMNS, [
+        'id',
+        'name',
+        'component',
+        'connector',
+        'type',
+        'categoryName',
+        'impactLevel',
+        'enabled',
+        'infos',
+        'componentInfos',
+        'links',
+      ]),
+    ));
 
-  emits: [
-    'update:modelValue',
-    'update:widget-columns-template',
-    'update:active-alarms-columns-template',
-    'update:resolved-alarms-columns-template',
-  ],
+    const updateWidgetColumnsTemplate = (template, columns) => {
+      emit('update:widget-columns-template', template, columns);
+    };
 
-  computed: {
-    localForm: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
+    const updateActiveAlarmsColumnsTemplate = (template, columns) => {
+      emit('update:active-alarms-columns-template', template, columns);
+    };
 
-    availabilityRanges() {
-      return AVAILABILITY_QUICK_RANGES;
-    },
+    const updateResolvedAlarmsColumnsTemplate = (template, columns) => {
+      emit('update:resolved-alarms-columns-template', template, columns);
+    };
 
-    excludedWidgetColumns() {
-      return Object.values(
-        omit(CONTEXT_WIDGET_COLUMNS, [
-          'id',
-          'name',
-          'component',
-          'connector',
-          'type',
-          'categoryName',
-          'impactLevel',
-          'enabled',
-          'infos',
-          'componentInfos',
-          'links',
-        ]),
-      );
-    },
-  },
-
-  methods: {
-    updateWidgetColumnsTemplate(template, columns) {
-      this.$emit('update:widget-columns-template', template, columns);
-    },
-
-    updateActiveAlarmsColumnsTemplate(template, columns) {
-      this.$emit('update:active-alarms-columns-template', template, columns);
-    },
-
-    updateResolvedAlarmsColumnsTemplate(template, columns) {
-      this.$emit('update:resolved-alarms-columns-template', template, columns);
-    },
+    return {
+      availabilityRanges,
+      excludedWidgetColumns,
+      updateWidgetColumnsTemplate,
+      updateActiveAlarmsColumnsTemplate,
+      updateResolvedAlarmsColumnsTemplate,
+    };
   },
 };
 </script>

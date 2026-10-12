@@ -1,5 +1,8 @@
 <template>
-  <path :d="rhombusPath" v-bind="$attrs" />
+  <path
+    :d="rhombusPath"
+    v-on="$listeners"
+  />
 </template>
 
 <script>

@@ -1,54 +1,63 @@
 <template>
   <div>
-    <c-layout class="pbehavior-recurrence-rule-periods__header" align="center" justify="center">
-      <span class="text-h6">
-        {{ t('common.periods') }}
-      </span>
-
-      <div class="pbehavior-recurrence-rule-periods__actions">
-        <c-action-btn
-          :tooltip="t('pbehavior.periodsCalendar')"
-          icon="event_note"
-          @click="showPbehaviorRecurrenceRuleModal"
-        />
-      </div>
-    </c-layout>
-
-    <c-select
-      :model-value="selectedRange"
-      :items="availableRanges"
-      :label="t('common.range')"
-      class="mt-2"
-      item-title="text"
-      item-value="value"
-      @update:model-value="updateSelectedRange"
-    />
-
-    <v-progress-linear
-      v-show="pending"
-      :height="3"
-      class="ma-0"
-      color="primary"
-      indeterminate
-    />
-
-    <v-data-table
-      :headers="headers"
-      :items="timespans"
-      :items-per-page="itemsPerPage"
-      :items-per-page-options="itemsPerPageOptions"
-      :loading="pending"
-      :no-data-text="t('common.noData')"
-      class="mt-2"
+    <v-layout
+      justify-space-between
+      align-center
     >
-      <template #item.from="{ item }">
-        {{ dateToString(item.from) }}
-      </template>
-
-      <template #item.to="{ item }">
-        {{ dateToString(item.to) }}
-      </template>
-    </v-data-table>
+      <v-layout justify-center>
+        <span class="text-h6">
+          {{ $t('common.periods') }}
+        </span>
+      </v-layout>
+      <c-action-btn
+        :tooltip="$t('pbehavior.periodsCalendar')"
+        icon="event_note"
+        @click="showPbehaviorRecurrenceRuleModal"
+      />
+    </v-layout>
+    <v-layout class="mt-2">
+      <v-select
+        v-model="selectedRange"
+        :items="availableRanges"
+        :label="$t('common.range')"
+        @change="fetchList"
+      />
+    </v-layout>
+    <v-layout>
+      <v-data-iterator
+        :items="timespans"
+        :loading="pending"
+        class="data-iterator"
+      >
+        <template #header="">
+          <v-flex>
+            <v-fade-transition>
+              <v-progress-linear
+                v-show="pending"
+                :height="3"
+                class="progress ma-0"
+                color="primary"
+                indeterminate
+              />
+            </v-fade-transition>
+          </v-flex>
+        </template>
+        <template #item="{ item }">
+          <v-flex>
+            <v-card>
+              <v-card-title>{{ item.from | date }} — {{ item.to | date }}</v-card-title>
+            </v-card>
+          </v-flex>
+        </template>
+        <template #no-data="">
+          <v-flex>
+            <v-card>
+              <v-card-title>{{ $t('common.noData') }}</v-card-title>
+            </v-card>
+          </v-flex>
+        </template>
+      </v-data-iterator>
+    </v-layout>
   </div>
 </template>
 
@@ -59,80 +68,45 @@ import {
   addUnitToDate,
   convertDateToEndOfUnitTimestamp,
   convertDateToStartOfUnitTimestamp,
-  convertDateToString,
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useInfo } from '@/hooks/store/modules/info';
-import { usePbehaviorTimespan } from '@/hooks/store/modules/pbehavior-timespan';
+import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
 export default {
+  inject: ['$system'],
+  mixins: [entitiesPbehaviorTimespansMixin],
   props: {
     pbehavior: {
       type: Object,
       required: true,
     },
   },
-
   data() {
     return {
       pending: false,
       timespans: [],
-      itemsPerPage: 5,
-      itemsPerPageOptions: [5, 10, 25],
       selectedRange: PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek,
     };
   },
-
-  setup() {
-    const { t } = useI18n();
-    const modals = useModals();
-    const popups = usePopups();
-    const { timezone } = useInfo();
-    const { fetchPbehaviorTimespansListWithoutStore } = usePbehaviorTimespan();
-
-    return {
-      t,
-      modals,
-      popups,
-      timezone,
-      fetchPbehaviorTimespansListWithoutStore,
-    };
-  },
-
   computed: {
     availableRanges() {
-      return Object.values(PBEHAVIOR_RRULE_PERIODS_RANGES).map(value => ({
-        value,
-        text: this.t(`recurrenceRule.periodsRanges.${value}`),
-      }));
-    },
-
-    headers() {
-      return [
-        { title: this.t('common.begin'), key: 'from', sortable: false },
-        { title: this.t('common.end'), key: 'to', sortable: false },
-      ];
+      return Object.values(PBEHAVIOR_RRULE_PERIODS_RANGES)
+        .map(value => ({ value, text: this.$t(`recurrenceRule.periodsRanges.${value}`) }));
     },
   },
-
   watch: {
     pbehavior() {
-      return this.fetchList();
+      this.fetchList();
     },
   },
-
   mounted() {
-    return this.fetchList();
+    this.fetchList();
   },
-
   methods: {
     /**
-     * Get object with start and end fields by selected rrules periods range key.
+     * Get object with start and end fields by selected rrules periods range key
      *
      * @returns {{ start: number, end: number }}
      */
@@ -187,14 +161,8 @@ export default {
       throw new Error('Incorrect range');
     },
 
-    updateSelectedRange(range) {
-      this.selectedRange = range;
-
-      return this.fetchList();
-    },
-
     showPbehaviorRecurrenceRuleModal() {
-      this.modals.show({
+      this.$modals.show({
         name: MODALS.pbehaviorRecurrenceRule,
         config: {
           pbehavior: this.pbehavior,
@@ -202,12 +170,8 @@ export default {
       });
     },
 
-    dateToString(date) {
-      return convertDateToString(date);
-    },
-
     /**
-     * Fetch timespans list.
+     * Fetch timespans list
      *
      * @returns {Promise<void>}
      */
@@ -218,8 +182,8 @@ export default {
         const { pbehavior } = this;
         const { start, end } = this.getStartAndStopForSelectedRange();
 
-        const from = convertDateToTimestampByTimezone(start, this.timezone);
-        const to = convertDateToTimestampByTimezone(end, this.timezone);
+        const from = convertDateToTimestampByTimezone(start, this.$system.timezone);
+        const to = convertDateToTimestampByTimezone(end, this.$system.timezone);
 
         const data = pbehaviorToTimespanRequest({
           pbehavior,
@@ -227,11 +191,13 @@ export default {
           to,
         });
 
-        this.timespans = await this.fetchPbehaviorTimespansListWithoutStore({ data });
+        this.timespans = await this.fetchTimespansListWithoutStore({
+          data,
+        });
       } catch (err) {
         console.error(err);
 
-        this.popups.error({ text: err.message || this.t('errors.default') });
+        this.$popups.error({ text: err.message || this.$t('errors.default') });
       } finally {
         this.pending = false;
       }
@@ -240,15 +206,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.pbehavior-recurrence-rule-periods {
-  &__header {
-    position: relative;
-  }
+<style lang="scss">
+.data-iterator {
+  position: relative;
+  width: 100%;
+  padding-top: 3px;
 
-  &__actions {
+  .progress {
     position: absolute;
-    right: 0;
+    top: 0;
   }
 }
 </style>

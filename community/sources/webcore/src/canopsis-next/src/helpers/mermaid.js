@@ -9,7 +9,7 @@ import { uid } from '@/helpers/uid';
  * @param {Object} [options = {}]
  * @return {Promise<string>}
  */
-export const renderMermaid = async (value = '', options = {}) => {
+export const renderMermaid = (value = '', options = {}) => {
   mermaid.initialize({ ...options, startOnLoad: false });
 
   /**
@@ -18,13 +18,9 @@ export const renderMermaid = async (value = '', options = {}) => {
   const id = `id_${uid()}`;
 
   try {
-    const { svg } = await mermaid.render(id, value);
+    const svg = mermaid.render(id, value);
 
-    if (mermaid.mermaidAPI.reinitialize) {
-      mermaid.mermaidAPI.reinitialize();
-    } else {
-      mermaid.mermaidAPI.initialize({ ...options, startOnLoad: false });
-    }
+    mermaid.mermaidAPI.reinitialize();
 
     return svg;
   } catch (e) {
@@ -47,4 +43,6 @@ export const renderMermaid = async (value = '', options = {}) => {
  * @param {string} value
  * @return {boolean}
  */
-export const validateMermaidDiagram = value => mermaid.parse(value);
+export const validateMermaidDiagram = (value) => {
+  mermaid.parse(value);
+};

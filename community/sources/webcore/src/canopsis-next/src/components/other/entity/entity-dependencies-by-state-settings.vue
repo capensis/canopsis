@@ -14,28 +14,27 @@
 </template>
 
 <script>
+import { ref, computed, watch, onMounted } from 'vue';
 import { omit } from 'lodash';
-import { computed, onMounted, ref, watch } from 'vue';
 
 import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
-  COLOR_INDICATOR_TYPES,
-  ENTITY_FIELDS,
-  ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
   ROOT_CAUSE_DIAGRAM_OPTIONS,
   ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
+  ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
+  COLOR_INDICATOR_TYPES,
+  ENTITY_FIELDS,
   SORT_ORDERS,
 } from '@/constants';
 
-import { useEntityNetworkGraph } from '@/hooks/charts/entity-network-graph';
 import { useI18n } from '@/hooks/i18n';
+import { useEntityNetworkGraph } from '@/hooks/charts/entity-network-graph';
 import { useService } from '@/hooks/store/modules/service';
 
 import EntityNetworkGraph from '@/components/common/chart/entity-network-graph.vue';
 
 export default {
   components: { EntityNetworkGraph },
-
   props: {
     entity: {
       type: Object,
@@ -54,9 +53,8 @@ export default {
       default: COLOR_INDICATOR_TYPES.state,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
+    const { tc } = useI18n();
 
     const entityNetworkGraphElement = ref(null);
     const ready = ref(false);
@@ -103,7 +101,7 @@ export default {
           return '';
         }
 
-        return entity.state_setting?.title || t('common.event', 2);
+        return entity.state_setting?.title || tc('common.event', 2);
       },
     }));
 
@@ -154,7 +152,6 @@ export default {
       if (entitiesElements.value.length) {
         opts.layout = {
           ...ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
-          animate: false,
         };
       }
 

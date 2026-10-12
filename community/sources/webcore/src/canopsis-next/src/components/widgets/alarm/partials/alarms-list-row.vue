@@ -1,42 +1,49 @@
 <template>
   <tr
+    :class="classes"
     :data-id="alarm._id"
-    class="alarms-list-row"
-    @mousedown="mouseSelecting"
-    @dblclick="openExpandPanelByDoubleClick"
+    class="alarm-list-row"
+    v-on="listeners"
   >
-    <td
-      v-if="!preparedVisible"
-      :style="emptyTdStyle"
-      :colspan="headers.length"
-    />
+    <td v-if="!preparedVisible" :style="emptyTdStyle" :colspan="availableHeaders.length + Number(hasRowActions)" />
     <template v-if="localBooted">
       <td
+        v-if="hasRowActions"
         v-show="preparedVisible"
-        v-for="header in headers"
-        :key="header.key"
-        :style="getCellStyle(header)"
-        :class="{ 'alarms-list-row__cell--row-icons': header.key === rowIconsColumnKey }"
-        class="alarms-list-row__cell"
+        class="alarm-list-row__icons pr-0"
       >
-        <c-layout v-if="header.key === rowIconsColumnKey" class="alarms-list-row__icons" align="center">
-          <c-layout class="alarms-list-row__checkbox" align="center" justify="center">
-            <c-light-checkbox
-              v-if="selectable"
-              :model-value="selected"
-              :disabled="!selectableAlarm"
-              @update:model-value="$emit('update:selected', $event)"
-            />
-          </c-layout>
-
-          <c-layout v-if="hasAlarmInstruction" align="center">
+        <v-layout
+          align-center
+          justify-space-between
+        >
+          <v-layout class="alarm-list-row__checkbox">
+            <template v-if="selectable">
+              <v-simple-checkbox
+                v-if="isAlarmSelectable"
+                v-field="selected"
+                class="ma-0"
+                color="primary"
+                hide-details
+              />
+              <v-simple-checkbox
+                v-else
+                disabled
+                hide-details
+              />
+            </template>
+          </v-layout>
+          <v-layout
+            v-if="hasAlarmInstruction"
+            align-center
+          >
             <alarms-list-row-instructions-icon :alarm="alarm" />
-          </c-layout>
-
-          <c-layout v-if="alarm.bookmark" align="center">
+          </v-layout>
+          <v-layout
+            v-if="hasBookmark"
+            align-center
+          >
             <alarms-list-row-bookmark-icon />
-          </c-layout>
-
+          </v-layout>
           <alarms-expand-panel-btn
             v-if="expandable"
             ref="expandPanelBtn"
@@ -45,29 +52,32 @@
             :widget="widget"
             :small="small"
             :search="search"
-            class="alarms-list-row__expand-btn"
-            @update:expanded="$emit('update:expanded', $event)"
+            @input="$emit('expand', $event)"
           />
-        </c-layout>
-
+        </v-layout>
+      </td>
+      <td
+        v-show="preparedVisible"
+        v-for="header in availableHeaders"
+        :key="header.value"
+        class="alarm-list-row__cell"
+      >
         <c-booted-placeholder-loader
-          v-else-if="header.value === 'actions'"
+          v-if="header.value === 'actions'"
           :eager="eager"
-          class="d-flex align-center justify-end"
+          class="layout align-center justify-end"
           async-booting-provider="$asyncBootingActionsPanel"
         >
           <actions-panel
-            v-if="!hideActions"
             :item="alarm"
             :widget="widget"
             :parent-alarm="parentAlarm"
             :refresh-alarms-list="refreshAlarmsList"
             :small="small"
-            :inline-count="actionsInlineCount"
             :ignore-media-query="actionsIgnoreMediaQuery"
+            :inline-count="actionsInlineCount"
           />
         </c-booted-placeholder-loader>
-
         <alarm-column-value
           v-else
           :alarm="alarm"
@@ -76,16 +86,15 @@
           :selected-tags="selectedTags"
           :small="small"
           :parent-alarm="parentAlarm"
-          @click:state="$emit('click:state', $event)"
+          @activate="activateRow"
           @select:tag="$emit('select:tag', $event)"
           @remove:tag="$emit('remove:tag', $event)"
+          @click:state="$emit('click:state', $event)"
         />
-
         <span
-          v-if="resizing && header.key !== rowIconsColumnKey"
+          v-if="resizing"
           class="table__resize-handler"
-          @pointerdown.stop.prevent="$emit('start:resize', header.value)"
-          @mousedown.stop.prevent=""
+          @mousedown.prevent="$emit('start:resize', header.value)"
           @click.stop=""
         />
       </td>
@@ -94,31 +103,48 @@
 </template>
 
 <script>
-import { isNumber } from 'lodash';
+import { flow, isNumber } from 'lodash';
+
+import { featuresService } from '@/services/features';
+
+import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
+
+import { formBaseMixin } from '@/mixins/form';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
 import AlarmsExpandPanelBtn from '../expand-panel/alarms-expand-panel-btn.vue';
 
-import AlarmsListRowBookmarkIcon from './alarms-list-row-bookmark-icon.vue';
 import AlarmsListRowInstructionsIcon from './alarms-list-row-instructions-icon.vue';
+import AlarmsListRowBookmarkIcon from './alarms-list-row-bookmark-icon.vue';
 
 export default {
-  inject: {
-    $intersectionObserver: {
-      default: null,
-    },
-  },
-
+  inject: ['$system', '$intersectionObserver'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
     AlarmsExpandPanelBtn,
-    AlarmsListRowBookmarkIcon,
     AlarmsListRowInstructionsIcon,
+    AlarmsListRowBookmarkIcon,
   },
-
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'selected',
+    event: 'input',
+  },
   props: {
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    selectable: {
+      type: Boolean,
+      default: false,
+    },
+    expandable: {
+      type: Boolean,
+      default: false,
+    },
     alarm: {
       type: Object,
       required: true,
@@ -131,31 +157,27 @@ export default {
       type: Array,
       required: true,
     },
-    rowIconsColumnKey: {
-      type: String,
-      required: true,
+    columnsFilters: {
+      type: Array,
+      default: () => [],
     },
     parentAlarm: {
       type: Object,
       default: null,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
+    selecting: {
+      type: Boolean,
+      default: false,
+    },
     selectedTags: {
       type: Array,
       default: () => [],
     },
-    selectable: {
-      type: Boolean,
-      default: false,
-    },
-    selectableAlarm: {
-      type: Boolean,
-      default: false,
-    },
-    selected: {
-      type: Boolean,
-      default: false,
-    },
-    selecting: {
+    medium: {
       type: Boolean,
       default: false,
     },
@@ -167,15 +189,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideActions: {
-      type: Boolean,
-      default: false,
-    },
-    expandable: {
-      type: Boolean,
-      default: false,
-    },
     expanded: {
+      type: Boolean,
+      default: false,
+    },
+    showInstructionIcon: {
       type: Boolean,
       default: false,
     },
@@ -191,10 +209,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    refreshAlarmsList: {
-      type: Function,
-      default: () => {},
-    },
     booted: {
       type: Boolean,
       default: false,
@@ -208,26 +222,16 @@ export default {
       default: false,
     },
   },
-
-  emits: [
-    'update:selected',
-    'update:expanded',
-    'start:resize',
-    'click:state',
-    'select:tag',
-    'remove:tag',
-  ],
-
   data() {
     const visible = this.booted || this.eager;
 
     return {
+      active: false,
       localBooted: visible,
       visible,
       height: null,
     };
   },
-
   computed: {
     emptyTdStyle() {
       if (!this.height) {
@@ -243,29 +247,76 @@ export default {
       return (this.virtualScroll && this.visible) || (!this.virtualScroll && this.localBooted);
     },
 
-    hasAlarmInstruction() {
-      const hasAssignedInstructions = !!this.alarm.assigned_instructions?.length;
+    hasBookmark() {
+      return !!this.alarm.bookmark;
+    },
 
-      if (this.parentAlarm?.children_instructions && hasAssignedInstructions) {
+    hasRowActions() {
+      return this.selectable || this.expandable || this.showInstructionIcon || this.hasBookmark;
+    },
+
+    hasAlarmInstruction() {
+      const { children_instructions: parentAlarmChildrenInstructions = false } = this.parentAlarm || {};
+      const { assigned_instructions: assignedInstructions = [] } = this.alarm;
+
+      const hasAssignedInstructions = !!assignedInstructions.length;
+
+      if (parentAlarmChildrenInstructions && hasAssignedInstructions) {
         return true;
       }
 
       return hasAssignedInstructions || isNumber(this.alarm.instruction_execution_icon);
     },
-  },
 
+    isAlarmSelectable() {
+      return isActionAvailableForAlarm(this.alarm, this.widget);
+    },
+
+    isNotFiltered() {
+      return this.alarm.filtered === false;
+    },
+
+    listeners() {
+      let listeners = {};
+
+      if (this.expandable && this.widget.parameters?.openExpandPanelByDoubleClick) {
+        listeners.dblclick = () => this.$refs.expandPanelBtn?.showExpandPanel?.();
+      }
+
+      if (featuresService.has('components.alarmListRow.computed.listeners')) {
+        listeners = featuresService.call('components.alarmListRow.computed.listeners', this, {});
+      }
+
+      if (this.selecting) {
+        listeners.mousedown = flow([this.mouseSelecting, listeners.mouseenter].filter(Boolean));
+      }
+
+      return listeners;
+    },
+
+    classes() {
+      const classes = { 'alarm-list-row--not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
+
+      if (featuresService.has('components.alarmListRow.computed.classes')) {
+        return featuresService.call('components.alarmListRow.computed.classes', this, classes);
+      }
+
+      return classes;
+    },
+
+    availableHeaders() {
+      return this.headers.filter(({ value }) => value);
+    },
+  },
   created() {
     this.watchOnceBooted();
   },
-
   mounted() {
     this.$intersectionObserver?.observe(this.alarm._id, this.$el, this.intersectionHandler);
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     this.$intersectionObserver?.unobserve(this.alarm._id);
   },
-
   methods: {
     intersectionHandler(entry) {
       if (entry.isIntersecting !== this.visible) {
@@ -288,79 +339,51 @@ export default {
     },
 
     mouseSelecting(event) {
-      if (!this.selecting || event.button !== 0) {
-        return;
+      if (event.ctrlKey && event.buttons) {
+        event.preventDefault();
+
+        this.updateModel(!this.selected);
       }
 
-      event.preventDefault();
-
-      this.$emit('update:selected', !this.selected);
+      return event;
     },
 
-    openExpandPanelByDoubleClick() {
-      if (
-        !this.expandable ||
-        !this.widget.parameters?.openExpandPanelByDoubleClick
-      ) {
-        return;
-      }
-
-      const expandPanelBtn = Array.isArray(this.$refs.expandPanelBtn)
-        ? this.$refs.expandPanelBtn[0]
-        : this.$refs.expandPanelBtn;
-
-      expandPanelBtn?.showExpandPanel?.(!this.expanded);
-    },
-
-    getCellStyle(header) {
-      const width = header.width ?? header.minWidth;
-
-      if (!width) {
-        return {};
-      }
-
-      return {
-        width,
-        minWidth: header.minWidth ?? width,
-      };
+    activateRow(value) {
+      this.active = value;
     },
   },
 };
 </script>
 
 <style lang="scss">
-.alarms-list-row {
+.alarm-list-row {
   min-height: 24px;
-  position: relative;
 
-  &:after {
-    background: rgba(200, 220, 200, 0.3);
-    content: '';
-    height: 100%;
-    left: 0;
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    transition: opacity linear 0.3s;
-    width: 100%;
+  &__checkbox {
+    width: 24px;
+    max-width: 24px;
+    height: 24px;
+
+    .v-input--selection-controls__input {
+      margin: 0;
+    }
   }
-}
 
-.alarms-list-row__icons {
-  min-width: 84px;
-}
+  &__icons {
+    width: 100px;
+  }
 
-.alarms-list-row__cell--row-icons {
-  padding-left: 6px !important;
-  padding-right: 6px !important;
-}
+  &__cell {
+    position: relative;
+  }
 
-.alarms-list-row__checkbox {
-  width: 24px;
-}
+  &--not-filtered {
+    opacity: .4;
+    transition: opacity .3s linear;
 
-.alarms-list-row__expand-btn {
-  margin-left: auto;
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 </style>

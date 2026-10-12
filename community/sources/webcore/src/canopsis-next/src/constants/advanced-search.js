@@ -1,8 +1,8 @@
-import { ALARM_PATTERN_FIELDS } from './alarm';
-import { DYNAMIC_INFO_FIELDS } from './dynamic-info';
-import { ENTITY_PATTERN_FIELDS } from './entity';
 import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS, PATTERNS_FIELDS } from './pattern';
+import { ALARM_PATTERN_FIELDS } from './alarm';
+import { ENTITY_PATTERN_FIELDS } from './entity';
 import { PBEHAVIOR_PATTERN_PREFIX, PBEHAVIOR_PATTERN_FIELDS, PBEHAVIOR_FIELDS } from './pbehavior';
+import { DYNAMIC_INFO_FIELDS } from './dynamic-info';
 
 export const REGISTER_LAST_INPUT_FOCUS_KEY = '$registerLastInputFocus';
 
@@ -73,9 +73,6 @@ export const ALARM_ADVANCED_SEARCH_ENTITY_FIELDS = [
   ALARM_PATTERN_FIELDS.entityImpactLevel,
   ALARM_PATTERN_FIELDS.entityInfos,
   ALARM_PATTERN_FIELDS.entityComponentInfos,
-  ALARM_PATTERN_FIELDS.entityPause,
-  ALARM_PATTERN_FIELDS.entityPauseAuthor,
-  ALARM_PATTERN_FIELDS.entityPauseInitiator,
 ];
 
 export const ALARM_ADVANCED_SEARCH_PBEHAVIOR_INFO_FIELDS = [
@@ -113,7 +110,9 @@ export const ENTITY_SEARCH_NUMBER_ATTRIBUTES = [
   ENTITY_PATTERN_FIELDS.okEvents,
 ];
 
-export const PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES = [PBEHAVIOR_FIELDS.alarmCount];
+export const PBEHAVIOR_SEARCH_NUMBER_ATTRIBUTES = [
+  PBEHAVIOR_FIELDS.alarmCount,
+];
 
 export const ADVANCED_SEARCH_GROUPS = {
   basic: 'basic',
@@ -196,12 +195,10 @@ export const ENTITY_GROUPED_ADVANCED_SEARCH_FIELDS = {
     ENTITY_PATTERN_FIELDS.componentInfos,
   ],
   [ADVANCED_SEARCH_GROUPS.alias]: [],
-  [ADVANCED_SEARCH_GROUPS.actions]: [
-    ENTITY_PATTERN_FIELDS.pause,
-    ENTITY_PATTERN_FIELDS.pauseAuthor,
-    ENTITY_PATTERN_FIELDS.pauseInitiator,
+  [ADVANCED_SEARCH_GROUPS.events]: [
+    ENTITY_PATTERN_FIELDS.koEvents,
+    ENTITY_PATTERN_FIELDS.okEvents,
   ],
-  [ADVANCED_SEARCH_GROUPS.events]: [ENTITY_PATTERN_FIELDS.koEvents, ENTITY_PATTERN_FIELDS.okEvents],
   [ADVANCED_SEARCH_GROUPS.dates]: [
     ENTITY_PATTERN_FIELDS.idleSince,
     ENTITY_PATTERN_FIELDS.imported,
@@ -228,7 +225,9 @@ export const PBEHAVIOR_GROUPED_ADVANCED_SEARCH_FIELDS = {
     PBEHAVIOR_FIELDS.updated,
     PBEHAVIOR_FIELDS.lastAlarmDate,
   ],
-  [ADVANCED_SEARCH_GROUPS.alarms]: [PBEHAVIOR_FIELDS.alarmCount],
+  [ADVANCED_SEARCH_GROUPS.alarms]: [
+    PBEHAVIOR_FIELDS.alarmCount,
+  ],
 };
 
 export const AVAILABILITY_GROUPED_ADVANCED_SEARCH_FIELDS = {
@@ -243,9 +242,6 @@ export const AVAILABILITY_GROUPED_ADVANCED_SEARCH_FIELDS = {
     ENTITY_PATTERN_FIELDS.enabled,
     ENTITY_PATTERN_FIELDS.infos,
     ENTITY_PATTERN_FIELDS.componentInfos,
-    ENTITY_PATTERN_FIELDS.pause,
-    ENTITY_PATTERN_FIELDS.pauseAuthor,
-    ENTITY_PATTERN_FIELDS.pauseInitiator,
   ],
   [ADVANCED_SEARCH_GROUPS.alias]: [],
 };
@@ -257,11 +253,17 @@ export const DYNAMIC_INFO_GROUPED_ADVANCED_SEARCH_FIELDS = {
     DYNAMIC_INFO_FIELDS.author,
     DYNAMIC_INFO_FIELDS.enabled,
   ],
-  [ADVANCED_SEARCH_GROUPS.dates]: [DYNAMIC_INFO_FIELDS.created, DYNAMIC_INFO_FIELDS.updated],
+  [ADVANCED_SEARCH_GROUPS.dates]: [
+    DYNAMIC_INFO_FIELDS.created,
+    DYNAMIC_INFO_FIELDS.updated,
+  ],
 };
 
 export const ENTITY_DEPENDENCIES_GROUPED_ADVANCED_SEARCH_FIELDS = {
-  [ADVANCED_SEARCH_GROUPS.basic]: [ENTITY_PATTERN_FIELDS.name, ENTITY_PATTERN_FIELDS.type],
+  [ADVANCED_SEARCH_GROUPS.basic]: [
+    ENTITY_PATTERN_FIELDS.name,
+    ENTITY_PATTERN_FIELDS.type,
+  ],
 };
 
 export const ADVANCED_SEARCH_GROUPS_TO_PATTERNS = {
@@ -275,10 +277,9 @@ export const ADVANCED_SEARCH_GROUPS_TO_PATTERNS = {
   [ADVANCED_SEARCH_GROUPS.search]: ADVANCED_SEARCH_FIELDS.search,
 };
 
-export const ALARM_ADVANCED_SEARCH_FIELDS_TO_PATTERNS = Object.entries(
-  ADVANCED_SEARCH_GROUPS_TO_PATTERNS,
-).reduce((acc, [group, patternField]) => {
-  ALARM_GROUPED_ADVANCED_SEARCH_FIELDS[group]?.forEach?.(field => (acc[field] = patternField));
+export const ALARM_ADVANCED_SEARCH_FIELDS_TO_PATTERNS = Object.entries(ADVANCED_SEARCH_GROUPS_TO_PATTERNS)
+  .reduce((acc, [group, patternField]) => {
+    ALARM_GROUPED_ADVANCED_SEARCH_FIELDS[group]?.forEach?.(field => acc[field] = patternField);
 
-  return acc;
-}, {});
+    return acc;
+  }, {});

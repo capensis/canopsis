@@ -1,15 +1,20 @@
 <template>
-  <c-layout class="gap-3" column>
-    <c-enabled-field v-model="enabledField" :disabled="disabledCommon" with-background />
+  <v-layout class="gap-3" column>
+    <c-enabled-field
+      v-field="form.enabled"
+      :disabled="disabledCommon"
+      with-background
+    />
 
     <c-form-general-patterns-tabs
-      :form="formValues"
+      v-field="form"
       :rule-id="ruleId"
       :type="type"
       :additional-label="additionalLabel"
     >
       <template #general="{ setRef, templateVars }">
         <remediation-instruction-general-form
+          v-field="form"
           :ref="setRef"
           :disabled="disabled"
           :disabled-common="disabledCommon"
@@ -20,26 +25,31 @@
       </template>
 
       <template #additional="{ setRef, templateVars }">
-        <remediation-instruction-steps-form
-          v-if="isManualType"
-          :ref="setRef"
-          :disabled="disabled"
-          :template-vars="templateVars"
-          class="mt-3"
-        />
-        <remediation-instruction-jobs-form
-          v-else
-          :ref="setRef"
-          :disabled="disabled"
-          class="mt-3"
-        />
+        <div :ref="setRef">
+          <remediation-instruction-steps-form
+            v-if="isManualType"
+            v-field="form.steps"
+            :disabled="disabled"
+            :template-vars="templateVars"
+            class="mt-3"
+          />
+          <remediation-instruction-jobs-form
+            v-else
+            v-field="form.jobs"
+            :disabled="disabled"
+            class="mt-3"
+          />
+        </div>
       </template>
 
       <template #patterns="{ setRef }">
-        <remediation-instruction-patterns-form :ref="setRef" />
+        <remediation-instruction-patterns-form
+          v-field="form.patterns"
+          :ref="setRef"
+        />
       </template>
     </c-form-general-patterns-tabs>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -47,22 +57,30 @@ import { computed } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
-import { useFormContext, useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
-import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
+import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     RemediationInstructionGeneralForm,
     RemediationInstructionPatternsForm,
     RemediationInstructionStepsForm,
     RemediationInstructionJobsForm,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -84,25 +102,19 @@ export default {
       required: false,
     },
   },
-  setup() {
+  setup(props) {
     const type = TEMPLATE_TESTING_TEST_TYPES.instruction;
 
-    const { t } = useI18n();
-    const form = useFormContext();
-    const { enabledField, typeField } = useFormModels({
-      enabledField: 'enabled',
-      typeField: 'type',
-    });
+    const { t, tc } = useI18n();
 
-    const isManualType = computed(() => typeField.value === REMEDIATION_INSTRUCTION_TYPES.manual);
-    const additionalLabel = computed(() => isManualType.value ? t('common.step', 2) : t('remediation.tabs.jobs'),
-    );
+    const isManualType = computed(() => props.form.type === REMEDIATION_INSTRUCTION_TYPES.manual);
+
+    const additionalLabel = computed(() => (isManualType.value ? tc('common.step', 2) : t('remediation.tabs.jobs')));
 
     return {
       type,
-      formValues: form.values,
+
       isManualType,
-      enabledField,
       additionalLabel,
     };
   },

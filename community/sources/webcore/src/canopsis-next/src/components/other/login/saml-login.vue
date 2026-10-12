@@ -1,41 +1,45 @@
 <template>
-  <third-party-login :title="t('login.loginWithSAML')" :links="links" />
+  <third-party-login
+    :title="$t('login.loginWithSAML')"
+    :links="links"
+  />
 </template>
 
-<script setup>
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+<script>
+import qs from 'qs';
+import { get } from 'lodash';
 
-import { API_HOST, API_ROUTES, APP_HOST } from '@/config';
+import { APP_HOST, API_HOST, API_ROUTES } from '@/config';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { useInfo } from '@/hooks/store/modules/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import ThirdPartyLogin from './third-party-login.vue';
+import ThirdPartyLogin from './partials/third-party-login.vue';
 
-const route = useRoute();
-const { t } = useI18n();
-const { samlConfig } = useInfo();
+export default {
+  components: { ThirdPartyLogin },
+  mixins: [entitiesInfoMixin],
+  computed: {
+    title() {
+      return get(this.samlConfig, 'title', this.$t('login.loginWithSAML'));
+    },
 
-const title = computed(() => samlConfig.value?.title ?? t('login.loginWithSAML'));
+    samlHref() {
+      const { redirect = '' } = this.$route.query;
 
-const redirect = computed(() => route.query.redirect ?? '');
+      const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.saml.auth}`);
+      const query = qs.stringify({ relayState: removeTrailingSlashes(`${APP_HOST}${redirect}`) });
 
-const samlHref = computed(() => {
-  const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.saml.auth}`);
-  const query = new URLSearchParams({
-    relayState: removeTrailingSlashes(`${APP_HOST}${redirect.value}`),
-  });
+      return `${loginUrl}?${query}`;
+    },
 
-  return `${loginUrl}?${query}`;
-});
-
-const links = computed(() => [
-  {
-    title: title.value,
-    href: samlHref.value,
+    links() {
+      return [{
+        title: this.title,
+        href: this.samlHref,
+      }];
+    },
   },
-]);
+};
 </script>

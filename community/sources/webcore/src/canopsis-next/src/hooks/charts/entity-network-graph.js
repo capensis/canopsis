@@ -1,10 +1,7 @@
 import { isEmpty, uniq } from 'lodash';
-import { computed, ref, unref } from 'vue';
+import { ref, computed, unref } from 'vue';
 
-import {
-  getEntityChildrenElements,
-  normalizeTreeOfDependenciesMapEntities,
-} from '@/helpers/entities/map/list';
+import { normalizeTreeOfDependenciesMapEntities, getEntityChildrenElements } from '@/helpers/entities/map/list';
 
 /**
  * Composable for managing entity network graph data and operations
@@ -108,12 +105,12 @@ export const useEntityNetworkGraph = ({
       ...entitiesById.value,
       [entityId]: existingEntity
         ? {
-            ...existingEntity,
-            entity: {
-              ...existingEntity.entity,
-              ...entity,
-            },
-          }
+          ...existingEntity,
+          entity: {
+            ...existingEntity.entity,
+            ...entity,
+          },
+        }
         : { entity },
     };
   };
@@ -157,18 +154,16 @@ export const useEntityNetworkGraph = ({
       return elements;
     }
 
-    elements.push(
-      ...getEntityChildrenElements({
-        entity,
-        childrenIds: children,
-        handledChildrenIds: [entity._id],
-        entitiesById: entitiesById.value,
-        childrenKey: unwrappedChildrenKey,
-        withEvents: unwrappedWithEvents,
-        getEventsNodeElementByEntity,
-        getShowMoreElements,
-      }),
-    );
+    elements.push(...getEntityChildrenElements({
+      entity,
+      childrenIds: children,
+      handledChildrenIds: [entity._id],
+      entitiesById: entitiesById.value,
+      childrenKey: unwrappedChildrenKey,
+      withEvents: unwrappedWithEvents,
+      getEventsNodeElementByEntity,
+      getShowMoreElements,
+    }));
 
     return elements;
   });
@@ -273,10 +268,9 @@ export const useEntityNetworkGraph = ({
    *
    * @param {object} newEntity - New root entity object
    */
-  const resetEntities = newEntity =>
-    (entitiesById.value = normalizeTreeOfDependenciesMapEntities([
-      { entity: newEntity, pinned_entities: [] },
-    ]));
+  const resetEntities = newEntity => (
+    entitiesById.value = normalizeTreeOfDependenciesMapEntities([{ entity: newEntity, pinned_entities: [] }])
+  );
 
   return {
     metaByEntityId,

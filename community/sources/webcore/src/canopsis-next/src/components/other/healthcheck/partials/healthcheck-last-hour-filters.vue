@@ -14,14 +14,12 @@
 </template>
 
 <script>
+import HealthcheckEventTypesField from '@/components/other/healthcheck/form/fields/healthcheck-event-types-field.vue';
+
 import HealthcheckConnectorNamesField from '../form/fields/healthcheck-connector-names-field.vue';
-import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue';
 
 export default {
-  components: {
-    HealthcheckConnectorNamesField,
-    HealthcheckEventTypesField,
-  },
+  components: { HealthcheckEventTypesField, HealthcheckConnectorNamesField },
   props: {
     eventTypes: {
       type: Array,
@@ -32,8 +30,6 @@ export default {
       required: true,
     },
   },
-
-  emits: ['update:event-types', 'update:connector-names'],
 };
 </script>
 
@@ -41,14 +37,12 @@ export default {
 .healthcheck-last-hour-filters {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
 
   & > * {
     flex-grow: 0;
   }
 
-  &__connector-names,
-  &__event-types {
+  &__connector-names, &__event-types {
     width: 340px;
   }
 }

@@ -35,10 +35,8 @@ export const isDeepOrderChanged = (
   anotherEntities = [],
   key = '_id',
   callback = () => false,
-) =>
-  entities.length !== anotherEntities.length ||
-  entities.some((entity, index) => {
-    const anotherEntity = anotherEntities[index] || {};
+) => entities.length !== anotherEntities.length || entities.some((entity, index) => {
+  const anotherEntity = anotherEntities[index] || {};
 
-    return entity[key] !== anotherEntity[key] || callback(entity, anotherEntity);
-  });
+  return entity[key] !== anotherEntity[key] || callback(entity, anotherEntity);
+});

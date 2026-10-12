@@ -19,48 +19,52 @@
         :enablable="updatable"
         :disablable="updatable"
         meta-alarm-rule
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-
     <template #auto_resolve="{ item }">
       <c-enabled :value="item.auto_resolve" />
     </template>
-
     <template #config.threshold_rate="{ item }">
-      {{ percentage(item.config?.threshold_rate) }}
+      {{ item | get('config.threshold_rate') | percentage }}
     </template>
-
     <template #config.threshold_count="{ item }">
-      {{ item.config?.threshold_count }}
+      {{ item | get('config.threshold_count') }}
     </template>
-
     <template #config.time_interval="{ item }">
-      {{ durationToString(item.config?.time_interval) }}
+      {{ item | get('config.time_interval') | duration }}
     </template>
-
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
-
     <template #created="{ item }">
-      {{ dateToString(item.created) }}
+      {{ item.created | date }}
     </template>
-
     <template #updated="{ item }">
-      {{ dateToString(item.updated) }}
+      {{ item.updated | date }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
         <c-db-export-btn :id="item._id" meta-alarm-rule />
-        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
-      </c-layout>
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <meta-alarm-rule-list-expand-panel :meta-alarm-rule="item" />
     </template>
@@ -70,10 +74,7 @@
 <script>
 import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date';
-import { convertDurationToString } from '@/helpers/date/duration';
 import { isMetaAlarmRuleTypeHasPatterns } from '@/helpers/entities/meta-alarm/rule/form';
-import { convertNumberToRoundedPercentString } from '@/helpers/string';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -83,7 +84,6 @@ export default {
   components: {
     MetaAlarmRuleListExpandPanel,
   },
-
   props: {
     rules: {
       type: Array,
@@ -114,9 +114,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
-
   setup() {
     const { t } = useI18n();
 
@@ -125,9 +122,9 @@ export default {
       { text: t('common.name'), value: 'name' },
       { text: t('common.type'), value: 'type' },
       { text: t('common.enabled'), value: 'enabled', sortable: false },
-      { text: t('metaAlarmRule.autoResolve'), value: 'auto_resolve' },
-      { text: t('metaAlarmRule.thresholdRate'), value: 'config.threshold_rate' },
-      { text: t('metaAlarmRule.thresholdCount'), value: 'config.threshold_count' },
+      { text: t('metaAlarmRule.autoResolve'), value: 'auto_resolve', sortable: false },
+      { text: t('metaAlarmRule.thresholdRate'), value: 'config.threshold_rate', sortable: false },
+      { text: t('metaAlarmRule.thresholdCount'), value: 'config.threshold_count', sortable: false },
       { text: t('metaAlarmRule.timeInterval'), value: 'config.time_interval', sortable: false },
       { text: t('common.author'), value: 'author.display_name' },
       { text: t('common.created'), value: 'created' },
@@ -136,16 +133,10 @@ export default {
     ]);
 
     const hasRulePatterns = item => isMetaAlarmRuleTypeHasPatterns(item.type);
-    const percentage = value => convertNumberToRoundedPercentString(value);
-    const dateToString = date => convertDateToString(date);
-    const durationToString = duration => convertDurationToString(duration);
 
     return {
       headers,
       hasRulePatterns,
-      percentage,
-      dateToString,
-      durationToString,
     };
   },
 };

@@ -57,18 +57,20 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
 export const filterPatternsToForm = (
   filter = {},
   fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
-) =>
-  fields.reduce((acc, field) => {
-    const { [`corporate_${field}`]: id, [field]: pattern } = filter;
+) => fields.reduce((acc, field) => {
+  const {
+    [`corporate_${field}`]: id,
+    [field]: pattern,
+  } = filter;
 
-    acc[field] = patternToForm({
-      [field]: pattern,
-      is_corporate: !!id && id !== PATTERN_CUSTOM_ITEM_VALUE,
-      id,
-    });
+  acc[field] = patternToForm({
+    [field]: pattern,
+    is_corporate: !!id && id !== PATTERN_CUSTOM_ITEM_VALUE,
+    id,
+  });
 
-    return acc;
-  }, {});
+  return acc;
+}, {});
 
 /**
  * Convert filter object to filter form
@@ -93,26 +95,29 @@ export const filterToForm = (filter = {}, fields) => ({
  */
 export const formFilterToPatterns = (
   form = {},
-  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
+  fields = [
+    PATTERNS_FIELDS.alarm,
+    PATTERNS_FIELDS.entity,
+    PATTERNS_FIELDS.pbehavior,
+  ],
   corporate = false,
-) =>
-  fields.reduce((acc, field) => {
-    const patterns = form[field];
+) => fields.reduce((acc, field) => {
+  const patterns = form[field];
 
-    if (!patterns) {
-      return acc;
-    }
-
-    if ((corporate || patterns.is_corporate) && patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
-      acc[`corporate_${field}`] = patterns.id;
-    }
-
-    if (patterns.groups) {
-      acc[field] = formGroupsToPatternRules(patterns.groups);
-    }
-
+  if (!patterns) {
     return acc;
-  }, {});
+  }
+
+  if ((corporate || patterns.is_corporate) && patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
+    acc[`corporate_${field}`] = patterns.id;
+  }
+
+  if (patterns.groups) {
+    acc[field] = formGroupsToPatternRules(patterns.groups);
+  }
+
+  return acc;
+}, {});
 
 /**
  * Convert filter form to filter

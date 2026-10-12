@@ -53,21 +53,3 @@ export const formToAssociateTicketEvent = form => ({
   url: form.ticket_url,
   url_title: form.ticket_url_title,
 });
-
-/**
- * Checks a ticket ID against the configured regexp formats.
- * An empty formats list disables the check. Invalid configured regexps never match.
- *
- * @param {string} ticket
- * @param {TicketFormat[]} [formats=[]]
- * @returns {boolean}
- */
-export const isTicketIdMatchingFormats = (ticket, formats = []) =>
-  !formats.length ||
-  formats.some((format) => {
-    try {
-      return new RegExp(format).test(ticket);
-    } catch {
-      return false;
-    }
-  });

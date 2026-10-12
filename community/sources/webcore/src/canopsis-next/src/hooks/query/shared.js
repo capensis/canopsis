@@ -2,9 +2,9 @@ import { ref } from 'vue';
 
 import { convertQueryToRequest as convertQueryToRequestHelper } from '@/helpers/query';
 
+import { usePendingHandler } from './pending';
 import { useLocalQuery } from './local-query';
 import { useQueryOptions } from './options';
-import { usePendingHandler } from './pending';
 
 /**
  * Custom hook that combines the functionalities of tracking pending state of an asynchronous operation and managing a
@@ -27,10 +27,10 @@ export const usePendingWithLocalQuery = ({
   comparator,
   fetchHandler,
 } = {}) => {
-  const { pending, handler: fetchHandlerWithPending } = usePendingHandler(
-    fetchHandler,
-    initialPending,
-  );
+  const {
+    pending,
+    handler: fetchHandlerWithPending,
+  } = usePendingHandler(fetchHandler, initialPending);
 
   const queryData = useLocalQuery({
     initialQuery,
@@ -38,8 +38,7 @@ export const usePendingWithLocalQuery = ({
     onUpdate: fetchHandlerWithPending,
   });
 
-  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) =>
-    fetchHandlerWithPending(requestQuery);
+  const fetchHandlerWithQuery = (requestQuery = queryData.query.value) => fetchHandlerWithPending(requestQuery);
 
   return {
     ...queryData,
@@ -86,23 +85,22 @@ export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate })
  * @param {Object} [options.initialQuery] - The initial state of the query object.
  * @returns {Object} An object containing query state, options, and update functions.
  */
-export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) =>
-  useLocalQueryWithOptions({
-    initialQuery,
-    onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
-  });
+export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) => useLocalQueryWithOptions({
+  initialQuery,
+  onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequestHelper(fetchQuery) }),
+});
 
 /**
- * Custom hook to fetch a list of data with query options management.
+ * Custom hook to fetch a list of data with query options management
  *
  * This hook combines data fetching with query state management and options handling.
  * It provides reactive references for the fetched data, metadata, and loading state,
  * along with functions to manage the query and pagination/sorting options.
  *
- * @param {Object} options - Configuration options for the hook.
- * @param {Function} options.fetchListHandler - Async function that fetches data based on provided parameters.
- * @param {Object} [options.initialQuery] - Initial query state.
- * @param {Function} [options.convertQueryToRequest] - Function to convert query to request parameters.
+ * @param {Object} options - Configuration options for the hook
+ * @param {Function} options.fetchListHandler - Async function that fetches data based on provided parameters
+ * @param {Object} [options.initialQuery] - Initial query state
+ * @param {Function} [options.convertQueryToRequest] - Function to convert query to request parameters
  * @returns {Object}
  */
 export const useFetchListWithoutStoreWithOptions = ({

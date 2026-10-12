@@ -1,6 +1,6 @@
 <template>
   <draggable
-    :model-value="currentValue"
+    :value="value"
     :group="group"
     :tag="component"
     :animation="animation"
@@ -8,23 +8,17 @@
     :handle="handle"
     :ghost-class="ghostClass"
     :drag-class="dragClass"
-    :chosen-class="chosenClass || dragClass"
+    :chosen-class="dragClass"
     :component-data="componentData"
     :move="itemMove"
-    :draggable="sortableDraggable"
-    :item-key="itemKey"
+    :draggable="draggable"
     :class="classes"
-    @update:model-value="updateModel"
+    @change="updateOrdering"
     @start="startDragging"
     @end="endDragging"
   >
-    <template #item="{ element, index }">
-      <div class="c-draggable-list-field__item">
-        <slot :element="element" :index="index" name="item" />
-      </div>
-    </template>
-
-    <template #footer>
+    <slot />
+    <template #footer="">
       <slot name="footer" />
     </template>
   </draggable>
@@ -36,17 +30,20 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
+
+import { useModelField } from '@/hooks/form';
+
 export default {
   components: { Draggable },
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
-      type: Array,
-      default: undefined,
-    },
     value: {
       type: Array,
-      default: undefined,
+      default: () => [],
     },
     animation: {
       type: Number,
@@ -58,15 +55,15 @@ export default {
     },
     component: {
       type: String,
-      default: 'div',
+      required: false,
     },
     componentData: {
       type: Object,
-      default: undefined,
+      required: false,
     },
     handle: {
       type: String,
-      default: undefined,
+      required: false,
     },
     ghostClass: {
       type: String,
@@ -74,54 +71,39 @@ export default {
     },
     dragClass: {
       type: String,
-      default: undefined,
+      required: false,
     },
     chosenClass: {
       type: String,
-      default: undefined,
+      required: false,
     },
     group: {
       type: [Object, String],
-      default: undefined,
+      required: false,
     },
     itemMove: {
       type: Function,
-      default: undefined,
+      required: false,
     },
     draggable: {
       type: String,
       default: '>*',
     },
-    itemKey: {
-      type: [String, Function],
-      default: '_id',
-    },
   },
-
-  emits: ['update:modelValue', 'update:value', 'change', 'start', 'end'],
-
   setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
     /**
      * Tracks whether a drag operation is currently active.
      */
     const isDragging = ref(false);
-    const currentValue = computed(() => props.modelValue ?? props.value ?? []);
 
     /**
      * Classes applied to the root draggable element depending on state.
      */
     const classes = computed(() => ({
-      'c-draggable-list-field': true,
       'c-draggable-list-field--dragging': isDragging.value,
     }));
-
-    /**
-     * vuedraggable@4 already scopes draggable items with [data-draggable].
-     * The old Vuetify 2 wrapper default used `>*`, which would become
-     * `[data-draggable]>*` and make Sortable drag child DOM nodes instead of items.
-     */
-    const sortableDraggable = computed(() => props.draggable === '>*' ? undefined : props.draggable,
-    );
 
     /**
      * Handles drag start: set dragging state and re-emit the event.
@@ -146,40 +128,28 @@ export default {
     };
 
     /**
-     * Emits the updated list produced by vuedraggable.
+     * Processes list reordering and emits updated model value.
      *
-     * @param {Array} value - Updated list value.
+     * @param {Object} event - vuedraggable change event (may include moved/added/removed).
      * @returns {void}
      */
-    const updateModel = (value) => {
-      emit('update:modelValue', value);
-      emit('update:value', value);
-      emit('change', value);
-    };
+    const updateOrdering = event => updateModel(dragDropChangePositionHandler(props.value, event));
 
     return {
       classes,
-      currentValue,
-      sortableDraggable,
       startDragging,
       endDragging,
-      updateModel,
+      updateOrdering,
     };
   },
 };
 </script>
 
 <style lang="scss">
-.c-draggable-list-field {
-  &--dragging {
-    // We need to put it to avoid problem with `dragend` event on text-editon field with content
-    .text-editor {
-      pointer-events: none;
-    }
-  }
-
-  &__item {
-    width: 100%;
+.c-draggable-list-field--dragging {
+  // We need to put it to avoid problem with `dragend` event on text-editon field with content
+  .text-editor {
+    pointer-events: none;
   }
 }
 </style>

@@ -1,130 +1,118 @@
 <template>
-  <div class="c-form-general-patterns-tabs">
-    <v-tabs
-      v-model="activeTab"
-      :key="visibleTabsKey"
-      slider-color="primary"
-      align-tabs="center"
-    >
-      <template v-for="tab in visibleTabs" :key="`tab-head-${tab.id}`">
-        <v-tab
-          v-if="tab.testing"
-          :value="tab.id"
-          :disabled="isEmptyVariablesFields"
-          class="v-tab--tooltip"
-        >
-          <c-tooltip :disabled="!isEmptyVariablesFields" location="top">
-            <template #activator="{ props: tooltipProps }">
-              <span v-bind="tooltipProps" class="test-variables-tab__wrapper">
-                {{ t('templateTesting.testVariables') }}
-              </span>
-            </template>
-
-            <span>{{ t('templateTesting.testVariablesDisabledTooltip') }}</span>
-          </c-tooltip>
-        </v-tab>
-        <v-tab
-          v-else
-          :value="tab.id"
-          :class="tabTabClass(tab)"
-          :disabled="tab['test-query'] && !!disabledTestQueryTooltip"
-        >
-          <template v-if="tab.general">
-            {{ $t('common.general') }}
-          </template>
-          <template v-else-if="tab.patterns">
-            {{ patternsLabel || t('common.pattern', 2) }}
-          </template>
-          <template v-else-if="tab.additional">
-            {{ additionalLabel || $t('common.additional') }}
-          </template>
-          <template v-else-if="tab['test-query']">
-            <c-tooltip :disabled="!disabledTestQueryTooltip" location="top">
-              <template #activator="{ props: tooltipProps }">
-                <span v-bind="tooltipProps">{{ $t('common.testQuery') }}</span>
-              </template>
-              <span>{{ disabledTestQueryTooltip }}</span>
-            </c-tooltip>
-          </template>
-        </v-tab>
-      </template>
-    </v-tabs>
-
-    <v-window v-model="activeTab">
-      <v-window-item
-        v-for="tab in visibleTabs"
-        :key="`item-${tab.id}`"
-        :value="tab.id"
-        :class="tabItemClass(tab)"
-        :eager="tab.general || tab.patterns || tab.additional"
-        :disabled="tab.testing && isEmptyVariablesFields"
+  <v-tabs
+    v-model="activeTab"
+    slider-color="primary"
+    centered
+  >
+    <template v-for="tab in visibleTabs">
+      <template-testing-test-variables-tab
+        v-if="tab.testing"
+        :key="`tab-head-testing-${tab.id}`"
+        :disabled="isEmptyVariablesFields"
+      />
+      <v-tab
+        v-else
+        :key="`tab-head-default-${tab.id}`"
+        :class="tabTabClass(tab)"
+        :disabled="tab['test-query'] && !!disabledTestQueryTooltip"
       >
-        <slot
-          v-if="tab.general"
-          :set-ref="setGeneralRef"
-          :copy-vars="copyVars"
-          :template-vars="templateVars"
-          :pending="templateTestingPending"
-          name="general"
-        />
+        <template v-if="tab.general">
+          {{ $t('common.general') }}
+        </template>
+        <template v-else-if="tab.patterns">
+          {{ patternsLabel || $tc('common.pattern') }}
+        </template>
+        <template v-else-if="tab.additional">
+          {{ additionalLabel || $t('common.additional') }}
+        </template>
+        <template v-else-if="tab['test-query']">
+          <v-tooltip :disabled="!disabledTestQueryTooltip" top>
+            <template #activator="{ on }">
+              <span v-on="on">{{ $t('common.testQuery') }}</span>
+            </template>
+            <span>{{ disabledTestQueryTooltip }}</span>
+          </v-tooltip>
+        </template>
+      </v-tab>
+    </template>
 
-        <slot
-          v-else-if="tab.additional"
-          :set-ref="setAdditionalRef"
-          :template-vars="templateVars"
-          :copy-vars="copyVars"
-          :pending="templateTestingPending"
-          name="additional"
-        />
+    <v-tab-item
+      v-for="tab in visibleTabs"
+      :key="`item-${tab.id}`"
+      :class="tabItemClass(tab)"
+      :eager="tab.general || tab.patterns || tab.additional"
+      :disabled="tab.testing && isEmptyVariablesFields"
+    >
+      <slot
+        v-if="tab.general"
+        :set-ref="setGeneralRef"
+        :copy-vars="copyVars"
+        :template-vars="templateVars"
+        :pending="templateTestingPending"
+        name="general"
+      />
 
-        <slot
-          v-else-if="tab.patterns"
-          :set-ref="setPatternsRef"
-          :template-vars="templateVars"
-          :copy-vars="copyVars"
-          :pending="templateTestingPending"
-          name="patterns"
-        />
+      <slot
+        v-else-if="tab.additional"
+        :set-ref="setAdditionalRef"
+        :template-vars="templateVars"
+        :copy-vars="copyVars"
+        :pending="templateTestingPending"
+        name="additional"
+      />
 
-        <slot
-          v-else-if="tab['test-query']"
-          :set-ref="setTestQueryRef"
-          :form="form"
-          name="test-query"
-        />
+      <slot
+        v-else-if="tab.patterns"
+        :set-ref="setPatternsRef"
+        :template-vars="templateVars"
+        :copy-vars="copyVars"
+        :pending="templateTestingPending"
+        name="patterns"
+      />
 
-        <template-testing-test-variables
-          v-else-if="tab.testing"
-          :ref="setTestingRef"
-          :general-form="form"
-          :variables-fields="variablesFields"
-          :template-vars="templateVars"
-          :rule-id="ruleId"
-          :type="type"
-          :active="isActiveTestingTab"
-        />
-      </v-window-item>
-    </v-window>
-  </div>
+      <slot
+        v-else-if="tab['test-query']"
+        :form="form"
+        name="test-query"
+      />
+
+      <template-testing-test-variables
+        v-else-if="tab.testing"
+        :general-form="form"
+        :variables-fields="variablesFields"
+        :template-vars="templateVars"
+        :rule-id="ruleId"
+        :type="type"
+        :active="isActiveTestingTab"
+      />
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>
 import { isNumber } from 'lodash';
-import { computed, ref, toRef, useSlots, watch, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  toRef,
+  useSlots,
+  watch,
+  onMounted,
+} from 'vue';
 
 import { FORM_GENERAL_PATTERNS_TABS } from '@/constants';
 
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
-import { useFormContext } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
+import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
-import { useTestVariablesTabData } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
+import {
+  useTestVariablesTabData,
+} from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
 
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
-
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 
 /**
  * Builds a tab descriptor for `c-form-general-patterns-tabs` with a single active type flag.
@@ -149,7 +137,7 @@ const createTab = id => ({
 });
 
 export default {
-  components: { TemplateTestingTestVariables },
+  components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },
   model: {
     prop: 'form',
     event: 'input',
@@ -188,42 +176,27 @@ export default {
       type: Boolean,
       default: false,
     },
-    withTemplateTesting: {
-      type: Boolean,
-      default: true,
-    },
     aiChatExpandTabKeys: {
       type: Object,
       default: null,
     },
   },
-  emits: ['update:form'],
   setup(props, { emit }) {
     const slots = useSlots();
-    const { t } = useI18n();
-    const formContext = useFormContext();
 
-    const activeTab = ref(FORM_GENERAL_PATTERNS_TABS.general);
+    const activeTab = ref(0);
 
     const generalElement = ref(null);
     const patternsElement = ref(null);
     const additionalElement = ref(null);
-    const testQueryElement = ref(null);
-    const testingElement = ref(null);
 
-    const setGeneralRef = refElement => (generalElement.value = refElement);
-    const setPatternsRef = refElement => (patternsElement.value = refElement);
+    const setGeneralRef = refElement => generalElement.value = refElement;
+    const setPatternsRef = refElement => patternsElement.value = refElement;
     const setAdditionalRef = refElement => (additionalElement.value = refElement);
-    const setTestQueryRef = refElement => (testQueryElement.value = refElement);
-    const setTestingRef = refElement => (testingElement.value = refElement);
 
     const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
     const { hasChildrenError: hasPatternsError } = useValidationElementChildren(patternsElement);
-    const { hasChildrenError: hasAdditionalError } =
-      useValidationElementChildren(additionalElement);
-    const { hasChildrenError: hasTestQueryError } =
-      useValidationElementChildren(testQueryElement);
-    const { hasChildrenError: hasTestingError } = useValidationElementChildren(testingElement);
+    const { hasChildrenError: hasAdditionalError } = useValidationElementChildren(additionalElement);
     const {
       vars: copyVars,
       pending: copyVarsPending,
@@ -241,23 +214,14 @@ export default {
       form: toRef(props, 'form'),
     });
 
-    const updateForm = (event, value) => {
-      formContext.values.value = value;
-      emit(event, value);
-    };
-
     const {
       hasAccess: hasAccessToTemplateTesting,
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesTabData(props, toRef(props, 'type'), updateForm);
+    } = useTestVariablesTabData(props, toRef(props, 'type'), emit);
 
-    const hasTemplateTestingTab = computed(
-      () => props.withTemplateTesting && isNumber(props.type) && hasAccessToTemplateTesting.value,
-    );
-    const templateTestingPending = computed(
-      () => templateVarsPending.value || copyVarsPending.value,
-    );
+    const hasTemplateTestingTab = computed(() => isNumber(props.type) && hasAccessToTemplateTesting.value);
+    const templateTestingPending = computed(() => templateVarsPending.value || copyVarsPending.value);
 
     const hasGeneralSlot = computed(() => Boolean(slots.general));
     const hasPatternsSlot = computed(() => Boolean(slots.patterns));
@@ -265,62 +229,46 @@ export default {
     const hasAdditionalSlot = computed(() => Boolean(slots.additional));
 
     const visibleTabs = computed(() => {
-      const generalTab =
-        hasGeneralSlot.value && !props.hideGeneral && createTab(FORM_GENERAL_PATTERNS_TABS.general);
+      const generalTab = hasGeneralSlot.value && !props.hideGeneral && createTab(FORM_GENERAL_PATTERNS_TABS.general);
       const patternsTab = hasPatternsSlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.patterns);
-      const testQueryTab =
-        hasTestQuerySlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.testQuery);
-      const testingTab =
-        hasTemplateTestingTab.value && createTab(FORM_GENERAL_PATTERNS_TABS.testing);
-      const additionalTab =
-        hasAdditionalSlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.additional);
+      const testQueryTab = hasTestQuerySlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.testQuery);
+      const testingTab = hasTemplateTestingTab.value && createTab(FORM_GENERAL_PATTERNS_TABS.testing);
+      const additionalTab = hasAdditionalSlot.value && createTab(FORM_GENERAL_PATTERNS_TABS.additional);
 
-      const tabs = props.reverse
-        ? [patternsTab, generalTab, additionalTab]
-        : [generalTab, additionalTab, patternsTab];
+      const tabs = props.reverse ? [patternsTab, generalTab, additionalTab] : [generalTab, additionalTab, patternsTab];
 
       tabs.push(testQueryTab, testingTab);
 
       return tabs.filter(Boolean);
     });
-    const visibleTabsKey = computed(() => visibleTabs.value.map(tab => tab.id).join('|'));
 
-    const patternsTabIndex = computed(
-      () => visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
-        ? FORM_GENERAL_PATTERNS_TABS.patterns
-        : FORM_GENERAL_PATTERNS_TABS.general,
-    );
+    const patternsTabIndex = computed(() => (
+      visibleTabs.value.findIndex(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.patterns)
+    ));
 
-    const testingTabIndex = computed(() => visibleTabs.value.some(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
-        ? FORM_GENERAL_PATTERNS_TABS.testing
-        : null,
-    );
+    const testingTabIndex = computed(() => (
+      visibleTabs.value.findIndex(tab => tab.id === FORM_GENERAL_PATTERNS_TABS.testing)
+    ));
 
-    const isActiveTestingTab = computed(
-      () => testingTabIndex.value !== null && activeTab.value === testingTabIndex.value,
-    );
-
-    const tabHasError = tab => (tab.general && hasGeneralError.value) ||
-      (tab.patterns && hasPatternsError.value) ||
-      (tab.additional && hasAdditionalError.value) ||
-      (tab['test-query'] && hasTestQueryError.value) ||
-      (tab.testing && hasTestingError.value);
+    const isActiveTestingTab = computed(() => (
+      testingTabIndex.value !== -1 && activeTab.value === testingTabIndex.value
+    ));
 
     const tabTabClass = tab => ({
-      'text-error': tabHasError(tab),
+      'error--text': (tab.general && hasGeneralError.value)
+        || (tab.patterns && hasPatternsError.value)
+        || (tab.additional && hasAdditionalError.value),
       'v-tab--tooltip': tab['test-query'],
     });
 
-    const tabItemClass = tab => (tab.general || tab.patterns || tab.additional ? 'pt-4' : '');
+    const tabItemClass = tab => ((tab.general || tab.patterns || tab.additional) ? 'pt-4' : '');
 
     const expandNeededTab = computed(() => {
       if (props.aiChatExpandTabKeys) {
         return Object.fromEntries(
           Object.entries(props.aiChatExpandTabKeys).map(([fieldKey, tabId]) => [
             fieldKey,
-            visibleTabs.value.some(tab => tab.id === tabId)
-              ? tabId
-              : FORM_GENERAL_PATTERNS_TABS.general,
+            visibleTabs.value.findIndex(tab => tab.id === tabId),
           ]),
         );
       }
@@ -333,47 +281,30 @@ export default {
       neededTab: expandNeededTab,
     });
 
-    watch(
-      () => props.hideGeneral,
-      (value) => {
-        if (value) {
-          activeTab.value = patternsTabIndex.value;
-        }
-      },
-    );
-
-    watch(visibleTabs, (tabs) => {
-      if (!tabs.some(tab => tab.id === activeTab.value)) {
-        activeTab.value = tabs[0]?.id ?? FORM_GENERAL_PATTERNS_TABS.general;
+    watch(() => props.hideGeneral, (value) => {
+      if (value) {
+        activeTab.value = patternsTabIndex.value;
       }
     });
 
     onMounted(() => {
-      if (isNumber(props.type)) {
-        fetchTemplateVarsList();
-      }
-
       if (hasTemplateTestingTab.value) {
         fetchCopyVarsList();
+        fetchTemplateVarsList();
       }
     });
 
     return {
       activeTab,
-      t,
 
       visibleTabs,
-      visibleTabsKey,
 
       hasGeneralError,
       hasPatternsError,
-      hasAdditionalError,
 
       setGeneralRef,
       setPatternsRef,
       setAdditionalRef,
-      setTestQueryRef,
-      setTestingRef,
 
       copyVars,
       templateVars,
@@ -389,9 +320,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.test-variables-tab__wrapper {
-  max-width: 360px;
-}
-</style>

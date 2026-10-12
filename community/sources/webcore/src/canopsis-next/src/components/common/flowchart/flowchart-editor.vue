@@ -43,7 +43,10 @@
         :color="selectionColor"
       />
     </template>
-    <slot :data="data" name="layers" />
+    <slot
+      :data="data"
+      name="layers"
+    />
   </svg>
 </template>
 
@@ -53,30 +56,30 @@ import { cloneDeep, isEqual, omit } from 'lodash';
 import { COLORS } from '@/config';
 import { KEY_CODES, SHAPES } from '@/constants';
 
-import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 import { roundByStep } from '@/helpers/flowchart/round';
+import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 
+import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
-import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
 
 import FlowchartSelection from './partials/flowchart-selection.vue';
-import ArrowLineShape from './shapes/arrow-line-shape/arrow-line-shape.vue';
-import BidirectionalArrowLineShape from './shapes/bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
-import CircleShapeSelection from './shapes/circle-shape/circle-shape-selection.vue';
-import CircleShape from './shapes/circle-shape/circle-shape.vue';
-import DocumentShape from './shapes/document-shape/document-shape.vue';
-import EllipseShape from './shapes/ellipse-shape/ellipse-shape.vue';
-import ImageShape from './shapes/image-shape/image-shape.vue';
-import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
-import LineShape from './shapes/line-shape/line-shape.vue';
-import ParallelogramShape from './shapes/parallelogram-shape/parallelogram-shape.vue';
-import ProcessShape from './shapes/process-shape/process-shape.vue';
-import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
 import RectShape from './shapes/rect-shape/rect-shape.vue';
 import RhombusShape from './shapes/rhombus-shape/rhombus-shape.vue';
+import CircleShape from './shapes/circle-shape/circle-shape.vue';
+import EllipseShape from './shapes/ellipse-shape/ellipse-shape.vue';
+import ParallelogramShape from './shapes/parallelogram-shape/parallelogram-shape.vue';
+import ProcessShape from './shapes/process-shape/process-shape.vue';
+import DocumentShape from './shapes/document-shape/document-shape.vue';
 import StorageShape from './shapes/storage-shape/storage-shape.vue';
+import LineShape from './shapes/line-shape/line-shape.vue';
+import ArrowLineShape from './shapes/arrow-line-shape/arrow-line-shape.vue';
+import BidirectionalArrowLineShape from './shapes/bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
+import ImageShape from './shapes/image-shape/image-shape.vue';
+import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
+import CircleShapeSelection from './shapes/circle-shape/circle-shape-selection.vue';
+import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
 
 const DOCUMENT_EVENTS = ['mousemove', 'mouseup', 'keydown'];
 
@@ -104,12 +107,16 @@ export default {
     CircleShapeSelection,
     LineShapeSelection,
   },
-  mixins: [selectedShapesMixin, copyPasteShapesMixin, moveShapesMixin, viewBoxMixin],
+  mixins: [
+    selectedShapesMixin,
+    copyPasteShapesMixin,
+    moveShapesMixin,
+    viewBoxMixin,
+  ],
   model: {
     event: 'input',
     prop: 'shapes',
   },
-  emits: ['input', 'update:shapes', 'update:selected', 'update:viewBox'],
   props: {
     shapes: {
       type: Object,
@@ -182,13 +189,14 @@ export default {
     },
 
     svgHandlers() {
-      return Object.keys(this.handlers).reduce((acc, event) => {
-        if (!this.isDocumentEvent(event)) {
-          acc[event] = this.callHandlers;
-        }
+      return Object.keys(this.handlers)
+        .reduce((acc, event) => {
+          if (!this.isDocumentEvent(event)) {
+            acc[event] = this.callHandlers;
+          }
 
-        return acc;
-      }, {});
+          return acc;
+        }, {});
     },
 
     selectionComponents() {
@@ -249,7 +257,7 @@ export default {
     this.$flowchart.on('mousedown', this.onContainerMouseDown);
     this.$flowchart.on('keydown', this.onKeyDown);
   },
-  beforeUnmount() {
+  beforeDestroy() {
     this.$flowchart.off('mousemove', this.onContainerMouseMove);
     this.$flowchart.off('mouseup', this.onContainerMouseUp);
     this.$flowchart.off('mousedown', this.onContainerMouseDown);
@@ -264,7 +272,7 @@ export default {
       if (this.handlers[event]) {
         this.handlers[event].push(func);
       } else {
-        this.handlers[event] = [func];
+        this.$set(this.handlers, event, [func]);
 
         if (this.isDocumentEvent(event)) {
           document.addEventListener(event, this.callHandlers);
@@ -286,11 +294,10 @@ export default {
 
     callHandlers(event, data) {
       this.handlers[event.type]?.forEach(func => func({
-          event,
-          cursor: this.cursor,
-          ...data,
-        }),
-      );
+        event,
+        cursor: this.cursor,
+        ...data,
+      }));
     },
 
     handleShapeContextmenu(shape, event) {
@@ -314,7 +321,6 @@ export default {
 
     updateShapes(shapes) {
       this.$emit('input', shapes);
-      this.$emit('update:shapes', shapes);
     },
 
     onShapeMouseDown(shape, event) {
@@ -397,15 +403,14 @@ export default {
       const connectingShape = this.data[shape._id];
 
       connectingShape.connections = connectingShape.connections.filter(
-        connection => connection.shapeId !== this.editingShape._id ||
-          connection.pointId !== this.editingLinePoint._id,
+        connection => connection.shapeId !== this.editingShape._id
+        || connection.pointId !== this.editingLinePoint._id,
       );
 
       const editingShape = this.data[this.editingShape._id];
 
-      editingShape.connectedTo = editingShape.connectedTo.filter(
-        shapeId => shapeId !== shape._id,
-      );
+      editingShape.connectedTo = editingShape.connectedTo
+        .filter(shapeId => shapeId !== shape._id);
     },
 
     updateConnections(id) {
@@ -527,9 +532,7 @@ export default {
         const shapes = cloneDeep(omit(this.data, this.selectedIds));
 
         Object.values(shapes).forEach((shape) => {
-          shapes[shape._id].connections = shape.connections.filter(
-            connection => shapes[connection.shapeId],
-          );
+          shapes[shape._id].connections = shape.connections.filter(connection => shapes[connection.shapeId]);
           shapes[shape._id].connectedTo = shape.connectedTo.filter(shapeId => shapes[shapeId]);
         });
 

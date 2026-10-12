@@ -4,97 +4,96 @@
     :show-button="showAlarmsButton"
     :style="itemStyle"
     class="cursor-pointer service-weather-item"
-    @click="handleCardClick"
+    @click.native="handleCardClick"
     @show:alarms="$emit('show:alarms')"
   >
-    <c-layout
-      class="service-weather-item__content"
-      justify="space-between"
-      fill
-      row
+    <v-layout
+      class="fill-height service-weather-item__content"
+      justify-space-between
     >
-      <div class="service-weather-item__main position-relative">
-        <c-layout
-          :class="{ blinking: isBlinking }"
-          class="service-weather-item__template-wrapper"
-          justify="start"
-          fill
+      <v-flex class="position-relative fill-height">
+        <v-layout
+          :class="{ 'blinking': isBlinking }"
+          justify-start
         >
           <c-compiled-template
             :template="template"
             :context="templateContext"
+            :template-props="templateProps"
             class="service-weather-item__template pa-3"
           />
-        </c-layout>
-
-        <c-layout align="center" class="service-weather-item__toolbar pt-1 pr-1">
-          <c-no-events-icon :value="service.idle_since" color="white" location="top" />
-
+        </v-layout>
+        <v-layout
+          class="service-weather-item__toolbar pt-1 pr-1"
+          align-center
+        >
+          <c-no-events-icon
+            :value="service.idle_since"
+            color="white"
+            top
+          />
           <impact-state-indicator
             v-if="priorityEnabled"
             :value="service.impact_state"
             class="mr-1"
           />
-
           <v-btn
             v-if="showRootCauseByStateClick"
-            size="small"
-            variant="text"
             icon
+            small
             @click.stop="$emit('show:root-cause')"
           >
-            <v-icon color="white" icon="$root_cause" size="small" />
+            <v-icon color="white" small>
+              $vuetify.icons.root_cause
+            </v-icon>
           </v-btn>
-
           <v-btn
             v-if="showVariablesHelpButton"
-            size="small"
-            variant="text"
             icon
-            @click.stop="showVariablesHelpModal"
+            small
+            @click.stop="showVariablesHelpModal(service)"
           >
-            <v-icon color="white" icon="help" size="small" />
+            <v-icon color="white" small>
+              help
+            </v-icon>
           </v-btn>
-        </c-layout>
-
+        </v-layout>
         <v-icon
           class="service-weather-item__background"
+          size="5em"
           color="white"
         >
           {{ backgroundIcon }}
         </v-icon>
-
         <v-icon
           v-if="secondaryIconEnabled && service.secondary_icon"
-          class="service-weather-item__secondary-icon text-white mb-1 mr-1"
+          class="service-weather-item__secondary-icon white-text mb-1 mr-1"
         >
           {{ service.secondary_icon }}
         </v-icon>
-      </div>
-
+      </v-flex>
       <alarm-pbehavior-counters
         v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters"
         :counters="pbehaviorCounters"
         :types="pbehaviorCountersTypes"
       />
-
       <alarm-state-counters
         v-if="isStateCountersEnabled"
         :counters="counters"
         :types="stateCountersTypes"
       />
-    </c-layout>
+    </v-layout>
   </card-with-see-alarms-btn>
 </template>
 
 <script>
 import { ALARM_STATES, MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 
-import { getMostReadableTextColor } from '@/helpers/color';
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getMostReadableTextColor } from '@/helpers/color';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { handlebarsTagsHelperMixin } from '@/mixins/handlebars/tags-helper';
+import { handlebarsTagsHelperMixin } from '@/mixins/widget/handlebars/tags-helper';
 
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
@@ -109,9 +108,7 @@ export default {
     AlarmStateCounters,
     ImpactStateIndicator,
   },
-
   mixins: [handlebarsTagsHelperMixin],
-
   props: {
     service: {
       type: Object,
@@ -183,11 +180,12 @@ export default {
       default: () => ({}),
     },
   },
-
-  emits: ['show:service', 'show:alarms', 'show:root-cause'],
-
   computed: {
     templateContext() {
+      return { entity: this.service };
+    },
+
+    templateProps() {
       return { entity: this.service };
     },
 
@@ -204,12 +202,10 @@ export default {
     },
 
     backgroundIcon() {
-      return (
-        {
-          [this.isActionRequired]: this.actionRequiredIcon,
-          [this.isNoActionRequired]: this.noActionRequiredIcon,
-        }.true || this.service.icon
-      );
+      return {
+        [this.isActionRequired]: this.actionRequiredIcon,
+        [this.isNoActionRequired]: this.noActionRequiredIcon,
+      }.true || this.service.icon;
     },
 
     backgroundColorByActionRequired() {
@@ -224,10 +220,7 @@ export default {
         return undefined;
       }
 
-      return getMostReadableTextColor(this.backgroundColorByActionRequired, {
-        level: 'AA',
-        size: 'large',
-      });
+      return getMostReadableTextColor(this.backgroundColorByActionRequired, { level: 'AA', size: 'large' });
     },
 
     itemClasses() {
@@ -280,7 +273,6 @@ export default {
       return this.countersSettings?.state_types ?? [];
     },
   },
-
   methods: {
     handleCardClick(event) {
       if (event.target.tagName !== 'A' || !event.target.href) {
@@ -305,31 +297,13 @@ export default {
 
 <style lang="scss" scoped>
 .service-weather-item {
-  width: 100%;
   overflow: hidden;
   background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
-
-  &__content {
-    width: 100%;
-    height: 100%;
-  }
-
-  &__main {
-    flex: 1 1 auto;
-    min-width: 0;
-    height: 100%;
-  }
-
-  &__template-wrapper {
-    width: 100%;
-    height: 100%;
-  }
 
   &__content > * {
     margin-right: 2px;
 
-    &:first-child,
-    &:last-child {
+    &:first-child, &:last-child {
       margin: 0;
     }
   }
@@ -340,7 +314,7 @@ export default {
     text-overflow: ellipsis;
     line-height: 1.2em;
 
-    :deep(hr) {
+    ::v-deep hr {
       border-color: currentColor;
       background-color: currentColor;
     }
@@ -348,13 +322,11 @@ export default {
 
   &__background {
     position: absolute;
-    top: 50%;
+    top: 0;
     bottom: 0;
     right: 10px;
-    font-size: 5em !important;
     pointer-events: none;
     opacity: 0.5;
-    transform: translateY(-50%);
   }
 
   &__toolbar {
@@ -370,8 +342,7 @@ export default {
     bottom: 0;
     cursor: inherit;
 
-    &:hover,
-    &:focus {
+    &:hover, &:focus {
       position: absolute;
     }
   }

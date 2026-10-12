@@ -1,6 +1,6 @@
 import { ALARM_FIELDS } from '@/constants';
 
-import { i18n } from '@/i18n';
+import i18n from '@/i18n';
 
 import {
   getInfosWidgetColumn,
@@ -9,10 +9,10 @@ import {
 } from '@/helpers/entities/widget/column/form';
 
 /**
- * Get translated label for widget column.
+ * Get translated label for widget column
  *
- * @param {WidgetColumn} [column={}]
- * @param {Object<string, string>} [labelsMap={}]
+ * @param {WidgetColumn} [column = {}]
+ * @param {Object<string, string>} [labelsMap = {}]
  * @returns {string}
  */
 export const getWidgetColumnLabel = (column = {}, labelsMap = {}) => {
@@ -23,41 +23,27 @@ export const getWidgetColumnLabel = (column = {}, labelsMap = {}) => {
   const infosColumn = getInfosWidgetColumn(column.value);
 
   if (infosColumn) {
-    return getTranslatedColumnLabel(labelsMap[infosColumn], column.value);
+    return i18n.tc(labelsMap[infosColumn], 2);
   }
 
   if (isLinksWidgetColumn(column.value)) {
-    return getTranslatedColumnLabel(labelsMap[ALARM_FIELDS.links], column.value);
+    return i18n.tc(labelsMap[ALARM_FIELDS.links], 2);
   }
 
   if (isAlarmTicketDataWidgetColumn(column.value)) {
-    return getTranslatedColumnLabel(labelsMap[ALARM_FIELDS.ticketData], column.value);
+    return i18n.tc(labelsMap[ALARM_FIELDS.ticketData], 2);
   }
 
-  return getTranslatedColumnLabel(labelsMap[column.value], column.value);
+  return i18n.tc(labelsMap[column.value], 2);
 };
 
 /**
- * Translate a widget column label with the current vue-i18n pluralization API.
+ * Get sortable property for widget column for table
  *
- * @param {string} key
- * @param {string} fallback
- * @returns {string}
- */
-const getTranslatedColumnLabel = (key, fallback = '') => {
-  if (!key) {
-    return fallback;
-  }
-
-  return i18n.global.t(key, { count: 2 });
-};
-
-/**
- * Get sortable property for widget column for table.
- *
- * @param {WidgetColumn} [column={}]
- * @param {string[]} [unsortableFields=[]]
+ * @param {WidgetColumn} [column = {}]
+ * @param {string[]} [unsortableFields = []]
  * @returns {boolean}
  */
-export const getWidgetColumnSortable = (column = {}, unsortableFields = []) =>
-  !unsortableFields.some(field => (column.value ?? '').startsWith(field));
+export const getWidgetColumnSortable = (column = {}, unsortableFields = []) => (
+  !unsortableFields.some(field => (column.value ?? '').startsWith(field))
+);

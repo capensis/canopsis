@@ -1,65 +1,33 @@
 import { cloneDeep } from 'lodash';
 
-import {
-  DEFAULT_WIDGET_GRID_PARAMETERS,
-  FEATURES_SERVICE_KEYS,
-  WIDGET_GRID_SIZES_KEYS,
-  WIDGET_TYPES,
-} from '@/constants';
+import { WIDGET_TYPES, WIDGET_GRID_SIZES_KEYS, DEFAULT_WIDGET_GRID_PARAMETERS } from '@/constants';
 
 import { featuresService } from '@/services/features';
 
-import { uid } from '@/helpers/uid';
+import { uuid } from '@/helpers/uuid';
 
-import { formToWidgetColors, widgetColorsToForm } from './colors';
 import {
   alarmListWidgetParametersToForm,
   formToAlarmListWidgetParameters,
   prepareAlarmListWidget,
 } from './forms/alarm';
-import {
-  availabilityWidgetParametersToForm,
-  formToAvailabilityWidgetParameters,
-} from './forms/availability';
-import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './forms/bar-chart';
-import { clockWidgetParametersToForm, formToClockWidgetParameters } from './forms/clock';
-import {
-  contextWidgetParametersToForm,
-  formToContextWidgetParameters,
-  prepareContextWidget,
-} from './forms/context';
 import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
+import { testingWeatherWidgetParametersToForm, formToTestingWeatherWidgetParameters } from './forms/junit';
+import { statsCalendarWidgetParametersToForm, formToStatsCalendarWidgetParameters } from './forms/stats-calendar';
+import { serviceWeatherWidgetParametersToForm, formToServiceWeatherWidgetParameters } from './forms/service-weather';
+import { mapWidgetParametersToForm, formToMapWidgetParameters } from './forms/map';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './forms/bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './forms/line-chart';
+import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './forms/pie-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './forms/numbers-chart';
+import { contextWidgetParametersToForm, formToContextWidgetParameters, prepareContextWidget } from './forms/context';
+import { textWidgetParametersToForm } from './forms/text';
+import { statisticsWidgetParametersToForm, formToStatisticsWidgetParameters } from './forms/statistics';
+import { availabilityWidgetParametersToForm, formToAvailabilityWidgetParameters } from './forms/availability';
 import {
   externalDataTableWidgetParametersToForm,
   formToExternalDataTableWidgetParameters,
 } from './forms/external-data-table';
-import {
-  formToTestingWeatherWidgetParameters,
-  testingWeatherWidgetParametersToForm,
-} from './forms/junit';
-import {
-  formToLineChartWidgetParameters,
-  lineChartWidgetParametersToForm,
-} from './forms/line-chart';
-import { formToMapWidgetParameters, mapWidgetParametersToForm } from './forms/map';
-import {
-  formToNumbersWidgetParameters,
-  numbersWidgetParametersToForm,
-} from './forms/numbers-chart';
-import { formToPieChartWidgetParameters, pieChartWidgetParametersToForm } from './forms/pie-chart';
-import {
-  formToServiceWeatherWidgetParameters,
-  serviceWeatherWidgetParametersToForm,
-} from './forms/service-weather';
-import {
-  formToStatisticsWidgetParameters,
-  statisticsWidgetParametersToForm,
-} from './forms/statistics';
-import {
-  formToStatsCalendarWidgetParameters,
-  statsCalendarWidgetParametersToForm,
-} from './forms/stats-calendar';
-import { textWidgetParametersToForm } from './forms/text';
 
 /**
  * @typedef {
@@ -69,7 +37,6 @@ import { textWidgetParametersToForm } from './forms/text';
  *   'StatsCalendar' |
  *   'Text' |
  *   'Counter' |
- *   'Clock' |
  *   'Junit' |
  *   'Map' |
  *   'BarChart' |
@@ -117,6 +84,13 @@ import { textWidgetParametersToForm } from './forms/text';
  */
 
 /**
+ * @typedef {Object} WidgetCriticityLevels
+ * @property {number} minor
+ * @property {number} major
+ * @property {number} critical
+ */
+
+/**
  * @typedef {Object} WidgetCriticityLevelsColors
  * @property {string} ok
  * @property {string} minor
@@ -156,7 +130,6 @@ import { textWidgetParametersToForm } from './forms/text';
  *   ServiceWeatherWidgetParameters |
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
- *   ClockWidgetParameters |
  *   TestingWeatherWidgetParameters |
  *   TextWidgetParameters |
  *   MapWidgetParameters |
@@ -177,7 +150,6 @@ import { textWidgetParametersToForm } from './forms/text';
  *   ServiceWeatherWidgetParameters |
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
- *   ClockWidgetParametersForm |
  *   TestingWeatherWidgetParametersForm |
  *   TextWidgetParameters |
  *   MapWidgetParameters |
@@ -201,6 +173,12 @@ import { textWidgetParametersToForm } from './forms/text';
  */
 
 /**
+ * @typedef {EmptyWidget} Widget
+ * @property {string} [_id]
+ * @property {WidgetParameters} parameters
+ */
+
+/**
  * @typedef {Widget} WidgetForm
  * @typedef {WidgetParametersForm} parameters
  */
@@ -216,12 +194,12 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: alarmListWidgetParametersToForm,
     [WIDGET_TYPES.context]: contextWidgetParametersToForm,
-    [WIDGET_TYPES.text]: textWidgetParametersToForm,
-    [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
-    [WIDGET_TYPES.clock]: clockWidgetParametersToForm,
-    [WIDGET_TYPES.map]: mapWidgetParametersToForm,
     [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
     [WIDGET_TYPES.statsCalendar]: statsCalendarWidgetParametersToForm,
+    [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
+    [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
+    [WIDGET_TYPES.text]: textWidgetParametersToForm,
+    [WIDGET_TYPES.map]: mapWidgetParametersToForm,
     [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
     [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
     [WIDGET_TYPES.pieChart]: pieChartWidgetParametersToForm,
@@ -230,91 +208,28 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.alarmStatistics]: statisticsWidgetParametersToForm,
     [WIDGET_TYPES.availability]: availabilityWidgetParametersToForm,
     [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
-    [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
 
-    ...featuresService.get(
-      FEATURES_SERVICE_KEYS.helpers.forms.widgets.widgetParametersToForm.widgetsMap,
-      {},
-    ),
+    ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
 
   const preparer = widgetsMap[type];
 
-  const form = preparer ? preparer(parameters) : cloneDeep(parameters);
-
-  return {
-    ...form,
-    colors: widgetColorsToForm(parameters.colors),
-  };
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
- * Generate alarm list widget form with default parameters.
- *
- * @return {WidgetForm}
- */
-export const generateDefaultAlarmListWidgetForm = () =>
-  widgetToForm({ type: WIDGET_TYPES.alarmList });
-
-/**
- * Generate alarm list widget with default parameters.
- *
- * @return {Widget}
- */
-export const generateDefaultAlarmListWidget = () => ({
-  ...formToWidget(generateDefaultAlarmListWidgetForm()),
-
-  _id: uid(),
-});
-
-/**
- * Generate prepared default alarm list.
- *
- * @returns {Widget}
- */
-export const generatePreparedDefaultAlarmListWidget = () =>
-  prepareAlarmListWidget(generateDefaultAlarmListWidget());
-
-/**
- * Generate context widget form with default parameters.
- *
- * @return {WidgetForm}
- */
-export const generateDefaultContextWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.context });
-
-/**
- * Generate context widget with default parameters.
- *
- * @return {Widget}
- */
-export const generateDefaultContextWidget = () => ({
-  ...formToWidget(generateDefaultContextWidgetForm()),
-
-  _id: uid(),
-});
-
-/**
- * Generate prepared default context widget.
- *
- * @returns {Widget}
- */
-export const generatePreparedDefaultContextWidget = () =>
-  prepareContextWidget(generateDefaultContextWidget());
-
-/**
- * Get default widget grid parameters.
+ * Get default widget grid parameters
  *
  * @return {WidgetGridParameters}
  */
-export const getDefaultGridParameters = () =>
-  Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
-    acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
+export const getDefaultGridParameters = () => Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+  acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
 
-    return acc;
-  }, {});
+  return acc;
+}, {});
 
 /**
- * Get empty widget by widget type.
+ * Get empty widget by widget type
  *
  * @param {WidgetType} type
  * @return {EmptyWidget}
@@ -343,7 +258,7 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
 });
 
 /**
- * Convert widget parameters to payload
+ * Convert widget parameters to form
  *
  * @param {WidgetType} type
  * @param {WidgetParametersForm} parameters
@@ -353,11 +268,11 @@ export const formToWidgetParameters = ({ type, parameters }) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
     [WIDGET_TYPES.context]: formToContextWidgetParameters,
-    [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
-    [WIDGET_TYPES.clock]: formToClockWidgetParameters,
-    [WIDGET_TYPES.map]: formToMapWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
+    [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
+    [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
+    [WIDGET_TYPES.map]: formToMapWidgetParameters,
     [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
     [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
     [WIDGET_TYPES.pieChart]: formToPieChartWidgetParameters,
@@ -366,21 +281,13 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.alarmStatistics]: formToStatisticsWidgetParameters,
     [WIDGET_TYPES.availability]: formToAvailabilityWidgetParameters,
     [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
-    [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
 
-    ...featuresService.get(
-      FEATURES_SERVICE_KEYS.helpers.forms.widgets.formToWidgetParameters.widgetsMap,
-      {},
-    ),
+    ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };
 
   const preparer = widgetsMap[type];
-  const widgetParameters = preparer ? preparer(parameters) : cloneDeep(parameters);
 
-  return {
-    ...widgetParameters,
-    colors: formToWidgetColors(parameters.colors),
-  };
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
@@ -393,4 +300,58 @@ export const formToWidget = form => ({
   ...form,
 
   parameters: formToWidgetParameters(form),
+});
+
+/**
+ * Generate alarm list widget form with default parameters.
+ *
+ * @return {WidgetForm}
+ */
+export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
+
+/**
+ * Generate alarm list widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultAlarmListWidget = () => ({
+  ...formToWidget(generateDefaultAlarmListWidgetForm()),
+
+  _id: uuid(),
+});
+
+/**
+ * Generate prepared default alarm list
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultAlarmListWidget = () => prepareAlarmListWidget(generateDefaultAlarmListWidget());
+
+/**
+ * Generate context widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultContextWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.context })),
+
+  _id: uuid(),
+});
+
+/**
+ * Generate prepared default context
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
+
+/**
+ * Generate service weather widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultServiceWeatherWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.serviceWeather })),
+
+  _id: uuid(),
 });

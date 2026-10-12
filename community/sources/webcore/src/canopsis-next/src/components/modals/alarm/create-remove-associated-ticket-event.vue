@@ -1,87 +1,91 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
-        <span>{{ t('modals.removeAssociatedTicketEvent.title') }}</span>
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.removeAssociatedTicketEvent.title') }}</span>
       </template>
-
-      <template #text>
-        <c-layout gap="4" column>
+      <template #text="">
+        <v-layout class="gap-4" column>
           <alarm-general-table v-if="items.length" :items="items" item-class="itemClass" />
           <c-collapse-panel class="c-alternative-bg-panel" expanded disabled>
             <template #header>
               <span class="font-weight-medium text-uppercase">
-                {{ t('modals.removeAssociatedTicketEvent.title') }}
+                {{ $t('modals.removeAssociatedTicketEvent.title') }}
               </span>
             </template>
             <remove-associated-ticket-event-form
-              :form="values"
-              :items="config.items"
-              :ticket-disabled="config.ticketDisabled"
-              @update:form="updateForm"
+              v-model="form"
+              :items="items"
             />
           </c-collapse-panel>
-        </c-layout>
+        </v-layout>
       </template>
-
-      <template #actions>
-        <v-btn :disabled="submitting" variant="text" @click="close">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
           :disabled="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ t('common.submit') }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import RemoveAssociatedTicketEventForm from '@/components/widgets/alarm/forms/remove-associated-ticket-event-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to remove associated ticket from alarm
  */
 export default {
   name: MODALS.removeAssociatedTicketEvent,
-
-  components: { AlarmGeneralTable, RemoveAssociatedTicketEventForm },
-
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: { AlarmGeneralTable, RemoveAssociatedTicketEventForm, ModalWrapper },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
+    const form = ref({
+      ticket: null,
+      comment: '',
+    });
+
     const { config, close } = useInnerModal(props);
 
-    const form = useForm({
-      initialValues: {
-        ticket: config.value.ticket ?? null,
-        comment: '',
-      },
-    });
-    const { values, handleSubmit, isSubmitting: submitting } = form;
-
+    /**
+     * Checks if an alarm item should be visually disabled (greyed out).
+     * Item is disabled when a ticket is selected but the alarm does not have that ticket associated.
+     *
+     * @param {Object} item - Alarm item with v.tickets array
+     * @param {string|null} ticketValue - Selected ticket value to match
+     * @return {boolean} True if item should be disabled
+     */
     const submittingItem = (item, ticketValue) => (
       ticketValue && !item.v.tickets?.find?.(ticket => ticket.ticket === ticketValue)
     );
@@ -89,33 +93,30 @@ export default {
     const items = computed(() => (config.value.items ?? []).map(item => ({
       ...item,
 
-      itemClass: submittingItem(item, values.value.ticket) ? 'text-medium-emphasis' : '',
+      itemClass: submittingItem(item, form.value.ticket) ? 'grey--text' : '',
     })));
 
-    const updateForm = nextForm => values.value = nextForm;
-
-    const submit = handleSubmit(async () => {
-      if (config.value.action) {
-        await config.value.action(values.value);
-        close();
-      }
+    const { submitting, submit } = useSubmittableForm({
+      form,
+      method: async () => {
+        if (config.value.action) {
+          await config.value.action(form.value);
+          close();
+        }
+      },
     });
 
     useFormConfirmableCloseModal({
-      form: values,
+      form,
       submit,
       close,
     });
 
     return {
-      t,
-      config,
-      values,
+      form,
       items,
       submitting,
       submit,
-      close,
-      updateForm,
     };
   },
 };

@@ -1,13 +1,10 @@
 <template>
   <c-patterns-field
-    v-model:value="patternsField"
+    v-field="form"
     :readonly="readonly"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :pending="pending"
-    :expanded-alarm="readonly"
-    :expanded-entity="readonly"
-    name="patterns"
     with-alarm
     with-entity
     some-required
@@ -17,13 +14,13 @@
 <script>
 import { computed } from 'vue';
 
-import { useFormModel } from '@/hooks/form';
-import {
-  usePatternsFields,
-  usePatternsFieldsFetching,
-} from '@/hooks/store/modules/patterns-fields';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -38,24 +35,22 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
-    const patternsField = props.readonly
-     ? computed(() => props.form)
-     : useFormModel('patterns');
-
     const { fetchFlappingRulePatternFields, fetchResolveRulePatternFields } = usePatternsFields();
 
-    const fetchAction = computed(() => props.flapping ? fetchFlappingRulePatternFields : fetchResolveRulePatternFields,
-    );
+    const fetchAction = computed(() => (
+      props.flapping
+        ? fetchFlappingRulePatternFields
+        : fetchResolveRulePatternFields
+    ));
 
-    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
-      fetchAction,
-      props.readonly,
-    );
+    const {
+      pending,
+      alarmAttributes,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchAction, props.readonly);
 
     return {
-      patternsField,
       pending,
       alarmAttributes,
       entityAttributes,

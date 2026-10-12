@@ -11,21 +11,17 @@
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
-
     <template #type="{ item }">
       {{ item.type || '-' }}
     </template>
-
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
-
     <template #method="{ item }">
       {{ getMethodLabel(item.method) }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout>
+      <v-layout>
         <c-action-btn
           v-if="updatable"
           :disabled="!item.editable"
@@ -44,7 +40,7 @@
           type="delete"
           @click.stop="$emit('remove', item)"
         />
-      </c-layout>
+      </v-layout>
     </template>
   </c-advanced-data-table>
 </template>
@@ -87,9 +83,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove'],
-
   setup() {
     const { t, te } = useI18n();
 
@@ -123,9 +116,9 @@ export default {
 
     const isDuplicable = item => ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
 
-    const getMethodLabel = method => te(`stateSetting.methods.${method}.label`)
-        ? t(`stateSetting.methods.${method}.label`)
-        : t(`stateSetting.junit.methods.${method}`);
+    const getMethodLabel = method => (te(`stateSetting.methods.${method}.label`)
+      ? t(`stateSetting.methods.${method}.label`)
+      : t(`stateSetting.junit.methods.${method}`));
 
     return {
       headers,

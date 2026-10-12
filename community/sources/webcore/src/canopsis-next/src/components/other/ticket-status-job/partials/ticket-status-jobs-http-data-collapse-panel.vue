@@ -1,12 +1,11 @@
 <template>
   <c-collapse-panel :expanded="expanded">
     <template #header>
-      <span class="text-white">
+      <span class="white--text">
         <strong>{{ titlePrefix }} : </strong>
         {{ parsedRaw.startLine }}
       </span>
     </template>
-
     <template v-if="parsedRaw.headers">
       <c-information-block-row
         v-for="(value, key) in parsedRaw.headers"
@@ -15,13 +14,13 @@
         :value="value"
       />
     </template>
-
     <div v-if="parsedRaw.body" class="mt-2">
-      <c-json-treeview v-if="bodyJsonObject" :json-object="bodyJsonObject" />
-      <pre
-        v-else
-        class="text-break pre-wrap"
-      >{{ parsedRaw.body }}
+      <c-json-treeview
+        v-if="bodyJsonObject"
+        :json-object="bodyJsonObject"
+      />
+      <pre v-else class="text-break pre-wrap">
+{{ parsedRaw.body }}
 </pre>
     </div>
   </c-collapse-panel>
@@ -47,7 +46,6 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const parsedRaw = computed(() => {
       try {
@@ -55,17 +53,14 @@ export default {
       } catch (error) {
         console.error(error);
 
-        return {
-          startLine: props.raw,
-          headers: null,
-          body: '',
-        };
+        return error;
       }
     });
+
     const bodyJsonObject = computed(() => {
       try {
         return JSON.parse(parsedRaw.value.body);
-      } catch {
+      } catch (error) {
         return null;
       }
     });
@@ -77,3 +72,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.ticket-status-jobs-http-data-collapse-panel__data {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+}
+</style>

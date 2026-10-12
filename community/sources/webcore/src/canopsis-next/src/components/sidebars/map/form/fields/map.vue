@@ -1,27 +1,26 @@
 <template>
-  <widget-settings-item :title="$t('common.map')">
+  <widget-settings-item :title="$tc('common.map')">
     <c-map-field
-      :value="modelValue"
+      v-field="value"
       name="parameters.map"
-      required
-      @update:value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
 
 <script>
+import { formValidationHeaderMixin } from '@/mixins/form';
+
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
+  inject: ['$validator'],
   components: { WidgetSettingsItem },
-
+  mixins: [formValidationHeaderMixin],
   props: {
-    modelValue: {
+    value: {
       type: String,
-      default: '',
+      required: false,
     },
   },
-
-  emits: ['update:modelValue'],
 };
 </script>

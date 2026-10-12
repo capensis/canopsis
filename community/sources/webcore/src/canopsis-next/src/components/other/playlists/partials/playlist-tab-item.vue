@@ -1,15 +1,27 @@
 <template>
-  <v-row class="playlist-tab-item flex-grow-0" no-gutters>
-    <v-col class="playlist-tab-item__cell playlist-tab-item__cell--group" cols="4">
-      <span class="playlist-tab-item__text">{{ group.title }}</span>
-    </v-col>
-    <v-col class="playlist-tab-item__cell playlist-tab-item__cell--view" cols="4">
-      <span class="playlist-tab-item__text">{{ view.title }}</span>
-    </v-col>
-    <v-col class="playlist-tab-item__cell playlist-tab-item__cell--tab" cols="4">
-      <span class="playlist-tab-item__text">{{ tab.title }}</span>
-    </v-col>
-  </v-row>
+  <v-layout
+    class="tab-panel-content"
+    xs12
+  >
+    <v-flex
+      class="tab-content-block tab-content-block--group white--text"
+      xs4
+    >
+      <span class="tab-content-block__text">{{ group.title }}</span>
+    </v-flex>
+    <v-flex
+      class="tab-content-block tab-content-block--view white--text"
+      xs4
+    >
+      <span class="tab-content-block__text">{{ view.title }}</span>
+    </v-flex>
+    <v-flex
+      class="tab-content-block tab-content-block--tab white--text"
+      xs4
+    >
+      <span class="tab-content-block__text">{{ tab.title }}</span>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -32,16 +44,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.playlist-tab-item {
-  width: 100%;
-  min-height: 48px;
+.tab-panel-content {
+  height: 100%;
 }
 
-.playlist-tab-item__cell {
+.tab-content-block {
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 0;
+  min-height: 48px;
   padding: 12px 28px;
   border: 1px solid var(--v-application-background-darken2);
   color: #fff;
@@ -64,11 +76,11 @@ export default {
   &--tab {
     background-color: #5a6d80;
   }
-}
 
-.playlist-tab-item__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>

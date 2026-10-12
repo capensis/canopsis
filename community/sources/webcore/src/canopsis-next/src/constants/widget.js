@@ -2,14 +2,11 @@ import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
 import { featuresService } from '@/services/features';
 
+import { CANOPSIS_EDITION } from './permission';
 import { ALARM_METRIC_PARAMETERS } from './alarm';
 import { QUICK_RANGES } from './common';
 import { SAMPLINGS } from './date';
-import { FEATURES_SERVICE_KEYS } from './features';
 import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODS } from './kpi';
-import { CANOPSIS_EDITION } from './permission';
-
-const featuresWidgetTypes = featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetTypes, {});
 
 export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
@@ -18,7 +15,6 @@ export const WIDGET_TYPES = {
   statsCalendar: 'StatsCalendar',
   text: 'Text',
   counter: 'Counter',
-  clock: 'Clock',
   testingWeather: 'Junit',
   map: 'Map',
   barChart: 'BarChart',
@@ -30,29 +26,20 @@ export const WIDGET_TYPES = {
   availability: 'Availability',
   externalDataTable: 'ExternalDataTable',
 
-  ...featuresWidgetTypes,
-};
-
-export const WIDGET_COLORS_MODES = {
-  theme: 'theme',
-  custom: 'custom',
+  ...featuresService.get('constants.WIDGET_TYPES'),
 };
 
 export const TOP_LEVEL_WIDGET_TYPES = [
-  ...new Set([
-    WIDGET_TYPES.alarmList,
-    WIDGET_TYPES.context,
-    WIDGET_TYPES.serviceWeather,
-    WIDGET_TYPES.statsCalendar,
-    WIDGET_TYPES.text,
-    WIDGET_TYPES.counter,
-    WIDGET_TYPES.clock,
-    WIDGET_TYPES.testingWeather,
-    WIDGET_TYPES.map,
-    WIDGET_TYPES.availability,
-    WIDGET_TYPES.externalDataTable,
-    ...Object.values(featuresWidgetTypes),
-  ]),
+  WIDGET_TYPES.alarmList,
+  WIDGET_TYPES.context,
+  WIDGET_TYPES.serviceWeather,
+  WIDGET_TYPES.statsCalendar,
+  WIDGET_TYPES.text,
+  WIDGET_TYPES.counter,
+  WIDGET_TYPES.testingWeather,
+  WIDGET_TYPES.map,
+  WIDGET_TYPES.availability,
+  WIDGET_TYPES.externalDataTable,
 ];
 
 export const COMPONENTS_BY_WIDGET_TYPES = {
@@ -62,7 +49,6 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
   [WIDGET_TYPES.text]: 'text-widget',
   [WIDGET_TYPES.counter]: 'counter-widget',
-  [WIDGET_TYPES.clock]: 'clock-widget',
   [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
   [WIDGET_TYPES.map]: 'map-widget',
   [WIDGET_TYPES.barChart]: 'bar-chart-widget',
@@ -74,7 +60,7 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.availability]: 'availability-widget',
   [WIDGET_TYPES.externalDataTable]: 'external-data-table-widget',
 
-  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.componentsByWidgetTypes),
+  ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };
 
 export const WIDGET_ICONS = {
@@ -84,7 +70,6 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.statsCalendar]: 'calendar_today',
   [WIDGET_TYPES.text]: 'view_headline',
   [WIDGET_TYPES.counter]: 'numbers',
-  [WIDGET_TYPES.clock]: 'schedule',
   [WIDGET_TYPES.testingWeather]: 'view_module',
   [WIDGET_TYPES.map]: 'location_on',
   [WIDGET_TYPES.barChart]: 'stacked_bar_chart',
@@ -97,7 +82,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.availability]: 'published_with_changes',
   [WIDGET_TYPES.externalDataTable]: 'database',
 
-  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetIcons),
+  ...featuresService.get('constants.WIDGET_ICONS'),
 };
 
 export const SIDE_BARS = {
@@ -107,7 +92,6 @@ export const SIDE_BARS = {
   statsCalendarSettings: 'stats-calendar-settings',
   textSettings: 'text-settings',
   counterSettings: 'counter-settings',
-  clockSettings: 'clock-settings',
   testingWeatherSettings: 'testing-weather-settings',
   mapSettings: 'map-settings',
   barChartSettings: 'bar-chart-settings',
@@ -119,7 +103,7 @@ export const SIDE_BARS = {
   availabilitySettings: 'availability-settings',
   externalDataTableSettings: 'external-data-table-settings',
 
-  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.sideBars),
+  ...featuresService.get('constants.SIDE_BARS'),
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -129,7 +113,6 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCalendar]: SIDE_BARS.statsCalendarSettings,
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
-  [WIDGET_TYPES.clock]: SIDE_BARS.clockSettings,
   [WIDGET_TYPES.testingWeather]: SIDE_BARS.testingWeatherSettings,
   [WIDGET_TYPES.map]: SIDE_BARS.mapSettings,
   [WIDGET_TYPES.barChart]: SIDE_BARS.barChartSettings,
@@ -141,7 +124,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.availability]: SIDE_BARS.availabilitySettings,
   [WIDGET_TYPES.externalDataTable]: SIDE_BARS.externalDataTableSettings,
 
-  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.sideBarsByWidgetTypes),
+  ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
 
 export const WIDGET_TYPES_RULES = {
@@ -152,7 +135,7 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.alarmStatistics]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.availability]: { edition: CANOPSIS_EDITION.pro },
 
-  ...featuresService.get(FEATURES_SERVICE_KEYS.constants.widgetTypesRules),
+  ...featuresService.get('constants.WIDGET_TYPES_RULES'),
 };
 
 export const WIDGET_GRID_SIZES_KEYS = {
@@ -168,15 +151,6 @@ export const MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
   xl: WIDGET_GRID_SIZES_KEYS.desktop,
 };
 
-export const DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
-  xs: WIDGET_GRID_SIZES_KEYS.mobile,
-  sm: WIDGET_GRID_SIZES_KEYS.mobile,
-  md: WIDGET_GRID_SIZES_KEYS.tablet,
-  lg: WIDGET_GRID_SIZES_KEYS.desktop,
-  xl: WIDGET_GRID_SIZES_KEYS.desktop,
-  xxl: WIDGET_GRID_SIZES_KEYS.desktop,
-};
-
 export const WIDGET_LAYOUT_MAX_WIDTHS = {
   [WIDGET_GRID_SIZES_KEYS.desktop]: '100%',
   [WIDGET_GRID_SIZES_KEYS.tablet]: `${MEDIA_QUERIES_BREAKPOINTS.t}px`,
@@ -186,7 +160,7 @@ export const WIDGET_LAYOUT_MAX_WIDTHS = {
 export const WIDGET_GRID_SIZES_STYLES = {
   [WIDGET_GRID_SIZES_KEYS.mobile]: {
     value: WIDGET_GRID_SIZES_KEYS.mobile,
-    icon: 'mobile',
+    icon: 'stay_primary_portrait',
   },
   [WIDGET_GRID_SIZES_KEYS.tablet]: {
     value: WIDGET_GRID_SIZES_KEYS.tablet,
@@ -252,7 +226,6 @@ export const WIDGET_TEMPLATES_TYPES = {
   entityColumns: 'entity_columns',
   alarmMoreInfos: 'alarm_more_infos',
   alarmExportToPdf: 'alarm_export_to_pdf',
-  ticketFormats: 'ticket_formats',
   alarmQuickActions: 'alarm_quick_actions',
   alarmMassQuickActions: 'alarm_mass_quick_actions',
   weatherItem: 'weather_item',
@@ -273,7 +246,6 @@ export const WIDGET_TEMPLATE_TYPES_TO_ICONS = {
   [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'description',
   [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'description',
   [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'description',
-  [WIDGET_TEMPLATES_TYPES.ticketFormats]: 'description',
   [WIDGET_TEMPLATES_TYPES.weatherItem]: 'description',
   [WIDGET_TEMPLATES_TYPES.weatherModal]: 'description',
   [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'description',
@@ -290,8 +262,6 @@ export const ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES = [
 ];
 
 export const CUSTOM_WIDGET_TEMPLATE = Symbol('custom').toString();
-
-export const DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE = 'Default ticket formats';
 
 export const CHART_WIDGET_PRESET_TYPES = {
   numberOfActiveAlarms: 'number_of_active_alarms',
@@ -335,7 +305,9 @@ export const BAR_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
   [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: {
     stacked: false,
     comparison: true,
-    metrics: [{ metric: ALARM_METRIC_PARAMETERS.activeAlarms }],
+    metrics: [
+      { metric: ALARM_METRIC_PARAMETERS.activeAlarms },
+    ],
     default_time_range: QUICK_RANGES.last7Days.value,
     default_sampling: SAMPLINGS.day,
   },
@@ -448,7 +420,9 @@ export const NUMBERS_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
   },
   [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: {
     aggregate_func: AGGREGATE_FUNCTIONS.sum,
-    metrics: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
+    metrics: [
+      { metric: ALARM_METRIC_PARAMETERS.createdAlarms },
+    ],
   },
   [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: {
     aggregate_func: AGGREGATE_FUNCTIONS.avg,

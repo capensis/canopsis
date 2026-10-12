@@ -1,102 +1,86 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <remediation-configuration-form :is-new="isNew" />
+      <template #text="">
+        <remediation-configuration-form v-model="form" />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="submitting"
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
           :loading="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ submitLabel }}
+          {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import {
   formToRemediationConfiguration,
   remediationConfigurationToForm,
 } from '@/helpers/entities/remediation/configuration/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
+  name: MODALS.createRemediationConfiguration,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     RemediationConfigurationForm,
+    ModalWrapper,
   },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    return {
+      form: remediationConfigurationToForm(this.modal.config.remediationConfiguration),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createRemediationConfiguration.create.title');
     },
   },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
 
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const remediationConfiguration = computed(() => config.value.remediationConfiguration);
-    const isNew = computed(() => !remediationConfiguration.value?._id);
-    const title = computed(
-      () => config.value.title || t('modals.createRemediationConfiguration.create.title'),
-    );
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(formToRemediationConfiguration(this.form));
+        }
 
-    const form = useForm({
-      initialValues: remediationConfigurationToForm(remediationConfiguration.value),
-    });
-    const { values, handleSubmit, submitting } = form;
-
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(
-        formToRemediationConfiguration(values.value),
-      );
-
-      closeModal();
-
-      return result;
-    });
-
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
-
-    return {
-      t,
-      title,
-      submitLabel,
-      submitting,
-      isNew,
-      submit,
-      closeModal,
-    };
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

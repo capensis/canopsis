@@ -1,49 +1,52 @@
 <template>
-  <v-row class="request-header-field ga-3 flex-nowrap flex-grow-1" no-gutters>
-    <v-col class="request-header-field__column" cols="6">
-      <c-combobox
-        :model-value="header.text"
+  <v-layout>
+    <v-flex
+      class="mr-3"
+      xs6
+    >
+      <v-combobox
+        v-field="header.text"
+        v-validate="'required'"
         :label="$t('common.headerKey')"
+        :error-messages="errors.collect(textFieldName)"
         :disabled="disabled"
         :items="textHints"
         :name="textFieldName"
-        required
-        @update:model-value="updateField('text', $event)"
       />
-    </v-col>
-
-    <v-col class="request-header-field__column" cols="6">
-      <c-combobox
+    </v-flex>
+    <v-flex xs6>
+      <v-combobox
         v-if="valueHints"
-        :model-value="header.value"
+        v-field="header.value"
+        v-validate="'required'"
         :label="$t('common.headerValue')"
+        :error-messages="errors.collect(valueFieldName)"
         :disabled="disabled"
         :items="valueHints"
         :name="valueFieldName"
         :return-object="false"
-        required
-        @update:model-value="updateField('value', $event)"
       />
       <c-payload-text-field
         v-else
-        :value="header.value"
+        v-field="header.value"
         :label="$t('common.headerValue')"
+        :error-messages="errors.collect(valueFieldName)"
         :disabled="disabled"
         :variables="headersVariables"
         :name="valueFieldName"
         required
-        @update:value="updateField('value', $event)"
       />
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
 export default {
-  emits: ['update:header'],
-  mixins: [formMixin],
+  inject: ['$validator'],
+  model: {
+    prop: 'header',
+    event: 'input',
+  },
   props: {
     header: {
       type: Object,
@@ -85,15 +88,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.request-header-field {
-  min-width: 0;
-
-  &__column {
-    flex: 0 0 calc(50% - 6px);
-    max-width: calc(50% - 6px);
-    min-width: 0;
-  }
-}
-</style>

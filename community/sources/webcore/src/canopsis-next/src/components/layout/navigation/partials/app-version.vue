@@ -1,31 +1,34 @@
 <template>
-  <c-tooltip location="left">
-    <template #activator="{ props }">
-      <div v-bind="{ ...props, ...$attrs }">
-        {{ version }}
-      </div>
-    </template>
-
-    <c-compiled-template :template="template" :context="context" />
-  </c-tooltip>
+  <div>
+    <v-tooltip left>
+      <template #activator="{ on }">
+        <div v-on="on">
+          {{ version }}
+        </div>
+      </template>
+      <c-compiled-template :template="template" :context="context" />
+    </v-tooltip>
+  </div>
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inheritAttrs: false,
-
   setup() {
-    const { tm } = useI18n();
-    const { version, edition, serialName, versionUpdated, versionDescription } = useInfo();
+    const { t } = useI18n();
+    const {
+      version,
+      edition,
+      serialName,
+      versionUpdated,
+      versionDescription,
+    } = useInfo();
 
-    const template = computed(
-      () => versionDescription.value || tm('userInterface.defaultVersionDescription'),
-    );
+    const template = computed(() => (versionDescription.value || t('userInterface.defaultVersionDescription')));
     const context = computed(() => ({
       version: version.value,
       edition: edition.value,

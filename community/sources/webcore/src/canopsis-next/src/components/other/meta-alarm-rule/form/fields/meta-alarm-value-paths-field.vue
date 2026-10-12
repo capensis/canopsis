@@ -1,48 +1,51 @@
 <template>
-  <c-form-block-row :label="t('metaAlarmRule.valuePath', 2)" indented>
-    <c-layout gap="3" column>
+  <c-form-block-row :label="$tc('metaAlarmRule.valuePath', 2)" indented>
+    <v-layout class="gap-3" column>
       <c-label
-        :label="t('metaAlarmRule.valuePath', 2)"
-        :help-text="t('metaAlarmRule.valuePathHelpText')"
+        :label="$tc('metaAlarmRule.valuePath', 2)"
+        :help-text="$t('metaAlarmRule.valuePathHelpText')"
         :required="required"
       />
-
-      <c-layout
+      <v-layout
         v-for="(item, index) in items"
         :key="item[itemKey]"
-        gap="2"
-        align="center"
+        justify-space-between
+        align-center
       >
         <c-name-field
-          :model-value="item[itemValue]"
+          :value="item[itemValue]"
           :label="label"
           :name="getFieldName(item[itemKey])"
           :required="required"
-          @update:model-value="updateFieldInArrayItem(index, itemValue, $event)"
+          @input="updateFieldInArrayItem(index, itemValue, $event)"
         />
         <c-action-btn type="delete" @click="removeItemFromArray(index)" />
-      </c-layout>
-
+      </v-layout>
       <c-btn-with-error
-        :error="addButtonError"
-        variant="outlined"
+        :error="hasValuePathsErrors ? $t('metaAlarmRule.errors.noValuePaths'): ''"
+        outlined
         @click="addNewItem"
       >
-        {{ t('metaAlarmRule.addValuePath') }}
+        {{ $t('metaAlarmRule.addValuePath') }}
       </c-btn-with-error>
-    </c-layout>
+    </v-layout>
   </c-form-block-row>
 </template>
 
 <script>
-import { computed, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, watch } from 'vue';
 
 import { defaultPrimitiveArrayItemCreator } from '@/helpers/entities/shared/form';
 
-import { useArrayModelField, useField } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidator } from '@/hooks/validator/validator';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 export default {
+  model: {
+    prop: 'items',
+    event: 'input',
+  },
   props: {
     items: {
       type: Array,
@@ -62,47 +65,50 @@ export default {
     },
     name: {
       type: String,
-      default: 'value_paths',
+      default: 'item',
     },
     required: {
       type: Boolean,
       default: false,
     },
   },
-
-  emits: ['update:items'],
-
   setup(props, { emit }) {
-    const { t } = useI18n();
-    const { addItemIntoArray, updateFieldInArrayItem, removeItemFromArray } =
-      useArrayModelField(props, emit);
+    const validator = useValidator();
+    const { addItemIntoArray, updateFieldInArrayItem, removeItemFromArray } = useArrayModelField(props, emit);
+    const {
+      attachRequiredRule,
+      detachRequiredRule,
+      validateRequiredRule,
+    } = useValidationAttachRequired(props.name);
 
-    const fieldRules = () => {
-      if (!props.required) {
-        return true;
-      }
+    const hasValuePathsErrors = computed(() => validator.errors.has(props.name));
 
-      return props.items.length > 0 || t('metaAlarmRule.errors.noValuePaths');
+    const getFieldName = key => `${props.name}[${key}].${props.itemValue}`;
+
+    const addNewItem = () => {
+      addItemIntoArray(defaultPrimitiveArrayItemCreator());
     };
 
-    const { errorMessage, validate } = useField(props.name, fieldRules, {
-      initialValue: props.items.length,
-      validateOnValueUpdate: false,
-    });
-
-    const addButtonError = computed(() => errorMessage.value);
-    const getFieldName = key => `${props.name}.${key}.${props.itemValue}`;
-    const addNewItem = () => addItemIntoArray(defaultPrimitiveArrayItemCreator());
+    const isValuePathsExist = () => props.items && props.items.length > 0;
 
     watch(
-      () => props.items.length,
-      () => validate(),
-      { flush: 'post' },
+      () => props.required,
+      () => {
+        if (props.required) {
+          attachRequiredRule(isValuePathsExist);
+        } else {
+          detachRequiredRule();
+        }
+      },
+      { immediate: true },
     );
 
+    watch(() => props.items, () => nextTick(validateRequiredRule));
+
+    onBeforeUnmount(detachRequiredRule);
+
     return {
-      t,
-      addButtonError,
+      hasValuePathsErrors,
       addNewItem,
       getFieldName,
       updateFieldInArrayItem,

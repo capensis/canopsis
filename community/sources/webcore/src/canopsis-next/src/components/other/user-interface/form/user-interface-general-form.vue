@@ -1,87 +1,61 @@
 <template>
   <c-form-block>
-    <c-form-block-row :label="t('userInterface.appTitle')">
+    <c-form-block-row
+      :label="$t('userInterface.appTitle')"
+      indented
+    >
       <text-editor-field
-        v-model="appTitleField"
+        v-field="form.app_title"
         :disabled="disabled"
-        :label="t('userInterface.appTitle')"
+        :label="$t('userInterface.appTitle')"
         :variables="variables"
-        name="app_title"
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.language')">
+    <c-form-block-row :label="$t('userInterface.language')">
       <c-language-field
-        v-model="languageField"
-        :label="t('userInterface.language')"
+        v-field="form.language"
+        :label="$t('userInterface.language')"
         :disabled="disabled"
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.defaultTheme')">
+    <c-form-block-row :label="$t('userInterface.defaultTheme')">
       <c-theme-field
-        v-model="defaultColorThemeField"
-        :label="t('userInterface.defaultTheme')"
+        v-field="form.default_color_theme"
+        :label="$t('userInterface.defaultTheme')"
         :disabled="disabled"
       />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.dateFormat')">
-      <c-select
-        v-model="dateFormatField"
-        :items="dateFormats"
-        :label="t('userInterface.dateFormat')"
-        :disabled="disabled"
-        item-title="text"
-        item-value="value"
-        name="date_format"
-      >
-        <template #append>
-          <c-help-icon
-            :text="t('userInterface.tooltips.dateFormat')"
-            color="grey-darken-1"
-            icon="help"
-            left
-          />
-        </template>
-      </c-select>
+    <c-form-block-row :label="$t('common.timezone')">
+      <c-timezone-field
+        v-field="form.timezone"
+        disabled
+      />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('common.timezone')">
-      <c-timezone-field v-model="timezoneField" disabled />
-    </c-form-block-row>
-
-    <c-form-block-row :label="t('userInterface.logo')" align-center>
+    <c-form-block-row :label="$t('userInterface.logo')" indented>
       <file-selector
-        v-model="logoField"
         ref="fileSelectorElement"
         :max-file-size="maxFileSize"
         :disabled="disabled"
         accept="image/*"
         name="logo"
-        hide-details="auto"
         with-files-list
-      >
-        <template #activator="{ disabled: activatorDisabled, loading, on }">
-          <v-btn
-            :disabled="activatorDisabled"
-            :loading="loading"
-            color="primary"
-            v-on="on"
-          >
-            <v-icon icon="cloud_upload" />
-          </v-btn>
-        </template>
-      </file-selector>
+        @change="changeLogoFile"
+      />
     </c-form-block-row>
 
-    <c-form-block-row :label="t('userInterface.versionDescriptionTooltip')">
+    <c-form-block-row
+      :label="$t('userInterface.versionDescriptionTooltip')"
+      indented
+    >
       <text-editor-field
-        v-model="versionDescriptionField"
-        :label="t('userInterface.versionDescriptionTooltip')"
+        v-field="form.version_description"
+        :label="$t('userInterface.versionDescriptionTooltip')"
         :config="textEditorConfig"
         :variables="versionDescriptionVariables"
-        name="version_description"
         public
       />
     </c-form-block-row>
@@ -91,82 +65,66 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { MAX_ICON_SIZE_IN_KB, USER_INTERFACE_DATE_FORMATS } from '@/constants';
+import { MAX_ICON_SIZE_IN_KB } from '@/constants';
 
 import { objectToVariables, variableTemplatePreparer } from '@/helpers/variables';
 
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     FileSelector,
     TextEditorField,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     disabled: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props) {
-    const { t } = useI18n();
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
     const { templateVars } = useTemplateVars();
-    const {
-      appTitleField,
-      languageField,
-      defaultColorThemeField,
-      dateFormatField,
-      timezoneField,
-      logoField,
-      versionDescriptionField,
-    } = useFormModels({
-      appTitleField: 'app_title',
-      languageField: 'language',
-      defaultColorThemeField: 'default_color_theme',
-      dateFormatField: 'date_format',
-      timezoneField: 'timezone',
-      logoField: 'logo',
-      versionDescriptionField: 'version_description',
-    });
 
     const maxFileSize = MAX_ICON_SIZE_IN_KB;
-    const dateFormats = computed(() =>
-      Object.values(USER_INTERFACE_DATE_FORMATS).map(({ text, value }) => ({
-        text: t(text),
-        value,
-      })),
-    );
     const fileSelectorElement = ref(null);
+
     const variables = computed(() => objectToVariables({ env: templateVars.value }));
-    const versionDescriptionVariables = computed(() => [
+
+    const versionDescriptionVariables = computed(() => ([
       ...variables.value,
-      ...['edition', 'versionUpdated', 'serialName'].map(text => ({
-        text,
-        value: variableTemplatePreparer(text),
-      })),
-    ]);
+      ...[
+        'edition',
+        'versionUpdated',
+        'serialName',
+      ].map(text => ({ text, value: variableTemplatePreparer(text) })),
+    ]));
+
     const textEditorConfig = computed(() => ({ disabled: props.disabled }));
 
+    const changeLogoFile = ([file] = []) => updateField('logo', file);
+
     return {
-      t,
       maxFileSize,
-      dateFormats,
       fileSelectorElement,
       variables,
-      dateFormatField,
       versionDescriptionVariables,
       textEditorConfig,
-      appTitleField,
-      languageField,
-      defaultColorThemeField,
-      timezoneField,
-      logoField,
-      versionDescriptionField,
+
+      changeLogoFile,
     };
   },
 };

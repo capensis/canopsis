@@ -10,7 +10,6 @@
       :size="iconSize"
       :color-indicator="colorIndicator"
       :pbehavior-enabled="pbehaviorEnabled"
-      :pause-enabled="pauseEnabled"
       @click="openPopup(point, $event)"
     />
     <point-popup-dialog
@@ -37,7 +36,6 @@ import PointPopupDialog from './point-popup-dialog.vue';
 export default {
   components: { MermaidPointMarker, PointPopupDialog },
   mixins: [mapInformationPopupMixin],
-
   props: {
     points: {
       type: Array,

@@ -25,12 +25,11 @@ export const textPairToForm = (textPair = {}) => ({
  * @param {TextPairObject[]} textPairs - text pairs array
  * @returns {Object}
  */
-export const textPairsToObject = textPairs =>
-  textPairs.reduce((acc, { text, value }) => {
-    acc[text] = value;
+export const textPairsToObject = textPairs => textPairs.reduce((acc, { text, value }) => {
+  acc[text] = value;
 
-    return acc;
-  }, {});
+  return acc;
+}, {});
 
 /**
  * Convert object to text pairs array.
@@ -38,5 +37,5 @@ export const textPairsToObject = textPairs =>
  *
  * @param {Object} object
  */
-export const objectToTextPairs = (object = {}) =>
-  Object.keys(object).map(text => ({ key: uid(), text, value: object[text] }));
+export const objectToTextPairs = (object = {}) => Object.keys(object)
+  .map(text => ({ key: uid(), text, value: object[text] }));

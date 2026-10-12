@@ -1,10 +1,15 @@
 <template>
-  <c-tooltip location="right">
-    <template #activator="{ props: activatorProps }">
-      <v-icon v-bind="activatorProps" :color="statusColor" :icon="statusIcon" />
+  <v-tooltip right>
+    <template #activator="{ on }">
+      <v-icon
+        :color="statusColor"
+        v-on="on"
+      >
+        {{ statusIcon }}
+      </v-icon>
     </template>
     <span class="pre-line">{{ label }}</span>
-  </c-tooltip>
+  </v-tooltip>
 </template>
 
 <script>
@@ -21,23 +26,22 @@ export default {
       default: null,
     },
   },
-
   setup(props) {
     const { t, te } = useI18n();
+
     const label = computed(() => {
       const statusTooltipKey = `jobs.statusTooltip.${props.status}`;
 
       return te(statusTooltipKey) ? t(statusTooltipKey) : t(`jobs.status.${props.status}`);
     });
-    const statusColor = computed(() => props.status === JOB_STATUS.running ? 'success' : 'grey-darken-1',
-    );
-    const statusIcon = computed(
-      () => ({
-          [JOB_STATUS.running]: 'play_circle',
-          [JOB_STATUS.paused]: 'pause_circle',
-          [JOB_STATUS.stopped]: 'stop_circle',
-        })[props.status] ?? 'stop_circle',
-    );
+
+    const statusColor = computed(() => (props.status === JOB_STATUS.running ? 'success' : 'grey darken-1'));
+
+    const statusIcon = computed(() => ({
+      [JOB_STATUS.running]: 'play_circle',
+      [JOB_STATUS.paused]: 'pause_circle',
+      [JOB_STATUS.stopped]: 'stop_circle',
+    }[props.status] ?? 'stop_circle'));
 
     return {
       label,

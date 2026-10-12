@@ -2,76 +2,97 @@
   <v-form
     v-click-outside.zIndex="clickOutsideDirective"
     class="pbehavior-form position-relative"
-    @submit.prevent="submit"
+    @submit.prevent="submitHandler"
   >
     <div class="pbehavior-form__body">
       <pbehavior-general-form
         v-if="entityPattern"
-        :form="form"
+        v-field="form"
         :with-inherited="withInherited"
         :no-timezone="noTimezone"
         with-enabled
-        @update:form="form = $event"
       />
 
       <pbehavior-form
         v-else
-        :form="form"
+        v-model="form"
         :pbehavior-id="pbehavior?._id"
         :with-inherited="withInherited"
         :no-timezone="noTimezone"
         pbehavior-counter-type
-        @update:form="form = $event"
       />
     </div>
-
-    <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
-
-    <c-layout class="pbehavior-form__actions" column>
+    <ai-chat-sidebar
+      v-if="chatShown"
+      v-bind="chatOptions.bind"
+      v-on="chatOptions.on"
+    />
+    <v-layout
+      class="pbehavior-form__actions"
+      column
+    >
       <v-divider />
-
-      <c-layout class="pa-3" gap="2" justify="end">
-        <v-btn v-show="pbehavior" color="error" @click="remove">
+      <v-layout
+        class="pa-3"
+        justify-end
+      >
+        <v-btn
+          v-show="pbehavior"
+          :outlined="$system.dark"
+          class="error"
+          @click="remove"
+        >
           {{ $t('common.delete') }}
         </v-btn>
-
-        <v-btn variant="text" @click="cancel">
+        <v-btn
+          depressed
+          text
+          @click="cancel"
+        >
           {{ $t('common.cancel') }}
         </v-btn>
-
-        <v-btn :disabled="chatOptions.attrs.pending" color="primary" type="submit">
+        <v-btn
+          :disabled="errors.any() || chatOptions.bind.pending"
+          color="primary"
+          type="submit"
+        >
           {{ $t('common.submit') }}
         </v-btn>
-      </c-layout>
-    </c-layout>
+      </v-layout>
+    </v-layout>
   </v-form>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import dependentMixin from 'vuetify/lib/mixins/dependent';
 
-import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
 import { isOmitEqual } from '@/helpers/collection';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 import { getLocalTimezone } from '@/helpers/date/date';
-import {
-  calendarEventToPbehaviorForm,
-  formToCalendarEvent,
-} from '@/helpers/entities/pbehavior/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
-import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useValidator } from '@/hooks/validator/validator';
+import { useComponentInstance } from '@/hooks/vue';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
+  inject: ['$system'],
   components: { PbehaviorForm, PbehaviorGeneralForm, AiChatSidebar },
-
+  mixins: [dependentMixin],
   props: {
     event: {
       type: Object,
@@ -98,29 +119,18 @@ export default {
       default: false,
     },
   },
-
-  emits: ['close', 'submit', 'remove'],
-
   setup(props, { emit }) {
-    const initialValues = calendarEventToPbehaviorForm(
-      props.event,
-      props.entityPattern,
-      props.defaultFields,
-      props.timezone,
-    );
-
-    const { handleSubmit } = useForm({ initialValues });
-
+    const vm = useComponentInstance();
     const modals = useModals();
+    const validator = useValidator();
     const { t } = useI18n();
 
     const manualClose = ref(false);
-    const form = ref(initialValues);
+    const form = ref(
+      calendarEventToPbehaviorForm(props.event, props.entityPattern, props.defaultFields, props.timezone),
+    );
 
     const pbehavior = computed(() => props.event?.data?.pbehavior);
-    const closeConfirmationModalId = computed(
-      () => `pbehavior-close-confirmation-${props.event?.id ?? 'new'}`,
-    );
 
     const ruleId = computed(() => {
       const { _id: id = '' } = props.event?.data?.pbehavior ?? {};
@@ -128,7 +138,10 @@ export default {
       return id.startsWith('pbehavior_') ? '' : id;
     });
 
-    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+    const {
+      shown: chatShown,
+      options: chatOptions,
+    } = useAiChatForm({
       form,
       ruleId,
       context: LLM_SOCKET_CONTEXTS.pbehavior,
@@ -163,12 +176,7 @@ export default {
         return close(event, true);
       }
 
-      if (modals.isModalOpenedById(closeConfirmationModalId.value)) {
-        return undefined;
-      }
-
       return modals.show({
-        id: closeConfirmationModalId.value,
         name: MODALS.confirmation,
         config: {
           text: t('modals.createPbehavior.cancelConfirmation'),
@@ -179,16 +187,19 @@ export default {
 
     const clickOutsideDirective = computed(() => {
       const selectorsForInclude = [
-        '.ai-chat-sidebar-wrapper',
-        '.ai-chat-sidebar__progress',
-        '.c-calendar__popover-wrapper',
-        '.v-overlay__content',
+        '.c-calendar__today-btn',
+        '.c-calendar__pagination',
+        '.c-calendar__menu-right',
+        '.v-event',
+        `.${getMenuClassByCalendarEvent(props.event.id)}`,
       ];
 
       return {
         handler: cancel,
-        include: () => [...document.querySelectorAll(selectorsForInclude.join(','))]
-          .filter(element => !element.querySelector('.c-calendar')),
+        include: () => [
+          ...vm.getOpenDependentElements(),
+          ...document.querySelectorAll(selectorsForInclude.join(',')),
+        ],
         closeConditional: () => true,
       };
     });
@@ -198,13 +209,17 @@ export default {
       close(event);
     };
 
-    const submit = handleSubmit(async () => {
-      const calendarEvent = formToCalendarEvent(form.value, props.event);
+    const submitHandler = async (event) => {
+      const isValid = await validator.validateAll();
 
-      manualClose.value = true;
+      if (isValid) {
+        const calendarEvent = formToCalendarEvent(form.value, props.event);
 
-      emit('submit', calendarEvent);
-    });
+        manualClose.value = true;
+
+        emit('submit', calendarEvent, event);
+      }
+    };
 
     return {
       form,
@@ -214,31 +229,35 @@ export default {
       chatOptions,
       cancel,
       remove,
-      submit,
+      submitHandler,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.pbehavior-form {
-  display: flex;
-  flex-direction: column;
-  flex: 0 1 auto;
-  width: 100%;
-  max-height: 85vh;
-  min-height: 0;
-  overflow: hidden;
-
-  &__body {
-    flex: 0 1 auto;
+  .pbehavior-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    width: 100%;
+    max-height: 100%;
     min-height: 0;
-    overflow-y: auto;
-    padding: 16px;
-  }
+    overflow: hidden;
 
-  &__actions {
-    flex: 0 0 auto;
+    &__body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    &__actions {
+      flex: 0 0 auto;
+
+      .layout {
+        gap: 6px;
+      }
+    }
   }
-}
 </style>

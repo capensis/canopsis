@@ -1,6 +1,5 @@
 import {
   ALARM_STATES,
-  ALARM_STATES_KEYS,
   ALARM_STATUSES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
@@ -21,8 +20,7 @@ export default {
   refresh: 'Rafraîchir',
   restart: 'Redémarrer',
   toggleEditView: 'Activer/Désactiver le mode édition',
-  toggleEditViewSubtitle:
-    'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
+  toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
   alias: 'Alias',
   namePrefix: 'Préfixe du nom',
@@ -55,7 +53,6 @@ export default {
   every: 'Chaque',
   start: 'Début',
   message: 'Message',
-  text: 'Texte',
   preview: 'Aperçu',
   recursive: 'Récursif',
   select: 'Sélectionner',
@@ -101,9 +98,7 @@ export default {
   replace: 'Remplacer',
   play: 'Lecture',
   pause: 'Pause',
-  pin: 'Épingler',
   copyLink: 'Copier le lien',
-  copy: 'Copier',
   parse: 'Analyser',
   home: 'Accueil',
   step: 'Étape',
@@ -242,8 +237,7 @@ export default {
   exportFieldToJson: 'Exporter {field} au format JSON',
   exportFieldToPdfOrJson: 'Exporter {field} au format PDF ou JSON',
   copyFieldPath: 'Copier le chemin {field}',
-  copyFieldPathOrExportFieldToPdf:
-    'Copiez le chemin du {field} ou exportez le {field} au format PDF',
+  copyFieldPathOrExportFieldToPdf: 'Copiez le chemin du {field} ou exportez le {field} au format PDF',
   copyToClipboard: 'Copier dans le presse-papier',
   copyPathToClipboard: 'Copier le chemin dans le presse-papiers',
   criteria: 'Critères',
@@ -285,7 +279,6 @@ export default {
   sharedTokens: 'Jetons partagés',
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
-  moreButton: 'Plus',
   more: 'plus',
   all: 'Tous',
   other: 'Autre',
@@ -466,10 +459,6 @@ export default {
     [ALARM_STATES.minor]: 'Mineur',
     [ALARM_STATES.major]: 'Majeur',
     [ALARM_STATES.critical]: 'Critique',
-    [ALARM_STATES_KEYS.ok]: 'Ok',
-    [ALARM_STATES_KEYS.minor]: 'Mineur',
-    [ALARM_STATES_KEYS.major]: 'Majeur',
-    [ALARM_STATES_KEYS.critical]: 'Critique',
   },
   statusTypes: {
     [ALARM_STATUSES.closed]: 'Fermée',
@@ -538,7 +527,7 @@ export default {
     [PATTERN_OPERATORS.enabled]: 'Vrai',
     [PATTERN_OPERATORS.disabled]: 'Faux',
 
-    [PATTERN_OPERATORS.isMetaAlarm]: 'C\'est une méta-alarme',
+    [PATTERN_OPERATORS.isMetaAlarm]: 'Est-ce une méta-alarme',
     [PATTERN_OPERATORS.isNotMetaAlarm]: 'Ce n\'est pas une méta-alarme',
     [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
@@ -549,158 +538,105 @@ export default {
     [PATTERN_OPERATORS.inRangeDates]: 'Dans l\'intervalle (dates)',
     [PATTERN_OPERATORS.inRangePeriod]: 'Dans l\'intervalle (période)',
   },
-  triggersGroups: {
-    general: 'Général',
-    pbehavior: 'Pbehavior',
-    tickets: 'Tickets',
-    instructions: 'Instructions',
-  },
   triggers: {
     [TRIGGERS_TYPES.create]: {
-      text: 'Créée',
-      selectedText: 'Alarme créée',
+      text: 'Alarme créée',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: 'Criticité diminuée',
-      selectedText: 'Criticité de l\'alarme diminuée',
+      text: 'Criticité de l\'alarme diminuée',
     },
     [TRIGGERS_TYPES.changestate]: {
-      text: 'Criticité changée par l\'action "changer de criticité"',
-      selectedText: 'Criticité de l\'alarme changée par l\'action "changer de criticité"',
+      text: 'Criticité de l\'alarme changée par l\'action "changer de criticité"',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: 'Criticité augmentée',
-      selectedText: 'Criticité de l\'alarme augmentée',
+      text: 'Criticité de l\'alarme augmentée',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: 'Statut changé, par ex. flapping',
-      selectedText: 'Statut de l\'alarme changé, par ex. flapping',
-    },
-    [TRIGGERS_TYPES.changedoutput]: {
-      text: 'Sortie modifiée',
-      selectedText: 'Alarme sortie modifiée',
-    },
-    [TRIGGERS_TYPES.changedlongoutput]: {
-      text: 'Sortie longue modifiée',
-      selectedText: 'Alarme sortie longue modifiée',
+      text: 'Statut de l\'alarme changé, par ex. flapping',
     },
     [TRIGGERS_TYPES.ack]: {
-      text: 'Acquittée',
-      selectedText: 'Alarme acquittée',
+      text: 'Alarme acquittée',
     },
     [TRIGGERS_TYPES.ackremove]: {
-      text: 'Désacquittée',
-      selectedText: 'Alarme désacquittée',
+      text: 'Alarme désacquittée',
     },
     [TRIGGERS_TYPES.cancel]: {
-      text: 'Annulée',
-      selectedText: 'Alarme annulée',
+      text: 'Alarme annulée',
     },
     [TRIGGERS_TYPES.uncancel]: {
-      text: 'Désannulée',
-      selectedText: 'Alarme désannulée',
-      helpText:
-        'Probablement un déclencheur hérité, car il n\'y a aucun moyen d\'annuler l\'alarme lorsque vous l\'annulez dans l\'interface utilisateur, mais il est possible d\'envoyer un événement d\'annulation via l\'API',
+      text: 'Alarme désannulée',
+      helpText: 'Probablement un déclencheur hérité, car il n\'y a aucun moyen d\'annuler l\'alarme lorsque vous l\'annulez dans l\'interface utilisateur, mais il est possible d\'envoyer un événement d\'annulation via l\'API',
     },
     [TRIGGERS_TYPES.comment]: {
-      text: 'Commentée',
-      selectedText: 'Alarme commentée',
+      text: 'Alarme commentée',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: 'Ticket déclaré par l\'action de l\'interface',
-      selectedText: 'Ticket déclaré par l\'action de l\'interface utilisateur',
+      text: 'Ticket déclaré par l\'action de l\'interface utilisateur',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
-      text: 'Ticket déclaré par webhook',
-      selectedText: 'Ticket déclaré par le webhook',
+      text: 'Ticket déclaré par le webhook',
     },
     [TRIGGERS_TYPES.declareticketwebhookfail]: {
       text: 'La déclaration du ticket par le webhook a échoué',
     },
     [TRIGGERS_TYPES.assocticket]: {
-      text: 'Ticket associé',
-      selectedText: 'Ticket associé à une alarme',
+      text: 'Ticket associé à une alarme',
     },
     [TRIGGERS_TYPES.ticketremove]: {
       text: 'Ticket retiré',
     },
     [TRIGGERS_TYPES.snooze]: {
-      text: 'Mise en veille',
-      selectedText: 'Alarme mise en veille',
+      text: 'Alarme mise en veille',
     },
     [TRIGGERS_TYPES.unsnooze]: {
-      text: 'Sortie de veille',
-      selectedText: 'Alarme sortie de veille',
+      text: 'Alarme sortie de veille',
     },
     [TRIGGERS_TYPES.resolve]: {
-      text: 'Résolue',
-      selectedText: 'Alarme résolue',
+      text: 'Alarme résolue',
     },
     [TRIGGERS_TYPES.activate]: {
-      text: 'Activée',
-      selectedText: 'Alarme activée',
-    },
-    [TRIGGERS_TYPES.pause]: {
-      text: 'Mise en pause',
-      selectedText: 'Alarme mise en pause',
-    },
-    [TRIGGERS_TYPES.resume]: {
-      text: 'Reprise',
-      selectedText: 'Alarme reprise',
+      text: 'Alarme activée',
     },
     [TRIGGERS_TYPES.pbhenter]: {
-      text: 'Entrée dans un pbehavior',
-      selectedText: 'Alarme entrée dans un pbehavior',
+      text: 'Alarme entrée dans un pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: 'Sortie d\'un pbehavior',
-      selectedText: 'Alarme sortie d\'un pbehavior',
+      text: 'Alarme sortie d\'un pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
       text: 'Consigne manuelle en erreur',
-      selectedText: 'La consigne manuelle a échoué',
     },
     [TRIGGERS_TYPES.autoinstructionfail]: {
       text: 'Consigne automatique en erreur',
-      selectedText: 'La consigne automatique a échoué',
     },
     [TRIGGERS_TYPES.instructionjobfail]: {
       text: 'Job de consigne manuelle ou automatique en erreur',
-      selectedText: 'Le job de consigne manuelle ou automatique a échoué',
     },
     [TRIGGERS_TYPES.instructionjobcomplete]: {
       text: 'Job de consigne manuelle ou automatique terminé',
-      selectedText: 'Le job de consigne manuelle ou automatique est terminé',
     },
     [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Consigne manuelle terminée',
-      selectedText: 'La consigne manuelle est terminée',
     },
     [TRIGGERS_TYPES.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
-      selectedText: 'La consigne automatique est terminée',
     },
     [TRIGGERS_TYPES.autoinstructionresultok]: {
-      text: 'Alarme en état OK après toutes les consignes automatiques',
+      text: 'L\'alarme est en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.autoinstructionresultfail]: {
-      text: 'Alarme en état KO après toutes les consignes automatiques',
+      text: 'L\'alarme n\'est pas en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: 'N événements reçus',
+      text: 'L\'alarme a reçu N événements',
       selectedText: 'L\'alarme a reçu {additionalValue} événements',
       additionalFieldLabel: 'Nombre d\'événements',
     },
   },
   repeatTriggers: {
-    [TRIGGERS_TYPES.pause]: {
-      text: 'Alarme mise en pause',
-    },
-    [TRIGGERS_TYPES.resume]: {
-      text: 'Alarme reprise',
-    },
     [TRIGGERS_TYPES.eventscount]: {
       text: 'L\'alarme a reçu un nouvel événement check',
+      selectedText: 'L\'alarme a reçu un nouvel événement check',
     },
   },
   request: {
@@ -711,13 +647,12 @@ export default {
     skipVerify: 'Ne pas vérifier les certificats HTTPS',
     headersHelpText: 'Sélectionnez la clé et la valeur de l\'en-tête ou saisissez-les manuellement',
     addHeader: 'Ajouter un en-tête',
-    urlHelp:
-      '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>' +
-      '<i>Quelques exemples :</i>' +
-      '<pre>"https://exampleurl.com?resource={\'{{ .Alarm.Value.Resource }}\'}"</pre>' +
-      '<pre>"https://exampleurl.com?entity_id={\'{{ .Entity.ID }}\'}"</pre>' +
-      '<pre>"https://exampleurl.com?children_count={\'{{ len .Children }}\'}"</pre>' +
-      '<pre>"https://exampleurl.com?children={\'{{ range .Children }}\'}{\'{{ .ID }}\'}{\'{{ end }}\'}"</pre>',
+    urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
+      + '<i>Quelques exemples :</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   },
 
   fileSelector: {

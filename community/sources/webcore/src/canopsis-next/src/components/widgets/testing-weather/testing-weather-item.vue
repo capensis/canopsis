@@ -2,46 +2,53 @@
   <card-with-see-alarms-btn
     :style="{ backgroundColor: color }"
     :show-button="hasAlarmsListAccess"
-    class="text-white cursor-pointer ma-1"
+    class="white--text cursor-pointer ma-1"
     tile
     @click="showTestSuiteInformationModal"
     @show:alarms="showAlarmListModal"
   >
-    <c-layout class="fill-height" fill>
-      <div class="pa-2">
-        <h3 class="text-center">
+    <v-layout class="fill-height">
+      <v-flex class="pa-2">
+        <h3 class="text-md-center">
           {{ testSuite.name }}
         </h3>
-        <v-divider color="white" />
-        <v-row class="pt-1">
-          <v-col cols="6">
-            <c-layout class="fill-height" justify="space-between" column>
+        <v-divider
+          class="white"
+          light
+        />
+        <v-layout
+          class="pt-1"
+          justify-start
+        >
+          <v-flex xs6>
+            <v-layout
+              class="fill-height"
+              column
+              justify-space-between
+            >
               <c-mini-bar-chart
                 :history="testSuite.mini_chart"
                 :unit="$constants.TIME_UNITS.second"
               />
               <span class="pre-wrap">
-                {{ convertDateToString(testSuite.timestamp, 'testSuiteFormat') }}
+                {{ testSuite.timestamp | date('testSuiteFormat') }}
               </span>
-            </c-layout>
-          </v-col>
-          <v-col cols="6">
+            </v-layout>
+          </v-flex>
+          <v-flex xs6>
             <test-suite-statistics :test-suite="testSuite" />
-          </v-col>
-        </v-row>
-      </div>
-    </c-layout>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
   </card-with-see-alarms-btn>
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, TEST_SUITE_COLORS, USER_PERMISSIONS } from '@/constants';
+import { MODALS, USER_PERMISSIONS, TEST_SUITE_COLORS } from '@/constants';
 
-import { useAlarmStore } from '@/stores/modules/alarm';
-
-import { convertDateToString } from '@/helpers/date/date';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { authMixin } from '@/mixins/auth';
@@ -49,6 +56,8 @@ import { authMixin } from '@/mixins/auth';
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
 import TestSuiteStatistics from './test-suite-statistics.vue';
+
+const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
@@ -76,11 +85,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useAlarmStore, {
+    ...mapActions({
       fetchComponentAlarmsListWithoutStore: 'fetchComponentAlarmsListWithoutStore',
     }),
-
-    convertDateToString,
 
     showTestSuiteInformationModal() {
       this.$modals.show({

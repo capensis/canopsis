@@ -1,11 +1,18 @@
 <template>
-  <c-layout class="kpi-widget" align="center" column>
+  <v-layout
+    class="kpi-widget"
+    column
+    align-center
+  >
     <h4 class="kpi-widget__title">
       {{ title }}
     </h4>
     <bar-chart
+      :chart-id="chartId"
       :options="chartOptions"
       :datasets="datasets"
+      :width="width"
+      :height="height"
       :dark="$system.dark"
       class="kpi-widget__chart"
     >
@@ -14,16 +21,15 @@
           :downloading="downloading"
           :chart="chart"
           class="mt-4"
-          @export:csv="$emit('export:csv')"
-          @export:png="$emit('export:png', $event)"
+          v-on="$listeners"
         />
       </template>
     </bar-chart>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { KPI_CHART_DEFAULT_HEIGHT, SAMPLINGS, X_AXES_IDS } from '@/constants';
+import { X_AXES_IDS, SAMPLINGS, KPI_CHART_DEFAULT_HEIGHT } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 import { getMetricColor } from '@/helpers/entities/metric/color';
@@ -31,20 +37,19 @@ import { convertMetricValueByUnit, getDateLabelBySampling } from '@/helpers/enti
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
-import BarChart from '@/components/common/chart/bar-chart.vue';
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
+
+const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
 
 export default {
   inject: ['$system'],
-
-  components: {
-    BarChart,
-    ChartExportActions,
-  },
-
+  components: { ChartExportActions, BarChart },
   mixins: [chartMetricsOptionsMixin],
-
   props: {
+    chartId: {
+      type: String,
+      required: false,
+    },
     metrics: {
       type: Array,
       default: () => [],
@@ -52,6 +57,10 @@ export default {
     title: {
       type: String,
       required: false,
+    },
+    width: {
+      default: 600,
+      type: Number,
     },
     height: {
       default: KPI_CHART_DEFAULT_HEIGHT,
@@ -82,9 +91,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['export:csv', 'export:png'],
-
   computed: {
     xAxes() {
       const xAxes = {
@@ -101,6 +107,7 @@ export default {
 
       if (this.hasHistoryData) {
         const [metric] = this.metrics;
+
         const labels = metric?.data.map(({ history_timestamp: timestamp }) => (
           getDateLabelBySampling(timestamp, this.sampling).split('\n')
         )) ?? [];
@@ -146,6 +153,7 @@ export default {
         const metricColor = color ?? getMetricColor(metric);
         const datasetLabel = label ?? this.getMetricLabel(metric);
         const yAxisID = this.getMetricYAxisId(metric, unit);
+
         const defaultDataset = {
           metric,
           yAxisID,
@@ -189,7 +197,6 @@ export default {
       }, []);
     },
   },
-
   methods: {
     getMetricLabel(metric) {
       const metricMessageKey = `alarm.metrics.${metric}`;

@@ -4,7 +4,7 @@
     :d="path"
     :fill="fill"
     pointer-events="stroke"
-    v-bind="$attrs"
+    v-on="$listeners"
   />
 </template>
 
@@ -29,7 +29,7 @@ export default {
     },
     curveOffset: {
       type: Number,
-      default: 0.6,
+      default: 0.60,
     },
   },
   computed: {
@@ -76,7 +76,10 @@ export default {
     },
 
     linePoints() {
-      return [this.startMoveTo, `L ${this.end.x} ${this.end.y}`];
+      return [
+        this.startMoveTo,
+        `L ${this.end.x} ${this.end.y}`,
+      ];
     },
 
     curvesPoints() {
@@ -94,33 +97,57 @@ export default {
     leftCurvedAnglePoints() {
       const corner = { x: this.start.x, y: this.end.y };
 
-      return [this.startMoveTo, `Q ${corner.x} ${corner.y} ${this.end.x} ${this.end.y}`];
+      return [
+        this.startMoveTo,
+        `Q ${corner.x} ${corner.y} ${this.end.x} ${this.end.y}`,
+      ];
     },
 
     rightCurvedAnglePoints() {
       const corner = { x: this.end.x, y: this.start.y };
 
-      return [this.startMoveTo, `Q ${corner.x} ${corner.y} ${this.end.x} ${this.end.y}`];
+      return [
+        this.startMoveTo,
+        `Q ${corner.x} ${corner.y} ${this.end.x} ${this.end.y}`,
+      ];
     },
 
     rightElbowPoints() {
-      return [this.startMoveTo, `h ${this.diffX}`, `v ${this.diffY}`];
+      return [
+        this.startMoveTo,
+        `h ${this.diffX}`,
+        `v ${this.diffY}`,
+      ];
     },
 
     leftElbowPoints() {
-      return [this.startMoveTo, `v ${this.diffY}`, `h ${this.diffX}`];
+      return [
+        this.startMoveTo,
+        `v ${this.diffY}`,
+        `h ${this.diffX}`,
+      ];
     },
 
     horizontalSteppedPoints() {
       const halfDiffX = this.diffX / 2;
 
-      return [this.startMoveTo, `h ${halfDiffX}`, `v ${this.diffY}`, `h ${halfDiffX}`];
+      return [
+        this.startMoveTo,
+        `h ${halfDiffX}`,
+        `v ${this.diffY}`,
+        `h ${halfDiffX}`,
+      ];
     },
 
     verticalSteppedPoints() {
       const halfDiffY = this.diffY / 2;
 
-      return [this.startMoveTo, `v ${halfDiffY}`, `h ${this.diffX}`, `v ${halfDiffY}`];
+      return [
+        this.startMoveTo,
+        `v ${halfDiffY}`,
+        `h ${this.diffX}`,
+        `v ${halfDiffY}`,
+      ];
     },
 
     path() {

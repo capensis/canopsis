@@ -2,7 +2,7 @@ import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
-export const permissionsWidgetsAvailabilityInterval = {
+export const permissionsWidgetsAlarmStatisticsInterval = {
   mixins: [authMixin],
   computed: {
     hasAccessToInterval() {

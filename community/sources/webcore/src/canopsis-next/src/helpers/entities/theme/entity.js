@@ -28,15 +28,6 @@ import { isString, kebabCase } from 'lodash';
  */
 
 /**
- * @typedef {Object} ThemeWidgetColors
- * @property {string} title_background
- * @property {string} content_background
- * @property {boolean} border
- * @property {string} border_color
- * @property {number} border_radius
- */
-
-/**
  * @typedef {Object} ThemeStatesColors
  * @property {string} ok
  * @property {string} minor
@@ -45,24 +36,10 @@ import { isString, kebabCase } from 'lodash';
  */
 
 /**
- * @typedef {Object} ThemeIconsColors
- * @property {string} ack
- * @property {string} canceled
- * @property {string} children
- * @property {string} parent
- * @property {string} comment
- * @property {string} snooze
- * @property {string} tickets
- * @property {string} cancel_delay
- */
-
-/**
  * @typedef {Object} ThemeColors
  * @property {ThemeMainColors} main
  * @property {ThemeTableColors} table
- * @property {ThemeWidgetColors} widget
  * @property {ThemeStatesColors} state
- * @property {ThemeIconsColors} icons
  */
 
 /**
@@ -72,13 +49,20 @@ import { isString, kebabCase } from 'lodash';
  * @property {number} font_size
  */
 
-const themeObjectColorsToCSSVariables = (colors, prefix = '') =>
-  Object.entries(colors).reduce((acc, [key, value]) => {
+/**
+ * Convert object deep object to flat object variables
+ *
+ * @param {Object} colors
+ * @param {string} prefix
+ * @returns {Object}
+ */
+const themeObjectColorsToCSSVariables = (colors, prefix = '') => Object.entries(colors)
+  .reduce((acc, [key, value]) => {
     if (!value) {
       return acc;
     }
 
-    if (isString(value) || typeof value === 'number') {
+    if (isString(value)) {
       acc[`${prefix}${kebabCase(key)}`] = value;
 
       return acc;
@@ -96,8 +80,7 @@ const themeObjectColorsToCSSVariables = (colors, prefix = '') =>
  * @param {Object} [colors = {}]
  * @returns {Object}
  */
-export const themePropertiesToCSSVariables = (colors = {}) =>
-  themeObjectColorsToCSSVariables(colors);
+export const themePropertiesToCSSVariables = (colors = {}) => themeObjectColorsToCSSVariables(colors);
 
 /**
  * Extracts the theme variable key from a CSS variable string.
@@ -105,5 +88,6 @@ export const themePropertiesToCSSVariables = (colors = {}) =>
  * @param {string} [cssVariable=''] - The CSS variable string to process.
  * @returns {string} The extracted theme variable key.
  */
-export const getThemeVariableKeyFromCssVariable = (cssVariable = '') =>
-  cssVariable.replace('var(--v-', '').replace('-base)', '');
+export const getThemeVariableKeyFromCssVariable = (cssVariable = '') => (
+  cssVariable.replace('var(--v-', '').replace('-base)', '')
+);

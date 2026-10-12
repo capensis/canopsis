@@ -1,22 +1,22 @@
 <template>
   <v-fade-transition>
-    <div v-if="pageScrolled" class="view-scroll-top-btn">
-      <c-tooltip location="top">
-        <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            color="secondary-lighten-2"
-            size="x-large"
-            icon
-            @click="scrollToTop"
-          >
-            <v-icon icon="arrow_upward" color="white" />
-          </v-btn>
-        </template>
-
-        <span>{{ $t('common.toTheTop') }}</span>
-      </c-tooltip>
-    </div>
+    <c-simple-tooltip
+      v-if="pageScrolled"
+      :content="$t('common.toTheTop')"
+      top
+    >
+      <template #activator="{ on }">
+        <v-btn
+          color="secondary lighten-2"
+          fab
+          dark
+          v-on="on"
+          @click="scrollToTop"
+        >
+          <v-icon>arrow_upward</v-icon>
+        </v-btn>
+      </template>
+    </c-simple-tooltip>
   </v-fade-transition>
 </template>
 
@@ -34,9 +34,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.view-scroll-top-btn {
-  display: inline-flex;
-}
-</style>

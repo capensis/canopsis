@@ -1,68 +1,100 @@
 <template>
-  <div>
-    <v-tabs
+  <v-tabs
+    v-model="activeTab"
+    background-color="secondary lighten-1"
+    slider-color="primary"
+    dark
+    centered
+  >
+    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    <v-tab>{{ $tc('common.entity', 2) }}</v-tab>
+    <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
+    <v-tab v-if="pbehavior.rrule">
+      {{ $t('common.recurrence') }}
+    </v-tab>
+    <v-tabs-items
       v-model="activeTab"
-      bg-color="secondary-lighten-1"
-      color="primary"
-      align-tabs="center"
+      mandatory
     >
-      <v-tab value="patterns">
-        {{ t('common.pattern', 2) }}
-      </v-tab>
-      <v-tab value="entities">
-        {{ t('common.entity', 2) }}
-      </v-tab>
-      <v-tab value="comments">
-        {{ t('common.comment', 2) }}
-      </v-tab>
-      <v-tab v-if="pbehavior.rrule" value="recurrence">
-        {{ t('common.recurrence') }}
-      </v-tab>
-    </v-tabs>
-
-    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
-      <c-window-expand-item value="patterns" cols="8">
-        <pbehavior-patterns-form
-          :form="patterns"
-          :pbehavior-id="pbehavior._id"
-          pbehavior-counter-type
-          readonly
-        />
-      </c-window-expand-item>
-
-      <c-window-expand-item value="entities" cols="10">
-        <pbehavior-entities :pbehavior="pbehavior" />
-      </c-window-expand-item>
-
-      <c-window-expand-item value="comments" cols="10">
-        <pbehavior-comments :comments="pbehavior.comments" />
-      </c-window-expand-item>
-
-      <c-window-expand-item
-        v-if="pbehavior.rrule"
-        value="recurrence"
-        cols="10"
-      >
-        <pbehavior-recurrence-rule :pbehavior="pbehavior" />
-      </c-window-expand-item>
-    </v-window>
-  </div>
+      <v-tab-item>
+        <v-layout class="py-3">
+          <v-flex
+            xs12
+            sm10
+            offset-sm1
+          >
+            <v-card>
+              <v-card-text>
+                <pbehavior-patterns-form
+                  :form="patterns"
+                  :pbehavior-id="pbehavior._id"
+                  pbehavior-counter-type
+                  readonly
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item>
+        <v-layout class="py-3">
+          <v-flex
+            xs12
+            sm10
+            offset-sm1
+          >
+            <v-card>
+              <v-card-text>
+                <pbehavior-entities :pbehavior="pbehavior" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item>
+        <v-layout class="py-3">
+          <v-flex
+            xs12
+            sm10
+            offset-sm1
+          >
+            <v-card>
+              <v-card-text class="pa-0">
+                <pbehavior-comments :comments="pbehavior.comments" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab-item v-if="pbehavior.rrule">
+        <v-layout class="py-3">
+          <v-flex
+            xs12
+            sm10
+            offset-sm1
+          >
+            <v-card>
+              <v-card-text>
+                <pbehavior-recurrence-rule :pbehavior="pbehavior" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-tabs>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-
 import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
-import { useI18n } from '@/hooks/i18n';
-
 import PbehaviorPatternsForm from '../form/pbehavior-patterns-form.vue';
 
 import PbehaviorComments from './pbehavior-comments.vue';
-import PbehaviorEntities from './pbehavior-entities.vue';
 import PbehaviorRecurrenceRule from './pbehavior-recurrence-rule.vue';
+import PbehaviorEntities from './pbehavior-entities.vue';
 
 export default {
   components: {
@@ -71,25 +103,21 @@ export default {
     PbehaviorRecurrenceRule,
     PbehaviorEntities,
   },
-
   props: {
     pbehavior: {
       type: Object,
       required: true,
     },
   },
-
-  setup(props) {
-    const { t } = useI18n();
-    const activeTab = ref('patterns');
-
-    const patterns = computed(() => filterPatternsToForm(props.pbehavior, [PATTERNS_FIELDS.entity]));
-
+  data() {
     return {
-      t,
-      activeTab,
-      patterns,
+      activeTab: 0,
     };
+  },
+  computed: {
+    patterns() {
+      return filterPatternsToForm(this.pbehavior, [PATTERNS_FIELDS.entity]);
+    },
   },
 };
 </script>

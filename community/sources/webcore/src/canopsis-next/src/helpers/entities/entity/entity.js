@@ -1,10 +1,13 @@
 import { ENTITY_TYPES } from '@/constants';
 
+export const isEntityComponent = entity => entity.type === ENTITY_TYPES.component;
+
+export const isEntityResource = entity => entity.type === ENTITY_TYPES.resource;
+
 /**
- * Check if an entity may have a state setting.
+ * Check if entity may have state setting
  *
  * @param {Entity} entity
- * @returns {boolean}
+ * @return {boolean}
  */
-export const hasStateSetting = entity =>
-  [ENTITY_TYPES.component, ENTITY_TYPES.service].includes(entity?.type);
+export const hasStateSetting = entity => [ENTITY_TYPES.component, ENTITY_TYPES.service].includes(entity?.type);

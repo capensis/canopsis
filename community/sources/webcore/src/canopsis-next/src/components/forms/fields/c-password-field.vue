@@ -1,210 +1,132 @@
 <template>
-  <c-layout v-if="replaceable" class="c-password-field--replaceable" column>
-    <v-label class="c-password-field__label">
-      <span v-if="required && fieldLabel" class="text-error"> * </span>
-      {{ fieldLabel }}
+  <v-layout v-if="replaceable" class="gap-4" column>
+    <v-label :aria-required="required" class="c-password-field__label">
+      {{ label }}
     </v-label>
-
-    <c-layout v-if="shownField" align="center" gap="3">
-      <c-text-field
-        ref="fieldElement"
+    <v-layout v-if="shownField" class="gap-3" align-center>
+      <v-text-field
+        v-field="value"
+        v-validate="rules"
         v-bind="$attrs"
-        :model-value="displayedValue"
-        :placeholder="fieldPlaceholder"
+        :placeholder="placeholder || $t('common.password')"
+        :error-messages="errors.collect(name)"
         :name="name"
-        :type="inputType"
-        :append-inner-icon="appendInnerIcon"
+        :type="shownPassword ? 'text' : 'password'"
+        :append-icon="appendIcon"
         :clearable="false"
-        :required="required"
-        :readonly="isValueMasked"
-        @update:model-value="updateModel"
-        @click:append-inner="toggleShownPassword"
-        @focus="revealValue"
-        @blur="maskValueIfEmpty"
+        @click:append="toggleShownPassword"
       />
-
-      <v-btn
-        icon="delete"
-        size="small"
-        variant="text"
+      <c-action-btn
+        type="delete"
+        top
+        small
         @click="toggleShownField"
       />
-    </c-layout>
-
-    <div v-else>
-      <v-btn color="primary" variant="outlined" @click="toggleShownField">
-        {{ buttonLabel || `${t('common.replace')} ${fieldLabel}` }}
+    </v-layout>
+    <div v-if="!shownField">
+      <v-btn color="primary" outlined @click="toggleShownField">
+        {{ buttonLabel || `${$t('common.replace')} ${label}` }}
       </v-btn>
     </div>
-  </c-layout>
-
-  <c-text-field
+  </v-layout>
+  <v-text-field
     v-else
-    ref="fieldElement"
+    v-field="value"
+    v-validate="rules"
     v-bind="$attrs"
-    :model-value="displayedValue"
-    :label="fieldLabel"
+    :label="label || $t('common.password')"
+    :error-messages="errors.collect(name)"
     :name="name"
-    :type="inputType"
-    :append-inner-icon="appendInnerIcon"
+    :type="shownPassword ? 'text' : 'password'"
+    :append-icon="appendIcon"
     :clearable="false"
-    :required="required"
-    :readonly="isValueMasked"
-    @update:model-value="updateModel"
-    @click:append-inner="toggleShownPassword"
-    @focus="revealValue"
-    @blur="maskValueIfEmpty"
+    @click:append="toggleShownPassword"
   />
 </template>
 
-<script setup>
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+<script>
+import { computed, ref } from 'vue';
 
-const MASKED_VALUE_PLACEHOLDER = '*'.repeat(30);
+import { useModelField } from '@/hooks/form/model-field';
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
+export default {
+  inject: ['$validator'],
+  inheritAttrs: false,
+  model: {
+    prop: 'value',
+    event: 'input',
   },
-  label: {
-    type: String,
-    default: '',
+  props: {
+    value: {
+      type: String,
+      default: '',
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    buttonLabel: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      default: 'password',
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    replaceable: {
+      type: Boolean,
+      default: false,
+    },
+    visibility: {
+      type: Boolean,
+      default: false,
+    },
   },
-  placeholder: {
-    type: String,
-    default: '',
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
+    const shownPassword = ref(false);
+    const shownField = ref(false);
+
+    const rules = computed(() => ({
+      required: props.required,
+    }));
+
+    const appendIcon = computed(() => {
+      if (!props.visibility) {
+        return null;
+      }
+
+      return shownPassword.value ? 'visibility' : 'visibility_off';
+    });
+
+    const toggleShownPassword = () => shownPassword.value = !shownPassword.value;
+    const toggleShownField = () => {
+      shownField.value = !shownField.value;
+
+      if (!shownField.value) {
+        updateModel('');
+      }
+    };
+
+    return {
+      shownPassword,
+      shownField,
+      rules,
+      appendIcon,
+      toggleShownPassword,
+      toggleShownField,
+    };
   },
-  buttonLabel: {
-    type: String,
-    default: '',
-  },
-  name: {
-    type: String,
-    default: 'password',
-  },
-  required: {
-    type: Boolean,
-    default: false,
-  },
-  replaceable: {
-    type: Boolean,
-    default: false,
-  },
-  visibility: {
-    type: Boolean,
-    default: false,
-  },
-  masked: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const emit = defineEmits(['update:modelValue']);
-
-const { t } = useI18n();
-
-const fieldElement = ref(null);
-
-const shownPassword = ref(false);
-const shownField = ref(false);
-const isValueMasked = ref(props.masked && !props.modelValue);
-
-const fieldLabel = computed(() => props.label || t('common.password'));
-const fieldPlaceholder = computed(() => props.placeholder || t('common.password'));
-const displayedValue = computed(() => (
-  isValueMasked.value ? MASKED_VALUE_PLACEHOLDER : props.modelValue
-));
-
-const appendInnerIcon = computed(() => {
-  if (!props.visibility) {
-    return undefined;
-  }
-
-  return shownPassword.value ? 'visibility' : 'visibility_off';
-});
-
-const inputType = computed(() => (shownPassword.value ? 'text' : 'password'));
-
-/**
- * Returns the root DOM element of the password text field.
- *
- * @returns {HTMLElement|undefined}
- */
-const getFieldEl = () => fieldElement.value?.$el ?? fieldElement.value;
-
-let blurTimeout;
-
-/**
- * Restores the masked placeholder after blur when the value is still empty.
- */
-const maskValueIfEmpty = () => {
-  window.clearTimeout(blurTimeout);
-
-  blurTimeout = window.setTimeout(() => {
-    if (getFieldEl()?.contains(document.activeElement)) {
-      return;
-    }
-
-    isValueMasked.value = props.masked && !props.modelValue;
-  });
 };
-
-/**
- * Stops masking the field and shows the real empty value.
- */
-const revealValue = () => {
-  window.clearTimeout(blurTimeout);
-  isValueMasked.value = false;
-};
-
-/**
- * Focuses the native input inside the password text field.
- */
-const focusField = () => {
-  nextTick(() => getFieldEl()?.querySelector?.('input')?.focus());
-};
-
-/**
- * Emits the new field value and ignores the masked placeholder.
- *
- * @param {string} value
- */
-const updateModel = (value) => {
-  revealValue();
-
-  if (value === MASKED_VALUE_PLACEHOLDER) {
-    return;
-  }
-
-  emit('update:modelValue', value);
-};
-
-/**
- * Toggles password visibility and reveals the real value when it was masked.
- */
-const toggleShownPassword = () => {
-  revealValue();
-  shownPassword.value = !shownPassword.value;
-  focusField();
-};
-
-/**
- * Shows or hides the replaceable password field.
- */
-const toggleShownField = () => {
-  shownField.value = !shownField.value;
-
-  if (!shownField.value) {
-    updateModel('');
-  }
-};
-
-watch(() => props.masked, masked => isValueMasked.value = masked && !props.modelValue);
-
-onBeforeUnmount(() => window.clearTimeout(blurTimeout));
 </script>
 
 <style lang="scss" scoped>

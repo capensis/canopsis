@@ -1,17 +1,21 @@
 <template>
-  <c-tooltip :content="text" top>
-    <template #activator="{ props: activatorProps }">
+  <v-tooltip
+    :disabled="!text"
+    right
+  >
+    <template #activator="{ on }">
       <div
-        v-bind="activatorProps"
         :class="{ 'color-indicator--invalid': !text }"
         :style="{ backgroundColor: color }"
         class="color-indicator"
-        @click="$emit('click', $event)"
+        v-on="on"
+        @click="handleClick"
       >
         <slot>{{ value }}</slot>
       </div>
     </template>
-  </c-tooltip>
+    <span>{{ text }}</span>
+  </v-tooltip>
 </template>
 
 <script>
@@ -20,13 +24,11 @@ import { computed } from 'vue';
 import { COLORS } from '@/config';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getAlarmImpactStateColor, getAlarmStateColor } from '@/helpers/entities/alarm/color';
+import { getAlarmStateColor, getAlarmImpactStateColor } from '@/helpers/entities/alarm/color';
 
 import { useI18n } from '@/hooks/i18n';
 
 export default {
-  emits: ['click'],
-
   props: {
     entity: {
       type: Object,
@@ -41,17 +43,25 @@ export default {
       default: '',
     },
   },
-
-  setup(props) {
+  setup(props, { emit, listeners }) {
     const { t, te } = useI18n();
 
     const isImpactState = computed(() => props.type === COLOR_INDICATOR_TYPES.impactState);
+
     const impactLevel = computed(() => props.entity.impact_level ?? 0);
-    const state = computed(() => props.alarm?.v?.state?.val ?? props.entity?.state ?? 0);
-    const impactState = computed(
-      () => props.entity?.impact_state ?? props.alarm?.impact_state ?? state.value * impactLevel.value,
-    );
-    const value = computed(() => (isImpactState.value ? impactState.value : state.value));
+
+    const state = computed(() => props.alarm?.v?.state?.val
+      ?? props.entity?.state
+      ?? 0);
+
+    const impactState = computed(() => props.entity?.impact_state
+      ?? props.alarm?.impact_state
+      ?? state.value * impactLevel.value);
+
+    const value = computed(() => (isImpactState.value
+      ? impactState.value
+      : state.value));
+
     const color = computed(() => {
       const colorValue = isImpactState.value
         ? getAlarmImpactStateColor(impactState.value)
@@ -59,12 +69,10 @@ export default {
 
       return colorValue ?? 'black';
     });
+
     const text = computed(() => {
       if (isImpactState.value) {
-        return t('common.countOfTotal', {
-          count: impactState.value,
-          total: COLORS.impactState.length - 1,
-        });
+        return t('common.countOfTotal', { count: impactState.value, total: COLORS.impactState.length - 1 });
       }
 
       const key = `common.stateTypes.${state.value}`;
@@ -72,10 +80,22 @@ export default {
       return te(key) && t(key);
     });
 
+    const handleClick = (event) => {
+      if (listeners?.click) {
+        listeners.click(event);
+      }
+      emit('click', event);
+    };
+
     return {
+      isImpactState,
+      impactLevel,
+      state,
+      impactState,
+      value,
       color,
       text,
-      value,
+      handleClick,
     };
   },
 };
@@ -84,9 +104,9 @@ export default {
 <style lang="scss" scoped>
 .color-indicator {
   display: inline-block;
+  border-radius: 10px;
   padding: 3px 7px;
   color: black;
-  border-radius: 10px;
 
   &--invalid {
     color: white;

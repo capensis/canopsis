@@ -1,35 +1,39 @@
 <template>
-  <c-layout class="gap-4 ml-2" wrap>
-    <c-tooltip
+  <v-layout
+    class="gap-4 ml-2"
+    wrap
+  >
+    <v-tooltip
       v-for="action in actions"
       :key="action.type"
-      location="top"
+      top
     >
-      <template #activator="{ props: tooltipProps }">
-        <span v-bind="tooltipProps">
+      <template #activator="{ on }">
+        <span v-on="on">
           <service-entity-alarm-instruction-menu
             v-if="action.type === $constants.WEATHER_ACTIONS_TYPES.executeInstruction"
             :icon="action.icon"
             :entity="entity"
             :assigned-instructions="assignedInstructions"
-            @execute="$emit('execute', $event)"
+            @execute="$listeners.execute"
           />
           <v-btn
             v-else
             :disabled="action.disabled"
             :loading="action.loading"
             class="ml-2"
-            size="small"
-            variant="flat"
+            depressed
+            small
+            light
             @click.stop="$emit('apply', action)"
           >
-            <v-icon :icon="action.icon" />
+            <v-icon>{{ action.icon }}</v-icon>
           </v-btn>
         </span>
       </template>
       <span>{{ $t(`serviceWeather.actions.${action.type}`) }}</span>
-    </c-tooltip>
-  </c-layout>
+    </v-tooltip>
+  </v-layout>
 </template>
 
 <script>
@@ -53,6 +57,5 @@ export default {
       default: () => [],
     },
   },
-  emits: ['apply', 'execute'],
 };
 </script>

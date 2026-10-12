@@ -1,42 +1,41 @@
 <template>
-  <c-select
-    :model-value="modelValue"
+  <v-select
+    v-field="value"
+    :label="$t('recurrenceRule.freq')"
     :items="frequencies"
-    :label="t('recurrenceRule.freq')"
     :autofocus="autofocus"
-    item-title="text"
-    item-value="value"
-    @update:model-value="emit('update:modelValue', $event)"
   />
 </template>
 
-<script setup>
+<script>
 import { RRule } from 'rrule';
-import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
-
-defineProps({
-  modelValue: {
-    type: Number,
-    default: null,
+export default {
+  model: {
+    prop: 'value',
+    event: 'input',
   },
-  autofocus: {
-    type: Boolean,
-    default: false,
+  props: {
+    value: {
+      type: Number,
+      required: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
   },
-});
-
-const emit = defineEmits(['update:modelValue']);
-
-const { t } = useI18n();
-
-const frequencies = computed(() => [
-  { text: t('recurrenceRule.none'), value: null },
-  { text: t('common.timeFrequencies.hourly'), value: RRule.HOURLY },
-  { text: t('common.timeFrequencies.daily'), value: RRule.DAILY },
-  { text: t('common.timeFrequencies.weekly'), value: RRule.WEEKLY },
-  { text: t('common.timeFrequencies.monthly'), value: RRule.MONTHLY },
-  { text: t('common.timeFrequencies.yearly'), value: RRule.YEARLY },
-]);
+  computed: {
+    frequencies() {
+      return [
+        { text: this.$t('recurrenceRule.none'), value: null },
+        { text: this.$t('common.timeFrequencies.hourly'), value: RRule.HOURLY },
+        { text: this.$t('common.timeFrequencies.daily'), value: RRule.DAILY },
+        { text: this.$t('common.timeFrequencies.weekly'), value: RRule.WEEKLY },
+        { text: this.$t('common.timeFrequencies.monthly'), value: RRule.MONTHLY },
+        { text: this.$t('common.timeFrequencies.yearly'), value: RRule.YEARLY },
+      ];
+    },
+  },
+};
 </script>

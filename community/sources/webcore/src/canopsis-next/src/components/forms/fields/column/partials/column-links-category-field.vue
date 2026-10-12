@@ -1,53 +1,53 @@
 <template>
-  <c-combobox
-    :model-value="modelValue"
+  <v-combobox
+    v-field="value"
     :items="categories"
-    :label="$t('common.category')"
+    :label="$tc('common.category')"
+    :return-object="false"
     :loading="pending"
+    item-text="value"
+    item-value="value"
     clearable
-    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
 import { LINK_RULE_TYPES, MAX_LIMIT } from '@/constants';
 
-import { useLinkRuleStore } from '@/stores/modules/link-rule';
+const { mapActions } = createNamespacedHelpers('linkRule');
 
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
   },
-
-  emits: ['update:modelValue'],
-
   data() {
     return {
       pending: false,
       categories: [],
     };
   },
-
   mounted() {
     this.fetchList();
   },
-
   methods: {
-    ...mapActions(useLinkRuleStore, {
-      fetchLinkRuleCategoriesWithoutStore: 'fetchLinkCategoriesWithoutStore',
-    }),
+    ...mapActions(['fetchLinkCategoriesWithoutStore']),
 
     async fetchList() {
       try {
         this.pending = true;
 
         const params = { limit: MAX_LIMIT, type: LINK_RULE_TYPES.alarm };
-        const { categories = [] } = await this.fetchLinkRuleCategoriesWithoutStore({ params });
+
+        const { categories = [] } = await this.fetchLinkCategoriesWithoutStore({ params });
 
         if (categories?.length) {
           this.categories = categories.filter(category => !!category);

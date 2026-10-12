@@ -5,36 +5,38 @@
     :name="name"
     @change="$emit('change', $event)"
   >
-    <template #activator="{ clear, on, files, errors }">
+    <template #activator="{ clear, on, files }">
       <slot
-        v-if="$slots.selected && files.length"
+        v-if="$scopedSlots.selected && files.length"
         :clear="clear"
         :files="files"
-        :errors="errors"
         name="selected"
       />
-      <c-layout
+      <v-layout
         v-else
-        :class="{ 'drag-zone--dropping': dropping, 'drag-zone--has-errors': errors?.length }"
+        :class="{ 'drag-zone--dropping': dropping, 'drag-zone--has-errors': errors.has(name) }"
         class="pa-3 drag-zone"
-        align="center"
+        align-center
         @drop.prevent="drop"
         @dragover.prevent="dragover"
         @dragleave.prevent="dragleave"
       >
-        <v-icon class="mr-3" size="large">
+        <v-icon
+          class="mr-3"
+          large
+        >
           upload_file
         </v-icon>
         <slot :on="on" name="label">
           <span class="text-subtitle-2">
             {{ $t('common.fileSelector.dragAndDrop.label') }}
-            <a @click="on.click">
+            <a v-on="on">
               {{ $t('common.fileSelector.dragAndDrop.labelAction') }}
             </a>
             {{ fileTypeLabel ? ` ${fileTypeLabel}` : '' }}
           </span>
         </slot>
-      </c-layout>
+      </v-layout>
     </template>
   </file-selector>
 </template>
@@ -43,9 +45,9 @@
 import FileSelector from './file-selector.vue';
 
 export default {
+  inject: ['$validator'],
   components: { FileSelector },
   inheritAttrs: false,
-
   props: {
     name: {
       type: String,
@@ -56,15 +58,11 @@ export default {
       default: '',
     },
   },
-
-  emits: ['change'],
-
   data() {
     return {
       dropping: false,
     };
   },
-
   methods: {
     drop(event) {
       this.$refs.fileSelector.dropFiles(event);
@@ -77,7 +75,7 @@ export default {
     },
 
     dragleave() {
-      this.$nextTick(() => (this.dropping = false));
+      this.$nextTick(() => this.dropping = false);
     },
   },
 };
@@ -86,7 +84,6 @@ export default {
 <style lang="scss" scoped>
 .drag-zone {
   position: relative;
-  width: 100%;
   border-radius: 10px;
   border: 3px dashed;
 
@@ -98,45 +95,38 @@ export default {
     width: 100%;
     height: 100%;
     z-index: 1;
-    opacity: 0.4;
+    opacity: .4;
 
-    .theme--light &,
-    .v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) & {
+    .theme--light & {
       background: var(--v-application-background-darken2);
     }
 
-    .theme--dark &,
-    .v-theme--dark & {
+    .theme--dark & {
       background: var(--v-application-background-lighten3);
     }
   }
 
-  .theme--light &,
-  .v-theme--canopsis:not(:where(.v-theme--dark, .v-theme--dark *)) & {
+  .theme--light & {
     border-color: var(--v-application-background-darken2);
 
-    &,
-    :deep(.v-icon) {
+    &, & ::v-deep .v-icon {
       color: var(--v-application-background-darken2);
     }
   }
 
-  .theme--dark &,
-  .v-theme--dark & {
+  .theme--dark & {
     border-color: var(--v-application-background-lighten3);
 
-    &,
-    :deep(.v-icon) {
+    &, & ::v-deep .v-icon {
       color: var(--v-application-background-lighten4);
     }
   }
 
   &--has-errors {
-    border-color: rgb(var(--v-theme-error)) !important;
+    border-color: var(--v-error-base) !important;
 
-    &,
-    :deep(.v-icon) {
-      color: rgb(var(--v-theme-error)) !important;
+    & ::v-deep .v-icon {
+      color: var(--v-error-base) !important;
     }
   }
 }

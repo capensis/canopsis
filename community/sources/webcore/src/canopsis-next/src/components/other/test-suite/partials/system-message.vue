@@ -1,6 +1,6 @@
 <template>
   <div class="system-message">
-    <c-layout align="center">
+    <v-layout align-center>
       <span class="mr-1">
         <slot name="label">
           {{ label }}
@@ -17,7 +17,7 @@
         :name="fileName"
         type="txt"
       />
-    </c-layout>
+    </v-layout>
     <pre class="pre-wrap system-message__text">
       <slot>{{ value }}</slot>
     </pre>

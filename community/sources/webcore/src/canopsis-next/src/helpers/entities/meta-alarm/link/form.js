@@ -1,8 +1,5 @@
+import { metaAlarmRuleInfosItemToForm, metaAlarmRuleTagsToForm } from '@/helpers/entities/meta-alarm/rule/form';
 import { removeKeyFromEntities } from '@/helpers/array';
-import {
-  metaAlarmRuleInfosItemToForm,
-  metaAlarmRuleTagsToForm,
-} from '@/helpers/entities/meta-alarm/rule/form';
 
 /**
  * @typedef {Object} MetaAlarmLink
@@ -63,10 +60,10 @@ export const formToMetaAlarmLinkRequest = ({ infos, metaAlarm, ...form } = {}) =
     infos: removeKeyFromEntities(infos),
   };
 
-  if (metaAlarm?._id && !metaAlarm.noData) {
+  if (metaAlarm?._id) {
     result.id = metaAlarm._id;
   } else {
-    result.name = metaAlarm?._id ?? metaAlarm;
+    result.name = metaAlarm;
   }
 
   return result;

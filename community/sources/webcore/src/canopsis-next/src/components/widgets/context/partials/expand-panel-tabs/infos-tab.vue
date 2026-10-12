@@ -1,17 +1,17 @@
 <template>
-  <c-layout column>
-    <c-layout wrap>
-      <v-col cols="4" class="pa-0">
+  <v-layout column>
+    <v-layout wrap>
+      <v-flex xs4>
         <c-search-field v-model="searchingText" />
-      </v-col>
-    </c-layout>
+      </v-flex>
+    </v-layout>
     <v-data-table
       :items="items"
       :headers="headers"
       :search="searchingText"
-      item-value="name"
+      item-key="name"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -21,7 +21,6 @@ import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 export default {
   mixins: [widgetColumnsFiltersMixin],
-
   props: {
     infos: {
       type: Object,
@@ -32,36 +31,31 @@ export default {
       default: () => [],
     },
   },
-
   data() {
     return {
       searchingText: '',
     };
   },
-
   computed: {
     headers() {
       return [
         {
-          title: this.$t('common.name'),
-          key: 'name',
+          text: this.$t('common.name'),
           value: 'name',
         },
         {
-          title: this.$t('common.description'),
-          key: 'description',
+          text: this.$t('common.description'),
           value: 'description',
         },
         {
-          title: this.$t('common.value'),
-          key: 'value',
+          text: this.$t('common.value'),
           value: 'value',
         },
       ];
     },
 
     items() {
-      return Object.entries(this.infos ?? {}).map(([infoKey, info = {}]) => {
+      return Object.entries(this.infos).map(([infoKey, info = {}]) => {
         const valueColumnFilter = this.columnsFiltersMap[`${INFOS_COLUMN_PREFIX}.${infoKey}.value`] ?? String;
 
         return {

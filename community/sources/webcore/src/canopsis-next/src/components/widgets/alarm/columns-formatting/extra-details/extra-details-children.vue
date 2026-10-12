@@ -1,18 +1,19 @@
 <template>
   <div>
-    <c-tooltip :content="tooltipContent" html top>
-      <template #activator="{ props: activatorProps }">
-        <c-alarm-extra-details-chip
-          v-bind="activatorProps"
-          icon="center_focus_strong"
-          theme-color="children"
-        />
+    <c-simple-tooltip
+      :content="tooltipContent"
+      top
+    >
+      <template #activator="{ on }">
+        <c-alarm-extra-details-chip :color="color" icon="center_focus_strong" v-on="on" />
       </template>
-    </c-tooltip>
+    </c-simple-tooltip>
   </div>
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 import { useExtraDetailsChildrenTooltip } from '../../hooks/extra-details-tooltips';
 
 export default {
@@ -34,12 +35,14 @@ export default {
       default: 0,
     },
   },
-
   setup(props) {
     const { tooltipContent } = useExtraDetailsChildrenTooltip(props);
 
+    const color = COLORS.alarmExtraDetails.children;
+
     return {
       tooltipContent,
+      color,
     };
   },
 };

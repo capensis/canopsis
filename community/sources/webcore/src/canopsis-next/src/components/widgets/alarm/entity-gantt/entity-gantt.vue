@@ -1,33 +1,32 @@
 <template>
-  <c-layout class="position-relative" justify="center">
+  <v-layout justify-center>
     <c-progress-overlay :pending="pending" />
     <junit-gantt-chart
       :items="ganttIntervals"
-      :total-items="totalItems"
-      :query="query"
+      :total-items="meta.total_count"
+      :query.sync="query"
       :width="840"
-      @update:query="updateQuery"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useTestSuite } from '@/hooks/store/modules/test-suite';
+import { PAGINATION_LIMIT } from '@/config';
 
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
+const { mapActions } = createNamespacedHelpers('testSuite/entityGantt');
+
 export default {
   components: { JunitGanttChart },
-
   props: {
     alarm: {
       type: Object,
       required: true,
     },
   },
-
   data() {
     return {
       pending: false,
@@ -39,17 +38,6 @@ export default {
       },
     };
   },
-
-  computed: {
-    entityId() {
-      return this.alarm.entity?._id;
-    },
-
-    totalItems() {
-      return this.meta.total_count ?? 0;
-    },
-  },
-
   watch: {
     query: {
       deep: true,
@@ -59,39 +47,26 @@ export default {
       },
     },
   },
-
   methods: {
-    fetchEntityGanttIntervalsWithoutStore(params) {
-      const { fetchTestSuiteEntityGanttIntervalsWithoutStore } = useTestSuite();
-
-      return fetchTestSuiteEntityGanttIntervalsWithoutStore(params);
-    },
-
-    updateQuery(query) {
-      this.query = query;
-    },
+    ...mapActions({
+      fetchEntityGanttIntervalsWithoutStore: 'fetchItemGanttIntervalsWithoutStore',
+    }),
 
     async fetchList() {
-      if (!this.entityId) {
-        this.ganttIntervals = [];
-        this.meta = {};
-
-        return;
-      }
-
       try {
         this.pending = true;
 
         const { page, itemsPerPage: limit } = this.query;
         const { data, meta } = await this.fetchEntityGanttIntervalsWithoutStore({
-          id: this.entityId,
+          id: this.alarm.entity._id,
           params: { page, limit },
         });
 
-        this.ganttIntervals = data ?? [];
-        this.meta = meta ?? {};
+        this.ganttIntervals = data;
+        this.meta = meta;
       } catch (err) {
         console.error(err);
+
         this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
       } finally {
         this.pending = false;

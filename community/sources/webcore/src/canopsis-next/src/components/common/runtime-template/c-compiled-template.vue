@@ -1,16 +1,19 @@
 <template>
-  <c-runtime-template v-bind="$attrs" :template="compiledTemplate" :parent="$parent" />
+  <c-runtime-template
+    v-bind="$attrs"
+    :template="compiledTemplate"
+    :parent="$parent"
+    v-on="$listeners"
+  />
 </template>
 
 <script>
+import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
 import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars';
-import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 
 export default {
   inject: ['$system'],
-
   inheritAttrs: false,
-
   props: {
     template: {
       type: String,
@@ -37,43 +40,32 @@ export default {
       required: false,
     },
   },
-
   data() {
     return {
       compiledTemplate: '',
     };
   },
-
   watch: {
     template: 'compileTemplate',
-
     context: {
       deep: true,
       handler: 'compileTemplate',
     },
-
     parentElement: 'compileTemplate',
     sanitizeOptions: 'compileTemplate',
     linkifyOptions: 'compileTemplate',
-
-    '$system.theme': {
-      deep: true,
-      handler: 'compileTemplate',
-    },
-
-    '$system.dark': 'compileTemplate',
+    '$system.theme': 'compileTemplate',
   },
-
   created() {
     this.compileTemplate();
   },
-
   methods: {
     async compileTemplate() {
       try {
         const context = {
           theme: {
             ...this.$system.theme,
+
             dark: this.$system.dark,
           },
 
@@ -84,11 +76,14 @@ export default {
           ? await runTemplate(this.templateId, context)
           : await compile(this.template, context);
 
-        const html = sanitizeHtml(
-          linkifyHtml(compiledTemplate, this.linkifyOptions),
-          this.sanitizeOptions,
-        );
-        this.compiledTemplate = `<${this.parentElement}>${html}</${this.parentElement}>`;
+        this.compiledTemplate = `<${this.parentElement}>${
+          normalizeHtml(
+            sanitizeHtml(
+              linkifyHtml(compiledTemplate, this.linkifyOptions),
+              this.sanitizeOptions,
+            ),
+          )
+        }</${this.parentElement}>`;
       } catch (err) {
         console.error(err);
 

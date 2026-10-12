@@ -33,20 +33,17 @@ export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => {
 
   const defaultAlarms = alarmsInfos.length === 1 ? alarmsInfos[0].alarms : [];
 
-  return ticketIds.reduce(
-    (acc, ticketId) => {
-      acc.alarms_by_tickets[ticketId] = [...defaultAlarms];
-      acc.comments_by_tickets[ticketId] = '';
-      acc.ticket_resources_by_tickets[ticketId] = false;
+  return ticketIds.reduce((acc, ticketId) => {
+    acc.alarms_by_tickets[ticketId] = [...defaultAlarms];
+    acc.comments_by_tickets[ticketId] = '';
+    acc.ticket_resources_by_tickets[ticketId] = false;
 
-      return acc;
-    },
-    {
-      alarms_by_tickets: {},
-      comments_by_tickets: {},
-      ticket_resources_by_tickets: {},
-    },
-  );
+    return acc;
+  }, {
+    alarms_by_tickets: {},
+    comments_by_tickets: {},
+    ticket_resources_by_tickets: {},
+  });
 };
 
 /**
@@ -56,8 +53,8 @@ export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => {
  * @param {boolean} singleMode
  * @return {DeclareTicketEvent[]}
  */
-export const formToDeclareTicketEvents = (form, singleMode) =>
-  Object.entries(form.alarms_by_tickets).reduce((acc, [ticketId, alarms]) => {
+export const formToDeclareTicketEvents = (form, singleMode) => Object.entries(form.alarms_by_tickets)
+  .reduce((acc, [ticketId, alarms]) => {
     if (alarms.length) {
       const event = {
         _id: ticketId,

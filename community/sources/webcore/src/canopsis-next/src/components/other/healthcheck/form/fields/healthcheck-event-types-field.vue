@@ -1,27 +1,34 @@
 <template>
-  <c-autocomplete
-    :model-value="value"
-    :items="types"
-    :label="$t('common.eventType')"
+  <c-event-type-field
+    :value="value"
+    :types="types"
     :placeholder="!value.length ? $t('common.all') : ''"
     :persistent-placeholder="!value.length"
-    :show-count="showCount"
     class="healthcheck-event-types-field"
-    item-title="text"
-    item-value="value"
-    density="compact"
     multiple
     clearable
-    chips
-    closable-chips
-    hide-details
-    @update:model-value="$emit('input', $event)"
-  />
+    @input="$emit('input', $event)"
+  >
+    <template #selection="{ item, index, parent }">
+      <v-chip
+        v-if="index < showCount"
+        small
+        close
+        @click:close="parent.onChipInput(item)"
+      >
+        <span class="text-truncate">
+          {{ item }}
+        </span>
+      </v-chip>
+      <span v-else-if="index === showCount">
+        +{{ value.length - showCount }} {{ $t('common.more') }}
+      </span>
+      <span v-else />
+    </template>
+  </c-event-type-field>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { HEALTHCHECK_EVENT_TYPES } from '@/constants';
 
 export default {
@@ -35,14 +42,11 @@ export default {
       default: 2,
     },
   },
-
-  emits: ['input'],
-
   setup() {
-    const types = computed(() => Object.values(HEALTHCHECK_EVENT_TYPES).map(value => ({
+    const types = Object.values(HEALTHCHECK_EVENT_TYPES).map(value => ({
       value,
       text: value,
-    })));
+    }));
 
     return {
       types,
@@ -54,8 +58,13 @@ export default {
 <style lang="scss">
 .healthcheck-event-types-field {
   & ::placeholder {
-    color: currentColor !important;
-    opacity: 1;
+    .theme--dark & {
+      color: var(--v-text-dark-primary) !important;
+    }
+
+    .theme--light & {
+      color: var(--v-text-light-primary) !important;
+    }
   }
 }
 </style>

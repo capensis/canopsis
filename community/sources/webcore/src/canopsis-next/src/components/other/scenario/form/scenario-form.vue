@@ -1,27 +1,26 @@
 <template>
-  <c-layout gap="2" column>
-    <c-enabled-field v-model="enabledField" with-background />
-
+  <v-layout class="gap-2" column>
+    <c-enabled-field v-field="form.enabled" with-background />
     <c-form-general-patterns-tabs
-      :form="formValues"
+      v-field="form"
       :rule-id="ruleId"
-      :type="testType"
-      :patterns-label="t('common.actionsLabel')"
+      :type="type"
+      :patterns-label="$t('common.actionsLabel')"
       :disabled-test-query-tooltip="disabledTestQueryTooltip"
     >
       <template #general="{ setRef }">
-        <scenario-general-form :ref="setRef" />
+        <scenario-general-form v-field="form" :ref="setRef" />
       </template>
 
       <template #patterns="{ setRef, templateVars }">
-        <scenario-actions-form :ref="setRef" :template-vars="templateVars" />
+        <scenario-actions-form v-field="form.actions" :ref="setRef" :template-vars="templateVars" />
       </template>
 
-      <template #test-query="{ setRef }">
-        <scenario-test-query :ref="setRef" :form="formValues" />
+      <template #test-query>
+        <scenario-test-query :form="form" />
       </template>
     </c-form-general-patterns-tabs>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -31,42 +30,46 @@ import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { isWebhookActionType } from '@/helpers/entities/action/form';
 
-import { useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
 
 import ScenarioTestQuery from '@/components/other/scenario/partials/scenario-test-query.vue';
 
-import ScenarioActionsForm from './scenario-actions-form.vue';
 import ScenarioGeneralForm from './scenario-general-form.vue';
+import ScenarioActionsForm from './scenario-actions-form.vue';
 
 export default {
   components: {
-    ScenarioActionsForm,
     ScenarioGeneralForm,
+    ScenarioActionsForm,
     ScenarioTestQuery,
   },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     ruleId: {
       type: String,
-      required: false,
+      default: undefined,
     },
   },
-
-  setup() {
+  setup(props) {
     const { t } = useI18n();
-    const form = useFormContext();
-    const enabledField = form.model('enabled');
-    const hasWebhookAction = computed(() => form.values.value.actions?.some(action => isWebhookActionType(action.type)),
-    );
-    const disabledTestQueryTooltip = computed(() => hasWebhookAction.value ? '' : t('scenario.errors.testQueryRequireSteps'),
-    );
+
+    const type = TEMPLATE_TESTING_TEST_TYPES.scenario;
+
+    const hasWebhookAction = computed(() => (
+      props.form.actions.some(({ type: actionType }) => isWebhookActionType(actionType))
+    ));
+
+    const disabledTestQueryTooltip = computed(() => (hasWebhookAction.value ? '' : t('scenario.errors.testQueryRequireSteps')));
 
     return {
-      t,
-      formValues: form.values,
-      enabledField,
-      testType: TEMPLATE_TESTING_TEST_TYPES.scenario,
+      type,
       disabledTestQueryTooltip,
     };
   },

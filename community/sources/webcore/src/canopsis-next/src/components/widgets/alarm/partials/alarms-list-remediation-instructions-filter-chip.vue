@@ -1,8 +1,7 @@
 <template>
   <v-chip
-    :closable="chip.closable"
-    size="small"
-    @click:close="chip.close"
+    v-bind="chip.bind"
+    v-on="chip.on"
   >
     <v-progress-circular
       v-if="instructionsPending && chip.hasPending"
@@ -23,16 +22,20 @@ import { REMEDIATION_INSTRUCTION_FILTER_FIELDS } from '@/constants';
 
 import { getSelectionText } from '@/helpers/vuetify';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
+  model: {
+    prop: 'filter',
+    event: 'input',
+  },
   props: {
     field: {
       type: String,
       default: '',
     },
-    modelValue: {
+    filter: {
       type: Object,
       default: () => ({}),
     },
@@ -45,9 +48,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:modelValue'],
-
   setup(props, { emit }) {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
@@ -60,54 +60,50 @@ export default {
     /**
      * Clears instruction_type, instruction_statuses, and instruction_ids from the filter.
      */
-    const clearType = () => updateModel(omit(props.modelValue, ['instruction_type', 'instruction_statuses', 'instruction_ids']));
+    const clearType = () => updateModel(omit(props.filter, ['instruction_type', 'instruction_statuses', 'instruction_ids']));
 
     /**
      * Clears instruction_statuses from the filter.
      */
-    const clearStatuses = () => updateModel(omit(props.modelValue, ['instruction_statuses']));
+    const clearStatuses = () => updateModel(omit(props.filter, ['instruction_statuses']));
 
     /**
      * Clears instruction_ids from the filter.
      */
-    const clearIds = () => updateModel(omit(props.modelValue, ['instruction_ids']));
+    const clearIds = () => updateModel(omit(props.filter, ['instruction_ids']));
 
     const chip = computed(() => {
       switch (props.field) {
         case REMEDIATION_INSTRUCTION_FILTER_FIELDS.instructionFilterType:
           return {
-            closable: true,
-            close: clearFilterType,
-            text: t(`alarm.instructionsFilter.filters.${props.modelValue.instruction_filter_type}`),
+            bind: { close: true },
+            on: { 'click:close': clearFilterType },
+            text: t(`alarm.instructionsFilter.filters.${props.filter.instruction_filter_type}`),
           };
 
         case REMEDIATION_INSTRUCTION_FILTER_FIELDS.instructionType:
           return {
-            closable: true,
-            close: clearType,
-            text: t(`remediation.instruction.types.${props.modelValue.instruction_type}`),
+            bind: { close: true },
+            on: { 'click:close': clearType },
+            text: t(`remediation.instruction.types.${props.filter.instruction_type}`),
           };
 
         case REMEDIATION_INSTRUCTION_FILTER_FIELDS.instructionStatuses:
           return {
-            closable: true,
-            close: clearStatuses,
+            bind: { close: true },
+            on: { 'click:close': clearStatuses },
             text: t('alarm.instructionsFilter.statusSelector', {
-              statuses: props.modelValue.instruction_statuses
-                .map(status => t(`alarm.instructionsFilter.statuses.${status}`))
-                .join(', '),
+              statuses: props.filter.instruction_statuses.map(status => t(`alarm.instructionsFilter.statuses.${status}`)).join(', '),
             }),
           };
 
         case REMEDIATION_INSTRUCTION_FILTER_FIELDS.instructionIds:
           return {
             hasPending: true,
-            closable: true,
-            close: clearIds,
+            bind: { close: true },
+            on: { 'click:close': clearIds },
             text: t('alarm.instructionsFilter.nameSelector', {
-              names: props.modelValue.instruction_ids
-                .map(id => getSelectionText(props.instructions, id, '_id', 'name'))
-                .join(', '),
+              names: props.filter.instruction_ids.map(id => getSelectionText(props.instructions, id, '_id', 'name')).join(', '),
             }),
           };
 

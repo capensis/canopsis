@@ -1,28 +1,34 @@
 <template>
-  <v-row class="request-url-field" align="start">
-    <v-col class="request-url-field__column" cols="6">
-      <c-select
-        :model-value="method"
+  <v-layout
+    class="gap-2"
+    justify-space-between
+    align-start
+  >
+    <v-flex xs6>
+      <v-select
+        v-field="request.method"
+        v-validate="'required'"
         :items="availableMethods"
         :label="methodLabel || $t('common.method')"
+        :error-messages="errors.collect(methodFieldName)"
         :name="methodFieldName"
         :disabled="disabled"
-        required
-        @update:model-value="$emit('update:method', $event)"
       />
-    </v-col>
-
-    <v-col class="request-url-field__column" cols="6">
+    </v-flex>
+    <v-flex xs6>
       <c-payload-text-field
-        :value="url"
+        v-field="request.url"
         :label="urlLabel || $t('common.url')"
         :name="urlFieldName"
         :variables="urlVariables"
         :disabled="disabled"
+        :error-messages="errors.collect(urlFieldName)"
         required
-        @update:value="$emit('update:url', $event)"
       >
-        <template v-if="helpText" #append="">
+        <template
+          v-if="helpText"
+          #append=""
+        >
           <c-help-icon
             :text="helpText"
             icon="help"
@@ -31,8 +37,8 @@
           />
         </template>
       </c-payload-text-field>
-    </v-col>
-  </v-row>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -41,15 +47,15 @@ import { computed } from 'vue';
 import { REQUEST_METHODS } from '@/constants';
 
 export default {
-  emits: ['update:method', 'update:url'],
+  inject: ['$validator'],
+  model: {
+    prop: 'request',
+    event: 'input',
+  },
   props: {
-    method: {
-      type: String,
-      required: false,
-    },
-    url: {
-      type: String,
-      required: false,
+    request: {
+      type: Object,
+      required: true,
     },
     methodLabel: {
       type: String,
@@ -76,6 +82,7 @@ export default {
       default: () => [],
     },
   },
+
   setup(props) {
     const availableMethods = Object.values(REQUEST_METHODS);
     const methodFieldName = computed(() => `${props.name}.method`);

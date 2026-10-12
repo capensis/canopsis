@@ -1,50 +1,43 @@
 <template>
-  <div class="pattern-rules-field">
-    <v-row
+  <v-layout column>
+    <v-layout
       v-for="(rule, index) in rules"
       :key="rule.key"
-      align="center"
-      class="pattern-rules-field__row my-0"
-      density="compact"
+      justify-space-between
+      align-center
     >
-      <v-col class="pattern-rules-field__rule py-0">
+      <v-flex>
         <pattern-rule-field
           v-bind="getRuleProps(rule)"
-          :key="`${rule.key}-${rule.attribute}`"
           :rule="rule"
           :name="rule.key"
           :attributes="attributes"
           :disabled-field="rule.disabled?.field"
           :disabled-operator="rule.disabled?.operator"
-          @update:rule="updateRule(index, $event)"
+          @input="updateRule(index, $event)"
         />
-      </v-col>
-      <v-col class="pattern-rules-field__action py-0">
-        <c-action-btn
-          :tooltip="$t('pattern.removeRule')"
-          :disabled="readonly || disabled || rule.disabled?.remove"
-          type="delete"
-          @click="removeItemFromArray(index)"
-        />
-      </v-col>
-    </v-row>
+      </v-flex>
+      <c-action-btn
+        :tooltip="$t('pattern.removeRule')"
+        :disabled="readonly || disabled || rule.disabled?.remove"
+        type="delete"
+        @click="removeItemFromArray(index)"
+      />
+    </v-layout>
 
     <c-btn-with-error
       v-if="!readonly"
       :error="hasRulesErrors ? $t('pattern.errors.existExcluded') : ''"
       :disabled="disabled"
-      class="align-self-start"
-      variant="outlined"
+      outlined
       @click="addFilterRule"
     >
       {{ $t('pattern.addRule') }}
     </c-btn-with-error>
-  </div>
+  </v-layout>
 </template>
 
 <script>
-import { computed, nextTick, toRef, watch } from 'vue';
-
 import {
   patternRuleToForm,
   convertValueByOperator,
@@ -52,14 +45,18 @@ import {
   getOperatorsByRule,
 } from '@/helpers/entities/pattern/form';
 
-import { useField } from '@/hooks/form';
-import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { formArrayMixin } from '@/mixins/form';
 
 import PatternRuleField from './pattern-rule-field.vue';
 
 export default {
-  emits: ['update:rules'],
+  inject: ['$validator'],
   components: { PatternRuleField },
+  mixins: [formArrayMixin],
+  model: {
+    prop: 'rules',
+    event: 'input',
+  },
   props: {
     rules: {
       type: Array,
@@ -82,55 +79,67 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const { addItemIntoArray, updateItemInArray, removeItemFromArray } = useArrayModelField(
-      props,
-      emit,
-    );
-    const fieldName = toRef(props, 'name');
-    const enabledRulesCount = () => props.rules.filter((rule) => {
-      const attribute = props.attributes.find(({ value }) => value === rule.attribute);
-
-      return !attribute?.options?.disabled;
-    }).length;
-    const { errorMessage, validate } = useField(
-      fieldName,
-      () => (enabledRulesCount() ? true : 'Required'),
-      {
-        initialValue: enabledRulesCount(),
-        validateOnValueUpdate: false,
-      },
-    );
-
-    const rulesMap = computed(() =>
-      props.attributes.reduce((acc, { value, options = {} }) => {
+  computed: {
+    rulesMap() {
+      return this.attributes.reduce((acc, { value, options = {} }) => {
         acc[value] = options;
 
         return acc;
-      }, {}));
+      }, {});
+    },
 
-    const hasRulesErrors = computed(() => !!errorMessage.value);
+    hasRulesErrors() {
+      return this.errors.has(this.name);
+    },
+  },
+  created() {
+    this.attachMinValueRule();
+  },
+  beforeDestroy() {
+    this.detachMinValueRule();
+  },
+  methods: {
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: {
+          is_not: 0,
+        },
+        getter: () => {
+          const rules = this.rules.filter((rule) => {
+            const { disabled } = this.getOptionsByRule(rule);
 
-    const getOptionsByRule = rule => rulesMap.value[rule.attribute] ?? {};
+            return !disabled;
+          });
 
-    const getRuleProps = (rule) => {
-      const {
-        operators,
-        type,
-        disabled,
-        ...ruleProps
-      } = getOptionsByRule(rule);
+          return rules.length;
+        },
+        context: () => this,
+        vm: this,
+      });
+    },
+
+    detachMinValueRule() {
+      this.$validator.detach(this.name);
+    },
+
+    getOptionsByRule(rule) {
+      return this.rulesMap[rule.attribute] ?? {};
+    },
+
+    getRuleProps(rule) {
+      const { operators, type, disabled, ...props } = this.getOptionsByRule(rule);
 
       return {
-        ...ruleProps,
-        disabled: disabled || props.readonly || props.disabled,
+        ...props,
+        disabled: disabled || this.readonly || this.disabled,
         type,
         operators: operators ?? getOperatorsByRule(rule, type),
       };
-    };
+    },
 
-    const getUpdatedRule = (rule, newRule) => {
-      const { defaultValue, operators } = getRuleProps(newRule);
+    getUpdatedRule(rule, newRule) {
+      const { defaultValue, operators } = this.getRuleProps(newRule);
 
       const updatedRule = { ...newRule };
 
@@ -140,12 +149,7 @@ export default {
         updatedRule.dictionary = '';
         updatedRule.value = defaultValue;
       } else if (updatedRule.operator !== rule.operator) {
-        updatedRule.value = convertValueByOperator(
-          updatedRule.value,
-          updatedRule.operator,
-          updatedRule,
-          rule,
-        );
+        updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
       }
 
       if (rule.fieldType !== updatedRule.fieldType) {
@@ -161,59 +165,19 @@ export default {
       }
 
       return updatedRule;
-    };
+    },
 
-    const updateRule = (index, newRule) => {
-      const rule = props.rules[index];
+    updateRule(index, newRule) {
+      const rule = this.rules[index];
 
-      updateItemInArray(index, getUpdatedRule(rule, newRule));
-    };
+      this.updateItemInArray(index, this.getUpdatedRule(rule, newRule));
+    },
 
-    const addFilterRule = () => {
-      const [firstAttribute] = props.attributes;
+    addFilterRule() {
+      const [firstAttribute] = this.attributes;
 
-      addItemIntoArray(patternRuleToForm({ field: firstAttribute?.value }));
-    };
-
-    watch(
-      () => props.rules,
-      () => nextTick(validate),
-    );
-
-    return {
-      hasRulesErrors,
-      getRuleProps,
-      updateRule,
-      addFilterRule,
-      removeItemFromArray,
-    };
+      this.addItemIntoArray(patternRuleToForm({ field: firstAttribute?.value }));
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pattern-rules-field {
-  display: flex;
-  flex-direction: column;
-  row-gap: 12px;
-  min-width: 0;
-  width: 100%;
-
-  &__row {
-    width: 100%;
-  }
-
-  &__rule {
-    flex: 1 1 0;
-    max-width: none;
-  }
-
-  &__action {
-    display: flex;
-    flex: 0 0 40px;
-    justify-content: center;
-    max-width: 40px;
-    width: 40px;
-  }
-}
-</style>

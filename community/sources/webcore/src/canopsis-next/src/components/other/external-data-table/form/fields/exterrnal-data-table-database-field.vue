@@ -1,13 +1,10 @@
 <template>
-  <c-select
-    :model-value="value"
+  <c-select-field
+    v-field="value"
     :items="databases"
     :label="$t('common.database')"
     :disabled="disabled"
     :required="required"
-    item-title="text"
-    item-value="value"
-    @update:model-value="updateModel"
   />
 </template>
 <script>
@@ -15,11 +12,9 @@ import { computed } from 'vue';
 
 import { EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
-  emits: ['update:value'],
   props: {
     value: {
       type: Number,
@@ -34,19 +29,15 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
+  setup() {
     const { t } = useI18n();
-    const { updateModel } = useModelField(props, emit);
 
-    const databases = computed(() => Object.values(EXTERNAL_DATA_TABLES_TYPES).map(value => ({
-        value,
-        text: t(`externalData.tableTypes.${value}`),
-      })),
-    );
+    const databases = computed(() => (
+      Object.values(EXTERNAL_DATA_TABLES_TYPES).map(value => ({ value, text: t(`externalData.tableTypes.${value}`) }))
+    ));
 
     return {
       databases,
-      updateModel,
     };
   },
 };

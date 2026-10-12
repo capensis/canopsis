@@ -1,15 +1,15 @@
 import { isEmpty } from 'lodash';
 
-import { removeKeyFromEntities } from '@/helpers/array';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import {
   formToRequest,
   formToRequestAuthToken,
   requestAuthTokenToForm,
   requestToForm,
 } from '@/helpers/entities/shared/request/form';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
+import { removeKeyFromEntities } from '@/helpers/array';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import { uid } from '@/helpers/uid';
 
 /**
@@ -182,8 +182,7 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) =>
-  webhooks.map(declareTicketRuleWebhookToForm);
+export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) => webhooks.map(declareTicketRuleWebhookToForm);
 
 /**
  * Convert declare ticket rule object to form compatible object
@@ -208,7 +207,10 @@ export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
  * @returns {DeclareTicketRuleCheckTicketStatus}
  */
 export const formToDeclareTicketRuleCheckTicketStatus = (form) => {
-  const { enabled, ticket_status: ticketStatus } = form;
+  const {
+    enabled,
+    ticket_status: ticketStatus,
+  } = form;
 
   if (!enabled) {
     return null;
@@ -239,7 +241,13 @@ export const formToDeclareTicketRuleCheckTicketStatus = (form) => {
  * @returns {DeclareTicketRuleWebhookDeclareTicket | null}
  */
 export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
-  const { enabled, mapping, ticket_url: ticketUrl, ticket_id: ticketId, ...rest } = form;
+  const {
+    enabled,
+    mapping,
+    ticket_url: ticketUrl,
+    ticket_id: ticketId,
+    ...rest
+  } = form;
 
   if (!enabled) {
     return null;
@@ -291,8 +299,9 @@ export const formToDeclareTicketRuleWebhook = webhook => ({
  * @param {DeclareTicketRuleWebhooksForm} webhooks
  * @returns {DeclareTicketRuleWebhooks}
  */
-export const formToDeclareTicketRuleWebhooks = (webhooks = []) =>
-  removeKeyFromEntities(webhooks.map(formToDeclareTicketRuleWebhook));
+export const formToDeclareTicketRuleWebhooks = (webhooks = []) => removeKeyFromEntities(
+  webhooks.map(formToDeclareTicketRuleWebhook),
+);
 
 /**
  * Convert form object to declare ticket API compatible object

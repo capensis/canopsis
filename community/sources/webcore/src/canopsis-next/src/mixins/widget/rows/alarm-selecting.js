@@ -1,7 +1,5 @@
 import { throttle } from 'lodash';
 
-import { hasAlarmSelectingModifier, isAlarmSelectingModifierKey } from '@/helpers/event';
-
 export const widgetRowsSelectingAlarmMixin = {
   props: {
     selectable: {
@@ -13,6 +11,7 @@ export const widgetRowsSelectingAlarmMixin = {
     return {
       prevEvent: null,
       selecting: false,
+      selected: [],
     };
   },
 
@@ -20,39 +19,31 @@ export const widgetRowsSelectingAlarmMixin = {
     selectingMousePressed() {
       return this.selecting && !!this.prevEvent;
     },
-
-    wrapperListeners() {
-      return this.selectable ? { mousemove: this.throttledMousemoveHandler } : {};
-    },
   },
 
   created() {
     this.throttledMousemoveHandler = throttle(this.mousemoveHandler, 50);
   },
 
-  mounted() {
+  async mounted() {
     if (this.selectable) {
       window.addEventListener('keydown', this.handleKeyDown);
       window.addEventListener('keyup', this.handleKeyUp);
       window.addEventListener('mousedown', this.mousedownHandler);
       window.addEventListener('mouseup', this.mouseupHandler);
-      window.addEventListener('resize', this.handleSelectingResize);
       window.addEventListener('blur', this.disableSelecting);
     }
   },
-
   updated() {
     if (this.selecting) {
       this.calculateRowsPositions();
     }
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
     window.removeEventListener('mousedown', this.mousedownHandler);
     window.removeEventListener('mouseup', this.mouseupHandler);
-    window.removeEventListener('resize', this.handleSelectingResize);
     window.removeEventListener('blur', this.disableSelecting);
   },
 
@@ -63,13 +54,7 @@ export const widgetRowsSelectingAlarmMixin = {
           return acc;
         }
 
-        const instance = Array.isArray(value) ? value[0] : value;
-
-        if (!instance?.$el) {
-          return acc;
-        }
-
-        const position = instance.$el.getBoundingClientRect();
+        const position = value.$el.getBoundingClientRect();
 
         acc.push({
           position: {
@@ -78,7 +63,7 @@ export const widgetRowsSelectingAlarmMixin = {
             y1: position.y,
             y2: position.y + position.height,
           },
-          alarm: instance.alarm,
+          alarm: value.$options.propsData.alarm,
         });
 
         return acc;
@@ -86,26 +71,21 @@ export const widgetRowsSelectingAlarmMixin = {
     },
 
     getIntersectAlarmsByPosition(newX, newY, prevX, prevY) {
-      return (
-        this.rowsPositions?.reduce((acc, { position, alarm }) => {
-          if (
-            (prevX >= position.x1 &&
-              prevX <= position.x2 &&
-              prevY >= position.y1 &&
-              prevY <= position.y2) ||
-            (newX < position.x1 && prevX < position.x1) ||
-            (newX > position.x2 && prevX > position.x2) ||
-            (newY < position.y1 && prevY < position.y1) ||
-            (newY > position.y2 && prevY > position.y2)
-          ) {
-            return acc;
-          }
-
-          acc.push(alarm);
-
+      return this.rowsPositions?.reduce((acc, { position, alarm }) => {
+        if (
+          (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
+          || (newX < position.x1 && prevX < position.x1)
+          || (newX > position.x2 && prevX > position.x2)
+          || (newY < position.y1 && prevY < position.y1)
+          || (newY > position.y2 && prevY > position.y2)
+        ) {
           return acc;
-        }, []) ?? []
-      );
+        }
+
+        acc.push(alarm);
+
+        return acc;
+      }, []) ?? [];
     },
 
     mousedownHandler(event) {
@@ -117,7 +97,7 @@ export const widgetRowsSelectingAlarmMixin = {
     },
 
     mousemoveHandler(event) {
-      if (!hasAlarmSelectingModifier(event) || event.buttons !== 1 || !this.prevEvent) {
+      if (!event.ctrlKey || !event.buttons || !this.prevEvent) {
         return;
       }
 
@@ -134,32 +114,37 @@ export const widgetRowsSelectingAlarmMixin = {
     },
 
     toggleSelected(alarm) {
-      this.toggleAlarmSelection(alarm, !this.isAlarmSelected(alarm));
+      const index = this.selected.findIndex(({ _id: id }) => id === alarm._id);
+
+      if (index === -1) {
+        this.selected.push(alarm);
+
+        return;
+      }
+
+      this.selected.splice(index, 1);
+    },
+
+    clearSelected() {
+      this.selected = [];
     },
 
     enableSelecting() {
       this.selecting = true;
-      this.calculateRowsPositions();
     },
 
     disableSelecting() {
       this.selecting = false;
     },
 
-    handleSelectingResize() {
-      if (this.selecting) {
-        this.calculateRowsPositions();
-      }
-    },
-
     handleKeyDown({ key }) {
-      if (isAlarmSelectingModifierKey(key)) {
+      if (key === 'Control') {
         this.enableSelecting();
       }
     },
 
     handleKeyUp({ key }) {
-      if (isAlarmSelectingModifierKey(key)) {
+      if (key === 'Control') {
         this.disableSelecting();
       }
     },

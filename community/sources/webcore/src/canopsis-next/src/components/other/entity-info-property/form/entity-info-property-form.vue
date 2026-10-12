@@ -1,40 +1,45 @@
 <template>
-  <c-layout gap="3" column>
+  <v-layout
+    class="gap-3"
+    column
+  >
     <c-entity-info-property-key-field
-      v-model:value="name"
+      :value="form.name"
       :label="$t('entityInfoProperties.infosKey')"
       :disabled="!isNew"
       name="name"
       required
       @update:selected-items="updateSelectedItems"
     />
-
     <c-form-block>
-      <c-form-block-row :label="$t('common.description')" indented>
+      <c-form-block-row :label="$t('common.description')">
         <c-description-field
-          v-model="description"
-          :max-length="FORM_MAX_STRING_LENGTH"
+          v-field="form.description"
+          :max-length="255"
           name="description"
         />
       </c-form-block-row>
-
       <c-form-block-row :label="$t('common.alias')">
-        <c-name-field v-model="alias" :max-length="FORM_MAX_STRING_LENGTH" name="alias" />
+        <c-name-field
+          v-field="form.alias"
+          :max-length="255"
+          name="alias"
+        />
       </c-form-block-row>
-
       <c-form-block-row :label="$t('common.type')">
-        <entity-info-property-type-field v-model:value="type" required />
+        <entity-info-property-type-field
+          v-field="form.type"
+          required
+        />
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { ref } from 'vue';
 
-import { FORM_MAX_STRING_LENGTH } from '@/constants';
-
-import { useFormModels } from '@/hooks/form';
+import { useModelField } from '@/hooks/form';
 
 import EntityInfoPropertyTypeField from './entity-info-property-type-field.vue';
 
@@ -42,21 +47,22 @@ export default {
   components: {
     EntityInfoPropertyTypeField,
   },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     isNew: {
       type: Boolean,
       default: false,
     },
   },
-
-  setup(props) {
-    const { name, description, alias, type } = useFormModels([
-      'name',
-      'description',
-      'alias',
-      'type',
-    ]);
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
 
     const wasInit = ref(props.isNew);
 
@@ -68,27 +74,20 @@ export default {
       }
 
       if (!selectedItems.length) {
-        name.value = '';
+        updateModel({ ...props.form, name: '' });
 
         return;
       }
 
-      const [selectedItem] = selectedItems;
+      updateModel({
+        ...props.form,
 
-      name.value = selectedItem.value;
-
-      if (selectedItem.type !== undefined) {
-        type.value = selectedItem.type;
-      }
+        name: selectedItems[0].value,
+        type: selectedItems[0].type,
+      });
     };
 
     return {
-      name,
-      description,
-      alias,
-      type,
-      FORM_MAX_STRING_LENGTH,
-
       updateSelectedItems,
     };
   },

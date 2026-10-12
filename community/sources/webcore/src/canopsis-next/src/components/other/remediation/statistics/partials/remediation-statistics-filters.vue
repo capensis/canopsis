@@ -1,55 +1,55 @@
 <template>
-  <c-layout class="remediation-statistics-filters my-4" wrap>
+  <v-layout
+    class="remediation-statistics-filters my-4"
+    wrap
+  >
     <c-quick-date-interval-field
-      :interval="modelValue.interval"
+      v-field="query.interval"
       :min="minDate"
-      class="remediation-statistics-filters__interval mr-4"
-      @update:interval="updateField('interval', $event)"
+      class="mr-4"
     />
     <c-sampling-field
-      :value="modelValue.sampling"
+      v-field="query.sampling"
       class="remediation-statistics-filters__sampling mr-4"
-      @update:value="updateField('sampling', $event)"
     />
     <remediation-statistics-show-mode-field
-      :model-value="modelValue.type"
+      v-field="query.type"
       class="remediation-statistics-filters__type mr-4"
-      @update:model-value="updateField('type', $event)"
     />
     <remediation-statistics-instructions-field
-      :model-value="modelValue.instruction"
+      v-field="query.instruction"
       class="remediation-statistics-filters__instruction"
-      @update:model-value="updateField('instruction', $event)"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
-<script setup>
-import RemediationStatisticsInstructionsField from '../form/fields/remediation-statistics-instructions-field.vue';
+<script>
 import RemediationStatisticsShowModeField from '../form/fields/remediation-statistics-show-mode-field.vue';
+import RemediationStatisticsInstructionsField from '../form/fields/remediation-statistics-instructions-field.vue';
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true,
+export default {
+  components: {
+    RemediationStatisticsShowModeField,
+    RemediationStatisticsInstructionsField,
   },
-  minDate: {
-    type: Number,
-    required: false,
+  model: {
+    prop: 'query',
+    event: 'input',
   },
-});
-
-const emit = defineEmits(['update:modelValue']);
-
-const updateField = (field, value) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    [field]: value,
-  });
+  props: {
+    query: {
+      type: Object,
+      required: true,
+    },
+    minDate: {
+      type: Number,
+      required: false,
+    },
+  },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .remediation-statistics-filters {
   &__sampling {
     max-width: 200px;

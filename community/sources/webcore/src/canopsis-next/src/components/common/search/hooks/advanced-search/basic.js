@@ -1,4 +1,14 @@
-import { computed, provide, inject, ref, unref, watch, onMounted } from 'vue';
+import {
+  ref,
+  computed,
+  inject,
+  unref,
+  watch,
+  onBeforeMount,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
+import { Validator } from 'vee-validate';
 
 import {
   ADVANCED_SEARCH_GROUPS,
@@ -20,16 +30,13 @@ import {
 
 import { deepKeyBy } from '@/helpers/array';
 import { getOperatorsByFieldType } from '@/helpers/entities/pattern/form';
-import { getNextForFormItemType } from '@/helpers/search/advanced-search';
 
-import { useField } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useEntity } from '@/hooks/store/modules/entity';
 import { useService } from '@/hooks/store/modules/service';
-
-export const ADVANCED_SEARCH_VALIDATION_CONTEXT = Symbol('advancedSearchValidationContext');
+import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useComponentInstance } from '@/hooks/vue';
 
 /**
  * Hook to manage fetching and processing entity information keys for advanced search.
@@ -45,7 +52,10 @@ export const useEntityInfosKeys = () => {
 
   const entityInfosKeys = ref([]);
   const dynamicInfosKeys = ref([]);
-  const { pending, handler } = usePendingHandler(async () => {
+  const {
+    pending,
+    handler,
+  } = usePendingHandler(async () => {
     const [{ data: entityInfos }, { data: dynamicInfos }] = await Promise.all([
       fetchEntityInfosKeysWithoutStore({ params: { paginate: false } }),
       fetchDynamicInfosKeysWithoutStore({ params: { paginate: false } }),
@@ -66,24 +76,26 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The translated text for the item.
    *   - {string} chipText: The complete chip text including the prefix.
    */
-  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) =>
-    [PATTERN_RULE_INFOS_FIELDS.name, PATTERN_RULE_INFOS_FIELDS.value].map((value) => {
-      const text = t(`common.${value}`);
-      const result = { value, text };
+  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) => [
+    PATTERN_RULE_INFOS_FIELDS.name,
+    PATTERN_RULE_INFOS_FIELDS.value,
+  ].map((value) => {
+    const text = t(`common.${value}`);
+    const result = { value, text };
 
-      if (chipTextPrefix) {
-        result.chipText = `${chipTextPrefix}.${text}`;
-      }
+    if (chipTextPrefix) {
+      result.chipText = `${chipTextPrefix}.${text}`;
+    }
 
-      if (value === PATTERN_RULE_INFOS_FIELDS.name) {
-        result.operators = PATTERN_EXISTS_OPERATORS;
-      } else {
-        result.definedType = definedType;
-        result.inputTypes = inputTypes;
-      }
+    if (value === PATTERN_RULE_INFOS_FIELDS.name) {
+      result.operators = PATTERN_EXISTS_OPERATORS;
+    } else {
+      result.definedType = definedType;
+      result.inputTypes = inputTypes;
+    }
 
-      return result;
-    });
+    return result;
+  });
 
   /**
    * Retrieves items formatted for search configurations, with optional chip text prefix.
@@ -96,35 +108,34 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The text for the item.
    *   - {Array<Object>} items: The default child items for the chip text.
    */
-  const getItems = (chipTextPrefix, keys, fieldTypes) =>
-    keys.map(({ value, type }) => {
-      const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
-      const definedType = ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
+  const getItems = (chipTextPrefix, keys, fieldTypes) => keys.map(({ value, type }) => {
+    const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
+    const definedType = ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
 
-      return {
-        value,
-        chipText,
-        definedType,
-        text: value,
-        items: getDefaultItemChildren(chipText, definedType, fieldTypes),
-      };
-    });
+    return {
+      value,
+      chipText,
+      definedType,
+      text: value,
+      items: getDefaultItemChildren(chipText, definedType, fieldTypes),
+    };
+  });
 
-  const alarmItems = computed(() =>
+  const alarmItems = computed(() => (
     getItems(
       t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.infos]),
       dynamicInfosKeys.value,
       DEFAULT_PATTERN_FIELD_TYPES,
-    ),
-  );
+    )
+  ));
 
-  const entityItems = computed(() =>
+  const entityItems = computed(() => (
     getItems(
       t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.entityInfos]),
       entityInfosKeys.value,
       ENTITY_PATTERN_FIELD_TYPES,
-    ),
-  );
+    )
+  ));
 
   onMounted(handler);
 
@@ -151,10 +162,9 @@ export const useGetEntityOptions = () => {
 
   const getEntityOptions = (type = Object.values(BASIC_ENTITY_TYPES)) => ({
     operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
-    fetchValues: ({ params }) =>
-      fetchContextEntitiesListWithoutStore({
-        params: { ...params, type },
-      }),
+    fetchValues: ({ params }) => fetchContextEntitiesListWithoutStore({
+      params: { ...params, type },
+    }),
     itemText: '_id',
     itemValue: '_id',
   });
@@ -252,10 +262,7 @@ export const useAdvancedSearchGroupedAttributes = ({
       const isDisabled = getDisabled ? getDisabled() : unwrappedDisabled;
 
       result.push(
-        {
-          header: t(`advancedSearch.groups.${headerKey}`),
-          value: t(`advancedSearch.groups.${headerKey}`),
-        },
+        { header: t(`advancedSearch.groups.${headerKey}`), value: t(`advancedSearch.groups.${headerKey}`) },
         ...fields.map(field => prepareFromMap(field, isDisabled, map)).filter(Boolean),
       );
     }
@@ -275,97 +282,44 @@ export const useAdvancedSearchGroupedAttributes = ({
  * @param {Array} options.rules - The array of rules to be validated.
  * @returns {Object} An object containing the `extendValidatorRule` function.
  */
-export const useAdvancedSearchValidator = ({
-  rules,
-  name = 'advancedSearch',
-  disabled = false,
-} = {}) => {
-  const ruleErrors = ref({});
-  const touched = ref(false);
+export const useAdvancedSearchValidator = ({ rules }) => {
+  const instance = useComponentInstance();
 
-  const isFinishedRule = (rule) => {
-    const lastFilledType = rule.filled?.at(-1);
+  /**
+   * Extends the validator with a custom rule named ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME.
+   * This rule is used to validate advanced search criteria based on specific conditions.
+   *
+   * @description
+   * The ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME checks the following conditions:
+   * - If the rule has an attribute and is not finished, it returns false.
+   * - If the rule does not have an attribute but has a union, it checks the last two rules:
+   * - If the last rule does not have an attribute and the second-to-last rule has the same key as the current rule,
+   *   it returns false.
+   * - Otherwise, it returns true.
+   */
+  const extendValidatorRule = () => (
+    instance.$validator.extend(ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME, ({ rule, finished }) => {
+      const unwrappedRules = unref(rules);
 
-    return !getNextForFormItemType(rule, lastFilledType);
-  };
-
-  const getRuleErrors = () => {
-    const unwrappedRules = unref(rules);
-
-    if (unref(disabled)) {
-      return {};
-    }
-
-    return unwrappedRules.reduce((acc, rule, index) => {
-      if (rule.attribute && !isFinishedRule(rule)) {
-        acc[rule.key] = true;
+      if (rule.attribute && !finished) {
+        return false;
       }
 
       if (!rule.attribute && rule.union) {
         const lastRule = unwrappedRules.at(-1);
         const preLastRule = unwrappedRules.at(-2);
 
-        if (!lastRule?.attribute && preLastRule?.key === rule?.key) {
-          acc[rule.key] = true;
-        }
+        return !(!lastRule?.attribute && preLastRule?.key === rule?.key);
       }
 
-      if (!rule.attribute && !rule.union && index !== unwrappedRules.length - 1) {
-        acc[rule.key] = true;
-      }
-
-      return acc;
-    }, {});
-  };
-
-  const validateRules = () => {
-    ruleErrors.value = getRuleErrors();
-
-    return !Object.keys(ruleErrors.value).length || 'Invalid advanced search';
-  };
-
-  const { validate, setValue, resetField } = useField(name, validateRules, {
-    initialValue: unref(rules),
-    validateOnValueUpdate: false,
-  });
-
-  watch(
-    rules,
-    (newRules) => {
-      ruleErrors.value = {};
-      touched.value = false;
-
-      setValue(newRules, false);
-    },
-    { deep: true },
+      return true;
+    })
   );
 
-  const errors = {
-    clear: () => {
-      ruleErrors.value = {};
-      touched.value = false;
-      resetField({ value: unref(rules), errors: [] });
-    },
-    has: key => touched.value && !!ruleErrors.value[key],
-  };
-
-  const validateAll = async () => {
-    touched.value = true;
-    setValue(unref(rules), false);
-
-    const { valid } = await validate();
-
-    return valid;
-  };
-
-  provide(ADVANCED_SEARCH_VALIDATION_CONTEXT, {
-    errors,
-  });
+  onBeforeMount(extendValidatorRule);
 
   return {
-    errors,
-    validateAll,
-    extendValidatorRule: () => {},
+    extendValidatorRule,
   };
 };
 
@@ -406,28 +360,32 @@ export const useAdvancedSearchRuleActiveItems = ({
     let result = getOperatorsByFieldType(unwrappedRule.fieldType);
 
     if (unwrappedRule.fieldType === PATTERN_FIELD_TYPES.string) {
-      result = [...result, PATTERN_OPERATORS.isOneOf, PATTERN_OPERATORS.isNotOneOf];
+      result = [
+        ...result,
+        PATTERN_OPERATORS.isOneOf,
+        PATTERN_OPERATORS.isNotOneOf,
+      ];
     }
 
     return result;
   });
 
-  const preparedOperators = computed(() =>
+  const preparedOperators = computed(() => (
     (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
       text: t(`common.operators.${operator}`),
       value: operator,
-    })),
-  );
+    }))
+  ));
 
   /**
    * INTERVAL ITEMS
    */
-  const preparedIntervalRanges = computed(() =>
+  const preparedIntervalRanges = computed(() => (
     unref(intervalRanges).map(range => ({
       ...range,
       text: t(`quickRanges.types.${range.value}`),
-    })),
-  );
+    }))
+  ));
 
   /**
    * INPUT TYPES ITEMS
@@ -445,31 +403,29 @@ export const useAdvancedSearchRuleActiveItems = ({
   /**
    * UNION ITEMS
    */
-  const preparedUnionItems = computed(() =>
+  const preparedUnionItems = computed(() => (
     Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
       value,
       text: value,
       disabled: value === ADVANCED_SEARCH_UNION_CONDITIONS.or && !unref(allowOr),
-    })),
-  );
+    }))
+  ));
 
   /**
    * BOOLEAN ITEMS
    */
   const preparedBooleanItems = computed(() => [
-    { text: t('common.true'), value: true },
-    { text: t('common.false'), value: false },
+    { text: t('common.true'), value: true }, { text: t('common.false'), value: false },
   ]);
 
   /**
    * VALUE ITEMS
    */
-  const preparedValueItems = computed(
-    () =>
-      currentAttribute.value?.values ??
-      { [isBooleanFieldType.value]: preparedBooleanItems.value }.true ??
-      [],
-  );
+  const preparedValueItems = computed(() => (
+    currentAttribute.value?.values
+      ?? { [isBooleanFieldType.value]: preparedBooleanItems.value }.true
+      ?? []
+  ));
 
   /**
    * ITEMS BY TYPE
@@ -492,15 +448,52 @@ export const useAdvancedSearchRuleActiveItems = ({
 
 /**
  * A Vue composition function that manages the attachment and detachment of validation rules
- * for an advanced search rule.
+ * for an advanced search rule. It uses the injected `$validator` from `vee-validate` to
+ * dynamically attach or detach validation rules based on the `disabled` state.
  *
- * @returns {Object} - An object containing validation error helpers.
+ * @param {Object} options - Options for configuring the validator attachment.
+ * @param {Object} [options.rule = {}] - The rule object to be validated.
+ * @param {boolean} [options.disabled = false] - Determines if the validation should be disabled.
+ * @param {boolean} [options.isFinishedRule = false] - Indicates if the rule is finished, affecting validation logic.
+ * @returns {Object} - An object containing the `validator` instance.
  */
-export const useAttachAdvancedSearchRuleValidator = () => {
-  const context = inject(ADVANCED_SEARCH_VALIDATION_CONTEXT, null);
+export const useAttachAdvancedSearchRuleValidator = ({
+  rule = {},
+  disabled = false,
+  isFinishedRule = false,
+} = {}) => {
+  const validator = inject('$validator', new Validator());
+
+  /**
+   * Attaches a validation rule to the validator instance.
+   * The rule is identified by its key and uses a predefined validation rule name.
+   * The getter function provides the rule and its finished state for validation.
+   */
+  const attachValidationRule = () => validator.attach({
+    name: unref(rule).key,
+    rules: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
+    getter: () => ({ rule: unref(rule), finished: unref(isFinishedRule) }),
+  });
+
+  /**
+   * Detaches a validation rule from the validator instance.
+   * The rule is identified by its key, ensuring it is no longer validated.
+   */
+  const detachValidationRule = () => validator.detach(unref(rule).key);
+
+  watch(() => unref(disabled), (newDisabled) => {
+    if (newDisabled) {
+      detachValidationRule();
+
+      return;
+    }
+
+    attachValidationRule();
+  }, { immediate: true });
+
+  onBeforeUnmount(detachValidationRule);
 
   return {
-    hasError: key => context?.errors.has(key),
-    ruleName: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
+    validator,
   };
 };

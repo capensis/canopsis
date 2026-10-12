@@ -1,25 +1,25 @@
 <template>
-  <c-tooltip location="top">
-    <template #activator="{ props: activatorProps }">
-      <c-layout
-        v-bind="activatorProps"
+  <v-tooltip top>
+    <template #activator="{ on }">
+      <v-layout
         :class="{ 'event-statistics__tooltip--inactive': hasInactivePbehavior }"
         class="event-statistics__tooltip"
-        justify="center"
+        justify-center
+        v-on="on"
       >
-        <span class="mr-1 text-success font-weight-bold">
+        <span class="mr-1 success--text font-weight-bold">
           {{ entity.ok_events }}
         </span>
         <span>/</span>
-        <span class="ml-1 text-error font-weight-bold">
+        <span class="ml-1 error--text font-weight-bold">
           {{ entity.ko_events }}
         </span>
-      </c-layout>
+      </v-layout>
     </template>
     <span class="pre-wrap">
       {{ statisticsMessage }}
     </span>
-  </c-tooltip>
+  </v-tooltip>
 </template>
 
 <script>
@@ -32,7 +32,6 @@ export default {
       required: true,
     },
   },
-
   computed: {
     statisticsMessage() {
       return this.$t('context.eventStatisticsMessage', {

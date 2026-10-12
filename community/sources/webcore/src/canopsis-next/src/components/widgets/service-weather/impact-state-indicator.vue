@@ -1,13 +1,16 @@
 <template>
   <div class="impact-state-indicator">
-    <span class="impact-state-text text-white">
+    <span class="impact-state-text white--text">
       {{ value }}
     </span>
     <div class="pointer-wrapper">
-      <div :style="pointerStyle" class="pointer" />
+      <div
+        :style="pointerStyle"
+        class="pointer"
+      />
       <div class="section-wrapper">
         <div
-          v-for="color in COLORS.impactState"
+          v-for="color in $config.COLORS.impactState"
           :key="color"
           :style="{ backgroundColor: color }"
           class="section"
@@ -18,8 +21,6 @@
 </template>
 
 <script>
-import { COLORS } from '@/config';
-
 /**
  * Half of width of triangle -1px for including sections wrapper border
  *
@@ -34,13 +35,6 @@ export default {
       default: 0,
     },
   },
-
-  data() {
-    return {
-      COLORS,
-    };
-  },
-
   computed: {
     pointerStyle() {
       return { left: `${this.value - POINTER_SHIFT}px` };

@@ -1,18 +1,17 @@
 <template>
-  <c-layout column>
-    <field-title v-model="localForm.title" :required="requiredTitle" autofocus />
+  <v-layout column>
+    <field-title
+      v-field="form.title"
+      :required="requiredTitle"
+      autofocus
+    />
     <field-periodic-refresh
       v-if="withPeriodicRefresh"
-      v-model="localForm.parameters.periodic_refresh"
-    />
-    <field-preset
-      v-if="withPreset"
-      v-model="localForm.parameters"
-      :type="localForm.type"
+      v-field="form.parameters"
     />
     <widget-settings-group :title="$t('settings.chart.metricsDisplay')">
       <field-alarm-metric-presets
-        v-model="localForm.parameters.metrics"
+        v-field="form.parameters.metrics"
         :only-external="onlyExternal"
         with-color
         with-external
@@ -20,64 +19,62 @@
     </widget-settings-group>
     <widget-settings-group :title="$t('settings.advancedSettings')">
       <field-title
-        v-model="localForm.parameters.chart_title"
-        :label="$t('common.header')"
+        v-field="form.parameters.chart_title"
+        :label="$tc('common.header')"
         :placeholder="$t('settings.headerTitle')"
         name="chart_title"
       />
-      <field-quick-date-interval-type
-        v-model="localForm.parameters.default_time_range"
-        :ranges="metricsRanges"
-      />
-      <field-sampling v-model="localForm.parameters.default_sampling" />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" :ranges="metricsRanges" />
+      <field-sampling v-field="form.parameters.default_sampling" />
       <field-filters
         v-if="withFilters"
-        v-model="localForm.parameters.mainFilter"
-        :filters="localForm.filters"
+        v-field="form.parameters.mainFilter"
+        :filters="form.filters"
         addable
         editable
         with-entity
-        @update:filters="localForm.filters = $event"
+        @update:filters="updateFilters"
       />
       <field-switcher
-        v-model="localForm.parameters.comparison"
+        v-field="form.parameters.comparison"
         :title="$t('settings.chart.showComparison')"
       />
     </widget-settings-group>
-    <widget-colors-form v-model="localForm.parameters.colors" />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { METRICS_QUICK_RANGES } from '@/constants';
 
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
-import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import { formMixin } from '@/mixins/form';
 
-import FieldAlarmMetricPresets from './fields/alarm-metric-presets.vue';
-import FieldPreset from './fields/preset.vue';
-import FieldQuickDateIntervalType from './fields/quick-date-interval-type.vue';
-import FieldSampling from './fields/sampling.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
+import FieldAlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';
+import FieldSampling from '@/components/sidebars/chart/form/fields/sampling.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
+import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 
 export default {
   components: {
-    FieldFilters,
-    FieldPeriodicRefresh,
-    FieldSwitcher,
-    FieldTitle,
     WidgetSettingsGroup,
-    FieldAlarmMetricPresets,
-    FieldPreset,
+    FieldTitle,
+    FieldPeriodicRefresh,
     FieldQuickDateIntervalType,
+    FieldAlarmMetricPresets,
     FieldSampling,
-    WidgetColorsForm,
+    FieldFilters,
+    FieldSwitcher,
+  },
+  mixins: [formMixin],
+  model: {
+    prop: 'form',
+    event: 'input',
   },
   props: {
-    modelValue: {
+    form: {
       type: Object,
       required: true,
     },
@@ -86,10 +83,6 @@ export default {
       default: false,
     },
     withFilters: {
-      type: Boolean,
-      default: false,
-    },
-    withPreset: {
       type: Boolean,
       default: false,
     },
@@ -102,26 +95,14 @@ export default {
       default: false,
     },
   },
-  emits: ['update:modelValue'],
   computed: {
-    localForm: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
     metricsRanges() {
       return METRICS_QUICK_RANGES;
     },
   },
   methods: {
-    updateParameter(name, value) {
-      this.$emit('update:modelValue', {
-        ...this.modelValue,
-        parameters: { ...this.modelValue.parameters, [name]: value },
-      });
+    updateFilters(filters) {
+      this.updateField('filters', filters);
     },
   },
 };

@@ -3,7 +3,7 @@ import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/co
 export default {
   common: {
     titleButtons: {
-      minimizeTooltip: 'Minimize',
+      minimizeTooltip: 'You already have minimized modal window',
     },
   },
   contextInfos: {
@@ -14,7 +14,7 @@ export default {
       title: 'Create an entity',
     },
     edit: {
-      title: 'Edit an entity',
+      title: 'Edit entity',
     },
     duplicate: {
       title: 'Duplicate an entity',
@@ -27,13 +27,13 @@ export default {
   },
   createService: {
     create: {
-      title: 'Create a service',
+      title: 'Create service',
     },
     edit: {
-      title: 'Edit a service',
+      title: 'Edit service',
     },
     duplicate: {
-      title: 'Duplicate a service',
+      title: 'Duplicate service',
     },
     success: {
       create: 'Service successfully created!',
@@ -43,7 +43,7 @@ export default {
   },
   createEntityInfo: {
     create: {
-      title: 'Add an information',
+      title: 'Add infos',
     },
     edit: {
       title: 'Edit an information',
@@ -75,8 +75,7 @@ export default {
     },
     duplicate: {
       title: 'Duplicate the view - {viewTitle}',
-      infoMessage:
-        'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
+      infoMessage: 'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
     },
     success: {
       create: 'New view created!',
@@ -114,7 +113,7 @@ export default {
   createChangeStateEvent: {
     title: 'Change severity',
     states: {
-      ok: 'OK',
+      ok: 'Ok',
       minor: 'Minor',
       major: 'Major',
       critical: 'Critical',
@@ -175,17 +174,10 @@ export default {
       create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
       remove: 'Pbehavior successfully removed! You may need to wait 60 sec to see it in interface',
     },
-    cancelConfirmation:
-      'Some data has been modified and will not be saved. Do you really want to close this menu?',
+    cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
   },
   createPause: {
     title: 'Create Pause event',
-  },
-  createEntityPauseEvent: {
-    title: 'Pause entity',
-  },
-  createEntityResumeEvent: {
-    title: 'Unpause entity',
   },
   createAckRemove: {
     title: 'Remove ack',
@@ -250,12 +242,6 @@ export default {
   textEditor: {
     title: 'Text editor',
   },
-  textEditorPaste: {
-    title: 'Paste as HTML',
-    text: 'The pasted content looks like HTML. How do you want to insert it?',
-    pasteAsHtml: 'Paste as HTML',
-    pasteAsPlainText: 'Paste as plain text',
-  },
   createWidget: {
     title: 'Select a widget',
     types: {
@@ -276,9 +262,6 @@ export default {
       },
       [WIDGET_TYPES.counter]: {
         title: 'Counter',
-      },
-      [WIDGET_TYPES.clock]: {
-        title: 'Clock',
       },
       [WIDGET_TYPES.testingWeather]: {
         title: 'Junit scenarios',
@@ -463,8 +446,7 @@ export default {
         title: 'Patterns',
         alarmPatterns: 'Alarm patterns',
         entityPatterns: 'Entity patterns',
-        validationError:
-          'At least one pattern must be set. Please add an alarm pattern and/or an entity pattern',
+        validationError: 'At least one pattern must be set. Please add an alarm pattern and/or an entity pattern',
       },
     },
   },
@@ -567,7 +549,6 @@ export default {
     edit: {
       title: 'Edit type',
     },
-    iconNameHint: 'Enter a name of an icon from material.io',
     iconNamePlaceholder: 'Icon name in material.io',
     errors: {
       iconName: 'The name is invalid',
@@ -607,10 +588,10 @@ export default {
   },
   createPbehaviorException: {
     create: {
-      title: 'Create date of exception',
+      title: 'Create exception dates',
     },
     edit: {
-      title: 'Edit date of exception',
+      title: 'Edit exception dates',
     },
     addDate: 'Add date',
     fields: {
@@ -667,10 +648,6 @@ export default {
     fields: {
       host: 'Host',
       token: 'Authorization token',
-      enableRefreshToken: 'Enable refresh token',
-      refreshToken: 'Refresh token',
-      clientId: 'Client id',
-      clientSecret: 'Client secret',
     },
   },
   createRemediationJob: {
@@ -843,54 +820,47 @@ export default {
   },
   webSocketError: {
     title: 'WebSocket connection error',
-    text:
-      '<p>Websockets are unavailable, so the following functionalities are restricted:</p>' +
-      '<p>' +
-      '<ul>' +
-      '<li>Healthcheck header</li>' +
-      '<li>Healthcheck network graph</li>' +
-      '<li>Active broadcast messages</li>' +
-      '<li>Active users sessions</li>' +
-      '<li>Remediation execution</li>' +
-      '</ul>' +
-      '</p>' +
-      '<p>Please check your server configuration.</p>',
-    shortText:
-      '<p>Websockets are unavailable, so the following functionalities are restricted:</p>' +
-      '<p>' +
-      '<ul>' +
-      '<li>Active broadcast messages</li>' +
-      '<li>Active users sessions</li>' +
-      '</ul>' +
-      '</p>' +
-      '<p>Please check your server configuration.</p>',
+    text: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+      + '<p>'
+      + '<ul>'
+      + '<li>Healthcheck header</li>'
+      + '<li>Healthcheck network graph</li>'
+      + '<li>Active broadcast messages</li>'
+      + '<li>Active users sessions</li>'
+      + '<li>Remediation execution</li>'
+      + '</ul>'
+      + '</p>'
+      + '<p>Please check your server configuration.</p>',
+    shortText: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+      + '<p>'
+      + '<ul>'
+      + '<li>Active broadcast messages</li>'
+      + '<li>Active users sessions</li>'
+      + '</ul>'
+      + '</p>'
+      + '<p>Please check your server configuration.</p>',
   },
   confirmationPhrase: {
     phrase: 'Phrase',
     updateStorageSettings: {
       title: 'Updating storage policy. Are you sure ?',
-      text:
-        'You are about to change the storage policy.\n' +
-        '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+      text: 'You are about to change the storage policy.\n'
+        + '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
       phraseText: 'Please, type the following to confirm:',
       phrase: 'update the storage policy',
     },
     cleanStorage: {
       title: 'Clean archive',
-      text:
-        '<span class="font-weight-regular">Are you sure?</span>\n' +
-        '<strong>This operation won\'t be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>',
-      phraseText:
-        'Please type the following to confirm <strong>one-time delete operation</strong> :',
+      text: '<span class="font-weight-regular">Are you sure?</span>\n'
+        + '<strong>This operation won\'t be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time delete operation</strong> :',
       phrase: 'delete',
     },
     archiveUnlinkedEntities: {
       title: 'Archive unlinked entities',
-      text:
-        '<span class="font-weight-regular">Are you sure ?</span>\n' +
-        '<strong>This operation won\'t be cancellable.</strong>',
-      phraseText:
-        'Please type the following to confirm <strong>one-time archive operation</strong> :',
+      text: '<span class="font-weight-regular">Are you sure ?</span>\n'
+        + '<strong>This operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time archive operation</strong> :',
       phrase: 'archive',
     },
     archiveDisabledEntities: {
@@ -898,46 +868,40 @@ export default {
     },
     deleteExternalDataTable: {
       title: 'Delete Reference table / collection',
-      text:
-        'You are about to delete data.\n' +
-        '<strong>Deletion operation won\'t be cancellable.</strong>',
+      text: 'You are about to delete data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type table / collection name to confirm:',
     },
     deleteExternalAuthToken: {
       title: 'Delete auth token',
-      text:
-        '<span class="font-weight-regular">You are about to delete the token.</span>\n' +
-        '<strong>Deletion operation won’t be cancellable.</strong>',
+      text: '<span class="font-weight-regular">You are about to delete the token.</span>\n'
+        + '<strong>Deletion operation won’t be cancellable.</strong>',
       phraseText: 'Please type the token name to confirm:',
     },
     deleteLlm: {
       title: 'Delete LLM',
-      text:
-        'You are about to delete LLM connection.\n' +
-        '<strong>Deletion operation won\'t be cancellable.</strong>',
+      text: 'You are about to delete LLM connection.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type LLM name to confirm:',
     },
     deleteSelectedLlms: {
       title: 'Delete {count} model? | Delete {count} models?',
-      text:
-        'You are about to delete {count} model.\n' +
-        '<strong>Deletion operation won\'t be cancellable.</strong> | You are about to delete {count} models.\n' +
-        '<strong>Deletion operation won\'t be cancellable.</strong>',
+      text: 'You are about to delete {count} model.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong> | You are about to delete {count} models.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type the following to confirm <strong>delete operation</strong> :',
       phrase: 'delete',
     },
     templateTestingData: {
       title: 'Delete test data',
-      text:
-        'You are about to delete test data.\n' +
-        '<strong>Deletion operation won\'t be cancellable.</strong>',
+      text: 'You are about to delete test data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type test data name to confirm:',
     },
     templateTestingTest: {
       title: 'Delete test',
-      text:
-        'You are about to delete test.\n' +
-        '<strong>Deletion operation won\'t be cancellable.</strong>',
+      text: 'You are about to delete test.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type test name to confirm:',
     },
   },
@@ -1066,7 +1030,7 @@ export default {
   },
   createShareToken: {
     create: {
-      title: 'Create shared view token',
+      title: 'Create share token',
     },
   },
   createWidgetTemplate: {
@@ -1084,7 +1048,6 @@ export default {
       [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Quick actions (single alarm)',
       [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Quick actions (massive)',
       [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export to PDF',
-      [WIDGET_TEMPLATES_TYPES.ticketFormats]: 'Associate ticket (Ticket formats)',
       [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Tile template',
       [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modal template',
       [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Entity template',
@@ -1197,20 +1160,18 @@ export default {
   },
   confirmationRemoveEntityInfoProperty: {
     title: 'Delete entity info property',
-    alert:
-      '<span class="text-body-1">You are about to delete properties of entity infos <strong>{name}</strong>.</span>\n' +
-      '<strong>Deletion operation won’t be cancellable.</strong>',
-    text:
-      'In the following places <strong>alias</strong> will be change to <strong>entity infos name</strong>,' +
-      ' selected <strong>type will not be changed</strong>: ' +
-      '<ul><li>patterns</li><li>advanced search</li><li>manually added infos</li></ul>',
+    alert: '<span class="text-body-1">You are about to delete properties of entity infos <strong>{name}</strong>.</span>\n'
+      + '<strong>Deletion operation won’t be cancellable.</strong>',
+    text: 'In the following places <strong>alias</strong> will be change to <strong>entity infos name</strong>,'
+      + ' selected <strong>type will not be changed</strong>: '
+      + '<ul><li>patterns</li><li>advanced search</li><li>manually added infos</li></ul>',
   },
   createTag: {
     create: {
-      title: 'Create a tag',
+      title: 'Create tag',
     },
     edit: {
-      title: 'Edit a tag',
+      title: 'Edit tag',
     },
     duplicate: {
       title: 'Duplicate a tag',
@@ -1231,9 +1192,6 @@ export default {
     create: {
       title: 'Upload icon',
       success: 'Icon was uploaded',
-    },
-    edit: {
-      title: 'Edit icon',
     },
     remove: {
       success: 'Icon was removed',
@@ -1256,7 +1214,7 @@ export default {
   },
   createExternalDataTableRecord: {
     create: {
-      title: 'Add record',
+      title: 'Import records',
     },
     edit: {
       title: 'Edit record',
@@ -1264,9 +1222,6 @@ export default {
     duplicate: {
       title: 'Duplicate record',
     },
-  },
-  importExternalDataTableRecords: {
-    title: 'Import records',
   },
   createExternalAuthToken: {
     create: {
@@ -1302,8 +1257,7 @@ export default {
   },
   entitiesComparison: {
     title: 'Pattern entities comparison',
-    infoMessage:
-      'Counts may differ because of 2 reasons :\n<span class="font-weight-regular">1. changes happened in Canopsis during the check (some if initially filtered entity changed and do not fit the pattern anymore)</span>\n<span class="font-weight-regular">2. suggested pattern isn\'t correct</span>\n\n<strong>You can run the check again to be sure.</strong>',
+    infoMessage: 'Counts may differ because of 2 reasons :\n<span class="font-weight-regular">1. changes happened in Canopsis during the check (some if initially filtered entity changed and do not fit the pattern anymore)</span>\n<span class="font-weight-regular">2. suggested pattern isn\'t correct</span>\n\n<strong>You can run the check again to be sure.</strong>',
     foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN',
     foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN',
   },

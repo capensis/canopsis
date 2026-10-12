@@ -1,23 +1,23 @@
 <template>
-  <v-sheet color="grey lighten-2" class="c-word-break-all pa-3" rounded="lg">
+  <v-sheet color="grey lighten-2" class="c-word-break-all pa-3" rounded="xxl">
     <p>{{ recurrenceRuleString }}</p>
     <p>{{ recurrenceRuleText }}</p>
     <template v-if="exceptionItems.length > 0">
-      <div>
+      <p>
         {{ $t('pbehavior.exdates.title') }}:
         <ul>
           <li v-for="item in exceptionItems" :key="item">
             {{ item }}
           </li>
         </ul>
-      </div>
+      </p>
     </template>
   </v-sheet>
 </template>
 
 <script>
-import { rrulestr } from 'rrule';
 import { computed } from 'vue';
+import { rrulestr } from 'rrule';
 
 import { convertDateToString } from '@/helpers/date/date';
 
@@ -60,9 +60,7 @@ export default {
 
     const exceptionItems = computed(() => {
       const result = props.exceptions.map(({ name }) => name);
-      const preparedExdates = props.exdates.map(
-        ({ begin, end }) => `${convertDateToString(begin)} - ${convertDateToString(end)}`,
-      );
+      const preparedExdates = props.exdates.map(({ begin, end }) => `${convertDateToString(begin)} - ${convertDateToString(end)}`);
 
       result.push(...preparedExdates);
 

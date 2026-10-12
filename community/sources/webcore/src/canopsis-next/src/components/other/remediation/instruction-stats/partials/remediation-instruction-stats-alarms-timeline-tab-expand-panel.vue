@@ -1,6 +1,10 @@
 <template>
   <div class="instruction-stats-alarms-timeline-tab-expand-panel__wrapper pa-3">
-    <c-advanced-data-table :items="steps" :headers="headers" :loading="pending">
+    <c-advanced-data-table
+      :items="steps"
+      :headers="headers"
+      :loading="pending"
+    >
       <template #status="{ item }">
         <remediation-instruction-stats-alarms-timeline-tab-expand-panel-status-icon
           :type="execution.type"
@@ -9,24 +13,21 @@
         />
       </template>
       <template #completed_at="{ item }">
-        {{ formatDate(item.completed_at) }}
+        {{ item.completed_at | date('long', '-') }}
       </template>
     </c-advanced-data-table>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
-
-import { DATETIME_FORMATS } from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
+import { computed, ref, onMounted } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationInstructionExecution } from '@/hooks/store/modules/remediation-instruction-execution';
 
-import RemediationInstructionStatsAlarmsTimelineTabExpandPanelStatusIcon from './remediation-instruction-stats-alarms-timeline-tab-expand-panel-status-icon.vue';
+import RemediationInstructionStatsAlarmsTimelineTabExpandPanelStatusIcon
+  from './remediation-instruction-stats-alarms-timeline-tab-expand-panel-status-icon.vue';
 
 export default {
   components: { RemediationInstructionStatsAlarmsTimelineTabExpandPanelStatusIcon },
@@ -43,16 +44,23 @@ export default {
   setup(props) {
     const execution = ref({});
 
-    const { t } = useI18n();
-    const { fetchAlarmRemediationInstructionExecutionsWithoutStore } =
-      useRemediationInstructionExecution();
+    const { t, tc } = useI18n();
+
+    const {
+      fetchAlarmRemediationInstructionExecutionsWithoutStore,
+    } = useRemediationInstructionExecution();
 
     const steps = computed(() => execution.value?.steps ?? []);
 
-    const { pending, handler: fetchList } = usePendingHandler(async () => {
+    const {
+      pending,
+      handler: fetchList,
+    } = usePendingHandler(async () => {
       const response = await fetchAlarmRemediationInstructionExecutionsWithoutStore({
         alarmId: props.alarmId,
-        params: { ids: [props.executionId] },
+        params: {
+          ids: [props.executionId],
+        },
       });
 
       execution.value = response.data?.[0] ?? {};
@@ -60,7 +68,7 @@ export default {
 
     const headers = computed(() => [
       {
-        text: t('common.step'),
+        text: tc('common.step'),
         value: 'name',
         sortable: false,
         width: '300px',
@@ -84,8 +92,6 @@ export default {
       },
     ]);
 
-    const formatDate = value => convertDateToString(value, DATETIME_FORMATS.long, '-');
-
     onMounted(fetchList);
 
     return {
@@ -93,7 +99,6 @@ export default {
       steps,
       pending,
       headers,
-      formatDate,
     };
   },
 };
@@ -101,6 +106,10 @@ export default {
 
 <style lang="scss">
 .instruction-stats-alarms-timeline-tab-expand-panel__wrapper {
+  --expand-panel-width: 94vw;
+
+  width: var(--expand-panel-width);
+
   table {
     table-layout: fixed;
     width: 100%;

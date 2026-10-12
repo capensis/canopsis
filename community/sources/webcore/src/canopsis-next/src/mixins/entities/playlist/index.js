@@ -1,18 +1,17 @@
-import { mapActions, mapState, mapStores } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { usePlaylistStore } from '@/stores/modules/playlist';
+const { mapActions, mapGetters } = createNamespacedHelpers('playlist');
 
 export const entitiesPlaylistMixin = {
   computed: {
-    ...mapStores(usePlaylistStore),
-    ...mapState(usePlaylistStore, {
+    ...mapGetters({
       playlists: 'items',
       playlistsPending: 'pending',
       playlistsMeta: 'meta',
     }),
   },
   methods: {
-    ...mapActions(usePlaylistStore, {
+    ...mapActions({
       fetchPlaylistsList: 'fetchList',
       createPlaylist: 'create',
       updatePlaylist: 'update',

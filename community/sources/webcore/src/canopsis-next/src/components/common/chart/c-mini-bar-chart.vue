@@ -6,23 +6,21 @@
         :key="index"
         :style="{ height: bar.height }"
         :title="bar.title"
-        :class="`bg-${color}`"
+        :class="color"
         class="mini-bar-chart--bar"
       />
     </div>
     <span
       v-if="lastHistory"
-      :class="`text-${color}`"
+      :class="`${color}--text`"
       class="ml-1 font-weight-bold"
     >
-      {{ convertNumberToFixedString(lastHistory, digits) }}{{ unit }}
+      {{ lastHistory | fixed(digits) }}{{ unit }}
     </span>
   </div>
 </template>
 
 <script>
-import { convertNumberToFixedString } from '@/helpers/string';
-
 export default {
   props: {
     history: {
@@ -46,7 +44,6 @@ export default {
       default: 'white',
     },
   },
-
   computed: {
     lastHistory() {
       return this.history[this.history.length - 1];
@@ -57,7 +54,7 @@ export default {
     },
 
     bars() {
-      return Array.from({ length: this.barCount })
+      return new Array(this.barCount)
         .fill(null)
         .map((item, index) => {
           const historyValue = this.history[index];
@@ -70,10 +67,6 @@ export default {
           };
         });
     },
-  },
-
-  methods: {
-    convertNumberToFixedString,
   },
 };
 </script>

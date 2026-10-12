@@ -1,20 +1,18 @@
 <template>
   <v-menu
-    :model-value="value"
+    :value="value"
+    :position-x="positionX"
+    :position-y="positionY"
     :close-on-content-click="false"
-    :content-props="contentProps"
-    location-strategy="static"
-    scroll-strategy="none"
-    persistent
-    eager
+    ignore-click-outside
+    absolute
   >
     <point-form-dialog
-      v-if="point"
-      v-show="value"
+      v-if="value && point"
       :point="point"
       :editing="editing"
       :exists-entities="existsEntities"
-      v-bind="$attrs"
+      v-on="$listeners"
     />
   </v-menu>
 </template>
@@ -24,7 +22,6 @@ import PointFormDialog from './point-form-dialog.vue';
 
 export default {
   components: { PointFormDialog },
-  inheritAttrs: false,
   props: {
     value: {
       type: Boolean,
@@ -49,17 +46,6 @@ export default {
     existsEntities: {
       type: Array,
       required: false,
-    },
-  },
-  computed: {
-    contentProps() {
-      return {
-        style: {
-          position: 'fixed',
-          left: `${this.positionX}px`,
-          top: `${this.positionY}px`,
-        },
-      };
     },
   },
 };

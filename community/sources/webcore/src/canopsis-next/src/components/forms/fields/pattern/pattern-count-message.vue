@@ -1,5 +1,5 @@
 <template>
-  <span class="pattern-count-message">
+  <span class="text-caption text--secondary">
     <span v-html="errorMessage || message" />
   </span>
 </template>
@@ -9,8 +9,8 @@ import { computed } from 'vue';
 
 import { TIME_UNITS, PATTERN_DURATION_FORMAT } from '@/constants';
 
-import { convertDurationToString } from '@/helpers/date/duration';
 import { sanitizeHtml } from '@/helpers/html';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -30,7 +30,7 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
+    const { t, tc } = useI18n();
 
     const message = computed(() => {
       const messages = [];
@@ -38,13 +38,13 @@ export default {
       if (props.alarmCounter) {
         const alarmCount = props.alarmCounter?.count ?? 0;
 
-        messages.push(t('pattern.alarmFound', alarmCount, { count: alarmCount }));
+        messages.push(tc('pattern.alarmFound', alarmCount, { count: alarmCount }));
       }
 
       if (props.entityCounter) {
         const entityCount = props.entityCounter?.count ?? 0;
 
-        messages.push(t('pattern.entityFound', entityCount, { count: entityCount }));
+        messages.push(tc('pattern.entityFound', entityCount, { count: entityCount }));
       }
 
       if (!messages.length) {
@@ -66,11 +66,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.pattern-count-message {
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-}
-</style>

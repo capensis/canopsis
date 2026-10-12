@@ -1,49 +1,63 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <user-form :is-new="isNew" :user="config.user" :only-user-prefs="config.onlyUserPrefs" />
+      <template #text="">
+        <user-form
+          v-model="form"
+          :is-new="isNew"
+          :user="config.user"
+          :only-user-prefs="config.onlyUserPrefs"
+        />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="submitting"
+          :loading="submitting"
+          class="primary white--text"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
-import { MAX_LIMIT } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { userToForm, formToUserRequest, findDefaultViewId } from '@/helpers/entities/user/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { useView } from '@/hooks/store/modules/view';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useViewGroup } from '@/hooks/store/modules/view';
 
 import UserForm from '@/components/other/users/form/user-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
-  components: { UserForm },
+  name: MODALS.createUser,
+
+  $_veeValidate: {
+    validator: 'new',
+  },
+
+  components: { UserForm, ModalWrapper },
 
   props: {
     modal: {
@@ -54,56 +68,46 @@ export default {
 
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
-    const { viewGroups, fetchViewGroupsList } = useView();
-    const config = computed(() => props.modal.config ?? {});
+    const { config, close } = useInnerModal(props);
+    const { groups, fetchAllGroupsListWithWidgets } = useViewGroup();
+
+    const form = ref(userToForm(config.value.user));
 
     const isNew = computed(() => !config.value.user);
-    const title = computed(() => config.value.title || t('modals.createUser.create.title'));
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const title = computed(() => (config.value.title || t('modals.createUser.create.title')));
 
-    const form = useForm({
-      initialValues: userToForm(config.value.user),
-    });
-    const { handleSubmit, isSubmitting, values } = form;
+    const { submit, submitting, submitLabel } = useSubmittableForm({
+      form,
+      item: config.value.user,
+      method: async () => {
+        await config.value.action(formToUserRequest(form.value));
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(formToUserRequest(values.value));
-
-      closeModal();
+        close();
+      },
     });
 
-    const { updateOriginalForm } = useFormConfirmableCloseModal({ form: values, submit, close: closeModal });
+    const { updateOriginalForm } = useFormConfirmableCloseModal({ form, submit, close });
 
     onMounted(async () => {
-      if (!isNew.value || values.value.defaultview) {
+      if (!isNew.value || form.value.defaultview) {
         return;
       }
 
       try {
-        if (!viewGroups.value?.length) {
-          await fetchViewGroupsList({
-            params: {
-              limit: MAX_LIMIT,
-              page: 1,
-              with_views: true,
-              with_tabs: true,
-              with_widgets: true,
-              with_flags: true,
-              with_private: true,
-            },
-          });
+        if (!groups.value?.length) {
+          await fetchAllGroupsListWithWidgets();
         }
 
-        const defaultViewId = findDefaultViewId(viewGroups.value);
+        const defaultViewId = findDefaultViewId(groups.value);
 
         if (!defaultViewId) {
           return;
         }
 
-        form.setValue('defaultview', defaultViewId);
+        form.value = {
+          ...form.value,
+          defaultview: defaultViewId,
+        };
         updateOriginalForm();
       } catch (err) {
         console.error(err);
@@ -111,14 +115,14 @@ export default {
     });
 
     return {
-      t,
-      config,
+      form,
       isNew,
       title,
+      submitting,
       submitLabel,
-      isSubmitting,
-      closeModal,
       submit,
+      close,
+      config,
     };
   },
 };

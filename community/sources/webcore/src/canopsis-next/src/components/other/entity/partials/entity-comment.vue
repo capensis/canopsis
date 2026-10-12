@@ -1,32 +1,34 @@
 <template>
-  <c-layout column>
-    <c-layout align="center">
-      <c-layout class="gap-2" column>
-        <c-layout column>
-          <span class="font-weight-bold">
+  <v-layout column>
+    <v-layout align-center>
+      <v-layout class="gap-2" column>
+        <v-layout column>
+          <span class="comment-author font-weight-bold">
             {{ comment.author.display_name }}
           </span>
-          <span class="text-subtitle-2 text-medium-emphasis">
-            {{ formattedDate }}
+          <span class="text-subtitle-2 grey--text">
+            {{ comment.t | date }}
           </span>
-        </c-layout>
-        <span class="pre-wrap">
+        </v-layout>
+        <span class="pre-wrap comment-message">
           {{ comment.message }}
         </span>
-      </c-layout>
-      <c-layout v-if="editable">
-        <c-action-btn type="edit" @click="edit" />
-      </c-layout>
-    </c-layout>
+      </v-layout>
+      <v-flex shrink>
+        <v-layout class="gap-1" column>
+          <c-action-btn
+            v-if="editable"
+            type="edit"
+            @click="edit"
+          />
+        </v-layout>
+      </v-flex>
+    </v-layout>
     <v-divider class="mt-3" />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { convertDateToString } from '@/helpers/date/date';
-
 export default {
   props: {
     comment: {
@@ -38,15 +40,10 @@ export default {
       default: false,
     },
   },
-
-  emits: ['edit'],
-
   setup(props, { emit }) {
-    const formattedDate = computed(() => convertDateToString(props.comment.t));
     const edit = () => emit('edit', props.comment);
 
     return {
-      formattedDate,
       edit,
     };
   },

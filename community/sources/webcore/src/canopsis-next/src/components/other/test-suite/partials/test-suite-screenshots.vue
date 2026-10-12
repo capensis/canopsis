@@ -1,10 +1,14 @@
 <template>
-  <v-container class="pa-0" fluid>
-    <v-row density="compact">
-      <v-col
+  <v-container
+    class="pa-0"
+    fluid
+    grid-list-sm
+  >
+    <v-layout wrap>
+      <v-flex
         v-for="image in images"
         :key="image.src"
-        cols="4"
+        xs4
       >
         <v-img
           :src="image.src"
@@ -12,8 +16,8 @@
           aspect-ratio="1"
           @click="showImagesModal(image.src)"
         />
-      </v-col>
-    </v-row>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 

@@ -1,41 +1,31 @@
 <template>
-  <shared-actions-panel
+  <mass-actions-panel
     v-show="items.length"
     :actions="actions"
-    :inline-count="actions.length"
     :small="small"
-    ignore-media-query
   />
 </template>
 
 <script>
-import { CONTEXT_ACTIONS_TYPES, MODALS } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
-import {
-  isPausePropagationAvailableForEntity,
-  entityResumeFormToRequest,
-  isEntityPaused,
-  isResumeAvailableForEntity,
-} from '@/helpers/entities/entity/pause';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
-import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
+import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
 /**
  * Panel regrouping mass actions icons
  *
  * @module context
  *
- * @prop {Array} [items] - Items selected for the mass action
+ * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
-  components: { SharedActionsPanel },
-
+  components: { MassActionsPanel },
   mixins: [widgetActionsPanelContextMixin],
-
   props: {
     items: {
       type: Array,
@@ -50,9 +40,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['clear:items'],
-
   data() {
     return {
       actionsMap: {
@@ -65,21 +52,9 @@ export default {
         },
         pbehavior: {
           type: CONTEXT_ACTIONS_TYPES.pbehaviorAdd,
-          icon: '$vuetify.icons.pbehavior',
+          icon: 'pause',
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorsModal,
-        },
-        pause: {
-          type: CONTEXT_ACTIONS_TYPES.pause,
-          icon: 'pause',
-          title: this.$t('context.actions.titles.pause'),
-          method: this.showPauseModal,
-        },
-        resume: {
-          type: CONTEXT_ACTIONS_TYPES.resume,
-          icon: 'play_arrow',
-          title: this.$t('context.actions.titles.unpause'),
-          method: this.resumeEntityPauses,
         },
         massEnable: {
           type: CONTEXT_ACTIONS_TYPES.massEnable,
@@ -98,47 +73,16 @@ export default {
       },
     };
   },
-
   computed: {
-    entitiesToPause() {
-      return this.items.filter(item => !isEntityPaused(item));
-    },
-
-    pausedEntities() {
-      return this.items.filter(isEntityPaused);
-    },
-
-    entitiesToResume() {
-      return this.items.filter(isResumeAvailableForEntity);
-    },
-
-    resumeAction() {
-      if (!this.pausedEntities.length) {
-        return null;
-      }
-
-      if (this.entitiesToResume.length) {
-        return this.actionsMap.resume;
-      }
-
-      return {
-        ...this.actionsMap.resume,
-        title: this.$t('context.actions.titles.inheritedPauses'),
-        disabledButton: true,
-      };
-    },
-
     actions() {
-      const actions = [];
+      const actions = [this.actionsMap.pbehavior];
       const someOneDeletable = this.items.some(({ deletable }) => deletable);
       const someOneEnable = this.items.some(({ enabled }) => enabled);
       const someOneDisable = this.items.some(({ enabled }) => !enabled);
 
-      if (this.entitiesToPause.length) {
-        actions.push(this.actionsMap.pause);
+      if (someOneDeletable) {
+        actions.unshift(this.actionsMap.deleteEntity);
       }
-
-      actions.push(this.resumeAction, this.actionsMap.pbehavior);
 
       if (someOneDisable) {
         actions.push(this.actionsMap.massEnable);
@@ -148,14 +92,9 @@ export default {
         actions.push(this.actionsMap.massDisable);
       }
 
-      if (someOneDeletable) {
-        actions.push(this.actionsMap.deleteEntity);
-      }
-
-      return actions.filter(Boolean).filter(this.actionsAccessFilterHandler);
+      return actions.filter(this.actionsAccessFilterHandler);
     },
   },
-
   methods: {
     clearItems() {
       this.$emit('clear:items');
@@ -226,48 +165,6 @@ export default {
           afterSubmit: this.afterSubmit,
         },
       });
-    },
-
-    showPauseModal() {
-      this.$modals.show({
-        name: MODALS.createEntityPauseEvent,
-        config: {
-          withInherited: this.entitiesToPause.every(isPausePropagationAvailableForEntity),
-          action: async (pause) => {
-            try {
-              await this.bulkPauseContextEntities({
-                data: this.entitiesToPause.map(({ _id: id }) => ({ ...pause, _id: id })),
-              });
-              this.$popups.success({ text: this.$t('entity.popups.pauseOperation') });
-
-              return this.afterSubmit();
-            } catch (error) {
-              console.error(error);
-              this.$popups.error({ text: this.$t('alarm.popups.pauseFailed') });
-            }
-          },
-        },
-      });
-    },
-
-    async resumeEntityPauses() {
-      if (!this.entitiesToResume.length) {
-        return;
-      }
-
-      const resume = entityResumeFormToRequest();
-
-      try {
-        await this.bulkResumeContextEntities({
-          data: this.entitiesToResume.map(({ _id: id }) => ({ ...resume, _id: id })),
-        });
-        this.$popups.success({ text: this.$t('entity.popups.resumeOperation') });
-
-        return this.afterSubmit();
-      } catch (error) {
-        console.error(error);
-        this.$popups.error({ text: this.$t('alarm.popups.unpauseFailed') });
-      }
     },
   },
 };

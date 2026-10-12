@@ -1,31 +1,31 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
+  <modal-wrapper close>
+    <template #title="">
       <span>{{ title }}</span>
     </template>
-
-    <template #text>
+    <template #text="">
       <pbehaviors-calendar-component :entity-id="config.entityId" />
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
-<script setup>
-import { computed } from 'vue';
+<script>
+import { MODALS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
+import { modalInnerMixin } from '@/mixins/modal/inner';
 
 import PbehaviorsCalendarComponent from '@/components/other/pbehavior/calendar/pbehaviors-calendar.vue';
 
-const props = defineProps({
-  modal: {
-    type: Object,
-    required: true,
+import ModalWrapper from '../modal-wrapper.vue';
+
+export default {
+  name: MODALS.pbehaviorsCalendar,
+  components: { PbehaviorsCalendarComponent, ModalWrapper },
+  mixins: [modalInnerMixin],
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.pbehaviorsCalendar.title');
+    },
   },
-});
-
-const { t } = useI18n();
-
-const config = computed(() => props.modal.config ?? {});
-const title = computed(() => config.value.title ?? t('modals.pbehaviorsCalendar.title'));
+};
 </script>

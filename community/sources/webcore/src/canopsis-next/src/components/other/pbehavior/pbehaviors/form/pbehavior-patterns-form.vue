@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    :value="form"
+    v-field="form"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
     :pending="pending"
@@ -8,20 +8,21 @@
     entity-counters-type
     with-entity
     required
-    @update:value="$emit('update:form', $event)"
   />
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import {
-  usePatternsFields,
-  usePatternsFieldsFetching,
-} from '@/hooks/store/modules/patterns-fields';
+import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 import { usePbehaviorPatterns } from '@/hooks/store/modules/pbehavior-patterns';
 
 export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -40,16 +41,13 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:form'],
-
   setup(props) {
     const { fetchPbehaviorPatternFields } = usePatternsFields();
 
-    const { pending, entityAttributes } = usePatternsFieldsFetching(
-      fetchPbehaviorPatternFields,
-      props.readonly,
-    );
+    const {
+      pending,
+      entityAttributes,
+    } = usePatternsFieldsFetching(fetchPbehaviorPatternFields, props.readonly);
 
     const { checkPatternsPbehaviorsCount } = usePbehaviorPatterns();
 
@@ -64,7 +62,11 @@ export default {
       };
     };
 
-    const counterMethod = computed(() => (props.pbehaviorCounterType ? checkFilter : undefined));
+    const counterMethod = computed(() => (
+      props.pbehaviorCounterType
+        ? checkFilter
+        : undefined
+    ));
 
     return {
       pending,

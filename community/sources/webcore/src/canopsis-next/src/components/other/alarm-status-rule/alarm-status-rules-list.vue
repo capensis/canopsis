@@ -19,42 +19,51 @@
         :disablable="updatable"
         :flapping-rule="flapping"
         :resolve-rule="!flapping"
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-
     <template #duration="{ item }">
-      <span>{{ durationToString(item.duration) }}</span>
+      <span>{{ item.duration | duration }}</span>
     </template>
-
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
-
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
-
     <template #actions="{ item }">
-      <c-layout>
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
         <c-db-export-btn :id="item._id" flapping-rule />
-        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
-      </c-layout>
+        <c-action-btn
+          v-if="removable"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
-      <alarm-status-rules-list-expand-item :rule="item" :flapping="flapping" />
+      <alarm-status-rules-list-expand-item
+        :rule="item"
+        :flapping="flapping"
+      />
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
-
-import { convertDurationToString } from '@/helpers/date/duration';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -64,7 +73,6 @@ export default {
   components: {
     AlarmStatusRulesListExpandItem,
   },
-
   props: {
     rules: {
       type: Array,
@@ -99,29 +107,22 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
-
   setup(props) {
     const { t } = useI18n();
 
     const headers = computed(() => [
-        { text: t('common.id'), value: '_id' },
-        { text: t('common.name'), value: 'name' },
-        { text: t('common.duration'), value: 'duration', sortable: false },
-        { text: t('common.priority'), value: 'priority' },
-        { text: t('common.enabled'), value: 'enabled' },
-        props.flapping && { text: t('common.frequencyLimit'), value: 'freq_limit' },
-        { text: t('common.author'), value: 'author.display_name' },
-        { text: t('common.actionsLabel'), value: 'actions', sortable: false },
-      ].filter(Boolean),
-    );
-
-    const durationToString = duration => convertDurationToString(duration);
+      { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.duration'), value: 'duration', sortable: false },
+      { text: t('common.priority'), value: 'priority' },
+      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      props.flapping && { text: t('common.frequencyLimit'), value: 'freq_limit' },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ].filter(Boolean));
 
     return {
       headers,
-      durationToString,
     };
   },
 };

@@ -1,110 +1,108 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
-        {{ t('modals.linkToMetaAlarm.title') }}
+    <modal-wrapper close>
+      <template #title="">
+        {{ $t('modals.linkToMetaAlarm.title') }}
       </template>
-
-      <template #text>
-        <c-layout gap="2" column>
+      <template #text="">
+        <v-layout column>
           <alarm-general-table :items="alarms" class="mb-4" />
-          <link-meta-alarm-form :form="values" @update:form="updateForm" />
-        </c-layout>
+          <link-meta-alarm-form v-model="form" />
+        </v-layout>
       </template>
-
-      <template #actions>
-        <v-btn :disabled="submitting" variant="text" @click="close">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
           :disabled="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ t('common.saveChanges') }}
+          {{ $t('common.saveChanges') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 import { isAlarmStateNotOk } from '@/helpers/entities/alarm/form';
-import { formToMetaAlarmLinkRequest, metaAlarmLinkToForm } from '@/helpers/entities/meta-alarm/link/form';
+import { metaAlarmLinkToForm, formToMetaAlarmLinkRequest } from '@/helpers/entities/meta-alarm/link/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to manage alarms in manual meta alarm
  */
 export default {
   name: MODALS.linkToMetaAlarm,
-
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     AlarmGeneralTable,
     LinkMetaAlarmForm,
+    ModalWrapper,
   },
-
   props: {
     modal: {
       type: Object,
       default: () => ({}),
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const form = ref(metaAlarmLinkToForm());
 
-    const form = useForm({
-      initialValues: metaAlarmLinkToForm(),
-    });
-    const { values, handleSubmit, isSubmitting: submitting } = form;
+    const { modals, config, close } = useInnerModal(props);
 
     const alarms = computed(() => config.value.items?.filter(isAlarmStateNotOk) ?? []);
 
-    const updateForm = (nextForm) => {
-      values.value = nextForm;
-    };
-
-    const submit = handleSubmit(async () => {
+    const submitMethod = async () => {
       const data = {
-        ...formToMetaAlarmLinkRequest(values.value),
+        ...formToMetaAlarmLinkRequest(form.value),
         alarms: mapIds(alarms.value),
       };
 
       await config.value?.action?.(data);
 
-      close();
+      modals.hide();
+    };
+
+    const { submit, submitting } = useSubmittableForm({
+      form,
+      method: submitMethod,
     });
 
     useFormConfirmableCloseModal({
-      form: values,
-      submit,
+      form,
+      submit: submitMethod,
       close,
     });
 
     return {
-      t,
       form,
-      values,
       alarms,
       submit,
       submitting,
-      close,
-      updateForm,
     };
   },
 };

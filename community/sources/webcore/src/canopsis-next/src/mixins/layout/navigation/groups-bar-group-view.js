@@ -1,8 +1,8 @@
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
+import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { viewRouterMixin } from '@/mixins/view/router';
 
 import { layoutNavigationEditingModeMixin } from './editing-mode';
@@ -41,7 +41,7 @@ export default {
     },
 
     hasDeleteViewAccess() {
-      return this.checkDeleteAccess(this.view._id) && this.hasDeleteAnyViewAccess;
+      return this.checkDeleteAccess(this.view._id) && this.hasUpdateAnyViewAccess;
     },
 
     hasViewEditButtonAccess() {
@@ -64,9 +64,10 @@ export default {
           },
           remove: async () => {
             await this.removeViewWithPopup({ id: this.view._id });
+
             await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
-            return this.redirectToHomeIfCurrentRoute();
+            this.redirectToHomeIfCurrentRoute();
           },
         },
       });

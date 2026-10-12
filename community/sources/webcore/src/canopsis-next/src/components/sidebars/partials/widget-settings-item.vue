@@ -2,51 +2,49 @@
   <v-list-group
     v-bind="$attrs"
     :eager="eager"
-    class="widget-settings-item"
     color=""
   >
-    <template #activator="{ props: activatorProps }">
-      <v-list-item v-bind="activatorProps">
-        <template #title>
-          <c-layout align="center" gap="1">
-            <span :class="validationHeaderClass">
-              <slot name="title">
-                {{ title }}
-              </slot>
+    <template #activator="">
+      <v-list-item-content class="widget-settings-item-title">
+        <v-list-item-title :class="validationHeaderClass">
+          <slot name="title">
+            {{ title }}
+          </slot>
+          <span
+            v-if="optional || subTitle"
+            class="font-italic text-caption ml-1"
+          >
+            <span v-if="optional" class="text-lowercase">
+              ({{ $t('common.optional') }})
             </span>
-
-            <span v-if="optional || subTitle" class="font-italic text-caption text-medium-emphasis">
-              <span v-if="optional" class="text-lowercase"> ({{ $t('common.optional') }}) </span>
-
-              <span v-if="subTitle">
-                {{ subTitle }}
-              </span>
+            <span v-if="subTitle">
+              {{ subTitle }}
             </span>
-          </c-layout>
-        </template>
-      </v-list-item>
+          </span>
+        </v-list-item-title>
+      </v-list-item-content>
     </template>
-
-    <v-container class="widget-settings-item__content">
+    <v-container>
       <slot />
     </v-container>
   </v-list-group>
 </template>
 
 <script>
-import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
+  mixins: [formValidationHeaderMixin],
   inheritAttrs: false,
-
   props: {
     title: {
       type: String,
-      default: '',
+      required: false,
     },
     subTitle: {
       type: String,
-      default: '',
+      required: false,
     },
     optional: {
       type: Boolean,
@@ -57,30 +55,5 @@ export default {
       default: true,
     },
   },
-
-  setup() {
-    const { validationHeaderClass } = useValidationHeader();
-
-    return {
-      validationHeaderClass,
-    };
-  },
 };
 </script>
-
-<style lang="scss" scoped>
-.widget-settings-item {
-  &__content {
-    padding: 24px;
-  }
-
-  :deep(.v-list-item) {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  :deep(.v-list-group__items .v-list-item) {
-    padding-inline-start: 16px !important;
-  }
-}
-</style>

@@ -1,25 +1,25 @@
 <template>
   <widget-settings-group :title="$t('settings.margin.title')">
     <field-slider
-      v-model="model.top"
+      v-field="form.top"
       :title="$t('settings.margin.top')"
       :min="min"
       :max="max"
     />
     <field-slider
-      v-model="model.right"
+      v-field="form.right"
       :title="$t('settings.margin.right')"
       :min="min"
       :max="max"
     />
     <field-slider
-      v-model="model.bottom"
+      v-field="form.bottom"
       :title="$t('settings.margin.bottom')"
       :min="min"
       :max="max"
     />
     <field-slider
-      v-model="model.left"
+      v-field="form.left"
       :title="$t('settings.margin.left')"
       :min="min"
       :max="max"
@@ -33,9 +33,12 @@ import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-
 
 export default {
   components: { WidgetSettingsGroup, FieldSlider },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    form: {
       type: Object,
       default: () => ({}),
     },
@@ -46,19 +49,6 @@ export default {
     max: {
       type: Number,
       default: 5,
-    },
-  },
-
-  emits: ['update:modelValue'],
-
-  computed: {
-    model: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
     },
   },
 };

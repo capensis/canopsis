@@ -1,54 +1,47 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <h4 class="text-subtitle-1">
-      {{ t('notificationSetting.instruction.header') }}
+      {{ $t('notificationSetting.instruction.header') }}
     </h4>
-
-    <c-checkbox
-      v-model="instructionRateField"
-      :disabled="!instructionRateFrequencyField.value"
-      :label="t('notificationSetting.instruction.rate')"
+    <v-checkbox
+      v-field="form.instruction.rate"
+      :disabled="!form.instruction.rate_frequency.value"
+      :label="$t('notificationSetting.instruction.rate')"
       class="my-2"
       color="primary"
       hide-details
     />
-
-    <v-row class="flex-grow-0" align="start" density="comfortable">
-      <v-col class="text-subtitle-1 mt-3" cols="2">
-        {{ t('notificationSetting.instruction.rateFrequency') }}
-      </v-col>
-
-      <v-col cols="3">
+    <v-layout>
+      <v-flex
+        class="text-subtitle-1 mt-3"
+        xs2
+      >
+        {{ $t('notificationSetting.instruction.rateFrequency') }}
+      </v-flex>
+      <v-flex xs3>
         <c-duration-field
-          v-model:duration="instructionRateFrequencyField"
-          :disabled="!instructionRateField"
-          :required="instructionRateField"
-          :label="t('notificationSetting.instruction.duration')"
-          name="instruction.rate_frequency"
+          v-field="form.instruction.rate_frequency"
+          :disabled="!form.instruction.rate"
+          :required="form.instruction.rate"
+          :label="$t('notificationSetting.instruction.duration')"
           long
         />
-      </v-col>
-    </v-row>
-  </c-layout>
+      </v-flex>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>
-import { useFormModels } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-
 export default {
-  setup() {
-    const { t } = useI18n();
-    const { instructionRateField, instructionRateFrequencyField } = useFormModels({
-      instructionRateField: 'instruction.rate',
-      instructionRateFrequencyField: 'instruction.rate_frequency',
-    });
-
-    return {
-      t,
-      instructionRateField,
-      instructionRateFrequencyField,
-    };
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      required: true,
+    },
   },
 };
 </script>

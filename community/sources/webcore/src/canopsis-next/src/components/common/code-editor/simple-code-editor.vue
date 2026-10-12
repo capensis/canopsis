@@ -1,11 +1,10 @@
 <template>
   <code-editor
+    v-field="value"
     ref="codeEditor"
-    :value="value"
     :options="editorOptions"
     :resettable="resettable"
     :language="language"
-    @update:value="$emit('update:value', $event)"
   />
 </template>
 
@@ -16,6 +15,10 @@ import CodeEditor from '@/components/common/code-editor/code-editor.vue';
 
 export default {
   components: { CodeEditor },
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: String,
@@ -50,9 +53,6 @@ export default {
       default: 'plaintext',
     },
   },
-
-  emits: ['update:value'],
-
   setup(props) {
     const codeEditor = ref(null);
 

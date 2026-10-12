@@ -1,17 +1,27 @@
-import { useMetaAlarmStore } from '@/stores/modules/meta-alarm';
+import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Meta alarm store facade.
+ * Retrieves the store module hooks for managing meta alarm.
  *
- * @returns {Object}
+ * @returns {Object} An object containing store module.
+ */
+const useMetaAlarmStoreModule = () => useStoreModuleHooks('metaAlarm');
+
+/**
+ * Provides actions to interact with meta alarm.
+ *
+ * @returns {Object} An object containing actions to create, update, remove, and fetch meta alarm list without
+ * storing.
  */
 export const useMetaAlarm = () => {
-  const metaAlarmStore = useMetaAlarmStore();
+  const { useActions } = useMetaAlarmStoreModule();
 
-  return {
-    fetchMetaAlarmsListWithoutStore: metaAlarmStore.fetchListWithoutStore,
-    createMetaAlarm: metaAlarmStore.create,
-    addMetaAlarmAlarms: metaAlarmStore.addAlarms,
-    removeMetaAlarmAlarms: metaAlarmStore.removeAlarms,
-  };
+  const actions = useActions({
+    fetchMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
+    createMetaAlarm: 'create',
+    addAlarmsIntoMetaAlarm: 'addAlarms',
+    removeAlarmsFromMetaAlarm: 'removeAlarms',
+  });
+
+  return actions;
 };

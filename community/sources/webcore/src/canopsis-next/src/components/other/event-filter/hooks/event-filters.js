@@ -22,7 +22,11 @@ export const useEventFilterActions = (refresh = () => {}) => {
   const modals = useModals();
   const popups = usePopups();
 
-  const { createEventFilter, updateEventFilter, removeEventFilter } = useEventFilter();
+  const {
+    createEventFilter,
+    updateEventFilter,
+    removeEventFilter,
+  } = useEventFilter();
 
   /**
    * Show modal to create a new event filter.

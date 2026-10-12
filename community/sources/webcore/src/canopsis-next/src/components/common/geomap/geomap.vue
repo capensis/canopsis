@@ -1,21 +1,13 @@
-<template>
-  <div ref="mapElement" class="geomap">
-    <slot v-if="mapObject" />
-  </div>
-</template>
-
 <script>
-import { Icon, Map } from 'leaflet';
-import { GestureHandling } from 'leaflet-gesture-handling';
 import { debounce } from 'lodash';
+import { LMap } from 'vue2-leaflet';
+import { Map, Icon } from 'leaflet';
+import { GestureHandling } from 'leaflet-gesture-handling';
 
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { GEOMAP_PANES, GEOMAP_PANE_Z_INDEXES } from '@/constants';
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import locationUrl from '@/assets/images/location.svg';
-
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-gesture-handling/dist/leaflet-gesture-handling.css';
 
 Map.mergeOptions({
   attributionControl: false,
@@ -39,46 +31,15 @@ Icon.Default.mergeOptions({
 });
 
 export default {
-  provide() {
-    return {
-      geomapRoot: this,
-      geomapParent: this,
-    };
-  },
+  extends: LMap,
   props: {
     disabled: {
       type: Boolean,
       required: false,
     },
-    minZoom: {
-      type: Number,
-      required: false,
-    },
-    maxZoom: {
-      type: Number,
-      required: false,
-    },
-    zoom: {
-      type: Number,
-      default: 2,
-    },
-    center: {
-      type: Array,
-      default: () => [0, 0],
-    },
-    options: {
-      type: Object,
-      default: () => ({}),
-    },
   },
-
-  emits: ['click', 'dblclick', 'update:center'],
-
   data() {
     return {
-      mapObject: undefined,
-      layers: [],
-      layerControls: [],
       invalidateSizeRaf: undefined,
       invalidateSizeTimeout: undefined,
       resizeObserver: undefined,
@@ -86,7 +47,6 @@ export default {
       isMapDestroyed: false,
     };
   },
-
   watch: {
     disabled(value) {
       if (value) {
@@ -98,24 +58,10 @@ export default {
       this.invalidateMapSize();
     },
   },
-
   created() {
     this.debouncedInvalidateMapSize = debounce(this.invalidateMapSize, RESIZE_OBSERVER_DELAY);
   },
-
   mounted() {
-    this.mapObject = new Map(this.$refs.mapElement, {
-      center: this.center,
-      zoom: this.zoom,
-      minZoom: this.minZoom,
-      maxZoom: this.maxZoom,
-      ...this.options,
-    });
-
-    this.mapObject.on('click', this.emitClick);
-    this.mapObject.on('dblclick', this.emitDblClick);
-    this.mapObject.on('moveend', this.updateCenter);
-
     Object.values(GEOMAP_PANES).forEach((pane) => {
       this.mapObject.createPane(pane).style.zIndex = GEOMAP_PANE_Z_INDEXES[pane];
     });
@@ -127,71 +73,13 @@ export default {
       this.disableInteraction();
     }
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     this.isMapDestroyed = true;
 
     this.cleanupInvalidateSize();
     this.disconnectResizeObserver();
-
-    this.mapObject?.off('click', this.emitClick);
-    this.mapObject?.off('dblclick', this.emitDblClick);
-    this.mapObject?.off('moveend', this.updateCenter);
-    this.mapObject?.remove();
   },
-
   methods: {
-    emitClick(event) {
-      this.$emit('click', event);
-    },
-
-    emitDblClick(event) {
-      this.$emit('dblclick', event);
-    },
-
-    updateCenter() {
-      const center = this.mapObject.getCenter();
-
-      this.$emit('update:center', [center.lat, center.lng]);
-    },
-
-    isControlLayer(layer) {
-      return layer.name && (layer.layerType === 'base' || layer.layerType === 'overlay');
-    },
-
-    addLayer(layer) {
-      this.layers.push(layer);
-
-      if (!layer.layerType || layer.layerType === 'base' || layer.layerType === 'overlay') {
-        this.mapObject.addLayer(layer.mapObject);
-      }
-
-      if (this.isControlLayer(layer)) {
-        this.layerControls.forEach(control => control.addLayerDescriptor(layer));
-      }
-    },
-
-    removeLayer(layer) {
-      this.layers = this.layers.filter(item => item !== layer);
-
-      if (this.isControlLayer(layer)) {
-        this.layerControls.forEach(control => control.removeLayerDescriptor(layer));
-      }
-
-      if (this.mapObject.hasLayer(layer.mapObject)) {
-        this.mapObject.removeLayer(layer.mapObject);
-      }
-    },
-
-    registerLayerControl(control) {
-      this.layerControls.push(control);
-      this.layers.filter(this.isControlLayer).forEach(layer => control.addLayerDescriptor(layer));
-    },
-
-    unregisterLayerControl(control) {
-      this.layerControls = this.layerControls.filter(item => item !== control);
-    },
-
     cleanupInvalidateSize() {
       if (this.invalidateSizeRaf) {
         window.cancelAnimationFrame(this.invalidateSizeRaf);
@@ -266,7 +154,7 @@ export default {
       this.mapObject.boxZoom.enable();
       this.mapObject.keyboard.enable();
 
-      if (this.mapObject.options?.doubleClickZoom !== false) {
+      if (this.options?.doubleClickZoom !== false) {
         this.mapObject.doubleClickZoom.enable();
       }
 
@@ -279,11 +167,11 @@ export default {
 </script>
 
 <style lang="scss">
-.geomap,
+@import "~leaflet/dist/leaflet.css";
+
 .leaflet-container {
   width: 100%;
   min-height: inherit;
-  height: 100%;
 }
 
 .leaflet {
@@ -292,13 +180,6 @@ export default {
   &-top,
   &-bottom {
     z-index: unset;
-  }
-
-  &-gesture-handling-scroll-warning,
-  &-gesture-handling-touch-warning {
-    &::after {
-      display: none;
-    }
   }
 }
 </style>

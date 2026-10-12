@@ -1,90 +1,76 @@
-import { createVuetify } from 'vuetify';
-import { VExpansionPanels } from 'vuetify/components';
+import Vuetify from 'vuetify/lib';
+import * as VuetifyComponents from 'vuetify/lib/components';
+import * as VuetifyDirectives from 'vuetify/lib/directives';
 
-import { DEFAULT_THEME_COLORS } from '@/config';
+import icons from './components/icons';
+import ClickOutside from './directives/click-outside';
+import VAlert from './components/v-alert/v-alert.vue';
+import VAutocomplete from './components/v-autocomplete/v-autocomplete.vue';
+import VCombobox from './components/v-combobox/v-combobox.vue';
+import VChip from './components/v-chip/v-chip.vue';
+import VIcon from './components/v-icon/v-icon.vue';
+import VMenu from './components/v-menu/v-menu.vue';
+import VDialog from './components/v-dialog/v-dialog.vue';
+import VNavigationDrawer from './components/v-navigation-drawer/v-navigation-drawer.vue';
+import VDataTable from './components/v-data-table/v-data-table.vue';
+import VSimpleTable from './components/v-data-table/v-simple-table.vue';
+import VDataTableHeaderDesktop from './components/v-data-table/v-data-table-header-desktop.vue';
+import VDataTableHeader from './components/v-data-table/v-data-table-header.vue';
+import VSpeedDial from './components/v-speed-dial/v-speed-dial.vue';
+import VCalendar from './components/v-calendar/v-calendar.vue';
+import VTooltip from './components/v-tooltip/v-tooltip.vue';
+import VSelect from './components/v-select/v-select.vue';
+import VSwitch from './components/v-switch/v-switch.vue';
+import VListGroup from './components/v-list/v-list-group.vue';
+import VListItemMask from './components/v-list/v-list-item-mask.vue';
+import VTabs from './components/v-tabs/v-tabs.vue';
+import VTextarea from './components/v-textarea/v-textarea.vue';
 
-import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
+import './styles/vuetify.scss';
 
-import { customIconAliases, iconSets, bindIconAliases } from './icons';
+export const createVuetify = (Vue, options) => {
+  Vue.use(Vuetify, {
+    components: {
+      ...VuetifyComponents,
+      VAlert,
+      VChip,
+      VIcon,
+      VMenu,
+      VNavigationDrawer,
+      VDialog,
+      VSpeedDial,
+      VDataTable,
+      VSimpleTable,
+      VDataTableHeaderDesktop,
+      VDataTableHeader,
+      VCalendar,
+      VTooltip,
+      VSelect,
+      VListGroup,
+      VListItemMask,
+      VCombobox,
+      VAutocomplete,
+      VTabs,
+      VTextarea,
+      VSwitch,
+    },
 
-const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
+    directives: {
+      ...VuetifyDirectives,
+      ClickOutside,
+    },
+  });
 
-export const CANOPSIS_THEME_NAME = 'canopsis';
-
-export const vuetify = createVuetify({
-  defaults: {
-    VAutocomplete: {
-      color: 'primary',
-      density: 'compact',
-      variant: 'underlined',
+  return new Vuetify({
+    icons: {
+      iconfont: 'md',
+      values: icons,
     },
-    VCombobox: {
-      color: 'primary',
-      density: 'compact',
-      variant: 'underlined',
+    theme: {
+      options: {
+        customProperties: true,
+      },
+      ...options.theme,
     },
-    VField: {
-      color: 'primary',
-    },
-    VMenu: {
-      transition: 'fade-transition',
-    },
-    VSelect: {
-      color: 'primary',
-      density: 'compact',
-      variant: 'underlined',
-      transition: 'fade-transition',
-    },
-    VTextarea: {
-      color: 'primary',
-      density: 'compact',
-      variant: 'underlined',
-    },
-    VTextField: {
-      color: 'primary',
-      density: 'compact',
-      variant: 'underlined',
-    },
-    VTooltip: {
-      transition: 'fade-transition',
-    },
-    VBtn: {
-      density: 'default',
-    },
-    VCard: {
-      elevation: 2,
-    },
-    VExpansionPanels: {
-      elevation: 2,
-    },
-    VRow: {
-      density: 'compact',
-    },
-    VTabs: {
-      sliderColor: 'primary',
-    },
-  },
-  icons: {
-    defaultSet: 'md',
-    aliases: customIconAliases,
-    sets: iconSets,
-  },
-  theme: {
-    defaultTheme: CANOPSIS_THEME_NAME,
-    themes: {
-      [CANOPSIS_THEME_NAME]: definition,
-    },
-  },
-});
-
-bindIconAliases(vuetify.icons.aliases);
-
-/**
- * Kebab-case aliases for Vuetify components used as dynamic tags in vuedraggable.
- * vuedraggable resolves `tag` via resolveComponent(string), which requires global registration.
- */
-export const registerVuetifyComponentAliases = (app) => {
-  app.component('v-expansion-panels', VExpansionPanels);
+  });
 };
-
-export default vuetify;

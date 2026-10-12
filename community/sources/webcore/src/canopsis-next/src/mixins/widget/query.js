@@ -1,24 +1,26 @@
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
-import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { queryMixin } from '@/mixins/query';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 import { widgetOptionsMixin } from './options';
 
 export const queryWidgetMixin = {
-  mixins: [queryMixin, widgetOptionsMixin, entitiesUserPreferenceMixin],
-
+  mixins: [
+    queryMixin,
+    widgetOptionsMixin,
+    entitiesUserPreferenceMixin,
+  ],
   props: {
     tabId: {
       type: String,
-      default: '',
+      required: true,
     },
     defaultQueryId: {
       type: [Number, String],
       required: false,
     },
   },
-
   computed: {
     query: {
       get() {
@@ -37,7 +39,6 @@ export const queryWidgetMixin = {
       return this.getQueryNonceById(this.tabId);
     },
   },
-
   methods: {
     getQuery() {
       return convertWidgetQueryToRequest(this.query);

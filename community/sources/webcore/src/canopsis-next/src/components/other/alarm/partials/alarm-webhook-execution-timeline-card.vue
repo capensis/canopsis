@@ -1,34 +1,41 @@
 <template>
-  <c-layout column>
-    <c-layout class="mb-2" align="center">
+  <v-layout column>
+    <v-layout
+      class="mb-2"
+      align-center
+    >
       <c-expand-btn
         v-if="expandable"
-        :model-value="expanded"
+        :expanded="expanded"
         :loading="expanding"
         color="grey"
-        @update:model-value="expandResponse"
+        @expand="expandResponse"
       />
       <span class="ml-2">
         {{ $t(`alarm.timeline.steps.${step._t}`) }}
       </span>
-      <span v-if="step.message"> : {{ step.message }} </span>
-    </c-layout>
+      <span v-if="step.message">
+        : {{ step.message }}
+      </span>
+    </v-layout>
     <v-expand-transition>
       <v-card v-show="expanded">
         <v-card-text>
-          <c-request-text-information v-if="response" :value="response" />
+          <c-request-text-information
+            v-if="response"
+            :value="response"
+          />
           <span v-else>
             {{ $t('common.noResponse') }}
           </span>
         </v-card-text>
       </v-card>
     </v-expand-transition>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 export default {
-  emits: ['expand'],
   props: {
     step: {
       type: Object,

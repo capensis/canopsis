@@ -1,89 +1,93 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper text-class="position-relative" close>
-      <template #title>
-        <span>{{ t('modals.importPbehaviorException.title') }}</span>
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
       </template>
-
-      <template #text>
-        <pbehavior-exception-import-form />
+      <template #text="">
+        <pbehavior-exception-import-form v-model="form" />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
         </v-btn>
-
         <v-btn
           :disabled="submitting"
           :loading="submitting"
-          color="primary"
+          class="primary"
           type="submit"
         >
-          {{ t('common.import') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 
-import {
-  formToPbehaviorExceptionImport,
-  pbehaviorExceptionImportToForm,
-} from '@/helpers/entities/pbehavior/exception/form';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
+import { pbehaviorExceptionImportToForm } from '@/helpers/entities/pbehavior/exception/form';
+
 import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import PbehaviorExceptionImportForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-import-form.vue';
 
-export default {
-  components: { PbehaviorExceptionImportForm },
+import ModalWrapper from '../modal-wrapper.vue';
 
+export default {
+  name: MODALS.importPbehaviorException,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
+  components: {
+    PbehaviorExceptionImportForm,
+    ModalWrapper,
+  },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
     const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
+    const { config, close } = useInnerModal(props);
 
-    const form = useForm({
-      initialValues: pbehaviorExceptionImportToForm(config.value.exceptionImport),
-    });
-    const { values, handleSubmit, submitting } = form;
+    const form = ref(pbehaviorExceptionImportToForm(config.value.pbehaviorException));
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
+    const title = computed(() => config.value.title || t('modals.importPbehaviorException.title'));
 
-    const submit = handleSubmit(async () => {
-      const result = await config.value.action?.(formToPbehaviorExceptionImport(values.value));
+    const submitLabel = computed(() => config.value.submitLabel || t('common.import'));
 
-      await config.value.afterSubmit?.(result);
+    const { submit, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(form.value);
 
-      closeModal();
-
-      return result;
+        close();
+      },
     });
 
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      t,
+      form,
+      title,
+      submitLabel,
       submitting,
-      closeModal,
+      close,
       submit,
     };
   },

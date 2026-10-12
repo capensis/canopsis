@@ -24,16 +24,3 @@ export const entityInfoPropertyToForm = (entityInfoProperty = {}) => ({
   type: entityInfoProperty.type ?? ENTITY_INFO_PROPERTY_TYPES.string,
   alias: entityInfoProperty.alias ?? '',
 });
-
-/**
- * Convert entity info property form to API payload.
- *
- * @param {EntityInfoPropertyForm} form
- * @returns {EntityInfoProperty}
- */
-export const formToEntityInfoProperty = (form = {}) => ({
-  name: form.name,
-  description: form.description,
-  type: form.type,
-  alias: form.alias,
-});

@@ -1,36 +1,36 @@
 <template>
-  <c-layout gap="3">
-    <div class="ticket-status-jobs-table-filters__field">
-      <c-select
-        :model-value="options.status"
-        :label="t('jobs.filterByActiveState')"
+  <v-layout class="gap-4">
+    <v-flex md3 xs6>
+      <c-select-field
+        :value="options.status"
+        :label="$t('jobs.filterByActiveState')"
         :items="activeStateItems"
-        item-title="text"
         item-value="value"
+        item-text="text"
         clearable
         hide-details
-        @update:model-value="updateStatus"
+        @input="updateStatus"
       />
-    </div>
-    <div class="ticket-status-jobs-table-filters__field">
-      <c-select
-        :model-value="options.last_run_status"
-        :label="t('jobs.filterByLastStatus')"
+    </v-flex>
+    <v-flex md3 xs6>
+      <c-select-field
+        :value="options.last_run_status"
+        :label="$t('jobs.filterByLastStatus')"
         :items="statusItems"
-        item-title="text"
         item-value="value"
+        item-text="text"
         clearable
         hide-details
-        @update:model-value="updateLastRunStatus"
+        @input="updateLastRunStatus"
       />
-    </div>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import { JOB_LAST_RUN_STATUS, JOB_STATUS } from '@/constants';
+import { JOB_STATUS, JOB_LAST_RUN_STATUS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -41,35 +41,51 @@ export default {
       required: true,
     },
   },
-
-  emits: ['update:options'],
-
   setup(props, { emit }) {
     const { t } = useI18n();
+
     const statusItems = computed(() => Object.values(JOB_LAST_RUN_STATUS).map(value => ({
-        value,
-        text: t(`jobs.lastRunStatus.${value}`),
-      })),
-    );
+      value,
+      text: t(`jobs.lastRunStatus.${value}`),
+    })));
+
     const activeStateItems = computed(() => Object.values(JOB_STATUS).map(value => ({
-        value,
-        text: t(`jobs.status.${value}`),
-      })),
-    );
+      value,
+      text: t(`jobs.status.${value}`),
+    })));
+
+    /**
+     * Emits updated options to parent.
+     *
+     * @param {Object} newOptions - Updated table options
+     */
     const updateOptions = newOptions => emit('update:options', newOptions);
+
+    /**
+     * Updates status filter and resets pagination.
+     *
+     * @param {number|undefined} status - Run status value
+     */
     const updateLastRunStatus = lastRunStatus => updateOptions({
-        ...props.options,
-        last_run_status: lastRunStatus ?? undefined,
-        page: 1,
-      });
+      ...props.options,
+
+      last_run_status: lastRunStatus ?? undefined,
+      page: 1,
+    });
+
+    /**
+     * Updates active state filter and resets pagination.
+     *
+     * @param {number|undefined} activeState - Job state value
+     */
     const updateStatus = status => updateOptions({
-        ...props.options,
-        status: status ?? undefined,
-        page: 1,
-      });
+      ...props.options,
+
+      status: status ?? undefined,
+      page: 1,
+    });
 
     return {
-      t,
       statusItems,
       activeStateItems,
       updateLastRunStatus,
@@ -78,11 +94,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.ticket-status-jobs-table-filters__field {
-  flex: 0 0 25%;
-  max-width: 25%;
-  min-width: 220px;
-}
-</style>

@@ -1,41 +1,51 @@
 <template>
-  <c-layout gap="2" column>
+  <v-layout class="gap-2" column>
     <c-enabled-field
-      v-model="enabledField"
+      v-field="form.enabled"
       :disabled="disablable || defaultRule"
       hide-details
       with-background
     />
-
     <c-form-general-patterns-tabs>
       <template #general="{ setRef }">
         <alarm-status-rule-general-form
+          v-field="form"
           :ref="setRef"
           :flapping="flapping"
           :default-rule="defaultRule"
         />
       </template>
-
       <template v-if="!defaultRule" #patterns="{ setRef }">
-        <alarm-status-rule-patterns-form :ref="setRef" :flapping="flapping" />
+        <alarm-status-rule-patterns-form
+          v-field="form.patterns"
+          :ref="setRef"
+          :flapping="flapping"
+          class="mt-2"
+        />
       </template>
     </c-form-general-patterns-tabs>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { useFormModel } from '@/hooks/form';
-
 import AlarmStatusRuleGeneralForm from './alarm-status-rule-general-form.vue';
 import AlarmStatusRulePatternsForm from './alarm-status-rule-patterns-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     AlarmStatusRuleGeneralForm,
     AlarmStatusRulePatternsForm,
   },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     flapping: {
       type: Boolean,
       default: false,
@@ -48,14 +58,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-
-  setup() {
-    const enabledField = useFormModel('enabled');
-
-    return {
-      enabledField,
-    };
   },
 };
 </script>

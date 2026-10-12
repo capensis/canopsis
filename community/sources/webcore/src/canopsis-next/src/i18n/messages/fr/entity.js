@@ -28,20 +28,10 @@ export default {
     alarmLastComment: 'Dernier commentaire d\'alarme',
     importSource: 'Source d\'import',
     imported: 'Date d\'import',
-    pause: 'Pause',
-    pauseAuthor: 'Auteur de la pause',
-    pauseInitiator: 'Initiateur de la pause',
-  },
-  popups: {
-    pauseOperation:
-      'La mise en pause peut prendre jusqu’à 60 secondes avant d’apparaître dans l’interface',
-    resumeOperation:
-      'La reprise peut prendre jusqu’à 60 secondes avant d’apparaître dans l’interface',
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Afficher toutes les dépendances',
-    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]:
-      'Afficher les dépendances définissant l\'état',
+    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]: 'Afficher les dépendances définissant l\'état',
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.custom]: 'Afficher le sélecteur',
   },
   comments: {

@@ -1,44 +1,42 @@
 <template>
-  <c-layout gap="3" column>
+  <v-layout class="gap-3" column>
+    <c-name-field v-field="form.name" />
+
     <c-form-block>
       <c-form-block-row :label="$t('common.type')">
-        <c-event-filter-type-field v-model="typeField" />
+        <c-event-filter-type-field v-field="form.type" />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.priority')">
-        <c-priority-field v-model="priorityField" />
+        <c-priority-field v-field="form.priority" />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.description')" indented>
-        <c-description-field v-model="descriptionField" required />
+      <c-form-block-row :label="$t('common.description')">
+        <c-description-field v-field="form.description" required />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('eventFilter.duringPeriod')">
-        <event-filter-drop-intervals-field
-          v-model:start="startField"
-          v-model:stop="stopField"
-          :required="hasRRule"
-        />
+        <event-filter-drop-intervals-field v-field="form" :required="hasRRule" />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.recurrence')">
-        <pbehavior-recurrence-rule-field
-          v-model:rrule="rruleField"
-          v-model:exdates="exdatesField"
-          v-model:exceptions="exceptionsField"
-          :start="startField"
-        />
+      <c-form-block-row :label="$t('common.recurrence')" indented>
+        <pbehavior-recurrence-rule-field v-field="form" />
       </c-form-block-row>
     </c-form-block>
 
     <event-filter-enrichment-form
       v-if="isEnrichmentType"
+      v-field="form"
       :template-vars="templateVars"
       :copy-vars="copyVars"
     />
 
-    <event-filter-change-entity-form v-else-if="isChangeEntityType" :template-vars="templateVars" />
-  </c-layout>
+    <event-filter-change-entity-form
+      v-else-if="isChangeEntityType"
+      v-field="form"
+      :template-vars="templateVars"
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -49,22 +47,29 @@ import {
   isChangeEntityEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
 
-import { useFormModels } from '@/hooks/form';
+import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
 
-import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-field.vue';
-
+import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
 import EventFilterChangeEntityForm from './fields/event-filter-change-entity-form.vue';
 import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-field.vue';
-import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     EventFilterDropIntervalsField,
     PbehaviorRecurrenceRuleField,
     EventFilterEnrichmentForm,
     EventFilterChangeEntityForm,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     templateVars: {
       type: Object,
       default: () => ({}),
@@ -78,40 +83,12 @@ export default {
       default: false,
     },
   },
-  setup() {
-    const {
-      typeField,
-      priorityField,
-      descriptionField,
-      rruleField,
-      exdatesField,
-      exceptionsField,
-      startField,
-      stopField,
-    } = useFormModels({
-      typeField: 'type',
-      priorityField: 'priority',
-      descriptionField: 'description',
-      rruleField: 'rrule',
-      exdatesField: 'exdates',
-      exceptionsField: 'exceptions',
-      startField: 'start',
-      stopField: 'stop',
-    });
-
-    const hasRRule = computed(() => !!rruleField.value);
-    const isEnrichmentType = computed(() => isEnrichmentEventFilterRuleType(typeField.value));
-    const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(typeField.value));
+  setup(props) {
+    const hasRRule = computed(() => !!props.form.rrule);
+    const isEnrichmentType = computed(() => isEnrichmentEventFilterRuleType(props.form.type));
+    const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(props.form.type));
 
     return {
-      typeField,
-      priorityField,
-      descriptionField,
-      rruleField,
-      exdatesField,
-      exceptionsField,
-      startField,
-      stopField,
       hasRRule,
       isEnrichmentType,
       isChangeEntityType,

@@ -22,19 +22,16 @@ export const widgetsToLayoutBySize = (
   widgets = [],
   oldLayout = [],
   size = WIDGET_GRID_SIZES_KEYS.desktop,
-) =>
-  widgets.map((widget) => {
-    const oldLayoutItem = oldLayout.find(({ i }) => i === widget._id);
-    const newLayoutItem = oldLayoutItem
-      ? omit(oldLayoutItem, ['i', 'widget'])
-      : { ...widget.grid_parameters[size] };
+) => widgets.map((widget) => {
+  const oldLayoutItem = oldLayout.find(({ i }) => i === widget._id);
+  const newLayoutItem = oldLayoutItem ? omit(oldLayoutItem, ['i', 'widget']) : { ...widget.grid_parameters[size] };
 
-    newLayoutItem.i = widget._id;
-    newLayoutItem.widget = widget;
-    newLayoutItem.h = newLayoutItem.h || 1;
+  newLayoutItem.i = widget._id;
+  newLayoutItem.widget = widget;
+  newLayoutItem.h = newLayoutItem.h || 1;
 
-    return newLayoutItem;
-  });
+  return newLayoutItem;
+});
 
 /**
  * Get y positions for every sizes for new widget
@@ -42,29 +39,27 @@ export const widgetsToLayoutBySize = (
  * @param {Widget[]} [widgets = []]
  * @returns {{ mobile: number, tablet: number, desktop: number }}
  */
-export const calculateNewWidgetGridParametersY = (widgets = []) =>
-  widgets.reduce(
-    (acc, { grid_parameters: gridParameters }) => {
-      const newMobileYPosition = gridParameters.mobile.y + gridParameters.mobile.h;
-      const newTabletYPosition = gridParameters.tablet.y + gridParameters.tablet.h;
-      const newDesktopYPosition = gridParameters.desktop.y + gridParameters.desktop.h;
+export const calculateNewWidgetGridParametersY = (widgets = []) => (
+  widgets.reduce((acc, { grid_parameters: gridParameters }) => {
+    const newMobileYPosition = gridParameters.mobile.y + gridParameters.mobile.h;
+    const newTabletYPosition = gridParameters.tablet.y + gridParameters.tablet.h;
+    const newDesktopYPosition = gridParameters.desktop.y + gridParameters.desktop.h;
 
-      if (newMobileYPosition > acc.mobile) {
-        acc.mobile = newMobileYPosition;
-      }
+    if (newMobileYPosition > acc.mobile) {
+      acc.mobile = newMobileYPosition;
+    }
 
-      if (newTabletYPosition > acc.tablet) {
-        acc.tablet = newTabletYPosition;
-      }
+    if (newTabletYPosition > acc.tablet) {
+      acc.tablet = newTabletYPosition;
+    }
 
-      if (newDesktopYPosition > acc.desktop) {
-        acc.desktop = newDesktopYPosition;
-      }
+    if (newDesktopYPosition > acc.desktop) {
+      acc.desktop = newDesktopYPosition;
+    }
 
-      return acc;
-    },
-    { mobile: 0, tablet: 0, desktop: 0 },
-  );
+    return acc;
+  }, { mobile: 0, tablet: 0, desktop: 0 })
+);
 
 /**
  * Convert widgets to layouts for all sizes with compact layout function
@@ -78,14 +73,15 @@ export const widgetsToLayoutsWithCompact = (
   widgets = [],
   layouts = [],
   sizes = Object.values(WIDGET_GRID_SIZES_KEYS),
-) =>
+) => (
   sizes.reduce((acc, size) => {
     const oldLayout = get(layouts, size, []);
 
     acc[size] = compactLayout(widgetsToLayoutBySize(widgets, oldLayout, size));
 
     return acc;
-  }, {});
+  }, {})
+);
 
 /**
  * Convert layouts to widgets grid

@@ -1,45 +1,32 @@
 <template>
   <widget-settings-item :title="$t('settings.colorsSelector.title')">
-    <c-color-picker-field
-      v-for="level in levels"
-      :key="level"
-      :model-value="modelValue[level]"
-      :label="getButtonText(level)"
-      :type="colorType"
-      class="mb-3 w-100"
-      fill-width
-      @update:model-value="updateLevel(level, $event)"
-    >
-      <template #activator="{ props, color, label, style, disabled }">
-        <v-row class="w-100" align="center" justify="space-between">
-          <v-btn v-bind="props" :disabled="disabled">
-            {{ label }}
-          </v-btn>
-
-          <div :style="style" class="pa-1 text-center">
-            {{ color }}
-          </div>
-        </v-row>
-      </template>
-    </c-color-picker-field>
+    <v-layout column>
+      <c-color-picker-field
+        v-for="level in $constants.STATS_CRITICITY"
+        v-field="levelsColors[level]"
+        :key="level"
+        :label="getButtonText(level)"
+        :type="colorType"
+        class="mb-3"
+        splitted
+      />
+    </v-layout>
   </widget-settings-item>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { ALARM_LEVELS_COLORS, STATS_CRITICITY } from '@/constants';
-
-import { useModelField } from '@/hooks/form/model-field';
-import { useI18n } from '@/hooks/i18n';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
-
+  model: {
+    prop: 'levelsColors',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    levelsColors: {
       type: Object,
       default: () => ({ ...ALARM_LEVELS_COLORS }),
     },
@@ -52,40 +39,20 @@ export default {
       default: 'rgba',
     },
   },
-
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { updateModel } = useModelField(props, emit);
-    const levels = computed(() => Object.values(STATS_CRITICITY));
-
-    const getButtonText = (key) => {
+  methods: {
+    getButtonText(key) {
       let suffix = '';
 
-      if (!props.hideSuffix) {
+      if (!this.hideSuffix) {
         if (key === STATS_CRITICITY.ok) {
-          suffix = ` / ${t('common.yes')}`;
+          suffix = ` / ${this.$t('common.yes')}`;
         } else if (key === STATS_CRITICITY.critical) {
-          suffix = ` / ${t('common.no')}`;
+          suffix = ` / ${this.$t('common.no')}`;
         }
       }
 
-      return t(`settings.colorsSelector.statsCriticity.${key}`) + suffix;
-    };
-
-    const updateLevel = (level, value) => {
-      updateModel({
-        ...props.modelValue,
-        [level]: value,
-      });
-    };
-
-    return {
-      levels,
-      getButtonText,
-      updateLevel,
-    };
+      return this.$t(`settings.colorsSelector.statsCriticity.${key}`) + suffix;
+    },
   },
 };
 </script>

@@ -1,42 +1,41 @@
-import { storeToRefs } from 'pinia';
-
-import { useLlmStore } from '@/stores/modules/llm';
+import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * LLM store facade.
+ * @returns {Object} Vuex module hooks for the `llm` namespace
+ */
+const useLlmStoreModule = () => useStoreModuleHooks('llm');
+
+/**
+ * Maps Vuex `llm` actions to app-facing names.
  *
  * @returns {Object}
  */
 export const useLlm = () => {
-  const llmStore = useLlmStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(llmStore);
-  const fetchDefaultLlmWithoutStore = () =>
-    llmStore.fetchListWithoutStore({
-      params: { only_default: true, enabled: true },
-    });
+  const { useActions } = useLlmStoreModule();
+
+  const actions = useActions({
+    createLlm: 'create',
+    updateLlm: 'update',
+    removeLlm: 'remove',
+    bulkRemoveLlms: 'bulkRemove',
+    bulkEnableLlms: 'bulkEnable',
+    bulkDisableLlms: 'bulkDisable',
+    fetchLlmsListWithoutStore: 'fetchListWithoutStore',
+    fetchModelsListWithoutStore: 'fetchModelsListWithoutStore',
+    fetchLlmHistoryWithoutStore: 'fetchLlmHistoryWithoutStore',
+    fetchLlmChatsWithoutStore: 'fetchLlmChatsWithoutStore',
+    fetchLlmUsersWithoutStore: 'fetchLlmUsersWithoutStore',
+    fetchLlmMessagesWithoutStore: 'fetchLlmMessagesWithoutStore',
+    bulkLinkLlmHistory: 'bulkLinkLlmHistory',
+  });
+
+  const fetchDefaultLlmWithoutStore = () => actions.fetchLlmsListWithoutStore({
+    params: { only_default: true, enabled: true },
+  });
 
   return {
-    llms: items,
-    llmsMeta: meta,
-    llmsPending: pending,
-    llmsFetchingParams: fetchingParams,
+    ...actions,
 
-    fetchLlmsList: llmStore.fetchList,
-    fetchLlmsListWithPreviousParams: llmStore.fetchListWithPreviousParams,
-    fetchLlmsListWithoutStore: llmStore.fetchListWithoutStore,
-    createLlm: llmStore.create,
-    updateLlm: llmStore.update,
-    removeLlm: llmStore.remove,
-    bulkRemoveLlms: llmStore.bulkRemove,
-    bulkEnableLlms: llmStore.bulkEnable,
-    bulkDisableLlms: llmStore.bulkDisable,
     fetchDefaultLlmWithoutStore,
-    fetchModelsListWithoutStore: llmStore.fetchModelsListWithoutStore,
-    fetchLlmHistoryWithoutStore: llmStore.fetchLlmHistoryWithoutStore,
-    fetchLlmChatsWithoutStore: llmStore.fetchLlmChatsWithoutStore,
-    fetchLlmUsersWithoutStore: llmStore.fetchLlmUsersWithoutStore,
-    fetchLlmMessagesWithoutStore: llmStore.fetchLlmMessagesWithoutStore,
-    fetchLlmStatsWithoutStore: llmStore.fetchLlmStatsWithoutStore,
-    bulkLinkLlmHistory: llmStore.bulkLinkLlmHistory,
   };
 };

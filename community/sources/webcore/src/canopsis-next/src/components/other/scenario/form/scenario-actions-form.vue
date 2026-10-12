@@ -1,28 +1,25 @@
 <template>
   <c-card-iterator-form
-    :value="actionsField"
-    :handle="`.${dragItemHandleClass}`"
-    :required-error-message="t('scenario.errors.actionRequired')"
-    :empty-message="t('scenario.emptyActions')"
-    :add-button-label="t('scenario.addAction')"
+    v-field="actions"
+    :draggable-group="draggableGroup"
+    :name="name"
+    :required-error-message="$t('scenario.errors.actionRequired')"
+    :empty-message="$t('scenario.emptyActions')"
+    :add-button-label="$t('scenario.addAction')"
     item-key="key"
-    name="actions"
+    iterator-class="mb-2"
     required
-    @update:value="actionsField = $event"
     @add="addAction"
   >
-    <template #item="{ index, item: action }">
+    <template #item="{ item: action, index }">
       <scenario-action-field
-        :key="action.key"
-        :model-value="actionsField[index]"
-        :name="`actions.${action.key}`"
-        :drag-handle-class="dragItemHandleClass"
+        v-field="actions[index]"
+        :name="`${name}.${action.key}`"
         :action-number="index + 1"
         :has-previous-webhook="hasPreviousWebhook(index)"
         :template-vars="templateVars"
-        @update:model-value="updateAction(index, $event)"
-        @remove="removeAction(index)"
-        @duplicate="duplicateAction(index)"
+        @remove="removeItemFromArray(index)"
+        @duplicate="duplicateAction(action)"
       />
     </template>
   </c-card-iterator-form>
@@ -31,67 +28,78 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { actionToForm, isWebhookActionType } from '@/helpers/entities/action/form';
+import { actionToForm, isWebhookActionType } from '@/helpers/entities/action';
 import { uid } from '@/helpers/uid';
 
-import { useFormArray } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
+import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
 import ScenarioActionField from './fields/scenario-action-field.vue';
 
 export default {
-  components: {
-    ScenarioActionField,
+  inject: ['$validator'],
+  components: { ScenarioActionField },
+  mixins: [formArrayMixin, validationChildrenMixin],
+  model: {
+    prop: 'actions',
+    event: 'input',
   },
-
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
+    actions: {
+      type: Array,
+      default: () => ([]),
+    },
+    name: {
+      type: String,
+      default: 'actions',
+    },
     templateVars: {
       type: Object,
       default: () => ({}),
     },
   },
+  computed: {
+    hasActionsErrors() {
+      return this.errors.has(this.name);
+    },
 
-  setup() {
-    const { t } = useI18n();
-    const actionsField = useFormArray('actions');
-    const dragItemHandleClass = 'scenario-action-drag-handle';
+    draggableGroup() {
+      return {
+        name: 'scenarios-actions',
+      };
+    },
 
-    const addAction = () => {
-      actionsField.value = [...actionsField.value, actionToForm()];
-    };
+    webhookIndexes() {
+      return this.actions.reduce((acc, action, index) => {
+        if (isWebhookActionType(action.type)) {
+          acc.push(index);
+        }
 
-    const updateAction = (index, action) => {
-      const actions = [...actionsField.value];
+        return acc;
+      }, []);
+    },
 
-      actions[index] = action;
-      actionsField.value = actions;
-    };
+    firstWebhookIndex() {
+      return this.webhookIndexes[0];
+    },
+  },
+  methods: {
+    addAction() {
+      this.addItemIntoArray(actionToForm());
+    },
 
-    const removeAction = (index) => {
-      actionsField.value = actionsField.value.filter((action, actionIndex) => actionIndex !== index);
-    };
+    hasPreviousWebhook(index) {
+      return this.firstWebhookIndex < index;
+    },
 
-    const duplicateAction = (index) => {
-      const action = cloneDeep(actionsField.value[index]);
+    duplicateAction(action) {
+      const clonedAction = cloneDeep(action);
 
-      action.key = uid();
-      actionsField.value = [...actionsField.value, action];
-    };
-
-    const hasPreviousWebhook = index => actionsField.value
-        .slice(0, index)
-        .some(action => isWebhookActionType(action.type));
-
-    return {
-      t,
-      actionsField,
-      dragItemHandleClass,
-      addAction,
-      updateAction,
-      removeAction,
-      duplicateAction,
-      hasPreviousWebhook,
-    };
+      this.addItemIntoArray({ ...clonedAction, key: uid() });
+    },
   },
 };
 </script>

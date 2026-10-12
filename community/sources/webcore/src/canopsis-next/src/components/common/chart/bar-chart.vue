@@ -1,41 +1,20 @@
-<template>
-  <div class="bar-chart">
-    <div class="bar-chart__canvas">
-      <canvas ref="canvas" />
-    </div>
-    <slot :chart="chart" name="actions" />
-  </div>
-</template>
-
 <script>
-import {
-  BarController,
-  BarElement,
-  CategoryScale,
-  Chart,
-  Legend,
-  LinearScale,
-  TimeScale,
-  Tooltip,
-} from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
 import { merge } from 'lodash';
-import 'chartjs-adapter-moment';
-import { markRaw } from 'vue';
 
-Chart.register(
-  BarController,
-  BarElement,
-  CategoryScale,
-  Legend,
-  LinearScale,
-  TimeScale,
-  Tooltip,
-  zoomPlugin,
-);
+import { chartBackgroundMixin } from '@/mixins/chart/background';
+import { chartZoomMixin } from '@/mixins/chart/zoom';
+
+import { Bar } from '@/externals/vue-chart/components';
 
 export default {
+  extends: Bar,
+  mixins: [
+    chartBackgroundMixin,
+    chartZoomMixin,
+  ],
   props: {
+    ...Bar.props,
+
     labels: {
       type: Array,
       required: false,
@@ -48,18 +27,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    dark: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  data() {
-    return {
-      chart: null,
-    };
-  },
-
   computed: {
     chartData() {
       return {
@@ -67,94 +35,47 @@ export default {
         datasets: this.datasets,
       };
     },
-
     mergedOptions() {
-      return merge(
-        {
-          responsive: true,
-          maintainAspectRatio: false,
+      return merge({
+        responsive: true,
+        maintainAspectRatio: false,
 
-          plugins: {
+        plugins: {
+          zoom: {
+            pan: {
+              enabled: false,
+            },
             zoom: {
-              pan: {
+              wheel: {
                 enabled: false,
               },
-              zoom: {
-                wheel: {
-                  enabled: false,
-                },
-                pinch: {
-                  enabled: false,
-                },
-                drag: {
-                  enabled: false,
-                },
+              pinch: {
+                enabled: false,
+              },
+              drag: {
+                enabled: false,
               },
             },
           },
         },
-        this.options,
-      );
+      }, this.options);
     },
   },
-
   watch: {
-    chartData: {
-      deep: true,
-      handler() {
-        this.updateChart();
-      },
-    },
-
-    mergedOptions: {
-      deep: true,
-      handler() {
-        this.updateChart();
-      },
-    },
-  },
-
-  mounted() {
-    this.renderChart();
-  },
-
-  beforeUnmount() {
-    this.chart?.destroy();
-    this.chart = null;
-  },
-
-  methods: {
-    renderChart() {
-      this.chart = markRaw(
-        new Chart(this.$refs.canvas, {
-          type: 'bar',
-          data: this.chartData,
-          options: this.mergedOptions,
-        }),
-      );
-    },
-
-    updateChart() {
-      if (!this.chart) {
-        return;
+    chartData(data, oldData) {
+      if (data !== oldData) {
+        this.updateChart(data, this.mergedOptions);
       }
-
-      this.chart.data = this.chartData;
-      this.chart.options = this.mergedOptions;
-      this.chart.update();
     },
+
+    mergedOptions(options, oldOptions) {
+      if (options !== oldOptions) {
+        this.updateChart(this.chartData, options);
+      }
+    },
+  },
+  mounted() {
+    this.renderChart(this.chartData, this.mergedOptions);
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.bar-chart {
-  position: relative;
-  width: 100%;
-
-  &__canvas {
-    position: relative;
-    height: 360px;
-  }
-}
-</style>

@@ -9,86 +9,88 @@
   />
 </template>
 
-<script setup>
-import { computed, nextTick, onMounted, ref } from 'vue';
-
+<script>
 import { COLORS } from '@/config';
 import { DATETIME_FORMATS } from '@/constants';
 
+import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import {
   convertDateToDateObjectByTimezone,
   convertDateToString,
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
 import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
-import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 
-import { useInfo } from '@/hooks/store/modules/info';
-import { usePbehaviorTimespan } from '@/hooks/store/modules/pbehavior-timespan';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
-const props = defineProps({
-  pbehavior: {
-    type: Object,
-    required: true,
+export default {
+  inject: ['$system'],
+  mixins: [
+    entitiesInfoMixin,
+    entitiesPbehaviorTimespansMixin,
+  ],
+  props: {
+    pbehavior: {
+      type: Object,
+      required: true,
+    },
   },
-});
-
-const { timezone } = useInfo();
-const { fetchPbehaviorTimespansListWithoutStore } = usePbehaviorTimespan();
-
-const calendar = ref(null);
-const pending = ref(false);
-const timespans = ref([]);
-
-const isTimed = computed(() => !isFullDayEvent(
-    convertDateToDateObjectByTimezone(props.pbehavior.tstart, timezone.value),
-    props.pbehavior.tstop &&
-      convertDateToDateObjectByTimezone(props.pbehavior.tstop, timezone.value),
-  ),
-);
-
-const events = computed(() => timespans.value.map((timespan, index) => {
-    const fromString = convertDateToString(timespan.from, DATETIME_FORMATS.medium);
-    const toString = convertDateToString(timespan.to, DATETIME_FORMATS.medium);
-
+  data() {
     return {
-      id: index,
-      start: convertDateToDateObjectByTimezone(timespan.from, timezone.value),
-      end: convertDateToDateObjectByTimezone(timespan.to, timezone.value),
-      timed: isTimed.value,
-      name: `${fromString} - ${toString}`,
-      color: COLORS.secondary,
+      pending: false,
+      timespans: [],
     };
-  }),
-);
+  },
+  computed: {
+    isTimed() {
+      return !isFullDayEvent(
+        convertDateToDateObjectByTimezone(this.pbehavior.tstart, this.$system.timezone),
+        this.pbehavior.tstop && convertDateToDateObjectByTimezone(this.pbehavior.tstop, this.$system.timezone),
+      );
+    },
 
-const fetchTimespans = async () => {
-  const filled = calendar.value?.filled;
+    events() {
+      return this.timespans.map((timespan, index) => {
+        const start = convertDateToDateObjectByTimezone(timespan.from, this.$system.timezone);
+        const end = convertDateToDateObjectByTimezone(timespan.to, this.$system.timezone);
 
-  if (!filled?.start || !filled?.end) {
-    return;
-  }
+        const fromString = convertDateToString(timespan.from, DATETIME_FORMATS.medium);
+        const toString = convertDateToString(timespan.to, DATETIME_FORMATS.medium);
 
-  pending.value = true;
+        return {
+          id: index,
+          start,
+          end,
+          timed: this.isTimed,
+          name: `${fromString} - ${toString}`,
+          color: COLORS.secondary,
+        };
+      });
+    },
+  },
+  mounted() {
+    this.fetchTimespans();
+  },
+  methods: {
+    async fetchTimespans() {
+      this.pending = true;
 
-  try {
-    const from = convertDateToTimestampByTimezone(filled.start, timezone.value);
-    const to = convertDateToTimestampByTimezone(filled.end, timezone.value);
-    const data = pbehaviorToTimespanRequest({
-      pbehavior: props.pbehavior,
-      from,
-      to,
-    });
+      const { start, end } = this.$refs.calendar.filled;
 
-    timespans.value = await fetchPbehaviorTimespansListWithoutStore({ data });
-  } finally {
-    pending.value = false;
-  }
+      const from = convertDateToTimestampByTimezone(start, this.$system.timezone);
+      const to = convertDateToTimestampByTimezone(end, this.$system.timezone);
+
+      const timespan = pbehaviorToTimespanRequest({
+        pbehavior: this.pbehavior,
+        from,
+        to,
+      });
+
+      this.timespans = await this.fetchTimespansListWithoutStore({ data: timespan });
+
+      this.pending = false;
+    },
+  },
 };
-
-onMounted(async () => {
-  await nextTick();
-
-  fetchTimespans();
-});
 </script>

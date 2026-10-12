@@ -1,11 +1,11 @@
 <template>
-  <c-layout
-    class="ai-chat-messages-list"
-    gap="3"
+  <v-layout
+    class="ai-chat-messages-list gap-3"
     column
   >
-    <template v-for="message in messages" :key="message._id">
+    <template v-for="message in messages">
       <ai-chat-message
+        :key="message._id"
         :message="message"
         :history="history"
       />
@@ -25,7 +25,7 @@
       :key="thinkingMessage._id"
       :message="thinkingMessage"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -37,7 +37,6 @@ export default {
     AiChatMessage,
     AiChatPattern,
   },
-  emits: ['restore:version'],
   props: {
     messages: {
       type: Array,

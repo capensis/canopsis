@@ -1,6 +1,6 @@
 <template>
   <c-select-chip
-    :value="value"
+    v-field="value"
     :items="items"
     :aria-label="$t('llm.model')"
     :disabled="disabled || pending"
@@ -11,7 +11,6 @@
     active-list-item-class="primary--text"
     return-object
     rounded
-    @update:value="updateValue"
   >
     <template #selection>
       <v-progress-circular
@@ -27,7 +26,7 @@
           v-if="!disabled"
           :color="colors.chipText"
           class="ml-1"
-          size="small"
+          small
         >
           keyboard_arrow_down
         </v-icon>
@@ -40,7 +39,10 @@
 import { COLORS } from '@/config';
 
 export default {
-  emits: ['update:value'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
@@ -59,13 +61,11 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
+  setup() {
     const colors = COLORS.aiChat;
-    const updateValue = value => emit('update:value', value);
 
     return {
       colors,
-      updateValue,
     };
   },
 };

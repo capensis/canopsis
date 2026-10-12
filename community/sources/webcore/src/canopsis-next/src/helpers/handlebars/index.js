@@ -1,5 +1,5 @@
-import { createHandlebarsInstance as createPromisedHandlebarsInstance } from './handlebars';
 import { registerAllHelpers } from './registers';
+import { createHandlebarsInstance as createPromisedHandlebarsInstance } from './handlebars';
 
 export { createHandlebarsInstance, Handlebars } from './handlebars';
 export { compile } from './compilers';
@@ -12,7 +12,6 @@ export { registerTemplate, unregisterTemplate, runTemplate, hasTemplate } from '
  *
  * @returns {Handlebars} A Handlebars instance with all registered custom helpers
  */
-export const createHandlebarsInstanceWithHelpers = () =>
-  registerAllHelpers(createPromisedHandlebarsInstance());
+export const createHandlebarsInstanceWithHelpers = () => registerAllHelpers(createPromisedHandlebarsInstance());
 
 export const ServiceWeatherHandlebars = createHandlebarsInstanceWithHelpers();

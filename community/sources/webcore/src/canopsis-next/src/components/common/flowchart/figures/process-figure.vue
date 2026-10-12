@@ -10,6 +10,7 @@
       :height="height"
       :stroke="stroke"
       :stroke-width="strokeWidth"
+      v-on="$listeners"
     />
     <path
       :stroke="stroke"

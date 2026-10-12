@@ -1,5 +1,5 @@
 <template>
-  <c-layout class="availability-bar-chart-information-row" gap="4" align="center">
+  <v-layout class="availability-bar-chart-information-row gap-4" align-center>
     <div :style="{ backgroundColor: color }" class="availability-bar-chart-information-row__color" />
     <div class="availability-bar-chart-information-row__label">
       {{ label }}
@@ -7,7 +7,7 @@
     <div>
       <slot />
     </div>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -25,16 +25,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .availability-bar-chart-information-row {
   &__color {
-    width: 20px;
     height: 20px;
+    width: 20px;
   }
 
   &__label {
-    width: 250px;
     flex-shrink: 0;
+    width: 250px;
   }
 }
 </style>

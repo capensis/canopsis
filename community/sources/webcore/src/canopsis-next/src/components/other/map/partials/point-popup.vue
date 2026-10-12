@@ -1,17 +1,28 @@
 <template>
-  <v-card class="point-popup" width="400">
-    <v-card-title :style="{ backgroundColor: color }" class="pa-2 text-white">
-      <c-layout justify="space-between" align="center">
+  <v-card
+    class="point-popup"
+    width="400"
+  >
+    <v-card-title
+      :style="{ backgroundColor: color }"
+      class="pa-2 white--text"
+    >
+      <v-layout
+        justify-space-between
+        align-center
+      >
         <h4>{{ title }}</h4>
         <v-btn
-          class="ml-3"
-          color="white"
-          icon="close"
-          size="small"
-          variant="text"
+          class="ma-0 ml-3"
+          icon
+          small
           @click="close"
-        />
-      </c-layout>
+        >
+          <v-icon color="white">
+            close
+          </v-icon>
+        </v-btn>
+      </v-layout>
     </v-card-title>
     <v-card-text>
       <c-compiled-template
@@ -19,16 +30,26 @@
         :template="template"
         :context="templateContext"
       />
-      <c-layout v-else column>
-        <span v-if="point.entity"> {{ $t('common.entity') }}: {{ point.entity.name }} </span>
-        <span v-if="point.map"> {{ $t('common.map') }}: {{ point.map.name }} </span>
-      </c-layout>
+      <v-layout
+        v-else
+        column
+      >
+        <span v-if="point.entity">
+          {{ $tc('common.entity') }}: {{ point.entity.name }}
+        </span>
+        <span v-if="point.map">
+          {{ $tc('common.map') }}: {{ point.map.name }}
+        </span>
+      </v-layout>
     </v-card-text>
-    <c-layout v-if="actions" class="ma-0 bg-background">
+    <v-layout
+      v-if="actions"
+      class="ma-0 background darken-1"
+    >
       <v-btn
         v-if="hasAlarmsListAccess && point.entity"
         class="point-popup__action"
-        variant="text"
+        text
         @click.stop="$emit('show:alarms')"
       >
         {{ $t('common.seeAlarms') }}
@@ -36,17 +57,17 @@
       <v-btn
         v-if="point.map"
         class="point-popup__action"
-        variant="text"
+        text
         @click.stop="$emit('show:map')"
       >
-        <v-icon start>
+        <v-icon left>
           link
         </v-icon>
         <span class="text-none text-truncate">
           {{ point.map.name }}
         </span>
       </v-btn>
-    </c-layout>
+    </v-layout>
   </v-card>
 </template>
 
@@ -62,7 +83,6 @@ import { authMixin } from '@/mixins/auth';
 
 export default {
   mixins: [authMixin],
-
   props: {
     point: {
       type: Object,
@@ -81,9 +101,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['close', 'show:alarms', 'show:map'],
-
   computed: {
     templateContext() {
       return { entity: this.point.entity };
@@ -103,7 +120,6 @@ export default {
       return this.checkAccess(USER_PERMISSIONS.business.map.actions.alarmsList);
     },
   },
-
   methods: {
     close() {
       this.$emit('close');

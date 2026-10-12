@@ -22,29 +22,33 @@
         @refresh="$emit('refresh')"
       />
     </template>
-
     <template #type="{ item }">
-      <span>{{ t(`map.types.${item.type}`) }}</span>
+      <span>{{ $t(`map.types.${item.type}`) }}</span>
     </template>
-
     <template #updated="{ item }">
-      {{ formatDate(item.updated) }}
+      {{ item.updated | date }}
     </template>
-
     <template #actions="{ item }">
-      <c-layout>
-        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
-        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
+          @click="$emit('duplicate', item)"
+        />
         <c-action-btn
           v-if="removable"
-          :tooltip="item.deletable ? t('common.delete') : t('map.usingMap')"
+          :tooltip="item.deletable ? $t('common.delete') : $t('map.usingMap')"
           :disabled="!item.deletable"
           type="delete"
-          @click.stop="$emit('remove', item._id)"
+          @click="$emit('remove', item._id)"
         />
-      </c-layout>
+      </v-layout>
     </template>
-
     <template #expand="{ item }">
       <maps-list-expand-item :map="item" />
     </template>
@@ -54,8 +58,6 @@
 <script>
 import { computed } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date';
-
 import { useI18n } from '@/hooks/i18n';
 
 import MapsListExpandItem from './partials/maps-list-expand-item.vue';
@@ -64,7 +66,6 @@ export default {
   components: {
     MapsListExpandItem,
   },
-
   props: {
     maps: {
       type: Array,
@@ -95,9 +96,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['edit', 'remove', 'duplicate', 'refresh', 'update:options'],
-
   setup(props) {
     const { t } = useI18n();
 
@@ -128,15 +126,12 @@ export default {
     const hasAnyDeletableMap = computed(() => props.maps.some(({ deletable }) => deletable));
 
     const isDisabledMap = ({ deletable }) => !deletable;
-    const formatDate = value => convertDateToString(value);
 
     return {
-      t,
       headers,
       hasAnyDeletableMap,
 
       isDisabledMap,
-      formatDate,
     };
   },
 };

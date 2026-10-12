@@ -1,14 +1,13 @@
 <template>
   <v-expansion-panel
+    :hide-actions="hideActions"
     :class="{ 'group-panel--editing': isEditing }"
-    class="group-panel"
-    color="secondary"
-    elevation="0"
-    rounded="0"
+    :rounded="false"
+    class="secondary group-panel"
   >
-    <v-expansion-panel-title
-      :class="{ 'group-panel__active': active }"
+    <v-expansion-panel-header
       :hide-actions="hideActions"
+      :class="{ 'group-panel__active': active }"
       class="pa-0 pr-6"
     >
       <div class="px-6 py-4 group-panel__title">
@@ -20,20 +19,20 @@
         <v-btn
           v-show="editable"
           :disabled="orderChanged"
-          size="small"
-          variant="text"
+          depressed
+          small
           icon
           @click.stop="handleChange"
         >
-          <c-icon size="18">
+          <v-icon small>
             edit
-          </c-icon>
+          </v-icon>
         </v-btn>
       </div>
-    </v-expansion-panel-title>
-    <v-expansion-panel-text class="group-item__content" eager>
+    </v-expansion-panel-header>
+    <v-expansion-panel-content class="group-item__content" eager>
       <slot />
-    </v-expansion-panel-text>
+    </v-expansion-panel-content>
   </v-expansion-panel>
 </template>
 
@@ -65,9 +64,6 @@ export default {
       default: false,
     },
   },
-
-  emits: ['change'],
-
   setup(props, { emit }) {
     const handleChange = () => {
       emit('change');
@@ -82,13 +78,14 @@ export default {
 
 <style lang="scss" scoped>
 .group-panel {
-  :deep(.v-expansion-panel-title) {
+  & ::v-deep .v-expansion-panel-header {
     height: 48px;
     min-height: 48px;
   }
 
-  :deep(.v-expansion-panel-text__wrapper) {
-    padding: 0;
+  & ::v-deep .v-expansion-panel-content .v-card {
+    border-radius: 0;
+    box-shadow: 0 0 0 0 rgba(0,0,0,.2), 0 0 0 0 rgba(0,0,0,.14), 0 0 0 0 rgba(0,0,0,.12) !important;
   }
 
   &__actions {
@@ -101,11 +98,11 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     display: inline-block;
-    padding: 16px 24px;
+    padding: 5px 0;
   }
 
   &--editing {
-    :deep(.v-expansion-panel-title) {
+    & ::v-deep .v-expansion-panel-header {
       cursor: move;
     }
 

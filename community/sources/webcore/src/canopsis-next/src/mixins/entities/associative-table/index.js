@@ -1,10 +1,10 @@
-import { mapActions } from 'pinia';
+import { createNamespacedHelpers } from 'vuex';
 
-import { useAssociativeTableStore } from '@/stores/modules/associative-table';
+const { mapActions } = createNamespacedHelpers('associativeTable');
 
 export const entitiesAssociativeTableMixin = {
   methods: {
-    ...mapActions(useAssociativeTableStore, {
+    ...mapActions({
       fetchAssociativeTable: 'fetch',
       createAssociativeTable: 'create',
       updateAssociativeTable: 'update',

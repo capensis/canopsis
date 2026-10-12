@@ -1,34 +1,30 @@
 <template>
-  <c-select
-    v-bind="$attrs"
-    :model-value="currentValue"
-    :items="items"
-    :label="label || t('common.type')"
+  <v-select
+    v-field="value"
+    v-validate="'required'"
+    :items="actionTypes"
+    :error-messages="errors.collect(name)"
+    :label="label || $t('common.type')"
     :name="name"
-    item-title="text"
-    item-value="value"
-    @update:model-value="updateModel"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ACTION_TYPES, PRO_ACTION_TYPES } from '@/constants';
 
-import { ACTION_TYPES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
-  inheritAttrs: false,
-
+  inject: ['$validator'],
+  mixins: [entitiesInfoMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
-      type: String,
-      default: undefined,
-    },
     value: {
       type: String,
-      default: undefined,
+      required: true,
     },
     label: {
       type: String,
@@ -40,33 +36,20 @@ export default {
     },
     types: {
       type: Array,
-      default: () => Object.values(ACTION_TYPES),
+      required: false,
     },
   },
+  computed: {
+    actionTypes() {
+      const types = this.types || Object.values(ACTION_TYPES);
 
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-
-    const currentValue = computed(() => props.modelValue ?? props.value);
-
-    const items = computed(() => props.types.map(type => ({
-        value: type,
-        text: t(`scenario.actions.${type}`),
-      })),
-    );
-
-    const updateModel = (value) => {
-      emit('update:modelValue', value);
-    };
-
-    return {
-      t,
-      currentValue,
-      items,
-      updateModel,
-    };
+      return types
+        .filter(type => !PRO_ACTION_TYPES.includes(type) || this.isProVersion)
+        .map(type => ({
+          value: type,
+          text: this.$t(`scenario.actions.${type}`),
+        }));
+    },
   },
 };
 </script>

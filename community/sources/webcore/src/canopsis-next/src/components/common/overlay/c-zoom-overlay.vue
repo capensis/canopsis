@@ -1,7 +1,13 @@
 <template>
-  <div class="zoom-overlay__wrapper" @wheel="wheelListener">
+  <div
+    class="zoom-overlay__wrapper"
+    @wheel="wheelListener"
+  >
     <v-fade-transition>
-      <div v-if="shown" class="zoom-overlay">
+      <div
+        v-if="shown"
+        class="zoom-overlay"
+      >
         <span class="zoom-overlay__text">
           {{ $t('common.ctrlZoom') }}
         </span>
@@ -25,13 +31,11 @@ export default {
       default: false,
     },
   },
-
   data() {
     return {
       shown: false,
     };
   },
-
   methods: {
     wheelListener(event) {
       if (this.timer) {
@@ -46,9 +50,7 @@ export default {
       }
 
       this.shown = true;
-      this.timer = setTimeout(() => {
-        this.shown = false;
-      }, ZOOM_OVERLAY_DELAY);
+      this.timer = setTimeout(() => this.shown = false, ZOOM_OVERLAY_DELAY);
     },
   },
 };
@@ -63,7 +65,7 @@ export default {
   height: 100%;
   width: 100%;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, .5);
   align-content: center;
   justify-content: center;
   pointer-events: none;

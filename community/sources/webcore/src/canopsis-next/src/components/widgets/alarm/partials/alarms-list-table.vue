@@ -1,285 +1,275 @@
 <template>
-  <div
-    class="alarms-list-table"
+  <v-flex
+    v-resize="resizeHandler"
+    ref="tableWrapper"
     v-on="wrapperListeners"
   >
-    <c-empty-data-table-columns v-if="!preparedColumns.length" />
-    <template v-else>
-    <div
-      v-if="shownTopPagination"
-      ref="actions"
-      class="alarms-list-table__top-pagination"
-    >
-      <c-layout
-        class="pa-2 position-relative"
-        align="center"
+    <c-empty-data-table-columns v-if="!columns.length" />
+    <div v-else>
+      <v-layout
+        v-if="shownTopPagination"
+        ref="actions"
+        class="alarms-list-table__top-pagination px-4 position-relative"
+        align-center
       >
-        <div class="alarms-list-table__top-pagination-left">
-          <c-density-btn-toggle
-            v-if="densable && isTableControlsShown"
-            :value="dense"
-            button-size="x-small"
-            density="compact"
-            icon-size="16"
-            @change="$emit('update:dense', $event)"
-          />
-
-          <c-mass-actions-panel
-            v-if="selectable && unresolvedSelected.length"
-            v-model="keepSelectedAfterAction"
-            v-bind="widgetGridParameters"
-            :selected="unresolvedSelected"
-            :default-value="defaultKeepSelectedAfterAction"
-            @clear:selected="clearSelected"
+        <v-flex
+          v-if="densable || selectable"
+          class="alarms-list-table__top-pagination--left"
+          xs6
+        >
+          <v-layout
+            align-center
+            justify-start
           >
-            <template #actions>
-              <mass-actions-panel
-                :items="unresolvedSelected"
-                :widget="preparedWidget"
-                :refresh-alarms-list="refreshAlarmsList"
-                :small="isSmallDensity"
-                @clear:items="clearSelectedAfterAction"
-              />
-            </template>
-          </c-mass-actions-panel>
-        </div>
-
-        <c-pagination
-          :page="options.page"
-          :limit="options.itemsPerPage"
-          :total="totalItems"
-          class="alarms-list-table__top-pagination-center"
-          type="top"
-          @update:page="updatePage"
-        />
-
+            <c-density-btn-toggle
+              v-if="densable"
+              :value="dense"
+              @change="$emit('update:dense', $event)"
+            />
+            <v-fade-transition v-if="selectable">
+              <v-flex
+                v-if="unresolvedSelected.length"
+                class="px-1"
+              >
+                <c-mass-actions-panel
+                  v-model="keepSelectedAfterAction"
+                  v-bind="widgetCurrentGridParameters"
+                  :selected="unresolvedSelected"
+                  :default-value="defaultKeepSelectedAfterAction"
+                  @clear:selected="clearSelected(true)"
+                >
+                  <template #actions>
+                    <mass-actions-panel
+                      :items="unresolvedSelected"
+                      :widget="widget"
+                      :refresh-alarms-list="refreshAlarmsList"
+                      small
+                      @clear:items="clearSelected"
+                    />
+                  </template>
+                </c-mass-actions-panel>
+              </v-flex>
+            </v-fade-transition>
+          </v-layout>
+        </v-flex>
+        <v-flex
+          v-if="!hidePagination"
+          class="alarms-list-table__top-pagination--center-absolute"
+          xs4
+        >
+          <c-pagination
+            :page="options.page"
+            :limit="options.itemsPerPage"
+            :total="totalItems"
+            type="top"
+            @input="updatePage"
+          />
+        </v-flex>
         <c-grid-btns
-          v-if="hasColumnEditButtons"
+          v-if="resizableColumn || draggableColumn"
           :editing="isColumnsChanging"
-          class="alarms-list-table__top-pagination-right"
+          class="alarms-list-table__top-pagination--right-absolute"
           @toggle="toggleColumnEditingMode"
           @reset="resetColumnsSettings"
         />
-      </c-layout>
-    </div>
-
-    <v-data-table-server
-      ref="dataTable"
-      :headers="headersWithWidth"
-      :hide-default-footer="true"
-      :items="alarms"
-      :items-length="totalItems"
-      :items-per-page="options.itemsPerPage"
-      :loading="isTableLoading"
-      :page="options.page"
-      :sort-by="options.sortBy"
-      :disable-sort="isColumnsChanging"
-      :density="tableDensity"
-      :class="tableClasses"
-      :style="tableStyle"
-      class="alarms-list-table__table"
-      multi-sort
-      @update:options="updateOptions"
-    >
-      <template
-        v-for="header in headersWithWidth"
-        :key="`header.${header.key}`"
-        #[`header.${header.key}`]="{ column, isSorted, sortBy, getSortIcon }"
+      </v-layout>
+      <v-data-table
+        v-model="selected"
+        ref="dataTable"
+        :class="vDataTableClass"
+        :style="vDataTableStyle"
+        :items="alarms"
+        :headers="headersWithWidth"
+        :server-items-length="totalItems"
+        :options="options"
+        :show-select="selectable"
+        :loading="loading || columnsFiltersPending || entityInfoPropertyPending"
+        :dense="isMediumDense"
+        :ultra-dense="isSmallDense"
+        :expanded.sync="expanded"
+        class="alarms-list-table v-data-table--expand"
+        item-key="_id"
+        loader-height="2"
+        hide-default-footer
+        multi-sort
+        v-on="tableListeners"
       >
-        <div v-if="header.key === rowIconsColumnKey" class="alarms-list-table__select-all">
-          <div class="alarms-list-table__select-all-checkbox">
-            <c-light-checkbox
-              v-if="selectable"
-              :model-value="isAllSelectableSelected"
-              :indeterminate="isSomeSelectableSelected && !isAllSelectableSelected"
-              :disabled="!selectableAlarms.length"
-              @update:model-value="toggleAllSelectableAlarms"
+        <template #progress="">
+          <v-fade-transition>
+            <v-progress-linear
+              color="primary"
+              height="2"
+              indeterminate
             />
-          </div>
-        </div>
-        <div v-else class="v-data-table-header__content">
+          </v-fade-transition>
+        </template>
+        <template
+          v-for="item in headers"
+          #[`header.${item.value}`]="{ header }"
+        >
           <alarm-header-cell
+            :key="`header.${item.value}`"
             :header="header"
             :resizing="resizingMode"
             :ellipsis-headers="isCellContentTruncated"
           />
-          <template v-if="column.sortable && !isColumnsChanging">
-            <v-icon
-              :icon="getSortIcon(column)"
-              class="v-data-table-header__sort-icon"
+          <template>
+            <span
+              v-if="draggingMode"
+              :key="`header.${item.value}.drag`"
+              class="table__dragging-handler"
+              @click.stop=""
             />
-            <div
-              v-if="isSorted(column)"
-              class="v-data-table-header__sort-badge"
-            >
-              {{ getHeaderSortIndex(column, sortBy) }}
-            </div>
+            <span
+              v-if="resizingMode"
+              :key="`header.cell.${item.value}.resize`"
+              class="table__resize-handler"
+              @mousedown.stop.prevent="startColumnResize(header.value)"
+              @click.stop=""
+            />
           </template>
-        </div>
-        <span
-          v-if="draggingMode && header.key !== rowIconsColumnKey"
-          :data-value="header.value"
-          class="table__dragging-handler"
-          @click.stop=""
-        />
-        <span
-          v-if="resizingMode && header.key !== rowIconsColumnKey"
-          class="table__resize-handler"
-          @pointerdown.stop.prevent="startColumnResize(header.value)"
-          @mousedown.stop.prevent=""
-          @click.stop=""
-        />
-      </template>
-
-      <template #body="{ items }">
-        <tr v-if="!items.length && !isTableLoading" class="v-data-table-rows-no-data">
-          <td :colspan="headersColspan">
-            {{ $t('common.noDataAvailable') }}
-          </td>
-        </tr>
-        <template
-          v-for="item in items"
-          :key="getTableItem(item)._id"
-        >
+        </template>
+        <template #item="{ isSelected, isExpanded, item, select, expand }">
           <alarms-list-row
-            :ref="`row${getTableItem(item)._id}`"
-            :alarm="getTableItem(item)"
-            :widget="preparedWidget"
-            :headers="headersWithWidth"
-            :row-icons-column-key="rowIconsColumnKey"
-            :parent-alarm="parentAlarm"
-            :selected-tags="selectedTags"
+            :ref="`row${item._id}`"
+            :key="item._id"
+            :selected="isSelected"
             :selectable="selectable"
-            :selectable-alarm="isAlarmSelectable(getTableItem(item))"
-            :selected="isAlarmSelected(getTableItem(item))"
-            :selecting="selecting"
-            :small="isSmallDensity"
-            :resizing="resizingMode"
-            :hide-actions="hideActions"
             :expandable="expandable"
-            :expanded="isAlarmExpanded(getTableItem(item))"
-            :search="query.search"
+            :expanded="isExpanded"
+            :alarm="item"
+            :widget="widget"
+            :headers="headers"
+            :parent-alarm="parentAlarm"
+            :refresh-alarms-list="refreshAlarmsList"
+            :selecting="selecting"
+            :selected-tags="selectedTags"
+            :medium="isMediumDense"
+            :small="isSmallDense"
+            :resizing="resizingMode"
+            :search="search"
+            :show-instruction-icon="hasInstructionsAlarms"
             :actions-inline-count="actionsInlineCount"
             :actions-ignore-media-query="resizableColumn"
-            :refresh-alarms-list="refreshAlarmsList"
-            :virtual-scroll="preparedWidget.parameters.isVirtualScrollEnabled"
-            :booted="bootedRows[getTableItem(item)._id]"
+            :virtual-scroll="widget.parameters.isVirtualScrollEnabled"
+            :booted="bootedRows[item._id]"
             :eager="eager"
-            @update:selected="toggleAlarmSelection(getTableItem(item), $event)"
-            @update:expanded="toggleAlarmExpanded(getTableItem(item), $event)"
+            v-on="rowListeners"
             @start:resize="startColumnResize"
+            @select:tag="$emit('select:tag', $event)"
+            @remove:tag="$emit('remove:tag', $event)"
             @click:state="openRootCauseDiagram"
+            @expand="expand"
+            @input="select"
+          />
+        </template>
+        <template #expanded-item="{ item }">
+          <alarms-expand-panel
+            :alarm="item"
+            :selected-tags="selectedTags"
+            :parent-alarm-id="parentAlarmId"
+            :widget="widget"
+            :search="search"
+            :hide-children="hideChildren"
             @select:tag="$emit('select:tag', $event)"
             @remove:tag="$emit('remove:tag', $event)"
           />
-
-          <c-table-expand-row
-            :expanded="isAlarmExpanded(getTableItem(item))"
-            :colspan="headersColspan"
-            row-class="alarms-list-table__expand-row"
-          >
-            <alarms-expand-panel
-              :alarm="getExpandedAlarm(getTableItem(item))"
-              :widget="preparedWidget"
-              :hide-children="hideChildren"
-              :search="query.search"
-              :selected-tags="selectedTags"
-              :refresh-alarms-list="refreshAlarmsList"
-              @select:tag="$emit('select:tag', $event)"
-              @remove:tag="$emit('remove:tag', $event)"
-            />
-          </c-table-expand-row>
         </template>
-      </template>
-    </v-data-table-server>
-
-    <c-horizontal-scrollbar
-      v-if="stickyHorizontalScroll"
-      ref="horizontalScrollbar"
-      :class="{ 'alarms-list-table__horizontal-scrollbar--hidden': isHorizontalScrollbarHidden }"
-      class="alarms-list-table__horizontal-scrollbar"
+      </v-data-table>
+      <c-horizontal-scrollbar v-if="stickyHorizontalScroll" ref="horizontalScrollbar" />
+    </div>
+    <c-table-pagination
+      v-if="!hidePagination"
+      :items="paginationItems"
+      :total-items="totalItems"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+      @input="updatePaginationOptions"
     />
-    </template>
-  </div>
+    <component
+      v-bind="additionalComponent.props"
+      :is="additionalComponent.is"
+      v-on="additionalComponent.on"
+    />
+  </v-flex>
 </template>
 
 <script>
-import { get, isEqual, isNumber } from 'lodash';
-import { mapState } from 'pinia';
+import { get, intersectionBy } from 'lodash';
 
-import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ALARM_ACTION_BUTTON_MARGINS,
   ALARM_ACTION_BUTTON_WIDTHS,
   ALARM_ACTIONS_PADDINGS,
-  DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
   DENSE_TYPES,
-  MODALS,
   RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
+  MODALS,
+  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
 } from '@/constants';
 
+import { featuresService } from '@/services/features';
 import { AsyncBooting } from '@/services/async-booting';
 import { TableIntersectionObserver } from '@/services/table-intersection-observer';
 
-import { useAlarmStore } from '@/stores/modules/alarm';
-
 import { mapIds } from '@/helpers/array';
-import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
-import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
-import {
-  convertDataTableSortToQuery,
-  convertQuerySortToDataTableSort,
-} from '@/helpers/entities/shared/query';
-import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import {
   getNearestAndFarthestIndexes,
   getNearestViewportIndexesBound,
   recursiveRaf,
+  splitIdsToChunk,
 } from '@/helpers/render';
+import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
+import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
 import { activeViewMixin } from '@/mixins/active-view';
-import { handlebarsTagsHelperMixin } from '@/mixins/handlebars/tags-helper';
-import {
-  widgetColumnDraggingAlarmMixin,
-  widgetColumnResizingAlarmMixin,
-  widgetColumnsAlarmMixin,
-} from '@/mixins/widget/columns';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-selecting';
+import { widgetColumnResizingAlarmMixin } from '@/mixins/widget/columns/alarm-resizing';
+import { widgetColumnDraggingAlarmMixin } from '@/mixins/widget/columns/alarm-dragging';
 import { widgetStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky';
+import { handlebarsTagsHelperMixin } from '@/mixins/widget/handlebars/tags-helper';
 
-import MassActionsPanel from '../actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
+import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
+import MassActionsPanel from '../actions/mass-actions-panel.vue';
 
 import AlarmsListRow from './alarms-list-row.vue';
 
-const INITIAL_BOOTED_ROWS_LIMIT = 20;
-
+/**
+ * Alarm-list-table component
+ *
+ * @module alarm
+ */
 export default {
   provide() {
     return {
-      $asyncBootingActionsPanel: this.asyncBootingActionsPanel,
+      $asyncBootingActionsPanel: this.$asyncBootingActionsPanel,
       $intersectionObserver: this.$intersectionObserver,
     };
   },
-
   components: {
+    MassActionsPanel,
     AlarmHeaderCell,
     AlarmsExpandPanel,
     AlarmsListRow,
-    MassActionsPanel,
   },
-
   mixins: [
     activeViewMixin,
-    handlebarsTagsHelperMixin,
+    entitiesInfoMixin,
     widgetColumnsAlarmMixin,
-    widgetColumnDraggingAlarmMixin,
-    widgetColumnResizingAlarmMixin,
-    widgetRowsSelectingAlarmMixin,
     widgetStickyAlarmMixin,
-  ],
+    widgetRowsSelectingAlarmMixin,
+    widgetColumnResizingAlarmMixin,
+    widgetColumnDraggingAlarmMixin,
+    handlebarsTagsHelperMixin,
 
+    ...featuresService.get('components.alarmListTable.mixins', []),
+  ],
   props: {
     widget: {
       type: Object,
@@ -289,25 +279,17 @@ export default {
       type: Array,
       required: true,
     },
-    columns: {
-      type: Array,
-      default: () => [],
+    totalItems: {
+      type: Number,
+      required: false,
     },
-    columnsSettings: {
+    options: {
       type: Object,
       default: () => ({}),
     },
-    meta: {
-      type: Object,
-      required: true,
-    },
-    query: {
-      type: Object,
-      required: true,
-    },
-    parentAlarm: {
-      type: Object,
-      default: null,
+    columns: {
+      type: Array,
+      default: () => [],
     },
     loading: {
       type: Boolean,
@@ -317,9 +299,21 @@ export default {
       type: Boolean,
       default: false,
     },
-    selectable: {
-      type: Boolean,
-      default: false,
+    dense: {
+      type: Number,
+      default: DENSE_TYPES.large,
+    },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     hideChildren: {
       type: Boolean,
@@ -337,10 +331,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    denseValue: {
-      type: Number,
-      default: undefined,
-    },
     resizableColumn: {
       type: Boolean,
       default: false,
@@ -349,73 +339,64 @@ export default {
       type: Boolean,
       default: false,
     },
-    widgetGridParameters: {
+    columnsSettings: {
       type: Object,
       default: () => ({}),
     },
-    defaultKeepSelectedAfterAction: {
-      type: Boolean,
-      default: false,
+    cellsContentBehavior: {
+      type: String,
+      required: false,
     },
-    selectedTags: {
-      type: Array,
-      default: () => [],
-    },
-    refreshAlarmsList: {
-      type: Function,
-      default: () => {},
+    search: {
+      type: String,
+      default: '',
     },
     eager: {
       type: Boolean,
       default: false,
     },
+    stickyHorizontalScroll: {
+      type: Boolean,
+      default: false,
+    },
   },
-
-  emits: ['update:query', 'update:columns-settings', 'update:dense', 'select:tag', 'remove:tag'],
-
   data() {
     return {
-      keepSelectedAfterAction: this.defaultKeepSelectedAfterAction,
-      rowIconsColumnKey: 'row-icons',
-      rowIconsColumnClass: 'alarms-list-table__row-icons-column',
-      selectedAlarmIds: [],
-      expandedAlarmIds: [],
-      asyncBootingActionsPanel: new AsyncBooting(),
       bootedRows: {},
-      virtualScrollColumnsWidth: {},
-      recalculatingHorizontalScrollbar: false,
+      expanded: [],
+      visibleMassActionsPanel: false,
+      keepSelectedAfterAction: this.widget.parameters.keepSelectedAfterAction ?? false,
     };
   },
-
   computed: {
-    preparedWidget() {
-      return prepareAlarmListWidget(this.widget);
+    widgetCurrentGridParameters() {
+      return this.widget.grid_parameters[MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq]];
     },
 
-    ...mapState(useAlarmStore, {
-      alarmDetailsById(store) {
-        return store.getDetailsByWidgetId(this.preparedWidget._id);
-      },
-    }),
-
-    widgetColumnValues() {
-      return this.preparedColumns.map(({ value }) => value).join('\0');
+    defaultKeepSelectedAfterAction() {
+      return this.widget.parameters.keepSelectedAfterAction ?? false;
     },
 
-    columnsSettingsHeaderValues() {
-      return this.baseHeaders.map(({ value }) => value).filter(Boolean);
+    shownTopPagination() {
+      return this.totalItems && (this.densable || this.selectable || !this.hidePagination);
     },
 
-    hasRowActions() {
-      return (
-        this.expandable ||
-        this.selectable ||
-        this.alarms.some(alarm => this.hasAlarmInstruction(alarm) || alarm.bookmark)
-      );
+    wrapperListeners() {
+      return this.selectable
+        ? { mousemove: this.throttledMousemoveHandler }
+        : {};
     },
 
-    cellsContentBehavior() {
-      return this.preparedWidget.parameters?.columns?.cells_content_behavior;
+    unresolvedSelected() {
+      return this.selected.filter(item => isActionAvailableForAlarm(item, this.widget));
+    },
+
+    isColumnsChanging() {
+      return this.resizingMode || this.draggingMode;
+    },
+
+    hasInstructionsAlarms() {
+      return this.alarms.some(alarm => alarm.assigned_instructions?.length);
     },
 
     isCellContentWrapped() {
@@ -426,47 +407,19 @@ export default {
       return this.cellsContentBehavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate;
     },
 
-    hasColumnEditButtons() {
-      return this.resizableColumn || this.draggableColumn;
+    needToAddLeftActionsCell() {
+      return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
     },
 
-    isTableControlsShown() {
-      return !!this.preparedColumns.length;
-    },
-
-    shownTopPagination() {
-      return !this.hidePagination && !!this.totalItems;
-    },
-
-    isTableLoading() {
-      return this.loading || this.columnsFiltersPending || this.entityInfoPropertyPending;
-    },
-
-    isColumnsChanging() {
-      return this.resizingMode || this.draggingMode;
-    },
-
-    isHorizontalScrollbarHidden() {
-      return this.isColumnResizing || this.recalculatingHorizontalScrollbar;
-    },
-
-    baseHeaders() {
+    headers() {
       const headers = this.preparedColumns.map((column) => {
         const header = {
           ...column,
-          key: column.value,
-          title: column.text,
           class: this.draggableClass,
-          headerProps: {
-            'data-value': column.value,
-            class: this.draggableClass,
-          },
         };
 
         if (column.linksInRowCount) {
-          const linksCounts = this.alarms.map(
-            alarm => Object.values(get(alarm, column.value, {})).flat().length,
-          );
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
           const maxLinksCount = Math.max(...linksCounts);
           const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
             ? column.inlineLinksCount + 1
@@ -481,178 +434,42 @@ export default {
         return header;
       });
 
-      if (this.hasRowActions) {
-        headers.unshift({
-          key: this.rowIconsColumnKey,
-          value: this.rowIconsColumnKey,
-          title: '',
-          text: '',
-          sortable: false,
-          width: 100,
-          headerProps: {
-            'data-value': this.rowIconsColumnKey,
-            class: this.rowIconsColumnClass,
-          },
-        });
-      }
-
       if (!this.hideActions) {
-        const actionsText = this.$t('common.actionsLabel');
-
         headers.push({
-          key: 'actions',
+          text: this.$t('common.actionsLabel'),
           value: 'actions',
-          title: actionsText,
-          text: actionsText,
           sortable: false,
           class: this.draggableClass,
-          headerProps: {
-            'data-value': 'actions',
-            class: this.draggableClass,
-          },
         });
       }
 
-      return headers;
-    },
-
-    headers() {
-      if (!this.draggableColumn) {
-        return this.baseHeaders;
+      if (this.needToAddLeftActionsCell) {
+        /**
+         * We need it for the expand panel open button
+         */
+        headers.unshift({ sortable: false, width: 100 });
       }
 
-      const baseHeadersPositions = new Map(
-        this.baseHeaders.map(({ value }, index) => [value, index]),
-      );
-      const rowActionsHeaders = this.baseHeaders.filter(
-        ({ value }) => value === this.rowIconsColumnKey,
-      );
-      const draggableHeaders = this.baseHeaders.filter(
-        ({ value }) => value !== this.rowIconsColumnKey,
-      );
-
-      return [
-        ...rowActionsHeaders,
-        ...draggableHeaders.sort(
-          (a, b) => this.getColumnSortPosition(a, baseHeadersPositions)
-            - this.getColumnSortPosition(b, baseHeadersPositions),
-        ),
-      ];
+      return this.draggableColumn
+        ? headers.sort((a, b) => this.getColumnPositionByField(a.value) - this.getColumnPositionByField(b.value))
+        : headers;
     },
 
     headersWithWidth() {
-      const hasVirtualScrollColumnsWidth = Object.keys(this.virtualScrollColumnsWidth).length > 0;
-
-      if (!this.resizableColumn && !hasVirtualScrollColumnsWidth) {
-        return this.headers;
-      }
-
-      return this.headers.map((header, index) => {
-        const virtualScrollWidth = this.virtualScrollColumnsWidth[header.value];
-        const configuredWidth = this.getColumnWidthByField(header.value);
-        const columnWidth = this.resizableColumn
-          ? header.width || (configuredWidth && `${configuredWidth}px`)
-          : (virtualScrollWidth && `${virtualScrollWidth}px`) || header.width;
-        const preparedColumnWidth = isNumber(columnWidth) ? `${columnWidth}px` : columnWidth;
-        const renderedColumnWidth = this.resizableColumn && preparedColumnWidth
-          ? `var(${this.getColumnWidthCssVariable(index)}, ${preparedColumnWidth})`
-          : preparedColumnWidth;
-
-        return {
-          ...header,
-          width: renderedColumnWidth,
-          minWidth: renderedColumnWidth,
-        };
-      });
-    },
-
-    headersColspan() {
-      return Math.max(this.headersWithWidth.length, 1);
-    },
-
-    tableStyle() {
-      const style = {};
-
       if (this.resizableColumn) {
-        style['--alarms-list-table-width'] = this.sumOfColumnsWidth
-          ? `${this.sumOfColumnsWidth}px`
-          : '100%';
-      } else if (Object.keys(this.virtualScrollColumnsWidth).length) {
-        const tableWidth = Object.values(this.virtualScrollColumnsWidth).reduce(
-          (sum, width) => sum + width,
-          0,
-        );
+        return this.headers.map((header) => {
+          const width = this.getColumnWidthByField(header.value);
 
-        style['--alarms-list-table-width'] = `${tableWidth}px`;
+          return {
+            ...header,
+            width: header.width
+              ? header.width
+              : width && `${width}px`,
+          };
+        });
       }
 
-      return style;
-    },
-
-    tableClasses() {
-      return {
-        table__grid: this.isColumnsChanging,
-        'alarms-list-table__table--fixed':
-          this.resizableColumn ||
-          this.draggableColumn ||
-          Object.keys(this.virtualScrollColumnsWidth).length > 0,
-        'alarms-list-table__table--resizing': this.isHorizontalScrollbarHidden,
-        'alarms-list-table__table--sticky-header': this.stickyHeader,
-        'alarms-list-table__table--sticky-horizontal-scroll': this.stickyHorizontalScroll,
-        'alarms-list-table__table--wrapped': this.isCellContentWrapped,
-        'alarms-list-table__table--truncated': this.isCellContentTruncated,
-        'alarms-list-table__table--dragging': this.draggingMode,
-        'alarms-list-table__table--selecting': this.selecting,
-        'alarms-list-table__table--selecting-text-unselectable': this.selectingMousePressed,
-      };
-    },
-
-    selectableAlarms() {
-      return this.alarms.filter(alarm => this.isAlarmSelectable(alarm));
-    },
-
-    selectedAlarms() {
-      const selectedIds = new Set(this.selectedAlarmIds);
-
-      return this.alarms.filter(alarm => selectedIds.has(alarm._id));
-    },
-
-    unresolvedSelected() {
-      return this.selectedAlarms.filter(alarm => isActionAvailableForAlarm(alarm, this.preparedWidget));
-    },
-
-    isAllSelectableSelected() {
-      return (
-        !!this.selectableAlarms.length &&
-        this.selectableAlarms.every(alarm => this.selectedAlarmIds.includes(alarm._id))
-      );
-    },
-
-    isSomeSelectableSelected() {
-      return this.selectableAlarms.some(alarm => this.selectedAlarmIds.includes(alarm._id));
-    },
-
-    totalItems() {
-      return this.meta.total_count ?? 0;
-    },
-
-    dense() {
-      return this.denseValue ?? this.preparedWidget.parameters.dense;
-    },
-
-    tableDensity() {
-      return {
-        [DENSE_TYPES.medium]: 'comfortable',
-        [DENSE_TYPES.small]: 'compact',
-      }[this.dense] ?? 'default';
-    },
-
-    isSmallDensity() {
-      return this.dense === DENSE_TYPES.small;
-    },
-
-    isMediumDensity() {
-      return this.dense === DENSE_TYPES.medium;
+      return this.headers;
     },
 
     actionsInlineCount() {
@@ -661,8 +478,8 @@ export default {
       }
 
       const denseType = {
-        [this.isSmallDensity]: DENSE_TYPES.small,
-        [this.isMediumDensity]: DENSE_TYPES.medium,
+        [this.isSmallDense]: DENSE_TYPES.small,
+        [this.isMediumDense]: DENSE_TYPES.medium,
       }.true ?? DENSE_TYPES.large;
       const width = this.getColumnWidthByField('actions') ?? 0;
       const widthWithoutPaddings = width - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
@@ -671,114 +488,113 @@ export default {
       return Math.floor(widthWithoutPaddings / actionWidth) || 1;
     },
 
-    options: {
-      get() {
-        const {
-          page = 1,
-          itemsPerPage = PAGINATION_LIMIT,
-          sortBy = [],
-          sortDesc = [],
-        } = this.query;
+    vDataTableClass() {
+      const columnsLength = this.headers.length;
+      const COLUMNS_SIZES_VALUES = {
+        sm: { min: 0, max: 10, label: 'sm' },
+        md: { min: 11, max: 12, label: 'md' },
+        lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
+      };
 
-        return {
-          page,
-          itemsPerPage,
-          sortBy: convertQuerySortToDataTableSort(sortBy, sortDesc),
-        };
-      },
+      const { label } = Object.values(COLUMNS_SIZES_VALUES)
+        .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
 
-      set(newOptions = {}) {
-        const {
-          page = 1,
-          itemsPerPage = PAGINATION_LIMIT,
-          sortBy = [],
-        } = newOptions;
-        const sort = convertDataTableSortToQuery(sortBy);
-        const oldItemsPerPage = this.query.itemsPerPage ?? PAGINATION_LIMIT;
-        const convertedOptions = {
-          page: itemsPerPage <= oldItemsPerPage ? page : 1,
-          itemsPerPage,
-          sortBy: sort.sortBy,
-          sortDesc: sort.sortDesc,
-        };
-        const oldOptions = {
-          page: this.query.page ?? 1,
-          itemsPerPage: oldItemsPerPage,
-          sortBy: this.query.sortBy ?? [],
-          sortDesc: this.query.sortDesc ?? [],
-        };
-
-        if (isEqual(convertedOptions, oldOptions)) {
-          return;
-        }
-
-        this.$emit('update:query', {
-          ...this.query,
-          ...convertedOptions,
-        });
-      },
+      return {
+        [`columns-${label}`]: true,
+        'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__selecting--text-unselectable': this.selectingMousePressed,
+        'alarms-list-table__grid': this.isColumnsChanging,
+        'alarms-list-table__dragging': this.draggingMode,
+        'alarms-list-table--wrapped': this.isCellContentWrapped,
+        'alarms-list-table--truncated': this.isCellContentTruncated,
+        'alarms-list-table--fixed': this.resizableColumn || this.draggableColumn,
+        'alarms-list-table--sticky-horizontal-scroll': this.stickyHorizontalScroll,
+      };
     },
 
+    vDataTableStyle() {
+      if (this.resizableColumn) {
+        return {
+          '--alarms-list-table-width': `${this.sumOfColumnsWidth}px`,
+        };
+      }
+
+      return {};
+    },
+
+    rowListeners() {
+      if (featuresService.has('components.alarmListTable.computed.rowListeners')) {
+        return featuresService.call('components.alarmListTable.computed.rowListeners', this, {});
+      }
+
+      return {};
+    },
+
+    additionalComponent() {
+      if (featuresService.has('components.alarmListTable.computed.additionalComponent')) {
+        return featuresService.call('components.alarmListTable.computed.additionalComponent', this);
+      }
+
+      return {};
+    },
+
+    isMediumDense() {
+      return this.dense === DENSE_TYPES.medium;
+    },
+
+    isSmallDense() {
+      return this.dense === DENSE_TYPES.small;
+    },
+
+    parentAlarmId() {
+      return this.parentAlarm?._id;
+    },
+
+    paginationItems() {
+      return [5, 10, 20, 50, 100, 200];
+    },
+
+    tableListeners() {
+      const listeners = {
+        'update:options': event => this.$emit('update:options', event),
+      };
+
+      if (this.widget.parameters.pausePeriodicRefreshOnExpandPanel) {
+        listeners['update:expanded'] = this.checkExpandedForPausePeriodicRefresh;
+      }
+
+      return listeners;
+    },
   },
 
   watch: {
-    alarms() {
-      this.synchronizeSelectedAlarms();
-      this.synchronizeExpandedAlarms();
-      this.scheduleStickyScrollHandler();
+    alarms(alarms) {
+      this.selected = intersectionBy(alarms, this.selected, '_id');
 
       if (!this.eager) {
-        this.setBootedRows(this.alarms);
-
-        return;
+        this.setBootedRows(alarms);
       }
-
-      this.scheduleActionsPanelBooting();
-      this.scheduleVirtualScrollColumnsWidthCapture();
     },
 
-    defaultKeepSelectedAfterAction(value) {
-      this.keepSelectedAfterAction = value;
-    },
-
-    widgetColumnValues(newValues, oldValues) {
-      if (!oldValues || newValues === oldValues || !this.isColumnsChanging) {
-        return;
-      }
-
-      this.$nextTick(() => {
-        if (this.draggingMode) {
-          this.calculateColumnsSortingOrderByHeaders(this.baseHeaders);
-        }
-
-        if (this.resizingMode) {
-          this.calculateColumnsWidths();
-        }
-
+    columns() {
+      if (this.isColumnsChanging) {
         this.updateColumnsSettings();
+
         this.disableDraggingMode();
         this.disableResizingMode();
-      });
+      }
     },
 
     columnsSettings: {
       immediate: true,
       deep: true,
       handler() {
-        if (!this.draggingMode) {
-          this.setColumnsPosition(
-            this.normalizeColumnsPosition(this.columnsSettings?.columns_position),
-          );
+        if (!this.draggingMode && this.columnsSettings?.columns_position) {
+          this.setColumnsPosition(this.columnsSettings?.columns_position);
         }
 
-        if (!this.resizingMode) {
-          const columnsWidth = this.normalizeColumnsWidth(this.columnsSettings?.columns_width);
-
-          this.setColumnsWidth(columnsWidth);
-
-          if (!this.hasWidthForAllColumns(columnsWidth)) {
-            this.$nextTick(() => this.calculateColumnsWidths());
-          }
+        if (!this.resizingMode && this.columnsSettings?.columns_width) {
+          this.setColumnsWidth(this.columnsSettings?.columns_width);
         }
       },
     },
@@ -786,18 +602,8 @@ export default {
     resizableColumn: {
       immediate: true,
       handler(newResizableColumn) {
-        if (newResizableColumn) {
-          this.virtualScrollColumnsWidth = {};
-
-          if (this.isEmptyColumnsWidthByField) {
-            this.$nextTick(() => this.calculateColumnsWidths());
-          }
-
-          return;
-        }
-
-        if (this.preparedWidget.parameters.isVirtualScrollEnabled) {
-          this.scheduleVirtualScrollColumnsWidthCapture();
+        if (newResizableColumn && this.isEmptyColumnsWidthByField) {
+          this.$nextTick(() => this.calculateColumnsWidths());
         }
       },
     },
@@ -806,180 +612,97 @@ export default {
       if (!this.resizableColumn) {
         this.$nextTick(() => this.calculateColumnsWidths());
       }
-
-      this.scheduleStickyScrollHandler();
-    },
-
-    expandedAlarmIds(expandedAlarmIds) {
-      if (this.preparedWidget.parameters.pausePeriodicRefreshOnExpandPanel) {
-        this.checkExpandedForPausePeriodicRefresh(expandedAlarmIds);
-      }
-    },
-
-    'widget.parameters.pausePeriodicRefreshOnExpandPanel': {
-      handler(pausePeriodicRefreshOnExpandPanel) {
-        this.checkExpandedForPausePeriodicRefresh(
-          pausePeriodicRefreshOnExpandPanel ? this.expandedAlarmIds : [],
-        );
-      },
     },
 
     'widget.parameters.isVirtualScrollEnabled': {
-      immediate: true,
       handler(isVirtualScrollEnabled) {
         if (isVirtualScrollEnabled) {
           this.$intersectionObserver.connect();
-
-          if (
-            this.alarms.length &&
-            this.alarms.every(({ _id: id }) => this.bootedRows[id])
-          ) {
-            this.scheduleVirtualScrollColumnsWidthCapture();
-          }
 
           return;
         }
 
         this.$intersectionObserver.disconnect();
-        this.virtualScrollColumnsWidth = {};
+      },
+      immediate: true,
+    },
+
+    'widget.parameters.pausePeriodicRefreshOnExpandPanel': {
+      handler(pausePeriodicRefreshOnExpandPanel) {
+        this.checkExpandedForPausePeriodicRefresh(pausePeriodicRefreshOnExpandPanel ? this.expanded : []);
       },
     },
   },
 
   beforeCreate() {
+    this.$asyncBootingActionsPanel = new AsyncBooting();
     this.$intersectionObserver = new TableIntersectionObserver();
-    this.$cancelBootedRowsRendering = null;
   },
 
   mounted() {
     this.$tbodyEl = this.$el.querySelector('tbody');
 
-    if (this.resizableColumn && this.isEmptyColumnsWidthByField) {
-      this.$nextTick(() => this.calculateColumnsWidths());
-    }
-
-    if (this.eager) {
-      this.scheduleActionsPanelBooting();
-      this.scheduleVirtualScrollColumnsWidthCapture();
-    } else {
-      this.setBootedRows(this.alarms);
-    }
-
-    this.scheduleStickyScrollHandler();
+    this.fetchEntityInfoPropertiesList({ params: { paginate: false } });
   },
 
-  beforeUnmount() {
-    this.$cancelBootedRowsRendering?.();
-    this.asyncBootingActionsPanel.clear();
+  beforeDestroy() {
+    this.$asyncBootingActionsPanel.clear();
     this.$intersectionObserver.destroy();
   },
 
   methods: {
-    refreshHorizontalScrollbarAfterColumnResize() {
-      if (!this.stickyHorizontalScroll) {
-        return;
-      }
-
-      this.recalculatingHorizontalScrollbar = true;
-
-      this.$nextTick(() => {
-        window.requestAnimationFrame(() => {
-          this.setHorizontalScrollbarWidth();
-          this.calculateScrollPosition();
-          this.setHorizontalScrollPosition();
-          this.recalculatingHorizontalScrollbar = false;
-        });
-      });
-    },
-
-    captureVirtualScrollColumnsWidth() {
-      if (
-        !this.preparedWidget.parameters.isVirtualScrollEnabled ||
-        Object.keys(this.virtualScrollColumnsWidth).length ||
-        this.resizableColumn ||
-        this.draggableColumn ||
-        !this.headerCells.length
-      ) {
-        return;
-      }
-
-      const columnsWidth = [...this.headerCells].reduce((acc, headerElement) => {
-        const { value } = headerElement.dataset;
-        const width = headerElement.getBoundingClientRect().width || headerElement.offsetWidth;
-
-        if (value && width) {
-          acc[value] = width;
-        }
-
-        return acc;
-      }, {});
-
-      if (Object.keys(columnsWidth).length === this.headers.length) {
-        this.virtualScrollColumnsWidth = columnsWidth;
-        this.$nextTick(() => this.$intersectionObserver.connect());
+    clearSelected(force = false) {
+      if (force || !this.keepSelectedAfterAction) {
+        this.selected = [];
       }
     },
 
-    scheduleVirtualScrollColumnsWidthCapture() {
-      this.$nextTick(() => {
-        window.requestAnimationFrame(this.captureVirtualScrollColumnsWidth);
-      });
-    },
-
-    scheduleActionsPanelBooting() {
-      this.$nextTick(() => {
-        window.requestAnimationFrame(() => this.asyncBootingActionsPanel.run());
-      });
-    },
-
-    setBootedRows(items, duration) {
-      this.$cancelBootedRowsRendering?.();
-      this.$cancelBootedRowsRendering = null;
-
+    setBootedRows(items, itemsPerRender = 10) {
       if (!this.$tbodyEl || !items.length) {
         return;
       }
 
-      const { start, end } = getNearestViewportIndexesBound({
+      const {
+        start,
+        end,
+      } = getNearestViewportIndexesBound({
         wrapperEl: this.$tbodyEl,
         length: items.length,
       });
-      const { nearest, farthest } = getNearestAndFarthestIndexes({
+
+      const {
+        nearest,
+        farthest,
+      } = getNearestAndFarthestIndexes({
         start,
         end,
         ids: mapIds(items),
       });
-      const initialRows = nearest.slice(0, INITIAL_BOOTED_ROWS_LIMIT);
-      const deferredRows = [...nearest.slice(INITIAL_BOOTED_ROWS_LIMIT), ...farthest];
 
-      this.bootedRows = initialRows.reduce((acc, id) => {
+      this.bootedRows = nearest.reduce((acc, id) => {
         acc[id] = true;
 
         return acc;
       }, {});
 
-      if (!deferredRows.length) {
-        window.requestAnimationFrame(() => {
-          this.captureVirtualScrollColumnsWidth();
+      const chunks = splitIdsToChunk(farthest, itemsPerRender);
 
+      if (!chunks.length) {
+        window.requestAnimationFrame(() => {
           if (this.stickyHorizontalScroll) {
             this.setHorizontalScrollbarWidth();
             this.calculateScrollPosition();
             this.setHorizontalScrollPosition();
           }
 
-          this.asyncBootingActionsPanel.run();
+          this.$asyncBootingActionsPanel.run();
         });
-
         return;
       }
 
-      this.$cancelBootedRowsRendering = recursiveRaf(
-        deferredRows,
-        async (id, index) => {
-          this.bootedRows[id] = true;
-
-          await this.$nextTick();
+      chunks.forEach((chunk, index) => {
+        recursiveRaf(() => {
+          chunk.forEach(id => this.$set(this.bootedRows, id, true));
 
           if (!index && this.stickyHorizontalScroll) {
             window.requestAnimationFrame(() => {
@@ -988,32 +711,14 @@ export default {
               this.setHorizontalScrollPosition();
             });
           }
-        },
-        {
-          duration,
-          onComplete: () => {
-            this.$cancelBootedRowsRendering = null;
-            window.requestAnimationFrame(() => {
-              this.captureVirtualScrollColumnsWidth();
-              this.asyncBootingActionsPanel.run();
-            });
-          },
-        },
-      );
-    },
 
-    updateOptions(options) {
-      if (this.isColumnsChanging) {
-        return;
-      }
-
-      this.options = options;
-    },
-
-    updatePage(page) {
-      this.$emit('update:query', {
-        ...this.query,
-        page,
+          if (index === chunks.length - 1) {
+            /**
+             * Render actions panels
+             */
+            window.requestAnimationFrame(() => this.$asyncBootingActionsPanel.run());
+          }
+        }, index + 1);
       });
     },
 
@@ -1021,11 +726,11 @@ export default {
       const settings = {};
 
       if (this.resizingMode) {
-        settings.columns_width = this.normalizeColumnsWidth(this.columnsWidthByField);
+        settings.columns_width = this.columnsWidthByField;
       }
 
       if (this.draggingMode) {
-        settings.columns_position = this.normalizeColumnsPosition(this.columnsPositionByField);
+        settings.columns_position = this.columnsPositionByField;
       }
 
       this.$emit('update:columns-settings', settings);
@@ -1056,109 +761,20 @@ export default {
       }
     },
 
-    getColumnSortPosition(header, baseHeadersPositions) {
-      const position = this.getColumnPositionByField(header.value);
-
-      return Number.isFinite(position) ? position : baseHeadersPositions.get(header.value);
+    updateItemsPerPage(limit) {
+      this.$emit('update:items-per-page', limit);
     },
 
-    normalizeColumnsPosition(columnsPosition = {}) {
-      const columnsPositionFields = new Set(Object.keys(columnsPosition));
-      const orderedFields = this.columnsSettingsHeaderValues
-        .filter(value => columnsPositionFields.has(value))
-        .sort((a, b) => columnsPosition[a] - columnsPosition[b]);
-      const missingFields = this.columnsSettingsHeaderValues.filter(
-        value => !columnsPositionFields.has(value),
-      );
-
-      return [...orderedFields, ...missingFields].reduce((acc, value, index) => {
-        acc[value] = index;
-
-        return acc;
-      }, {});
+    updatePage(page) {
+      this.$emit('update:page', page);
     },
 
-    normalizeColumnsWidth(columnsWidth = {}) {
-      const headerValues = new Set(this.columnsSettingsHeaderValues);
-
-      return Object.entries(columnsWidth).reduce((acc, [value, width]) => {
-        if (headerValues.has(value)) {
-          acc[value] = width;
-        }
-
-        return acc;
-      }, {});
+    updatePaginationOptions(query) {
+      this.$emit('update:pagination-options', query);
     },
 
-    hasWidthForAllColumns(columnsWidth) {
-      return this.columnsSettingsHeaderValues.every(value => columnsWidth[value]);
-    },
-
-    getHeaderSortIndex(column, sortBy = []) {
-      return sortBy.findIndex(sortItem => sortItem.key === column.key) + 1;
-    },
-
-    getTableItem(item) {
-      return item?.raw ?? item;
-    },
-
-    hasAlarmInstruction(alarm) {
-      return !!alarm.assigned_instructions?.length || isNumber(alarm.instruction_execution_icon);
-    },
-
-    isAlarmSelectable(alarm) {
-      return this.selectable && isActionAvailableForAlarm(alarm, this.preparedWidget);
-    },
-
-    isAlarmSelected(alarm) {
-      return this.selectedAlarmIds.includes(alarm._id);
-    },
-
-    isAlarmExpanded(alarm) {
-      return this.expandedAlarmIds.includes(alarm._id);
-    },
-
-    toggleAlarmSelection(alarm, selected) {
-      if (!this.isAlarmSelectable(alarm)) {
-        return;
-      }
-
-      if (selected) {
-        this.selectedAlarmIds = [...new Set([...this.selectedAlarmIds, alarm._id])];
-      } else {
-        this.selectedAlarmIds = this.selectedAlarmIds.filter(id => id !== alarm._id);
-      }
-    },
-
-    toggleAllSelectableAlarms(selected) {
-      const selectableIds = this.selectableAlarms.map(({ _id }) => _id);
-
-      if (selected) {
-        this.selectedAlarmIds = [...new Set([...this.selectedAlarmIds, ...selectableIds])];
-      } else {
-        this.selectedAlarmIds = this.selectedAlarmIds.filter(id => !selectableIds.includes(id));
-      }
-    },
-
-    toggleAlarmExpanded(alarm, expanded) {
-      if (expanded && !this.expandedAlarmIds.includes(alarm._id)) {
-        this.expandedAlarmIds = [...this.expandedAlarmIds, alarm._id];
-
-        return;
-      }
-
-      if (!expanded && this.expandedAlarmIds.includes(alarm._id)) {
-        this.expandedAlarmIds = this.expandedAlarmIds.filter(id => id !== alarm._id);
-      }
-    },
-
-    getExpandedAlarm(alarm) {
-      const alarmDetails = this.alarmDetailsById[alarm._id] ?? {};
-
-      return {
-        ...alarm,
-        ...(alarmDetails.data ?? alarmDetails),
-      };
+    updateKeepSelectedAfterAction(value) {
+      this.keepSelectedAfterAction = value;
     },
 
     openRootCauseDiagram(entity) {
@@ -1166,31 +782,19 @@ export default {
         name: MODALS.entitiesRootCauseDiagram,
         config: {
           entity,
-          colorIndicator: this.preparedWidget.parameters.rootCauseColorIndicator,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
         },
       });
     },
 
-    clearSelected() {
-      this.selectedAlarmIds = [];
-    },
-
-    clearSelectedAfterAction() {
-      if (!this.keepSelectedAfterAction) {
-        this.clearSelected();
+    resizeHandler() {
+      if (this.stickyHeader || this.stickyHorizontalScroll) {
+        this.stickyScrollHandler();
       }
-    },
 
-    synchronizeSelectedAlarms() {
-      const alarmIds = new Set(this.alarms.map(({ _id }) => _id));
-
-      this.selectedAlarmIds = this.selectedAlarmIds.filter(id => alarmIds.has(id));
-    },
-
-    synchronizeExpandedAlarms() {
-      const alarmIds = new Set(this.alarms.map(({ _id }) => _id));
-
-      this.expandedAlarmIds = this.expandedAlarmIds.filter(id => alarmIds.has(id));
+      if (this.selecting) {
+        this.calculateRowsPositions();
+      }
     },
 
     checkExpandedForPausePeriodicRefresh(expanded) {
@@ -1202,137 +806,147 @@ export default {
 
       this.resumePeriodicRefresh();
 
-      setTimeout(() => this.scheduleStickyScrollHandler(), VUETIFY_ANIMATION_DELAY);
+      /**
+       * We need to recalculate sticky horizontal scroll position
+       */
+      setTimeout(() => this.stickyScrollHandler(), VUETIFY_ANIMATION_DELAY);
     },
   },
 };
 </script>
 
 <style lang="scss">
-.alarms-list-table__top-pagination {
-  position: relative;
-  min-height: 48px;
-  background: rgb(var(--v-theme-surface));
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-  transition-property: opacity, background-color;
-  z-index: 2;
-
-  &:after {
-    content: ' ';
-    width: 100%;
-    height: 2px;
-    background: inherit;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-  }
-}
-
-.alarms-list-table__top-pagination-left {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  padding-right: 80px;
-}
-
-.alarms-list-table__top-pagination-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.alarms-list-table__top-pagination-right {
-  position: absolute;
-  right: 16px;
-}
-
-.alarms-list-table__table {
-  > .v-table__wrapper {
-    overflow-x: auto;
-  }
-
-  &.alarms-list-table__table--sticky-horizontal-scroll {
-    > .v-table__wrapper {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-
+.alarms-list-table {
+  &--sticky-horizontal-scroll {
+    > .v-data-table__wrapper {
       &::-webkit-scrollbar {
         display: none;
       }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
     }
   }
 
-  &.alarms-list-table__table--resizing {
-    > .v-table__wrapper {
-      scrollbar-color: transparent transparent;
-
-      &::-webkit-scrollbar-thumb,
-      &::-webkit-scrollbar-track {
-        visibility: hidden;
-      }
-    }
+  .theme--light & {
+    --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
   }
 
-  &.alarms-list-table__table--sticky-header {
-    thead {
-      position: relative;
-      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      transition-property: opacity, background-color;
+  .theme--dark & {
+    --alarms-list-table-border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  &__top-pagination {
+    position: relative;
+    min-height: 48px;
+    background: var(--v-background-base);
+    z-index: 2;
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
+    transition-property: opacity, background-color;
+
+    &:after {
+      content: ' ';
       width: 100%;
-      z-index: 2;
+      height: 2px;
+      background: inherit;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+    }
 
-      &.head-shadow {
-        tr:first-child {
-          box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
-        }
+    &--left {
+      padding-right: 80px;
+    }
+
+    &--center-absolute {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+
+    &--right-absolute {
+      position: absolute;
+      right: 0;
+    }
+  }
+
+  .alarm-list-row {
+    position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(200, 220, 200, .3);
+      transition: opacity linear .3s;
+    }
+  }
+
+  &__selecting {
+    & > .v-data-table__wrapper > table > tbody > .alarm-list-row:after {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    &--text-unselectable {
+      * {
+        user-select: none;
       }
+    }
+  }
 
-      tr {
-        background: rgb(var(--v-theme-surface));
-        box-shadow: 0 1px 0 rgba(var(--v-border-color), var(--v-border-opacity));
-        transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-        width: 100%;
+  &__grid {
+    & > .v-data-table__wrapper > table {
+      & > tbody > tr > td,
+      & > thead > tr > th {
+        position: relative;
 
-        th {
-          border-bottom: none;
+        &:after {
+          content: ' ';
+          background: rgba(0, 0, 0, 0.12);
+          position: absolute;
+          right: -1px;
+          top: 0;
+          width: 1px;
+          height: 100%;
         }
       }
     }
   }
 
-  tr:not(.v-data-table__expanded) th:first-of-type {
-    width: 120px !important;
-  }
-
-  .alarms-list-table__row-icons-column {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-  }
-
-  &.alarms-list-table__table--fixed {
-    > .v-table__wrapper > table {
+  &--fixed {
+    & > .v-data-table__wrapper > table {
       table-layout: fixed;
+      /**
+       * TODO: Should be used v-bind later. We should update compiler.
+       * Current compiler cannot to handle script setup and v-bind
+       */
       width: var(--alarms-list-table-width);
       max-width: unset;
       min-width: 100%;
+
+      & > thead > tr > th {
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
     }
   }
 
-  &.alarms-list-table__table--selecting {
-    .alarms-list-row:after {
-      opacity: 1;
-      pointer-events: auto;
+  &--wrapped {
+    & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
+      word-break: break-all;
+      word-wrap: break-word;
     }
   }
 
-  &.alarms-list-table__table--selecting-text-unselectable {
-    * {
-      user-select: none;
-    }
-  }
-
-  &.alarms-list-table__table--truncated {
+  &--truncated {
     .color-indicator {
       max-width: 100%;
     }
@@ -1341,33 +955,117 @@ export default {
       display: grid;
     }
 
-    .alarms-list-row__cell {
+    .alarm-list-row__cell {
       .alarm-column-cell__text,
       .alarm-column-cell__text > span,
       .alarm-column-value {
-        display: block;
         overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
       }
     }
   }
-}
 
-.alarms-list-table__horizontal-scrollbar--hidden {
-  pointer-events: none;
-  visibility: hidden;
-}
+  tbody {
+    position: relative;
+  }
 
-.alarms-list-table__select-all {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-}
+  thead {
+    position: relative;
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
+    transition-property: opacity, background-color;
+    z-index: 1;
 
-.alarms-list-table__select-all-checkbox {
-  display: flex;
-  justify-content: center;
-  width: 24px;
+    &.head-shadow {
+      tr:first-child {
+        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+
+        &:after {
+          content: unset;
+        }
+      }
+    }
+
+    tr {
+      background: var(--v-table-background-base);
+      transition: background-color .3s cubic-bezier(.25, .8, .5, 1);
+
+      .theme--dark & {
+        background: var(--v-table-background-base);
+      }
+
+      th {
+        position: relative;
+        transition: none;
+      }
+    }
+  }
+
+  tr:not(.v-data-table__expanded) th:first-of-type {
+    width: 120px !important;
+  }
+
+  &.v-data-table--dense,
+  &.v-data-table--ultra-dense {
+    thead tr:not(.v-data-table__expanded) th:first-of-type {
+      width: 100px !important;
+    }
+  }
+
+  &.columns-lg table {
+    &:not(.v-data-table--dense) {
+      td, th {
+        padding: 0 8px;
+      }
+    }
+
+    @media screen and (max-width: 1600px) {
+      td, th {
+        padding: 0 4px;
+      }
+    }
+
+    @media screen and (max-width: 1450px) {
+      td, th {
+        font-size: 0.85em;
+      }
+
+      .badge {
+        font-size: inherit;
+      }
+    }
+  }
+
+  &.columns-md .v-table {
+    @media screen and (max-width: 1700px) {
+      td, th {
+        padding: 0 12px;
+      }
+    }
+
+    @media screen and (max-width: 1250px) {
+      td, th {
+        padding: 0 8px;
+      }
+    }
+
+    @media screen and (max-width: 1150px) {
+      td, th {
+        font-size: 0.85em;
+        padding: 0 4px;
+      }
+
+      .badge {
+        font-size: inherit;
+      }
+    }
+  }
+
+  &.columns-sm .v-table {
+    td, th {
+      padding: 0 12px;
+    }
+  }
 }
 </style>

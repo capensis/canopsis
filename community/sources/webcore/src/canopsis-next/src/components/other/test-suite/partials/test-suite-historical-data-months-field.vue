@@ -1,25 +1,22 @@
 <template>
-  <c-layout>
+  <v-layout>
     <c-enabled-field
-      :model-value="Boolean(modelValue)"
+      :value="Boolean(value)"
       :label="$t('testSuite.compareWithHistorical')"
-      @update:model-value="changeEnabledField"
+      @input="changeEnabledField"
     />
-    <c-radio-group
-      v-if="modelValue"
-      :model-value="modelValue"
-      inline
-      @update:model-value="$emit('update:modelValue', $event)"
+    <v-radio-group
+      v-if="value"
+      v-field="value"
+      row
     >
       <v-radio
         v-for="item in preparedItems"
         :key="item.value"
-        :value="item.value"
-        :label="item.label"
-        :color="item.color"
+        v-bind="item"
       />
-    </c-radio-group>
-  </c-layout>
+    </v-radio-group>
+  </v-layout>
 </template>
 
 <script>
@@ -27,7 +24,7 @@ import { TEST_SUITE_HISTORICAL_DATA_MONTHS_DEFAULT_ITEMS } from '@/constants';
 
 export default {
   props: {
-    modelValue: {
+    value: {
       type: Number,
       default: 0,
     },
@@ -36,9 +33,6 @@ export default {
       default: () => TEST_SUITE_HISTORICAL_DATA_MONTHS_DEFAULT_ITEMS,
     },
   },
-
-  emits: ['update:modelValue'],
-
   computed: {
     preparedItems() {
       return this.items.map((value) => {
@@ -56,7 +50,7 @@ export default {
   },
   methods: {
     changeEnabledField(value) {
-      this.$emit('update:modelValue', Number(value));
+      this.$emit('input', Number(value));
     },
   },
 };

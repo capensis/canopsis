@@ -1,7 +1,6 @@
 import {
   LLM_AI_CHAT_ERROR_CODES,
   LLM_AI_CHAT_SUGGESTION_TYPES,
-  LLM_MODEL_TYPES,
   LLM_SOCKET_CONTEXTS,
   LLM_THINKING_LEVELS,
 } from '@/constants';
@@ -16,13 +15,6 @@ export default {
     tabs: {
       allPrompts: 'Toutes les invites',
     },
-    statistics: {
-      totalInputTokens: 'Total des jetons d\'entrée',
-      totalOutputTokens: 'Total des jetons de sortie',
-      uncachedTokens: 'Jetons non mis en cache (Chat)',
-      cacheReadTokens: 'Jetons de lecture du cache',
-      cacheWriteTokens: 'Jetons d\'écriture du cache',
-    },
     expandUserHistory: {
       lastPromptDate: 'Date de la dernière invite',
     },
@@ -31,22 +23,15 @@ export default {
     notRelatedToCanopsis: 'Sans lien avec Canopsis',
     allUsers: 'Tous les utilisateurs',
     search: 'Rechercher par utilisateur, modal ou nom',
-    searchByUserName: 'Rechercher par nom d\'utilisateur',
+    searchByUserName: "Rechercher par nom d'utilisateur",
     searchByModalOrName: 'Rechercher par modal ou nom',
-    showHistory: 'Afficher l\'historique',
     userHistoryTitle: 'Historique utilisateur',
     userHistoryEmpty: 'Aucun utilisateur pour cette configuration.',
     ruleNotSaved: 'Non enregistré',
-    inputTokensTooltip:
-      '<strong>Jetons d\'entrée</strong> : {inputTokens}\n' +
-      '<strong>Jetons d\'écriture du cache</strong> : {cacheWriteTokens}\n' +
-      '<strong>Jetons de lecture du cache</strong> : {cacheReadTokens}',
     columns: {
       userName: 'Utilisateur',
       datetime: 'Date et heure',
       tokensUsed: 'Jetons utilisés',
-      inputTokensUsed: 'Jetons d\'entrée utilisés',
-      outputTokensUsed: 'Jetons de sortie utilisés',
       modal: 'Modal',
       usage: 'Utilisation',
       canopsisRelated: 'Lié à Canopsis',
@@ -78,11 +63,6 @@ export default {
     },
   },
   modelType: 'Type de modèle LLM',
-  modelTypes: {
-    [LLM_MODEL_TYPES.gemini]: 'Gemini',
-    [LLM_MODEL_TYPES.claude]: 'Claude',
-    [LLM_MODEL_TYPES.chatgpt]: 'ChatGPT',
-  },
   modelName: 'Nom du modèle LLM',
   model: 'Modèle LLM',
   recommendedBadge: 'recommandé',
@@ -93,21 +73,19 @@ export default {
   currentDefaultModelLine: 'Modèle par défaut actuel :',
   lastUsedDate: 'Dernière utilisation',
   importantNotesMessage:
-    '<div>Notes importantes :</div>' +
-    '<ul>' +
-    '<li>Les modèles LLM peuvent être activés ou désactivés via ce module ; toutefois, ' +
-    '<strong>la gestion des limites de jetons et des quotas</strong>' +
-    ' se configure directement dans la console du fournisseur LLM.</li>' +
-    '<li><strong>Une surveillance régulière</strong> des limites LLM est requise, car les <strong>politiques d\'API et les conditions d\'utilisation sont susceptibles d\'évoluer.</strong></li>' +
-    '</ul>',
+    '<div>Notes importantes :</div>'
+    + '<ul>'
+    + '<li>Les modèles Gemini peuvent être activés ou désactivés via ce module ; toutefois, '
+    + '<strong>la gestion des limites de jetons et des quotas</strong>'
+    + ' se configure directement dans la '
+    + '<strong><a href="{geminiConsoleUrl}" target="_blank">Console Gemini AI</a></strong>.</li>'
+    + '<li><strong>Une surveillance régulière</strong> des limites Google Cloud est requise, car les <strong>politiques d\'API et les conditions d\'utilisation sont susceptibles d\'évoluer.</strong></li>'
+    + '</ul>',
   thinkingLevels: {
-    [LLM_THINKING_LEVELS.none]: 'Aucun',
     [LLM_THINKING_LEVELS.minimal]: 'Minimal',
     [LLM_THINKING_LEVELS.low]: 'Faible',
     [LLM_THINKING_LEVELS.medium]: 'Moyen',
     [LLM_THINKING_LEVELS.high]: 'Élevé',
-    [LLM_THINKING_LEVELS.xhigh]: 'Extra élevé',
-    [LLM_THINKING_LEVELS.max]: 'Max',
   },
   chat: {
     title: 'Assistant IA',
@@ -116,29 +94,23 @@ export default {
     ask: 'Demander',
     thinking: 'Réflexion en cours…',
     tryLabel: 'Essayez :',
-    restartConfirmation:
-      'Redémarrer la conversation ? <strong>L\'historique</strong> et les <strong>versions</strong> seront effacés.',
+    restartConfirmation: 'Redémarrer la conversation ? <strong>L\'historique</strong> et les <strong>versions</strong> seront effacés.',
     suggestions: {
       createPattern: 'Créer un modèle',
       editPattern: 'Éditer le modèle',
       validatePattern: 'Valider le modèle',
     },
     patternsMessage: '{patterns} modèle | {patterns} modèles',
-    patternsEditedMessage:
-      'Vous avez modifié {patterns} modèle | Vous avez modifié {patterns} modèles',
+    patternsEditedMessage: 'Vous avez modifié {patterns} modèle | Vous avez modifié {patterns} modèles',
     patternCreatedMessage: 'Modèles créés',
     patternUpdatedMessage: 'Modèles mis à jour',
-    emptyPatternsMessage:
-      'Vous avez supprimé tous les modèles.\nSi vous devez effacer le contexte, redémarrez l\'assistant IA.',
+    emptyPatternsMessage: 'Vous avez supprimé tous les modèles.\nSi vous devez effacer le contexte, redémarrez l\'assistant IA.',
     patternCannotBeCreatedReasons: 'Le modèle ne peut pas être créé pour les raisons suivantes :\n',
     fixPatternPrompt: 'Corriger le modèle :\n{jsonString}',
     suggestionPrompts: {
-      [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]:
-        'Créer un modèle avec les conditions suivantes :\n',
-      [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]:
-        'Les modifications suivantes sont nécessaires dans le modèle :\n',
-      [LLM_AI_CHAT_SUGGESTION_TYPES.validatePattern]:
-        'Corrigez le modèle suivant si nécessaire :\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.createPattern]: 'Créer un modèle avec les conditions suivantes :\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.editPattern]: 'Les modifications suivantes sont nécessaires dans le modèle :\n',
+      [LLM_AI_CHAT_SUGGESTION_TYPES.validatePattern]: 'Corrigez le modèle suivant si nécessaire :\n',
     },
     pattern: {
       restoreVersion: 'Restaurer la version',
@@ -161,36 +133,36 @@ export default {
       '<strong>Cliquez sur Redémarrer pour lancer l\'assistant IA pour un autre modèle</strong>',
     patternsItemsError: {
       [LLM_SOCKET_CONTEXTS.scenario]:
-        'L\'action sélectionnée a été supprimée.<br />' +
-        '<strong>Vous pouvez redémarrer la conversation avec une autre action (l\'historique sera perdu).</strong>',
+        'L\'action sélectionnée a été supprimée.<br />'
+        + '<strong>Vous pouvez redémarrer la conversation avec une autre action (l\'historique sera perdu).</strong>',
     },
-    warningAlert:
-      '<div>Veuillez noter que :</div>' +
-      '<ul>' +
-      '<li>Les résultats générés par l\'IA <strong>peuvent contenir des erreurs</strong> — vérifiez et validez toujours les modèles avant utilisation.</li>' +
-      '<li>Cette conversation est <strong>temporaire</strong> et sera <strong>effacée</strong> à la fermeture de la fenêtre modale.</li>' +
-      '</ul>',
+    warningAlert: '<div>Veuillez noter que :</div>'
+      + '<ul>'
+      + '<li>Les résultats générés par l\'IA <strong>peuvent contenir des erreurs</strong> — vérifiez et validez toujours les modèles avant utilisation.</li>'
+      + '<li>Cette conversation est <strong>temporaire</strong> et sera <strong>effacée</strong> à la fermeture de la fenêtre modale.</li>'
+      + '</ul>',
     errors: {
       [LLM_AI_CHAT_ERROR_CODES.badRequest]:
-        'La requête n\'a pas pu être traitée.<br />' +
-        '<strong>Vérifiez votre saisie et réessayez.</strong>',
+        'La requête n\'a pas pu être traitée.<br />'
+        + '<strong>Vérifiez votre saisie et réessayez.</strong>',
       [LLM_AI_CHAT_ERROR_CODES.gone]:
-        'Le modèle d\'IA sélectionné est actuellement indisponible.<br />' +
-        '<strong>Veuillez contacter votre administrateur. Vous pouvez redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',
+        'Le modèle d\'IA sélectionné est actuellement indisponible.<br />'
+        + '<strong>Veuillez contacter votre administrateur. Vous pouvez redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',
       [LLM_AI_CHAT_ERROR_CODES.tooManyRequests]:
-        'Vous avez dépassé votre quota actuel.<br />' +
-        '<strong>Veuillez réessayer à {retryAt} ou redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',
+        'Vous avez dépassé votre quota actuel.<br />'
+        + '<strong>Veuillez réessayer à {retryAt} ou redémarrer la conversation avec un autre modèle (l\'historique sera perdu).</strong>',
       [LLM_AI_CHAT_ERROR_CODES.internalError]:
-        'Une erreur s\'est produite.<br />' +
-        '<strong>Veuillez contacter votre administrateur</strong>',
+        'Une erreur s\'est produite.<br />'
+        + '<strong>Veuillez contacter votre administrateur</strong>',
       [LLM_AI_CHAT_ERROR_CODES.timeout]:
-        'La requête a expiré.<br />' + '<strong>Veuillez réessayer plus tard.</strong>',
+        'La requête a expiré.<br />'
+        + '<strong>Veuillez réessayer plus tard.</strong>',
       noModels:
-        'Aucun modèle d\'IA n\'est actuellement disponible.<br />' +
-        '<strong>Veuillez contacter votre administrateur.</strong>',
+        'Aucun modèle d\'IA n\'est actuellement disponible.<br />'
+        + '<strong>Veuillez contacter votre administrateur.</strong>',
       serverError:
-        'Problème de connexion au socket.<br />' +
-        '<strong>Veuillez contacter votre administrateur.</strong>',
+        'Problème de connexion au socket.<br />'
+        + '<strong>Veuillez contacter votre administrateur.</strong>',
     },
   },
 };

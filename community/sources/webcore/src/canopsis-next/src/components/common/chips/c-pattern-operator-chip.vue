@@ -1,5 +1,5 @@
 <template>
-  <div class="text-uppercase c-pattern-operator-chip">
+  <div class="text-uppercase c-pattern-operator-chip bg-gray">
     <slot />
   </div>
 </template>

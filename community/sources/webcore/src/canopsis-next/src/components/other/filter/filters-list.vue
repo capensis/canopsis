@@ -1,30 +1,30 @@
 <template>
   <div>
-    <c-alert v-if="!pending && !filters.length" :type="required ? 'error' : 'info'">
+    <c-alert
+      :value="!pending && !filters.length"
+      :type="errors.has(name) ? 'error' : 'info'"
+    >
       {{ $t('modals.createFilter.emptyFilters') }}
     </c-alert>
-
     <c-draggable-list-field
-      :model-value="filters"
+      v-field="filters"
       :disabled="!editable"
       handle=".action-drag-handler"
-      @update:model-value="$emit('update:filters', $event)"
     >
-      <template #item="{ element, index }">
-        <filter-tile
-          :filter="element"
-          :editable="editable"
-          @edit="$emit('edit', element, index)"
-          @delete="$emit('delete', element, index)"
-        />
-      </template>
+      <filter-tile
+        v-for="(filter, index) in filters"
+        :key="filter._id"
+        :filter="filter"
+        :editable="editable"
+        @edit="$emit('edit', filter, index)"
+        @delete="$emit('delete', filter, index)"
+      />
     </c-draggable-list-field>
-
     <v-btn
       v-if="addable"
-      class="my-2"
+      class="v-btn-legacy-m--y"
       color="primary"
-      variant="outlined"
+      outlined
       @click.prevent="$emit('add', $event)"
     >
       {{ $t('common.addFilter') }}
@@ -33,11 +33,25 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
+
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
+
 import FilterTile from './partials/filter-tile.vue';
 
 export default {
+  inject: {
+    $validator: {
+      default: new Validator(),
+    },
+  },
   components: { FilterTile },
-
+  mixins: [entitiesWidgetMixin, validationAttachRequiredMixin],
+  model: {
+    prop: 'filters',
+    event: 'input',
+  },
   props: {
     filters: {
       type: Array,
@@ -55,16 +69,29 @@ export default {
       type: Boolean,
       default: true,
     },
-    required: {
-      type: Boolean,
-      default: false,
-    },
     name: {
       type: String,
       default: 'filters',
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
-
-  emits: ['update:filters', 'add', 'edit', 'delete'],
+  watch: {
+    filters() {
+      if (this.required) {
+        this.validateRequiredRule();
+      }
+    },
+  },
+  mounted() {
+    if (this.required) {
+      this.attachRequiredRule(() => this.filters.length > 0);
+    }
+  },
+  beforeDestroy() {
+    this.detachRequiredRule();
+  },
 };
 </script>

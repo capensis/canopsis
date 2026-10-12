@@ -1,7 +1,10 @@
 <template>
-  <c-modal-wrapper close minimize>
-    <template #title>
-      <c-layout align="center">
+  <modal-wrapper
+    close
+    minimize
+  >
+    <template #title="">
+      <v-layout align-center>
         <span>{{ title }}</span>
         <alarm-webhook-execution-status
           v-if="modal.minimized"
@@ -11,15 +14,23 @@
           class="ml-2 declare-ticket-rule-execute-status"
           color="white"
         />
-      </c-layout>
+      </v-layout>
     </template>
-
-    <template #text>
-      <c-layout v-if="pending" justify="center">
-        <v-progress-circular color="primary" indeterminate />
-      </c-layout>
+    <template #text="">
+      <v-layout
+        v-if="pending"
+        justify-center
+      >
+        <v-progress-circular
+          color="primary"
+          indeterminate
+        />
+      </v-layout>
       <template v-else-if="config.singleMode">
-        <c-layout class="declare-ticket-rule-execute-status__executions" column>
+        <v-layout
+          class="declare-ticket-rule-execute-status__executions"
+          column
+        >
           <declare-ticket-rule-executions-group
             v-for="(executions, ruleName) of alarmExecutionsByTicketName"
             :key="ruleName"
@@ -29,7 +40,7 @@
             show-status
             show-rule-name
           />
-        </c-layout>
+        </v-layout>
       </template>
       <template v-else>
         <declare-ticket-rule-executions-group
@@ -39,13 +50,16 @@
         />
       </template>
     </template>
-
-    <template #actions>
-      <v-btn variant="text" @click="close">
-        {{ t('common.close') }}
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.close') }}
       </v-btn>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -62,48 +76,28 @@ import {
   isWebhookExecutionSucceeded,
 } from '@/helpers/entities/webhook-execution/entity';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
-import { usePopups } from '@/hooks/popups';
-import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
-import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
+import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
+/**
+ * Modal to execute declare tickets
+ */
 export default {
   name: MODALS.executeDeclareTickets,
-
   components: {
     AlarmWebhookExecutionStatus,
     DeclareTicketRuleExecutionsGroup,
+    ModalWrapper,
   },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const popups = usePopups();
-    const { bulkCreateDeclareTicketExecution, fetchDeclareTicketExecutionWithoutStore } =
-      useDeclareTicketRule();
-
-    const close = () => modals.hide({ id: props.modal.id });
-
-    return {
-      t,
-      modals,
-      popups,
-      close,
-      bulkCreateDeclareTicketExecution,
-      fetchDeclareTicketExecutionWithoutStore,
-    };
-  },
-
+  mixins: [
+    modalInnerMixin,
+    entitiesDeclareTicketRuleMixin,
+  ],
   data() {
     return {
       pending: false,
@@ -111,12 +105,7 @@ export default {
       executionsStatusesById: {},
     };
   },
-
   computed: {
-    config() {
-      return this.modal.config ?? {};
-    },
-
     isOneTicket() {
       return this.config.tickets.length === 1;
     },
@@ -157,9 +146,7 @@ export default {
     },
 
     failReason() {
-      return Object.values(this.executionsStatusesById)
-        .map(execution => execution.fail_reason)
-        .join('\n');
+      return Object.values(this.executionsStatusesById).map(execution => execution.fail_reason).join('\n');
     },
 
     title() {
@@ -169,10 +156,9 @@ export default {
 
       return this.isOneTicket
         ? this.config.tickets[0].name
-        : this.t('modals.executeDeclareTickets.title');
+        : this.$t('modals.executeDeclareTickets.title');
     },
   },
-
   watch: {
     alarmExecutions(value) {
       if (value.length && this.isAllExecutionsFinished) {
@@ -180,24 +166,21 @@ export default {
       }
     },
   },
-
   async mounted() {
     await this.createExecutions();
     await this.fetchExecutionsStatuses();
     this.joinToSocketRooms();
   },
-
-  beforeUnmount() {
+  beforeDestroy() {
     this.leaveFromSocketRooms();
   },
-
   methods: {
     getSocketRoomName(id) {
       return `${SOCKET_ROOMS.declareticket}/${id}`;
     },
 
     setExecutionStatus(executionStatus) {
-      this.executionsStatusesById[executionStatus._id] = executionStatus;
+      this.$set(this.executionsStatusesById, executionStatus._id, executionStatus);
     },
 
     isExecutionFinished(execution) {
@@ -205,23 +188,23 @@ export default {
     },
 
     /**
-     * Socket customClose event handler (we need to use for connection checking).
+     * Socket customClose event handler (we need to use for connection checking)
      */
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
-        this.close();
-        this.popups.error({
-          text: this.t('remediation.instructionExecute.popups.connectionError'),
+        this.$modals.hide();
+        this.$popups.error({
+          text: this.$t('remediation.instructionExecute.popups.connectionError'),
           autoClose: false,
         });
       }
     },
 
     /**
-     * Socket closeRoom event handler.
+     * Socket closeRoom event handler
      */
     socketCloseRoomHandler() {
-      this.close();
+      this.$modals.hide();
     },
 
     handleSocketError() {
@@ -230,7 +213,7 @@ export default {
     },
 
     /**
-     * Join from execution room.
+     * Join from execution room
      */
     joinToSocketRooms() {
       this.successExecutions.forEach(({ executionId }) => {
@@ -250,7 +233,7 @@ export default {
     },
 
     /**
-     * Leave from execution room.
+     * Leave from execution room
      */
     leaveFromSocketRooms() {
       this.successExecutions.forEach(({ executionId }) => {
@@ -287,9 +270,8 @@ export default {
     fetchExecutionsStatuses() {
       return Promise.all(
         this.successExecutions.map(
-          ({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId }).then(
-            this.setExecutionStatus,
-          ),
+          ({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId })
+            .then(this.setExecutionStatus),
         ),
       );
     },

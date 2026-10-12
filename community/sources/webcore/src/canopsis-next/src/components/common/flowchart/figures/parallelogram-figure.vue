@@ -1,5 +1,8 @@
 <template>
-  <path :d="parallelogramPath" v-bind="$attrs" />
+  <path
+    :d="parallelogramPath"
+    v-on="$listeners"
+  />
 </template>
 
 <script>

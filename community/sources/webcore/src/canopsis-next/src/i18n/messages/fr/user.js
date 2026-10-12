@@ -17,7 +17,6 @@ export default {
   navigationType: 'Type d\'affichage de la barre de vues',
   active: 'Session active',
   activeConnects: 'Nombre de connexions',
-  showTopUserByConnections: 'Afficher le premier utilisateur par nombre de connexions',
   navigationTypes: {
     [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
     [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
@@ -25,8 +24,7 @@ export default {
   metrics: {
     [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
     [USER_METRIC_PARAMETERS.tickets]: 'Nombre de billets créés',
-    [USER_METRIC_PARAMETERS.ackAlarmWithoutCancel]:
-      'Nombre d\'accusés de réception excluant les accusés de réception annulés',
+    [USER_METRIC_PARAMETERS.ackAlarmWithoutCancel]: 'Nombre d\'accusés de réception excluant les accusés de réception annulés',
     [USER_METRIC_PARAMETERS.averageUserSession]: 'Temps moyen d\'activité de l\'utilisateur',
     [USER_METRIC_PARAMETERS.minUserSession]: 'Durée d\'activité minimale de l\'utilisateur',
     [USER_METRIC_PARAMETERS.maxUserSession]: 'Durée d\'activité maximale de l\'utilisateur',

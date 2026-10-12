@@ -1,113 +1,131 @@
 <template>
-  <c-radio-group :model-value="type" :label="t('common.end')" @update:model-value="updateType">
-    <v-radio :value="types.never" color="primary">
-      <template #label>
-        {{ t('recurrenceRule.never') }}
+  <v-radio-group
+    :value="type"
+    :label="$t('common.end')"
+    @change="updateType"
+  >
+    <v-radio
+      :value="types.never"
+      color="primary"
+    >
+      <template #label="">
+        {{ $t('recurrenceRule.never') }}
       </template>
     </v-radio>
-
-    <v-radio :value="types.date" class="mb-0" color="primary">
-      <template #label>
-        <c-layout gap="4" align="center">
-          <span>{{ t('recurrenceRule.on') }}</span>
-
-          <date-time-splitted-picker-field
-            :value="modelValue.until"
-            :rules="dateTimeSplittedRules"
-            :placeholder="t('common.date')"
-            :disabled="!isDateType"
-            name="until"
-            @update:value="updateModelField('until', $event)"
-          />
-        </c-layout>
+    <v-radio
+      :value="types.date"
+      class="mb-0"
+      color="primary"
+    >
+      <template #label="">
+        <span>{{ $t('recurrenceRule.on') }}</span>
+        <date-time-splitted-picker-field
+          v-field="value.until"
+          v-validate="dateTimeSplittedRules"
+          :placeholder="$t('common.date')"
+          :disabled="!isDateType"
+          class="ml-3"
+          name="until"
+        />
       </template>
     </v-radio>
-
-    <v-radio :value="types.after" class="mb-0" color="primary">
-      <template #label>
-        <c-layout class="recurrence-rule-end-field__after" gap="4" align="center">
-          <span>{{ t('recurrenceRule.after') }}</span>
-
-          <c-number-field
-            :value="modelValue.count"
-            :disabled="!isAfterType"
-            :min="1"
-            :required="isAfterType"
-            class="recurrence-rule-end-field__count"
-            name="count"
-            @update:value="updateModelField('count', $event)"
-          />
-
-          <span class="text-lowercase">
-            {{ t('recurrenceRule.occurrence', modelValue.count || 1) }}
-          </span>
-        </c-layout>
+    <v-radio
+      :value="types.after"
+      class="mb-0"
+      color="primary"
+    >
+      <template #label="">
+        <span>{{ $t('recurrenceRule.after') }}</span>
+        <c-number-field
+          v-field="value.count"
+          :disabled="!isAfterType"
+          :required="isAfterType"
+          class="mx-3"
+          name="count"
+        />
+        <span class="text-lowercase">
+          {{ $tc('recurrenceRule.occurrence', value.count || 1) }}
+        </span>
       </template>
     </v-radio>
-  </c-radio-group>
+  </v-radio-group>
 </template>
 
-<script setup>
-import { isNumber, omit } from 'lodash';
-import { computed, ref } from 'vue';
+<script>
+import { omit, isNumber } from 'lodash';
 
 import { RECURRENCE_RULE_END_TYPES } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
+import { formBaseMixin } from '@/mixins/form';
 
 import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true,
+export default {
+  inject: ['$validator'],
+  components: { DateTimeSplittedPickerField },
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
   },
-  types: {
-    type: Object,
-    default: () => RECURRENCE_RULE_END_TYPES,
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
+    types: {
+      type: Object,
+      default: () => RECURRENCE_RULE_END_TYPES,
+    },
   },
-});
+  data() {
+    let type = RECURRENCE_RULE_END_TYPES.never;
 
-const emit = defineEmits(['update:modelValue']);
+    if (this.value.until) {
+      type = RECURRENCE_RULE_END_TYPES.date;
+    }
 
-const { t } = useI18n();
+    if (isNumber(this.value.count)) {
+      type = RECURRENCE_RULE_END_TYPES.after;
+    }
 
-const type = ref(
-  props.modelValue.until
-    ? RECURRENCE_RULE_END_TYPES.date
-    : isNumber(props.modelValue.count)
-      ? RECURRENCE_RULE_END_TYPES.after
-      : RECURRENCE_RULE_END_TYPES.never,
-);
+    return {
+      type,
+    };
+  },
+  computed: {
+    dateTimeSplittedRules() {
+      return {
+        required: this.isDateType,
+      };
+    },
 
-const isDateType = computed(() => type.value === props.types.date);
-const isAfterType = computed(() => type.value === props.types.after);
-const dateTimeSplittedRules = computed(() => ({ required: isDateType.value }));
+    isDateType() {
+      return this.type === this.types.date;
+    },
 
-const updateModelField = (field, value) => emit('update:modelValue', {
-    ...props.modelValue,
-    [field]: value,
-  });
+    isAfterType() {
+      return this.type === this.types.after;
+    },
+  },
+  methods: {
+    updateType(type) {
+      this.type = type;
 
-const updateType = (value) => {
-  type.value = value;
+      const deletingFields = [];
 
-  const deletingFields = [];
+      if (!this.isDateType) {
+        deletingFields.push('until');
+      }
 
-  if (!isDateType.value) {
-    deletingFields.push('until');
-  }
+      if (!this.isAfterType) {
+        deletingFields.push('count');
+      }
 
-  if (!isAfterType.value) {
-    deletingFields.push('count');
-  }
+      deletingFields.forEach(name => this.errors.remove(name));
 
-  emit('update:modelValue', omit(props.modelValue, deletingFields));
+      this.updateModel(omit(this.value, deletingFields));
+    },
+  },
 };
 </script>
-
-<style lang="scss" scoped>
-.recurrence-rule-end-field__count {
-  width: 96px;
-}
-</style>

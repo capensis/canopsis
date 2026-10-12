@@ -1,12 +1,11 @@
-import { COLOR_INDICATOR_TYPES, RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { RESIZING_CELLS_CONTENTS_BEHAVIORS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import {
-  getAlarmsListWidgetColumnComponentGetter,
   getAlarmsListWidgetColumnValueFilter,
+  getAlarmsListWidgetColumnComponentGetter,
 } from '@/helpers/entities/widget/forms/alarm';
-import { FILTERS } from '@/helpers/filter';
 
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { entitiesAlarmColumnsFiltersMixin } from '../../entities/associative-table/alarm-columns-filters';
 
 import { widgetColumnsEntityInfoPropertyMixin } from './entity-info-property';
 
@@ -36,20 +35,24 @@ export const widgetColumnsAlarmMixin = {
     },
 
     preparedColumns() {
-      const { showRootCauseByStateClick = true, columns: columnsSettings = {} } =
-        this.widget.parameters ?? {};
+      const {
+        showRootCauseByStateClick = true,
+        columns: columnsSettings = {},
+      } = this.widget.parameters ?? {};
 
       return (this.columns ?? []).map(column => ({
         ...column,
         text: column.label || this.findAliasByColumnValue(column.value, 'entity') || column.text,
-        popupTemplate:
-          this.infoPopupsMap[column.value] ?? this.infoPopupsMap[`alarm.${column.value}`],
+        popupTemplate: this.infoPopupsMap[column.value] ?? this.infoPopupsMap[`alarm.${column.value}`],
         filter: this.$i18n.locale && this.getColumnFilter(column.value),
-        getComponent: getAlarmsListWidgetColumnComponentGetter(column, {
-          showRootCauseByStateClick,
-          isCellContentTruncated:
-            columnsSettings.cells_content_behavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
-        }),
+        getComponent: getAlarmsListWidgetColumnComponentGetter(
+          column,
+          {
+            showRootCauseByStateClick,
+            isCellContentTruncated:
+              columnsSettings.cells_content_behavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
+          },
+        ),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
       }));
     },
@@ -64,7 +67,7 @@ export const widgetColumnsAlarmMixin = {
     },
 
     getFilter(filter, attributes = []) {
-      const filterFunc = FILTERS[filter];
+      const filterFunc = this.$options.filters[filter];
 
       return value => (filterFunc ? filterFunc(value, ...attributes) : value);
     },

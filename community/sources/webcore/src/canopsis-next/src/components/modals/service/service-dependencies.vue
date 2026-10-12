@@ -1,35 +1,40 @@
 <template>
-  <c-modal-wrapper close>
-    <template #title>
-      <span>{{ $t('modals.serviceDependencies.title') }}</span>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
     </template>
-    <template #text>
-      <service-dependencies
+    <template #text="">
+      <service-dependencies-table
         :root="config.root"
         :columns="config.columns"
         :impact="config.impact"
+        :openable-root="config.openableRoot"
         include-root
       />
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
-import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
+import { MODALS } from '@/constants';
+
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
+import ServiceDependenciesTable from '@/components/other/service/partials/service-dependencies.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  components: { ServiceDependencies },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-
+  name: MODALS.serviceDependencies,
+  components: { ServiceDependenciesTable, ModalWrapper },
+  mixins: [modalInnerMixin],
   computed: {
-    config() {
-      return this.modal.config ?? {};
+    title() {
+      const type = this.config.impact
+        ? 'impacts'
+        : 'dependencies';
+
+      return this.$t(`modals.serviceDependencies.${type}.title`, { name: this.config.root?.name });
     },
   },
 };

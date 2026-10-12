@@ -1,58 +1,55 @@
 <template>
   <pattern-editor-field
-    :patterns="patterns"
+    v-field="patterns"
     :disabled="disabled"
     :readonly="readonly"
     :name="name"
-    :type="PATTERN_TYPES.pbehavior"
+    :type="$constants.PATTERN_TYPES.pbehavior"
     :required="required"
     :attributes="pbehaviorAttributes"
     :with-type="withType"
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
     class="c-pbehavior-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
   >
     <template #append-count="">
       <v-btn
         v-if="alarmCounter && alarmCounter.count"
-        variant="text"
+        text
         small
         @click="showPatternAlarmsModal()"
       >
-        {{ t('common.seeAlarms') }}
+        {{ $t('common.seeAlarms') }}
       </v-btn>
       <v-btn
         v-if="entityCounter && entityCounter.count"
-        variant="text"
+        text
         small
         @click="showPatternEntitiesModal()"
       >
-        {{ t('common.seeEntities') }}
+        {{ $t('common.seeEntities') }}
       </v-btn>
     </template>
   </pattern-editor-field>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { createNamespacedHelpers } from 'vuex';
 
-import {
-  PATTERN_OPERATORS,
-  PATTERN_TYPES,
-  PBEHAVIOR_PATTERN_FIELDS,
-  PBEHAVIOR_TYPE_TYPES,
-} from '@/constants';
-
-import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
-
-import { useI18n } from '@/hooks/i18n';
+import { MAX_LIMIT, PATTERN_OPERATORS, PBEHAVIOR_PATTERN_FIELDS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+const { mapActions: pbehaviorReasonMapActions } = createNamespacedHelpers('pbehaviorReasons');
+const { mapActions: pbehaviorTypeMapActions } = createNamespacedHelpers('pbehaviorTypes');
+
 export default {
-  emits: ['update:patterns', 'update:value', 'show:alarms', 'show:entities'],
   components: { PatternEditorField },
+  model: {
+    prop: 'patterns',
+    event: 'input',
+  },
   props: {
     patterns: {
       type: Object,
@@ -82,10 +79,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    attributes: {
-      type: Array,
-      default: () => [],
-    },
     alarmCounter: {
       type: Object,
       required: false,
@@ -95,99 +88,161 @@ export default {
       required: false,
     },
   },
-  setup(props, { emit }) {
-    const { t } = useI18n();
-
-    const nameOptions = computed(() => ({
-      operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
-      valueField: {
-        is: 'c-pbehavior-field',
-        props: {
-          itemTitle: 'name',
-          itemValue: '_id',
-          ellipsis: true,
-        },
-      },
-    }));
-
-    const reasonOptions = computed(() => ({
-      operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
-      valueField: {
-        is: 'c-pbehavior-reason-field',
-        props: {
-          ellipsis: true,
-        },
-      },
-    }));
-
-    const typeOptions = computed(() => ({
-      operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
-      valueField: {
-        is: 'c-pbehavior-type-field',
-        props: {
-          ellipsis: true,
-        },
-      },
-    }));
-
-    const availablePbehaviorTypeTypes = computed(() => Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
-      value: type,
-      text: t(`pbehavior.types.types.${type}`),
-    })));
-
-    const canonicalTypeOptions = computed(() => ({
-      operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
-      valueField: {
-        is: 'c-select',
-        props: {
-          items: availablePbehaviorTypeTypes.value,
-          itemTitle: 'text',
-          itemValue: 'value',
-        },
-      },
-    }));
-
-    const defaultPbehaviorAttributes = computed(() => [
-      {
-        text: t('common.name'),
-        value: PBEHAVIOR_PATTERN_FIELDS.id,
-        options: nameOptions.value,
-      },
-      {
-        text: t('common.reason'),
-        value: PBEHAVIOR_PATTERN_FIELDS.reason,
-        options: reasonOptions.value,
-      },
-      {
-        text: t('common.type'),
-        value: PBEHAVIOR_PATTERN_FIELDS.type,
-        options: typeOptions.value,
-      },
-      {
-        text: t('common.canonicalType'),
-        value: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
-        options: canonicalTypeOptions.value,
-      },
-    ]);
-
-    const pbehaviorAttributes = computed(() =>
-      mergePatternAttributes(defaultPbehaviorAttributes.value, props.attributes));
-
-    const showPatternAlarmsModal = () => {
-      emit('show:alarms');
-    };
-
-    const showPatternEntitiesModal = () => {
-      emit('show:entities');
-    };
-
+  data() {
     return {
-      t,
-      PATTERN_TYPES,
-      pbehaviorAttributes,
-      showPatternAlarmsModal,
-      showPatternEntitiesModal,
+      pbehaviors: [],
+      pbehaviorsPending: false,
+
+      pbehaviorReasons: [],
+      pbehaviorReasonsPending: false,
+
+      pbehaviorTypes: [],
+      pbehaviorTypesPending: false,
     };
+  },
+  computed: {
+    nameOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.pbehaviors,
+            loading: this.pbehaviorsPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    reasonOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.pbehaviorReasons,
+            loading: this.pbehaviorReasonsPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    typeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.pbehaviorTypes,
+            loading: this.pbehaviorTypesPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    availablePbehaviorTypeTypes() {
+      return Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
+        value: type,
+        text: this.$t(`pbehavior.types.types.${type}`),
+      }));
+    },
+
+    canonicalTypeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.availablePbehaviorTypeTypes,
+          },
+        },
+      };
+    },
+
+    pbehaviorAttributes() {
+      return [
+        {
+          text: this.$t('common.name'),
+          value: PBEHAVIOR_PATTERN_FIELDS.id,
+          options: this.nameOptions,
+        },
+        {
+          text: this.$t('common.reason'),
+          value: PBEHAVIOR_PATTERN_FIELDS.reason,
+          options: this.reasonOptions,
+        },
+        {
+          text: this.$t('common.type'),
+          value: PBEHAVIOR_PATTERN_FIELDS.type,
+          options: this.typeOptions,
+        },
+        {
+          text: this.$t('common.canonicalType'),
+          value: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
+          options: this.canonicalTypeOptions,
+        },
+      ];
+    },
+  },
+  mounted() {
+    this.fetchPbehaviors();
+    this.fetchPbehaviorReasons();
+    this.fetchPbehaviorTypes();
+  },
+  methods: {
+    ...pbehaviorMapActions({ fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore' }),
+    ...pbehaviorReasonMapActions({ fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore' }),
+    ...pbehaviorTypeMapActions({ fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore' }),
+
+    showPatternAlarmsModal() {
+      this.$emit('show:alarms');
+    },
+
+    showPatternEntitiesModal() {
+      this.$emit('show:entities');
+    },
+
+    async fetchPbehaviors() {
+      this.pbehaviorsPending = true;
+
+      const { data: pbehaviors } = await this.fetchPbehaviorsListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.pbehaviors = pbehaviors;
+      this.pbehaviorsPending = false;
+    },
+
+    async fetchPbehaviorReasons() {
+      this.pbehaviorReasonsPending = true;
+
+      const { data: reasons } = await this.fetchPbehaviorReasonsListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.pbehaviorReasons = reasons;
+      this.pbehaviorReasonsPending = false;
+    },
+
+    async fetchPbehaviorTypes() {
+      this.pbehaviorTypesPending = true;
+
+      const { data: types } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.pbehaviorTypes = types;
+      this.pbehaviorTypesPending = false;
+    },
   },
 };
 </script>

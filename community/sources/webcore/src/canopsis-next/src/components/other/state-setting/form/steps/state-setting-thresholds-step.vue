@@ -1,80 +1,71 @@
 <template>
-  <c-layout class="state-setting-thresholds-step" column>
+  <v-layout
+    class="state-setting-thresholds-step"
+    column
+  >
     <state-setting-threshold-field
       v-for="key in sortedThresholdsKeys"
+      v-field="thresholds[key]"
       :key="key"
-      :condition="thresholds[key]"
       :label="getLabel(key)"
       :name="`${name}.${key}`"
       :state="key"
-      @update:condition="updateThreshold(key, $event)"
+      @input="errors.remove(name)"
     />
-
-    <c-alert v-if="hasError" type="error">
-      {{ t('stateSetting.conditionsError') }}
+    <c-alert
+      :value="errors.has(name)"
+      type="error"
+    >
+      {{ $t('stateSetting.conditionsError') }}
     </c-alert>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
-
 import { ALARM_STATES } from '@/constants';
 
-import { useFormModel } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
 import StateSettingThresholdField from '../fields/state-setting-threshold-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { StateSettingThresholdField },
-
+  mixins: [formValidationHeaderMixin, validationAttachRequiredMixin],
+  model: {
+    prop: 'thresholds',
+    event: 'input',
+  },
   props: {
+    thresholds: {
+      type: Object,
+      default: () => ({}),
+    },
     name: {
       type: String,
-      default: 'state_thresholds',
+      default: 'thresholds',
     },
   },
+  computed: {
+    sortedThresholdsKeys() {
+      return Object.keys(this.thresholds).reverse();
+    },
+  },
+  created() {
+    this.attachRequiredRule(this.requiredRuleGetter);
+  },
+  beforeDestroy() {
+    this.detachRequiredRule();
+  },
+  methods: {
+    getLabel(key) {
+      return this.$t(`common.stateTypes.${ALARM_STATES[key]}`);
+    },
 
-  setup(props) {
-    const { t } = useI18n();
-    const thresholds = useFormModel(props.name);
-    const { hasAnyError } = useValidationHeader();
-    const { hasError: hasFieldError, clearError, attachRequiredRule, detachRequiredRule, validateRequiredRule } =
-      useValidationAttachRequired(props.name);
-
-    const sortedThresholdsKeys = computed(() => Object.keys(thresholds.value ?? {}).reverse());
-    const hasError = computed(() => hasFieldError(props.name));
-
-    const getLabel = key => t(`common.stateTypes.${ALARM_STATES[key]}`);
-
-    const requiredRuleGetter = () => Object.values(thresholds.value ?? {}).some(({ enabled }) => enabled);
-
-    const updateThreshold = (key, value) => {
-      thresholds.value = {
-        ...thresholds.value,
-        [key]: value,
-      };
-
-      clearError(props.name);
-    };
-
-    watch(thresholds, () => validateRequiredRule(), { deep: true });
-
-    onMounted(() => attachRequiredRule(requiredRuleGetter));
-    onBeforeUnmount(() => detachRequiredRule());
-
-    return {
-      t,
-      thresholds,
-      sortedThresholdsKeys,
-      hasAnyError,
-      hasError,
-      getLabel,
-      updateThreshold,
-    };
+    requiredRuleGetter() {
+      return Object.values(this.thresholds).some(({ enabled }) => enabled);
+    },
   },
 };
 </script>

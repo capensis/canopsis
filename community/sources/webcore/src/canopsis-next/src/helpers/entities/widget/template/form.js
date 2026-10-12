@@ -1,15 +1,13 @@
 import {
   COLUMNS_WIDGET_TEMPLATES_TYPES,
-  CUSTOM_WIDGET_TEMPLATE,
   QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
+  CUSTOM_WIDGET_TEMPLATE,
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
-import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
-import { formToWidgetQuickActions, widgetQuickActionsToForm } from '../quick-action/form';
-import { formToWidgetSortColumns, widgetSortColumnsToForm } from '../sort-column/form';
-import { formToTicketFormats, ticketFormatsToForm } from '../ticket-format/form';
-
+import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
+import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
+import { widgetSortColumnsToForm, formToWidgetSortColumns } from '../sort-column/form';
 /**
  * @typedef {
  *  'alarm_columns'
@@ -19,7 +17,6 @@ import { formToTicketFormats, ticketFormatsToForm } from '../ticket-format/form'
  *  | 'alarm_quick_actions'
  *  | 'alarm_mass_quick_actions'
  *  | 'alarm_sort_columns'
- *  | 'ticket_formats'
  *  | 'weather_item'
  *  | 'weather_modal'
  *  | 'weather_entity'
@@ -34,21 +31,18 @@ import { formToTicketFormats, ticketFormatsToForm } from '../ticket-format/form'
  * @property {WidgetQuickAction[]} [actions]
  * @property {Object[]} [sort_columns]
  * @property {string} [content]
- * @property {TicketFormat[]} [formats]
  */
 
 /**
  * @typedef {WidgetTemplate} WidgetTemplateForm
  * @property {WidgetColumnForm[]} columns
- * @property {WidgetQuickActionForm[]} actions
  * @property {Object[]} sort_columns
- * @property {TicketFormatForm[]} formats
  */
 
 /**
- * Convert widget template to form.
+ * Convert widget template to form
  *
- * @param {WidgetTemplate} [widgetTemplate={}]
+ * @param {WidgetTemplate} widgetTemplate
  * @returns {WidgetTemplateForm}
  */
 export const widgetTemplateToForm = (widgetTemplate = {}) => ({
@@ -57,28 +51,18 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
   columns: widgetColumnsToForm(widgetTemplate.columns),
   actions: widgetQuickActionsToForm(widgetTemplate.actions),
   sort_columns: widgetSortColumnsToForm(widgetTemplate.sort_columns),
-  formats: ticketFormatsToForm(widgetTemplate.formats),
   content: widgetTemplate.content ?? '',
 });
 
 /**
- * Convert form to widget template.
+ * Convert form to widget template
  *
  * @param {WidgetTemplateForm} form
  * @param {WidgetColumnForm[]} columns
- * @param {WidgetQuickActionForm[]} actions
- * @param {TicketFormatForm[]} formats
  * @param {string} content
  * @returns {WidgetTemplate}
  */
-export const formToWidgetTemplate = ({
-  columns,
-  content,
-  actions,
-  formats,
-  sort_columns: sortColumns,
-  ...form
-}) => {
+export const formToWidgetTemplate = ({ columns, content, actions, sort_columns: sortColumns, ...form }) => {
   const widgetTemplate = form;
 
   if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(form.type)) {
@@ -87,8 +71,6 @@ export const formToWidgetTemplate = ({
     widgetTemplate.actions = formToWidgetQuickActions(actions);
   } else if (form.type === WIDGET_TEMPLATES_TYPES.alarmSortColumns) {
     widgetTemplate.sort_columns = formToWidgetSortColumns(sortColumns ?? []);
-  } else if (form.type === WIDGET_TEMPLATES_TYPES.ticketFormats) {
-    widgetTemplate.formats = formToTicketFormats(formats);
   } else {
     widgetTemplate.content = content;
   }
@@ -97,7 +79,7 @@ export const formToWidgetTemplate = ({
 };
 
 /**
- * Convert widget column template to form.
+ * Convert widget column template to form
  *
  * @param {string} [template]
  * @returns {string}
@@ -105,10 +87,9 @@ export const formToWidgetTemplate = ({
 export const widgetTemplateValueToForm = template => template || CUSTOM_WIDGET_TEMPLATE;
 
 /**
- * Convert form to widget column template.
+ * Convert form to widget column template
  *
  * @param {string} [template]
  * @returns {string}
  */
-export const formToWidgetTemplateValue = template =>
-  template === CUSTOM_WIDGET_TEMPLATE ? '' : template;
+export const formToWidgetTemplateValue = template => (template === CUSTOM_WIDGET_TEMPLATE ? '' : template);

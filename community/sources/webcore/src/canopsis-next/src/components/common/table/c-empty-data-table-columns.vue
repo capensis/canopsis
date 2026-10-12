@@ -1,6 +1,6 @@
 <template>
   <div class="v-data-table">
-    <div class="v-table__wrapper">
+    <div class="v-data-table__wrapper">
       <table>
         <tbody>
           <tr>

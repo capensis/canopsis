@@ -1,27 +1,31 @@
 <template>
   <div>
-    <c-select
-      :model-value="modelValue"
+    <c-select-field
+      v-field="value"
+      v-validate="'required'"
       :label="label"
       :items="items"
+      :error-messages="errors.collect('patternItem')"
       name="patternItem"
-      item-title="text"
+      item-text="text"
       item-value="value"
       hide-details
-      required
       return-object
-      @update:model-value="$emit('update:modelValue', $event)"
     />
   </div>
 </template>
 
 <script>
 export default {
-  emits: ['update:modelValue'],
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: Object,
-      default: null,
+      default: () => ({}),
     },
     items: {
       type: Array,

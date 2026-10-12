@@ -1,107 +1,104 @@
 <template>
-  <c-layout gap="3" column>
+  <v-layout class="gap-3" column>
     <c-enabled-field
-      :model-value="form.enabled"
+      :value="form.enabled"
       with-background
       hide-details
-      @update:model-value="updateEnabled"
+      @change="updateEnabled"
     />
 
     <c-name-field
-      :model-value="form.name"
+      v-field="form.name"
       :label="$t('llm.modelName')"
-      :max-length="FORM_MAX_STRING_LENGTH"
+      :max-length="255"
       name="llm_name"
       required
-      @update:model-value="updateField('name', $event)"
     />
 
     <c-form-block>
       <c-form-block-row :label="$t('llm.modelType')">
-        <llm-model-type-field
-          :model-value="form.type"
-          :disabled="!isNew"
-          name="type"
-          required
-          @update:model-value="updateType"
+        <v-text-field
+          v-field="form.type"
+          :label="$t('llm.modelType')"
+          disabled
+          readonly
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('llm.apiKey')">
         <c-password-field
-          :model-value="form.api_key"
+          v-field="form.api_key"
           :label="$t('llm.apiKey')"
           :required="isNew"
           :placeholder="$t('llm.apiKeyPlaceholder')"
           :replaceable="!isNew"
           name="api_key"
           visibility
-          @update:model-value="updateField('api_key', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('llm.model')">
-        <v-row>
-          <v-col cols="6" class="pa-0">
+        <v-layout class="gap-3">
+          <v-flex xs6>
             <llm-model-field
-              :model-value="form.model"
+              v-field="form.model"
               :items="models"
               :loading="modelsPending"
               name="model"
               required
-              @update:model-value="updateField('model', $event)"
             />
-          </v-col>
-          <v-col v-if="thinkingLevels.length" cols="6" class="pa-0">
+          </v-flex>
+          <v-flex xs6>
             <llm-thinking-level-field
-              :model-value="form.thinking_level"
+              v-field="form.thinking_level"
               :items="thinkingLevels"
               name="thinking_level"
-              @update:model-value="updateField('thinking_level', $event)"
             />
-          </v-col>
-        </v-row>
+          </v-flex>
+        </v-layout>
       </c-form-block-row>
 
       <c-form-block-row :label="$t('llm.isDefaultModel')" align-center>
-        <c-layout column>
+        <v-layout column>
           <c-enabled-field
-            :model-value="form.default"
+            v-field="form.default"
             :label="$t('llm.isDefaultModel')"
             :disabled="!form.enabled"
             hide-details
             no-margin
-            @update:model-value="updateField('default', $event)"
           />
-          <div v-if="defaultLlm" class="text-caption text-medium-emphasis mt-1">
+          <div
+            v-if="defaultLlm"
+            class="text-caption text--secondary mt-1"
+          >
             {{ $t('llm.currentDefaultModelLine') }} <strong>{{ defaultLlm.name }}</strong>
           </div>
-        </c-layout>
+        </v-layout>
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
-
-import { FORM_MAX_STRING_LENGTH } from '@/constants';
 
 import { useModelField } from '@/hooks/form/model-field';
 
 import { useLlmModelsListForSelect } from '@/components/other/llm/hooks/llm-models-list';
 
 import LlmModelField from './fields/llm-model-field.vue';
-import LlmModelTypeField from './fields/llm-model-type-field.vue';
 import LlmThinkingLevelField from './fields/llm-thinking-level-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     LlmModelField,
-    LlmModelTypeField,
     LlmThinkingLevelField,
   },
-
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
@@ -113,34 +110,15 @@ export default {
     },
     defaultLlm: {
       type: Object,
-      default: null,
+      default: () => ({}),
     },
   },
-
-  emits: ['update:form'],
-
   setup(props, { emit }) {
-    const { updateModel, updateField } = useModelField(props, emit);
-    const type = computed(() => props.form.type);
-    const {
-      items: models,
-      itemsByName: modelsByName,
-      pending: modelsPending,
-    } = useLlmModelsListForSelect(type);
+    const { updateModel } = useModelField(props, emit);
+    const { items: models, itemsByName: modelsByName, pending: modelsPending } = useLlmModelsListForSelect();
     const emptyThinkingLevels = [];
 
-    const thinkingLevels = computed(
-      () => modelsByName.value[props.form.model]?.thinking_levels ?? emptyThinkingLevels,
-    );
-
-    const updateType = (value) => {
-      updateModel({
-        ...props.form,
-        type: value,
-        model: '',
-        thinking_level: '',
-      });
-    };
+    const thinkingLevels = computed(() => modelsByName.value[props.form.model]?.thinking_levels ?? emptyThinkingLevels);
 
     const updateEnabled = (value) => {
       const newForm = {
@@ -156,14 +134,10 @@ export default {
     };
 
     return {
-      FORM_MAX_STRING_LENGTH,
       models,
       modelsPending,
       thinkingLevels,
-
       updateEnabled,
-      updateField,
-      updateType,
     };
   },
 };

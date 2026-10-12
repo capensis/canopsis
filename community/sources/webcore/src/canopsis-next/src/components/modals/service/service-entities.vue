@@ -1,43 +1,35 @@
 <template>
-  <c-modal-wrapper
+  <modal-wrapper
     :title-class="titleClass"
     close
   >
-    <template #title>
+    <template #title="">
       <span>{{ service.name }}</span>
     </template>
-    <template #text>
+    <template #text="">
       <v-tabs
-        v-model="activeTab"
-        align-tabs="center"
-        color="primary"
         class="position-relative"
+        slider-color="primary"
+        centered
       >
-        <v-tab :value="tabs.service">{{ $t('common.service') }}</v-tab>
-        <v-tab :value="tabs.pbehavior" :disabled="!hasPbehaviorListAccess">
-          {{ $t('common.pbehavior', 2) }}
-        </v-tab>
-        <v-tab v-if="hasAccessToComment" :value="tabs.comments">
-          {{ $t('common.comment', 2) }}
-        </v-tab>
-      </v-tabs>
-
-      <v-window v-model="activeTab" class="mt-2">
-        <v-window-item :value="tabs.service">
+        <v-tab>{{ $t('common.service') }}</v-tab>
+        <v-tab-item>
           <c-progress-overlay :pending="pending" />
           <service-template
-            v-model:options="options"
             :service="service"
             :service-entities="serviceEntitiesWithKey"
             :widget-parameters="widgetParameters"
+            :options.sync="options"
             :total-items="serviceEntitiesMeta.total_count"
             :actions-requests="actionsRequests"
             @refresh="refresh"
             @add:action="addAction"
           />
-        </v-window-item>
-
-        <v-window-item :value="tabs.pbehavior">
+        </v-tab-item>
+        <v-tab :disabled="!hasPbehaviorListAccess">
+          {{ $tc('common.pbehavior', 2) }}
+        </v-tab>
+        <v-tab-item>
           <pbehaviors-simple-list
             :entity="service"
             :default-inherited="widgetParameters.defaultInheritedPbehavior"
@@ -48,44 +40,46 @@
             removable
             dense
           />
-        </v-window-item>
-
-        <v-window-item v-if="hasAccessToComment" :value="tabs.comments">
-          <entity-comments
-            :entity="service"
-            addable
-            editable
-          />
-        </v-window-item>
-      </v-window>
+        </v-tab-item>
+        <template v-if="hasAccessToComment">
+          <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
+          <v-tab-item>
+            <entity-comments
+              :entity="service"
+              addable
+              editable
+            />
+          </v-tab-item>
+        </template>
+      </v-tabs>
     </template>
-    <template #actions>
+    <template #actions="">
       <v-alert
-        v-if="actionsRequests.length > 0"
-        :model-value="actionsRequests.length > 0"
+        :value="actionsRequests.length > 0"
         class="actions-requests-alert my-0 mr-2 pa-1 pr-2"
         type="info"
-        closable
-        @update:model-value="clearActions"
+        dismissible
+        @input="clearActions"
       >
-        {{ actionsRequests.length }} {{ $t('modals.service.actionInQueue', actionsRequests.length) }}
+        {{ actionsRequests.length }} {{ $tc('modals.service.actionInQueue', actionsRequests.length) }}
       </v-alert>
-      <c-tooltip location="top">
-        <template #activator="{ props: tooltipProps }">
+      <v-tooltip top>
+        <template #activator="{ on }">
           <v-btn
             class="mx-2"
             color="secondary"
-            v-bind="tooltipProps"
+            v-on="on"
             @click="refresh"
           >
-            <v-icon icon="refresh" />
+            <v-icon>refresh</v-icon>
           </v-btn>
         </template>
         <span>{{ $t('modals.service.refreshEntities') }}</span>
-      </c-tooltip>
+      </v-tooltip>
       <v-btn
-        variant="text"
-        @click="close"
+        depressed
+        text
+        @click="$modals.hide"
       >
         {{ $t('common.close') }}
       </v-btn>
@@ -93,98 +87,72 @@
         v-if="entitiesActionsInQueue"
         :loading="submitting"
         :disabled="submitting || !actionsRequests.length"
-        color="primary"
+        class="primary"
         type="submit"
         @click="submit"
       >
         {{ $t('common.submit') }}
       </v-btn>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
-
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, PBEHAVIOR_ORIGINS, USER_PERMISSIONS } from '@/constants';
 
 import Observer from '@/services/observer';
 
-import { useServiceEntityStore } from '@/stores/modules/service-entity';
-
 import { authMixin } from '@/mixins/auth';
-import { permissionsWidgetsEventComment } from '@/mixins/permissions/widgets/entity-comment';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query/query';
+import { permissionsWidgetsEventComment } from '@/mixins/permissions/widgets/entity-comment';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import EntityComments from '@/components/other/entity/entity-comments.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
+import EntityComments from '@/components/other/entity/entity-comments.vue';
 
-const tabs = {
-  service: 'service',
-  pbehavior: 'pbehavior',
-  comments: 'comments',
-};
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.serviceEntities,
-
-  inject: ['$system'],
-
   provide() {
     return {
       $periodicRefresh: this.$periodicRefresh,
     };
   },
-
+  inject: ['$system'],
   components: {
     PbehaviorsSimpleList,
     ServiceTemplate,
     EntityComments,
+    ModalWrapper,
   },
-
   mixins: [
     authMixin,
     localQueryMixin,
+    modalInnerMixin,
+    entitiesServiceEntityMixin,
     permissionsWidgetsEventComment,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'actionsRequests' }),
   ],
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-
   data() {
-    const { config = {} } = this.modal;
-
     return {
       pending: true,
-      submitting: false,
+      unavailableEntitiesAction: {},
       actionsRequests: [],
-      activeTab: tabs.service,
-      tabs,
       query: {
-        page: 1,
-        itemsPerPage: config.widgetParameters?.modalItemsPerPage ?? PAGINATION_LIMIT,
+        itemsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
         sortBy: ['state'],
         sortDesc: [true],
       },
     };
   },
-
   computed: {
-    ...mapState(useServiceEntityStore, {
-      getServiceEntitiesListByServiceId: 'getListByServiceId',
-      getServiceEntitiesMetaByServiceId: 'getMetaByServiceId',
-    }),
-
-    config() {
-      return this.modal.config ?? {};
-    },
-
     service() {
       return this.config.service;
     },
@@ -194,19 +162,11 @@ export default {
     },
 
     widgetParameters() {
-      return this.config.widgetParameters ?? {};
+      return this.config.widgetParameters;
     },
 
     entitiesActionsInQueue() {
       return this.widgetParameters?.entitiesActionsInQueue ?? false;
-    },
-
-    serviceEntities() {
-      return this.getServiceEntitiesListByServiceId(this.service._id);
-    },
-
-    serviceEntitiesMeta() {
-      return this.getServiceEntitiesMetaByServiceId(this.service._id);
     },
 
     serviceEntitiesWithKey() {
@@ -229,7 +189,7 @@ export default {
     this.$periodicRefresh.register(this.fetchList);
   },
 
-  beforeUnmount() {
+  beforeDestroy() {
     this.$periodicRefresh.unregister(this.fetchList);
   },
 
@@ -238,14 +198,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(useServiceEntityStore, {
-      fetchServiceEntitiesList: 'fetchList',
-    }),
-
-    close() {
-      this.$modals.hide({ id: this.modal.id });
-    },
-
     refresh(immediate = false) {
       if (!immediate && this.entitiesActionsInQueue) {
         return Promise.resolve();
@@ -278,15 +230,9 @@ export default {
     },
 
     async submit() {
-      this.submitting = true;
+      await Promise.all(this.actionsRequests.map(({ action }) => action()));
 
-      try {
-        await Promise.all(this.actionsRequests.map(({ action }) => action()));
-
-        this.close();
-      } finally {
-        this.submitting = false;
-      }
+      this.$modals.hide();
     },
   },
 };

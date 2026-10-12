@@ -1,104 +1,92 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
-        <span>{{ title }}</span>
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createTicketStatusJob.edit.title') }}</span>
       </template>
-
-      <template #text>
+      <template #text="">
         <ticket-status-job-form
-          :form="values"
+          v-model="form"
           :is-new="isNew"
-          @update:form="updateForm"
         />
       </template>
-
-      <template #actions>
-        <v-btn variant="text" @click="closeModal">
-          {{ t('common.cancel') }}
-        </v-btn>
-
+      <template #actions="">
         <v-btn
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
-          color="primary"
+          depressed
+          text
+          @click="close"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="submitting"
+          :loading="submitting"
+          class="primary"
           type="submit"
+          @click="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref } from 'vue';
 
-import {
-  formToTicketStatusJob,
-  ticketStatusJobToForm,
-} from '@/helpers/entities/ticket-status-job/form';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { ticketStatusJobToForm, formToTicketStatusJob } from '@/helpers/entities/ticket-status-job/form';
+
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
 
 import TicketStatusJobForm from '@/components/other/ticket-status-job/ticket-status-job-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
+  name: MODALS.createTicketStatusJob,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     TicketStatusJobForm,
+    ModalWrapper,
   },
-
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-
   setup(props) {
-    const { t } = useI18n();
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const ticketStatusJob = computed(() => config.value.ticketStatusJob);
-    const isNew = computed(() => !ticketStatusJob.value?._id);
-    const title = computed(
-      () => config.value.title || t('modals.createTicketStatusJob.edit.title'),
-    );
-    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
+    const { config, close } = useInnerModal(props);
 
-    const form = useForm({
-      initialValues: ticketStatusJobToForm(ticketStatusJob.value),
-    });
-    const { values, handleSubmit, isSubmitting } = form;
+    const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
 
-    const closeModal = () => modals.hide({ id: props.modal.id });
-    const updateForm = value => (values.value = value);
+    const { submit, submitting, submitLabel, isNew } = useSubmittableForm({
+      form,
+      item: config.value.ticketStatusJob,
+      method: async () => {
+        await config.value.action?.(formToTicketStatusJob(form.value));
 
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(formToTicketStatusJob(values.value));
-
-      closeModal();
+        close();
+      },
     });
 
-    useFormConfirmableCloseModal({
-      form: values,
-      submit,
-      close: closeModal,
-    });
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      t,
-      title,
-      values,
+      form,
       isNew,
-      isSubmitting,
+      submitting,
       submitLabel,
       submit,
-      updateForm,
-      closeModal,
+      close,
     };
   },
 };

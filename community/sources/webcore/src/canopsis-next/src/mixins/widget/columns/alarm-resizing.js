@@ -1,10 +1,11 @@
-import { isEmpty } from 'lodash';
-
-const TABLE_WIDTH_CSS_VARIABLE = '--alarms-list-table-width';
-const COLUMN_WIDTH_CSS_VARIABLE_PREFIX = '--alarms-list-table-column-width';
+import { throttle, isEmpty } from 'lodash';
 
 export const widgetColumnResizingAlarmMixin = {
   props: {
+    resizingColumnThrottleDelay: {
+      type: Number,
+      default: 10,
+    },
     minColumnWidth: {
       type: Number,
       default: 40,
@@ -19,21 +20,12 @@ export const widgetColumnResizingAlarmMixin = {
   },
   created() {
     this.aggregatedMovementDiff = 0;
-    this.resizeColumnAnimationFrame = null;
-    this.resizingColumnWidth = null;
-    this.resizingTableWidth = null;
+    this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
   },
-  beforeUnmount() {
-    this.finishColumnResize({ suppressClick: false });
+  beforeDestroy() {
+    this.finishColumnResize();
   },
   computed: {
-    tableHeader() {
-      return (
-        this.$refs.dataTable?.$el?.querySelector('thead') ??
-        this.$el?.querySelector('.alarms-list-widget__table thead')
-      );
-    },
-
     tableRow() {
       return this.tableHeader?.querySelector('tr:first-of-type');
     },
@@ -48,10 +40,6 @@ export const widgetColumnResizingAlarmMixin = {
 
     isEmptyColumnsWidthByField() {
       return isEmpty(this.columnsWidthByField);
-    },
-
-    isColumnResizing() {
-      return this.resizingColumnIndex !== null;
     },
   },
   methods: {
@@ -86,7 +74,7 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     calculateElementNormalizedWidth(element, field) {
-      const { offsetWidth: width } = element;
+      const { width } = element.getBoundingClientRect();
 
       return this.getNormalizedWidth(field, width);
     },
@@ -103,35 +91,6 @@ export const widgetColumnResizingAlarmMixin = {
       }, {});
     },
 
-    getColumnWidthCssVariable(index) {
-      return `${COLUMN_WIDTH_CSS_VARIABLE_PREFIX}-${index}`;
-    },
-
-    applyColumnResizePreview(index, columnWidth, tableWidth) {
-      const tableElement = this.$refs.dataTable?.$el;
-
-      if (!tableElement) {
-        return;
-      }
-
-      tableElement.style.setProperty(this.getColumnWidthCssVariable(index), `${columnWidth}px`);
-      tableElement.style.setProperty(TABLE_WIDTH_CSS_VARIABLE, `${tableWidth}px`);
-    },
-
-    clearColumnResizePreview(index) {
-      const tableElement = this.$refs.dataTable?.$el;
-
-      if (!tableElement || index === null) {
-        return;
-      }
-
-      tableElement.style.removeProperty(this.getColumnWidthCssVariable(index));
-
-      if (this.sumOfColumnsWidth) {
-        tableElement.style.setProperty(TABLE_WIDTH_CSS_VARIABLE, `${this.sumOfColumnsWidth}px`);
-      }
-    },
-
     resizeColumnByDiff(index) {
       const diff = this.aggregatedMovementDiff;
 
@@ -139,125 +98,55 @@ export const widgetColumnResizingAlarmMixin = {
         return;
       }
 
-      const previousLeftColumnWidth = this.resizingColumnWidth;
+      const resizingLeftColumn = this.headers[index].value;
+      const previousLeftColumnWidth = this.getColumnWidthByField(resizingLeftColumn);
+      const newLeftColumnWidth = this.getNormalizedWidth(resizingLeftColumn, previousLeftColumnWidth + diff);
 
-      if (!Number.isFinite(previousLeftColumnWidth) || !Number.isFinite(this.resizingTableWidth)) {
-        return;
-      }
+      this.columnsWidthByField = {
+        ...this.columnsWidthByField,
+        [resizingLeftColumn]: newLeftColumnWidth,
+      };
 
-      const newLeftColumnWidth = this.getNormalizedWidth(
-        this.headers[index]?.value,
-        previousLeftColumnWidth + diff,
-      );
-      const appliedDiff = newLeftColumnWidth - previousLeftColumnWidth;
-
-      if (appliedDiff) {
-        this.resizingColumnWidth = newLeftColumnWidth;
-        this.resizingTableWidth += appliedDiff;
+      if (newLeftColumnWidth !== previousLeftColumnWidth) {
         this.aggregatedMovementDiff = 0;
-
-        this.applyColumnResizePreview(index, newLeftColumnWidth, this.resizingTableWidth);
       }
     },
 
     handleColumnResize(event) {
       this.aggregatedMovementDiff += event.movementX;
 
-      if (this.resizeColumnAnimationFrame !== null) {
-        return;
-      }
+      this.throttledResizeColumnByDiff(this.resizingColumnIndex);
 
-      this.resizeColumnAnimationFrame = window.requestAnimationFrame(() => {
-        this.resizeColumnAnimationFrame = null;
-        this.resizeColumnByDiff(this.resizingColumnIndex);
-      });
-    },
-
-    flushColumnResize() {
-      if (this.resizeColumnAnimationFrame !== null) {
-        window.cancelAnimationFrame(this.resizeColumnAnimationFrame);
-        this.resizeColumnAnimationFrame = null;
-      }
-
-      this.resizeColumnByDiff(this.resizingColumnIndex);
-    },
-
-    suppressNextClickAfterResize() {
-      const suppressNextClick = (clickEvent) => {
-        clickEvent.preventDefault();
-        clickEvent.stopPropagation();
-        clickEvent.stopImmediatePropagation();
-        document.removeEventListener('click', suppressNextClick, true);
-      };
-
-      document.addEventListener('click', suppressNextClick, true);
-      window.setTimeout(() => {
-        document.removeEventListener('click', suppressNextClick, true);
-      }, 0);
+      this.setHorizontalScrollbarWidth();
+      this.setHorizontalScrollPosition();
     },
 
     startColumnResize(columnName) {
-      this.finishColumnResize({ suppressClick: false });
-
       const body = document.querySelector('body');
 
       this.resizingColumnIndex = this.headers.findIndex(({ value }) => value === columnName);
-      this.resizingColumnWidth = this.getColumnWidthByField(columnName);
-      this.resizingTableWidth = this.sumOfColumnsWidth;
 
       if (!body) {
         return;
       }
 
-      this.sortableInstance?.option('disabled', true);
-
-      body.addEventListener('pointermove', this.handleColumnResize);
-      body.addEventListener('pointerup', this.finishColumnResize);
-      body.addEventListener('pointercancel', this.finishColumnResize);
+      body.addEventListener('mousemove', this.handleColumnResize);
+      body.addEventListener('mouseup', this.finishColumnResize);
+      body.addEventListener('mouseleave', this.finishColumnResize);
     },
 
-    finishColumnResize(event) {
-      const resizingColumnIndex = this.resizingColumnIndex;
-
-      this.flushColumnResize();
-
-      const resizingColumn = this.headers[resizingColumnIndex]?.value;
-
-      if (resizingColumn && Number.isFinite(this.resizingColumnWidth)) {
-        this.columnsWidthByField = {
-          ...this.columnsWidthByField,
-          [resizingColumn]: this.resizingColumnWidth,
-        };
-      }
-
-      this.clearColumnResizePreview(resizingColumnIndex);
-
+    finishColumnResize() {
       this.aggregatedMovementDiff = 0;
-      this.resizingColumnIndex = null;
-      this.resizingColumnWidth = null;
-      this.resizingTableWidth = null;
-
-      if (resizingColumnIndex !== null) {
-        this.refreshHorizontalScrollbarAfterColumnResize?.();
-      }
 
       const body = document.querySelector('body');
 
-      if (body) {
-        body.removeEventListener('pointermove', this.handleColumnResize);
-        body.removeEventListener('pointerup', this.finishColumnResize);
-        body.removeEventListener('pointercancel', this.finishColumnResize);
-      }
-
-      if (this.draggingMode) {
-        this.sortableInstance?.option('disabled', false);
-      }
-
-      if (event?.suppressClick === false) {
+      if (!body) {
         return;
       }
 
-      this.suppressNextClickAfterResize();
+      body.removeEventListener('mousemove', this.handleColumnResize);
+      body.removeEventListener('mouseup', this.finishColumnResize);
+      body.removeEventListener('mouseleave', this.finishColumnResize);
     },
   },
 };

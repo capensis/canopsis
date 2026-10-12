@@ -1,60 +1,60 @@
 <template>
   <v-combobox
     v-if="combobox"
+    v-field="value"
     ref="comboboxElement"
-    :model-value="modelValue"
     :label="label || $t('common.search')"
     :items="items"
-    :disabled="disabled"
     :menu-props="comboboxMenuProps"
     :return-object="false"
-    item-title="search"
+    append-icon=""
+    item-text="search"
     item-value="search"
-    class="c-field"
     hide-no-data
     single-line
     hide-details
     @keydown.enter="keydownEnterCombobox"
-    @update:model-value="submit"
-    @update:search="updateModel"
+    @input="submit"
+    @update:search-input="updateModel"
   >
     <template #item="{ item }">
-      <v-list-item :title="item.raw.search">
-        <template #append>
-          <advanced-search-history-item-btns
-            :id="item.raw.search"
-            :pinned="item.raw.pinned"
-            @remove="removeItem"
-            @toggle-pin="togglePinItem"
-          />
-        </template>
-      </v-list-item>
+      <v-list-item-content>
+        <v-list-item-title class="pr-2">
+          {{ item.search }}
+        </v-list-item-title>
+      </v-list-item-content>
+      <v-list-item-action>
+        <advanced-search-history-item-btns
+          :id="item.search"
+          :pinned="item.pinned"
+          @remove="removeItem"
+          @toggle-pin="togglePinItem"
+        />
+      </v-list-item-action>
     </template>
   </v-combobox>
   <v-text-field
     v-else
-    :model-value="modelValue"
+    v-field="value"
     :label="label || $t('common.search')"
-    :disabled="disabled"
-    class="c-field"
     hide-details
     single-line
-    @update:model-value="updateModel"
-    @keydown.enter.prevent="submit(modelValue)"
+    @keydown.enter.prevent="submit(value)"
   />
 </template>
 
 <script>
 import { computed, ref } from 'vue';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 import { useSearchSavedItems } from './hooks/search';
 import AdvancedSearchHistoryItemBtns from './partials/advanced-search-history-item-btns.vue';
 
 export default {
   components: { AdvancedSearchHistoryItemBtns },
-
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
@@ -70,22 +70,17 @@ export default {
       type: Array,
       required: false,
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
   },
-
-  emits: ['update:modelValue', 'submit', 'remove:item', 'toggle-pin:item'],
-
   setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
     const comboboxElement = ref();
-    const { removeItem, togglePinItem } = useSearchSavedItems(emit);
 
     const comboboxMenuProps = computed(() => ({ contentClass: 'c-search-field__menu' }));
 
-    const updateModel = value => emit('update:modelValue', value ?? '');
-    const submit = () => emit('submit', props.modelValue);
+    const submit = () => emit('submit', props.value);
+    const { removeItem, togglePinItem } = useSearchSavedItems(emit);
+
     const keydownEnterCombobox = () => {
       submit();
       comboboxElement.value?.blur();
@@ -123,7 +118,7 @@ export default {
       padding: 0;
 
       .v-list-item {
-        min-height: 32px;
+        height: 32px;
       }
     }
   }

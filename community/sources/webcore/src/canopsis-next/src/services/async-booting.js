@@ -1,5 +1,3 @@
-import { recursiveRaf } from '@/helpers/render';
-
 /**
  * Class representing asynchronous booting functionality.
  */
@@ -9,8 +7,8 @@ export class AsyncBooting {
    */
   constructor() {
     this.wasCalled = false;
+    this.registeredRAFs = new Map();
     this.registered = [];
-    this.cancelBooting = null;
   }
 
   /**
@@ -36,49 +34,67 @@ export class AsyncBooting {
    * @param {any} key - The key to unregister.
    */
   unregister(key) {
-    this.registered = this.registered.filter(({ key: registeredKey }) => key !== registeredKey);
+    this.registered = this.registered
+      .filter(({ key: registeredKey }) => key !== registeredKey);
+
+    if (this.registeredRAFs.has(key)) {
+      window.cancelAnimationFrame(this.registeredRAFs.get(key));
+    }
+  }
+
+  /**
+   * Perform a recursive requestAnimationFrame.
+   *
+   * @param {Function} bootCallback - The callback function to execute on each frame.
+   * @param {number} depth - The depth of recursion.
+   * @param {any} [key] - The key to perform the recursive rAF on.
+   */
+  recursiveRAF(bootCallback, depth, key) {
+    if (depth <= 0) {
+      bootCallback();
+
+      if (key) {
+        this.registeredRAFs.delete(key);
+      }
+
+      return;
+    }
+
+    const rAFId = window.requestAnimationFrame(() => this.recursiveRAF(bootCallback, depth - 1, key));
+
+    if (key) {
+      this.registeredRAFs.set(key, rAFId);
+    }
   }
 
   /**
    * Run the asynchronous booting process.
    *
-   * @param {number} [duration] - Work budget for one frame, in milliseconds.
+   * @param {number} [itemsPerRender = 10] - The number of items per one requestAnimationFrame
    * @param {Function} [onFinishCallbackRoot] - Callback which will calls after all bootCallbacks
    */
-  run(duration, onFinishCallbackRoot) {
-    this.cancelBooting?.();
+  run(itemsPerRender = 10, onFinishCallbackRoot) {
+    this.registered.forEach(({ key, bootCallback }, index) => {
+      this.recursiveRAF(bootCallback, Math.floor(index / itemsPerRender), key);
+    });
 
-    const cancelBooting = recursiveRaf(
-      this.registered,
-      async ({ key, bootCallback }) => {
-        if (this.registered.some(({ key: registeredKey }) => key === registeredKey)) {
-          await bootCallback();
-        }
-      },
-      {
-        duration,
-        onComplete: () => {
-          this.cancelBooting = null;
-          this.registered.forEach(({ onFinishCallback }) => onFinishCallback?.());
-          onFinishCallbackRoot?.();
-          this.registered = [];
-          this.wasCalled = true;
-        },
-      },
-    );
+    const afterRAFs = Math.floor(this.registered.length / itemsPerRender) + 1;
 
-    if (this.registered.length) {
-      this.cancelBooting = cancelBooting;
-    }
+    this.recursiveRAF(() => {
+      this.registered.forEach(({ onFinishCallback }) => onFinishCallback?.());
+      onFinishCallbackRoot?.();
+      this.clear();
+      this.wasCalled = true;
+    }, afterRAFs);
   }
 
   /**
    * Clear all registered components and rAFs.
    */
   clear() {
-    this.cancelBooting?.();
+    this.registeredRAFs.forEach(rAFId => window.cancelAnimationFrame(rAFId));
 
     this.registered = [];
-    this.cancelBooting = null;
+    this.registeredRAFs = new Map();
   }
 }

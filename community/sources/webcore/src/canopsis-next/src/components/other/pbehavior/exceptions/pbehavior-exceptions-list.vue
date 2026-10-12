@@ -8,7 +8,6 @@
     :is-disabled-item="isDisabledException"
     :select-all="removable || updatable"
     :hide-mass-actions="!active"
-    expand-content-class="secondary lighten-2"
     expand
     search
     advanced-pagination
@@ -21,30 +20,30 @@
         :hideable="updatable"
         :unhideable="updatable"
         pbehavior-exception
+        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-
-    <template #hidden="{ item }">
+    <template #visible="{ item }">
       <c-enabled :value="!item.hidden" />
     </template>
-
-    <template #actions="{ item }">
-      <c-layout gap="1">
-        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
-        <c-action-btn
-          v-if="removable"
-          :disabled="!item.deletable"
-          :tooltip="item.deletable ? t('common.delete') : t('pbehavior.exceptions.usingException')"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
-      </c-layout>
+    <template #actions="{ item: actionsItem }">
+      <c-action-btn
+        v-if="updatable"
+        type="edit"
+        @click="$emit('edit', actionsItem)"
+      />
+      <c-action-btn
+        v-if="removable"
+        :tooltip="actionsItem.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')"
+        :disabled="!actionsItem.deletable"
+        type="delete"
+        @click="$emit('remove', actionsItem._id)"
+      />
     </template>
-
-    <template #expand="{ item }">
-      <pbehavior-exceptions-list-expand-panel :pbehavior-exception="item" />
+    <template #expand="{ item: expandItem }">
+      <pbehavior-exceptions-list-expand-panel :pbehavior-exception="expandItem" />
     </template>
   </c-advanced-data-table>
 </template>
@@ -60,7 +59,6 @@ export default {
   components: {
     PbehaviorExceptionsListExpandPanel,
   },
-
   props: {
     pbehaviorExceptions: {
       type: Array,
@@ -91,27 +89,32 @@ export default {
       default: true,
     },
   },
-
-  emits: ['update:options', 'edit', 'remove', 'refresh'],
-
   setup() {
     const { t } = useI18n();
 
     const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      /**
-       * The column displays visibility, but uses the hidden field supported by the API for sorting.
-       */
-      { text: t('pbehavior.visible'), value: 'hidden' },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('pbehavior.visible'),
+        value: 'visible',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
     ]);
 
     const isDisabledException = ({ deletable }) => !deletable;
 
     return {
       headers,
+
       isDisabledException,
-      t,
     };
   },
 };

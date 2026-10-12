@@ -1,30 +1,30 @@
 <template>
-  <c-layout class="c-retry-field" gap="3">
-    <div class="c-retry-field__count">
+  <v-layout>
+    <v-flex
+      class="pr-3"
+      xs4
+    >
       <c-number-field
-        :value="value.retry_count"
+        v-field="value.retry_count"
         :label="$t('common.retryCount')"
         :min="0"
         :name="countFieldName"
         :required="isRequired"
         :disabled="disabled"
-        @update:value="updateCount"
       />
-    </div>
-
-    <div class="c-retry-field__delay">
+    </v-flex>
+    <v-flex xs8>
       <c-duration-field
         :duration="value.retry_delay"
         :units-label="$t('common.unit')"
         :required="isRequired"
         :name="name"
         :disabled="isDurationDisabled"
-        :min="1"
         clearable
-        @update:duration="updateDelay"
+        @input="updateDelay"
       />
-    </div>
-  </c-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -33,7 +33,12 @@ import { isNumber } from 'lodash';
 import { formMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
@@ -52,67 +57,36 @@ export default {
       default: false,
     },
   },
-
-  emits: ['update:value'],
-
   computed: {
     countFieldName() {
       return `${this.name}.count`;
     },
 
     isDurationDisabled() {
-      return this.disabled || !isNumber(this.value.retry_count) || this.value.retry_count === 0;
+      return this.disabled || this.value.retry_count === 0;
     },
 
     isRequired() {
       const { retry_delay: retryDelay, retry_count: retryCount } = this.value;
 
-      return (
-        this.required ||
-        (isNumber(retryCount) && retryCount > 0) ||
-        isNumber(retryDelay?.value) ||
-        Boolean(retryDelay?.unit)
-      );
+      return this.required
+        || (isNumber(retryCount) && retryCount > 0)
+        || isNumber(retryDelay?.value)
+        || Boolean(retryDelay?.unit);
     },
   },
-
   methods: {
-    updateCount(retryCount) {
-      if (isNumber(retryCount) && retryCount > 0) {
-        this.updateField('retry_count', retryCount);
-
-        return;
-      }
-
-      this.updateModel({
-        ...this.value,
-        retry_count: retryCount || undefined,
-        retry_delay: {
-          value: undefined,
-          unit: undefined,
-        },
-      });
-    },
-
     updateDelay(duration) {
-      this.updateField('retry_delay', duration);
+      if (duration.unit || duration.value) {
+        this.updateField('retry_delay', duration);
+      } else {
+        this.updateModel({
+          ...this.value,
+          retry_delay: duration,
+          retry_count: undefined,
+        });
+      }
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.c-retry-field {
-  &__count {
-    flex: 0 0 calc(100% / 3 - 8px);
-    max-width: calc(100% / 3 - 8px);
-    min-width: 0;
-  }
-
-  &__delay {
-    flex: 0 0 calc(100% * 2 / 3 - 4px);
-    max-width: calc(100% * 2 / 3 - 4px);
-    min-width: 0;
-  }
-}
-</style>

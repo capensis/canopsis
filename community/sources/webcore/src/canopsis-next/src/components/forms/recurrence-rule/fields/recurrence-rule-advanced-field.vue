@@ -1,13 +1,12 @@
 <template>
-  <c-text-field
-    :model-value="modelValue"
-    :label="$attrs.label"
+  <v-text-field
+    v-field="value"
+    v-bind="$attrs"
+    :error-messages="errorMessage"
     :name="name"
-    :validation-rules="validationRules"
     persistent-hint
-    @update:model-value="emit('update:modelValue', $event)"
   >
-    <template #append>
+    <template #append="">
       <c-help-icon
         v-if="helpText"
         :text="helpText"
@@ -16,71 +15,113 @@
         left
       />
     </template>
-  </c-text-field>
+  </v-text-field>
 </template>
 
-<script setup>
-import { isNaN, isNumber } from 'lodash';
-import { computed } from 'vue';
+<script>
+import { isNumber, isNaN } from 'lodash';
+import { computed, onBeforeUnmount, watch } from 'vue';
 
+import { useValidator } from '@/hooks/validator/validator';
+import { useComponentInstance } from '@/hooks/vue';
 import { useI18n } from '@/hooks/i18n';
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
+export default {
+  inject: ['$validator'],
+  inheritAttrs: false,
+  model: {
+    prop: 'value',
+    event: 'input',
   },
-  helpText: {
-    type: String,
-    default: '',
+  props: {
+    value: {
+      type: String,
+      default: '',
+    },
+    helpText: {
+      type: String,
+      required: false,
+    },
+    name: {
+      type: String,
+      default: 'regex',
+    },
+    min: {
+      type: Number,
+      required: false,
+    },
+    max: {
+      type: Number,
+      required: false,
+    },
+    negative: {
+      type: Boolean,
+      default: false,
+    },
   },
-  name: {
-    type: String,
-    default: 'regex',
-  },
-  min: {
-    type: Number,
-    default: undefined,
-  },
-  max: {
-    type: Number,
-    default: undefined,
-  },
-  negative: {
-    type: Boolean,
-    default: false,
-  },
-});
+  setup(props) {
+    const { t } = useI18n();
+    const validator = useValidator();
+    const instance = useComponentInstance();
 
-const emit = defineEmits(['update:modelValue']);
+    const invalidMessage = computed(
+      () => {
+        const isMinZero = props.min === 0;
 
-const { t } = useI18n();
+        if (!props.negative || isMinZero) {
+          return t(
+            'recurrenceRule.errors.invalidRange',
+            {
+              min: props.negative && isMinZero ? -props.max : props.min,
+              max: props.max,
+            },
+          );
+        }
 
-const invalidMessage = computed(() => {
-  const isMinZero = props.min === 0;
+        return t(
+          'recurrenceRule.errors.invalidRangeNegative',
+          { min: props.min, max: props.max },
+        );
+      },
+    );
+    const errorMessage = computed(() => (validator.errors.has(props.name) ? invalidMessage.value : undefined));
 
-  if (!props.negative || isMinZero) {
-    return t('recurrenceRule.errors.invalidRange', {
-      min: props.negative && isMinZero ? -props.max : props.min,
-      max: props.max,
+    const isValueValid = () => !props.value.length || props.value.split(',').every((value) => {
+      const preparedValue = props.negative
+        ? Math.abs(+value)
+        : +value;
+
+      if (isNaN(preparedValue) || !isNumber(preparedValue)) {
+        return false;
+      }
+
+      return isNumber(props.min) && isNumber(props.max)
+        ? preparedValue >= props.min && preparedValue <= props.max
+        : true;
     });
-  }
+    const attachRangeRule = () => {
+      validator.attach({
+        name: props.name,
+        rules: 'required:true',
+        getter: isValueValid,
+        vm: instance,
+      });
+    };
+    const validateRangeRule = () => validator.validate(props.name);
+    const detachRangeRule = () => validator.detach(props.name);
 
-  return t('recurrenceRule.errors.invalidRangeNegative', { min: props.min, max: props.max });
-});
+    attachRangeRule();
 
-const isValueValid = (value = '') => !value.length ||
-  value.split(',').every((item) => {
-    const preparedValue = props.negative ? Math.abs(+item) : +item;
+    watch(() => props.value, () => {
+      if (errorMessage.value) {
+        validateRangeRule();
+      }
+    });
+    onBeforeUnmount(detachRangeRule);
 
-    if (isNaN(preparedValue) || !isNumber(preparedValue)) {
-      return false;
-    }
-
-    return isNumber(props.min) && isNumber(props.max)
-      ? preparedValue >= props.min && preparedValue <= props.max
-      : true;
-  });
-
-const validationRules = [value => isValueValid(value) || invalidMessage.value];
+    return {
+      errorMessage,
+    };
+  },
+};
 </script>

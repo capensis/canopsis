@@ -36,8 +36,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @param {Storage[]} storages
  * @return {StorageForm[]}
  */
-const storagesToForm = (storages = []) =>
-  addKeyInEntities(storages.map(directory => ({ directory })));
+const storagesToForm = (storages = []) => addKeyInEntities(storages.map(directory => ({ directory })));
 
 /**
  * Convert testing weather widget parameters to form
@@ -46,9 +45,7 @@ const storagesToForm = (storages = []) =>
  * @return {TestingWeatherWidgetParametersForm}
  */
 export const testingWeatherWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(
-    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
-  ),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   directory: parameters.directory ?? '',
   is_api: parameters.is_api ?? false,
   screenshot_directories: storagesToForm(parameters.screenshot_directories),

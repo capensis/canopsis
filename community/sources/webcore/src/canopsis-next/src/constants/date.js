@@ -80,30 +80,6 @@ export const DEFAULT_PERIODIC_REFRESH = {
   enabled: false,
 };
 
-export const USER_INTERFACE_DATE_FORMATS = {
-  dateTime: {
-    value: '02/01/2006 15:04:05',
-    format: 'DD/MM/YYYY HH:mm:ss',
-    dateFormat: 'DD/MM/YYYY',
-    text: 'userInterface.dateFormats.dateTime',
-  },
-  dateTimeWithWeekday: {
-    value: '02/01/2006 (Mon) 15:04:05',
-    format: 'DD/MM/YYYY (ddd) HH:mm:ss',
-    dateFormat: 'DD/MM/YYYY (ddd)',
-    text: 'userInterface.dateFormats.dateTimeWithWeekday',
-  },
-  weekdayWithDateTime: {
-    value: 'Mon 02/01/2006 15:04:05',
-    format: 'ddd DD/MM/YYYY HH:mm:ss',
-    dateFormat: 'ddd DD/MM/YYYY',
-    text: 'userInterface.dateFormats.weekdayWithDateTime',
-  },
-};
-
-export const DEFAULT_USER_INTERFACE_DATE_FORMAT =
-  USER_INTERFACE_DATE_FORMATS.dateTime.value;
-
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   longWithTimezone: 'DD/MM/YYYY H:mm:ss z',
@@ -123,7 +99,6 @@ export const DATETIME_FORMATS = {
   durationWithMilliseconds: 'Y __ D __ H _ m _ s _ S _',
   testSuiteFormat: 'DD MMM YYYY [\n]H:mm:ss [GMT]',
   vuetifyDatePicker: 'YYYY-MM-DD',
-  period: 'D MMM',
 };
 
 export const DATETIME_INTERVAL_TYPES = {

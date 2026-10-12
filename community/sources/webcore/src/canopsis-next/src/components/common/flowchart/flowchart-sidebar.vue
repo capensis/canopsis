@@ -1,96 +1,118 @@
 <template>
   <v-navigation-drawer
-    :width="320"
     class="flowchart-sidebar"
+    width="100%"
     permanent
     touchless
-    absolute
   >
-    <c-layout column>
+    <v-layout column>
       <slot name="prepend" />
       <flowchart-color-field
-        v-model:value="localBackgroundColor"
+        :value="backgroundColor"
         :label="$t('flowchart.backgroundColor')"
         :palette="backgroundColors"
         class="flowchart-sidebar__additional-item px-6"
         hide-checkbox
+        @input="$emit('update:backgroundColor', $event)"
       />
-    </c-layout>
+    </v-layout>
     <v-divider />
-    <v-expansion-panels variant="accordion" multiple>
+    <v-expansion-panels
+      color="grey"
+      multiple
+      accordion
+      flat
+    >
       <v-expansion-panel>
-        <v-expansion-panel-title>
+        <v-expansion-panel-header>
           <span class="v-label">
-            {{ $t('flowchart.shape', 2) }}
+            {{ $tc('flowchart.shape', 2) }}
           </span>
-        </v-expansion-panel-title>
+        </v-expansion-panel-header>
         <v-divider />
-        <v-expansion-panel-text>
-          <c-layout wrap>
-            <c-tooltip
+        <v-expansion-panel-content>
+          <v-layout wrap>
+            <v-tooltip
               v-for="(button, index) in buttons"
               :key="index"
               z-index="230"
-              location="top"
+              top
             >
-              <template #activator="{ props: activatorProps }">
+              <template #activator="{ on }">
                 <v-btn
-                  v-bind="activatorProps"
                   class="ma-0 pa-0 flowchart-sidebar__button"
-                  variant="text"
-                  size="large"
+                  text
+                  large
+                  v-on="on"
                   @click="button.action"
                 >
-                  <component :is="button.icon" class="pa-1 text-disabled" />
+                  <component
+                    :is="button.icon"
+                    class="pa-1 text--disabled"
+                  />
                 </v-btn>
               </template>
               <span>{{ button.label }}</span>
-            </c-tooltip>
-            <file-selector ref="fileSelector" hide-details @change="addImage">
-              <template #activator="{ props: fileActivatorProps }">
-                <c-tooltip z-index="230" location="top">
-                  <template #activator="{ props: tooltipActivatorProps }">
+            </v-tooltip>
+            <file-selector
+              ref="fileSelector"
+              hide-details
+              @change="addImage"
+            >
+              <template #activator="{ on }">
+                <v-tooltip
+                  z-index="230"
+                  top
+                >
+                  <template #activator="{ on: tooltipOn }">
                     <v-btn
-                      v-bind="{ ...fileActivatorProps, ...tooltipActivatorProps }"
                       class="ma-0 pa-0 flowchart-sidebar__button"
-                      variant="text"
-                      size="large"
+                      text
+                      large
+                      v-on="{ ...on, ...tooltipOn }"
                     >
-                      <image-shape-icon class="text-grey-darken-3" />
+                      <image-shape-icon class="grey--text text--darken-3" />
                     </v-btn>
                   </template>
                   <span>{{ $t('flowchart.shapes.image') }}</span>
-                </c-tooltip>
+                </v-tooltip>
               </template>
             </file-selector>
-          </c-layout>
+          </v-layout>
           <v-divider />
-        </v-expansion-panel-text>
+        </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-title>
+        <v-expansion-panel-header>
           <span class="v-label">
             {{ $t('flowchart.icons') }}
           </span>
-        </v-expansion-panel-title>
+        </v-expansion-panel-header>
         <v-divider />
-        <v-expansion-panel-text>
-          <c-layout v-for="group in iconGroups" :key="group.name" wrap>
+        <v-expansion-panel-content>
+          <v-layout
+            v-for="group in iconGroups"
+            :key="group.name"
+            wrap
+          >
             <v-btn
               v-for="(icon, index) in group.icons"
               :key="index"
               class="flowchart-sidebar__button-icon ma-0"
-              variant="text"
+              text
               @click="addIconAsset(icon)"
             >
-              <span v-html="icon" class="text-disabled flowchart-sidebar__button-svg" />
+              <span
+                v-html="icon"
+                class="text--disabled flowchart-sidebar__button-svg"
+              />
             </v-btn>
-            <v-col cols="12">
+            <v-flex xs12>
               <v-divider />
-            </v-col>
-          </c-layout>
+            </v-flex>
+          </v-layout>
           <v-divider />
-        </v-expansion-panel-text>
+        </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
   </v-navigation-drawer>
@@ -101,8 +123,6 @@ import { COLORS } from '@/config';
 import { LINE_TYPES } from '@/constants';
 
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
-import { getImageProperties } from '@/helpers/file/image';
-import { generatePoint } from '@/helpers/flowchart/points';
 import {
   arrowLineShapeToForm,
   bidirectionalArrowLineShapeToForm,
@@ -117,32 +137,34 @@ import {
   rhombusShapeToForm,
   storageShapeToForm,
 } from '@/helpers/flowchart/shapes';
+import { generatePoint } from '@/helpers/flowchart/points';
+import { getImageProperties } from '@/helpers/file/image';
 
 import { formBaseMixin } from '@/mixins/form';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
-import assetGroups from './assets';
 import FlowchartColorField from './fields/flowchart-color-field.vue';
-import ArrowLineShapeIcon from './icons/arrow-line-shape.vue';
-import BidirectionalArrowLineShapeIcon from './icons/bidirectional-arrow-line-shape.vue';
-import BidirectionalCurveArrowLineShape from './icons/bidirectional-curve-arrow-line-shape.vue';
-import CircleShapeIcon from './icons/circle-shape.vue';
-import CurveArrowLineShapeIcon from './icons/curve-arrow-line-shape.vue';
-import CurveLineShapeIcon from './icons/curve-line-shape.vue';
-import DocumentShapeIcon from './icons/document-shape.vue';
-import EllipseShapeIcon from './icons/ellipse-shape.vue';
-import ImageShapeIcon from './icons/image-shape.vue';
-import LineShapeIcon from './icons/line-shape.vue';
-import ParallelogramShapeIcon from './icons/parallelogram-shape.vue';
-import ProcessShapeIcon from './icons/process-shape.vue';
 import RectShapeIcon from './icons/rect-shape.vue';
-import RhombusShapeIcon from './icons/rhombus-shape.vue';
 import RoundedRectShapeIcon from './icons/rounded-rect-shape.vue';
 import SquareShapeIcon from './icons/square-shape.vue';
+import RhombusShapeIcon from './icons/rhombus-shape.vue';
+import CircleShapeIcon from './icons/circle-shape.vue';
+import EllipseShapeIcon from './icons/ellipse-shape.vue';
+import ParallelogramShapeIcon from './icons/parallelogram-shape.vue';
 import StorageShapeIcon from './icons/storage-shape.vue';
+import LineShapeIcon from './icons/line-shape.vue';
+import ArrowLineShapeIcon from './icons/arrow-line-shape.vue';
+import BidirectionalArrowLineShapeIcon from './icons/bidirectional-arrow-line-shape.vue';
+import ImageShapeIcon from './icons/image-shape.vue';
+import CurveLineShapeIcon from './icons/curve-line-shape.vue';
+import CurveArrowLineShapeIcon from './icons/curve-arrow-line-shape.vue';
+import BidirectionalCurveArrowLineShape from './icons/bidirectional-curve-arrow-line-shape.vue';
+import ProcessShapeIcon from './icons/process-shape.vue';
+import DocumentShapeIcon from './icons/document-shape.vue';
 import TextShapeIcon from './icons/text-shape.vue';
 import TextboxShapeIcon from './icons/textbox-shape.vue';
+import assetGroups from './assets';
 
 export default {
   components: { FlowchartColorField, FileSelector, ImageShapeIcon },
@@ -151,7 +173,6 @@ export default {
     prop: 'shapes',
     event: 'input',
   },
-  emits: ['input', 'update:shapes', 'update:selected', 'update:backgroundColor'],
   props: {
     shapes: {
       type: Object,
@@ -175,16 +196,6 @@ export default {
     },
   },
   computed: {
-    localBackgroundColor: {
-      get() {
-        return this.backgroundColor;
-      },
-
-      set(value) {
-        this.$emit('update:backgroundColor', value);
-      },
-    },
-
     buttons() {
       return [
         {

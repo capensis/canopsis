@@ -19,9 +19,9 @@
       :small="small"
       :selected-tags="selectedTags"
       @activate="$emit('activate', $event)"
-      @click:state="$emit('click:state', $event)"
       @select:tag="$emit('select:tag', $event)"
       @remove:tag="$emit('remove:tag', $event)"
+      @click:state="$emit('click:state', $event)"
     />
   </color-indicator-wrapper>
   <alarm-column-cell
@@ -32,19 +32,16 @@
     :small="small"
     :selected-tags="selectedTags"
     @activate="$emit('activate', $event)"
-    @click:state="$emit('click:state', $event)"
     @select:tag="$emit('select:tag', $event)"
     @remove:tag="$emit('remove:tag', $event)"
+    @click:state="$emit('click:state', $event)"
   />
 </template>
 
 <script>
 import { get } from 'lodash';
 
-import {
-  getAlarmWidgetColumnTemplateId,
-  getAlarmWidgetGroupColumnTemplateId,
-} from '@/helpers/entities/alarm/list';
+import { getAlarmWidgetColumnTemplateId, getAlarmWidgetGroupColumnTemplateId } from '@/helpers/entities/alarm/list';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -52,12 +49,9 @@ import AlarmColumnCell from './alarm-column-cell.vue';
 
 export default {
   components: {
-    AlarmColumnCell,
     ColorIndicatorWrapper,
+    AlarmColumnCell,
   },
-
-  emits: ['activate', 'click:state', 'select:tag', 'remove:tag'],
-
   props: {
     alarm: {
       type: Object,
@@ -84,7 +78,6 @@ export default {
       default: false,
     },
   },
-
   computed: {
     templateId() {
       return this.parentAlarm
@@ -94,9 +87,9 @@ export default {
 
     templateContext() {
       return {
+        value: get(this.alarm, this.column.value, ''),
         alarm: this.alarm,
         entity: this.alarm.entity,
-        value: get(this.alarm, this.column.value, ''),
       };
     },
   },

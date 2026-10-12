@@ -1,13 +1,13 @@
 <template>
-  <c-layout gap="3" column>
+  <v-layout class="gap-3" column>
     <span class="text-subtitle-1">
       {{ $t('eventFilter.enrichmentOptions') }}
     </span>
 
     <c-form-block>
-      <c-form-block-row :label="$t('externalData.title')">
-        <external-data-field
-          v-model:external-data="externalDataField"
+      <c-form-block-row :label="$t('externalData.title')" indented>
+        <external-data-form
+          v-field="form.external_data"
           :variables="templateVars.external_data"
           optionally
         />
@@ -15,22 +15,20 @@
 
       <c-form-block-row :label="$t('common.actionsLabel')" indented>
         <c-label :label="$t('common.actionsLabel')" class="mb-3" required />
-        <event-filter-enrichment-actions-field
-          v-model:actions="actionsField"
+        <event-filter-enrichment-actions-form
+          v-field="form.config.actions"
           :variables="templateVars.config"
           :copy-variables="copyVars.config"
+          :name="name"
           :set-tags-items="setTagsItems"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('eventFilter.onSuccessAndFailure')">
-        <event-filter-enrichment-after-outcome-fields
-          v-model:on-success="configField.on_success"
-          v-model:on-failure="configField.on_failure"
-        />
+        <event-filter-enrichment-after-outcome-fields v-field="form" />
       </c-form-block-row>
     </c-form-block>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -38,20 +36,31 @@ import { computed } from 'vue';
 
 import { getSetTagsItemsFromPattern } from '@/helpers/entities/event-filter/rule/entity';
 
-import { useFormModels } from '@/hooks/form';
+import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
-import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
-
-import EventFilterEnrichmentActionsField from './event-filter-enrichment-actions-field.vue';
+import EventFilterEnrichmentActionsForm from './event-filter-enrichment-actions-form.vue';
 import EventFilterEnrichmentAfterOutcomeFields from './event-filter-enrichment-after-outcome-fields.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
-    ExternalDataField,
-    EventFilterEnrichmentActionsField,
+    ExternalDataForm,
+    EventFilterEnrichmentActionsForm,
     EventFilterEnrichmentAfterOutcomeFields,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
+    name: {
+      type: String,
+      default: 'config.actions',
+    },
     templateVars: {
       type: Object,
       default: () => ({}),
@@ -61,23 +70,11 @@ export default {
       default: () => ({}),
     },
   },
-  setup() {
-    const { externalDataField, configField, actionsField, patternsField } = useFormModels({
-      externalDataField: 'external_data',
-      configField: 'config',
-      actionsField: 'config.actions',
-      patternsField: 'patterns',
-    });
-
-    const setTagsItems = computed(() => getSetTagsItemsFromPattern(patternsField.value?.event_pattern),
-    );
+  setup(props) {
+    const setTagsItems = computed(() => getSetTagsItemsFromPattern(props.form.patterns?.event_pattern));
 
     return {
       setTagsItems,
-
-      externalDataField,
-      configField,
-      actionsField,
     };
   },
 };

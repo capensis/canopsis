@@ -1,11 +1,13 @@
 <template>
-  <div :data-teleport-target="TELEPORTS_NAMES.massActionsPanel" :class="targetClass" />
+  <portal-target
+    :name="$constants.PORTALS_NAMES.massActionsPanel"
+    :class="targetClass"
+    multiple
+  />
 </template>
 
 <script>
 import { computed } from 'vue';
-
-import { TELEPORTS_NAMES } from '@/constants';
 
 export default {
   props: {
@@ -14,15 +16,13 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const targetClass = computed(() => ({
-      'the-mass-actions-panels__teleport-target': true,
-      'the-mass-actions-panels__teleport-target--fixed': props.fixed,
+      'the-mass-actions-panels__portal-target': true,
+      'the-mass-actions-panels__portal-target--fixed': props.fixed,
     }));
 
     return {
-      TELEPORTS_NAMES,
       targetClass,
     };
   },
@@ -30,7 +30,7 @@ export default {
 </script>
 
 <style lang="scss">
-.the-mass-actions-panels__teleport-target {
+.the-mass-actions-panels__portal-target {
   --actions-grid-columns-count: 12;
   --actions-grid-column-gap: 20px;
   --actions-grid-padding: 0 20px;

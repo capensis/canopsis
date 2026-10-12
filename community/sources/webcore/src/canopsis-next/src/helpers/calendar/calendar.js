@@ -9,13 +9,13 @@ import {
 } from '@/helpers/date/date';
 
 /**
- * Convert alarms to calendar events.
+ * Convert alarms to calendar events
  *
  * @param {Array} alarms
  * @param {string} groupByValue
  * @param {Object} [filter={}]
  * @param {Function} [getColor=() => {}]
- * @returns {Array}
+ * @returns []
  */
 export function convertAlarmsToEvents({
   alarms,
@@ -23,9 +23,7 @@ export function convertAlarmsToEvents({
   filter = {},
   getColor = () => '#fff',
 }) {
-  const groupedAlarms = groupBy(alarms, alarm =>
-    convertDateToStartOfUnitString(alarm.t, groupByValue, null),
-  );
+  const groupedAlarms = groupBy(alarms, alarm => convertDateToStartOfUnitString(alarm.t, groupByValue, null));
 
   return Object.entries(groupedAlarms).map(([dateString, alarmsGroup]) => {
     const dateObject = convertDateToDateObject(dateString);
@@ -49,21 +47,15 @@ export function convertAlarmsToEvents({
 }
 
 /**
- * Convert calendar events to grouped calendar events.
+ * Convert calendar events to grouped calendar events
  *
  * @param {Array} alarms
  * @param {string} [groupByValue='hour']
  * @param {Function} [getColor=() => {}]
- * @returns {Array}
+ * @returns []
  */
-export function convertEventsToGroupedEvents({
-  events,
-  groupByValue = 'hour',
-  getColor = () => '#fff',
-}) {
-  const groupedEvents = groupBy(events, event =>
-    convertDateToMoment(event.start).startOf(groupByValue).format(),
-  );
+export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', getColor = () => '#fff' }) {
+  const groupedEvents = groupBy(events, event => convertDateToMoment(event.start).startOf(groupByValue).format());
 
   return Object.keys(groupedEvents).map((dateString) => {
     const groupedEvent = groupedEvents[dateString];
@@ -93,9 +85,9 @@ export function convertEventsToGroupedEvents({
 }
 
 /**
- * Get class for calendar event menu by calendar event id.
+ * Get class for calendar event menu by calendar event id
  *
  * @param {string} id
- * @returns {string}
+ * @return {string}
  */
 export const getMenuClassByCalendarEvent = id => `calendar-event-id-${id}`;

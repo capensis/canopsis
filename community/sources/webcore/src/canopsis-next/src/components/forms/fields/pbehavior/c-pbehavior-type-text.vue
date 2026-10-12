@@ -1,26 +1,24 @@
 <template>
-  <c-autocomplete
-    :model-value="value"
-    :items="items"
-    :label="label || t('common.type')"
-    :loading="pending"
+  <v-select
+    :value="value"
+    :label="label || $t('common.type')"
+    :items="fieldPbehaviorTypes"
+    :loading="fieldPbehaviorTypesPending"
     :multiple="multiple"
     :chips="chips"
-    :closable-chips="false"
-    item-title="name"
+    :deletable-chips="chips"
+    :small-chips="chips"
+    item-text="name"
     item-value="_id"
-    return-object
     disabled
   />
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
-
-import { useI18n } from '@/hooks/i18n';
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 export default {
+  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
   props: {
     value: {
       type: [Object, String, Array],
@@ -38,39 +36,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-
-  setup() {
-    const { t } = useI18n();
-    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
-
-    const items = ref([]);
-    const pending = ref(false);
-
-    const fetchList = async () => {
-      try {
-        pending.value = true;
-
-        const { data = [] } = await fetchPbehaviorTypesFieldList({
-          params: {
-            paginate: false,
-            with_hidden: true,
-          },
-        });
-
-        items.value = data;
-      } finally {
-        pending.value = false;
-      }
-    };
-
-    onMounted(fetchList);
-
-    return {
-      t,
-      items,
-      pending,
-    };
   },
 };
 </script>

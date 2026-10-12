@@ -6,7 +6,7 @@ export const permissionsWidgetsNumbersInterval = {
   mixins: [authMixin],
   computed: {
     hasAccessToInterval() {
-      return this.checkAccess(USER_PERMISSIONS.business.numbers.actions.interval);
+      return this.checkAccess(USER_PERMISSIONS.business.pieChart.actions.interval);
     },
   },
 };

@@ -1,19 +1,19 @@
-const modules = import.meta.glob('./**/*.svg', {
-  eager: true,
-  query: '?raw',
-  import: 'default',
-});
+const requireModule = require.context(
+  '!!svg-inline-loader?modules!.',
+  true,
+  /.*\.svg$/,
+);
+const assetGroups = {};
 
-const assetGroups = Object.entries(modules).reduce((acc, [fileName, file]) => {
-  const [, groupName] = fileName.match(/\.\/(.+)\/.+\.svg$/);
+requireModule.keys().forEach((fileName) => {
+  const [, groupName] = fileName.match(/\.\/(.+)\/.+.svg$/);
+  const file = requireModule(fileName);
 
-  if (acc[groupName]) {
-    acc[groupName].push(file);
+  if (assetGroups[groupName]) {
+    assetGroups[groupName].push(file);
   } else {
-    acc[groupName] = [file];
+    assetGroups[groupName] = [file];
   }
-
-  return acc;
-}, {});
+});
 
 export default assetGroups;

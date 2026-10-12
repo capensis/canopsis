@@ -1,26 +1,34 @@
 <template>
-  <c-tooltip location="left">
-    <template #activator="{ props }">
+  <v-tooltip
+    class="view-editing-btn"
+    left
+  >
+    <template #activator="{ on }">
       <v-btn
-        v-bind="props"
-        :active="activeViewEditing"
+        :input-value="activeViewEditing"
         :loading="activeViewEditingProcess"
         class="view-editing-btn__button"
-        size="default"
-        icon
+        fab
+        dark
+        small
+        v-on="on"
         @click.stop="toggleEditing"
       >
-        <v-icon :icon="activeViewEditing ? 'done' : 'edit'" size="small" />
+        <v-icon small>
+          edit
+        </v-icon>
+        <v-icon small>
+          done
+        </v-icon>
       </v-btn>
     </template>
-
     <div>
-      <div>{{ $t('common.toggleEditView') }} (ctrl + e / command + e)</div>
+      <div>{{ $t('common.toggleEditView') }}  (ctrl + e / command + e)</div>
       <div class="font-italic">
         {{ $t('common.toggleEditViewSubtitle') }}
       </div>
     </div>
-  </c-tooltip>
+  </v-tooltip>
 </template>
 
 <script>
@@ -31,15 +39,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.view-editing-btn__button {
-  border-color: #212121 !important;
-  background-color: #212121 !important;
-  color: #fff !important;
+<style lang="scss">
+.view-editing-btn {
+  &__button  {
+    border-color: #212121 !important;
+    background-color: #212121 !important;
 
-  .v-theme--dark & {
-    border-color: #979797 !important;
-    background-color: #979797 !important;
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
   }
 }
 </style>

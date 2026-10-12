@@ -6,19 +6,19 @@
     @submit="submit"
   >
     <field-title v-model="form.title" />
-    <widget-settings-group :title="t('settings.advancedSettings')">
+    <widget-settings-group :title="$t('settings.advancedSettings')">
       <field-default-sort-column
         v-model="form.parameters.sort"
         :columns="sortablePreparedWidgetColumns"
-        :columns-label="t('settings.columnName')"
+        :columns-label="$t('settings.columnName')"
       />
       <field-columns
         v-model="form.parameters.widgetColumns"
         :template="form.parameters.widgetColumnsTemplate"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="t('settings.columnNames')"
-        :type="ENTITIES_TYPES.entity"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
         @update:template="updateWidgetColumnsTemplate"
       />
       <field-columns
@@ -26,8 +26,8 @@
         :template="form.parameters.serviceDependenciesColumnsTemplate"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="t('settings.treeOfDependenciesColumnNames')"
-        :type="ENTITIES_TYPES.entity"
+        :label="$t('settings.treeOfDependenciesColumnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
         with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
@@ -39,8 +39,8 @@
         :template="form.parameters.activeAlarmsColumnsTemplate"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="t('settings.activeAlarmsColumns')"
-        :type="ENTITIES_TYPES.alarm"
+        :label="$t('settings.activeAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateActiveAlarmsColumnsTemplate"
       />
       <field-columns
@@ -48,16 +48,15 @@
         :template="form.parameters.resolvedAlarmsColumnsTemplate"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="t('settings.resolvedAlarmsColumns')"
-        :type="ENTITIES_TYPES.alarm"
+        :label="$t('settings.resolvedAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateResolvedAlarmsColumnsTemplate"
       />
       <field-filters
         v-if="hasAccessToFilter"
         v-model="form.parameters.mainFilter"
-        v-model:filters="form.filters"
+        :filters.sync="form.filters"
         :widget-id="widget._id"
-        :widget-type="form.type"
         addable
         editable
         with-alarm
@@ -68,157 +67,118 @@
       <field-context-entities-types-filter v-model="form.parameters.selectedTypes" />
       <field-grid-range-size
         v-model="form.parameters.expandGridRangeSize"
-        :title="t('settings.expandGridRangeSize')"
+        :title="$t('settings.expandGridRangeSize')"
       />
       <export-csv-form
         v-model="form.parameters"
-        :type="ENTITIES_TYPES.entity"
+        :type="$constants.ENTITIES_TYPES.entity"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
         without-infos-attributes
       />
       <field-switcher
         v-model="form.parameters.defaultInheritedPbehavior"
-        :title="t('settings.defaultInheritedPbehavior')"
+        :title="$t('settings.defaultInheritedPbehavior')"
       />
       <field-switcher
         v-model="form.parameters.keepSelectedAfterAction"
-        :title="t('common.massActionsPanel.keepSelectedAfterAction')"
+        :title="$t('common.massActionsPanel.keepSelectedAfterAction')"
       />
     </widget-settings-group>
     <charts-form v-model="form.parameters.charts" />
-    <widget-colors-form v-model="form.parameters.colors" with-table />
   </widget-settings>
 </template>
 
-<script setup>
-import { computed, onMounted, ref, toRef } from 'vue';
-
-import {
-  ENTITIES_TYPES,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_UNSORTABLE_FIELDS,
-  MAX_LIMIT,
-  SIDE_BARS,
-  USER_PERMISSIONS,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
+<script>
+import { SIDE_BARS, ENTITY_UNSORTABLE_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
-import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
-import { useCanPermission } from '@/hooks/auth';
-import { useI18n } from '@/hooks/i18n';
-import { useInfos } from '@/hooks/store/modules/infos';
-import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
-import { useWidgetSettings } from '@/hooks/widget/settings';
+import { authMixin } from '@/mixins/auth';
+import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
+import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 
-import FieldAvailabilityGraphSettings from '@/components/sidebars/availability/form/fields/availability-graph-settings.vue';
-import ChartsForm from '@/components/sidebars/chart/form/charts-form.vue';
-import ExportCsvForm from '@/components/sidebars/form/export-csv.vue';
-import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-import FieldDefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
-import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
-import FieldGridRangeSize from '@/components/sidebars/form/fields/grid-range-size.vue';
-import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause-settings.vue';
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
-import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import FieldTreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
-import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
+
+import FieldAvailabilityGraphSettings from '../availability/form/fields/availability-graph-settings.vue';
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
+import FieldTitle from '../form/fields/title.vue';
+import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
+import FieldColumns from '../form/fields/columns.vue';
+import FieldFilters from '../form/fields/filters.vue';
+import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
+import FieldSwitcher from '../form/fields/switcher.vue';
+import ExportCsvForm from '../form/export-csv.vue';
+import WidgetSettings from '../partials/widget-settings.vue';
+import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
+import ChartsForm from '../chart/form/charts-form.vue';
 
 import FieldContextEntitiesTypesFilter from './form/fields/context-entities-types-filter.vue';
 
-defineOptions({
+export default {
   name: SIDE_BARS.contextSettings,
-});
-
-const props = defineProps({
-  sidebar: {
-    type: Object,
-    required: true,
+  components: {
+    FieldSwitcher,
+    FieldGridRangeSize,
+    FieldAvailabilityGraphSettings,
+    FieldRootCauseSettings,
+    FieldTreeOfDependenciesSettings,
+    FieldTitle,
+    FieldDefaultSortColumn,
+    FieldColumns,
+    FieldFilters,
+    FieldContextEntitiesTypesFilter,
+    ExportCsvForm,
+    WidgetSettings,
+    WidgetSettingsGroup,
+    ChartsForm,
   },
-});
+  mixins: [
+    authMixin,
+    widgetSettingsMixin,
+    entitiesInfosMixin,
+    widgetTemplatesMixin,
+    permissionsWidgetsContextFilters,
+  ],
+  computed: {
+    preparedWidgetColumns() {
+      return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
+        ...column,
 
-const { t } = useI18n();
-const { hasAccess: hasAccessToFilter } = useCanPermission(
-  USER_PERMISSIONS.business.context.actions.filter,
-);
-const sidebar = toRef(props, 'sidebar');
-const widgetTemplates = ref([]);
-const widgetTemplatesPending = ref(false);
-const { fetchInfos } = useInfos();
-const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
+        text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+      }));
+    },
 
-const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({
-  sidebar,
-});
+    sortablePreparedWidgetColumns() {
+      return this.preparedWidgetColumns.filter(column => getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS));
+    },
+  },
+  mounted() {
+    this.fetchInfos();
+  },
+  methods: {
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
 
-const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
 
-const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
-    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns,
-  ),
-);
-const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
-    ({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns,
-  ),
-);
+    updateActiveAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'activeAlarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'activeAlarmsColumns', columns);
+    },
 
-const preparedWidgetColumns = computed(() => formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
-    ...column,
-
-    text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-  })),
-);
-
-const sortablePreparedWidgetColumns = computed(() => preparedWidgetColumns.value.filter(
-    column => getWidgetColumnSortable(column, ENTITY_UNSORTABLE_FIELDS),
-  ),
-);
-
-const updateWidgetColumnsTemplate = (template, columns) => {
-  form.value.parameters.widgetColumnsTemplate = template;
-  form.value.parameters.widgetColumns = columns;
+    updateResolvedAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'resolvedAlarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'resolvedAlarmsColumns', columns);
+    },
+  },
 };
-
-const updateServiceDependenciesColumnsTemplate = (template, columns) => {
-  form.value.parameters.serviceDependenciesColumnsTemplate = template;
-  form.value.parameters.serviceDependenciesColumns = columns;
-};
-
-const updateActiveAlarmsColumnsTemplate = (template, columns) => {
-  form.value.parameters.activeAlarmsColumnsTemplate = template;
-  form.value.parameters.activeAlarmsColumns = columns;
-};
-
-const updateResolvedAlarmsColumnsTemplate = (template, columns) => {
-  form.value.parameters.resolvedAlarmsColumnsTemplate = template;
-  form.value.parameters.resolvedAlarmsColumns = columns;
-};
-
-const fetchWidgetTemplates = async () => {
-  try {
-    widgetTemplatesPending.value = true;
-
-    const { data } = await fetchWidgetTemplatesListWithoutStore({ params: { limit: MAX_LIMIT } });
-
-    widgetTemplates.value = data;
-  } catch (err) {
-    console.warn(err);
-  } finally {
-    widgetTemplatesPending.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchInfos();
-  fetchWidgetTemplates();
-});
-
-defineExpose({
-  close,
-});
 </script>

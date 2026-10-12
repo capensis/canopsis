@@ -1,12 +1,9 @@
 <template>
-  <c-select
-    :model-value="modelValue"
+  <v-select
+    v-field="value"
     :items="showingTypes"
     :label="$t('common.show')"
-    item-title="text"
-    item-value="value"
     hide-details
-    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
@@ -14,21 +11,22 @@
 import { REMEDIATION_STATISTICS_CHART_DATA_TYPE } from '@/constants';
 
 export default {
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       required: true,
     },
   },
-
-  emits: ['update:modelValue'],
-
   computed: {
     showingTypes() {
       return [
         {
           value: REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
-          text: this.$t('common.percent'),
+          text: this.$tc('common.percent'),
         },
         {
           value: REMEDIATION_STATISTICS_CHART_DATA_TYPE.remediation,

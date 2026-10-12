@@ -2,45 +2,50 @@
   <div>
     <v-navigation-drawer
       v-model="isOpen"
-      :mobile-breakpoint="mobileBreakpoint"
-      :width="sideBarWidth"
+      :width="$config.SIDE_BAR_WIDTH"
       :class="{ 'side-bar--editing': isNavigationEditingMode }"
-      class="side-bar"
-      color="secondary"
-      location="left"
-      name="groups-side-bar"
+      :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal"
+      class="side-bar secondary"
+      app
     >
       <template #prepend>
-        <div class="side-bar__brand ma-0">
+        <div class="side-bar__brand ma-0 secondary lighten-1">
           <app-logo class="logo" />
           <logged-users-count />
           <app-version class="version" />
         </div>
       </template>
-
       <section :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]">
-        <c-layout v-if="!mutatedGroups.length && groupsPending" class="pa-2" justify="center">
-          <v-progress-circular color="primary" indeterminate />
-        </c-layout>
-
+        <v-layout
+          v-if="!mutatedGroups.length && groupsPending"
+          class="pa-2"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
         <c-draggable-list-field
           v-else
           v-model="mutatedGroups"
           :component-data="draggableComponentData"
           :disabled="!isNavigationEditingMode"
           class="groups-panel"
+          draggable=".groups-panel__item--public"
           component="v-expansion-panels"
         >
-          <template #item="{ element: group, index }">
-            <groups-side-bar-group
-              :group="group"
-              :is-groups-order-changed="isGroupsOrderChanged"
-              class="groups-panel__item--public"
-              @update:group="mutatedGroups[index] = $event"
-            />
-          </template>
-
-          <template v-if="hasAccessToPrivateView" #footer>
+          <groups-side-bar-group
+            v-for="(group, index) in mutatedGroups"
+            :key="group._id"
+            :group.sync="mutatedGroups[index]"
+            :is-groups-order-changed="isGroupsOrderChanged"
+            class="groups-panel__item--public"
+          />
+          <template
+            v-if="hasAccessToPrivateView"
+            #footer=""
+          >
             <groups-side-bar-group
               v-for="privateGroup in privateGroups"
               :key="privateGroup._id"
@@ -49,68 +54,70 @@
             />
           </template>
         </c-draggable-list-field>
-
-        <v-divider class="side-bar__divider" />
-
+        <v-divider />
         <groups-side-bar-playlists />
       </section>
-
-      <groups-settings-button tooltip-right @toggle-editing-mode="toggleNavigationEditingMode" />
-
-      <v-overlay
-        :model-value="isGroupsOrderChanged"
-        class="side-bar__overlay"
-        attach=".side-bar"
-        persistent
-        absolute
-      >
-        <v-btn
-          class="ma-2"
-          color="primary"
-          variant="elevated"
-          @click="submit"
+      <groups-settings-button
+        tooltip-right
+        @toggleEditingMode="toggleNavigationEditingMode"
+      />
+      <v-fade-transition>
+        <v-overlay
+          :value="isGroupsOrderChanged"
+          class="side-bar__overlay"
         >
-          {{ $t('common.submit') }}
-        </v-btn>
-        <v-btn class="ma-2" variant="elevated" @click="resetMutatedGroups">
-          {{ $t('common.cancel') }}
-        </v-btn>
-      </v-overlay>
+          <v-btn
+            class="primary ma-2"
+            @click="submit"
+          >
+            {{ $t('common.submit') }}
+          </v-btn>
+          <v-btn
+            class="ma-2"
+            light
+            @click="resetMutatedGroups"
+          >
+            {{ $t('common.cancel') }}
+          </v-btn>
+        </v-overlay>
+      </v-fade-transition>
     </v-navigation-drawer>
-
-    <v-overlay :model-value="isGroupsOrderChanged" class="side-bar__overlay" persistent />
+    <v-fade-transition>
+      <v-overlay
+        :value="isGroupsOrderChanged"
+        z-index="8"
+      />
+    </v-fade-transition>
   </div>
 </template>
 
 <script>
 import { uniq } from 'lodash';
-import { mapState } from 'pinia';
-
-import { MEDIA_QUERIES_BREAKPOINTS, SIDE_BAR_WIDTH } from '@/config';
-
-import { useModalsStore } from '@/plugins/modals/stores';
+import { createNamespacedHelpers } from 'vuex';
 
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
 
-import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesViewMixin } from '@/mixins/entities/view';
+import { activeViewMixin } from '@/mixins/active-view';
 import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 
+import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';
 import AppVersion from '../app-version.vue';
-import GroupsSettingsButton from '../groups-settings-button.vue';
 import LoggedUsersCount from '../logged-users-count.vue';
 
 import GroupsSideBarGroup from './groups-side-bar-group.vue';
 import GroupsSideBarPlaylists from './groups-side-bar-playlists.vue';
 
+const { mapGetters: modalMapGetters } = createNamespacedHelpers('modals');
+
 /**
  * Component for the side-bar, on the left of the application
  *
- * @prop {bool} [modelValue=false] - visibility control
+ * @prop {bool} [value=false] - visibility control
  *
- * @event update:modelValue
+ * @event input#update
  */
 export default {
   components: {
@@ -121,29 +128,33 @@ export default {
     GroupsSideBarGroup,
     GroupsSideBarPlaylists,
   },
-  mixins: [entitiesViewMixin, activeViewMixin, layoutNavigationGroupsBarMixin],
-
-  emits: ['update:modelValue'],
-
+  mixins: [
+    entitiesViewMixin,
+    activeViewMixin,
+    layoutNavigationGroupsBarMixin,
+  ],
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       mutatedGroups: [],
       draggableComponentDataValue: [],
-      mobileBreakpoint: MEDIA_QUERIES_BREAKPOINTS.t,
-      sideBarWidth: SIDE_BAR_WIDTH,
     };
   },
-
   computed: {
-    ...mapState(useModalsStore, ['hasMaximizedModal']),
+    ...modalMapGetters(['hasMaximizedModal']),
 
     isOpen: {
       get() {
-        return this.modelValue;
+        return this.value;
       },
       set(value) {
-        if (value !== this.modelValue) {
-          this.$emit('update:modelValue', value);
+        if (value !== this.value) {
+          this.$emit('input', value);
         }
       },
     },
@@ -167,15 +178,20 @@ export default {
 
     draggableComponentData() {
       return {
-        multiple: true,
-        flat: true,
-        tile: true,
-        modelValue: this.draggableComponentDataValue,
-        'onUpdate:modelValue': value => (this.draggableComponentDataValue = value),
+        props: {
+          multiple: true,
+          dark: true,
+          accordion: true,
+          flat: true,
+          tile: true,
+          value: this.draggableComponentDataValue,
+        },
+        on: {
+          change: value => this.draggableComponentDataValue = value,
+        },
       };
     },
   },
-
   watch: {
     publicGroups: {
       deep: true,
@@ -191,7 +207,6 @@ export default {
       }
     },
   },
-
   methods: {
     /**
      * Reset mutated groups method
@@ -225,10 +240,10 @@ export default {
       this.mutatedGroups = groups.map(group => ({
         ...group,
 
-        views: [...(group.views ?? [])],
+        views: [...group.views],
       }));
 
-      if (this.isOpen && !this.draggableComponentDataValue.length) {
+      if (this.isOpen && !this.draggableComponentDataValue) {
         this.calculateDraggableComponentDataValue();
       }
     },
@@ -246,7 +261,7 @@ export default {
         await this.fetchAllGroupsListWithWidgets();
 
         this.$popups.success({ text: this.$t('layout.sideBar.ordering.popups.success') });
-      } catch {
+      } catch (err) {
         this.$popups.error({ text: this.$t('layout.sideBar.ordering.popups.error') });
       }
     },
@@ -255,39 +270,81 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.groups-panel {
-  position: relative;
-  box-shadow: none;
-  transition: none;
-}
-
-.side-bar {
-  position: fixed;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-
-  &__divider {
-    border-color: rgba(0, 0, 0, 0.12) !important;
-    opacity: 1;
+  .groups-panel {
+    position: relative;
+    box-shadow: none;
+    transition: none;
   }
 
-  &__brand {
-    background-color: var(--v-secondary-lighten1);
-    max-height: 48px;
-    position: relative;
+  .side-bar {
+    position: fixed;
+    overflow-y: auto;
     display: flex;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 0.5em 0;
+    flex-direction: column;
+    justify-content: stretch;
 
-    :deep(.logged-users-count) {
-      right: 0;
+    &__brand {
+      max-height: 48px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0.5em 0;
+
+      & ::v-deep .logged-users-count {
+        right: 0;
+      }
+    }
+
+    .v-navigation-drawer__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+    }
+
+    &__brand {
+      max-height: 48px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0.5em 0;
+
+      & ::v-deep .logged-users-count {
+        right: 0;
+      }
+    }
+
+    &__links {
+      overflow: auto;
+      padding-bottom: 100px;
+      width: 100%;
+
+      &--ordering {
+        position: absolute;
+        z-index: 9;
+      }
+    }
+
+    &__overlay {
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    &--editing {
+      z-index: 9;
+
+      .groups-panel:after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        height: 48px;
+      }
     }
   }
 
-  :deep(.version) {
+  .version {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -297,50 +354,9 @@ export default {
     line-height: 1.3em;
   }
 
-  :deep(.v-navigation-drawer__content) {
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
+  .logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: scale-down;
   }
-
-  :deep(.v-expansion-panel-title__overlay),
-  :deep(.v-card__overlay) {
-    opacity: 0 !important;
-  }
-
-  &__links {
-    overflow: auto;
-    padding-bottom: 100px;
-    width: 100%;
-
-    &--ordering {
-      position: absolute;
-      z-index: 9;
-    }
-  }
-
-  &__overlay {
-    align-items: flex-start;
-    justify-content: flex-start;
-    z-index: 8 !important;
-  }
-
-  &--editing {
-    z-index: 9;
-
-    .groups-panel:after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      width: 100%;
-      height: 48px;
-    }
-  }
-}
-
-.logo {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: scale-down;
-}
 </style>

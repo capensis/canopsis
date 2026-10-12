@@ -1,35 +1,39 @@
 <template>
-  <c-layout column>
-    <c-layout v-if="showStatus" class="mb-4" align="center">
+  <v-layout column>
+    <v-layout
+      v-if="showStatus"
+      class="mb-4"
+      align-center
+    >
       <v-chip
         v-if="showRuleName"
         class="mr-2"
         color="primary"
-        size="small"
+        text-color="white"
+        small
       >
         {{ ruleName }}
       </v-chip>
-      <span class="text-subtitle-1 mr-5"> {{ $t('common.webhookStatus') }}: </span>
+      <span class="text-subtitle-1 mr-5">
+        {{ $t('common.webhookStatus') }}:
+      </span>
       <alarm-webhook-execution-status
         :running="isExecutionsRunning"
         :success="isExecutionsSucceeded"
         :fail-reason="failReason"
       />
-    </c-layout>
+    </v-layout>
     <declare-ticket-rule-execution-alarms
       :alarm-executions="executions"
       :is-one-execution="isOneExecution"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 import { keyBy } from 'lodash';
 
-import {
-  isWebhookExecutionRunning,
-  isWebhookExecutionSucceeded,
-} from '@/helpers/entities/webhook-execution/entity';
+import { isWebhookExecutionRunning, isWebhookExecutionSucceeded } from '@/helpers/entities/webhook-execution/entity';
 
 import AlarmWebhookExecutionStatus from '@/components/other/alarm/partials/alarm-webhook-execution-status.vue';
 
@@ -72,9 +76,7 @@ export default {
     },
 
     failReason() {
-      return Object.values(keyBy(this.executions, 'executionId'))
-        .map(execution => execution.fail_reason)
-        .join('\n');
+      return Object.values(keyBy(this.executions, 'executionId')).map(execution => execution.fail_reason).join('\n');
     },
   },
 };

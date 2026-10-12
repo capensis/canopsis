@@ -9,8 +9,6 @@ export default {
     [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Bac à alarmes : Actions rapides (alarme unitaire)',
     [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Bac à alarmes : Actions rapides (massive)',
     [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Général : Colonnes de tri par défaut des alarmes',
-    [WIDGET_TEMPLATES_TYPES.ticketFormats]:
-      'Bac à alarmes : Associer un ticket (formats de ticket)',
     [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Météo des services : Modèle de tuile',
     [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Météo des services : Modèle de modale',
     [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Météo des services : Modèle d\'entité',

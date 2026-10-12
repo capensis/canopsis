@@ -1,94 +1,83 @@
 <template>
   <v-form @submit.prevent="submit">
-    <c-modal-wrapper close>
-      <template #title>
+    <modal-wrapper close>
+      <template #title="">
         <span>{{ $t('modals.infoPopupSetting.addInfoPopup.title') }}</span>
       </template>
-
-      <template #text>
+      <template #text="">
         <info-popup-form
-          v-model:form="form"
+          v-model="form"
           :columns="config.columns"
           :variables="config.variables"
         />
       </template>
-
-      <template #actions>
-        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
+      <template #actions="">
+        <v-btn
+          text
+          depressed
+          @click="$modals.hide"
+        >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :loading="isSubmitting"
-          :disabled="isSubmitting"
-          color="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </c-modal-wrapper>
+    </modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { MODALS } from '@/constants';
-
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useForm } from '@/hooks/form';
-import { useModals } from '@/hooks/modals';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 
+import ModalWrapper from '../../modal-wrapper.vue';
+
 export default {
   name: MODALS.addInfoPopup,
-
-  components: { InfoPopupForm },
-
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
   },
-
-  setup(props) {
-    const modals = useModals();
-    const config = computed(() => props.modal.config ?? {});
-    const popup = computed(() => config.value.popup ?? {});
-    const firstColumn = computed(() => config.value.columns?.[0]);
-    const formContext = useForm({
-      initialValues: {
-        form: {
-          column: popup.value.column ?? firstColumn.value?.value ?? firstColumn.value?.column,
-          template: popup.value.template ?? '',
-        },
-      },
-    });
-    const { handleSubmit, isSubmitting, model, values } = formContext;
-    const form = model('form');
-    const closeModal = () => modals.hide({ id: props.modal.id });
-
-    const submit = handleSubmit(async () => {
-      await config.value.action?.(values.value.form);
-
-      closeModal();
-    });
-
-    useFormConfirmableCloseModal({
-      form,
-      submit,
-      close: closeModal,
-    });
+  components: { InfoPopupForm, ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    const { popup = {}, columns = [] } = this.modal.config;
+    const [firstColumn] = columns;
 
     return {
-      config,
-      form,
-      isSubmitting,
-      submit,
-      closeModal,
+      form: {
+        column: popup?.column ?? firstColumn?.value,
+        template: popup.template ?? '',
+      },
     };
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.form);
+        }
+
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

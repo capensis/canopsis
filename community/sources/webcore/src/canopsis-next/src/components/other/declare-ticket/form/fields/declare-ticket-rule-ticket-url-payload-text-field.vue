@@ -1,13 +1,12 @@
 <template>
   <c-payload-text-field
-    :value="value"
+    v-field="value"
     :label="$t('declareTicket.ticketURL')"
     :name="name"
     :variables="variables"
     :disabled="disabled"
-    @update:value="$emit('update:value', $event)"
   >
-    <template #append>
+    <template #append="">
       <c-help-icon
         :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })"
         icon="help"
@@ -20,7 +19,10 @@
 
 <script>
 export default {
-  emits: ['update:value'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: String,

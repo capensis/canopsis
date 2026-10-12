@@ -1,5 +1,5 @@
 <template>
-  <c-layout column>
+  <v-layout column>
     <remediation-instruction-execute-step
       v-for="(step, index) in steps"
       :key="step.step_id"
@@ -10,13 +10,9 @@
       :execution-id="executionId"
       :next-pending="nextPending"
       :previous-pending="previousPending"
-      @next-step="$emit('next-step', $event)"
-      @next-operation="$emit('next-operation')"
-      @previous-operation="$emit('previous-operation')"
-      @execute-job="$emit('execute-job', $event)"
-      @cancel-job-execution="$emit('cancel-job-execution', $event)"
+      v-on="$listeners"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -24,7 +20,6 @@ import RemediationInstructionExecuteStep from './remediation-instruction-execute
 
 export default {
   components: { RemediationInstructionExecuteStep },
-
   props: {
     executionId: {
       type: String,
@@ -43,7 +38,5 @@ export default {
       default: false,
     },
   },
-
-  emits: ['next-step', 'next-operation', 'previous-operation', 'execute-job', 'cancel-job-execution'],
 };
 </script>

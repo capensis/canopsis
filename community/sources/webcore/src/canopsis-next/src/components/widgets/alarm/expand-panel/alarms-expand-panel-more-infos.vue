@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="more-infos">
     <c-compiled-template
       v-if="template"
       :template-id="templateId"
@@ -8,12 +8,9 @@
       @select:tag="$emit('select:tag', $event)"
       @remove:tag="$emit('remove:tag', $event)"
     />
-
-    <c-layout
+    <v-layout
       v-else
-      justify="center"
-      align="center"
-      gap="2"
+      justify-center
     >
       <v-icon color="info">
         infos
@@ -21,33 +18,40 @@
       <p class="ma-0">
         {{ $t('alarm.moreInfos.defineATemplate') }}
       </p>
-    </c-layout>
+    </v-layout>
   </div>
 </template>
 
 <script>
+import { USER_PERMISSIONS } from '@/constants';
+
+import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
+
 export default {
+  mixins: [
+    handlebarsLinksHelperCreator(
+      'alarm.links',
+      USER_PERMISSIONS.business.alarmsList.actions.links,
+    ),
+  ],
   props: {
     alarm: {
       type: Object,
-      required: true,
+      required: false,
     },
     template: {
       type: String,
-      default: '',
+      required: false,
     },
     templateId: {
       type: String,
-      default: '',
+      required: false,
     },
     selectedTags: {
       type: Array,
       default: () => [],
     },
   },
-
-  emits: ['select:tag', 'remove:tag'],
-
   computed: {
     templateContext() {
       return {
@@ -58,3 +62,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.more-infos {
+  width: 90%;
+  margin: 0 auto;
+}
+</style>

@@ -1,5 +1,9 @@
 <template>
-  <component v-bind="component.bind" :is="component.is">
+  <component
+    v-bind="component.bind"
+    :is="component.is"
+    v-on="component.on"
+  >
     {{ component.text }}
   </component>
 </template>
@@ -13,7 +17,6 @@ export default {
   components: {
     AlarmHeaderPriority,
   },
-
   props: {
     header: {
       type: Object,
@@ -32,7 +35,6 @@ export default {
       default: false,
     },
   },
-
   computed: {
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
@@ -42,24 +44,14 @@ export default {
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];
       const bind = this.ellipsisHeaders
         ? { class: 'v-data-table-header__span--ellipsis', title: this.header.text }
-        : { style: { whiteSpace: 'normal' } };
+        : { style: { 'white-space': 'normal' } };
 
       return {
-        bind,
         is: component || 'span',
         text: this.header.text,
+        bind,
       };
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.v-data-table-header__span--ellipsis {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-</style>

@@ -1,30 +1,40 @@
 <template>
-  <c-layout gap="3" column>
-    <c-label :label="$t('common.header', 2)" :help-text="$t('common.request.headersHelpText')" />
+  <v-layout class="gap-3" column>
+    <c-label
+      :label="$tc('common.header', 2)"
+      :help-text="$t('common.request.headersHelpText')"
+    />
 
-    <c-layout
+    <v-layout
       v-for="(item, index) in headers"
       :key="item.key"
-      align="center"
-      justify="space-between"
+      align-center
+      justify-space-between
     >
       <request-header-field
-        :header="headers[index]"
+        v-field="headers[index]"
         :disabled="disabled"
         :name="`${name}.${item.key}`"
         :headers-hints="headersHints"
         :headers-variables="headersVariables"
-        @update:header="updateItemInArray(index, $event)"
       />
-      <c-action-btn v-if="!disabled" type="delete" @click="removeItemFromArray(index)" />
-    </c-layout>
+      <c-action-btn
+        v-if="!disabled"
+        type="delete"
+        @click="removeItemFromArray(index)"
+      />
+    </v-layout>
 
     <div>
-      <v-btn color="primary" outlined @click="addItem">
+      <v-btn
+        color="primary"
+        outlined
+        @click="addItem"
+      >
         {{ $t('common.request.addHeader') }}
       </v-btn>
     </div>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
@@ -39,8 +49,12 @@ import { useArrayModelField } from '@/hooks/form/array-model-field';
 import RequestHeaderField from './request-header-field.vue';
 
 export default {
-  emits: ['update:headers'],
+  inject: ['$validator'],
   components: { RequestHeaderField },
+  model: {
+    prop: 'headers',
+    event: 'input',
+  },
   props: {
     title: {
       type: String,
@@ -64,10 +78,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(
-      props,
-      emit,
-    );
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
     const headersHints = computed(() => [
       {
@@ -84,7 +95,6 @@ export default {
     return {
       headersHints,
       removeItemFromArray,
-      updateItemInArray,
       addItem,
     };
   },

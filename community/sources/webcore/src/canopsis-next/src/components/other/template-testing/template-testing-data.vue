@@ -19,7 +19,7 @@ import { USER_PERMISSIONS } from '@/constants';
 
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
-import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
+import { useTemplateData } from '@/hooks/store/modules/template-data';
 
 import { useTemplateDataModals } from './hooks/template-testing-data';
 import TemplateTestingDataList from './partials/template-testing-data-list.vue';
@@ -32,7 +32,7 @@ export default {
       hasDeleteAccess: hasDeleteAccessForTemplateData,
     } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData);
 
-    const { fetchTemplateTestingDataListWithoutStore } = useTemplateTesting();
+    const { fetchTemplateDataListWithoutStore } = useTemplateData();
 
     const {
       data: items,
@@ -42,11 +42,13 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: fetchTemplateTestingDataListWithoutStore,
+      fetchListHandler: fetchTemplateDataListWithoutStore,
     });
 
-    const { showEditTemplateTestingDataModal, showRemoveTemplateTestingDataModal } =
-      useTemplateDataModals({ refresh: fetchList });
+    const {
+      showEditTemplateTestingDataModal,
+      showRemoveTemplateTestingDataModal,
+    } = useTemplateDataModals({ refresh: fetchList });
 
     onMounted(fetchList);
 
@@ -60,6 +62,10 @@ export default {
       options,
 
       updateOptions,
+
+      /**
+       * We need to return it for parent component to be able to fetch the list
+       */
       fetchList,
 
       showEditTemplateTestingDataModal,

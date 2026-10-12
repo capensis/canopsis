@@ -35,9 +35,6 @@ export const SERVICE_WEATHER_STATE_COUNTERS = {
   unacked: 'unacked',
   underPbehavior: 'under_pbh',
   ackedUnderPbehavior: 'acked_under_pbh',
-  paused: 'paused',
-  acknowledgedInactive: 'acked_inactive',
-  inactiveDepends: 'inactive_depends',
 };
 
 export const SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS = {
@@ -52,9 +49,6 @@ export const SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS = {
   [SERVICE_WEATHER_STATE_COUNTERS.unacked]: '.NotAcknowledged',
   [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: '.UnderPbehavior',
   [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: '.AcknowledgedUnderPbh',
-  [SERVICE_WEATHER_STATE_COUNTERS.paused]: '.Paused',
-  [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: '.AcknowledgedInactive',
-  [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: '.InactiveDepends',
 };
 
 export const SERVICE_WEATHER_STATE_COUNTERS_ICONS = {
@@ -69,9 +63,6 @@ export const SERVICE_WEATHER_STATE_COUNTERS_ICONS = {
   [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'playlist_play',
   [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'build',
   [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: '$vuetify.icons.playlist_build',
-  [SERVICE_WEATHER_STATE_COUNTERS.paused]: 'pause',
-  [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: 'playlist_add_check',
-  [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: 'mediation',
 };
 
 export const SERVICE_WEATHER_MAX_STATE_COUNTERS = 5;

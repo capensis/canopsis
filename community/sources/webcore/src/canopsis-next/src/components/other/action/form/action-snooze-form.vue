@@ -1,74 +1,43 @@
 <template>
-  <c-layout column>
-    <action-note-form
-      :model-value="modelValue"
-      :name="name"
-      :depth="depth"
-      :template-vars="templateVars"
-      @update:model-value="$emit('update:modelValue', $event)"
-    />
+  <div>
+    <action-note-form v-field="value" :template-vars="templateVars" :depth="depth" />
 
-    <c-form-block-row :label="t('common.duration')" :depth="depth">
+    <c-form-block-row :label="$t('common.duration')" :depth="depth">
       <c-duration-field
-        v-model:duration="duration"
+        v-field="value.duration"
         :name="`${name}.duration`"
-        :label="t('common.duration')"
-        :min="MIN_DURATION_VALUE"
         required
       />
     </c-form-block-row>
-  </c-layout>
+  </div>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { MIN_DURATION_VALUE, TIME_UNITS } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-
 import ActionNoteForm from './action-note-form.vue';
 
 export default {
   components: { ActionNoteForm },
-
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    modelValue: {
+    value: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
     name: {
       type: String,
-      default: 'parameters',
-    },
-    depth: {
-      type: Number,
-      default: 0,
+      required: 'parameters',
     },
     templateVars: {
       type: Object,
       default: () => ({}),
     },
-  },
-
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
-    const { t } = useI18n();
-
-    const duration = computed({
-      get: () => props.modelValue.duration ?? { value: MIN_DURATION_VALUE, unit: TIME_UNITS.hour },
-      set: value => emit('update:modelValue', {
-          ...props.modelValue,
-          duration: value,
-        }),
-    });
-
-    return {
-      t,
-      duration,
-      MIN_DURATION_VALUE,
-    };
+    depth: {
+      type: Number,
+      default: 0,
+    },
   },
 };
 </script>

@@ -46,8 +46,14 @@ export const moveShapesMixin = {
     handleShapeMove(event) {
       const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
 
-      const newMovingOffsetX = roundByStep(x - this.movingStart.x, this.gridSize);
-      const newMovingOffsetY = roundByStep(y - this.movingStart.y, this.gridSize);
+      const newMovingOffsetX = roundByStep(
+        x - this.movingStart.x,
+        this.gridSize,
+      );
+      const newMovingOffsetY = roundByStep(
+        y - this.movingStart.y,
+        this.gridSize,
+      );
 
       this.moveSelected({
         x: newMovingOffsetX - this.movingOffset.x,

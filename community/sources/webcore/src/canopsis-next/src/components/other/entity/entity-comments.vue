@@ -1,10 +1,13 @@
 <template>
-  <c-layout class="gap-3" column>
-    <div v-if="addable">
-      <v-btn color="primary" @click="addComment">
+  <v-layout class="gap-3" column>
+    <v-flex v-if="addable">
+      <v-btn
+        color="primary"
+        @click="addComment"
+      >
         {{ $t('common.add') }}
       </v-btn>
-    </div>
+    </v-flex>
     <entity-comments-list
       :comments="comments"
       :pending="pending"
@@ -17,13 +20,19 @@
       :page="query.page"
       @update:page="updateQueryPage"
       @update:items-per-page="updateQueryItemsPerPage"
-      @update:pagination="updatePagination"
+      @input="updateQuery"
     />
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
-import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import {
+  computed,
+  ref,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
@@ -32,14 +41,13 @@ import Observer from '@/services/observer';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { useEntityComments } from '@/hooks/store/modules/entity-comment';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
-import { useEntityComment } from '@/hooks/store/modules/entity-comment';
 
 import EntityCommentsList from './partials/entity-comments-list.vue';
 
 export default {
   components: { EntityCommentsList },
-
   props: {
     entity: {
       type: Object,
@@ -54,7 +62,6 @@ export default {
       default: false,
     },
   },
-
   setup(props) {
     const comments = ref([]);
     const meta = ref({});
@@ -65,7 +72,7 @@ export default {
       createEntityComment,
       updateEntityComment,
       fetchEntityCommentsListWithoutStore,
-    } = useEntityComment();
+    } = useEntityComments();
 
     const periodicRefresh = inject('$periodicRefresh', new Observer());
 
@@ -94,13 +101,7 @@ export default {
 
     const isFirstPage = computed(() => query.value.page === 1);
 
-    const updatePagination = ({ page, itemsPerPage }) => updateQuery({
-      ...query.value,
-      page,
-      itemsPerPage,
-    });
-
-    const addComment = () => {
+    const addComment = async () => {
       modals.show({
         name: MODALS.textEditor,
         config: {
@@ -124,10 +125,7 @@ export default {
           label: t('common.message'),
           text: comment.message,
           action: async (message) => {
-            await updateEntityComment({
-              id: comment._id,
-              data: { entity: props.entity._id, message },
-            });
+            await updateEntityComment({ id: comment._id, data: { entity: props.entity._id, message } });
             return fetchList();
           },
         },
@@ -149,9 +147,9 @@ export default {
       isFirstPage,
       addComment,
       editComment,
+      updateQuery,
       updateQueryPage,
       updateQueryItemsPerPage,
-      updatePagination,
     };
   },
 };

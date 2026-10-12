@@ -1,11 +1,10 @@
 <template>
-  <c-radio-group
-    :model-value="modelValue"
+  <v-radio-group
+    v-field="value"
     :name="name"
     :label="label"
     hide-details
     mandatory
-    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
       v-for="type in types"
@@ -14,15 +13,19 @@
       :value="type.value"
       color="primary"
     />
-  </c-radio-group>
+  </v-radio-group>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABILITY_SHOW_TYPE } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
-    modelValue: {
+    value: {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.percent,
     },
@@ -32,25 +35,23 @@ export default {
     },
     label: {
       type: String,
-      default: '',
+      required: false,
     },
   },
+  setup() {
+    const { t, tc } = useI18n();
 
-  emits: ['update:modelValue'],
+    const types = computed(() => [{
+      value: AVAILABILITY_SHOW_TYPE.percent,
+      label: tc('common.percent'),
+    }, {
+      value: AVAILABILITY_SHOW_TYPE.duration,
+      label: t('common.duration'),
+    }]);
 
-  computed: {
-    types() {
-      return [
-        {
-          value: AVAILABILITY_SHOW_TYPE.percent,
-          label: this.$t('common.percent'),
-        },
-        {
-          value: AVAILABILITY_SHOW_TYPE.duration,
-          label: this.$t('common.duration'),
-        },
-      ];
-    },
+    return {
+      types,
+    };
   },
 };
 </script>

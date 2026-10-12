@@ -1,70 +1,48 @@
 <template>
   <div class="fab ma-2">
-    <c-layout column>
-      <div class="mb-3">
-        <c-refresh-btn @click="emit('refresh')" />
-      </div>
-
-      <v-speed-dial
+    <v-layout column>
+      <v-flex class="mb-3">
+        <c-refresh-btn @click="$emit('refresh')" />
+      </v-flex>
+      <c-speed-dial
         v-if="hasAccess"
-        location="left center"
-        persistent
-        attach
+        :transition="transition"
+        direction="left"
       >
-        <template #activator="{ props: activatorProps, isActive }">
+        <template #activator="{ bind }">
           <v-btn
-            v-bind="activatorProps"
-            :class="{ 'c-fab--active': isActive }"
+            v-bind="bind"
             color="primary"
-            class="c-fab"
-            icon
+            fab
           >
-            <slot
-              :is-active="isActive"
-              name="icons"
-            >
-              <v-icon size="large" icon="add" />
+            <slot name="icons">
+              <v-icon>add</v-icon>
+              <v-icon>close</v-icon>
             </slot>
           </v-btn>
         </template>
-
         <slot />
-      </v-speed-dial>
-    </c-layout>
+      </c-speed-dial>
+    </v-layout>
   </div>
 </template>
 
-<script setup>
-const emit = defineEmits(['refresh']);
-
-defineProps({
-  transition: {
-    type: String,
-    default: 'slide-y-reverse-transition',
+<script>
+export default {
+  props: {
+    transition: {
+      type: String,
+      default: 'slide-y-reverse-transition',
+    },
+    hasAccess: {
+      type: Boolean,
+      default: true,
+    },
   },
-  hasAccess: {
-    type: Boolean,
-    default: true,
+  data() {
+    return {
+      fab: false,
+    };
   },
-});
+};
 </script>
-
-<style lang="scss" scoped>
-.c-fab {
-  --v-btn-height: 56px;
-
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-
-  .v-icon {
-    transition: transform 0.2s ease;
-  }
-
-  &--active {
-    .v-icon {
-      transform: rotate(45deg);
-    }
-  }
-}
-</style>

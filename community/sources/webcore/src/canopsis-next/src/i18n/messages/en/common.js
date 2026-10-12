@@ -1,6 +1,5 @@
 import {
   ALARM_STATES,
-  ALARM_STATES_KEYS,
   ALARM_STATUSES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
@@ -21,8 +20,7 @@ export default {
   refresh: 'Refresh',
   restart: 'Restart',
   toggleEditView: 'Toggle view edition mode',
-  toggleEditViewSubtitle:
-    'If you want to save widget positions you should toggle off the editing mode for that',
+  toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
   alias: 'Alias',
   namePrefix: 'Name prefix',
@@ -55,7 +53,6 @@ export default {
   end: 'End',
   every: 'Every',
   message: 'Message',
-  text: 'Text',
   preview: 'Preview',
   recursive: 'Recursive',
   select: 'Select',
@@ -101,9 +98,7 @@ export default {
   replace: 'Replace',
   play: 'Play',
   pause: 'Pause',
-  pin: 'Pin',
   copyLink: 'Copy link',
-  copy: 'Copy',
   parse: 'Parse',
   home: 'Home',
   step: 'Step | Steps',
@@ -284,7 +279,6 @@ export default {
   sharedTokens: 'Shared tokens',
   notAvailable: 'N/a',
   addMore: 'Add more',
-  moreButton: 'More',
   more: 'more',
   all: 'All',
   other: 'Other',
@@ -465,10 +459,6 @@ export default {
     [ALARM_STATES.minor]: 'Minor',
     [ALARM_STATES.major]: 'Major',
     [ALARM_STATES.critical]: 'Critical',
-    [ALARM_STATES_KEYS.ok]: 'Ok',
-    [ALARM_STATES_KEYS.minor]: 'Minor',
-    [ALARM_STATES_KEYS.major]: 'Major',
-    [ALARM_STATES_KEYS.critical]: 'Critical',
   },
   statusTypes: {
     [ALARM_STATUSES.closed]: 'Closed',
@@ -537,8 +527,8 @@ export default {
     [PATTERN_OPERATORS.enabled]: 'True',
     [PATTERN_OPERATORS.disabled]: 'False',
 
-    [PATTERN_OPERATORS.isMetaAlarm]: 'Is a meta-alarm',
-    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not a meta-alarm',
+    [PATTERN_OPERATORS.isMetaAlarm]: 'Is meta alarm',
+    [PATTERN_OPERATORS.isNotMetaAlarm]: 'Is not meta alarm',
     [PATTERN_OPERATORS.ruleIs]: 'Rule is',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
@@ -548,158 +538,105 @@ export default {
     [PATTERN_OPERATORS.inRangeDates]: 'In range (dates)',
     [PATTERN_OPERATORS.inRangePeriod]: 'In range (period)',
   },
-  triggersGroups: {
-    general: 'General',
-    pbehavior: 'Pbehavior',
-    tickets: 'Tickets',
-    instructions: 'Instructions',
-  },
   triggers: {
     [TRIGGERS_TYPES.create]: {
-      text: 'Created',
-      selectedText: 'Alarm created',
+      text: 'Alarm created',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: 'State decreased',
-      selectedText: 'Alarm state decreased',
+      text: 'Alarm state decreased',
     },
     [TRIGGERS_TYPES.changestate]: {
-      text: 'State changed by "change state" action',
-      selectedText: 'Alarm state changed by "change state" action',
+      text: 'Alarm state changed by "change state" action',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: 'State increased',
-      selectedText: 'Alarm state increased',
+      text: 'Alarm state increased',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: 'Status changed eg. flapping',
-      selectedText: 'Alarm status changed eg. flapping',
-    },
-    [TRIGGERS_TYPES.changedoutput]: {
-      text: 'Output changed',
-      selectedText: 'Alarm output changed',
-    },
-    [TRIGGERS_TYPES.changedlongoutput]: {
-      text: 'Long output changed',
-      selectedText: 'Alarm long output changed',
+      text: 'Alarm status changed eg. flapping',
     },
     [TRIGGERS_TYPES.ack]: {
-      text: 'Acked',
-      selectedText: 'Alarm acked',
+      text: 'Alarm acked',
     },
     [TRIGGERS_TYPES.ackremove]: {
-      text: 'Unacked',
-      selectedText: 'Alarm unacked',
+      text: 'Alarm unacked',
     },
     [TRIGGERS_TYPES.cancel]: {
-      text: 'Cancelled',
-      selectedText: 'Alarm cancelled',
+      text: 'Alarm cancelled',
     },
     [TRIGGERS_TYPES.uncancel]: {
-      text: 'Uncancelled',
-      selectedText: 'Alarm uncancelled',
-      helpText:
-        'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      text: 'Alarm uncancelled',
+      helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
     },
     [TRIGGERS_TYPES.comment]: {
-      text: 'Commented',
-      selectedText: 'Alarm commented',
+      text: 'Alarm commented',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: 'Ticket declared by UI action',
-      selectedText: 'Ticket declared by the UI action',
+      text: 'Ticket declared by the UI action',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
-      text: 'Ticket declared by webhook',
-      selectedText: 'Ticket declared by the webhook',
+      text: 'Ticket declared by the webhook',
     },
     [TRIGGERS_TYPES.declareticketwebhookfail]: {
       text: 'Ticket declaration by the webhook has failed',
     },
     [TRIGGERS_TYPES.assocticket]: {
-      text: 'Ticket associated',
-      selectedText: 'Ticket associated with an alarm',
+      text: 'Ticket associated with an alarm',
     },
     [TRIGGERS_TYPES.ticketremove]: {
       text: 'Ticket removed',
     },
     [TRIGGERS_TYPES.snooze]: {
-      text: 'Snoozed',
-      selectedText: 'Alarm snoozed',
+      text: 'Alarm snoozed',
     },
     [TRIGGERS_TYPES.unsnooze]: {
-      text: 'Unsnoozed',
-      selectedText: 'Alarm unsnoozed',
+      text: 'Alarm unsnoozed',
     },
     [TRIGGERS_TYPES.resolve]: {
-      text: 'Resolved',
-      selectedText: 'Alarm resolved',
+      text: 'Alarm resolved',
     },
     [TRIGGERS_TYPES.activate]: {
-      text: 'Activated',
-      selectedText: 'Alarm activated',
-    },
-    [TRIGGERS_TYPES.pause]: {
-      text: 'Paused',
-      selectedText: 'Alarm paused',
-    },
-    [TRIGGERS_TYPES.resume]: {
-      text: 'Resumed',
-      selectedText: 'Alarm resumed',
+      text: 'Alarm activated',
     },
     [TRIGGERS_TYPES.pbhenter]: {
-      text: 'Entered pbehavior',
-      selectedText: 'Alarm entered pbehavior',
+      text: 'Alarm entered pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: 'Left pbehavior',
-      selectedText: 'Alarm left pbehavior',
+      text: 'Alarm leaved pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
-      text: 'Manual instruction failed',
-      selectedText: 'Manual instruction has failed',
+      text: 'Manual instruction has failed',
     },
     [TRIGGERS_TYPES.autoinstructionfail]: {
-      text: 'Auto instruction failed',
-      selectedText: 'Auto instruction has failed',
+      text: 'Auto instruction has failed',
     },
     [TRIGGERS_TYPES.instructionjobfail]: {
-      text: 'Manual or auto instruction job failed',
-      selectedText: 'Manual or auto instruction\'s job is failed',
+      text: 'Manual or auto instruction\'s job is failed',
     },
     [TRIGGERS_TYPES.instructionjobcomplete]: {
-      text: 'Manual or auto instruction job completed',
-      selectedText: 'Manual or auto instruction\'s job is completed',
+      text: 'Manual or auto instruction\'s job is completed',
     },
     [TRIGGERS_TYPES.instructioncomplete]: {
-      text: 'Manual instruction completed',
-      selectedText: 'Manual instruction is completed',
+      text: 'Manual instruction is completed',
     },
     [TRIGGERS_TYPES.autoinstructioncomplete]: {
-      text: 'Auto instruction completed',
-      selectedText: 'Auto instruction is completed',
+      text: 'Auto instruction is completed',
     },
     [TRIGGERS_TYPES.autoinstructionresultok]: {
-      text: 'Alarm is OK state after all auto instructions',
+      text: 'Alarm is in OK state after all auto instructions',
     },
     [TRIGGERS_TYPES.autoinstructionresultfail]: {
-      text: 'Alarm is KO state after all auto instructions',
+      text: 'Alarm is in not OK state after all auto instructions',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: 'Received N events',
+      text: 'Alarm received N events',
       selectedText: 'Alarm received {additionalValue} events',
       additionalFieldLabel: 'Number of events',
     },
   },
   repeatTriggers: {
-    [TRIGGERS_TYPES.pause]: {
-      text: 'Alarm paused',
-    },
-    [TRIGGERS_TYPES.resume]: {
-      text: 'Alarm resumed',
-    },
     [TRIGGERS_TYPES.eventscount]: {
       text: 'Alarm received new check event',
+      selectedText: 'Alarm received new check event',
     },
   },
   request: {
@@ -710,13 +647,12 @@ export default {
     skipVerify: 'Ignore HTTPS certificate verification',
     headersHelpText: 'Select header key and value or type them manually',
     addHeader: 'Add header',
-    urlHelp:
-      '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>"https://exampleurl.com?resource={\'{{ .Alarm.Value.Resource }}\'}"</pre>' +
-      '<pre>"https://exampleurl.com?entity_id={\'{{ .Entity.ID }}\'}"</pre>' +
-      '<pre>"https://exampleurl.com?children_count={\'{{ len .Children }}\'}"</pre>' +
-      '<pre>"https://exampleurl.com?children={\'{{ range .Children }}\'}{\'{{ .ID }}\'}{\'{{ end }}\'}"</pre>',
+    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   },
 
   fileSelector: {

@@ -1,22 +1,18 @@
 <template>
-  <c-modal-wrapper
-    class="ai-chat-history-modal"
-    text-class="ai-chat-history-modal__text"
-    close
-  >
-    <template #title>
+  <modal-wrapper class="ai-chat-history-modal" close>
+    <template #title="">
       {{ $t('modals.aiChatHistory.title') }}
     </template>
-    <template #text>
-      <div class="ai-chat-history-modal__content position-relative">
-        <c-layout class="ai-chat-history-modal__info" column>
+    <template #text="">
+      <div class="position-relative">
+        <v-layout class="ai-chat-history-modal__info" column>
           <c-alert type="info" class="ma-0">
-            <c-layout column>
+            <v-layout column>
               <span class="font-weight-regular">
                 {{ chatUserDisplayName }}
               </span>
               <span>{{ chatContext }}</span>
-            </c-layout>
+            </v-layout>
           </c-alert>
           <v-fade-transition>
             <v-progress-linear
@@ -27,8 +23,8 @@
               indeterminate
             />
           </v-fade-transition>
-        </c-layout>
-        <c-layout class="ai-chat-history-modal__messages_wrapper" column>
+        </v-layout>
+        <v-layout class="ai-chat-history-modal__messages_wrapper" column>
           <div
             v-if="messages.length"
             class="ai-chat-history-modal__messages pa-4"
@@ -46,18 +42,19 @@
           >
             {{ $t('common.noData') }}
           </span>
-        </c-layout>
+        </v-layout>
       </div>
     </template>
-    <template #actions>
+    <template #actions="">
       <v-btn
-        variant="text"
+        depressed
+        text
         @click="close"
       >
         {{ $t('common.close') }}
       </v-btn>
     </template>
-  </c-modal-wrapper>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -70,10 +67,12 @@ import { llmChatHistoryServerMessagesToMessages } from '@/helpers/entities/llm/c
 import { convertQueryToRequest } from '@/helpers/query';
 
 import { useInnerModal } from '@/hooks/modals';
-import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useLlm } from '@/hooks/store/modules/llm';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 
 import AiChatMessagesList from '@/components/other/llm/chat/ai-chat-messages-list.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 const SCROLL_BOTTOM_THRESHOLD_PX = 30;
 
@@ -81,6 +80,7 @@ export default {
   name: MODALS.aiChatHistory,
   components: {
     AiChatMessagesList,
+    ModalWrapper,
   },
   props: {
     modal: {
@@ -164,33 +164,8 @@ export default {
 
 <style lang="scss" scoped>
 .ai-chat-history-modal {
-  :deep(.v-card__text) {
+  ::v-deep .v-card__text {
     padding: 0 !important;
-  }
-
-  :deep(.ai-chat-history-modal__text) {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    padding: 0 !important;
-    overflow-x: hidden;
-  }
-
-  :deep(.ai-chat-history-modal__text > *) {
-    flex: 1 1 auto;
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-  }
-
-  &__content,
-  &__messages_wrapper,
-  &__messages {
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
   }
 
   &__info {
@@ -202,14 +177,10 @@ export default {
   }
 
   &__messages {
-    flex: 1 1 auto;
-    height: 100%;
+    max-height: 60vh;
     overflow-y: auto;
-    overflow-x: hidden;
 
     &_wrapper {
-      display: flex;
-      flex: 1 1 auto;
       padding-top: 76px;
     }
   }

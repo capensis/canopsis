@@ -1,9 +1,9 @@
 <template>
   <div>
     <test-suite-history-panel
-      v-for="historyTestSuite in testSuiteHistory"
-      :key="historyTestSuite._id"
-      :test-suite="historyTestSuite"
+      v-for="testSuite in testSuiteHistory"
+      :key="testSuite._id"
+      :test-suite="testSuite"
       class="mb-2"
     />
   </div>
@@ -19,7 +19,7 @@ export default {
   props: {
     testSuiteHistory: {
       type: Array,
-      default: () => [],
+      required: () => [],
     },
   },
 };

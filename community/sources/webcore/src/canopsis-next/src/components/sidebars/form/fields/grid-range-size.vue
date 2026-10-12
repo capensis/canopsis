@@ -1,16 +1,33 @@
 <template>
-  <widget-settings-item :title="title">
+  <v-list-item v-if="inline" class="overflow-visible">
+    <v-list-item-content class="overflow-visible">
+      <v-list-item-title>{{ title }}</v-list-item-title>
+      <v-list-item-action class="ml-0">
+        <v-range-slider
+          v-field="value"
+          :min="min"
+          :max="max"
+          :step="step"
+          class="mt-3"
+          ticks="always"
+          always-dirty
+          thumb-label
+          hide-details
+        />
+      </v-list-item-action>
+    </v-list-item-content>
+  </v-list-item>
+  <widget-settings-item v-else :title="title">
     <v-range-slider
-      :model-value="modelValue"
+      v-field="value"
       :min="min"
       :max="max"
       :step="step"
-      color="primary"
       class="mt-3"
-      show-ticks="always"
+      ticks="always"
+      always-dirty
       thumb-label
       hide-details
-      @update:model-value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
@@ -22,9 +39,8 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-
   props: {
-    modelValue: {
+    value: {
       type: Array,
       default: () => [GRID_SIZES.min, GRID_SIZES.max],
     },
@@ -44,8 +60,14 @@ export default {
       type: String,
       default: '',
     },
+    inline: {
+      type: Boolean,
+      default: false,
+    },
   },
-
-  emits: ['update:modelValue'],
 };
 </script>
+
+<style lang="scss">
+
+</style>

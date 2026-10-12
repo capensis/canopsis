@@ -1,6 +1,11 @@
-import { storeToRefs } from 'pinia';
+import { useStoreModuleHooks } from '@/hooks/store';
 
-import { useDynamicInfoStore } from '@/stores/modules/dynamic-info';
+/**
+ * Creates an instance of the dynamic info store module hooks.
+ *
+ * @returns {Object} Store module hooks for the 'dynamicInfo' namespace
+ */
+export const useDynamicInfoStoreModule = () => useStoreModuleHooks('dynamicInfo');
 
 /**
  * Hook for accessing and managing dynamic infos.
@@ -16,32 +21,39 @@ import { useDynamicInfoStore } from '@/stores/modules/dynamic-info';
  * @property {Function} createDynamicInfo - Creates a new dynamic info
  * @property {Function} updateDynamicInfo - Updates a dynamic info
  * @property {Function} removeDynamicInfo - Removes a dynamic info
- * @property {Function} fetchDynamicInfosKeysWithoutStore - Fetches dictionary keys without storing them locally
+ * @property {Function} fetchDynamicInfosKeysWithoutStore - Fetches dictionary keys without storing in Vuex
  * @property {Function} bulkEnableDynamicInfos - Bulk enables dynamic infos
  * @property {Function} bulkDisableDynamicInfos - Bulk disables dynamic infos
  * @property {Function} bulkRemoveDynamicInfos - Bulk removes dynamic infos
  *
- * @returns {DynamicInfoGetters & DynamicInfoActions}
+ * @returns {Object} Hook return object
+ * @property {DynamicInfoGetters} getters - All available getters
+ * @property {DynamicInfoActions} actions - All available actions
  */
 export const useDynamicInfo = () => {
-  const dynamicInfoStore = useDynamicInfoStore();
-  const { items, meta, pending, fetchingParams } = storeToRefs(dynamicInfoStore);
+  const { useGetters, useActions } = useDynamicInfoStoreModule();
+
+  const getters = useGetters({
+    dynamicInfosPending: 'pending',
+    dynamicInfos: 'items',
+    dynamicInfosMeta: 'meta',
+  });
+
+  const actions = useActions({
+    fetchDynamicInfosList: 'fetchList',
+    fetchDynamicInfosListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchDynamicInfosListWithoutStore: 'fetchListWithoutStore',
+    createDynamicInfo: 'create',
+    updateDynamicInfo: 'update',
+    removeDynamicInfo: 'remove',
+    fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore',
+    bulkEnableDynamicInfos: 'bulkEnable',
+    bulkDisableDynamicInfos: 'bulkDisable',
+    bulkRemoveDynamicInfos: 'bulkRemove',
+  });
 
   return {
-    dynamicInfos: items,
-    dynamicInfosMeta: meta,
-    dynamicInfosPending: pending,
-    dynamicInfosFetchingParams: fetchingParams,
-
-    fetchDynamicInfosList: dynamicInfoStore.fetchList,
-    fetchDynamicInfosListWithPreviousParams: dynamicInfoStore.fetchListWithPreviousParams,
-    fetchDynamicInfosListWithoutStore: dynamicInfoStore.fetchListWithoutStore,
-    createDynamicInfo: dynamicInfoStore.create,
-    updateDynamicInfo: dynamicInfoStore.update,
-    removeDynamicInfo: dynamicInfoStore.remove,
-    fetchDynamicInfosKeysWithoutStore: dynamicInfoStore.fetchInfosKeysWithoutStore,
-    bulkEnableDynamicInfos: dynamicInfoStore.bulkEnable,
-    bulkDisableDynamicInfos: dynamicInfoStore.bulkDisable,
-    bulkRemoveDynamicInfos: dynamicInfoStore.bulkRemove,
+    ...getters,
+    ...actions,
   };
 };

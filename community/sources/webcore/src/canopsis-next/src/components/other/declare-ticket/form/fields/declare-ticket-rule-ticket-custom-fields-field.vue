@@ -1,8 +1,8 @@
 <template>
-  <c-layout gap="3" column>
-    <c-label :label="$t('common.customField', 2)" />
+  <v-layout class="gap-3" column>
+    <c-label :label="$tc('common.customField', 2)" />
     <c-text-pairs-field
-      :items="value"
+      v-field="value"
       :text-label="$t('declareTicket.alarmFieldName')"
       :value-label="$t('declareTicket.responseField')"
       :add-button-label="$t('common.addCustomField')"
@@ -10,7 +10,6 @@
       :disabled="disabled"
       text-required
       value-required
-      @update:items="$emit('update:value', $event)"
     >
       <template #append-value="{ item }">
         <c-help-icon
@@ -22,12 +21,15 @@
         />
       </template>
     </c-text-pairs-field>
-  </c-layout>
+  </v-layout>
 </template>
 
 <script>
 export default {
-  emits: ['update:value'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Array,

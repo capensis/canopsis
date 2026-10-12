@@ -235,13 +235,10 @@ export const useIntersectionVirtualScroll = ({
     };
   };
 
-  watch(
-    () => unref(scrollContainerElement),
-    () => {
-      connectObserver();
-      updateListWidth();
-    },
-  );
+  watch(() => unref(scrollContainerElement), () => {
+    connectObserver();
+    updateListWidth();
+  });
 
   onBeforeUnmount(disconnectObserver);
 

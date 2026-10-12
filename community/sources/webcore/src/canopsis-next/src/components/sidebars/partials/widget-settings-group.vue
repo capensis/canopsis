@@ -5,28 +5,28 @@
     color=""
     eager
   >
-    <template #activator="{ props: activatorProps }">
-      <v-list-item v-bind="activatorProps" :disabled="disabled">
-        <template #title>
-          <span :class="validationHeaderClass">
-            {{ title }}
-          </span>
-        </template>
-      </v-list-item>
+    <template #activator="">
+      <v-list-item-content>
+        <v-list-item-title :class="validationHeaderClass">
+          {{ title }}
+        </v-list-item-title>
+      </v-list-item-content>
     </template>
-
-    <v-list ref="contentElement" class="widget-settings-group__list px-2 py-0">
+    <v-list
+      class="px-2 py-0 background darken-1"
+      expand
+    >
       <slot />
     </v-list>
   </v-list-group>
 </template>
 
 <script>
-import { ref } from 'vue';
-
-import { useValidationHeader } from '@/hooks/validator/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
+  mixins: [formValidationHeaderMixin],
   props: {
     title: {
       type: String,
@@ -37,23 +37,5 @@ export default {
       default: false,
     },
   },
-
-  setup() {
-    const contentElement = ref(null);
-    const { validationHeaderClass } = useValidationHeader(contentElement);
-
-    return {
-      contentElement,
-      validationHeaderClass,
-    };
-  },
 };
 </script>
-
-<style lang="scss" scoped>
-.widget-settings-group {
-  &__list {
-    background-color: rgba(var(--v-theme-on-surface), 0.04);
-  }
-}
-</style>
