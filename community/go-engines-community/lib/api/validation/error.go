@@ -48,6 +48,10 @@ func (e *Error) Error() string {
 	return e.errors.Error()
 }
 
+func (e *Error) Unwrap() error {
+	return e.errors
+}
+
 // TransformNamespace transforms struct namespace to json|form tag namespace.
 // for example:
 // - Username -> username

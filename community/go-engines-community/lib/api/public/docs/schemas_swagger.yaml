@@ -1,0 +1,1081 @@
+definitions:
+  alarm.Response:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/alarm.Step'
+      activation_date:
+        type: integer
+      active_duration:
+        type: integer
+      canceled:
+        $ref: '#/definitions/alarm.Step'
+      change_state:
+        $ref: '#/definitions/alarm.Step'
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      creation_date:
+        type: integer
+      current_state_duration:
+        type: integer
+      display_name:
+        type: string
+      duration:
+        type: integer
+      entity:
+        $ref: '#/definitions/entity.Response'
+      infos:
+        type: object
+      initial_long_output:
+        type: string
+      initial_output:
+        type: string
+      initial_state:
+        type: integer
+      last_comment:
+        $ref: '#/definitions/alarm.Step'
+      last_event_date:
+        type: integer
+      last_st_upd_dt:
+        type: integer
+      last_update_date:
+        type: integer
+      links:
+        items:
+          $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_public_link.Link'
+        type: array
+      long_output:
+        type: string
+      max_state:
+        type: integer
+      meta_alarm_rule:
+        $ref: '#/definitions/response.Reference'
+      output:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      resolved:
+        type: integer
+      resource:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.Step'
+      state:
+        $ref: '#/definitions/alarm.Step'
+      state_changes_since_status_update:
+        type: integer
+      status:
+        $ref: '#/definitions/alarm.Step'
+      tags:
+        items:
+          type: string
+        type: array
+      ticket:
+        $ref: '#/definitions/alarm.Step'
+      total_state_changes:
+        type: integer
+      type:
+        type: string
+    type: object
+  alarm.SearchRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      meta_alarm:
+        items:
+          type: string
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      resolution:
+        enum:
+        - open
+        - resolved
+        type: string
+      sort:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+        uniqueItems: true
+    required:
+    - resolution
+    type: object
+  alarm.Step:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      initiator:
+        type: string
+      m:
+        type: string
+      struct_m:
+        items:
+          $ref: '#/definitions/types.StructuredMessage'
+        type: array
+      t:
+        type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_source_status:
+        type: string
+      ticket_status:
+        type: integer
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
+  alarmexport.Request:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      delimiter:
+        description: csv
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      fields:
+        items:
+          $ref: '#/definitions/dataexport.Field'
+        type: array
+      format:
+        enum:
+        - csv
+        - json
+        type: string
+      meta_alarm:
+        items:
+          type: string
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      resolution:
+        enum:
+        - open
+        - resolved
+        type: string
+      sort:
+        type: string
+      time_format:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+        uniqueItems: true
+    required:
+    - fields
+    - format
+    - resolution
+    type: object
+  asyncjob.Response:
+    properties:
+      _id:
+        type: string
+      error_message:
+        type: string
+      status:
+        type: string
+    type: object
+  bulk.DeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  dataexport.Field:
+    properties:
+      label:
+        maxLength: 10000
+        type: string
+      name:
+        maxLength: 10000
+        type: string
+    required:
+    - label
+    - name
+    type: object
+  entity.Info:
+    properties:
+      description:
+        type: string
+      value: {}
+    type: object
+  entity.PbehaviorInfo:
+    properties:
+      reason:
+        $ref: '#/definitions/response.Reference'
+      rule:
+        $ref: '#/definitions/response.Reference'
+      timestamp:
+        type: integer
+      type:
+        properties:
+          _id:
+            type: string
+          canonical_type:
+            type: string
+          name:
+            type: string
+        type: object
+    type: object
+  entity.Response:
+    properties:
+      _id:
+        type: string
+      category:
+        $ref: '#/definitions/response.Reference'
+      component:
+        type: string
+      component_infos:
+        additionalProperties:
+          $ref: '#/definitions/entity.Info'
+        type: object
+      connector:
+        type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/entity.Info'
+        type: object
+      last_event_date:
+        type: integer
+      links:
+        items:
+          $ref: '#/definitions/git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_public_link.Link'
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      type:
+        type: string
+      updated:
+        type: integer
+      upstream:
+        type: string
+    type: object
+  entity.SearchRequest:
+    properties:
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      import_source:
+        maxLength: 10000
+        type: string
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      sort:
+        type: string
+    type: object
+  entityexport.Request:
+    properties:
+      delimiter:
+        description: csv
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      fields:
+        items:
+          $ref: '#/definitions/dataexport.Field'
+        type: array
+      format:
+        enum:
+        - csv
+        - json
+        type: string
+      import_source:
+        maxLength: 10000
+        type: string
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      sort:
+        type: string
+      time_format:
+        type: string
+    required:
+    - fields
+    - format
+    type: object
+  entityimport.RequestItem:
+    properties:
+      action:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      name:
+        type: string
+      output_template:
+        type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
+      type:
+        type: string
+      upstream:
+        type: string
+    required:
+    - name
+    - type
+    type: object
+  git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_public_link.Link:
+    properties:
+      category:
+        type: string
+      label:
+        type: string
+      url:
+        type: string
+    type: object
+  pattern.Condition:
+    properties:
+      type:
+        type: string
+      value:
+        type: object
+    type: object
+  pattern.FieldCondition:
+    properties:
+      alias:
+        description: Alias can only be defined for entity infos.
+        type: string
+      cond:
+        $ref: '#/definitions/pattern.Condition'
+      field:
+        type: string
+      field_type:
+        description: 'FieldType is only defined for custom fields, ex: infos.'
+        type: string
+    type: object
+  pbehavior.BulkConnectorCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - name
+    - origin
+    - reason
+    - tstart
+    - tstop
+    - type
+    type: object
+  pbehavior.BulkConnectorDeleteRequestItem:
+    properties:
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      origin:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
+  pbehavior.BulkConnectorEditRequestItem:
+    properties:
+      action:
+        enum:
+        - create
+        - delete
+        type: string
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
+  pbehavior.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    type: object
+  pbehavior.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - enabled
+    - entity_pattern
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.EditRequest:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - enabled
+    - entity_pattern
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.ExdateRequest:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        type: string
+    required:
+    - begin
+    - end
+    - type
+    type: object
+  pbehavior.ExdateResponse:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        $ref: '#/definitions/response.Reference'
+    type: object
+  pbehavior.PatchRequest:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateRequest'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    type: object
+  pbehavior.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/response.Reference'
+      color:
+        type: string
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          $ref: '#/definitions/response.Reference'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehavior.ExdateResponse'
+        type: array
+      inherited:
+        type: boolean
+      name:
+        type: string
+      origin:
+        type: string
+      origin_comment:
+        type: string
+      reason:
+        $ref: '#/definitions/response.Reference'
+      rrule:
+        type: string
+      timezone:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/response.Reference'
+      updated:
+        type: integer
+    type: object
+  pbehaviorreason.EditRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  pbehaviorreason.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/response.Reference'
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
+  pbehaviortype.CreateRequest:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        maximum: 100000
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - color
+    - description
+    - icon_name
+    - name
+    - priority
+    - type
+    type: object
+  pbehaviortype.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/response.Reference'
+      color:
+        type: string
+      created:
+        type: integer
+      default:
+        type: boolean
+      description:
+        type: string
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  pbehaviortype.UpdateRequest:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        maximum: 100000
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - color
+    - description
+    - name
+    - priority
+    - type
+    type: object
+  response.Reference:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  types.Coordinates:
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+    - lat
+    - lng
+    type: object
+  types.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value: {}
+    type: object
+  types.StructuredMessage:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  user.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    type: object
+  user.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    - email
+    - enabled
+    - name
+    - roles
+    type: object
+  user.CreateRequest:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      external_id:
+        maxLength: 10000
+        type: string
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      source:
+        maxLength: 10000
+        type: string
+    required:
+    - email
+    - enabled
+    - external_id
+    - name
+    - roles
+    - source
+    type: object
+  user.EditRequest:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    required:
+    - email
+    - enabled
+    - name
+    - roles
+    type: object
+  user.PatchRequest:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  user.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/response.Reference'
+      created:
+        type: integer
+      email:
+        type: string
+      enabled:
+        type: boolean
+      external_id:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/response.Reference'
+        type: array
+      source:
+        type: string
+      updated:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths: {}
+swagger: "2.0"

@@ -197,15 +197,29 @@ services:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}community/engine-pbehavior:${CANOPSIS_IMAGE_TAG}
 
-  api:
+  internalapi:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-internal-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
       - uploadfiles:/opt/canopsis/var/lib
     ports:
       - "8082:8082"
     healthcheck:
-      test: /usr/bin/wget -q -O /dev/null http://localhost:8082/api/v4/template-vars
+      test: /usr/bin/wget -q -O /dev/null http://localhost:8082/internal/template-vars
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 3m
+
+  publicapi:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-public-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
+    volumes:
+      - uploadfiles:/opt/canopsis/var/lib
+    ports:
+      - "8083:8083"
+    healthcheck:
+      test: /usr/bin/wget -q -O /dev/null http://localhost:8083/api/v5
       interval: 30s
       timeout: 30s
       retries: 3
