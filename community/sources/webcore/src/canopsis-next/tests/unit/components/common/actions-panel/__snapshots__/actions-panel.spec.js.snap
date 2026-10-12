@@ -17,44 +17,12 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'x
       icon="delete"
       tooltip="Delete title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'xl' 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with actions correctly. Size 'xl' 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly 1`] = `
 <div
@@ -63,44 +31,12 @@ exports[`actions-panel Renders \`actions-panel\` with default props correctly 1`
   <div
     class="layout align-center"
   >
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with default props correctly 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with default props correctly 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'l' 1`] = `
 <div
@@ -262,44 +198,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inline
       icon="done"
       tooltip="Ack title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions and 3 inlineCount correctly. Size 'xl' 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with three actions, 2 inlineCount and ignoreMediaQuery 1`] = `
 <div
@@ -374,44 +278,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
       icon="done"
       tooltip="Ack title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 1`] = `
 <div
@@ -435,44 +307,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
       icon="done"
       tooltip="Ack title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size l 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 1`] = `
 <div
@@ -496,44 +336,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
       icon="done"
       tooltip="Ack title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size m 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 1`] = `
 <div
@@ -557,44 +365,12 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
       icon="done"
       tooltip="Ack title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size t 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 1`] = `
 <div
@@ -618,41 +394,9 @@ exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCou
       icon="done"
       tooltip="Ack title"
     />
-    <div
-      class="v-menu"
-    >
-      <!---->
-    </div>
-    <button
-      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-      type="button"
-    >
-      <span
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          more_vert
-        </i>
-      </span>
-    </button>
+    <!---->
   </div>
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 2`] = `
-<div
-  class="v-menu__content theme--light menuable__content__active "
-  role="menu"
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 8;"
->
-  <c-list-stub
-    item-text="title"
-    item-value="title"
-    items=""
-    return-object=""
-  />
-</div>
-`;
+exports[`actions-panel Renders \`actions-panel\` with three actions, 3 inlineCount and ignoreMediaQuery correctly. Size xl 2`] = `undefined`;

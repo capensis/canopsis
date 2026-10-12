@@ -51,9 +51,7 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
 `;
 
 exports[`text Renders \`text\` widget settings with default props with changed title 1`] = `
-<widget-settings-stub
-  dirty="true"
->
+<widget-settings-stub>
   <field-title-stub
     name="title"
     value="New title"
