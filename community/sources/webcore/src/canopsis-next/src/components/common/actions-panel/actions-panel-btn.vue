@@ -9,6 +9,7 @@
         :color="action.iconColor"
         :badge-value="action.badgeValue"
         :badge-tooltip="action.badgeTooltip"
+        :small="small"
         v-on="on"
       />
     </template>
@@ -31,6 +32,7 @@
     :color="action.iconColor"
     :badge-value="action.badgeValue"
     :badge-tooltip="action.badgeTooltip"
+    :small="small"
     @click="action.method"
   />
 </template>
@@ -41,6 +43,10 @@ export default {
     action: {
       type: Object,
       required: true,
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
 };
