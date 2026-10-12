@@ -5,7 +5,6 @@
         :model-value="form.ticket_system_name"
         :label="$t('common.systemName')"
         :name="systemNameFieldName"
-        autofocus
         @update:model-value="updateField('ticket_system_name', $event)"
       />
     </c-form-block-row>
@@ -16,6 +15,7 @@
         :name="ticketFieldName"
         :ticket-formats="ticketFormats"
         :validation-rules="ticketValidationRules"
+        autofocus
         required
         @update:value="updateField('ticket', $event)"
       />

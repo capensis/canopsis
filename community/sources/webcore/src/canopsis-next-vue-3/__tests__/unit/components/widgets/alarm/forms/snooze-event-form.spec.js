@@ -16,6 +16,13 @@ const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub
 describe('snooze-event-form', () => {
   const factory = generateShallowRenderer(SnoozeEventForm, { stubs });
 
+  test('Autofocuses the Note field', () => {
+    const wrapper = factory();
+
+    expect(selectDurationField(wrapper).attributes()).not.toHaveProperty('autofocus');
+    expect(selectDescriptionField(wrapper).attributes()).toHaveProperty('autofocus');
+  });
+
   test('Duration changed after trigger duration field', () => {
     const form = {
       duration: {

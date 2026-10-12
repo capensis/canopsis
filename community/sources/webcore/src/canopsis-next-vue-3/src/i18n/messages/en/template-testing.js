@@ -129,6 +129,7 @@ export default {
     lastCommentMessage: 'Last comment message',
     lastCommentMessages: 'Last comment messages',
     lastname: 'Lastname',
+    metaAlarmRuleNames: 'Meta alarm rule names',
     name: 'Name',
     names: 'Names',
     numberOfAcknowledgedAlarms: 'Number of acknowledged alarms',

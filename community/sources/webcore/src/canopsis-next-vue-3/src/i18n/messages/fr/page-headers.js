@@ -1,4 +1,4 @@
-import { GROUPED_USER_PERMISSIONS_KEYS, USER_PERMISSIONS } from '@/constants';
+import { GROUPED_USER_PERMISSIONS_KEYS, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
 export default {
   hideMessage: 'J\'ai compris! Cacher',
@@ -97,6 +97,11 @@ export default {
   [USER_PERMISSIONS.technical.user]: {
     title: 'Utilisateurs',
     message: 'Gestion des utilisateurs de Canopsis',
+  },
+  [ROUTES_NAMES.adminApiAccessTokens]: {
+    title: 'Jetons d\'accès API',
+    message:
+      'Gérez les liens de vues partagées et les jetons personnels utilisés pour authentifier les requêtes vers l\'API publique.',
   },
 
   /**

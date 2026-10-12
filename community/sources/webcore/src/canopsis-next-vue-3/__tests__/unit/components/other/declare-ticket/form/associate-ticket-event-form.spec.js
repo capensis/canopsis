@@ -40,6 +40,13 @@ describe('associate-ticket-event-form', () => {
 
   const factory = generateShallowRenderer(AssociateTicketEventForm, { stubs });
 
+  test('Autofocuses the Ticket ID field', () => {
+    const wrapper = factory({ propsData: { form } });
+
+    expect(selectSystemNameField(wrapper).attributes()).not.toHaveProperty('autofocus');
+    expect(selectDeclareTicketRuleTicketIdField(wrapper).attributes()).toHaveProperty('autofocus');
+  });
+
   test('System name changed after trigger name field', () => {
     const wrapper = factory({
       propsData: {

@@ -131,6 +131,7 @@ export default {
     lastCommentMessage: 'Message du dernier commentaire',
     lastCommentMessages: 'Messages du dernier commentaire',
     lastname: 'Nom de famille',
+    metaAlarmRuleNames: 'Noms de règles de méta-alarme',
     name: 'Nom',
     names: 'Noms',
     numberOfAcknowledgedAlarms: 'Nombre d\'alarmes acquittées',

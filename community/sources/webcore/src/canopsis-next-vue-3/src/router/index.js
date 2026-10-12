@@ -18,6 +18,7 @@ import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/r
 
 const AdminRights = () => import('@/views/admin/rights-page.vue');
 const AdminUsers = () => import('@/views/admin/users-page.vue');
+const AdminApiAccessTokens = () => import('@/views/admin/api-access-tokens-page.vue');
 const AdminRoles = () => import('@/views/admin/roles-page.vue');
 const AdminBroadcastMessages = () => import('@/views/admin/broadcast-messages-page.vue');
 const AdminPlaylists = () => import('@/views/admin/playlists-page.vue');
@@ -133,6 +134,12 @@ const routes = [
       },
     }),
     component: AdminUsers,
+  },
+  {
+    path: ROUTES.adminApiAccessTokens,
+    name: ROUTES_NAMES.adminApiAccessTokens,
+    meta: protectedRoute(),
+    component: AdminApiAccessTokens,
   },
   {
     path: ROUTES.adminRoles,

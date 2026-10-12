@@ -54,14 +54,15 @@ export default {
         search: '',
       },
       onUpdate: fetchQuery => fetchShareTokensList({
-          params: getQueryForList(fetchQuery),
-        }),
+        params: getQueryForList(fetchQuery),
+      }),
     });
 
     const showRemoveShareTokenModal = (shareToken) => {
       modals.show({
         name: MODALS.confirmation,
         config: {
+          text: t('shareToken.deleteConfirmation', { name: shareToken.description }),
           action: async () => {
             await removeShareToken({ id: shareToken._id });
 
@@ -77,6 +78,7 @@ export default {
       modals.show({
         name: MODALS.confirmation,
         config: {
+          text: t('shareToken.deleteSelectedConfirmation', { count: selected.length }),
           action: async () => {
             await Promise.all(selected.map(({ _id }) => removeShareToken({ id: _id })));
 

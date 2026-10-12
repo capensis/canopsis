@@ -32,15 +32,23 @@
       {{ dateToString(item.accessed, notAvailableText) }}
     </template>
 
+    <template #roles="{ item }">
+      <div class="d-flex flex-wrap ga-1">
+        <v-chip v-for="role in item.roles" :key="role._id">
+          {{ role.name }}
+        </v-chip>
+      </div>
+    </template>
+
     <template #actions="{ item }">
-      <c-layout>
+      <div class="d-flex">
         <c-action-btn
           v-if="removable"
           :tooltip="t('shareToken.revokeToken')"
           type="delete"
           @click.stop="$emit('remove', item)"
         />
-      </c-layout>
+      </div>
     </template>
   </c-advanced-data-table>
 </template>
@@ -84,12 +92,7 @@ export default {
     const headers = computed(() => {
       const items = [
         {
-          text: t('common.id'),
-          value: '_id',
-          sortable: false,
-        },
-        {
-          text: t('common.description'),
+          text: t('common.name'),
           value: 'description',
         },
         {
@@ -100,10 +103,11 @@ export default {
         {
           text: t('common.user'),
           value: 'user.display_name',
+          sortable: false,
         },
         {
-          text: t('common.role'),
-          value: 'role.name',
+          text: t('common.role', 2),
+          value: 'roles',
           sortable: false,
         },
         {
@@ -111,11 +115,11 @@ export default {
           value: 'created',
         },
         {
-          text: t('common.expired'),
+          text: t('apiToken.expirationDate'),
           value: 'expired',
         },
         {
-          text: t('common.accessed'),
+          text: t('apiToken.lastUsedDate'),
           value: 'accessed',
         },
       ];

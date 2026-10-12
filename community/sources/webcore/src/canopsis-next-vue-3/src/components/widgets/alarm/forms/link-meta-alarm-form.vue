@@ -5,6 +5,7 @@
       :label="t('modals.linkToMetaAlarm.fields.metaAlarm')"
       :autocomplete="false"
       name="metaAlarm"
+      autofocus
       required
       addable
       return-object

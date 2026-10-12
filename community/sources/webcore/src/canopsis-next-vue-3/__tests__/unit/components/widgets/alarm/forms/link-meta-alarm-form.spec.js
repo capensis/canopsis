@@ -29,6 +29,20 @@ const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 describe('link-meta-alarm-form', () => {
   const factory = generateShallowRenderer(LinkMetaAlarmForm, { stubs });
 
+  test('Autofocuses the meta alarm field', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          metaAlarm: null,
+          comment: '',
+          auto_resolve: false,
+        },
+      },
+    });
+
+    expect(selectMetaAlarmField(wrapper).attributes()).toHaveProperty('autofocus');
+  });
+
   test('Meta alarm field returns the selected meta alarm object', () => {
     const wrapper = factory({
       propsData: {
