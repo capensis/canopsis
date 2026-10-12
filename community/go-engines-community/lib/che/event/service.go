@@ -52,9 +52,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
-			EventMetric: techmetrics.EventMetric{
-				EventType: event.EventType,
-			},
+			EventType: event.EventType,
 		}
 
 		if event.EventType == types.EventTypeRecomputeEntityService {

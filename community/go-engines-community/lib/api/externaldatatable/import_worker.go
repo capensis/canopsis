@@ -857,10 +857,8 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 			columns = make([]ColumnConfig, len(record))
 			for idx, r := range record {
 				columns[idx] = ColumnConfig{
-					BaseColumnConfig: BaseColumnConfig{
-						Name: r,
-						Type: externaldata.ColumnTypeString,
-					},
+					Name: r,
+					Type: externaldata.ColumnTypeString,
 				}
 			}
 
@@ -940,10 +938,8 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 			columnConfigs = make([]ColumnConfig, len(record))
 			for idx, r := range record {
 				columnConfigs[idx] = ColumnConfig{
-					BaseColumnConfig: BaseColumnConfig{
-						Name: r,
-						Type: externaldata.ColumnTypeString,
-					},
+					Name: r,
+					Type: externaldata.ColumnTypeString,
 				}
 
 				columnsWithID[idx*sqlColumnsForCsvColumn+1] = r + "_initial_value"
@@ -1161,8 +1157,7 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 		if _, err := pgPool.Exec(ctx, "ALTER TABLE "+tableName+" ALTER COLUMN "+pgx.Identifier{cfg.Name + "_transformed_value"}.Sanitize()+" TYPE "+columnType+" USING NULL"); err != nil {
 			// keep this check despite having validation in syncColumnConfigsOrder func,
 			// db might unexpectedly don't have this column.
-			var pgErr *pgconn.PgError
-			if errors.As(err, &pgErr) {
+			if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 				if pgErr.Code == sqlUndefinedColumnCode {
 					return nil, fmt.Errorf("no such column %q", cfg.Name)
 				}

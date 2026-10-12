@@ -125,9 +125,10 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					s.sendEventToFifoAck(ctx, fifoAckEvent)
 				}
 
-				eventMetric := techmetrics.ActionEventMetric{}
-				eventMetric.Timestamp = result.StartEventProcessing
-				eventMetric.EventType = fifoAckEvent.EventType
+				eventMetric := techmetrics.ActionEventMetric{
+					Timestamp: result.StartEventProcessing,
+					EventType: fifoAckEvent.EventType,
+				}
 				eventMetric.Interval = time.Since(eventMetric.Timestamp)
 				eventMetric.ExecutedRules = result.ExecutedRuleCount
 				eventMetric.ExecutedWebhooks = result.ExecutedWebhookCount
@@ -331,11 +332,9 @@ func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
 func (s *service) sendCpsEventMetric(event types.Event) {
 	if event.ReceivedTimestamp.Time.Unix() > 0 {
 		eventMetric := techmetrics.CpsEventMetric{
-			EventMetric: techmetrics.EventMetric{
-				Timestamp: event.ReceivedTimestamp.Time,
-				EventType: event.EventType,
-				Interval:  time.Since(event.ReceivedTimestamp.Time),
-			},
+			Timestamp: event.ReceivedTimestamp.Time,
+			EventType: event.EventType,
+			Interval:  time.Since(event.ReceivedTimestamp.Time),
 		}
 
 		if event.EventType == types.EventTypeCheck {

@@ -37,9 +37,9 @@ func PrintVersionInfo() {
 }
 
 func GetBuildInfo() BuildInfo {
-	bi := BuildInfo{}
-
-	bi.Version = Version
+	bi := BuildInfo{
+		Version: Version,
+	}
 	if bi.Version == "" {
 		bi.Version = "development"
 	}

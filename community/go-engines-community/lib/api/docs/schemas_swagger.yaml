@@ -1707,6 +1707,8 @@ definitions:
         properties:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
+          delete_token_usage_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       metrics:
         properties:
