@@ -1,6 +1,13 @@
 import { THEME_FONT_SIZES } from '@/constants/theme';
 
 export default {
+  tabs: {
+    mainColors: 'Main colors',
+    widgetTable: 'Widget and table colors',
+    severity: 'Severity colors',
+    fontSize: 'Font size',
+    extraDetails: 'Extra details',
+  },
   themes: 'Themes',
   exampleText: 'Hello world!',
   defaultTheme: 'The theme is default, you cannot to edit theme!',
@@ -45,17 +52,33 @@ export default {
       [THEME_FONT_SIZES.large]: 'Large',
     },
   },
+  widget: {
+    title: 'Widget',
+    titleBackground: 'Widget title background',
+    contentBackground: 'Widget content background',
+    border: 'Set border',
+    borderColor: 'Widget border color',
+    borderRadius: 'Radius (px)',
+  },
+  preview: {
+    title: 'Preview',
+    widgetTitle: 'Widget title',
+    header: 'Header',
+    tableRow: 'Table row',
+    secondTableRow: 'Second table row',
+    hoveredRow: 'Hovered row',
+  },
   table: {
-    title: 'Table settings',
+    title: 'Table',
 
-    background: 'Table background',
+    background: 'Table header',
 
     rowColor: 'Table row',
 
     shiftRowEnable: 'Shift table background colors',
     shiftRowEnableHelpText: 'Switcher to enable/disable color shifts for table rows',
 
-    shiftRowColor: 'Second table row background',
+    shiftRowColor: 'Second table row',
 
     hoverRowEnable: 'Change row color on hover',
 
@@ -71,5 +94,15 @@ export default {
     major: 'Major',
 
     critical: 'Critical',
+  },
+  extraDetails: {
+    ack: 'Ack / fast ack',
+    canceled: 'Canceled',
+    children: 'Children',
+    parent: 'Parent',
+    comment: 'Comment',
+    snooze: 'Snooze',
+    tickets: 'Tickets',
+    cancel_delay: 'Cancel delay',
   },
 };

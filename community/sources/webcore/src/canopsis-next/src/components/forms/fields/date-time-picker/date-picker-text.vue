@@ -1,7 +1,7 @@
 <template>
-  <v-text-field
+  <c-text-field
     :class="contentClass"
-    :value="value | date(format)"
+    :model-value="textValue"
     :label="label"
     :hide-details="hideDetails"
     disabled
@@ -10,11 +10,12 @@
 </template>
 
 <script>
+import { convertDateToString } from '@/helpers/date/date';
 
 export default {
   props: {
     value: {
-      type: [String, Number],
+      type: [String, Number, Date],
       default: null,
     },
     label: {
@@ -36,6 +37,11 @@ export default {
     contentClass: {
       type: [String, Object],
       required: false,
+    },
+  },
+  computed: {
+    textValue() {
+      return convertDateToString(this.value, this.format);
     },
   },
 };

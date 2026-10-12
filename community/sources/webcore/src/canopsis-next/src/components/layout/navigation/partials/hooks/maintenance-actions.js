@@ -4,21 +4,15 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useInfo } from '@/hooks/store/modules/info';
 
-/**
- * Hook for maintenance mode actions
- * Provides methods to enable, disable, and toggle maintenance mode
- *
- * @returns {Object} An object containing maintenance-related methods and state
- */
 export const useMaintenanceActions = () => {
-  const { t } = useI18n();
   const modals = useModals();
+  const { t } = useI18n();
   const { maintenance, updateMaintenanceMode, fetchAppInfo } = useInfo();
 
   /**
-   * Enable maintenance mode
+   * Enable maintenance mode.
    *
-   * @param {Object} form - Form data for maintenance mode
+   * @param {Object} form - Form data for maintenance mode.
    */
   const enableMaintenanceMode = async (form) => {
     await updateMaintenanceMode({
@@ -32,20 +26,22 @@ export const useMaintenanceActions = () => {
   };
 
   /**
-   * Disable maintenance mode
+   * Disable maintenance mode.
    */
   const disableMaintenanceMode = async () => {
     await updateMaintenanceMode({
-      data: { enabled: false },
+      data: {
+        enabled: false,
+      },
     });
 
     await fetchAppInfo();
   };
 
   /**
-   * Show modal to create maintenance mode
+   * Show modal to create maintenance mode.
    */
-  const showCreateMaintenanceModeModal = () => {
+  const showCreateMaintenanceModeModal = () =>
     modals.show({
       name: MODALS.createMaintenance,
       config: {
@@ -53,12 +49,11 @@ export const useMaintenanceActions = () => {
         warningText: t('maintenance.logoutWarning'),
       },
     });
-  };
 
   /**
-   * Show confirmation modal to leave maintenance mode
+   * Show confirmation modal to leave maintenance mode.
    */
-  const showConfirmationLeaveMaintenanceMode = () => {
+  const showConfirmationLeaveMaintenanceMode = () =>
     modals.show({
       name: MODALS.confirmation,
       config: {
@@ -67,18 +62,12 @@ export const useMaintenanceActions = () => {
         action: disableMaintenanceMode,
       },
     });
-  };
 
   /**
-   * Toggle maintenance mode (show appropriate modal)
+   * Toggle maintenance mode.
    */
-  const showToggleMaintenanceModeModal = () => {
-    if (maintenance.value) {
-      showConfirmationLeaveMaintenanceMode();
-    } else {
-      showCreateMaintenanceModeModal();
-    }
-  };
+  const showToggleMaintenanceModeModal = () =>
+    maintenance.value ? showConfirmationLeaveMaintenanceMode() : showCreateMaintenanceModeModal();
 
   return {
     maintenance,

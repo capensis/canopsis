@@ -1,15 +1,24 @@
+<template>
+  <div :style="{ width: `${width}px`, height: `${height}px` }" class="test-suite-status-pie-chart">
+    <pie-chart
+      :labels="chartData.labels"
+      :datasets="chartData.datasets"
+      :options="mergedOptions"
+    />
+  </div>
+</template>
+
 <script>
 import { merge } from 'lodash';
 
 import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
-import { Pie } from '@/externals/vue-chart/components';
+import PieChart from '@/components/common/chart/pie-chart.vue';
 
 export default {
-  extends: Pie,
-  props: {
-    ...Pie.props,
+  components: { PieChart },
 
+  props: {
     statuses: {
       type: Object,
       required: true,
@@ -27,6 +36,7 @@ export default {
       default: 160,
     },
   },
+
   computed: {
     mergedOptions() {
       return merge({
@@ -38,6 +48,9 @@ export default {
             labels: {
               boxWidth: 20,
             },
+          },
+          datalabels: {
+            display: false,
           },
         },
       }, this.options);
@@ -65,15 +78,13 @@ export default {
       };
     },
   },
-  watch: {
-    chartData(value, oldValue) {
-      if (value !== oldValue) {
-        this.renderChart(value, this.mergedOptions);
-      }
-    },
-  },
-  mounted() {
-    this.renderChart(this.chartData, this.mergedOptions);
-  },
 };
 </script>
+
+<style lang="scss" scoped>
+.test-suite-status-pie-chart {
+  :deep(.pie-chart__canvas) {
+    height: 100%;
+  }
+}
+</style>

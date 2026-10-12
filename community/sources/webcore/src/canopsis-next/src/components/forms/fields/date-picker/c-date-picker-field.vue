@@ -5,64 +5,61 @@
     :disabled="disabled"
     content-class="date-picker"
     transition="slide-y-transition"
-    max-width="290px"
-    right
+    max-width="360"
+    location="bottom end"
   >
-    <template #activator="{ on }">
-      <v-text-field
+    <template #activator="{ props: activatorProps }">
+      <c-text-field
+        v-bind="activatorProps"
         :class="contentClass"
-        :value="value | date(format)"
+        :model-value="textValue"
         :label="label"
         :placeholder="placeholder"
         :error="error"
-        :error-messages="errorMessages"
         :name="name"
         :disabled="disabled"
         :hide-details="hideDetails"
-        :append-icon="clearable ? 'close' : ''"
+        :append-inner-icon="clearable ? 'close' : ''"
         :readonly="!disabled"
-        v-on="on"
-        @click:append="clear"
+        @click:append-inner="clear"
       >
-        <template #append="">
+        <template v-if="$slots['append-inner']" #append-inner>
+          <slot name="append-inner" />
+        </template>
+        <template v-if="$slots.append" #append>
           <slot name="append" />
         </template>
-      </v-text-field>
+      </c-text-field>
     </template>
+
     <v-date-picker
-      v-field="value"
-      :opened="opened"
+      :model-value="pickerValue"
       :color="color"
+      :header-color="headerColor"
+      :control-variant="controlVariant"
       :min="min"
       :max="max"
       :allowed-dates="allowedDates"
+      :hide-header="hideHeader"
       class="date-picker"
-      @change="change"
+      @update:model-value="updateDate"
     />
   </v-menu>
 </template>
 
 <script>
+import { DATETIME_FORMATS } from '@/constants';
+
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
+
 import { formBaseMixin } from '@/mixins/form';
 
-/**
- * Date picker field component
- */
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
-  inject: ['$validator'],
+  emits: ['update:value', 'change'],
   mixins: [formBaseMixin],
   props: {
     value: {
-      type: [String, Number],
+      type: [String, Number, Date],
       default: null,
     },
     label: {
@@ -75,11 +72,19 @@ export default {
     },
     name: {
       type: String,
-      default: null,
+      default: '',
     },
     color: {
       type: String,
       default: 'primary',
+    },
+    headerColor: {
+      type: String,
+      default: 'primary',
+    },
+    controlVariant: {
+      type: String,
+      default: undefined,
     },
     format: {
       type: String,
@@ -98,11 +103,11 @@ export default {
       default: false,
     },
     min: {
-      type: [String, Number],
+      type: [String, Number, Date],
       required: false,
     },
     max: {
-      type: [String, Number],
+      type: [String, Number, Date],
       required: false,
     },
     allowedDates: {
@@ -124,12 +129,16 @@ export default {
     };
   },
   computed: {
-    errorMessages() {
-      if (this.$validator && this.errors && this.name) {
-        return this.errors.collect(this.name);
-      }
+    hideHeader() {
+      return this.controlVariant !== 'modal';
+    },
 
-      return [];
+    textValue() {
+      return convertDateToString(this.value, this.format);
+    },
+
+    pickerValue() {
+      return this.value ? convertDateToDateObject(this.value, DATETIME_FORMATS.datePicker) : null;
     },
   },
   methods: {
@@ -137,9 +146,12 @@ export default {
       this.updateModel(null);
     },
 
-    change(value) {
-      this.$emit('change', value);
+    updateDate(value) {
+      const date = value instanceof Date ? value : convertDateToDateObject(value);
+      const preparedValue = convertDateToString(date, DATETIME_FORMATS.datePicker, null);
 
+      this.updateModel(preparedValue);
+      this.$emit('change', preparedValue);
       this.opened = false;
     },
   },
@@ -147,12 +159,34 @@ export default {
 </script>
 
 <style lang="scss">
-  .date-picker {
-    .v-picker__body,
-    .v-time-picker-clock__item,
-    .v-time-picker-clock__item span,
-    .v-time-picker-clock__hand {
-      z-index: inherit;
-    }
+.date-picker {
+  .v-date-picker-controls {
+    width: 100%;
+    padding: 0;
   }
+
+  .v-date-picker-month {
+    width: 100%;
+  }
+
+  .v-date-picker-month__day {
+    height: 36px;
+  }
+
+  .v-date-picker-month__day .v-btn.v-date-picker-month__day-btn {
+    --v-btn-height: 32px;
+    --v-btn-size: 0.875rem;
+
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .v-picker__body,
+  .v-time-picker-clock__item,
+  .v-time-picker-clock__item span,
+  .v-time-picker-clock__hand {
+    z-index: inherit;
+  }
+}
 </style>

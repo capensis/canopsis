@@ -1,29 +1,31 @@
 <template>
   <pbehavior-general-form
-    v-field="value"
+    :form="modelValue"
     :name="name"
-    :name-label="$t('common.namePrefix')"
-    :name-tooltip="$t('scenario.tooltips.pbehaviorActionsNamePrefix')"
+    :name-label="t('common.namePrefix')"
+    :name-tooltip="t('scenario.tooltips.pbehaviorActionsNamePrefix')"
     :depth="depth"
+    with-start-on-trigger
     block-child
     no-comments
-    with-start-on-trigger
+    @update:form="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
+import { useI18n } from '@/hooks/i18n';
+
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
-  components: { PbehaviorGeneralForm },
-  model: {
-    prop: 'value',
-    event: 'input',
+  components: {
+    PbehaviorGeneralForm,
   },
+
   props: {
-    value: {
+    modelValue: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     name: {
       type: String,
@@ -33,6 +35,16 @@ export default {
       type: Number,
       default: 0,
     },
+  },
+
+  emits: ['update:modelValue'],
+
+  setup() {
+    const { t } = useI18n();
+
+    return {
+      t,
+    };
   },
 };
 </script>

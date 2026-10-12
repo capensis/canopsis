@@ -1,12 +1,19 @@
-import { saveAs } from 'file-saver';
-
 /**
  * Save data in file
  *
  * @param {Blob} blob
  * @param {string} name
  */
-export const saveFile = (blob, name) => saveAs(blob, name);
+export const saveFile = (data, filename) => {
+  const blob = data instanceof Blob ? data : new Blob([data]);
+  const link = document.createElement('a');
+
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+
+  URL.revokeObjectURL(link.href);
+};
 
 /**
  * Save file as json
@@ -23,11 +30,11 @@ export const saveJsonFile = (data, name) => {
 /**
  * Save file as csv
  *
- * @param {string} string
+ * @param {string|Blob} data
  * @param {string} name
  */
-export const saveCsvFile = (string, name) => {
-  const blob = new Blob([string], { type: 'text/csv;charset=utf-8;' });
+export const saveCsvFile = (data, name) => {
+  const blob = data instanceof Blob ? data : new Blob([data], { type: 'text/csv;charset=utf-8;' });
 
   return saveFile(blob, `${name}.csv`);
 };

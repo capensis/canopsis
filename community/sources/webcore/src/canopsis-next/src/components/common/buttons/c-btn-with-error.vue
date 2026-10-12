@@ -1,23 +1,14 @@
 <template>
-  <v-layout class="gap-2" align-center>
-    <v-btn
-      :color="error ? 'error' : 'primary'"
-      v-bind="$attrs"
-      @click.prevent="$emit('click', $event)"
-    >
-      <slot>
-        {{ $t('common.add') }}
-      </slot>
+  <c-layout gap="2" align="center" class="c-btn-with-error">
+    <v-btn v-bind="$attrs" :color="error ? 'error' : 'primary'" class="c-btn-with-error__button">
+      <slot />
     </v-btn>
     <v-fade-transition>
-      <span
-        v-show="error"
-        class="error--text"
-      >
+      <span v-show="error" class="c-btn-with-error__message text-error">
         {{ error }}
       </span>
     </v-fade-transition>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -31,3 +22,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-btn-with-error {
+  min-width: 0;
+
+  &__button {
+    flex: 0 0 auto;
+  }
+
+  &__message {
+    min-width: 0;
+  }
+}
+</style>

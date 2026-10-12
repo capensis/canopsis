@@ -1,44 +1,33 @@
 <template>
-  <div
-    :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }, themeClasses]"
-    class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active"
-  >
-    <div
-      class="v-input__control"
-      @click="$emit('click', $event)"
-    >
-      <div class="v-input__slot">
-        <div class="v-text-field__slot" @click="wrapperClickHandler">
-          <label
-            :class="[{ 'v-label--active': value }, themeClasses]"
-            class="v-label"
-          >{{ label }}</label>
-          <c-compiled-template
-            :template="value"
-            :class="{ 'v-text-field--input__disabled': disabled }"
-          />
-        </div>
-      </div>
-      <div
-        v-if="!hideDetails"
-        class="v-text-field__details"
+  <div class="text-editor-blurred" @click="$emit('click', $event)">
+    <v-input :error-messages="errorMessages" :hide-details="hideDetails">
+      <v-field
+        :label="label"
+        :dirty="Boolean(value)"
+        :disabled="disabled"
+        :error="errorMessages.length > 0"
+        variant="filled"
+        active
       >
-        <v-messages
-          :value="errorMessages"
-          color="error"
-        />
-      </div>
-    </div>
+        <template #default="{ props: fieldProps }">
+          <div v-bind="fieldProps" @click="wrapperClickHandler">
+            <c-compiled-template
+              :template="value"
+              :class="{ 'text-editor-blurred__disabled': disabled }"
+            />
+          </div>
+        </template>
+      </v-field>
+    </v-input>
   </div>
 </template>
 
 <script>
-import Themeable from 'vuetify/lib/mixins/themeable';
-
 import { MODALS } from '@/constants';
 
+import { useModals } from '@/hooks/modals';
+
 export default {
-  mixins: [Themeable], // TODO: rewrite it to composition in the future
   props: {
     value: {
       type: String,
@@ -61,53 +50,53 @@ export default {
       default: () => [],
     },
   },
-  methods: {
-    wrapperClickHandler(e) {
-      if (e.target.tagName !== 'IMG') {
+
+  emits: ['click'],
+
+  setup() {
+    const modals = useModals();
+
+    const wrapperClickHandler = (event) => {
+      if (event.target.tagName !== 'IMG') {
         return;
       }
 
-      e.preventDefault();
-      e.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
-      this.$modals.show({
+      modals.show({
         name: MODALS.imageViewer,
         config: {
-          src: e.target.getAttribute('src'),
+          src: event.target.getAttribute('src'),
         },
       });
-    },
+    };
+
+    return {
+      wrapperClickHandler,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.v-label {
-  left: 0;
-  right: auto;
-  position: absolute;
-}
-
-.v-text-field {
-  padding-top: 28px !important;
-
-  &__slot {
+.text-editor-blurred {
+  :deep(.v-field__input) {
     min-height: 150px;
-    max-width: 100%;
-
-    & ::v-deep img {
-      cursor: pointer !important;
-    }
+    align-items: flex-start;
+    overflow: auto;
   }
 
-  &--input {
-    &__disabled {
-      color: rgba(0, 0, 0, 0.38);
+  :deep(img) {
+    cursor: pointer !important;
+  }
+}
 
-      & ::v-deep img {
-        pointer-events: all !important;
-      }
-    }
+.text-editor-blurred__disabled {
+  color: rgba(var(--v-theme-on-surface), 0.38);
+
+  :deep(img) {
+    pointer-events: all !important;
   }
 }
 </style>

@@ -1,57 +1,46 @@
 <template>
   <div>
     <c-name-field
-      v-field="form.name"
+      v-model="nameField"
       :disabled="disabledCommon"
       required
       autofocus
     />
 
     <c-form-block>
-      <c-form-block-row :label="$t('remediation.instruction.type')" indented>
-        <c-instruction-type-field
-          v-field="form.type"
-          :disabled="disabled || !isNew"
-        />
+      <c-form-block-row :label="t('remediation.instruction.type')">
+        <c-instruction-type-field v-model="typeField" :disabled="disabled || !isNew" />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.description')">
-        <c-description-field
-          v-field="form.description"
-          :disabled="disabledCommon"
-          required
-        />
+      <c-form-block-row :label="t('common.description')" indented>
+        <c-description-field v-model="descriptionField" :disabled="disabledCommon" required />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('remediation.instruction.timeoutAfterExecution')">
+      <c-form-block-row :label="t('remediation.instruction.timeoutAfterExecution')">
         <c-duration-field
-          v-field="form.timeout_after_execution"
-          :label="$t('remediation.instruction.timeoutAfterExecution')"
-          :units-label="$t('common.unit')"
+          v-model:duration="timeoutAfterExecutionField"
+          :label="t('remediation.instruction.timeoutAfterExecution')"
+          :units-label="t('common.unit')"
           :disabled="disabled"
           :autofocus="disabledCommon"
           name="timeout_after_execution"
           required
         />
-        <c-priority-field
-          v-if="isAutoType"
-          v-field="form.priority"
-          :disabled="disabled"
-        />
+        <c-priority-field v-if="isAutoType" v-model="priorityField" :disabled="disabled" />
       </c-form-block-row>
 
-      <c-form-block-row v-if="isAutoType" :label="$t('remediation.instruction.retryEnabled')">
+      <c-form-block-row v-if="isAutoType" :label="t('remediation.instruction.retryEnabled')">
         <c-enabled-field
-          :value="form.retry_enabled"
-          :label="$t('remediation.instruction.retryEnabled')"
+          :model-value="retryEnabledField"
+          :label="t('remediation.instruction.retryEnabled')"
           :disabled="disabled"
-          @input="updateRetryEnabled"
+          @update:model-value="updateRetryEnabled"
         />
         <v-expand-transition>
           <c-number-field
-            v-if="form.retry_enabled"
-            v-field="form.retry_count"
-            :label="$t('remediation.instruction.retryCount')"
+            v-if="retryEnabledField"
+            v-model:value="retryCountField"
+            :label="t('remediation.instruction.retryCount')"
             :min="1"
             :max="100"
             name="retry_count"
@@ -60,20 +49,21 @@
         </v-expand-transition>
       </c-form-block-row>
 
-      <c-form-block-row v-if="isAutoType" :label="$tc('common.trigger', 2)">
+      <c-form-block-row v-if="isAutoType" :label="t('common.trigger', 2)">
         <c-triggers-field
-          v-field="form.triggers"
+          v-model="triggersField"
           :types="availableTriggers"
+          required
           with-additional-values
         />
 
         <c-enabled-field
-          v-field="form.enabled_repeat_triggers"
-          :label="$t('remediation.instruction.enabledRepeatTrigger')"
+          v-model="enabledRepeatTriggersField"
+          :label="t('remediation.instruction.enabledRepeatTrigger')"
         >
           <template #append>
             <c-help-icon
-              :text="$t('remediation.instruction.tooltips.enabledRepeatTriggerTooltip')"
+              :text="t('remediation.instruction.tooltips.enabledRepeatTriggerTooltip')"
               icon="help"
               color="grey darken-1"
               top
@@ -83,24 +73,38 @@
 
         <v-expand-transition>
           <c-triggers-field
-            v-if="form.enabled_repeat_triggers"
-            v-field="form.repeat_triggers"
+            v-if="enabledRepeatTriggersField"
+            v-model="repeatTriggersField"
             :types="availableRepeatTriggers"
-            :label="$t('remediation.instruction.repeatTriggers')"
+            :label="t('remediation.instruction.repeatTriggers')"
             name="repeat_triggers"
             translation-key-prefix="common.repeatTriggers"
+            required
           />
         </v-expand-transition>
       </c-form-block-row>
 
-      <c-form-block-row v-if="!disabledCommon" :label="$t('remediation.instruction.requestApproval')">
+      <c-form-block-row
+        v-if="!disabledCommon"
+        :label="t('remediation.instruction.requestApproval')"
+        align-center
+      >
         <remediation-instruction-approval-form
-          v-field="form.approval"
           :disabled="disabled"
           :required="requiredApprove"
         />
       </c-form-block-row>
     </c-form-block>
+
+    <template v-if="withAdditional">
+      <remediation-instruction-steps-form
+        v-if="isManualType"
+        :disabled="disabled"
+        :template-vars="templateVars"
+        class="mt-3"
+      />
+      <remediation-instruction-jobs-form v-else :disabled="disabled" class="mt-3" />
+    </template>
   </div>
 </template>
 
@@ -112,25 +116,28 @@ import {
   REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES,
 } from '@/constants';
 
-import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/entities/remediation/instruction/form';
+import {
+  isInstructionTypeAuto,
+  isInstructionTypeManual,
+} from '@/helpers/entities/remediation/instruction/form';
 
-import { useModelField } from '@/hooks/form/model-field';
+import { useFormContext, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';
+import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
+import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     RemediationInstructionApprovalForm,
-  },
-  model: {
-    prop: 'form',
-    event: 'input',
+    RemediationInstructionJobsForm,
+    RemediationInstructionStepsForm,
   },
   props: {
     form: {
       type: Object,
-      default: () => ({}),
+      required: false,
     },
     disabled: {
       type: Boolean,
@@ -152,15 +159,48 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    withAdditional: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const availableTriggers = REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
     const availableRepeatTriggers = REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES;
 
-    const { updateModel } = useModelField(props, emit);
+    const { t } = useI18n();
+    const formContext = useFormContext();
 
-    const isAutoType = computed(() => isInstructionTypeAuto(props.form?.type));
-    const isManualSimplified = computed(() => isInstructionTypeSimpleManual(props.form?.type));
+    if (props.form) {
+      formContext.reset(props.form);
+    }
+
+    const {
+      nameField,
+      typeField,
+      descriptionField,
+      timeoutAfterExecutionField,
+      priorityField,
+      retryEnabledField,
+      retryCountField,
+      triggersField,
+      enabledRepeatTriggersField,
+      repeatTriggersField,
+    } = useFormModels({
+      nameField: 'name',
+      typeField: 'type',
+      descriptionField: 'description',
+      timeoutAfterExecutionField: 'timeout_after_execution',
+      priorityField: 'priority',
+      retryEnabledField: 'retry_enabled',
+      retryCountField: 'retry_count',
+      triggersField: 'triggers',
+      enabledRepeatTriggersField: 'enabled_repeat_triggers',
+      repeatTriggersField: 'repeat_triggers',
+    });
+
+    const isAutoType = computed(() => isInstructionTypeAuto(typeField.value));
+    const isManualType = computed(() => isInstructionTypeManual(typeField.value));
 
     /**
      * Updates the retry enabled field and sets initial retry count when enabled
@@ -168,22 +208,31 @@ export default {
      * @param {boolean} value - The new retry enabled state
      */
     const updateRetryEnabled = (value) => {
-      const newForm = { ...props.form, retry_enabled: value };
+      retryEnabledField.value = value;
 
       if (value) {
-        newForm.retry_count = 1;
+        retryCountField.value = 1;
       }
-
-      updateModel(newForm);
     };
 
     return {
+      t,
       availableTriggers,
       availableRepeatTriggers,
 
       isAutoType,
-      isManualSimplified,
+      isManualType,
 
+      nameField,
+      typeField,
+      descriptionField,
+      timeoutAfterExecutionField,
+      priorityField,
+      retryEnabledField,
+      retryCountField,
+      triggersField,
+      enabledRepeatTriggersField,
+      repeatTriggersField,
       updateRetryEnabled,
     };
   },

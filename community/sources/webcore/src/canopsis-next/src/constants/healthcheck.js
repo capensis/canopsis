@@ -32,6 +32,24 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   remediation: 'engine-remediation',
 };
 
+export const HEALTHCHECK_STATUSES = {
+  healthy: 'healthy',
+  degraded: 'degraded',
+  unhealthy: 'unhealthy',
+};
+
+export const HEALTHCHECK_SERVICE_ISSUES = {
+  nodeDown: 'node_down',
+  noQuorum: 'no_quorum',
+  quorumDegraded: 'quorum_degraded',
+};
+
+export const HEALTHCHECK_ENGINE_ISSUES = {
+  queueOverflowed: 'queue_overflowed',
+  tooFewInstances: 'too_few_instances',
+  instancesConfigMismatch: 'instances_config_mismatch',
+};
+
 export const PRO_ENGINES = [
   HEALTHCHECK_ENGINES_NAMES.correlation,
   HEALTHCHECK_ENGINES_NAMES.dynamicInfos,

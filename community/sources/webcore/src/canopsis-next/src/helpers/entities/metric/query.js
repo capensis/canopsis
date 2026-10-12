@@ -3,10 +3,12 @@ import { uniq } from 'lodash';
 import { QUICK_RANGES } from '@/constants';
 
 import { isOmitEqual } from '@/helpers/collection';
-import { isRatioMetric, isCustomCriteria } from '@/helpers/entities/metric/form';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+
+import { isCustomCriteria, isRatioMetric } from './form';
 
 /**
- * Check query is changed with interval
+ * Check query is changed with interval.
  *
  * @param {Object} query
  * @param {Object} oldQuery
@@ -23,14 +25,14 @@ export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
 };
 
 /**
- * Convert widget filter to query
+ * Convert widget filter to query.
  *
  * @param {AlarmChart[]} charts
  * @returns {string[]}
  */
-export function convertWidgetChartsToPerfDataQuery(charts) {
+export function convertWidgetChartsToPerfDataQuery(charts = []) {
   const allMetrics = charts.reduce((acc, chart) => {
-    acc.push(...chart.parameters.metrics.map(({ metric }) => metric));
+    acc.push(...(chart.parameters?.metrics ?? []).map(({ metric }) => metric));
 
     return acc;
   }, []);
@@ -39,12 +41,26 @@ export function convertWidgetChartsToPerfDataQuery(charts) {
 }
 
 /**
- * This function converts userPreference with widget type 'Map' to query Object
+ * Convert KPI metrics interval to API timestamps.
+ *
+ * Metrics API validates both `from` and `to` as day starts in Canopsis timezone.
+ *
+ * @param {{ from: number|string, to: number|string }} interval
+ * @param {string} timezone
+ * @returns {{ from: number, to: number }}
+ */
+export const convertMetricsIntervalToTimestamp = (interval, timezone) =>
+  convertMetricIntervalToTimestamp({ interval, timezone });
+
+/**
+ * Convert user preference of a chart widget to query.
  *
  * @param {Object} userPreference
- * @returns {{ sampling: string, interval: Object }}
+ * @returns {{ sampling?: string, interval?: Object, filter?: * }}
  */
-export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval, mainFilter } }) => {
+export const convertChartUserPreferenceToQuery = ({
+  content: { sampling, interval, mainFilter } = {},
+}) => {
   const query = {
     filter: mainFilter,
   };
@@ -61,86 +77,84 @@ export const convertChartUserPreferenceToQuery = ({ content: { sampling, interva
 };
 
 /**
- * This function converts chart widgets default parameters to query Object
+ * Convert chart widget default parameters to query.
  *
- * @param {Widget} widget
- * @returns {{ lockedFilter: string | null, sampling: string, interval: Object }}
+ * @param {Object} widget
+ * @returns {Object}
  */
-export function convertChartWidgetDefaultParametersToQuery(widget) {
+export const convertChartWidgetDefaultParametersToQuery = (widget) => {
   const {
     mainFilter,
     default_sampling: defaultSampling,
     default_time_range: defaultTimeRange,
-  } = widget.parameters;
+  } = widget.parameters ?? {};
+  const range = QUICK_RANGES[defaultTimeRange] ?? QUICK_RANGES.last30Days;
 
   return {
     lockedFilter: mainFilter,
     sampling: defaultSampling,
     interval: {
-      from: QUICK_RANGES[defaultTimeRange].start,
-      to: QUICK_RANGES[defaultTimeRange].stop,
+      from: range.start,
+      to: range.stop,
     },
   };
-}
+};
 
 /**
- * This function converts bar chart widget to query Object
+ * Convert bar/line chart widget to query.
  *
- * @param {Widget} widget
+ * @param {Object} widget
  * @returns {Object}
  */
-export function convertChartWidgetToQuery(widget) {
-  const { comparison = false, metrics = [] } = widget.parameters;
+export const convertChartWidgetToQuery = (widget) => {
+  const { comparison = false, metrics = [] } = widget.parameters ?? {};
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
-
     with_history: comparison,
-    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({ metric, aggregate_func: aggregateFunc })),
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
+      metric,
+      aggregate_func: aggregateFunc,
+    })),
   };
-}
+};
 
 /**
- * This function converts pie chart widget to query Object
+ * Convert pie chart widget to query.
  *
- * @param {Widget} widget
+ * @param {Object} widget
  * @returns {Object}
  */
-export function convertPieChartWidgetToQuery(widget) {
-  const {
-    metrics = [],
-    aggregate_func: widgetAggregateFunc,
-  } = widget.parameters;
+export const convertPieChartWidgetToQuery = (widget) => {
+  const { metrics = [], aggregate_func: widgetAggregateFunc } = widget.parameters ?? {};
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
-
     parameters: metrics.map(({ metric, aggregate_func: metricAggregateFunc }) => ({
       metric,
       aggregate_func: metricAggregateFunc || widgetAggregateFunc,
     })),
   };
-}
+};
 
 /**
- * This function converts numbers widget to query Object
+ * Convert numbers widget to query.
  *
- * @param {Widget} widget
+ * @param {Object} widget
  * @returns {Object}
  */
-export function convertNumbersWidgetToQuery(widget) {
-  const { metrics = [], show_trend: showTrend = false } = widget.parameters;
+export const convertNumbersWidgetToQuery = (widget) => {
+  const { metrics = [], show_trend: showTrend = false } = widget.parameters ?? {};
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
-
     with_history: showTrend,
     parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
       metric,
       aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
     })),
   };
-}
+};
 
 /**
  * This function converts statistics widgets default parameters to query Object
@@ -156,10 +170,11 @@ export function convertStatisticsWidgetParametersToQuery(widget) {
     default_time_range: defaultTimeRange,
   } = widget.parameters;
 
+  const range = QUICK_RANGES[defaultTimeRange] ?? QUICK_RANGES.last30Days;
   const query = {
     interval: {
-      from: QUICK_RANGES[defaultTimeRange].start,
-      to: QUICK_RANGES[defaultTimeRange].stop,
+      from: range.start,
+      to: range.stop,
     },
     parameters: widgetColumns.map(({ metric, criteria }) => {
       const parameter = {
@@ -172,7 +187,10 @@ export function convertStatisticsWidgetParametersToQuery(widget) {
 
       return parameter;
     }),
-    entity_patterns: mainParameter.patterns.map(({ title, entity_pattern: pattern }) => ({ title, pattern })),
+    entity_patterns: (mainParameter.patterns ?? []).map(({ title, entity_pattern: pattern }) => ({
+      title,
+      pattern,
+    })),
     lockedFilter: mainFilter,
   };
 
@@ -189,7 +207,9 @@ export function convertStatisticsWidgetParametersToQuery(widget) {
  * @param {Object} userPreference
  * @returns {Object}
  */
-export const convertStatisticsUserPreferenceToQuery = ({ content: { interval, mainFilter } }) => {
+export const convertStatisticsUserPreferenceToQuery = ({
+  content: { interval, mainFilter } = {},
+}) => {
   const query = {
     filter: mainFilter,
   };

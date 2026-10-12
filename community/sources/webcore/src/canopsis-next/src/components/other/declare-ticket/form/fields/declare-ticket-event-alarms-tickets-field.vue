@@ -1,46 +1,42 @@
 <template>
-  <v-layout column>
-    <v-data-table
-      :headers="headers"
-      :items="alarms"
-      hide-default-footer
-    >
+  <c-layout column>
+    <v-data-table :headers="headers" :items="alarms" hide-default-footer>
       <template #item="{ item }">
         <tr>
           <td v-if="!hideRowSelect">
-            <v-checkbox
-              :input-value="isEveryTicketsActive(item._id)"
+            <c-checkbox
+              :model-value="isEveryTicketsActive(getAlarmItem(item)._id)"
               class="mt-0 pt-0"
               color="primary"
               hide-details
-              @change="updateAllTickets(item._id, $event)"
+              @update:model-value="updateAllTickets(getAlarmItem(item)._id, $event)"
             />
           </td>
           <td class="text-left">
-            {{ item.v.connector_name }}
+            {{ getAlarmItem(item).v.connector_name }}
           </td>
           <td class="text-left">
-            {{ item.v.connector }}
+            {{ getAlarmItem(item).v.connector }}
           </td>
           <td class="text-left">
-            {{ item.v.component }}
+            {{ getAlarmItem(item).v.component }}
           </td>
           <td class="text-left">
-            {{ item.v.resource }}
+            {{ getAlarmItem(item).v.resource }}
           </td>
           <td v-if="!hideTickets">
             <declare-ticket-event-tickets-field
-              :alarm-tickets="item.v.tickets"
-              :value="activeTicketsByAlarms[item._id]"
-              :tickets="ticketsByAlarms[item._id]"
-              @input="updateTickets(item._id, $event)"
+              :alarm-tickets="getAlarmItem(item).v.tickets"
+              :value="activeTicketsByAlarms[getAlarmItem(item)._id]"
+              :tickets="ticketsByAlarms[getAlarmItem(item)._id]"
+              @update:value="updateTickets(getAlarmItem(item)._id, $event)"
             />
           </td>
         </tr>
       </template>
     </v-data-table>
     <v-divider />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -56,10 +52,7 @@ import DeclareTicketEventTicketsField from './declare-ticket-event-tickets-field
 export default {
   components: { DeclareTicketEventTicketsField },
   mixins: [formMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: Object,
@@ -98,29 +91,33 @@ export default {
           width: 80,
         },
         {
-          text: this.$t('common.connectorName'),
+          title: this.$t('common.connectorName'),
           sortable: false,
         },
         {
-          text: this.$t('common.connector'),
+          title: this.$t('common.connector'),
           sortable: false,
         },
         {
-          text: this.$t('common.component'),
+          title: this.$t('common.component'),
           sortable: false,
         },
         {
-          text: this.$t('common.resource'),
+          title: this.$t('common.resource'),
           sortable: false,
         },
         !this.hideTickets && {
-          text: this.$tc('common.ticket', 2),
+          title: this.$t('common.ticket', 2),
           sortable: false,
         },
       ].filter(Boolean);
     },
   },
   methods: {
+    getAlarmItem(item) {
+      return item.raw ?? item;
+    },
+
     isEveryTicketsActive(alarmId) {
       return this.activeTicketsByAlarms[alarmId]?.length === this.ticketsByAlarms[alarmId]?.length;
     },

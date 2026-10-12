@@ -1,40 +1,28 @@
 <template>
-  <div
-    class="widget-edit-drag-handler"
-    @pointerdown.left="$emit('pointerdown', $event)"
-  >
-    <v-layout
-      class="widget-edit-drag-handler__controls pr-1"
-      justify-end
-      align-center
-    >
+  <div class="widget-edit-drag-handler" @pointerdown.left="$emit('pointerdown', $event)">
+    <c-layout class="widget-edit-drag-handler__controls pr-1" justify="end" align="center">
       <span @pointerdown.stop="">
-        <v-tooltip bottom>
-          <template #activator="{ on }">
+        <c-tooltip location="bottom">
+          <template #activator="{ props }">
             <v-btn
-              :color="autoHeight ? 'grey lighten-1' : 'transparent'"
+              :color="autoHeight ? 'grey-lighten-1' : 'transparent'"
               class="ma-0 mr-1"
+              size="small"
+              variant="text"
               icon
-              small
-              v-on="on"
+              v-bind="props"
               @click="$emit('toggle')"
             >
-              <v-icon
-                :color="autoHeight ? 'black' : 'grey darken-1'"
-                small
-              >
-                lock
-              </v-icon>
+              <v-icon :color="autoHeight ? 'black' : 'grey-darken-1'" size="small"> lock </v-icon>
             </v-btn>
           </template>
+
           <span>{{ $t('view.autoHeightButton') }}</span>
-        </v-tooltip>
-        <widget-wrapper-menu
-          :widget="widget"
-          :tab="tab"
-        />
+        </c-tooltip>
+
+        <widget-wrapper-menu :widget="widget" :tab="tab" />
       </span>
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
@@ -57,21 +45,22 @@ export default {
       default: false,
     },
   },
+  emits: ['pointerdown', 'toggle'],
 };
 </script>
 
 <style lang="scss" scoped>
 .widget-edit-drag-handler {
   position: absolute;
-  background-color: rgba(0, 0, 0, .12);
+  background-color: rgba(0, 0, 0, 0.12);
   width: 100%;
   height: 36px;
-  transition: .2s ease-out;
+  transition: 0.2s ease-out;
   cursor: move;
   z-index: 3;
 
   &:hover {
-    background-color: rgba(0, 0, 0, .15);
+    background-color: rgba(0, 0, 0, 0.15);
   }
 
   &__controls {

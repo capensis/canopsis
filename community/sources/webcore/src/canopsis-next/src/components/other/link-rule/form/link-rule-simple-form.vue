@@ -1,35 +1,25 @@
 <template>
-  <v-layout class="gap-3" column>
-    <c-label
-      :label="$tc('common.link', 2)"
-      :error="!!errorMessages.length"
-      required
-    />
+  <c-layout gap="3" column>
+    <c-label :label="$t('common.link', 2)" :error="!!errorMessages.length" required />
     <link-rule-link-form
-      v-for="(link, index) in links"
-      v-field="links[index]"
+      v-for="(link, index) in linksField"
       :key="link.key"
+      :form="linksField[index]"
       :name="link.key"
       :type="type"
       :template-vars="templateVars"
       class="mb-3"
-      @remove="removeItemFromArray(index)"
+      @update:form="updateItem(index, $event)"
+      @change="$emit('change')"
+      @remove="removeItem(index)"
     />
-    <v-flex>
-      <v-btn
-        :color="hasErrors ? 'error' : 'primary'"
-        outlined
-        @click="addItem"
-      >
+    <div>
+      <v-btn :color="hasErrors ? 'error' : 'primary'" variant="outlined" @click="addItem">
         {{ $t('linkRule.addLink') }}
       </v-btn>
-    </v-flex>
-    <v-messages
-      v-if="hasErrors"
-      :value="errorMessages"
-      color="error"
-    />
-  </v-layout>
+    </div>
+    <v-messages v-if="hasErrors" :messages="errorMessages" color="error" />
+  </c-layout>
 </template>
 
 <script>
@@ -39,24 +29,14 @@ import { LINK_RULE_TYPES } from '@/constants';
 
 import { linkRuleLinkToForm } from '@/helpers/entities/link/form';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
+import { useFormArray, useFormContext } from '@/hooks/form';
+import { useValidationHeader } from '@/hooks/validator/validation-header';
 
 import LinkRuleLinkForm from './fields/link-rule-link-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: { LinkRuleLinkForm },
-  mixins: [formValidationHeaderMixin],
-  model: {
-    prop: 'links',
-    event: 'input',
-  },
   props: {
-    links: {
-      type: Array,
-      default: () => [],
-    },
     type: {
       type: String,
       default: LINK_RULE_TYPES.alarm,
@@ -70,18 +50,39 @@ export default {
       default: () => [],
     },
   },
+
+  emits: ['change'],
+
   setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+    const form = useFormContext();
+    const linksField = useFormArray('links');
+    const { hasAnyError } = useValidationHeader();
 
     const hasErrors = computed(() => !!props.errorMessages.length);
 
-    const addItem = () => addItemIntoArray(linkRuleLinkToForm());
+    const addItem = () => {
+      form.push('links', linkRuleLinkToForm());
+      emit('change');
+    };
+    const updateItem = (index, value) => {
+      form.replace('links', index, value);
+      emit('change');
+    };
+    const removeItem = (index) => {
+      form.remove('links', index);
+      emit('change');
+    };
 
     return {
+      /**
+       * It's using in the parent component to display the validation header color for tabs
+       */
+      hasAnyError,
+      linksField,
       hasErrors,
-
       addItem,
-      removeItemFromArray,
+      updateItem,
+      removeItem,
     };
   },
 };

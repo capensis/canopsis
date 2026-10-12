@@ -1,134 +1,135 @@
 <template>
   <v-form class="position-relative" @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         {{ title }}
       </template>
-      <template #text="">
+
+      <template #text>
         <c-progress-overlay :pending="defaultLlmPending" />
-        <llm-form v-model="form" :is-new="isNew" :default-llm="defaultLlm" />
+        <llm-form
+          :form="values"
+          :is-new="isNew"
+          :default-llm="defaultLlm"
+          @update:form="updateForm"
+        />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
-
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed, onMounted, ref } from 'vue';
 
 import { llmToForm, formToLlm } from '@/helpers/entities/llm/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useLlm } from '@/hooks/store/modules/llm';
 
 import LlmForm from '@/components/other/llm/form/llm-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createLlm,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     LlmForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
     const { fetchDefaultLlmWithoutStore } = useLlm();
-
-    const form = ref(llmToForm(config.value.llm));
+    const config = computed(() => props.modal.config ?? {});
+    const llm = computed(() => config.value.llm);
     const defaultLlm = ref(null);
+    const isNew = computed(() => !llm.value?._id);
 
-    const isNew = computed(() => !config.value.llm?._id);
+    const title = computed(
+      () => config.value.title ||
+        t(isNew.value ? 'modals.createLlm.create.title' : 'modals.createLlm.edit.title'),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.add' : 'common.submit'));
 
-    const title = computed(() => (
-      config.value.title || (
-        isNew.value
-          ? t('modals.createLlm.create.title')
-          : t('modals.createLlm.edit.title')
-      )
-    ));
+    const form = useForm({
+      initialValues: llmToForm(llm.value),
+    });
+    const { values, handleSubmit, isSubmitting, reset } = form;
 
-    const submitLabel = computed(() => (
-      isNew.value ? t('common.add') : t('common.submit')
-    ));
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const updateForm = value => (values.value = value);
 
-    const { submit, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToLlm(form.value));
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToLlm(values.value));
 
-        close();
-      },
+      closeModal();
     });
 
-    const { updateOriginalForm } = useFormConfirmableCloseModal({ form, submit, close });
+    const { updateOriginalForm } = useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     const { pending: defaultLlmPending, handler: fetchDefaultLlm } = usePendingHandler(async () => {
-      const { data: [fetchedDefaultLlm] = [] } = await fetchDefaultLlmWithoutStore() || {};
+      const { data: [fetchedDefaultLlm] = [] } = (await fetchDefaultLlmWithoutStore()) || {};
 
-      if (!fetchedDefaultLlm || fetchedDefaultLlm._id === config.value.llm?._id) {
+      if (!fetchedDefaultLlm || fetchedDefaultLlm._id === llm.value?._id) {
+        if (isNew.value && !fetchedDefaultLlm) {
+          const nextValues = {
+            ...values.value,
+            default: true,
+          };
+
+          values.value = nextValues;
+          reset(nextValues);
+          updateOriginalForm();
+        }
+
         return;
       }
 
       defaultLlm.value = fetchedDefaultLlm;
-
-      if (!defaultLlm.value && isNew.value) {
-        form.value.default = true;
-
-        updateOriginalForm();
-      }
     });
 
     onMounted(fetchDefaultLlm);
 
     return {
-      form,
-
+      t,
+      values,
       isNew,
       title,
       submitLabel,
-
-      submitting,
-
-      submit,
-      close,
-
+      isSubmitting,
       defaultLlmPending,
       defaultLlm,
+
+      submit,
+      updateForm,
+      closeModal,
     };
   },
 };

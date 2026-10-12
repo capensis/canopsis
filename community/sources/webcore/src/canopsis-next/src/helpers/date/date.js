@@ -1,7 +1,9 @@
-import { isNumber } from 'lodash';
+import { isNumber, isString } from 'lodash';
 import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
+
+import { resolveUserInterfaceDateFormat } from './date-format';
 
 /**
  * @typedef {Date | number | string | moment.Moment} LocalDate
@@ -22,8 +24,10 @@ export const convertDateToMoment = (date, format) => {
     return moment.unix(date);
   }
 
-  if (format && typeof date === 'string') {
-    return moment(date, format);
+  if (format && isString(date)) {
+    const preparedFormat = DATETIME_FORMATS[format] ?? format;
+
+    return moment(date, resolveUserInterfaceDateFormat(preparedFormat));
   }
 
   return moment(date);
@@ -35,6 +39,16 @@ export const convertDateToMoment = (date, format) => {
  * @return {Array}
  */
 export const getTimezones = () => moment.tz.names();
+
+/**
+ * Convert an IANA timezone identifier to a human-readable label.
+ *
+ * The identifier itself must stay unchanged when it is used for date conversion.
+ *
+ * @param {string} timezone
+ * @return {string}
+ */
+export const formatTimezoneLabel = (timezone = '') => timezone.replace(/_/g, ' ');
 
 /**
  * Set locale for each dates
@@ -72,8 +86,8 @@ export const updateDateLocaleMessages = (language, messages) => {
  * @param {string} unit
  * @return {number}
  */
-export const getDiffBetweenDates = (left, right, unit = TIME_UNITS.second) => convertDateToMoment(left)
-  .diff(convertDateToMoment(right), unit);
+export const getDiffBetweenDates = (left, right, unit = TIME_UNITS.second) =>
+  convertDateToMoment(left).diff(convertDateToMoment(right), unit);
 
 /**
  * Getting a now timestamp
@@ -114,10 +128,8 @@ export const getLocalTimezone = () => moment.tz.guess();
  * @param {string} [unit = TIME_UNITS.second]
  * @return {number}
  */
-export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) => convertDateToMoment(date)
-  .clone()
-  .subtract(value, unit)
-  .unix();
+export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) =>
+  convertDateToMoment(date).clone().subtract(value, unit).unix();
 
 /**
  * Subtract value from date by unit
@@ -127,10 +139,8 @@ export const subtractUnitFromDate = (date, value = 0, unit = TIME_UNITS.second) 
  * @param {string} [unit = TIME_UNITS.second]
  * @return {number}
  */
-export const addUnitToDate = (date, value = 0, unit = TIME_UNITS.second) => convertDateToMoment(date)
-  .clone()
-  .add(value, unit)
-  .unix();
+export const addUnitToDate = (date, value = 0, unit = TIME_UNITS.second) =>
+  convertDateToMoment(date).clone().add(value, unit).unix();
 
 /**
  * Convert date to native date object
@@ -170,7 +180,9 @@ export const convertDateToMomentByTimezone = (
 
   const localTimezone = getLocalTimezone();
 
-  return dateObject.tz(sourceTimezone || localTimezone).tz(targetTimezone || localTimezone, keepTime);
+  return dateObject
+    .tz(sourceTimezone || localTimezone)
+    .tz(targetTimezone || localTimezone, keepTime);
 };
 
 /**
@@ -189,7 +201,14 @@ export const convertDateToDateObjectByTimezone = (
   targetTimezone,
   defaultValue,
   keepTime = true,
-) => convertDateToMomentByTimezone(timestamp, sourceTimezone, targetTimezone, defaultValue, keepTime).toDate();
+) =>
+  convertDateToMomentByTimezone(
+    timestamp,
+    sourceTimezone,
+    targetTimezone,
+    defaultValue,
+    keepTime,
+  ).toDate();
 
 /**
  * Convert date to timestamp with keep time
@@ -199,11 +218,11 @@ export const convertDateToDateObjectByTimezone = (
  * @param {boolean} [keepTime = true]
  * @returns {number}
  */
-export const convertDateToTimestampByTimezone = (date, timezone = getLocalTimezone(), keepTime = true) => (
-  convertDateToMoment(date)
-    .tz(timezone, keepTime)
-    .unix()
-);
+export const convertDateToTimestampByTimezone = (
+  date,
+  timezone = getLocalTimezone(),
+  keepTime = true,
+) => convertDateToMoment(date).tz(timezone, keepTime).unix();
 
 /**
  * Check if date is start of day
@@ -252,7 +271,9 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
     return defaultValue ?? date;
   }
 
-  return dateObject.format(DATETIME_FORMATS[format] ?? format);
+  const preparedFormat = DATETIME_FORMATS[format] ?? format;
+
+  return dateObject.format(resolveUserInterfaceDateFormat(preparedFormat));
 };
 
 /**
@@ -284,11 +305,12 @@ export const convertDateToStringWithFormatForToday = (
  * @param [defaultValue]
  * @return {string}
  */
-export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue) => convertDateToString(
-  convertDateToMomentByTimezone(date, timezone, defaultValue),
-  format,
-  defaultValue,
-);
+export const convertDateToTimezoneDateString = (date, timezone, format, defaultValue) =>
+  convertDateToString(
+    convertDateToMomentByTimezone(date, timezone, defaultValue),
+    format,
+    defaultValue,
+  );
 
 /**
  * Convert date to start of unit as moment
@@ -297,7 +319,8 @@ export const convertDateToTimezoneDateString = (date, timezone, format, defaultV
  * @param {string} unit
  * @return {moment.Moment}
  */
-export const convertDateToStartOfUnitMoment = (date, unit) => convertDateToMoment(date).startOf(unit);
+export const convertDateToStartOfUnitMoment = (date, unit) =>
+  convertDateToMoment(date).startOf(unit);
 
 /**
  * Convert date to start of unit as timestamp
@@ -306,9 +329,8 @@ export const convertDateToStartOfUnitMoment = (date, unit) => convertDateToMomen
  * @param {string} unit
  * @return {number}
  */
-export const convertDateToStartOfUnitTimestamp = (date, unit) => convertDateToTimestamp(
-  convertDateToStartOfUnitMoment(date, unit),
-);
+export const convertDateToStartOfUnitTimestamp = (date, unit) =>
+  convertDateToTimestamp(convertDateToStartOfUnitMoment(date, unit));
 
 /**
  * Convert date to start of unit as native date
@@ -317,7 +339,8 @@ export const convertDateToStartOfUnitTimestamp = (date, unit) => convertDateToTi
  * @param {string} unit
  * @return {Date}
  */
-export const convertDateToStartOfUnitDateObject = (date, unit) => convertDateToStartOfUnitMoment(date, unit).toDate();
+export const convertDateToStartOfUnitDateObject = (date, unit) =>
+  convertDateToStartOfUnitMoment(date, unit).toDate();
 
 /**
  * Convert date to start of unit as moment
@@ -335,9 +358,8 @@ export const convertDateToEndOfUnitMoment = (date, unit) => convertDateToMoment(
  * @param {string} unit
  * @return {number}
  */
-export const convertDateToEndOfUnitTimestamp = (date, unit) => convertDateToTimestamp(
-  convertDateToEndOfUnitMoment(date, unit),
-);
+export const convertDateToEndOfUnitTimestamp = (date, unit) =>
+  convertDateToTimestamp(convertDateToEndOfUnitMoment(date, unit));
 
 /**
  * Convert date to end of unit as timestamp
@@ -346,9 +368,8 @@ export const convertDateToEndOfUnitTimestamp = (date, unit) => convertDateToTime
  * @param {string} unit
  * @return {Date}
  */
-export const convertDateToEndOfUnitDateObject = (date, unit) => convertDateToDateObject(
-  convertDateToEndOfUnitMoment(date, unit),
-);
+export const convertDateToEndOfUnitDateObject = (date, unit) =>
+  convertDateToDateObject(convertDateToEndOfUnitMoment(date, unit));
 
 /**
  * Convert date to start of unit as formatted string
@@ -358,10 +379,8 @@ export const convertDateToEndOfUnitDateObject = (date, unit) => convertDateToDat
  * @param {?string} [format]
  * @return {string}
  */
-export const convertDateToStartOfUnitString = (date, unit, format) => convertDateToString(
-  convertDateToStartOfUnitMoment(date, unit),
-  format,
-);
+export const convertDateToStartOfUnitString = (date, unit, format) =>
+  convertDateToString(convertDateToStartOfUnitMoment(date, unit), format);
 
 /**
  * Return moment with start of day timestamp
@@ -392,9 +411,12 @@ export const convertDateToStartOfDayTimestamp = date => convertDateToStartOfDayM
  * @param {string} [timezone = getLocalTimezone()]
  * @return {number}
  */
-export const convertDateToStartOfDayTimestampByTimezone = (date, timezone = getLocalTimezone()) => (
-  convertDateToMomentByTimezone(convertDateToStartOfDayMoment(date), timezone, getLocalTimezone()).unix()
-);
+export const convertDateToStartOfDayTimestampByTimezone = (date, timezone = getLocalTimezone()) =>
+  convertDateToMomentByTimezone(
+    convertDateToStartOfDayMoment(date),
+    timezone,
+    getLocalTimezone(),
+  ).unix();
 
 /**
  * Convert date to start of day as native date
@@ -402,7 +424,8 @@ export const convertDateToStartOfDayTimestampByTimezone = (date, timezone = getL
  * @param {LocalDate} date
  * @return {Date}
  */
-export const convertDateToStartOfDayDateObject = date => convertDateToStartOfDayMoment(date).toDate();
+export const convertDateToStartOfDayDateObject = date =>
+  convertDateToStartOfDayMoment(date).toDate();
 
 /**
  * Return moment with end of day timestamp
@@ -446,11 +469,10 @@ export const convertDateToStringWithNewTimezone = (
   date,
   format = DATETIME_FORMATS.long,
   timezone = getLocalTimezone(),
-) => (
+) =>
   date
-    ? convertDateToMoment(date).tz(timezone).format(format)
-    : ''
-);
+    ? convertDateToMoment(date).tz(timezone).format(resolveUserInterfaceDateFormat(format))
+    : '';
 
 /**
  * Check time unit is valid
@@ -466,10 +488,8 @@ export const isValidTimeUnit = unit => Object.values(TIME_UNITS).includes(unit);
  * @param {Interval | *} value
  * @return {boolean}
  */
-export const isValidDateInterval = value => value
-  && isNumber(value?.from)
-  && isNumber(value?.to)
-  && value.from < value.to;
+export const isValidDateInterval = value =>
+  value && isNumber(value?.from) && isNumber(value?.to) && value.from < value.to;
 
 /**
  * Get days in month
@@ -477,9 +497,7 @@ export const isValidDateInterval = value => value
  * @param {LocalDate} date
  * @return {number}
  */
-export const getDaysInMonth = date => convertDateToMoment(date)
-  .clone()
-  .daysInMonth();
+export const getDaysInMonth = date => convertDateToMoment(date).clone().daysInMonth();
 
 /**
  * Get start week day
@@ -488,11 +506,8 @@ export const getDaysInMonth = date => convertDateToMoment(date)
  * @param {number} week
  * @return {number}
  */
-export const getWeekStartDay = (date, week) => convertDateToMoment(date)
-  .clone()
-  .week(week)
-  .startOf(TIME_UNITS.week)
-  .toDate();
+export const getWeekStartDay = (date, week) =>
+  convertDateToMoment(date).clone().week(week).startOf(TIME_UNITS.week).toDate();
 
 /**
  * Get end week day
@@ -501,11 +516,8 @@ export const getWeekStartDay = (date, week) => convertDateToMoment(date)
  * @param {number} week
  * @return {number}
  */
-export const getWeekEndDay = (date, week) => convertDateToMoment(date)
-  .clone()
-  .week(week)
-  .endOf(TIME_UNITS.week)
-  .toDate();
+export const getWeekEndDay = (date, week) =>
+  convertDateToMoment(date).clone().week(week).endOf(TIME_UNITS.week).toDate();
 
 /**
  * Check date is same by unit
@@ -515,8 +527,8 @@ export const getWeekEndDay = (date, week) => convertDateToMoment(date)
  * @param {string} unit
  * @return {number}
  */
-export const isSameDates = (leftDate, rightDate, unit) => convertDateToMoment(leftDate)
-  .isSame(rightDate, unit);
+export const isSameDates = (leftDate, rightDate, unit) =>
+  convertDateToMoment(leftDate).isSame(rightDate, unit);
 
 /**
  * Check date is same by unit
@@ -533,9 +545,7 @@ export const getWeekNumber = date => convertDateToMoment(date).week();
  * @param {number} week
  * @return {number}
  */
-export const getDateByWeekNumber = (date, week) => convertDateToMoment(date)
-  .week(week)
-  .toDate();
+export const getDateByWeekNumber = (date, week) => convertDateToMoment(date).week(week).toDate();
 
 /**
  * Get date by month
@@ -544,9 +554,8 @@ export const getDateByWeekNumber = (date, week) => convertDateToMoment(date)
  * @param {number} month
  * @return {number}
  */
-export const getDateByMonthNumber = (date, month) => convertDateToMoment(date)
-  .month(month)
-  .toDate();
+export const getDateByMonthNumber = (date, month) =>
+  convertDateToMoment(date).month(month).toDate();
 
 /**
  * Check is date before target date
@@ -555,7 +564,6 @@ export const getDateByMonthNumber = (date, month) => convertDateToMoment(date)
  * @param {LocalDate} targetDate
  * @return {number}
  */
-export const isDateBefore = (date, targetDate) => convertDateToMoment(date)
-  .isBefore(targetDate);
+export const isDateBefore = (date, targetDate) => convertDateToMoment(date).isBefore(targetDate);
 
 export default convertDateToMoment;

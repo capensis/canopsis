@@ -1,35 +1,38 @@
 <template>
-  <v-layout class="gap-2" column>
+  <c-layout gap="2" column>
     <c-draggable-list-field
-      v-field="operations"
+      :model-value="operations"
       :disabled="disabled"
       :class="{ 'grey lighten-1': isDragging }"
       class="flex-column gap-2"
       ghost-class="grey"
       handle=".operation-drag-handler"
+      item-key="key"
+      @update:model-value="updateModel"
       @start="startDragging"
       @end="endDragging"
     >
-      <remediation-instruction-operation-field
-        v-for="(operation, index) in operations"
-        v-field="operations[index]"
-        :key="operation.key"
-        :index="index"
-        :operation-number="getOperationNumber(index)"
-        :disabled="disabled"
-        :template-vars="templateVars"
-        @remove="removeOperation(index)"
-      />
+      <template #item="{ element: operation, index }">
+        <remediation-instruction-operation-field
+          :operation="operation"
+          :name="`${name}.${operation.key}`"
+          :operation-number="getOperationNumber(index)"
+          :disabled="disabled"
+          :template-vars="templateVars"
+          @update:operation="updateItemInArray(index, $event)"
+          @remove="removeOperation(index)"
+        />
+      </template>
     </c-draggable-list-field>
     <c-btn-with-error
       :error="hasOperationsErrors ? $t('remediation.instruction.errors.operationRequired') : ''"
       :disabled="disabled"
-      outlined
+      variant="outlined"
       @click="addOperation"
     >
       {{ $t('remediation.instruction.addOperation') }}
     </c-btn-with-error>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -40,8 +43,8 @@ import {
   getOperationNumber,
 } from '@/helpers/entities/remediation/instruction/form';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useValidator } from '@/hooks/validator/validator';
 import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
@@ -50,10 +53,6 @@ export default {
   components: {
     RemediationInstructionOperationField,
   },
-  model: {
-    prop: 'operations',
-    event: 'input',
-  },
   props: {
     name: {
       type: String,
@@ -61,7 +60,7 @@ export default {
     },
     operations: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
     stepNumber: {
       type: [String, Number],
@@ -76,13 +75,15 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:operations'],
   setup(props, { emit }) {
     const isDragging = ref(false);
 
-    const validator = useValidator();
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+    const { hasError } = useFormErrorsMap();
+    const { updateModel, addItemIntoArray, updateItemInArray, removeItemFromArray } =
+      useArrayModelField(props, emit);
 
-    const hasOperationsErrors = computed(() => validator?.errors?.has(props.name) ?? false);
+    const hasOperationsErrors = computed(() => hasError(props.name));
 
     const { asyncValidateMinValueRule } = useValidationAttachMinValueForField(
       props.name,
@@ -122,6 +123,8 @@ export default {
       isDragging,
       hasOperationsErrors,
       getOperationNumber: getOperationNumberByIndex,
+      updateModel,
+      updateItemInArray,
       addOperation,
       removeOperation: removeItemFromArray,
       startDragging,

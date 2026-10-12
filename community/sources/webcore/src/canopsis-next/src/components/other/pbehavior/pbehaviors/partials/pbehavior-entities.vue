@@ -3,70 +3,87 @@
     :headers="headers"
     :items="entities"
     :loading="pending"
-    :options.sync="options"
+    :options="options"
     :total-items="meta.total_count"
     item-key="_id"
     search
+    advanced-pagination
+    @update:options="updateOptions"
   />
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query/query';
-import entitiesPbehaviorEntitiesMixin from '@/mixins/entities/pbehavior/entities';
+import { useI18n } from '@/hooks/i18n';
+import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
+import { usePbehaviorEntities } from '@/hooks/store/modules/pbehavior-entities';
 
 export default {
-  mixins: [localQueryMixin, entitiesPbehaviorEntitiesMixin],
   props: {
     pbehavior: {
       type: Object,
       default: () => ({}),
     },
   },
-  data() {
+
+  setup(props) {
+    const { t } = useI18n();
+    const { fetchPbehaviorEntitiesListWithoutStore } = usePbehaviorEntities();
+
+    const {
+      data: entities,
+      meta,
+      pending,
+      fetchList,
+      options,
+      updateOptions,
+    } = useFetchListWithoutStoreWithOptions({
+      fetchListHandler: ({ params }) => fetchPbehaviorEntitiesListWithoutStore({
+          id: props.pbehavior._id,
+          params,
+        }),
+    });
+
     return {
-      pending: false,
-      meta: {},
-      entities: [],
+      t,
+      entities,
+      meta,
+      pending,
+      fetchList,
+      options,
+      updateOptions,
     };
   },
+
   computed: {
     headers() {
       return [
         {
-          text: this.$t('common.id'),
+          text: this.t('common.id'),
           sortable: false,
           value: '_id',
         },
         {
-          text: this.$t('common.name'),
+          text: this.t('common.name'),
           sortable: false,
           value: 'name',
         },
         {
-          text: this.$t('common.type'),
+          text: this.t('common.type'),
           sortable: false,
           value: 'type',
         },
       ];
     },
   },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    async fetchList() {
-      this.pending = true;
 
-      const { data: entities, meta } = await this.fetchPbehaviorEntitiesListWithoutStore({
-        id: this.pbehavior._id,
-        params: this.getQuery(),
-      });
-
-      this.meta = meta;
-      this.entities = entities;
-
-      this.pending = false;
+  watch: {
+    pbehavior() {
+      return this.fetchList();
     },
+  },
+
+  mounted() {
+    return this.fetchList();
   },
 };
 </script>

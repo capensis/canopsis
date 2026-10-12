@@ -1,41 +1,37 @@
 <template>
-  <div class="request-content">
-    <request-information-content-row
+  <div class="request-information-content">
+    <div
       v-for="(line, index) in request.commonInformationLines"
       :key="index"
-      :row="line"
-    />
-    <div
-      v-if="request.body"
-      class="request-content__body"
+      class="request-information-content__line"
     >
-      <c-json-treeview
-        v-if="request.isJsonBody"
-        :json="request.body"
-      />
-      <template v-else>
-        {{ request.body }}
-      </template>
+      <strong>{{ line.name }}</strong>
+      <template v-if="line.value !== undefined">: {{ line.value }}</template>
+    </div>
+
+    <div v-if="request.body" class="request-information-content__body">
+      <c-json-treeview v-if="request.isJsonBody" :json="request.body" />
+      <template v-else>{{ request.body }}</template>
     </div>
   </div>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { isValidJsonData } from '@/helpers/json';
 
-import RequestInformationContentRow from './request-information-content-row.vue';
-
 export default {
-  components: { RequestInformationContentRow },
   props: {
     text: {
       type: String,
       required: true,
     },
   },
-  computed: {
-    request() {
-      const [commonInformation, body] = this.text.split('\r\n\r\n');
+
+  setup(props) {
+    const request = computed(() => {
+      const [commonInformation = '', body] = props.text.split('\r\n\r\n');
 
       return {
         commonInformationLines: commonInformation.split('\r\n').map((line) => {
@@ -49,19 +45,29 @@ export default {
         isJsonBody: isValidJsonData(body),
         body,
       };
-    },
+    });
+
+    return {
+      request,
+    };
   },
 };
 </script>
 
-<style lang="scss">
-.request-content {
+<style lang="scss" scoped>
+.request-information-content {
   display: flex;
   flex-direction: column;
 
+  &__line {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
   &__body {
     margin-top: 20px;
-    word-break: break-all;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
   }
 }
 </style>

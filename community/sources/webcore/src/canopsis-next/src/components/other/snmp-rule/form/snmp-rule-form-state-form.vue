@@ -1,39 +1,43 @@
 <template>
-  <v-layout class="gap-3" column>
-    <v-layout wrap>
-      <v-flex xs12>
+  <c-layout gap="3" column>
+    <v-row density="comfortable">
+      <v-col cols="12">
         <v-switch
-          :input-value="form.type"
-          :false-value="$constants.SNMP_STATE_TYPES.simple"
-          :true-value="$constants.SNMP_STATE_TYPES.template"
-          :label="$t('snmpRule.toCustom')"
+          :model-value="form.type"
+          :false-value="SNMP_STATE_TYPES.simple"
+          :true-value="SNMP_STATE_TYPES.template"
+          :label="t('snmpRule.toCustom')"
           color="primary"
           class="mt-0 pt-0"
           hide-details
-          @change="updateTypeField"
+          @update:model-value="updateTypeField"
         />
-      </v-flex>
-    </v-layout>
-    <v-divider light />
+      </v-col>
+    </v-row>
+
+    <v-divider />
+
     <template v-if="isTemplate">
       <snmp-rule-form-module-mib-objects-form
-        v-field="form.stateoid"
+        :form="form.stateoid"
         :items="items"
-        :label="$t('snmpRule.defineVar')"
+        :label="t('snmpRule.defineVar')"
+        name="state.stateoid"
+        @update:form="updateField('stateoid', $event)"
       />
-      <v-layout wrap>
-        <v-flex xs12>
-          <v-layout
+
+      <v-row density="comfortable">
+        <v-col cols="12">
+          <v-row
             v-for="{ value, color, whiteText, key, text } in availableStates"
             :key="value"
-            class="gap-4"
-            align-center
-            justify-center
+            class="align-center justify-center"
+            density="comfortable"
           >
-            <v-flex xs2>
+            <v-col cols="2">
               <v-chip
                 :style="{ backgroundColor: color }"
-                :class="{ 'white--text': whiteText }"
+                :class="{ 'text-white': whiteText }"
                 class="snmp-rule-state-chip rounded-lg"
                 label
               >
@@ -41,19 +45,36 @@
                   {{ text }}
                 </strong>
               </v-chip>
-            </v-flex>
-            <v-flex xs10>
-              <v-text-field
-                v-field="form[key]"
-                :placeholder="$t('snmpRule.writeTemplate')"
+            </v-col>
+            <v-col cols="10">
+              <c-text-field
+                :model-value="form[key]"
+                :placeholder="t('snmpRule.writeTemplate')"
+                :name="`state.${key}`"
+                @update:model-value="updateField(key, $event)"
               />
-            </v-flex>
-          </v-layout>
-        </v-flex>
-      </v-layout>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     </template>
-    <state-criticity-field v-else v-field="form.state" class="mt-1" />
-  </v-layout>
+
+    <template v-else>
+      <state-criticity-field
+        :value="form.state"
+        class="mt-1"
+        name="state.state"
+        required
+        @update:value="updateField('state', $event)"
+      />
+      <v-messages
+        v-if="stateErrorMessage"
+        :active="true"
+        :messages="stateErrorMessage ? [stateErrorMessage] : []"
+        color="error"
+      />
+    </template>
+  </c-layout>
 </template>
 
 <script>
@@ -63,6 +84,8 @@ import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
 import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
 
+import { useFieldError } from '@/hooks/form';
+import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
@@ -74,10 +97,7 @@ export default {
     StateCriticityField,
     SnmpRuleFormModuleMibObjectsForm,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -92,18 +112,26 @@ export default {
       default: () => SNMP_TEMPLATE_STATE_STATES,
     },
   },
+
+  emits: ['update:form'],
+
   setup(props, { emit }) {
     const { t } = useI18n();
+    const { updateModel, updateField } = useModelField(props, emit);
 
     const isTemplate = computed(() => props.form.type === SNMP_STATE_TYPES.template);
+    const stateErrorMessage = useFieldError('state.state');
 
     const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
-      key,
-      text: t(`snmpRule.states.${key}`),
-      value: state,
-      color: getSnmpRuleStateColor(state),
-      whiteText: [SNMP_TEMPLATE_STATE_STATES.info, SNMP_TEMPLATE_STATE_STATES.critical].includes(state),
-    })));
+        key,
+        text: t(`snmpRule.states.${key}`),
+        value: state,
+        color: getSnmpRuleStateColor(state),
+        whiteText: [SNMP_TEMPLATE_STATE_STATES.info, SNMP_TEMPLATE_STATE_STATES.critical].includes(
+          state,
+        ),
+      })),
+    );
 
     const updateTypeField = (type) => {
       const state = {
@@ -114,12 +142,16 @@ export default {
         state.stateoid = {};
       }
 
-      emit('input', state);
+      updateModel(state);
     };
 
     return {
+      t,
+      SNMP_STATE_TYPES,
       isTemplate,
       availableStates,
+      stateErrorMessage,
+      updateField,
       updateTypeField,
     };
   },
@@ -127,16 +159,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .snmp-rule-state-chip {
+.snmp-rule-state-chip {
+  width: 100%;
+
+  :deep(.v-chip__content) {
     width: 100%;
-
-    ::v-deep .v-chip__content {
-      width: 100%;
-    }
-
-    .state-title {
-      text-transform: uppercase;
-      margin: auto;
-    }
   }
+
+  .state-title {
+    text-transform: uppercase;
+    margin: auto;
+  }
+}
 </style>

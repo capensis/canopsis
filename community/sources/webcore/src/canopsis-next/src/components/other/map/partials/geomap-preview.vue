@@ -6,17 +6,11 @@
       :disabled="!!activePoint"
       class="geomap-preview"
     >
-      <geomap-control-zoom
-        :disabled="!!activePoint"
-        position="topleft"
-      />
-      <geomap-control-layers
-        :disabled="!!activePoint"
-        position="topright"
-      />
+      <geomap-control-zoom :disabled="!!activePoint" position="topleft" />
+      <geomap-control-layers :disabled="!!activePoint" position="topright" />
       <geomap-tile-layer
         :name="$t('map.layers.openStreetMap')"
-        :url="$config.OPEN_STREET_LAYER_URL"
+        :url="openStreetLayerUrl"
         layer-type="base"
         no-wrap
       />
@@ -26,7 +20,7 @@
           size="32"
           color="secondary"
           icon="help"
-          top
+          location="top"
         />
       </geomap-control>
       <geomap-cluster-group
@@ -49,6 +43,7 @@
               :size="icon.size"
               :color-indicator="colorIndicator"
               :pbehavior-enabled="pbehaviorEnabled"
+              :pause-enabled="pauseEnabled"
             />
           </geomap-icon>
         </geomap-marker>
@@ -70,24 +65,25 @@
 </template>
 
 <script>
+import { LatLng, LatLngBounds } from 'leaflet';
 import { groupBy } from 'lodash';
-import { LatLngBounds, LatLng } from 'leaflet';
 
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { OPEN_STREET_LAYER_URL } from '@/config';
+import { COLOR_INDICATOR_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
 import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
 
 import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 
-import Geomap from '@/components/common/geomap/geomap.vue';
-import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
-import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
-import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
-import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
-import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
+import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
 import GeomapControl from '@/components/common/geomap/geomap-control.vue';
+import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
+import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
+import Geomap from '@/components/common/geomap/geomap.vue';
 
 import PointIcon from './point-icon.vue';
 import PointPopupDialog from './point-popup-dialog.vue';
@@ -105,7 +101,9 @@ export default {
     GeomapControl,
     PointIcon,
   },
+
   mixins: [mapInformationPopupMixin],
+
   props: {
     map: {
       type: Object,
@@ -116,7 +114,12 @@ export default {
       default: 2,
     },
   },
+
   computed: {
+    openStreetLayerUrl() {
+      return OPEN_STREET_LAYER_URL;
+    },
+
     isStateColorIndicator() {
       return this.colorIndicator === COLOR_INDICATOR_TYPES.state;
     },
@@ -138,6 +141,17 @@ export default {
           return 'map';
         }
 
+        const hasNonPausePbehavior = entity.pbehavior_info &&
+          entity.pbehavior_info.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause;
+
+        if (this.pbehaviorEnabled && hasNonPausePbehavior) {
+          return 'pbehavior';
+        }
+
+        if (this.pauseEnabled && entity.pause) {
+          return 'pause';
+        }
+
         if (this.pbehaviorEnabled && entity.pbehavior_info) {
           return 'pbehavior';
         }
@@ -153,7 +167,7 @@ export default {
     layers() {
       const layers = {};
 
-      if (!this.colorIndicator && !this.pbehaviorEnabled) {
+      if (!this.colorIndicator && !this.pbehaviorEnabled && !this.pauseEnabled) {
         return {
           points: {
             name: this.$t('map.layers.points'),
@@ -165,20 +179,28 @@ export default {
       const {
         map: mapMarkers,
         pbehavior: pbehaviorMarkers,
+        pause: pauseMarkers,
         ...restGroups
       } = this.groupedMarkers;
 
       if (mapMarkers) {
         layers.map = {
-          name: this.$tc('common.map', mapMarkers.length),
+          name: this.$t('common.map', mapMarkers.length),
           markers: mapMarkers,
         };
       }
 
       if (pbehaviorMarkers) {
         layers.pbehavior = {
-          name: this.$tc('common.pbehavior'),
+          name: this.$t('common.pbehavior'),
           markers: pbehaviorMarkers,
+        };
+      }
+
+      if (pauseMarkers) {
+        layers.pause = {
+          name: this.$t('common.pause'),
+          markers: pauseMarkers,
         };
       }
 
@@ -197,6 +219,7 @@ export default {
       return layers;
     },
   },
+
   watch: {
     'map.parameters.points': {
       handler() {
@@ -204,12 +227,14 @@ export default {
       },
     },
   },
+
   mounted() {
     this.$nextTick(this.fitMap);
   },
+
   methods: {
     fitMap() {
-      if (this.map.parameters?.points) {
+      if (this.map.parameters?.points?.length) {
         const bounds = new LatLngBounds();
 
         this.map.parameters.points.forEach(({ coordinates }) => {
@@ -229,6 +254,7 @@ export default {
 
 <style lang="scss">
 .geomap-preview {
+  height: 700px;
   min-height: 700px;
   border-radius: 5px;
   overflow: hidden;

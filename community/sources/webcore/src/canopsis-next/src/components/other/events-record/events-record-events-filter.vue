@@ -1,72 +1,75 @@
 <template>
-  <v-layout class="gap-3 my-4" justify-space-between align-center>
-    <v-layout class="gap-2" align-center>
-      <v-btn
-        v-if="hasFilterApplied"
-        color="secondary"
-        @click="applyEventFilter"
-      >
+  <c-layout
+    class="my-4"
+    gap="3"
+    justify="space-between"
+    align="center"
+  >
+    <c-layout gap="2" align="center">
+      <v-btn v-if="hasFilterApplied" color="secondary" @click="$emit('apply:filter')">
         <v-icon class="mr-2">
           filter_list
         </v-icon>
-        {{ $t('eventsRecord.eventFilterApplied') }}
+        {{ t('eventsRecord.eventFilterApplied') }}
       </v-btn>
       <v-btn
         v-else
         color="secondary"
-        outlined
-        @click="applyEventFilter"
+        variant="outlined"
+        @click="$emit('apply:filter')"
       >
-        {{ $t('eventsRecord.applyEventFilter') }}
+        {{ t('eventsRecord.applyEventFilter') }}
       </v-btn>
 
       <v-btn
         v-if="hasFilterApplied"
         color="secondary"
-        outlined
-        @click="resetFilter"
+        variant="outlined"
+        @click="$emit('reset:filter')"
       >
-        {{ $t('common.reset') }}
+        {{ t('common.reset') }}
       </v-btn>
-    </v-layout>
+    </c-layout>
+
     <v-spacer />
-    <events-record-download-btn :events-record-id="eventsRecordId" :event-pattern="query.event_pattern" />
-  </v-layout>
+
+    <events-record-download-btn
+      :events-record-id="eventsRecordId"
+      :event-pattern="query.event_pattern"
+    />
+  </c-layout>
 </template>
+
 <script>
 import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
   components: { EventsRecordDownloadBtn },
+
   props: {
     eventsRecordId: {
       type: String,
       required: true,
-    },
-    count: {
-      type: Number,
-      default: 0,
     },
     query: {
       type: Object,
       default: () => ({}),
     },
   },
-  setup(props, { emit }) {
+
+  emits: ['apply:filter', 'reset:filter'],
+
+  setup(props) {
+    const { t } = useI18n();
     const hasFilterApplied = computed(() => props.query.event_pattern !== undefined);
 
-    const remove = () => emit('remove');
-    const applyEventFilter = () => emit('apply:filter');
-    const resetFilter = () => emit('reset:filter');
-
     return {
+      t,
       hasFilterApplied,
-
-      remove,
-      applyEventFilter,
-      resetFilter,
     };
   },
 };

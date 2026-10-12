@@ -1,8 +1,5 @@
 <template>
-  <path
-    :d="path"
-    v-on="$listeners"
-  />
+  <path :d="path" v-bind="$attrs" />
 </template>
 
 <script>
@@ -39,7 +36,7 @@ export default {
     },
 
     path() {
-      const heightWithoutRadius = this.height - (this.ellipseRadius * 2);
+      const heightWithoutRadius = this.height - this.ellipseRadius * 2;
 
       return [
         /* Move to top left corner */
