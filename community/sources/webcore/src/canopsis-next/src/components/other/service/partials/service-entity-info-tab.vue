@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-layout
+    <c-layout
       v-if="actions.length"
-      class="pa-2"
-      align-center
+      align="center"
+      class="pa-2 gap-2"
       wrap
     >
       <div>{{ $t('common.actionsLabel') }}:</div>
@@ -11,10 +11,10 @@
         :actions="actions"
         :entity="entity"
         :assigned-instructions="entity.assigned_instructions"
-        @apply="$listeners.apply"
-        @execute="$listeners.execute"
+        @apply="$emit('apply', $event)"
+        @execute="$emit('execute', $event)"
       />
-    </v-layout>
+    </c-layout>
     <service-entity-template
       :entity="entity"
       :template="template"
@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import ServiceEntityTemplate from './service-entity-template.vue';
 import ServiceEntityActions from './service-entity-actions.vue';
+import ServiceEntityTemplate from './service-entity-template.vue';
 
 export default {
   components: {
@@ -45,5 +45,6 @@ export default {
       default: () => [],
     },
   },
+  emits: ['apply', 'execute'],
 };
 </script>

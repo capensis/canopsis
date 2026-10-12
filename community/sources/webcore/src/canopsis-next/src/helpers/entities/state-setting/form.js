@@ -1,11 +1,11 @@
 import { omit, mapValues, pickBy } from 'lodash';
 
 import {
-  PATTERNS_FIELDS,
-  STATE_SETTING_THRESHOLDS_METHODS,
-  STATE_SETTING_METHODS,
-  ENTITY_TYPES,
   ALARM_STATES,
+  ENTITY_TYPES,
+  PATTERNS_FIELDS,
+  STATE_SETTING_METHODS,
+  STATE_SETTING_THRESHOLDS_METHODS,
 } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
@@ -110,9 +110,10 @@ const stateSettingThresholdToForm = (threshold = {}) => ({
  * @param {StateSettingThresholds} [thresholds = {}]
  * @return {StateSettingThresholdsForm}
  */
-const stateSettingThresholdsToForm = (thresholds = {}) => (
-  mapValues(ALARM_STATES, (stateValue, stateKey) => stateSettingThresholdToForm(thresholds[stateKey]))
-);
+const stateSettingThresholdsToForm = (thresholds = {}) =>
+  mapValues(ALARM_STATES, (stateValue, stateKey) =>
+    stateSettingThresholdToForm(thresholds[stateKey]),
+  );
 
 /**
  * Convert state setting pattern to form
@@ -120,10 +121,8 @@ const stateSettingThresholdsToForm = (thresholds = {}) => (
  * @param {PatternGroups} pattern
  * @return {FilterPatterns}
  */
-export const stateSettingPatternToForm = patterns => filterPatternsToForm(
-  patterns,
-  [PATTERNS_FIELDS.entity],
-);
+export const stateSettingPatternToForm = patterns =>
+  filterPatternsToForm(patterns, [PATTERNS_FIELDS.entity]);
 
 /**
  * Convert state setting to form
@@ -162,9 +161,11 @@ export const formToStateSettingThreshold = form => omit(form, ['enabled']);
  * @param {StateSettingThresholdsForm} form
  * @return {StateSettingThresholds}
  */
-export const formToStateSettingThresholds = form => (
-  mapValues(pickBy(form, ({ enabled }) => enabled), formToStateSettingThreshold)
-);
+export const formToStateSettingThresholds = form =>
+  mapValues(
+    pickBy(form, ({ enabled }) => enabled),
+    formToStateSettingThreshold,
+  );
 
 /**
  * Convert form to state setting
@@ -183,6 +184,7 @@ export const formToStateSetting = (form) => {
       [PATTERNS_FIELDS.entity]: inheritedEntityPattern,
       corporate_entity_pattern: corporateInheritedEntityPattern,
     } = formFilterToPatterns(form.inherited_entity_pattern, [PATTERNS_FIELDS.entity]);
+
     stateSetting.inherited_entity_pattern = inheritedEntityPattern;
     stateSetting.corporate_inherited_entity_pattern = corporateInheritedEntityPattern;
   } else {

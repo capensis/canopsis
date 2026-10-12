@@ -1,50 +1,27 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { useRemediationInstructionExecutionStore } from '@/stores/modules/remediation-instruction-execution';
 
 /**
- * Hook to use the remediation instruction execution store module.
+ * Remediation instruction execution store facade.
  *
- * @returns {Object} The store module hooks for remediation instruction execution.
- */
-export const useRemediationInstructionExecutionStoreModule = () => (
-  useStoreModuleHooks('remediationInstructionExecution')
-);
-
-/**
- * Hook to use actions related to remediation instruction execution.
- *
- * @returns {Object} An object containing action methods for remediation instruction execution.
- * @property {Function} fetchPausedExecutionsWithoutStore - Fetches the list of paused executions without using the
- *                                                          store.
- * @property {Function} fetchRemediationInstructionExecutionWithoutStore - Fetches a remediation instruction execution
- *                                                                         item without using the store.
- * @property {Function} createRemediationInstructionExecution - Creates a new remediation instruction execution.
- * @property {Function} cancelRemediationInstructionExecution - Cancels an existing remediation instruction execution.
- * @property {Function} nextOperationRemediationInstructionExecution - Proceeds to the next operation in the remediation
- *                                                                     instruction execution.
- * @property {Function} nextStepRemediationInstructionExecution - Proceeds to the next step in the remediation
- *                                                                instruction execution.
- * @property {Function} pauseRemediationInstructionExecution - Pauses the remediation instruction execution.
- * @property {Function} previousOperationRemediationInstructionExecution - Returns to the previous operation in the
- *                                                                         remediation instruction execution.
- * @property {Function} resumeRemediationInstructionExecution - Resumes a paused remediation instruction execution.
- * @property {Function} fetchAlarmRemediationInstructionExecutionsWithoutStore - Fetches alarm remediation instruction
- *                                                                               executions without using the store.
+ * @returns {Object}
  */
 export const useRemediationInstructionExecution = () => {
-  const { useActions } = useRemediationInstructionExecutionStoreModule();
+  const store = useRemediationInstructionExecutionStore();
 
-  return useActions({
-    fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
-    fetchExecutionsStatusesWithoutStore: 'fetchStatusesListWithoutStore',
-    fetchRemediationInstructionExecutionWithoutStore: 'fetchItemWithoutStore',
-    createRemediationInstructionExecution: 'create',
-    cancelRemediationInstructionExecution: 'cancel',
-    nextOperationRemediationInstructionExecution: 'nextOperation',
-    nextStepRemediationInstructionExecution: 'nextStep',
-    pauseRemediationInstructionExecution: 'pause',
-    previousOperationRemediationInstructionExecution: 'previousOperation',
-    resumeRemediationInstructionExecution: 'resume',
-    fetchAlarmRemediationInstructionExecutionsWithoutStore: 'fetchAlarmExecutionsWithoutStore',
-    readRemediationInstructionExecution: 'read',
-  });
+  return {
+    fetchRemediationInstructionExecutionWithoutStore: store.fetchItemWithoutStore,
+    fetchPausedRemediationInstructionExecutionsListWithoutStore: store.fetchPausedListWithoutStore,
+    fetchRemediationInstructionExecutionStatusesListWithoutStore:
+      store.fetchStatusesListWithoutStore,
+    createRemediationInstructionExecution: store.create,
+    updateRemediationInstructionExecution: store.update,
+    cancelRemediationInstructionExecution: store.cancel,
+    nextRemediationInstructionExecutionOperation: store.nextOperation,
+    nextRemediationInstructionExecutionStep: store.nextStep,
+    pauseRemediationInstructionExecution: store.pause,
+    previousRemediationInstructionExecutionOperation: store.previousOperation,
+    resumeRemediationInstructionExecution: store.resume,
+    fetchAlarmRemediationInstructionExecutionsWithoutStore: store.fetchAlarmExecutionsWithoutStore,
+    readRemediationInstructionExecution: store.read,
+  };
 };

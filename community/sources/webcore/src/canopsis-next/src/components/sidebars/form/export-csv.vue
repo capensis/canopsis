@@ -1,71 +1,77 @@
 <template>
   <widget-settings-item :title="$t('settings.exportCsv.title')">
-    <c-csv-separator-field v-field="form.exportCsvSeparator" />
-    <v-select
+    <c-csv-separator-field
+      :value="modelValue.exportCsvSeparator"
+      @update:value="updateField('exportCsvSeparator', $event)"
+    />
+    <c-select
       v-if="datetimeFormat"
-      v-field="form.exportCsvDatetimeFormat"
+      :model-value="modelValue.exportCsvDatetimeFormat"
       :items="formats"
       :label="$t('settings.exportCsv.fields.datetimeFormat')"
+      item-title="text"
+      item-value="value"
+      @update:model-value="updateField('exportCsvDatetimeFormat', $event)"
     />
-    <v-layout column>
-      <h4 class="text-subtitle-1 my-4">
-        {{ $t('settings.exportColumnNames') }}
-      </h4>
-      <c-columns-field
-        v-if="withoutTemplate"
-        v-field="form.widgetExportColumns"
-        :items="items"
-        :label="$t('settings.exportColumnNames')"
-        :type="type"
-        :with-instructions="withInstructions"
-        :with-template="withTemplate"
-        :with-simple-template="withSimpleTemplate"
-        :variables="variables"
-        :optional-infos-attributes="optionalInfosAttributes"
-        :without-infos-attributes="withoutInfosAttributes"
-        :excluded-columns="excludedColumns"
-        :without-custom-label="withoutCustomLabel"
-      />
-      <c-columns-with-template-field
-        v-else
-        v-field="form.widgetExportColumns"
-        :items="items"
-        :template="form.widgetExportColumnsTemplate"
-        :templates="templates"
-        :templates-pending="templatesPending"
-        :label="$t('settings.exportColumnNames')"
-        :type="type"
-        :with-instructions="withInstructions"
-        :variables="variables"
-        :optional-infos-attributes="optionalInfosAttributes"
-        :with-template="withTemplate"
-        :with-simple-template="withSimpleTemplate"
-        :without-infos-attributes="withoutInfosAttributes"
-        :excluded-columns="excludedColumns"
-        @update:template="updateTemplate"
-      />
-    </v-layout>
+    <h4 class="text-subtitle-1 my-4">
+      {{ $t('settings.exportColumnNames') }}
+    </h4>
+    <c-columns-field
+      v-if="withoutTemplate"
+      :model-value="modelValue.widgetExportColumns"
+      :items="items"
+      :label="$t('settings.exportColumnNames')"
+      :type="type"
+      :name="name"
+      :with-instructions="withInstructions"
+      :with-template="withTemplate"
+      :with-simple-template="withSimpleTemplate"
+      :variables="variables"
+      :optional-infos-attributes="optionalInfosAttributes"
+      :without-infos-attributes="withoutInfosAttributes"
+      :excluded-columns="excludedColumns"
+      :without-custom-label="withoutCustomLabel"
+      @update:model-value="updateField('widgetExportColumns', $event)"
+    />
+    <c-columns-with-template-field
+      v-else
+      :model-value="modelValue.widgetExportColumns"
+      :template="modelValue.widgetExportColumnsTemplate"
+      :templates="templates"
+      :templates-pending="templatesPending"
+      :type="type"
+      :name="name"
+      :with-instructions="withInstructions"
+      :with-template="withTemplate"
+      :with-simple-template="withSimpleTemplate"
+      :variables="variables"
+      :optional-infos-attributes="optionalInfosAttributes"
+      :without-infos-attributes="withoutInfosAttributes"
+      :excluded-columns="excludedColumns"
+      @update:model-value="updateField('widgetExportColumns', $event)"
+      @update:template="updateTemplate"
+    />
   </widget-settings-item>
 </template>
 
 <script>
-import { EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
+import { computed } from 'vue';
 
-import { formBaseMixin } from '@/mixins/form';
+import { EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
 
 import WidgetSettingsItem from '../partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
-    form: {
+    modelValue: {
       type: Object,
       default: () => ({}),
+    },
+    name: {
+      type: String,
+      default: 'widgetExportColumns',
     },
     type: {
       type: String,
@@ -89,7 +95,7 @@ export default {
     },
     variables: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     optionalInfosAttributes: {
       type: Boolean,
@@ -121,23 +127,32 @@ export default {
     },
     excludedColumns: {
       type: Array,
-      required: false,
+      default: undefined,
     },
   },
-  computed: {
-    formats() {
-      return Object.values(EXPORT_CSV_DATETIME_FORMATS);
-    },
-  },
-  methods: {
-    updateTemplate(template, columns) {
-      this.updateModel({
-        ...this.form,
 
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const formats = computed(() => Object.values(EXPORT_CSV_DATETIME_FORMATS));
+
+    const updateField = (field, value) => {
+      emit('update:modelValue', { ...props.modelValue, [field]: value });
+    };
+
+    const updateTemplate = (template, columns) => {
+      emit('update:modelValue', {
+        ...props.modelValue,
         widgetExportColumnsTemplate: template,
         widgetExportColumns: columns,
       });
-    },
+    };
+
+    return {
+      formats,
+      updateField,
+      updateTemplate,
+    };
   },
 };
 </script>

@@ -4,13 +4,9 @@
     :width="width"
     :height="height"
     pointer-events="none"
-    style="overflow: visible;"
+    style="overflow: visible"
   >
-    <div
-      :class="editorClasses"
-      :style="editorStyle"
-      class="text-shape-editor"
-    >
+    <div :class="editorClasses" :style="editorStyle" class="text-shape-editor">
       <div class="text-shape-editor__wrapper">
         <div
           v-html="value"
@@ -88,6 +84,7 @@ export default {
       required: false,
     },
   },
+  emits: ['blur'],
   computed: {
     editorClasses() {
       return {

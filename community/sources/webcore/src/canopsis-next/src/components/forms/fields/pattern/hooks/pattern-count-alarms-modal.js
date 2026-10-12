@@ -3,9 +3,9 @@ import { PATTERNS_FIELDS, MODALS } from '@/constants';
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
-import { useStoreModuleHooks } from '@/hooks/store';
-import { useModals } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useAlarm } from '@/hooks/store/modules/alarm';
 
 /**
  * Hook for managing pattern count alarms modal functionality.
@@ -17,8 +17,7 @@ import { useI18n } from '@/hooks/i18n';
 export const usePatternCountAlarmsModal = (props) => {
   const modals = useModals();
   const { t } = useI18n();
-  const { useActions } = useStoreModuleHooks('alarm');
-  const { fetchAlarmsListWithoutStore } = useActions({ fetchAlarmsListWithoutStore: 'fetchListWithoutStore' });
+  const { fetchListWithoutStore: fetchAlarmsListWithoutStore } = useAlarm();
 
   /**
    * Shows a modal with alarms filtered by the specified pattern names.
@@ -26,11 +25,7 @@ export const usePatternCountAlarmsModal = (props) => {
    * @param {Array<string>} [patternNames=[PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior]]
    */
   const showPatternAlarmsModal = (
-    patternNames = [
-      PATTERNS_FIELDS.alarm,
-      PATTERNS_FIELDS.entity,
-      PATTERNS_FIELDS.pbehavior,
-    ],
+    patternNames = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
   ) => {
     const patterns = patternNames.reduce((acc, patternName) => {
       acc[patternName] = formGroupsToPatternRulesQuery(props.value[patternName]?.groups);
@@ -44,13 +39,15 @@ export const usePatternCountAlarmsModal = (props) => {
       name: MODALS.alarmsList,
       config: {
         widget,
+        localWidget: true,
         title: t('pattern.patternAlarms'),
-        fetchList: params => fetchAlarmsListWithoutStore({
-          params: {
-            ...params,
-            ...patterns,
-          },
-        }),
+        fetchList: params =>
+          fetchAlarmsListWithoutStore({
+            params: {
+              ...params,
+              ...patterns,
+            },
+          }),
       },
     });
   };

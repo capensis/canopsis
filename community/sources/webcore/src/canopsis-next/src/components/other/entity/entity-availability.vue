@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="entity-availability position-relative" align-start justify-center>
+  <c-layout class="entity-availability position-relative" align="start" justify="center">
     <c-progress-overlay :pending="pending" />
     <availability-bar
       v-if="availability"
@@ -9,35 +9,29 @@
       class="entity-availability__content"
       @update:interval="updateInterval"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions } from 'pinia';
 
 import { QUICK_RANGES } from '@/constants';
 
-import Observer from '@/services/observer';
+import { useMetricsStore } from '@/stores/modules/metrics';
 
-import { convertQueryIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
-import { localQueryMixin } from '@/mixins/query/query';
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
 
-const { mapActions: mapAvailabilityActions } = createNamespacedHelpers('availability');
-
 export default {
-  inject: {
-    $periodicRefresh: {
-      default() {
-        return new Observer();
-      },
-    },
-  },
+  inject: ['$periodicRefresh'],
+
   components: { AvailabilityBar },
-  mixins: [localQueryMixin, queryIntervalFilterMixin],
+
+  mixins: [entitiesInfoMixin],
+
   props: {
     entity: {
       type: Object,
@@ -52,8 +46,9 @@ export default {
       required: false,
     },
   },
+
   data() {
-    const { start, stop } = QUICK_RANGES[this.defaultTimeRange];
+    const { start, stop } = QUICK_RANGES[this.defaultTimeRange] ?? QUICK_RANGES.today;
 
     return {
       pending: false,
@@ -66,18 +61,26 @@ export default {
       },
     };
   },
+
   mounted() {
     this.fetchList();
+    this.$periodicRefresh?.register?.(this.fetchList);
+  },
 
-    this.$periodicRefresh.register(this.fetchList);
+  beforeUnmount() {
+    this.$periodicRefresh?.unregister?.(this.fetchList);
   },
-  beforeDestroy() {
-    this.$periodicRefresh.unregister(this.fetchList);
-  },
+
   methods: {
-    ...mapAvailabilityActions({
-      fetchAvailabilityWithoutStore: 'fetchAvailabilityWithoutStore',
-    }),
+    ...mapActions(useMetricsStore, ['fetchAvailabilityWithoutStore']),
+
+    updateInterval(interval) {
+      this.query = {
+        ...this.query,
+        interval,
+      };
+      this.fetchList();
+    },
 
     getIntervalQuery() {
       const { interval } = this.query;
@@ -86,9 +89,9 @@ export default {
         return {};
       }
 
-      return convertQueryIntervalToTimestamp({
+      return convertMetricIntervalToTimestamp({
         interval,
-        timezone: this.$system.timezone,
+        timezone: this.timezone,
       });
     },
 
@@ -116,13 +119,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .entity-availability {
   min-height: 100px;
 
   &__content {
-    max-width: 900px;
     width: 100%;
+    max-width: 900px;
   }
 }
 </style>

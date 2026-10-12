@@ -1,77 +1,67 @@
 <template>
   <remediation-instruction-executions-list
     :executions="executions"
-    :options.sync="options"
+    :options="options"
     :total-items="meta.total_count"
     :pending="pending"
+    @update:options="updateOptions"
   />
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { onMounted } from 'vue';
 
-import Observer from '@/services/observer';
+import { useChildObserver } from '@/hooks/observer';
+import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
+import { useAlarm } from '@/hooks/store/modules/alarm';
 
-import { localQueryMixin } from '@/mixins/query/query';
-
-import RemediationInstructionExecutionsList
-  from '@/components/other/remediation/instruction-execute/remediation-instruction-executions-list.vue';
-
-const { mapActions } = createNamespacedHelpers('alarm');
+import RemediationInstructionExecutionsList from '@/components/other/remediation/instruction-execute/remediation-instruction-executions-list.vue';
 
 export default {
-  inject: {
-    $periodicRefresh: {
-      default() {
-        return new Observer();
-      },
-    },
-  },
   components: { RemediationInstructionExecutionsList },
-  mixins: [localQueryMixin],
+
   props: {
     alarm: {
       type: Object,
-      required: false,
+      required: true,
     },
   },
-  data() {
-    return {
-      pending: false,
-      meta: {},
-      executions: [],
-    };
-  },
-  mounted() {
-    this.fetchList();
 
-    this.$periodicRefresh.register(this.fetchList);
-  },
-  beforeDestroy() {
-    this.$periodicRefresh.unregister(this.fetchList);
-  },
-  methods: {
-    ...mapActions({
-      fetchAlarmExecutionsWithoutStore: 'fetchExecutionsWithoutStore',
-    }),
+  setup(props) {
+    const { fetchExecutionsWithoutStore } = useAlarm();
 
-    async fetchList() {
+    const {
+      data: executions,
+      meta,
+      pending,
+      options,
+      updateOptions,
+      fetchList,
+    } = useFetchListWithoutStoreWithOptions({
+      fetchListHandler: ({ params }) => fetchExecutionsWithoutStore({
+          id: props.alarm._id,
+          params,
+        }),
+    });
+
+    const fetchListWithErrorHandling = async () => {
       try {
-        this.pending = true;
-
-        const { data, meta } = await this.fetchAlarmExecutionsWithoutStore({
-          id: this.alarm._id,
-          params: this.getQuery(),
-        });
-
-        this.executions = data;
-        this.meta = meta;
+        await fetchList();
       } catch (err) {
         console.error(err);
-      } finally {
-        this.pending = false;
       }
-    },
+    };
+
+    useChildObserver({ key: '$periodicRefresh', handler: fetchListWithErrorHandling });
+    onMounted(fetchListWithErrorHandling);
+
+    return {
+      executions,
+      meta,
+      options,
+      pending,
+      updateOptions,
+    };
   },
 };
 </script>

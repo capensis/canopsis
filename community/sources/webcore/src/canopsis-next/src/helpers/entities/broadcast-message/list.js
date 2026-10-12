@@ -7,9 +7,12 @@
  * @param {Object|null} currentView - The current view object from store
  * @returns {boolean} Whether the message view matches the current route
  */
-export const isBroadcastMessageViewMatchingRoute = (activeMessageView, routeView, routeId, currentView) => (
-  [routeView, routeId, currentView?.group?._id].includes(activeMessageView)
-);
+export const isBroadcastMessageViewMatchingRoute = (
+  activeMessageView,
+  routeView,
+  routeId,
+  currentView,
+) => [routeView, routeId, currentView?.group?._id].includes(activeMessageView);
 
 /**
  * Checks if an active broadcast message should be visible on the current route
@@ -27,6 +30,8 @@ export const isActiveBroadcastMessageVisibleOnRoute = (
   routeView,
   routeId,
   currentView,
-) => maintenance || (messageViews || []).some(
-  messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-);
+) =>
+  maintenance ||
+  (messageViews || []).some(messageView =>
+    isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
+  );

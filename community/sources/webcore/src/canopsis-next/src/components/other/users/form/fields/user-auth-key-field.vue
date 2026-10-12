@@ -1,26 +1,43 @@
 <template>
-  <v-layout class="user-auth-key-field gap-2" align-center justify-space-between>
+  <c-layout class="user-auth-key-field" align="center" justify="space-between">
     <span class="user-auth-key-field__value">
       {{ displayedValue }}
     </span>
-    <v-flex shrink>
-      <c-action-btn
-        v-if="value"
-        :icon="visibilityIcon"
-        :tooltip="visibilityTooltip"
-        top
-        @click="toggleVisibility"
-      />
-      <c-copy-btn
-        v-if="value"
-        :value="value"
-        :tooltip="$t('common.copyToClipboard')"
-        top
-        @success="showCopySuccessPopup"
-        @error="showCopyErrorPopup"
-      />
-    </v-flex>
-  </v-layout>
+
+    <c-layout v-if="value" align="center" gap="1">
+      <c-tooltip location="top">
+        <template #activator="{ props: activatorProps }">
+          <v-btn
+            v-bind="activatorProps"
+            size="small"
+            variant="text"
+            icon
+            @click="toggleVisibility"
+          >
+            <c-icon>{{ visibilityIcon }}</c-icon>
+          </v-btn>
+        </template>
+
+        <span>{{ visibilityTooltip }}</span>
+      </c-tooltip>
+
+      <c-tooltip location="top">
+        <template #activator="{ props: activatorProps }">
+          <v-btn
+            v-bind="activatorProps"
+            size="small"
+            variant="text"
+            icon
+            @click="copy"
+          >
+            <c-icon>content_copy</c-icon>
+          </v-btn>
+        </template>
+
+        <span>{{ t('common.copyToClipboard') }}</span>
+      </c-tooltip>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -36,10 +53,10 @@ export default {
       default: '',
     },
   },
+
   setup(props) {
     const { t } = useI18n();
     const popups = usePopups();
-
     const isShown = ref(false);
 
     const displayedValue = computed(() => {
@@ -53,17 +70,25 @@ export default {
     const visibilityIcon = computed(() => (isShown.value ? 'visibility_off' : 'visibility'));
     const visibilityTooltip = computed(() => t(isShown.value ? 'common.hide' : 'common.show'));
 
-    const toggleVisibility = () => isShown.value = !isShown.value;
-    const showCopySuccessPopup = () => popups.success({ text: t('success.authKeyCopied') });
-    const showCopyErrorPopup = () => popups.error({ text: t('errors.default') });
+    const toggleVisibility = () => (isShown.value = !isShown.value);
+
+    const copy = async () => {
+      try {
+        await navigator.clipboard.writeText(props.value);
+        popups.success({ text: t('success.authKeyCopied') });
+      } catch (err) {
+        console.error(err);
+        popups.error({ text: t('errors.default') });
+      }
+    };
 
     return {
+      t,
       displayedValue,
       visibilityIcon,
       visibilityTooltip,
       toggleVisibility,
-      showCopySuccessPopup,
-      showCopyErrorPopup,
+      copy,
     };
   },
 };

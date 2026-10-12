@@ -1,24 +1,26 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
+  <c-modal-wrapper close>
+    <template #title>
       <span>{{ title }}</span>
     </template>
-    <template #text="">
+    <template #text>
       <alarms-list-table-with-pagination
         :widget="widget"
         :columns="widget.parameters.widgetColumns"
         :alarms="alarms"
         :meta="meta"
         :loading="pending"
-        :query.sync="query"
+        :query="query"
         :refresh-alarms-list="fetchList"
         :columns-settings="columnsSettings"
         selectable
         expandable
+        eager
+        @update:query="updateQuery"
         @update:columns-settings="updateColumnsSettings"
       />
     </template>
-  </modal-wrapper>
+  </c-modal-wrapper>
 </template>
 
 <script>
@@ -26,25 +28,31 @@ import { isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 import { convertAlarmWidgetToQuery } from '@/helpers/entities/alarm/query';
+import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/alarms-list-table-with-pagination.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.alarmsList,
-  components: { AlarmsListTableWithPagination, ModalWrapper },
+
+  components: {
+    AlarmsListTableWithPagination,
+  },
+
   mixins: [
-    modalInnerMixin,
-    widgetColumnsAlarmMixin,
     entitiesUserPreferenceMixin,
   ],
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
   data() {
     const { config = {} } = this.modal;
 
@@ -55,7 +63,12 @@ export default {
       query: convertAlarmWidgetToQuery(config.widget),
     };
   },
+
   computed: {
+    config() {
+      return this.modal.config ?? {};
+    },
+
     title() {
       return this.config.title ?? this.$t('modals.alarmsList.title');
     },
@@ -65,9 +78,10 @@ export default {
     },
 
     columnsSettings() {
-      return this.userPreference.content.alarms_columns_settings ?? {};
+      return this.userPreference.content?.alarms_columns_settings ?? {};
     },
   },
+
   watch: {
     query(query, prevQuery) {
       if (!isEqual(query, prevQuery)) {
@@ -75,6 +89,7 @@ export default {
       }
     },
   },
+
   async mounted() {
     if (this.widget._id) {
       await this.fetchUserPreference({ id: this.widget._id });
@@ -82,7 +97,12 @@ export default {
 
     this.fetchList();
   },
+
   methods: {
+    updateQuery(query) {
+      this.query = query;
+    },
+
     updateColumnsSettings(columnsSettings) {
       this.updateContentInUserPreference({ alarms_columns_settings: columnsSettings });
     },

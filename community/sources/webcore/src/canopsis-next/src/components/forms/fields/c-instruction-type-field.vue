@@ -1,11 +1,12 @@
 <template>
-  <v-radio-group
-    v-field="value"
+  <c-radio-group
+    :model-value="modelValue"
     :label="$t('remediation.instruction.type')"
     :disabled="disabled"
     class="mt-0"
     hide-details
     mandatory
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
       v-for="type in types"
@@ -14,19 +15,15 @@
       :value="type.value"
       color="primary"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Number,
       default: REMEDIATION_INSTRUCTION_TYPES.manual,
     },
@@ -35,6 +32,7 @@ export default {
       default: false,
     },
   },
+  emits: ['update:modelValue'],
   computed: {
     types() {
       return Object.values(REMEDIATION_INSTRUCTION_TYPES).map(value => ({

@@ -1,60 +1,49 @@
 <template>
-  <v-layout>
-    <v-btn
+  <c-layout>
+    <c-action-btn type="delete" class="advanced-search__history__item__btn" @click="remove" />
+    <c-action-btn
+      :class="{
+        'advanced-search__history__item__btn--pinned': pinned,
+      }"
+      :color="pinned ? 'primary' : 'grey'"
+      :tooltip="$t('common.pin')"
       class="advanced-search__history__item__btn"
-      small
-      icon
-      @click.prevent.stop="remove"
-    >
-      <v-icon color="grey" small>
-        delete
-      </v-icon>
-    </v-btn>
-    <v-btn
-      :class="{ 'advanced-search__history__item__btn--pinned': pinned }"
-      class="advanced-search__history__item__btn"
-      small
-      icon
-      @click.prevent.stop="togglePin"
-    >
-      <v-icon :color="pinned ? 'inherit' : 'grey'" small>
-        $vuetify.icons.push_pin
-      </v-icon>
-    </v-btn>
-  </v-layout>
+      icon="push_pin"
+      @click="$emit('toggle-pin', id)"
+    />
+  </c-layout>
 </template>
 
 <script>
 export default {
   props: {
     id: {
-      type: [Number, String],
-      default: '',
+      type: String,
+      required: true,
     },
     pinned: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const remove = () => emit('remove', props.id);
-    const togglePin = () => emit('toggle-pin', props.id);
 
-    return {
-      remove,
-      togglePin,
-    };
+  emits: ['remove', 'toggle-pin'],
+
+  methods: {
+    remove() {
+      this.$emit('remove', this.id);
+    },
   },
 };
 </script>
 
 <style lang="scss">
 .v-list-item {
-  .advanced-search__history__item__btn.v-btn:not(.advanced-search__history__item__btn--pinned) {
+  .advanced-search__history__item__btn.c-action-btn:not(.advanced-search__history__item__btn--pinned) {
     opacity: 0;
   }
 
-  &:hover .advanced-search__history__item__btn.v-btn {
+  &:hover .advanced-search__history__item__btn.c-action-btn {
     opacity: 1;
   }
 }
