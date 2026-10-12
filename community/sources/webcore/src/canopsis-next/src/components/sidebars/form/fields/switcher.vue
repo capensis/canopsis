@@ -2,11 +2,11 @@
   <widget-settings-flat-item :title="title">
     <template #actions>
       <v-switch
-        :input-value="value"
+        :model-value="modelValue"
         class="ma-0 pa-0"
         color="primary"
         hide-details
-        @change="$emit('input', $event)"
+        @update:model-value="$emit('update:modelValue', $event)"
       />
     </template>
   </widget-settings-flat-item>
@@ -17,15 +17,18 @@ import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settin
 
 export default {
   components: { WidgetSettingsFlatItem },
+
   props: {
     title: {
       type: String,
       default: '',
     },
-    value: {
+    modelValue: {
       type: Boolean,
       default: false,
     },
   },
+
+  emits: ['update:modelValue'],
 };
 </script>

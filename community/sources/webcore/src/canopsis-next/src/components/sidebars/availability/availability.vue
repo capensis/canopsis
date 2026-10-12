@@ -1,6 +1,7 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
@@ -22,46 +23,111 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { computed, onMounted, ref, toRef } from 'vue';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { widgetTemplatesMixin } from '@/mixins/widget/templates';
-import { permissionsWidgetsAvailabilityFilters } from '@/mixins/permissions/widgets/availability/filters';
-import { permissionsWidgetsAlarmStatisticsInterval } from '@/mixins/permissions/widgets/availability/interval';
-import { permissionsWidgetsAvailabilityExport } from '@/mixins/permissions/widgets/availability/export';
+import { MAX_LIMIT, SIDE_BARS, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import WidgetSettings from '../partials/widget-settings.vue';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
-import AvailabilityForm from './form/availability-form.vue';
+import {
+  useAvailabilityExportPermissions,
+  useAvailabilityFiltersPermissions,
+  useAvailabilityIntervalPermissions,
+} from '@/hooks/permissions/widgets/availability/filters';
+import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
+import { useWidgetSettings } from '@/hooks/widget/settings';
+
+import AvailabilityForm from '@/components/sidebars/availability/form/availability-form.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
 export default {
   name: SIDE_BARS.availabilitySettings,
+
   components: {
     WidgetSettings,
     AvailabilityForm,
   },
-  mixins: [
-    widgetSettingsMixin,
-    widgetTemplatesMixin,
-    permissionsWidgetsAvailabilityFilters,
-    permissionsWidgetsAlarmStatisticsInterval,
-    permissionsWidgetsAvailabilityExport,
-  ],
-  methods: {
-    updateWidgetColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'widget_columns_template', template);
-      this.$set(this.form.parameters, 'widget_columns', columns);
-    },
 
-    updateActiveAlarmsColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'active_alarms_columns_template', template);
-      this.$set(this.form.parameters, 'active_alarms_columns', columns);
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
     },
+  },
 
-    updateResolvedAlarmsColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'resolved_alarms_columns_template', template);
-      this.$set(this.form.parameters, 'resolved_alarms_columns', columns);
-    },
+  setup(props) {
+    const sidebar = toRef(props, 'sidebar');
+    const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+    const { hasAccessToFilter } = useAvailabilityFiltersPermissions();
+    const { hasAccessToInterval } = useAvailabilityIntervalPermissions();
+    const { hasAccessToExportAsCsv } = useAvailabilityExportPermissions();
+    const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
+
+    const widgetTemplates = ref([]);
+    const widgetTemplatesPending = ref(false);
+
+    const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
+
+    const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+      ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns,
+    ),
+    );
+    const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+      ({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns,
+    ),
+    );
+
+    const updateWidgetColumnsTemplate = (template, columns) => {
+      form.value.parameters.widget_columns_template = template;
+      form.value.parameters.widget_columns = columns;
+    };
+
+    const updateActiveAlarmsColumnsTemplate = (template, columns) => {
+      form.value.parameters.active_alarms_columns_template = template;
+      form.value.parameters.active_alarms_columns = columns;
+    };
+
+    const updateResolvedAlarmsColumnsTemplate = (template, columns) => {
+      form.value.parameters.resolved_alarms_columns_template = template;
+      form.value.parameters.resolved_alarms_columns = columns;
+    };
+
+    const fetchWidgetTemplates = async () => {
+      try {
+        widgetTemplatesPending.value = true;
+
+        const { data } = await fetchWidgetTemplatesListWithoutStore({ params: { limit: MAX_LIMIT } });
+
+        widgetTemplates.value = data;
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        widgetTemplatesPending.value = false;
+      }
+    };
+
+    onMounted(() => {
+      fetchWidgetTemplates();
+    });
+
+    return {
+      form,
+      widget,
+      hasChanges,
+      submitting,
+      hasAccessToFilter,
+      hasAccessToInterval,
+      hasAccessToExportAsCsv,
+      widgetTemplatesPending,
+      alarmColumnsWidgetTemplates,
+      entityColumnsWidgetTemplates,
+
+      close,
+      submit,
+      updateWidgetColumnsTemplate,
+      updateActiveAlarmsColumnsTemplate,
+      updateResolvedAlarmsColumnsTemplate,
+    };
   },
 };
 </script>

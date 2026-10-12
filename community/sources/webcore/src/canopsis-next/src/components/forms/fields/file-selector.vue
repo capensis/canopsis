@@ -1,82 +1,87 @@
 <template>
-  <div>
-    <div v-if="withFilesList">
-      <div
-        v-for="file in files"
-        :key="file.name"
-        class="ml-2 font-italic"
-      >
-        {{ file.name }}
-        <v-btn
-          icon
-          text
-          small
-          @click="removeFileFromSelections(file.name)"
-        >
-          <v-icon small>
-            close
-          </v-icon>
-        </v-btn>
+  <v-input
+    :error-messages="errorMessages"
+    :hide-details="hideDetails"
+    class="file-selector w-100"
+  >
+    <div class="file-selector__content w-100">
+      <div v-if="withFilesList">
+        <div v-for="file in selectedFiles" :key="file.name" class="ml-2 font-italic">
+          {{ file.name }}
+          <v-btn
+            icon="close"
+            variant="text"
+            size="small"
+            @click="removeFileFromSelections(file.name)"
+          />
+        </div>
       </div>
-    </div>
-    <v-layout
-      :class="{ disabled: fullDisabled }"
-      align-center
-      v-on="wrapperListeners"
-    >
+
       <slot
+        :on="{ click: selectFile }"
+        :attrs="{ disabled: fullDisabled }"
         :disabled="fullDisabled"
         :loading="loading"
-        :on="scopedActivatorSlotListeners"
-        :clear="internalClear"
+        :files="selectedFiles"
+        :errors="errorMessages"
+        :clear="clear"
         :drop="dropFiles"
-        :files="files"
         name="activator"
       >
-        <v-btn
-          :disabled="fullDisabled"
-          :loading="loading"
-          v-on="scopedActivatorSlotListeners"
-        >
-          <v-icon>cloud_upload</v-icon>
+        <v-btn :disabled="fullDisabled" :loading="loading" @click="selectFile">
+          {{ label || t('common.import') }}
         </v-btn>
       </slot>
-    </v-layout>
-    <input
-      ref="fileInput"
-      :multiple="multiple"
-      :accept="accept"
-      :name="name"
-      class="hidden"
-      type="file"
-      @change="change"
-      @click.stop=""
-    >
-    <div
-      v-if="!hideDetails"
-      class="mt-2"
-    >
-      <v-messages
-        :value="errors.collect(name)"
-        color="error"
+
+      <input
+        ref="inputElement"
+        :accept="accept"
+        :multiple="multiple"
+        :disabled="fullDisabled"
+        class="d-none"
+        type="file"
+        @change="change"
+        @click.stop
       />
     </div>
-  </div>
+  </v-input>
 </template>
 
 <script>
-import { union } from 'lodash';
+import { unionBy } from 'lodash';
+import { computed, ref, watch } from 'vue';
+
+import { useField } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
   props: {
-    name: {
+    modelValue: {
+      type: [File, Array],
+      default: undefined,
+    },
+    label: {
       type: String,
-      default: null,
+      default: '',
+    },
+    accept: {
+      type: String,
+      default: '',
     },
     multiple: {
       type: Boolean,
       default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * File size in kilobytes (KB)
+     */
+    maxFileSize: {
+      type: [Number, String],
+      required: false,
     },
     disabled: {
       type: Boolean,
@@ -90,182 +95,130 @@ export default {
       type: Boolean,
       default: false,
     },
-    accept: {
-      type: String,
-      default: null,
-    },
-    /**
-     * File size in kilobytes (KB)
-     */
-    maxFileSize: {
-      type: [String, Number],
-      required: false,
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
     hideDetails: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false,
     },
-  },
-  data() {
-    return {
-      files: [],
-      filesForValidator: [],
-    };
-  },
-  computed: {
-    fullDisabled() {
-      return this.loading || this.disabled;
-    },
-
-    hasActivatorSlot() {
-      return this.$slots.activator && Boolean(this.$slots.activator.length);
-    },
-
-    wrapperListeners() {
-      if (this.hasActivatorSlot) {
-        return this.scopedActivatorSlotListeners;
-      }
-
-      return {};
-    },
-
-    scopedActivatorSlotListeners() {
-      return {
-        click: this.selectFiles,
-      };
-    },
-
-    errorMessages() {
-      return this.$validator.errors.collect();
+    name: {
+      type: String,
+      default: 'file',
     },
   },
-  mounted() {
-    this.attachField();
-  },
-  beforeDestroy() {
-    this.detachField();
-  },
-  methods: {
-    attachField() {
-      if (!this.name) {
-        return;
+
+  emits: ['update:modelValue', 'change'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const inputElement = ref(null);
+    const selectedFiles = ref([]);
+    const fieldName = computed(() => props.name || 'file');
+    const fullDisabled = computed(() => props.disabled || props.loading);
+    const fieldRules = computed(() => {
+      const rules = {};
+
+      if (props.required) {
+        rules.required = true;
       }
 
-      const rules = {
-        required: this.required,
-      };
-
-      if (this.accept) {
-        rules.mimes = this.accept.split(',');
+      if (props.accept) {
+        rules.mimes = props.accept.split(',').map(type => type.trim()).filter(Boolean);
       }
 
-      if (this.maxFileSize) {
-        rules.size = Number(this.maxFileSize);
+      if (props.maxFileSize) {
+        rules.size = Number(props.maxFileSize);
       }
 
-      this.$validator.attach({
-        name: this.name,
-        rules,
-        getter: () => this.filesForValidator,
-        vm: this,
-      });
-    },
+      return rules;
+    });
+    const { errors, setValue, setErrors, validate } = useField(fieldName, fieldRules, {
+      initialValue: props.modelValue,
+      validateOnMount: false,
+      validateOnValueUpdate: false,
+    });
 
-    detachField() {
-      if (!this.name) {
-        return;
-      }
-
-      this.$validator.detach(this.name);
-    },
-
-    selectFiles(event) {
+    const selectFile = (event) => {
       event?.stopPropagation();
 
-      if (!this.fullDisabled) {
-        this.$refs.fileInput.click();
+      if (!fullDisabled.value) {
+        inputElement.value?.click();
       }
-    },
+    };
 
-    async dropFiles(event) {
-      const { files } = event?.dataTransfer ?? {};
+    const updateFiles = async (files, { updateInvalidEmpty = false } = {}) => {
+      const value = props.multiple ? files : files[0];
 
-      if (files) {
-        this.setFilesForValidator(files);
+      setValue(value, false);
+      const { valid } = await validate();
 
-        const isValid = await this.$validator.validate(this.name);
-
-        if (isValid) {
-          this.setFiles(this.filesForValidator);
-        }
-      }
-    },
-
-    async change(event) {
-      let isValid = true;
-
-      this.setFilesForValidator(event.target.files);
-
-      if (this.name) {
-        isValid = await this.$validator.validate(this.name);
-      }
-
-      if (isValid) {
-        this.setFiles(this.filesForValidator);
-      }
-    },
-
-    setFilesForValidator(files) {
-      this.filesForValidator = this.multiple
-        ? union(this.files, [...files])
-        : [...files];
-    },
-
-    setFiles(files) {
-      this.files = [...files];
-      this.$emit('change', this.files);
-    },
-
-    clear() {
-      this.$refs.fileInput.value = null;
-      this.files = [];
-      this.filesForValidator = [];
-
-      this.errors.remove(this.name);
-    },
-
-    internalClear() {
-      this.clear();
-      this.$emit('change', this.files);
-    },
-
-    async removeFileFromSelections(name) {
-      this.setFilesForValidator(this.files.filter(file => file.name !== name));
-
-      const isValid = await this.$validator.validate(this.name);
-
-      if (!isValid) {
+      if (!valid && !(updateInvalidEmpty && !files.length)) {
         return;
       }
 
-      this.setFiles(this.filesForValidator);
+      selectedFiles.value = files;
+      emit('update:modelValue', value);
+      emit('change', value);
+    };
 
-      if (!this.files.length) {
-        this.internalClear();
-      } else {
-        this.$emit('change', this.files);
+    const change = ({ target }) => {
+      const files = Array.from(target.files ?? []);
+      const nextFiles = props.multiple ? unionBy(selectedFiles.value, files, 'name') : files;
+
+      updateFiles(nextFiles);
+    };
+
+    const dropFiles = (event) => {
+      const files = Array.from(event?.dataTransfer?.files ?? []);
+      const nextFiles = props.multiple ? unionBy(selectedFiles.value, files, 'name') : files;
+
+      updateFiles(nextFiles);
+    };
+
+    const clear = () => {
+      if (inputElement.value) {
+        inputElement.value.value = '';
       }
-    },
+
+      selectedFiles.value = [];
+      setErrors([]);
+      setValue(undefined, false);
+      emit('update:modelValue', props.multiple ? [] : undefined);
+      emit('change', props.multiple ? [] : undefined);
+    };
+
+    const removeFileFromSelections = (fileName) => {
+      updateFiles(selectedFiles.value.filter(file => file.name !== fileName), {
+        updateInvalidEmpty: true,
+      });
+    };
+
+    watch(
+      () => props.modelValue,
+      (nextValue) => {
+        selectedFiles.value = Array.isArray(nextValue) ? nextValue : [nextValue].filter(Boolean);
+        setValue(nextValue, false);
+      },
+    );
+
+    return {
+      t,
+      inputElement,
+      selectedFiles,
+      errorMessages: errors,
+      fullDisabled,
+      selectFile,
+      change,
+      dropFiles,
+      clear,
+      removeFileFromSelections,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .hidden {
-    display: none;
+.file-selector {
+  :deep(.v-input__control) {
+    width: 100%;
   }
+}
 </style>

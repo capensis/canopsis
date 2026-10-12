@@ -1,19 +1,33 @@
-import { omit, isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 
-import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS, WORKFLOW_TYPES } from '@/constants';
+import {
+  ACTION_TYPES,
+  ALARM_STATES,
+  MIN_DURATION_VALUE,
+  PATTERNS_FIELDS,
+  TIME_UNITS,
+  WORKFLOW_TYPES,
+} from '@/constants';
 
-import { uid } from '@/helpers/uid';
 import { durationToForm } from '@/helpers/date/duration';
-import { getLocalTimezone } from '@/helpers/date/date';
-import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
-
-import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '../pbehavior/form';
-import { requestToForm, formToRequest, requestAuthTokenToForm, formToRequestAuthToken } from '../shared/request/form';
 import {
   declareTicketRuleWebhookDeclareTicketToForm,
   formToDeclareTicketRuleWebhookDeclareTicket,
-} from '../declare-ticket/rule/form';
-import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
+} from '@/helpers/entities/declare-ticket/rule/form';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+import {
+  formToPbehavior,
+  pbehaviorToForm,
+  pbehaviorToRequest,
+} from '@/helpers/entities/pbehavior/form';
+import {
+  formToRequest,
+  formToRequestAuthToken,
+  requestAuthTokenToForm,
+  requestToForm,
+} from '@/helpers/entities/shared/request/form';
+import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {
@@ -26,7 +40,9 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  *   "ack" |
  *   "ackremove" |
  *   "assocticket" |
- *   "cancel"
+ *   "cancel" |
+ *   "pause" |
+ *   "resume"
  * } ActionType
  */
 
@@ -49,6 +65,18 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 /**
  * @typedef {ActionDefaultParameters} ActionChangeStateParameters
  * @property {number} state
+ */
+
+/**
+ * @typedef {Object} ActionPauseParameters
+ * @property {string} output
+ * @property {string} type
+ * @property {boolean} inherited
+ */
+
+/**
+ * @typedef {Object} ActionResumeParameters
+ * @property {string} output
  */
 
 /**
@@ -93,35 +121,22 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  */
 
 /**
+ * @typedef {PbehaviorForm & ActionForwardAuthorParameters} ActionPbehaviorFormParameters
+ * @property {boolean} start_on_trigger
+ * @property {Duration} duration
+ */
+
+/**
  * @typedef {
  *   Pbehavior |
  *   ActionDefaultParameters |
  *   ActionSnoozeParameters |
  *   ActionChangeStateParameters |
  *   ActionWebhookParameters |
- *   ActionAssocTicketParameters
+ *   ActionAssocTicketParameters |
+ *   ActionPauseParameters |
+ *   ActionResumeParameters
  * } ActionParameters
- */
-
-/**
- * @typedef {FilterPatterns} Action
- * @property {ActionType} type
- * @property {boolean} drop_scenario_if_not_matched
- * @property {boolean} emit_trigger_success
- * @property {boolean} [emit_trigger_fail]
- * @property {string} comment
- * @property {ActionParameters} parameters
- */
-
-/**
- * @typedef {
- *   PbehaviorForm |
- *   ActionDefaultParameters |
- *   ActionSnoozeParameters |
- *   ActionChangeStateParameters |
- *   ActionWebhookFormParameters |
- *   ActionAssocTicketParametersForm
- * } ActionFormParameters
  */
 
 /**
@@ -131,7 +146,20 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  */
 
 /**
- * Check action type is pbehavior
+ * @typedef {
+ *   ActionPbehaviorFormParameters |
+ *   ActionDefaultParameters |
+ *   ActionSnoozeParameters |
+ *   ActionChangeStateParameters |
+ *   ActionWebhookFormParameters |
+ *   ActionAssocTicketParametersForm |
+ *   ActionPauseParameters |
+ *   ActionResumeParameters
+ * } ActionFormParameters
+ */
+
+/**
+ * Check action type is pbehavior.
  *
  * @param {ActionType} type
  * @return {boolean}
@@ -139,7 +167,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
 
 /**
- * Check action type is pbehaviorremove
+ * Check action type is pbehaviorremove.
  *
  * @param {ActionType} type
  * @return {boolean}
@@ -147,7 +175,7 @@ export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
 export const isPbehaviorRemoveActionType = type => type === ACTION_TYPES.pbehaviorRemove;
 
 /**
- * Check action type is webhook
+ * Check action type is webhook.
  *
  * @param {ActionType} type
  * @return {boolean}
@@ -155,7 +183,7 @@ export const isPbehaviorRemoveActionType = type => type === ACTION_TYPES.pbehavi
 export const isWebhookActionType = type => type === ACTION_TYPES.webhook;
 
 /**
- * Check if action type is associate ticket
+ * Check if action type is associate ticket.
  *
  * @param {ActionType} type
  * @returns {boolean}
@@ -163,10 +191,10 @@ export const isWebhookActionType = type => type === ACTION_TYPES.webhook;
 export const isAssociateTicketActionType = type => type === ACTION_TYPES.assocticket;
 
 /**
- * Convert action parameters to form
+ * Creates default forward-author parameters form.
  *
- * @param {ActionForwardAuthorParameters | {}} [parameters = {}]
- * @returns {ActionForwardAuthorParameters}
+ * @param {Object} [parameters={}]
+ * @returns {Object}
  */
 const defaultActionForwardAuthorToForm = (parameters = {}) => ({
   forward_author: parameters.forward_author ?? true,
@@ -174,24 +202,48 @@ const defaultActionForwardAuthorToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert action parameters to form
+ * Creates default action parameters form.
  *
- * @param {ActionDefaultParameters | {}} [parameters = {}]
- * @returns {ActionDefaultParameters}
+ * @param {Object} [parameters={}] Action parameters.
+ * @returns {Object}
  */
-const defaultActionParametersToForm = (parameters = {}) => ({
+export const defaultActionParametersToForm = (parameters = {}) => ({
   ...defaultActionForwardAuthorToForm(parameters),
   output: parameters.output ?? '',
 });
 
 /**
- * Convert action webhook parameters to form
+ * Creates pause action parameters form.
  *
- * @param {ActionWebhookParameters} [parameters = {}]
- * @returns {ActionWebhookFormParameters}
+ * @param {Object} [parameters={}]
+ * @returns {Object}
+ */
+export const pauseActionParametersToForm = (parameters = {}) => ({
+  ...defaultActionForwardAuthorToForm(parameters),
+  output: parameters.output ?? '',
+  type: parameters.type ?? '',
+  inherited: parameters.inherited ?? false,
+});
+
+/**
+ * Creates resume action parameters form.
+ *
+ * @param {Object} [parameters={}]
+ * @returns {Object}
+ */
+const resumeActionParametersToForm = (parameters = {}) => ({
+  ...defaultActionForwardAuthorToForm(parameters),
+  output: parameters.output ?? '',
+});
+
+/**
+ * Creates webhook action parameters form.
+ *
+ * @param {Object} [parameters={}]
+ * @returns {Object}
  */
 const webhookActionParametersToForm = (parameters = {}) => {
-  const isEmptyParameters = isEmpty(parameters);
+  const emptyParameters = isEmpty(parameters);
 
   return {
     ...defaultActionForwardAuthorToForm(parameters),
@@ -201,41 +253,47 @@ const webhookActionParametersToForm = (parameters = {}) => {
     multiple_urls: parameters.multiple_urls ?? false,
     skip_for_child: parameters.skip_for_child ?? false,
     skip_for_instruction: parameters.skip_for_instruction ?? false,
-    stop_on_fail: isEmptyParameters ? WORKFLOW_TYPES.stop : parameters.stop_on_fail ?? WORKFLOW_TYPES.continue,
-    stop_on_success: isEmptyParameters ? WORKFLOW_TYPES.stop : parameters.stop_on_success ?? WORKFLOW_TYPES.continue,
+    stop_on_fail: emptyParameters
+      ? WORKFLOW_TYPES.stop
+      : (parameters.stop_on_fail ?? WORKFLOW_TYPES.continue),
+    stop_on_success: emptyParameters
+      ? WORKFLOW_TYPES.stop
+      : (parameters.stop_on_success ?? WORKFLOW_TYPES.continue),
     ticket_system_name: parameters.ticket_system_name ?? '',
   };
 };
 
 /**
- * Convert action snooze parameters to form
+ * Creates snooze action parameters form.
  *
- * @param {ActionSnoozeParameters | {}} [parameters = {}]
- * @returns {ActionSnoozeParameters}
+ * @param {Object} [parameters={}] Action parameters.
+ * @returns {Object}
  */
-const snoozeActionParametersToForm = (parameters = {}) => ({
+export const snoozeActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  duration: durationToForm(parameters.duration),
+  duration: parameters.duration
+    ? durationToForm(parameters.duration)
+    : { value: MIN_DURATION_VALUE, unit: TIME_UNITS.second },
 });
 
 /**
- * Convert action snooze parameters to form
+ * Creates change state action parameters form.
  *
- * @param {ActionChangeStateParameters | {}} [parameters = {}]
- * @returns {ActionChangeStateParameters}
+ * @param {Object} [parameters={}] Action parameters.
+ * @returns {Object}
  */
-const changeStateActionParametersToForm = (parameters = {}) => ({
+export const changeStateActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
   state: parameters.state ?? ALARM_STATES.minor,
 });
 
 /**
- * Convert action assoc ticket parameters to form
+ * Creates associate ticket action parameters form.
  *
- * @param {ActionAssocTicketParameters | {}} [parameters = {}]
- * @returns {ActionAssocTicketParametersForm}
+ * @param {Object} [parameters={}] Action parameters.
+ * @returns {Object}
  */
-const assocTicketActionParametersToForm = (parameters = {}) => ({
+export const associateTicketActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
   ticket: parameters.ticket ?? '',
   ticket_url: parameters.ticket_url ?? '',
@@ -246,13 +304,13 @@ const assocTicketActionParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert action pbehavior parameters to form
+ * Creates pbehavior action parameters form.
  *
- * @param {Pbehavior} [parameters = {}]
- * @param {string} [timezone = getLocalTimezone()]
- * @returns {PbehaviorForm}
+ * @param {Object} [parameters={}]
+ * @param {string} [timezone]
+ * @returns {Object}
  */
-const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocalTimezone()) => {
+const pbehaviorActionParametersToForm = (parameters = {}, timezone) => {
   const pbehaviorForm = {
     ...defaultActionForwardAuthorToForm(parameters),
     ...pbehaviorToForm(parameters, null, timezone),
@@ -265,9 +323,9 @@ const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocalTim
 };
 
 /**
- * Prepare parameters for all action types
+ * Prepare default parameters for all action types.
  *
- * @returns {Object.<ActionType, ActionFormParameters>}
+ * @returns {Object}
  */
 const prepareDefaultActionParameters = () => ({
   [ACTION_TYPES.snooze]: snoozeActionParametersToForm(),
@@ -277,19 +335,21 @@ const prepareDefaultActionParameters = () => ({
   [ACTION_TYPES.changeState]: changeStateActionParametersToForm(),
   [ACTION_TYPES.ack]: defaultActionParametersToForm(),
   [ACTION_TYPES.ackremove]: defaultActionParametersToForm(),
-  [ACTION_TYPES.assocticket]: assocTicketActionParametersToForm(),
+  [ACTION_TYPES.assocticket]: associateTicketActionParametersToForm(),
   [ACTION_TYPES.cancel]: defaultActionParametersToForm(),
   [ACTION_TYPES.webhook]: webhookActionParametersToForm(),
+  [ACTION_TYPES.pause]: pauseActionParametersToForm(),
+  [ACTION_TYPES.resume]: resumeActionParametersToForm(),
 });
 
 /**
- * Convert action parameters to form
+ * Converts action parameters to form for all supported scenario actions.
  *
- * @param {Action} action
- * @param {string} timezone
- * @returns {Object.<ActionType, ActionParameters>}
+ * @param {Object} [action={}] Action entity.
+ * @param {string} [timezone]
+ * @returns {Object}
  */
-export const actionParametersToForm = (action, timezone) => {
+export const actionParametersToForm = (action = {}, timezone) => {
   const parameters = prepareDefaultActionParameters();
 
   if (!action.type || !action.parameters) {
@@ -300,27 +360,29 @@ export const actionParametersToForm = (action, timezone) => {
     [ACTION_TYPES.snooze]: snoozeActionParametersToForm,
     [ACTION_TYPES.webhook]: webhookActionParametersToForm,
     [ACTION_TYPES.pbehavior]: pbehaviorActionParametersToForm,
-    [ACTION_TYPES.assocticket]: assocTicketActionParametersToForm,
+    [ACTION_TYPES.assocticket]: associateTicketActionParametersToForm,
     [ACTION_TYPES.changeState]: changeStateActionParametersToForm,
+    [ACTION_TYPES.pause]: pauseActionParametersToForm,
+    [ACTION_TYPES.resume]: resumeActionParametersToForm,
   };
 
-  const prepareParametersToFormFunction = parametersPreparers[action.type];
+  const prepareParametersToForm = parametersPreparers[action.type];
 
-  parameters[action.type] = prepareParametersToFormFunction
-    ? prepareParametersToFormFunction(action.parameters, timezone)
-    : defaultActionParametersToForm({ ...action.parameters });
+  parameters[action.type] = prepareParametersToForm
+    ? prepareParametersToForm(action.parameters, timezone)
+    : defaultActionParametersToForm(action.parameters);
 
   return parameters;
 };
 
 /**
- * Convert action to form
+ * Converts action entity to form.
  *
- * @param {Action} [action = {}]
- * @param {string} [timezone = getLocalTimezone()]
- * @returns {ActionForm}
+ * @param {Object} [action={}]
+ * @param {string} [timezone]
+ * @returns {Object}
  */
-export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
+export const actionToForm = (action = {}, timezone) => ({
   type: action.type ?? ACTION_TYPES.snooze,
   key: uid(),
   parameters: actionParametersToForm(action, timezone),
@@ -332,10 +394,10 @@ export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
 });
 
 /**
- * Convert pbehavior parameters to action
+ * Converts webhook parameters form to entity.
  *
- * @param {ActionWebhookFormParameters | {}} [parameters = {}]
- * @return {ActionWebhookParameters}
+ * @param {Object} [parameters={}]
+ * @returns {Object}
  */
 export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
@@ -351,13 +413,13 @@ export const formToWebhookActionParameters = (parameters = {}) => ({
 });
 
 /**
- * Convert pbehavior parameters to action
+ * Converts pbehavior parameters form to entity.
  *
- * @param {PbehaviorForm | {}} [parameters = {}]
- * @param {string} [timezone = getLocalTimezone()]
- * @return {PbehaviorRequest}
+ * @param {Object} [parameters={}]
+ * @param {string} [timezone]
+ * @returns {Object}
  */
-export const formToPbehaviorActionParameters = (parameters = {}, timezone = getLocalTimezone()) => {
+export const formToPbehaviorActionParameters = (parameters = {}, timezone) => {
   const pbehavior = formToPbehavior(omit(parameters, ['start_on_trigger', 'duration']), timezone);
 
   if (parameters.start_on_trigger) {
@@ -369,10 +431,10 @@ export const formToPbehaviorActionParameters = (parameters = {}, timezone = getL
 };
 
 /**
- * Convert form object to associate ticket action parameters object
+ * Converts associate ticket parameters form to entity.
  *
- * @param {ActionAssocTicketParametersForm} form
- * @return {ActionAssocTicketParameters}
+ * @param {Object} form
+ * @returns {Object}
  */
 export const formToAssociateTicketParameters = form => ({
   ...omit(form, ['mapping']),
@@ -380,18 +442,18 @@ export const formToAssociateTicketParameters = form => ({
 });
 
 /**
- * Convert form to action parameters
+ * Converts action form to action parameters.
  *
- * @param {ActionForm} form
+ * @param {Object} form
  * @param {string} [timezone]
- * @returns {ActionParameters}
+ * @returns {Object}
  */
 const formToActionParameters = (form, timezone) => {
   const {
     forward_author: forwardAuthor,
     author,
     ...parametersByCurrentType
-  } = form.parameters[form.type];
+  } = form.parameters?.[form.type] ?? {};
 
   const parametersPreparers = {
     [ACTION_TYPES.webhook]: formToWebhookActionParameters,
@@ -416,15 +478,14 @@ const formToActionParameters = (form, timezone) => {
 };
 
 /**
- * Convert form to action
+ * Converts action form to API entity.
  *
- * @param {ActionForm} form
+ * @param {Object} form Action form.
  * @param {string} [timezone]
- * @returns {Action}
+ * @returns {Object}
  */
-export const formToAction = (form, timezone) => {
+export const formToAction = (form = {}, timezone) => {
   const parameters = formToActionParameters(form, timezone);
-
   const action = {
     ...omit(form, ['key', 'patterns', 'emit_trigger_fail']),
     ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),

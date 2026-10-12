@@ -1,15 +1,17 @@
 <template>
-  <v-select
-    v-field="value"
-    v-validate="required ? 'required' : ''"
+  <c-select
+    :model-value="currentValue"
     :items="actionTypes"
-    :error-messages="errors.collect(name)"
     :label="label || $t('common.type')"
     :disabled="disabled"
     :name="name"
+    :required="required"
     :multiple="isMultiple"
-    :deletable-chips="isMultiple"
-    :small-chips="isMultiple"
+    :chips="isMultiple"
+    :closable-chips="isMultiple"
+    item-title="text"
+    item-value="value"
+    @update:model-value="updateValue"
   />
 </template>
 
@@ -19,13 +21,14 @@ import { isArray } from 'lodash';
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value', 'update:modelValue'],
+
   props: {
     value: {
+      type: [String, Array],
+      required: false,
+    },
+    modelValue: {
       type: [String, Array],
       required: false,
     },
@@ -50,7 +53,12 @@ export default {
       default: false,
     },
   },
+
   computed: {
+    currentValue() {
+      return this.modelValue ?? this.value;
+    },
+
     actionTypes() {
       const types = this.types ?? Object.values(BASIC_ENTITY_TYPES);
 
@@ -61,7 +69,14 @@ export default {
     },
 
     isMultiple() {
-      return isArray(this.value);
+      return isArray(this.currentValue);
+    },
+  },
+
+  methods: {
+    updateValue(value) {
+      this.$emit('update:value', value);
+      this.$emit('update:modelValue', value);
     },
   },
 };

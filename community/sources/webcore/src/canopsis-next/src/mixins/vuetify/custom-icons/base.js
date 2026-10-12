@@ -1,24 +1,19 @@
-import { omit } from 'lodash';
+import {
+  customIconsRegistry,
+  registerCustomIcon,
+  unregisterCustomIcon,
+} from '@/plugins/vuetify/icons';
 
 import { normalizeHtml } from '@/helpers/html';
 
 export const vuetifyCustomIconsBaseMixin = {
   methods: {
     hasIconInVuetify(name) {
-      return !!this.$vuetify.icons.values[name];
+      return !!customIconsRegistry[name];
     },
 
     registerIconInVuetify(name, template, meta = {}) {
-      this.$vuetify.icons.values = {
-        ...this.$vuetify.icons.values,
-
-        [name]: {
-          meta,
-          component: {
-            template: normalizeHtml(template),
-          },
-        },
-      };
+      registerCustomIcon(name, normalizeHtml(template), meta);
     },
 
     unregisterIconFromVuetify(name) {
@@ -26,7 +21,7 @@ export const vuetifyCustomIconsBaseMixin = {
         return;
       }
 
-      this.$vuetify.icons.values = omit(this.$vuetify.icons.values, [name]);
+      unregisterCustomIcon(name);
     },
   },
 };

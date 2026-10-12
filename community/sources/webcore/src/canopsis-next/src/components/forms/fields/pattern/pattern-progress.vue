@@ -12,45 +12,50 @@
         error_outline
       </v-icon>
     </template>
-    <v-layout v-if="failedReason" class="gap-4 mt-3" column>
+    <c-layout
+      v-if="failedReason"
+      class="mt-3"
+      gap="4"
+      column
+    >
       <span class="error--text text-h6 font-weight-regular">
         {{ failedMessageText || $t('pattern.optimizationFailed', { reason: failedReason }) }}
       </span>
-      <v-layout class="gap-2" justify-center>
+      <c-layout gap="2" justify-center>
         <v-btn
           color="primary"
-          outlined
+          variant="outlined"
+          type="button"
           @click="close"
         >
           {{ closeButtonLabel || $t('common.close') }}
         </v-btn>
-        <v-btn
-          color="primary"
-          @click="tryAgain"
-        >
+        <v-btn color="primary" type="button" @click="tryAgain">
           {{ tryAgainButtonLabel || $t('common.tryAgain') }}
         </v-btn>
-      </v-layout>
-    </v-layout>
-    <v-layout
+      </c-layout>
+    </c-layout>
+    <c-layout
       v-else
-      class="gap-4 mt-3"
+      class="mt-3"
+      gap="4"
       justify-center
       column
     >
       <span class="primary--text text-h6 font-weight-regular">
         {{ inProgressText || $t('pattern.optimizationInProgress') }}
       </span>
-      <v-layout justify-center>
+      <c-layout justify-center>
         <v-btn
           color="primary"
-          outlined
+          variant="outlined"
+          type="button"
           @click="cancel"
         >
           {{ cancelButtonLabel || $t('pattern.cancelOptimization') }}
         </v-btn>
-      </v-layout>
-    </v-layout>
+      </c-layout>
+    </c-layout>
   </c-progress-overlay>
 </template>
 
@@ -97,7 +102,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .c-patterns-field__progress-overlay .c-progress-overlay__background {
-    outline: 3px solid var(--v-background-base);
-  }
+.c-patterns-field__progress-overlay .c-progress-overlay__background {
+  outline: 3px solid var(--v-background-base);
+}
 </style>

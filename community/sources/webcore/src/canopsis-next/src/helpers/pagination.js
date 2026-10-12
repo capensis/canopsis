@@ -26,6 +26,4 @@ export const getPageForNewItemsPerPage = (
   newItemsPerPage,
   oldItemsPerPage = PAGINATION_LIMIT,
   oldPage = 1,
-) => (
-  Math.ceil(Math.min(oldItemsPerPage * (oldPage - 1) + 1) / newItemsPerPage)
-);
+) => Math.ceil(Math.min(oldItemsPerPage * (oldPage - 1) + 1) / newItemsPerPage);

@@ -1,37 +1,53 @@
 <template>
-  <span
-    v-html="preparedContent"
-    :class="themeClass"
-    class="v-icon"
-  />
+  <span v-html="sanitizedContent" class="custom-icon" />
 </template>
+
 <script>
+import { computed } from 'vue';
+
+import { sanitizeHtml } from '@/helpers/html';
+
+const CUSTOM_ICON_SANITIZE_OPTIONS = {
+  USE_PROFILES: {
+    svg: true,
+    svgFilters: true,
+  },
+
+  ADD_ATTR: ['class', 'style', 'viewBox', 'xmlns'],
+
+  FORBID_TAGS: ['script', 'foreignObject', 'iframe', 'object', 'embed'],
+};
+
 export default {
-  inject: ['$system'],
   props: {
     content: {
       type: String,
       default: '',
     },
   },
-  computed: {
-    themeClass() {
-      return `theme--${this.$system.dark ? 'dark' : 'light'}`;
-    },
 
-    preparedContent() {
-      const element = document.createElement('div');
+  setup(props) {
+    const sanitizedContent = computed(() => sanitizeHtml(props.content, CUSTOM_ICON_SANITIZE_OPTIONS),
+    );
 
-      element.innerHTML = this.content;
-
-      const svg = element.getElementsByTagName('svg')[0];
-
-      if (svg) {
-        svg.classList.add('v-icon__component', this.themeClass);
-      }
-
-      return element.innerHTML;
-    },
+    return {
+      sanitizedContent,
+    };
   },
 };
 </script>
+
+<style lang="scss">
+.custom-icon {
+  display: inline-flex;
+  align-items: center;
+  max-width: 24px;
+  max-height: 24px;
+  overflow: hidden;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+</style>

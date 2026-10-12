@@ -1,16 +1,56 @@
-import { computed } from 'vue';
+import { computed, inject, toRef, unref } from 'vue';
 
-import { useComponentInstance } from './vue';
+import { useModalsStore } from '@/plugins/modals/stores';
 
-/**
- * Hook to access modal management methods and properties from the Vue instance.
- *
- * @returns {Object} An object containing modal management methods and properties.
- */
 export const useModals = () => {
-  const vm = useComponentInstance();
+  const store = useModalsStore();
+  const modalContext = inject('$modals', null);
 
-  return vm.$modals;
+  const getCurrentModalId = (payload) => {
+    if (payload?.id) {
+      return payload.id;
+    }
+
+    return unref(modalContext)?.id;
+  };
+
+  return {
+    dialogPropsMap: {},
+
+    isModalOpenedById: id => Boolean(store.byId[id]),
+
+    show: modal => store.show(modal),
+
+    hide: (payload = {}) =>
+      store.hide({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
+
+    updateDialogProps: (payload = {}) =>
+      store.updateDialogProps({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
+
+    updateModalConfig: (payload = {}) =>
+      store.updateModalConfig({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
+
+    minimize: (payload = {}) =>
+      store.minimize({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
+
+    maximize: (payload = {}) =>
+      store.maximize({
+        ...payload,
+        id: getCurrentModalId(payload),
+      }),
+  };
 };
 
 /**
@@ -22,10 +62,10 @@ export const useModals = () => {
 export const useInnerModal = (props) => {
   const modals = useModals();
 
-  const modal = computed(() => props.modal);
+  const modal = toRef(props, 'modal');
   const config = computed(() => modal.value?.config ?? {});
 
-  const close = () => modals.hide(props.modal);
+  const close = () => modals.hide({ id: props.modal?.id });
 
   return {
     modals,

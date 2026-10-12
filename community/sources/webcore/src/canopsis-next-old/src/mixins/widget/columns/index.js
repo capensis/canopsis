@@ -1,0 +1,1 @@
+export { widgetColumnsAlarmMixin } from './alarm';

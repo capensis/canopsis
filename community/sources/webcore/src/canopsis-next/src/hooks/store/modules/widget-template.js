@@ -1,48 +1,27 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
+
+import { useWidgetTemplateStore } from '@/stores/modules/widget-template';
 
 /**
- * Custom hook to access the `widgetTemplate` store module.
+ * Widget template store facade.
  *
- * @returns {Object} An object containing the store, module, useGetters, and useActions
- *                   functions for the `widgetTemplate` namespace.
- */
-export const useWidgetTemplateStoreModule = () => useStoreModuleHooks('widgetTemplate');
-
-/**
- * Custom hook to interact with the `widgetTemplate` store module.
- *
- * This hook provides access to the `widgetTemplate` module's getters and actions,
- * allowing for easy retrieval and manipulation of widget template data.
- *
- * @returns {Object} An object containing:
- * - `widgetTemplates`: Getter for widget templates items.
- * - `widgetTemplatesMeta`: Getter for widget templates meta information.
- * - `widgetTemplatesPending`: Getter for widget templates pending state.
- * - `fetchWidgetTemplatesList`: Action to fetch the list of widget templates.
- * - `fetchWidgetTemplatesListWithPreviousParams`: Action to fetch widget templates with previous parameters.
- * - `createWidgetTemplate`: Action to create a new widget template.
- * - `updateWidgetTemplate`: Action to update an existing widget template.
- * - `removeWidgetTemplate`: Action to remove a widget template.
+ * @returns {Object}
  */
 export const useWidgetTemplate = () => {
-  const { useGetters, useActions } = useWidgetTemplateStoreModule();
-
-  const getters = useGetters({
-    widgetTemplates: 'items',
-    widgetTemplatesMeta: 'meta',
-    widgetTemplatesPending: 'pending',
-  });
-
-  const actions = useActions({
-    fetchWidgetTemplatesList: 'fetchList',
-    fetchWidgetTemplatesListWithPreviousParams: 'fetchListWithPreviousParams',
-    createWidgetTemplate: 'create',
-    updateWidgetTemplate: 'update',
-    removeWidgetTemplate: 'remove',
-  });
+  const widgetTemplateStore = useWidgetTemplateStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(widgetTemplateStore);
 
   return {
-    ...getters,
-    ...actions,
+    widgetTemplates: items,
+    widgetTemplatesMeta: meta,
+    widgetTemplatesPending: pending,
+    widgetTemplatesFetchingParams: fetchingParams,
+
+    fetchWidgetTemplatesList: widgetTemplateStore.fetchList,
+    fetchWidgetTemplatesListWithPreviousParams: widgetTemplateStore.fetchListWithPreviousParams,
+    fetchWidgetTemplatesListWithoutStore: widgetTemplateStore.fetchListWithoutStore,
+    createWidgetTemplate: widgetTemplateStore.create,
+    updateWidgetTemplate: widgetTemplateStore.update,
+    removeWidgetTemplate: widgetTemplateStore.remove,
   };
 };

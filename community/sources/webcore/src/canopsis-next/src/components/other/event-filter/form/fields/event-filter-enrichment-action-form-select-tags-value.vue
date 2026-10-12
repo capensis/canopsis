@@ -1,30 +1,28 @@
 <template>
-  <v-select
-    v-field="value"
-    v-validate="'required'"
+  <c-select
+    :model-value="value"
     :label="$t('common.value')"
-    :error-messages="errorMessages"
     :items="items"
     :name="name"
+    item-title="text"
+    item-value="value"
     class="ml-2"
-    @change="validateRegex"
+    required
+    @update:model-value="updateValue"
   />
 </template>
 
 <script>
-import { find, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
+import { computed, nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
 
 import { EVENT_FILTER_SET_TAGS_REGEX } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidationAttachRule } from '@/hooks/validator/validation-attach-rule';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: String,
@@ -39,70 +37,49 @@ export default {
       default: 'tags_value',
     },
   },
-  computed: {
-    selectedItem() {
-      return find(this.items, { value: this.value });
-    },
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
 
-    regexRuleFieldName() {
-      return `${this.name}.regex`;
-    },
+    const selectedItem = computed(() => props.items.find(({ value }) => value === props.value));
+    const regexRuleFieldName = computed(() => `${props.name}.regex`);
 
-    errorMessages() {
-      const messages = this.errors.collect(this.name);
+    const {
+      attachRule: attachRegexRule,
+      detachRule: detachRegexRule,
+      validateRule: validateRegexRule,
+    } = useValidationAttachRule(
+      regexRuleFieldName,
+      {
+        regex: EVENT_FILTER_SET_TAGS_REGEX,
+      },
+      () => selectedItem.value?.valueForValidation ?? '',
+    );
 
-      if (this.errors.has(this.regexRuleFieldName)) {
-        messages.push(this.$t('eventFilter.validation.incorrectRegexOnSetTagsValue'));
-      }
+    const validateRegex = () => nextTick(validateRegexRule);
 
-      return messages;
-    },
-  },
-  watch: {
-    items: {
-      immediate: true,
-      handler(items, oldItems) {
-        if (
-          this.value
-          && !isEqual(items, oldItems)
-          && items.every(({ value }) => value !== this.value)
-        ) {
-          this.updateField('value', '');
+    const updateValue = (value) => {
+      updateModel(value);
+      validateRegex();
+    };
+
+    watch(
+      () => props.items,
+      (items, oldItems) => {
+        if (props.value && !isEqual(items, oldItems) && items.every(item => item.value !== props.value)) {
+          updateModel('');
         }
 
-        this.validateRegex();
+        validateRegex();
       },
-    },
-  },
-  mounted() {
-    this.attachRegexRule();
-  },
-  beforeDestroy() {
-    this.detachRegexRule();
-  },
-  methods: {
-    attachRegexRule() {
-      this.$validator.attach({
-        name: this.regexRuleFieldName,
-        rules: {
-          regex: EVENT_FILTER_SET_TAGS_REGEX,
-        },
-        getter: () => this.selectedItem?.valueForValidation ?? '',
-        vm: this,
-      });
-    },
+      { immediate: true },
+    );
 
-    detachRegexRule() {
-      this.$validator.detach(this.regexRuleFieldName);
-    },
+    onMounted(attachRegexRule);
+    onBeforeUnmount(detachRegexRule);
 
-    validateRegex() {
-      if (!this.$validator.fields.find({ name: this.regexRuleFieldName })) {
-        return;
-      }
-
-      this.$validator.validate(this.regexRuleFieldName);
-    },
+    return {
+      updateValue,
+    };
   },
 };
 </script>

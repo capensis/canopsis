@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title
         :style="{ backgroundColor: color }"
-        class="white--text"
+        class="text-white"
       >
         {{ title }}
       </v-card-title>
@@ -50,7 +50,7 @@ export default {
 
 <style lang="scss" scoped>
 .test-suite-message {
-  & ::v-deep .v-sheet {
+  :deep(.v-sheet) {
     border-radius: 5px;
     overflow: hidden;
   }

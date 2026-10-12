@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-html="svg"
-    :class="{ 'mermaid-preview--error': !parsed }"
-    class="mermaid-code-preview"
-  />
+  <div v-html="svg" :class="{ 'mermaid-preview--error': !parsed }" class="mermaid-code-preview" />
 </template>
 
 <script>
@@ -32,35 +28,41 @@ export default {
       required: false,
     },
   },
+
   data() {
     return {
       svg: '',
       parsed: false,
     };
   },
+
   computed: {
     resultConfig() {
       const themeProperties = MERMAID_THEME_PROPERTIES_BY_NAME[this.theme] ?? {};
 
-      return merge({
-        theme: this.theme,
-        ...themeProperties,
+      return merge(
+        {
+          theme: this.theme,
+          ...themeProperties,
 
-        er: {
-          useMaxWidth: false,
+          er: {
+            useMaxWidth: false,
+          },
+          pie: {
+            useMaxWidth: false,
+          },
+          sequence: {
+            useMaxWidth: false,
+          },
+          requirement: {
+            useMaxWidth: false,
+          },
         },
-        pie: {
-          useMaxWidth: false,
-        },
-        sequence: {
-          useMaxWidth: false,
-        },
-        requirement: {
-          useMaxWidth: false,
-        },
-      }, this.config);
+        this.config,
+      );
     },
   },
+
   watch: {
     value: {
       immediate: true,
@@ -68,13 +70,34 @@ export default {
     },
     resultConfig: 'renderMermaid',
   },
+
   methods: {
-    renderMermaid() {
+    normalizeSvgHeight(svg) {
+      const wrapper = document.createElement('div');
+
+      wrapper.innerHTML = svg;
+
+      const svgElement = wrapper.querySelector('svg');
+      const [, , , height] = svgElement?.getAttribute('viewBox')?.split(/\s+/).map(Number) ?? [];
+
+      if (height) {
+        svgElement.setAttribute('height', height);
+        svgElement.style.height = `${height}px`;
+      }
+
+      return wrapper.innerHTML;
+    },
+
+    async renderMermaid() {
       try {
-        this.svg = renderMermaid(this.value, this.resultConfig);
+        const svg = await renderMermaid(this.value, this.resultConfig);
+
+        this.svg = this.normalizeSvgHeight(svg);
 
         this.parsed = true;
       } catch (err) {
+        console.error(err);
+
         this.parsed = false;
       }
     },

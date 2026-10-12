@@ -3,22 +3,17 @@
     :disabled="pending"
     :min-width="300"
     :close-on-content-click="false"
-    bottom
-    offset-y
+    origin="top center"
   >
-    <template #activator="{ on }">
+    <template #activator="{ props: activatorProps }">
       <v-btn
-        class="white--text"
-        text
-        v-on="on"
+        class="top-bar-notifications-menu__button text-white"
+        variant="text"
+        v-bind="activatorProps"
       >
-        {{ $tc('common.notification', 2) }}
-        <c-circle-badge
-          :class="badgeTextClasses"
-          :outlined="!totalCount"
-          class="ml-2"
-          color="white"
-        >
+        {{ t('common.notification', 2) }}
+
+        <c-circle-badge class="top-bar-notifications-menu__badge ml-2 text-primary" color="white">
           <v-progress-circular
             v-if="pending"
             size="12"
@@ -31,51 +26,56 @@
         </c-circle-badge>
       </v-btn>
     </template>
+
     <v-list class="py-0">
       <top-bar-notifications-menu-item
         v-for="notification in notifications"
         :key="notification._id"
         :notification="notification"
       />
+
       <v-list-item v-if="!notifications.length">
-        <v-list-item-content>
-          <v-list-item-title class="text-center">
-            <strong class="font-italic grey--text">
-              {{ $t('notifications.topBar.noNotifications') }}
-            </strong>
-          </v-list-item-title>
-        </v-list-item-content>
+        <v-list-item-title class="text-center">
+          <strong class="font-italic text-medium-emphasis">
+            {{ t('notifications.topBar.noNotifications') }}
+          </strong>
+        </v-list-item-title>
       </v-list-item>
-      <v-layout class="pa-4" justify-center>
-        <v-btn
-          :to="linkToSeeAllNotifications"
-          color="primary"
-        >
-          {{ $t('notifications.topBar.seeAll') }}
+
+      <c-layout class="pa-4" justify="center">
+        <v-btn :disabled="!canOpenNotifications" color="primary" @click="showAllNotifications">
+          {{ t('notifications.topBar.seeAll') }}
         </v-btn>
-      </v-layout>
+      </c-layout>
     </v-list>
   </v-menu>
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { SOCKET_ROOMS } from '@/config';
-import { DEFAULT_NOTIFICATION_TOP_BAR_LIMIT, NOTIFICATIONS_PAGE_TABS_KEYS, ROUTES_NAMES } from '@/constants';
+import {
+  DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
+  NOTIFICATIONS_PAGE_TABS_KEYS,
+  ROUTES_NAMES,
+} from '@/constants';
 
+import { useI18n } from '@/hooks/i18n';
+import { usePendingHandler } from '@/hooks/query/pending';
 import { useSocketRoom } from '@/hooks/socket';
 import { useInfo } from '@/hooks/store/modules/info';
 import { useNotifications } from '@/hooks/store/modules/notification';
-import { usePendingHandler } from '@/hooks/query/pending';
 
 import TopBarNotificationsMenuItem from './top-bar-notifications-menu-item.vue';
 
 export default {
-  components: {
-    TopBarNotificationsMenuItem,
-  },
+  components: { TopBarNotificationsMenuItem },
+
   setup() {
+    const router = useRouter();
+    const { t } = useI18n();
     const { notificationDisplayCount } = useInfo();
     const { fetchNotificationsListWithoutStore } = useNotifications();
 
@@ -87,36 +87,33 @@ export default {
     const notifications = ref([]);
     const totalCount = ref(0);
 
-    const badgeTextClasses = computed(() => ({
-      'primary--text': !!totalCount.value,
-      'white--text': !totalCount.value,
-    }));
+    const canOpenNotifications = computed(() => router.hasRoute(ROUTES_NAMES.notifications));
 
-    /**
-     * Fetches notifications list from the API and updates the component state
-     */
     const { pending, handler: fetchList } = usePendingHandler(async () => {
-      const { data, meta } = await fetchNotificationsListWithoutStore({
-        params: {
-          page: 1,
-          limit: notificationDisplayCount.value || DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
-        },
-      });
+      try {
+        const { data, meta } = await fetchNotificationsListWithoutStore({
+          params: {
+            page: 1,
+            limit: notificationDisplayCount.value || DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
+          },
+        });
 
-      notifications.value = data ?? [];
-      totalCount.value = meta?.total_count ?? 0;
+        notifications.value = data ?? [];
+        totalCount.value = meta?.total_count ?? 0;
+      } catch (err) {
+        console.warn(err);
+      }
     });
 
-    /**
-     * Updates notifications data and total count from socket events
-     *
-     * @param {Object} params - The update parameters
-     * @param {Array} [params.data] - Array of notification objects
-     * @param {number} [params.total_count] - Total count of notifications
-     */
     const updateNotifications = ({ data, total_count: newTotalCount } = {}) => {
       notifications.value = data ?? [];
       totalCount.value = newTotalCount ?? 0;
+    };
+
+    const showAllNotifications = () => {
+      if (canOpenNotifications.value) {
+        router.push(linkToSeeAllNotifications);
+      }
     };
 
     useSocketRoom({ room: SOCKET_ROOMS.notifications, listener: updateNotifications });
@@ -124,12 +121,41 @@ export default {
     onMounted(fetchList);
 
     return {
-      linkToSeeAllNotifications,
+      t,
       notifications,
       pending,
       totalCount,
-      badgeTextClasses,
+      canOpenNotifications,
+      showAllNotifications,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.top-bar-notifications-menu {
+  &__button {
+    --v-btn-height: 48px;
+
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 500;
+    height: 48px;
+    letter-spacing: 0;
+    line-height: normal;
+    min-height: 0;
+    padding: 0 16px;
+    text-transform: uppercase;
+
+    :deep(.v-btn__content) {
+      height: 100%;
+    }
+  }
+
+  &__badge {
+    background: white;
+    color: rgb(var(--v-theme-primary));
+    font-weight: 700;
+  }
+}
+</style>

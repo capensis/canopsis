@@ -1,11 +1,7 @@
 <template>
-  <g
-    class="image-shape"
-    @dblclick.stop="enableEditingMode"
-  >
+  <g class="image-shape" @dblclick.stop="enableEditingMode">
     <template v-if="shape.svg">
-      <component
-        is="foreignObject"
+      <foreignObject
         v-html="shape.svg"
         :style="svgStyle"
         :x="shape.x"
@@ -13,7 +9,6 @@
         :height="shape.height"
         :width="shape.width"
         cursor="move"
-        v-on="$listeners"
       />
     </template>
     <template v-else>
@@ -31,7 +26,6 @@
         :width="shape.width"
         :height="shape.height"
         :cursor="readonly ? '' : 'move'"
-        v-on="$listeners"
       />
     </template>
     <text-editor

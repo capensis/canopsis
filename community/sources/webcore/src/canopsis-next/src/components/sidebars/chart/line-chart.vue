@@ -1,6 +1,7 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
@@ -8,29 +9,52 @@
       v-model="form"
       :with-filters="hasAccessToFilter"
       with-periodic-refresh
+      with-preset
     />
   </widget-settings>
 </template>
 
 <script>
+import { toRef } from 'vue';
+
 import { SIDE_BARS } from '@/constants';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { permissionsWidgetsLineChartFilters } from '@/mixins/permissions/widgets/chart/line/filters';
+import { useLineChartFiltersPermissions } from '@/hooks/permissions/widgets/chart/filters';
+import { useWidgetSettings } from '@/hooks/widget/settings';
 
-import WidgetSettings from '../partials/widget-settings.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
 import LineChartWidgetForm from './form/line-chart-widget-form.vue';
 
 export default {
   name: SIDE_BARS.lineChartSettings,
+
   components: {
-    WidgetSettings,
     LineChartWidgetForm,
+    WidgetSettings,
   },
-  mixins: [
-    widgetSettingsMixin,
-    permissionsWidgetsLineChartFilters,
-  ],
+
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const sidebar = toRef(props, 'sidebar');
+    const { form, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+    const { hasAccessToFilter } = useLineChartFiltersPermissions();
+
+    return {
+      form,
+      hasChanges,
+      submitting,
+      hasAccessToFilter,
+
+      close,
+      submit,
+    };
+  },
 };
 </script>

@@ -1,36 +1,23 @@
 <template>
-  <v-layout
-    class="pa-4"
-    column
-    align-center
-  >
+  <c-layout class="pa-4" align="center" column>
     <div class="kpi-charts">
-      <c-information-block
-        :title="$t('kpi.alarmMetrics')"
-        class="mb-5"
-      >
+      <c-information-block :title="$t('kpi.alarmMetrics')" class="mb-5">
         <kpi-alarms :unavailable="unavailable" />
       </c-information-block>
-      <c-information-block
-        :title="$tc('common.rating', 2)"
-        class="mb-5"
-      >
+      <c-information-block :title="$t('common.rating', 2)" class="mb-5">
         <kpi-rating :unavailable="unavailable" />
       </c-information-block>
-      <c-information-block
-        :title="$t('kpi.sli')"
-        class="mb-5"
-      >
+      <c-information-block :title="$t('kpi.sli')" class="mb-5">
         <kpi-sli :unavailable="unavailable" />
       </c-information-block>
     </div>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import KpiAlarms from './kpi-alarms.vue';
-import KpiSli from './kpi-sli.vue';
 import KpiRating from './kpi-rating.vue';
+import KpiSli from './kpi-sli.vue';
 
 export default {
   components: {
@@ -38,6 +25,7 @@ export default {
     KpiRating,
     KpiSli,
   },
+
   props: {
     unavailable: {
       type: Boolean,

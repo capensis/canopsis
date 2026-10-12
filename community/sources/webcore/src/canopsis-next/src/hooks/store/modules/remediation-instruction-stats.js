@@ -1,39 +1,34 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
+
+import { useRemediationInstructionStatsStore } from '@/stores/modules/remediation-instruction-stats';
 
 /**
- * Hook to use the Remediation Instruction Stats Store Module.
+ * Remediation instruction stats store facade.
  *
- * @returns {Object} An object containing getters and actions for the remediation instruction stats.
- */
-const useRemediationInstructionStatsStoreModule = () => useStoreModuleHooks('remediationInstructionStats');
-
-/**
- * Hook to access remediation instruction stats.
- *
- * @returns {Object} An object containing:
- * - Getters for remediation instruction stats, pending status, and metadata.
- * - Actions to fetch lists and summaries without using the store.
+ * @returns {Object}
  */
 export const useRemediationInstructionStats = () => {
-  const { useGetters, useActions } = useRemediationInstructionStatsStoreModule();
-
-  const getters = useGetters({
-    remediationInstructionStats: 'items',
-    remediationInstructionStatsPending: 'pending',
-    remediationInstructionStatsMeta: 'meta',
-  });
-
-  const actions = useActions({
-    fetchRemediationInstructionStatsList: 'fetchList',
-    fetchRemediationInstructionStatsListWithoutStore: 'fetchListWithoutStore',
-    fetchRemediationInstructionStatsSummaryWithoutStore: 'fetchSummaryWithoutStore',
-    fetchRemediationInstructionStatsCommentsListWithoutStore: 'fetchCommentsWithoutStore',
-    fetchRemediationInstructionStatsChangesListWithoutStore: 'fetchChangesWithoutStore',
-    fetchRemediationInstructionStatsExecutionsListWithoutStore: 'fetchExecutionsWithoutStore',
-  });
+  const remediationInstructionStatsStore = useRemediationInstructionStatsStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(remediationInstructionStatsStore);
 
   return {
-    ...getters,
-    ...actions,
+    remediationInstructionStats: items,
+    remediationInstructionStatsMeta: meta,
+    remediationInstructionStatsPending: pending,
+    remediationInstructionStatsFetchingParams: fetchingParams,
+
+    fetchRemediationInstructionStatsList: remediationInstructionStatsStore.fetchList,
+    fetchRemediationInstructionStatsListWithPreviousParams:
+      remediationInstructionStatsStore.fetchListWithPreviousParams,
+    fetchRemediationInstructionStatsListWithoutStore:
+      remediationInstructionStatsStore.fetchListWithoutStore,
+    fetchRemediationInstructionStatsSummaryWithoutStore:
+      remediationInstructionStatsStore.fetchSummaryWithoutStore,
+    fetchRemediationInstructionStatsChangesWithoutStore:
+      remediationInstructionStatsStore.fetchChangesWithoutStore,
+    fetchRemediationInstructionStatsExecutionsWithoutStore:
+      remediationInstructionStatsStore.fetchExecutionsWithoutStore,
+    fetchRemediationInstructionStatsCommentsWithoutStore:
+      remediationInstructionStatsStore.fetchCommentsWithoutStore,
   };
 };

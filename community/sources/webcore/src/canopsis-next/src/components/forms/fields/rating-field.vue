@@ -1,24 +1,20 @@
 <template>
   <v-rating
-    v-field="value"
+    :model-value="modelValue"
     :readonly="readonly"
     :hover="hover"
     class="layout"
-    background-color="success"
-    medium
+    color="success"
+    density="comfortable"
     half-increments
-    @input="$emit('input', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: [Number, String],
       default: 0,
     },
@@ -31,5 +27,7 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue'],
 };
 </script>

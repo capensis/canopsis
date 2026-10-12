@@ -5,7 +5,10 @@
     :pending="pending"
     allow-or
     with-history
-    v-on="$listeners"
+    @submit="$emit('submit', $event)"
+    @reset="$emit('reset')"
+    @remove:search="$emit('remove:search', $event)"
+    @toggle-pin:search="$emit('toggle-pin:search', $event)"
   />
 </template>
 
@@ -19,6 +22,9 @@ export default {
       default: () => [],
     },
   },
+
+  emits: ['submit', 'reset', 'remove:search', 'toggle-pin:search'],
+
   setup() {
     const { attributes, pending } = useAvailabilityAdvancedSearchAttributes();
 

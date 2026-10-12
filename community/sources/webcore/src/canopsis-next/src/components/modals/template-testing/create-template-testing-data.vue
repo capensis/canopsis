@@ -1,97 +1,99 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        {{ title }}
+    <c-modal-wrapper text-class="pa-0" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <template-testing-data-form v-model="form" :is-new="isNew" />
+
+      <template #text>
+        <div class="pa-3">
+          <template-testing-data-form :is-new="isNew" />
+        </div>
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.save') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import {
+  formToTemplateTestingData,
+  templateTestingDataToForm,
+} from '@/helpers/entities/template-testing-data/form';
 
-import { templateTestingDataToForm, formToTemplateTestingData } from '@/helpers/entities/template-testing-data/form';
-
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import TemplateTestingDataForm from '@/components/other/template-testing/form/template-testing-data-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createTemplateTestingData,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     TemplateTestingDataForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
-
-    const form = ref(templateTestingDataToForm(config.value.templateTestingData));
-
-    const { submit, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToTemplateTestingData(form.value));
-
-        close();
-      },
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    const title = computed(() => config.value.title || t('modals.createTemplateTestingData.create.title'));
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
 
     const isNew = computed(() => !config.value.templateTestingData?._id);
+    const title = computed(
+      () => config.value.title || t('modals.createTemplateTestingData.create.title'),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+
+    const form = useForm({
+      initialValues: templateTestingDataToForm(config.value.templateTestingData),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
+
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToTemplateTestingData(values.value));
+
+      closeModal();
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
-
-      submitting,
-
+      t,
       title,
+      submitLabel,
       isNew,
-
+      isSubmitting,
+      closeModal,
       submit,
-      close,
     };
   },
 };

@@ -1,36 +1,43 @@
 <template>
   <span class="calendar-period-picker">
-    <v-select
+    <c-select
       v-if="isWeekType"
-      v-model="week"
+      :model-value="week"
       :items="weeks"
-      :menu-props="menuProps"
       class="calendar-period-picker__week pt-0 mt-0"
+      item-title="text"
+      item-value="value"
       hide-details
+      @update:model-value="week = $event"
     />
+
     <template v-else>
-      <v-select
+      <c-select
         v-if="!isMonthType"
-        v-model="day"
+        :model-value="day"
         :items="days"
-        :menu-props="menuProps"
         class="calendar-period-picker__day pt-0 mt-0"
         hide-details
+        @update:model-value="day = $event"
       />
-      <v-select
-        v-model="month"
+
+      <c-select
+        :model-value="month"
         :items="months"
-        :menu-props="menuProps"
         class="calendar-period-picker__month pt-0 mt-0"
+        item-title="text"
+        item-value="value"
         hide-details
+        @update:model-value="month = $event"
       />
     </template>
-    <v-select
-      v-model="year"
+
+    <c-select
+      :model-value="year"
       :items="years"
-      :menu-props="menuProps"
       class="calendar-period-picker__year pt-0 mt-0"
       hide-details
+      @update:model-value="year = $event"
     />
   </span>
 </template>
@@ -70,27 +77,16 @@ export default {
       default: 50,
     },
   },
-  computed: {
-    menuProps() {
-      return {
-        auto: true,
-      };
-    },
 
+  emits: ['update:focus'],
+
+  computed: {
     isWeekType() {
       return this.type === CALENDAR_TYPES.week;
     },
 
     isMonthType() {
       return this.type === CALENDAR_TYPES.month;
-    },
-
-    start() {
-      return this.calendar?.start;
-    },
-
-    startMoment() {
-      return this.start?.date;
     },
 
     day: {
@@ -131,7 +127,7 @@ export default {
       set(value) {
         const selectDate = new Date(this.focus);
 
-        selectDate.setYear(value);
+        selectDate.setFullYear(value);
 
         this.updateFocus(selectDate);
       },
@@ -182,6 +178,7 @@ export default {
       }));
     },
   },
+
   methods: {
     getWeekLabelByNumber(week) {
       const start = getWeekStartDay(this.focus, week);
@@ -193,7 +190,7 @@ export default {
     },
 
     updateFocus(date) {
-      this.$emit('input', date);
+      this.$emit('update:focus', date);
     },
   },
 };
@@ -205,7 +202,7 @@ export default {
   gap: 10px;
 
   &__day {
-    width: 50px;
+    width: 70px;
   }
 
   &__week {
@@ -213,11 +210,11 @@ export default {
   }
 
   &__month {
-    width: 115px;
+    width: 140px;
   }
 
   &__year {
-    width: 80px;
+    width: 100px;
   }
 }
 </style>

@@ -1,15 +1,17 @@
 <template>
-  <widget-settings-item :title="$t('settings.fastPbehavior')">
+  <widget-settings-item :title="t('settings.fastPbehavior')">
     <c-card-iterator-form
-      v-field="form"
+      :value="modelValue"
       :handle="`.${dragHandleClass}`"
+      :name="name"
+      @update:value="$emit('update:modelValue', $event)"
       @add="add"
     >
       <template #header>
         <span class="text-body-2">
-          {{ $t('settings.fastPbehavior') }}
+          {{ t('settings.fastPbehavior') }}
         </span>
-        <span>{{ $t('settings.fastPbehaviorDescription') }}</span>
+        <span>{{ t('settings.fastPbehaviorDescription') }}</span>
       </template>
       <template #item="{ index }">
         <c-card-iterator-item
@@ -18,87 +20,92 @@
           @remove="remove(index)"
         >
           <template #header>
-            <v-layout class="gap-2" column>
+            <c-layout
+              gap="2"
+              column
+              fill
+            >
               <c-name-field
-                v-field="form[index].name_prefix"
-                :label="$t('common.namePrefix')"
-                :max-length="255"
-                :name="getName(form[index], 'name_prefix')"
+                :model-value="modelValue[index].name_prefix"
+                :label="t('common.namePrefix')"
+                :max-length="FORM_MAX_STRING_LENGTH"
+                :name="`${name}.${modelValue[index].key}.name_prefix`"
                 required
+                @update:model-value="updateField(index, 'name_prefix', $event)"
               />
               <c-pbehavior-type-field
-                v-field="form[index].type"
-                :label="$t('common.type')"
+                :model-value="modelValue[index].type"
+                :label="t('common.type')"
                 :types="types"
-                :name="getName(form[index], 'type')"
+                :name="`${name}.${modelValue[index].key}.type`"
                 independent
                 clearable
                 required
+                @update:model-value="updateField(index, 'type', $event)"
               />
               <c-pbehavior-reason-field
-                v-field="form[index].reason"
-                :label="$t('common.reason')"
-                :name="getName(form[index], 'reason')"
+                :model-value="modelValue[index].reason"
+                :label="t('common.reason')"
+                :name="`${name}.${modelValue[index].key}.reason`"
                 clearable
                 required
+                @update:model-value="updateField(index, 'reason', $event)"
               />
-            </v-layout>
+            </c-layout>
           </template>
         </c-card-iterator-item>
       </template>
     </c-card-iterator-form>
   </widget-settings-item>
 </template>
+
 <script>
-import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { FORM_MAX_STRING_LENGTH, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { alarmListFastPbehaviorParametersItemToForm } from '@/helpers/entities/widget/forms/alarm';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
-  inject: ['$validator'],
   components: { WidgetSettingsItem },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
-    form: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
+    name: {
+      type: String,
+      default: 'fast_pbehaviors',
+    },
   },
+
+  emits: ['update:modelValue'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
     const types = [PBEHAVIOR_TYPE_TYPES.pause];
     const dragHandleClass = 'fast-pbehavior-drag-handle';
 
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+    const { addItemIntoArray, updateFieldInArrayItem, removeItemFromArray } = useArrayModelField(
+      props,
+      emit,
+    );
 
-    /**
-     * Adds a new fast pbehavior parameters item with default values to the form.
-     */
     const add = () => addItemIntoArray(alarmListFastPbehaviorParametersItemToForm());
-
-    /**
-     * Builds a unique field name for vee-validate by combining item key with suffix.
-     *
-     * @param {Object} item - Form item with key property
-     * @param {string} suffix - Suffix to append (e.g. 'name_prefix', 'type', 'reason')
-     * @returns {string} Unique field name
-     */
-    const getName = (item, suffix) => `${item.key}${suffix}`;
+    const updateField = (index, field, value) => updateFieldInArrayItem(index, field, value);
 
     return {
+      t,
+      FORM_MAX_STRING_LENGTH,
       types,
       dragHandleClass,
-
       add,
+      updateField,
       remove: removeItemFromArray,
-
-      getName,
     };
   },
 };

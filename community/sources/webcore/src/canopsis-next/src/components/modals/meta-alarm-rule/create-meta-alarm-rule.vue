@@ -1,140 +1,124 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
-        {{ title }}
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <meta-alarm-rule-form
-          v-model="form"
           :rule-id="ruleId"
-          :disabled-id-field="!isNew"
+          :disabled-id-field="disabledIdField"
         />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
+
+      <template #actions>
         <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
+          :disabled="isSubmitting"
+          variant="text"
+          @click="closeModal"
         >
-          {{ $t('common.cancel') }}
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
-          :loading="submitting"
-          class="primary"
+          :disabled="submitDisabled"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, onMounted, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
-import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
+import { useModals } from '@/hooks/modals';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createMetaAlarmRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
+
   components: {
-    MetaAlarmRuleForm,
     AiChatSidebar,
-    ModalWrapper,
+    MetaAlarmRuleForm,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
     const { t } = useI18n();
-    const { alarmInfos, entityInfos, fetchInfos } = useEntityInfos(); // TODO: may be remove this
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const rule = computed(() => config.value.rule);
+    const ruleId = computed(() => rule.value?._id);
+    const isNew = computed(() => !ruleId.value || config.value.isDuplicating);
+    const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
+    const disabledIdField = computed(() => !isNew.value);
 
-    const form = ref(metaAlarmRuleToForm(config.value.rule));
-    const ruleId = computed(() => config.value.rule?._id);
+    const form = useForm({
+      initialValues: metaAlarmRuleToForm(rule.value),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
-      ruleId,
-
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
       modal: toRef(props, 'modal'),
+      ruleId: ruleId.value,
       context: LLM_SOCKET_CONTEXTS.metaAlarmRule,
     });
+    const submitDisabled = computed(() => isSubmitting.value || chatOptions.value.attrs.pending);
 
-    const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToMetaAlarmRule(values.value));
 
-    const { submit, submitting, submitLabel, isNew } = useSubmittableForm({
-      form,
-      item: config.value.rule,
-      method: async () => {
-        const result = await config.value.action(formToMetaAlarmRule(form.value));
+      await config.value.afterSubmit?.(result);
 
-        await config.value.afterSubmit?.(result);
+      closeModal();
 
-        close();
-
-        return result;
-      },
+      return result;
     });
 
-    useEntityInfoPropertyFetching();
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    onMounted(() => {
-      fetchInfos();
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
     });
 
     return {
-      form,
-
-      ruleId,
-      config,
+      t,
       title,
-
-      alarmInfos,
-      entityInfos,
-
-      isNew,
-      submitting,
+      ruleId,
+      disabledIdField,
       submitLabel,
-      submit,
-      close,
-
+      isSubmitting,
+      submitDisabled,
       chatShown,
       chatOptions,
+      submit,
+      closeModal,
     };
   },
 };

@@ -13,7 +13,7 @@ export default {
     [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
     [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
     [WEATHER_ACTIONS_TYPES.entityPause]: '@:common.pause',
-    [WEATHER_ACTIONS_TYPES.entityPlay]: 'Play',
+    [WEATHER_ACTIONS_TYPES.entityPlay]: 'Resume',
     [WEATHER_ACTIONS_TYPES.entityCancel]: 'Cancel',
     [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associate ticket',
     [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',
@@ -37,6 +37,9 @@ export default {
     [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Not acknowledged',
     [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Under PBh',
     [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acknowledged under PBh',
+    [SERVICE_WEATHER_STATE_COUNTERS.paused]: 'Paused',
+    [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: 'Acknowledged inactive',
+    [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: 'Inactive dependencies',
   },
   stateCountersTooltips: {
     [SERVICE_WEATHER_STATE_COUNTERS.all]: 'alarms total',
@@ -50,5 +53,8 @@ export default {
     [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'not acked',
     [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'under PBh',
     [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'acked under PBh',
+    [SERVICE_WEATHER_STATE_COUNTERS.paused]: 'paused alarms',
+    [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: 'acknowledged inactive alarms',
+    [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: 'inactive dependencies',
   },
 };
