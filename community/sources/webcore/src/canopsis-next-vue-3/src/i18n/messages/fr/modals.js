@@ -1070,7 +1070,7 @@ export default {
   },
   createShareToken: {
     create: {
-      title: 'Créer un jeton de partage',
+      title: 'Créer un jeton de vue partagée',
     },
   },
   createWidgetTemplate: {

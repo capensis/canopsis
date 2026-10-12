@@ -103,6 +103,7 @@ export default {
   pause: 'Pause',
   pin: 'Épingler',
   copyLink: 'Copier le lien',
+  copy: 'Copier',
   parse: 'Analyser',
   home: 'Accueil',
   step: 'Étape',

@@ -30,9 +30,9 @@ export const MODALS = {
   textEditorWithTemplate: 'text-editor-with-template',
   textFieldEditor: 'text-field-editor',
   payloadTextareaEditor: 'payload-textarea-editor',
+  copyValue: 'copy-value',
   selectView: 'select-view',
   createView: 'create-view',
-  shareView: 'share-view',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
@@ -96,6 +96,7 @@ export const MODALS = {
   createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
 
   createShareToken: 'create-share-token',
+  createApiToken: 'create-api-token',
 
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createDeclareTicketRule: 'create-declare-ticket-rule',

@@ -66,10 +66,13 @@ export default {
             const url = removeTrailingSlashes(`${APP_HOST}${href}`);
 
             modals.show({
-              name: MODALS.shareView,
+              name: MODALS.copyValue,
               config: {
                 title: t('view.shareView', { name: props.view.title }),
-                url,
+                label: t('view.sharedViewUrl'),
+                value: url,
+                copyTooltip: t('common.copyLink'),
+                copySuccessText: t('success.linkCopied'),
               },
             });
           },

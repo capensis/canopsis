@@ -62,6 +62,11 @@ export default {
         icon: 'people',
         permission: USER_PERMISSIONS.technical.user,
       },
+      {
+        route: { name: ROUTES_NAMES.adminApiAccessTokens },
+        icon: 'key',
+        title: t(`pageHeaders.${ROUTES_NAMES.adminApiAccessTokens}.title`),
+      },
     ];
 
     const maintenanceLinks = [

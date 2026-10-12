@@ -4,11 +4,15 @@ import Faker from 'faker';
 import AlarmCommentTemplateForm from '@/components/other/comment-template/form/alarm-comment-template-form.vue';
 
 const stubs = {
+  'v-card': { template: '<div><slot /></div>' },
+  'v-card-text': { template: '<div><slot /></div>' },
+  'c-layout': { template: '<div><slot /></div>' },
   'c-select': true,
   'c-name-field': true,
 };
 
 const selectTemplateField = wrapper => wrapper.find('c-select-stub');
+const selectNameFields = wrapper => wrapper.findAll('c-name-field-stub');
 
 describe('alarm-comment-template-form', () => {
   const factory = generateShallowRenderer(AlarmCommentTemplateForm, { stubs });
@@ -26,6 +30,7 @@ describe('alarm-comment-template-form', () => {
 
     expect(wrapper.vm.fields).toHaveLength(1);
     expect(wrapper.vm.fields[0]).toMatchObject({ name: 'comment', required: true });
+    expect(selectNameFields(wrapper)[0].attributes('autofocus')).toBe('true');
   });
 
   test('Renders template fields when template is selected', () => {
@@ -52,6 +57,10 @@ describe('alarm-comment-template-form', () => {
     });
 
     expect(wrapper.vm.fields).toEqual(template.fields);
+    const fields = selectNameFields(wrapper);
+
+    expect(fields[0].attributes('autofocus')).toBe('true');
+    expect(fields.slice(1).every(field => field.attributes('autofocus') === 'false')).toBe(true);
   });
 
   test('Does not render template select when templates array is empty', () => {

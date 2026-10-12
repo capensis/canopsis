@@ -103,6 +103,7 @@ export default {
   pause: 'Pause',
   pin: 'Pin',
   copyLink: 'Copy link',
+  copy: 'Copy',
   parse: 'Parse',
   home: 'Home',
   step: 'Step | Steps',

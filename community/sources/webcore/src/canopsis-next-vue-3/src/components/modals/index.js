@@ -67,6 +67,7 @@ export default {
   [MODALS.textEditorWithTemplate]: defineAsyncComponent(
     () => import('./common/text-editor-with-template.vue'),
   ),
+  [MODALS.copyValue]: defineAsyncComponent(() => import('./common/copy-value.vue')),
   [MODALS.infoPopupSetting]: defineAsyncComponent(
     () => import('./alarm/info-popup-setting/info-popup-setting.vue'),
   ),
@@ -83,7 +84,6 @@ export default {
   [MODALS.createGroup]: defineAsyncComponent(() => import('./view/create-group.vue')),
   [MODALS.selectView]: defineAsyncComponent(() => import('./view/select-view.vue')),
   [MODALS.selectViewTab]: defineAsyncComponent(() => import('./view/select-view-tab.vue')),
-  [MODALS.shareView]: defineAsyncComponent(() => import('./view/share-view.vue')),
   [MODALS.createWidget]: defineAsyncComponent(() => import('./view/create-widget.vue')),
   [MODALS.selectWidgetTemplateType]: defineAsyncComponent(
     () => import('./widget-template/select-widget-template-type.vue'),
@@ -93,6 +93,9 @@ export default {
   ),
   [MODALS.createShareToken]: defineAsyncComponent(
     () => import('./share-token/create-share-token.vue'),
+  ),
+  [MODALS.createApiToken]: defineAsyncComponent(
+    () => import('./api-token/create-api-token.vue'),
   ),
   [MODALS.serviceDependencies]: defineAsyncComponent(
     () => import('./service/service-dependencies.vue'),

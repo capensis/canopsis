@@ -1066,7 +1066,7 @@ export default {
   },
   createShareToken: {
     create: {
-      title: 'Create share token',
+      title: 'Create shared view token',
     },
   },
   createWidgetTemplate: {

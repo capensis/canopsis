@@ -20,7 +20,7 @@
           color="primary"
           type="submit"
         >
-          {{ t('common.submit') }}
+          {{ t('common.create') }}
         </v-btn>
       </template>
     </c-modal-wrapper>

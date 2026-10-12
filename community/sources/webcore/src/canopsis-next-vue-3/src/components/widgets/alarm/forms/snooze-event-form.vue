@@ -2,7 +2,6 @@
   <c-layout gap="2" column>
     <c-duration-field
       v-model:duration="duration"
-      autofocus
       required
     />
     <c-description-field
@@ -11,6 +10,7 @@
       :required="isNoteRequired"
       :max-length="FORM_MAX_STRING_LENGTH"
       name="comment"
+      autofocus
     />
   </c-layout>
 </template>

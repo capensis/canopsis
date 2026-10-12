@@ -15,13 +15,14 @@
           @update:model-value="updateField('template', $event)"
         />
         <c-name-field
-          v-for="field in fields"
+          v-for="(field, index) in fields"
           :key="field.name"
           :model-value="form[field.name]"
           :required="field.required"
           :label="field.label || field.name"
           :name="field.name"
           :max-length="FORM_MAX_STRING_LENGTH"
+          :autofocus="index === 0"
           @update:model-value="updateField(field.name, $event)"
         />
       </c-layout>

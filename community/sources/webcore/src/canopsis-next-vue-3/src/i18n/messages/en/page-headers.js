@@ -1,4 +1,4 @@
-import { USER_PERMISSIONS, GROUPED_USER_PERMISSIONS_KEYS } from '@/constants';
+import { USER_PERMISSIONS, GROUPED_USER_PERMISSIONS_KEYS, ROUTES_NAMES } from '@/constants';
 
 export default {
   hideMessage: 'Got it! Hide',
@@ -99,6 +99,11 @@ export default {
   [USER_PERMISSIONS.technical.user]: {
     title: 'Users',
     message: 'Canopsis User Management',
+  },
+  [ROUTES_NAMES.adminApiAccessTokens]: {
+    title: 'API access tokens',
+    message:
+      'Manage shared view links and personal tokens used to authenticate requests to the public API.',
   },
 
   /**

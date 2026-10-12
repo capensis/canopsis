@@ -40,6 +40,7 @@ export * from './icon';
 export * from './availability';
 export * from './meta-alarm-rule';
 export * from './advanced-search';
+export * from './api-token';
 export * from './sanitize';
 export * from './events-record';
 export * from './role';
