@@ -1,132 +1,97 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs6>
-        <v-layout column>
-          <date-time-picker-text-field
-            v-field="value.tstart"
-            v-validate="tstartRules"
-            :label="$t('common.startDate')"
-            :date-object-preparer="startDateObjectPreparer"
-            :round-hours="roundHours"
-            name="tstart"
-            autofocus
-            @update:objectValue="$emit('update:startObjectValue', $event)"
-          />
-          <date-time-picker-text-field
-            v-field="value.tstop"
-            v-validate="tstopRules"
-            :label="$t('common.endDate')"
-            :date-object-preparer="stopDateObjectPreparer"
-            :round-hours="roundHours"
-            name="tstop"
-            @update:objectValue="$emit('update:stopObjectValue', $event)"
-          />
-        </v-layout>
-      </v-flex>
-      <v-flex
-        class="pl-1"
-        xs6
-      >
-        <c-quick-date-interval-type-field
-          v-model="range"
-          :ranges="quickRanges"
-          :item-value="getQuickRangeItemValue"
-          return-object
-        />
-        <v-select
-          v-field="value.time_field"
-          :items="intervalFields"
-          :label="$t('quickRanges.timeField')"
-          clearable
-        />
-      </v-flex>
-    </v-layout>
-  </div>
+  <c-layout class="date-interval-selector" gap="3">
+    <c-layout gap="3" column>
+      <date-time-picker-text-field
+        :value="value.tstart"
+        :label="$t('common.startDate')"
+        :date-object-preparer="startDateObjectPreparer"
+        name="tstart"
+        round-hours
+        autofocus
+        @update:value="updateDate('tstart', $event)"
+      />
+      <date-time-picker-text-field
+        :value="value.tstop"
+        :label="$t('common.endDate')"
+        :date-object-preparer="stopDateObjectPreparer"
+        name="tstop"
+        round-hours
+        @update:value="updateDate('tstop', $event)"
+      />
+    </c-layout>
+
+    <c-layout class="date-interval-selector__right" gap="3" column>
+      <c-quick-date-interval-type-field
+        :value="range"
+        :ranges="quickRanges"
+        :label="$t('quickRanges.title')"
+        return-object
+        @input="updateRange"
+      />
+      <c-select
+        :model-value="value.time_field"
+        :items="intervalFields"
+        :label="$t('quickRanges.timeField')"
+        item-title="text"
+        item-value="value"
+        clearable
+        @update:model-value="updateField('time_field', $event)"
+      />
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
-import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_INTERVAL_TYPES, DATETIME_FORMATS } from '@/constants';
+import {
+  ALARM_INTERVAL_FIELDS,
+  DATETIME_FORMATS,
+  DATETIME_INTERVAL_TYPES,
+  TIME_UNITS,
+} from '@/constants';
 
-import { convertDateIntervalToDateObject, getValueFromQuickRange } from '@/helpers/date/date-intervals';
+import {
+  convertDateIntervalToDateObject,
+  getValueFromQuickRange,
+} from '@/helpers/date/date-intervals';
 
-import { formMixin } from '@/mixins/form';
-
-import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
+import DateTimePickerTextField from './fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
-  inject: ['$validator'],
-  components: {
-    DateTimePickerTextField,
-  },
-  mixins: [formMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  components: { DateTimePickerTextField },
+
   props: {
-    roundHours: {
-      type: Boolean,
-      default: false,
-    },
     value: {
       type: Object,
       required: true,
     },
-    tstopRules: {
-      type: [String, Object],
-      default: null,
-    },
-    tstartRules: {
-      type: [String, Object],
-      default: null,
-    },
     quickRanges: {
       type: Array,
-      required: false,
+      default: () => [],
     },
   },
+
+  emits: ['update:value'],
+
   computed: {
-    range: {
-      get() {
-        return { start: this.value?.tstart, stop: this.value?.tstop };
-      },
-      set(range) {
-        if (range.start !== this.range.start || range.stop !== this.range.stop) {
-          this.updateModel({
-            ...this.value,
-            ...getValueFromQuickRange(range),
-          });
-        }
-      },
+    range() {
+      return { start: this.value.tstart, stop: this.value.tstop };
     },
 
     intervalFields() {
-      const messages = this.$t('quickRanges.intervalFields');
-
       return Object.values(ALARM_INTERVAL_FIELDS).map(value => ({
         value,
-        text: messages[value],
+        text: this.$t(`quickRanges.intervalFields[${JSON.stringify(value)}]`),
       }));
     },
-
-    unit() {
-      return this.roundHours
-        ? TIME_UNITS.hour
-        : TIME_UNITS.minute;
-    },
   },
-  methods: {
-    getQuickRangeItemValue(item) {
-      return `${item.start}|${item.stop}`;
-    },
 
+  methods: {
     startDateObjectPreparer(date) {
       return convertDateIntervalToDateObject(
         date,
         DATETIME_INTERVAL_TYPES.start,
         DATETIME_FORMATS.dateTimePicker,
-        this.unit,
+        TIME_UNITS.hour,
       );
     },
 
@@ -135,9 +100,41 @@ export default {
         date,
         DATETIME_INTERVAL_TYPES.stop,
         DATETIME_FORMATS.dateTimePicker,
-        this.unit,
+        TIME_UNITS.hour,
       );
+    },
+
+    updateField(field, value) {
+      this.$emit('update:value', { ...this.value, [field]: value });
+    },
+
+    updateDate(field, value) {
+      this.updateField(field, value || '');
+    },
+
+    updateRange(range) {
+      if (range?.start && range?.stop) {
+        this.$emit('update:value', {
+          ...this.value,
+          ...getValueFromQuickRange(range),
+        });
+      }
     },
   },
 };
 </script>
+
+<style scoped>
+.date-interval-selector {
+  display: flex;
+}
+
+.date-interval-selector > :deep(*) {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+.date-interval-selector__right {
+  padding-left: 4px;
+}
+</style>

@@ -5,7 +5,7 @@ import { DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
-import { linkifyHtml, sanitizeHtml } from '@/helpers/html';
+import { linkifyHtml } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -16,7 +16,7 @@ import { useI18n } from '@/hooks/i18n';
  * @returns {Object} - The tooltip content for Ack action.
  */
 export const useExtraDetailsAckTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.ack.t));
 
@@ -30,7 +30,7 @@ export const useExtraDetailsAckTooltip = (props) => {
     }
 
     if (props.ack.m) {
-      content += `<div class="c-extra-details__message">${tc('common.comment')} : ${escape(props.ack.m)}</div>`;
+      content += `<div class="c-extra-details__message">${t('common.comment')} : ${escape(props.ack.m)}</div>`;
     }
 
     return `<div class="text-md-center">${content}</div>`;
@@ -46,7 +46,7 @@ export const useExtraDetailsAckTooltip = (props) => {
  * @returns {Object} - The tooltip content for Canceled action.
  */
 export const useExtraDetailsCanceledTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.canceled.t));
 
@@ -56,7 +56,7 @@ export const useExtraDetailsCanceledTooltip = (props) => {
         <div>${t('common.date')} : ${date.value}</div>`;
 
     if (props.canceled.m) {
-      content += `<div class="c-extra-details__message">${tc('common.comment')} : ${escape(props.canceled.m)}</div>`;
+      content += `<div class="c-extra-details__message">${t('common.comment')} : ${escape(props.canceled.m)}</div>`;
     }
 
     return `<div class="text-md-center">${content}</div>`;
@@ -76,13 +76,15 @@ export const useExtraDetailsChildrenTooltip = (props) => {
 
   const ruleName = computed(() => props.rule?.name ?? '');
 
-  const tooltipContent = computed(() => (`<div class="text-md-center">
+  const tooltipContent = computed(
+    () => `<div class="text-md-center">
         <strong>${t('alarm.actions.iconsTitles.grouping')}</strong>
         <div>${t('common.title')} : ${escape(ruleName.value)}</div>
         <div>${t('alarm.actions.iconsFields.children')} : ${props.total}</div>
         <div>${t('alarm.fields.openedChildren')} : ${props.opened}</div>
         <div>${t('alarm.fields.closedChildren')} : ${props.closed}</div>
-      </div>`));
+      </div>`,
+  );
 
   return { tooltipContent };
 };
@@ -94,17 +96,19 @@ export const useExtraDetailsChildrenTooltip = (props) => {
  * @returns {Object} - The tooltip content for Last Comment action.
  */
 export const useExtraDetailsLastCommentTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.lastComment.t));
-  const sanitizedLastComment = computed(() => sanitizeHtml(linkifyHtml(String(props.lastComment?.m ?? ''))));
+  const linkifiedLastComment = computed(() => linkifyHtml(String(props.lastComment?.m ?? '')));
 
-  const tooltipContent = computed(() => (`<div class="text-md-center">
+  const tooltipContent = computed(
+    () => `<div class="text-md-center">
           <strong>${t('alarm.actions.iconsTitles.comment')}</strong>
           <div>${t('common.by')}: ${escape(props.lastComment.a)}</div>
           <div>${t('common.date')}: ${date.value}</div>
-          <div class="c-extra-details__message">${tc('common.comment')}:&nbsp;<div>${sanitizedLastComment.value}</div></div>
-        </div>`));
+          <div class="c-extra-details__message">${t('common.comment')}:&nbsp;<div>${linkifiedLastComment.value}</div></div>
+        </div>`,
+  );
 
   return { tooltipContent };
 };
@@ -116,15 +120,17 @@ export const useExtraDetailsLastCommentTooltip = (props) => {
  * @returns {Object} - The tooltip content for Parents action.
  */
 export const useExtraDetailsParentsTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
   const tooltipContent = computed(() => {
-    const rulesContent = props.rules.map(({ name }) => `<div class="rule-name">&nbsp;${escape(name)}</div>`).join('');
+    const rulesContent = props.rules
+      .map(({ name }) => `<div class="rule-name">&nbsp;${escape(name)}</div>`)
+      .join('');
 
     return `<div class="text-md-center">
           <strong>${t('alarm.actions.iconsTitles.grouping')}</strong>
-          <div class="v-layout column">
-            <div>${tc('common.rule', props.rules.length)}&nbsp;:</div>
+          <div class="d-flex flex-column">
+            <div>${t('common.rule', props.rules.length)}&nbsp;:</div>
             ${rulesContent}
           </div>
           <div>${t('alarm.actions.iconsFields.parents')} : ${props.total}</div>
@@ -185,13 +191,51 @@ export const useExtraDetailsPbehaviorTooltip = (props) => {
 };
 
 /**
+ * Function to provide tooltip content for Pause action in extra details.
+ *
+ * @param {Object} props - The props object containing pause information.
+ * @returns {Object} - The tooltip content for Pause action.
+ */
+export const useExtraDetailsPauseTooltip = (props) => {
+  const { t } = useI18n();
+
+  const tooltipContent = computed(() => {
+    const comment = props.pause.m ?? '';
+    const isInherited = props.entity.pause?.message === comment;
+    const source = `${t(`entity.types.${props.entity.type}`)} ${props.entity.name}`;
+
+    const content = [];
+
+    if (isInherited && source) {
+      content.push(
+        `<div>${t('alarm.actions.iconsFields.pauseInheritedFrom', {
+          source: escape(source),
+        })}</div>`,
+      );
+    }
+
+    if (comment) {
+      content.push(`<div class="c-extra-details__message pre-line">${escape(comment)}</div>`);
+    }
+
+    if (!content.length) {
+      return '';
+    }
+
+    return `<div class="text-md-center">${content.join('')}</div>`;
+  });
+
+  return { tooltipContent };
+};
+
+/**
  * Function to provide tooltip content for Snooze action in extra details.
  *
  * @param {Object} props - The props object containing snooze information.
  * @returns {Object} - The tooltip content for Snooze action.
  */
 export const useExtraDetailsSnoozeTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.snooze.t));
   const end = computed(() => convertDateToStringWithFormatForToday(props.snooze.val));
@@ -211,7 +255,7 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
     }
 
     if (props.snooze.m) {
-      content += `<div class="c-extra-details__message">${tc('common.comment')} : ${escape(props.snooze.m)}</div>`;
+      content += `<div class="c-extra-details__message">${t('common.comment')} : ${escape(props.snooze.m)}</div>`;
     }
 
     return `<div class="text-md-center">${content}</div>`;
@@ -227,14 +271,17 @@ export const useExtraDetailsSnoozeTooltip = (props) => {
  * @returns {Object} - The tooltip content for Ticket action.
  */
 export const useExtraDetailsTicketTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
-  const getTicketStatusText = ticket => t(`declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`);
+  const getTicketStatusText = ticket =>
+    t(
+      `declareTicket.status.${ticket.ticket_status ?? DECLARE_TICKET_RULE_STATUS_MAPPING_VALUES.unknown}`,
+    );
   const convertDateWithToday = date => convertDateToStringWithFormatForToday(date);
 
-  const shownTickets = computed(() => (
-    props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit)
-  ));
+  const shownTickets = computed(() =>
+    props.failedTicket ? [props.failedTicket] : props.tickets.slice(0, props.limit),
+  );
 
   const tooltipContent = computed(() => {
     const content = shownTickets.value.reduce((acc, ticket) => {
@@ -247,13 +294,14 @@ export const useExtraDetailsTicketTooltip = (props) => {
       }
 
       if (ticket.ticket_comment) {
-        ticketContent += `<div>${tc('common.comment')} : ${escape(ticket.ticket_comment)}</div>`;
+        ticketContent += `<div>${t('common.comment')} : ${escape(ticket.ticket_comment)}</div>`;
       }
 
       return `${acc}<div class="text-md-center">${ticketContent}</div>`;
     }, '');
 
-    const otherTickets = props.tickets.length > props.limit ? `<i>${t('alarm.otherTickets')}</i>` : '';
+    const otherTickets =
+      props.tickets.length > props.limit ? `<i>${t('alarm.otherTickets')}</i>` : '';
 
     return `<div class="layout extra-details-ticket__list column">${content}</div>
               <div class="mt-2">${otherTickets}</div>`;
@@ -269,7 +317,7 @@ export const useExtraDetailsTicketTooltip = (props) => {
  * @returns {Object} - The tooltip content for Ticket action.
  */
 export const useExtraDetailsCloseDelayTooltip = (props) => {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
 
   const date = computed(() => convertDateToStringWithFormatForToday(props.closeDelay.t));
 
@@ -283,7 +331,7 @@ export const useExtraDetailsCloseDelayTooltip = (props) => {
     }
 
     if (props.closeDelay.m) {
-      content += `<div class="c-extra-details__message">${tc('common.comment')} : ${escape(props.closeDelay.m)}</div>`;
+      content += `<div class="c-extra-details__message">${t('common.comment')} : ${escape(props.closeDelay.m)}</div>`;
     }
 
     return `<div class="text-md-center">${content}</div>`;

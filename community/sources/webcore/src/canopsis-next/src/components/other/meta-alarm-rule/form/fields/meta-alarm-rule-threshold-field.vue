@@ -1,72 +1,118 @@
 <template>
-  <c-form-block-row :label="$t('metaAlarmRule.threshold')" class="meta-alarm-rule-threshold-field">
-    <c-label
-      :label="$t('metaAlarmRule.threshold')"
-      :help-text="$t('metaAlarmRule.thresholdHelpText')"
-    />
-    <v-radio-group v-field="value.threshold_type">
-      <v-radio :value="META_ALARMS_THRESHOLD_TYPES.thresholdCount" color="primary">
-        <template #label>
-          <v-layout class="gap-3" align-center>
-            {{ $t('common.count') }}
-            <c-number-field
-              v-if="value.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount"
-              v-field="value.threshold_count"
-              :min="0"
-              name="thresholdCount"
-            />
-          </v-layout>
-        </template>
-      </v-radio>
+  <c-form-block-row :label="t('metaAlarmRule.threshold')" indented>
+    <c-layout gap="2" column>
+      <c-label
+        :label="t('metaAlarmRule.threshold')"
+        :help-text="t('metaAlarmRule.thresholdHelpText')"
+      />
 
-      <v-radio :value="META_ALARMS_THRESHOLD_TYPES.thresholdRate" color="primary">
-        <template #label>
-          <v-layout class="gap-3" align-center>
-            {{ $t('common.rate') }}
-            <c-percents-field
-              v-if="value.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdRate"
-              v-field="value.threshold_rate"
-              name="thresholdRate"
-            />
-          </v-layout>
-        </template>
-      </v-radio>
-    </v-radio-group>
+      <c-radio-group
+        :model-value="config.threshold_type"
+        name="threshold_type"
+        hide-details
+        @update:model-value="updateField('threshold_type', $event)"
+      >
+        <v-radio
+          v-for="option in thresholdOptions"
+          :key="option.value"
+          :value="option.value"
+        >
+          <template #label>
+            <c-layout class="meta-alarm-rule-threshold-field__option" gap="3" align="center">
+              <span>{{ option.text }}</span>
+
+              <c-number-field
+                v-if="option.value === config.threshold_type"
+                :value="getThresholdValue(option.value)"
+                :min="0"
+                :max="option.value === META_ALARMS_THRESHOLD_TYPES.thresholdRate ? 100 : undefined"
+                :name="getThresholdName(option.value)"
+                class="meta-alarm-rule-threshold-field__value"
+                hide-details
+                hide-label
+                @update:value="updateThreshold(option.value, $event)"
+              />
+            </c-layout>
+          </template>
+        </v-radio>
+      </c-radio-group>
+    </c-layout>
   </c-form-block-row>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { META_ALARMS_THRESHOLD_TYPES } from '@/constants';
 
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    config: {
       type: Object,
       default: () => ({}),
     },
   },
-  setup() {
+
+  emits: ['update:config'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
+
+    const thresholdOptions = computed(() => [
+      {
+        value: META_ALARMS_THRESHOLD_TYPES.thresholdCount,
+        text: t('common.count'),
+      },
+      {
+        value: META_ALARMS_THRESHOLD_TYPES.thresholdRate,
+        text: t('common.rate'),
+      },
+    ]);
+
+    const getThresholdName = type => type === META_ALARMS_THRESHOLD_TYPES.thresholdRate ? 'threshold_rate' : 'threshold_count';
+
+    const getThresholdValue = type => props.config[getThresholdName(type)];
+    const updateThreshold = (type, value) => updateField(getThresholdName(type), value);
+
     return {
       META_ALARMS_THRESHOLD_TYPES,
+      t,
+      thresholdOptions,
+      updateField,
+      getThresholdName,
+      getThresholdValue,
+      updateThreshold,
     };
   },
 };
 </script>
 
-<style lang="scss">
-.meta-alarm-rule-threshold-field {
-  .v-radio {
-    width: 100%;
-    height: 40px;
-  }
+<style lang="scss" scoped>
+.meta-alarm-rule-threshold-field__option {
+  width: 100%;
 
-  .v-text-field {
-    margin-top: 6px;
-    padding-top: 0;
+  :deep(.meta-alarm-rule-threshold-field__value) {
+    --v-input-control-height: 36px;
+
+    flex: 0 0 100px;
+    width: 100px;
+    max-width: 100px;
+
+    .v-field,
+    .v-field__field,
+    .v-field__input {
+      height: 36px;
+      min-height: 36px;
+    }
+
+    .v-field__input {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
 }
 </style>

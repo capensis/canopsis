@@ -59,11 +59,17 @@ export default {
   },
   popups: {
     updated: 'Job mis à jour',
-    repeated: 'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> répété | {count} jobs répétés',
-    restarted: 'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> redémarré | {count} jobs redémarrés',
-    repeatFailed: 'Échec de répétition du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être répétés',
-    restartFailed: 'Échec de redémarrage du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être redémarrés',
-    paused: 'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> mis en pause | {count} jobs mis en pause',
-    pauseFailed: 'Échec de mise en pause du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être mis en pause',
+    repeated:
+      'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> répété | {count} jobs répétés',
+    restarted:
+      'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> redémarré | {count} jobs redémarrés',
+    repeatFailed:
+      'Échec de répétition du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être répétés',
+    restartFailed:
+      'Échec de redémarrage du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être redémarrés',
+    paused:
+      'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> mis en pause | {count} jobs mis en pause',
+    pauseFailed:
+      'Échec de mise en pause du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être mis en pause',
   },
 };

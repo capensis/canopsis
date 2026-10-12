@@ -1,46 +1,43 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-name-field
-      v-field="form.name"
-      :max-length="255"
+      v-model="nameField"
+      :max-length="FORM_MAX_STRING_LENGTH"
       autofocus
       required
     />
+
     <c-form-block>
-      <c-form-block-row :label="$t('common.priority')">
-        <c-priority-field v-field="form.priority" />
+      <c-form-block-row :label="t('common.priority')">
+        <c-priority-field v-model="priorityField" :min="MIN_PRIORITY" />
       </c-form-block-row>
 
-      <c-form-block-row v-if="!isEntityType" :label="$t('common.type')" indented>
-        <idle-rule-alarm-type-field
-          v-field="form.alarm_condition"
-          :label="$t('common.type')"
-        />
+      <c-form-block-row v-if="!isEntityType" :label="t('common.type')" indented>
+        <idle-rule-alarm-type-field v-model="alarmConditionField" :label="t('common.type')" />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.description')">
-        <c-description-field
-          v-field="form.description"
-          required
-        />
+      <c-form-block-row :label="t('common.description')" indented>
+        <c-description-field v-model="descriptionField" required />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('idleRules.timeRangeAwaiting')">
+      <c-form-block-row :label="t('idleRules.timeRangeAwaiting')">
         <c-duration-field
-          v-field="form.duration"
-          :label="$t('idleRules.timeRangeAwaiting')"
+          v-model:duration="durationField"
+          :label="t('idleRules.timeRangeAwaiting')"
+          :min="MIN_DURATION_VALUE"
+          name="duration"
           required
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.disableDuringPeriods')">
-        <c-disable-during-periods-field v-field="form.disable_during_periods" />
+      <c-form-block-row :label="t('common.disableDuringPeriods')">
+        <c-disable-during-periods-field v-model="disableDuringPeriodsField" />
       </c-form-block-row>
 
       <template v-if="!isEntityType">
-        <c-form-block-row :label="$t('common.type')">
+        <c-form-block-row :label="t('common.type')">
           <c-action-type-field
-            v-field="form.operation.type"
+            v-model="operationTypeField"
             :types="actionTypes"
             name="operation.type"
           />
@@ -48,36 +45,34 @@
 
         <action-parameters-form
           v-model="parameters"
-          :type="form.operation.type"
+          :type="operationTypeField"
           :depth="1"
           name="operation.parameters"
         />
 
         <c-form-block-row
           v-if="isAssociateTicketAction"
-          :label="$tc('common.comment')"
+          :label="t('common.comment')"
           :depth="1"
+          indented
           top-border
         >
-          <c-description-field
-            v-field="form.comment"
-            :label="$tc('common.comment')"
-            name="comment"
-          />
+          <c-description-field v-model="commentField" :label="t('common.comment')" name="comment" />
         </c-form-block-row>
       </template>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import { ACTION_TYPES } from '@/constants';
+import { ACTION_TYPES, FORM_MAX_STRING_LENGTH, MIN_DURATION_VALUE, MIN_PRIORITY } from '@/constants';
 
 import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
-import { useModelField } from '@/hooks/form/model-field';
+import { useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 
@@ -91,48 +86,70 @@ const IDLE_RULE_ACTION_TYPES = [
   ACTION_TYPES.assocticket,
   ACTION_TYPES.changeState,
   ACTION_TYPES.pbehavior,
+  ACTION_TYPES.pause,
 ];
 
 export default {
-  inject: ['$validator'],
-  components: { IdleRuleAlarmTypeField, ActionParametersForm },
-  model: {
-    prop: 'form',
-    event: 'input',
+  components: {
+    ActionParametersForm,
+    IdleRuleAlarmTypeField,
   },
+
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     isEntityType: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const { updateField } = useModelField(props, emit);
 
-    const parameters = computed({
-      get() {
-        const { type, parameters: operationParameters } = props.form.operation;
+  setup() {
+    const { t } = useI18n();
+    const form = useFormContext();
 
-        return operationParameters[type];
-      },
-
-      set(value) {
-        updateField(`operation.parameters.${props.form.operation.type}`, value);
-      },
+    const {
+      nameField,
+      priorityField,
+      alarmConditionField,
+      descriptionField,
+      durationField,
+      disableDuringPeriodsField,
+      operationTypeField,
+      commentField,
+    } = form.models({
+      nameField: 'name',
+      priorityField: 'priority',
+      alarmConditionField: 'alarm_condition',
+      descriptionField: 'description',
+      durationField: 'duration',
+      disableDuringPeriodsField: 'disable_during_periods',
+      operationTypeField: 'operation.type',
+      commentField: 'comment',
     });
 
-    const isAssociateTicketAction = computed(() => (
-      isAssociateTicketActionType(props.form.operation.type)
-    ));
+    const parameters = computed({
+      get: () => form.getValue(`operation.parameters.${operationTypeField.value}`),
+      set: value => form.setValue(`operation.parameters.${operationTypeField.value}`, value),
+    });
+
+    const isAssociateTicketAction = computed(() => isAssociateTicketActionType(operationTypeField.value),
+    );
 
     return {
+      t,
+      nameField,
+      priorityField,
+      alarmConditionField,
+      descriptionField,
+      durationField,
+      disableDuringPeriodsField,
+      operationTypeField,
+      commentField,
       parameters,
       actionTypes: IDLE_RULE_ACTION_TYPES,
       isAssociateTicketAction,
+      FORM_MAX_STRING_LENGTH,
+      MIN_DURATION_VALUE,
+      MIN_PRIORITY,
     };
   },
 };

@@ -1,19 +1,47 @@
-import { isObject, isArray } from 'lodash';
+import { isArray, isObject } from 'lodash';
+
+/**
+ * Build unique treeview path. Empty object keys must stay in the path,
+ * otherwise parent and child share the same id (e.g. alarm.links + "").
+ *
+ * @param {string} basePath
+ * @param {string} key
+ * @param {boolean} isParentArray
+ * @returns {string}
+ */
+const getObjectTreeviewPath = (basePath, key, isParentArray) => {
+  const keySegment = isParentArray ? `[${key}]` : key;
+
+  if (!basePath) {
+    return keySegment;
+  }
+
+  if (!isParentArray && key === '') {
+    return `${basePath}['']`;
+  }
+
+  return `${basePath}.${keySegment}`;
+};
 
 /**
  * Convert object to tree view object
  *
- * @param parent - Object
- * @param parentKey - Key of object
- * @param [parentPath=''] - Path to parent
- * @param [isParentArray=false] - Is parent converted array into object
- * @return {{children: [string, any], name: *}}
+ * @param {Object} parent - Object
+ * @param {string} parentKey - Key of object
+ * @param {string} [parentPath=''] - Path to parent
+ * @param {boolean} [isParentArray=false] - Is parent converted array into object
+ * @returns {{ children: Array, name: string, path: string }}
  */
-export const convertObjectToTreeview = (parent, parentKey, parentPath = '', isParentArray = false) => {
+export const convertObjectToTreeview = (
+  parent,
+  parentKey,
+  parentPath = '',
+  isParentArray = false,
+) => {
   const basePath = !parentPath ? parentKey : parentPath;
 
   const children = Object.entries(parent).reduce((acc, [key, value]) => {
-    const path = [basePath, isParentArray ? `[${key}]` : key].filter(Boolean).join('.');
+    const path = getObjectTreeviewPath(basePath, key, isParentArray);
 
     if (isArray(value)) {
       acc.push({
@@ -34,15 +62,15 @@ export const convertObjectToTreeview = (parent, parentKey, parentPath = '', isPa
     return acc;
   }, []);
 
-  return { name: parentKey, children };
+  return { name: parentKey, path: basePath, children };
 };
 
 /**
  * Convert tree array structure to flat array structure
  *
  * @param {Array} tree
- * @param {string} [itemChildren = 'children']
- * @return {Array}
+ * @param {string} [itemChildren='children']
+ * @returns {Array}
  */
 export const convertTreeArrayToArray = (tree, itemChildren = 'children') => {
   const result = [];

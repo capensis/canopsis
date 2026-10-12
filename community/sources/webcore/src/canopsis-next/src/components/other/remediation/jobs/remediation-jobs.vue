@@ -4,7 +4,7 @@
       :remediation-jobs="remediationJobs"
       :pending="remediationJobsPending"
       :total-items="remediationJobsMeta.total_count"
-      :options.sync="options"
+      :options="options"
       :removable="hasDeleteAnyRemediationJobAccess"
       :updatable="hasUpdateAnyRemediationJobAccess"
       :duplicable="hasCreateAnyRemediationJobAccess"
@@ -13,100 +13,84 @@
       @duplicate="showDuplicateRemediationJobModal"
       @edit="showEditRemediationJobModal"
       @refresh="fetchList"
+      @update:options="updateOptions"
     />
   </v-card-text>
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { onMounted } from 'vue';
 
-import { MODALS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query/query';
-import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
-import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useFetchListWithOptions } from '@/hooks/query/shared';
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 
+import { useRemediationJobsActions } from './hooks/remediation-jobs';
 import RemediationJobsList from './remediation-jobs-list.vue';
 
 export default {
-  components: { RemediationJobsList },
-  mixins: [
-    localQueryMixin,
-    entitiesRemediationJobMixin,
-    permissionsTechnicalRemediationJobMixin,
-  ],
+  components: {
+    RemediationJobsList,
+  },
+
   props: {
     active: {
       type: Boolean,
       default: true,
     },
   },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    fetchList() {
-      const params = this.getQuery();
-      params.with_flags = true;
 
-      this.fetchRemediationJobsList({ params });
-    },
+  setup() {
+    const {
+      remediationJobs,
+      remediationJobsMeta,
+      remediationJobsPending,
+      fetchRemediationJobsList,
+    } = useRemediationJob();
 
-    showEditRemediationJobModal(remediationJob) {
-      this.$modals.show({
-        name: MODALS.createRemediationJob,
-        config: {
-          remediationJob,
-          title: this.$t('modals.createRemediationJob.edit.title'),
-          action: async (job) => {
-            await this.updateRemediationJob({ id: remediationJob._id, data: job });
-
-            this.$popups.success({
-              text: this.$t('modals.createRemediationJob.edit.popups.success', {
-                jobName: job.name,
-              }),
-            });
-
-            await this.fetchList();
+    const {
+      options,
+      updateOptions,
+      handler: fetchList,
+    } = useFetchListWithOptions({
+      fetchListHandler: ({ params }) => fetchRemediationJobsList({
+          params: {
+            ...params,
+            with_flags: true,
           },
-        },
-      });
-    },
+        }),
+    });
 
-    showDuplicateRemediationJobModal(remediationJob) {
-      this.$modals.show({
-        name: MODALS.createRemediationJob,
-        config: {
-          remediationJob: omit(remediationJob, ['_id']),
-          title: this.$t('modals.createRemediationJob.duplicate.title'),
-          action: async (job) => {
-            const newRemediationJob = await this.createRemediationJob({ data: job });
+    const {
+      hasCreateAccess: hasCreateAnyRemediationJobAccess,
+      hasUpdateAccess: hasUpdateAnyRemediationJobAccess,
+      hasDeleteAccess: hasDeleteAnyRemediationJobAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.remediationJob);
 
-            this.$popups.success({
-              text: this.$t('modals.createRemediationJob.duplicate.popups.success', {
-                jobName: remediationJob.name,
-              }),
-            });
+    const {
+      showEditRemediationJobModal,
+      showDuplicateRemediationJobModal,
+      showRemoveRemediationJobModal,
+    } = useRemediationJobsActions(fetchList);
 
-            await this.fetchList();
+    onMounted(fetchList);
 
-            return newRemediationJob;
-          },
-        },
-      });
-    },
-
-    showRemoveRemediationJobModal(remediationJob) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removeRemediationJob({ id: remediationJob._id });
-            await this.fetchList();
-          },
-        },
-      });
-    },
+    return {
+      remediationJobs,
+      remediationJobsMeta,
+      remediationJobsPending,
+      options,
+      updateOptions,
+      hasCreateAnyRemediationJobAccess,
+      hasUpdateAnyRemediationJobAccess,
+      hasDeleteAnyRemediationJobAccess,
+      showEditRemediationJobModal,
+      showDuplicateRemediationJobModal,
+      showRemoveRemediationJobModal,
+      fetchList,
+    };
   },
 };
 </script>

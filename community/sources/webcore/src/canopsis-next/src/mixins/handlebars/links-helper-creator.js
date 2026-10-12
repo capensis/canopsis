@@ -1,9 +1,9 @@
-import { get } from 'lodash';
 import Handlebars from 'handlebars';
+import { get } from 'lodash';
 
 import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import { authMixin } from '../auth';
+import { authMixin } from '@/mixins/auth';
 
 export const handlebarsLinksHelperCreator = (linksPath, right) => ({
   mixins: [authMixin],
@@ -25,7 +25,7 @@ export const handlebarsLinksHelperCreator = (linksPath, right) => ({
         `);
     });
   },
-  destroyed() {
+  beforeUnmount() {
     unregisterHelper('links');
   },
 });

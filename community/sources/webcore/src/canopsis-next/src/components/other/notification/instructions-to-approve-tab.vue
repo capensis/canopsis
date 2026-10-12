@@ -25,18 +25,15 @@ import { isInstructionDismissed } from '@/helpers/entities/remediation/instructi
 
 import { useCRUDPermissions } from '@/hooks/auth';
 
-import {
-  useRemediationInstructionsActions,
-} from '@/components/other/remediation/instructions/hooks/remediation-instructions';
+import { useRemediationInstructionsActions } from '@/components/other/remediation/instructions/hooks/remediation-instructions';
 
 import RemediationInstructionsList from '@/components/other/remediation/instructions/remediation-instructions-list.vue';
 
 import { useNotificationActiveId } from './hooks/notifications';
 
 export default {
-  components: {
-    RemediationInstructionsList,
-  },
+  components: { RemediationInstructionsList },
+
   props: {
     items: {
       type: Array,
@@ -48,17 +45,20 @@ export default {
     },
     meta: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     options: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     activeId: {
       type: String,
       required: false,
     },
   },
+
+  emits: ['update:options', 'refresh'],
+
   setup(props, { emit }) {
     const {
       hasCreateAccess: hasCreateAnyRemediationInstructionAccess,
@@ -67,7 +67,6 @@ export default {
     } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.remediationInstruction);
 
     const refresh = () => emit('refresh');
-
     const {
       showDuplicateRemediationInstructionModal,
       showEditRemediationInstructionModal,
@@ -76,11 +75,6 @@ export default {
       showRemoveSelectedRemediationInstructionModal,
     } = useRemediationInstructionsActions(refresh);
 
-    /**
-     * Handles notification action for a remediation instruction by showing appropriate modal
-     *
-     * @param {Object} remediationInstruction - The remediation instruction object to process
-     */
     const notificationAction = (remediationInstruction) => {
       if (isInstructionDismissed(remediationInstruction)) {
         showEditRemediationInstructionModal(remediationInstruction);
@@ -101,7 +95,6 @@ export default {
       hasUpdateAnyRemediationInstructionAccess,
       hasDeleteAnyRemediationInstructionAccess,
       hasCreateAnyRemediationInstructionAccess,
-
       showApproveRemediationInstructionModal,
       showRemoveSelectedRemediationInstructionModal,
       showRemoveRemediationInstructionModal,

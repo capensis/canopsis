@@ -1,11 +1,16 @@
 <script>
+import { cloneVNode, h } from 'vue';
+
+import { writeTextToClipboard } from '@/helpers/clipboard';
+
 export default {
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
   },
+
   methods: {
     showSuccessPopup() {
       this.$popups.success({ text: this.$t('popups.copySuccess') });
@@ -14,41 +19,40 @@ export default {
     showErrorPopup() {
       this.$popups.error({ text: this.$t('popups.copyError') });
     },
+
+    async copy() {
+      try {
+        await writeTextToClipboard(String(this.value));
+        this.showSuccessPopup();
+      } catch {
+        this.showErrorPopup();
+      }
+    },
+
+    prepareVNode(vnode) {
+      return cloneVNode(vnode, {
+        onClick: (event) => {
+          vnode.props?.onClick?.(event);
+          this.copy();
+        },
+      });
+    },
   },
-  render(h) {
-    const slots = this.$slots.default || [];
-    const [slot] = slots;
 
-    let tag = 'span';
-    let children = slots;
-    let attributes = {
-      directives: [{
-        name: 'clipboard',
-        rawName: 'v-clipboard:copy',
-        value: this.value,
-        arg: 'copy',
-      },
-      {
-        name: 'clipboard',
-        rawName: 'v-clipboard:success',
-        value: this.showSuccessPopup,
-        arg: 'success',
-      },
-      {
-        name: 'clipboard',
-        rawName: 'v-clipboard:error',
-        value: this.showErrorPopup,
-        arg: 'error',
-      }],
-    };
+  render() {
+    const slots = this.$slots.default?.() ?? [];
 
-    if (slots.length === 1 && slot?.tag) {
-      tag = slot?.tag;
-      attributes = { ...attributes, ...slot.data };
-      children = slot.children;
+    if (slots.length === 1) {
+      return this.prepareVNode(slots[0]);
     }
 
-    return h(tag, attributes, children);
+    return h(
+      'span',
+      {
+        onClick: this.copy,
+      },
+      slots,
+    );
   },
 };
 </script>

@@ -32,12 +32,10 @@ class Observer {
 
   async notifyInSeries(data) {
     for (const handler of this.handlers) {
-      // eslint-disable-next-line no-await-in-loop
       await handler(data);
     }
 
     for (const handler of this.childrenHandlers) {
-      // eslint-disable-next-line no-await-in-loop
       await handler(data);
     }
   }

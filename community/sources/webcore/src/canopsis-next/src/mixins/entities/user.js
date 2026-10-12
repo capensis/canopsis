@@ -1,20 +1,19 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState, mapStores } from 'pinia';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('user');
+import { useUserStore } from '@/stores/modules/user';
 
-/**
- * @mixin
- */
 export const entitiesUserMixin = {
   computed: {
-    ...mapGetters({
+    ...mapStores(useUserStore),
+    ...mapState(useUserStore, {
       users: 'items',
       usersPending: 'pending',
       usersMeta: 'meta',
     }),
   },
+
   methods: {
-    ...mapActions({
+    ...mapActions(useUserStore, {
       fetchUsersList: 'fetchList',
       fetchUsersListWithPreviousParams: 'fetchListWithPreviousParams',
       createUser: 'create',
@@ -50,3 +49,5 @@ export const entitiesUserMixin = {
     },
   },
 };
+
+export default entitiesUserMixin;

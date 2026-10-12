@@ -2,13 +2,9 @@
   <div class="secondary pa-3">
     <v-card>
       <v-card-text>
-        <v-data-table
-          :headers="headers"
-          :items="items"
-          hide-default-footer
-        >
+        <v-data-table :headers="preparedHeaders" :items="items" hide-default-footer>
           <template #item.failed="{ item }">
-            {{ item.failed | date }}
+            {{ formatDate(item.failed) }}
           </template>
         </v-data-table>
       </v-card-text>
@@ -19,6 +15,8 @@
 <script>
 import { computed } from 'vue';
 
+import { convertDateToString } from '@/helpers/date/date';
+
 import { useI18n } from '@/hooks/i18n';
 
 export default {
@@ -28,6 +26,7 @@ export default {
       default: () => ({}),
     },
   },
+
   setup(props) {
     const { t } = useI18n();
 
@@ -35,12 +34,19 @@ export default {
       { text: t('common.requestDate'), value: 'failed', width: 200, sortable: false },
       { text: t('common.output'), value: 'fail_reason', sortable: false },
     ]);
-
+    const preparedHeaders = computed(() => headers.value.map(header => ({
+        ...header,
+        title: header.text,
+        key: header.value,
+      })),
+    );
     const items = computed(() => [props.token]);
+    const formatDate = date => convertDateToString(date);
 
     return {
-      headers,
+      preparedHeaders,
       items,
+      formatDate,
     };
   },
 };

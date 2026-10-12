@@ -1,37 +1,26 @@
 <template>
-  <v-list-item :to="viewLink">
+  <v-list-item :to="viewLink" class="groups-top-bar-view">
     <v-list-item-title>
       <span>{{ view.title }}</span>
-      <v-icon
-        v-if="view.is_private"
-        color="white"
-        small
-      >
-        lock
-      </v-icon>
+      <c-icon v-if="view.is_private" size="16">lock</c-icon>
       <v-btn
         v-show="(view.is_private || hasViewEditButtonAccess) && isNavigationEditingMode"
-        class="edit-view-button"
-        depressed
-        small
+        class="ml-2"
+        variant="text"
+        size="small"
         icon
         @click.prevent="showEditViewModal"
       >
-        <v-icon small>
-          edit
-        </v-icon>
+        <c-icon size="16">edit</c-icon>
       </v-btn>
       <v-btn
         v-show="(view.is_private || hasCreateAnyViewAccess) && isNavigationEditingMode"
-        class="duplicate-view-button"
-        depressed
-        small
+        variant="text"
+        size="small"
         icon
         @click.prevent="showDuplicateViewModal"
       >
-        <v-icon small>
-          file_copy
-        </v-icon>
+        <c-icon size="16">file_copy</c-icon>
       </v-btn>
     </v-list-item-title>
   </v-list-item>
@@ -44,3 +33,16 @@ export default {
   mixins: [layoutNavigationGroupsBarGroupViewMixin],
 };
 </script>
+
+<style lang="scss" scoped>
+.groups-top-bar-view :deep(.v-list-item-title) {
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+  color: white !important;
+}
+
+.groups-top-bar-view :deep(.v-list-item__content) {
+  color: white;
+}
+</style>

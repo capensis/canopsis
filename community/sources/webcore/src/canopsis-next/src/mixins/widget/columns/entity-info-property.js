@@ -10,10 +10,11 @@ export const widgetColumnsEntityInfoPropertyMixin = {
   },
   methods: {
     findAliasByColumnValue(columnValue, prefix) {
-      const item = this.entityInfoProperties.find(property => (
-        property.alias
-        && columnValue === [prefix, 'infos', property.name, 'value'].filter(Boolean).join('.')
-      ));
+      const item = this.entityInfoProperties.find(
+        property =>
+          property.alias &&
+          columnValue === [prefix, 'infos', property.name, 'value'].filter(Boolean).join('.'),
+      );
 
       return item?.alias;
     },

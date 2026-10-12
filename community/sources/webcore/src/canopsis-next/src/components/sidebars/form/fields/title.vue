@@ -1,15 +1,12 @@
 <template>
-  <widget-settings-item
-    :title="label || $t('common.title')"
-    :optional="!required"
-  >
-    <v-text-field
-      v-field="value"
-      v-validate="rules"
+  <widget-settings-item :title="label || $t('common.title')" :optional="!required">
+    <c-text-field
+      :model-value="modelValue"
       :placeholder="placeholder || $t('settings.widgetTitle')"
       :name="name"
-      :error-messages="errors.collect(name)"
+      :required="required"
       :autofocus="autofocus"
+      @update:model-value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
@@ -20,15 +17,15 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 /**
  * Component to set the title of a widget
  *
- * @prop {String} [value] - Value of the title
+ * @prop {String} [modelValue] - Value of the title
  */
 export default {
-  inject: ['$validator'],
   components: { WidgetSettingsItem },
+
   props: {
-    value: {
+    modelValue: {
       type: String,
-      required: false,
+      default: '',
     },
     required: {
       type: Boolean,
@@ -51,12 +48,7 @@ export default {
       default: false,
     },
   },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
+
+  emits: ['update:modelValue'],
 };
 </script>

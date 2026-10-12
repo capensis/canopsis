@@ -1,17 +1,18 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import {
+  createEntityCategory,
+  useEntityCategoryStore,
+} from '@/stores/modules/entity-category';
 
-const useEntityCategoryStoreModule = () => useStoreModuleHooks('entityCategory');
-
-// TODO: add comments
+/**
+ * Entity category store facade.
+ *
+ * @returns {Object}
+ */
 export const useEntityCategory = () => {
-  const { useActions } = useEntityCategoryStoreModule();
-
-  const actions = useActions({
-    fetchCategoriesListWithoutStore: 'fetchListWithoutStore',
-    // TODO: finish add another actions and getters
-  });
+  const store = useEntityCategoryStore();
 
   return {
-    ...actions,
+    createEntityCategory,
+    fetchCategoriesListWithoutStore: store.fetchCategoriesListWithoutStore,
   };
 };

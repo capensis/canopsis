@@ -1,25 +1,23 @@
 <template>
   <div>
-    <c-simple-tooltip
-      :content="tooltipContent"
-      top
-    >
-      <template #activator="{ on }">
-        <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on">
-          <v-icon color="white" small>
-            {{ icon }}
-          </v-icon>
-          <strong v-if="hasInactivePbehavior" class="ml-2 white--text">
-            !
-          </strong>
+    <c-tooltip :content="tooltipContent" html top>
+      <template #activator="{ props: activatorProps }">
+        <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" theme-color="snooze">
+          <template #default="{ iconColor }">
+            <v-icon :color="iconColor" size="small">
+              {{ icon }}
+            </v-icon>
+            <strong v-if="hasInactivePbehavior" :style="{ color: iconColor }" class="ml-2">
+              !
+            </strong>
+          </template>
         </c-alarm-extra-details-chip>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </div>
 </template>
 
 <script>
-import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
@@ -37,16 +35,15 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
     const { tooltipContent } = useExtraDetailsSnoozeTooltip(props);
 
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.snooze);
-    const color = COLORS.alarmExtraDetails.snooze;
 
     return {
-      tooltipContent,
       icon,
-      color,
+      tooltipContent,
     };
   },
 };

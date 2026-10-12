@@ -1,42 +1,17 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { useTechMetricsStore } from '@/stores/modules/tech-metrics';
 
 /**
- * Custom hook to use the tech metrics store module.
+ * Tech metrics store facade.
  *
- * This hook utilizes the `useStoreModuleHooks` function to access the tech metrics store module
- * and provides actions for creating and fetching tech metrics exports.
- *
- * @returns {Object} An object containing the actions for creating and fetching tech metrics exports.
- * @property {Function} createTechMetricsExport - Action to create a tech metrics export.
- * @property {Function} fetchTechMetricsExport - Action to fetch a tech metrics export.
- */
-const useTechMetricsStoreModule = () => useStoreModuleHooks('techMetrics');
-
-/**
- * Custom hook to use tech metrics actions.
- *
- * This hook provides actions for creating and fetching tech metrics exports, as well as fetching and updating tech
- * metrics settings,
- * by utilizing the `useTechMetricsStoreModule` hook.
- *
- * @returns {Object} An object containing the actions for creating and fetching tech metrics exports, and fetching and
- * updating tech metrics settings.
- * @property {Function} createTechMetricsExport - Action to create a tech metrics export.
- * @property {Function} fetchTechMetricsExport - Action to fetch a tech metrics export.
- * @property {Function} fetchTechMetricsSettings - Action to fetch tech metrics settings.
- * @property {Function} updateTechMetricsSettings - Action to update tech metrics settings.
+ * @returns {Object}
  */
 export const useTechMetrics = () => {
-  const { useActions } = useTechMetricsStoreModule();
-
-  const actions = useActions({
-    createTechMetricsExport: 'createTechMetricsExport',
-    fetchTechMetricsExport: 'fetchTechMetricsExport',
-    fetchTechMetricsSettings: 'fetchTechMetricsSettings',
-    updateTechMetricsSettings: 'updateTechMetricsSettings',
-  });
+  const techMetricsStore = useTechMetricsStore();
 
   return {
-    ...actions,
+    createTechMetricsExport: techMetricsStore.createTechMetricsExport,
+    fetchTechMetricsExport: techMetricsStore.fetchTechMetricsExport,
+    fetchTechMetricsSettings: techMetricsStore.fetchTechMetricsSettings,
+    updateTechMetricsSettings: techMetricsStore.updateTechMetricsSettings,
   };
 };

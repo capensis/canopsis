@@ -5,26 +5,27 @@ import { WIDGET_PERIODIC_REFRESH_KEY } from '@/constants';
 import { durationToSeconds } from '@/helpers/date/duration';
 
 import {
-  usePeriodicRefreshParent,
-  usePeriodicRefreshChild,
   usePeriodicRefreshBasicWatchers,
+  usePeriodicRefreshChild,
+  usePeriodicRefreshParent,
 } from '@/hooks/periodic-refresh';
 
 /**
  * Hook to set up periodic refresh for a widget based on options and a handler.
  *
- * @param {Object} options - The options for the periodic refresh.
- * @param {Object} options.enabled - Flag to enable/disable periodic refresh.
- * @param {number} options.value - The value for the refresh interval.
- * @param {DurationUnit} options.unit - The unit of the refresh interval.
- * @param {Function} handler - The function to be called on each refresh interval.
+ * @param {Object} config - The options for the periodic refresh.
+ * @param {Object|import('vue').Ref<Object>} config.options - Periodic refresh settings.
+ * @param {Function} config.handler - The function to be called on each refresh interval.
  */
 export const useWidgetPeriodicRefresh = ({ options, handler }) => {
-  const { periodicRefresh } = usePeriodicRefreshParent({ handler, key: WIDGET_PERIODIC_REFRESH_KEY });
+  // TODO: may be we should remove it later
+  const { periodicRefresh } = usePeriodicRefreshParent({
+    handler,
+    key: WIDGET_PERIODIC_REFRESH_KEY,
+  });
 
-  const unwrappedOptions = unref(options) || {};
-  const enabled = computed(() => !!unwrappedOptions.enabled);
-  const delay = computed(() => (unwrappedOptions ? durationToSeconds(unwrappedOptions) : 0));
+  const enabled = computed(() => !!unref(options)?.enabled);
+  const delay = computed(() => (unref(options) ? durationToSeconds(unref(options)) : 0));
 
   let timer;
 
@@ -38,17 +39,6 @@ export const useWidgetPeriodicRefresh = ({ options, handler }) => {
     timer = null;
   };
 
-  const tick = async () => {
-    try {
-      stopRefresh();
-      await periodicRefresh.notify();
-      // eslint-disable-next-line no-use-before-define
-      startRefresh();
-    } catch (err) {
-      console.error('Error during periodic refresh:', err);
-    }
-  };
-
   const startRefresh = () => {
     stopRefresh();
 
@@ -59,11 +49,18 @@ export const useWidgetPeriodicRefresh = ({ options, handler }) => {
     timer = setTimeout(tick, delay.value * 1000);
   };
 
+  const tick = async () => {
+    try {
+      stopRefresh();
+      await periodicRefresh.notify();
+      startRefresh();
+    } catch (err) {
+      console.error('Error during periodic refresh:', err);
+    }
+  };
+
   usePeriodicRefreshChild({ handler: tick });
 
-  /**
-   * Periodic refresh watchers and lifecycle listeners
-   */
   usePeriodicRefreshBasicWatchers({
     enabled,
     delay,
