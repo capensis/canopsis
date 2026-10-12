@@ -316,6 +316,7 @@ export const API_ROUTES = {
   widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
+  topUserByActiveConnects: '/api/v4/users/top/active-connects',
   bulkUsersEnable: '/api/v4/bulk/users/enable',
   bulkUsersDisable: '/api/v4/bulk/users/disable',
   bulkUsers: '/api/v4/bulk/users',

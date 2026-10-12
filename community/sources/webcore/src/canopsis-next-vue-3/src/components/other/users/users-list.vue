@@ -5,11 +5,24 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :search-disabled="showTopUserByConnections"
     :select-all="removable"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
+    <template #toolbar>
+      <v-switch
+        :model-value="showTopUserByConnections"
+        :label="$t('user.showTopUserByConnections')"
+        class="users-list__top-user-switch ml-4"
+        color="primary"
+        density="compact"
+        hide-details
+        @update:model-value="$emit('update:showTopUserByConnections', $event)"
+      />
+    </template>
+
     <template #mass-actions="{ selected, clearSelected }">
       <c-table-mass-actions-panel
         :items="selected"
@@ -91,9 +104,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    showTopUserByConnections: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  emits: ['update:options', 'edit', 'remove', 'refresh'],
+  emits: ['update:options', 'update:showTopUserByConnections', 'edit', 'remove', 'refresh'],
 
   setup() {
     const { t } = useI18n();

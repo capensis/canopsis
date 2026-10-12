@@ -5,6 +5,7 @@
     :model-value="modelValue"
     :label="label || $t('common.search')"
     :items="items"
+    :disabled="disabled"
     :menu-props="comboboxMenuProps"
     :return-object="false"
     item-title="search"
@@ -34,6 +35,7 @@
     v-else
     :model-value="modelValue"
     :label="label || $t('common.search')"
+    :disabled="disabled"
     class="c-field"
     hide-details
     single-line
@@ -67,6 +69,10 @@ export default {
     items: {
       type: Array,
       required: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 
