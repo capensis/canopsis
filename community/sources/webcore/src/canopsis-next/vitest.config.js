@@ -46,6 +46,7 @@ export default mergeConfig(
     test: {
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/**'],
+      globalSetup: ['./__tests__/global-setup.js'],
       globals: true,
       pool: 'threads',
       root: fileURLToPath(new URL('./', import.meta.url)),

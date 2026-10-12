@@ -90,7 +90,7 @@ describe('alarm-column-cell', () => {
 
     const ellipsis = selectEllipsis(wrapper);
 
-    expect(ellipsis.attributes('text')).toBe('10/01/2022 04:49:13');
+    expect(ellipsis.attributes('text')).toBe('09/01/2022 23:49:13');
   });
 
   it.each([
@@ -148,7 +148,7 @@ describe('alarm-column-cell', () => {
 
     const ellipsis = selectEllipsis(wrapper);
 
-    expect(ellipsis.attributes('text')).toBe('03/01/1970');
+    expect(ellipsis.attributes('text')).toBe('02/01/1970');
   });
 
   it('Applies filter class when column has isFilter set to true', async () => {

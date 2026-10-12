@@ -8,8 +8,8 @@ import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import {
   addUnitToDate,
-  convertDateToDateObject,
   convertDateToEndOfDayDateObject,
+  convertDateToEndOfUnitDateObject,
   convertDateToStartOfDayDateObject,
 } from '@/helpers/date/date';
 
@@ -414,7 +414,10 @@ describe('pbehavior-general-form', () => {
 
     expect(wrapper).toEmitInput({
       ...newForm,
-      tstop: convertDateToDateObject(addUnitToDate(newForm.tstart, 1, TIME_UNITS.hour)),
+      tstop: convertDateToEndOfUnitDateObject(
+        addUnitToDate(newForm.tstart, 1, TIME_UNITS.day),
+        TIME_UNITS.day,
+      ),
     });
   });
 
