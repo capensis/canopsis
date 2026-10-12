@@ -15,6 +15,7 @@ export const useUser = () => {
     fetchUsersList: userStore.fetchList,
     fetchUsersListWithPreviousParams: userStore.fetchListWithPreviousParams,
     fetchUsersListWithoutStore: userStore.fetchListWithoutStore,
+    fetchTopUserByActiveConnectsWithoutStore: userStore.fetchTopByActiveConnectsWithoutStore,
     createUser: userStore.create,
     updateUser: userStore.update,
     removeUser: userStore.remove,

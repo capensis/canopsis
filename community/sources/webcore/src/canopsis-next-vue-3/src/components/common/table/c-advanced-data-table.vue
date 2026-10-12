@@ -6,6 +6,7 @@
           v-if="search"
           :model-value="options?.search"
           :label="searchLabel"
+          :disabled="searchDisabled"
           @submit="updateSearch"
         />
         <c-advanced-search
@@ -178,6 +179,10 @@ export default {
       default: false,
     },
     search: {
+      type: Boolean,
+      default: false,
+    },
+    searchDisabled: {
       type: Boolean,
       default: false,
     },

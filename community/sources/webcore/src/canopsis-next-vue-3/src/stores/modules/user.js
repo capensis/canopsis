@@ -15,6 +15,10 @@ export const useUserStore = createCRUDStore({
   withMeta: true,
   withWithoutStore: true,
   actions: {
+    fetchTopByActiveConnectsWithoutStore() {
+      return request.get(API_ROUTES.topUserByActiveConnects);
+    },
+
     remove({ id } = {}) {
       return request.delete(`${API_ROUTES.users}/${encodeURIComponent(id)}`);
     },

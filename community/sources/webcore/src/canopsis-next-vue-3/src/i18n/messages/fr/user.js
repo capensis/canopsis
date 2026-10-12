@@ -17,6 +17,7 @@ export default {
   navigationType: 'Type d\'affichage de la barre de vues',
   active: 'Session active',
   activeConnects: 'Nombre de connexions',
+  showTopUserByConnections: 'Afficher le premier utilisateur par nombre de connexions',
   navigationTypes: {
     [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
     [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',

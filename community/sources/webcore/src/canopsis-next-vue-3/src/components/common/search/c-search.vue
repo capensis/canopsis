@@ -5,14 +5,25 @@
       :combobox="combobox"
       :items="items"
       :label="label"
+      :disabled="disabled"
       @submit="submit"
       @remove:item="removeItem"
       @toggle-pin:item="togglePinItem"
     >
       <slot />
     </c-search-field>
-    <c-action-btn :tooltip="$t('common.search')" icon="search" @click="submit" />
-    <c-action-btn :tooltip="$t('common.clearSearch')" icon="clear" @click="clear" />
+    <c-action-btn
+      :disabled="disabled"
+      :tooltip="$t('common.search')"
+      icon="search"
+      @click="submit"
+    />
+    <c-action-btn
+      :disabled="disabled"
+      :tooltip="$t('common.clearSearch')"
+      icon="clear"
+      @click="clear"
+    />
     <slot />
   </c-layout>
 </template>
@@ -46,6 +57,10 @@ export default {
     fields: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 
