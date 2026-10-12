@@ -72,7 +72,7 @@ describe('variables-help', () => {
 
     expect(saveJsonFile).toHaveBeenCalledWith(
       variablesObjectSecond.array_prop,
-      'array_prop-07/12/2013 23:00:00',
+      'array_prop-07/12/2013 18:00:00',
     );
   });
 });

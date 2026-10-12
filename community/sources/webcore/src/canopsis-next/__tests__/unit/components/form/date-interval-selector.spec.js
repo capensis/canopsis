@@ -170,7 +170,7 @@ describe('date-interval-selector', () => {
     const startDate = wrapper.vm.startDateObjectPreparer(QUICK_RANGES.previousWeek.start);
     const stopDate = wrapper.vm.stopDateObjectPreparer(QUICK_RANGES.previousWeek.stop);
 
-    expect(startDate.getTime()).toBe(1385316000000);
-    expect(stopDate.getTime()).toBe(1385920799999);
+    expect(startDate.getTime()).toBe(1385334000000);
+    expect(stopDate.getTime()).toBe(1385938799999);
   });
 });
