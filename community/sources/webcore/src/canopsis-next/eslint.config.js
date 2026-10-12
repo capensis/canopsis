@@ -1,21 +1,26 @@
 import pluginVitest from '@vitest/eslint-plugin';
-import {
-  configureVueProject,
-  defineConfigWithVueTs,
-  vueTsConfigs,
-} from '@vue/eslint-config-typescript';
 import skipFormatting from 'eslint-config-prettier/flat';
 import pluginOxlint from 'eslint-plugin-oxlint';
 import perfectionist from 'eslint-plugin-perfectionist';
 import pluginPlaywright from 'eslint-plugin-playwright';
 import pluginVue from 'eslint-plugin-vue';
 import { globalIgnores } from 'eslint/config';
+import tseslint from 'typescript-eslint';
 
-configureVueProject({
-  scriptLangs: ['js', 'jsx', 'ts', 'tsx'],
+const vueTsRecommended = tseslint.configs.recommended.map((config) => {
+  if (!config.files?.includes('**/*.ts')) {
+    return config;
+  }
+
+  return {
+    ...config,
+    files: [...config.files, '**/*.vue'],
+  };
 });
 
-export default defineConfigWithVueTs(
+const vueParser = pluginVue.configs['flat/base'][1].languageOptions.parser;
+
+export default tseslint.config(
   {
     name: 'app/files-to-lint',
     files: ['**/*.{vue,js,cjs,mjs,jsx,ts,mts,tsx}'],
@@ -30,7 +35,40 @@ export default defineConfigWithVueTs(
   ]),
 
   ...pluginVue.configs['flat/essential'],
-  vueTsConfigs.recommended,
+  ...vueTsRecommended,
+
+  ...pluginVue.configs['flat/base'],
+  {
+    name: 'app/typescript-in-vue',
+    files: ['*.vue', '**/*.vue'],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: {
+          js: 'espree',
+          jsx: 'espree',
+          ts: tseslint.parser,
+          tsx: tseslint.parser,
+        },
+        ecmaVersion: 2024,
+        ecmaFeatures: {
+          jsx: true,
+        },
+        extraFileExtensions: ['.vue'],
+      },
+    },
+    rules: {
+      'vue/block-lang': [
+        'error',
+        {
+          script: {
+            lang: ['js', 'jsx', 'ts', 'tsx'],
+            allowNoLang: true,
+          },
+        },
+      ],
+    },
+  },
 
   {
     ...pluginPlaywright.configs['flat/recommended'],
