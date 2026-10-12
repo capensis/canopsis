@@ -1,35 +1,47 @@
 <template>
-  <v-layout column>
+  <c-layout gap="2" column>
     <c-duration-field
-      v-field="form.duration"
-      autofocus
+      v-model:duration="duration"
       required
     />
     <c-description-field
-      v-field="form.comment"
-      :label="$t('common.note')"
+      v-model="comment"
+      :label="t('common.note')"
       :required="isNoteRequired"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="comment"
+      autofocus
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
-    form: {
-      type: Object,
-      required: true,
-    },
     isNoteRequired: {
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { t } = useI18n();
+    const { duration, comment } = useFormModels({
+      duration: 'duration',
+      comment: 'comment',
+    });
+
+    return {
+      t,
+      FORM_MAX_STRING_LENGTH,
+      duration,
+      comment,
+    };
   },
 };
 </script>

@@ -1,33 +1,21 @@
 <template>
-  <v-select
-    v-field="value"
+  <c-select
+    :model-value="value"
     :items="availableSamplings"
     :disabled="disabled"
     :label="label || $t('common.sampling')"
     :name="name"
+    item-title="text"
+    item-value="value"
     hide-details
-  >
-    <template #selection="{ item }">
-      <span class="text-capitalize">
-        {{ item.text }}
-      </span>
-    </template>
-    <template #item="{ item }">
-      <span class="text-capitalize">
-        {{ item.text }}
-      </span>
-    </template>
-  </v-select>
+    @update:model-value="$emit('update:value', $event)"
+  />
 </template>
 
 <script>
 import { SAMPLINGS } from '@/constants';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: String,
@@ -50,11 +38,14 @@ export default {
       default: () => Object.values(SAMPLINGS),
     },
   },
+
+  emits: ['update:value'],
+
   computed: {
     availableSamplings() {
       return this.samplings.map(value => ({
         value,
-        text: this.$tc(`common.times.${value}`, 2),
+        text: this.$t(`common.times.${value}`, 2),
       }));
     },
   },

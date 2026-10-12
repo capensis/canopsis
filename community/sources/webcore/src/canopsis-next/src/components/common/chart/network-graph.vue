@@ -1,18 +1,12 @@
 <template>
   <div class="network-graph">
-    <div
-      ref="canvasWrapper"
-      class="network-graph__canvas-wrapper"
-    />
-    <div
-      ref="tooltip"
-      class="v-tooltip__content menuable__content__active network-graph__tooltip"
-    />
+    <div ref="canvasWrapper" class="network-graph__canvas-wrapper" />
+    <div ref="tooltip" class="v-tooltip__content network-graph__tooltip" />
   </div>
 </template>
 
 <script>
-import { isEqual, debounce } from 'lodash';
+import { debounce, isEqual, isNil } from 'lodash';
 
 import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
 
@@ -28,12 +22,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    /**
-     * @typedef {Object} NetworkGraphTooltipOptions
-     * @property {number} offsetX
-     * @property {number} offsetY
-     * @property {function} getContent
-     */
     tooltipOptions: {
       type: Object,
       default: () => ({}),
@@ -43,108 +31,109 @@ export default {
       default: false,
     },
   },
+
   watch: {
     nodeHtmlLabelOptions(newOptions, oldOptions) {
-      if (!isEqual(newOptions, oldOptions)) {
+      if (!isEqual(newOptions, oldOptions) && this.$cy) {
         this.$cy.nodeHtmlLabel(newOptions, {
           enablePointerEvents: true,
         });
       }
     },
   },
+
   created() {
     this.debouncedResizeHandler = debounce(this.resizeHandler, 50);
   },
+
   mounted() {
     this.mountCytoscape();
 
     window.addEventListener('resize', this.debouncedResizeHandler);
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.destroyCytoscape();
 
     window.removeEventListener('resize', this.debouncedResizeHandler);
   },
+
   methods: {
-    /**
-     * Custom handler for ctrl + wheel zooming
-     *
-     * @param {WheelEvent} e
-     */
-    wheelHandler(e) {
-      const r = this.$cy.renderer();
+    wheelHandler(event) {
+      const renderer = this.$cy.renderer();
+      const inBoxSelection = () => renderer.selection[4] !== 0;
 
-      const inBoxSelection = () => r.selection[4] !== 0;
-
-      if (r.scrollingPage) {
-        return;
-      } // while scrolling, ignore wheel-to-zoom
-
-      if (!e.ctrlKey) {
+      if (renderer.scrollingPage || !event.ctrlKey) {
         return;
       }
 
-      const { cy } = r;
+      const { cy } = renderer;
       const zoom = cy.zoom();
       const pan = cy.pan();
-      const pos = r.projectIntoViewport(e.clientX, e.clientY);
-      const rpos = [pos[0] * zoom + pan.x, pos[1] * zoom + pan.y];
+      const position = renderer.projectIntoViewport(event.clientX, event.clientY);
+      const renderedPosition = [position[0] * zoom + pan.x, position[1] * zoom + pan.y];
 
-      if (r.hoverData.draggingEles || r.hoverData.dragging || r.hoverData.cxtStarted || inBoxSelection()) {
-        // if pan dragging or cxt dragging, wheel movements make no zoom
-        e.preventDefault();
+      if (
+        renderer.hoverData.draggingEles ||
+        renderer.hoverData.dragging ||
+        renderer.hoverData.cxtStarted ||
+        inBoxSelection()
+      ) {
+        event.preventDefault();
         return;
       }
 
       if (cy.panningEnabled() && cy.userPanningEnabled() && cy.zoomingEnabled()) {
-        e.preventDefault();
-        r.data.wheelZooming = true;
+        event.preventDefault();
+        renderer.data.wheelZooming = true;
 
-        clearTimeout(r.data.wheelTimeout);
+        clearTimeout(renderer.data.wheelTimeout);
 
-        r.data.wheelTimeout = setTimeout(() => {
-          r.data.wheelZooming = false;
-          r.redrawHint('eles', true);
-          r.redraw();
+        renderer.data.wheelTimeout = setTimeout(() => {
+          renderer.data.wheelZooming = false;
+          renderer.redrawHint('eles', true);
+          renderer.redraw();
         }, 150);
 
         let diff;
 
-        if (e.deltaY != null) {
-          diff = e.deltaY / -250;
-        } else if (e.wheelDeltaY != null) {
-          diff = e.wheelDeltaY / 1000;
+        if (!isNil(event.deltaY)) {
+          diff = event.deltaY / -250;
+        } else if (!isNil(event.wheelDeltaY)) {
+          diff = event.wheelDeltaY / 1000;
         } else {
-          diff = e.wheelDelta / 1000;
+          diff = event.wheelDelta / 1000;
         }
 
-        diff *= r.wheelSensitivity;
-        const needsWheelFix = e.deltaMode === 1;
+        diff *= renderer.wheelSensitivity;
 
-        if (needsWheelFix) {
-          // fixes slow wheel events on ff/linux and ff/windows
+        if (event.deltaMode === 1) {
           diff *= 33;
         }
 
-        let newZoom = cy.zoom() * (10 ** diff);
+        let newZoom = cy.zoom() * 10 ** diff;
 
-        if (e.type === 'gesturechange') {
-          newZoom = r.gestureStartZoom * e.scale;
+        if (event.type === 'gesturechange') {
+          newZoom = renderer.gestureStartZoom * event.scale;
         }
 
         cy.zoom({
           level: newZoom,
           renderedPosition: {
-            x: rpos[0],
-            y: rpos[1],
+            x: renderedPosition[0],
+            y: renderedPosition[1],
           },
         });
 
-        cy.emit(e.type === 'gesturechange' ? 'pinchzoom' : 'scrollzoom');
+        cy.emit(event.type === 'gesturechange' ? 'pinchzoom' : 'scrollzoom');
       }
     },
 
     resizeHandler() {
+      if (!this.$cy) {
+        return;
+      }
+
       this.$cy.invalidateSize();
       this.$cy.fit(this.$cy.nodes(), HEALTHCHECK_NETWORK_GRAPH_OPTIONS.fitPadding);
     },
@@ -153,7 +142,6 @@ export default {
       this.$cy = cytoscape({
         container: this.$refs.canvasWrapper,
         userZoomingEnabled: !this.ctrlWheelZoom,
-
         ...options,
       });
 
@@ -173,7 +161,7 @@ export default {
         this.$cy = null;
       }
 
-      if (this.ctrlWheelZoom) {
+      if (this.ctrlWheelZoom && this.$el) {
         this.$el.removeEventListener('wheel', this.wheelHandler);
       }
     },
@@ -183,13 +171,6 @@ export default {
       this.mountCytoscape(options);
     },
 
-    /**
-     * Show tooltip with special position and content
-     *
-     * @param {{ x: number, y: number }} renderedPosition
-     * @param {Object} data
-     * @param {number} [zoom = 1]
-     */
     showTooltip({ renderedPosition, data, zoom = 1 }) {
       const { getContent, offsetX = 0, offsetY = 0 } = this.tooltipOptions;
 
@@ -200,42 +181,28 @@ export default {
       const tooltipInnerHTML = getContent(data);
 
       if (tooltipInnerHTML) {
-        const { tooltip: tooltipEl } = this.$refs;
+        const { tooltip: tooltipElement } = this.$refs;
 
-        tooltipEl.innerHTML = tooltipInnerHTML;
+        tooltipElement.innerHTML = tooltipInnerHTML;
 
-        const { height } = tooltipEl.getBoundingClientRect();
+        const { height } = tooltipElement.getBoundingClientRect();
+        const x = renderedPosition.x - offsetX * zoom;
+        const y = renderedPosition.y - offsetY * zoom;
 
-        const x = renderedPosition.x - (offsetX * zoom);
-        const y = renderedPosition.y - (offsetY * zoom);
-
-        tooltipEl.style.left = `${Math.round(x)}px`;
-        tooltipEl.style.top = `${Math.round(y < height ? height : y)}px`;
-        tooltipEl.style.opacity = 1;
+        tooltipElement.style.left = `${Math.round(x)}px`;
+        tooltipElement.style.top = `${Math.round(y < height ? height : y)}px`;
+        tooltipElement.style.opacity = 1;
       }
     },
 
-    /**
-     * Hide tooltip
-     */
     hideTooltip() {
       this.$refs.tooltip.style.opacity = 0;
     },
 
-    /**
-     * Handler for the 'tap' event on node for cytoscape
-     *
-     * @param {Object} event
-     */
     nodeTapHandler(event) {
       this.$emit('node:tap', event);
     },
 
-    /**
-     * Handler for the 'mouseover' event on node for cytoscape
-     *
-     * @param {Object} event
-     */
     nodeMouseoverHandler(event) {
       const { target, cy } = event;
 
@@ -250,11 +217,6 @@ export default {
       this.$emit('node:mouseover', event);
     },
 
-    /**
-     * Handler for the 'mouseout' event on node for cytoscape
-     *
-     * @param {Object} event
-     */
     nodeMouseoutHandler(event) {
       this.hideTooltip();
       this.$refs.canvasWrapper.classList.remove('network-graph__canvas-wrapper--pointer');
@@ -290,9 +252,19 @@ export default {
 .v-tooltip__content {
   position: absolute;
   top: 0;
+  max-width: 420px;
+  padding: 8px 12px;
+  color: rgb(var(--v-theme-surface));
+  background: rgba(var(--v-theme-on-surface), 0.9);
+  border-radius: 4px;
   opacity: 0;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
   transform: translate(-50%, 50%);
   pointer-events: none;
+  z-index: 10;
+
+  :deep(*) {
+    color: inherit !important;
+  }
 }
 </style>

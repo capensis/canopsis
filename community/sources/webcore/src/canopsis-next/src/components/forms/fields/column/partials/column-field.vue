@@ -1,56 +1,59 @@
 <template>
-  <card-iterator-item
+  <c-card-iterator-item
     :drag-handle-class="dragHandleClass"
     :default-expanded="isExpanded"
+    :expandable="!withoutCustomLabel"
     class="column-field"
     small
     @remove="$emit('remove')"
   >
     <template #header>
-      <v-layout align-center>
+      <c-layout class="column-field__header" align="center" fill>
         <c-name-field
           v-if="isCustom"
-          v-field="column.label"
+          :model-value="column.label"
           :name="columnLabelFieldName"
           :label="$t('common.label')"
-          :error-messages="columnLabelErrorMessages"
+          class="flex-grow-1"
           required
+          @update:model-value="updateField('label', $event)"
         />
-        <v-select
+        <c-select
           v-else
-          v-validate="'required'"
-          :value="column.column"
+          :model-value="column.column"
           :items="availableColumns"
-          :label="$tc('common.column', 1)"
-          :error-messages="errors.collect(`${name}.column`)"
+          :label="$t('common.column', 1)"
           :name="`${name}.column`"
-          :menu-props="selectMenuProps"
-          @change="changeColumn"
+          class="flex-grow-1"
+          item-title="text"
+          item-value="value"
+          required
+          @update:model-value="changeColumn"
         />
-        <v-tooltip v-if="!withoutCustomLabel" left>
-          <template #activator="{ on }">
+        <c-tooltip v-if="!withoutCustomLabel" location="left">
+          <template #activator="{ props }">
             <v-btn
-              :class="`mr-0 ${isCustom ? 'text--primary' : 'text--disabled'}`"
-              small
-              text
+              :class="isCustom ? 'text-primary' : 'text-disabled'"
+              class="mr-0"
+              size="small"
+              variant="text"
               icon
-              v-on="on"
+              v-bind="props"
               @click="convertToCustom"
             >
-              <v-icon small>
+              <v-icon size="small">
                 tune
               </v-icon>
             </v-btn>
           </template>
           <span>{{ $t('common.convertToCustomColumn') }}</span>
-        </v-tooltip>
-      </v-layout>
+        </c-tooltip>
+      </c-layout>
     </template>
 
     <v-expand-transition v-if="!withoutCustomLabel" mode="out-in">
       <column-field-expand-panel
-        v-if="bootedExpandPanel"
-        v-field="column"
+        :value="column"
         :name="name"
         :with-label="!isCustom"
         :with-field="isCustom"
@@ -64,43 +67,35 @@
         :without-infos-attributes="withoutInfosAttributes"
         :variables="variables"
         class="pl-1"
+        @update:value="updateModel"
       />
     </v-expand-transition>
-  </card-iterator-item>
+  </c-card-iterator-item>
 </template>
 
 <script>
 import { computed, ref, toRef } from 'vue';
 
-import { ENTITIES_TYPES, ALARM_OUTPUT_FIELDS } from '@/constants';
+import { ALARM_OUTPUT_FIELDS, ENTITIES_TYPES } from '@/constants';
 
 import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
-import { useValidator } from '@/hooks/validator/validator';
-import { useValidationChildren } from '@/hooks/validator/validation-children';
-import { useModelField } from '@/hooks/form/model-field';
-import { useAsyncBootingChild } from '@/hooks/render/async-booting';
 import { useAvailableColumns } from '@/hooks/form/available-columns';
-
-import CardIteratorItem from '@/components/forms/fields/card-iterator/c-card-iterator-item.vue';
+import { useModelField } from '@/hooks/form/model-field';
 
 import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
 
 export default {
-  inject: ['$validator', '$asyncBooting'],
-  components: { ColumnFieldExpandPanel, CardIteratorItem },
-  model: {
-    prop: 'column',
-    event: 'input',
-  },
+  components: { ColumnFieldExpandPanel },
+
   props: {
+    modelValue: {
+      type: Object,
+      default: () => ({}),
+    },
     type: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-    },
-    column: {
-      type: Object,
-      default: () => ({}),
     },
     items: {
       type: Array,
@@ -159,19 +154,13 @@ export default {
       default: () => [],
     },
   },
+
+  emits: ['update:modelValue', 'remove'],
+
   setup(props, { emit }) {
     const isCustom = ref(false);
-    const isExpanded = ref(!props.column.column);
-
-    const validator = useValidator();
-    const { updateModel } = useModelField(props, emit);
-    const { booted: bootedExpandPanel } = useAsyncBootingChild(!props.column?.column);
-    const { hasChildrenError } = useValidationChildren();
-
-    const selectMenuProps = {
-      contentClass: 'column-field-menu',
-    };
-
+    const isExpanded = ref(!props.modelValue.column);
+    const { updateModel, updateField } = useModelField(props, emit);
     const { availableColumns } = useAvailableColumns({
       type: toRef(props, 'type'),
       items: toRef(props, 'items'),
@@ -179,21 +168,17 @@ export default {
       withInstructions: toRef(props, 'withInstructions'),
     });
 
+    const column = toRef(props, 'modelValue');
     const columnLabelFieldName = computed(() => `${props.name}.label`);
-    const columnLabelErrorMessages = computed(() => validator.errors.collect(columnLabelFieldName.value));
 
-    /**
-     * METHODS
-     */
-    const changeColumn = (column) => {
+    const changeColumn = (columnValue) => {
       const newValue = {
-        ...props.column,
-
-        column,
+        ...props.modelValue,
+        column: columnValue,
       };
 
       if (props.withHtml) {
-        newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(column);
+        newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(columnValue);
       }
 
       updateModel(newValue);
@@ -202,16 +187,14 @@ export default {
     const convertToCustom = () => {
       isCustom.value = !isCustom.value;
 
-      const newColumn = {
-        ...props.column,
-      };
+      const newColumn = { ...props.modelValue };
 
       if (isCustom.value) {
-        const { value } = formToWidgetColumn(props.column);
-
-        const selectedColumn = availableColumns.value.find(column => column.value === props.column.column);
-
-        const label = props.column.label || selectedColumn?.text || '';
+        const { value } = formToWidgetColumn(props.modelValue);
+        const selectedColumn = availableColumns.value.find(
+          columnItem => columnItem.value === props.modelValue.column,
+        );
+        const label = props.modelValue.label || selectedColumn?.text || '';
 
         newColumn.column = value;
         newColumn.label = label;
@@ -219,9 +202,15 @@ export default {
         newColumn.rule = '';
         newColumn.dictionary = '';
       } else {
-        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(props.column.column);
-
-        const selectedColumn = availableColumns.value.find(column => column.value === value);
+        const {
+          column: value,
+          field,
+          rule,
+          dictionary,
+        } = widgetColumnValueToForm(props.modelValue.column);
+        const selectedColumn = availableColumns.value.find(
+          columnItem => columnItem.value === value,
+        );
 
         newColumn.column = value === selectedColumn?.value ? value : '';
         newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;
@@ -236,13 +225,11 @@ export default {
     return {
       isExpanded,
       isCustom,
-      bootedExpandPanel,
+      column,
       availableColumns,
       columnLabelFieldName,
-      columnLabelErrorMessages,
-      hasChildrenError,
-      selectMenuProps,
-
+      updateModel,
+      updateField,
       changeColumn,
       convertToCustom,
     };
@@ -251,7 +238,14 @@ export default {
 </script>
 
 <style lang="scss">
-.column-field .v-input {
-  min-width: 236px;
+.column-field {
+  &__header {
+    min-width: 0;
+  }
+
+  .v-input {
+    min-width: 0;
+    width: 100%;
+  }
 }
 </style>

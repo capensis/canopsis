@@ -10,10 +10,10 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * Converts a quick action string to a form-compatible object with a unique key.
+ * Converts one quick action to its editable form representation.
  *
- * @param {WidgetQuickAction} [quickAction=''] - The quick action string to convert.
- * @returns {WidgetQuickActionForm} The form-compatible object with a unique key and value.
+ * @param {WidgetQuickAction} [quickAction='']
+ * @returns {WidgetQuickActionForm}
  */
 export const widgetQuickAlarmActionToForm = (quickAction = '') => ({
   key: uid(),
@@ -21,17 +21,18 @@ export const widgetQuickAlarmActionToForm = (quickAction = '') => ({
 });
 
 /**
- * Converts an array of quick actions to form-compatible format by adding unique keys
+ * Converts widget quick actions to editable form items.
  *
- * @param {WidgetQuickAction[]} [quickActions=[]] - Array of quick actions to convert
- * @returns {WidgetQuickActionForm[]} Array of quick actions with unique keys for form usage
+ * @param {WidgetQuickAction[]} [quickActions=[]]
+ * @returns {WidgetQuickActionForm[]}
  */
-export const widgetQuickActionsToForm = (quickActions = []) => quickActions.map(widgetQuickAlarmActionToForm);
+export const widgetQuickActionsToForm = (quickActions = []) =>
+  quickActions.map(widgetQuickAlarmActionToForm);
 
 /**
- * Converts form data back to quick actions format by extracting only the values
+ * Converts editable quick action items back to widget values.
  *
- * @param {WidgetQuickActionForm[]} [form=[]] - Array of form items to convert
- * @returns {WidgetQuickAction[]} Array of quick action values
+ * @param {WidgetQuickActionForm[]} [form=[]]
+ * @returns {WidgetQuickAction[]}
  */
 export const formToWidgetQuickActions = (form = []) => form.map(({ value }) => value);

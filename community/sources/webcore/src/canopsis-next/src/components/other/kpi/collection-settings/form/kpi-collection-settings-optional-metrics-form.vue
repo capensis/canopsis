@@ -1,50 +1,46 @@
 <template>
-  <v-list
-    class="kpi-collection-settings-metrics-form"
-    subheader
-  >
-    <v-subheader>{{ $t('kpi.collectionSetting.optionalMetrics') }}</v-subheader>
+  <v-list class="kpi-collection-settings-metrics-form">
+    <v-list-subheader>
+      {{ $t('kpi.collectionSetting.optionalMetrics') }}
+    </v-list-subheader>
     <v-list-item>
-      <v-list-item-action>
+      <template #prepend>
         <v-checkbox
-          v-field="value.enabled_instructions"
+          :model-value="value.enabled_instructions"
           color="primary"
-        >
-          <template #label="">
-            <span class="kpi-collection-settings-metrics-form__label ml-4">
-              {{ $t('kpi.collectionSetting.manualInstructions') }}
-            </span>
-          </template>
-        </v-checkbox>
-      </v-list-item-action>
+          hide-details
+          @update:model-value="updateField('enabled_instructions', $event)"
+        />
+      </template>
+      <v-list-item-title class="kpi-collection-settings-metrics-form__label">
+        {{ $t('kpi.collectionSetting.manualInstructions') }}
+      </v-list-item-title>
     </v-list-item>
     <v-list-item>
-      <v-list-item-action>
+      <template #prepend>
         <v-checkbox
-          v-field="value.enabled_not_acked_metrics"
+          :model-value="value.enabled_not_acked_metrics"
           color="primary"
-        >
-          <template #label="">
-            <span class="kpi-collection-settings-metrics-form__label ml-4">
-              {{ $t('kpi.collectionSetting.notAckedMetrics') }}
-            </span>
-          </template>
-        </v-checkbox>
-      </v-list-item-action>
+          hide-details
+          @update:model-value="updateField('enabled_not_acked_metrics', $event)"
+        />
+      </template>
+      <v-list-item-title class="kpi-collection-settings-metrics-form__label">
+        {{ $t('kpi.collectionSetting.notAckedMetrics') }}
+      </v-list-item-title>
     </v-list-item>
     <v-list-item>
-      <v-list-item-action>
+      <template #prepend>
         <v-checkbox
-          v-field="value.enabled_sli_metrics"
+          :model-value="value.enabled_sli_metrics"
           color="primary"
-        >
-          <template #label="">
-            <span class="kpi-collection-settings-metrics-form__label ml-4">
-              {{ $t('kpi.collectionSetting.sliDuration') }}
-            </span>
-          </template>
-        </v-checkbox>
-      </v-list-item-action>
+          hide-details
+          @update:model-value="updateField('enabled_sli_metrics', $event)"
+        />
+      </template>
+      <v-list-item-title class="kpi-collection-settings-metrics-form__label">
+        {{ $t('kpi.collectionSetting.sliDuration') }}
+      </v-list-item-title>
     </v-list-item>
   </v-list>
 </template>
@@ -57,17 +53,24 @@ export default {
       required: true,
     },
   },
+
+  emits: ['update:value'],
+
+  methods: {
+    updateField(field, value) {
+      this.$emit('update:value', {
+        ...this.value,
+        [field]: value,
+      });
+    },
+  },
 };
 </script>
 
 <style lang="scss">
 .kpi-collection-settings-metrics-form {
   &__label {
-    color: #fff;
-
-    .theme--light & {
-      color: #000;
-    }
+    color: rgb(var(--v-theme-on-surface));
   }
 }
 </style>

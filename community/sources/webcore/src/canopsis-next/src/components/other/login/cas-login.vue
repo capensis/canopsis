@@ -1,48 +1,42 @@
 <template>
-  <third-party-login
-    :title="$t('login.loginWithCAS')"
-    :links="links"
-  />
+  <third-party-login :title="t('login.loginWithCAS')" :links="links" />
 </template>
 
-<script>
-import qs from 'qs';
-import { get } from 'lodash';
+<script setup>
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 
-import { APP_HOST, API_HOST, API_ROUTES } from '@/config';
+import { API_HOST, API_ROUTES, APP_HOST } from '@/config';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { useInfo } from '@/hooks/store/modules/info';
 
-import ThirdPartyLogin from './partials/third-party-login.vue';
+import ThirdPartyLogin from './third-party-login.vue';
 
-export default {
-  components: { ThirdPartyLogin },
-  mixins: [entitiesInfoMixin],
-  computed: {
-    title() {
-      return get(this.casConfig, 'title', this.$t('login.loginWithCAS'));
-    },
+const route = useRoute();
+const { t } = useI18n();
+const { casConfig } = useInfo();
 
-    casHref() {
-      const { redirect = '' } = this.$route.query;
+const title = computed(() => casConfig.value?.title ?? t('login.loginWithCAS'));
 
-      const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.login}`);
-      const query = qs.stringify({
-        redirect: removeTrailingSlashes(`${APP_HOST}${redirect}`),
-        service: removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.loggedin}`),
-      });
+const redirect = computed(() => route.query.redirect ?? '');
 
-      return `${loginUrl}?${query}`;
-    },
+const casHref = computed(() => {
+  const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.login}`);
+  const query = new URLSearchParams({
+    redirect: removeTrailingSlashes(`${APP_HOST}${redirect.value}`),
+    service: removeTrailingSlashes(`${API_HOST}${API_ROUTES.cas.loggedin}`),
+  });
 
-    links() {
-      return [{
-        title: this.title,
-        href: this.casHref,
-      }];
-    },
+  return `${loginUrl}?${query}`;
+});
+
+const links = computed(() => [
+  {
+    title: title.value,
+    href: casHref.value,
   },
-};
+]);
 </script>

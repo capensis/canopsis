@@ -10,7 +10,7 @@ export default {
   advancedEditor: 'Éditeur avancé',
   simpleEditor: 'Éditeur simple',
   fixJsonWithAi: 'Corriger le JSON avec l\'IA',
-  noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
+  noData: 'Aucun modèle. Cliquez sur @:pattern.addGroup pour ajouter des champs au modèle',
   noDataDisabled: 'Aucun modèle.',
   alarmsCount: '{alarmsCount} alarmes trouvées',
   entitiesCount: '{entitiesCount} entités trouvées',
@@ -38,7 +38,8 @@ export default {
   patternsMessage: '{patterns} modèle | {patterns} modèles',
   notDefinedType: 'Le type sélectionné diffère du type défini dans les informations d\'entité',
   tryOptimization: 'Essayer l\'optimisation',
-  tryOptimizationHint: 'Essayez d\'optimiser la Regexp pour accélérer la requête<br><span class="font-weight-regular">Les requêtes Regexp fonctionnent généralement plus lentement que les requêtes normales.</span>',
+  tryOptimizationHint:
+    'Essayez d\'optimiser la Regexp pour accélérer la requête<br><span class="font-weight-regular">Les requêtes Regexp fonctionnent généralement plus lentement que les requêtes normales.</span>',
   optimizationInProgress: 'Optimisation en cours...',
   optimizationFailed: 'Optimisation échouée : {reason}',
   cancelOptimization: 'Annuler l\'optimisation',
@@ -54,13 +55,15 @@ export default {
   seeRecordsComparison: 'Comparaison des résultats',
   conditionsOptimized: 'Les expressions <strong>réguliéres suivantes</strong> ont été optimisées :',
   applyThisSuggestion: 'APPLIQUER CETTE SUGGESTION',
-  optimizationSuggestionsWasntFound: 'Aucune suggestion d\'optimisation <strong>regexp</strong> trouvée',
+  optimizationSuggestionsWasntFound:
+    'Aucune suggestion d\'optimisation <strong>regexp</strong> trouvée',
   errors: {
     ruleRequired: 'Veuillez ajouter au moins une règle',
     groupRequired: 'Veuillez ajouter au moins un groupe',
     invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
-    countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
+    countOverLimit:
+      'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
     existExcluded: 'Les règles incluent la règle exclue.',
-    required: 'Au moins un modèle doit être défini. Veuillez définir des modèles de filtre pour la règle',
+    required: 'Ajoutez au moins un modèle',
   },
 };

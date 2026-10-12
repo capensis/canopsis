@@ -1,7 +1,7 @@
 import {
+  ENTITY_TYPES_ICONS_FOR_CYTOSCAPE,
   ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE,
   ROOT_CAUSE_DIAGRAM_NODE_SIZE,
-  ENTITY_TYPES_ICONS_FOR_CYTOSCAPE,
 } from '@/constants';
 
 import { getMapEntityText } from '@/helpers/entities/map/list';
@@ -15,19 +15,18 @@ import { getMapEntityText } from '@/helpers/entities/map/list';
  */
 export const getIconElement = (name, color) => {
   const badgeIconEl = document.createElement('i');
-  badgeIconEl.classList.add(
-    'v-icon',
-    'material-icons',
-  );
+  badgeIconEl.classList.add('v-icon', 'material-icons');
 
   if (color) {
-    badgeIconEl.classList.add(`${color}--text`);
+    badgeIconEl.classList.add(`text-${color}`);
   }
 
-  badgeIconEl.innerHTML = name;
+  badgeIconEl.textContent = name;
 
-  badgeIconEl.style.width = '100%';
-  badgeIconEl.style.height = '100%';
+  badgeIconEl.style.display = 'inline-flex';
+  badgeIconEl.style.alignItems = 'center';
+  badgeIconEl.style.justifyContent = 'center';
+  badgeIconEl.style.lineHeight = '1';
   badgeIconEl.style.borderRadius = '50%';
 
   return badgeIconEl;
@@ -45,19 +44,20 @@ export const getBadgeElement = () => {
     'd-inline-flex',
     'justify-center',
     'align-center',
-    'grey',
-    'darken-1',
+    'bg-grey-darken-1',
     'cursor-pointer',
     'pa-0',
   );
+  badgeEl.style.position = 'absolute';
   badgeEl.style.width = '20px';
   badgeEl.style.height = '20px';
+  badgeEl.style.minWidth = '20px';
 
   return badgeEl;
 };
 
 /**
- * Create icon by entity fot state settings
+ * Create icon by entity for state settings
  *
  * @return {HTMLSpanElement}
  */
@@ -65,18 +65,27 @@ export const getStateSettingsNodeIconElement = (node) => {
   const { isEvents, entity } = node;
   const size = `${isEvents ? 20 : 30}px`;
 
-  const icon = isEvents
-    ? 'textsms'
-    : (ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity');
+  let icon = ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity';
+
+  if (isEvents) {
+    icon = 'textsms';
+  } else if (entity.pause) {
+    icon = 'pause';
+  }
 
   const element = getIconElement(icon);
 
+  element.classList.add('entity-network-graph__node-icon');
   element.style.fontSize = size;
+  element.style.width = size;
+  element.style.height = size;
+  element.style.minWidth = size;
 
   const svgElement = element.querySelector('svg');
 
   if (svgElement) {
     svgElement.style.width = size;
+    svgElement.style.height = size;
   }
 
   return element;
@@ -89,7 +98,7 @@ export const getStateSettingsNodeIconElement = (node) => {
  */
 export const getProgressElement = () => {
   const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  progressContentCircleEl.classList.add('v-progress-circular__overlay', 'white--text');
+  progressContentCircleEl.classList.add('v-progress-circular__overlay');
   progressContentCircleEl.setAttribute('fill', 'transparent');
   progressContentCircleEl.setAttribute('cx', '45.714285714285715');
   progressContentCircleEl.setAttribute('cy', '45.714285714285715');
@@ -99,7 +108,10 @@ export const getProgressElement = () => {
   progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
 
   const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
+  progressContentEl.setAttribute(
+    'viewBox',
+    '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715',
+  );
   progressContentEl.appendChild(progressContentCircleEl);
 
   const progressEl = document.createElement('div');
@@ -108,6 +120,7 @@ export const getProgressElement = () => {
     'v-progress-circular',
     'v-progress-circular--indeterminate',
     'v-progress-circular--visible',
+    'text-white',
     'position-relative',
   );
 
@@ -129,19 +142,37 @@ export const getEntityNodeElement = (node) => {
   const nodeSize = isEvents ? ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE : ROOT_CAUSE_DIAGRAM_NODE_SIZE;
 
   const nodeLabelEl = document.createElement('div');
-  nodeLabelEl.classList.add('position-absolute');
+  nodeLabelEl.classList.add('position-absolute', 'entity-network-graph__node-label');
+  nodeLabelEl.style.position = 'absolute';
   nodeLabelEl.style.top = `${nodeSize}px`;
+  nodeLabelEl.style.left = '50%';
+  nodeLabelEl.style.transform = 'translateX(-50%)';
   nodeLabelEl.style.color = '#000000';
+  nodeLabelEl.style.whiteSpace = 'nowrap';
+  nodeLabelEl.style.lineHeight = 'normal';
+  nodeLabelEl.style.fontSize = '12px';
 
   if (!isEvents) {
     nodeLabelEl.textContent = getMapEntityText(entity);
   }
 
   const nodeEl = document.createElement('div');
-  nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
+  nodeEl.classList.add(
+    'v-btn__content',
+    'position-relative',
+    'rounded-circle',
+    'entity-network-graph__node',
+  );
+  nodeEl.style.position = 'relative';
+  nodeEl.style.display = 'flex';
+  nodeEl.style.alignItems = 'center';
+  nodeEl.style.justifyContent = 'center';
   nodeEl.style.width = `${nodeSize}px`;
   nodeEl.style.height = `${nodeSize}px`;
-  nodeEl.style.justifyContent = 'center';
+  nodeEl.style.lineHeight = '1';
+  nodeEl.style.overflow = 'visible';
+  nodeEl.style.boxSizing = 'border-box';
+  nodeEl.style.borderRadius = '50%';
 
   nodeEl.appendChild(getStateSettingsNodeIconElement(node));
   nodeEl.appendChild(nodeLabelEl);
@@ -161,11 +192,7 @@ export const getButtonHTML = (text) => {
   btnContentEl.textContent = text;
 
   const btnEl = document.createElement('button');
-  btnEl.classList.add(
-    'v-btn',
-    'v-btn--round',
-    'theme--light',
-  );
+  btnEl.classList.add('v-btn', 'v-btn--rounded');
   btnEl.appendChild(btnContentEl);
 
   return btnEl.outerHTML;

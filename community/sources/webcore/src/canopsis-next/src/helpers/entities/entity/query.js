@@ -12,13 +12,7 @@ import { convertSortToQuery } from '@/helpers/entities/shared/query';
  * @returns {{}}
  */
 export function convertContextWidgetToQuery(widget) {
-  const {
-    itemsPerPage,
-    selectedTypes,
-    widgetColumns,
-    mainFilter,
-    charts = [],
-  } = widget.parameters;
+  const { itemsPerPage, selectedTypes, widgetColumns, mainFilter, charts = [] } = widget.parameters;
 
   const query = {
     page: 1,
@@ -44,12 +38,12 @@ export function convertContextWidgetToQuery(widget) {
  * @param {Object} userPreference
  * @returns {{ category: string }}
  */
-export function convertContextUserPreferenceToQuery({ content }) {
+export function convertContextUserPreferenceToQuery({ content = {} } = {}) {
   const { category, noEvents, mainFilter } = content;
 
   return {
     category,
     filter: mainFilter,
-    no_events: noEvents,
+    no_events: noEvents ?? false,
   };
 }

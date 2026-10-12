@@ -1,70 +1,53 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
-        {{ title }}
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <link-rule-form
-          v-model="form"
-          :rule-id="config.linkRule?._id"
-        />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+
+      <template #text>
+        <link-rule-form :rule-id="config.linkRule?._id" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.attrs.pending"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS } from '@/constants';
 
-import { linkRuleToForm, formToLinkRule } from '@/helpers/entities/link/form';
+import { linkRuleToForm, formToLinkRule, isDefaultSourceCode } from '@/helpers/entities/link/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
-  name: MODALS.createLinkRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     LinkRuleForm,
-    ModalWrapper,
     AiChatSidebar,
   },
   props: {
@@ -74,60 +57,75 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
-
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const linkRule = computed(() => config.value.linkRule);
+    const isNew = computed(() => !linkRule.value?._id);
+    const title = computed(() => config.value.title ?? t('modals.createLinkRule.create.title'));
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const form = ref(linkRuleToForm(config.value.linkRule));
+    const form = useForm({
+      initialValues: linkRuleToForm(linkRule.value),
+    });
+    const { values, handleSubmit, submitting, setFieldError } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
 
       modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.linkRule?._id,
       context: LLM_SOCKET_CONTEXTS.linkRule,
     });
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.linkRule,
-      method: async () => {
-        const result = await config.value.action?.(formToLinkRule(form.value));
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-        await config.value.afterSubmit?.(result);
+    const validateLinks = () => {
+      const hasLinks = !!values.value.links?.length;
+      const hasCustomSourceCode = !isDefaultSourceCode(values.value.source_code);
 
-        close();
+      if (hasLinks || hasCustomSourceCode) {
+        setFieldError('links', undefined);
 
-        return result;
-      },
+        return true;
+      }
+
+      setFieldError('links', t('linkRule.linksEmptyError'));
+
+      return false;
+    };
+
+    const submit = handleSubmit(async () => {
+      if (!validateLinks()) {
+        return undefined;
+      }
+
+      const result = await config.value.action?.(formToLinkRule(values.value));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
     useEntityInfoPropertyFetching();
 
-    const title = computed(() => config.value.title ?? t('modals.createLinkRule.create.title'));
-
     return {
-      type,
-
+      t,
       config,
-
-      form,
-
-      submitting,
-
       title,
-
+      submitLabel,
+      submitting,
       chatShown,
       chatOptions,
-
-      submitLabel,
+      closeModal,
       submit,
-      close,
     };
   },
 };

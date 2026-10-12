@@ -6,27 +6,37 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/met
 /**
  * @typedef {Object} NumbersWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {MetricPreset[]} metrics
+ * @property {MetricPresets} metrics
  * @property {string} chart_title
  * @property {string} default_time_range
  * @property {Sampling} default_sampling
- * @property {string} show_trend
+ * @property {boolean} show_trend
  * @property {number} [font_size]
  * @property {string | null} mainFilter
  */
 
 /**
- * @typedef {NumbersWidgetParameters} NumbersWidgetParametersForm
+ * @typedef {Object} NumbersWidgetParametersForm
+ * @property {DurationWithEnabled} periodic_refresh
+ * @property {MetricPresetsForm} metrics
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {boolean} show_trend
+ * @property {number} [font_size]
+ * @property {string | null} mainFilter
  */
 
 /**
- * Convert numbers widget parameters to form
+ * Convert numbers widget parameters to form.
  *
- * @param {NumbersWidgetParameters} parameters
+ * @param {NumbersWidgetParameters} [parameters={}]
  * @return {NumbersWidgetParametersForm}
  */
 export const numbersWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(
+    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
+  ),
   metrics: metricPresetsToForm(parameters.metrics),
   chart_title: parameters.chart_title ?? '',
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
@@ -37,13 +47,12 @@ export const numbersWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to numbers widget parameters
+ * Convert form to numbers widget parameters.
  *
  * @param {NumbersWidgetParametersForm} form
  * @return {NumbersWidgetParameters}
  */
 export const formToNumbersWidgetParameters = form => ({
   ...form,
-
   metrics: formToMetricPresets(form.metrics),
 });

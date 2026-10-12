@@ -1,63 +1,54 @@
+import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
 import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
-import { checkUserAccess } from '@/helpers/entities/permissions/list';
+import { useAuthStore } from '@/stores/modules/auth';
 
-import { useStoreModuleHooks } from './store';
-
-/**
- * Provides hooks for accessing the Vuex store module specifically for authentication.
- * This function utilizes the `useStoreModuleHooks` to interact with the `auth` namespace of the Vuex store.
- *
- * @returns {Object} An object containing the store, module, and functions to access getters and actions related
- * to authentication.
- */
-export const useAuthStoreModule = () => useStoreModuleHooks('auth');
+import { checkUserAccess } from '@/helpers/permission';
 
 /**
  * Hook for accessing authentication-related functionality.
  * Provides access to the current user, login/logout methods, and other auth-related features.
  *
- * @returns {Object} An object containing auth-related getters and actions
+ * @returns {Object} An object containing auth-related state and actions
  */
 export const useAuth = () => {
-  const { useGetters, useActions } = useAuthStoreModule();
+  const authStore = useAuthStore();
 
-  const getters = useGetters({
-    currentUser: 'currentUser',
-    isLoggedIn: 'isLoggedIn',
-    currentUserPermissionsById: 'currentUserPermissionsById',
-    currentUserViewPermissionsByViewId: 'currentUserViewPermissionsByViewId',
-    pending: 'pending',
-  });
+  const {
+    currentUser,
+    isLoggedIn,
+    currentUserPermissionsById,
+    currentUserViewPermissionsByViewId,
+    pending,
+  } = storeToRefs(authStore);
 
-  const actions = useActions({
-    login: 'login',
-    applyAccessToken: 'applyAccessToken',
-    logout: 'logout',
-    fetchCurrentUser: 'fetchCurrentUser',
-    filesAccess: 'filesAccess',
-  });
+  const { login, applyAccessToken, logout, fetchCurrentUser, filesAccess } = authStore;
 
-  const isShownGroupsTopBar = computed(() => {
-    const { ui_groups_navigation_type: groupsNavigationType } = getters.currentUser.value;
-    const isSelectedTopBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.topBar;
-    // Note: $mq check would need to be handled differently in composition API
-    return isSelectedTopBar;
-  });
+  const isShownGroupsTopBar = computed(
+    () => currentUser.value?.ui_groups_navigation_type === GROUPS_NAVIGATION_TYPES.topBar,
+  );
 
   const isShownGroupsSideBar = computed(() => {
-    const { ui_groups_navigation_type: groupsNavigationType } = getters.currentUser.value;
+    const groupsNavigationType = currentUser.value?.ui_groups_navigation_type;
     const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
-    // Note: $mq and filters are not available in setup, would need to be injected or handled differently
-    // For now, keeping the logic simpler
+
     return isSelectedSideBar || !isShownGroupsTopBar.value;
   });
 
   return {
-    ...getters,
-    ...actions,
+    currentUser,
+    isLoggedIn,
+    currentUserPermissionsById,
+    currentUserViewPermissionsByViewId,
+    pending,
+
+    login,
+    applyAccessToken,
+    logout,
+    fetchCurrentUser,
+    filesAccess,
 
     isShownGroupsTopBar,
     isShownGroupsSideBar,
@@ -66,7 +57,7 @@ export const useAuth = () => {
 
 /**
  * Custom hook for accessing and checking the current user's permissions.
- * This hook utilizes the Vuex store module `auth` to retrieve permissions and provides methods to check specific
+ * This hook utilizes the Pinia auth store to retrieve permissions and provides methods to check specific
  * CRUD actions.
  *
  * @returns {Object} An object containing methods to check user permissions for various CRUD actions.
@@ -98,28 +89,23 @@ export const useAuth = () => {
  * }
  */
 export const useCurrentUserPermissions = () => {
-  const { useGetters } = useAuthStoreModule();
-  const { currentUserPermissionsById } = useGetters(['currentUserPermissionsById']);
+  const authStore = useAuthStore();
+  const { currentUserPermissionsById } = storeToRefs(authStore);
 
-  const checkAccess = (permissionId, action = CRUD_ACTIONS.can) => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], action)
-  );
+  const checkAccess = (permissionId, action = CRUD_ACTIONS.can) =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], action);
 
-  const checkCreateAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create)
-  );
+  const checkCreateAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.create);
 
-  const checkReadAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read)
-  );
+  const checkReadAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.read);
 
-  const checkUpdateAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update)
-  );
+  const checkUpdateAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.update);
 
-  const checkDeleteAccess = permissionId => (
-    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete)
-  );
+  const checkDeleteAccess = permissionId =>
+    checkUserAccess(currentUserPermissionsById.value[permissionId], CRUD_ACTIONS.delete);
 
   return {
     currentUserPermissionsById,
@@ -190,12 +176,8 @@ export const useCanPermission = (permission) => {
  * }
  */
 export const useCRUDPermissions = (permission) => {
-  const {
-    checkCreateAccess,
-    checkReadAccess,
-    checkUpdateAccess,
-    checkDeleteAccess,
-  } = useCurrentUserPermissions();
+  const { checkCreateAccess, checkReadAccess, checkUpdateAccess, checkDeleteAccess } =
+    useCurrentUserPermissions();
 
   const hasCreateAccess = computed(() => checkCreateAccess(permission));
   const hasReadAccess = computed(() => checkReadAccess(permission));

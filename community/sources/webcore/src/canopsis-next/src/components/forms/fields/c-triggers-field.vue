@@ -1,124 +1,123 @@
 <template>
-  <v-select
-    v-validate="'required'"
-    :value="value"
+  <c-select
+    :model-value="selectedTriggers"
     :items="preparedTriggers"
     :disabled="disabled"
-    :label="label || $tc('common.trigger', 2)"
-    :error-messages="errorMessages"
+    :label="label || $t('common.trigger', 2)"
     :name="name"
-    item-value="type"
-    item-disabled="deprecated"
+    :required="required"
+    :error-messages="errorMessages"
+    :item-props="getTriggerItemProps"
+    :item-value="getTriggerItemValue"
+    item-title="text"
     multiple
     chips
     return-object
-    @change="changeValue"
+    standalone
+    @update:model-value="changeValue"
   >
-    <template #selection="{ item, index }">
-      <v-tooltip
-        :disabled="!item.deprecated || errors.has(getChipName(index))"
-        top
+    <template #chip="{ item, index }">
+      <c-tooltip
+        :disabled="!getPreparedTrigger(item).deprecated || hasError(getChipName(index))"
+        location="top"
       >
-        <template #activator="{ on }">
+        <template #activator="{ props: tooltipProps }">
           <v-chip
-            v-validate=""
-            :class="getSelectedClass(item)"
-            :close="errors.has(getChipName(index)) || item.deprecated"
+            v-bind="tooltipProps"
+            :class="getSelectedClass(getPreparedTrigger(item))"
+            :closable="hasError(getChipName(index)) || getPreparedTrigger(item).deprecated"
             :name="`${name}.${index}.type`"
-            :color="errors.has(getChipName(index)) ? 'error' : ''"
-            v-on="on"
+            :color="hasError(getChipName(index)) ? 'error' : ''"
             @click:close="removeItemFromArray(index)"
           >
-            {{ getSelectedText(item) }}
+            {{ getSelectedText(getPreparedTrigger(item)) }}
           </v-chip>
         </template>
         <span>
           {{
-            errors.has(getChipName(index))
-              ? errors.collect(getChipName(index))
-              : item.deprecated
+            hasError(getChipName(index))
+              ? collectErrors(getChipName(index))
+              : getPreparedTrigger(item).deprecated
                 ? $t('common.deprecatedTrigger')
                 : ''
           }}
         </span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
-    <template #item="{ item, attrs, on, parent }">
+    <template #subheader="{ props: subheaderProps }">
+      <v-list-subheader v-bind="subheaderProps" />
+    </template>
+    <template #item="{ item, props: itemProps }">
       <v-list-item
-        v-bind="attrs"
-        :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : attrs.activeClass"
-        @click="on.click"
+        v-bind="itemProps"
+        :active-class="
+          hasError(getAdditionalValueFieldName(getPreparedTrigger(item).type))
+            ? 'error--text'
+            : itemProps.activeClass
+        "
       >
-        <v-list-item-action>
-          <v-checkbox
-            :input-value="attrs.inputValue"
-            :color="parent.color"
+        <template #prepend>
+          <v-checkbox-btn
+            :model-value="isTriggerSelected(getPreparedTrigger(item))"
+            :disabled="getPreparedTrigger(item).deprecated"
+            color="primary"
             hide-details
           />
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-layout
-            class="fill-width"
-            align-center
-            justify-space-between
+        </template>
+
+        <v-row class="w-100" align="center" justify="space-between">
+          <v-col cols="auto">
+            <v-list-item-title>{{ getPreparedTrigger(item).text }}</v-list-item-title>
+          </v-col>
+          <v-col
+            v-if="additionalValuesComponentsByTypes[getPreparedTrigger(item).type]"
+            cols="6"
           >
-            <v-flex>{{ item.text }}</v-flex>
             <component
-              v-if="additionalValuesComponentsByTypes[item.type]"
-              v-bind="additionalValuesComponentsByTypes[item.type].bind"
-              :is="additionalValuesComponentsByTypes[item.type].is"
-              :disabled="!attrs.inputValue"
+              v-bind="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].bind"
+              :is="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].is"
+              :disabled="!isTriggerSelected(getPreparedTrigger(item))"
               class="ml-1"
-              v-on="additionalValuesComponentsByTypes[item.type].on"
+              v-on="additionalValuesComponentsByTypes[getPreparedTrigger(item).type].on"
               @click.prevent.stop=""
             />
-          </v-layout>
-        </v-list-item-content>
-        <v-list-item-action v-if="item.helpText">
+          </v-col>
+        </v-row>
+
+        <template v-if="getPreparedTrigger(item).helpText" #append>
           <c-help-icon
-            :text="item.helpText"
+            :text="getPreparedTrigger(item).helpText"
             color="info"
             size="20"
-            top
+            location="top"
           />
-        </v-list-item-action>
+        </template>
       </v-list-item>
     </template>
-  </v-select>
+  </c-select>
 </template>
 
 <script>
-import {
-  computed,
-  ref,
-  watch,
-  set,
-  nextTick,
-  onBeforeUnmount,
-} from 'vue';
 import { find } from 'lodash';
+import { computed, ref, toRef, watch } from 'vue';
 
-import { TRIGGERS_TYPES, PRO_TRIGGERS } from '@/constants';
+import { TRIGGERS_TYPES } from '@/constants';
 
-import { setSeveralFields } from '@/helpers/immutable';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
+import { setSeveralFields } from '@/helpers/immutable';
 
-import { useValidator } from '@/hooks/validator/validator';
+import { useField, useFormErrorsMap } from '@/hooks/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import {
+  DEFAULT_TRIGGERS_TRANSLATION_PREFIX,
+  usePreparedTriggers,
+} from '@/hooks/form/triggers';
 import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
-import { useComponentInstance } from '@/hooks/vue';
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-
-const DEFAULT_TRANSLATION_PREFIX = 'common.triggers';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -138,65 +137,91 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     types: {
       type: Array,
       default: () => Object.values(TRIGGERS_TYPES),
     },
     translationKeyPrefix: {
       type: String,
-      default: DEFAULT_TRANSLATION_PREFIX,
+      default: DEFAULT_TRIGGERS_TRANSLATION_PREFIX,
     },
   },
+  emits: ['update:modelValue'],
   setup(props, { emit }) {
     const additionalValuesKeysByTriggers = {
       [TRIGGERS_TYPES.eventscount]: 'threshold',
     };
 
-    const validator = useValidator();
-    const { t, tc, te } = useI18n();
+    const { t } = useI18n();
     const { updateModel, removeItemFromArray } = useArrayModelField(props, emit);
     const { isProVersion, eventsCountTriggerDefaultThreshold } = useInfo();
-    const vm = useComponentInstance();
 
     const preparedTriggersByTypes = ref({});
 
-    const deprecatedValues = computed(() => props.value.filter(({ type }) => isDeprecatedTrigger(type)));
+    const deprecatedValues = computed(() => props.modelValue.filter(({ type }) => isDeprecatedTrigger(type)),
+    );
+
+    const validateTriggers = (value = []) => {
+      if (!value.length) {
+        return t('validation.messages.required');
+      }
+
+      if (deprecatedValues.value.length) {
+        return t('errors.triggerMustNotUsed', deprecatedValues.value.length, {
+          field: deprecatedValues.value.map(({ type }) => type).join(', '),
+        });
+      }
+
+      return true;
+    };
+    const { setValue: setTriggersFieldValue } = useField(
+      toRef(props, 'name'),
+      validateTriggers,
+      {
+        initialValue: props.modelValue,
+        validateOnValueUpdate: true,
+      },
+    );
+    const { collectErrors, hasError } = useFormErrorsMap();
 
     const defaultAdditionalValuesByTriggers = computed(() => ({
       [TRIGGERS_TYPES.eventscount]: eventsCountTriggerDefaultThreshold.value ?? '',
     }));
 
-    const preparedTriggers = computed(() => props.types.reduce((acc, type) => {
-      if (!PRO_TRIGGERS.includes(type) || isProVersion.value) {
-        const key = `${props.translationKeyPrefix}.${type}`;
-        const { text, helpText } = props.translationKeyPrefix !== DEFAULT_TRANSLATION_PREFIX && te(key)
-          ? t(key)
-          : t(`${DEFAULT_TRANSLATION_PREFIX}.${type}`);
+    const {
+      preparedTriggers,
+      triggerToPreparedTrigger,
+      getTriggerSelectedText,
+    } = usePreparedTriggers({
+      types: toRef(props, 'types'),
+      translationKeyPrefix: toRef(props, 'translationKeyPrefix'),
+      isProVersion,
+      preparedTriggersByTypes,
+    });
 
-        acc.push({
-          ...(preparedTriggersByTypes.value[type] ?? {}),
+    const selectedTriggers = computed(() => props.modelValue.map((trigger) => {
+        const preparedTrigger = preparedTriggers.value.find(({ type }) => type === trigger.type);
 
-          text,
-          helpText,
-          deprecated: isDeprecatedTrigger(type),
-        });
+        return preparedTrigger
+          ? {
+              ...preparedTrigger,
+              ...trigger,
+            }
+          : triggerToPreparedTrigger(trigger);
+      }),
+    );
+
+    const errorMessages = computed(() => {
+      if (!hasError(props.name)) {
+        return [];
       }
 
-      return acc;
-    }, []));
-
-    const errorMessages = computed(() => validator.errors.collect(props.name, null, false)
-      .map((item) => {
-        const messageMap = {
-          max_value: tc(
-            'errors.triggerMustNotUsed',
-            deprecatedValues.value.length,
-            { field: deprecatedValues.value.join(', ') },
-          ),
-        };
-
-        return messageMap[item.rule] ?? item.msg;
-      }));
+      return collectErrors(props.name);
+    });
 
     /**
      * Get name property for chip field
@@ -215,6 +240,14 @@ export default {
     const getAdditionalValueFieldName = type => `${props.name}.${type}.additionalValue`;
 
     /**
+     * Check if trigger is selected
+     *
+     * @param {Trigger} trigger
+     * @return {boolean}
+     */
+    const isTriggerSelected = trigger => props.modelValue.some(({ type }) => type === trigger.type);
+
+    /**
      * Get CSS class for selected item
      *
      * @param {boolean} deprecated
@@ -223,24 +256,61 @@ export default {
      */
     const getSelectedClass = ({ deprecated, type }) => ({
       'error--text': deprecated,
-      error: validator.errors.has(getAdditionalValueFieldName(type)),
+      error: hasError(getAdditionalValueFieldName(type)),
     });
 
     /**
      * Get text for selected item
      *
-     * @param {string} type
-     * @param {string} text
-     * @param {number | string | boolean} [additionalValue]
+     * @param {Trigger} [trigger={}]
      * @return {VueI18n.TranslateResult|*}
      */
-    const getSelectedText = ({ type, text, [additionalValuesKeysByTriggers[type]]: additionalValue } = {}) => {
-      const messageKey = `${props.translationKeyPrefix}.${type}.selectedText`;
+    const getSelectedText = (trigger = {}) => {
+      const { type } = trigger;
+      const additionalValueKey = additionalValuesKeysByTriggers[type];
+      const additionalValue = additionalValueKey ? trigger[additionalValueKey] : undefined;
 
-      return te(messageKey)
-        ? t(messageKey, { additionalValue })
-        : text;
+      return getTriggerSelectedText(trigger, { additionalValue });
     };
+
+    /**
+     * Get prepared trigger by select slot item.
+     *
+     * @param {Object} item
+     * @return {Trigger}
+     */
+    const getPreparedTrigger = (item = {}) => {
+      const raw = item.raw ?? item;
+      const type = raw.type ?? (typeof item.value === 'string' ? item.value : item.value?.type);
+      const preparedTrigger = preparedTriggers.value.find(triggerItem => triggerItem.type === type)
+        ?? triggerToPreparedTrigger(typeof raw === 'object' ? raw : { type });
+
+      return {
+        ...preparedTrigger,
+        ...(typeof raw === 'object' ? raw : {}),
+        text: preparedTrigger.text,
+        helpText: preparedTrigger.helpText,
+        deprecated: preparedTrigger.deprecated,
+      };
+    };
+
+    /**
+     * Get select item props.
+     *
+     * @param {Trigger} trigger
+     * @return {{ disabled: boolean }}
+     */
+    const getTriggerItemProps = trigger => ({
+      disabled: !!trigger.deprecated,
+    });
+
+    /**
+     * Get a unique select value for trigger items and group subheaders.
+     *
+     * @param {Object} item
+     * @returns {string}
+     */
+    const getTriggerItemValue = item => item.type === 'subheader' ? item.value : item.type;
 
     /**
      * Set preparedTriggersByTypes by types array
@@ -252,7 +322,7 @@ export default {
         const additionalValueKey = additionalValuesKeysByTriggers[type];
         const {
           [additionalValueKey]: additionalValue = defaultAdditionalValuesByTriggers.value[type],
-        } = find(props.value, { type }) ?? {};
+        } = find(props.modelValue, { type }) ?? {};
 
         const newTypeValue = { type };
 
@@ -272,9 +342,18 @@ export default {
      * @param {Trigger[]} value
      */
     const changeValue = (value = []) => {
-      updateModel(value.map(({ type }) => preparedTriggersByTypes.value[type]));
+      const nextValue = value.reduce((acc, { type }) => {
+        const preparedTrigger = preparedTriggersByTypes.value[type] ?? { type };
 
-      nextTick(() => validator.validate(props.name));
+        if (!isDeprecatedTrigger(type) || isTriggerSelected(preparedTrigger)) {
+          acc.push(preparedTrigger);
+        }
+
+        return acc;
+      }, []);
+
+      updateModel(nextValue);
+      setTriggersFieldValue(nextValue);
     };
 
     /**
@@ -284,36 +363,12 @@ export default {
      * @param {number | string | boolean} additionalValue
      */
     const changeAdditionalValue = (type, additionalValue) => {
-      set(
-        preparedTriggersByTypes.value[type],
-        additionalValuesKeysByTriggers[type],
-        additionalValue,
+      preparedTriggersByTypes.value[type][additionalValuesKeysByTriggers[type]] = additionalValue;
+
+      updateModel(
+        props.modelValue.map(trigger => trigger.type === type ? preparedTriggersByTypes.value[type] : trigger,
+        ),
       );
-
-      updateModel(props.value.map(trigger => (
-        trigger.type === type
-          ? preparedTriggersByTypes.value[type]
-          : trigger
-      )));
-    };
-
-    /**
-     * Attach rule for deprecatedValues checking into validator
-     */
-    const attachMaxValueRule = () => {
-      validator.attach({
-        name: props.name,
-        rules: 'max_value:0',
-        getter: () => deprecatedValues.value.length,
-        vm,
-      });
-    };
-
-    /**
-     * Detach rule for deprecatedValues checking from validator
-     */
-    const detachRules = () => {
-      validator.detach(props.name);
     };
 
     const additionalValuesComponentsByTypes = computed(() => {
@@ -342,32 +397,41 @@ export default {
           return acc;
         }
 
-        acc[type] = setSeveralFields(rest, {
-          'bind.name': name,
-          'bind.value': trigger[additionalValuesKeysByTriggers[type]],
-          'bind.label': t(`common.triggers.${type}.additionalFieldLabel`),
-          'bind.errorMessages': validator.errors.collect(name),
-          'on.input': () => value => changeAdditionalValue(type, value),
-        });
+        acc[type] = {
+          ...setSeveralFields(rest, {
+            'bind.name': name,
+            'bind.value': trigger[additionalValuesKeysByTriggers[type]],
+            'bind.label': t(`common.triggers.${type}.additionalFieldLabel`),
+            'bind.errorMessages': collectErrors(name),
+          }),
+          on: {
+            'update:value': value => changeAdditionalValue(type, value),
+          },
+        };
 
         return acc;
       }, {});
     });
 
     watch(() => props.types, setPreparedTriggersByTypes, { immediate: true });
-
-    attachMaxValueRule();
-
-    onBeforeUnmount(() => {
-      detachRules();
-    });
+    watch(
+      () => props.modelValue,
+      value => setTriggersFieldValue(value, false),
+    );
 
     return {
       preparedTriggers,
+      selectedTriggers,
       errorMessages,
       additionalValuesComponentsByTypes,
+      collectErrors,
+      hasError,
       getChipName,
       getAdditionalValueFieldName,
+      getTriggerItemProps,
+      getTriggerItemValue,
+      isTriggerSelected,
+      getPreparedTrigger,
       getSelectedClass,
       getSelectedText,
       changeValue,

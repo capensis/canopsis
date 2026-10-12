@@ -1,32 +1,36 @@
 <template>
-  <v-textarea
-    v-validate="rules"
-    v-field="value"
+  <c-textarea
     ref="field"
+    :model-value="value"
     :label="label"
     :name="name"
     :rows="rows"
     :readonly="readonly"
     :disabled="disabled"
-    :error-messages="payloadErrors.inline"
     :row-height="lineHeight"
     :style="textareaStyle"
     :error="!!linesErrors.length"
     :autofocus="autofocus"
     :wrap="wrap"
+    :required="required"
     class="c-payload-textarea-field"
     auto-grow
     @blur="handleBlur"
+    @update:model-value="updateModel"
     @input="debouncedOnSelectionChange"
   >
-    <template #prepend-inner="">
+    <template #prepend-inner>
       <div :style="{ width: errorsOffsetPixel }" />
     </template>
-    <template #append="">
-      <slot name="append" />
+
+    <template v-if="$slots.append || variables.length || lines.length" #append-inner>
+      <div v-if="$slots.append" class="c-payload-textarea-field__append-slot">
+        <slot name="append" />
+      </div>
+
       <div class="c-payload-textarea-field__append">
         <variables-menu
-          v-if="variables"
+          v-if="variables.length"
           :items="variables"
           :visible="variablesShown"
           :value="variablesMenuValue"
@@ -35,12 +39,11 @@
           ignore-click-outside
           show-value
           clickable-parent
-          @input="pasteVariable"
+          @update:value="pasteVariable"
+          @close="hideVariablesMenu"
         />
-        <span
-          :style="linesStyle"
-          class="c-payload-textarea-field__lines"
-        >
+
+        <span :style="linesStyle" class="c-payload-textarea-field__lines">
           <span
             v-for="(line, index) in lines"
             :key="index"
@@ -53,29 +56,26 @@
               class="c-payload-textarea-field__fake-line"
             >
               <span>{{ line.text.slice(0, selectedVariable.start) }}</span>
-              <span
-                ref="variable"
-                class="c-payload-textarea-field__highlight"
-              >
+              <span ref="variable" class="c-payload-textarea-field__highlight">
                 <span>{{ line.text.slice(selectedVariable.start, selectedVariable.end) }}</span>
               </span>
             </span>
-            <v-tooltip
-              v-if="line.error"
-              top
-            >
-              <template #activator="{ on }">
-                <v-icon
+
+            <c-tooltip v-if="line.error" location="top">
+              <template #activator="{ props: activatorProps }">
+                <c-icon
+                  v-bind="activatorProps"
                   :size="lineHeight"
                   class="c-payload-textarea-field__warning-icon"
                   color="error"
-                  v-on="on"
                 >
                   warning
-                </v-icon>
+                </c-icon>
               </template>
+
               <span>{{ line.error.message }}</span>
-            </v-tooltip>
+            </c-tooltip>
+
             <span class="c-payload-textarea-field__line-text" contenteditable="true">
               {{ line.text }}
             </span>
@@ -83,11 +83,13 @@
         </span>
       </div>
     </template>
-  </v-textarea>
+  </c-textarea>
 </template>
 
 <script>
 import { keyBy } from 'lodash';
+
+import { FORM_CONTEXT_KEY } from '@/constants';
 
 import { getStringLinesCount } from '@/helpers/string';
 
@@ -96,9 +98,16 @@ import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
 
 export default {
-  inject: ['$validator'],
+  inject: {
+    formContext: {
+      from: FORM_CONTEXT_KEY,
+      default: null,
+    },
+  },
+
   components: { VariablesMenu },
   mixins: [payloadFieldMixin],
+
   props: {
     label: {
       type: String,
@@ -136,14 +145,13 @@ export default {
       type: String,
       default: 'on',
     },
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
+    errorMessages: {
+      type: [Array, String],
+      default: () => [],
     },
+  },
 
+  computed: {
     lines() {
       return this.value.split(/\n/).map((text, index) => ({
         text,
@@ -160,7 +168,6 @@ export default {
 
       for (let index = 0; index < this.lines.length; index += 1) {
         const { text } = this.lines[index];
-
         const lineCharactersCount = text.length + 1;
 
         if (end < lineCharactersCount) {
@@ -178,24 +185,39 @@ export default {
     },
 
     payloadErrors() {
-      return this.errors.collect(this.name).reduce((acc, fullMessage) => {
-        if (fullMessage.includes('|')) {
-          const [line, message] = fullMessage.split('|');
+      return this.normalizedErrorMessages.reduce(
+        (acc, fullMessage) => {
+          if (fullMessage.includes('|')) {
+            const [line, message] = fullMessage.split('|');
 
-          acc.lines.push({ line, message });
-        } else {
-          acc.inline.push(fullMessage);
-        }
+            acc.lines.push({ line, message });
+          } else {
+            acc.inline.push(fullMessage);
+          }
 
-        return acc;
-      }, {
-        lines: [],
-        inline: [],
-      });
+          return acc;
+        },
+        {
+          lines: [],
+          inline: [],
+        },
+      );
+    },
+
+    normalizedErrorMessages() {
+      if (!this.errorMessages) {
+        return [];
+      }
+
+      return Array.isArray(this.errorMessages) ? this.errorMessages : [this.errorMessages];
     },
 
     linesErrors() {
       return this.payloadErrors.lines;
+    },
+
+    inlineErrorMessage() {
+      return this.payloadErrors.inline.join('\n') || undefined;
     },
 
     linesErrorsByLineNumber() {
@@ -231,9 +253,37 @@ export default {
       };
     },
   },
+
+  watch: {
+    inlineErrorMessage: {
+      immediate: true,
+      handler(message, oldMessage) {
+        if (message) {
+          this.formContext?.setFieldError(this.name, message);
+
+          return;
+        }
+
+        const currentMessage = this.formContext?.errors?.value?.[this.name];
+
+        if (!oldMessage || !currentMessage) {
+          return;
+        }
+
+        const nextMessage =
+          currentMessage
+            .split('\n')
+            .filter(part => part !== oldMessage)
+            .join('\n') || undefined;
+
+        this.formContext?.setFieldError(this.name, nextMessage);
+      },
+    },
+  },
+
   mounted() {
     setTimeout(() => {
-      const { input } = this.$refs.field?.$refs ?? {};
+      const input = this.getInputElement();
 
       if (!input) {
         return;
@@ -243,7 +293,7 @@ export default {
       const lineHeight = parseFloat(computedStyle.lineHeight);
       const linesCount = getStringLinesCount(this.value);
       const height = Math.ceil(lineHeight * linesCount);
-      const minHeight = parseInt(this.rows, 10) * parseFloat(this.rowHeight);
+      const minHeight = parseInt(this.rows, 10) * parseFloat(this.lineHeight);
 
       input.style.height = `${Math.max(height, minHeight)}px`;
     }, 1000);
@@ -255,7 +305,22 @@ export default {
 $iconBarWidth: 18px;
 
 .c-payload-textarea-field {
-  .v-input__append-inner {
+  .v-field {
+    position: relative;
+  }
+
+  .v-field__field {
+    position: relative;
+  }
+
+  .v-field__append-inner {
+    position: absolute;
+    grid-area: 1 / 1 / -1 / -1;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0 !important;
     pointer-events: none;
 
     .v-icon {
@@ -263,7 +328,7 @@ $iconBarWidth: 18px;
     }
   }
 
-  .v-input__prepend-inner {
+  .v-field__prepend-inner {
     padding: 0 !important;
   }
 
@@ -271,14 +336,15 @@ $iconBarWidth: 18px;
     line-height: inherit;
   }
 
-  &__lines  {
+  &__lines {
     display: flex;
     flex-direction: column;
 
     max-height: 100%;
   }
 
-  &__line, &__fake-line {
+  &__line,
+  &__fake-line {
     line-height: 16px;
     white-space: pre-wrap;
     word-break: normal;
@@ -289,19 +355,12 @@ $iconBarWidth: 18px;
 
   &__line {
     &-text {
-      margin-left: -18px;
+      margin-left: -$iconBarWidth;
     }
 
     &--error {
-      background: var(--v-error-base);
-
-      .theme--light & {
-        color: var(--v-text-light-primary, rgba(0, 0, 0, 0.87));
-      }
-
-      .theme--dark & {
-        color: var(--v-text-dark-primary, #FFFFFF);
-      }
+      background: rgb(var(--v-theme-error));
+      color: rgb(var(--v-theme-on-error));
     }
   }
 
@@ -310,6 +369,8 @@ $iconBarWidth: 18px;
   }
 
   &__highlight {
+    display: inline-block;
+    line-height: inherit;
     outline: 1px solid grey;
     border-radius: 2px;
     background: rgba(grey, 0.2);
@@ -328,10 +389,21 @@ $iconBarWidth: 18px;
     padding: 0;
 
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
+
+    .c-payload-textarea-field__lines {
+      padding: var(--v-field-input-padding-top, var(--v-field-padding-top, 0))
+        var(--v-field-padding-end, 16px) var(--v-field-input-padding-bottom, 0)
+        var(--v-field-padding-start, 16px);
+    }
+  }
+
+  &__append-slot {
+    position: absolute;
+    top: var(--v-field-padding-top, 0);
+    right: var(--v-field-padding-end, 16px);
+    z-index: 2;
+    pointer-events: auto;
   }
 }
 </style>

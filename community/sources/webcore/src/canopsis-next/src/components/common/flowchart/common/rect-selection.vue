@@ -65,6 +65,7 @@ export default {
       default: false,
     },
   },
+  emits: ['update'],
   data() {
     return {
       direction: undefined,

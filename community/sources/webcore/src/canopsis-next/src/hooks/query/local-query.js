@@ -1,5 +1,5 @@
-import { isEqual, upperFirst, camelCase } from 'lodash';
-import { ref, unref, set, del } from 'vue';
+import { camelCase, isEqual, upperFirst } from 'lodash';
+import { ref, unref } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -11,30 +11,6 @@ import { PAGINATION_LIMIT } from '@/config';
  * @param {Function} options.onUpdate - Callback function that is called when the query is updated.
  * @param {Function} options.comparator - Function used to compare the old and new query values.
  * @returns {Object} An object containing methods to manipulate the query state and the current query state itself.
- *
- * @example
- * // Usage of useLocalQuery within a Vue component
- * import { useLocalQuery } from `./path/to/useLocalQuery`;
- *
- * export default {
- *   setup() {
- *     const { query, updateQueryPage, updateQueryLimit } = useLocalQuery({
- *       initialQuery: { page: 1, limit: 10 },
- *       onUpdate: () => console.log(`Query updated`),
- *       comparator: (a, b) => JSON.stringify(a) === JSON.stringify(b)
- *     });
- *
- *     // Update the page number
- *     updateQueryPage(2);
- *
- *     // Update the limit
- *     updateQueryLimit(20);
- *
- *     return {
- *       query
- *     };
- *   }
- * };
  */
 export const useLocalQuery = ({
   initialQuery = {
@@ -75,7 +51,7 @@ export const useLocalQuery = ({
   const updateQueryField = (field, value) => {
     const oldValue = query.value?.[field];
 
-    set(query.value, field, value);
+    query.value[field] = value;
 
     if (onUpdate && !isEqual(oldValue, value)) {
       onUpdate(query.value);
@@ -92,7 +68,7 @@ export const useLocalQuery = ({
     const hadField = Object.prototype.hasOwnProperty.call(query.value, field);
 
     if (hadField) {
-      del(query.value, field);
+      delete query.value[field];
 
       if (onUpdate) {
         onUpdate(query.value);
@@ -103,7 +79,7 @@ export const useLocalQuery = ({
   /**
    * Resets the query to its initial state.
    */
-  const resetQuery = () => query.value = { ...unref(initialQuery) };
+  const resetQuery = () => (query.value = { ...unref(initialQuery) });
 
   /**
    * Calls the onUpdate callback with the provided query or the current query value.

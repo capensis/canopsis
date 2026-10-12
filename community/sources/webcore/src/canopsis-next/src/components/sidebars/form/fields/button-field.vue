@@ -1,33 +1,36 @@
 <template>
   <widget-settings-flat-item :title="title">
     <template #actions>
-      <v-layout justify-end>
+      <c-layout justify="end">
         <v-btn
           v-if="isEmpty && addable"
-          class="primary"
-          small
+          color="primary"
+          size="small"
           @click="$emit('create', $event)"
         >
           <span>{{ $t('common.create') }}</span>
         </v-btn>
+
         <template v-else>
           <v-btn
-            class="primary mr-2"
-            small
+            class="mr-2"
+            color="primary"
+            size="small"
             @click="$emit('edit', $event)"
           >
             <span>{{ $t('common.edit') }}</span>
           </v-btn>
+
           <v-btn
             v-if="removable"
-            class="error"
-            small
+            color="error"
+            size="small"
             @click="$emit('delete', $event)"
           >
-            <v-icon>delete</v-icon>
+            <c-icon>delete</c-icon>
           </v-btn>
         </template>
-      </v-layout>
+      </c-layout>
     </template>
   </widget-settings-flat-item>
 </template>
@@ -37,6 +40,7 @@ import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settin
 
 export default {
   components: { WidgetSettingsFlatItem },
+
   props: {
     title: {
       type: String,

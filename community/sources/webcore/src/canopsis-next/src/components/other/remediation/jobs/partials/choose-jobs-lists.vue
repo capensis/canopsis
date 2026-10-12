@@ -1,64 +1,70 @@
 <template>
   <c-advanced-data-table
+    v-model:options="options"
     :headers="headers"
     :items="jobsItems"
     :loading="pending"
     :total-items="totalItems"
     :is-disabled-item="isSelectedJob"
-    :options.sync="options"
+    :pagination-total-visible="3"
     select-all
     advanced-pagination
   >
     <template #toolbar="{ updateSearch }">
-      <v-layout>
-        <c-search @submit="updateSearch" />
-      </v-layout>
+      <c-search @submit="updateSearch" />
     </template>
     <template #actions="{ disabled, item }">
       <v-btn
         :disabled="disabled"
-        icon
-        small
+        icon="add"
+        variant="text"
+        size="small"
         @click="$emit('select', [item])"
-      >
-        <v-icon>add</v-icon>
-      </v-btn>
+      />
     </template>
     <template #mass-actions="{ selected, count }">
       <v-btn
         class="ma-2"
         color="primary"
-        outlined
+        variant="outlined"
         @click="$emit('select', selected)"
       >
-        {{ $tc('remediation.job.addJobs', count, { count: count }) }}
+        {{ $t('remediation.job.addJobs', count, { count }) }}
       </v-btn>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
-import { localQueryMixin } from '@/mixins/query/query';
-import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
+import { convertQueryToRequest } from '@/helpers/query';
+
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 
 export default {
-  mixins: [
-    localQueryMixin,
-    entitiesRemediationJobMixin,
-  ],
   props: {
     jobs: {
       type: Array,
       default: () => [],
     },
   },
+  emits: ['select'],
+  setup() {
+    const { fetchRemediationJobsListWithoutStore } = useRemediationJob();
+
+    return {
+      fetchRemediationJobsListWithoutStore,
+    };
+  },
   data() {
     return {
       pending: false,
       jobsItems: [],
       totalItems: 0,
-      query: {
+      options: {
+        page: 1,
         itemsPerPage: 5,
+        sortBy: [],
+        sortDesc: [],
       },
     };
   },
@@ -69,10 +75,18 @@ export default {
 
     headers() {
       return [
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.type'), value: 'config.type' },
-        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
+        { title: this.$t('common.name'), key: 'name' },
+        { title: this.$t('common.type'), key: 'config.type' },
+        { title: this.$t('common.actionsLabel'), key: 'actions', sortable: false },
       ];
+    },
+  },
+  watch: {
+    options: {
+      deep: true,
+      handler() {
+        this.fetchList();
+      },
     },
   },
   mounted() {
@@ -83,10 +97,16 @@ export default {
       return this.selectedIds.includes(_id);
     },
 
+    getQuery() {
+      return convertQueryToRequest(this.options);
+    },
+
     async fetchList() {
       this.pending = true;
 
-      const { data: jobs, meta } = await this.fetchRemediationJobsListWithoutStore({ params: this.getQuery() });
+      const { data: jobs, meta } = await this.fetchRemediationJobsListWithoutStore({
+        params: this.getQuery(),
+      });
 
       this.jobsItems = jobs;
       this.totalItems = meta.total_count;

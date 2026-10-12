@@ -1,46 +1,62 @@
 <template>
-  <alarms-list-table
-    :widget="widget"
-    :alarms="alarms"
-    :total-items="meta.total_count"
-    :options.sync="options"
-    :columns="columns"
-    :columns-settings="columnsSettings"
-    :loading="loading"
-    :parent-alarm="parentAlarm"
-    :hide-children="hideChildren"
-    :sticky-header="stickyHeader"
-    :refresh-alarms-list="refreshAlarmsList"
-    :selectable="selectable"
-    :expandable="expandable"
-    :hide-actions="hideActions"
-    :hide-pagination="hidePagination"
-    :resizable-column="resizableColumn"
-    :draggable-column="draggableColumn"
-    :cells-content-behavior="cellsContentBehavior"
-    :keep-selected-after-action="query.keepSelectedAfterAction"
-    eager
-    @update:page="updatePage"
-    @update:items-per-page="updateItemsPerPage"
-    @update:columns-settings="updateColumnsSettings"
-  />
+  <div class="alarms-list-table-with-pagination">
+    <alarms-list-table
+      :widget="widget"
+      :alarms="alarms"
+      :columns="columns"
+      :columns-settings="columnsSettings"
+      :meta="meta"
+      :query="query"
+      :parent-alarm="parentAlarm"
+      :loading="loading"
+      :expandable="expandable"
+      :selectable="selectable"
+      :sticky-header="stickyHeader"
+      :sticky-horizontal-scroll="stickyHorizontalScroll"
+      :hide-children="hideChildren"
+      :hide-actions="hideActions"
+      :densable="densable"
+      :dense-value="dense"
+      :widget-grid-parameters="widgetGridParameters"
+      :default-keep-selected-after-action="defaultKeepSelectedAfterAction"
+      :refresh-alarms-list="refreshAlarmsList"
+      :selected-tags="selectedTags"
+      :eager="eager"
+      :resizable-column="resizableColumn"
+      :draggable-column="draggableColumn"
+      @update:query="updateQuery"
+      @update:columns-settings="updateColumnsSettings"
+      @update:dense="$emit('update:dense', $event)"
+      @select:tag="$emit('select:tag', $event)"
+      @remove:tag="$emit('remove:tag', $event)"
+    />
+
+    <c-table-pagination
+      v-if="!hidePagination"
+      :items="paginationItems"
+      :total-items="totalItems"
+      :items-per-page="query.itemsPerPage"
+      :page="query.page"
+      class="mt-2 px-4"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+      @update:pagination="updatePaginationOptions"
+    />
+  </div>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { PAGINATION_LIMIT } from '@/config';
 
-import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
 import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
-/**
- * Group-alarm-list component
- *
- * @module alarm
- *
- */
+import AlarmsListTable from './alarms-list-table.vue';
+
 export default {
+  components: {
+    AlarmsListTable,
+  },
+
   props: {
     widget: {
       type: Object,
@@ -86,6 +102,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    stickyHorizontalScroll: {
+      type: Boolean,
+      default: false,
+    },
     hideChildren: {
       type: Boolean,
       default: false,
@@ -98,76 +118,87 @@ export default {
       type: Boolean,
       default: false,
     },
+    densable: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
+      type: Number,
+      default: undefined,
+    },
+    widgetGridParameters: {
+      type: Object,
+      default: () => ({}),
+    },
+    defaultKeepSelectedAfterAction: {
+      type: Boolean,
+      default: false,
+    },
+    selectedTags: {
+      type: Array,
+      default: () => [],
+    },
     refreshAlarmsList: {
       type: Function,
       default: () => {},
     },
+    eager: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props, { emit }) {
-    const resizableColumn = computed(() => !!props.widget.parameters?.columns?.resizable);
-    const draggableColumn = computed(() => !!props.widget.parameters?.columns?.draggable);
-    const cellsContentBehavior = computed(() => props.widget.parameters?.columns?.cells_content_behavior);
 
-    const options = computed({
-      get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = props.query;
+  emits: ['update:query', 'update:columns-settings', 'update:dense', 'select:tag', 'remove:tag'],
 
-        return { page, itemsPerPage, sortBy, sortDesc };
-      },
+  computed: {
+    totalItems() {
+      return this.meta.total_count ?? 0;
+    },
 
-      set(newOptions) {
-        const convertedOptions = convertDataTableOptionsToQuery(newOptions, options.value);
+    paginationItems() {
+      return [5, 10, 20, 50, 100, 200];
+    },
 
-        if (convertedOptions === options.value) {
-          return;
-        }
+    resizableColumn() {
+      return !!this.widget.parameters?.columns?.resizable;
+    },
 
-        emit('update:query', {
-          ...props.query,
-          ...convertedOptions,
-        });
-      },
-    });
+    draggableColumn() {
+      return !!this.widget.parameters?.columns?.draggable;
+    },
+  },
 
-    /**
-     * Updates items per page and recalculates the current page number
-     *
-     * @param {number} itemsPerPage - New items per page value
-     */
-    const updateItemsPerPage = itemsPerPage => emit('update:query', {
-      ...props.query,
+  methods: {
+    updateQuery(query) {
+      this.$emit('update:query', query);
+    },
 
-      itemsPerPage,
-      page: getPageForNewItemsPerPage(itemsPerPage, props.query.itemsPerPage, props.query.page),
-    });
+    updatePage(page) {
+      this.$emit('update:query', {
+        ...this.query,
+        page,
+      });
+    },
 
-    /**
-     * Updates the current page number
-     *
-     * @param {number} page - New page number
-     */
-    const updatePage = page => emit('update:query', {
-      ...props.query,
+    updateItemsPerPage(itemsPerPage) {
+      this.$emit('update:query', {
+        ...this.query,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
+        itemsPerPage,
+      });
+    },
 
-      page,
-    });
+    updatePaginationOptions({ page, itemsPerPage }) {
+      this.$emit('update:query', {
+        ...this.query,
+        page,
+        itemsPerPage: itemsPerPage || PAGINATION_LIMIT,
+      });
+    },
 
-    /**
-     * Updates the columns settings
-     *
-     * @param {Object} columnsSettings - New columns settings
-     */
-    const updateColumnsSettings = columnsSettings => emit('update:columns-settings', columnsSettings);
-
-    return {
-      resizableColumn,
-      draggableColumn,
-      cellsContentBehavior,
-      options,
-      updateItemsPerPage,
-      updatePage,
-      updateColumnsSettings,
-    };
+    updateColumnsSettings(columnsSettings) {
+      this.$emit('update:columns-settings', columnsSettings);
+    },
   },
 };
 </script>
