@@ -249,6 +249,8 @@ func (e *Entity) GetStringField(f string) (string, bool) {
 		return e.Connector, true
 	case "component":
 		return e.Component, true
+	case "upstream":
+		return e.Upstream, true
 	case "pause.author":
 		if e.Pause == nil {
 			return "", false

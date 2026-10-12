@@ -1,0 +1,2923 @@
+openapi: 3.0.1
+
+info:
+  title: Canopsis Community Public API
+  description: This is a Canopsis Community Public API.
+  version: latest
+  license:
+    name: GNU AGPLv3
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+
+servers:
+  - url: /api/v5
+
+paths:
+  /alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find all alarms
+      description: |
+        Get paginated list of alarms.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-find-all
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/resolution'
+        - name: search
+          in: query
+          description: full text search
+          schema:
+            type: string
+            maxLength: 10000
+        - name: search_by
+          in: query
+          style: form
+          explode: true
+          description: restrict the full text search to these fields
+          schema:
+            type: array
+            items:
+              type: string
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by alarm types
+          schema:
+            type: array
+            uniqueItems: true
+            items:
+              type: string
+              enum:
+                - standalone
+                - meta
+                - grouped
+        - name: meta_alarm
+          in: query
+          style: form
+          explode: true
+          description: filter by ids of the meta alarms the returned ones are grouped into
+          schema:
+            type: array
+            items:
+              type: string
+        - name: tag
+          in: query
+          style: form
+          explode: true
+          description: filter by alarm tags
+          schema:
+            type: array
+            items:
+              type: string
+        - name: time_field
+          in: query
+          description: the date the `from` and `to` interval applies to, required with them
+          schema:
+            type: string
+            enum:
+              - creation_date
+              - resolved
+              - activation_date
+              - last_event_date
+              - last_update_date
+              - last_st_upd_dt
+        - name: from
+          in: query
+          description: filter by alarms whose `time_field` is after this timestamp
+          schema:
+            type: integer
+        - name: to
+          in: query
+          description: filter by alarms whose `time_field` is before this timestamp
+          schema:
+            type: integer
+        - name: entity_type
+          in: query
+          style: form
+          explode: true
+          description: filter by the types of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - connector
+                - component
+                - resource
+                - service
+        - name: entity_category
+          in: query
+          style: form
+          explode: true
+          description: filter by the category ids of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+        - name: entity_connector
+          in: query
+          style: form
+          explode: true
+          description: filter by the connector ids of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+        - name: entity_component
+          in: query
+          style: form
+          explode: true
+          description: filter by the component ids of the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+        - name: entity_upstream
+          in: query
+          style: form
+          explode: true
+          description: filter by ids of the entities which depend on the alarm entities
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /alarms/search:
+    post:
+      tags:
+        - alarms
+      summary: Search alarms
+      description: |
+        Get paginated list of alarms matching a pattern.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-search
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarm.SearchRequest'
+            examples:
+              critical:
+                summary: Critical alarms of a component
+                description: Find the open critical alarms of one component
+                value: {
+                  "offset": 0,
+                  "limit": 100,
+                  "resolution": "open",
+                  "sort": "creation_date:desc",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              paused:
+                summary: Paused alarms
+                description: Find the alarms which are under a pause pbehavior type
+                value: {
+                  "resolution": "open",
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "canonical_type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pause"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              resolved:
+                summary: Resolved alarms
+                description: Find the resolved alarms which have been acknowledged
+                value: {
+                  "resolution": "resolved",
+                  "types": [ "standalone" ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.ack",
+                        "cond": {
+                          "type": "exist",
+                          "value": true
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /alarms/{id}/steps:
+    get:
+      tags:
+        - alarms
+      summary: Find the steps of an alarm
+      description: |
+        Get paginated list of the steps of one alarm.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-find-steps
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by step types
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - stateinc
+                - statedec
+                - statusinc
+                - statusdec
+                - ack
+                - ackremove
+                - comment
+                - snooze
+                - unsnooze
+                - statecounter
+                - changestate
+                - pbhenter
+                - pbhleave
+                - metaalarmattach
+                - metaalarmdetach
+                - activate
+                - resolve
+                - assocticket
+                - ticketremove
+                - declareticket
+                - declareticketfail
+                - webhookstart
+                - webhookcomplete
+                - webhookfail
+                - instructionstart
+                - instructionpause
+                - instructionresume
+                - instructioncomplete
+                - instructionfail
+                - instructionabort
+                - autoinstructionstart
+                - autoinstructioncomplete
+                - autoinstructionfail
+                - junittestsuiteupdate
+                - junittestcaseupdate
+                - changeticketstatus
+        - name: initiator
+          in: query
+          style: form
+          explode: true
+          description: filter by step initiators
+          schema:
+            type: array
+            uniqueItems: true
+            items:
+              type: string
+              enum:
+                - user
+                - external
+                - system
+        - name: from
+          in: query
+          description: filter by steps which are after this timestamp
+          schema:
+            type: integer
+        - name: to
+          in: query
+          description: filter by steps which are before this timestamp
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Step'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /alarm-exports:
+    post:
+      tags:
+        - alarm-exports
+      summary: Start an alarm export
+      description: |
+        Start an export of the alarms matching a pattern.
+
+        The export runs in the background: this returns a job, whose progress is followed with
+        `GET /alarm-exports/{id}` and whose result is fetched with `GET /alarm-exports/{id}/download` once
+        its status is `done`.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-exports-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmexport.Request'
+            examples:
+              csv:
+                summary: CSV
+                description: Export to a semicolon separated csv
+                value: {
+                  "format": "csv",
+                  "delimiter": "semicolon",
+                  "time_format": "DD MMM YYYY hh:mm:ss ZZ",
+                  "resolution": "open",
+                  "sort": "creation_date:desc",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "display_name", "label": "Name" },
+                    { "name": "entity.name", "label": "Entity" },
+                    { "name": "state.val", "label": "State" },
+                    { "name": "creation_date", "label": "Created" }
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ]
+                }
+              json:
+                summary: JSON
+                description: Export the infos of every resolved alarm to json
+                value: {
+                  "format": "json",
+                  "resolution": "resolved",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "infos", "label": "Infos" },
+                    { "name": "entity.infos.my_info.value", "label": "My info" }
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /alarm-exports/{id}:
+    get:
+      tags:
+        - alarm-exports
+      summary: Get an alarm export by id
+      description: |
+        Get the status of an export job.
+
+        Poll it until the status is `done` or `failed`.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-exports-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /alarm-exports/{id}/download:
+    get:
+      tags:
+        - alarm-exports
+      summary: Download an alarm export by id
+      description: |
+        Download the file produced by an export job.
+
+        The job must be `done`: not found is returned while it's still running, or if it failed.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-exports-download
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Disposition:
+              description: attachment, with the generated file name
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /event:
+    post:
+      tags:
+        - events
+      summary: Send event/events
+      description: |
+        Send event/events.
+
+        - PERMISSIONS: `api_event`
+      operationId: event-send
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/event.Event'
+            examples:
+              check:
+                summary: Check
+                description: Update a state of an alarm.
+                value: {
+                  "event_type": "check",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "state": 3,
+                  "output": "Lorem ipsum dolor sit amet",
+                  "long_output": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                }
+              ack:
+                summary: Ack
+                description: Acknowledge an alarm.
+                value: {
+                  "event_type": "ack",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              ackremove:
+                summary: Ack remove
+                description: Unacknowledge an alarm.
+                value: {
+                  "event_type": "ackremove",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              cancel:
+                summary: Cancel
+                description: Cancel an alarm.
+                value: {
+                  "event_type": "cancel",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              uncancel:
+                summary: Uncancel
+                description: Uncancel an alarm.
+                value: {
+                  "event_type": "uncancel",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              comment:
+                summary: Comment
+                description: Add new comment to an alarm.
+                value: {
+                  "event_type": "comment",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet"
+                }
+              snooze:
+                summary: Snooze
+                description: Snooze an alarm for duration (in seconds).
+                value: {
+                  "event_type": "snooze",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet",
+                  "duration": 600
+                }
+              changestate:
+                summary: Change state
+                description: Change a state of an alarm. Following check events won't update the state.
+                value: {
+                  "event_type": "changestate",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "output": "Lorem ipsum dolor sit amet",
+                  "state": 3
+                }
+              assocticket:
+                summary: Associate ticket
+                description: Add new ticket to an alarm.
+                value: {
+                  "event_type": "assocticket",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource",
+                  "author": "root",
+                  "user_id": "root",
+                  "ticket": "ENV-116",
+                  "ticket_url": "https://jira.local/ENV-116",
+                  "ticket_system_name": "Jira",
+                  "ticket_data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "ticket_comment": "Lorem ipsum dolor sit amet"
+                }
+              declareticket:
+                summary: Declare ticket
+                description: Emit a trigger. A scenario can be started on the trigger.
+                value: {
+                  "event_type": "declareticket",
+                  "connector": "cps_connector",
+                  "connector_name": "cps_connector_name",
+                  "component": "cps_component",
+                  "resource": "cps_resource",
+                  "source_type": "resource"
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entities:
+    get:
+      tags:
+        - entities
+      summary: Find all entities
+      description: |
+        Get paginated list of entities.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entities-find-all
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: search
+          in: query
+          description: full text search
+          schema:
+            type: string
+        - name: search_by
+          in: query
+          style: form
+          explode: true
+          description: restrict the full text search to these fields
+          schema:
+            type: array
+            items:
+              type: string
+        - name: enabled
+          in: query
+          description: filter by enabled state
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by entity types
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - connector
+                - component
+                - resource
+                - service
+        - name: category
+          in: query
+          style: form
+          explode: true
+          description: filter by category ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: connector
+          in: query
+          style: form
+          explode: true
+          description: filter by connector ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: component
+          in: query
+          style: form
+          explode: true
+          description: filter by component ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: upstream
+          in: query
+          style: form
+          explode: true
+          description: filter by ids of the entities which depend on the returned ones
+          schema:
+            type: array
+            items:
+              type: string
+        - name: import_source
+          in: query
+          description: filter by the source of the import which created the entity
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entities/search:
+    post:
+      tags:
+        - entities
+      summary: Search entities
+      description: |
+        Get paginated list of entities matching a pattern.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entities-search
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.SearchRequest'
+            examples:
+              resources:
+                summary: Resources of a component
+                description: Find the enabled resources of one component
+                value: {
+                  "offset": 0,
+                  "limit": 100,
+                  "enabled": true,
+                  "sort": "name:asc",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              paused:
+                summary: Paused entities
+                description: Find the entities which are under a pause pbehavior type
+                value: {
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "canonical_type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pause"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entity-exports:
+    post:
+      tags:
+        - entity-exports
+      summary: Start an entity export
+      description: |
+        Start an export of the entities matching a pattern.
+
+        The export runs in the background: this returns a job, whose progress is followed with
+        `GET /entity-exports/{id}` and whose result is fetched with `GET /entity-exports/{id}/download` once
+        its status is `done`.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-exports-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entityexport.Request'
+            examples:
+              csv:
+                summary: CSV
+                description: Export to a semicolon separated csv
+                value: {
+                  "format": "csv",
+                  "delimiter": "semicolon",
+                  "time_format": "DD MMM YYYY hh:mm:ss ZZ",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "name", "label": "Name" },
+                    { "name": "type", "label": "Type" },
+                    { "name": "created", "label": "Created" }
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              json:
+                summary: JSON
+                description: Export the infos of every entity to json
+                value: {
+                  "format": "json",
+                  "fields": [
+                    { "name": "_id", "label": "ID" },
+                    { "name": "infos", "label": "Infos" },
+                    { "name": "infos.my_info.value", "label": "My info" }
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /entity-exports/{id}:
+    get:
+      tags:
+        - entity-exports
+      summary: Get an entity export by id
+      description: |
+        Get the status of an export job.
+
+        Poll it until the status is `done` or `failed`.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-exports-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /entity-exports/{id}/download:
+    get:
+      tags:
+        - entity-exports
+      summary: Download an entity export by id
+      description: |
+        Download the file produced by an export job.
+
+        The job must be `done`: not found is returned while it's still running, or if it failed.
+
+        -  PERMISSIONS: `api_entity:read`
+      operationId: entity-exports-download
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Disposition:
+              description: attachment, with the generated file name
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /entity-imports:
+    post:
+      tags:
+        - entity-imports
+      summary: Start an entity import
+      description: |
+        Import entities from the request body.
+
+        The import runs in the background: this returns a job, whose progress is followed
+        with `GET /entity-imports/{id}`.
+
+        Only one import runs at a time, so a job can stay `pending` while another one is ongoing.
+
+        -  PERMISSIONS: `api_entity:create`
+      operationId: entity-imports-create
+      parameters:
+        - name: source
+          in: query
+          required: true
+          description: name of the system the entities come from, stored on every imported entity
+          schema:
+            type: string
+      requestBody:
+        description: the entities to import
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entityimport.RequestItem'
+            examples:
+              set:
+                summary: Set
+                description: Create or update a component and one of its resources
+                value: [
+                  {
+                    "action": "set",
+                    "name": "cps_component",
+                    "type": "component",
+                    "enabled": true,
+                    "infos": {
+                      "location": {
+                        "description": "Datacenter",
+                        "value": "eu-west-1"
+                      }
+                    }
+                  },
+                  {
+                    "action": "set",
+                    "name": "cps_resource",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "enabled": true
+                  }
+                ]
+              service:
+                summary: Service
+                description: Create a service from an entity pattern
+                value: [
+                  {
+                    "action": "set",
+                    "name": "cps_service",
+                    "type": "service",
+                    "enabled": true,
+                    "output_template": "Dependencies: {{ .All }}",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "infos.cps_info",
+                          "field_type": "string",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_test"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                ]
+              disable:
+                summary: Disable and delete
+                description: Disable a component and delete a resource
+                value: [
+                  {
+                    "action": "disable",
+                    "name": "cps_component",
+                    "type": "component"
+                  },
+                  {
+                    "action": "delete",
+                    "name": "cps_resource",
+                    "component": "cps_component",
+                    "type": "resource"
+                  }
+                ]
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+        '413':
+          $ref: '#/components/schemas/RequestEntityTooLarge'
+  /entity-imports/{id}:
+    get:
+      tags:
+        - entity-imports
+      summary: Get an entity import by id
+      description: |
+        Get the status of an import job.
+
+        Poll it until the status is `done` or `failed`. A failed job reports why in `error_message`.
+
+        -  PERMISSIONS: `api_entity:create`
+      operationId: entity-imports-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /pbehaviors:
+    get:
+      tags:
+        - pbehaviors
+      summary: Find all pbehaviors
+      description: |
+        Get paginated list of pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-find-all
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/author'
+        - name: enabled
+          in: query
+          description: filter by enabled state
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by pbehavior type ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: reason
+          in: query
+          style: form
+          explode: true
+          description: filter by pbehavior reason ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: inherited
+          in: query
+          description: filter by inherited pbehaviors
+          schema:
+            type: boolean
+        - name: origin
+          in: query
+          style: form
+          explode: true
+          description: filter by origin
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - pbehaviors
+      summary: Create pbehavior
+      description: |
+        Create pbehavior.
+
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: pbehaviors-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.EditRequest'
+            examples:
+              maintenance:
+                summary: Maintenance period
+                description: Create a pbehavior with one maintenance period
+                value: {
+                  "name": "Maintenance period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": 1591536400,
+                  "rrule": "",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              pause:
+                summary: Pause period
+                description: Create a pbehavior with endless pause period
+                value: {
+                  "name": "Pause period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": null,
+                  "rrule": "",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              inactive:
+                summary: Inactive period
+                description: Create a pbehavior with weekend inactive periods
+                value: {
+                  "name": "Inactive period",
+                  "enabled": true,
+                  "tstart": 1651269600,
+                  "tstop": 1651442400,
+                  "rrule": "FREQ=WEEKLY",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              active:
+                summary: Active period
+                description: Create a pbehavior with daily active periods except some days
+                value: {
+                  "name": "Active period",
+                  "enabled": true,
+                  "tstart": 1650855600,
+                  "tstop": 1650891600,
+                  "rrule": "FREQ=DAILY",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "exdates": [
+                    {
+                      "begin": 1651460400,
+                      "end": 1651496400,
+                      "type": "3b46e648-f7c0-4c94-8167-30e78728706e"
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /pbehaviors/{id}:
+    get:
+      tags:
+        - pbehaviors
+      summary: Get pbehavior by id
+      description: |
+        Get pbehavior by id.
+
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - pbehaviors
+      summary: Update behavior by id
+      description: |
+        Update behavior by id.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a pbehavior
+                value: {
+                  "name": "Active period",
+                  "enabled": true,
+                  "tstart": 1650855600,
+                  "tstop": 1650891600,
+                  "rrule": "FREQ=DAILY",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "exdates": [
+                    {
+                      "begin": 1651460400,
+                      "end": 1651496400,
+                      "type": "3b46e648-f7c0-4c94-8167-30e78728706e"
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Delete pbehavior by id
+      description: |
+        Delete pbehavior by id.
+
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: pbehaviors-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/schemas/NoContent'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - pbehaviors
+      summary: Patch partial set of behavior attributes by id
+      description: |
+        Patch partial set of behavior attributes by id.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-patch-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.PatchRequest'
+            examples:
+              update:
+                summary: Update interval
+                description: Update only a pbehavior interval
+                value: {
+                  "tstart": 1650855600,
+                  "tstop": 1650891600
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /bulk/pbehaviors:
+    put:
+      tags:
+        - pbehaviors
+      summary: Bulk update pbehaviors
+      description: |
+        Bulk update pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-bulk-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "Active period",
+                    "enabled": true,
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "rrule": "FREQ=DAILY",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
+                        }
+                      ]
+                    ],
+                    "exdates": [
+                      {
+                        "begin": 1651460400,
+                        "end": 1651496400,
+                        "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
+                      }
+                    ]
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - pbehaviors
+      summary: Bulk create pbehaviors
+      description: |
+        Bulk create pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: pbehaviors-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create pbehaviors
+                value: [
+                  {
+                    "name": "Active period",
+                    "enabled": true,
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "rrule": "FREQ=DAILY",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
+                        }
+                      ]
+                    ],
+                    "exdates": [
+                      {
+                        "begin": 1651460400,
+                        "end": 1651496400,
+                        "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
+                      }
+                    ]
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Bulk delete pbehaviors
+      description: |
+        Bulk delete pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: pbehaviors-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/bulk.DeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - pbehaviors
+      summary: Bulk patch pbehaviors
+      description: |
+        Patch a partial set of attributes of several pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-bulk-patch
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkPatchRequestItem'
+            examples:
+              update:
+                summary: Update intervals
+                description: Update only the interval of several pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600
+                  },
+                  {
+                    "_id": "9e1f1cf5-1a0e-4a3e-9b8f-6c9a1e0d2f47",
+                    "tstop": null
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /bulk/connector-pbehaviors:
+    post:
+      tags:
+        - pbehaviors
+      summary: Bulk create connector pbehaviors
+      description: |
+        Bulk create connector pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: connector-pbehaviors-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorCreateRequestItem'
+            examples:
+              create:
+                summary: Create
+                description: Create connector pbehaviors
+                value: [
+                  {
+                    "entities": [ "cps_resource/cps_component" ],
+                    "origin": "centreon",
+                    "name": "Downtime",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Bulk delete connector pbehaviors
+      description: |
+        Bulk delete connector pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: connector-pbehaviors-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete entity pbehaviors
+                value: [
+                  {
+                    "entities": [ "cps_resource/cps_component" ],
+                    "origin": "centreon",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - pbehaviors
+      summary: Bulk create and delete connector pbehaviors
+      description: |
+        Bulk create and delete connector pbehaviors.
+
+        -  PERMISSIONS: `api_pbehavior:create`, `api_pbehavior:delete`
+      operationId: connector-pbehaviors-bulk-edit
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorEditRequestItem'
+            examples:
+              create:
+                summary: Create and delete
+                description: Create and delete connector pbehaviors
+                value: [
+                  {
+                    "action": "create",
+                    "entities": [ "cps_resource1/cps_component1" ],
+                    "origin": "centreon",
+                    "name": "Downtime",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "comment": "Downtime by centreon"
+                  },
+                  {
+                    "action": "delete",
+                    "entities": [ "cps_resource2/cps_component2" ],
+                    "origin": "centreon",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /pbehavior-reasons:
+    get:
+      tags:
+        - pbehavior-reasons
+      summary: Find pbehavior reasons
+      description: |
+        Get paginated list of behavior reasons.
+
+        -  PERMISSIONS: `api_pbehaviorreason:read`
+      operationId: pbehavior-reasons-find-all
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/author'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - pbehavior-reasons
+      summary: Create pbehavior reason
+      description: |
+        Create pbehavior reason.
+
+        -  PERMISSIONS: `api_pbehaviorreason:create`
+      operationId: pbehavior-reasons-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a reason
+                value: {
+                  "name": "Deployment",
+                  "description": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /pbehavior-reasons/{id}:
+    get:
+      tags:
+        - pbehavior-reasons
+      summary: Get pbehavior reason by id
+      description: |
+        Get pbehavior reason by id.
+
+        -  PERMISSIONS: `api_pbehaviorreason:read`
+      operationId: pbehavior-reasons-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - pbehavior-reasons
+      summary: Update behavior reason by id
+      description: |
+        Update behavior reason by id.
+
+        -  PERMISSIONS: `api_pbehaviorreason:update`
+      operationId: pbehavior-reasons-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a reason
+                value: {
+                  "name": "Deployment",
+                  "description": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehavior-reasons
+      summary: Delete pbehavior reason by id
+      description: |
+        Delete pbehavior reason by id.
+
+        -  PERMISSIONS: `api_pbehaviorreason:delete`
+      operationId: pbehavior-reasons-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/schemas/NoContent'
+        '409':
+          $ref: '#/components/schemas/Conflict'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /pbehavior-types:
+    get:
+      tags:
+        - pbehavior-types
+      summary: Find pbehavior types
+      description: |
+        Get paginated list of behavior types.
+        
+        -  PERMISSIONS: `api_pbehaviortype:read`
+      operationId: pbehavior-types-find-all
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/author'
+        - name: type
+          in: query
+          style: form
+          explode: true
+          description: filter by canonical type
+          schema:
+            type: array
+            items:
+              type: string
+        - name: default
+          in: query
+          description: filter by default types
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - pbehavior-types
+      summary: Create pbehavior type
+      description: |
+        Create pbehavior type.
+        
+        -  PERMISSIONS: `api_pbehaviortype:create`
+      operationId: pbehavior-types-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a type
+                value: {
+                  "name": "Unplanned maintenance",
+                  "description": "Maintenances which are not on the schedule",
+                  "type": "maintenance",
+                  "priority": 10,
+                  "icon_name": "broken_image"
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+  /pbehavior-types/{id}:
+    get:
+      tags:
+        - pbehavior-types
+      summary: Get pbehavior type by id
+      description: |
+        Get pbehavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:read`
+      operationId: pbehavior-types-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - pbehavior-types
+      summary: Update behavior type by id
+      description: |
+        Update behavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:update`
+      operationId: pbehavior-types-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.UpdateRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a type
+                value: {
+                  "name": "Unplanned maintenance",
+                  "description": "Maintenances which are not on the schedule",
+                  "type": "maintenance",
+                  "priority": 10,
+                  "icon_name": "broken_image"
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - pbehavior-types
+      summary: Delete pbehavior type by id
+      description: |
+        Delete pbehavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:delete`
+      operationId: pbehavior-types-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/schemas/NoContent'
+        '409':
+          $ref: '#/components/schemas/Conflict'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /users:
+    get:
+      tags:
+        - users
+      summary: Find all users
+      description: |
+        Get paginated list of users.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: users-find-all
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/author'
+        - name: enabled
+          in: query
+          description: filter by enabled state
+          schema:
+            type: boolean
+        - name: source
+          in: query
+          style: form
+          explode: true
+          description: filter by authentication source
+          schema:
+            type: array
+            items:
+              type: string
+        - name: role
+          in: query
+          style: form
+          explode: true
+          description: filter by role ids
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: |
+        Create user.
+
+        -  PERMISSIONS: `api_acl:create`
+      operationId: users-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
+            examples:
+              saml:
+                summary: SAML user
+                description: Create a user authenticated by an external identity provider
+                value: {
+                  "name": "jdoe",
+                  "firstname": "John",
+                  "lastname": "Doe",
+                  "email": "jdoe@example.com",
+                  "roles": [
+                    "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                  ],
+                  "enabled": true,
+                  "source": "saml",
+                  "external_id": "jdoe@example.com"
+                }
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by id
+      description: |
+        Get user by id.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: users-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - users
+      summary: Update user by id
+      description: |
+        Update user by id.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a user
+                value: {
+                  "name": "jdoe",
+                  "firstname": "John",
+                  "lastname": "Doe",
+                  "email": "jdoe@example.com",
+                  "roles": [
+                    "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                  ],
+                  "enabled": true
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - users
+      summary: Patch partial set of user attributes by id
+      description: |
+        Patch partial set of user attributes by id.
+
+        Omitted attributes are left unchanged. The same restrictions as for the update apply.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-patch-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/user.PatchRequest'
+            examples:
+              disable:
+                summary: Disable
+                description: Disable a user without changing its other attributes
+                value: {
+                  "enabled": false
+                }
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.Response'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - users
+      summary: Delete user by id
+      description: |
+        Delete user by id.
+
+        Only a user with the `admin` role can delete a user with the `admin` role, and you cannot
+        delete your own account.
+
+        -  PERMISSIONS: `api_acl:delete`
+      operationId: users-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/schemas/NoContent'
+        '404':
+          $ref: '#/components/schemas/NotFound'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+  /bulk/users:
+    post:
+      tags:
+        - users
+      summary: Bulk create users
+      description: |
+        Bulk create users.
+
+        -  PERMISSIONS: `api_acl:create`
+      operationId: users-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create users
+                value: [
+                  {
+                    "name": "jdoe",
+                    "firstname": "John",
+                    "lastname": "Doe",
+                    "email": "jdoe@example.com",
+                    "roles": [
+                      "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                    ],
+                    "enabled": true,
+                    "source": "saml",
+                    "external_id": "jdoe@example.com"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    put:
+      tags:
+        - users
+      summary: Bulk update users
+      description: |
+        Bulk update users.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update users
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "jdoe",
+                    "firstname": "John",
+                    "lastname": "Doe",
+                    "email": "jdoe@example.com",
+                    "roles": [
+                      "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
+                    ],
+                    "enabled": true
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    patch:
+      tags:
+        - users
+      summary: Bulk patch users
+      description: |
+        Patch a partial set of attributes of several users.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-patch
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkPatchRequestItem'
+            examples:
+              disable:
+                summary: Disable
+                description: Disable several users without changing their other attributes
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "enabled": false
+                  },
+                  {
+                    "_id": "9e1f1cf5-1a0e-4a3e-9b8f-6c9a1e0d2f47",
+                    "enabled": false
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+    delete:
+      tags:
+        - users
+      summary: Bulk delete users
+      description: |
+        Bulk delete users.
+
+        -  PERMISSIONS: `api_acl:delete`
+      operationId: users-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/bulk.DeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete users
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkResponseItem'
+        '400':
+          $ref: '#/components/schemas/BadRequest'
+        '401':
+          $ref: '#/components/schemas/Unauthorized'
+        '403':
+          $ref: '#/components/schemas/Forbidden'
+
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      description: resource id
+      required: true
+      schema:
+        type: string
+    offset:
+      name: offset
+      in: query
+      description: current offset
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+    limit:
+      name: limit
+      in: query
+      description: number of items
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    sort:
+      name: sort
+      in: query
+      description: |
+        Comma separated list of `field:direction`, applied in order.
+        
+        The direction is `asc` or `desc`, and may be omitted to sort ascending.
+        The fields which can be sorted on depend on the endpoint.
+      schema:
+        type: string
+      example: name:asc,created:desc
+    author:
+      name: author
+      in: query
+      description: filter by author
+      schema:
+        type: string
+    resolution:
+      name: resolution
+      in: query
+      required: true
+      description: search the open alarms or the resolved ones
+      schema:
+        type: string
+        enum:
+          - open
+          - resolved
+
+  schemas:
+    event.Event:
+      type: object
+      required:
+        - connector
+        - connector_name
+        - component
+        - event_type
+        - source_type
+      properties:
+        component:
+          type: string
+        connector:
+          type: string
+        connector_name:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - check
+            - ack
+            - ackremove
+            - cancel
+            - uncancel
+            - comment
+            - snooze
+            - changestate
+            - assocticket
+            - declareticket
+        resource:
+          type: string
+        source_type:
+          type: string
+          enum:
+            - resource
+            - component
+        state:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+          description: >
+            State:
+              * `0` - Info
+              * `1` - Minor
+              * `2` - Major
+              * `3` - Critical
+        output:
+          type: string
+        long_output:
+          type: string
+        author:
+          type: string
+        user_id:
+          type: string
+        duration:
+          type: integer
+    event.Response:
+      type: object
+      properties:
+        failed_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/event.Event'
+        retry_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/event.Event'
+        sent_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/event.Event'
+    ListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+        meta:
+          type: object
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+            has_more:
+              type: boolean
+    BulkResponseItem:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: integer
+        error:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+    ErrorResponse:
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      type: object
+
+    NoContent:
+      description: No Content
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Not Found"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Unauthorized"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Forbidden"
+            message: "The admin role cannot be deleted."
+    RequestEntityTooLarge:
+      description: RequestEntityTooLarge
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Request Entity Too Large"
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Conflict"
+            message: "The type cannot be deleted because it is referenced by a pbehavior."
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            properties:
+              errors:
+                additionalProperties:
+                  type: string
+                type: object
+            type: object
+          example:
+            errors:
+              name: "The field already exists"
+              enabled: "The field is a required field"
+
+  securitySchemes:
+    TokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API token
+      description: >
+        An API token, sent as `Authorization: Bearer <token>`.
+
+        Tokens are created from the Canopsis interface, or by `POST /internal/api-tokens` on the internal API.
+
+security:
+  - TokenAuth: [ ]

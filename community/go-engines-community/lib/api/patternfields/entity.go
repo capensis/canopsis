@@ -33,10 +33,10 @@ func (r EntityRequest) ToModelWithoutFields(collectionName string) savedpattern.
 		}
 	}
 
-	forbiddenFields := GetForbiddenFieldsInEntityPattern(collectionName)
+	disabledFields := disabledFieldsInEntityPattern[collectionName]
 
 	return savedpattern.EntityPatternFields{
-		EntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
+		EntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(disabledFields),
 		CorporateEntityPattern:      r.CorporatePattern.ID,
 		CorporateEntityPatternTitle: r.CorporatePattern.Title,
 	}
