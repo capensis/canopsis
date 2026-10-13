@@ -1,6 +1,6 @@
 <template>
-  <c-layout column>
-    <c-layout gap="4">
+  <div class="d-flex flex-column align-stretch ga-4">
+    <div class="d-flex flex-row ga-4">
       <c-enabled-field
         v-if="optionally"
         :model-value="form.optional"
@@ -16,7 +16,7 @@
         @update:value="updateField('table', $event)"
         @update:selected-items="updateSelectedItems"
       />
-    </c-layout>
+    </div>
     <v-row align="center">
       <v-col cols="6">
         <c-select
@@ -54,6 +54,12 @@
       @update:condition="updateCondition(index, $event)"
       @remove="removeCondition(index)"
     />
+    <external-data-on-mismatch-field
+      v-if="withOnMismatch && !form.optional"
+      :model-value="form.on_mismatch"
+      :disabled="disabled"
+      @update:model-value="updateField('on_mismatch', $event)"
+    />
     <div v-if="!disabled" class="align-self-start">
       <v-btn
         color="primary"
@@ -63,7 +69,7 @@
         {{ $t('common.addMore') }}
       </v-btn>
     </div>
-  </c-layout>
+  </div>
 </template>
 
 <script>
@@ -78,11 +84,16 @@ import { useModelField } from '@/hooks/form/model-field';
 
 import ExternalDataTableTableField from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
 
+import ExternalDataOnMismatchField from './external-data-on-mismatch-field.vue';
 import ExternalDataTableConditionForm from './external-data-table-condition-form.vue';
 
 export default {
   emits: ['update:form'],
-  components: { ExternalDataTableTableField, ExternalDataTableConditionForm },
+  components: {
+    ExternalDataOnMismatchField,
+    ExternalDataTableTableField,
+    ExternalDataTableConditionForm,
+  },
   props: {
     form: {
       type: Object,
@@ -101,6 +112,10 @@ export default {
       default: () => [],
     },
     optionally: {
+      type: Boolean,
+      default: false,
+    },
+    withOnMismatch: {
       type: Boolean,
       default: false,
     },
