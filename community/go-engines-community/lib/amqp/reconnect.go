@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
@@ -18,15 +19,15 @@ const (
 
 // Dial accepts a string in the AMQP URI format and returns a new amqp connection.
 // If connection is closed it tries to reconnect.
-func Dial(url string, logger zerolog.Logger,
-	reconnectCount int, minReconnectTimeout time.Duration) (Connection, error) {
-	amqpConn, err := amqp.Dial(url)
+func Dial(url string, logger zerolog.Logger, reconnectCount int, minReconnectTimeout time.Duration) (Connection, error) {
+	tc := tls.CreateTLSConfigFromEnv(EnvCaCertFile, EnvInsecureSkipVerify, logger)
+	amqpConn, err := amqp.DialTLS(url, tc)
 	if err != nil {
 		return nil, err
 	}
 
 	if reconnectCount < -1 {
-		return nil, fmt.Errorf("invalid reconnectCount %v, can be -1 or possitive int", reconnectCount)
+		return nil, fmt.Errorf("invalid reconnectCount %v, can be -1 or positive int", reconnectCount)
 	}
 
 	isReconnectable := reconnectCount != 0 && minReconnectTimeout > 0
