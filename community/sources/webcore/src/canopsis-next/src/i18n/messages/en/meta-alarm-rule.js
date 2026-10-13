@@ -29,7 +29,6 @@ export default {
   valuePath: 'Value path | Value paths',
   addValuePath: 'Add value path',
   autoResolve: 'Auto resolve',
-  idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   corelId: 'Corel ID',
   corelIdHelpText: 'Alarms with the same selected attribute are grouped',
   corelStatus: 'Corel status',

@@ -274,7 +274,6 @@ export const metaAlarmRuleToForm = (rule = {}) => {
   const config = rule.config ?? {};
 
   return {
-    _id: rule._id ?? '',
     type: rule.type ?? META_ALARMS_RULE_TYPES.attribute,
     name: rule.name ?? '',
     auto_resolve: !!rule.auto_resolve,
@@ -360,7 +359,7 @@ export const formToMetaAlarmRule = (form = {}) => {
   });
 
   const metaAlarmRule = {
-    ...omit(form, ['config', 'patterns', 'infos', 'tags']),
+    ...omit(form, ['_id', 'config', 'patterns', 'infos', 'tags']),
     ...formFilterToPatterns(form.patterns, patternsFields),
 
     infos,

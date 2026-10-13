@@ -6,10 +6,7 @@
       </template>
 
       <template #text>
-        <meta-alarm-rule-form
-          :rule-id="ruleId"
-          :disabled-id-field="disabledIdField"
-        />
+        <meta-alarm-rule-form :rule-id="ruleId" />
         <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
@@ -75,8 +72,6 @@ export default {
     const isNew = computed(() => !ruleId.value || config.value.isDuplicating);
     const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
-    const disabledIdField = computed(() => !isNew.value);
-
     const form = useForm({
       initialValues: metaAlarmRuleToForm(rule.value),
     });
@@ -111,7 +106,6 @@ export default {
       t,
       title,
       ruleId,
-      disabledIdField,
       submitLabel,
       isSubmitting,
       submitDisabled,

@@ -190,6 +190,7 @@ export const eventFilterPatternToForm = (eventFilter) => {
  * @returns {EventFilterForm}
  */
 export const eventFilterToForm = (eventFilter = {}, timezone) => ({
+  name: eventFilter.name ?? eventFilter._id ?? '',
   type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter.description ?? '',
   priority: eventFilter.priority,
@@ -248,6 +249,7 @@ export const formToEventFilterAction = (eventFilterActionForm) => {
  */
 export const formToEventFilter = (eventFilterForm, timezone) => {
   const {
+    _id,
     config,
     patterns,
     exdates,
