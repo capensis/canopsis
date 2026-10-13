@@ -59,6 +59,7 @@ export const registerAllHelpers = (instance = Handlebars) => {
   registerHelper('state', helpers.alarmStateHelper, instance);
   registerHelper('request', helpers.requestHelper, instance);
   registerHelper('timestamp', helpers.timestampHelper, instance);
+  registerHelper('now', helpers.nowHelper, instance);
   registerHelper('internal-link', helpers.internalLinkHelper, instance);
   registerHelper('compare', helpers.compareHelper, instance);
   registerHelper('concat', helpers.concatHelper, instance);
