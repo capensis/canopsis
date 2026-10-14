@@ -36,7 +36,7 @@ var disabledFieldsInEntityPattern = map[string]map[string]bool{
 	mongo.StateSettingsMongoCollection:     {"last_event_date": true, "component": true, "type": true, "component_infos": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.EntityMongoCollection:            {"last_event_date": true, "connector": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.PbehaviorMongoCollection:         {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
-	mongo.IdleRuleMongoCollection:          {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
+	mongo.IdleRuleMongoCollection:          {"last_event_date": true},
 	mongo.DynamicInfosRulesMongoCollection: {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.MetaAlarmRulesMongoCollection:    {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},
 	mongo.FlappingRuleMongoCollection:      {"last_event_date": true, "pause": true, "pause.author": true, "pause.initiator": true},

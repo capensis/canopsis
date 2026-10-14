@@ -166,6 +166,14 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 			return err
 		}
 
+		// The entity has been added to or removed from services, so its pause and its alarm pause
+		// are updated before the alarm is updated by the event.
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+			&entity, &alarm, event.Parameters.Timestamp, p.logger)
+		if err != nil {
+			return err
+		}
+
 		if alarm.ID == "" {
 			if !event.Healthcheck {
 				var v types.Entity
@@ -181,23 +189,17 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 				return err
 			}
 		} else {
-			// The entity has been added to or removed from services, so its pause and its alarm pause
-			// are updated before the alarm is updated by the event.
-			change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
-				&entity, &alarm, event.Parameters.Timestamp, p.logger)
-			if err != nil {
-				return err
-			}
-
 			result, err = p.updateAlarm(ctx, alarm, entity, event.Parameters)
 			if err != nil {
 				return err
 			}
 
-			result.PauseChange = change
-
 			result.AlarmChange.ChangedOutput = result.Alarm.Value.Output != alarm.Value.Output
 			result.AlarmChange.ChangedLongOutput = result.Alarm.Value.LongOutput != alarm.Value.LongOutput
+		}
+
+		if result.PauseChange.alarmChange == "" {
+			result.PauseChange = change
 		}
 
 		if result.Entity.ID != "" {
@@ -368,15 +370,14 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	if pause != nil {
-		// The alarm is created paused, so the pause is propagated. The entity is paused by this event
-		// only if the pause has been resolved from its parents, otherwise it's already paused
-		// and already counted as paused, so it's not an alarm change.
-		result.PauseChange = pauseChange{pause: pause}
+		// The entity is paused by this event only if the pause has been resolved from its parents,
+		// then the pause is propagated. Otherwise the entity is already paused and counted as paused,
+		// and its pause has already been propagated when it has been paused, or it's not inherited.
 		if resolvedFromParents {
-			result.PauseChange.alarmChange = types.AlarmChangeTypePause
+			result.PauseChange = pauseChange{pause: pause, alarmChange: types.AlarmChangeTypePause}
 		}
 
-		newStep := types.NewAlarmStep(types.AlarmStepPause, pause.Timestamp, pause.Author,
+		newStep := types.NewAlarmStep(types.AlarmStepPause, now, pause.Author,
 			pause.Message, pause.UserID, "", pause.Initiator, false)
 		alarm.Value.Pause = &newStep
 		alarm.Value.Steps = append(alarm.Value.Steps, newStep)
