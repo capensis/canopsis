@@ -2938,6 +2938,12 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.Source = string(in.String())
 			}
+		case "source_type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SourceType = string(in.String())
+			}
 		case "inherited":
 			if in.IsNull() {
 				in.Skip()
@@ -3019,6 +3025,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"source\":"
 		out.RawString(prefix)
 		out.String(string(in.Source))
+	}
+	{
+		const prefix string = ",\"source_type\":"
+		out.RawString(prefix)
+		out.String(string(in.SourceType))
 	}
 	if in.Inherited {
 		const prefix string = ",\"inherited\":"

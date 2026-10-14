@@ -620,6 +620,8 @@ func unusedFieldsProject() bson.M {
 			"entity.perf_data":    0,
 			"entity.comments":     0,
 			"entity.imtags":       0,
+			"entity.pause.path":   0,
+			"entity.latest_pause": 0,
 		},
 	}
 }
