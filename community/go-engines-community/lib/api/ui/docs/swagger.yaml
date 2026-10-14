@@ -2648,7 +2648,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entities/pause:
-    put:
+    post:
       tags:
         - entities
       summary: Bulk pause entities
@@ -2705,7 +2705,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entities/resume:
-    put:
+    post:
       tags:
         - entities
       summary: Bulk resume entities
@@ -6222,7 +6222,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /entities/pause:
-    put:
+    post:
       tags:
         - entities
       summary: Pause entity
@@ -6358,7 +6358,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /entities/resume:
-    put:
+    post:
       tags:
         - entities
       summary: Resume entity

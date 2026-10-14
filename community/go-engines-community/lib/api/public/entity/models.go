@@ -55,6 +55,8 @@ type Response struct {
 
 	PbehaviorInfo *PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 
+	Pause *Pause `bson:"pause" json:"pause"`
+
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 
 	Component      string           `bson:"component,omitempty" json:"component,omitempty"`
@@ -100,4 +102,27 @@ type PbehaviorInfo struct {
 		response.Reference `bson:",inline"`
 		CanonicalType      string `bson:"canonical_type" json:"canonical_type"`
 	} `bson:"type" json:"type"`
+}
+
+type Pause struct {
+	Timestamp  datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
+	Message    string           `bson:"message" json:"message"`
+	Author     string           `bson:"author" json:"author"`
+	UserID     string           `bson:"user_id" json:"user_id"`
+	Initiator  string           `bson:"initiator" json:"initiator"`
+	Type       string           `bson:"type,omitempty" json:"type"`
+	Source     string           `bson:"source,omitempty" json:"source"`
+	SourceType string           `bson:"source_type,omitempty" json:"source_type"`
+}
+
+type PauseRequest struct {
+	ID        string `json:"_id" binding:"required"`
+	Comment   string `json:"comment" binding:"max=255"`
+	Inherited bool   `json:"inherited"`
+	Type      string `json:"type" binding:"max=255"`
+}
+
+type ResumeRequest struct {
+	ID      string `json:"_id" binding:"required"`
+	Comment string `json:"comment" binding:"max=255"`
 }

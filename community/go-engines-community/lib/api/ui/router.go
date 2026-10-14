@@ -750,12 +750,12 @@ func RegisterRoutes(
 				pbehaviorApi.CalendarByEntityID,
 			)
 
-			entityRouter.PUT(
+			entityRouter.POST(
 				"/pause",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
 				entityAPI.Pause,
 			)
-			entityRouter.PUT(
+			entityRouter.POST(
 				"/resume",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
 				entityAPI.Resume,
@@ -2618,13 +2618,13 @@ func RegisterRoutes(
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					entityAPI.BulkDisable,
 				)
-				entityRouter.PUT(
+				entityRouter.POST(
 					"/pause",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
 					entityAPI.BulkPause,
 				)
-				entityRouter.PUT(
+				entityRouter.POST(
 					"/resume",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
