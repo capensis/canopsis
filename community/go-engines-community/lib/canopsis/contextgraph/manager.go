@@ -548,8 +548,15 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		})
 
 		// The entity is not a dependency of the service anymore, so its pause must be ended.
-		if ent.Pause != nil && ent.Pause.Source == serviceID {
-			pauseChanges.ToResume = append(pauseChanges.ToResume, ent)
+		if ent.Pause != nil {
+			parent := ent.Pause.Source
+			if len(ent.Pause.Path) > 0 {
+				parent = ent.Pause.Path[len(ent.Pause.Path)-1]
+			}
+
+			if parent == serviceID {
+				pauseChanges.ToResume = append(pauseChanges.ToResume, ent)
+			}
 		}
 	}
 
@@ -1391,8 +1398,15 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 			"services_to_add":    ent.ServicesToAdd,
 		})
 
-		if ent.Pause != nil && ent.Pause.Source == serviceID {
-			toResume = append(toResume, ent)
+		if ent.Pause != nil {
+			parent := ent.Pause.Source
+			if len(ent.Pause.Path) > 0 {
+				parent = ent.Pause.Path[len(ent.Pause.Path)-1]
+			}
+
+			if parent == serviceID {
+				toResume = append(toResume, ent)
+			}
 		}
 	}
 

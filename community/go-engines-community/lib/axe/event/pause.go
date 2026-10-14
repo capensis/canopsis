@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
@@ -88,7 +90,14 @@ func (p *pauseProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	return result, nil
 }
 
-func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (Result, countersResult, bool, error) {
+func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (_ Result, _ countersResult, _ bool, resErr error) {
+	// A panic is returned as an error, so a panic on a dependency doesn't stop the processing of the other ones.
+	defer func() {
+		if r := recover(); r != nil {
+			resErr = fmt.Errorf("panic on pause of %s: %v\n%s", event.Entity.ID, r, debug.Stack())
+		}
+	}()
+
 	newPause := types.Pause{
 		Timestamp:  event.Parameters.Timestamp,
 		Message:    event.Parameters.Output,
@@ -102,31 +111,34 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 		Path:       event.Parameters.PausePath,
 	}
 	match := getOpenAlarmMatch(event)
-	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepPause, event.Parameters.Output, event.Parameters)
+	now := datetime.NewCpsTime()
+	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepPause, now,
+		event.Parameters.Author, event.Parameters.Output, event.Parameters.User, event.Parameters.Role,
+		event.Parameters.Initiator, false))
 	// wasPaused is true if the pause of the alarm is replaced by this one.
 	alarmUpdate := func(wasPaused bool) []bson.M {
 		set := bson.M{
 			"v.pause":          newStepQuery,
 			"v.steps":          addStepUpdateQuery(newStepQuery),
-			"v.inactive_start": event.Parameters.Timestamp,
+			"v.inactive_start": now,
 			"v.inactive_duration": bson.M{"$sum": bson.A{
 				"$v.inactive_duration",
 				bson.M{"$cond": bson.M{
 					"if": bson.M{"$gt": bson.A{"$v.inactive_start", 0}},
 					"then": bson.M{"$subtract": bson.A{
-						event.Parameters.Timestamp,
+						now,
 						"$v.inactive_start",
 					}},
 					"else": 0,
 				}},
 			}},
-			"v.last_update_date": event.Parameters.Timestamp,
+			"v.last_update_date": now,
 		}
 		if wasPaused {
 			// The replaced pause is not resumed, so its duration is kept.
 			set["v.pause_duration"] = bson.M{"$sum": bson.A{
 				"$v.pause_duration",
-				bson.M{"$subtract": bson.A{event.Parameters.Timestamp, "$v.pause.t"}},
+				bson.M{"$subtract": bson.A{now, "$v.pause.t"}},
 			}}
 		}
 
@@ -149,6 +161,20 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 			}
 
 			return err
+		}
+
+		// The entity may have been removed from the parent which propagates the pause after the parent
+		// has fetched its dependencies, then the pause is ignored, otherwise nothing would resume it.
+		// The parent is the last entity of the pause path or the source if the pause comes from it.
+		if newPause.Inherited && newPause.Source != "" && newPause.Source != entity.ID {
+			parent := newPause.Source
+			if len(newPause.Path) > 0 {
+				parent = newPause.Path[len(newPause.Path)-1]
+			}
+
+			if !slices.Contains(entity.Services, parent) && (entity.Type != types.EntityTypeResource || entity.Component != parent) {
+				return nil
+			}
 		}
 
 		latestPause := types.LatestPause{Pause: newPause}
@@ -194,6 +220,8 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 
 		alarmChange := types.NewAlarmChange()
 		alarmChange.Type = types.AlarmChangeTypePause
+		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
 		result.AlarmChange = alarmChange
 
 		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
@@ -223,6 +251,14 @@ func (p *pauseProcessor) postProcess(
 	result Result,
 	countersRes countersResult,
 ) {
+	// A panic is logged, so a panic on a dependency doesn't stop the processing of the other ones.
+	defer func() {
+		if r := recover(); r != nil {
+			p.logger.Error().Str("entity", event.Entity.ID).Interface("panic", r).Bytes("stack", debug.Stack()).
+				Msg("panic on post process of pause")
+		}
+	}()
+
 	entity := *event.Entity
 	if result.Entity.ID != "" {
 		entity = result.Entity

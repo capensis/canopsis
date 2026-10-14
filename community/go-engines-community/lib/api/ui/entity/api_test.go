@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"testing"
 
-	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -101,7 +101,7 @@ func benchmarkBulkPause_givenNCreateItems(b *testing.B, itemCount int) {
 	amqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	amqpPublisher.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	store := entity.NewStore(dbClient, nil, nil, authorProvider, nil, json.NewEncoder(), json.NewDecoder(), amqpPublisher, event.NewGenerator("", ""))
-	errorResponder := httperror.NewResponder(validation.NewErrorTranslator(trans, zerolog.Nop()), zerolog.Nop())
+	errorResponder := response.NewErrorResponder(validation.NewErrorTranslator(trans, zerolog.Nop()), zerolog.Nop())
 	api := entity.NewApi(store, nil, nil, nil, nil, nil, errorResponder, zerolog.Nop())
 	encoder := json.NewEncoder()
 	reqItems := make([]map[string]any, itemCount)

@@ -208,6 +208,14 @@ func (c Coordinates) IsZero() bool {
 	return c == Coordinates{}
 }
 
+// Pause is a pause of an entity, its own one or inherited from a parent: a service of the entity
+// or the component of a resource.
+//
+// An entity has a single pause even if several of its parents are paused: it keeps the one
+// chosen by LatestPause.CanApplyOver, and Source and Path keep the route it has come through.
+// The pause is ended when it's resumed through this route, i.e. when its source is resumed or
+// when an entity of the route doesn't propagate it anymore (removed from a service, deleted
+// or disabled), whether or not the other parents of the entity are still paused.
 type Pause struct {
 	Timestamp  datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
 	Message    string           `bson:"message" json:"message"`
@@ -305,6 +313,10 @@ func (e *Entity) GetInfoVal(f string) (any, bool) {
 func (e *Entity) GetRefField(f string) (any, bool) {
 	switch f {
 	case "pause":
+		if e.Pause == nil {
+			return nil, true
+		}
+
 		return e.Pause, true
 	default:
 		return nil, false

@@ -1440,7 +1440,7 @@ func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 				"$v.pause_duration",
 				bson.M{"$cond": bson.M{
 					"if":   "$v.pause",
-					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"then": bson.M{"$subtract": bson.A{now, "$v.pause.t"}},
 					"else": 0,
 				}},
 			}},

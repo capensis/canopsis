@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -94,28 +95,38 @@ func (p *resumeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 // processEvent ends the pause which started at pauseStart.
 // pauseStart is nil for a direct resume, then the entity's own current pause is ended.
 // It returns the ended pause if the resume is applied, nil if it is ignored.
-func (p *resumeProcessor) processEvent(ctx context.Context, event rpc.AxeEvent, pauseStart *datetime.CpsTime) (Result, countersResult, *types.LatestPause, error) {
+func (p *resumeProcessor) processEvent(ctx context.Context, event rpc.AxeEvent, pauseStart *datetime.CpsTime) (_ Result, _ countersResult, _ *types.LatestPause, resErr error) {
+	// A panic is returned as an error, so a panic on a dependency doesn't stop the processing of the other ones.
+	defer func() {
+		if r := recover(); r != nil {
+			resErr = fmt.Errorf("panic on resume of %s: %v\n%s", event.Entity.ID, r, debug.Stack())
+		}
+	}()
+
 	match := getOpenAlarmMatch(event)
-	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepResume, event.Parameters.Output, event.Parameters)
+	now := datetime.NewCpsTime()
+	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepResume, now,
+		event.Parameters.Author, event.Parameters.Output, event.Parameters.User, event.Parameters.Role,
+		event.Parameters.Initiator, false))
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.steps": addStepUpdateQuery(newStepQuery),
 			"v.pause_duration": bson.M{"$sum": bson.A{
 				"$v.pause_duration",
 				bson.M{"$subtract": bson.A{
-					event.Parameters.Timestamp,
+					now,
 					"$v.pause.t",
 				}},
 			}},
 			"v.inactive_duration": bson.M{"$sum": bson.A{
 				"$v.inactive_duration",
 				bson.M{"$subtract": bson.A{
-					event.Parameters.Timestamp,
+					now,
 					"$v.inactive_start",
 				}},
 			}},
-			"v.inactive_start":   updateInactiveStart(event.Parameters.Timestamp, true, true, true, true, false),
-			"v.last_update_date": event.Parameters.Timestamp,
+			"v.inactive_start":   updateInactiveStart(now, true, true, true, true, false),
+			"v.last_update_date": now,
 		}},
 		{"$unset": "v.pause"},
 	}
@@ -145,50 +156,45 @@ func (p *resumeProcessor) processEvent(ctx context.Context, event rpc.AxeEvent, 
 			sourceType = entity.Type
 		}
 
-		prev := entity.LatestPause
 		start := pauseStart
 		if start == nil {
 			// Direct resume: only the entity's active pause from this source can be ended.
-			if prev == nil || prev.End != nil || prev.Source != source {
+			if entity.LatestPause == nil || entity.LatestPause.End != nil || entity.LatestPause.Source != source {
 				return nil
 			}
 
-			start = &prev.Timestamp
+			start = &entity.LatestPause.Timestamp
 		}
 
 		end := event.Parameters.Timestamp
 		if end.Before(*start) {
-			// The pause has been created with a later timestamp, e.g. by a connector whose clock
-			// is ahead, so it lasts no time instead of a negative time.
 			p.logger.Warn().
 				Str("entity", entity.ID).
 				Str("connector", event.Parameters.Connector+"/"+event.Parameters.ConnectorName).
 				Str("pause", start.String()).
 				Str("resume", end.String()).
-				Msg("the resume is older than the pause it ends")
+				Msg("the resume is older than the pause it ends, it is ignored")
 
-			end = *start
+			return nil
 		}
 
 		ended := types.LatestPause{
 			// A pause of another entity is always inherited.
-			Pause: types.Pause{
-				Timestamp:  *start,
-				Source:     source,
-				SourceType: sourceType,
-				Inherited:  source != entity.ID,
-				Path:       event.Parameters.PausePath,
-			},
-			End: new(end),
+			Timestamp:  *start,
+			Source:     source,
+			SourceType: sourceType,
+			Inherited:  source != entity.ID,
+			Path:       event.Parameters.PausePath,
+			End:        new(end),
 		}
 		switch {
-		case prev != nil && prev.Source == source && prev.Timestamp.Equal(*start):
-			if prev.End != nil {
+		case entity.LatestPause != nil && entity.LatestPause.Source == source && entity.LatestPause.Timestamp.Equal(*start):
+			if entity.LatestPause.End != nil {
 				return nil // duplicate
 			}
 
-			ended.Pause = prev.Pause
-		case ended.CanApplyOver(prev, entity.ID):
+			ended.Pause = entity.LatestPause.Pause
+		case ended.CanApplyOver(entity.LatestPause, entity.ID):
 			// Resume arrived before its pause, keep the ended pause so the late pause and older ones are ignored.
 		default:
 			return nil // resume of a replaced pause
@@ -221,6 +227,8 @@ func (p *resumeProcessor) processEvent(ctx context.Context, event rpc.AxeEvent, 
 
 		alarmChange := types.NewAlarmChange()
 		alarmChange.Type = types.AlarmChangeTypeResume
+		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
 		result.Forward = true
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
@@ -252,6 +260,14 @@ func (p *resumeProcessor) postProcess(
 	result Result,
 	countersRes countersResult,
 ) {
+	// A panic is logged, so a panic on a dependency doesn't stop the processing of the other ones.
+	defer func() {
+		if r := recover(); r != nil {
+			p.logger.Error().Str("entity", event.Entity.ID).Interface("panic", r).Bytes("stack", debug.Stack()).
+				Msg("panic on post process of resume")
+		}
+	}()
+
 	entity := *event.Entity
 	if result.Entity.ID != "" {
 		entity = result.Entity

@@ -1015,20 +1015,48 @@ func getNestedObjectsPipeline() []bson.M {
 			"preserveNullAndEmptyArrays": true,
 			"includeArrayIndex":          "action_index",
 		}},
+		{"$addFields": bson.M{
+			"pbehavior_type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$actions.parameters.type",
+				"else": nil,
+			}},
+			"pbehavior_reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$actions.parameters.reason",
+				"else": nil,
+			}},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "actions.parameters.type",
+			"localField":   "pbehavior_type",
 			"foreignField": "_id",
-			"as":           "actions.parameters.type",
+			"as":           "pbehavior_type",
 		}},
-		{"$unwind": bson.M{"path": "$actions.parameters.type", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
-			"localField":   "actions.parameters.reason",
+			"localField":   "pbehavior_reason",
 			"foreignField": "_id",
-			"as":           "actions.parameters.reason",
+			"as":           "pbehavior_reason",
 		}},
-		{"$unwind": bson.M{"path": "$actions.parameters.reason", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_reason", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"actions.parameters.type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_type",
+				"else": "$actions.parameters.type",
+			}},
+			"actions.parameters.reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_reason",
+				"else": "$actions.parameters.reason",
+			}},
+		}},
+		{"$project": bson.M{
+			"pbehavior_type":   0,
+			"pbehavior_reason": 0,
+		}},
 		{"$sort": bson.M{"action_index": 1}},
 		{"$group": bson.M{
 			"_id":     "$_id",
