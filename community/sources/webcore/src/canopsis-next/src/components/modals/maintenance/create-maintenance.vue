@@ -1,83 +1,83 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close minimize>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <c-alert type="warning">
-          {{ config.warningText }}
-        </c-alert>
-        <maintenance-form v-model="form" />
+
+      <template #text>
+        <c-layout gap="3" column>
+          <c-alert type="warning">
+            {{ config.warningText }}
+          </c-alert>
+
+          <maintenance-form />
+        </c-layout>
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t(config.maintenance ? 'common.submit' : 'modals.createMaintenance.enableMaintenance') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
-<script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+<script setup>
+import { computed, inject } from 'vue';
 
 import { maintenanceToForm } from '@/helpers/entities/maintenance/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
-export default {
-  name: MODALS.createMaintenance,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  components: { MaintenanceForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { maintenance } = this.modal.config;
+});
 
-    return {
-      form: maintenanceToForm(maintenance),
-    };
-  },
-  computed: {
-    title() {
-      return this.$t('modals.createMaintenance.setup.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validate();
+const modalContext = inject('$modal');
 
-      if (isFormValid) {
-        await this.config.action?.(this.form);
+const modals = useModals();
+const { t } = useI18n();
 
-        this.$modals.hide();
-      }
-    },
-  },
-};
+const config = computed(() => props.modal.config ?? {});
+const form = useForm({
+  initialValues: maintenanceToForm(config.value.maintenance),
+});
+
+const title = computed(() => config.value.title ?? t('modals.createMaintenance.setup.title'));
+
+const submitLabel = computed(() => config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance'),
+);
+
+const close = () => modals.hide({ id: modalContext.id });
+
+const { handleSubmit, isSubmitting } = form;
+
+const submit = handleSubmit(async () => {
+  await config.value.action?.(form.values.value);
+
+  close();
+});
+
+useFormConfirmableCloseModal({ form: form.values, submit, close });
+
+const submitting = computed(() => isSubmitting.value);
 </script>

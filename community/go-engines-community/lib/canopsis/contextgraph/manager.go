@@ -1051,9 +1051,9 @@ func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commR
 func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) error {
 	cursor, err := m.entityCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"enabled":   true,
-			"connector": bson.M{"$nin": bson.A{nil, ""}},
-			"services":  bson.M{"$nin": bson.A{nil, bson.A{}}},
+			"enabled":    true,
+			"connector":  bson.M{"$gt": ""},
+			"services.0": bson.M{"$exists": true},
 		}},
 		{"$unwind": "$services"},
 		{"$group": bson.M{
@@ -1120,6 +1120,10 @@ func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) er
 			writeModels = writeModels[:0]
 			bulkBytesSize = 0
 		}
+	}
+
+	if err := cursor.Err(); err != nil {
+		return err
 	}
 
 	if len(writeModels) > 0 {

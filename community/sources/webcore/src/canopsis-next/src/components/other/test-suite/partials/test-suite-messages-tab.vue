@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <template v-if="hasMessages">
       <test-suite-message-panel
         v-if="testSuite.system_err"
@@ -7,7 +7,7 @@
         :title="$t('testSuite.systemError')"
         :label="$t('testSuite.systemErrorMessage')"
         :file-name="systemErrorFileName"
-        :color="$config.COLORS.testSuiteStatuses.failed"
+        :color="COLORS.testSuiteStatuses.failed"
         class="mb-2"
       />
       <test-suite-message-panel
@@ -16,17 +16,19 @@
         :title="$t('testSuite.systemOut')"
         :label="$t('testSuite.systemOutMessage')"
         :file-name="systemOutFileName"
-        :color="$config.COLORS.testSuiteStatuses.error"
+        :color="COLORS.testSuiteStatuses.error"
       />
     </template>
     <template v-else>
       <div>{{ testSuite.artifact_match_err }}</div>
       <div>{{ $t('testSuite.noData') }}</div>
     </template>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 import TestSuiteMessagePanel from './test-suite-message-panel.vue';
 
 export default {
@@ -38,6 +40,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      COLORS,
+    };
   },
   computed: {
     systemErrorFileName() {

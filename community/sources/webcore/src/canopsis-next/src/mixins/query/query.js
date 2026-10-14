@@ -4,6 +4,11 @@ import { PAGINATION_LIMIT } from '@/config';
 
 import { getQueryForList } from '@/helpers/entities/shared/query';
 
+/**
+ * Mixin for local list query state.
+ *
+ * Provides Vuetify table options, query field updates and request query conversion.
+ */
 export const localQueryMixin = {
   data() {
     return {
@@ -28,7 +33,13 @@ export const localQueryMixin = {
   computed: {
     options: {
       get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = this.query;
+        const {
+          page = 1,
+          itemsPerPage = PAGINATION_LIMIT,
+          sortBy = [],
+          sortDesc = [],
+          ...restQuery
+        } = this.query;
 
         return { page, itemsPerPage, sortBy, sortDesc, ...restQuery };
       },
@@ -56,6 +67,12 @@ export const localQueryMixin = {
   },
 
   methods: {
+    /**
+     * Update query field by name.
+     *
+     * @param {string} field
+     * @param {*} value
+     */
     updateQueryField(field, value) {
       this.query = {
         ...this.query,
@@ -63,10 +80,23 @@ export const localQueryMixin = {
       };
     },
 
+    /**
+     * Check whether query update should trigger list fetching.
+     *
+     * @param {Object} query
+     * @param {Object} oldQuery
+     * @returns {boolean}
+     */
     customQueryCondition(query, oldQuery) {
       return !isEqual(query, oldQuery);
     },
 
+    /**
+     * Convert local query state to request params.
+     *
+     * @param {Object} [queryParams=this.query]
+     * @returns {Object}
+     */
     getQuery(queryParams = this.query) {
       return getQueryForList(queryParams);
     },

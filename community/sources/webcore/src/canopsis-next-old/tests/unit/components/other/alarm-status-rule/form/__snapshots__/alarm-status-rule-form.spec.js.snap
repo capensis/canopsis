@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom props 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <c-enabled-field-stub
+    hide-details=""
+    with-background=""
+  />
+  <div>
+    <alarm-status-rule-general-form-stub
+      flapping="true"
+      form="[object Object]"
+    />
+    <alarm-status-rule-patterns-form-stub
+      class="mt-2"
+      flapping="true"
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default props 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <c-enabled-field-stub
+    hide-details=""
+    with-background=""
+  />
+  <div>
+    <alarm-status-rule-general-form-stub
+      form="[object Object]"
+    />
+    <alarm-status-rule-patterns-form-stub
+      class="mt-2"
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;

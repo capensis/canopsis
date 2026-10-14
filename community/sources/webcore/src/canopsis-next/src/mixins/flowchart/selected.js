@@ -73,28 +73,31 @@ export const selectedShapesMixin = {
         y: Math.max(start.y, end.y),
       };
 
-      this.selectedIds = Object.values(this.data).reduce((acc, shape) => {
-        /**
-         * Selection area not include a shape
-         */
-        if (!isAreaIncludeShape(normalizedStart, normalizedEnd, shape)) {
+      this.selectedIds = Object.values(this.data).reduce(
+        (acc, shape) => {
+          /**
+           * Selection area not include a shape
+           */
+          if (!isAreaIncludeShape(normalizedStart, normalizedEnd, shape)) {
+            return acc;
+          }
+
+          /**
+           * Selection area include already selected shape and shift pressed.
+           */
+          if (shiftKey && acc.includes(shape._id)) {
+            return acc.filter(id => id !== shape._id);
+          }
+
+          /**
+           * Selection area include shape
+           */
+          acc.push(shape._id);
+
           return acc;
-        }
-
-        /**
-         * Selection area include already selected shape and shift pressed.
-         */
-        if (shiftKey && acc.includes(shape._id)) {
-          return acc.filter(id => id !== shape._id);
-        }
-
-        /**
-         * Selection area include shape
-         */
-        acc.push(shape._id);
-
-        return acc;
-      }, shiftKey ? [...this.selectedIds] : []);
+        },
+        shiftKey ? [...this.selectedIds] : [],
+      );
 
       this.updateSelected();
     },

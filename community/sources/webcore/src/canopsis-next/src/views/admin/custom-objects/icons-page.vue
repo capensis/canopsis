@@ -1,0 +1,65 @@
+<template>
+  <c-page
+    :creatable="hasCreateAnyIconAccess"
+    :create-tooltip="t('modals.createIcon.create.title')"
+    @create="showCreateIconModal"
+    @refresh="refresh"
+  >
+    <template #header>
+      {{ t('common.icon', 2) }}
+    </template>
+
+    <icons ref="iconsElement" />
+  </c-page>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+import { MODALS, USER_PERMISSIONS } from '@/constants';
+
+import { useCallActionWithPopup } from '@/hooks/actions/call';
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useIcon } from '@/hooks/store/modules/icon';
+
+import Icons from '@/components/other/icons/icons.vue';
+
+export default {
+  components: { Icons },
+
+  setup() {
+    const { t } = useI18n();
+    const modals = useModals();
+    const iconsElement = ref(null);
+    const { createIcon } = useIcon();
+    const { hasCreateAccess: hasCreateAnyIconAccess } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.icon,
+    );
+    const { callActionWithPopup } = useCallActionWithPopup();
+
+    const refresh = () => iconsElement.value?.fetchList?.();
+
+    const showCreateIconModal = () => modals.show({
+        name: MODALS.createIcon,
+        config: {
+          title: t('modals.createIcon.create.title'),
+          action: newIcon => callActionWithPopup(
+              () => createIcon({ data: newIcon }),
+              refresh,
+              t('modals.createIcon.create.success'),
+            ),
+        },
+      });
+
+    return {
+      t,
+      iconsElement,
+      hasCreateAnyIconAccess,
+      showCreateIconModal,
+      refresh,
+    };
+  },
+};
+</script>

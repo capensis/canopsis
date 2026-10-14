@@ -9,6 +9,8 @@ export const ACTION_TYPES = {
   changeState: 'changestate',
   webhook: 'webhook',
   pbehaviorRemove: 'pbehaviorremove',
+  pause: 'pause',
+  resume: 'resume',
 };
 
 export const PRO_ACTION_TYPES = [ACTION_TYPES.webhook];

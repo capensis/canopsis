@@ -1,60 +1,62 @@
 <template>
-  <v-tabs
-    v-model="activeTab"
-    background-color="secondary lighten-1"
-    slider-color="primary"
-    dark
-    centered
-  >
-    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
-    <v-tabs-items
+  <div>
+    <v-tabs
       v-model="activeTab"
-      mandatory
+      bg-color="secondary-lighten-1"
+      color="primary"
+      align-tabs="center"
     >
-      <v-tab-item>
-        <v-layout class="py-3">
-          <v-flex
-            xs12
-            md8
-            offset-md2
-          >
-            <v-card>
-              <v-card-text>
-                <tag-patterns-form
-                  :form="patterns"
-                  readonly
-                />
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-tab-item>
-    </v-tabs-items>
-  </v-tabs>
+      <v-tab :value="TABS.patterns">
+        {{ t('common.pattern', 2) }}
+      </v-tab>
+    </v-tabs>
+
+    <v-window v-model="activeTab" class="bg-secondary-lighten-2">
+      <c-window-expand-item :value="TABS.patterns" cols="8">
+        <tag-patterns-form :form="patterns" readonly />
+      </c-window-expand-item>
+    </v-window>
+  </div>
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { tagFilterPatternsToForm } from '@/helpers/entities/tag/form';
+
+import { useI18n } from '@/hooks/i18n';
 
 import TagPatternsForm from '@/components/other/tag/form/tag-patterns-form.vue';
 
+const TABS = {
+  patterns: 'patterns',
+};
+
 export default {
-  components: { TagPatternsForm },
+  components: {
+    TagPatternsForm,
+  },
+
   props: {
     tag: {
       type: Object,
       default: () => ({}),
     },
   },
-  data() {
+
+  setup(props) {
+    const { t } = useI18n();
+
+    const activeTab = ref(TABS.patterns);
+
+    const patterns = computed(() => tagFilterPatternsToForm(props.tag));
+
     return {
-      activeTab: 0,
+      TABS,
+      activeTab,
+      patterns,
+      t,
     };
-  },
-  computed: {
-    patterns() {
-      return tagFilterPatternsToForm(this.tag);
-    },
   },
 };
 </script>

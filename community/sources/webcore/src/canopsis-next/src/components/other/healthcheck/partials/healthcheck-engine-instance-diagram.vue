@@ -5,10 +5,7 @@
       :key="instanceNumber"
       class="instances-diagram__node my-2"
     >
-      <div
-        :style="getInstanceStyle(instanceNumber)"
-        class="instances-diagram__node__circle"
-      />
+      <div :style="getInstanceStyle(instanceNumber)" class="instances-diagram__node-circle" />
     </div>
   </div>
 </template>
@@ -35,6 +32,7 @@ export default {
       default: false,
     },
   },
+
   methods: {
     getInstanceColor(instanceNumber) {
       if (instanceNumber <= this.instances) {
@@ -66,7 +64,7 @@ export default {
     justify-content: center;
   }
 
-  &__node__circle {
+  &__node-circle {
     border-radius: 50%;
     width: 60px;
     height: 60px;

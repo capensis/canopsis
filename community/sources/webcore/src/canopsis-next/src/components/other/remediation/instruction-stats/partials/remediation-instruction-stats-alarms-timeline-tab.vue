@@ -11,17 +11,19 @@
     advanced-pagination
     @update:options="updateOptions"
   >
-    <template #toolbar="">
-      <v-layout align-center>
+    <template #toolbar>
+      <c-layout align="center">
         <c-enabled-field
           v-model="showFailed"
-          :label="$t('remediation.instructionStat.showFailedExecutions')"
+          :label="t('remediation.instructionStat.showFailedExecutions')"
           hide-details
         />
-      </v-layout>
+      </c-layout>
     </template>
     <template #alarm_display_name="{ item }">
-      <span class="c-nowrap">{{ item.alarm_display_name }}</span>
+      <span class="c-nowrap">
+        {{ item.alarm_display_name }}
+      </span>
     </template>
     <template #result="{ item }">
       <c-enabled
@@ -35,33 +37,40 @@
       <c-alarm-state-chip v-if="item.alarm_id" :value="item.result_alarm_state" />
     </template>
     <template #started_at="{ item }">
-      <span class="c-nowrap">{{ item.started_at }}</span>
+      <span class="c-nowrap">
+        {{ item.started_at }}
+      </span>
     </template>
     <template #completed_at="{ item }">
-      <span class="c-nowrap">{{ item.completed_at }}</span>
+      <span class="c-nowrap">
+        {{ item.completed_at }}
+      </span>
     </template>
     <template #duration="{ item }">
-      <span class="c-nowrap">{{ item.duration }}</span>
+      <span class="c-nowrap">
+        {{ item.duration }}
+      </span>
     </template>
     <template #alarm_ok_at="{ item }">
-      <span class="c-nowrap">{{ item.alarm_ok_at }}</span>
+      <span class="c-nowrap">
+        {{ item.alarm_ok_at }}
+      </span>
     </template>
     <template #timeout_after_execution="{ item }">
-      <span class="c-nowrap">{{ item.timeout_after_execution }}</span>
+      <span class="c-nowrap">
+        {{ item.timeout_after_execution }}
+      </span>
     </template>
     <template #alarm_ok_before_completed="{ item }">
-      <span class="c-nowrap">{{ item.alarm_ok_before_completed }}</span>
+      <span class="c-nowrap">
+        {{ item.alarm_ok_before_completed }}
+      </span>
     </template>
     <template #timeline="{ item }">
-      <span
-        v-if="!item.alarm_id"
-        class="text--secondary"
-      >{{ $t('remediation.instructionStat.instructionChanged') }}</span>
-      <alarm-horizontal-timeline
-        v-else
-        :steps="item.alarm_steps"
-        class="my-2"
-      />
+      <span v-if="!item.alarm_id" class="text-medium-emphasis">
+        {{ t('remediation.instructionStat.instructionChanged') }}
+      </span>
+      <alarm-horizontal-timeline v-else :steps="item.alarm_steps" class="my-2" />
     </template>
     <template #expand="{ item }">
       <remediation-instruction-stats-alarms-timeline-tab-expand-panel
@@ -74,30 +83,31 @@
 </template>
 
 <script>
-import { computed, ref, watch, onMounted } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import {
-  prepareRemediationInstructionExecutionsForAlarmTimeline,
-} from '@/helpers/entities/remediation/instruction-execution/list';
-import { getQueryForList } from '@/helpers/entities/shared/query';
-import { isInstructionTypeAuto } from '@/helpers/entities/remediation/instruction/form';
-import { isInstructionExecutionCompleted } from '@/helpers/entities/remediation/instruction-execution/form';
 import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
+import { isInstructionExecutionCompleted } from '@/helpers/entities/remediation/instruction-execution/form';
+import { prepareRemediationInstructionExecutionsForAlarmTimeline } from '@/helpers/entities/remediation/instruction-execution/list';
+import { isInstructionTypeAuto } from '@/helpers/entities/remediation/instruction/form';
+import { getQueryForList } from '@/helpers/entities/shared/query';
 
 import { useI18n } from '@/hooks/i18n';
-import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useQueryOptions } from '@/hooks/query/options';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useRemediationInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import AlarmHorizontalTimeline from '@/components/widgets/alarm/timeline/horizontal-timeline.vue';
-import RemediationInstructionStatsAlarmsTimelineTabExpandPanel
-  from '@/components/other/remediation/instruction-stats/partials/remediation-instruction-stats-alarms-timeline-tab-expand-panel.vue';
+
+import RemediationInstructionStatsAlarmsTimelineTabExpandPanel from './remediation-instruction-stats-alarms-timeline-tab-expand-panel.vue';
 
 export default {
-  components: { RemediationInstructionStatsAlarmsTimelineTabExpandPanel, AlarmHorizontalTimeline },
+  components: {
+    AlarmHorizontalTimeline,
+    RemediationInstructionStatsAlarmsTimelineTabExpandPanel,
+  },
   props: {
     remediationInstruction: {
       type: Object,
@@ -110,23 +120,28 @@ export default {
   },
   setup(props) {
     const { t } = useI18n();
-    const { fetchRemediationInstructionStatsExecutionsListWithoutStore } = useRemediationInstructionStats();
+    const { fetchRemediationInstructionStatsExecutionsWithoutStore } =
+      useRemediationInstructionStats();
 
     const remediationInstructionExecutions = ref([]);
     const totalItems = ref(0);
     const showFailed = ref(true);
 
-    const preparedRemediationInstructionExecutions = computed(() => (
-      remediationInstructionExecutions.value.map((execution = {}) => (!execution.alarm_id
-        ? {}
-        : ({
+    const preparedRemediationInstructionExecutions = computed(
+      () => remediationInstructionExecutions.value.map((execution = {}) => {
+        if (!execution.alarm_id) {
+          return execution;
+        }
+
+        return {
           ...execution,
 
           started_at: convertDateToString(execution.started_at, DATETIME_FORMATS.long, '-'),
           completed_at: convertDateToString(execution.completed_at, DATETIME_FORMATS.long, '-'),
           alarm_ok_at: convertDateToString(execution.alarm_ok_at, DATETIME_FORMATS.long, '-'),
           duration: convertDurationToString(execution.duration) || '-',
-          timeout_after_execution: convertDurationToString(execution.timeout_after_execution) || '-',
+          timeout_after_execution:
+            convertDurationToString(execution.timeout_after_execution) || '-',
           completed: isInstructionExecutionCompleted(execution),
           result_icon: isInstructionTypeAuto(execution.instruction_type)
             ? 'assignment'
@@ -135,8 +150,9 @@ export default {
           alarm_ok_before_completed: execution.alarm_ok_before_completed
             ? t('remediation.instructionStat.solveBeforeRemediationEnd')
             : convertDurationToString(execution.alarm_ok_timeout) || '-',
-        })))
-    ));
+        };
+      }),
+    );
 
     const headers = computed(() => [
       {
@@ -190,31 +206,26 @@ export default {
       },
     ]);
 
-    const {
-      pending,
-      query,
-      fetchHandlerWithQuery: fetchList,
-      updateQuery,
-    } = usePendingWithLocalQuery({
-      fetchHandler: async (fetchQuery) => {
-        const params = getQueryForList(fetchQuery);
+    const { pending, query, fetchHandlerWithQuery: fetchList, updateQuery } =
+      usePendingWithLocalQuery({
+        fetchHandler: async (fetchQuery) => {
+          const params = {
+            ...getQueryForList(fetchQuery),
+            from: props.interval.from,
+            to: props.interval.to,
+            show_failed: showFailed.value,
+          };
 
-        params.from = props.interval.from;
-        params.to = props.interval.to;
-        params.show_failed = showFailed.value;
+          const { data, meta } = await fetchRemediationInstructionStatsExecutionsWithoutStore({
+            params,
+            id: props.remediationInstruction._id,
+          });
 
-        const {
-          data,
-          meta,
-        } = await fetchRemediationInstructionStatsExecutionsListWithoutStore({
-          params,
-          id: props.remediationInstruction._id,
-        });
-
-        remediationInstructionExecutions.value = prepareRemediationInstructionExecutionsForAlarmTimeline(data);
-        totalItems.value = meta.total_count;
-      },
-    });
+          remediationInstructionExecutions.value =
+            prepareRemediationInstructionExecutionsForAlarmTimeline(data ?? []);
+          totalItems.value = meta?.total_count ?? 0;
+        },
+      });
 
     const { options, updateOptions } = useQueryOptions(query, updateQuery);
 
@@ -232,6 +243,7 @@ export default {
       headers,
       pending,
       options,
+      t,
       updateOptions,
       isExpandableItem,
     };

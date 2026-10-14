@@ -1,82 +1,98 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createPbehaviorReason.title') }}</span>
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <pbehavior-reason-form v-model="form" />
+
+      <template #text>
+        <pbehavior-reason-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          class="primary"
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import {
+  formToPbehaviorReason,
+  pbehaviorReasonToForm,
+} from '@/helpers/entities/pbehavior/reason/form';
 
-import { pbehaviorReasonToForm, formToPbehaviorReason } from '@/helpers/entities/pbehavior/reason/form';
-
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import PbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/pbehavior-reason-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createPbehaviorReason,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: {
-    PbehaviorReasonForm,
-    ModalWrapper,
-  },
+  components: { PbehaviorReasonForm },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const reason = computed(() => config.value.pbehaviorReason ?? config.value.reason);
+    const isNew = computed(() => !reason.value?._id);
+    const title = computed(
+      () => config.value.title ||
+        t(`modals.createPbehaviorReason.${isNew.value ? 'create' : 'edit'}.title`),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const form = ref(pbehaviorReasonToForm(config.value.pbehaviorReason));
+    const form = useForm({
+      initialValues: pbehaviorReasonToForm(reason.value),
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        if (config.value.action) {
-          await config.value.action(formToPbehaviorReason(form.value));
-        }
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-        close();
-      },
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToPbehaviorReason(values.value));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
     });
 
     return {
-      form,
-      isDisabled,
+      t,
+      title,
+      submitLabel,
       submitting,
-      close,
+      closeModal,
       submit,
     };
   },

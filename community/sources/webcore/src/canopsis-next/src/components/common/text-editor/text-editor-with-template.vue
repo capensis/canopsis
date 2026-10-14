@@ -1,45 +1,41 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-widget-template-field
-      :value="form.template"
+      :value="currentForm.template"
       :templates="templates"
-      @input="updateTemplate"
+      @update:model-value="updateTemplate"
     />
+
     <text-editor-field
-      v-validate="rules"
-      :value="form.text"
+      :model-value="currentForm.text"
       :label="label"
-      :error-messages="errors.collect('text')"
       :variables="variables"
       :sanitize-options="sanitizeOptions"
-      :dark="$system.dark"
+      :required="required"
       name="text"
-      @input="updateText"
+      @update:model-value="updateText"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
-
-import TextEditorField from './text-editor.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
-  inject: ['$validator', '$system'],
-
   components: { TextEditorField },
 
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-
   props: {
+    modelValue: {
+      type: Object,
+      default: undefined,
+    },
     form: {
       type: Object,
-      default: () => ({}),
+      default: undefined,
     },
     templates: {
       type: Array,
@@ -61,37 +57,47 @@ export default {
       type: Object,
       required: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
 
+  emits: ['update:modelValue'],
+
   setup(props, { emit }) {
-    const { updateModel, updateField } = useModelField(props, emit);
+    const currentForm = computed(() => props.modelValue ?? props.form ?? {});
+
+    const updateModel = (value) => {
+      emit('update:modelValue', value);
+    };
 
     /**
      * Handles template selection and updates the model with the selected template and its content.
      *
-     * @param {Object} param - The template update payload.
-     * @param {string} param.value - The selected template value.
-     * @param {string} param.content - The content associated with the selected template.
+     * @param {Object} template - The template update payload.
      */
-    const updateTemplate = ({ value, content }) => {
-      if (value === props.form.template) {
+    const updateTemplate = (template) => {
+      if (template.value === currentForm.value.template) {
         return;
       }
 
       updateModel({
-        template: value,
-        text: content,
+        template: template.value,
+        text: template.content,
       });
     };
 
     /**
      * Handles text changes. If a custom template is used, updates both text and template fields in the model.
-     * Otherwise, updates only the text field.
      *
      * @param {string} text - The new text value.
      */
     const updateText = (text) => {
-      if (props.form.template !== CUSTOM_WIDGET_TEMPLATE && text !== props.form.text) {
+      if (
+        currentForm.value.template !== CUSTOM_WIDGET_TEMPLATE &&
+        text !== currentForm.value.text
+      ) {
         updateModel({
           text,
           template: CUSTOM_WIDGET_TEMPLATE,
@@ -100,10 +106,14 @@ export default {
         return;
       }
 
-      updateField('text', text);
+      updateModel({
+        ...currentForm.value,
+        text,
+      });
     };
 
     return {
+      currentForm,
       updateTemplate,
       updateText,
     };

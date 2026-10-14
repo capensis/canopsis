@@ -1,66 +1,58 @@
 <template>
-  <v-layout column>
-    <v-layout>
-      <v-flex
-        class="text-center font-weight-bold"
-        xs4
-      >
-        {{ $tc('common.group') }}
-      </v-flex>
-      <v-flex
-        class="text-center font-weight-bold"
-        xs4
-      >
-        {{ $tc('common.view') }}
-      </v-flex>
-      <v-flex
-        class="text-center font-weight-bold"
-        xs4
-      >
-        {{ $tc('common.tab') }}
-      </v-flex>
-    </v-layout>
-    <v-layout column>
-      <c-draggable-list-field
-        v-field="tabs"
-        :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }"
-        :disabled="disabled"
-        class="tabs-draggable-panel secondary lighten-1"
-      >
-        <tab-panel-content
-          v-for="{ tab, view, group } in tabsWithDetails"
-          :key="tab._id"
-          :tab="tab"
-          hide-actions="hideActions"
-        >
-          <template #title="">
-            <playlist-tab-item
-              :tab="tab"
-              :view="view"
-              :group="group"
-            />
-          </template>
-        </tab-panel-content>
-      </c-draggable-list-field>
-    </v-layout>
-  </v-layout>
+  <c-layout class="draggable-playlist-tabs" column>
+    <v-row class="draggable-playlist-tabs__header flex-grow-0" no-gutters>
+      <v-col class="draggable-playlist-tabs__header-cell" cols="4">
+        {{ t('common.group', 1) }}
+      </v-col>
+      <v-col class="draggable-playlist-tabs__header-cell" cols="4">
+        {{ t('common.view', 1) }}
+      </v-col>
+      <v-col class="draggable-playlist-tabs__header-cell" cols="4">
+        {{ t('common.tab', 1) }}
+      </v-col>
+    </v-row>
+
+    <c-draggable-list-field
+      :model-value="tabs"
+      :class="{
+        'tabs-draggable-panel--empty': isTabsEmpty,
+        'tabs-draggable-panel--disabled': disabled,
+      }"
+      :disabled="disabled"
+      class="tabs-draggable-panel"
+      item-key="_id"
+      @update:model-value="$emit('update:tabs', $event)"
+    >
+      <template #item="{ element }">
+        <div class="tabs-draggable-panel__item">
+          <playlist-tab-item
+            v-if="tabsDetailsById[element._id]"
+            :tab="tabsDetailsById[element._id].tab"
+            :view="tabsDetailsById[element._id].view"
+            :group="tabsDetailsById[element._id].group"
+          />
+        </div>
+      </template>
+    </c-draggable-list-field>
+  </c-layout>
 </template>
 
 <script>
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { computed } from 'vue';
 
-import TabPanelContent from '@/components/other/playlists/partials/tab-panel-content.vue';
+import { useI18n } from '@/hooks/i18n';
+
 import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue';
 
 export default {
-  components: { TabPanelContent, PlaylistTabItem },
-  mixins: [entitiesViewGroupMixin],
-  model: {
-    prop: 'tabs',
-    event: 'change',
-  },
+  components: { PlaylistTabItem },
+
   props: {
     tabs: {
+      type: Array,
+      required: true,
+    },
+    groups: {
       type: Array,
       required: true,
     },
@@ -69,51 +61,65 @@ export default {
       default: false,
     },
   },
-  computed: {
-    tabsDetailsById() {
-      return this.groups.reduce((acc, group) => {
-        group.views.forEach((view) => {
-          view.tabs.forEach((tab) => {
-            acc[tab._id] = {
-              tab,
-              group,
-              view,
-            };
+
+  emits: ['update:tabs'],
+
+  setup(props) {
+    const { t } = useI18n();
+
+    const tabsDetailsById = computed(() => props.groups.reduce((acc, group) => {
+        group.views?.forEach((view) => {
+          view.tabs?.forEach((tab) => {
+            acc[tab._id] = { tab, group, view };
           });
         });
 
         return acc;
-      }, {});
-    },
+      }, {}),
+    );
 
-    tabsWithDetails() {
-      return this.tabs
-        .map(tab => this.tabsDetailsById[tab._id])
-        .filter(Boolean);
-    },
+    const isTabsEmpty = computed(() => props.tabs.length === 0);
 
-    isTabsEmpty() {
-      return this.tabs.length === 0;
-    },
+    return {
+      t,
+      tabsDetailsById,
+      isTabsEmpty,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .tabs-draggable-panel {
-    &:not(&--disabled) ::v-deep .tab-panel-item {
+.draggable-playlist-tabs__header {
+  min-height: 24px;
+}
+
+.draggable-playlist-tabs__header-cell {
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: center;
+}
+
+.tabs-draggable-panel {
+  background: transparent !important;
+
+  &:not(.tabs-draggable-panel--disabled) {
+    :deep(.tabs-draggable-panel__item) {
       cursor: move;
     }
+  }
 
-    &--empty {
-      &:after {
-        content: '';
-        display: block;
-        height: 48px;
-        border: 4px dashed #4f6479;
-        border-radius: 5px;
-        position: relative;
-      }
+  &--empty {
+    &:after {
+      content: '';
+      display: block;
+      height: 48px;
+      border: 1px dashed #4f6479;
+      border-radius: 0;
+      position: relative;
     }
   }
+}
 </style>

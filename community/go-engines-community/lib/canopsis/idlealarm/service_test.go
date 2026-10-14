@@ -11,7 +11,6 @@ import (
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
@@ -63,13 +62,11 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 				Output: "test-output",
 			},
 		},
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: [][]pattern.FieldCondition{
+		AlarmPattern: [][]pattern.FieldCondition{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
@@ -165,13 +162,11 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 				Output: "test-output",
 			},
 		},
-		AlarmPatternFields: savedpattern.AlarmPatternFields{
-			AlarmPattern: [][]pattern.FieldCondition{
+		AlarmPattern: [][]pattern.FieldCondition{
+			{
 				{
-					{
-						Field:     "v.resource",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
-					},
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
 				},
 			},
 		},
@@ -259,13 +254,11 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 			Value: 10,
 			Unit:  "s",
 		},
-		EntityPatternFields: savedpattern.EntityPatternFields{
-			EntityPattern: [][]pattern.FieldCondition{
+		EntityPattern: [][]pattern.FieldCondition{
+			{
 				{
-					{
-						Field:     "name",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, resource),
-					},
+					Field:     "name",
+					Condition: pattern.NewStringCondition(pattern.ConditionEqual, resource),
 				},
 			},
 		},

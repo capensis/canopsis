@@ -1,21 +1,24 @@
 <template>
-  <v-radio-group
-    v-field="value"
+  <c-radio-group
+    :model-value="modelValue"
     :name="name"
-    v-bind="$attrs"
+    :label="label"
     :disabled="disabled"
+    color="primary"
+    v-bind="$attrs"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
-      :value="$constants.COLOR_INDICATOR_TYPES.state"
+      :value="COLOR_INDICATOR_TYPES.state"
       :label="$t('settings.colorIndicator.fields.displayAsSeverity')"
       color="primary"
     />
     <v-radio
-      :value="$constants.COLOR_INDICATOR_TYPES.impactState"
+      :value="COLOR_INDICATOR_TYPES.impactState"
       :label="$t('settings.colorIndicator.fields.displayAsPriority')"
       color="primary"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
@@ -23,23 +26,32 @@ import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 export default {
   inheritAttrs: false,
+
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: COLOR_INDICATOR_TYPES.state,
     },
     name: {
       type: String,
-      default: 'colorIndicator',
+      default: '',
     },
     label: {
       type: String,
-      required: false,
+      default: '',
     },
     disabled: {
       type: Boolean,
       default: false,
     },
+  },
+
+  emits: ['update:modelValue'],
+
+  data() {
+    return {
+      COLOR_INDICATOR_TYPES,
+    };
   },
 };
 </script>

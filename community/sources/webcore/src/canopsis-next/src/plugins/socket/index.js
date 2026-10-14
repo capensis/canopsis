@@ -1,13 +1,10 @@
 import Socket from './services/socket';
 
 export default {
-  install(Vue) {
+  install(app) {
     const socket = new Socket();
 
-    Object.defineProperty(Vue.prototype, '$socket', {
-      get() {
-        return socket;
-      },
-    });
+    app.config.globalProperties.$socket = socket;
+    app.provide('$socket', socket);
   },
 };

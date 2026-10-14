@@ -1,8 +1,7 @@
 <template>
   <c-lazy-search-field
-    v-bind="$attrs"
-    :value="multiple ? selectedItems : selectedItems[0]"
-    :label="label || $t('alarm.metaAlarm')"
+    :value="multiple ? selectedItems : selectedItem"
+    :label="label || t('alarm.metaAlarm')"
     :loading="wholePending"
     :items="items"
     :name="name"
@@ -16,12 +15,12 @@
     :multiple="multiple"
     with-type
     return-object
-    @input="changeSelectedItems"
+    @update:value="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   >
-    <template #no-data="">
+    <template #no-data>
       <slot name="no-data" />
     </template>
   </c-lazy-search-field>
@@ -31,13 +30,10 @@
 import { toRef } from 'vue';
 
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
 import { useMetaAlarm } from '@/hooks/store/modules/meta-alarm';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: [Array, String, Object],
@@ -61,7 +57,7 @@ export default {
     },
     limit: {
       type: Number,
-      default: 20,
+      default: 100,
     },
     disabled: {
       type: Boolean,
@@ -92,11 +88,16 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:value', 'update:modelValue', 'update:selected-items'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { fetchMetaAlarmsListWithoutStore } = useMetaAlarm();
 
     const {
       selectedItems,
+      selectedItem,
       items,
       wholePending,
       hasMoreItems,
@@ -109,28 +110,37 @@ export default {
       fetchHandler: async (fetchParams) => {
         const data = await fetchMetaAlarmsListWithoutStore(fetchParams);
 
-        return {
-          data,
-          meta: {
-            total_count: data.length,
-            page_count: 1,
-          },
-        };
+        if (Array.isArray(data)) {
+          return {
+            data,
+            meta: {
+              total_count: data.length,
+              page_count: 1,
+            },
+          };
+        }
+
+        return data;
       },
       idKey: toRef(props, 'itemValue'),
       value: toRef(props, 'value'),
       addable: toRef(props, 'addable'),
       multiple: toRef(props, 'multiple'),
       returnObject: toRef(props, 'returnObject'),
-      limit: 100,
+      initialQuery: {
+        page: 1,
+        limit: props.limit,
+        search: '',
+      },
     }, emit);
 
     return {
+      t,
       selectedItems,
+      selectedItem,
       items,
       wholePending,
       hasMoreItems,
-
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,

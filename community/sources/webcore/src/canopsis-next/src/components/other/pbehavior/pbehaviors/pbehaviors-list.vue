@@ -7,23 +7,22 @@
     :total-items="totalItems"
     :select-all="removable || updatable"
     :advanced-search-attributes="advancedSearchAttributes"
+    expand
     advanced-search
     advanced-pagination
-    expand
     @update:options="$emit('update:options', $event)"
   >
     <template #toolbar="">
-      <v-layout class="gap-3" justify-end align-center>
-        <v-flex v-if="shownUserTimezone" xs3>
-          <c-timezone-field
-            v-model="timezone"
-            server
-            hide-details
-          />
-        </v-flex>
+      <c-layout
+        class="pbehaviors-list__toolbar-actions mt-3"
+        gap="3"
+        align="center"
+        justify="end"
+      >
         <pbehaviors-list-alarm-filtering-btn class="ma-0" @refresh="$emit('refresh')" />
-      </v-layout>
+      </c-layout>
     </template>
+
     <template #mass-actions="{ selected, clearSelected }">
       <c-table-mass-actions-panel
         :items="selected"
@@ -31,54 +30,68 @@
         :enablable="updatable"
         :disablable="updatable"
         pbehavior
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #name="{ item }">
-      <c-ellipsis :text="item.name" />
+      <span class="text-truncate">{{ item.name }}</span>
     </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+
     <template #tstart="{ item }">
       {{ formatIntervalDate(item, 'tstart') }}
     </template>
+
     <template #tstop="{ item }">
       {{ formatIntervalDate(item, 'tstop') }}
     </template>
+
     <template #rrule_end="{ item }">
       {{ formatRruleEndDate(item) }}
     </template>
+
     <template #last_alarm_date="{ item }">
-      {{ item.last_alarm_date | timezone(timezone) }}
+      {{ timezoneDateToString(item.last_alarm_date) }}
     </template>
+
     <template #pattern_ms="{ item }">
-      {{ item.pattern_ms | duration(durationFormat, millisecondUnit) }}
+      {{ durationToString(item.pattern_ms) }}
     </template>
+
     <template #pattern_exec_at="{ item }">
-      {{ item.pattern_exec_at | timezone(timezone) }}
+      {{ timezoneDateToString(item.pattern_exec_at) }}
     </template>
+
     <template #created="{ item }">
-      {{ item.created | timezone(timezone) }}
+      {{ timezoneDateToString(item.created) }}
     </template>
+
     <template #updated="{ item }">
-      {{ item.updated | timezone(timezone) }}
+      {{ timezoneDateToString(item.updated) }}
     </template>
+
     <template #rrule="{ item }">
       <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
     </template>
+
     <template #type.icon_name="{ item }">
       <v-icon color="primary">
-        {{ item.type.icon_name }}
+        {{ item.type?.icon_name }}
       </v-icon>
     </template>
+
     <template #is_active_status="{ item }">
-      <v-icon :color="item.is_active_status ? 'success' : 'error'">
-        $vuetify.icons.settings_sync
-      </v-icon>
+      <v-icon
+        :color="item.is_active_status ? 'success' : 'error'"
+        icon="$vuetify.icons.settings_sync"
+      />
     </template>
+
     <template #actions="{ item }">
       <pbehavior-actions
         :pbehavior="item"
@@ -88,6 +101,7 @@
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #expand="{ item }">
       <pbehaviors-list-expand-item :pbehavior="item" />
     </template>
@@ -97,7 +111,15 @@
 <script>
 import { computed } from 'vue';
 
-import { PBEHAVIOR_LIST_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
+import {
+  DATETIME_FORMATS,
+  PBEHAVIOR_LIST_FIELDS,
+  PATTERN_DURATION_FORMAT,
+  TIME_UNITS,
+} from '@/constants';
+
+import { convertDateToTimezoneDateString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -105,16 +127,16 @@ import { usePbehaviorAdvancedSearchAttributes } from '@/components/common/search
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
 import PbehaviorActions from './partials/pbehavior-actions.vue';
-import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 import PbehaviorsListAlarmFilteringBtn from './partials/pbehaviors-list-alarm-filtering-btn.vue';
+import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 
 export default {
-  inject: ['$system'],
   components: {
     PbehaviorActions,
     PbehaviorsListExpandItem,
     PbehaviorsListAlarmFilteringBtn,
   },
+
   props: {
     pbehaviors: {
       type: Array,
@@ -145,13 +167,15 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:options', 'refresh'],
+
   setup() {
     const durationFormat = PATTERN_DURATION_FORMAT;
     const millisecondUnit = TIME_UNITS.millisecond;
 
-    const { t, tc } = useI18n();
-    const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
-
+    const { t } = useI18n();
+    const { timezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
     const { attributes: advancedSearchAttributes } = usePbehaviorAdvancedSearchAttributes();
 
     const headers = computed(() => [
@@ -167,26 +191,32 @@ export default {
       { text: t('common.created'), value: PBEHAVIOR_LIST_FIELDS.created },
       { text: t('common.updated'), value: PBEHAVIOR_LIST_FIELDS.updated },
       { text: t('pbehavior.lastAlarmDate'), value: PBEHAVIOR_LIST_FIELDS.lastAlarmDate },
-      { text: t('pbehavior.alarmCount'), value: PBEHAVIOR_LIST_FIELDS.alarmCount, sortable: false },
+      { text: t('pbehavior.alarmCount'), value: PBEHAVIOR_LIST_FIELDS.alarmCount },
       { text: t('pbehavior.alarmFilteringTime'), value: PBEHAVIOR_LIST_FIELDS.patternMs },
       { text: t('pbehavior.lastFilteringDate'), value: PBEHAVIOR_LIST_FIELDS.patternExecAt },
-      { text: tc('common.icon', 1), value: PBEHAVIOR_LIST_FIELDS.typeIcon },
+      { text: t('common.icon', 1), value: PBEHAVIOR_LIST_FIELDS.typeIcon },
       { text: t('common.status'), value: PBEHAVIOR_LIST_FIELDS.status, sortable: false },
       { text: t('common.actionsLabel'), value: PBEHAVIOR_LIST_FIELDS.actions, sortable: false },
     ]);
 
+    const timezoneDateToString = date => convertDateToTimezoneDateString(date, timezone.value, DATETIME_FORMATS.long);
+    const durationToString = duration => convertDurationToString(duration, durationFormat, millisecondUnit);
+
     return {
-      durationFormat,
-      millisecondUnit,
-
       advancedSearchAttributes,
-      timezone,
-      shownUserTimezone,
       headers,
-
       formatIntervalDate,
       formatRruleEndDate,
+      timezoneDateToString,
+      durationToString,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pbehaviors-list__toolbar-actions {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+</style>

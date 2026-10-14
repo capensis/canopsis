@@ -18,12 +18,14 @@ export default {
   },
   entity: {
     title: 'Stockage des données d\'entités',
-    titleHelp: 'Toutes les entités désactivées avec des alarmes associées peuvent être archivées (déplacées vers une collection séparée) et/ou supprimées définitivement.',
+    titleHelp:
+      'Toutes les entités désactivées avec des alarmes associées peuvent être archivées (déplacées vers une collection séparée) et/ou supprimées définitivement.',
     archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
-    archiveDependenciesHelp: '<strong>Pour les connecteurs :</strong>\n'
-      + '<ul><li>tous les <strong class="font-italic">composants</strong> et <strong class="font-italic">ressources</strong> impactants et dépendants seront archivés ou supprimés définitivement.</li></ul>\n'
-      + '<strong>Pour les composants :</strong>\n'
-      + '<ul><li>toutes les <strong class="font-italic">ressources</strong> dépendantes seront également archivées ou supprimées définitivement.</li></ul>',
+    archiveDependenciesHelp:
+      '<strong>Pour les connecteurs :</strong>\n' +
+      '<ul><li>tous les <strong class="font-italic">composants</strong> et <strong class="font-italic">ressources</strong> impactants et dépendants seront archivés ou supprimés définitivement.</li></ul>\n' +
+      '<strong>Pour les composants :</strong>\n' +
+      '<ul><li>toutes les <strong class="font-italic">ressources</strong> dépendantes seront également archivées ou supprimées définitivement.</li></ul>',
     archiveDisabled: 'Archiver les entités désactivées',
   },
   entityUnlinked: {
@@ -40,7 +42,8 @@ export default {
   pbehavior: {
     title: 'Comportements périodiques',
     deleteAfter: 'Supprimer les PBehavior inactifs',
-    deleteAfterHelpText: 'Les comportements périodiques inactifs seront supprimés après la période définie depuis le dernier événement',
+    deleteAfterHelpText:
+      'Les comportements périodiques inactifs seront supprimés après la période définie depuis le dernier événement',
   },
   healthCheck: {
     title: 'Bilan de santé',
@@ -50,9 +53,10 @@ export default {
     title: 'Webhooks',
     deleteAfter: 'Supprimer l\'historique des requêtes webhooks',
     logCredentials: 'Afficher les données d\'authentification en clair dans les journaux',
-    logCredentialsHelpText: 'Affecte la façon dont les mots de passe, tokens et données d\'authentification apparaissent dans les logs. \n'
-      + '<ul><li>activé : affichés en clair (non recommandé)</li>'
-      + '<li>désactivé : masqués avec ***</li></ul>',
+    logCredentialsHelpText:
+      'Affecte la façon dont les mots de passe, tokens et données d\'authentification apparaissent dans les logs. \n' +
+      '<ul><li>activé : affichés en clair (non recommandé)</li>' +
+      '<li>désactivé : masqués avec ***</li></ul>',
   },
   metrics: {
     title: 'Métriques internes (KPI, performances moteurs)',
@@ -86,6 +90,7 @@ export default {
   llmChat: {
     title: 'Discussions IA',
     deleteHistory: 'Supprimer l\'historique des discussions IA',
+    deleteStats: 'Supprimer les statistiques des modèles IA',
   },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',

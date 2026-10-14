@@ -1,58 +1,59 @@
 <template>
   <div class="kpi-rating-toolbar">
-    <v-layout
-      class="ml-4 my-4"
-      wrap
-    >
+    <c-layout class="ml-4 my-4" gap="3" wrap>
       <c-quick-date-interval-field
-        v-field="query.interval"
+        :interval="query.interval"
         :min="minDate"
         :quick-ranges="quickRanges"
-        class="mr-4"
+        @update:interval="updateQueryField('interval', $event)"
       />
       <c-filter-field
-        v-field="query.filter"
+        :value="query.filter"
         :disabled="isUserMetric"
-        class="mr-4 kpi-rating-toolbar__filters"
+        class="kpi-rating-toolbar__filters"
+        @update:value="updateQueryField('filter', $event)"
       />
       <kpi-rating-criteria-field
         :value="query.criteria"
-        class="mr-4 kpi-rating-toolbar__criteria"
+        class="kpi-rating-toolbar__criteria"
         mandatory
-        @input="updateCriteria"
+        @update:value="updateCriteria"
       />
       <kpi-rating-metric-field
-        v-field="query.metric"
+        :value="query.metric"
         :type="criteriaType"
-        class="mr-4 kpi-rating-toolbar__metric"
+        class="kpi-rating-toolbar__metric"
         hide-details
+        @update:value="updateQueryField('metric', $event)"
       />
       <c-items-per-page-field
-        v-field="query.itemsPerPage"
+        :model-value="query.itemsPerPage"
         class="mt-4"
+        @update:model-value="updateQueryField('itemsPerPage', $event)"
       />
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
 <script>
-import { KPI_RATING_SETTINGS_TYPES, METRICS_QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
+import {
+  KPI_RATING_SETTINGS_TYPES,
+  METRICS_QUICK_RANGES,
+  USER_METRIC_PARAMETERS,
+} from '@/constants';
 
 import { isUserCriteria } from '@/helpers/entities/metric/form';
 import { getAvailableMetricByCriteria } from '@/helpers/entities/metric/list';
-
-import { formMixin } from '@/mixins/form';
 
 import KpiRatingCriteriaField from '../form/fields/kpi-rating-criteria-field.vue';
 import KpiRatingMetricField from '../form/fields/kpi-rating-metric-field.vue';
 
 export default {
-  components: { KpiRatingMetricField, KpiRatingCriteriaField },
-  mixins: [formMixin],
-  model: {
-    prop: 'query',
-    event: 'input',
+  components: {
+    KpiRatingCriteriaField,
+    KpiRatingMetricField,
   },
+
   props: {
     query: {
       type: Object,
@@ -63,6 +64,9 @@ export default {
       required: false,
     },
   },
+
+  emits: ['update:query'],
+
   computed: {
     quickRanges() {
       return Object.values(METRICS_QUICK_RANGES);
@@ -78,9 +82,17 @@ export default {
         : KPI_RATING_SETTINGS_TYPES.entity;
     },
   },
+
   methods: {
+    updateQueryField(field, value) {
+      this.$emit('update:query', {
+        ...this.query,
+        [field]: value,
+      });
+    },
+
     updateCriteria(criteria) {
-      this.updateModel({
+      this.$emit('update:query', {
         ...this.query,
         metric: getAvailableMetricByCriteria(this.query.metric, criteria?.label),
         criteria,
@@ -92,7 +104,8 @@ export default {
 
 <style scoped lang="scss">
 .kpi-rating-toolbar {
-  &__filters, &__criteria {
+  &__filters,
+  &__criteria {
     max-width: 200px;
   }
 

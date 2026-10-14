@@ -1,28 +1,38 @@
 <template>
-  <v-layout class="gap-3" column>
+  <div>
     <request-with-token-form
-      v-field="webhook"
-      :name="`${name}.request`"
+      :form="modelValue"
+      :name="requestFormName"
       :url-variables="templateVars[webhookTemplateVarsKey]"
       :headers-variables="templateVars[webhookTemplateVarsKey]"
       :payload-variables="templateVars[webhookTemplateVarsKey]"
-      class="c-alternative-bg-panel pa-5"
+      :depth="depth"
       with-multiple-urls
+      @update:form="$emit('update:modelValue', $event)"
     />
+
     <declare-ticket-rule-ticket-mapping-field
-      v-field="webhook"
+      :form="modelValue"
+      :name="`${name}.declare_ticket`"
+      :depth="depth"
       :variables="templateVars.ticket"
-      class="c-alternative-bg-panel pa-5"
+      hide-empty-response
+      ticket-id-required
+      only-one-ticket-id
       with-ticket-system-name
+      @update:form="$emit('update:modelValue', $event)"
     />
+
     <declare-ticket-rule-check-ticket-status-field
-      v-if="webhook.declare_ticket?.enabled"
-      v-field="webhook.declare_ticket.check_ticket_status"
+      v-if="modelValue.declare_ticket?.enabled"
+      :form="modelValue.declare_ticket.check_ticket_status"
       :name="`${name}.declare_ticket.check_ticket_status`"
       :template-vars="templateVars"
-      class="c-alternative-bg-panel pa-5"
+      :depth="depth"
+      top-border
+      @update:form="updateField('declare_ticket.check_ticket_status', $event)"
     />
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -31,8 +41,8 @@ import { computed } from 'vue';
 import { useModelField } from '@/hooks/form/model-field';
 
 import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
-import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 import DeclareTicketRuleCheckTicketStatusField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-check-ticket-status-field.vue';
+import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
   components: {
@@ -40,43 +50,42 @@ export default {
     DeclareTicketRuleTicketMappingField,
     DeclareTicketRuleCheckTicketStatusField,
   },
-  model: {
-    prop: 'webhook',
-    event: 'input',
-  },
+
   props: {
-    webhook: {
+    modelValue: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     name: {
       type: String,
-      required: true,
+      default: 'parameters',
     },
     hasPrevious: {
       type: Boolean,
       default: false,
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
     templateVars: {
       type: Object,
       default: () => ({}),
     },
   },
+
+  emits: ['update:modelValue'],
+
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
-
-    const webhookTemplateVarsKey = computed(() => (props.hasPrevious ? 'webhook' : 'first_webhook'));
-
-    /**
-     * Updates the multiple_urls field in the webhook form
-     *
-     * @param {boolean} multiple - Whether multiple URLs are enabled for the webhook
-     */
-    const updateMultiple = multiple => updateField('multiple_urls', multiple);
+    const requestFormName = computed(() => `${props.name}.request`);
+    const webhookTemplateVarsKey = computed(() => props.hasPrevious ? 'webhook' : 'first_webhook',
+    );
 
     return {
+      requestFormName,
       webhookTemplateVarsKey,
-      updateMultiple,
+      updateField,
     };
   },
 };

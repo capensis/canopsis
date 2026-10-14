@@ -7,7 +7,6 @@
       :rx="radiusX"
       :ry="radiusY"
       :cursor="readonly ? '' : 'move'"
-      v-on="$listeners"
     />
     <text-editor
       ref="editor"

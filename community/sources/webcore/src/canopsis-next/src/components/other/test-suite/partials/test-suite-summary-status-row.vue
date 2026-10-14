@@ -1,17 +1,19 @@
 <template>
   <c-information-block-row :label="label">
-    <v-layout>
-      <v-flex xs2>
+    <v-row>
+      <v-col cols="2">
         {{ count }}
-      </v-flex>
-      <v-flex v-if="testsStatusPercent">
-        {{ testsStatusPercent | percentage(precision) }}
-      </v-flex>
-    </v-layout>
+      </v-col>
+      <v-col v-if="testsStatusPercent || testsStatusPercent === 0">
+        {{ convertNumberToRoundedPercentString(testsStatusPercent, precision) }}
+      </v-col>
+    </v-row>
   </c-information-block-row>
 </template>
 
 <script>
+import { convertNumberToRoundedPercentString } from '@/helpers/string';
+
 export default {
   props: {
     label: {
@@ -39,6 +41,9 @@ export default {
 
       return this.count / this.total;
     },
+  },
+  methods: {
+    convertNumberToRoundedPercentString,
   },
 };
 </script>

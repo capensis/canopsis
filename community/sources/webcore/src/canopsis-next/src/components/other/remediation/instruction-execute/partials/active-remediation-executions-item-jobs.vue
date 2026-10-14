@@ -1,16 +1,17 @@
 <template>
-  <v-layout class="gap-1">
+  <c-layout gap="1">
     <v-chip
       v-for="chip in chips"
       :key="chip.key"
       :color="chip.color"
       class="cursor-pointer"
-      text-color="white"
-      small
+      size="small"
     >
-      <span class="text-ucfirst">{{ chip.text }}</span>
+      <span class="text-ucfirst">
+        {{ chip.text }}
+      </span>
     </v-chip>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

@@ -1,12 +1,12 @@
 <template>
   <widget-settings-item :title="$t('settings.filterOnOpenResolved')">
-    <v-layout>
-      <v-radio-group
+    <c-layout>
+      <c-radio-group
         v-model="localValue"
         class="mt-0"
         name="opened"
+        color="primary"
         hide-details
-        mandatory
       >
         <v-radio
           v-for="type in types"
@@ -15,51 +15,51 @@
           :value="type.value"
           color="primary"
         />
-      </v-radio-group>
-    </v-layout>
+      </c-radio-group>
+    </c-layout>
   </widget-settings-item>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { ALARMS_OPENED_VALUES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
+
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       required: false,
     },
   },
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const { updateModel } = useModelField(props, emit);
 
-    const localValue = computed({
-      get: () => String(props.value),
-      set: newValue => updateModel({
-        true: true,
-        false: false,
-        null: null,
-      }[newValue]),
-    });
+  emits: ['update:modelValue'],
 
-    const types = computed(() => Object.values(ALARMS_OPENED_VALUES).map(value => ({
-      value: String(value),
-      label: t(`settings.openedTypes.${value}`),
-    })));
+  computed: {
+    localValue: {
+      get() {
+        return String(this.modelValue);
+      },
+      set(value) {
+        this.$emit(
+          'update:modelValue',
+          {
+            true: true,
+            false: false,
+            null: null,
+          }[value],
+        );
+      },
+    },
 
-    return {
-      localValue,
-      types,
-    };
+    types() {
+      return Object.values(ALARMS_OPENED_VALUES).map(value => ({
+        value: String(value),
+        label: this.$t(`settings.openedTypes.${value}`),
+      }));
+    },
   },
 };
 </script>

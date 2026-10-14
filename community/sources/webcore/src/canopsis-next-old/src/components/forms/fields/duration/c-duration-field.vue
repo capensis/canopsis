@@ -1,0 +1,164 @@
+<template>
+  <v-layout class="gap-2">
+    <v-flex :xs6="sameWidth" :xs7="!sameWidth">
+      <c-number-field
+        v-field="duration.value"
+        :label="label || $t('common.duration')"
+        :disabled="disabled"
+        :name="valueFieldName"
+        :required="isRequired"
+        :min="min"
+        :max="max"
+        :hide-details="hideDetails"
+        :autofocus="autofocus"
+      >
+        <template #append="">
+          <slot name="append" />
+        </template>
+      </c-number-field>
+    </v-flex>
+    <v-flex :xs6="sameWidth" :xs5="!sameWidth">
+      <v-select
+        v-validate="unitValidateRules"
+        :value="duration.unit"
+        :items="availableUnits"
+        :disabled="disabled"
+        :label="unitsLabel"
+        :error-messages="errors.collect(unitFieldName)"
+        :name="unitFieldName"
+        :clearable="clearable"
+        :hide-details="hideDetails"
+        @change="updateUnit"
+      />
+    </v-flex>
+  </v-layout>
+</template>
+
+<script>
+import { isNumber } from 'lodash';
+
+import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS, MEDIUM_AVAILABLE_TIME_UNITS } from '@/constants';
+
+import { formMixin } from '@/mixins/form';
+
+export default {
+  inject: ['$validator'],
+  mixins: [formMixin],
+  model: {
+    prop: 'duration',
+    event: 'input',
+  },
+  props: {
+    duration: {
+      type: Object,
+      default: () => ({
+        value: 1,
+        unit: AVAILABLE_TIME_UNITS.minute.value,
+      }),
+    },
+    label: {
+      type: String,
+      default: null,
+    },
+    unitsLabel: {
+      type: String,
+      default: null,
+    },
+    units: {
+      type: Array,
+      default: null,
+    },
+    name: {
+      type: String,
+      default: 'duration',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    min: {
+      type: Number,
+      default: 1,
+    },
+    max: {
+      type: Number,
+      required: false,
+    },
+    long: {
+      type: Boolean,
+      default: false,
+    },
+    medium: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
+    sameWidth: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    valueFieldName() {
+      return `${this.name}.value`;
+    },
+
+    unitFieldName() {
+      return `${this.name}.unit`;
+    },
+
+    availableUnits() {
+      if (this.units) {
+        return this.units;
+      }
+
+      const units = {
+        true: SHORT_AVAILABLE_TIME_UNITS,
+        [this.long]: AVAILABLE_TIME_UNITS,
+        [this.medium]: MEDIUM_AVAILABLE_TIME_UNITS,
+      }.true;
+
+      return Object.values(units).map(({ value, text }) => ({
+        value,
+        text: this.$tc(text, this.duration.value || 0),
+      }));
+    },
+
+    isRequired() {
+      return this.required || isNumber(this.duration.value) || Boolean(this.duration.unit);
+    },
+
+    unitValidateRules() {
+      return { required: this.isRequired };
+    },
+  },
+  methods: {
+    updateUnit(unit) {
+      if (unit) {
+        this.updateField('unit', unit);
+      } else {
+        this.updateModel({
+          ...this.duration,
+          unit: undefined,
+          value: undefined,
+        });
+      }
+    },
+  },
+};
+</script>

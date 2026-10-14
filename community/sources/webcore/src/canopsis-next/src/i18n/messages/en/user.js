@@ -17,6 +17,7 @@ export default {
   navigationType: 'Groups navigation type',
   active: 'Session active',
   activeConnects: 'Connections count',
+  showTopUserByConnections: 'Show top 1 user by connections',
   navigationTypes: {
     [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
     [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',

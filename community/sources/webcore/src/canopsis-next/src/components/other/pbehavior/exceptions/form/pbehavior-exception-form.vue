@@ -1,54 +1,56 @@
 <template>
-  <v-layout class="gap-2" column>
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
-      hide-details
-      with-background
-    />
+  <c-layout gap="3" column>
+    <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
+
     <c-name-field
-      v-field="form.name"
+      v-model="name"
+      :label="t('modals.createPbehaviorException.fields.name')"
       autofocus
       required
     />
-    <v-text-field
-      v-field="form.description"
-      v-validate="'required'"
-      :label="$t('modals.createPbehaviorException.fields.description')"
-      :error-messages="errors.collect('description')"
-      name="description"
-    />
-    <pbehavior-exceptions-field
-      v-field="form.exdates"
-      with-exdate-type
-    >
-      <template #no-data="">
-        <c-alert type="info">
-          {{ $t('modals.createPbehaviorException.emptyExdates') }}
-        </c-alert>
-      </template>
-    </pbehavior-exceptions-field>
-  </v-layout>
+
+    <c-form-block>
+      <c-form-block-row :label="t('modals.createPbehaviorException.fields.description')" indented>
+        <c-description-field v-model="description" name="description" required />
+      </c-form-block-row>
+
+      <c-form-block-row
+        :label="t('pbehavior.exdates.title')"
+        :align="!exdates.length ? 'center' : undefined"
+        indented
+      >
+        <pbehavior-exceptions-field
+          :exdates="exdates"
+          with-exdate-type
+          required
+          @update:exdates="exdates = $event"
+        />
+      </c-form-block-row>
+    </c-form-block>
+  </c-layout>
 </template>
 
 <script>
-import { formMixin, formArrayMixin } from '@/mixins/form';
+import { useFormArray, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { PbehaviorExceptionsField },
-  mixins: [formMixin, formArrayMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
+
+  setup() {
+    const { t } = useI18n();
+    const { name, description, visible } = useFormModels(['name', 'description', 'visible']);
+    const exdates = useFormArray('exdates');
+
+    return {
+      t,
+      name,
+      description,
+      visible,
+      exdates,
+    };
   },
 };
 </script>

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <!---->
+  <div
+    form="[object Object]"
+  >
+    <pbehavior-general-form-stub
+      depth="0"
+      form="[object Object]"
+      name=""
+      nocomments="true"
+      noenabled="true"
+      withstartontrigger="true"
+    />
+    <pbehavior-patterns-form-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <c-enabled-field-stub
+    hide-details=""
+    with-background=""
+  />
+  <div
+    form="[object Object]"
+  >
+    <pbehavior-general-form-stub
+      depth="0"
+      form="[object Object]"
+      name=""
+    />
+    <pbehavior-patterns-form-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;

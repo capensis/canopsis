@@ -1,105 +1,82 @@
 <template>
-  <div>
-    <snmp-rule-form-field-title :label="$t('snmpRule.oid')" />
-    <v-layout wrap>
-      <v-flex
-        class="pr-1"
-        xs6
-      >
-        <v-autocomplete
-          v-validate="'required'"
-          :value="form.moduleName"
-          :items="modules"
-          :search-input.sync="searchInput"
-          :loading="modulesPending"
-          :placeholder="$t('snmpRule.module')"
-          :error-messages="errors.collect('moduleName')"
-          class="pt-0"
-          item-text="moduleName"
-          item-value="_id"
-          name="moduleName"
-          hide-no-data
-          hide-details
-          @change="selectModule"
-        />
-      </v-flex>
-      <v-flex
-        class="pl-1"
-        xs6
-      >
-        <v-autocomplete
-          :value="form.mib"
-          :items="moduleMibs"
-          :loading="moduleMibsPending"
-          :menu-props="{ offsetY: true }"
-          :error-messages="errors.collect(mibName)"
-          :name="mibName"
-          class="pt-0"
-          item-text="name"
-          item-value="_id"
-          hide-no-data
-          hide-details
-          return-object
-          @change="selectMib"
-        />
-      </v-flex>
-    </v-layout>
-  </div>
+  <v-row density="comfortable">
+    <v-col cols="6">
+      <c-autocomplete
+        v-model="moduleName"
+        v-model:search="searchInput"
+        :items="modules"
+        :loading="modulesPending"
+        :placeholder="t('snmpRule.module')"
+        class="pt-0"
+        item-title="moduleName"
+        item-value="moduleName"
+        name="moduleName"
+        hide-no-data
+        hide-details
+        required
+        @update:model-value="selectModule"
+      />
+    </v-col>
+    <v-col cols="6">
+      <c-autocomplete
+        v-model="mib"
+        :items="moduleMibs"
+        :loading="moduleMibsPending"
+        :menu-props="{ offsetY: true }"
+        class="pt-0"
+        item-title="name"
+        item-value="_id"
+        name="oid.mibName"
+        hide-no-data
+        hide-details
+        return-object
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import { find, sortBy, throttle } from 'lodash';
-import {
-  ref,
-  watch,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useSnmpMib } from '@/hooks/store/modules/snmp-mib';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
-
-import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { SnmpRuleFormFieldTitle },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
       required: true,
     },
   },
-  setup(props, { emit }) {
-    const mibName = 'oid.mibName';
 
+  emits: ['update:form'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
     const modules = ref([]);
     const moduleMibs = ref([]);
     const searchInput = ref('');
 
     const { updateField } = useModelField(props, emit);
-    const { fetchSnmpMibList } = useSnmpMib();
+    const { fetchSnmpMibsList } = useSnmpMib();
 
-    const {
-      attachRequiredRule,
-      detachRequiredRule,
-      validateRequiredRule,
-    } = useValidationAttachRequired(mibName);
+    const moduleName = computed({
+      get: () => props.form.moduleName,
+      set: value => updateField('moduleName', value),
+    });
 
-    const {
-      pending: modulesPending,
-      handler: fetchModulesList,
-    } = usePendingHandler(async () => {
-      const { data } = await fetchSnmpMibList({
+    const mib = computed({
+      get: () => props.form.mib,
+      set: value => updateField('mib', value),
+    });
+
+    const { pending: modulesPending, handler: fetchModulesList } = usePendingHandler(async () => {
+      const { data } = await fetchSnmpMibsList({
         params: {
           search: searchInput.value,
 
@@ -115,69 +92,48 @@ export default {
 
     const throttledFetchModulesList = throttle(fetchModulesList, 500);
 
-    const {
-      pending: moduleMibsPending,
-      handler: selectModule,
-    } = usePendingHandler(async (module) => {
-      updateField('moduleName', module);
+    const { pending: moduleMibsPending, handler: selectModule } = usePendingHandler(
+      async (module) => {
+        updateField('moduleName', module);
 
-      const { data } = await fetchSnmpMibList({
-        params: {
-          limit: MAX_LIMIT,
-          nodetype: 'notification',
-          moduleName: module,
-        },
-      });
+        const { data } = await fetchSnmpMibsList({
+          params: {
+            limit: MAX_LIMIT,
+            nodetype: 'notification',
+            moduleName: module,
+          },
+        });
 
-      moduleMibs.value = sortBy(data, 'name');
+        moduleMibs.value = sortBy(data, 'name');
 
-      if (props.form.mib?.name) {
-        updateField('mib', find(data, { name: props.form.mib.name }));
-      }
-    });
-
-    /**
-     * Select a MIB and update the form field.
-     *
-     * @param {Object} mib - The MIB object to be selected.
-     * @returns {void}
-     */
-    const selectMib = (mib) => {
-      updateField('mib', mib);
-
-      nextTick(validateRequiredRule);
-    };
-
-    /**
-     * Check if a MIB name exists.
-     *
-     * @returns {boolean} Returns true if the MIB name exists, otherwise false.
-     */
-    const isMibNameExists = () => !!props.form.mib?.name;
+        if (props.form.mib?.name) {
+          updateField('mib', find(data, { name: props.form.mib.name }));
+        }
+      },
+    );
 
     watch(searchInput, throttledFetchModulesList);
 
     onMounted(() => {
+      fetchModulesList();
+
       if (props.form.moduleName) {
         selectModule(props.form.moduleName);
       }
-
-      attachRequiredRule(isMibNameExists);
     });
 
-    onBeforeUnmount(detachRequiredRule);
+    onBeforeUnmount(() => throttledFetchModulesList.cancel());
 
     return {
-      mibName,
-
+      t,
+      moduleName,
+      mib,
       modules,
       modulesPending,
       moduleMibs,
       moduleMibsPending,
       searchInput,
-
       selectModule,
-      selectMib,
     };
   },
 };

@@ -1,9 +1,9 @@
-import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TEMPLATES_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
     titleButtons: {
-      minimizeTooltip: 'Vous avez déjà réduit la fenêtre modale',
+      minimizeTooltip: 'Réduire',
     },
   },
   contextInfos: {
@@ -59,7 +59,8 @@ export default {
     },
     duplicate: {
       title: 'Dupliquer une vue - {viewTitle}',
-      infoMessage: 'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
+      infoMessage:
+        'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
     },
     success: {
       create: 'Nouvelle vue créée !',
@@ -131,6 +132,7 @@ export default {
           noEnding: 'Sans fin',
           startOnTrigger: 'Démarrer sur déclencheur',
           inherited: 'S\'applique à toutes les entités dépendantes',
+          reasonAndType: 'Raison et type',
         },
       },
       filter: {
@@ -155,12 +157,20 @@ export default {
     },
     success: {
       create: 'Comportement périodique créé avec succès !',
-      remove: 'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
+      remove:
+        'Comportement périodique supprimé avec succès ! Vous devrez peut-être attendre 60 s pour le voir dans l\'interface.',
     },
-    cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
+    cancelConfirmation:
+      'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
   },
   createPause: {
     title: 'Mettre en pause',
+  },
+  createEntityPauseEvent: {
+    title: 'Mettre l\'entité en pause',
+  },
+  createEntityResumeEvent: {
+    title: 'Réactiver l\'entité',
   },
   createAckRemove: {
     title: 'Annuler l\'acquittement',
@@ -225,6 +235,12 @@ export default {
   textEditor: {
     title: 'Éditeur de texte',
   },
+  textEditorPaste: {
+    title: 'Coller en HTML',
+    text: 'Le contenu collé semble être du HTML. Comment souhaitez-vous l\'insérer ?',
+    pasteAsHtml: 'Coller en HTML',
+    pasteAsPlainText: 'Coller en texte brut',
+  },
   createWidget: {
     title: 'Sélectionnez un widget',
     types: {
@@ -245,6 +261,9 @@ export default {
       },
       [WIDGET_TYPES.counter]: {
         title: 'Compteur',
+      },
+      [WIDGET_TYPES.clock]: {
+        title: 'Horloge',
       },
       [WIDGET_TYPES.testingWeather]: {
         title: 'Scénarios Junit',
@@ -432,6 +451,11 @@ export default {
     errors: {
       emptyInfos: 'Au moins une information doit être ajoutée.',
     },
+    infosSection: {
+      title: 'Information',
+      addInfos: 'Ajouter des informations',
+      addInfosFromTemplate: 'Ajouter des informations depuis un modèle',
+    },
     steps: {
       infos: {
         title: 'Informations',
@@ -440,35 +464,37 @@ export default {
         title: 'Modèles',
         alarmPatterns: 'Modèles des alarmes',
         entityPatterns: 'Modèles des entités',
-        validationError: 'Au moins un modèle est requis. Merci d\'ajouter un modèle sur les alarmes et/ou un modèle sur les événements',
+        validationError:
+          'Au moins un modèle est requis. Merci d\'ajouter un modèle sur les alarmes et/ou un modèle sur les événements',
       },
     },
   },
-  createDynamicInfoInformation: {
-    create: {
-      title: 'Ajouter une information à la règle d\'information dynamique',
-    },
-  },
-  dynamicInfoTemplatesList: {
-    title: 'Modèles d\'informations dynamiques',
-  },
   createDynamicInfoTemplate: {
     create: {
-      title: 'Créer un modèle d\'informations dynamiques',
+      title: 'Créer un modèle d\'information dynamique',
     },
     edit: {
-      title: 'Éditer un modèle d\'informations dynamiques',
+      title: 'Modifier un modèle d\'information dynamique',
     },
     fields: {
-      names: 'Attributs',
+      names: 'Noms',
     },
     buttons: {
-      addName: 'Ajouter un attribut',
+      addName: 'Ajouter un nom',
     },
     errors: {
-      noNames: 'Vous devez ajouter au moins 1 attribut',
+      noNames: 'Vous devez ajouter au moins un nom',
     },
     emptyNames: 'Aucun nom ajouté pour le moment',
+  },
+  addDynamicInfoInfosFromTemplate: {
+    title: 'Ajouter des informations depuis un modèle',
+    fields: {
+      template: 'Modèle',
+    },
+    actions: {
+      addInfos: 'Ajouter des informations',
+    },
   },
   importExportViews: {
     title: 'Vues d\'importation / exportation',
@@ -504,7 +530,8 @@ export default {
     },
   },
   anomalyMonitoredConnectorHistory: {
-    disableConfirm: 'Désactiver la surveillance des anomalies pour <strong>{connectorName}</strong> ?',
+    disableConfirm:
+      'Désactiver la surveillance des anomalies pour <strong>{connectorName}</strong> ?',
   },
   createCommentEvent: {
     title: 'Ajouter un commentaire',
@@ -536,8 +563,14 @@ export default {
     title: 'Créer une règle de récurrence',
   },
   createPbehaviorType: {
-    title: 'Créer un type',
+    create: {
+      title: 'Créer un type',
+    },
+    edit: {
+      title: 'Modifier un type',
+    },
     iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+    iconNamePlaceholder: 'Nom de l\'icône sur material.io',
     errors: {
       iconName: 'Le nom est invalide',
     },
@@ -563,24 +596,34 @@ export default {
     },
   },
   createPbehaviorReason: {
-    title: 'Créer une raison',
+    create: {
+      title: 'Créer une raison',
+    },
+    edit: {
+      title: 'Modifier une raison',
+    },
     fields: {
       name: 'Nom',
       description: 'Description',
     },
   },
   createPbehaviorException: {
-    title: 'Créer une liste d\'exceptions',
+    create: {
+      title: 'Créer une liste d\'exceptions',
+    },
+    edit: {
+      title: 'Modifier une liste d\'exceptions',
+    },
     addDate: 'Ajouter une date',
     fields: {
       name: 'Nom',
       description: 'Description',
     },
-    emptyExdates: 'Aucune date d\'exception ajoutée pour le moment',
   },
   linkToMetaAlarm: {
     title: 'Lier à une méta-alarme',
-    noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
+    noData:
+      'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
     fields: {
       metaAlarm: 'Sélectionnez une méta-alarme ou créez-en une nouvelle',
     },
@@ -627,6 +670,10 @@ export default {
     fields: {
       host: 'Hôte',
       token: 'Jeton d\'autorisation',
+      enableRefreshToken: 'Activer le jeton d\'actualisation',
+      refreshToken: 'Jeton d\'actualisation',
+      clientId: 'ID client',
+      clientSecret: 'Secret client',
     },
   },
   createRemediationJob: {
@@ -799,47 +846,54 @@ export default {
   },
   webSocketError: {
     title: 'Erreur de connexion WebSocket',
-    text: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
-      + '<p>'
-      + '<ul>'
-      + '<li>En-tête Healthcheck</li>'
-      + '<li>Graphique du réseau Healthcheck</li>'
-      + '<li>Messages diffusés actifs</li>'
-      + '<li>Sessions d\'utilisateurs actifs</li>'
-      + '<li>Exécution de la remédiation</li>'
-      + '</ul>'
-      + '</p>'
-      + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
-    shortText: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
-      + '<p>'
-      + '<ul>'
-      + '<li>Messages diffusés actifs</li>'
-      + '<li>Sessions d\'utilisateurs actifs</li>'
-      + '</ul>'
-      + '</p>'
-      + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+    text:
+      '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>' +
+      '<p>' +
+      '<ul>' +
+      '<li>En-tête Healthcheck</li>' +
+      '<li>Graphique du réseau Healthcheck</li>' +
+      '<li>Messages diffusés actifs</li>' +
+      '<li>Sessions d\'utilisateurs actifs</li>' +
+      '<li>Exécution de la remédiation</li>' +
+      '</ul>' +
+      '</p>' +
+      '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+    shortText:
+      '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>' +
+      '<p>' +
+      '<ul>' +
+      '<li>Messages diffusés actifs</li>' +
+      '<li>Sessions d\'utilisateurs actifs</li>' +
+      '</ul>' +
+      '</p>' +
+      '<p>Veuillez vérifier la configuration de votre serveur.</p>',
   },
   confirmationPhrase: {
     phrase: 'Phrase',
     updateStorageSettings: {
       title: 'Changement de politique de stockage. Êtes vous sur ?',
-      text: 'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n'
-        + '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
+      text:
+        'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n' +
+        '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
       phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
       phrase: 'modifier la politique de stockage',
     },
     cleanStorage: {
       title: 'Nettoyer l\'archive',
-      text: '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n'
-        + '<strong>Cette opération ne pourra pas être annulée. Toutes les entités archivées (désactivées et non liées) seront supprimées définitivement</strong>',
-      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression unique</strong> :',
+      text:
+        '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n' +
+        '<strong>Cette opération ne pourra pas être annulée. Toutes les entités archivées (désactivées et non liées) seront supprimées définitivement</strong>',
+      phraseText:
+        'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression unique</strong> :',
       phrase: 'supprimer',
     },
     archiveUnlinkedEntities: {
       title: 'Archiver les entités non liées',
-      text: '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n'
-        + '<strong>Cette opération ne pourra pas être annulée.</strong>',
-      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération d\'archivage unique</strong> :',
+      text:
+        '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n' +
+        '<strong>Cette opération ne pourra pas être annulée.</strong>',
+      phraseText:
+        'Veuillez taper ce qui suit pour confirmer <strong>l\'opération d\'archivage unique</strong> :',
       phrase: 'archiver',
     },
     archiveDisabledEntities: {
@@ -847,40 +901,47 @@ export default {
     },
     deleteExternalDataTable: {
       title: 'Supprimer la Collection / Table',
-      text: 'vous êtes sur le point de supprimer des données.\n'
-        + '<strong>Cette opération est irreversible.</strong>',
+      text:
+        'vous êtes sur le point de supprimer des données.\n' +
+        '<strong>Cette opération est irreversible.</strong>',
       phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
     },
     deleteExternalAuthToken: {
       title: 'Supprimer le jeton d\'authentification',
-      text: '<span class="font-weight-regular">Vous êtes sur le point de supprimer le jeton.</span>\n'
-        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      text:
+        '<span class="font-weight-regular">Vous êtes sur le point de supprimer le jeton.</span>\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
     },
     deleteLlm: {
       title: 'Supprimer le LLM',
-      text: 'Vous êtes sur le point de supprimer la connexion LLM.\n'
-        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      text:
+        'Vous êtes sur le point de supprimer la connexion LLM.\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du LLM pour confirmer :',
     },
     deleteSelectedLlms: {
       title: 'Supprimer {count} modèle ? | Supprimer {count} modèles ?',
-      text: 'Vous êtes sur le point de supprimer {count} modèle.\n'
-        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n'
-        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
-      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
+      text:
+        'Vous êtes sur le point de supprimer {count} modèle.\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong> | Vous êtes sur le point de supprimer {count} modèles.\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText:
+        'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression</strong> :',
       phrase: 'supprimer',
     },
     templateTestingData: {
       title: 'Supprimer les données de test',
-      text: 'Vous êtes sur le point de supprimer les données de test.\n'
-        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      text:
+        'Vous êtes sur le point de supprimer les données de test.\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom des données de test pour confirmer :',
     },
     templateTestingTest: {
       title: 'Supprimer le test',
-      text: 'Vous êtes sur le point de supprimer le test.\n'
-        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      text:
+        'Vous êtes sur le point de supprimer le test.\n' +
+        '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
       phraseText: 'Veuillez saisir le nom du test pour confirmer :',
     },
   },
@@ -1009,7 +1070,7 @@ export default {
   },
   createShareToken: {
     create: {
-      title: 'Créer un jeton de partage',
+      title: 'Créer un jeton de vue partagée',
     },
   },
   createWidgetTemplate: {
@@ -1018,6 +1079,19 @@ export default {
     },
     edit: {
       title: 'Modifier le modèle de widget',
+    },
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Colonnes des alarmes',
+      [WIDGET_TEMPLATES_TYPES.alarmSortColumns]: 'Colonnes de tri par défaut des alarmes',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Colonnes des entités',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Plus d\'infos',
+      [WIDGET_TEMPLATES_TYPES.alarmQuickActions]: 'Actions rapides (alarme unitaire)',
+      [WIDGET_TEMPLATES_TYPES.alarmMassQuickActions]: 'Actions rapides (massive)',
+      [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Export PDF',
+      [WIDGET_TEMPLATES_TYPES.ticketFormats]: 'Associer un ticket (Formats de ticket)',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Modèle de tuile',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Modèle de modale',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Modèle d\'entité',
     },
   },
   selectWidgetTemplateType: {
@@ -1127,11 +1201,13 @@ export default {
   },
   confirmationRemoveEntityInfoProperty: {
     title: 'Supprimer la propriété d\'info d\'entité',
-    alert: 'Vous êtes sur le point de supprimer les propriétés des infos d\'entité <strong>{name}</strong>.\n'
-      + '<strong>L\'opération de suppression ne sera pas annulable.</strong>',
-    text: 'Dans les endroits suivants, <strong>l\'alias</strong> sera changé en <strong>nom d\'infos d\'entité</strong>,'
-      + ' le <strong>type sélectionné ne sera pas modifié</strong>: '
-      + '<ul><li>modèles</li><li>recherche avancée</li><li>infos ajoutées manuellement</li></ul>',
+    alert:
+      'Vous êtes sur le point de supprimer les propriétés des infos d\'entité <strong>{name}</strong>.\n' +
+      '<strong>L\'opération de suppression ne sera pas annulable.</strong>',
+    text:
+      'Dans les endroits suivants, <strong>l\'alias</strong> sera changé en <strong>nom d\'infos d\'entité</strong>,' +
+      ' le <strong>type sélectionné ne sera pas modifié</strong>: ' +
+      '<ul><li>modèles</li><li>recherche avancée</li><li>infos ajoutées manuellement</li></ul>',
   },
   createTag: {
     create: {
@@ -1159,6 +1235,9 @@ export default {
     create: {
       title: 'Icône de téléchargement',
       success: 'L\'icône a été téléchargée',
+    },
+    edit: {
+      title: 'Modifier l\'icône',
     },
     remove: {
       success: 'L\'icône a été supprimée',
@@ -1189,6 +1268,9 @@ export default {
     duplicate: {
       title: 'Dupliquer',
     },
+  },
+  importExternalDataTableRecords: {
+    title: 'Importer des enregistrements',
   },
   createExternalAuthToken: {
     create: {
@@ -1224,7 +1306,8 @@ export default {
   },
   entitiesComparison: {
     title: 'Comparaison des entités de motif',
-    infoMessage: 'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n\n<strong>Vous pouvez relancer la vérification pour être sûr.</strong>',
+    infoMessage:
+      'Les résultats peuvent différer pour 2 raisons :\n<span class="font-weight-regular">1. Des changements se sont produits dans Canopsis pendant la vérification (certaines entités initialement filtrées ont changé et ne correspondent plus au filtre)</span>\n<span class="font-weight-regular">2. Le filtre suggéré n\'est pas correct</span>\n\n<strong>Vous pouvez relancer la vérification pour être sûr.</strong>',
     foundInCurrent: 'TROUVÉ DANS LE MOTIF ACTUEL, NON TROUVÉ DANS LE MOTIF SUGGÉRÉ',
     foundInSuggestion: 'TROUVÉ DANS LE MOTIF SUGGÉRÉ, NON TROUVÉ DANS LE MOTIF ACTUEL',
   },

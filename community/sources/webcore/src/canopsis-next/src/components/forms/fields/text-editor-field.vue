@@ -1,48 +1,45 @@
 <template>
   <text-editor
-    v-field="value"
+    v-model="fieldValue"
     :label="label"
     :public="isPublic"
     :buttons="buttons"
     :config="config"
     :extra-buttons="extraButtons"
-    :error-messages="errorMessages"
+    :error-messages="fieldErrorMessages"
     :max-file-size="preparedMaxFileSize"
     :variables="variables"
-    :dark="$system.dark"
+    :sanitize-options="sanitizeOptions"
     :autofocus="autofocus"
+    :required="required"
+    :dark="dark"
+    @blur="handleBlur"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, toRef, watch } from 'vue';
+import { useTheme } from 'vuetify';
 
+import { useField } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 import { useInfo } from '@/hooks/store/modules/info';
 
-const TextEditor = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
+import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
-  inject: ['$validator', '$system'],
   components: {
     TextEditor,
   },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+
   props: {
+    modelValue: {
+      type: String,
+      default: undefined,
+    },
     value: {
       type: String,
-      default: '',
+      default: undefined,
     },
     name: {
       type: String,
@@ -58,11 +55,11 @@ export default {
     },
     buttons: {
       type: Array,
-      required: false,
+      default: undefined,
     },
     extraButtons: {
       type: Array,
-      required: false,
+      default: undefined,
     },
     config: {
       type: Object,
@@ -74,9 +71,7 @@ export default {
     },
     maxFileSize: {
       type: Number,
-      default() {
-        return this.fileUploadMaxSize;
-      },
+      default: 0,
     },
     variables: {
       type: Array,
@@ -86,20 +81,87 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    sanitizeOptions: {
+      type: Object,
+      required: false,
+    },
   },
-  setup(props) {
+
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const theme = useTheme();
+    const { t } = useI18n();
     const { fileUploadMaxSize } = useInfo();
 
+    const validateValue = (value) => {
+      if (props.required && !value) {
+        return t('validation.messages.required');
+      }
+
+      return true;
+    };
+
+    const { value, errorMessage, handleBlur, setValue, validate } = useField(
+      toRef(props, 'name'),
+      validateValue,
+      {
+        initialValue: props.modelValue ?? props.value ?? '',
+        validateOnValueUpdate: false,
+      },
+    );
+
+    const fieldValue = computed({
+      get: () => props.modelValue ?? props.value ?? value.value,
+      set: (nextValue) => {
+        setValue(nextValue, false);
+        emit('update:modelValue', nextValue);
+        validate();
+      },
+    });
+
     /**
-     * Defined it because public is reserved word in JS
+     * Use toRef instead of public property directly because public is reserved word
      */
-    const isPublic = computed(() => props.public);
+    const isPublic = toRef(props, 'public');
+    const dark = computed(() => theme.current.value.dark);
     const preparedMaxFileSize = computed(() => props.maxFileSize || fileUploadMaxSize.value);
+    const fieldErrorMessages = computed(() => [
+      ...props.errorMessages,
+      ...(errorMessage.value ? [errorMessage.value] : []),
+    ]);
+
+    watch(
+      () => props.modelValue,
+      (nextValue) => {
+        if (nextValue !== undefined && nextValue !== value.value) {
+          setValue(nextValue, false);
+          validate();
+        }
+      },
+    );
+
+    watch(
+      () => props.value,
+      (nextValue) => {
+        if (nextValue !== undefined && nextValue !== value.value) {
+          setValue(nextValue, false);
+          validate();
+        }
+      },
+    );
 
     return {
-      preparedMaxFileSize,
-
+      fieldValue,
+      fieldErrorMessages,
       isPublic,
+      dark,
+      preparedMaxFileSize,
+      handleBlur,
     };
   },
 };

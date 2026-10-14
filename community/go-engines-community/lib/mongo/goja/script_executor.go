@@ -61,8 +61,7 @@ func (e *scriptExecutor) Exec(ctx context.Context, file string) error {
 
 	_, err = vm.RunProgram(prg)
 	if err != nil {
-		var ex *goja.Exception
-		if errors.As(err, &ex) {
+		if ex, ok := errors.AsType[*goja.Exception](err); ok {
 			return fmt.Errorf("cannot execute js %q: %w\nstack: %s", file, err, ex.String())
 		}
 

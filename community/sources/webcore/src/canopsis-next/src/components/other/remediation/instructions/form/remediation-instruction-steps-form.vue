@@ -1,23 +1,25 @@
 <template>
   <c-card-iterator-form
-    v-field="steps"
+    :value="stepsField"
     :disabled="disabled"
     :draggable-group="draggableGroup"
-    :required-error-message="$t('remediation.instruction.errors.stepRequired')"
-    :empty-message="$t('remediation.instruction.emptySteps')"
-    :add-button-label="$t('remediation.instruction.addStep')"
+    :required-error-message="t('remediation.instruction.errors.stepRequired')"
+    :add-button-label="t('remediation.instruction.addStep')"
     :name="name"
     item-key="key"
     iterator-class="mb-2"
     required
     @add="addStep"
+    @update:value="stepsField = $event"
   >
-    <template #item="{ index }">
+    <template #item="{ index, item: step }">
       <remediation-instruction-step-field
-        v-field="steps[index]"
+        :step="stepsField[index]"
+        :name="`${name}.${step.key}`"
         :step-number="index + 1"
         :disabled="disabled"
         :template-vars="templateVars"
+        @update:step="updateStep(index, $event)"
         @remove="removeStep(index)"
       />
     </template>
@@ -27,25 +29,16 @@
 <script>
 import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useFormArray } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     RemediationInstructionStepField,
   },
-  mixins: [formArrayMixin],
-  model: {
-    prop: 'steps',
-    event: 'input',
-  },
   props: {
-    steps: {
-      type: Array,
-      default: () => ([]),
-    },
     name: {
       type: String,
       default: 'steps',
@@ -59,30 +52,35 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      isDragging: false,
+  setup() {
+    const { t } = useI18n();
+    const stepsField = useFormArray('steps');
+
+    const draggableGroup = {
+      name: 'remediation-instruction-steps',
     };
-  },
-  computed: {
-    hasStepsErrors() {
-      return this.errors.has(this.name);
-    },
 
-    draggableGroup() {
-      return {
-        name: 'remediation-instruction-steps',
-      };
-    },
-  },
-  methods: {
-    addStep() {
-      this.addItemIntoArray(remediationInstructionStepToForm());
-    },
+    const addStep = () => {
+      stepsField.value = [...stepsField.value, remediationInstructionStepToForm()];
+    };
+    const updateStep = (index, value) => {
+      const steps = [...stepsField.value];
 
-    removeStep(index) {
-      this.removeItemFromArray(index);
-    },
+      steps[index] = value;
+      stepsField.value = steps;
+    };
+    const removeStep = (index) => {
+      stepsField.value = stepsField.value.filter((step, stepIndex) => stepIndex !== index);
+    };
+
+    return {
+      t,
+      stepsField,
+      draggableGroup,
+      updateStep,
+      addStep,
+      removeStep,
+    };
   },
 };
 </script>

@@ -14,7 +14,6 @@
       :type="shape.lineType"
       :cursor="readonly ? '' : 'move'"
       stroke-width="10"
-      v-on="$listeners"
     />
     <text-editor
       v-if="labelPosition"

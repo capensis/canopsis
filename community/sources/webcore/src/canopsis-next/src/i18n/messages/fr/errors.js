@@ -4,17 +4,19 @@ export default {
   JSONNotValid: 'JSON non valide',
   versionNotFound: 'Erreur dans la récupération du numéro de version...',
   statsRequestProblem: 'Erreur dans la récupération des statistiques',
-  statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'community' de Canopsis",
+  statsWrongEditionError:
+    'Les widgets de statistiques ne sont pas disponibles dans l\'édition \'community\' de Canopsis',
   socketConnectionProblem: 'Problème de connexion aux Websockets',
-  socketConnectionRoomNotFound: 'Canal Websocket introuvable. Veuillez recharger la page ou contacter l\'administrateur',
-  socketConnectionRoomForbidden: 'Ce canal Websocket est interdit',
+  socketConnectionRoomNotFound:
+    'Canal Websocket introuvable. Veuillez recharger la page ou contacter l\'administrateur',
   socketConnectionRoomBadRequest: 'Mauvaise demande d\'adhésion aux Websockets',
-  socketConnectionRoomInternalServerError: 'La connexion Websocket est interrompue. Veuillez recharger la page ou contacter l\'administrateur',
+  socketConnectionRoomInternalServerError:
+    'La connexion Websocket est interrompue. Veuillez recharger la page ou contacter l\'administrateur',
   endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
   unknownWidgetType: 'Type de widget inconnu: {type}',
   unique: 'Le champ doit être unique',
   codeEditorProblem: 'Problème avec l\'éditeur de code',
-  triggerMustNotUsed: 'Le déclencheur {field} ne doit pas être utilisé | Les déclencheurs {field} ne doivent pas être utilisés',
+  triggerMustNotUsed:
+    'Le déclencheur {field} ne doit pas être utilisé | Les déclencheurs {field} ne doivent pas être utilisés',
   invalid: 'Invalide',
-  invalidNumberFormat: 'Format de nombre invalide',
 };

@@ -1,18 +1,11 @@
 <template>
-  <v-layout
-    class="kpi-widget"
-    column
-    align-center
-  >
+  <c-layout class="kpi-widget" align="center" column>
     <h4 class="kpi-widget__title">
       {{ title }}
     </h4>
     <line-chart
-      :chart-id="chartId"
       :options="chartOptions"
       :datasets="datasets"
-      :width="width"
-      :height="height"
       :dark="$system.dark"
       class="kpi-widget__chart"
     >
@@ -21,15 +14,16 @@
           :downloading="downloading"
           :chart="chart"
           class="mt-4"
-          v-on="$listeners"
+          @export:csv="$emit('export:csv')"
+          @export:png="$emit('export:png', $event)"
         />
       </template>
     </line-chart>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { X_AXES_IDS, SAMPLINGS, KPI_CHART_DEFAULT_HEIGHT } from '@/constants';
+import { KPI_CHART_DEFAULT_HEIGHT, SAMPLINGS, X_AXES_IDS } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 import { getMetricColor } from '@/helpers/entities/metric/color';
@@ -38,18 +32,19 @@ import { convertMetricValueByUnit } from '@/helpers/entities/metric/list';
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-
-const LineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/line-chart.vue');
+import LineChart from '@/components/common/chart/line-chart.vue';
 
 export default {
   inject: ['$system'],
-  components: { ChartExportActions, LineChart },
+
+  components: {
+    ChartExportActions,
+    LineChart,
+  },
+
   mixins: [chartMetricsOptionsMixin],
+
   props: {
-    chartId: {
-      type: String,
-      required: false,
-    },
     metrics: {
       type: Array,
       default: () => [],
@@ -58,10 +53,6 @@ export default {
       type: String,
       required: false,
     },
-    width: {
-      default: 600,
-      type: Number,
-    },
     height: {
       default: KPI_CHART_DEFAULT_HEIGHT,
       type: Number,
@@ -69,6 +60,10 @@ export default {
     sampling: {
       type: String,
       default: SAMPLINGS.day,
+    },
+    stacked: {
+      type: Boolean,
+      default: false,
     },
     downloading: {
       type: Boolean,
@@ -87,6 +82,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['export:csv', 'export:png'],
+
   computed: {
     xAxes() {
       const xAxes = {
@@ -146,7 +144,6 @@ export default {
         const metricColor = color ?? getMetricColor(metric);
         const datasetLabel = label ?? this.getMetricLabel(metric);
         const yAxisID = this.getMetricYAxisId(metric, unit);
-
         const defaultDataset = {
           metric,
           backgroundColor: metricColor,
@@ -186,6 +183,7 @@ export default {
       }, []);
     },
   },
+
   methods: {
     getMetricLabel(metric) {
       const metricMessageKey = `alarm.metrics.${metric}`;

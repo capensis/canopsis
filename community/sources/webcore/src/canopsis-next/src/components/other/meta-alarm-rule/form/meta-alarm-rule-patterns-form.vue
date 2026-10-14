@@ -1,26 +1,34 @@
 <template>
   <c-patterns-field
-    v-field="form"
+    :value="form"
     :readonly="readonly"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :pending="pending"
     :with-total-entity="withTotalEntity"
     :some-required="someRequired"
+    :counter-method="counterMethod"
     with-alarm
     with-entity
-  />
+    @update:value="$emit('update:form', $event)"
+  >
+    <template #additional-counters="{ counters }">
+      <c-layout v-if="withThresholdSummary && counters?.threshold_summary" gap="2">
+        <strong>{{ $t('common.summary') }}:</strong>
+        <span class="pre-line">{{ counters.threshold_summary }}</span>
+      </c-layout>
+    </template>
+  </c-patterns-field>
 </template>
 
 <script>
-import { useValidationHeader } from '@/hooks/validator/validation-header';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -38,25 +46,29 @@ export default {
       type: Boolean,
       default: false,
     },
+    withThresholdSummary: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['update:form'],
+
   setup(props) {
     const { fetchMetaalarmrulePatternFields } = usePatternsFields();
-    const { hasAnyError } = useValidationHeader();
 
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchMetaalarmrulePatternFields, props.readonly);
+    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
+      fetchMetaalarmrulePatternFields,
+      props.readonly,
+    );
+
+    const { checkPatternsAlarmsCount } = useMetaAlarmRule();
 
     return {
-      /**
-       * It's using in the parent component to display the validation header color for tabs
-       */
-      hasAnyError,
       pending,
       alarmAttributes,
       entityAttributes,
+      counterMethod: checkPatternsAlarmsCount,
     };
   },
 };

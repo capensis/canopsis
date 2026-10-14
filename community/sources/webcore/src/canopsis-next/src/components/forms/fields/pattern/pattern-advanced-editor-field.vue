@@ -1,23 +1,24 @@
 <template>
   <c-json-field
     :value="value"
-    :label="$t('pattern.advancedEditor')"
+    :label="t('pattern.advancedEditor')"
     :readonly="disabled"
     :name="name"
     validate-on="button"
     rows="10"
-    @input="updatePatternsFromJSON"
+    @update:value="updatePatternsFromJSON"
   >
-    <template #append="{ jsonString }">
+    <template #append="{ jsonString, errorMessage: jsonErrorMessage }">
       <v-fade-transition>
-        <pattern-fix-with-ai-btn v-if="errors.has(name)" :json-string="jsonString" />
+        <pattern-fix-with-ai-btn v-if="errorMessage || jsonErrorMessage" :json-string="jsonString" />
       </v-fade-transition>
     </template>
   </c-json-field>
 </template>
 
-<script>
+<script setup>
 import { isArray } from 'lodash';
+import { computed, toRef } from 'vue';
 
 import {
   isExtraInfosRuleType,
@@ -26,100 +27,80 @@ import {
   isObjectRuleType,
 } from '@/helpers/entities/pattern/form';
 
-import { formMixin } from '@/mixins/form';
+import { useFieldError, useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import PatternFixWithAiBtn from './pattern-fix-with-ai-btn.vue';
 
-export default {
-  inject: ['$validator'],
-  components: {
-    PatternFixWithAiBtn,
+const props = defineProps({
+  value: {
+    type: Array,
+    required: true,
   },
-  mixins: [formMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
+  attributes: {
+    type: Array,
+    required: true,
   },
-  props: {
-    value: {
-      type: Array,
-      required: true,
-    },
-    attributes: {
-      type: Array,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    name: {
-      type: String,
-      required: false,
-    },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
-  computed: {
-    disabledAttributes() {
-      return this.attributes.reduce((acc, { value, options }) => {
-        if (options?.disabled) {
-          acc.push(value);
-        }
-
-        return acc;
-      }, []);
-    },
+  name: {
+    type: String,
+    default: undefined,
   },
-  methods: {
-    isDisabledField(field) {
-      return this.disabledAttributes.includes(field);
-    },
+});
 
-    isValidRuleField({ field }) {
-      return this.attributes.some(({ value, options }) => {
-        if (this.isDisabledField(value)) {
-          return false;
-        }
+const emit = defineEmits(['update:value']);
 
-        if (
-          isInfosRuleType(options?.type)
-          || isExtraInfosRuleType(options?.type)
-          || isObjectRuleType(options?.type)
-        ) {
-          return field.startsWith(`${value}.`);
-        }
+const { t } = useI18n();
+const formContext = useFormContext();
 
-        return value === field;
-      });
-    },
+const fieldName = toRef(props, 'name');
+const errorMessage = useFieldError(fieldName);
 
-    isValidPatternRule(rule) {
-      return isValidPatternRule(rule) && this.isValidRuleField(rule);
-    },
+const disabledAttributes = computed(() => props.attributes.reduce((acc, { value, options }) => {
+  if (options?.disabled) {
+    acc.push(value);
+  }
 
-    isValidPatternRules(rules) {
-      return isArray(rules)
-        && rules.length > 0
-        && rules.every(this.isValidPatternRule);
-    },
+  return acc;
+}, []));
 
-    isValidPatterns(patterns) {
-      return isArray(patterns) && patterns.every(this.isValidPatternRules);
-    },
+const setErrorMessage = message => formContext.setFieldError(fieldName.value, message);
 
-    updatePatternsFromJSON(patterns) {
-      const isValidPatterns = this.isValidPatterns(patterns);
+const isDisabledField = field => disabledAttributes.value.includes(field);
 
-      if (isValidPatterns) {
-        this.updateModel(patterns);
-      } else {
-        /**
-         * Validator.errors.reset using nextTick twice, because we need to add errors after reset
-         */
-        setTimeout(() => {
-          this.errors.add({ field: this.name, msg: this.$t('pattern.errors.invalidPatterns') });
-        });
-      }
-    },
-  },
+const isValidRuleField = ({ field }) => props.attributes.some(({ value, options }) => {
+  if (isDisabledField(value)) {
+    return false;
+  }
+
+  if (
+    isInfosRuleType(options?.type) ||
+    isExtraInfosRuleType(options?.type) ||
+    isObjectRuleType(options?.type)
+  ) {
+    return field.startsWith(`${value}.`);
+  }
+
+  return value === field;
+});
+
+const isValidPatternRuleField = rule => isValidPatternRule(rule) && isValidRuleField(rule);
+
+const isValidPatternRules = rules => isArray(rules) && rules.length > 0 && rules.every(isValidPatternRuleField);
+
+const isValidPatterns = patterns => isArray(patterns) && patterns.every(isValidPatternRules);
+
+const updatePatternsFromJSON = (patterns) => {
+  if (isValidPatterns(patterns)) {
+    setErrorMessage(undefined);
+    emit('update:value', patterns);
+
+    return;
+  }
+
+  setErrorMessage(t('pattern.errors.invalidPatterns'));
 };
 </script>

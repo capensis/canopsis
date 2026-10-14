@@ -1,33 +1,33 @@
 <template>
-  <v-radio-group
-    v-field="value"
+  <c-radio-group
+    :model-value="modelValue"
     :label="label"
+    :name="name"
     :disabled="disabled"
+    :standalone="standalone"
     hide-details
+    inline
     mandatory
-    row
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
       v-for="method in methods"
       :key="method"
-      :label="$t(`stateSetting.thresholdMethods.${method}`)"
+      :label="t(`stateSetting.thresholdMethods.${method}`)"
       :value="method"
       color="primary"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
 import { STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: STATE_SETTING_THRESHOLDS_METHODS.share,
     },
@@ -35,15 +35,29 @@ export default {
       type: String,
       default: '',
     },
+    name: {
+      type: String,
+      default: '',
+    },
     disabled: {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    methods() {
-      return STATE_SETTING_THRESHOLDS_METHODS;
+    standalone: {
+      type: Boolean,
+      default: false,
     },
+  },
+
+  emits: ['update:modelValue'],
+
+  setup() {
+    const { t } = useI18n();
+
+    return {
+      t,
+      methods: STATE_SETTING_THRESHOLDS_METHODS,
+    };
   },
 };
 </script>

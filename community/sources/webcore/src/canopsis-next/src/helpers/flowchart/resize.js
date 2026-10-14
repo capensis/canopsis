@@ -17,33 +17,30 @@ import { DIRECTIONS } from '@/constants';
  * @param {string} direction
  * @returns {Rect}
  */
-export const resizeRectangleShapeWithoutAspectRatio = ({
-  rect,
-  cursorX,
-  cursorY,
-  direction,
-}) => direction
-  .split('')
-  .reduce((acc, singleDirection) => {
-    switch (singleDirection) {
-      case DIRECTIONS.south:
-        acc.height = Math.max(0, cursorY - acc.y);
-        break;
-      case DIRECTIONS.east:
-        acc.width = Math.max(0, cursorX - acc.x);
-        break;
-      case DIRECTIONS.north:
-        acc.height = Math.max(0, acc.height + acc.y - cursorY);
-        acc.y += rect.height - acc.height;
-        break;
-      case DIRECTIONS.west:
-        acc.width = Math.max(0, acc.width + acc.x - cursorX);
-        acc.x += rect.width - acc.width;
-        break;
-    }
+export const resizeRectangleShapeWithoutAspectRatio = ({ rect, cursorX, cursorY, direction }) =>
+  direction.split('').reduce(
+    (acc, singleDirection) => {
+      switch (singleDirection) {
+        case DIRECTIONS.south:
+          acc.height = Math.max(0, cursorY - acc.y);
+          break;
+        case DIRECTIONS.east:
+          acc.width = Math.max(0, cursorX - acc.x);
+          break;
+        case DIRECTIONS.north:
+          acc.height = Math.max(0, acc.height + acc.y - cursorY);
+          acc.y += rect.height - acc.height;
+          break;
+        case DIRECTIONS.west:
+          acc.width = Math.max(0, acc.width + acc.x - cursorX);
+          acc.x += rect.width - acc.width;
+          break;
+      }
 
-    return acc;
-  }, { ...rect });
+      return acc;
+    },
+    { ...rect },
+  );
 
 /**
  * Resize rect by direction and cursor position
@@ -55,13 +52,7 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
  * @param {number} ratio
  * @returns {Rect}
  */
-export const resizeRectangleWithAspectRation = ({
-  rect,
-  cursorX,
-  cursorY,
-  direction,
-  ratio,
-}) => {
+export const resizeRectangleWithAspectRation = ({ rect, cursorX, cursorY, direction, ratio }) => {
   const newRect = { ...rect };
 
   switch (direction) {
