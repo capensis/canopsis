@@ -14,6 +14,7 @@ export default {
       required: true,
     },
   },
+
   computed: {
     sanitizeOptions() {
       return TEXT_WIDGET_SANITIZE_OPTIONS;

@@ -1,96 +1,97 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <c-duration-field
-          v-model="form"
+          v-model:duration="form"
           :label="label"
           :units="units"
           autofocus
           required
         />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
 import { computed, ref } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 export default {
   name: MODALS.duration,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: { ModalWrapper },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-  setup(props) {
-    const { t, tc } = useI18n();
-    const { config, close } = useInnerModal(props);
 
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
     const form = ref(durationToForm(config.value.duration));
+    const submitting = ref(false);
 
     const title = computed(() => config.value.title ?? t('common.duration'));
     const label = computed(() => config.value.label ?? t('common.duration'));
-    const units = computed(() => (
-      config.value.units?.map(unit => ({ ...unit, text: tc(unit.text, form.value.value) }))
-    ));
+    const units = computed(() => config.value.units?.map(unit => ({ ...unit, text: t(unit.text, form.value.value) })),
+    );
 
-    const { submit, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = async () => {
+      try {
+        submitting.value = true;
+
         await config.value.action?.(form.value);
-        close();
-      },
+        closeModal();
+      } finally {
+        submitting.value = false;
+      }
+    };
+
+    useFormConfirmableCloseModal({
+      form,
+      submit,
+      close: closeModal,
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
-
     return {
+      t,
       form,
       title,
       label,
       units,
       submitting,
-
-      close,
+      closeModal,
       submit,
     };
   },

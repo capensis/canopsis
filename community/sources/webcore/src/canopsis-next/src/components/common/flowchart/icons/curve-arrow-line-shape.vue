@@ -6,10 +6,7 @@
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      fill="currentColor"
-      d="M33 0 l12 6 l-12 6 l3 -6 Z"
-    />
+    <path fill="currentColor" d="M33 0 l12 6 l-12 6 l3 -6 Z" />
     <path
       d="M 0 44
       Q 45 44 22.5 22.5

@@ -49,6 +49,7 @@ export default {
       default: 4,
     },
   },
+  emits: ['edit:point', 'update'],
   data() {
     return {
       editingPoints: [],

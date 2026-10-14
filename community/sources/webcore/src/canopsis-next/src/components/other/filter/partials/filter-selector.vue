@@ -1,21 +1,18 @@
 <template>
-  <v-select
-    v-field="value"
+  <c-select
+    v-model="model"
     :items="preparedFilters"
     :label="label"
     :disabled="disabled"
-    :always-dirty="!!lockedItems.length"
-    :item-text="itemText"
+    :item-title="itemText"
     :item-value="itemValue"
-    :item-disabled="isFilterItemDisabled"
     :multiple="isMultiple"
+    :show-count="2"
     :hide-details="hideDetails"
+    :clearable="clearable"
     class="filter-selector mt-0"
   >
-    <template
-      v-if="!hideMultiply"
-      #prepend-item=""
-    >
+    <template v-if="!hideMultiply" #prepend-item>
       <c-enabled-field
         v-model="isMultiple"
         :label="$t('filter.selector.fields.mixFilters')"
@@ -24,82 +21,72 @@
       />
       <v-divider class="mt-3" />
     </template>
-    <template #selections="{ items }">
-      <v-tooltip
+
+    <template v-if="lockedItems.length" #prepend-inner>
+      <v-chip
         v-for="lockedItem in lockedItems"
         :key="getItemValue(lockedItem)"
-        top
+        class="filter-selector__locked-chip"
+        size="small"
       >
-        <template #activator="{ on }">
-          <v-chip
-            small
-            v-on="on"
-          >
-            <span>{{ getItemText(lockedItem) }}</span>
-            <v-icon
-              class="ml-2"
-              small
-            >
-              lock
-            </v-icon>
-          </v-chip>
-        </template>
-        <span>{{ $t('settings.lockedFilter') }}</span>
-      </v-tooltip>
+        <c-tooltip activator="parent" location="top">
+          {{ $t('settings.lockedFilter') }}
+        </c-tooltip>
+        <span>{{ getItemText(lockedItem) }}</span>
+        <v-icon class="ml-2" size="small">
+          lock
+        </v-icon>
+      </v-chip>
+    </template>
+
+    <template #selection="{ item, index }">
       <v-chip
-        v-for="(item, index) in items"
-        :key="getItemValue(item)"
-        :close="isChipRemovable"
-        small
+        :closable="isChipRemovable"
+        size="small"
         @click:close="removeFilter(index)"
       >
         {{ getItemText(item) }}
       </v-chip>
     </template>
-    <template #item="{ parent, item, attrs, on }">
-      <v-list-item
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-action v-if="isMultiple">
-          <v-checkbox
-            :input-value="item.active || attrs.inputValue"
-            :color="parent.color"
-            :disabled="attrs.disabled"
-          />
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>
-            <span>{{ item.title }}</span>
-            <v-icon
-              :color="attrs.value ? parent.color : ''"
-              class="ml-2"
-              small
-            >
-              {{ getItemIcon(item) }}
-            </v-icon>
-          </v-list-item-title>
-        </v-list-item-content>
+
+    <template #item="{ props, item }">
+      <v-list-item v-bind="props" :disabled="isFilterItemDisabled(item)">
+        <template v-if="isMultiple" #prepend>
+          <v-checkbox-btn :model-value="isFilterSelected(item)" color="primary" />
+        </template>
+
+        <template #title>
+          <span class="filter-selector__item-title">
+          <span class="text-truncate">{{ getItemText(item) }}</span>
+          <v-icon
+            :color="isFilterSelected(item) ? 'primary' : ''"
+            class="ml-2 flex-shrink-0"
+            size="small"
+          >
+            {{ getItemIcon(item) }}
+          </v-icon>
+          </span>
+        </template>
       </v-list-item>
     </template>
-  </v-select>
+  </c-select>
 </template>
 
 <script>
 import { isArray } from 'lodash';
+import { computed } from 'vue';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
-  mixins: [formArrayMixin],
   props: {
-    value: {
+    modelValue: {
       type: [String, Array],
-      default: () => null,
+      default: null,
     },
     lockedValue: {
       type: [String, Array],
-      default: () => null,
+      default: null,
     },
     filters: {
       type: Array,
@@ -138,109 +125,125 @@ export default {
       default: false,
     },
   },
-  computed: {
-    isMultiple: {
+
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
+    const model = computed({
+      get() {
+        return props.modelValue;
+      },
+      set(value) {
+        updateModel(value);
+      },
+    });
+
+    const isMultiple = computed({
       set(isMultiple) {
         if (isMultiple) {
-          this.updateModel(this.value ? [this.value] : []);
+          model.value = props.modelValue ? [props.modelValue] : [];
         } else {
-          this.updateModel(this.value.length ? this.value[0] : undefined);
+          model.value = props.modelValue?.length ? props.modelValue[0] : undefined;
         }
       },
       get() {
-        return isArray(this.value);
+        return isArray(props.modelValue);
       },
-    },
+    });
 
-    isOneValueSelected() {
-      return this.value.length === 1;
-    },
+    const selectedValues = computed(() => (
+      isArray(props.modelValue) ? props.modelValue : [props.modelValue].filter(Boolean)
+    ));
 
-    isChipRemovable() {
-      if (this.clearable) {
+    const isOneValueSelected = computed(() => selectedValues.value.length === 1);
+
+    const isChipRemovable = computed(() => {
+      if (props.clearable) {
         return true;
       }
 
-      return this.isMultiple ? !this.isOneValueSelected : false;
-    },
+      return isMultiple.value ? !isOneValueSelected.value : false;
+    });
 
-    lockedItems() {
-      return this.lockedFilters.filter(this.isLockedFilter);
-    },
+    const getItemText = item => item?.[props.itemText];
+    const getItemValue = item => item?.[props.itemValue];
+    const getItemIcon = item => (item?.is_user_preference ? 'person' : 'lock');
 
-    preparedFilters() {
-      const preparedFilters = [...this.filters];
+    const isLockedFilter = (filter) => {
+      const value = getItemValue(filter);
 
-      if (!this.lockedFilters.length) {
-        return preparedFilters;
+      return isMultiple.value ? props.lockedValue?.includes(value) : props.lockedValue === value;
+    };
+
+    const lockedItems = computed(() => props.lockedFilters.filter(isLockedFilter));
+
+    const preparedFilters = computed(() => {
+      const filters = [...props.filters];
+
+      if (!props.lockedFilters.length) {
+        return filters;
       }
 
-      if (preparedFilters.length) {
-        preparedFilters.push({ divider: true });
-      }
-
-      preparedFilters.push(
-        ...this.lockedFilters.map(filter => ({
+      return [
+        ...filters,
+        ...props.lockedFilters.map(filter => ({
           ...filter,
-          active: this.isLockedFilter(filter),
+          props: {
+            disabled: isLockedFilter(filter),
+          },
         })),
-      );
+      ];
+    });
 
-      return preparedFilters;
-    },
-  },
-  methods: {
-    getItemText(item) {
-      return item[this.itemText];
-    },
+    const isFilterSelected = filter => selectedValues.value.includes(getItemValue(filter));
 
-    getItemValue(item) {
-      return item[this.itemValue];
-    },
-
-    getItemIcon(item) {
-      return item.is_user_preference ? 'person' : 'lock';
-    },
-
-    isFilterItemDisabled(filter) {
-      if (this.isLockedFilter(filter)) {
+    const isFilterItemDisabled = (filter) => {
+      if (isLockedFilter(filter)) {
         return true;
       }
 
-      if (this.clearable) {
+      if (props.clearable) {
         return false;
       }
 
-      const value = this.getItemValue(filter);
+      const value = getItemValue(filter);
 
-      if (this.isMultiple) {
-        return this.isOneValueSelected && this.value.includes(value);
+      if (isMultiple.value) {
+        return isOneValueSelected.value && selectedValues.value.includes(value);
       }
 
-      return this.value === value;
-    },
+      return props.modelValue === value;
+    };
 
-    isLockedFilter(filter) {
-      const value = this.getItemValue(filter);
-
-      return this.isMultiple
-        ? this.lockedValue?.includes(value)
-        : this.lockedValue === value;
-    },
-
-    removeFilter(index) {
-      if (this.isMultiple) {
-        this.removeItemFromArray(index);
+    const removeFilter = (index) => {
+      if (isMultiple.value) {
+        model.value = selectedValues.value.filter((value, valueIndex) => valueIndex !== index);
       } else {
-        this.updateModel('');
+        model.value = '';
       }
-    },
+    };
+
+    return {
+      model,
+      isMultiple,
+      isChipRemovable,
+      lockedItems,
+      preparedFilters,
+      getItemText,
+      getItemValue,
+      getItemIcon,
+      isFilterSelected,
+      isFilterItemDisabled,
+      removeFilter,
+    };
   },
 };
 </script>
 
 <style lang="scss">
-.filter-selector {
-  max-width: 500px;
+.filter-selector__locked-chip {
+  margin-right: 4px;
 }
 </style>

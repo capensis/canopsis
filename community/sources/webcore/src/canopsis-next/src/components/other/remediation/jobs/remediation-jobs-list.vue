@@ -16,31 +16,25 @@
       <c-table-mass-actions-panel
         :items="selected"
         :removable="removable"
-        small
         remediation-job
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #actions="{ item, disabled }">
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="$emit('edit', item)"
-      />
-      <c-action-btn
-        v-if="duplicable"
-        type="duplicate"
-        @click="$emit('duplicate', item)"
-      />
-      <c-db-export-btn :id="item._id" job />
-      <c-action-btn
-        v-if="removable"
-        :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')"
-        :disabled="disabled"
-        type="delete"
-        @click="$emit('remove', item)"
-      />
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-db-export-btn :id="item._id" job />
+        <c-action-btn
+          v-if="removable"
+          :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')"
+          :disabled-button="disabled"
+          type="delete"
+          @click="$emit('remove', item)"
+        />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
@@ -81,6 +75,9 @@ export default {
       default: true,
     },
   },
+
+  emits: ['update:options', 'refresh', 'remove', 'duplicate', 'edit'],
+
   computed: {
     headers() {
       return [
@@ -109,6 +106,7 @@ export default {
       ];
     },
   },
+
   methods: {
     isDisabledJob({ deletable }) {
       return !deletable;

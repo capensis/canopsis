@@ -1,16 +1,6 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-/**
- * Creates hooks for accessing the scenario Vuex store module.
- * Provides access to getters and actions for managing scenario operations.
- *
- * @returns {Object} An object containing store module utilities:
- * @property {import('vuex').Store} store - The Vuex store instance
- * @property {import('vuex').Module} module - The scenario module instance
- * @property {Function} useGetters - Function to access module getters
- * @property {Function} useActions - Function to access module actions
- */
-const useScenarioStoreModule = () => useStoreModuleHooks('scenario');
+import { useScenarioStore } from '@/stores/modules/scenario';
 
 /**
  * Custom hook for scenario operations.
@@ -40,31 +30,27 @@ const useScenarioStoreModule = () => useStoreModuleHooks('scenario');
  * await fetchScenariosList({ params: { page: 1, limit: 10 } });
  */
 export const useScenario = () => {
-  const { useGetters, useActions } = useScenarioStoreModule();
-
-  const getters = useGetters({
-    scenariosMeta: 'meta',
-    scenariosPending: 'pending',
-    scenarios: 'items',
-  });
-
-  const actions = useActions({
-    fetchScenariosList: 'fetchList',
-    fetchScenariosListWithPreviousParams: 'fetchListWithPreviousParams',
-    fetchScenariosListWithoutStore: 'fetchListWithoutStore',
-    createScenario: 'create',
-    updateScenario: 'update',
-    removeScenario: 'remove',
-    createTestScenarioExecution: 'createTestScenarioExecution',
-    fetchTestScenarioExecutionWithoutStore: 'fetchTestScenarioExecutionWithoutStore',
-    fetchTestScenarioExecutionWebhooksResponse: 'fetchTestScenarioExecutionWebhooksResponse',
-    bulkEnableScenarios: 'bulkEnable',
-    bulkDisableScenarios: 'bulkDisable',
-    bulkRemoveScenarios: 'bulkRemove',
-  });
+  const scenarioStore = useScenarioStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(scenarioStore);
 
   return {
-    ...getters,
-    ...actions,
+    scenariosMeta: meta,
+    scenariosPending: pending,
+    scenarios: items,
+    scenariosFetchingParams: fetchingParams,
+
+    fetchScenariosList: scenarioStore.fetchList,
+    fetchScenariosListWithPreviousParams: scenarioStore.fetchListWithPreviousParams,
+    fetchScenariosListWithoutStore: scenarioStore.fetchListWithoutStore,
+    createScenario: scenarioStore.create,
+    updateScenario: scenarioStore.update,
+    removeScenario: scenarioStore.remove,
+    createTestScenarioExecution: scenarioStore.createTestScenarioExecution,
+    fetchTestScenarioExecutionWithoutStore: scenarioStore.fetchTestScenarioExecutionWithoutStore,
+    fetchTestScenarioExecutionWebhooksResponse:
+      scenarioStore.fetchTestScenarioExecutionWebhooksResponse,
+    bulkEnableScenarios: scenarioStore.bulkEnable,
+    bulkDisableScenarios: scenarioStore.bulkDisable,
+    bulkRemoveScenarios: scenarioStore.bulkRemove,
   };
 };

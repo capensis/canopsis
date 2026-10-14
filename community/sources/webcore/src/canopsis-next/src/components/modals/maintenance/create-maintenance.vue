@@ -1,99 +1,83 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close minimize>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <v-layout class="gap-4" column>
+
+      <template #text>
+        <c-layout gap="3" column>
           <c-alert type="warning">
             {{ config.warningText }}
           </c-alert>
-          <maintenance-form v-model="form" />
-        </v-layout>
+
+          <maintenance-form />
+        </c-layout>
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
           :loading="submitting"
           :disabled="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
-<script>
-import { computed, ref } from 'vue';
-
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+<script setup>
+import { computed, inject } from 'vue';
 
 import { maintenanceToForm } from '@/helpers/entities/maintenance/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import MaintenanceForm from '@/components/other/maintenance/form/maintenance-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
-export default {
-  name: MODALS.createMaintenance,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  components: { MaintenanceForm, ModalWrapper },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+});
 
-    const form = ref(maintenanceToForm(config.value.maintenance));
+const modalContext = inject('$modal');
 
-    const title = computed(() => config.value.title ?? t('modals.createMaintenance.setup.title'));
+const modals = useModals();
+const { t } = useI18n();
 
-    const submitLabel = computed(() => (
-      config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance')
-    ));
+const config = computed(() => props.modal.config ?? {});
+const form = useForm({
+  initialValues: maintenanceToForm(config.value.maintenance),
+});
 
-    const { submit, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(form.value);
+const title = computed(() => config.value.title ?? t('modals.createMaintenance.setup.title'));
 
-        close();
-      },
-    });
+const submitLabel = computed(() => config.value.maintenance ? t('common.submit') : t('modals.createMaintenance.enableMaintenance'),
+);
 
-    useFormConfirmableCloseModal({ form, submit, close });
+const close = () => modals.hide({ id: modalContext.id });
 
-    return {
-      form,
-      config,
-      title,
-      submitLabel,
-      submit,
-      submitting,
-      close,
-    };
-  },
-};
+const { handleSubmit, isSubmitting } = form;
+
+const submit = handleSubmit(async () => {
+  await config.value.action?.(form.values.value);
+
+  close();
+});
+
+useFormConfirmableCloseModal({ form: form.values, submit, close });
+
+const submitting = computed(() => isSubmitting.value);
 </script>

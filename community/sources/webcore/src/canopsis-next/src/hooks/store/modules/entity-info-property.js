@@ -1,68 +1,37 @@
+import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
-import { useStoreModuleHooks } from '@/hooks/store';
+import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property';
 
 /**
- * Creates an instance of the entity info property store module hooks.
+ * Entity info property store facade.
  *
- * @returns {Object} Store module hooks for the 'entityInfoProperty' namespace
- */
-export const useEntityInfoPropertyStoreModule = () => useStoreModuleHooks('entityInfoProperty');
-
-/**
- * Hook for accessing and managing entity info properties.
- * Provides CRUD operations for entity information properties.
- *
- * @typedef {Object} EntityInfoPropertyGetters
- * @property {Ref<Array>} items - Entity info properties items
- * @property {Ref<Object>} meta - Metadata for pagination
- * @property {Ref<boolean>} pending - Loading state
- *
- * @typedef {Object} EntityInfoPropertyActions
- * @property {Function} fetchList - Fetches entity info properties list
- * @property {Function} create - Creates a new entity info property
- * @property {Function} update - Updates an entity info property
- * @property {Function} remove - Removes an entity info property
- * @property {Function} fetchListWithoutStore - Fetches list without storing in store
- * @property {Function} fetchAllEntityInfoPropertiesList - Fetches all entity info properties list
- *
- * @returns {Object} Hook return object
- * @property {EntityInfoPropertyGetters} getters - All available getters
- * @property {EntityInfoPropertyActions} actions - All available actions
+ * @returns {Object}
  */
 export const useEntityInfoProperty = () => {
-  const { useGetters, useActions } = useEntityInfoPropertyStoreModule();
-
-  const getters = useGetters({
-    entityInfoProperties: 'items',
-    entityInfoPropertiesWithAlias: 'itemsWithAlias',
-    entityInfoPropertiesWithoutAlias: 'itemsWithoutAlias',
-    entityInfoPropertyMeta: 'meta',
-    entityInfoPropertyPending: 'pending',
-  });
-
-  const actions = useActions({
-    fetchEntityInfoPropertiesList: 'fetchList',
-    createEntityInfoProperty: 'create',
-    updateEntityInfoProperty: 'update',
-    removeEntityInfoProperty: 'remove',
-    bulkRemoveEntityInfoProperty: 'bulkRemove',
-    fetchEntityInfoPropertiesListWithoutStore: 'fetchListWithoutStore',
-  });
-
-  /**
-   * Fetches all entity info properties without pagination.
-   * Retrieves the complete list of entity information properties from the server.
-   */
-  const fetchAllEntityInfoPropertiesList = async () => (
-    actions.fetchEntityInfoPropertiesList({ params: { paginate: false } })
-  );
+  const entityInfoPropertyStore = useEntityInfoPropertyStore();
+  const { items, meta, pending, fetchingParams, itemsWithAlias, itemsWithoutAlias } =
+    storeToRefs(entityInfoPropertyStore);
 
   return {
-    ...getters,
-    ...actions,
+    entityInfoProperties: items,
+    entityInfoPropertiesMeta: meta,
+    entityInfoPropertiesPending: pending,
+    entityInfoPropertiesFetchingParams: fetchingParams,
+    entityInfoPropertiesWithAlias: itemsWithAlias,
+    entityInfoPropertiesWithoutAlias: itemsWithoutAlias,
 
-    fetchAllEntityInfoPropertiesList,
+    fetchEntityInfoPropertiesList: entityInfoPropertyStore.fetchList,
+    fetchEntityInfoPropertiesListWithPreviousParams:
+      entityInfoPropertyStore.fetchListWithPreviousParams,
+    fetchEntityInfoPropertiesListWithoutStore: entityInfoPropertyStore.fetchListWithoutStore,
+    createEntityInfoProperty: entityInfoPropertyStore.create,
+    updateEntityInfoProperty: entityInfoPropertyStore.update,
+    removeEntityInfoProperty: entityInfoPropertyStore.remove,
+    bulkRemoveEntityInfoProperties: entityInfoPropertyStore.bulkRemove,
+
+    fetchAllEntityInfoPropertiesList: () =>
+      entityInfoPropertyStore.fetchList({ params: { paginate: false } }),
   };
 };
 

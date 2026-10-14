@@ -1,20 +1,22 @@
 <template>
-  <v-layout :class="{ 'gap-3': !blockChild }" column>
+  <c-layout :gap="blockChild ? undefined : '3'" column>
     <c-enabled-field
       v-if="withEnabled"
-      v-field="form.enabled"
+      :model-value="form.enabled"
       hide-details
       with-background
+      @update:model-value="updateField('enabled', $event)"
     />
 
     <component :is="blockChild ? 'c-form-block-row' : 'div'" :label="nameLabel" :depth="depth">
       <c-name-field
-        v-field="form.name"
+        :model-value="form.name"
         :label="nameLabel"
         :tooltip="nameTooltip"
         :name="nameFieldName"
         autofocus
         required
+        @update:model-value="updateField('name', $event)"
       />
     </component>
 
@@ -25,51 +27,53 @@
         :depth="depth"
       >
         <c-enabled-field
-          v-field="form.inherited"
+          :model-value="form.inherited"
           :label="$t('modals.createPbehavior.steps.general.fields.inherited')"
           hide-details
+          @update:model-value="updateField('inherited', $event)"
         />
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="$t('common.duration')"
-        :depth="depth"
-      >
+      <c-form-block-row :label="$t('common.duration')" :depth="depth">
         <c-enabled-field
           v-if="withStartOnTrigger"
-          :value="form.start_on_trigger"
+          :model-value="form.start_on_trigger"
           :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
           class="mt-0 mb-1"
           hide-details
-          @input="updateStartOnTrigger"
+          @update:model-value="updateStartOnTrigger"
         />
 
         <c-duration-field
           v-if="form.start_on_trigger"
-          v-field="form.duration"
+          :duration="form.duration"
           :name="durationFieldName"
           required
+          @update:duration="updateField('duration', $event)"
         />
+
         <template v-else>
-          <v-layout class="gap-2 mb-3" align-center>
-            <v-flex xs6>
+          <c-layout class="mb-3" gap="2" align="center">
+            <div class="pbehavior-general-form__half">
               <c-enabled-field
                 v-model="fullDay"
                 :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
                 hide-details
               />
-            </v-flex>
-            <v-flex xs6>
+            </div>
+
+            <div class="pbehavior-general-form__half">
               <c-enabled-field
                 v-if="hasPauseType"
                 v-model="noEnding"
                 :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
                 hide-details
               />
-            </v-flex>
-          </v-layout>
-          <v-layout class="gap-2" align-center>
-            <v-flex>
+            </div>
+          </c-layout>
+
+          <c-layout gap="2" align="center">
+            <div class="pbehavior-general-form__date-range">
               <date-time-splitted-range-picker-field
                 :start="form.tstart"
                 :end="form.tstop"
@@ -85,62 +89,75 @@
                 @update:start="updateField('tstart', $event)"
                 @update:end="updateField('tstop', $event)"
               />
-            </v-flex>
-            <v-flex v-if="!noTimezone">
+            </div>
+
+            <div v-if="!noTimezone" class="pbehavior-general-form__timezone">
               <c-timezone-field
-                v-field="form.timezone"
+                :model-value="form.timezone"
                 server
+                @update:model-value="updateField('timezone', $event)"
               />
-            </v-flex>
-          </v-layout>
+            </div>
+          </c-layout>
         </template>
       </c-form-block-row>
 
       <c-form-block-row :label="'Pbehavior reason and type'" :depth="depth">
-        <v-layout>
-          <v-flex xs6>
+        <c-layout gap="3">
+          <div class="pbehavior-general-form__half">
             <c-pbehavior-reason-field
-              v-field="form.reason"
+              :model-value="form.reason"
+              :name="pbehaviorReasonFieldName"
               class="mr-2"
               required
               return-object
+              @update:model-value="updateField('reason', $event)"
             />
-          </v-flex>
-          <v-flex xs6>
+          </div>
+
+          <div class="pbehavior-general-form__half">
             <c-pbehavior-type-field
-              v-field="form.type"
+              :model-value="form.type"
               :name="pbehaviorTypeFieldName"
               class="ml-2"
               required
               return-object
+              @update:model-value="updateField('type', $event)"
             />
-          </v-flex>
-        </v-layout>
+          </div>
+        </c-layout>
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('common.color')" :depth="depth">
+      <c-form-block-row :label="$t('common.color')" :depth="depth" align-center>
         <c-enabled-color-picker-field
-          v-field="form.color"
+          :model-value="form.color"
           :label="$t('modals.createPbehavior.steps.color.label')"
           justify-end
-          row
+          @update:model-value="updateField('color', $event)"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('modals.createPbehavior.steps.rrule.title')" :depth="depth" indented>
-        <pbehavior-recurrence-rule-field v-field="form" with-exdate-type />
+      <c-form-block-row
+        :label="$t('modals.createPbehavior.steps.rrule.title')"
+        :depth="depth"
+        indented
+      >
+        <pbehavior-recurrence-rule-field :form="form" with-exdate-type @update:form="updateModel" />
       </c-form-block-row>
 
       <c-form-block-row
         v-if="!noComments"
-        :label="$tc('common.comment', 2)"
+        :label="$t('common.comment', 2)"
         :depth="depth"
         indented
       >
-        <pbehavior-comments-field v-field="form.comments" />
+        <pbehavior-comments-field
+          :comments="form.comments"
+          @update:comments="updateField('comments', $event)"
+        />
       </c-form-block-row>
     </component>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -150,39 +167,33 @@ import { MAX_PBEHAVIOR_DATES_DIFF_YEARS } from '@/config';
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import {
-  isStartOfDay,
-  isEndOfDay,
   addUnitToDate,
-  getNowTimestamp,
+  convertDateToDateObject,
+  convertDateToEndOfDayDateObject,
+  convertDateToEndOfUnitDateObject,
+  convertDateToStartOfDayDateObject,
   convertDateToString,
   convertDateToTimestamp,
-  convertDateToDateObject,
-  convertDateToStartOfDayDateObject,
-  convertDateToEndOfUnitDateObject,
-  convertDateToEndOfDayDateObject,
+  getNowTimestamp,
+  isEndOfDay,
+  isStartOfDay,
 } from '@/helpers/date/date';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import PbehaviorRecurrenceRule from '@/components/modals/pbehavior/pbehavior-recurrence-rule.vue';
 
 import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
 import PbehaviorRecurrenceRuleField from '../fields/pbehavior-recurrence-rule-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     PbehaviorCommentsField,
     DateTimeSplittedRangePickerField,
-    PbehaviorRecurrenceRule,
     PbehaviorRecurrenceRuleField,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -233,6 +244,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:form'],
+
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
@@ -241,6 +255,7 @@ export default {
 
     const nameFieldName = computed(() => getFieldName('name'));
     const durationFieldName = computed(() => getFieldName('duration'));
+    const pbehaviorReasonFieldName = computed(() => getFieldName('reason'));
     const pbehaviorTypeFieldName = computed(() => getFieldName('type'));
     const dateTimeSplittedRangePickerFieldName = computed(() => getFieldName('tstart'));
 
@@ -279,9 +294,10 @@ export default {
     });
 
     const tstopMax = computed(() => convertDateToString(
-      addUnitToDate(props.form.tstart, MAX_PBEHAVIOR_DATES_DIFF_YEARS, TIME_UNITS.year),
-      DATETIME_FORMATS.vuetifyDatePicker,
-    ));
+        addUnitToDate(props.form.tstart, MAX_PBEHAVIOR_DATES_DIFF_YEARS, TIME_UNITS.year),
+        DATETIME_FORMATS.vuetifyDatePicker,
+      ),
+    );
 
     watch(noEnding, (isNoEnding) => {
       const { tstart } = props.form;
@@ -290,7 +306,6 @@ export default {
         updateField('tstop', null);
       } else if (tstart) {
         const unit = fullDay.value ? 'day' : 'hour';
-
         const tstop = addUnitToDate(tstart, 1, unit);
         const tstopDate = fullDay.value
           ? convertDateToEndOfUnitDateObject(tstop, unit)
@@ -356,15 +371,36 @@ export default {
       hasPauseType,
       nameFieldName,
       durationFieldName,
+      pbehaviorReasonFieldName,
       pbehaviorTypeFieldName,
       dateTimeSplittedRangePickerFieldName,
       tstartRules,
       tstopRules,
       tstopMin,
       tstopMax,
+      updateModel,
       updateField,
       updateStartOnTrigger,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pbehavior-general-form {
+  &__half {
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  &__date-range {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__timezone {
+    flex: 0 0 260px;
+    min-width: 0;
+  }
+}
+</style>

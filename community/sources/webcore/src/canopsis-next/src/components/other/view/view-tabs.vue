@@ -1,111 +1,97 @@
 <template>
-  <v-tabs
-    ref="tabs"
-    :key="vTabsKey"
-    :value="$route.fullPath"
-    :class="{ hidden: tabs.length < 2 && !activeViewEditing, 'tabs-editing': activeViewEditing }"
-    :hide-slider="changed"
-    class="view-tabs"
-    background-color="secondary lighten-2"
-    slider-color="primary"
-  >
-    <c-draggable-list-field
-      v-if="tabs.length"
-      :value="tabs"
-      :disabled="!activeViewEditing"
-      class="d-flex"
-      drag-class="draggable-item--dragging"
-      chosen-class="draggable-item--chosen"
-      @end="onDragEnd"
-      @input="$emit('update:tabs', $event)"
+  <div class="view-tabs-wrapper">
+    <v-tabs
+      ref="tabs"
+      :key="vTabsKey"
+      :model-value="$route.query.tabId"
+      :class="{
+        hidden: tabs.length < 2 && !activeViewEditing,
+        'tabs-editing': activeViewEditing,
+      }"
+      :hide-slider="changed"
+      bg-color="secondary-lighten-2"
+      class="view-tabs"
+      color="white"
+      slider-color="primary"
     >
-      <v-tab
-        v-for="{ to, tab, title, key } in preparedTabs"
-        :key="key"
-        :to="to"
-        class="draggable-item view-tabs__tab"
-        exact
-        ripple
+      <c-draggable-list-field
+        v-if="tabs.length"
+        :model-value="tabs"
+        :disabled="!activeViewEditing"
+        class="d-flex"
+        drag-class="draggable-item--dragging"
+        chosen-class="draggable-item--chosen"
+        @end="onDragEnd"
+        @update:model-value="$emit('update:tabs', $event)"
       >
-        <span>{{ title }}</span>
-        <template v-if="updatable && activeViewEditing">
-          <v-btn
-            :disabled="changed"
-            class="ml-2"
-            small
-            text
-            icon
-            dark
-            @click.prevent="showUpdateTabModal(tab)"
+        <template #item="{ element: tab }">
+          <v-tab
+            :key="tab._id"
+            :value="tab._id"
+            :to="getTabRouteById(tab._id)"
+            class="draggable-item view-tabs__tab"
+            exact
+            ripple
           >
-            <v-icon small>
-              edit
-            </v-icon>
-          </v-btn>
-          <v-btn
-            :disabled="changed"
-            small
-            text
-            icon
-            dark
-            @click.prevent="showSelectViewModal(tab)"
-          >
-            <v-icon small>
-              file_copy
-            </v-icon>
-          </v-btn>
-          <v-btn
-            :disabled="changed"
-            small
-            text
-            icon
-            dark
-            @click.prevent="showDeleteTabModal(tab)"
-          >
-            <v-icon small>
-              delete
-            </v-icon>
-          </v-btn>
+            <span>{{ tab.title }}</span>
+
+            <template v-if="updatable && activeViewEditing">
+              <v-btn
+                :disabled="changed"
+                class="ml-2"
+                size="small"
+                variant="text"
+                icon
+                @click.prevent.stop="showUpdateTabModal(tab)"
+              >
+                <v-icon size="small">edit</v-icon>
+              </v-btn>
+
+              <v-btn
+                :disabled="changed"
+                size="small"
+                variant="text"
+                icon
+                @click.prevent.stop="showSelectViewModal(tab)"
+              >
+                <v-icon size="small">file_copy</v-icon>
+              </v-btn>
+
+              <v-btn
+                :disabled="changed"
+                size="small"
+                variant="text"
+                icon
+                @click.prevent.stop="showDeleteTabModal(tab)"
+              >
+                <v-icon size="small">delete</v-icon>
+              </v-btn>
+            </template>
+          </v-tab>
         </template>
-      </v-tab>
-    </c-draggable-list-field>
-    <template v-if="$scopedSlots.default">
-      <v-tabs-items
-        :value="$route.fullPath"
-        touchless
-      >
-        <v-tab-item
-          v-for="{ to, tab, key } in preparedTabs"
-          :key="key"
-          :value="to"
-        >
-          <slot
-            :tab="tab"
-            :visible="to === $route.fullPath"
-          />
-        </v-tab-item>
-      </v-tabs-items>
-    </template>
-  </v-tabs>
+      </c-draggable-list-field>
+    </v-tabs>
+
+    <v-window v-if="$slots.default" :model-value="$route.query.tabId" touchless>
+      <v-window-item v-for="tab in tabs" :key="tab._id" :value="tab._id">
+        <slot :tab="tab" :visible="tab._id === $route.query.tabId" />
+      </v-window-item>
+    </v-window>
+  </div>
 </template>
 
 <script>
+import { mapActions } from 'pinia';
+
 import { MODALS, ROUTES_NAMES } from '@/constants';
+
+import { useViewStore } from '@/stores/modules/view';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
-import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
-import { entitiesViewMixin } from '@/mixins/entities/view';
-import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
-  mixins: [
-    activeViewMixin,
-    viewRouterMixin,
-    vuetifyTabsMixin,
-    entitiesViewMixin,
-    entitiesViewTabMixin,
-  ],
+  mixins: [activeViewMixin, viewRouterMixin],
   props: {
     tabs: {
       type: Array,
@@ -120,31 +106,24 @@ export default {
       default: false,
     },
   },
+  emits: ['update:tabs'],
   computed: {
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
     },
 
-    preparedTabs() {
-      return this.tabs.map(tab => ({
-        key: tab._id,
-        to: this.getTabHrefById(tab._id),
-        title: tab.title,
-        tab,
-      }));
-    },
-
-    getTabHrefById() {
-      return (id) => {
-        const { href } = this.$router.resolve({ query: { tabId: id } }, this.$route);
-
-        return href.replace('#', '');
-      };
+    getTabRouteById() {
+      return id => ({
+        query: {
+          ...this.$route.query,
+          tabId: id,
+        },
+      });
     },
   },
   watch: {
     activeViewEditing() {
-      this.$nextTick(this.callTabsOnResizeMethod);
+      this.$nextTick(this.onUpdateTabs);
     },
 
     tabs: {
@@ -155,6 +134,12 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useViewStore, {
+      updateViewTab: 'updateViewTab',
+      copyViewTab: 'copyViewTab',
+      removeViewTab: 'removeViewTab',
+    }),
+
     showUpdateTabModal(tab) {
       this.$modals.show({
         name: MODALS.textFieldEditor,
@@ -164,7 +149,7 @@ export default {
             name: 'text',
             label: this.$t('modals.viewTab.fields.title'),
             value: tab.title,
-            validationRules: 'required',
+            validationRules: { required: true },
           },
           action: async (title) => {
             await this.updateViewTab({
@@ -195,7 +180,7 @@ export default {
           field: {
             name: 'text',
             label: this.$t('modals.viewTab.fields.title'),
-            validationRules: 'required',
+            validationRules: { required: true },
           },
           action: async (title) => {
             const data = {
@@ -209,7 +194,7 @@ export default {
               await this.fetchActiveView();
             }
 
-            this.$router.push({
+            await this.$router.push({
               name: ROUTES_NAMES.view,
               params: {
                 id: viewId,
@@ -248,8 +233,7 @@ export default {
 
     onUpdateTabs() {
       this.$nextTick(() => {
-        this.callTabsOnResizeMethod();
-        this.callTabsUpdateTabsMethod();
+        this.$refs.tabs?.updateSlider?.();
       });
     },
 
@@ -261,49 +245,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .view-tabs{
-    &.hidden {
-      & ::v-deep > .v-tabs-bar {
-        display: none;
-      }
-    }
+.view-tabs {
+  &.hidden {
+    display: none;
+  }
 
-    & ::v-deep .v-tabs-bar &__tab:not(.v-tab--active) {
-      color: var(--v-text-dark-primary, rgba(255, 255, 255, 0.6));
+  :deep(.v-tab:not(.v-tab--selected)) {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  :deep(.v-tab--selected) {
+    color: #fff !important;
+  }
+}
+
+.draggable-item {
+  position: relative;
+  transform: translateZ(0);
+
+  .tabs-editing & {
+    cursor: move;
+  }
+
+  &--dragging,
+  &--chosen {
+    :deep(.v-ripple__container) {
+      display: none;
     }
   }
 
-  .draggable-item {
-    position: relative;
-    transform: translateZ(0);
-
-    .tabs-editing & {
-      cursor: move;
-
-      & ::v-deep .v-tabs__item {
-        cursor: move;
-      }
-    }
-
-    & ::v-deep .v-tabs__item--disabled {
-      color: #fff;
-      opacity: 1;
-
-      button {
-        color: rgba(255, 255, 255, 0.3) !important;
-        box-shadow: none !important;
-        pointer-events: none;
-      }
-    }
-
-    &--dragging, &--chosen {
-      & ::v-deep .v-ripple__container {
-        display: none;
-      }
-    }
-
-    &--dragging {
-      background: var(--v-secondary-lighten2);
-    }
+  &--dragging {
+    background: var(--v-secondary-lighten2);
   }
+}
 </style>

@@ -3,11 +3,12 @@ import { MERMAID_THEMES } from '@/constants';
 export default {
   theme: 'Theme',
   panzoom: {
-    helpText: 'Useful shortcuts:\n'
-      + 'Ctrl + mouse wheel - zoom in/out\n'
-      + 'Shift + mouse wheel - horizontal scroll\n'
-      + 'Alt + mouse wheel - vertical scroll\n'
-      + 'Ctrl + Left mouse click + drag - pan the area',
+    helpText:
+      'Useful shortcuts:\n' +
+      'Ctrl + mouse wheel - zoom in/out\n' +
+      'Shift + mouse wheel - horizontal scroll\n' +
+      'Alt + mouse wheel - vertical scroll\n' +
+      'Ctrl + Left mouse click + drag - pan the area',
   },
   themes: {
     [MERMAID_THEMES.default]: 'Default',

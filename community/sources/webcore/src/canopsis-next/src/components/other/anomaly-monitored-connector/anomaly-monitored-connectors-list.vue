@@ -23,34 +23,32 @@
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+
     <template #created="{ item }">
-      {{ item.created | date }}
+      {{ formatDate(item.created) }}
     </template>
+
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ formatDate(item.updated) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item)"
-        />
-      </v-layout>
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item)" />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -81,34 +79,33 @@ export default {
       default: false,
     },
   },
+
+  emits: ['edit', 'remove', 'refresh', 'update:options'],
+
   setup() {
     const { t } = useI18n();
+    const formatDate = value => convertDateToString(value);
 
     const headers = computed(() => [
       {
         text: t('common.connectorName'),
         value: 'name',
-        sortable: false,
       },
       {
         text: t('common.enabled'),
         value: 'enabled',
-        sortable: false,
       },
       {
         text: t('common.created'),
         value: 'created',
-        sortable: false,
       },
       {
         text: t('common.updated'),
         value: 'updated',
-        sortable: false,
       },
       {
         text: t('common.author'),
         value: 'author.display_name',
-        sortable: false,
       },
       {
         text: t('common.actionsLabel'),
@@ -119,6 +116,7 @@ export default {
 
     return {
       headers,
+      formatDate,
     };
   },
 };

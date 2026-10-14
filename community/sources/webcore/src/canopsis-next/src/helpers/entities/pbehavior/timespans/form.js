@@ -1,28 +1,23 @@
 import { exceptionsToRequest, exdatesToRequest } from '@/helpers/entities/pbehavior/form';
 
 /**
- * Convert pbehavior to timespan
+ * Convert pbehavior to timespan.
  *
  * @param {Object} pbehavior
  * @param {number} from
  * @param {number} to
  * @param {boolean} byDate
- * @return {Object}}
+ * @returns {Object}
  */
-export const pbehaviorToTimespanRequest = ({
-  pbehavior,
-  from,
-  to,
-  byDate = false,
-}) => {
+export const pbehaviorToTimespanRequest = ({ pbehavior, from, to, byDate = false }) => {
   const tstartBeforeFrom = pbehavior.tstart < from;
-  const tstopAfterFrom = !pbehavior.tstop || (pbehavior.tstop > from);
+  const tstopAfterFrom = !pbehavior.tstop || pbehavior.tstop > from;
 
   const tstartBeforeTo = pbehavior.tstart < to;
-  const tstopAfterTo = pbehavior.tstop && (pbehavior.tstop > to);
+  const tstopAfterTo = pbehavior.tstop && pbehavior.tstop > to;
 
-  const viewFrom = (tstartBeforeFrom && tstopAfterFrom) ? pbehavior.tstart : from;
-  const viewTo = (tstartBeforeTo && tstopAfterTo) ? pbehavior.tstop : to;
+  const viewFrom = tstartBeforeFrom && tstopAfterFrom ? pbehavior.tstart : from;
+  const viewTo = tstartBeforeTo && tstopAfterTo ? pbehavior.tstop : to;
 
   const request = {
     rrule: pbehavior.rrule,

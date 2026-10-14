@@ -1,17 +1,14 @@
 <template>
   <div>
-    <c-simple-tooltip
-      :content="tooltipContent"
-      top
-    >
-      <template #activator="{ on }">
+    <c-tooltip :content="tooltipContent" html top>
+      <template #activator="{ props: activatorProps }">
         <c-alarm-pbehavior-chip
+          v-bind="activatorProps"
           :color="pbehaviorInfo.color"
           :icon="pbehaviorInfo.icon_name"
-          v-on="on"
         />
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </div>
 </template>
 
@@ -25,6 +22,7 @@ export default {
       default: () => ({}),
     },
   },
+
   setup(props) {
     const { tooltipContent } = useExtraDetailsPbehaviorTooltip(props);
 

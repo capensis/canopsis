@@ -32,8 +32,11 @@ export const useJavaScriptCompletions = ({ codeEditor, completions }) => {
     const unwrappedCodeEditor = unref(codeEditor);
     const unwrappedCompletions = unref(completions);
 
-    if (unwrappedCodeEditor.$monaco && unwrappedCompletions) {
-      registeredCompletions = registerJavaScriptCompletion(unwrappedCodeEditor.$monaco, unwrappedCompletions);
+    if (unwrappedCodeEditor?.$monaco && unwrappedCompletions) {
+      registeredCompletions = registerJavaScriptCompletion(
+        unwrappedCodeEditor.$monaco,
+        unwrappedCompletions,
+      );
     }
   };
 

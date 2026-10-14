@@ -1,42 +1,31 @@
 <template>
-  <v-layout
-    class="flowchart-color-field"
-    justify-space-between
-    align-center
-  >
+  <c-layout class="flowchart-color-field" justify="space-between" align="center">
     <v-checkbox
       v-if="!hideCheckbox"
-      :input-value="isFilled"
+      :model-value="isFilled"
       :label="label || $t('common.color')"
       class="mt-0"
       color="primary"
       hide-details
-      @change="updateIsFilled"
+      @update:model-value="updateIsFilled"
     />
-    <span
-      v-else
-      class="v-label"
-    >
+    <span v-else class="v-label">
       {{ label }}
     </span>
-    <v-flex
-      v-show="isFilled || hideCheckbox"
-      xs3
-    >
-      <v-btn
-        :style="style"
-        class="flowchart-color-field__button ma-0 pa-0"
-        small
-        block
-        @click="showColorPickerModal"
+    <v-col v-show="isFilled || hideCheckbox" class="flowchart-color-field__picker" cols="3">
+      <c-color-picker-field
+        :model-value="value"
+        size="small"
+        hide-details
+        hide-label
+        @update:model-value="updateModel"
       />
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </c-layout>
 </template>
 
 <script>
 import { COLORS } from '@/config';
-import { MODALS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -46,6 +35,7 @@ export default {
     prop: 'value',
     event: 'input',
   },
+  emits: ['input', 'update:value'],
   props: {
     value: {
       type: String,
@@ -69,26 +59,10 @@ export default {
       return this.value !== 'transparent';
     },
 
-    style() {
-      return {
-        backgroundColor: this.value,
-      };
-    },
   },
   methods: {
     updateIsFilled(checked) {
       this.updateModel(checked ? this.palette[0] : 'transparent');
-    },
-
-    showColorPickerModal() {
-      this.$modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          color: this.value,
-          palette: this.palette,
-          action: color => this.updateModel(color),
-        },
-      });
     },
   },
 };
@@ -96,8 +70,8 @@ export default {
 
 <style lang="scss">
 .flowchart-color-field {
-  &__button {
-    min-width: unset;
+  &__picker {
+    flex: 0 0 auto;
   }
 }
 </style>

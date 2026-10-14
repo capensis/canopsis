@@ -21,19 +21,20 @@
       :height="shape.diameter"
       :padding="padding"
       :color="color"
-      @connected="$listeners.connected"
-      @connecting="$listeners.connecting"
-      @unconnect="$listeners.unconnect"
+      @connected="$emit('connected', $event)"
+      @connecting="$emit('connecting', $event)"
+      @unconnect="$emit('unconnect', $event)"
     />
   </g>
 </template>
 
 <script>
-import RectSelection from '../../common/rect-selection.vue';
 import RectConnectors from '../../common/rect-connectors.vue';
+import RectSelection from '../../common/rect-selection.vue';
 
 export default {
   components: { RectConnectors, RectSelection },
+  emits: ['connected', 'connecting', 'unconnect', 'update'],
   props: {
     shape: {
       type: Object,

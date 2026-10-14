@@ -1,0 +1,16 @@
+export { default as AlarmSettings } from './alarm/alarm.vue';
+export { default as ContextSettings } from './context/context.vue';
+export { default as ServiceWeatherSettings } from './service-weather/service-weather.vue';
+export { default as StatsCalendarSettings } from './stats/stats-calendar.vue';
+export { default as TextSettings } from './text/text.vue';
+export { default as CounterSettings } from './counter/counter.vue';
+export { default as TestingWeatherSettings } from './testing-weather/testing-weather.vue';
+export { default as MapSettings } from './map/map.vue';
+export { default as BarChartSettings } from './chart/bar-chart.vue';
+export { default as LineChartSettings } from './chart/line-chart.vue';
+export { default as PieChartSettings } from './chart/pie-chart.vue';
+export { default as NumbersSettings } from './chart/numbers.vue';
+export { default as UserStatisticsSettings } from './statistics/user-statistics.vue';
+export { default as AlarmStatisticsSettings } from './statistics/alarm-statistics.vue';
+export { default as AvailabilitySettings } from './availability/availability.vue';
+export { default as ExternalDataTableSettings } from './external-data-table/external-data-table.vue';

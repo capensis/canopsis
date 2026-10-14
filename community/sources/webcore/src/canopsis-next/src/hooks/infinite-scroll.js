@@ -1,10 +1,4 @@
-import {
-  computed,
-  onBeforeUnmount,
-  ref,
-  unref,
-  watch,
-} from 'vue';
+import { computed, onBeforeUnmount, ref, unref, watch } from 'vue';
 
 /** Default number of items appended per infinite scroll page. */
 export const INFINITE_SCROLL_DEFAULT_LIMIT = 20;

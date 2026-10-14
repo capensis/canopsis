@@ -1,20 +1,20 @@
 <template>
-  <v-tooltip bottom>
-    <template #activator="{ on }">
+  <c-tooltip location="bottom">
+    <template #activator="{ props: tooltipProps }">
       <v-btn
+        v-bind="tooltipProps"
         class="mx-2"
-        fab
-        small
+        variant="text"
+        size="small"
         icon
-        depressed
-        v-on="on"
         @click="$emit('click', $event)"
       >
         <v-icon>{{ icon }}</v-icon>
       </v-btn>
     </template>
+
     <span>{{ label }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
@@ -29,5 +29,7 @@ export default {
       required: true,
     },
   },
+
+  emits: ['click'],
 };
 </script>

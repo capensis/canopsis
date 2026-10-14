@@ -1,70 +1,61 @@
 <template>
-  <span>
-    <v-tooltip
-      v-if="item.loadMore"
-      right
-    >
-      <template #activator="{ on }">
+  <span class="service-dependencies-expand">
+    <c-tooltip v-if="item.loadMore" :content="$t('common.loadMore')" right>
+      <template #activator="{ props: tooltipProps }">
         <v-btn
+          v-bind="tooltipProps"
           :loading="pending"
-          icon
-          v-on="on"
+          icon="more_horiz"
+          variant="text"
+          size="small"
           @click="$emit('load', item)"
-        >
-          <v-icon>more_horiz</v-icon>
-        </v-btn>
+        />
       </template>
-      <span>{{ $t('common.loadMore') }}</span>
-    </v-tooltip>
+    </c-tooltip>
     <v-badge
       v-else
-      :value="!!item.entity?.pbehavior_info?.id"
+      :model-value="hasStatusIcon"
       color="grey"
-      overlap
+      location="top end"
     >
       <v-btn
         :class="entityColorClass"
-        fab
-        small
-        depressed
-        dark
+        variant="flat"
+        size="small"
+        icon
         @click="$emit('show', item)"
       >
         <v-icon>{{ entityIcon }}</v-icon>
       </v-btn>
       <template #badge>
-        <v-icon
-          class="pa-0"
-          dark
-        >
-          {{ pbehaviorIcon }}
+        <v-icon class="pa-0" size="12">
+          {{ statusIcon }}
         </v-icon>
       </template>
     </v-badge>
-    <v-tooltip
-      v-if="item.cycle"
-      top
-    >
-      <template #activator="{ on }">
+    <c-tooltip v-if="item.cycle" :content="$t('common.cycleDependency')" top>
+      <template #activator="{ props: tooltipProps }">
         <v-icon
+          v-bind="tooltipProps"
           class="ml-1"
           color="error"
           size="14"
-          v-on="on"
         >
           autorenew
         </v-icon>
       </template>
-      <span>{{ $t('common.cycleDependency') }}</span>
-    </v-tooltip>
+    </c-tooltip>
   </span>
 </template>
 
 <script>
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import {
+  COLOR_INDICATOR_TYPES,
+  ENTITY_TYPES_ICONS,
+  PBEHAVIOR_TYPE_TYPES,
+} from '@/constants';
 
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
-import { getIconByEntityType } from '@/helpers/entities/entity/icons';
 
 export default {
   props: {
@@ -77,6 +68,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['load', 'show'],
+
   computed: {
     entity() {
       return this.item?.entity ?? {};
@@ -87,12 +81,36 @@ export default {
     },
 
     entityIcon() {
-      return getIconByEntityType(this.entity.type);
+      return ENTITY_TYPES_ICONS[this.entity.type] ?? 'perm_identity';
     },
 
-    pbehaviorIcon() {
-      return this.entity?.pbehavior_info?.icon_name ?? 'pause';
+    hasStatusIcon() {
+      return Boolean(this.entity.pause || this.entity.pbehavior_info?.id);
+    },
+
+    statusIcon() {
+      const pbehavior = this.entity.pbehavior_info;
+      const hasNonPausePbehavior = pbehavior?.id &&
+        pbehavior.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause;
+
+      if (hasNonPausePbehavior) {
+        return pbehavior.icon_name ?? 'build';
+      }
+
+      if (this.entity.pause) {
+        return 'pause';
+      }
+
+      return '$vuetify.icons.pbehavior';
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.service-dependencies-expand {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+</style>

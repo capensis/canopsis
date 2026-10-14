@@ -1,13 +1,8 @@
 <template>
   <v-fade-transition>
-    <v-layout
-      v-show="value"
-      class="alert"
-    >
-      <div
-        :style="{ opacity: opacity, backgroundColor }"
-        class="overlay"
-      />
+    <c-layout v-show="value" class="alert">
+      <div :style="{ opacity, backgroundColor }" class="overlay" />
+
       <div class="content">
         <slot>
           <v-alert type="error">
@@ -15,7 +10,7 @@
           </v-alert>
         </slot>
       </div>
-    </v-layout>
+    </c-layout>
   </v-fade-transition>
 </template>
 
@@ -41,7 +36,6 @@ export default {
       default: '',
     },
   },
-
   computed: {
     errorMessage() {
       return this.message || this.$t('errors.default');
@@ -51,31 +45,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .alert {
+.alert {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+
+  &,
+  .overlay {
+    min-height: 100px;
+  }
+
+  .overlay {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 2;
-
-    &, .overlay {
-      min-height: 100px;
-    }
-
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-    }
-
-    .content {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
   }
+
+  .content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
 </style>

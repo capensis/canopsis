@@ -1,9 +1,10 @@
 <template>
-  <v-layout
+  <c-layout
     ref="layoutElement"
     :class="{ 'c-advanced-search__groups-wrapper--disabled': disabled }"
-    class="c-advanced-search__groups-wrapper gap-1"
-    align-center
+    class="c-advanced-search__groups-wrapper"
+    align="center"
+    gap="1"
     wrap
     @mouseup="mouseupLayout"
   >
@@ -18,13 +19,13 @@
       :allow-or="allowOr"
       :disabled="disabled"
       :focus-on-mount="getFocusOnMount(index)"
-      @input="update($event, index)"
+      @update:rule="update($event, index)"
       @make:active="makeActive"
       @reset:active="resetActive"
       @next="next(index)"
       @remove="remove(index)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -32,22 +33,17 @@ import { ref, nextTick } from 'vue';
 
 import { REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
 
-import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
+import { advancedSearchRuleItemToFormItem } from '@/helpers/search/advanced-search';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-
-import { useLastInputFocus } from '../hooks/focus';
 import { useActiveKey } from '../hooks/active-key';
+import { useLastInputFocus } from '../hooks/focus';
 
 import AdvancedSearchRule from './advanced-search-rule.vue';
 
 export default {
   components: { AdvancedSearchRule },
-  model: {
-    prop: 'rules',
-    event: 'input',
-  },
+
   props: {
     rules: {
       type: Array,
@@ -72,17 +68,27 @@ export default {
       default: true,
     },
   },
-  setup(props, { emit }) {
-    const {
-      updateModel,
-      addItemIntoArray,
-      updateItemInArray,
-      removeItemsFromArray,
-    } = useArrayModelField(props, emit);
 
+  emits: ['update:rules'],
+
+  setup(props, { emit }) {
     const layoutElement = ref(null);
     const { activeKey, makeActive, resetActive } = useActiveKey();
     const { focusRegister } = useLastInputFocus(REGISTER_LAST_INPUT_FOCUS_KEY);
+
+    const updateModel = (rules) => {
+      emit('update:rules', rules);
+    };
+
+    const addItemIntoArray = value => updateModel([...props.rules, value]);
+    const updateItemInArray = (index, value) => {
+      const rules = [...props.rules];
+
+      rules[index] = value;
+
+      updateModel(rules);
+    };
+    const removeItemsFromArray = indexes => updateModel(props.rules.filter((rule, index) => !indexes.includes(index)));
 
     /**
      * Adds a new item into the array using a form item.
@@ -164,7 +170,8 @@ export default {
      *
      * @param {Event} event - The mouseup event.
      */
-    const mouseupLayout = event => event.target === layoutElement.value && focusRegister.call();
+    const mouseupLayout = event => event.target === event.currentTarget && focusRegister.call();
+    const focusLastInput = () => focusRegister.call();
 
     /**
      * Determines whether a rule should receive focus when mounted based on its position
@@ -192,6 +199,7 @@ export default {
       update,
       remove,
       mouseupLayout,
+      focusLastInput,
       getFocusOnMount,
     };
   },
@@ -200,11 +208,14 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-search__groups-wrapper {
+  flex: 1 1 auto;
+  min-width: 0;
+
   > * {
     flex: 0 1 auto;
   }
 
-  &--disabled::v-deep .v-chip {
+  &--disabled :deep(.v-chip) {
     cursor: pointer !important;
   }
 }
