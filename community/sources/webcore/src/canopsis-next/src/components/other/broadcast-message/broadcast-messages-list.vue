@@ -95,7 +95,6 @@ export default {
         text: t('common.preview'),
         value: 'message',
         width: 400,
-        sortable: false,
       },
       {
         text: t('common.status'),
@@ -105,12 +104,10 @@ export default {
       {
         text: t('common.start'),
         value: 'start',
-        sortable: false,
       },
       {
         text: t('common.end'),
         value: 'end',
-        sortable: false,
       },
       {
         text: t('common.actionsLabel'),
