@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    v-field="form"
+    v-model:value="patternsField"
     :with-alarm="!isEntityType"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
@@ -13,14 +13,15 @@
 </template>
 
 <script>
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import { computed } from 'vue';
+
+import { useFormModel } from '@/hooks/form';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -35,16 +36,21 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
+    const patternsField = props.readonly
+     ? computed(() => props.form)
+     : useFormModel('patterns');
+
     const { fetchIdleRulePatternFields } = usePatternsFields();
 
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchIdleRulePatternFields, props.readonly);
+    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
+      fetchIdleRulePatternFields,
+      props.readonly,
+    );
 
     return {
+      patternsField,
       pending,
       alarmAttributes,
       entityAttributes,

@@ -1,496 +1,269 @@
-import LoaderOverlay from '@/components/common/overlay/loader-overlay.vue';
+import { defineAsyncComponent } from 'vue';
 
-export const CreateEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-event.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateAckEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-ack-event.vue'),
-  loading: LoaderOverlay,
-});
-export const ConfirmAckWithTicket = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/confirm-ack-with-ticket.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateChangeStateEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-change-state-event.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateSnoozeEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-snooze-event.vue'),
-  loading: LoaderOverlay,
-});
-export const VariablesHelp = () => ({
-  component: import(/* webpackChunkName: "Events" */ './common/variables-help.vue'),
-  loading: LoaderOverlay,
-});
-export const EditLiveReporting = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/edit-live-reporting.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateCommentEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './common/create-comment-event.vue'),
-  loading: LoaderOverlay,
-});
-export const InfoPopupSetting = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/info-popup-setting/info-popup-setting.vue'),
-  loading: LoaderOverlay,
-});
-export const AddInfoPopup = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/info-popup-setting/add-info-popup.vue'),
-  loading: LoaderOverlay,
-});
-export const LinkToMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/link-to-meta-alarm.vue'),
-  loading: LoaderOverlay,
-});
-export const RemoveAlarmsFromMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-meta-alarm.vue'),
-  loading: LoaderOverlay,
-});
-export const AlarmsList = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/alarms-list.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateMetaAlarmRule = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './meta-alarm-rule/create-meta-alarm-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateAlarmChart = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/create-alarm-chart.vue'),
-  loading: LoaderOverlay,
-});
+import { FEATURES_SERVICE_KEYS, MODALS } from '@/constants';
 
-export const PbehaviorPlanning = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-planning.vue'),
-  loading: LoaderOverlay,
-});
-export const PbehaviorsCalendar = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehaviors-calendar.vue'),
-  loading: LoaderOverlay,
-});
-export const PbehaviorRecurrenceRule = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateRecurrenceRule = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-recurrence-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const PbehaviorRecurrentChangesConfirmation = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrent-changes-confirmation.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePbehavior = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePbehaviorType = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-type.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePbehaviorReason = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-reason.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePbehaviorException = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
-  loading: LoaderOverlay,
-});
-export const ImportPbehaviorException = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/import-pbehavior-exception.vue'),
-  loading: LoaderOverlay,
-});
-export const Confirmation = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/confirmation.vue'),
-  loading: LoaderOverlay,
-});
-export const ClickOutsideConfirmation = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/click-outside-confirmation.vue'),
-  loading: LoaderOverlay,
-});
-export const ColorPicker = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/color-picker.vue'),
-  loading: LoaderOverlay,
-});
-export const TextEditor = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/text-editor.vue'),
-  loading: LoaderOverlay,
-});
-export const PayloadTextareaEditor = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/payload-textarea-editor.vue'),
-  loading: LoaderOverlay,
-});
-export const TextEditorWithTemplate = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/text-editor-with-template.vue'),
-  loading: LoaderOverlay,
-});
-export const TextFieldEditor = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/text-field-editor.vue'),
-  loading: LoaderOverlay,
-});
-export const ConfirmationPhrase = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/confirmation-phrase.vue'),
-  loading: LoaderOverlay,
-});
-export const ImageViewer = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/image-viewer.vue'),
-  loading: LoaderOverlay,
-});
-export const ImagesViewer = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/images-viewer.vue'),
-  loading: LoaderOverlay,
-});
-export const Info = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/info.vue'),
-  loading: LoaderOverlay,
-});
-export const Duration = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/duration.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateWidget = () => ({
-  component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
-  loading: LoaderOverlay,
-});
-export const SelectWidgetTemplateType = () => ({
-  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/select-widget-template-type.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateWidgetTemplate = () => ({
-  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/create-widget-template.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateService = () => ({
-  component: import(/* webpackChunkName: "Context" */ './service/create-service.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEntity = () => ({
-  component: import(/* webpackChunkName: "Context" */ './entity/create-entity.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEntityInfo = () => ({
-  component: import(/* webpackChunkName: "Context" */ './entity/create-entity-info.vue'),
-  loading: LoaderOverlay,
-});
-export const EntitiesList = () => ({
-  component: import(/* webpackChunkName: "Context" */ './entity/entities-list.vue'),
-  loading: LoaderOverlay,
-});
-export const ServiceEntities = () => ({
-  component: import(/* webpackChunkName: "Context" */ './service/service-entities.vue'),
-  loading: LoaderOverlay,
-});
-export const ServiceDependencies = () => ({
-  component: import(/* webpackChunkName: "Context" */ './service/service-dependencies.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateServicePauseEvent = () => ({
-  component: import(/* webpackChunkName: "Context" */ './service/create-service-pause-event.vue'),
-  loading: LoaderOverlay,
-});
-export const EntitiesRootCauseDiagram = () => ({
-  component: import(/* webpackChunkName: "Context" */ './entity/entities-root-cause-diagram.vue'),
-  loading: LoaderOverlay,
-});
-export const EntityUpstream = () => ({
-  component: import(/* webpackChunkName: "Context" */ './entity/entity-upstream.vue'),
-  loading: LoaderOverlay,
-});
-export const SelectView = () => ({
-  component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
-  loading: LoaderOverlay,
-});
-export const SelectViewTab = () => ({
-  component: import(/* webpackChunkName: "View" */ './view/select-view-tab.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateView = () => ({
-  component: import(/* webpackChunkName: "View" */ './view/create-view.vue'),
-  loading: LoaderOverlay,
-});
-export const ShareView = () => ({
-  component: import(/* webpackChunkName: "View" */ './view/share-view.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateGroup = () => ({
-  component: import(/* webpackChunkName: "View" */ './view/create-group.vue'),
-  loading: LoaderOverlay,
-});
-export const ImportGroupsAndViews = () => ({
-  component: import(/* webpackChunkName: "View" */ './view/import-groups-and-views.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateFilter = () => ({
-  component: import(/* webpackChunkName: "Filters" */ './common/create-filter.vue'),
-  loading: LoaderOverlay,
-});
-export const FiltersList = () => ({
-  component: import(/* webpackChunkName: "Filters" */ './common/filters-list.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateUser = () => ({
-  component: import(/* webpackChunkName: "User" */ './admin/create-user.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateRole = () => ({
-  component: import(/* webpackChunkName: "Role" */ './admin/create-role.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateBroadcastMessage = () => ({
-  component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
-  loading: LoaderOverlay,
-});
-export const UserInterface = () => ({
-  component: import(/* webpackChunkName: "UserInterface" */ './admin/user-interface.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateCommentTemplate = () => ({
-  component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateAnomalyMonitoredConnector = () => ({
-  component: import(/* webpackChunkName: "AnomalyMonitoredConnector" */ './anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
-  loading: LoaderOverlay,
-});
-export const AnomalyMonitoredConnectorHistory = () => ({
-  component: import(/* webpackChunkName: "AnomalyMonitoredConnector" */ './anomaly-monitored-connector/anomaly-monitored-connector-history.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEventFilter = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePattern = () => ({
-  component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
-  loading: LoaderOverlay,
-});
-export const EntitiesComparison = () => ({
-  component: import(/* webpackChunkName: "Pattern" */ './entity/entities-comparison.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateSnmpRule = () => ({
-  component: import(/* webpackChunkName: "SnmpRule" */ './snmp-rule/create-snmp-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateDynamicInfo = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateDynamicInfoTemplate = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/create-dynamic-info-template.vue'),
-  loading: LoaderOverlay,
-});
-export const AddDynamicInfoInfosFromTemplate = () => ({
-  component: import(/* webpackChunkName: "DynamicInfo" */ './dynamic-info/add-dynamic-info-infos-from-template.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePlaylist = () => ({
-  component: import(/* webpackChunkName: "Playlist" */ './admin/create-playlist.vue'),
-  loading: LoaderOverlay,
-});
-export const ManagePlaylistTabs = () => ({
-  component: import(/* webpackChunkName: "Playlist" */ './admin/manage-playlist-tabs.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateRemediationInstruction = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-instruction.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateRemediationConfiguration = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-configuration.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateRemediationJob = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-job.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateTicketStatusJob = () => ({
-  component: import(/* webpackChunkName: "TicketStatusJob" */ './ticket-status-job/create-ticket-status-job.vue'),
-  loading: LoaderOverlay,
-});
-export const ExecuteRemediationInstruction = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-instruction.vue'),
-  loading: LoaderOverlay,
-});
-export const ExecuteRemediationSimpleInstruction = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-simple-instruction.vue'),
-  loading: LoaderOverlay,
-});
-export const RemediationInstructionApproval = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/remediation-instruction-approval.vue'),
-  loading: LoaderOverlay,
-});
-export const Rate = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
-  loading: LoaderOverlay,
-});
-export const TestSuite = () => ({
-  component: import(/* webpackChunkName: "Junit" */ './test-suite/test-suite.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateStateSetting = () => ({
-  component: import(/* webpackChunkName: "Parameters" */ './state-setting/create-state-setting.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateJunitStateSetting = () => ({
-  component: import(/* webpackChunkName: "Parameters" */ './state-setting/create-junit-state-setting.vue'),
-  loading: LoaderOverlay,
-});
-export const StateSettingInheritedEntityPattern = () => ({
-  component: import(/* webpackChunkName: "Context" */ './state-setting/state-setting-inherited-entity-pattern.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateIdleRule = () => ({
-  component: import(/* webpackChunkName: "IdleRule" */ './idle-rule/create-idle-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const HealthcheckEngine = () => ({
-  component: import(/* webpackChunkName: "Healthcheck" */ './healthcheck/healthcheck-engine.vue'),
-  loading: LoaderOverlay,
-});
-export const HealthcheckEnginesChainReference = () => ({
-  component: import(/* webpackChunkName: "Healthcheck" */ './healthcheck/healthcheck-engines-chain-reference.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateScenario = () => ({
-  component: import(/* webpackChunkName: "Scenario" */ './scenario/create-scenario.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateAlarmStatusRule = () => ({
-  component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateKpiFilter = () => ({
-  component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateMap = () => ({
-  component: import(/* webpackChunkName: "Maps" */ './map/create-map.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateGeoMap = () => ({
-  component: import(/* webpackChunkName: "Maps" */ './map/create-geo-map.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateFlowchartMap = () => ({
-  component: import(/* webpackChunkName: "Maps" */ './map/create-flowchart-map.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateMermaidMap = () => ({
-  component: import(/* webpackChunkName: "Maps" */ './map/create-mermaid-map.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateTreeOfDependenciesMap = () => ({
-  component: import(/* webpackChunkName: "Maps" */ './map/create-tree-of-dependencies-map.vue'),
-  loading: LoaderOverlay,
-});
-export const EntityDependenciesList = () => ({
-  component: import(/* webpackChunkName: "Map" */ './entity/entity-dependencies-list.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateShareToken = () => ({
-  component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
-  loading: LoaderOverlay,
-});
+import { featuresService } from '@/services/features';
 
-export const CreateDeclareTicketRule = () => ({
-  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateDeclareTicketEvent = () => ({
-  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-event.vue'),
-  loading: LoaderOverlay,
-});
-export const ExecuteDeclareTickets = () => ({
-  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/execute-declare-tickets-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateAssociateTicketEvent = () => ({
-  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
-  loading: LoaderOverlay,
-});
-export const RemoveAssociatedTicketEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-remove-associated-ticket-event.vue'),
-  loading: LoaderOverlay,
-});
+import { normalizeFeatureComponents } from '@/helpers/component';
 
-export const CreateLinkRule = () => ({
-  component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
-  loading: LoaderOverlay,
-});
+const featureModalComponents = normalizeFeatureComponents(
+  featuresService.get(FEATURES_SERVICE_KEYS.components.modals.components, {}),
+);
 
-export const CreateLlm = () => ({
-  component: import(/* webpackChunkName: "Llm" */ './llm/create-llm.vue'),
-  loading: LoaderOverlay,
-});
+export default {
+  [MODALS.confirmation]: defineAsyncComponent(() => import('./common/confirmation.vue')),
+  [MODALS.confirmationPhrase]: defineAsyncComponent(
+    () => import('./common/confirmation-phrase.vue'),
+  ),
+  [MODALS.duration]: defineAsyncComponent(() => import('./common/duration.vue')),
+  [MODALS.rate]: defineAsyncComponent(() => import('./common/rate.vue')),
+  [MODALS.clickOutsideConfirmation]: defineAsyncComponent(
+    () => import('./common/click-outside-confirmation.vue'),
+  ),
+  [MODALS.createUser]: defineAsyncComponent(() => import('./admin/create-user.vue')),
+  [MODALS.createRole]: defineAsyncComponent(() => import('./admin/create-role.vue')),
+  [MODALS.createPlaylist]: defineAsyncComponent(() => import('./admin/create-playlist.vue')),
+  [MODALS.managePlaylistTabs]: defineAsyncComponent(
+    () => import('./admin/manage-playlist-tabs.vue'),
+  ),
+  [MODALS.createBroadcastMessage]: defineAsyncComponent(
+    () => import('./admin/create-broadcast-message.vue'),
+  ),
+  [MODALS.createCommentTemplate]: defineAsyncComponent(
+    () => import('./comment-template/create-comment-template.vue'),
+  ),
+  [MODALS.createStateSetting]: defineAsyncComponent(
+    () => import('./state-setting/create-state-setting.vue'),
+  ),
+  [MODALS.createJunitStateSetting]: defineAsyncComponent(
+    () => import('./state-setting/create-junit-state-setting.vue'),
+  ),
+  [MODALS.stateSettingInheritedEntityPattern]: defineAsyncComponent(
+    () => import('./state-setting/state-setting-inherited-entity-pattern.vue'),
+  ),
+  [MODALS.userInterface]: defineAsyncComponent(() => import('./admin/user-interface.vue')),
+  [MODALS.createDynamicInfo]: defineAsyncComponent(
+    () => import('./dynamic-info/create-dynamic-info.vue'),
+  ),
+  [MODALS.createEventFilter]: defineAsyncComponent(
+    () => import('./event-filter/create-event-filter.vue'),
+  ),
+  [MODALS.createMetaAlarmRule]: defineAsyncComponent(
+    () => import('./meta-alarm-rule/create-meta-alarm-rule.vue'),
+  ),
+  [MODALS.createDynamicInfoTemplate]: defineAsyncComponent(
+    () => import('./dynamic-info/create-dynamic-info-template.vue'),
+  ),
+  [MODALS.addDynamicInfoInfosFromTemplate]: defineAsyncComponent(
+    () => import('./dynamic-info/add-dynamic-info-infos-from-template.vue'),
+  ),
+  [MODALS.imageViewer]: defineAsyncComponent(() => import('./common/image-viewer.vue')),
+  [MODALS.imagesViewer]: defineAsyncComponent(() => import('./common/images-viewer.vue')),
+  [MODALS.textEditor]: defineAsyncComponent(() => import('./common/text-editor.vue')),
+  [MODALS.textEditorPaste]: defineAsyncComponent(() => import('./common/text-editor-paste.vue')),
+  [MODALS.payloadTextareaEditor]: defineAsyncComponent(
+    () => import('./common/payload-textarea-editor.vue'),
+  ),
+  [MODALS.textEditorWithTemplate]: defineAsyncComponent(
+    () => import('./common/text-editor-with-template.vue'),
+  ),
+  [MODALS.copyValue]: defineAsyncComponent(() => import('./common/copy-value.vue')),
+  [MODALS.infoPopupSetting]: defineAsyncComponent(
+    () => import('./alarm/info-popup-setting/info-popup-setting.vue'),
+  ),
+  [MODALS.addInfoPopup]: defineAsyncComponent(
+    () => import('./alarm/info-popup-setting/add-info-popup.vue'),
+  ),
+  [MODALS.textFieldEditor]: defineAsyncComponent(() => import('./common/text-field-editor.vue')),
+  [MODALS.createFilter]: defineAsyncComponent(() => import('./common/create-filter.vue')),
+  [MODALS.filtersList]: defineAsyncComponent(() => import('./common/filters-list.vue')),
+  [MODALS.variablesHelp]: defineAsyncComponent(() => import('./common/variables-help.vue')),
+  [MODALS.editLiveReporting]: defineAsyncComponent(() => import('./alarm/edit-live-reporting.vue')),
+  [MODALS.createAlarmChart]: defineAsyncComponent(() => import('./alarm/create-alarm-chart.vue')),
+  [MODALS.createView]: defineAsyncComponent(() => import('./view/create-view.vue')),
+  [MODALS.createGroup]: defineAsyncComponent(() => import('./view/create-group.vue')),
+  [MODALS.selectView]: defineAsyncComponent(() => import('./view/select-view.vue')),
+  [MODALS.selectViewTab]: defineAsyncComponent(() => import('./view/select-view-tab.vue')),
+  [MODALS.createWidget]: defineAsyncComponent(() => import('./view/create-widget.vue')),
+  [MODALS.selectWidgetTemplateType]: defineAsyncComponent(
+    () => import('./widget-template/select-widget-template-type.vue'),
+  ),
+  [MODALS.createWidgetTemplate]: defineAsyncComponent(
+    () => import('./widget-template/create-widget-template.vue'),
+  ),
+  [MODALS.createShareToken]: defineAsyncComponent(
+    () => import('./share-token/create-share-token.vue'),
+  ),
+  [MODALS.createApiToken]: defineAsyncComponent(
+    () => import('./api-token/create-api-token.vue'),
+  ),
+  [MODALS.serviceDependencies]: defineAsyncComponent(
+    () => import('./service/service-dependencies.vue'),
+  ),
+  [MODALS.serviceEntities]: defineAsyncComponent(() => import('./service/service-entities.vue')),
+  [MODALS.createMaintenance]: defineAsyncComponent(
+    () => import('./maintenance/create-maintenance.vue'),
+  ),
+  [MODALS.createPattern]: defineAsyncComponent(() => import('./pattern/create-pattern.vue')),
+  [MODALS.createTheme]: defineAsyncComponent(() => import('./theme/create-theme.vue')),
+  [MODALS.createPbehaviorType]: defineAsyncComponent(
+    () => import('./pbehavior/create-pbehavior-type.vue'),
+  ),
+  [MODALS.createPbehaviorReason]: defineAsyncComponent(
+    () => import('./pbehavior/create-pbehavior-reason.vue'),
+  ),
+  [MODALS.createPbehaviorException]: defineAsyncComponent(
+    () => import('./pbehavior/create-pbehavior-exception.vue'),
+  ),
+  [MODALS.createPbehavior]: defineAsyncComponent(() => import('./pbehavior/create-pbehavior.vue')),
+  [MODALS.createRecurrenceRule]: defineAsyncComponent(
+    () => import('./pbehavior/create-recurrence-rule.vue'),
+  ),
+  [MODALS.pbehaviorRecurrenceRule]: defineAsyncComponent(
+    () => import('./pbehavior/pbehavior-recurrence-rule.vue'),
+  ),
+  [MODALS.importPbehaviorException]: defineAsyncComponent(
+    () => import('./pbehavior/import-pbehavior-exception.vue'),
+  ),
+  [MODALS.pbehaviorPlanning]: defineAsyncComponent(
+    () => import('./pbehavior/pbehavior-planning.vue'),
+  ),
+  [MODALS.pbehaviorsCalendar]: defineAsyncComponent(
+    () => import('./pbehavior/pbehaviors-calendar.vue'),
+  ),
+  [MODALS.pbehaviorRecurrentChangesConfirmation]: defineAsyncComponent(
+    () => import('./pbehavior/pbehavior-recurrent-changes-confirmation.vue'),
+  ),
+  [MODALS.createAlarmStatusRule]: defineAsyncComponent(
+    () => import('./alarm-status-rule/create-alarm-status-rule.vue'),
+  ),
+  [MODALS.createIdleRule]: defineAsyncComponent(() => import('./idle-rule/create-idle-rule.vue')),
+  [MODALS.createLinkRule]: defineAsyncComponent(() => import('./link-rule/create-link-rule.vue')),
+  [MODALS.createScenario]: defineAsyncComponent(() => import('./scenario/create-scenario.vue')),
+  [MODALS.createDeclareTicketRule]: defineAsyncComponent(
+    () => import('./declare-ticket/create-declare-ticket-rule.vue'),
+  ),
+  [MODALS.createDeclareTicketEvent]: defineAsyncComponent(
+    () => import('./declare-ticket/create-declare-ticket-event.vue'),
+  ),
+  [MODALS.createAssociateTicketEvent]: defineAsyncComponent(
+    () => import('./declare-ticket/create-associate-ticket-event.vue'),
+  ),
+  [MODALS.removeAssociatedTicketEvent]: defineAsyncComponent(
+    () => import('./alarm/create-remove-associated-ticket-event.vue'),
+  ),
+  [MODALS.executeDeclareTickets]: defineAsyncComponent(
+    () => import('./declare-ticket/execute-declare-tickets-rule.vue'),
+  ),
+  [MODALS.createEvent]: defineAsyncComponent(() => import('./alarm/create-event.vue')),
+  [MODALS.createAckEvent]: defineAsyncComponent(() => import('./alarm/create-ack-event.vue')),
+  [MODALS.createSnoozeEvent]: defineAsyncComponent(() => import('./alarm/create-snooze-event.vue')),
+  [MODALS.createEntityPauseEvent]: defineAsyncComponent(
+    () => import('./entity/create-entity-pause-event.vue'),
+  ),
+  [MODALS.createEntityResumeEvent]: defineAsyncComponent(
+    () => import('./entity/create-entity-resume-event.vue'),
+  ),
+  [MODALS.createChangeStateEvent]: defineAsyncComponent(
+    () => import('./alarm/create-change-state-event.vue'),
+  ),
+  [MODALS.createCommentEvent]: defineAsyncComponent(
+    () => import('./common/create-comment-event.vue'),
+  ),
+  [MODALS.linkToMetaAlarm]: defineAsyncComponent(() => import('./alarm/link-to-meta-alarm.vue')),
+  [MODALS.removeAlarmsFromMetaAlarm]: defineAsyncComponent(
+    () => import('./alarm/remove-alarms-from-meta-alarm.vue'),
+  ),
+  [MODALS.alarmsList]: defineAsyncComponent(() => import('./alarm/alarms-list.vue')),
+  [MODALS.executeRemediationInstruction]: defineAsyncComponent(
+    () => import('./remediation/execute-remediation-instruction.vue'),
+  ),
+  [MODALS.executeRemediationSimpleInstruction]: defineAsyncComponent(
+    () => import('./remediation/execute-remediation-simple-instruction.vue'),
+  ),
+  [MODALS.healthcheckEngine]: defineAsyncComponent(
+    () => import('./healthcheck/healthcheck-engine.vue'),
+  ),
+  [MODALS.healthcheckEnginesChainReference]: defineAsyncComponent(
+    () => import('./healthcheck/healthcheck-engines-chain-reference.vue'),
+  ),
+  [MODALS.createKpiFilter]: defineAsyncComponent(() => import('./kpi/create-kpi-filter.vue')),
+  [MODALS.eventsRecord]: defineAsyncComponent(() => import('./events-record/events-record.vue')),
+  [MODALS.applyEventFilter]: defineAsyncComponent(
+    () => import('./events-record/apply-event-filter.vue'),
+  ),
+  [MODALS.createAnomalyMonitoredConnector]: defineAsyncComponent(
+    () => import('./anomaly-monitored-connector/create-anomaly-monitored-connector.vue'),
+  ),
+  [MODALS.anomalyMonitoredConnectorHistory]: defineAsyncComponent(
+    () => import('./anomaly-monitored-connector/anomaly-monitored-connector-history.vue'),
+  ),
+  [MODALS.createSnmpRule]: defineAsyncComponent(() => import('./snmp-rule/create-snmp-rule.vue')),
+  [MODALS.createTemplateTestingData]: defineAsyncComponent(
+    () => import('./template-testing/create-template-testing-data.vue'),
+  ),
+  [MODALS.createTemplateTestingTest]: defineAsyncComponent(
+    () => import('./template-testing/create-template-testing-test.vue'),
+  ),
+  [MODALS.createExternalAuthToken]: defineAsyncComponent(
+    () => import('./external-auth-token/create-external-auth-token.vue'),
+  ),
+  [MODALS.createExternalDataTable]: defineAsyncComponent(
+    () => import('./external-data-table/create-external-data-table.vue'),
+  ),
+  [MODALS.createEntityInfoProperty]: defineAsyncComponent(
+    () => import('./entity-info-property/create-entity-info-property.vue'),
+  ),
+  [MODALS.createEntity]: defineAsyncComponent(() => import('./entity/create-entity.vue')),
+  [MODALS.createEntityInfo]: defineAsyncComponent(() => import('./entity/create-entity-info.vue')),
+  [MODALS.entitiesComparison]: defineAsyncComponent(
+    () => import('./entity/entities-comparison.vue'),
+  ),
+  [MODALS.entitiesList]: defineAsyncComponent(() => import('./entity/entities-list.vue')),
+  [MODALS.entitiesRootCauseDiagram]: defineAsyncComponent(
+    () => import('./entity/entities-root-cause-diagram.vue'),
+  ),
+  [MODALS.entityDependenciesList]: defineAsyncComponent(
+    () => import('./entity/entity-dependencies-list.vue'),
+  ),
+  [MODALS.createService]: defineAsyncComponent(() => import('./service/create-service.vue')),
+  [MODALS.createIcon]: defineAsyncComponent(() => import('./icon/create-icon.vue')),
+  [MODALS.createMap]: defineAsyncComponent(() => import('./map/create-map.vue')),
+  [MODALS.createGeoMap]: defineAsyncComponent(() => import('./map/create-geo-map.vue')),
+  [MODALS.createFlowchartMap]: defineAsyncComponent(() => import('./map/create-flowchart-map.vue')),
+  [MODALS.createMermaidMap]: defineAsyncComponent(() => import('./map/create-mermaid-map.vue')),
+  [MODALS.createTreeOfDependenciesMap]: defineAsyncComponent(
+    () => import('./map/create-tree-of-dependencies-map.vue'),
+  ),
+  [MODALS.createTag]: defineAsyncComponent(() => import('./tag/create-tag.vue')),
+  [MODALS.createLlm]: defineAsyncComponent(() => import('./llm/create-llm.vue')),
+  [MODALS.llmPromptsHistory]: defineAsyncComponent(() => import('./llm/llm-prompts-history.vue')),
+  [MODALS.aiChatHistory]: defineAsyncComponent(() => import('./llm/ai-chat-history.vue')),
+  [MODALS.importExportViews]: defineAsyncComponent(
+    () => import('./view/import-groups-and-views.vue'),
+  ),
+  [MODALS.createExternalDataTableRecord]: defineAsyncComponent(
+    () => import('./external-data-table/create-external-data-table-record.vue'),
+  ),
+  [MODALS.importExternalDataTableRecords]: defineAsyncComponent(
+    () => import('./external-data-table/import-external-data-table-records.vue'),
+  ),
+  [MODALS.createRemediationConfiguration]: defineAsyncComponent(
+    () => import('./remediation/create-remediation-configuration.vue'),
+  ),
+  [MODALS.createRemediationInstruction]: defineAsyncComponent(
+    () => import('./remediation/create-remediation-instruction.vue'),
+  ),
+  [MODALS.remediationInstructionApproval]: defineAsyncComponent(
+    () => import('./remediation/remediation-instruction-approval.vue'),
+  ),
+  [MODALS.createRemediationJob]: defineAsyncComponent(
+    () => import('./remediation/create-remediation-job.vue'),
+  ),
+  [MODALS.createTicketStatusJob]: defineAsyncComponent(
+    () => import('./ticket-status-job/create-ticket-status-job.vue'),
+  ),
+  [MODALS.testSuite]: defineAsyncComponent(() => import('./test-suite/test-suite.vue')),
 
-export const AiChatHistory = () => ({
-  component: import(/* webpackChunkName: "Llm" */ './llm/ai-chat-history.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateMaintenance = () => ({
-  component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateTag = () => ({
-  component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateTheme = () => ({
-  component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateIcon = () => ({
-  component: import(/* webpackChunkName: "Common" */ './icon/create-icon.vue'),
-  loading: LoaderOverlay,
-});
-
-export const EventsRecord = () => ({
-  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/events-record.vue'),
-  loading: LoaderOverlay,
-});
-
-export const ApplyEventFilter = () => ({
-  component: import(/* webpackChunkName: "EventsRecord" */ './events-record/apply-event-filter.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateExternalDataTable = () => ({
-  component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/create-external-data-table.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateExternalDataTableRecord = () => ({
-  component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/create-external-data-table-record.vue'),
-  loading: LoaderOverlay,
-});
-
-export const ImportExternalDataTableRecords = () => ({
-  component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateExternalAuthToken = () => ({
-  component: import(/* webpackChunkName: "ExternalAuthToken" */ './external-auth-token/create-external-auth-token.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateTemplateTestingData = () => ({
-  component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-data.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateTemplateTestingTest = () => ({
-  component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-test.vue'),
-  loading: LoaderOverlay,
-});
-
-export const CreateEntityInfoProperty = () => ({
-  component: import(/* webpackChunkName: "EntityInfoProperty" */ './entity-info-property/create-entity-info-property.vue'),
-  loading: LoaderOverlay,
-});
+  ...featureModalComponents,
+};

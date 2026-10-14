@@ -1,9 +1,9 @@
 <template>
-  <v-text-field
-    :value="value"
+  <c-text-field
+    :model-value="value"
     :label="label"
     class="time-picker__select"
-    placeholder="−−:−−"
+    placeholder="--:--"
     hide-details
     disabled
   />
@@ -13,11 +13,8 @@
 import { formBaseMixin } from '@/mixins/form';
 
 export default {
+  emits: ['update:value'],
   mixins: [formBaseMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: String,

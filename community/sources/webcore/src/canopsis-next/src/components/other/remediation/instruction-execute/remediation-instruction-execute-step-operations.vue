@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <remediation-instruction-execute-step-operation
       v-for="(operation, index) in operations"
       :key="operation.operation_id"
@@ -14,7 +14,7 @@
       @execute-job="executeJob"
       @cancel-job-execution="cancelJobExecution"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -24,6 +24,7 @@ import RemediationInstructionExecuteStepOperation from './remediation-instructio
 
 export default {
   components: { RemediationInstructionExecuteStepOperation },
+
   props: {
     operations: {
       type: Array,
@@ -46,30 +47,31 @@ export default {
       default: false,
     },
   },
-  methods: {
-    getOperationNumber(index) {
-      return `${this.stepNumber}${getLetterByIndex(index)}`;
-    },
 
-    nextOperation(index) {
-      const event = index === this.operations.length - 1
+  emits: ['finish', 'next-operation', 'previous-operation', 'execute-job', 'cancel-job-execution'],
+
+  setup(props, { emit }) {
+    const getOperationNumber = index => `${props.stepNumber}${getLetterByIndex(index)}`;
+
+    const nextOperation = (index) => {
+      const event = index === props.operations.length - 1
         ? 'finish'
         : 'next-operation';
 
-      this.$emit(event);
-    },
+      emit(event);
+    };
 
-    previousOperation() {
-      this.$emit('previous-operation');
-    },
+    const previousOperation = () => emit('previous-operation');
+    const executeJob = data => emit('execute-job', data);
+    const cancelJobExecution = data => emit('cancel-job-execution', data);
 
-    executeJob(data) {
-      this.$emit('execute-job', data);
-    },
-
-    cancelJobExecution(data) {
-      this.$emit('cancel-job-execution', data);
-    },
+    return {
+      getOperationNumber,
+      nextOperation,
+      previousOperation,
+      executeJob,
+      cancelJobExecution,
+    };
   },
 };
 </script>

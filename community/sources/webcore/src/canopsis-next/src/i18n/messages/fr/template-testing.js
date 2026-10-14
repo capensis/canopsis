@@ -27,9 +27,11 @@ export default {
   saveTestAsNew: 'Sauvegarder comme nouveau test',
   errorsInInput: 'Erreur dans l\'entrée',
   mainFormHasErrors: 'Veuillez corriger les erreurs dans l\'onglet Général',
-  isNewForm: 'Si vous sauvegardez ce test mais que le formulaire n’est pas enregistré, ce test sera supprimé à la fermeture de la fenêtre de création',
+  isNewForm:
+    'Si vous sauvegardez ce test mais que le formulaire n’est pas enregistré, ce test sera supprimé à la fermeture de la fenêtre de création',
   testSaved: 'Test de modèle sauvegardé',
-  testWillSaveAfterFormSaving: 'Le test de modèle sera sauvegardé après la validation du formulaire',
+  testWillSaveAfterFormSaving:
+    'Le test de modèle sera sauvegardé après la validation du formulaire',
   lostCurrentTest: {
     text: 'Toutes les modifications non sauvegardées seront perdues pour le test actuel',
     actionText: 'Appliquer les nouvelles données de test',
@@ -55,8 +57,10 @@ export default {
   ticketStatusWebhookPayload: 'Charge utile webhook de vérification du statut - {number}',
   dynamicInfoValue: 'Valeur d\'information dynamique - {number} - {name}',
   instructionWebhookUrl: 'URL webhook de remédiation - Étape {step}, Opération {operation}',
-  instructionWebhookPayload: 'Charge utile webhook de remédiation - Étape {step}, Opération {operation}',
-  instructionWebhookHeader: 'En-tête webhook d\'instruction {header} - Étape {step}, Opération {operation}',
+  instructionWebhookPayload:
+    'Charge utile webhook de remédiation - Étape {step}, Opération {operation}',
+  instructionWebhookHeader:
+    'En-tête webhook d\'instruction {header} - Étape {step}, Opération {operation}',
   instructionJobPayload: 'Charge utile de travail d\'instruction - {number}',
   operationDescription: 'Description de l\'opération - Étape {step}, Opération {operation}',
   jobPayload: 'Charge utile du job',
@@ -83,6 +87,7 @@ export default {
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: 'Consigne',
     [TEMPLATE_TESTING_TEST_TYPES.job]: 'Travail',
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: 'Règle de méta-alarme',
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: 'Jeton d\'authentification externe',
   },
   templateVars: {
     ackAuthor: 'Auteur de l\'acquittement',
@@ -126,6 +131,7 @@ export default {
     lastCommentMessage: 'Message du dernier commentaire',
     lastCommentMessages: 'Messages du dernier commentaire',
     lastname: 'Nom de famille',
+    metaAlarmRuleNames: 'Noms de règles de méta-alarme',
     name: 'Nom',
     names: 'Noms',
     numberOfAcknowledgedAlarms: 'Nombre d\'alarmes acquittées',
@@ -139,6 +145,9 @@ export default {
     numberOfAlarmsUnderPbehavior: 'Nombre d\'alarmes sous pbehavior',
     numberOfDependencies: 'Nombre de dépendances',
     numberOfNotAcknowledgedAlarms: 'Nombre d\'alarmes non acquittées',
+    numberOfPausedAlarms: 'Nombre d\'alarmes en pause',
+    numberOfAcknowledgedInactiveAlarms: 'Nombre d\'alarmes inactives acquittées',
+    numberOfInactiveDependencies: 'Nombre de dépendances inactives',
     output: 'Sortie',
     outputs: 'Sorties',
     regexpMatch: 'Correspondance regexp',
@@ -179,7 +188,8 @@ export default {
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'Utilisateur',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entité',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'Réponse',
-    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: 'Réponse de vérification du statut du ticket',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]:
+      'Réponse de vérification du statut du ticket',
   },
   testDataResponseLabels: {
     [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Réponse (Données externes - {index} API)',
@@ -187,7 +197,9 @@ export default {
     [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse (Webhook - {index})',
   },
   testDataCheckTicketStatusResponseLabels: {
-    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse de vérification du statut du ticket (Webhook - {index})',
-    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Réponse de vérification du statut du ticket (Action - {index} webhook)',
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]:
+      'Réponse de vérification du statut du ticket (Webhook - {index})',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]:
+      'Réponse de vérification du statut du ticket (Action - {index} webhook)',
   },
 };

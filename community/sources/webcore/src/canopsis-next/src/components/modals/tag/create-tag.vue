@@ -1,125 +1,107 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <tag-form
-          v-model="form"
+          :form="values"
           :is-imported="isImported"
           :is-new="isNew"
-        />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
+          @update:form="updateForm"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, computed, toRef } from 'vue';
-
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed } from 'vue';
 
 import { tagToForm, formToTag } from '@/helpers/entities/tag/form';
 
-import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import TagForm from '@/components/other/tag/form/tag-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createTag,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+  components: {
+    TagForm,
   },
-  components: { TagForm, ModalWrapper, AiChatSidebar },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
-
-    const form = ref(tagToForm(config.value.tag));
-
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
-
-      modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.tag?._id,
-      context: LLM_SOCKET_CONTEXTS.alarmTag,
-    });
-
-    const isNew = computed(() => !config.value.tag?._id);
-    const title = computed(() => (
-      config.value.title || t('modals.createTag.create.title')
-    ));
-
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const tag = computed(() => config.value.tag);
+    const isNew = computed(() => !tag.value?._id);
+    const title = computed(() => config.value.title || t('modals.createTag.create.title'));
     const isImported = computed(() => config.value.isImported);
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.tag,
-      method: async () => {
-        const result = await config.value.action?.(formToTag(form.value));
+    const form = useForm({
+      initialValues: tagToForm(tag.value),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
 
-        await config.value.afterSubmit?.(result);
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const updateForm = value => (values.value = value);
 
-        close();
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToTag(values.value));
 
-        return result;
-      },
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
+      t,
+      values,
       title,
       isNew,
       isImported,
-      submitting,
-      chatShown,
-      chatOptions,
+      isSubmitting,
       submitLabel,
+
       submit,
-      close,
+      updateForm,
+      closeModal,
     };
   },
 };

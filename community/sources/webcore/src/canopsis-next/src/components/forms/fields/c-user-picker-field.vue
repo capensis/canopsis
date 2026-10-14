@@ -1,21 +1,21 @@
 <template>
-  <v-autocomplete
-    v-field="value"
-    v-validate="rules"
+  <c-autocomplete
+    :model-value="value"
     v-bind="$attrs"
     :items="items"
     :label="label"
     :loading="pending"
     :name="name"
-    :error-messages="errors.collect(name)"
+    :required="required"
     :return-object="returnObject"
-    :item-text="itemText"
+    :item-title="itemText"
     :item-value="itemValue"
+    @update:model-value="updateValue"
   />
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -23,8 +23,8 @@ import { usePendingHandler } from '@/hooks/query/pending';
 import { useUser } from '@/hooks/store/modules/user';
 
 export default {
-  inject: ['$validator'],
   inheritAttrs: false,
+  emits: ['update:value', 'update:modelValue'],
   props: {
     value: {
       type: [Object, Array, String],
@@ -59,12 +59,8 @@ export default {
       default: '_id',
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const items = ref([]);
-
-    const rules = computed(() => ({
-      required: props.required,
-    }));
 
     const { fetchUsersListWithoutStore } = useUser();
 
@@ -80,15 +76,18 @@ export default {
       items.value = data;
     });
 
+    const updateValue = (value) => {
+      emit('update:value', value);
+      emit('update:modelValue', value);
+    };
+
     onMounted(fetchList);
 
     return {
       pending,
       items,
-
-      rules,
-
       fetchList,
+      updateValue,
     };
   },
 };

@@ -1,21 +1,17 @@
 <template>
   <v-app id="app" :class="appClass">
-    <c-progress-overlay
-      :pending="wholePending"
-      :transition="false"
-      color="gray"
-    />
-    <v-layout v-if="!wholePending">
-      <the-navigation
-        id="main-navigation"
-        v-if="currentUser && shownHeader"
-      />
+    <c-progress-overlay :pending="wholePending" />
+
+    <c-layout v-if="!wholePending">
+      <the-navigation id="main-navigation" v-if="shownAppShell" />
+
       <v-main id="main-content">
         <active-broadcast-message />
         <router-view :key="routeViewKey" />
       </v-main>
-    </v-layout>
-    <the-sidebar />
+    </c-layout>
+
+    <the-sidebar v-if="shownAppShell" />
     <the-modals />
     <the-popups />
   </v-app>
@@ -24,34 +20,50 @@
 <script>
 import { isEmpty } from 'lodash';
 
-import { SOCKET_URL, SOCKET_ROOMS, LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_WARNING_POPUP_KEY } from '@/config';
+import {
+  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+  LOCAL_STORAGE_WARNING_POPUP_KEY,
+  SOCKET_ROOMS,
+  SOCKET_URL,
+} from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
+import {
+  getDefaultView,
+  getDefaultViewId,
+  getFirstRoleWithDefaultView,
+} from '@/helpers/entities/user/entity';
 import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 
-import { authMixin } from '@/mixins/auth';
-import { systemMixin } from '@/mixins/system';
-import { shownHeaderMixin } from '@/mixins/shown-header';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { entitiesUserMixin } from '@/mixins/entities/user';
-import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
-import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
 import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups';
+import { authMixin } from '@/mixins/auth';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
+import { entitiesUserMixin } from '@/mixins/entities/user';
+import { shownHeaderMixin } from '@/mixins/shown-header';
+import { systemMixin } from '@/mixins/system';
+import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
 
-import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
+import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
+import TheSidebar from '@/components/layout/sidebar/the-sidebar.vue';
 
 import '@/assets/styles/main.scss';
+import '@/assets/styles/vuetify-v2-compat.scss';
 
 export default {
+  name: 'App',
+
   components: {
-    TheNavigation,
     ActiveBroadcastMessage,
+    TheNavigation,
+    TheSidebar,
   },
+
   mixins: [
     authMixin,
     systemMixin,
@@ -62,12 +74,15 @@ export default {
     vuetifyCustomIconsRegisterMixin,
     appRemediationInstructionExecutionsPopupsMixin,
   ],
+
   data() {
     return {
       currentUserLocalPending: true,
       appInfoLocalPending: true,
+      templateVarsLocalPending: true,
     };
   },
+
   computed: {
     appClass() {
       return {
@@ -75,8 +90,15 @@ export default {
         'v-app--disabled-transitions': this.disabledTransitions,
       };
     },
+
     wholePending() {
-      return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending;
+      return (
+        this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsLocalPending
+      );
+    },
+
+    shownAppShell() {
+      return !!this.currentUser && this.shownHeader;
     },
 
     routeViewKey() {
@@ -92,24 +114,42 @@ export default {
       }
     },
   },
+
   watch: {
     templateVars: 'setTitle',
     currentUser: 'setTitle',
+
+    '$route.name'(routeName) {
+      if (
+        routeName === ROUTES_NAMES.home &&
+        this.isLoggedIn &&
+        !this.currentUserLocalPending &&
+        !isEmpty(this.currentUser)
+      ) {
+        this.redirectHomeToDefaultView();
+      }
+    },
   },
+
   beforeCreate() {
     reloadPageWithTrailingSlashes();
   },
+
   created() {
     this.socketConnectWithErrorHandling();
   },
+
   async mounted() {
     this.showLocalStorageWarningPopupMessage();
 
-    await Promise.all([
-      this.fetchCurrentUserWithErrorHandling(),
-      this.fetchTemplateVarsWithErrorHandling(),
-      this.fetchIconsWithRegistering(),
-    ]);
+    await this.fetchCurrentUserWithErrorHandling();
+
+    if (this.isLoggedIn) {
+      await this.$router.isReady();
+      await this.redirectHomeToDefaultView();
+    }
+
+    await Promise.all([this.fetchTemplateVarsWithErrorHandling(), this.fetchIconsWithRegistering()]);
 
     await this.fetchAppInfoWithErrorHandling();
 
@@ -119,6 +159,7 @@ export default {
       this.setTheme(this.defaultColorTheme);
     }
   },
+
   methods: {
     showLocalStorageWarningPopupMessage() {
       const text = localStorageService.pop(LOCAL_STORAGE_WARNING_POPUP_KEY);
@@ -162,31 +203,39 @@ export default {
     },
 
     socketErrorHandler({ message, error } = {}) {
-      if (message) {
-        const { room } = error ?? {};
-        const statusCode = +message;
-
-        if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
-          localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, this.$t('warnings.authTokenExpired'));
-          this.logout();
-
-          return;
-        }
-
-        if (room === SOCKET_ROOMS.llmChat || statusCode === RESPONSE_STATUSES.forbidden) {
-          return;
-        }
-
-        const textKey = {
-          [RESPONSE_STATUSES.notFound]: 'errors.socketConnectionRoomNotFound',
-          [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
-          [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
-        }[statusCode];
-
-        const text = this.$te(textKey) ? this.$t(textKey) : message;
-
-        this.$popups.error({ text });
+      if (!message) {
+        return;
       }
+
+      const { room } = error ?? {};
+      const statusCode = +message;
+
+      if (
+        statusCode === RESPONSE_STATUSES.unauthorized ||
+        message === Socket.ERROR_MESSAGES.authenticationFailed
+      ) {
+        localStorageService.set(
+          LOCAL_STORAGE_WARNING_POPUP_KEY,
+          this.$t('warnings.authTokenExpired'),
+        );
+        this.logout();
+
+        return;
+      }
+
+      if (room === SOCKET_ROOMS.llmChat || statusCode === RESPONSE_STATUSES.forbidden) {
+        return;
+      }
+
+      const textKey = {
+        [RESPONSE_STATUSES.notFound]: 'errors.socketConnectionRoomNotFound',
+        [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
+        [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
+      }[statusCode];
+
+      const text = textKey && this.$te?.(textKey) ? this.$t(textKey) : message;
+
+      this.$popups.error({ text });
     },
 
     socketConnectionFailureHandler() {
@@ -194,6 +243,52 @@ export default {
         text: this.$t('errors.socketConnectionProblem'),
         autoClose: false,
       });
+    },
+
+    async redirectHomeToDefaultView() {
+      if (
+        this.$route.name !== ROUTES_NAMES.home ||
+        this.currentUserLocalPending ||
+        isEmpty(this.currentUser)
+      ) {
+        return;
+      }
+
+      const userDefaultView = getDefaultView(this.currentUser);
+      const userDefaultViewId = getDefaultViewId(userDefaultView);
+
+      if (!userDefaultViewId) {
+        await this.redirectHomeToRoleDefaultView();
+      } else if (!this.checkReadAccess(userDefaultViewId)) {
+        this.addDefaultViewRedirectInfoPopup(this.$t('home.popups.info.noAccessToDefaultView'));
+
+        await this.redirectHomeToRoleDefaultView({ showMissingPopup: false });
+      } else {
+        await this.$router.push({ name: ROUTES_NAMES.view, params: { id: userDefaultViewId } });
+      }
+    },
+
+    async redirectHomeToRoleDefaultView({ showMissingPopup = true } = {}) {
+      const roleDefaultView = getDefaultView(getFirstRoleWithDefaultView(this.currentUser));
+      const roleDefaultViewId = getDefaultViewId(roleDefaultView);
+
+      if (!roleDefaultViewId) {
+        if (showMissingPopup) {
+          this.addDefaultViewRedirectInfoPopup(
+            this.$t('home.popups.info.notSelectedRoleDefaultView'),
+          );
+        }
+      } else if (!this.checkReadAccess(roleDefaultViewId)) {
+        this.addDefaultViewRedirectInfoPopup(
+          this.$t('home.popups.info.noAccessToRoleDefaultView'),
+        );
+      } else {
+        await this.$router.push({ name: ROUTES_NAMES.view, params: { id: roleDefaultViewId } });
+      }
+    },
+
+    addDefaultViewRedirectInfoPopup(text) {
+      return this.$popups.info({ text, autoClose: 10000 });
     },
 
     async fetchCurrentUserWithErrorHandling() {
@@ -217,16 +312,10 @@ export default {
         this.appInfoLocalPending = true;
         await this.fetchAppInfo();
 
-        this.setSystemData({
-          timezone: this.timezone,
-        });
-
         this.setTitle();
       } catch (err) {
         if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
-          this.$router.push({
-            name: ROUTES_NAMES.error,
-          });
+          this.$router.push({ name: ROUTES_NAMES.error });
         }
 
         console.error(err);
@@ -237,9 +326,12 @@ export default {
 
     async fetchTemplateVarsWithErrorHandling() {
       try {
+        this.templateVarsLocalPending = true;
         await this.fetchTemplateVars();
       } catch (err) {
         console.error(err);
+      } finally {
+        this.templateVarsLocalPending = false;
       }
     },
   },

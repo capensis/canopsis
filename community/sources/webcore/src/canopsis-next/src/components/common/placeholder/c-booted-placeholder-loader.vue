@@ -1,5 +1,5 @@
 <template>
-  <div class="position-relative">
+  <div class="c-booted-placeholder-loader position-relative">
     <c-placeholder-loader v-if="!allBooted" class="position-absolute" />
     <div v-if="booted" v-show="allBooted">
       <slot />
@@ -8,7 +8,12 @@
 </template>
 
 <script>
-import { ref, inject, onBeforeMount, onBeforeUnmount } from 'vue';
+import {
+  inject,
+  onBeforeMount,
+  onBeforeUnmount,
+  ref,
+} from 'vue';
 
 export default {
   props: {
@@ -21,19 +26,22 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
     const booted = ref(false);
     const allBooted = ref(false);
-    const asyncBooting = inject(props.asyncBootingProvider);
+    const asyncBooting = inject(props.asyncBootingProvider, null);
     const asyncBootingKey = Symbol('asyncBootingKey');
 
-    const setBooted = () => booted.value = true;
-    const setAllBooted = () => allBooted.value = true;
-
-    asyncBooting.register(asyncBootingKey, setBooted, setAllBooted);
+    const setBooted = () => {
+      booted.value = true;
+    };
+    const setAllBooted = () => {
+      allBooted.value = true;
+    };
 
     onBeforeMount(() => {
-      if (props.eager || asyncBooting.wasCalled) {
+      if (props.eager || !asyncBooting || asyncBooting.wasCalled) {
         setBooted();
         setAllBooted();
 
@@ -43,18 +51,18 @@ export default {
       asyncBooting.register(asyncBootingKey, setBooted, setAllBooted);
     });
 
-    onBeforeUnmount(() => asyncBooting.unregister(asyncBootingKey));
+    onBeforeUnmount(() => asyncBooting?.unregister(asyncBootingKey));
 
     return {
-      booted,
       allBooted,
+      booted,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.position-relative {
+.c-booted-placeholder-loader {
   width: 100%;
   height: 100%;
 }

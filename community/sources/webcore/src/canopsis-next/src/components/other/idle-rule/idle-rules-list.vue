@@ -18,46 +18,40 @@
         :enablable="updatable"
         :disablable="updatable"
         idle-rule
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #type="{ item }">
-      {{ $t(`idleRules.types.${item.type}`) }}
+      {{ t(`idleRules.types.${item.type}`) }}
     </template>
+
     <template #operation.type="{ item }">
-      {{ item | get('operation.type', '-') }}
+      {{ item.operation?.type || '-' }}
     </template>
+
     <template #duration="{ item }">
-      <span>{{ item.duration | duration }}</span>
+      <span>{{ convertDurationToString(item.duration) }}</span>
     </template>
+
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
         <c-db-export-btn :id="item._id" idle-rule />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
-      </v-layout>
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
     </template>
+
     <template #expand="{ item }">
       <idle-rules-list-expand-item :idle-rule="item" />
     </template>
@@ -67,6 +61,8 @@
 <script>
 import { computed } from 'vue';
 
+import { convertDurationToString } from '@/helpers/date/duration';
+
 import { useI18n } from '@/hooks/i18n';
 
 import IdleRulesListExpandItem from './partials/idle-rules-list-expand-item.vue';
@@ -75,6 +71,7 @@ export default {
   components: {
     IdleRulesListExpandItem,
   },
+
   props: {
     idleRules: {
       type: Array,
@@ -105,14 +102,17 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
+
   setup() {
     const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
       { text: t('common.type'), value: 'type' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
-      { text: t('common.action'), value: 'operation.type', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.action'), value: 'operation.type' },
       { text: t('idleRules.timeAwaiting'), value: 'duration', sortable: false },
       { text: t('common.priority'), value: 'priority' },
       { text: t('common.author'), value: 'author.display_name' },
@@ -120,7 +120,9 @@ export default {
     ]);
 
     return {
+      t,
       headers,
+      convertDurationToString,
     };
   },
 };

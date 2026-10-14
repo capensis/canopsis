@@ -1,12 +1,16 @@
 <template>
   <div class="text-editor">
-    <c-label v-if="label" :error="hasError" class="mb-2">{{ label }}</c-label>
-    <div
-      :class="{ 'error--text': hasError }"
-      class="text-editor"
-      @blur="$emit('blur', $event)"
-    >
+    <c-label
+      v-if="label"
+      :label="label"
+      :error="hasError"
+      :required="required"
+      class="text-editor__label text-caption"
+    />
+
+    <div :class="{ 'error--text': hasError }" class="text-editor" @blur="$emit('blur', $event)">
       <div ref="textEditorElement" />
+
       <variables-menu
         v-if="hasVariables"
         :items="variables"
@@ -16,31 +20,21 @@
         :position-y="variablesMenuPosition.y"
         dense
         clickable-parent
-        @input="pasteVariable"
+        @update:value="pasteVariable"
         @close="closeVariablesMenu"
       />
+
       <div class="text-editor__details">
-        <v-messages
-          :value="errorMessages"
-          color="error"
-        />
+        <v-messages :active="hasError" :messages="errorMessages" color="error" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
 import { Jodit } from 'jodit';
-
+import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 import 'jodit/esm/plugins/all';
-
 import 'jodit/es2021/jodit.min.css';
 
 import { BASE_URL, DEFAULT_SANITIZE_OPTIONS } from '@/config';
@@ -50,6 +44,7 @@ import { sanitizeHtml } from '@/helpers/html';
 import { useI18n } from '@/hooks/i18n';
 
 import { useTextEditorUpload, useTextEditorVariables } from './hooks/text-editor';
+import { useTextEditorPaste } from './hooks/text-editor-paste';
 import VariablesMenu from './variables-menu.vue';
 
 const JODIT_TO_MATERIAL_ICONS_MAP = {
@@ -77,9 +72,15 @@ const JODIT_TO_MATERIAL_ICONS_MAP = {
 
 export default {
   components: { VariablesMenu },
+
   props: {
+    modelValue: {
+      type: String,
+      default: undefined,
+    },
     value: {
       type: String,
+      default: undefined,
     },
     label: {
       type: String,
@@ -88,12 +89,29 @@ export default {
     buttons: {
       type: Array,
       default: () => [
-        'source', '|',
-        'bold', 'italic', 'strikethrough', 'underline', '|',
-        'ul', 'ol', '|',
-        'font', 'fontsize', 'brush', 'paragraph', '|',
-        'image', 'table', 'link', '|',
-        'align', 'undo', 'redo', '|',
+        'source',
+        '|',
+        'bold',
+        'italic',
+        'strikethrough',
+        'underline',
+        '|',
+        'ul',
+        'ol',
+        '|',
+        'font',
+        'fontsize',
+        'brush',
+        'paragraph',
+        '|',
+        'image',
+        'table',
+        'link',
+        '|',
+        'align',
+        'undo',
+        'redo',
+        '|',
       ],
     },
     public: {
@@ -124,6 +142,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     sanitizeOptions: {
       type: Object,
       required: false,
@@ -133,6 +155,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue', 'blur'],
+
   setup(props, { emit }) {
     const { locale } = useI18n();
 
@@ -140,13 +165,16 @@ export default {
     const textEditorElement = ref(null);
     const sanitized = ref(false);
 
-    const sanitizedValue = computed(() => sanitizeHtml(props.value, props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS));
+    const currentValue = computed(() => props.modelValue ?? props.value ?? '');
+    const sanitizedValue = computed(
+      () => sanitizeHtml(currentValue.value, props.sanitizeOptions || DEFAULT_SANITIZE_OPTIONS),
+    );
     const hasError = computed(() => props.errorMessages.length > 0);
 
     const { controlsOptions, uploaderOptions } = useTextEditorUpload({
       editor,
-      isPublic: props.public,
-      maxFileSize: props.maxFileSize,
+      isPublic: toRef(props, 'public'),
+      maxFileSize: toRef(props, 'maxFileSize'),
     });
 
     const {
@@ -160,7 +188,11 @@ export default {
       closeVariablesMenu,
     } = useTextEditorVariables({
       editor,
-      variables: props.variables,
+      variables: toRef(props, 'variables'),
+    });
+
+    const { pasteOptions, handleProcessHTML } = useTextEditorPaste({
+      editor,
     });
 
     const options = computed(() => {
@@ -188,10 +220,9 @@ export default {
 
           return '';
         },
-        sourceEditorCDNUrlsJS: [
-          `${BASE_URL}scripts/libs/ace/1.43.3/ace.js`,
-        ],
+        sourceEditorCDNUrlsJS: [`${BASE_URL}scripts/libs/ace/1.43.3/ace.js`],
         ...props.config,
+        ...pasteOptions,
       };
 
       if (props.buttons.length) {
@@ -223,18 +254,22 @@ export default {
       return config;
     });
 
-    const changeValue = value => emit('input', value);
+    const changeValue = (value) => {
+      emit('update:modelValue', value);
+    };
 
     const makeEditor = () => {
       editor.value = Jodit.make(textEditorElement.value, options.value);
-      editor.value.value = props.value;
+      editor.value.value = currentValue.value;
       editor.value.options.popupRoot = editor.value.container;
       editor.value.events.on('change', changeValue);
+      editor.value.e.on('processHTML', handleProcessHTML, { top: true });
     };
 
     const destructEditor = () => {
       if (editor.value) {
         editor.value.events.off('change', changeValue);
+        editor.value.e.off('processHTML', handleProcessHTML);
         editor.value.destruct();
         editor.value = null;
       }
@@ -245,32 +280,34 @@ export default {
       makeEditor();
     });
 
-    watch(() => props.value, (newValue) => {
-      if (!editor.value || newValue === editor.value.value) {
-        return;
-      }
+    watch(
+      () => currentValue.value,
+      (newValue) => {
+        if (!editor.value || newValue === editor.value.value) {
+          return;
+        }
 
-      if (newValue && !sanitized.value) {
-        editor.value.value = sanitizedValue.value;
-        sanitized.value = true;
-      } else {
-        editor.value.value = newValue;
-      }
-    }, { immediate: true });
+        if (newValue && !sanitized.value) {
+          editor.value.value = sanitizedValue.value;
+          sanitized.value = true;
+        } else {
+          editor.value.value = newValue;
+        }
+      },
+      { immediate: true },
+    );
 
     onMounted(makeEditor);
     onBeforeUnmount(destructEditor);
 
     return {
       editor,
-
       textEditorElement,
       variablesShown,
       variablesMenuValue,
       variablesMenuPosition,
       hasVariables,
       hasError,
-
       pasteVariable,
       closeVariablesMenu,
     };
@@ -282,26 +319,42 @@ export default {
 .text-editor {
   --jd-font-default: 'Roboto', sans-serif;
 
+  width: 100%;
+
+  &__label {
+    display: block;
+    margin-bottom: 8px;
+  }
+
   &__details {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 0 auto;
     flex: 1 0 auto;
     max-width: 100%;
     overflow: hidden;
+
+    .v-messages {
+      opacity: 1;
+    }
   }
 
   &.error--text {
     .jodit-container {
       margin-bottom: 8px;
-      border-color: var(--v-error-base) !important;
+      border-color: rgb(var(--v-theme-error)) !important;
+    }
+  }
+
+  .jodit-container {
+    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+    border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+
+    &:focus-within {
+      border-color: rgb(var(--v-theme-primary));
     }
   }
 
   .jodit-progress-bar div {
-    background: var(--v-primary-base);
+    background: rgb(var(--v-theme-primary));
   }
 
   .jodit-icon {
@@ -309,7 +362,7 @@ export default {
   }
 
   .jodit-ui-button_variant_primary {
-    background-color: var(--v-primary-base);
+    background-color: rgb(var(--v-theme-primary));
     text-transform: uppercase;
 
     .jodit-ui-button__text {
@@ -317,7 +370,7 @@ export default {
     }
 
     &:hover:not([disabled]) {
-      background-color: var(--v-primary-darken1);
+      background-color: rgb(var(--v-theme-primary-darken-1));
 
       .jodit-ui-button__text {
         background-color: unset;
@@ -330,10 +383,10 @@ export default {
   pointer-events: all;
 
   .jodit-ui-button_variant_primary {
-    background-color: var(--v-primary-base);
+    background-color: rgb(var(--v-theme-primary));
 
     &:hover:not([disabled]) {
-      background-color: var(--v-primary-darken1);
+      background-color: rgb(var(--v-theme-primary-darken-1));
     }
   }
 

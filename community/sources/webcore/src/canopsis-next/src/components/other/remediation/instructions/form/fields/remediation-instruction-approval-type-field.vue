@@ -1,37 +1,36 @@
 <template>
-  <v-radio-group
-    v-field="type"
+  <c-radio-group
+    :model-value="modelValue"
     class="mt-0"
     hide-details
     mandatory
-    row
+    inline
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
-      :label="$tc('common.role')"
+      :label="$t('common.role')"
       :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role"
       color="primary"
     />
     <v-radio
-      :label="$tc('common.user')"
+      :label="$t('common.user')"
       :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user"
       color="primary"
+      class="ml-2"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES } from '@/constants';
 
 export default {
-  model: {
-    prop: 'type',
-    event: 'input',
-  },
   props: {
-    type: {
+    modelValue: {
       type: Number,
       default: REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
     },
   },
+  emits: ['update:modelValue'],
 };
 </script>

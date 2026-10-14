@@ -25,20 +25,14 @@ echo "install golang $GOLANG_VERSION."
 wget https://go.dev/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
 tar -C ~ -xzf go$GOLANG_VERSION.linux-amd64.tar.gz
 
-YARN_VERSION=$(grep "^YARN_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
 NODE_VERSION=$(grep "^NODE_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
-echo "install yarn $YARN_VERSION."
+echo "install nodejs $NODE_VERSION."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 nvm install $NODE_VERSION
-nvm alias defaut $NODE_VERSION
+nvm alias default $NODE_VERSION
 node -v
-npm install -g corepack
-yarn init -2
-yarn set version $YARN_VERSION
-yarn install
-yarn --version
 
 %build
 export PATH=$PATH:~/go/bin

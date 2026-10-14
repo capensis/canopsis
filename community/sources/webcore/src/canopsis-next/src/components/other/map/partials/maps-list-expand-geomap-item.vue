@@ -3,10 +3,11 @@
 </template>
 
 <script>
-import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
+import GeomapPreview from './geomap-preview.vue';
 
 export default {
   components: { GeomapPreview },
+
   props: {
     map: {
       type: Object,

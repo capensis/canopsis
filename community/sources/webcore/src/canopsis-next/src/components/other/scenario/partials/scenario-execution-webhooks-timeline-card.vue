@@ -10,13 +10,11 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
-import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
+import { useScenarioStore } from '@/stores/modules/scenario';
 
-const { mapActions: mapScenarioActions } = createNamespacedHelpers('scenario');
+import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
 
 export default {
   components: { AlarmWebhookExecutionTimelineCard },
@@ -35,21 +33,21 @@ export default {
   },
   computed: {
     expandable() {
-      return [EVENT_ENTITY_TYPES.webhookComplete, EVENT_ENTITY_TYPES.webhookFail].includes(this.step._t);
+      return [EVENT_ENTITY_TYPES.webhookComplete, EVENT_ENTITY_TYPES.webhookFail].includes(
+        this.step._t,
+      );
     },
   },
   methods: {
-    ...mapScenarioActions({
-      fetchTestScenarioExecutionWebhooksResponse: 'fetchTestScenarioExecutionWebhooksResponse',
-    }),
-
     async expandResponse(value) {
       if (value) {
         if (!this.response) {
           this.pending = true;
 
           try {
-            this.response = await this.fetchTestScenarioExecutionWebhooksResponse({ id: this.step.webhookId });
+            this.response = await useScenarioStore().fetchTestScenarioExecutionWebhooksResponse({
+              id: this.step.webhookId,
+            });
           } catch (err) {
             console.error(err);
           } finally {

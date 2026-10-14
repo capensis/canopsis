@@ -9,45 +9,48 @@
     selectable
     @update:query="updateQuery"
   >
-    <template #toolbar="">
-      <v-flex>
-        <c-advanced-search
-          :attributes="advancedSearchAttributes"
-          @submit="updateSearch"
-          @reset="resetSearch"
-        />
-      </v-flex>
-      <v-flex v-if="hasAccessToCategory">
-        <c-entity-category-field
-          :category="query.category"
-          class="mr-3"
-          @input="updateCategory"
-        />
-      </v-flex>
+    <template #toolbar>
+      <c-layout class="gap-4 py-4 pt-0" align="end" wrap>
+        <div class="flex-grow-1">
+          <c-advanced-search
+            :attributes="advancedSearchAttributes"
+            @submit="updateSearch"
+            @reset="resetSearch"
+          />
+        </div>
+        <div v-if="hasAccessToCategory">
+          <c-entity-category-field
+            :category="query.category"
+            hide-details
+            @update:category="updateCategory"
+          />
+        </div>
+      </c-layout>
     </template>
   </entities-list-table-with-pagination>
 </template>
 
 <script>
 import { omit } from 'lodash';
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { USER_PERMISSIONS, ADVANCED_SEARCH_FIELDS_TO_COMPARISON } from '@/constants';
+import { ADVANCED_SEARCH_FIELDS_TO_COMPARISON, USER_PERMISSIONS } from '@/constants';
 
 import { getQueryForList } from '@/helpers/entities/shared/query';
 import { prepareQueryWithAdvancedSearch } from '@/helpers/search/advanced-search';
 
-import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useCurrentUserPermissions } from '@/hooks/auth';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useService } from '@/hooks/store/modules/service';
 
 import { useEntityDependenciesAdvancedSearchAttributes } from '@/components/common/search/hooks/advanced-search';
 
-import EntitiesListTableWithPagination from '../../widgets/context/partials/entities-list-table-with-pagination.vue';
+import EntitiesListTableWithPagination from '@/components/widgets/context/partials/entities-list-table-with-pagination.vue';
 
 export default {
   components: { EntitiesListTableWithPagination },
+
   props: {
     entityId: {
       type: String,
@@ -66,16 +69,15 @@ export default {
       default: () => [],
     },
   },
+
   setup(props) {
     const entities = ref([]);
     const meta = ref({});
 
     const { checkAccess } = useCurrentUserPermissions();
-    const {
-      fetchServiceDependenciesWithoutStore,
-      fetchServiceImpactsWithoutStore,
-    } = useService();
-    const { attributes: advancedSearchAttributes } = useEntityDependenciesAdvancedSearchAttributes();
+    const { fetchServiceDependenciesWithoutStore, fetchServiceImpactsWithoutStore } = useService();
+    const { attributes: advancedSearchAttributes } =
+      useEntityDependenciesAdvancedSearchAttributes();
 
     const {
       pending,
@@ -95,48 +97,39 @@ export default {
         const method = props.impact
           ? fetchServiceImpactsWithoutStore
           : fetchServiceDependenciesWithoutStore;
-
-        const params = getQueryForList(fetchQuery);
-        params.with_flags = true;
-
-        const { data, meta: responseMeta } = await method({
+        const params = {
+          ...getQueryForList(fetchQuery),
+          with_flags: true,
+        };
+        const response = await method({
           id: props.entityId,
           params,
         });
 
-        entities.value = data;
-        meta.value = responseMeta;
+        entities.value = response.data;
+        meta.value = response.meta;
       },
     });
 
-    const hasAccessToCategory = computed(() => checkAccess(USER_PERMISSIONS.business.context.actions.category));
+    const hasAccessToCategory = computed(() =>
+      checkAccess(USER_PERMISSIONS.business.context.actions.category),
+    );
 
-    /**
-     * Resets the search query by removing all search-related parameters and resetting pagination to the first page.
-     */
-    const resetSearch = () => updateQuery({
-      ...omit(query.value, [...ADVANCED_SEARCH_FIELDS_TO_COMPARISON]),
+    const resetSearch = () =>
+      updateQuery({
+        ...omit(query.value, [...ADVANCED_SEARCH_FIELDS_TO_COMPARISON]),
+        page: 1,
+      });
 
-      page: 1,
-    });
+    const updateSearch = (search = {}) =>
+      updateQuery(prepareQueryWithAdvancedSearch(query.value, search));
 
-    /**
-     * Updates the search query parameter and resets pagination to the first page.
-     *
-     * @param {string} search - The search term to filter entities
-     */
-    const updateSearch = (search = {}) => updateQuery(prepareQueryWithAdvancedSearch(query.value, search));
-
-    /**
-     * Updates the category filter in the query and resets pagination to the first page.
-     *
-     * @param {Object|null} category - The category object with _id property, or null to clear the filter
-     */
-    const updateCategory = category => updateQuery({
-      ...query.value,
-      page: 1,
-      category: category && category._id,
-    });
+    const updateCategory = category =>
+      updateQuery({
+        ...query.value,
+        page: 1,
+        category: category?._id,
+      });
 
     onMounted(fetchList);
 

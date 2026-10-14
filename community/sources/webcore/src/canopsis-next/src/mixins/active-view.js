@@ -1,13 +1,11 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState, mapStores } from 'pinia';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('activeView');
+import { useActiveViewStore } from '@/stores/modules/active-view';
 
-/**
- * @mixin Helpers for the view tab entity
- */
 export const activeViewMixin = {
   computed: {
-    ...mapGetters({
+    ...mapStores(useActiveViewStore),
+    ...mapState(useActiveViewStore, {
       view: 'item',
       activeViewPending: 'pending',
       activeViewScreenMode: 'screenMode',
@@ -18,7 +16,7 @@ export const activeViewMixin = {
     }),
   },
   methods: {
-    ...mapActions({
+    ...mapActions(useActiveViewStore, {
       toggleEditing: 'toggleEditing',
       registerEditingOffHandler: 'registerEditingOffHandler',
       unregisterEditingOffHandler: 'unregisterEditingOffHandler',

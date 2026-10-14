@@ -1,5 +1,5 @@
 import { COLORS } from '@/config';
-import { PRO_ENGINES } from '@/constants';
+import { HEALTHCHECK_STATUSES } from '@/constants';
 
 /**
  * Get color for a node
@@ -12,13 +12,14 @@ export const getHealthcheckNodeColor = (node = {}) => {
     return COLORS.healthcheck.unknown;
   }
 
-  if (!node.is_running || node.is_queue_overflown) {
-    return COLORS.healthcheck.error;
+  switch (node.status) {
+    case HEALTHCHECK_STATUSES.healthy:
+      return COLORS.primary;
+    case HEALTHCHECK_STATUSES.degraded:
+      return COLORS.healthcheck.warning;
+    case HEALTHCHECK_STATUSES.unhealthy:
+      return COLORS.healthcheck.error;
+    default:
+      return COLORS.healthcheck.unknown;
   }
-
-  if (node.is_too_few_instances || node.is_diff_instances_config || (node.nodes && node.nodes !== node.running_nodes)) {
-    return COLORS.healthcheck.warning;
-  }
-
-  return PRO_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
 };

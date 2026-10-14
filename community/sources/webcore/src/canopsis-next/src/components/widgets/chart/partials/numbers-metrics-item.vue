@@ -1,12 +1,12 @@
 <template>
-  <v-layout
+  <c-layout
     :style="itemStyle"
-    class="numbers-metrics-item"
+    class="numbers-metrics-item w-100"
+    align="center"
     column
-    align-center
   >
-    <v-layout align-center>
-      <div class="numbers-metrics-item__value">
+    <c-layout class="numbers-metrics-item__value-wrapper" align="center">
+      <div class="numbers-metrics-item__value w-100">
         {{ value }}
       </div>
       <c-help-icon
@@ -17,11 +17,11 @@
         size="0.75em"
         top
       />
-    </v-layout>
+    </c-layout>
     <div class="numbers-metrics-item__title">
       {{ title }}
     </div>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -29,11 +29,12 @@ import { isUndefined, lowerFirst } from 'lodash';
 
 import { AGGREGATE_FUNCTIONS, DATETIME_FORMATS, NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
 
-import { convertMetricValueByUnit, convertMetricValueToString } from '@/helpers/entities/metric/list';
 import { convertDateToTimezoneDateString } from '@/helpers/date/date';
+import { convertMetricValueByUnit, convertMetricValueToString } from '@/helpers/entities/metric/list';
 
 export default {
   inject: ['$system'],
+
   props: {
     metric: {
       type: Object,
@@ -48,6 +49,7 @@ export default {
       default: NUMBERS_CHART_DEFAULT_FONT_SIZE,
     },
   },
+
   computed: {
     itemStyle() {
       return {
@@ -57,7 +59,6 @@ export default {
 
     value() {
       const { value, unit, title: metric } = this.metric;
-
       const preparedValue = convertMetricValueByUnit(value, unit);
 
       return convertMetricValueToString({ value: preparedValue, metric, unit });
@@ -109,6 +110,12 @@ export default {
 
 <style lang="scss">
 .numbers-metrics-item {
+  text-align: center;
+
+  &__value-wrapper {
+    text-align: center;
+  }
+
   &__value {
     line-height: normal;
     text-align: center;
@@ -116,7 +123,7 @@ export default {
 
   &__trend {
     transform: rotate(0deg);
-    transition: transform linear .3s;
+    transition: transform linear 0.3s;
 
     &--up {
       transform: rotate(180deg);

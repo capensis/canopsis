@@ -1,22 +1,22 @@
 <template>
   <c-patterns-field
-    v-field="form"
+    :value="form"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
     :pending="pending"
     required
     with-entity
+    @update:value="$emit('update:form', $event)"
   />
 </template>
 
 <script>
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -27,13 +27,16 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:form'],
+
   setup(props) {
     const { fetchKpiFilterPatternFields } = usePatternsFields();
 
-    const {
-      pending,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchKpiFilterPatternFields, props.readonly);
+    const { pending, entityAttributes } = usePatternsFieldsFetching(
+      fetchKpiFilterPatternFields,
+      props.readonly,
+    );
 
     return {
       pending,

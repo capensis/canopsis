@@ -2,27 +2,20 @@
   <div class="choose-expansion-panel">
     <v-expansion-panels class="my-1">
       <v-expansion-panel>
-        <v-expansion-panel-header color="grey darken-2">
-          <div class="white--text">
+        <v-expansion-panel-title color="grey-darken-2">
+          <div class="text-white">
             {{ label }}
           </div>
 
           <template #actions>
-            <v-icon color="white">
+            <v-icon color="white" icon="keyboard_arrow_down">
               keyboard_arrow_down
             </v-icon>
           </template>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content
-          :class="{ error: errors.length }"
-          class="grey darken-2 white--text"
-        >
+        </v-expansion-panel-title>
+        <v-expansion-panel-text :class="{ error: errors.length }" class="grey-darken-2 text-white">
           <v-card class="pt-1">
-            <v-alert
-              :value="!!errors.length"
-              class="pa-2 mx-2"
-              type="error"
-            >
+            <v-alert v-if="errors.length" class="pa-2 mx-2" type="error">
               {{ errors.join(' ') }}
             </v-alert>
             <chips-list
@@ -32,12 +25,12 @@
               :content-key="contentKey"
               :item-key="itemKey"
               :clearable="clearable"
-              @remove="$listeners.remove"
-              @clear="$listeners.clear"
+              @remove="$emit('remove', $event)"
+              @clear="$emit('clear', $event)"
             />
             <slot />
           </v-card>
-        </v-expansion-panel-content>
+        </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
@@ -48,6 +41,7 @@ import ChipsList from './partials/chips-list.vue';
 
 export default {
   components: { ChipsList },
+  emits: ['remove', 'clear'],
   props: {
     label: {
       type: String,
@@ -86,9 +80,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .choose-expansion-panel {
-    & ::v-deep .v-expansion-panel__header .v-icon {
-      color: white !important;
-    }
+.choose-expansion-panel {
+  & :deep(.v-expansion-panel-title .v-icon) {
+    color: white !important;
   }
+}
 </style>

@@ -59,11 +59,17 @@ export default {
   },
   popups: {
     updated: 'Job updated',
-    repeated: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> repeated | {count} jobs repeated',
-    restarted: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> restarted | {count} jobs restarted',
-    repeatFailed: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to repeat | {count} jobs failed to repeat',
-    restartFailed: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to restart | {count} jobs failed to restart',
-    paused: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> paused | {count} jobs paused',
-    pauseFailed: 'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to pause | {count} jobs failed to pause',
+    repeated:
+      'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> repeated | {count} jobs repeated',
+    restarted:
+      'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> restarted | {count} jobs restarted',
+    repeatFailed:
+      'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to repeat | {count} jobs failed to repeat',
+    restartFailed:
+      'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to restart | {count} jobs failed to restart',
+    paused:
+      'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> paused | {count} jobs paused',
+    pauseFailed:
+      'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to pause | {count} jobs failed to pause',
   },
 };

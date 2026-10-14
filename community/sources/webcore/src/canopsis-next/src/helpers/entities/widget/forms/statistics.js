@@ -1,8 +1,12 @@
-import { DEFAULT_PERIODIC_REFRESH, KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA, QUICK_RANGES } from '@/constants';
+import {
+  DEFAULT_PERIODIC_REFRESH,
+  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
+  QUICK_RANGES,
+} from '@/constants';
 
-import { uid } from '@/helpers/uid';
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} StatisticsWidgetColumn
@@ -79,7 +83,9 @@ export const statisticsMainParameterToForm = (mainParameter = {}) => ({
  * @returns {StatisticsWidgetParametersForm}
  */
 export const statisticsWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(
+    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
+  ),
   mainParameter: statisticsMainParameterToForm(parameters.mainParameter),
   widgetColumns: (parameters.widgetColumns ?? []).map(statisticsWidgetColumnToForm),
   table_title: parameters.table_title ?? '',

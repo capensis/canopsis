@@ -1,88 +1,58 @@
 <template>
-  <v-layout
-    class="gap-3"
-    column
-  >
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
+  <c-layout gap="3" column>
+    <c-name-field v-model="name" autofocus required />
+
     <c-form-block>
-      <c-form-block-row :label="$t('pbehavior.pbehaviorType')">
-        <c-pbehavior-type-field
-          v-field="form.type"
-          name="type"
-          required
-        />
+      <c-form-block-row :label="t('pbehavior.pbehaviorType')">
+        <c-pbehavior-type-field v-model="type" name="type" required />
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="$t('common.file')"
-        align-center
-      >
+      <c-form-block-row :label="t('common.file')" align-center>
         <file-selector
+          v-model="file"
           name="file"
           required
           with-files-list
           hide-details
-          @change="changeFiles"
+          @change="changeFile"
         >
-          <template #activator="{ on, disabled }">
-            <v-btn
-              :color="errors.has('file') ? 'error' : 'primary'"
+          <template #activator="{ on, disabled, errors }">
+            <c-btn-with-error
+              :error="errors[0]"
               :disabled="disabled"
-              outlined
+              variant="outlined"
               v-on="on"
             >
-              {{ $t('common.chooseFile') }}
-            </v-btn>
+              {{ t('common.chooseFile') }}
+            </c-btn-with-error>
           </template>
         </file-selector>
       </c-form-block-row>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { onMounted } from 'vue';
-
-import { useModelField } from '@/hooks/form/model-field';
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-import { useValidator } from '@/hooks/validator/validator';
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 export default {
-  inject: ['$validator'],
   components: { FileSelector },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  setup(props, { emit }) {
-    const { updateField } = useModelField(props, emit);
-    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
-    const validator = useValidator();
 
-    /**
-     * Stores the first selected file in the import form.
-     *
-     * @param {File[]} [files=[]] - Selected files from the file selector.
-     */
-    const changeFiles = (files = []) => updateField('file', files[0]);
+  setup() {
+    const { t } = useI18n();
+    const { name, type, file } = useFormModels(['name', 'type', 'file']);
 
-    onMounted(fetchPbehaviorTypesFieldList);
+    const changeFile = selectedFile => file.value = selectedFile;
 
     return {
-      errors: validator.errors,
-      changeFiles,
+      t,
+      name,
+      type,
+      file,
+      changeFile,
     };
   },
 };

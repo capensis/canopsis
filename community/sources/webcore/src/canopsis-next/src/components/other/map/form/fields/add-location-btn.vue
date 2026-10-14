@@ -1,18 +1,17 @@
 <template>
   <v-btn-toggle
-    :value="value"
-    tile
-    group
-    @change="inputHandler"
+    :model-value="value ? true : undefined"
+    variant="text"
+    theme="light"
+    @update:model-value="inputHandler"
   >
     <v-btn
       :value="true"
-      class="ma-0"
-      light
-      text
+      class="ma-0 text-medium-emphasis"
+      theme="light"
       block
     >
-      <v-icon left>
+      <v-icon start>
         add_location
       </v-icon>
       <span>{{ $t('map.addPoint') }}</span>
@@ -25,16 +24,13 @@ import { formBaseMixin } from '@/mixins/form';
 
 export default {
   mixins: [formBaseMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Boolean,
       required: true,
     },
   },
+  emits: ['input'],
   methods: {
     inputHandler(value) {
       this.updateModel(!!value);

@@ -1,18 +1,24 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
     <field-title v-model="form.title" />
+
     <field-periodic-refresh
-      v-model="form.parameters"
+      v-model="form.parameters.periodic_refresh"
+      :live-watching="form.parameters.liveWatching"
       with-live-watching
+      @update:live-watching="form.parameters.liveWatching = $event"
     />
-    <widget-settings-group :title="$t('settings.liveReporting.title')">
+
+    <widget-settings-group :title="t('settings.liveReporting.title')">
       <field-live-reporting v-model="form.parameters.liveReporting" />
     </widget-settings-group>
-    <widget-settings-group :title="$tc('common.column', 2)">
+
+    <widget-settings-group :title="t('common.column', 2)">
       <field-default-sort-columns-with-template
         v-model="form.parameters.sort"
         :columns="sortablePreparedWidgetColumns"
@@ -26,8 +32,8 @@
         :template="form.parameters.widgetColumnsTemplate"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="$t('settings.columnNames')"
-        :type="$constants.ENTITIES_TYPES.alarm"
+        :label="t('settings.columnNames')"
+        :type="ENTITIES_TYPES.alarm"
         with-template
         with-html
         with-color-indicator
@@ -39,21 +45,21 @@
         :template="form.parameters.widgetGroupColumnsTemplate"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="$t('settings.groupColumnNames')"
-        :type="$constants.ENTITIES_TYPES.alarm"
+        :label="t('settings.groupColumnNames')"
+        :type="ENTITIES_TYPES.alarm"
         with-template
         with-html
         with-color-indicator
         with-filter-on-click
-        @update:template="updateWidgetGroupColumnsTemplate"
+        @update:template="updateGroupColumnsTemplate"
       />
       <field-columns
         v-model="form.parameters.serviceDependenciesColumns"
         :template="form.parameters.serviceDependenciesColumnsTemplate"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        :label="$t('settings.trackColumnNames')"
-        :type="$constants.ENTITIES_TYPES.entity"
+        :label="t('settings.trackColumnNames')"
+        :type="ENTITIES_TYPES.entity"
         with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
@@ -66,12 +72,12 @@
       />
     </widget-settings-group>
 
-    <widget-settings-group :title="$tc('common.filter', 2)">
+    <widget-settings-group :title="t('common.filter', 2)">
       <field-filters
-        v-if="hasAccessToFilter"
-        v-model="form.parameters.mainFilter"
-        :filters.sync="form.filters"
+        v-model:model-value="form.parameters.mainFilter"
+        v-model:filters="form.filters"
         :widget-id="widget._id"
+        :widget-type="form.type"
         addable
         editable
         with-alarm
@@ -81,110 +87,119 @@
       <field-opened-resolved-filter v-model="form.parameters.opened" />
       <field-switcher
         v-model="form.parameters.isCorrelationEnabled"
-        :title="$t('common.correlation')"
+        :title="t('common.correlation')"
       />
       <field-switcher
         v-model="form.parameters.clearFilterEnabled"
-        :title="$t('settings.clearFilterEnabled')"
+        :title="t('settings.clearFilterEnabled')"
       />
     </widget-settings-group>
 
-    <widget-settings-group :title="$tc('common.view', 1)">
+    <widget-settings-group :title="t('common.view', 1)">
       <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
       <field-density v-model="form.parameters.dense" />
-      <widget-settings-group :title="$t('settings.kioskMode')">
-        <field-switcher
-          v-model="form.parameters.kiosk.hideActions"
-          :title="$t('settings.kiosk.hideActions')"
-        />
-        <field-switcher
-          v-model="form.parameters.kiosk.hideMassSelection"
-          :title="$t('settings.kiosk.hideMassSelection')"
-        />
-        <field-switcher
-          v-model="form.parameters.kiosk.hideToolbar"
-          :title="$t('settings.kiosk.hideToolbar')"
-        />
-      </widget-settings-group>
-      <field-switcher
-        v-model="form.parameters.sticky_header"
-        :title="$t('settings.stickyHeader')"
-      />
+      <field-switcher v-model="form.parameters.sticky_header" :title="t('settings.stickyHeader')" />
       <field-switcher
         v-model="form.parameters.sticky_horizontal_scroll"
-        :title="$t('settings.stickyHorizontalScroll')"
+        :title="t('settings.stickyHorizontalScroll')"
       />
       <field-switcher
         v-model="form.parameters.isVirtualScrollEnabled"
-        :title="$t('settings.isVirtualScrollEnabled')"
+        :title="t('settings.isVirtualScrollEnabled')"
       />
+      <widget-settings-group :title="t('settings.kioskMode')">
+        <field-switcher
+          v-model="form.parameters.kiosk.hideActions"
+          :title="t('settings.kiosk.hideActions')"
+        />
+        <field-switcher
+          v-model="form.parameters.kiosk.hideMassSelection"
+          :title="t('settings.kiosk.hideMassSelection')"
+        />
+        <field-switcher
+          v-model="form.parameters.kiosk.hideToolbar"
+          :title="t('settings.kiosk.hideToolbar')"
+        />
+      </widget-settings-group>
     </widget-settings-group>
 
-    <widget-settings-group :title="$t('common.actionsLabel')">
-      <widget-settings-group :title="$t('common.ack')">
+    <widget-settings-group :title="t('common.actionsLabel')">
+      <widget-settings-group :title="t('common.ack')">
         <field-switcher
           v-model="form.parameters.isAckNoteRequired"
-          :title="$t('settings.isAckNoteRequired')"
+          :title="t('settings.isAckNoteRequired')"
         />
         <field-switcher
           v-model="form.parameters.isMultiAckEnabled"
-          :title="$t('settings.isMultiAckEnabled')"
+          :title="t('settings.isMultiAckEnabled')"
         />
         <field-fast-action-output
           v-model="form.parameters.fastAckOutput"
-          :label="$t('settings.fastAckOutput')"
+          :label="t('settings.fastAckOutput')"
         />
       </widget-settings-group>
 
-      <widget-settings-group :title="$t('common.cancel')">
+      <widget-settings-group :title="t('common.cancel')">
         <field-fast-action-output
           v-model="form.parameters.fastCancelOutput"
-          :label="$t('settings.fastCancelOutput')"
+          :label="t('settings.fastCancelOutput')"
         />
         <field-switcher
           v-model="form.parameters.isUncancelAlarmsCommentRequired"
-          :title="$t('settings.isUncancelAlarmsCommentRequired')"
+          :title="t('settings.isUncancelAlarmsCommentRequired')"
         />
       </widget-settings-group>
 
       <field-comment-templates v-model="form.parameters.comment_templates" />
 
-      <fast-pbehavior-form v-model="form.parameters.fast_pbehaviors" />
+      <pause-form
+        v-model="form.parameters.pause"
+        v-model:fast-pbehaviors="form.parameters.fast_pbehaviors"
+      />
 
       <field-switcher
         v-model="form.parameters.isSnoozeNoteRequired"
-        :title="$t('settings.isSnoozeNoteRequired')"
+        :title="t('settings.isSnoozeNoteRequired')"
       />
       <field-switcher
         v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired"
-        :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
+        :title="t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
       />
       <field-switcher
         v-model="form.parameters.isMultiDeclareTicketEnabled"
-        :title="$t('settings.isMultiDeclareTicketEnabled')"
+        :title="t('settings.isMultiDeclareTicketEnabled')"
       />
       <field-switcher
         v-model="form.parameters.isActionsAllowWithOkState"
-        :title="$t('settings.isActionsAllowWithOkState')"
+        :title="t('settings.isActionsAllowWithOkState')"
       />
       <field-switcher
         v-model="form.parameters.keepSelectedAfterAction"
-        :title="$t('common.massActionsPanel.keepSelectedAfterAction')"
+        :title="t('common.massActionsPanel.keepSelectedAfterAction')"
+      />
+      <field-associate-ticket
+        :model-value="form.parameters.associateTicket.formats"
+        :template="form.parameters.associateTicket.formatsTemplate"
+        :templates="ticketFormatsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        @update:model-value="form.parameters.associateTicket.formats = $event"
+        @update:template="updateAssociateTicketTemplate"
       />
       <field-text-editor-with-template
-        :value="form.parameters.exportPdfTemplate"
+        :model-value="form.parameters.exportPdfTemplate"
         :template="form.parameters.exportPdfTemplateTemplate"
-        :title="$t('settings.exportPdfTemplate')"
-        :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.alarmExportToPdf"
+        :title="t('settings.exportPdfTemplate')"
+        :widget-template-type="WIDGET_TEMPLATES_TYPES.alarmExportToPdf"
         :variables="exportPdfAlarmVariables"
+        :templates="alarmExportToPdfWidgetTemplates"
         :default-value="defaultExportPdfTemplateValue"
         :dialog-props="{ maxWidth: 1070 }"
-        :templates="alarmExportToPdfWidgetTemplates"
         addable
         removable
-        @input="updateExportPdfTemplate"
+        @update:model-value="updateExportPdf"
+        @update:template="updateExportPdfTemplate"
       />
-      <widget-settings-group :title="$t('settings.quickActions.title')">
+      <widget-settings-group :title="t('settings.quickActions.title')">
         <field-quick-alarm-actions
           v-model="form.parameters.quickActions"
           :template="form.parameters.quickActionsTemplate"
@@ -193,10 +208,10 @@
           @update:template="updateQuickActionsTemplate"
         />
       </widget-settings-group>
-      <widget-settings-group :title="$t('settings.quickMassActions.title')">
+      <widget-settings-group :title="t('settings.quickMassActions.title')">
         <field-switcher
           v-model="form.parameters.hideMassActions"
-          :title="$t('settings.quickMassActions.hideSwitcher')"
+          :title="t('settings.quickMassActions.hideSwitcher')"
         />
         <field-quick-alarm-actions
           v-model="form.parameters.quickMassActions"
@@ -209,42 +224,43 @@
       </widget-settings-group>
     </widget-settings-group>
 
-    <widget-settings-group :title="$t('settings.expandPanel.title')">
-      <widget-settings-group :title="$t('alarm.tabs.moreInfos')">
+    <widget-settings-group :title="t('settings.expandPanel.title')">
+      <widget-settings-group :title="t('alarm.tabs.moreInfos')">
         <field-text-editor-with-template
-          :value="form.parameters.moreInfoTemplate"
+          :model-value="form.parameters.moreInfoTemplate"
           :template="form.parameters.moreInfoTemplateTemplate"
-          :title="$t('common.infos')"
-          :widget-template-type="$constants.WIDGET_TEMPLATES_TYPES.alarmMoreInfos"
+          :title="t('common.infos')"
+          :widget-template-type="WIDGET_TEMPLATES_TYPES.alarmMoreInfos"
           :variables="alarmVariables"
           :templates="alarmMoreInfosWidgetTemplates"
           addable
           removable
-          @input="updateMoreInfoTemplate"
+          @update:model-value="updateMoreInfo"
+          @update:template="updateMoreInfoTemplate"
         />
         <field-grid-range-size
           v-model="form.parameters.expandGridRangeSize"
-          :title="$t('common.width')"
+          :title="t('common.width')"
           inline
         />
       </widget-settings-group>
       <field-availability-graph-settings v-model="form.parameters.availability" />
       <field-switcher
         v-model="form.parameters.isHtmlEnabledOnTimeLine"
-        :title="$t('settings.isHtmlEnabledOnTimeLine')"
+        :title="t('settings.isHtmlEnabledOnTimeLine')"
       />
       <field-switcher
         v-model="form.parameters.openExpandPanelByDoubleClick"
-        :title="$t('settings.openExpandPanelByDoubleClick')"
+        :title="t('settings.openExpandPanelByDoubleClick')"
       />
       <field-switcher
         v-model="form.parameters.pausePeriodicRefreshOnExpandPanel"
-        :title="$t('settings.pausePeriodicRefreshOnExpandPanel')"
+        :title="t('settings.pausePeriodicRefreshOnExpandPanel')"
       />
     </widget-settings-group>
-    <export-csv-form
+    <field-export-csv
       v-model="form.parameters"
-      :type="$constants.ENTITIES_TYPES.alarm"
+      :type="ENTITIES_TYPES.alarm"
       :templates="alarmColumnsWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
       :variables="templateVars.column"
@@ -254,155 +270,449 @@
       optional-infos-attributes
     />
     <charts-form v-model="form.parameters.charts" />
+    <widget-colors-form v-model="form.parameters.colors" with-table />
   </widget-settings>
 </template>
 
-<script>
-import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+<script setup>
+import { computed, onMounted, ref, toRef } from 'vue';
+
+import {
+  ALARM_EXPORT_PDF_FIELDS,
+  ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
+  ALARM_TEMPLATE_FIELDS,
+  ALARM_FIELDS_TO_LABELS_KEYS,
+  ALARM_UNSORTABLE_FIELDS,
+  CUSTOM_WIDGET_TEMPLATE,
+  DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
+  ENTITIES_TYPES,
+  ENTITY_TEMPLATE_FIELDS,
+  MAX_LIMIT,
+  SIDE_BARS,
+  WIDGET_TEMPLATES_TYPES,
+} from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
+import { prepareWidgetTemplates } from '@/helpers/entities/widget/template/prepare';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { entitiesInfosMixin } from '@/mixins/entities/infos';
-import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
-import { alarmVariablesMixin } from '@/mixins/widget/variables';
-import { widgetTemplatesMixin } from '@/mixins/widget/templates';
-import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
-import {
-  permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-} from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import { useI18n } from '@/hooks/i18n';
+import { useInfos } from '@/hooks/store/modules/infos';
+import { useTemplateVars } from '@/hooks/store/modules/template-vars';
+import { useWidgetTemplate } from '@/hooks/store/modules/widget-template';
+import { useVarsPrepare } from '@/hooks/vars/shared';
+import { useWidgetSettings } from '@/hooks/widget/settings';
 
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+import FieldAssociateTicket from '@/components/sidebars/alarm/form/fields/associate-ticket.vue';
+import FieldCommentTemplates from '@/components/sidebars/alarm/form/fields/comment-templates.vue';
+import FieldFastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
+import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
+import FieldOpenedResolvedFilter from '@/components/sidebars/alarm/form/fields/opened-resolved-filter.vue';
+import FieldQuickAlarmActions from '@/components/sidebars/alarm/form/fields/quick-alarm-actions.vue';
+import FieldResizeColumnBehavior from '@/components/sidebars/alarm/form/fields/resize-column-behavior.vue';
+import PauseForm from '@/components/sidebars/alarm/form/pause-form.vue';
+import FieldAvailabilityGraphSettings from '@/components/sidebars/availability/form/fields/availability-graph-settings.vue';
+import ChartsForm from '@/components/sidebars/chart/form/charts-form.vue';
+import FieldExportCsv from '@/components/sidebars/form/export-csv.vue';
+import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
+import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
+import FieldDefaultSortColumnsWithTemplate from '@/components/sidebars/form/fields/default-sort-columns-with-template.vue';
+import FieldDensity from '@/components/sidebars/form/fields/density.vue';
+import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
+import FieldGridRangeSize from '@/components/sidebars/form/fields/grid-range-size.vue';
+import FieldLiveReporting from '@/components/sidebars/form/fields/live-reporting.vue';
+import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause-settings.vue';
+import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
+import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
+import FieldTitle from '@/components/sidebars/form/fields/title.vue';
+import WidgetColorsForm from '@/components/sidebars/form/fields/widget-colors-form.vue';
+import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
-import FieldAvailabilityGraphSettings from '../availability/form/fields/availability-graph-settings.vue';
-import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
-import WidgetSettings from '../partials/widget-settings.vue';
-import FieldTitle from '../form/fields/title.vue';
-import FieldDefaultSortColumnsWithTemplate from '../form/fields/default-sort-columns-with-template.vue';
-import FieldColumns from '../form/fields/columns.vue';
-import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
-import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-page.vue';
-import FieldFilters from '../form/fields/filters.vue';
-import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
-import FieldSwitcher from '../form/fields/switcher.vue';
-import FieldGridRangeSize from '../form/fields/grid-range-size.vue';
-import ExportCsvForm from '../form/export-csv.vue';
-import ChartsForm from '../chart/form/charts-form.vue';
-import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html?raw';
 
-import FieldDensity from './form/fields/density.vue';
-import FieldLiveReporting from './form/fields/live-reporting.vue';
-import FieldFastActionOutput from './form/fields/fast-action-output.vue';
-import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
-import FieldInfoPopup from './form/fields/info-popup.vue';
-import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
-import FieldQuickAlarmActions from './form/fields/quick-alarm-actions.vue';
-import FieldCommentTemplates from './form/fields/comment-templates.vue';
-import FastPbehaviorForm from './form/fast-pbehavior-form.vue';
+defineOptions({
+  name: SIDE_BARS.alarmSettings,
+});
+
+const props = defineProps({
+  sidebar: {
+    type: Object,
+    required: true,
+  },
+});
+
+const { t } = useI18n();
+const sidebar = toRef(props, 'sidebar');
+const widgetTemplates = ref([]);
+const widgetTemplatesPending = ref(false);
+const { fetchInfos } = useInfos();
+const { fetchWidgetsTemplateVarsWithoutStore } = useTemplateVars();
+const { fetchWidgetTemplatesListWithoutStore } = useWidgetTemplate();
+const { prepare: prepareTemplateVars } = useVarsPrepare('templateTesting.templateVars');
+
+const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+let shouldSetDefaultTicketFormatsTemplate = widget.value.parameters?.associateTicket === undefined;
+
+const preparedWidgetTemplates = computed(() => prepareWidgetTemplates(widgetTemplates.value));
+
+const alarmSortColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmSortColumns,
+  ),
+);
+const alarmColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmColumns,
+  ),
+);
+const entityColumnsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.entityColumns,
+  ),
+);
+const alarmMoreInfosWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmMoreInfos,
+  ),
+);
+const alarmExportToPdfWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmExportToPdf,
+  ),
+);
+const alarmQuickActionsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmQuickActions,
+  ),
+);
+const alarmMassQuickActionsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.alarmMassQuickActions,
+  ),
+);
+const ticketFormatsWidgetTemplates = computed(() => preparedWidgetTemplates.value.filter(
+    ({ type }) => type === WIDGET_TEMPLATES_TYPES.ticketFormats,
+  ),
+);
+const defaultExportPdfTemplateValue = ALARM_EXPORT_PDF_TEMPLATE;
+const preparedWidgetColumns = computed(() => formToWidgetColumns(form.value.parameters.widgetColumns).map(column => ({
+    ...column,
+    text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+  })),
+);
+const sortablePreparedWidgetColumns = computed(() => preparedWidgetColumns.value.filter(
+    column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS),
+  ),
+);
+const alarmVariables = computed(() => [
+    { value: ENTITY_TEMPLATE_FIELDS.id },
+    { value: ALARM_TEMPLATE_FIELDS.ack },
+    { value: ALARM_TEMPLATE_FIELDS.state },
+    { value: ALARM_TEMPLATE_FIELDS.status },
+    { value: ALARM_TEMPLATE_FIELDS.ticket },
+    { value: ALARM_TEMPLATE_FIELDS.component },
+    { value: ALARM_TEMPLATE_FIELDS.connector },
+    { value: ALARM_TEMPLATE_FIELDS.connectorName },
+    { value: ALARM_TEMPLATE_FIELDS.resource },
+    { value: ALARM_TEMPLATE_FIELDS.creationDate },
+    { value: ALARM_TEMPLATE_FIELDS.displayName },
+    { value: ALARM_TEMPLATE_FIELDS.output },
+    { value: ALARM_TEMPLATE_FIELDS.lastUpdateDate },
+    { value: ALARM_TEMPLATE_FIELDS.lastEventDate },
+    { value: ALARM_TEMPLATE_FIELDS.pbehaviorInfo },
+    { value: ALARM_TEMPLATE_FIELDS.duration },
+    { value: ALARM_TEMPLATE_FIELDS.eventsCount },
+  ].map(variable => ({
+    value: `{{ ${variable.value} }}`,
+    text: t(ALARM_FIELDS_TO_LABELS_KEYS[variable.value.replace('alarm.', '')], 2),
+  })),
+);
+const exportPdfAlarmVariables = computed(() => [
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.currentDate,
+      text: t('common.currentDate'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.displayName,
+      text: t('alarm.fields.displayName'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.state,
+      text: t('common.state'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.initialState,
+      text: t('alarm.fields.initialState'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.maxState,
+      text: t('alarm.fields.maxState'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.status,
+      text: t('common.status'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.connector,
+      text: t('common.connector'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.connectorName,
+      text: t('common.connectorName'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.component,
+      text: t('common.component'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.resource,
+      text: t('common.resource'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.creationDate,
+      text: t('common.created'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.duration,
+      text: t('common.duration'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.infos,
+      text: t('common.infos'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo,
+      text: t('pbehavior.pbehaviorInfo'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.initialOutput,
+      text: t('alarm.fields.initialOutput'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.output,
+      text: t('common.output'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.lastEventDate,
+      text: t('common.lastEventDate'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.lastUpdateDate,
+      text: t('common.updated'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.acknowledgeDate,
+      text: t('alarm.fields.ackAt'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.resolved,
+      text: t('alarm.fields.resolved'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.eventsCount,
+      text: t('alarm.fields.eventsCount'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.ticket,
+      text: t('common.ticket', 1),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.comments,
+      text: t('common.comment', 2),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.activationDate,
+      text: t('alarm.fields.activationDate'),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.tags,
+      text: t('common.tag', 2),
+    },
+    {
+      value: ALARM_EXPORT_PDF_FIELDS.links,
+      text: t('common.link', 2),
+    },
+  ].map(variable => ({
+    ...variable,
+    value: `{{ ${ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS[variable.value]} }}`,
+  })),
+);
+const templateVars = ref({});
 
 /**
- * Component to regroup the alarms list settings fields
+ * Apply a sort columns template to the widget form.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetSortColumnForm[]} columns
  */
-export default {
-  name: SIDE_BARS.alarmSettings,
-  components: {
-    FieldAvailabilityGraphSettings,
-    FieldRootCauseSettings,
-    WidgetSettingsGroup,
-    WidgetSettings,
-    FieldTitle,
-    FieldDefaultSortColumnsWithTemplate,
-    FieldColumns,
-    FieldLiveReporting,
-    FieldPeriodicRefresh,
-    FieldDefaultElementsPerPage,
-    FieldOpenedResolvedFilter,
-    FieldFilters,
-    FieldTextEditorWithTemplate,
-    FieldSwitcher,
-    FieldFastActionOutput,
-    FieldGridRangeSize,
-    FieldInfoPopup,
-    FieldDensity,
-    FieldCommentTemplates,
-    FastPbehaviorForm,
-    ExportCsvForm,
-    ChartsForm,
-    FieldResizeColumnBehavior,
-    FieldQuickAlarmActions,
-  },
-  mixins: [
-    widgetSettingsMixin,
-    entitiesInfosMixin,
-    entitiesEntityInfoPropertyMixin,
-    alarmVariablesMixin,
-    widgetTemplatesMixin,
-    permissionsWidgetsAlarmsListFilters,
-    permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-  ],
-  computed: {
-    preparedWidgetColumns() {
-      return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
-        ...column,
-
-        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-      }));
-    },
-
-    sortablePreparedWidgetColumns() {
-      return this.preparedWidgetColumns.filter(column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS));
-    },
-
-    defaultExportPdfTemplateValue() {
-      return ALARM_EXPORT_PDF_TEMPLATE;
-    },
-  },
-  mounted() {
-    this.fetchInfos();
-    this.fetchTemplateVars();
-    this.fetchAllEntityInfoPropertiesList();
-  },
-  methods: {
-    updateTemplate(field, template, value) {
-      this.$set(this.form.parameters, `${field}Template`, template);
-
-      if (template !== this.form.parameters[field]) {
-        this.$set(this.form.parameters, field, value);
-      }
-    },
-
-    updateSortTemplate(template = '', sort = []) {
-      this.updateTemplate('sort', template, sort);
-    },
-
-    updateMoreInfoTemplate(value, template) {
-      this.updateTemplate('moreInfoTemplate', template, value);
-    },
-
-    updateExportPdfTemplate(value, template) {
-      this.updateTemplate('exportPdfTemplate', template, value);
-    },
-
-    updateWidgetColumnsTemplate(template, value) {
-      this.updateTemplate('widgetColumns', template, value);
-    },
-
-    updateWidgetGroupColumnsTemplate(template, value) {
-      this.updateTemplate('widgetGroupColumns', template, value);
-    },
-
-    updateServiceDependenciesColumnsTemplate(template, value) {
-      this.updateTemplate('serviceDependenciesColumns', template, value);
-    },
-
-    updateQuickActionsTemplate(template, value) {
-      this.updateTemplate('quickActions', template, value);
-    },
-
-    updateQuickMassActionsTemplate(template, value) {
-      this.updateTemplate('quickMassActions', template, value);
-    },
-  },
+const updateSortTemplate = (template, columns) => {
+  form.value.parameters.sortTemplate = template;
+  form.value.parameters.sort = columns;
 };
+
+/**
+ * Apply a columns template to the alarm list columns.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetColumnForm[]} columns
+ */
+const updateWidgetColumnsTemplate = (template, columns) => {
+  form.value.parameters.widgetColumnsTemplate = template;
+  form.value.parameters.widgetColumns = columns;
+};
+
+/**
+ * Apply a columns template to the grouped alarm columns.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetColumnForm[]} columns
+ */
+const updateGroupColumnsTemplate = (template, columns) => {
+  form.value.parameters.widgetGroupColumnsTemplate = template;
+  form.value.parameters.widgetGroupColumns = columns;
+};
+
+/**
+ * Apply a columns template to the service dependencies columns.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetColumnForm[]} columns
+ */
+const updateServiceDependenciesColumnsTemplate = (template, columns) => {
+  form.value.parameters.serviceDependenciesColumnsTemplate = template;
+  form.value.parameters.serviceDependenciesColumns = columns;
+};
+
+/**
+ * Set the more info template content.
+ *
+ * @param {string} value
+ */
+const updateMoreInfo = (value) => {
+  form.value.parameters.moreInfoTemplate = value;
+};
+
+/**
+ * Set the selected more info widget template.
+ *
+ * @param {string | Symbol} value
+ */
+const updateMoreInfoTemplate = (value) => {
+  form.value.parameters.moreInfoTemplateTemplate = value;
+};
+
+/**
+ * Set the export PDF template content.
+ *
+ * @param {string} value
+ */
+const updateExportPdf = (value) => {
+  form.value.parameters.exportPdfTemplate = value;
+};
+
+/**
+ * Set the selected export PDF widget template.
+ *
+ * @param {string | Symbol} value
+ */
+const updateExportPdfTemplate = (value) => {
+  form.value.parameters.exportPdfTemplateTemplate = value;
+};
+
+/**
+ * Apply a quick actions template to the widget form.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetQuickActionForm[]} actions
+ */
+const updateQuickActionsTemplate = (template, actions) => {
+  form.value.parameters.quickActionsTemplate = template;
+  form.value.parameters.quickActions = actions;
+};
+
+/**
+ * Apply a mass quick actions template to the widget form.
+ *
+ * @param {string | Symbol} template
+ * @param {WidgetQuickActionForm[]} actions
+ */
+const updateQuickMassActionsTemplate = (template, actions) => {
+  form.value.parameters.quickMassActionsTemplate = template;
+  form.value.parameters.quickMassActions = actions;
+};
+
+/**
+ * Apply a ticket formats template to associate ticket settings.
+ *
+ * @param {string | Symbol} template
+ * @param {TicketFormatForm[]} formats
+ */
+const updateAssociateTicketTemplate = (template, formats) => {
+  form.value.parameters.associateTicket.formatsTemplate = template;
+  form.value.parameters.associateTicket.formats = formats;
+};
+
+/**
+ * Select the default ticket formats template when associate ticket settings are missing.
+ *
+ * @param {WidgetTemplate[]} templates
+ */
+const setDefaultTicketFormatsTemplate = (templates) => {
+  const { associateTicket } = form.value.parameters;
+
+  if (
+    !shouldSetDefaultTicketFormatsTemplate ||
+    associateTicket.formatsTemplate !== CUSTOM_WIDGET_TEMPLATE ||
+    associateTicket.formats.length
+  ) {
+    return;
+  }
+
+  const defaultTemplate = prepareWidgetTemplates(templates).find(
+    ({ title, type }) =>
+      type === WIDGET_TEMPLATES_TYPES.ticketFormats &&
+      title === DEFAULT_TICKET_FORMATS_WIDGET_TEMPLATE_TITLE,
+  );
+
+  if (defaultTemplate) {
+    updateAssociateTicketTemplate(defaultTemplate._id, defaultTemplate.formats);
+    shouldSetDefaultTicketFormatsTemplate = false;
+  }
+};
+
+/**
+ * Load widget templates and apply the default ticket formats template when needed.
+ *
+ * @returns {Promise<void>}
+ */
+const fetchWidgetTemplates = async () => {
+  try {
+    widgetTemplatesPending.value = true;
+    const { data } = await fetchWidgetTemplatesListWithoutStore({ params: { limit: MAX_LIMIT } });
+
+    widgetTemplates.value = data;
+    setDefaultTicketFormatsTemplate(data);
+  } catch (err) {
+    console.warn(err);
+  } finally {
+    widgetTemplatesPending.value = false;
+  }
+};
+/**
+ * Load template variables used by export and column editors.
+ *
+ * @returns {Promise<void>}
+ */
+const fetchTemplateVars = async () => {
+  try {
+    const data = await fetchWidgetsTemplateVarsWithoutStore();
+
+    templateVars.value = prepareTemplateVars(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+onMounted(() => {
+  fetchInfos();
+  fetchTemplateVars();
+  fetchWidgetTemplates();
+});
+
+defineExpose({ close });
 </script>

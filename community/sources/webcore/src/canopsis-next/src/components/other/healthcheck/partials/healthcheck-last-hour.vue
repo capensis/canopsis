@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <div class="d-flex flex-column">
     <healthcheck-last-hour-filters
       :event-types="query.eventTypes"
       :connector-names="query.connectorNames"
@@ -12,7 +12,7 @@
       :pending="pending"
       @export:png="exportChartAsPng"
     />
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -22,23 +22,31 @@ import { DATETIME_FORMATS, MESSAGE_STATS_INTERVALS } from '@/constants';
 import { convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
 
-import { entitiesMessageRateStatsMixin } from '@/mixins/entities/message-rate-stats';
-import { localQueryMixin } from '@/mixins/query/query';
-
-import HealthcheckLastHourGraph from '@/components/other/healthcheck/partials/healthcheck-last-hour-graph.vue';
+import { useMessageRateStats } from '@/hooks/store/modules/message-rate-stats';
 
 import HealthcheckLastHourFilters from './healthcheck-last-hour-filters.vue';
+import HealthcheckLastHourGraph from './healthcheck-last-hour-graph.vue';
 
 export default {
-  inject: ['$system'],
-  components: { HealthcheckLastHourFilters, HealthcheckLastHourGraph },
-  mixins: [entitiesMessageRateStatsMixin, localQueryMixin],
+  components: {
+    HealthcheckLastHourFilters,
+    HealthcheckLastHourGraph,
+  },
   props: {
     maxMessagesPerMinute: {
       type: Number,
       required: true,
     },
   },
+
+  setup() {
+    const { fetchMessageRateStatsWithoutStore } = useMessageRateStats();
+
+    return {
+      fetchMessageRateStatsWithoutStore,
+    };
+  },
+
   data() {
     return {
       pending: false,
@@ -49,15 +57,26 @@ export default {
       },
     };
   },
+
   mounted() {
     this.fetchList();
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.leaveFromSocketRoom();
   },
+
   methods: {
-    setMessageRates(messagesRates) {
+    setMessageRates(messagesRates = []) {
       this.messagesRates = messagesRates;
+    },
+
+    updateQueryField(field, value) {
+      this.query = {
+        ...this.query,
+        [field]: value,
+      };
+      this.fetchList();
     },
 
     joinToSocketRoom() {
@@ -67,9 +86,7 @@ export default {
     },
 
     leaveFromSocketRoom() {
-      this.$socket
-        .leave(SOCKET_ROOMS.messageRates)
-        .removeListener(this.setMessageRates);
+      this.$socket.leave(SOCKET_ROOMS.messageRates).removeListener(this.setMessageRates);
     },
 
     async exportChartAsPng(chartBlob) {
@@ -77,11 +94,14 @@ export default {
         const firstStatsMessage = this.messagesRates.at(0);
         const lastStatsMessage = this.messagesRates.at(-1);
 
-        const day = convertDateToString(firstStatsMessage.time, DATETIME_FORMATS.short);
-        const fromTime = convertDateToString(firstStatsMessage.time, DATETIME_FORMATS.timePicker);
-        const toTime = convertDateToString(lastStatsMessage.time, DATETIME_FORMATS.timePicker);
+        const day = convertDateToString(firstStatsMessage?.time, DATETIME_FORMATS.short);
+        const fromTime = convertDateToString(firstStatsMessage?.time, DATETIME_FORMATS.timePicker);
+        const toTime = convertDateToString(lastStatsMessage?.time, DATETIME_FORMATS.timePicker);
 
-        await saveFile(chartBlob, `${HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX}${day}(${fromTime}-${toTime})`);
+        await saveFile(
+          chartBlob,
+          `${HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX}${day}(${fromTime}-${toTime})`,
+        );
       } catch (err) {
         console.error(err);
 
@@ -108,16 +128,20 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      this.leaveFromSocketRoom();
-      this.joinToSocketRoom();
+      try {
+        this.leaveFromSocketRoom();
+        this.joinToSocketRoom();
 
-      const { data: messagesRates } = await this.fetchMessageRateStatsWithoutStore({
-        params: this.getQuery(),
-      });
+        const { data: messagesRates } = await this.fetchMessageRateStatsWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.setMessageRates(messagesRates);
-
-      this.pending = false;
+        this.setMessageRates(messagesRates);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

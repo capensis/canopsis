@@ -1,132 +1,128 @@
 <template>
-  <v-layout class="gap-2" column>
+  <c-layout gap="2" column>
     <span class="text-subtitle-2">
-      {{ $t('common.fields') }}
+      {{ t('common.fields') }}
     </span>
-    <v-flex xs12>
-      <v-alert
-        :value="!form.length"
-        :color="errors.has('fields') ? 'error' : 'info'"
-      >
-        {{ $t('commentTemplate.errors.fieldsRequired') }}
-      </v-alert>
-    </v-flex>
-    <c-card-iterator-field
-      v-field="form"
+
+    <c-card-iterator-form
+      :value="fields"
       :handle="`.${dragItemHandleClass}`"
+      :empty-message="t('commentTemplate.errors.fieldsRequired')"
       item-key="key"
+      name="fields"
+      add-button-justify="end"
+      required
+      @update:value="fields = $event"
+      @add="addField"
     >
       <template #item="{ index }">
         <c-card-iterator-item
+          :item-number="index + 1"
           :drag-handle-class="dragItemHandleClass"
+          :removable="canRemoveField"
           small
           @remove="removeField(index)"
         >
           <template #header>
-            <v-layout column>
+            <c-layout class="comment-template-fields-form__field" column>
               <c-name-field
-                v-field="form[index].name"
-                :label="$t('common.fieldName')"
-                :name="`fields[${index}].name`"
-                :max-length="255"
+                :model-value="fields[index].name"
+                :label="t('common.fieldName')"
+                :name="`fields.${fields[index].key}.name`"
+                :max-length="FORM_MAX_STRING_LENGTH"
                 required
+                @update:model-value="updateField(index, 'name', $event)"
               />
+
               <c-enabled-field
-                v-field="form[index].required"
-                :label="$t('common.required')"
+                :model-value="fields[index].required"
+                :label="t('common.required')"
                 class="mt-0"
                 hide-details
+                @update:model-value="updateField(index, 'required', $event)"
               />
-            </v-layout>
+            </c-layout>
           </template>
         </c-card-iterator-item>
       </template>
-    </c-card-iterator-field>
-    <v-layout
-      class="mt-2"
-      justify-end
-    >
-      <v-tooltip left>
-        <template #activator="{ on }">
-          <v-btn
-            color="primary"
-            fab
-            small
-            v-on="on"
-            @click="addField"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $t('common.add') }}</span>
-      </v-tooltip>
-    </v-layout>
-  </v-layout>
+    </c-card-iterator-form>
+  </c-layout>
 </template>
 
 <script>
-import { watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
+import { computed, onMounted } from 'vue';
+
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+import { useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Array,
-      required: true,
-    },
-  },
-  setup(props, { emit }) {
+  setup() {
+    const { t } = useI18n();
+    const form = useFormContext();
+    const fields = form.model('fields');
+
     const dragItemHandleClass = 'field-drag-handler';
-
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
-    const { attachRequiredRule, detachRequiredRule, validateRequiredRule } = useValidationAttachRequired('fields');
-
-    const getter = () => !!props.form.length;
-    const validate = () => nextTick(validateRequiredRule);
+    const canRemoveField = computed(() => fields.value.length > 1);
 
     /**
      * Add new field to the fields array
      */
-    const addField = () => addItemIntoArray({
-      key: uid(),
-      name: '',
-      required: false,
-    });
+    const addField = () => {
+      fields.value = [
+        ...fields.value,
+        {
+          key: uid(),
+          name: '',
+          required: false,
+        },
+      ];
+    };
 
     /**
      * Remove field from the fields array
      *
      * @param {number} index - Index of the field to remove
      */
-    const removeField = index => removeItemFromArray(index);
-
-    watch(() => props.form, () => validate());
-
-    onMounted(() => {
-      if (!props.form.length) {
-        addField();
+    const removeField = (index) => {
+      if (!canRemoveField.value) {
+        return;
       }
 
-      attachRequiredRule(getter);
+      fields.value = fields.value.filter((field, fieldIndex) => fieldIndex !== index);
+    };
+
+    const updateField = (index, field, value) => {
+      fields.value = fields.value.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item,
+      );
+    };
+
+    onMounted(() => {
+      if (!fields.value.length) {
+        addField();
+      }
     });
 
-    onBeforeUnmount(detachRequiredRule);
-
     return {
+      t,
+      FORM_MAX_STRING_LENGTH,
+      fields,
       dragItemHandleClass,
+      canRemoveField,
       addField,
-      validate,
       removeField,
+      updateField,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.comment-template-fields-form__field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+</style>

@@ -1,40 +1,32 @@
 <template>
-  <div
-    :id="`view-tab-${tab._id}`"
-    class="view"
-  >
-    <portal
-      v-if="activeViewEditing"
-      :to="$constants.PORTALS_NAMES.additionalTopBarItems"
+  <div :id="`view-tab-${tab._id}`" class="view">
+    <Teleport
+      v-if="activeViewEditing && visible && additionalTopBarItemsTarget"
+      :to="additionalTopBarItemsTarget"
     >
-      <window-size-field
-        v-model="size"
-        color="white"
-        light
-      />
-    </portal>
+      <window-size-field v-model="size" color="white" />
+    </Teleport>
+
     <the-mass-actions-panels v-if="!isDefaultMode" fixed />
+
     <grid-layout
       v-model="layouts[size]"
-      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]"
-      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT"
-      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT"
+      :margin="[WIDGET_GRID_ROW_HEIGHT, WIDGET_GRID_ROW_HEIGHT]"
+      :columns-count="WIDGET_GRID_COLUMNS_COUNT"
+      :row-height="WIDGET_GRID_ROW_HEIGHT"
       :style="layoutStyle"
       :disabled="!activeViewEditing || !visible"
     >
       <template #item="{ on, item }">
         <widget-edit-drag-handler
           v-if="activeViewEditing"
+          v-bind="on"
           :widget="item.widget"
           :auto-height="item.autoHeight"
           :tab="tab"
-          v-on="on"
         />
-        <widget-wrapper
-          :widget="item.widget"
-          :tab="tab"
-          :visible="visible"
-        />
+
+        <widget-wrapper :widget="item.widget" :tab="tab" :visible="visible" />
       </template>
     </grid-layout>
   </div>
@@ -42,39 +34,39 @@
 
 <script>
 import { isEqual } from 'lodash';
+import { mapActions } from 'pinia';
 
 import {
+  TELEPORTS_NAMES,
+  WIDGET_GRID_COLUMNS_COUNT,
+  WIDGET_GRID_ROW_HEIGHT,
   WIDGET_GRID_SIZES_KEYS,
-  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
+  DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP,
   WIDGET_LAYOUT_MAX_WIDTHS,
   VIEW_SCREEN_MODES,
 } from '@/constants';
 
+import { useWidgetStore } from '@/stores/modules/widget';
+
 import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
 
-import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
-import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
+import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
 import GridLayout from '@/components/common/grid/grid-layout.vue';
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';
 import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
-import TheMassActionsPanels from '@/components/common/actions-panel/the-mass-actions-panels.vue';
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 export default {
   components: {
     GridLayout,
+    TheMassActionsPanels,
+    WidgetEditDragHandler,
     WidgetWrapper,
     WindowSizeField,
-    WidgetEditDragHandler,
-    TheMassActionsPanels,
   },
-  mixins: [
-    queryMixin,
-    activeViewMixin,
-    entitiesWidgetMixin,
-  ],
+  mixins: [activeViewMixin],
   props: {
     tab: {
       type: Object,
@@ -90,9 +82,11 @@ export default {
 
     return {
       layouts,
-
       size: WIDGET_GRID_SIZES_KEYS.desktop,
       widgetsGrid: layoutsToWidgetsGrid(layouts),
+      additionalTopBarItemsTarget: `[data-teleport-target="${TELEPORTS_NAMES.additionalTopBarItems}"]`,
+      WIDGET_GRID_COLUMNS_COUNT,
+      WIDGET_GRID_ROW_HEIGHT,
     };
   },
   computed: {
@@ -100,6 +94,14 @@ export default {
       return {
         maxWidth: WIDGET_LAYOUT_MAX_WIDTHS[this.size],
       };
+    },
+
+    displayName() {
+      return this.$vuetify.display.name;
+    },
+
+    displayGridSize() {
+      return DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.displayName] ?? WIDGET_GRID_SIZES_KEYS.desktop;
     },
 
     isDefaultMode() {
@@ -111,15 +113,15 @@ export default {
       this.layouts = widgetsToLayoutsWithCompact(widgets, this.layouts);
     },
 
-    $mq: {
+    displayGridSize: {
       immediate: true,
-      handler(mq) {
-        this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
+      handler(size) {
+        this.size = size;
       },
     },
 
     activeViewEditing() {
-      this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
+      this.size = this.displayGridSize;
     },
 
     visible: {
@@ -133,11 +135,14 @@ export default {
       },
     },
   },
-  beforeDestroy() {
-    this.removeWidgetsQueries();
+  beforeUnmount() {
     this.unregisterEditingOffHandler(this.updatePositions);
   },
   methods: {
+    ...mapActions(useWidgetStore, {
+      updateWidgetGridPositions: 'updateGridPositions',
+    }),
+
     async updatePositions() {
       try {
         const newWidgetsGrid = layoutsToWidgetsGrid(this.layouts);
@@ -156,21 +161,14 @@ export default {
         this.$popups.error({ text: this.$t('errors.default') });
       }
     },
-
-    /**
-     * Remove queries which was created for all widgets
-     */
-    removeWidgetsQueries() {
-      this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({ id }));
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .full-screen {
-    .hide-on-full-screen {
-      display: none;
-    }
+.full-screen {
+  .hide-on-full-screen {
+    display: none;
   }
+}
 </style>

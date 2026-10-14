@@ -1,33 +1,33 @@
 <template>
   <div>
-    <v-layout justify-end>
-      <v-btn color="primary" outlined @click="showAddInfoModal">
-        {{ $t('entity.addInfos') }}
+    <c-layout justify="end">
+      <v-btn color="primary" variant="outlined" @click="showAddInfoModal">
+        {{ t('entity.addInfos') }}
       </v-btn>
-    </v-layout>
+    </c-layout>
     <v-data-table
+      v-model:options="options"
       :items="infos"
       :headers="tableHeaders"
-      :no-data-text="$t('entity.emptyInfos')"
-      :options.sync="options"
-      item-key="name"
+      :no-data-text="t('entity.emptyInfos')"
+      item-value="name"
     >
       <template #item="{ item, index }">
         <tr>
-          <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.value }}</td>
+          <td>{{ getInfoItem(item).name }}</td>
+          <td>{{ getInfoItem(item).description }}</td>
+          <td>{{ getInfoItem(item).value }}</td>
           <td>
-            <v-layout>
+            <c-layout>
               <c-action-btn
                 type="edit"
-                @click="showEditInfoModal(index, item)"
+                @click="showEditInfoModal(index, getInfoItem(item))"
               />
               <c-action-btn
                 type="delete"
                 @click="removeItemFromArray(index)"
               />
-            </v-layout>
+            </c-layout>
           </td>
         </tr>
       </template>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -45,16 +45,15 @@ import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 
 export default {
-  model: {
-    prop: 'infos',
-    event: 'input',
-  },
   props: {
     infos: {
       type: Array,
       default: () => [],
     },
   },
+
+  emits: ['update:infos'],
+
   setup(props, { emit }) {
     const { t } = useI18n();
     const modals = useModals();
@@ -64,14 +63,19 @@ export default {
       removeItemFromArray,
     } = useArrayModelField(props, emit);
 
-    const options = ref({});
+    const options = ref({
+      page: 1,
+      itemsPerPage: 10,
+    });
 
     const tableHeaders = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      { text: t('common.description'), value: 'description' },
-      { text: t('common.value'), value: 'value' },
-      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+      { title: t('common.name'), key: 'name' },
+      { title: t('common.description'), key: 'description' },
+      { title: t('common.value'), key: 'value' },
+      { title: t('common.actionsLabel'), key: 'actions', sortable: false },
     ]);
+
+    const getInfoItem = item => item?.raw ?? item;
 
     /**
      * Opens the create entity info modal. On submit, adds the new info to the infos array.
@@ -105,8 +109,10 @@ export default {
     });
 
     return {
+      t,
       options,
       tableHeaders,
+      getInfoItem,
       showAddInfoModal,
       showEditInfoModal,
       removeItemFromArray,

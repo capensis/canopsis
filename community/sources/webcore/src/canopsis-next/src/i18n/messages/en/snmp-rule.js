@@ -17,8 +17,8 @@ export default {
   uploadMib: 'Upload MIB',
   addSnmpRule: 'Add SNMP rule',
   uploadedMibPopup:
-    'File was uploaded.\nNotifications: {notification}\nObjects: {object}'
-    + '|Files were uploaded.\nNotifications: {notification}\nObjects: {object}',
+    'File was uploaded.\nNotifications: {notification}\nObjects: {object}' +
+    '|Files were uploaded.\nNotifications: {notification}\nObjects: {object}',
   massRemove: 'Remove SNMP rules',
   massEnable: 'Enable SNMP rules',
   massDisable: 'Disable SNMP rules',
