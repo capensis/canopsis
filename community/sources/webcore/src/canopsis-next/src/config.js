@@ -288,6 +288,7 @@ export const API_ROUTES = {
   bulkEntityInfosProperties: '/internal/bulk/entity-infos-properties',
   weatherService: '/internal/weather-services',
   alarmListExport: '/internal/alarm-export',
+  alarmTimelineExport: '/internal/alarm-timeline-export',
   alarmTag: {
     list: '/internal/alarm-tags',
     bulkList: '/internal/bulk/alarm-tags',
