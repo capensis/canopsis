@@ -45,21 +45,23 @@ export const useAlarmFiltering = (refreshHandler = () => {}) => {
     pending.value = true;
 
     const completionListener = ({ ok } = {}) => {
-      if (ok) {
-        pending.value = false;
-
-        socket.leave(SOCKET_ROOMS.pbehaviorPatterns).removeListener(completionListener);
-        refreshHandler?.();
+      if (!ok) {
+        return;
       }
+
+      pending.value = false;
+
+      socket?.leave(SOCKET_ROOMS.pbehaviorPatterns).removeListener(completionListener);
+      refreshHandler?.();
     };
 
     try {
-      socket.join(SOCKET_ROOMS.pbehaviorPatterns).addListener(completionListener);
+      socket?.join(SOCKET_ROOMS.pbehaviorPatterns).addListener(completionListener);
       await runAlarmFilteringAction();
     } catch (err) {
       pending.value = false;
 
-      socket.leave(SOCKET_ROOMS.pbehaviorPatterns).removeListener(completionListener);
+      socket?.leave(SOCKET_ROOMS.pbehaviorPatterns).removeListener(completionListener);
       console.error('Error running alarm filtering:', err);
       popups.error({ text: t('pbehavior.alarmFilteringError') });
     }

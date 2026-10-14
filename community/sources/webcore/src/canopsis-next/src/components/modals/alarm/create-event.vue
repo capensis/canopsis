@@ -1,88 +1,102 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ config.title }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <alarm-general-table :items="config.items" class="mb-4" />
         <c-name-field
-          v-model="form.comment"
-          :label="$t('common.note')"
+          v-model="comment"
+          :label="t('common.note')"
           :required="isCommentRequired"
-          :max-length="255"
+          :max-length="FORM_MAX_STRING_LENGTH"
           name="comment"
           autofocus
         />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { computed } from 'vue';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { FORM_MAX_STRING_LENGTH, MODALS } from '@/constants';
+
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to cancel an alarm
  */
 export default {
   name: MODALS.createEvent,
-  $_veeValidate: {
-    validator: 'new',
+
+  components: { AlarmGeneralTable },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: { AlarmGeneralTable, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: {
+
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    const form = useForm({
+      initialValues: {
         comment: '',
       },
+    });
+    const comment = form.model('comment');
+    const { handleSubmit, isSubmitting: submitting } = form;
+
+    const isCommentRequired = computed(() => config.value.isCommentRequired ?? true);
+
+    const submit = handleSubmit(async () => {
+      await config.value?.action?.(form.values.value);
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({
+      form: form.values,
+      submit,
+      close,
+    });
+
+    return {
+      t,
+      FORM_MAX_STRING_LENGTH,
+      config,
+      comment,
+      isCommentRequired,
+      submitting,
+      submit,
+      close,
     };
-  },
-  computed: {
-    isCommentRequired() {
-      return this.config.isCommentRequired ?? true;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config?.action?.(this.form);
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

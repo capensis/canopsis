@@ -2,10 +2,15 @@ import { omit } from 'lodash';
 
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants';
 
-import { uid } from '@/helpers/uid';
 import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
+import { uid } from '@/helpers/uid';
 
-import { formToRequest, requestToForm } from '../request/form';
+import {
+  formToRequest,
+  formToRequestAuthToken,
+  requestAuthTokenToForm,
+  requestToForm,
+} from '../request/form';
 
 /**
  * @typedef {'mongo' | 'api'} ExternalDataType
@@ -28,6 +33,7 @@ import { formToRequest, requestToForm } from '../request/form';
  * @property {string} [sort]
  * @property {boolean} [optional]
  * @property {Request} [request]
+ * @property {RequestAuthToken} [auth_token]
  */
 
 /**
@@ -44,6 +50,7 @@ import { formToRequest, requestToForm } from '../request/form';
 /**
  * @typedef {Object & ObjectKey} ExternalDataItemForm
  * @property {RequestForm} request
+ * @property {RequestAuthTokenForm} auth_token
  * @property {string} reference
  * @property {ExternalDataType} type
  * @property {string} table
@@ -75,10 +82,10 @@ export const externalDataItemConditionAttributeToForm = (
  * @param {ExternalDataCondition} condition
  * @returns {ExternalDataConditionForm[]}
  */
-export const externalDataItemConditionToForm = (conditionType, condition) => (
-  Object.entries(condition)
-    .map(([attribute, value]) => externalDataItemConditionAttributeToForm(conditionType, attribute, value))
-);
+export const externalDataItemConditionToForm = (conditionType, condition) =>
+  Object.entries(condition).map(([attribute, value]) =>
+    externalDataItemConditionAttributeToForm(conditionType, attribute, value),
+  );
 
 /**
  * Convert external data item conditions to form
@@ -87,16 +94,15 @@ export const externalDataItemConditionToForm = (conditionType, condition) => (
  * @returns {ExternalDataConditionForm[]}
  */
 export const externalDataItemConditionsToForm = (item = {}) => {
-  const conditions = Object.values(EXTERNAL_DATA_CONDITION_TYPES)
-    .reduce((acc, conditionType) => {
-      const condition = item[conditionType];
+  const conditions = Object.values(EXTERNAL_DATA_CONDITION_TYPES).reduce((acc, conditionType) => {
+    const condition = item[conditionType];
 
-      if (condition) {
-        acc.push(...externalDataItemConditionToForm(conditionType, condition));
-      }
+    if (condition) {
+      acc.push(...externalDataItemConditionToForm(conditionType, condition));
+    }
 
-      return acc;
-    }, []);
+    return acc;
+  }, []);
 
   if (!conditions.length) {
     conditions.push(externalDataItemConditionAttributeToForm());
@@ -115,7 +121,8 @@ export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table 
   key: uid(),
   reference: item.reference,
   type: item.type,
-  request: requestToForm(item.request),
+  request: requestToForm(item.request, item.auth_token),
+  auth_token: requestAuthTokenToForm(item.auth_token),
   sort_by: item.sort_by,
   sort: item.sort,
   optional: item.optional ?? false,
@@ -129,11 +136,8 @@ export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table 
  * @param {ExternalData} [externalData]
  * @returns {ExternalDataForm}
  */
-export const externalDataToForm = externalData => (
-  externalData
-    ? externalData.map(externalDataItemToForm)
-    : []
-);
+export const externalDataToForm = externalData =>
+  externalData ? externalData.map(externalDataItemToForm) : [];
 
 /**
  * Convert form to external data conditions
@@ -141,7 +145,7 @@ export const externalDataToForm = externalData => (
  * @param {ExternalDataConditionForm[]} form
  * @returns {ExternalDataCondition}
  */
-export const formToExternalDataConditions = (form = []) => (
+export const formToExternalDataConditions = (form = []) =>
   form.reduce((acc, { type, attribute, value }) => {
     if (!acc[type]) {
       acc[type] = {};
@@ -150,8 +154,7 @@ export const formToExternalDataConditions = (form = []) => (
     acc[type][attribute] = value;
 
     return acc;
-  }, {})
-);
+  }, {});
 
 /**
  * Convert form to external data
@@ -159,16 +162,25 @@ export const formToExternalDataConditions = (form = []) => (
  * @param {ExternalDataForm} form
  * @returns {ExternalData}
  */
-export const formToExternalData = (form = []) => form.map((externalData) => {
-  const { type, reference } = externalData;
+export const formToExternalData = (form = []) =>
+  form.map((externalData) => {
+    const { type, reference } = externalData;
 
-  return isApiExternalDataType(type)
-    ? { reference, type, request: formToRequest(externalData.request) }
-    : {
-      ...omit(externalData, ['request']),
-      ...formToExternalDataConditions(externalData.conditions),
-    };
-});
+    return isApiExternalDataType(type)
+      ? {
+          reference,
+          type,
+          request: formToRequest(externalData.request),
+          auth_token: formToRequestAuthToken(
+            externalData.auth_token,
+            externalData.request.auth?.type,
+          ),
+        }
+      : {
+          ...omit(externalData, ['request', 'auth_token']),
+          ...formToExternalDataConditions(externalData.conditions),
+        };
+  });
 
 /**
  * Convert template variables errors structure to form structure
@@ -194,8 +206,8 @@ export const externalDataConditionTemplateVariablesErrorsToForm = (errorsObject)
  * @param {ExternalDataConditionForm[]} conditions
  * @return {FlattenErrors}
  */
-export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray, conditions) => errorsArray
-  .reduce((acc, errors, index) => {
+export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray, conditions) =>
+  errorsArray.reduce((acc, errors, index) => {
     const condition = conditions[index];
 
     acc[condition.key] = externalDataConditionTemplateVariablesErrorsToForm(errors);

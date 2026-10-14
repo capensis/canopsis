@@ -17,6 +17,7 @@ export const useInjectClickOutside = () => inject('$clickOutside');
  */
 export const useRegisterClickOutsideHandler = (handler) => {
   const clickOutside = useInjectClickOutside();
+
   clickOutside.register(handler);
 
   onBeforeUnmount(() => {

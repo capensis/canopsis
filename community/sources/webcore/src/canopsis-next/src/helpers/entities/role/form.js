@@ -50,51 +50,43 @@ import { isApiPermission } from '@/helpers/entities/permissions/list';
  */
 
 /**
- * @typedef {Role} RoleForm
- * @property {PermissionsForm} permissions
- * @property {string} defaultview
- */
-
-/**
  * @typedef {Role} RoleRequest
  * @property {string} defaultview
  */
-
 export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api;
 
 /**
- * Convert role permissions to form permissions object
+ * Convert role permissions to form permissions object.
  *
- * @param {Permission[]} [permissions = []]
- * @return {PermissionsForm}
+ * @param {Array} [permissions=[]]
+ * @returns {Object}
  */
-export const rolePermissionsToForm = (permissions = []) => permissions.reduce((acc, { _id: id, actions }) => {
-  if (actions.length === 0) {
-    acc[id] = [CRUD_ACTIONS.can];
-  } else {
-    acc[id] = actions;
-  }
+export const rolePermissionsToForm = (permissions = []) =>
+  permissions.reduce((acc, { _id: id, actions }) => {
+    if (actions.length === 0) {
+      acc[id] = [CRUD_ACTIONS.can];
+    } else {
+      acc[id] = actions;
+    }
 
-  return acc;
-}, {});
+    return acc;
+  }, {});
 
-/**
- * Convert role auth config to form auth config object
- *
- * @param {AuthConfig} [authConfig]
- * @return {AuthConfigForm}
- */
 const roleAuthConfigToForm = (authConfig = {}) => ({
   intervals_enabled: Boolean(authConfig.inactivity_interval || authConfig.expiration_interval),
-  inactivity_interval: durationToForm(authConfig.inactivity_interval ?? { value: 1, unit: TIME_UNITS.hour }),
-  expiration_interval: durationToForm(authConfig.expiration_interval ?? { value: 1, unit: TIME_UNITS.day }),
+  inactivity_interval: durationToForm(
+    authConfig.inactivity_interval ?? { value: 1, unit: TIME_UNITS.hour },
+  ),
+  expiration_interval: durationToForm(
+    authConfig.expiration_interval ?? { value: 1, unit: TIME_UNITS.day },
+  ),
 });
 
 /**
- * Convert role to form object
+ * Convert role to form object.
  *
- * @param {Role} [role = {}]
- * @returns {RoleForm}
+ * @param {Object} [role={}]
+ * @returns {Object}
  */
 export const roleToForm = (role = {}) => ({
   _id: role._id ?? '',
@@ -109,10 +101,10 @@ export const roleToForm = (role = {}) => ({
 });
 
 /**
- * Convert role to permission form object
+ * Convert role to permission form object.
  *
- * @param {Role} [role = {}]
- * @returns {RoleForm}
+ * @param {Object} [role={}]
+ * @returns {Object}
  */
 export const roleToPermissionForm = (role = {}) => ({
   ...roleToForm(role),
@@ -120,15 +112,8 @@ export const roleToPermissionForm = (role = {}) => ({
   permissions: rolePermissionsToForm(role.permissions),
 });
 
-/**
- * Convert role form role permissions to role permissions object
- *
- * @param {RoleForm} [form = {}]
- * @param {boolean} [isApi = false]
- * @return {PermissionsForm}
- */
-const permissionsFormToRolePermissions = (form = {}, isApi = false) => Object.entries(form ?? {})
-  .reduce((acc, [id, actions]) => {
+const permissionsFormToRolePermissions = (form = {}, isApi = false) =>
+  Object.entries(form ?? {}).reduce((acc, [id, actions]) => {
     if (isApiPermission(id) !== isApi) {
       return acc;
     }
@@ -146,22 +131,16 @@ const permissionsFormToRolePermissions = (form = {}, isApi = false) => Object.en
     return acc;
   }, {});
 
-/**
- * Convert form role auth config to role auth config object
- *
- * @param {AuthConfigForm} [form={}]
- * @return {AuthConfig}
- */
 const authConfigFormToRolePermissions = (form = {}) => ({
   inactivity_interval: form.intervals_enabled ? form.inactivity_interval : null,
   expiration_interval: form.intervals_enabled ? form.expiration_interval : null,
 });
 
 /**
- * Convert role form to role object
+ * Convert role form to role object.
  *
- * @param {RoleForm | {}} [form = {}]
- * @returns {RoleRequest}
+ * @param {Object} [form={}]
+ * @returns {Object}
  */
 export const formToRole = (form = {}) => ({
   ...omit(form, ['editable']),
@@ -172,10 +151,10 @@ export const formToRole = (form = {}) => ({
 });
 
 /**
- * Convert role form to role permissions object
+ * Convert role form to role permissions object.
  *
- * @param {RoleForm | {}} [form = {}]
- * @returns {{_id: string, permissions: PermissionsForm}}
+ * @param {Object} [form={}]
+ * @returns {{ _id: string, permissions: Object }}
  */
 export const formToRolePermissions = (form = {}) => ({
   _id: form._id,

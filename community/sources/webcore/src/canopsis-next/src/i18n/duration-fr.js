@@ -40,5 +40,8 @@ export default {
     HM: 'h:mm',
     MS: 'm:ss',
   },
-  durationLabelTypes: [{ type: 'standard', string: '__' }, { type: 'short', string: '_' }],
+  durationLabelTypes: [
+    { type: 'standard', string: '__' },
+    { type: 'short', string: '_' },
+  ],
 };

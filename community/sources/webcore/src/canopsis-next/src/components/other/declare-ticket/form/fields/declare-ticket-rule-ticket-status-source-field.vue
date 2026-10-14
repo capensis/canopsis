@@ -1,39 +1,40 @@
 <template>
-  <c-information-block :title="$t('declareTicket.ticketStatusSourceField')">
-    <v-layout class="gap-3">
-      <v-flex xs6>
-        <c-payload-text-field
-          v-if="form.template"
-          v-field="form.value"
-          :label="$t('declareTicket.ticketStatusSourceField')"
-          :name="name"
-          :variables="variables"
-          :disabled="disabled"
-          required
-        />
-        <c-name-field
-          v-else
-          v-field="form.value"
-          :label="$t('declareTicket.ticketStatusSourceField')"
-          :name="name"
-          :disabled="disabled"
-          required
-        />
-      </v-flex>
-      <c-enabled-field
-        v-field="form.template"
-        :label="$t('declareTicket.allowTicketStatusSourceTemplate')"
+  <c-form-block-row :label="$t('declareTicket.ticketStatusSourceField')" :depth="1" top-border>
+    <v-col cols="6">
+      <c-payload-text-field
+        v-if="form.template"
+        :value="form.value"
+        :label="$t('declareTicket.ticketStatusSourceField')"
+        :name="name"
+        :variables="variables"
+        :disabled="disabled"
+        required
+        @update:value="updateField('value', $event)"
       />
-    </v-layout>
-  </c-information-block>
+      <c-name-field
+        v-else
+        :model-value="form.value"
+        :label="$t('declareTicket.ticketStatusSourceField')"
+        :name="name"
+        :disabled="disabled"
+        required
+        @update:model-value="updateField('value', $event)"
+      />
+    </v-col>
+    <c-enabled-field
+      :model-value="form.template"
+      :label="$t('declareTicket.allowTicketStatusSourceTemplate')"
+      @update:model-value="updateField('template', $event)"
+    />
+  </c-form-block-row>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
+  emits: ['update:form'],
   props: {
     form: {
       type: Object,

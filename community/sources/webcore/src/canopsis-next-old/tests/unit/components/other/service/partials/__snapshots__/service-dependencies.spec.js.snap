@@ -1,0 +1,857 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-dependencies Renders \`service-dependencies\` with custom props 1`] = `
+<div
+  class="layout column"
+  dark="true"
+  light="true"
+>
+  <!---->
+  <state-settings-summary-stub
+    entity="[object Object]"
+  />
+  <div
+    class="treeview-data-table service-dependencies v-sheet theme--light"
+  >
+    <div
+      class="layout"
+    >
+      <div
+        class="treeview-data-table--tree mr-4"
+      >
+        <div
+          class="v-treeview theme--light"
+        >
+          <div
+            aria-expanded="false"
+            class="v-treeview-node"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <button
+                class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+                type="button"
+              >
+                arrow_drop_down
+              </button>
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                  <div
+                    class="expand-append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
+                    >
+                      arrow_right_alt
+                    </i>
+                    <span
+                      class="ma-0 v-chip v-chip--no-color theme--light v-size--default white--text impact-state-1"
+                    >
+                      <span
+                        class="v-chip__content"
+                      >
+                        <span
+                          class="px-2 text-body-2 font-weight-bold"
+                        >
+            7
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex"
+      >
+        <div
+          class="v-data-table theme--light"
+          header-text="text"
+        >
+          <div
+            class="v-data-table__wrapper"
+          >
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <table>
+              <colgroup>
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+              </colgroup>
+              <thead
+                class="v-data-table-header"
+              >
+                <tr>
+                  <th
+                    aria-label=""
+                    class="text-start"
+                    data-value="no-events-icon"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Custom name label"
+                    class="text-start"
+                    data-value="name"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Custom name label
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Custom type label"
+                    class="text-start"
+                    data-value="type"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Custom type label
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies\` with excluded root 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <div
+    class="treeview-data-table service-dependencies v-sheet theme--light"
+  >
+    <div
+      class="layout"
+    >
+      <div
+        class="treeview-data-table--tree mr-4"
+      >
+        <div
+          class="v-treeview theme--light"
+        >
+          <div
+            aria-expanded="false"
+            class="v-treeview-node v-treeview-node--leaf"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <div
+                class="v-treeview-node__level"
+              />
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded="false"
+            class="v-treeview-node"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <button
+                class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+                type="button"
+              >
+                arrow_drop_down
+              </button>
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded="false"
+            class="v-treeview-node v-treeview-node--leaf"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <div
+                class="v-treeview-node__level"
+              />
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded="false"
+            class="v-treeview-node v-treeview-node--leaf"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <div
+                class="v-treeview-node__level"
+              />
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex"
+      >
+        <div
+          class="v-data-table theme--light"
+          header-text="text"
+        >
+          <div
+            class="v-data-table__wrapper"
+          >
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <table>
+              <colgroup>
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+              </colgroup>
+              <thead
+                class="v-data-table-header"
+              >
+                <tr>
+                  <th
+                    aria-label=""
+                    class="text-start"
+                    data-value="no-events-icon"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Name"
+                    class="text-start"
+                    data-value="name"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Name
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Type"
+                    class="text-start"
+                    data-value="type"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Type
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <div
+    class="treeview-data-table service-dependencies v-sheet theme--light"
+  >
+    <div
+      class="layout"
+    >
+      <div
+        class="treeview-data-table--tree mr-4"
+      >
+        <div
+          class="v-treeview theme--light"
+        >
+          <div
+            aria-expanded="false"
+            class="v-treeview-node v-treeview-node--leaf"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <div
+                class="v-treeview-node__level"
+              />
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded="false"
+            class="v-treeview-node"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <button
+                class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+                type="button"
+              >
+                arrow_drop_down
+              </button>
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-expanded="false"
+            class="v-treeview-node v-treeview-node--leaf"
+          >
+            <div
+              class="v-treeview-node__root"
+            >
+              <div
+                class="v-treeview-node__level"
+              />
+              <div
+                class="v-treeview-node__content"
+              >
+                <div
+                  class="v-treeview-node__label"
+                >
+                  <service-dependencies-expand-stub
+                    item="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex"
+      >
+        <div
+          class="v-data-table theme--light"
+          header-text="text"
+        >
+          <div
+            class="v-data-table__wrapper"
+          >
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <transition-group-stub
+              class="v-data-table__expanded__col"
+              colspan="3"
+              tag="td"
+            />
+            <table>
+              <colgroup>
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+              </colgroup>
+              <thead
+                class="v-data-table-header"
+              >
+                <tr>
+                  <th
+                    aria-label=""
+                    class="text-start"
+                    data-value="no-events-icon"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Name"
+                    class="text-start"
+                    data-value="name"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Name
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Type"
+                    class="text-start"
+                    data-value="type"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Type
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+                <tr>
+                  <td>
+                    <c-no-events-icon-stub
+                      color="error"
+                      top=""
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                  <td>
+                    <service-dependencies-entity-cell-stub
+                      column="[object Object]"
+                      item="[object Object]"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  class="v-data-table__expanded v-data-table__expanded__row"
+                />
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies\` with required props 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <div
+    class="treeview-data-table service-dependencies v-sheet theme--light"
+  >
+    <div
+      class="layout"
+    >
+      <div
+        class="treeview-data-table--tree mr-4"
+      >
+        <div
+          class="v-treeview theme--light"
+        />
+      </div>
+      <div
+        class="flex"
+      >
+        <div
+          class="v-data-table theme--light"
+          header-text="text"
+        >
+          <div
+            class="v-data-table__wrapper"
+          >
+            <table>
+              <colgroup>
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+                <col
+                  class=""
+                />
+              </colgroup>
+              <thead
+                class="v-data-table-header"
+              >
+                <tr>
+                  <th
+                    aria-label=""
+                    class="text-start"
+                    data-value="no-events-icon"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      />
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Name"
+                    class="text-start"
+                    data-value="name"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Name
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    aria-label="Type"
+                    class="text-start"
+                    data-value="type"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <div
+                      class="layout align-center"
+                    >
+                      <span
+                        class=""
+                      >
+                        Type
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="v-data-table__empty-wrapper"
+                >
+                  <td
+                    colspan="3"
+                  >
+                    No data available
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

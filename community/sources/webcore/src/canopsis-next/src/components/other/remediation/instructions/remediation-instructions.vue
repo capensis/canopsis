@@ -8,6 +8,7 @@
       :updatable="hasUpdateAnyRemediationInstructionAccess"
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"
+      :active="active"
       @refresh="fetchList"
       @remove-selected="showRemoveSelectedRemediationInstructionModal"
       @duplicate="showDuplicateRemediationInstructionModal"
@@ -24,15 +25,25 @@ import { onMounted } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
 
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithOptions } from '@/hooks/query/shared';
 import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
-import { useCRUDPermissions } from '@/hooks/auth';
 
 import { useRemediationInstructionsActions } from './hooks/remediation-instructions';
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
 export default {
-  components: { RemediationInstructionsList },
+  components: {
+    RemediationInstructionsList,
+  },
+
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   setup() {
     const {
       remediationInstructions,
@@ -47,12 +58,12 @@ export default {
       handler: fetchList,
     } = useFetchListWithOptions({
       fetchListHandler: ({ params }) => fetchRemediationInstructionsList({
-        params: {
-          ...params,
-          with_flags: true,
-          with_month_executions: true,
-        },
-      }),
+          params: {
+            ...params,
+            with_flags: true,
+            with_month_executions: true,
+          },
+        }),
     });
 
     const {

@@ -1,58 +1,58 @@
 <template>
-  <v-layout column>
-    <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
-    <v-flex xs12>
-      <v-alert
-        :value="!form.columns.length"
-        color="info"
-      >
-        {{ $t('widgetTemplate.errors.columnsRequired') }}
-      </v-alert>
-    </v-flex>
+  <c-layout class="mt-3" gap="2" column>
+    <span class="text-body-2">
+      {{ t('common.column', 2) }}
+    </span>
+
     <c-columns-field
-      v-field="form.columns"
+      v-model="columns"
       :type="entityType"
+      name="columns"
       with-color-indicator
       with-template
       with-html
-      @input="validate"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 import { ENTITIES_TYPES, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import { useValidationAttachRequiredForField } from '@/hooks/validator/validation-attach-required';
+import { useField, useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
+  setup() {
+    const { t } = useI18n();
+    const form = useFormContext();
+    const columns = form.model('columns');
+    const type = form.model('type');
 
-  setup(props) {
-    const name = 'columns';
+    const { validate } = useField(
+      'columns',
+      () => (columns.value.length > 0 ? true : t('widgetTemplate.errors.columnsRequired')),
+      {
+        initialValue: columns.value.length,
+        validateOnValueUpdate: false,
+      },
+    );
 
-    const {
-      asyncValidateRequiredRule: validate,
-    } = useValidationAttachRequiredForField(name, () => !!props.form.columns?.length);
+    const entityType = computed(() => type.value === WIDGET_TEMPLATES_TYPES.alarmColumns
+        ? ENTITIES_TYPES.alarm
+        : ENTITIES_TYPES.entity,
+    );
 
-    const entityType = computed(() => (props.form.type === WIDGET_TEMPLATES_TYPES.alarmColumns
-      ? ENTITIES_TYPES.alarm
-      : ENTITIES_TYPES.entity));
+    watch(
+      () => columns.value.length,
+      () => validate(),
+      { flush: 'post' },
+    );
 
     return {
-      validate,
+      t,
+      columns,
       entityType,
     };
   },

@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <c-layout gap="1">
     <c-action-btn
       v-if="updatable"
       :tooltip="pbehavior.editable ? $t('common.edit') : $t('pbehavior.notEditable')"
@@ -13,24 +13,20 @@
       type="duplicate"
       @click="showDuplicatePbehaviorModal"
     />
-    <c-action-btn
-      v-if="removable"
-      type="delete"
-      @click="showDeletePbehaviorModal"
-    />
     <c-db-export-btn :id="pbehavior._id" pbehavior />
-  </v-layout>
+    <c-action-btn v-if="removable" type="delete" @click="showDeletePbehaviorModal" />
+  </c-layout>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { ref } from 'vue';
 
 import { MODALS } from '@/constants';
 
-const { mapActions } = createNamespacedHelpers('pbehavior');
+import { useModals } from '@/hooks/modals';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 
 export default {
-  inject: ['$system'],
   props: {
     pbehavior: {
       type: Object,
@@ -53,76 +49,79 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      editing: false,
-      duplicating: false,
-    };
-  },
-  methods: {
-    ...mapActions({
-      fetchPbehaviorWithoutStore: 'fetchItemWithoutStore',
-      removePbehavior: 'remove',
-    }),
 
-    refresh() {
-      this.$emit('refresh');
-    },
+  emits: ['refresh'],
 
-    async showEditPbehaviorModal() {
+  setup(props, { emit }) {
+    const modals = useModals();
+    const { fetchPbehaviorWithoutStore, removePbehavior } = usePbehavior();
+    const editing = ref(false);
+    const duplicating = ref(false);
+
+    const refresh = () => emit('refresh');
+
+    const showEditPbehaviorModal = async () => {
       try {
-        this.editing = true;
+        editing.value = true;
 
-        const pbehaviorObject = await this.fetchPbehaviorWithoutStore({ id: this.pbehavior._id });
+        const pbehaviorObject = await fetchPbehaviorWithoutStore({ id: props.pbehavior._id });
 
-        this.$modals.show({
+        modals.show({
           name: MODALS.pbehaviorPlanning,
           config: {
             pbehaviors: [pbehaviorObject],
-            withInherited: this.withInherited,
-            afterSubmit: this.refresh,
+            withInherited: props.withInherited,
+            afterSubmit: refresh,
           },
         });
       } catch (err) {
         console.error(err);
       } finally {
-        this.editing = false;
+        editing.value = false;
       }
-    },
+    };
 
-    async showDuplicatePbehaviorModal() {
+    const showDuplicatePbehaviorModal = async () => {
       try {
-        this.duplicating = true;
+        duplicating.value = true;
 
-        const pbehaviorObject = await this.fetchPbehaviorWithoutStore({ id: this.pbehavior._id });
+        const pbehaviorObject = await fetchPbehaviorWithoutStore({ id: props.pbehavior._id });
 
-        this.$modals.show({
+        modals.show({
           name: MODALS.pbehaviorPlanning,
           config: {
             pbehaviorsToAdd: [pbehaviorObject],
-            withInherited: this.withInherited,
-            afterSubmit: this.refresh,
+            withInherited: props.withInherited,
+            afterSubmit: refresh,
           },
         });
       } catch (err) {
         console.error(err);
       } finally {
-        this.duplicating = false;
+        duplicating.value = false;
       }
-    },
+    };
 
-    showDeletePbehaviorModal() {
-      this.$modals.show({
+    const showDeletePbehaviorModal = () => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.removePbehavior({ id: this.pbehavior._id });
+            await removePbehavior({ id: props.pbehavior._id });
 
-            this.refresh();
+            refresh();
           },
         },
       });
-    },
+    };
+
+    return {
+      editing,
+      duplicating,
+      showEditPbehaviorModal,
+      showDuplicatePbehaviorModal,
+      showDeletePbehaviorModal,
+    };
   },
 };
 </script>

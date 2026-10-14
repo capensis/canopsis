@@ -1,6 +1,6 @@
 <template>
   <pattern-editor-field
-    v-field="patterns"
+    :patterns="patterns"
     :disabled="disabled"
     :readonly="readonly"
     :name="name"
@@ -8,6 +8,7 @@
     :attributes="availableEventFilterAttributes"
     :counter="counter"
     class="c-event-filter-patterns-field"
+    @update:patterns="$emit('update:value', $event)"
   />
 </template>
 
@@ -31,11 +32,8 @@ import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-sta
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
+  emits: ['update:patterns', 'update:value'],
   components: { PatternEditorField },
-  model: {
-    prop: 'patterns',
-    event: 'input',
-  },
   props: {
     patterns: {
       type: Object,
@@ -165,10 +163,16 @@ export default {
         valueField: {
           is: 'c-event-type-field',
           props: (rule) => {
-            const isMultiple = isArray(rule?.value);
+            const hasChips = [
+              PATTERN_OPERATORS.isOneOf,
+              PATTERN_OPERATORS.isNotOneOf,
+            ].includes(rule?.operator);
+            const isMultiple = hasChips || isArray(rule?.value);
 
             return {
               multiple: isMultiple,
+              chips: hasChips,
+              closableChips: hasChips,
               deletableChips: isMultiple,
               smallChips: isMultiple,
             };
@@ -204,12 +208,14 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
-          is: 'c-select-field',
+          is: 'c-select',
           props: (rule) => {
             const isMultiple = isArray(rule?.value);
 
             return {
               items: this.sourceTypes,
+              itemTitle: 'text',
+              itemValue: 'value',
               multiple: isMultiple,
               deletableChips: isMultiple,
               smallChips: isMultiple,
@@ -233,7 +239,7 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
-          is: 'c-select-field',
+          is: 'c-select',
           props: {
             items: Object.values(ALARM_EVENT_INITIATORS),
           },
@@ -310,7 +316,7 @@ export default {
           options: this.stringWithOneOfOptions,
         },
         {
-          text: this.$tc('common.extraInfo'),
+          text: this.$t('common.extraInfo'),
           value: EVENT_FILTER_PATTERN_FIELDS.extraInfos,
           options: this.extraInfosOptions,
         },

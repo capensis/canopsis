@@ -1,23 +1,22 @@
 <template>
   <div>
-    <v-layout v-if="!hasStructure" class="gap-4" column>
-      <v-flex align-self-center>
-        <span class="grey--text">{{ $t('common.noDataAvailable') }}</span>
-      </v-flex>
-      <v-flex align-self-center>
-        <v-btn
-          color="primary"
-          @click="$emit('import')"
-        >
-          {{ $t('common.importData') }}
+    <c-layout v-if="!hasStructure" gap="4" column>
+      <div class="align-self-center">
+        <span class="text-grey">
+          {{ t('common.noDataAvailable') }}
+        </span>
+      </div>
+      <div class="align-self-center">
+        <v-btn color="primary" @click="$emit('import')">
+          {{ t('common.importData') }}
         </v-btn>
-      </v-flex>
-    </v-layout>
-    <v-layout v-else-if="isEmptyColumns" column>
-      <v-flex align-self-center>
-        <v-subheader>{{ $t('externalData.tableEmptyColumns') }}</v-subheader>
-      </v-flex>
-    </v-layout>
+      </div>
+    </c-layout>
+    <c-layout v-else-if="isEmptyColumns" column>
+      <div class="align-self-center">
+        <v-list-subheader>{{ t('externalData.tableEmptyColumns') }}</v-list-subheader>
+      </div>
+    </c-layout>
     <c-advanced-data-table
       v-else
       ref="tableElement"
@@ -38,12 +37,12 @@
       @update:options="$emit('update:options', $event)"
     >
       <template v-if="withToolbar" #toolbar="{ selected }">
-        <v-flex>
-          <v-layout class="gap-1" justify-end>
+        <div class="flex-grow-1">
+          <c-layout gap="1" justify="end">
             <v-btn
               color="blue"
-              fab
-              small
+              size="small"
+              icon
               @click="$emit('import')"
             >
               <v-icon color="white">
@@ -52,36 +51,36 @@
             </v-btn>
             <v-btn
               color="primary"
-              fab
-              small
+              size="small"
+              icon
               @click="$emit('add')"
             >
               <v-icon color="white">
                 add
               </v-icon>
             </v-btn>
-          </v-layout>
-        </v-flex>
-        <v-flex class="py-2" xs12>
-          <v-layout align-center>
-            <v-flex xs4 align-self-center>
+          </c-layout>
+        </div>
+        <div class="py-2 w-100">
+          <c-layout align="center">
+            <div class="w-33 align-self-center">
               <c-density-btn-toggle
                 v-if="densable"
                 :value="dense"
                 @change="$emit('update:dense', $event)"
               />
-            </v-flex>
-            <v-flex xs4 align-self-center>
+            </div>
+            <div class="w-33 align-self-center">
               <c-pagination
                 :page="options.page"
                 :limit="options.itemsPerPage"
                 :total="totalItems"
                 type="top"
-                @input="updatePage"
+                @update:page="updatePage"
               />
-            </v-flex>
-            <v-flex class="text-right" xs4 align-self-center>
-              <v-layout>
+            </div>
+            <div class="w-33 align-self-center text-right">
+              <c-layout>
                 <c-grid-btns
                   v-if="resizable || draggable"
                   :editing="isColumnsEditing"
@@ -91,43 +90,50 @@
                 <c-action-btn
                   v-if="exportable"
                   :loading="downloading"
-                  :tooltip="$t('settings.exportAsCsv')"
+                  :tooltip="t('settings.exportAsCsv')"
                   icon="cloud_download"
                   @click="$emit('export', selected)"
                 />
-              </v-layout>
-            </v-flex>
-          </v-layout>
-        </v-flex>
+              </c-layout>
+            </div>
+          </c-layout>
+        </div>
       </template>
+
       <template #mass-actions="{ selected }">
-        <c-action-btn
-          type="delete"
-          @click="$emit('remove-selected', selected)"
-        />
+        <c-action-btn type="delete" small @click="$emit('remove-selected', selected)" />
       </template>
+
       <template #body.prepend>
         <tr>
           <td v-if="selectable" />
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
-            <v-layout v-if="header.value === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN">
-              <span class="font-italic font-weight-bold grey--text">
-                {{ $t('common.calculated') }}
+            <c-layout v-if="header.value === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN">
+              <span class="font-italic font-weight-bold text-grey">
+                {{ t('common.calculated') }}
               </span>
-            </v-layout>
-            <v-layout v-else-if="header.value !== '_id' && header.value !== 'actions'" class="py-1 gap-2" column>
+            </c-layout>
+            <c-layout
+              v-else-if="header.value !== '_id' && header.value !== 'actions'"
+              class="py-1"
+              gap="2"
+              column
+            >
               <external-data-table-column-data-type-field
-                v-field="columns[header.value]"
+                :value="columns[header.value]"
                 :table-separator="separator"
+                :disabled="disabled || disabledTypes"
+                @update:value="updateColumn(header.value, $event)"
               />
-              <v-flex>
+              <div>
                 <external-data-table-column-tag-field
-                  v-field="columns[header.value].tag"
+                  :value="columns[header.value].tag"
                   :disabled="disabled"
+                  @update:value="updateColumnField(header.value, 'tag', $event)"
                 />
-              </v-flex>
-            </v-layout>
+              </div>
+            </c-layout>
             <span
               v-if="resizingMode"
               :key="`${header.value}.resize`"
@@ -138,12 +144,13 @@
           </td>
         </tr>
       </template>
+
       <template
         v-for="header in sortedHeaders"
+        :key="`header.${header.value}`"
         #[`header.${header.value}`]=""
       >
         <span
-          :key="`header.${header.value}`"
           :title="header.text"
           :class="{ 'table-cell__header--error': header.errors?.length }"
           class="table-cell__content"
@@ -172,14 +179,11 @@
           @click.stop=""
         />
       </template>
-      <template
-        v-for="header in sortedHeaders"
-        #[header.value]="{ item }"
-      >
+
+      <template v-for="header in dataHeaders" :key="header.value" #[header.value]="{ item }">
         <span
-          :key="`${header.value}`"
           :title="item[header.value]?.initial_value ?? item[header.value]"
-          :class="{ 'table-cell__content--error': item[header.value]?.transform_error }"
+          :class="{ 'table-cell__content--error': hasColumnCellError(header.value, item) }"
           class="table-cell__content"
         >
           {{ item[header.value]?.initial_value ?? item[header.value] }}
@@ -192,32 +196,23 @@
           @click.stop=""
         />
       </template>
+
       <template #actions="{ item, index }">
-        <v-layout>
-          <c-action-btn
-            type="edit"
-            @click="$emit('edit', records[index])"
-          />
-          <c-action-btn
-            type="duplicate"
-            @click="$emit('duplicate', records[index])"
-          />
-          <c-action-btn
-            type="delete"
-            @click="$emit('remove', item._id)"
-          />
-        </v-layout>
+        <c-layout>
+          <c-action-btn type="edit" @click="$emit('edit', records[index])" />
+          <c-action-btn type="duplicate" @click="$emit('duplicate', records[index])" />
+          <c-action-btn type="delete" @click="$emit('remove', item._id)" />
+        </c-layout>
       </template>
+
       <template #expand="{ item }">
         <external-data-table-records-list-expand-panel :record="item" />
       </template>
     </c-advanced-data-table>
-    <c-alert
-      v-if="errorsMessages.length"
-      type="error"
-    >
+
+    <c-alert v-if="errorsMessages.length" type="error">
       <span class="text-body-1">
-        {{ $tc('externalData.fieldsHasError', errorsMessages.length, { count: errorsMessages.length }) }}
+        {{ t('externalData.fieldsHasError', { count: errorsMessages.length }) }}
         <ul>
           <li v-for="error in errorsMessages" :key="error.name">
             <strong>{{ error.name }}</strong>: {{ error.message }}
@@ -232,16 +227,20 @@
 import { isEmpty } from 'lodash';
 import { computed, ref, toRef } from 'vue';
 
-import { DENSE_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, EXTERNAL_DATA_TABLE_PRIORITY_COLUMN } from '@/constants';
+import {
+  DENSE_TYPES,
+  EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
+  EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+} from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 
-import { useI18n } from '@/hooks/i18n';
 import { useHTMLElement } from '@/hooks/html-elements';
+import { useI18n } from '@/hooks/i18n';
 import { useTableColumnsSettings } from '@/hooks/table/columns-settings';
 
-import ExternalDataTableColumnTagField from '../form/fields/external-data-table-column-tag-field.vue';
 import ExternalDataTableColumnDataTypeField from '../form/fields/external-data-table-column-data-type-field.vue';
+import ExternalDataTableColumnTagField from '../form/fields/external-data-table-column-tag-field.vue';
 
 import ExternalDataTableRecordsListExpandPanel from './external-data-table-records-list-expand-panel.vue';
 
@@ -258,10 +257,7 @@ export default {
     ExternalDataTableColumnDataTypeField,
     ExternalDataTableRecordsListExpandPanel,
   },
-  model: {
-    prop: 'columns',
-    event: 'input',
-  },
+
   props: {
     records: {
       type: Array,
@@ -339,6 +335,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabledTypes: {
+      type: Boolean,
+      default: false,
+    },
     columnsSettings: {
       type: Object,
       default: () => ({}),
@@ -352,6 +352,21 @@ export default {
       required: false,
     },
   },
+
+  emits: [
+    'add',
+    'duplicate',
+    'edit',
+    'export',
+    'import',
+    'remove',
+    'remove-selected',
+    'update:columns',
+    'update:columns-settings',
+    'update:dense',
+    'update:options',
+  ],
+
   setup(props, { emit }) {
     const { t } = useI18n();
 
@@ -367,23 +382,26 @@ export default {
 
     const columnsForTableDisplaying = computed(() => props.originalColumns || props.columns);
 
-    const preparedRecords = computed(() => props.records.map(record => (
-      Object.entries(record).reduce((acc, [key, value]) => {
-        const filter = EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[columnsForTableDisplaying.value?.[key]?.type];
+    const preparedRecords = computed(() => props.records.map(
+      record => Object.entries(record).reduce((acc, [key, value]) => {
+          const filter =
+            EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[
+              columnsForTableDisplaying.value?.[key]?.type
+            ];
 
-        acc[key] = filter ? filter(value) : value;
+          acc[key] = filter ? filter(value) : value;
 
-        return acc;
-      }, {})
-    )));
+          return acc;
+        }, {}),
+      ),
+    );
 
     /**
      * COMPUTED
      */
     const isEmptyColumns = computed(() => isEmpty(props.columns));
 
-    const errorsMessages = computed(() => (
-      Object.values(props.columns).reduce((acc, column) => {
+    const errorsMessages = computed(() => Object.values(props.columns).reduce((acc, column) => {
         if (column.messages?.length) {
           acc.push({
             name: column.name,
@@ -392,8 +410,8 @@ export default {
         }
 
         return acc;
-      }, [])
-    ));
+      }, []),
+    );
 
     const headers = computed(() => {
       const result = Object.values(columnsForTableDisplaying.value).map((column = {}) => ({
@@ -401,7 +419,7 @@ export default {
         text: column.name,
         class: DRAGGABLE_CLASS,
         sortable: column.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
-        errors: column.messages,
+        errors: props.columns[column.name]?.messages,
       }));
 
       if (props.withActions) {
@@ -421,6 +439,19 @@ export default {
 
     const updatePage = page => emit('update:options', { ...props.options, page });
 
+    const hasColumnCellError = (name, item) =>
+      !!item[name]?.transform_error && !!props.columns[name]?.messages?.length;
+
+    const updateColumn = (name, value) => emit('update:columns', {
+        ...props.columns,
+        [name]: value,
+      });
+
+    const updateColumnField = (name, field, value) => updateColumn(name, {
+        ...props.columns[name],
+        [field]: value,
+      });
+
     const {
       tableStyle,
       tableClass,
@@ -433,17 +464,24 @@ export default {
       startColumnResize,
       toggleColumnEditingMode,
       resetColumnsSettings,
-    } = useTableColumnsSettings({
-      tableHeaderElement,
-      headers,
-      draggable: toRef(props, 'draggable'),
-      resizable: toRef(props, 'draggable'),
-      columnsSettings: toRef(props, 'columnsSettings'),
-      cellsContentBehavior: toRef(props, 'cellsContentBehavior'),
-      draggableClass: DRAGGABLE_CLASS,
-    }, emit);
+    } = useTableColumnsSettings(
+      {
+        tableHeaderElement,
+        headers,
+        draggable: toRef(props, 'draggable'),
+        resizable: toRef(props, 'draggable'),
+        columnsSettings: toRef(props, 'columnsSettings'),
+        cellsContentBehavior: toRef(props, 'cellsContentBehavior'),
+        draggableClass: DRAGGABLE_CLASS,
+      },
+      emit,
+    );
+    const dataHeaders = computed(() => sortedHeaders.value.filter(
+      header => header.value !== 'actions',
+    ));
 
     return {
+      t,
       tableElement,
 
       EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
@@ -456,6 +494,9 @@ export default {
       isMediumDense,
 
       updatePage,
+      updateColumn,
+      updateColumnField,
+      hasColumnCellError,
 
       tableStyle,
       tableClass,
@@ -464,6 +505,7 @@ export default {
       resizingMode,
       sortedHeaders,
       sortedHeadersWithWidth,
+      dataHeaders,
 
       startColumnResize,
       toggleColumnEditingMode,
@@ -482,12 +524,14 @@ export default {
       max-width: unset;
     }
 
-    th[data-value="data-table-select"], th[data-value="data-table-expand"] {
+    th[data-value='data-table-select'],
+    th[data-value='data-table-expand'] {
       width: 60px !important;
     }
   }
 
-  .table-cell__header--error, .table-cell__content--error  {
+  .table-cell__header--error,
+  .table-cell__content--error {
     color: var(--v-error-base);
   }
 

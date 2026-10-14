@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with custom props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div
+    type="4"
+    value="[object Object]"
+  >
+    <declare-ticket-rule-general-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <declare-ticket-rule-patterns-form-stub
+      form="[object Object]"
+    />
+    <declare-ticket-rule-test-query-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div
+    type="4"
+    value="[object Object]"
+  >
+    <declare-ticket-rule-general-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <declare-ticket-rule-patterns-form-stub
+      form="[object Object]"
+    />
+    <declare-ticket-rule-test-query-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with errors 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div
+    type="4"
+    value="[object Object]"
+  >
+    <declare-ticket-rule-general-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <declare-ticket-rule-patterns-form-stub
+      form="[object Object]"
+    />
+    <declare-ticket-rule-test-query-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with template testing tab access 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div
+    type="4"
+    value="[object Object]"
+  >
+    <declare-ticket-rule-general-form-stub
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <declare-ticket-rule-patterns-form-stub
+      form="[object Object]"
+    />
+    <declare-ticket-rule-test-query-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;

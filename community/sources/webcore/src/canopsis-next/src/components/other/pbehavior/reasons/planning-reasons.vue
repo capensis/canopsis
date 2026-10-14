@@ -1,104 +1,125 @@
 <template>
-  <v-card-text>
-    <planning-reasons-list
-      :pbehavior-reasons="pbehaviorReasons"
-      :pending="pbehaviorReasonsPending"
-      :total-items="pbehaviorReasonsMeta.total_count"
-      :options.sync="options"
-      :removable="hasDeleteAnyPbehaviorReasonAccess"
-      :updatable="hasUpdateAnyPbehaviorReasonAccess"
-      @remove-selected="showRemoveSelectedPbehaviorReasonModal"
-      @remove="showRemovePbehaviorReasonModal"
-      @edit="showEditPbehaviorReasonModal"
-      @refresh="fetchList"
-    />
-  </v-card-text>
+  <pbehavior-reasons-list
+    :pbehavior-reasons="pbehaviorReasons"
+    :pending="pbehaviorReasonsPending"
+    :total-items="pbehaviorReasonsMeta.total_count"
+    :options="options"
+    :removable="hasDeleteAccess"
+    :updatable="hasUpdateAccess"
+    :active="active"
+    @edit="showEditPbehaviorReasonModal"
+    @remove="showRemovePbehaviorReasonModal"
+    @refresh="fetchList"
+    @update:options="updateOptions"
+  />
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { onMounted } from 'vue';
 
-import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
-import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
-import { localQueryMixin } from '@/mixins/query/query';
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
-import PlanningReasonsList from './pbehavior-reasons-list.vue';
+import { convertQueryToRequest } from '@/helpers/query';
+
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useLocalQueryWithOptions } from '@/hooks/query/shared';
+import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
+
+import PbehaviorReasonsList from './pbehavior-reasons-list.vue';
 
 export default {
-  components: { PlanningReasonsList },
-  mixins: [
-    permissionsTechnicalPbehaviorReasonsMixin,
-    entitiesPbehaviorReasonMixin,
-    localQueryMixin,
-  ],
+  components: {
+    PbehaviorReasonsList,
+  },
+
   props: {
-    params: {
-      type: Object,
-      default: () => ({}),
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    fetchList() {
-      const params = this.getQuery();
-      params.with_flags = true;
-      params.with_hidden = true;
 
-      this.fetchPbehaviorReasonsList({ params });
-    },
+  setup() {
+    const {
+      pbehaviorReasons,
+      pbehaviorReasonsPending,
+      pbehaviorReasonsMeta,
+      fetchPbehaviorReasonsList,
+      updatePbehaviorReason,
+      removePbehaviorReason,
+    } = usePbehaviorReason();
 
-    async tryRemovePbehaviorReason(pbehavioReasonId) {
+    const { hasUpdateAccess, hasDeleteAccess } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.planningReason,
+    );
+
+    const modals = useModals();
+    const popups = usePopups();
+    const { t } = useI18n();
+
+    const {
+      options,
+      handler: fetchList,
+      updateOptions,
+    } = useLocalQueryWithOptions({
+      onUpdate: fetchQuery => fetchPbehaviorReasonsList({
+          params: {
+            ...convertQueryToRequest(fetchQuery),
+            with_flags: true,
+            with_hidden: true,
+          },
+        }),
+    });
+
+    const tryRemovePbehaviorReason = async (id) => {
       try {
-        await this.removePbehaviorReason({ id: pbehavioReasonId });
+        await removePbehaviorReason({ id });
       } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
+        popups.error({ text: err.error || t('errors.default') });
       }
-    },
+    };
 
-    showEditPbehaviorReasonModal(pbehaviorReason) {
-      this.$modals.show({
+    const showRemovePbehaviorReasonModal = id => modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await tryRemovePbehaviorReason(id);
+            await fetchList();
+          },
+        },
+      });
+
+    const showEditPbehaviorReasonModal = pbehaviorReason => modals.show({
         name: MODALS.createPbehaviorReason,
         config: {
           pbehaviorReason,
-          action: async (newPbehaviorReason) => {
-            await this.updatePbehaviorReason({
-              data: newPbehaviorReason,
+          action: async (data) => {
+            await updatePbehaviorReason({
               id: pbehaviorReason._id,
+              data,
             });
-            await this.fetchList();
+            await fetchList();
           },
         },
       });
-    },
 
-    showRemovePbehaviorReasonModal(pbehaviorReasonId) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.tryRemovePbehaviorReason(pbehaviorReasonId);
-            await this.fetchList();
-          },
-        },
-      });
-    },
+    onMounted(fetchList);
 
-    showRemoveSelectedPbehaviorReasonModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorReason(id)));
-
-            await this.fetchList();
-          },
-        },
-      });
-    },
+    return {
+      pbehaviorReasons,
+      pbehaviorReasonsPending,
+      pbehaviorReasonsMeta,
+      options,
+      hasUpdateAccess,
+      hasDeleteAccess,
+      fetchList,
+      updateOptions,
+      showEditPbehaviorReasonModal,
+      showRemovePbehaviorReasonModal,
+    };
   },
 };
 </script>

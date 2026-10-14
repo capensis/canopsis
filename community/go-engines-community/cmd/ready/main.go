@@ -41,7 +41,7 @@ func main() {
 	logger := log.NewLogger(ctx, logOpts)
 
 	retryDelay := time.Second
-	err := ready.CheckAll(ctx, retryDelay, retries, withPostgres, withTechPostgres, logger)
+	err := ready.CheckAll(ctx, retryDelay, retries, false, withPostgres, withTechPostgres, logger)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
 			logger.Fatal().Err(err).Msg("failed to open one of required sessions before shutdown")

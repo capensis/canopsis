@@ -1,54 +1,46 @@
 <template>
-  <v-select
-    v-validate
-    :value="value"
-    :label="label || $t('role.selectTemplate')"
+  <c-select
+    :model-value="selectedTemplate"
+    :label="label || t('role.selectTemplate')"
     :loading="pending"
     :items="preparedItems"
-    :error-messages="errors.collect(name)"
-    :name="name"
     :disabled="disabled"
-    class="role-template-field"
-    item-text="name"
-    item-value="permissions"
+    name="template"
+    item-title="name"
+    item-value="_id"
     return-object
     clearable
-    @input="updatePermissions"
+    @update:model-value="updatePermissions"
   >
-    <template #item="{ item }">
-      <v-layout justify-space-between>
-        {{ item.name }}<span class="role-template-field__item-description">{{ item.description }}</span>
-      </v-layout>
+    <template #item="{ props: itemProps, item }">
+      <v-list-item v-bind="getTemplateItemProps(itemProps)">
+        <c-layout justify="space-between">
+          {{ item?.name }}
+
+          <span class="role-template-field__item-description">
+            {{ item?.description }}
+          </span>
+        </c-layout>
+      </v-list-item>
     </template>
-  </v-select>
+  </c-select>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed, onMounted, ref } from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
 import { rolePermissionsToForm } from '@/helpers/entities/role/form';
 
-import { formBaseMixin } from '@/mixins/form/base';
-
-const { mapActions: mapRoleActions } = createNamespacedHelpers('role');
+import { useI18n } from '@/hooks/i18n';
+import { useRole } from '@/hooks/store/modules/role';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({}),
-    },
-    name: {
-      type: String,
-      default: 'template',
     },
     label: {
       type: String,
@@ -59,51 +51,59 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      items: [],
-      pending: false,
-    };
-  },
-  computed: {
-    preparedItems() {
-      return this.items.map(template => ({
+
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { fetchRoleTemplatesListWithoutStore } = useRole();
+    const items = ref([]);
+    const pending = ref(false);
+    const selectedTemplate = ref(null);
+
+    const preparedItems = computed(() => items.value.map(template => ({
         ...template,
         permissions: rolePermissionsToForm(template.permissions),
-      }));
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    ...mapRoleActions({ fetchRoleTemplatesListWithoutStore: 'fetchTemplatesListWithoutStore' }),
+      })),
+    );
 
-    updatePermissions(value) {
-      this.updateModel(value ? value.permissions : {});
-    },
+    const updatePermissions = (template) => {
+      selectedTemplate.value = template;
+      emit('update:modelValue', template ? template.permissions : {});
+    };
 
-    async fetchList() {
-      this.pending = true;
+    const getTemplateItemProps = ({ title, subtitle, ...itemProps } = {}) => itemProps;
 
-      const { data: roleTemplates } = await this.fetchRoleTemplatesListWithoutStore({
-        params: {
-          types: this.types,
-          limit: MAX_LIMIT,
-        },
-      });
+    const fetchList = async () => {
+      try {
+        pending.value = true;
 
-      this.items = roleTemplates;
-      this.pending = false;
-    },
+        const { data = [] } = await fetchRoleTemplatesListWithoutStore({
+          params: { limit: MAX_LIMIT },
+        });
+
+        items.value = data;
+      } finally {
+        pending.value = false;
+      }
+    };
+
+    onMounted(fetchList);
+
+    return {
+      t,
+      pending,
+      selectedTemplate,
+      preparedItems,
+      updatePermissions,
+      getTemplateItemProps,
+    };
   },
 };
 </script>
 
 <style lang="scss">
-.role-template-field {
-  &__item-description {
-    opacity: 0.7;
-  }
+.role-template-field__item-description {
+  opacity: 0.7;
 }
 </style>

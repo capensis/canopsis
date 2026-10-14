@@ -7,6 +7,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const (
+	// InheritedNone updates only the main state counter.
+	InheritedNone = iota
+	// InheritedWith updates both the main and inherited state counters.
+	InheritedWith
+	// InheritedOnly updates only the inherited state counter.
+	InheritedOnly
+)
+
 type StateCounters struct {
 	Critical int `bson:"critical"`
 	Major    int `bson:"major"`
@@ -138,51 +147,67 @@ func (s *EntityCounters) GetWorstState() int {
 	return types.AlarmStateOK
 }
 
-func (s *EntityCounters) IncrementState(state int, withInherited bool) {
+func (s *EntityCounters) IncrementState(state int, mode int) {
 	switch state {
 	case types.AlarmStateOK:
-		s.State.Ok++
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Ok++
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Ok++
 		}
 	case types.AlarmStateMinor:
-		s.State.Minor++
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Minor++
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Minor++
 		}
 	case types.AlarmStateMajor:
-		s.State.Major++
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Major++
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Major++
 		}
 	case types.AlarmStateCritical:
-		s.State.Critical++
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Critical++
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Critical++
 		}
 	}
 }
 
-func (s *EntityCounters) DecrementState(state int, withInherited bool) {
+func (s *EntityCounters) DecrementState(state int, mode int) {
 	switch state {
 	case types.AlarmStateOK:
-		s.State.Ok--
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Ok--
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Ok--
 		}
 	case types.AlarmStateMinor:
-		s.State.Minor--
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Minor--
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Minor--
 		}
 	case types.AlarmStateMajor:
-		s.State.Major--
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Major--
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Major--
 		}
 	case types.AlarmStateCritical:
-		s.State.Critical--
-		if withInherited {
+		if mode != InheritedOnly {
+			s.State.Critical--
+		}
+		if mode != InheritedNone {
 			s.InheritedState.Critical--
 		}
 	}

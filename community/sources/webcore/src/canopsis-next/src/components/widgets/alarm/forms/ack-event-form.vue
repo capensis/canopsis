@@ -1,42 +1,38 @@
 <template>
-  <v-layout column>
-    <v-tooltip
+  <c-layout gap="2" column>
+    <c-tooltip
       v-if="!hideAckResources"
+      :content="t('alarm.ackResourcesQuestion')"
       top
     >
-      <template #activator="{ on }">
-        <v-checkbox
-          v-field="form.ack_resources"
-          :label="$t('alarm.ackResources')"
+      <template #activator="{ props }">
+        <c-checkbox
+          v-bind="props"
+          v-model="ackResources"
+          :label="t('alarm.ackResources')"
           color="primary"
-          v-on="on"
         />
       </template>
-      <span>{{ $t('alarm.ackResourcesQuestion') }}</span>
-    </v-tooltip>
+    </c-tooltip>
     <c-description-field
-      v-field="form.comment"
-      :label="$t('common.note')"
+      v-model="comment"
+      :label="t('common.note')"
       :required="isNoteRequired"
-      :max-length="255"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="comment"
       autofocus
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     isNoteRequired: {
       type: Boolean,
       default: false,
@@ -45,6 +41,21 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { t } = useI18n();
+    const { comment, ackResources } = useFormModels({
+      comment: 'comment',
+      ackResources: 'ack_resources',
+    });
+
+    return {
+      t,
+      FORM_MAX_STRING_LENGTH,
+      comment,
+      ackResources,
+    };
   },
 };
 </script>

@@ -1,32 +1,33 @@
 <template>
   <widget-settings-item :title="$t('settings.filters')">
-    <v-layout column>
+    <c-layout gap="2" column>
       <filter-selector
         v-if="!hideSelector"
-        v-field="value"
+        :model-value="modelValue"
         :label="$t('filter.selector.defaultFilter')"
         :filters="filters"
         hide-multiply
+        @update:model-value="$emit('update:modelValue', $event)"
       />
+
       <field-filters-list
         v-bind="listProps"
         :filters="filters"
         :addable="addable"
         :editable="editable"
-        @input="updateFilters"
+        @update:filters="updateFilters"
       />
-    </v-layout>
+    </c-layout>
   </widget-settings-item>
 </template>
 
 <script>
 import { pick } from 'lodash';
 
-import { formBaseMixin } from '@/mixins/form';
-
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
-import FieldFiltersList from '@/components/sidebars/form/fields/filters-list.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+
+import FieldFiltersList from './filters-list.vue';
 
 export default {
   components: {
@@ -34,9 +35,13 @@ export default {
     FilterSelector,
     FieldFiltersList,
   },
-  mixins: [formBaseMixin],
+
   props: {
     widgetId: {
+      type: String,
+      required: false,
+    },
+    widgetType: {
       type: String,
       required: false,
     },
@@ -44,7 +49,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    value: {
+    modelValue: {
       type: String,
       default: null,
     },
@@ -85,6 +90,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue', 'update:filters'],
+
   computed: {
     listProps() {
       return pick(this, [
@@ -94,13 +102,16 @@ export default {
         'withServiceWeather',
         'entityTypes',
         'entityCountersType',
+        'widgetId',
+        'widgetType',
       ]);
     },
   },
+
   methods: {
     updateFilters(filters) {
-      if (this.value && !filters.some(filter => filter._id === this.value)) {
-        this.updateModel(null);
+      if (this.modelValue && !filters.some(filter => filter._id === this.modelValue)) {
+        this.$emit('update:modelValue', null);
       }
 
       this.$emit('update:filters', filters);

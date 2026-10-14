@@ -75,14 +75,18 @@ export const dependencyToTreeviewDependency = (dependency = {}, impact = false) 
  * @param {boolean} [impact = false]
  * @returns {{result: string[], dependencies: Object}}
  */
-export const normalizeDependencies = (dependencies = [], impact = false) => dependencies.reduce((acc, dependency) => {
-  const preparedDependency = dependencyToTreeviewDependency(dependency, impact);
+export const normalizeDependencies = (dependencies = [], impact = false) =>
+  dependencies.reduce(
+    (acc, dependency) => {
+      const preparedDependency = dependencyToTreeviewDependency(dependency, impact);
 
-  acc.dependencies[preparedDependency._id] = preparedDependency;
-  acc.result.push(preparedDependency._id);
+      acc.dependencies[preparedDependency._id] = preparedDependency;
+      acc.result.push(preparedDependency._id);
 
-  return acc;
-}, { result: [], dependencies: {} });
+      return acc;
+    },
+    { result: [], dependencies: {} },
+  );
 
 /**
  * Get child item which will show load more button
@@ -110,11 +114,12 @@ export const getLoadMoreDenormalizedChild = (parent) => {
 /**
  * Denormalize treeview dependencies array
  *
- * @param {string[]} [ids = []]
- * @param {Object} [dependenciesByIds = {}]
- * @param {Object} [metaByIds = {}]
- * @param {DenormalizedServiceTreeviewDependency} [parent]
- * @param {string[]} [parentIds]
+ * @param {Object} params
+ * @param {string[]} [params.ids = []]
+ * @param {Object} [params.dependenciesByIds = {}]
+ * @param {Object} [params.metaByIds = {}]
+ * @param {DenormalizedServiceTreeviewDependency} [params.parent]
+ * @param {string[]} [params.parentIds]
  * @returns {DenormalizedServiceTreeviewDependency[]}
  */
 export const dependenciesDenormalize = ({
@@ -123,8 +128,8 @@ export const dependenciesDenormalize = ({
   metaByIds = {},
   parent,
   parentIds = [],
-}) => ids
-  .map((id) => {
+}) =>
+  ids.map((id) => {
     const meta = metaByIds[id] || {};
     const dependency = dependenciesByIds[id] || {};
     const { children, ...denormalizedDependency } = dependency;

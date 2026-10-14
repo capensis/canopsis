@@ -1,15 +1,15 @@
 import { PAGINATION_LIMIT } from '@/config';
 import {
-  DENSE_TYPES,
   CSV_SEPARATORS,
   DEFAULT_PERIODIC_REFRESH,
+  DENSE_TYPES,
   EXPORT_CSV_DATETIME_FORMATS,
   SORT_ORDERS,
 } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-import { columnsParametersToForm } from '@/helpers/entities/widget/forms/alarm';
 import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { columnsParametersToForm } from '@/helpers/entities/widget/forms/alarm';
 
 /**
  * @typedef {Object} ExternalDataTableWidgetParameters
@@ -50,17 +50,18 @@ export const widgetSortToForm = (sort = {}) => ({
  */
 export const externalDataTableWidgetParametersToForm = parameters => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(
+    parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH,
+  ),
   table: parameters.table || '',
   sort: widgetSortToForm(parameters.sort),
-  widgetColumns:
-    widgetColumnsToForm(parameters.widgetColumns ?? []),
-  widgetExportColumns:
-    widgetColumnsToForm(parameters.widgetExportColumns ?? []),
+  widgetColumns: widgetColumnsToForm(parameters.widgetColumns ?? []),
+  widgetExportColumns: widgetColumnsToForm(parameters.widgetExportColumns ?? []),
   columns: columnsParametersToForm(parameters.columns),
   dense: parameters.dense ?? DENSE_TYPES.large,
   exportCsvSeparator: parameters.exportCsvSeparator ?? CSV_SEPARATORS.comma,
-  exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+  exportCsvDatetimeFormat:
+    parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
 });
 
 /**

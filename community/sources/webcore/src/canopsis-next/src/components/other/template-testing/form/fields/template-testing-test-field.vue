@@ -2,7 +2,7 @@
   <c-lazy-search-field
     :value="selectedItems?.[0]"
     :items="items"
-    :label="$tc('templateTesting.testName')"
+    :label="t('templateTesting.testName')"
     :loading="wholePending"
     :name="name"
     :has-more="hasMoreItems"
@@ -11,7 +11,7 @@
     item-text="name"
     item-value="_id"
     autocomplete
-    @input="changeSelectedItems"
+    @update:value="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
@@ -23,13 +23,10 @@ import { merge } from 'lodash';
 import { toRef } from 'vue';
 
 import { useLazySearch } from '@/hooks/form/lazy-search';
-import { useTemplateTest } from '@/hooks/store/modules/template-test';
+import { useI18n } from '@/hooks/i18n';
+import { useTemplateTesting } from '@/hooks/store/modules/template-testing';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Object,
@@ -52,12 +49,16 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const { fetchTemplateTestListWithoutStore } = useTemplateTest();
 
-    const fetchHandler = ({ params }) => fetchTemplateTestListWithoutStore({
-      params: merge(params, props.params, { rule: props.ruleId }),
-    });
+  emits: ['update:value', 'update:selected-items'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { fetchTemplateTestingTestsListWithoutStore } = useTemplateTesting();
+
+    const fetchHandler = ({ params }) => fetchTemplateTestingTestsListWithoutStore({
+        params: merge(params, { rule: props.ruleId }),
+      });
 
     const {
       selectedItems,
@@ -67,18 +68,21 @@ export default {
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,
-      removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      fetchHandler,
-      value: toRef(props, 'value'),
-      returnObject: toRef(props, 'returnObject'),
-      idParamsKey: 'ids',
-      idKey: '_id',
-      attachValue: true,
-    }, emit);
+    } = useLazySearch(
+      {
+        fetchHandler,
+        value: toRef(props, 'value'),
+        returnObject: toRef(props, 'returnObject'),
+        idParamsKey: 'ids',
+        idKey: '_id',
+        attachValue: true,
+      },
+      emit,
+    );
 
     return {
+      t,
       selectedItems,
       items,
       wholePending,
@@ -86,7 +90,6 @@ export default {
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,
-      removeItemFromSelectedItemsByIndex,
       updateSearch,
     };
   },

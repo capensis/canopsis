@@ -6,48 +6,42 @@
     :total-items="totalItems"
     :options="options"
     :select-all="removable"
+    class="pt-4"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
     <template #toolbar>
-      <v-flex xs2>
+      <div>
         <entity-info-property-type-field
           :value="options.type"
           :label="$t('common.filterByType')"
-          @input="updateType"
+          hide-details
+          @update:value="updateType"
         />
-      </v-flex>
+      </div>
     </template>
-    <template #mass-actions="{ selected }">
+
+    <template #mass-actions="{ selected, clearSelected }">
       <c-action-btn
         :tooltip="$t('common.bulkDelete')"
         icon="delete"
         type="delete"
-        @click="$emit('remove-selected', selected)"
+        small
+        @click="$emit('remove-selected', selected, clearSelected)"
       />
     </template>
+
     <template #type="{ item }">
       <span>{{ $t(ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS[item.type]) }}</span>
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item)"
-        />
-      </v-layout>
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item)" />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
@@ -65,6 +59,7 @@ export default {
   components: {
     EntityInfoPropertyTypeField,
   },
+
   props: {
     entityInfosProperties: {
       type: Array,
@@ -95,6 +90,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['edit', 'duplicate', 'remove', 'remove-selected', 'update:options'],
+
   setup(props, { emit }) {
     const { t } = useI18n();
 
@@ -126,7 +124,7 @@ export default {
     /**
      * Updates the type option in the options object and emits the change to the parent component
      *
-     * @param {string} type - The new type value to set in the options
+     * @param {number} type - The new type value to set in the options
      */
     const updateType = type => emit('update:options', { ...props.options, type });
 

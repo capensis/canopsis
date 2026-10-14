@@ -7,37 +7,34 @@
     :options="options"
     :is-disabled-item="isDisabledJob"
     :select-all="removable"
+    :hide-mass-actions="!active"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        remediation-job
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" job />
     </template>
+
     <template #actions="{ item, disabled }">
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="$emit('edit', item)"
-      />
-      <c-action-btn
-        v-if="duplicable"
-        type="duplicate"
-        @click="$emit('duplicate', item)"
-      />
-      <c-action-btn
-        v-if="removable"
-        :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')"
-        :disabled="disabled"
-        type="delete"
-        @click="$emit('remove', item)"
-      />
-      <c-db-export-btn :id="item._id" job />
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-db-export-btn :id="item._id" job />
+        <c-action-btn
+          v-if="removable"
+          :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')"
+          :disabled-button="disabled"
+          type="delete"
+          @click="$emit('remove', item)"
+        />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
@@ -73,7 +70,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
+
+  emits: ['update:options', 'refresh', 'remove', 'duplicate', 'edit'],
+
   computed: {
     headers() {
       return [
@@ -102,6 +106,7 @@ export default {
       ];
     },
   },
+
   methods: {
     isDisabledJob({ deletable }) {
       return !deletable;

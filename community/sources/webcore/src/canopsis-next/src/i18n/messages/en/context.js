@@ -17,6 +17,10 @@ export default {
       editEntity: 'Edit entity',
       duplicateEntity: 'Duplicate entity',
       deleteEntity: 'Delete entity',
+      pause: 'Pause',
+      unpause: 'Unpause',
+      inheritedPause: 'Pause is inherited',
+      inheritedPauses: 'Selected pauses are inherited and cannot be removed',
       pbehavior: 'Periodical behavior',
       variablesHelp: 'List of available variables',
       massEnable: 'Enable entities',
@@ -28,7 +32,8 @@ export default {
     addService: 'Add a new service entity',
   },
   popups: {
-    massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    massDeleteWarning:
+      'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
     exportFailed: 'Failed to export entities in CSV format',
   },
 };

@@ -1,40 +1,42 @@
 <template>
-  <v-layout class="gap-3">
-    <v-flex xs6>
-      <declare-ticket-rule-ticket-url-payload-text-field
-        v-if="form.template"
-        v-field="form.value"
-        :name="name"
-        :disabled="disabled"
-        :variables="variables"
-      />
-      <declare-ticket-rule-ticket-url-text-field
-        v-else
-        v-field="form.value"
-        :name="name"
-        :disabled="disabled"
-      />
-    </v-flex>
-    <c-enabled-field
-      v-field="form.template"
-      :label="$t('declareTicket.allowTicketURLTemplate')"
+  <c-layout gap="3" column>
+    <declare-ticket-rule-ticket-url-payload-text-field
+      v-if="form.template"
+      :value="form.value"
+      :name="name"
+      :disabled="disabled"
+      :variables="variables"
+      @update:value="updateField('value', $event)"
     />
-  </v-layout>
+    <declare-ticket-rule-ticket-url-text-field
+      v-else
+      :value="form.value"
+      :name="name"
+      :disabled="disabled"
+      @update:value="updateField('value', $event)"
+    />
+    <c-enabled-field
+      :model-value="form.template"
+      :label="$t('declareTicket.allowTicketURLTemplate')"
+      no-margin
+      @update:model-value="updateField('template', $event)"
+    />
+  </c-layout>
 </template>
 
 <script>
-import DeclareTicketRuleTicketUrlTextField from './declare-ticket-rule-ticket-url-text-field.vue';
+import { formMixin } from '@/mixins/form';
+
 import DeclareTicketRuleTicketUrlPayloadTextField from './declare-ticket-rule-ticket-url-payload-text-field.vue';
+import DeclareTicketRuleTicketUrlTextField from './declare-ticket-rule-ticket-url-text-field.vue';
 
 export default {
   components: {
     DeclareTicketRuleTicketUrlTextField,
     DeclareTicketRuleTicketUrlPayloadTextField,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
+  emits: ['update:form'],
   props: {
     form: {
       type: Object,

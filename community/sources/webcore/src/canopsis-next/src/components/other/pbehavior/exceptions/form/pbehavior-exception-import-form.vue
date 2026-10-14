@@ -1,78 +1,59 @@
 <template>
-  <v-layout column>
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
-    <c-pbehavior-type-field
-      v-field="form.type"
-      name="type"
-      required
-    />
-    <file-selector
-      class="mt-2"
-      name="file"
-      required
-      with-files-list
-      @change="changeFiles"
-    >
-      <template #activator="{ on, disabled }">
-        <v-tooltip top>
-          <template #activator="{ on: tooltipOn }">
-            <v-btn
-              :color="errors.has('file') ? 'error' : 'primary'"
+  <c-layout gap="3" column>
+    <c-name-field v-model="name" autofocus required />
+
+    <c-form-block>
+      <c-form-block-row :label="t('pbehavior.pbehaviorType')">
+        <c-pbehavior-type-field v-model="type" name="type" required />
+      </c-form-block-row>
+
+      <c-form-block-row :label="t('common.file')" align-center>
+        <file-selector
+          v-model="file"
+          name="file"
+          required
+          with-files-list
+          hide-details
+          @change="changeFile"
+        >
+          <template #activator="{ on, disabled, errors }">
+            <c-btn-with-error
+              :error="errors[0]"
               :disabled="disabled"
-              small
-              outlined
-              v-on="{ ...on, ...tooltipOn }"
+              variant="outlined"
+              v-on="on"
             >
-              <v-icon>cloud_upload</v-icon>
-            </v-btn>
+              {{ t('common.chooseFile') }}
+            </c-btn-with-error>
           </template>
-          <span>{{ $t('common.chooseFile') }}</span>
-        </v-tooltip>
-      </template>
-    </file-selector>
-  </v-layout>
+        </file-selector>
+      </c-form-block-row>
+    </c-form-block>
+  </c-layout>
 </template>
 
 <script>
-import { Validator } from 'vee-validate';
-
-import { formMixin } from '@/mixins/form';
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 export default {
-  inject: {
-    $validator: {
-      default: new Validator(),
-    },
-  },
   components: { FileSelector },
-  mixins: [
-    formMixin,
-    entitiesFieldPbehaviorFieldTypeMixin,
-  ],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  mounted() {
-    this.fetchFieldPbehaviorTypesList();
-  },
-  methods: {
-    changeFiles(files = []) {
-      this.updateField('file', files[0]);
-    },
+
+  setup() {
+    const { t } = useI18n();
+    const { name, type, file } = useFormModels(['name', 'type', 'file']);
+
+    const changeFile = selectedFile => file.value = selectedFile;
+
+    return {
+      t,
+      name,
+      type,
+      file,
+      changeFile,
+    };
   },
 };
 </script>

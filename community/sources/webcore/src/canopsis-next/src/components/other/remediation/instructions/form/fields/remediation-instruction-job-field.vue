@@ -1,69 +1,48 @@
 <template>
-  <v-layout column>
-    <v-layout align-center>
-      <v-flex
-        class="pr-2"
-        xs1
-      >
-        <c-draggable-step-number
-          :disabled="disabled"
-          :color="hasChildrenError ? 'error' : 'primary'"
-          drag-class="job-drag-handler"
-        >
-          {{ jobNumber }}
-        </c-draggable-step-number>
-      </v-flex>
-      <v-flex xs10>
-        <v-autocomplete
-          v-field="job.job"
-          v-validate="'required'"
-          :items="jobs"
-          :label="$tc('remediation.instruction.job')"
-          :error-messages="errors.collect(jobFieldName)"
-          :name="jobFieldName"
-          :disabled="disabled"
-          item-text="name"
-          item-value="_id"
-          return-object
-        />
-      </v-flex>
-      <v-flex xs1>
-        <v-layout justify-center>
-          <c-action-btn
-            v-if="!disabled"
-            type="delete"
-            @click="$emit('remove')"
+  <c-card-iterator-item
+    :item-number="jobNumber"
+    :disabled="disabled"
+    :removable="!disabled"
+    static-delete
+    @remove="$emit('remove')"
+  >
+    <template #header>
+      <v-row>
+        <v-col cols="12">
+          <c-autocomplete
+            :model-value="job.job"
+            :loading="loading"
+            :items="jobs"
+            :label="t('remediation.instruction.job')"
+            :name="`${name}.job`"
+            :disabled="disabled"
+            item-title="name"
+            item-value="_id"
+            return-object
+            required
+            @update:model-value="updateField('job', $event)"
           />
-        </v-layout>
-      </v-flex>
-    </v-layout>
-    <v-flex
-      offset-xs1
-      xs11
-    >
-      <c-workflow-field
-        v-field="job.stop_on_fail"
-        :disabled="disabled"
-        :label="$t('remediation.instruction.jobWorkflow')"
-        :continue-label="$t('remediation.instruction.remainingJob')"
-      />
-    </v-flex>
-  </v-layout>
+        </v-col>
+        <v-col cols="12">
+          <c-workflow-field
+          :model-value="job.stop_on_fail"
+          :name="`${name}.stop_on_fail`"
+            :disabled="disabled"
+            :label="t('remediation.instruction.jobWorkflow')"
+            :continue-label="t('remediation.instruction.remainingJob')"
+            @update:model-value="updateField('stop_on_fail', $event)"
+          />
+        </v-col>
+      </v-row>
+    </template>
+  </c-card-iterator-item>
 </template>
 
 <script>
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  mixins: [
-    formMixin,
-    validationChildrenMixin,
-  ],
-  model: {
-    prop: 'job',
-    event: 'input',
-  },
   props: {
     job: {
       type: Object,
@@ -85,11 +64,20 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    jobFieldName() {
-      return `${this.name}.job`;
+    loading: {
+      type: Boolean,
+      default: false,
     },
+  },
+  emits: ['update:job', 'remove'],
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
+
+    return {
+      t,
+      updateField,
+    };
   },
 };
 </script>

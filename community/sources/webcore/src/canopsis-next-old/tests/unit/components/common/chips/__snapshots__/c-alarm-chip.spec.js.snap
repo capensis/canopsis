@@ -1,0 +1,495 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      stealthy
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        3
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip state-ok"
+    >
+      ok
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px); display: none;"
+        >
+          <span
+            class="px-1"
+          >
+        0
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: critical 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip state-critical"
+    >
+      critical
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        23
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: major 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip state-major"
+    >
+      major
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        22
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: minor 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip state-minor"
+    >
+      minor
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        21
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ok 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip state-ok"
+    >
+      ok
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        20
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      cancelled
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        14
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      closed
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        10
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      flapping
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        13
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      no events
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        15
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      ongoing
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        11
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      stealthy
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        12
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: unknown 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap theme--light"
+  >
+    <span
+      class="chip"
+    >
+      unknown
+    </span>
+    <span
+      class="v-badge__wrapper"
+    >
+      <transition-stub
+        name="scale-rotate-transition"
+      >
+        <span
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
+        >
+          <span
+            class="px-1"
+          >
+        16
+          </span>
+        </span>
+      </transition-stub>
+    </span>
+  </span>
+</div>
+`;

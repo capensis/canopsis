@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-information-block-row
       :label="$t('testSuite.xmlFeed')"
       :value="testSuite.xml_feed"
@@ -13,13 +13,15 @@
       :value="testSuite.hostname"
     />
     <c-information-block-row :label="$t('testSuite.lastUpdate')">
-      {{ testSuite.last_update | date('testSuiteFormat') }}
+      {{ convertDateToString(testSuite.last_update, 'testSuiteFormat') }}
     </c-information-block-row>
     <c-information-block-row :label="$t('common.timeTaken')">
-      <span v-if="testSuite.time">{{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}</span>
+      <span v-if="testSuite.time">
+        {{ convertNumberToFixedString(testSuite.time) }}{{ $constants.TIME_UNITS.second }}
+      </span>
     </c-information-block-row>
-    <v-layout class="mt-4">
-      <v-layout column>
+    <v-row class="mt-4">
+      <c-layout column>
         <c-information-block-row
           :label="$t('testSuite.totalTests')"
           :value="testSuite.total"
@@ -44,18 +46,20 @@
           :total="testSuite.total"
           :count="testSuite.skipped"
         />
-      </v-layout>
-      <v-flex xs4>
+      </c-layout>
+      <v-col cols="4">
         <test-suite-status-pie-chart :statuses="testSuiteStatuses" />
-      </v-flex>
-    </v-layout>
-  </v-layout>
+      </v-col>
+    </v-row>
+  </c-layout>
 </template>
 
 <script>
-import TestSuiteSummaryStatusRow from './test-suite-summary-status-row.vue';
+import { convertDateToString } from '@/helpers/date/date';
+import { convertNumberToFixedString } from '@/helpers/string';
 
-const TestSuiteStatusPieChart = () => import(/* webpackChunkName: "Charts" */ './test-suite-status-pie-chart.vue');
+import TestSuiteStatusPieChart from './test-suite-status-pie-chart.vue';
+import TestSuiteSummaryStatusRow from './test-suite-summary-status-row.vue';
 
 export default {
   components: {
@@ -85,6 +89,10 @@ export default {
         passed: this.passed,
       };
     },
+  },
+  methods: {
+    convertDateToString,
+    convertNumberToFixedString,
   },
 };
 </script>

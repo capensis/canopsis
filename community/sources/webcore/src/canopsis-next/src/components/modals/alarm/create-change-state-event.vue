@@ -1,94 +1,95 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createChangeStateEvent.title') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createChangeStateEvent.title') }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <alarm-general-table
           v-if="config.items"
           :items="config.items"
           class="mb-4"
         />
         <c-change-state-field
-          v-model="form"
-          :label="$t('modals.createChangeStateEvent.fields.output')"
+          v-model="values"
+          :label="t('modals.createChangeStateEvent.fields.output')"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, ALARM_STATES } from '@/constants';
+import { ALARM_STATES, MODALS } from '@/constants';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create a 'change-state' event
  */
 export default {
   name: MODALS.createChangeStateEvent,
-  $_veeValidate: {
-    validator: 'new',
-  },
-  components: { AlarmGeneralTable, ModalWrapper },
+
+  components: { AlarmGeneralTable },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
+    const { t } = useI18n();
     const { config, close } = useInnerModal(props);
+    const items = computed(() => config.value.items ?? []);
+    const [firstItem] = items.value;
 
-    const { items } = props.modal.config;
-    const [firstItem] = items ?? [];
-
-    const form = ref({
-      comment: '',
-      state: firstItem && items.length === 1 ? firstItem.v.state.val : ALARM_STATES.major,
-    });
-
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(form.value);
-        close();
+    const form = useForm({
+      initialValues: {
+        comment: '',
+        state: firstItem && items.value.length === 1 ? firstItem.v.state.val : ALARM_STATES.major,
       },
     });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(values.value);
+      close();
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close,
+    });
 
     return {
+      t,
       config,
-      form,
-      isDisabled,
+      values,
       submitting,
       submit,
       close,

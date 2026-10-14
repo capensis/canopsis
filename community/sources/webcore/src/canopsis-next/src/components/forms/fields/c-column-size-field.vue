@@ -1,13 +1,13 @@
 <template>
-  <v-radio-group
-    v-field="value"
+  <c-radio-group
+    :model-value="modelValue"
     :class="{ 'c-column-size-field--mobile': mobile }"
     :name="name"
     class="c-column-size-field"
     color="primary"
     hide-details
-    mandatory
-    row
+    inline
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-radio
       v-for="item in availableItems"
@@ -15,35 +15,30 @@
       :value="item.value"
       color="primary"
     >
-      <template #label="">
-        <v-img
-          :src="item.src"
-          class="my-2"
-        />
+      <template #label>
+        <v-img :src="item.src" class="my-2" />
       </template>
     </v-radio>
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import oneColumnMobileSrc from '@/assets/images/column-mobile-1.svg';
-import twoColumnMobileSrc from '@/assets/images/column-mobile-2.svg';
-import oneColumnTabletSrc from '@/assets/images/column-tablet-1.svg';
-import twoColumnTabletSrc from '@/assets/images/column-tablet-2.svg';
-import threeColumnTabletSrc from '@/assets/images/column-tablet-3.svg';
-import fourColumnTabletSrc from '@/assets/images/column-tablet-4.svg';
 import oneColumnDesktopSrc from '@/assets/images/column-desktop-1.svg';
 import twoColumnDesktopSrc from '@/assets/images/column-desktop-2.svg';
 import threeColumnDesktopSrc from '@/assets/images/column-desktop-3.svg';
 import fourColumnDesktopSrc from '@/assets/images/column-desktop-4.svg';
 import sixColumnDesktopSrc from '@/assets/images/column-desktop-6.svg';
 import twelveColumnDesktopSrc from '@/assets/images/column-desktop-12.svg';
+import oneColumnMobileSrc from '@/assets/images/column-mobile-1.svg';
+import twoColumnMobileSrc from '@/assets/images/column-mobile-2.svg';
+import oneColumnTabletSrc from '@/assets/images/column-tablet-1.svg';
+import twoColumnTabletSrc from '@/assets/images/column-tablet-2.svg';
+import threeColumnTabletSrc from '@/assets/images/column-tablet-3.svg';
+import fourColumnTabletSrc from '@/assets/images/column-tablet-4.svg';
 
 export default {
   props: {
-    value: {
+    modelValue: {
       type: Number,
       required: false,
     },
@@ -60,43 +55,36 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const mobileItems = computed(() => [
-      { value: 1, src: oneColumnMobileSrc },
-      { value: 2, src: twoColumnMobileSrc },
-    ]);
 
-    const tabletItems = computed(() => [
-      { value: 1, src: oneColumnTabletSrc },
-      { value: 2, src: twoColumnTabletSrc },
-      { value: 3, src: threeColumnTabletSrc },
-      { value: 4, src: fourColumnTabletSrc },
-    ]);
+  emits: ['update:modelValue'],
 
-    const desktopItems = computed(() => [
-      { value: 1, src: oneColumnDesktopSrc },
-      { value: 2, src: twoColumnDesktopSrc },
-      { value: 3, src: threeColumnDesktopSrc },
-      { value: 4, src: fourColumnDesktopSrc },
-      { value: 6, src: sixColumnDesktopSrc },
-      { value: 12, src: twelveColumnDesktopSrc },
-    ]);
-
-    const availableItems = computed(() => {
-      if (props.mobile) {
-        return mobileItems.value;
+  computed: {
+    availableItems() {
+      if (this.mobile) {
+        return [
+          { value: 1, src: oneColumnMobileSrc },
+          { value: 2, src: twoColumnMobileSrc },
+        ];
       }
 
-      if (props.tablet) {
-        return tabletItems.value;
+      if (this.tablet) {
+        return [
+          { value: 1, src: oneColumnTabletSrc },
+          { value: 2, src: twoColumnTabletSrc },
+          { value: 3, src: threeColumnTabletSrc },
+          { value: 4, src: fourColumnTabletSrc },
+        ];
       }
 
-      return desktopItems.value;
-    });
-
-    return {
-      availableItems,
-    };
+      return [
+        { value: 1, src: oneColumnDesktopSrc },
+        { value: 2, src: twoColumnDesktopSrc },
+        { value: 3, src: threeColumnDesktopSrc },
+        { value: 4, src: fourColumnDesktopSrc },
+        { value: 6, src: sixColumnDesktopSrc },
+        { value: 12, src: twelveColumnDesktopSrc },
+      ];
+    },
   },
 };
 </script>
@@ -107,10 +95,10 @@ export default {
     width: 100%;
   }
 
-  .v-radio {
+  .v-selection-control {
     flex-direction: column;
     width: 50%;
-    margin-right: unset !important;
+    margin-right: 0 !important;
   }
 
   .v-label {

@@ -1,0 +1,328 @@
+import Faker from 'faker';
+import { merge } from 'lodash';
+
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createAuthModule, createLlmModule, createMockedStoreModules, createUserModule } from '@unit/utils/store';
+import { mockModals, mockPopups, mockSidebar } from '@unit/utils/mock-hooks';
+import { createModalWrapperStub } from '@unit/stubs/modal';
+import { createButtonStub } from '@unit/stubs/button';
+import { createFormStub } from '@unit/stubs/form';
+
+import ClickOutside from '@/services/click-outside';
+
+import CreatePbehavior from '@/components/modals/pbehavior/create-pbehavior.vue';
+
+const stubs = {
+  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pattern-progress': true,
+  'pbehavior-form': true,
+  'pbehavior-general-form': true,
+  'c-enabled-field': true,
+  'v-layout': true,
+  'v-btn': createButtonStub('v-btn'),
+  'v-form': createFormStub('v-form'),
+};
+
+const snapshotStubs = {
+  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'pbehavior-form': true,
+  'pbehavior-general-form': true,
+  'c-enabled-field': true,
+  'v-layout': true,
+};
+
+const selectButtons = wrapper => wrapper.findAll('button.v-btn');
+const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
+const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
+const selectPbehaviorForm = wrapper => wrapper.find('pbehavior-form-stub');
+
+const withModalInject = (options = {}) => {
+  const rawModal = options.propsData?.modal ?? { config: {} };
+  const modal = rawModal.id ? rawModal : { id: 'test-modal-id', ...rawModal };
+
+  return merge({}, options, {
+    propsData: {
+      ...options.propsData,
+      modal,
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $modal: modal,
+      },
+    },
+  });
+};
+
+describe('create-pbehavior', () => {
+  const $modals = {
+    ...mockModals(),
+    updateModalConfig: jest.fn(),
+    updateDialogProps: jest.fn(),
+  };
+  const $popups = mockPopups();
+  const $sidebar = mockSidebar();
+  const defaultPbehavior = {
+    _id: expect.any(String),
+    name: '',
+    color: '',
+    comments: [],
+    enabled: true,
+    inherited: false,
+    entity_pattern: [],
+    exceptions: [],
+    exdates: [],
+    reason: undefined,
+    type: undefined,
+    rrule: '',
+    tstart: null,
+    tstop: null,
+    timezone: 'Europe/Paris',
+  };
+
+  const defaultPbehaviorRequest = {
+    ...defaultPbehavior,
+    exec_pattern: true,
+  };
+
+  const { authModule } = createAuthModule();
+  const { userModule } = createUserModule();
+  const { llmModule } = createLlmModule();
+  const store = createMockedStoreModules([authModule, userModule, llmModule]);
+
+  const shallowCreatePbehavior = generateShallowRenderer(CreatePbehavior, {
+    stubs,
+    store,
+    attachTo: document.body,
+    mocks: { $modals, $popups, $sidebar },
+  });
+  const factory = (options = {}) => shallowCreatePbehavior(withModalInject(options));
+
+  const renderCreatePbehavior = generateRenderer(CreatePbehavior, {
+    stubs: snapshotStubs,
+    store,
+    mocks: { $modals, $popups, $sidebar },
+  });
+  const snapshotFactory = (options = {}) => renderCreatePbehavior(withModalInject(options));
+
+  test('Form submitted after trigger submit button', async () => {
+    const action = jest.fn();
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+          },
+        },
+      },
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledWith(defaultPbehaviorRequest);
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
+  });
+
+  test('Form didn\'t submitted after trigger submit button with error', async () => {
+    const action = jest.fn();
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+          },
+        },
+      },
+    });
+
+    const pbehaviorForm = selectPbehaviorForm(wrapper);
+
+    const validator = wrapper.getValidator();
+
+    validator.attach({
+      name: 'name',
+      rules: 'required:true',
+      getter: () => false,
+      context: () => pbehaviorForm.vm,
+      vm: pbehaviorForm.vm,
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect(action).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalled();
+  });
+
+  test('Form submitted after trigger submit button without action', async () => {
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {},
+        },
+      },
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
+  });
+
+  test('Errors added after trigger submit button with action errors', async () => {
+    const formErrors = {
+      name: 'Name error',
+      rrule: 'Rrule error',
+      tstart: 'Tstart error',
+    };
+    const action = jest.fn().mockRejectedValue({ ...formErrors, unavailableField: 'Error' });
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+          },
+        },
+      },
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    const addedErrors = wrapper.getValidatorErrorsObject();
+
+    expect(formErrors).toEqual(addedErrors);
+    expect(action).toHaveBeenCalledWith(defaultPbehaviorRequest);
+    expect($modals.hide).not.toHaveBeenCalled();
+  });
+
+  test('Error popup showed after trigger submit button with action errors', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error')
+      .mockImplementation();
+    const errors = {
+      unavailableField: 'Error',
+      anotherUnavailableField: 'Second error',
+    };
+    const action = jest.fn().mockRejectedValue(errors);
+    const customPbehavior = {
+      name: Faker.datatype.string(),
+      _id: Faker.datatype.string(),
+      entity_pattern: [],
+    };
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            pbehavior: customPbehavior,
+            action,
+          },
+        },
+      },
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
+      text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
+    });
+    expect(action).toHaveBeenCalledWith({
+      ...defaultPbehaviorRequest,
+      entity_pattern: customPbehavior.entity_pattern,
+      name: customPbehavior.name,
+      _id: customPbehavior._id,
+    });
+    expect($modals.hide).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockClear();
+  });
+
+  test('Modal submitted with correct data after trigger form', async () => {
+    const action = jest.fn();
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+          },
+        },
+      },
+    });
+
+    const newForm = {
+      name: Faker.datatype.string(),
+      _id: Faker.datatype.string(),
+      color: Faker.internet.color(),
+      entity_pattern: [],
+      rrule: null,
+      timezone: 'Europe/Paris',
+    };
+
+    selectPbehaviorForm(wrapper).triggerCustomEvent('input', { ...defaultPbehavior, ...newForm });
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledWith({
+      ...defaultPbehaviorRequest,
+      ...newForm,
+    });
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
+  });
+
+  test('Modal hidden after trigger cancel button', async () => {
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {},
+        },
+      },
+    });
+
+    selectCancelButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect($modals.hide).toHaveBeenCalledWith(wrapper.props().modal);
+  });
+
+  test('Renders `create-pbehavior` with empty modal', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        modal: {
+          config: {},
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `create-pbehavior` with pbehavior', () => {
+    const pbehavior = {
+      name: 'Pbehavior name',
+      rrule: 'FREQ=DAILY',
+      entity_pattern: [],
+    };
+    const wrapper = snapshotFactory({
+      propsData: {
+        modal: {
+          config: {
+            pbehavior,
+            title: 'Custom create pbehavior title',
+            noPattern: true,
+          },
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+});

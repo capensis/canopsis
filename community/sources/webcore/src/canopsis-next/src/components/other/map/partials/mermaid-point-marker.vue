@@ -1,13 +1,18 @@
 <template>
   <point-icon
+    v-bind="$attrs"
     :class="{ 'mermaid-point--centered': isFullEntity }"
     :style="{ top: `${y}px`, left: `${x}px` }"
     :entity="entity"
     :size="size"
     :color-indicator="colorIndicator"
     :pbehavior-enabled="pbehaviorEnabled"
+    :pause-enabled="pauseEnabled"
     class="mermaid-point"
-    v-on="$listeners"
+    @click="$emit('click', $event)"
+    @contextmenu="$emit('contextmenu', $event)"
+    @dblclick="$emit('dblclick', $event)"
+    @mousedown="$emit('mousedown', $event)"
   />
 </template>
 
@@ -18,6 +23,9 @@ import PointIcon from './point-icon.vue';
 
 export default {
   components: { PointIcon },
+  inheritAttrs: false,
+  emits: ['click', 'contextmenu', 'dblclick', 'mousedown'],
+
   props: {
     x: {
       type: Number,
@@ -43,7 +51,12 @@ export default {
       type: Boolean,
       required: false,
     },
+    pauseEnabled: {
+      type: Boolean,
+      required: false,
+    },
   },
+
   computed: {
     isFullEntity() {
       return isNumber(this.entity?.state);

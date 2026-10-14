@@ -1,158 +1,62 @@
 <template>
-  <v-stepper
-    v-model="stepper"
-    non-linear
-  >
-    <v-stepper-header>
-      <v-stepper-step
-        :complete="stepper > DYNAMIC_INFO_FORM_STEPS.general"
-        :step="DYNAMIC_INFO_FORM_STEPS.general"
-        :rules="[() => !hasGeneralFormAnyError]"
-        class="py-0"
-        editable
-      >
-        {{ $t('common.general') }}
-        <small v-if="hasGeneralFormAnyError">{{ $t('errors.invalid') }}</small>
-      </v-stepper-step>
-      <v-divider />
-      <v-stepper-step
-        :complete="stepper > DYNAMIC_INFO_FORM_STEPS.infos"
-        :step="DYNAMIC_INFO_FORM_STEPS.infos"
-        :rules="[() => !hasInfosFormAnyError]"
-        class="py-0"
-        editable
-      >
-        {{ $t('modals.createDynamicInfo.steps.infos.title') }}
-        <small v-if="hasInfosFormAnyError">{{ $t('errors.invalid') }}</small>
-      </v-stepper-step>
-      <v-divider />
-      <v-stepper-step
-        :complete="stepper > DYNAMIC_INFO_FORM_STEPS.patterns"
-        :step="DYNAMIC_INFO_FORM_STEPS.patterns"
-        :rules="[() => !hasPatternsFormAnyError]"
-        class="py-0"
-        editable
-      >
-        {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
-        <small v-if="hasPatternsFormAnyError">{{ $t('errors.invalid') }}</small>
-      </v-stepper-step>
-    </v-stepper-header>
-    <v-stepper-items>
-      <v-stepper-content
-        :step="DYNAMIC_INFO_FORM_STEPS.general"
-        class="pa-0"
-      >
+  <c-layout gap="2" column>
+    <c-enabled-field v-model="enabledField" :label="$t('common.enabled')" with-background />
+
+    <c-form-general-patterns-tabs
+      :form="formValues"
+      :rule-id="ruleId"
+      :type="type"
+    >
+      <template #general="{ setRef, templateVars, copyVars }">
         <dynamic-info-general-form
-          v-field="form"
-          ref="generalFormElement"
+          :ref="setRef"
           :is-disabled-id-field="isDisabledIdField"
-          class="pa-4"
+          :template-vars="templateVars"
+          :copy-vars="copyVars"
         />
-      </v-stepper-content>
-      <v-stepper-content
-        :step="DYNAMIC_INFO_FORM_STEPS.infos"
-        class="pa-0"
-      >
-        <dynamic-info-infos-form
-          v-field="form.infos"
-          ref="infosFormElement"
-          :variables="templateVars.value"
-          :copy-variables="copyVars.value"
-          class="pa-4"
-        />
-      </v-stepper-content>
-      <v-stepper-content
-        :step="DYNAMIC_INFO_FORM_STEPS.patterns"
-        class="pa-0"
-      >
-        <dynamic-info-patterns-form
-          v-field="form.patterns"
-          ref="patternsFormElement"
-          class="pa-4"
-        />
-      </v-stepper-content>
-    </v-stepper-items>
-  </v-stepper>
+      </template>
+
+      <template #patterns="{ setRef }">
+        <dynamic-info-patterns-form :ref="setRef" />
+      </template>
+    </c-form-general-patterns-tabs>
+  </c-layout>
 </template>
 
 <script>
-import { inject, ref, watch } from 'vue';
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
-import { useAiChatExpand } from '@/hooks/ai/ai-chat-form';
+import { useFormContext } from '@/hooks/form';
 
-import DynamicInfoGeneralForm from './fields/dynamic-info-general-form.vue';
-import DynamicInfoInfosForm from './fields/dynamic-info-infos-form.vue';
-import DynamicInfoPatternsForm from './fields/dynamic-info-patterns-form.vue';
-
-const DYNAMIC_INFO_FORM_STEPS = {
-  general: 1,
-  infos: 2,
-  patterns: 3,
-};
+import DynamicInfoGeneralForm from './dynamic-info-general-form.vue';
+import DynamicInfoPatternsForm from './dynamic-info-patterns-form.vue';
 
 export default {
   components: {
     DynamicInfoGeneralForm,
-    DynamicInfoInfosForm,
     DynamicInfoPatternsForm,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
-    form: {
-      type: Object,
-      required: true,
+    ruleId: {
+      type: String,
+      default: undefined,
     },
     isDisabledIdField: {
       type: Boolean,
       default: false,
     },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
-    },
-    copyVars: {
-      type: Object,
-      default: () => ({}),
-    },
   },
+
   setup() {
-    inject('$validator');
-
-    const stepper = ref(1);
-    const hasGeneralFormAnyError = ref(false);
-    const hasInfosFormAnyError = ref(false);
-    const hasPatternsFormAnyError = ref(false);
-
-    const generalFormElement = ref(null);
-    const infosFormElement = ref(null);
-    const patternsFormElement = ref(null);
-
-    useAiChatExpand({ activeTab: stepper, neededTab: DYNAMIC_INFO_FORM_STEPS.patterns });
-
-    watch(() => generalFormElement.value?.hasAnyError, (value) => {
-      hasGeneralFormAnyError.value = value ?? false;
-    });
-
-    watch(() => infosFormElement.value?.hasAnyError, (value) => {
-      hasInfosFormAnyError.value = value ?? false;
-    });
-
-    watch(() => patternsFormElement.value?.hasAnyError, (value) => {
-      hasPatternsFormAnyError.value = value ?? false;
-    });
+    const form = useFormContext();
+    const enabledField = form.model('enabled');
+    const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
 
     return {
-      DYNAMIC_INFO_FORM_STEPS,
-      stepper,
-      hasGeneralFormAnyError,
-      hasInfosFormAnyError,
-      hasPatternsFormAnyError,
-      generalFormElement,
-      infosFormElement,
-      patternsFormElement,
+      formValues: form.values,
+      enabledField,
+      type,
     };
   },
 };

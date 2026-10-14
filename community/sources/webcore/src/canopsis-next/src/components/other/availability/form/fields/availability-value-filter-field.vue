@@ -1,33 +1,34 @@
 <template>
-  <v-layout class="availability-value-filter-field gap-3" d-inline-flex align-end>
+  <c-layout class="availability-value-filter-field" gap="3" align="end">
     <availability-value-filter-method-field
       v-model="method"
       class="availability-value-filter-field__method"
     />
     <template v-if="method">
-      <c-percents-field
+      <c-number-field
         v-if="isPercentType"
-        v-field="value.value"
+        :value="modelValue.value"
         class="availability-value-filter-field__value"
+        prefix="%"
         hide-details
+        @update:value="updateField('value', $event)"
       />
       <c-splitted-duration-field
         v-else
-        v-field="value.value"
+        :model-value="modelValue.value"
         :max-value="maxSeconds"
         class="availability-value-filter-field__value"
-        hide-details
+        @update:model-value="updateField('value', $event)"
       />
       <c-action-btn
         :tooltip="$t('common.clear')"
         type="delete"
         icon="clear"
-        color="white"
         small
         @click="clearValue"
       />
     </template>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -41,8 +42,9 @@ import AvailabilityValueFilterMethodField from './availability-value-filter-meth
 
 export default {
   components: { AvailabilityValueFilterMethodField },
+
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: false,
     },
@@ -55,18 +57,21 @@ export default {
       required: false,
     },
   },
+
+  emits: ['update:modelValue'],
+
   setup(props, { emit }) {
-    const { updateModel } = useModelField(props, emit);
+    const { updateModel, updateField } = useModelField(props, emit);
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
 
     const method = computed({
       get() {
-        return props.value?.method;
+        return props.modelValue?.method;
       },
       set(newMethod) {
         updateModel({
-          ...props.value,
-          value: props.value?.value ?? 0,
+          ...props.modelValue,
+          value: props.modelValue?.value ?? 0,
           method: newMethod,
         });
       },
@@ -76,8 +81,8 @@ export default {
 
     return {
       method,
-
       isPercentType,
+      updateField,
       clearValue,
     };
   },

@@ -5,7 +5,7 @@
         ref="networkGraph"
         :options="options"
         :node-html-label-options="nodeHtmlLabelsOptions"
-        class="fill-height black--text"
+        class="fill-height text-black"
         ctrl-wheel-zoom
       />
     </c-zoom-overlay>
@@ -15,7 +15,7 @@
       icon-class="map-preview__help-icon"
       color="secondary"
       icon="help"
-      top
+      location="top"
     />
   </div>
 </template>
@@ -25,25 +25,32 @@ import { omit } from 'lodash';
 
 import { COLORS, PAGINATION_LIMIT } from '@/config';
 import {
-  MODALS,
-  TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
-  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
-  TREE_OF_DEPENDENCIES_TYPES,
   ENTITY_TYPES,
+  MODALS,
+  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+  TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
+  TREE_OF_DEPENDENCIES_TYPES,
 } from '@/constants';
 
+import { getShowAllEdgeId, getShowAllNodeId } from '@/helpers/cytoscape/elements';
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
-import { getShowAllNodeId, getShowAllEdgeId } from '@/helpers/cytoscape/elements';
+import {
+  getMapEntityText,
+  normalizeTreeOfDependenciesMapEntities,
+} from '@/helpers/entities/map/list';
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
-import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
-  components: { NetworkGraph },
+  components: {
+    NetworkGraph,
+  },
   mixins: [entitiesEntityDependenciesMixin],
+
   props: {
     map: {
       type: Object,
@@ -57,20 +64,29 @@ export default {
       type: Array,
       default: () => [],
     },
+    pauseEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   data() {
     return {
       entitiesById: normalizeTreeOfDependenciesMapEntities(this.map.parameters?.entities),
     };
   },
+
   computed: {
     impact() {
       return this.map.parameters?.type === TREE_OF_DEPENDENCIES_TYPES.impactChain;
     },
 
     rootEntities() {
-      return Object.values(this.entitiesById)
-        .filter(entity => entity.dependencies);
+      return Object.values(this.entitiesById).filter(entity => entity.dependencies);
     },
 
     cytoscapeClusters() {
@@ -82,17 +98,15 @@ export default {
 
     entitiesElements() {
       return this.rootEntities.reduce((acc, { entity, dependencies = [] }) => {
-        acc.push(
-          {
-            group: 'nodes',
-            data: {
-              id: entity._id,
-              entity,
-              root: true,
-              dependenciesCount: dependencies.length,
-            },
+        acc.push({
+          group: 'nodes',
+          data: {
+            id: entity._id,
+            entity,
+            root: true,
+            dependenciesCount: dependencies.length,
           },
-        );
+        });
 
         dependencies.forEach((childId) => {
           const child = this.entitiesById[childId];
@@ -164,20 +178,30 @@ export default {
         el.classList.add(
           'v-icon',
           'material-icons',
-          'theme--light',
-          'white--text',
+          'text-white',
           'tree-of-dependencies__node-icon',
         );
 
-        el.innerHTML = entity.type === ENTITY_TYPES.service
-          ? 'engineering'
-          : 'person';
+        const pbehaviorInfo = entity.pbehavior_info;
+        const hasPbehavior = this.pbehaviorEnabled &&
+          isNotActivePbehaviorType(pbehaviorInfo?.canonical_type);
+
+        if (this.pauseEnabled && entity.pause) {
+          el.innerHTML = 'pause';
+        } else if (hasPbehavior) {
+          el.innerHTML = pbehaviorInfo.icon_name || 'pause';
+        } else {
+          el.innerHTML = entity.type === ENTITY_TYPES.service ? 'engineering' : 'person';
+        }
 
         return el;
       };
 
       const getProgressEl = () => {
-        const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const progressContentCircleEl = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'circle',
+        );
         progressContentCircleEl.classList.add('v-progress-circular__overlay');
         progressContentCircleEl.setAttribute('fill', 'transparent');
         progressContentCircleEl.setAttribute('cx', '45.714285714285715');
@@ -188,7 +212,10 @@ export default {
         progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
 
         const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
+        progressContentEl.setAttribute(
+          'viewBox',
+          '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715',
+        );
         progressContentEl.appendChild(progressContentCircleEl);
 
         const progressEl = document.createElement('div');
@@ -197,7 +224,7 @@ export default {
           'v-progress-circular',
           'v-progress-circular--indeterminate',
           'v-progress-circular--visible',
-          'white--text',
+          'text-white',
           'position-relative',
         );
 
@@ -209,8 +236,7 @@ export default {
         badgeIconEl.classList.add(
           'v-icon',
           'material-icons',
-          'theme--light',
-          'white--text',
+          'text-white',
           'tree-of-dependencies__fetch-dependencies',
         );
         badgeIconEl.textContent = opened ? 'remove' : 'add';
@@ -226,8 +252,7 @@ export default {
           'd-inline-flex',
           'justify-center',
           'align-center',
-          'grey',
-          'darken-1',
+          'bg-grey-darken-1',
           'cursor-pointer',
           'pa-0',
         );
@@ -242,12 +267,13 @@ export default {
         const nodeLabelEl = document.createElement('div');
         nodeLabelEl.classList.add('position-absolute');
         nodeLabelEl.style.top = `${nodeSize}px`;
+        nodeLabelEl.style.color = '#000000';
         nodeLabelEl.textContent = getMapEntityText(entity);
 
         const nodeEl = document.createElement('div');
         nodeEl.appendChild(getIconEl(entity));
         nodeEl.appendChild(nodeLabelEl);
-        nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
+        nodeEl.classList.add('v-btn__content', 'position-relative', 'rounded-circle');
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
         nodeEl.style.justifyContent = 'center';
@@ -273,10 +299,12 @@ export default {
         const btnEl = document.createElement('button');
         btnEl.classList.add(
           'v-btn',
-          'v-btn--round',
-          'theme--light',
+          'v-btn--rounded',
+          'bg-grey-lighten-3',
           'tree-of-dependencies__show-all-btn',
         );
+        btnEl.dataset.id = entity._id;
+        btnEl.type = 'button';
         btnEl.appendChild(btnContentEl);
 
         return btnEl.outerHTML;
@@ -317,6 +345,7 @@ export default {
       return options;
     },
   },
+
   watch: {
     map(map) {
       this.entitiesById = normalizeTreeOfDependenciesMapEntities(map.parameters?.entities);
@@ -327,12 +356,15 @@ export default {
       setTimeout(() => this.resetLayout(), 1000);
     },
   },
+
   mounted() {
     this.$refs.networkGraph.$cy.on('tap', this.tapHandler);
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
   },
+
   methods: {
     hasDependencies(entity) {
       return !!entity[this.countProperty];
@@ -356,11 +388,13 @@ export default {
       }
 
       try {
-        this.$refs.networkGraph.$cy.layout({
-          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+        this.$refs.networkGraph.$cy
+          .layout({
+            ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
 
-          clusters: this.cytoscapeClusters,
-        }).run();
+            clusters: this.cytoscapeClusters,
+          })
+          .run();
       } catch (err) {
         console.warn(err);
       }
@@ -448,20 +482,26 @@ export default {
       nodesForRemoveSelectors.push(`node[id = "${getShowAllNodeId(sourceId)}"]`);
 
       const nodesForRemoveJoinedSelector = nodesForRemoveSelectors.join(',');
-      const openedNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
+      const openedNodesForRemove = this.$refs.networkGraph.$cy
+        .elements(nodesForRemoveJoinedSelector)
         .filter(node => node.data().opened);
 
       if (openedNodesForRemove.length) {
         openedNodesForRemove.forEach(node => this.hideDependencies(node));
       }
 
-      const filteredNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
+      const filteredNodesForRemove = this.$refs.networkGraph.$cy
+        .elements(nodesForRemoveJoinedSelector)
         .filter(node => node.connectedEdges().size() === 1);
 
-      const edgesForRemoveSelectors = elementsIds.map(id => `edge[source = "${sourceId}"][target = "${id}"]`);
+      const edgesForRemoveSelectors = elementsIds.map(
+        id => `edge[source = "${sourceId}"][target = "${id}"]`,
+      );
       edgesForRemoveSelectors.push(`node[id = "${getShowAllEdgeId(sourceId)}"]`);
 
-      const edgesForRemove = this.$refs.networkGraph.$cy.elements(edgesForRemoveSelectors.join(','));
+      const edgesForRemove = this.$refs.networkGraph.$cy.elements(
+        edgesForRemoveSelectors.join(','),
+      );
 
       filteredNodesForRemove.remove();
       edgesForRemove.remove();
@@ -508,12 +548,12 @@ export default {
           };
         }
 
-        this.$set(this.entitiesById, item._id, newEntityItem);
+        this.entitiesById[item._id] = newEntityItem;
 
         return item._id;
       });
 
-      this.$set(this.entitiesById[id], 'dependencies', ids);
+      this.entitiesById[id].dependencies = ids;
 
       this.addDependenciesElements(data, entity);
     },
@@ -522,7 +562,6 @@ export default {
      * Hide dependencies for node
      *
      * @param {Object} target
-     * @returns {void}
      */
     hideDependencies(target) {
       const { id, opened } = target.data();
@@ -540,7 +579,7 @@ export default {
         opened: false,
       });
 
-      this.$delete(this.entitiesById[id], 'dependencies');
+      delete this.entitiesById[id].dependencies;
     },
 
     /**
@@ -604,6 +643,20 @@ export default {
         }
       }
 
+      const showAllButton = originalEvent.target.closest?.(
+        '.tree-of-dependencies__show-all-btn',
+      );
+
+      if (showAllButton) {
+        const entity = this.entitiesById[showAllButton.dataset.id]?.entity;
+
+        if (entity && this.hasDependencies(entity)) {
+          this.showAllDependenciesModal(entity);
+        }
+
+        return;
+      }
+
       const { entity, showAll } = target.data();
 
       if (!showAll || !entity || !this.hasDependencies(entity)) {
@@ -615,6 +668,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .tree-of-dependencies__preview {
   position: relative;
@@ -623,11 +677,11 @@ export default {
   border-radius: 5px;
   background: white;
 
-  & ::v-deep canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
+  :deep(canvas[data-id='layer0-selectbox']) {
     display: none;
   }
 
-  & ::v-deep .v-badge__badge {
+  :deep(.v-badge__badge) {
     top: -7px;
     right: -7px;
 
@@ -636,12 +690,12 @@ export default {
     }
   }
 
-  & ::v-deep .v-progress-circular {
+  :deep(.v-progress-circular) {
     width: 20px;
     height: 20px;
   }
 
-  & ::v-deep .tree-of-dependencies__node-icon {
+  :deep(.tree-of-dependencies__node-icon) {
     font-size: 30px;
 
     svg {
@@ -649,7 +703,7 @@ export default {
     }
   }
 
-  & ::v-deep .tree-of-dependencies__fetch-dependencies {
+  :deep(.tree-of-dependencies__fetch-dependencies) {
     width: 100%;
     height: 100%;
     border-radius: 50%;

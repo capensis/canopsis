@@ -1,43 +1,33 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
+
+import { useEventFilterStore } from '@/stores/modules/event-filter';
 
 /**
- * Hook to use the Event Filter Store Module.
+ * Event filters store facade.
  *
- * @returns {Object} An object containing getters and actions for event filters.
- */
-const useEventFilterStore = () => useStoreModuleHooks('eventFilter');
-
-/**
- * Hook to access event filter store.
- *
- * @returns {Object} An object containing:
- * - Actions to fetch event filter rules and manage them.
+ * @returns {Object}
  */
 export const useEventFilter = () => {
-  const { useGetters, useActions } = useEventFilterStore();
-
-  const getters = useGetters({
-    eventFiltersPending: 'pending',
-    eventFilters: 'items',
-    eventFiltersMeta: 'meta',
-  });
-
-  const actions = useActions({
-    fetchEventFiltersList: 'fetchList',
-    fetchEventFiltersListWithoutStore: 'fetchListWithoutStore',
-    refreshEventFiltersList: 'fetchListWithPreviousParams',
-    fetchEventFilterFailuresListWithoutStore: 'fetchEventFilterFailuresListWithoutStore',
-    markNewEventFilterFailuresAsRead: 'markNewEventFilterFailuresAsRead',
-    createEventFilter: 'create',
-    updateEventFilter: 'update',
-    removeEventFilter: 'remove',
-    bulkEnableEventFilters: 'bulkEnable',
-    bulkDisableEventFilters: 'bulkDisable',
-    bulkRemoveEventFilters: 'bulkRemove',
-  });
+  const eventFilterStore = useEventFilterStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(eventFilterStore);
 
   return {
-    ...getters,
-    ...actions,
+    eventFilters: items,
+    eventFiltersMeta: meta,
+    eventFiltersPending: pending,
+    eventFiltersFetchingParams: fetchingParams,
+
+    fetchEventFiltersList: eventFilterStore.fetchList,
+    fetchEventFiltersListWithPreviousParams: eventFilterStore.fetchListWithPreviousParams,
+    fetchEventFiltersListWithoutStore: eventFilterStore.fetchListWithoutStore,
+    fetchEventFilterFailuresListWithoutStore:
+      eventFilterStore.fetchEventFilterFailuresListWithoutStore,
+    markNewEventFilterFailuresAsRead: eventFilterStore.markNewEventFilterFailuresAsRead,
+    createEventFilter: eventFilterStore.create,
+    updateEventFilter: eventFilterStore.update,
+    removeEventFilter: eventFilterStore.remove,
+    bulkEnableEventFilters: eventFilterStore.bulkEnable,
+    bulkDisableEventFilters: eventFilterStore.bulkDisable,
+    bulkRemoveEventFilters: eventFilterStore.bulkRemove,
   };
 };

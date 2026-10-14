@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div>
+    <idle-rule-general-form-stub
+      form="[object Object]"
+      isentitytype="true"
+    />
+    <idle-rule-patterns-form-stub
+      form="[object Object]"
+      isentitytype="true"
+    />
+  </div>
+</div>
+`;
+
+exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div>
+    <idle-rule-general-form-stub
+      form="[object Object]"
+    />
+    <idle-rule-patterns-form-stub
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;

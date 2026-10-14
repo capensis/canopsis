@@ -1,132 +1,133 @@
 <template>
   <c-responsive-list
     :items="preparedEngines"
-    class="ml-4"
+    class="healthcheck-chips-list ml-4"
     item-key="name"
     item-value="label"
   >
     <template #default="{ item }">
-      <v-tooltip
-        :disabled="!item.tooltip"
-        bottom
-      >
-        <template #activator="{ on }">
+      <c-tooltip :disabled="!item.tooltip" location="bottom">
+        <template #activator="{ props }">
           <c-engine-chip
             :color="item.color"
+            :clickable="hasAccessToHealthcheck"
             class="ma-1"
-            v-on="{ ...chipListeners, ...on }"
+            v-bind="props"
+            @click="redirectToHealthcheck"
           >
             {{ item.label }}
           </c-engine-chip>
         </template>
+
         <span>{{ item.tooltip }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
   </c-responsive-list>
 </template>
 
 <script>
 import { isEqual, sortBy } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { COLORS, SOCKET_ROOMS } from '@/config';
 import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
 
-import { authMixin } from '@/mixins/auth';
-import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
-
-const { mapActions } = createNamespacedHelpers('healthcheck');
+import { useCanPermission } from '@/hooks/auth';
+import { useHealthcheckNodes } from '@/hooks/healthcheck-nodes';
+import { useI18n } from '@/hooks/i18n';
+import { useSocketRoom } from '@/hooks/socket';
+import { useHealthcheck } from '@/hooks/store/modules/healthcheck';
 
 export default {
-  mixins: [authMixin, healthcheckNodesMixin],
-  data() {
-    return {
-      hasServerError: false,
-      wrongNodes: [],
-    };
-  },
-  computed: {
-    chipListeners() {
-      if (this.checkAccess(USER_PERMISSIONS.technical.healthcheck)) {
-        return {
-          click: this.redirectToHealthcheck,
-        };
-      }
+  setup() {
+    const router = useRouter();
+    const { t } = useI18n();
+    const { getNodeName, getTooltipText } = useHealthcheckNodes();
+    const { fetchHealthcheckStatusWithoutStore } = useHealthcheck();
+    const { hasAccess: hasAccessToHealthcheck } = useCanPermission(
+      USER_PERMISSIONS.technical.healthcheck,
+    );
 
-      return {};
-    },
+    const hasServerError = ref(false);
+    const wrongNodes = ref([]);
 
-    preparedEngines() {
-      if (this.hasServerError) {
-        return [{
-          name: 'error',
-          color: COLORS.healthcheck.error,
-          tooltip: this.$t('healthcheck.notRunning', {
-            name: this.getNodeName(HEALTHCHECK_SERVICES_NAMES.healthcheck),
-          }),
-          label: this.$tc('common.error'),
-        }];
-      }
-
-      if (!this.wrongNodes.length) {
-        return [{
-          name: 'ok',
-          tooltip: this.$t('healthcheck.systemsOperational'),
-          label: this.$t('common.ok'),
-        }];
-      }
-
-      return this.wrongNodes.map(engine => ({
-        ...engine,
-
-        color: getHealthcheckNodeColor(engine),
-        tooltip: this.getTooltipText(engine),
-        label: this.getNodeName(engine.name),
-      }));
-    },
-  },
-  mounted() {
-    this.fetchList();
-
-    this.$socket
-      .join(SOCKET_ROOMS.healthcheckStatus)
-      .addListener(this.setHealthcheckStatus);
-  },
-  beforeDestroy() {
-    this.$socket
-      .leave(SOCKET_ROOMS.healthcheckStatus)
-      .removeListener(this.setHealthcheckStatus);
-  },
-  methods: {
-    ...mapActions({
-      fetchHealthcheckStatusWithoutStore: 'fetchStatusWithoutStore',
-    }),
-
-    redirectToHealthcheck() {
-      this.$router.push({
-        name: ROUTES_NAMES.adminHealthcheck,
-      });
-    },
-
-    setHealthcheckStatus({ services = [], engines = [] } = {}) {
+    const setHealthcheckStatus = ({ services = [], engines = [] } = {}) => {
       const newWrongNodes = sortBy([...services, ...engines], ['name']);
 
-      if (!isEqual(newWrongNodes, this.wrongNodes)) {
-        this.wrongNodes = newWrongNodes;
+      if (!isEqual(newWrongNodes, wrongNodes.value)) {
+        wrongNodes.value = newWrongNodes;
       }
-    },
+    };
 
-    async fetchList() {
+    const preparedEngines = computed(() => {
+      if (hasServerError.value) {
+        return [
+          {
+            name: 'error',
+            color: COLORS.healthcheck.error,
+            tooltip: t('healthcheck.notRunning', {
+              name: getNodeName(HEALTHCHECK_SERVICES_NAMES.healthcheck),
+            }),
+            label: t('common.error'),
+          },
+        ];
+      }
+
+      if (!wrongNodes.value.length) {
+        return [
+          {
+            name: 'ok',
+            tooltip: t('healthcheck.systemsOperational'),
+            label: t('common.ok'),
+          },
+        ];
+      }
+
+      return wrongNodes.value.map(engine => ({
+        ...engine,
+        color: getHealthcheckNodeColor(engine),
+        tooltip: getTooltipText(engine),
+        label: getNodeName(engine.name),
+      }));
+    });
+
+    const fetchList = async () => {
       try {
-        const response = await this.fetchHealthcheckStatusWithoutStore();
+        const response = await fetchHealthcheckStatusWithoutStore();
 
-        this.setHealthcheckStatus(response);
-      } catch (err) {
-        this.hasServerError = true;
+        hasServerError.value = false;
+        setHealthcheckStatus(response);
+      } catch {
+        hasServerError.value = true;
       }
-    },
+    };
+
+    const redirectToHealthcheck = () => {
+      if (hasAccessToHealthcheck.value && router.hasRoute(ROUTES_NAMES.adminHealthcheck)) {
+        router.push({ name: ROUTES_NAMES.adminHealthcheck });
+      }
+    };
+
+    useSocketRoom({ room: SOCKET_ROOMS.healthcheckStatus, listener: setHealthcheckStatus });
+
+    onMounted(fetchList);
+    onBeforeUnmount(() => (wrongNodes.value = []));
+
+    return {
+      hasAccessToHealthcheck,
+      preparedEngines,
+      redirectToHealthcheck,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.healthcheck-chips-list {
+  max-width: 420px;
+  min-width: 0;
+}
+</style>

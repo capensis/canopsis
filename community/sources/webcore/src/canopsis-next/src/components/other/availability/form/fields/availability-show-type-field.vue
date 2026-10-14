@@ -1,10 +1,13 @@
 <template>
-  <v-select
-    v-field="value"
+  <c-select
+    :model-value="modelValue"
     :items="types"
     :name="name"
     :label="label"
+    item-title="text"
+    item-value="value"
     hide-details
+    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
@@ -17,7 +20,7 @@ import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
-    value: {
+    modelValue: {
       type: Number,
       default: AVAILABILITY_SHOW_TYPE.percent,
     },
@@ -30,16 +33,22 @@ export default {
       required: false,
     },
   },
-  setup() {
-    const { t, tc } = useI18n();
 
-    const types = computed(() => [{
-      value: AVAILABILITY_SHOW_TYPE.percent,
-      text: tc('common.percent'),
-    }, {
-      value: AVAILABILITY_SHOW_TYPE.duration,
-      text: t('common.duration'),
-    }]);
+  emits: ['update:modelValue'],
+
+  setup() {
+    const { t } = useI18n();
+
+    const types = computed(() => [
+      {
+        value: AVAILABILITY_SHOW_TYPE.percent,
+        text: t('common.percent'),
+      },
+      {
+        value: AVAILABILITY_SHOW_TYPE.duration,
+        text: t('common.duration'),
+      },
+    ]);
 
     return {
       types,

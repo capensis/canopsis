@@ -1,50 +1,54 @@
 <template>
-  <v-combobox
-    v-validate="rules"
+  <c-text-field
     ref="field"
-    :value="value"
-    :search-input="value"
-    :label="label ?? $t('common.payload')"
-    :items="variables"
+    :model-value="value"
+    :label="label || $t('common.payload')"
     :disabled="disabled"
-    :return-object="false"
-    :menu-props="menuProps"
-    :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"
-    no-filter
+    :required="required"
+    :max-length="maxLength"
+    class="c-payload-text-field"
     @blur="handleBlur"
-    @update:search-input="onSearchInputChange"
+    @click="onSelectionChange"
+    @keyup="onSelectionChange"
+    @update:model-value="updateModel"
   >
-    <template #append="">
+    <template v-if="$slots.append || $slots['append-inner'] || variables.length" #append-inner>
       <slot name="append" />
-    </template>
-    <template #append-outer="">
-      <slot name="append-outer" />
-    </template>
-    <template #list="">
-      <variables-list
-        :value="variablesMenuValue"
+      <slot name="append-inner" />
+
+      <variables-menu
+        v-if="variables.length"
         :items="variables"
-        children-key="variables"
+        :visible="variablesShown"
+        :value="variablesMenuValue"
+        :position-x="variablesMenuPosition.x"
+        :position-y="variablesMenuPosition.y"
+        :location="variablesMenuLocation"
+        ignore-click-outside
         show-value
         hide-empty-value
         clickable-parent
-        @input="pasteVariable"
+        @update:value="pasteVariable"
+        @close="hideVariablesMenu"
       />
     </template>
-  </v-combobox>
+    <template v-if="$slots['append-outer']" #append>
+      <slot name="append-outer" />
+    </template>
+  </c-text-field>
 </template>
 
 <script>
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
+import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { VariablesList },
+  components: { VariablesMenu },
   mixins: [payloadFieldMixin],
+
   props: {
     name: {
       type: String,
@@ -66,49 +70,38 @@ export default {
       type: Boolean,
       default: false,
     },
+    maxLength: {
+      type: Number,
+      required: false,
+    },
   },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-
-    hasValidationRules() {
-      return Object.values(this.rules).some(rule => !!rule);
-    },
-
-    errorMessages() {
-      return this.errors.collect(this.name).map((message = '') => (
-        message.includes('|') ? message.split('|')[1] : message
-      ));
-    },
-
-    menuProps() {
-      return {
-        value: !!this.variables.length && this.variablesShown,
-        offsetY: true,
-        closeOnContentClick: false,
-        minWidth: 200,
-      };
-    },
+  data() {
+    return {
+      variablesMenuLocation: 'bottom start',
+    };
   },
   methods: {
-    onSearchInputChange(value) {
-      this.debouncedOnSelectionChange();
-      this.updateModel(value ?? '');
+    showVariablesMenu() {
+      this.variablesShown = true;
 
-      if (this.errorMessages?.length) {
-        this.$nextTick(() => {
-          if (this.hasValidationRules) {
-            this.$validator.validate(this.name);
+      this.$nextTick(() => {
+        const input = this.getInputElement();
 
-            return;
-          }
+        if (!input) {
+          return;
+        }
 
-          this.errors.remove(this.name);
-        });
-      }
+        const menuMaxHeight = 300;
+        const offset = 8;
+        const { top, bottom, left } = input.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - bottom;
+        const spaceAbove = top;
+        const showBelow = spaceBelow >= menuMaxHeight || spaceBelow >= spaceAbove;
+
+        this.variablesMenuPosition.x = left;
+        this.variablesMenuPosition.y = showBelow ? bottom + offset : top - offset;
+        this.variablesMenuLocation = showBelow ? 'bottom start' : 'top start';
+      });
     },
   },
 };

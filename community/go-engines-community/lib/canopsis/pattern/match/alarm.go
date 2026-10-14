@@ -96,21 +96,12 @@ func MatchAlarmPattern(p pattern.Alarm, alarm *types.Alarm) (bool, error) {
 	return false, nil
 }
 
-func ValidateAlarmPattern(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFields []string) bool {
-	return len(AlarmPatternErrors(p, forbiddenFields, onlyTimeAbsoluteFields)) == 0
+func ValidateAlarmPattern(p pattern.Alarm, forbiddenFieldsMap, timeAbsoluteFieldsMap map[string]bool) bool {
+	return len(AlarmPatternErrors(p, forbiddenFieldsMap, timeAbsoluteFieldsMap)) == 0
 }
 
-func AlarmPatternErrors(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFields []string) []ConditionError {
+func AlarmPatternErrors(p pattern.Alarm, forbiddenFieldsMap, timeAbsoluteFieldsMap map[string]bool) []ConditionError {
 	emptyAlarm := types.Alarm{}
-	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
-	for _, field := range forbiddenFields {
-		forbiddenFieldsMap[field] = true
-	}
-
-	timeAbsoluteFieldsMap := make(map[string]bool, len(onlyTimeAbsoluteFields))
-	for _, field := range onlyTimeAbsoluteFields {
-		timeAbsoluteFieldsMap[field] = true
-	}
 
 	now := time.Now() // to compute relative time values
 	var errs []ConditionError

@@ -6,9 +6,11 @@ export const widgetChartMetricsMap = {
       widgetMetricsMap: {},
     };
   },
+
   created() {
     this.setWidgetMetricsMap();
   },
+
   methods: {
     setWidgetMetricsMap() {
       this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');

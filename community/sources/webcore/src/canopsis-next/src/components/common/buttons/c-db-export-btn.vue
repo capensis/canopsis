@@ -3,6 +3,7 @@
     :disabled="pending"
     :loading="pending"
     :tooltip="$t('common.download')"
+    :small="small"
     icon="file_download"
     @click="download"
   />
@@ -11,6 +12,7 @@
 <script>
 import { computed } from 'vue';
 
+import { getIdFromEntity } from '@/helpers/array';
 import { saveFile } from '@/helpers/file/files';
 
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -25,6 +27,10 @@ export default {
     ids: {
       type: Array,
       default: () => [],
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     pbehavior: {
       type: Boolean,
@@ -79,7 +85,9 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  emits: ['refresh'],
+
+  setup(props, { emit }) {
     const {
       exportPbehaviorsDb,
       exportEventFiltersDb,
@@ -95,32 +103,39 @@ export default {
       exportJobConfigsDb,
     } = useDbExport();
 
-    const action = computed(() => ({
-      [props.pbehavior]: exportPbehaviorsDb,
-      [props.eventFilter]: exportEventFiltersDb,
-      [props.linkRule]: exportLinkRulesDb,
-      [props.idleRule]: exportIdleRulesDb,
-      [props.flappingRule]: exportFlappingRulesDb,
-      [props.scenario]: exportScenariosDb,
-      [props.dynamicInfo]: exportDynamicInfosDb,
-      [props.declareTicket]: exportDeclareTicketsDb,
-      [props.metaAlarmRule]: exportMetaAlarmRulesDb,
-      [props.instruction]: exportInstructionsDb,
-      [props.job]: exportJobsDb,
-      [props.jobConfig]: exportJobConfigsDb,
-    }.true));
+    const action = computed(
+      () => ({
+          [props.pbehavior]: exportPbehaviorsDb,
+          [props.eventFilter]: exportEventFiltersDb,
+          [props.linkRule]: exportLinkRulesDb,
+          [props.idleRule]: exportIdleRulesDb,
+          [props.flappingRule]: exportFlappingRulesDb,
+          [props.scenario]: exportScenariosDb,
+          [props.dynamicInfo]: exportDynamicInfosDb,
+          [props.declareTicket]: exportDeclareTicketsDb,
+          [props.metaAlarmRule]: exportMetaAlarmRulesDb,
+          [props.instruction]: exportInstructionsDb,
+          [props.job]: exportJobsDb,
+          [props.jobConfig]: exportJobConfigsDb,
+        }).true,
+    );
+    const normalizedIds = computed(() =>
+      (props.id ? [props.id] : props.ids).map(getIdFromEntity).filter(Boolean),
+    );
 
-    const {
-      pending,
-      handler: download,
-    } = usePendingHandler(async () => {
-      const { headers = {}, data } = await action.value?.({
-        ids: props.id ? [props.id] : props.ids,
-      }) ?? {};
+    const { pending, handler: download } = usePendingHandler(async () => {
+      const { headers = {}, data } =
+        (await action.value?.({
+          ids: normalizedIds.value,
+        })) ?? {};
 
       const filename = String(headers['content-disposition']).replace(/^.*filename="?|"$/g, '');
 
-      return saveFile(data, filename);
+      const result = await saveFile(data, filename);
+
+      emit('refresh');
+
+      return result;
     });
 
     return {

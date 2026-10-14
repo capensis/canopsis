@@ -7,42 +7,45 @@
     :options="options"
     :is-disabled-item="isDisabledConfiguration"
     :select-all="removable"
+    :hide-mass-actions="!active"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected, selectedKeys }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        remediation-configuration
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
-      <c-db-export-btn :ids="selectedKeys" job-config />
     </template>
+
     <template #actions="{ item, disabled }">
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="$emit('edit', item)"
-      />
-      <c-action-btn
-        v-if="duplicable"
-        type="duplicate"
-        @click="$emit('duplicate', item)"
-      />
-      <c-action-btn
-        v-if="removable"
-        :tooltip="disabled ? $t('remediation.configuration.usingConfiguration') : $t('common.delete')"
-        :disabled="disabled"
-        type="delete"
-        @click="$emit('remove', item)"
-      />
-      <c-db-export-btn :id="item._id" job-config />
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-db-export-btn :id="item._id" job-config />
+        <c-action-btn
+          v-if="removable"
+          :tooltip="
+            disabled ? t('remediation.configuration.usingConfiguration') : t('common.delete')
+          "
+          :disabled-button="disabled"
+          type="delete"
+          @click="$emit('remove', item)"
+        />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     remediationConfigurations: {
@@ -73,38 +76,52 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.author'),
-          value: 'author.display_name',
-        },
-        {
-          text: this.$t('common.type'),
-          value: 'type',
-        },
-        {
-          text: this.$t('remediation.configuration.host'),
-          value: 'host',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
-  methods: {
-    isDisabledConfiguration({ deletable }) {
-      return !deletable;
-    },
+
+  emits: ['update:options', 'refresh', 'remove', 'duplicate', 'edit'],
+
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('common.author'),
+        value: 'author.display_name',
+      },
+      {
+        text: t('common.type'),
+        value: 'type',
+      },
+      {
+        text: t('remediation.configuration.host'),
+        value: 'host',
+      },
+      {
+        text: t('remediation.configuration.clientId'),
+        value: 'client_id',
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const isDisabledConfiguration = ({ deletable }) => !deletable;
+
+    return {
+      t,
+      headers,
+      isDisabledConfiguration,
+    };
   },
 };
 </script>

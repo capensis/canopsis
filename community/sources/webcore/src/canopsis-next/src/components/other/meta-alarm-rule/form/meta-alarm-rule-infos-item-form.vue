@@ -2,9 +2,10 @@
   <v-card>
     <v-card-text>
       <c-name-field
-        v-field="form.name"
+        :model-value="form.name"
         :name="nameFieldName"
         required
+        @update:model-value="updateField('name', $event)"
       >
         <template #append-outer>
           <c-action-btn
@@ -13,33 +14,37 @@
           />
         </template>
       </c-name-field>
-      <v-text-field
+      <c-text-field
         v-if="!form.copy_from_children"
-        v-field="form.description"
-        :label="$t('common.description')"
+        :model-value="form.description"
+        :label="t('common.description')"
+        :max-length="FORM_MAX_STRING_LENGTH"
+        @update:model-value="updateField('description', $event)"
       />
-      <v-layout class="gap-4">
-        <c-enabled-field
-          v-field="form.copy_from_children"
-          :label="$t('metaAlarmRule.copyFromLastChild')"
-          class="mr-4 pt-4"
-        >
-          <template #append>
-            <c-help-icon
-              :text="$t('metaAlarmRule.copyFromLastChildTooltip')"
-              icon="help"
-              top
-            />
-          </template>
-        </c-enabled-field>
-        <v-flex>
+      <v-row class="align-start" density="default">
+        <v-col cols="auto">
+          <c-enabled-field
+            v-model="copyFromChildren"
+            :label="t('metaAlarmRule.copyFromLastChild')"
+            hide-details
+          >
+            <template #append>
+              <c-help-icon
+                :text="t('metaAlarmRule.copyFromLastChildTooltip')"
+                icon="help"
+                top
+              />
+            </template>
+          </c-enabled-field>
+        </v-col>
+        <v-col v-if="!form.copy_from_children">
           <c-mixed-field
-            v-if="!form.copy_from_children"
-            v-field="form.value"
-            :label="$t('common.value')"
+            :value="form.value"
+            :label="t('common.value')"
+            @update:value="updateField('value', $event)"
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -47,11 +52,12 @@
 <script>
 import { computed } from 'vue';
 
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -62,13 +68,25 @@ export default {
       default: '',
     },
   },
-  setup(props) {
-    const getFieldName = field => `${props.name}.${field}`;
 
-    const nameFieldName = computed(() => getFieldName('name'));
+  emits: ['update:form', 'remove'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
+
+    const nameFieldName = computed(() => `${props.name}.name`);
+    const copyFromChildren = computed({
+      get: () => props.form.copy_from_children,
+      set: value => updateField('copy_from_children', value),
+    });
 
     return {
+      FORM_MAX_STRING_LENGTH,
+      t,
       nameFieldName,
+      copyFromChildren,
+      updateField,
     };
   },
 };

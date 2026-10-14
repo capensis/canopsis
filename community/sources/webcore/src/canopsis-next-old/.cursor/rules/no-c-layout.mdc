@@ -1,0 +1,28 @@
+---
+description: Do not use the legacy c-layout component
+globs: **/*.vue
+alwaysApply: true
+---
+
+# Layout components
+
+Do **not** use `c-layout`. It is a legacy compatibility component and must not be added to new or migrated code.
+
+Use Vuetify's `v-row` and `v-col` components for grid layouts. For simple flex layouts, use Vuetify flex utility classes such as `d-flex`, `flex-column`, `align-center`, and `justify-space-between` on a native element.
+
+```html
+<!-- ❌ BAD -->
+<c-layout align="center" justify="space-between">
+  <!-- content -->
+</c-layout>
+
+<!-- ✅ GOOD: grid layout -->
+<v-row align="center" justify="space-between">
+  <!-- content -->
+</v-row>
+
+<!-- ✅ GOOD: simple flex layout -->
+<div class="d-flex align-center justify-space-between">
+  <!-- content -->
+</div>
+```

@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with empty form 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <div
+    class="layout gap-4"
+  >
+    <c-name-field-stub
+      autofocus=""
+      required=""
+      value=""
+    />
+    <c-name-field-stub
+      label="System name"
+      name="system_name"
+      value=""
+    />
+  </div>
+  <c-enabled-field-stub
+    hide-details=""
+    label="Emit trigger on success"
+    name="emit_trigger_success"
+    no-margin=""
+  />
+  <c-enabled-field-stub
+    hide-details=""
+    label="Emit trigger on failure"
+    name="emit_trigger_fail"
+    no-margin=""
+  />
+  <declare-ticket-rule-webhooks-field-stub
+    name="webhooks"
+    templatevars="[object Object]"
+    webhooks=""
+  />
+</div>
+`;
+
+exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with filled form 1`] = `
+<div
+  class="layout gap-5 column"
+>
+  <div
+    class="layout gap-4"
+  >
+    <c-name-field-stub
+      autofocus=""
+      required=""
+      value="name"
+    />
+    <c-name-field-stub
+      label="System name"
+      name="system_name"
+      value="system-name"
+    />
+  </div>
+  <c-enabled-field-stub
+    hide-details=""
+    label="Emit trigger on success"
+    name="emit_trigger_success"
+    no-margin=""
+  />
+  <c-enabled-field-stub
+    hide-details=""
+    label="Emit trigger on failure"
+    name="emit_trigger_fail"
+    no-margin=""
+  />
+  <declare-ticket-rule-webhooks-field-stub
+    name="webhooks"
+    templatevars="[object Object]"
+    webhooks="[object Object]"
+  />
+</div>
+`;

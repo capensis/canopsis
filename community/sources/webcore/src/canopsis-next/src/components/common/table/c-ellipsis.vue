@@ -1,34 +1,27 @@
 <template>
   <div>
-    <c-simple-tooltip
+    <c-tooltip
       v-if="hover"
       :content="preparedText"
       :disabled="isShort"
       top
     >
       <template #activator="{ on }">
-        <span
-          class="c-ellipsis__activator"
-          @click.stop="textClicked"
-          v-on="on"
-        >
+        <span class="c-ellipsis__activator" v-bind="on" @click.stop="textClicked">
           <span>{{ shortenedText }}</span>
           <span v-if="!isShort">...</span>
         </span>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
+
     <template v-else>
       <span @click.stop="textClicked">{{ shortenedText }}</span>
-      <v-menu
-        v-if="!isShort"
-        :close-on-content-click="false"
-      >
-        <template #activator="{ on }">
-          <span
-            class="ml-1"
-            v-on="on"
-          >...</span>
+
+      <v-menu v-if="!isShort" :close-on-content-click="false">
+        <template #activator="{ props }">
+          <span class="ml-1" v-bind="props">...</span>
         </template>
+
         <v-card>
           <v-card-title class="pre-wrap">
             {{ text }}
@@ -59,7 +52,10 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit, listeners }) {
+
+  emits: ['textClicked', 'click'],
+
+  setup(props, { emit }) {
     const preparedText = computed(() => String(props.text));
 
     const isShort = computed(() => preparedText.value.length <= props.maxLetters);
@@ -74,8 +70,7 @@ export default {
 
     const textClicked = () => {
       emit('textClicked');
-
-      listeners.click?.();
+      emit('click');
     };
 
     return {

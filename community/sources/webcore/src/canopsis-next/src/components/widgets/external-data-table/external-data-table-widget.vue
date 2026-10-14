@@ -2,7 +2,7 @@
   <div class="position-relative pa-4">
     <c-progress-overlay :pending="pending" />
     <external-data-table-records-list
-      v-model="columns"
+      v-model:columns="columns"
       :records="records"
       :pending="recordsPending"
       :has-structure="!!externalDataTable.column_configs?.length"
@@ -37,22 +37,20 @@
 
 <script>
 import { map } from 'lodash';
-import { computed, toRef, onMounted } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 
-import { openUrlInNewTab } from '@/helpers/url';
 import { getExternalDataTableRecordsFileUrl } from '@/helpers/entities/external-data-table/url';
 import { prepareWidgetQuery, selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
+import { openUrlInNewTab } from '@/helpers/url';
 
+import { useObserver } from '@/hooks/observer';
 import { useFilePollingWithPending } from '@/hooks/polling';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 import { useWidgetPeriodicRefresh } from '@/hooks/widget/periodic-refresh';
 
-import {
-  useExternalDataTableRecordsList,
-} from '@/components/other/external-data-table/hooks/external-data-table-records';
+import { useExternalDataTableRecordsList } from '@/components/other/external-data-table/hooks/external-data-table-records';
 
-import ExternalDataTableRecordsList
-  from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
+import ExternalDataTableRecordsList from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
 
 import {
   useExternalDataTableWidgetColumnsSettings,
@@ -74,9 +72,6 @@ export default {
       fetchExternalDataTableExportStatus,
     } = useExternalDataTable();
 
-    /**
-     * EXTERNAL DATA TABLE BASIC
-     */
     const {
       userPreference,
       updateContentInUserPreference,
@@ -90,10 +85,8 @@ export default {
     } = useExternalDataTableWidgetTable({ widget: toRef(props, 'widget') });
 
     const initialQuery = computed(() => prepareWidgetQuery(props.widget, userPreference.value));
+    const { observer } = useObserver({ key: '$refresh' });
 
-    /**
-     * RECORDS LIST METHODS
-     */
     const {
       records,
       pending: recordsPending,
@@ -114,6 +107,7 @@ export default {
     } = useExternalDataTableRecordsList({
       externalDataTable,
       initialQuery,
+      refreshObserver: observer,
     });
 
     const updateOptions = (newOptions) => {
@@ -124,25 +118,14 @@ export default {
       return updateOptionsHook(newOptions);
     };
 
-    /**
-     * Fetches the widget item data and then loads the associated records list
-     *
-     * @returns {Promise} A promise that resolves when both the widget item and its records are fetched
-     */
     const fetchItemWithRecords = async () => {
       await fetchItem();
 
-      /**
-       * We need to reset query to use updated initialQuery with userPreference content
-       */
       resetQuery();
 
       return fetchRecordsList();
     };
 
-    /**
-     * COLUMNS SETTINGS
-     */
     const {
       draggableColumn,
       resizableColumn,
@@ -155,43 +138,35 @@ export default {
       updateContentInUserPreference,
     });
 
-    /**
-     * EXPORTING
-     */
     const {
       pending: downloading,
       poll: exportRecords,
     } = useFilePollingWithPending({
       createHandler: selected => createExternalDataTableExport({
-        id: externalDataTable.value._id,
-        data: {
-          search: selectedToQuery(selected, query.search),
-          separator: props.widget.parameters.exportCsvSeparator,
-          fields: widgetToExportQueryColumns(props.widget),
-          search_by: map(props.widget.parameters.widgetColumns, 'value'),
-        },
-      }),
+          id: externalDataTable.value._id,
+          data: {
+            search: selectedToQuery(selected, query.value.search),
+            separator: props.widget.parameters.exportCsvSeparator,
+            fields: widgetToExportQueryColumns(props.widget),
+            search_by: map(props.widget.parameters.widgetColumns, 'value'),
+          },
+        }),
       fetchHandler: fetchExternalDataTableExportStatus,
       endHandler: fileData => openUrlInNewTab(getExternalDataTableRecordsFileUrl(fileData?._id)),
     });
 
-    /**
-     * DENSE
-     */
     const { dense, updateDense } = useExternalDataTableWidgetDense({
       widget: toRef(props, 'widget'),
       userPreference,
       updateContentInUserPreference,
     });
 
-    /**
-     * PERIODIC REFRESH
-     */
     useWidgetPeriodicRefresh({
       options: toRef(props.widget.parameters, 'periodic_refresh'),
       handler: fetchItemWithRecords,
     });
 
+    observer.register(fetchItemWithRecords);
     onMounted(fetchItemWithRecords);
 
     return {

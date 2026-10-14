@@ -3,6 +3,7 @@
     :value="selectedItem"
     :items="items"
     :label="label || $t('externalData.tableField')"
+    :name="name"
     :disabled="disabled"
     :required="required"
     :loading="wholePending"
@@ -10,7 +11,7 @@
     item-text="name"
     item-value="_id"
     return-object
-    @input="changeSelectedItems"
+    @update:value="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
@@ -23,10 +24,7 @@ import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value', 'update:selected-items'],
   props: {
     value: {
       type: String,
@@ -44,6 +42,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'entities',
+    },
   },
   setup(props, { emit }) {
     const { fetchExternalDataTablesListWithoutStore } = useExternalDataTable();
@@ -58,12 +60,15 @@ export default {
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      value: toRef(props, 'value'),
-      idKey: '_id',
-      idParamsKey: 'ids',
-      fetchHandler: fetchExternalDataTablesListWithoutStore,
-    }, emit);
+    } = useLazySearch(
+      {
+        value: toRef(props, 'value'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler: fetchExternalDataTablesListWithoutStore,
+      },
+      emit,
+    );
 
     return {
       selectedItem,

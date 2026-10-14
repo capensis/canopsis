@@ -57,11 +57,10 @@ export const getAlarmStatusText = value => ALARM_STATUSES_TEXTS[value];
  * @param {boolean} resolved
  * @returns {string}
  */
-export const getAlarmStatusIcon = (value, resolved) => (
+export const getAlarmStatusIcon = (value, resolved) =>
   resolved
-    ? ALARM_STATUSES_RESOLVED_ICONS[value] ?? ALARM_STATUSES_ICONS[value]
-    : ALARM_STATUSES_ICONS[value]
-);
+    ? (ALARM_STATUSES_RESOLVED_ICONS[value] ?? ALARM_STATUSES_ICONS[value])
+    : ALARM_STATUSES_ICONS[value];
 
 /**
  * Return object that contains the status style
@@ -82,8 +81,7 @@ export const formatAlarmStatus = (status, resolved) => ({
  * @param {number} status
  * @returns {string}
  */
-export const getColorIndicatorByStatusAndState = status => (
+export const getColorIndicatorByStatusAndState = status =>
   status === ALARM_STATUSES.ongoing
     ? COLOR_INDICATOR_TYPES_WITH_STATUS.state
-    : COLOR_INDICATOR_TYPES_WITH_STATUS.status
-);
+    : COLOR_INDICATOR_TYPES_WITH_STATUS.status;

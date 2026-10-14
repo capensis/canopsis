@@ -9,7 +9,11 @@ import {
   ALARM_STATUSES_CLASSES,
 } from '@/constants';
 
-import { getAlarmImpactStateColor, getAlarmStateColor, getAlarmImpactStateGroupedColorIndex } from '../alarm/color';
+import {
+  getAlarmImpactStateColor,
+  getAlarmStateColor,
+  getAlarmImpactStateGroupedColorIndex,
+} from '../alarm/color';
 
 /**
  * Determines if the entity should be considered in a pause (grey) state.
@@ -18,13 +22,11 @@ import { getAlarmImpactStateColor, getAlarmStateColor, getAlarmImpactStateGroupe
  * @param {boolean} isGrey - The is_grey property from the entity.
  * @returns {boolean} True if the entity is in a pause state, otherwise false.
  */
-const isEntityPauseState = (pbehaviorInfo, isGrey) => (
-  isGrey
-  || (
-    pbehaviorInfo?.canonical_type
-    && pbehaviorInfo?.canonical_type !== PBEHAVIOR_CANONICAL_TYPES.active
-  )
-);
+const isEntityPauseState = (pbehaviorInfo, isGrey, pause) =>
+  isGrey ||
+  Boolean(pause) ||
+  (pbehaviorInfo?.canonical_type &&
+    pbehaviorInfo?.canonical_type !== PBEHAVIOR_CANONICAL_TYPES.active);
 
 /**
  * Get color class for a entity by colorIndicator and isGrey parameters
@@ -38,6 +40,7 @@ export const getEntityColorClass = (
   {
     status,
     state,
+    pause,
     is_grey: isGrey,
     pbehavior_info: pbehaviorInfo,
     impact_state: impactState,
@@ -45,7 +48,7 @@ export const getEntityColorClass = (
   colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state,
   withoutPauseColor = false,
 ) => {
-  if (!withoutPauseColor && isEntityPauseState(pbehaviorInfo, isGrey)) {
+  if (!withoutPauseColor && isEntityPauseState(pbehaviorInfo, isGrey, pause)) {
     return 'state-pause';
   }
 
@@ -68,15 +71,10 @@ export const getEntityColorClass = (
  * @returns {string|*}
  */
 export const getEntityColor = (
-  {
-    state,
-    is_grey: isGrey,
-    pbehavior_info: pbehaviorInfo,
-    impact_state: impactState,
-  } = {},
+  { state, pause, is_grey: isGrey, pbehavior_info: pbehaviorInfo, impact_state: impactState } = {},
   colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state,
 ) => {
-  if (isEntityPauseState(pbehaviorInfo, isGrey)) {
+  if (isEntityPauseState(pbehaviorInfo, isGrey, pause)) {
     return CSS_COLORS_VARS.state.pause;
   }
 

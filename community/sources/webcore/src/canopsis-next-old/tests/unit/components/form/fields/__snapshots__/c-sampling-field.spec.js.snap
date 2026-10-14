@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 1`] = `
+<div
+  class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-select"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      class="v-input__slot"
+      role="button"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          class="v-label v-label--active v-label--is-disabled theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <span
+            class="text-capitalize"
+          >
+      hours
+          </span>
+          <input
+            aria-readonly="false"
+            autocomplete="off"
+            disabled="disabled"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate v-icon--disabled material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="hour"
+        />
+      </div>
+      <div
+        class="v-menu"
+      >
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 2`] = `undefined`;
+
+exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = `
+<div
+  class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      class="v-input__slot"
+      role="button"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          class="v-label v-label--active theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Sampling
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <span
+            class="text-capitalize"
+          >
+      days
+          </span>
+          <input
+            aria-readonly="false"
+            autocomplete="off"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+        <input
+          name="sampling"
+          type="hidden"
+          value="day"
+        />
+      </div>
+      <div
+        class="v-menu"
+      >
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-sampling-field Renders \`c-sampling-field\` with default props 2`] = `undefined`;
