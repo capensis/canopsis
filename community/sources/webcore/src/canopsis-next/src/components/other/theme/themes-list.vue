@@ -6,7 +6,7 @@
     :total-items="totalItems"
     :options="options"
     :select-all="removable"
-    :is-disabled-item="isDisabledMap"
+    :is-disabled-item="isDisabledTheme"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
@@ -19,41 +19,45 @@
         @click="$emit('remove-selected', selected)"
       />
     </template>
+
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ dateToString(item.updated) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
+      <c-layout gap="1">
         <c-action-btn
           v-if="updatable"
-          :tooltip="item.deletable ? $t('common.edit') : $t('theme.defaultTheme')"
-          :disabled="!item.deletable"
+          :tooltip="item.deletable ? t('common.edit') : t('theme.defaultTheme')"
+          :disabled-button="!item.deletable"
           type="edit"
-          @click="$emit('edit', item)"
+          @click.stop="$emit('edit', item)"
         />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
+        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
         <c-action-btn
           v-if="removable"
-          :tooltip="item.deletable ? $t('common.delete') : $t('theme.defaultTheme')"
-          :disabled="!item.deletable"
+          :tooltip="item.deletable ? t('common.delete') : t('theme.defaultTheme')"
+          :disabled-button="!item.deletable"
           type="delete"
-          @click="$emit('remove', item._id)"
+          @click.stop="$emit('remove', item._id)"
         />
-      </v-layout>
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     themes: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     pending: {
       type: Boolean,
@@ -61,7 +65,7 @@ export default {
     },
     totalItems: {
       type: Number,
-      required: false,
+      default: 0,
     },
     options: {
       type: Object,
@@ -80,29 +84,37 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$tc('common.title'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.lastModifiedOn'),
-          value: 'updated',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    isDisabledMap({ deletable }) {
-      return !deletable;
-    },
+
+  emits: ['update:options', 'edit', 'remove', 'duplicate', 'remove-selected'],
+
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.title'),
+        value: 'name',
+      },
+      {
+        text: t('common.lastModifiedOn'),
+        value: 'updated',
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const dateToString = date => convertDateToString(date);
+    const isDisabledTheme = ({ deletable }) => !deletable;
+
+    return {
+      t,
+      headers,
+      dateToString,
+      isDisabledTheme,
+    };
   },
 };
 </script>

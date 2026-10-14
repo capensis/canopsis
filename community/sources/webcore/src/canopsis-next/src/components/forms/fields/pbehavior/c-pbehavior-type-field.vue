@@ -1,55 +1,55 @@
 <template>
-  <v-select
-    v-field="value"
-    v-validate="rules"
-    :label="label || $t('common.type')"
-    :loading="fieldPbehaviorTypesPending"
-    :items="preparedItems"
-    :error-messages="errors.collect(name)"
+  <c-lazy-search-field
+    :value="selectedValue"
+    :items="items"
+    :label="label || t('common.type')"
+    :loading="wholePending"
+    :has-more="hasMoreItems"
     :name="name"
+    :required="required"
     :disabled="disabled"
-    :multiple="multiple"
-    :chips="chips"
-    :deletable-chips="chips"
-    :small-chips="chips"
-    :item-disabled="isItemDisabled"
-    :return-object="returnObject"
     :clearable="clearable"
     item-text="name"
     item-value="_id"
+    autocomplete
+    return-object
+    @update:value="changeSelectedItems"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
+    @update:search="updateSearch"
   />
 </template>
 
 <script>
-import { isArray, isObject, isEmpty } from 'lodash';
+import { computed, toRef, watch } from 'vue';
 
-import { MAX_LIMIT } from '@/constants';
-
-import { mapIds } from '@/helpers/array';
-
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 export default {
-  inject: ['$validator'],
-  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
-      type: [Object, String, Array],
+    modelValue: {
+      type: [String, Object, Array],
+      default: '',
+    },
+    label: {
+      type: String,
       default: '',
     },
     name: {
       type: String,
       default: 'type',
     },
-    label: {
-      type: String,
-      default: '',
+    required: {
+      type: Boolean,
+      default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    returnObject: {
       type: Boolean,
       default: false,
     },
@@ -61,86 +61,69 @@ export default {
       type: Boolean,
       default: false,
     },
-    returnObject: {
+    clearable: {
       type: Boolean,
       default: false,
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    max: {
-      type: Number,
-      required: false,
     },
     types: {
       type: Array,
       required: false,
     },
-    clearable: {
-      type: Boolean,
-      default: false,
-    },
-    independent: {
-      type: Boolean,
-      default: false,
-    },
   },
-  data() {
+
+  emits: ['update:modelValue', 'update:selected-items'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
+
+    const fetchHandler = ({ params }) =>
+      fetchPbehaviorTypesFieldList({
+        params: {
+          ...params,
+          with_hidden: true,
+          ...(props.types ? { types: props.types } : {}),
+        },
+      });
+
+    const {
+      selectedItem,
+      selectedItems,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
+    } = useLazySearch(
+      {
+        value: toRef(props, 'modelValue'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler,
+        multiple: toRef(props, 'multiple'),
+        returnObject: toRef(props, 'returnObject'),
+        attachValue: true,
+      },
+      emit,
+    );
+
+    const selectedValue = computed(() => (props.multiple ? selectedItems.value : selectedItem.value));
+
+    watch(() => props.types, () => fetchItems(), { deep: true });
+
     return {
-      originalValue: this.value,
+      t,
+      selectedValue,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
     };
-  },
-  computed: {
-    selectedTypesIds() {
-      return this.getSelectedTypesIds();
-    },
-
-    originalSelectedTypesIds() {
-      return this.getSelectedTypesIds(this.originalValue);
-    },
-
-    preparedItems() {
-      return this.fieldPbehaviorTypes.filter(type => (
-        !type.hidden || this.originalSelectedTypesIds.includes(type._id)
-      ));
-    },
-
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
-  mounted() {
-    if (this.independent) {
-      this.fetchFieldPbehaviorTypesList({ params: { types: this.types, limit: MAX_LIMIT } });
-    }
-  },
-  methods: {
-    isItemDisabled(item) {
-      if (this.max) {
-        return this.value.length === this.max && !this.selectedTypesIds.includes(item._id);
-      }
-
-      return false;
-    },
-
-    getSelectedTypesIds(value = this.value) {
-      if (isArray(value)) {
-        return this.returnObject
-          ? mapIds(value)
-          : value;
-      }
-
-      return isEmpty(value)
-        ? []
-        : [
-          isObject(value)
-            ? value._id
-            : value,
-        ];
-    },
   },
 };
 </script>

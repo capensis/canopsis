@@ -2,12 +2,13 @@
   <div class="flowchart fill-height">
     <flowchart-sidebar
       v-if="!readonly"
-      v-field="shapes"
+      v-model:selected="selected"
+      :shapes="shapes"
       :view-box="viewBox"
-      :selected.sync="selected"
       :background-color="backgroundColor"
       :readonly="readonly"
       class="flowchart__sidebar"
+      @update:shapes="updateShapes"
       @update:backgroundColor="$emit('update:backgroundColor', $event)"
     >
       <template #prepend="">
@@ -21,29 +22,25 @@
       skip-shift
     >
       <flowchart-editor
-        v-field="shapes"
-        :view-box.sync="viewBox"
-        :selected.sync="selected"
+        v-model:view-box="viewBox"
+        v-model:selected="selected"
+        :shapes="shapes"
         :background-color="backgroundColor"
         :readonly="readonly"
         :cursor-style="cursorStyle"
+        @update:shapes="updateShapes"
       >
         <template #layers="{ data }">
-          <slot
-            :data="data"
-            name="layers"
-          />
+          <slot :data="data" name="layers" />
         </template>
       </flowchart-editor>
     </c-zoom-overlay>
-    <div
-      v-if="selected.length"
-      class="flowchart__properties"
-    >
+    <div v-if="selected.length" class="flowchart__properties">
       <flowchart-properties
         v-if="!readonly"
-        v-field="shapes"
+        :shapes="shapes"
         :selected="selected"
+        @update:shapes="updateShapes"
       />
     </div>
     <slot />
@@ -52,8 +49,8 @@
 
 <script>
 import FlowchartEditor from './flowchart-editor.vue';
-import FlowchartSidebar from './flowchart-sidebar.vue';
 import FlowchartProperties from './flowchart-properties.vue';
+import FlowchartSidebar from './flowchart-sidebar.vue';
 
 export default {
   components: {
@@ -65,6 +62,7 @@ export default {
     prop: 'shapes',
     event: 'input',
   },
+  emits: ['input', 'update:shapes', 'update:backgroundColor'],
   props: {
     shapes: {
       type: Object,
@@ -94,6 +92,12 @@ export default {
       },
     };
   },
+  methods: {
+    updateShapes(shapes) {
+      this.$emit('input', shapes);
+      this.$emit('update:shapes', shapes);
+    },
+  },
 };
 </script>
 
@@ -106,7 +110,13 @@ $sidebarWidth: 320px;
   background: white;
 
   &__sidebar {
-    width: $sidebarWidth !important;
+    position: absolute;
+    top: 0 !important;
+    bottom: 0;
+    left: 0;
+    width: $sidebarWidth;
+    height: 100%;
+    max-height: 100%;
   }
 
   &__editor {

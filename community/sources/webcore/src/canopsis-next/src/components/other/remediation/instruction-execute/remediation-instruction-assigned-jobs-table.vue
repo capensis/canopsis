@@ -1,53 +1,65 @@
 <template>
   <v-data-table
-    :items="jobs"
+    v-model:expanded="expandedJobIds"
     :headers="headers"
+    :items="jobs"
     class="jobs-assigned-table"
-    item-key="_id"
-    show-expand
+    item-value="_id"
     hide-default-footer
     hide-default-header
+    show-expand
   >
-    <template #header="">
+    <template #headers>
       <tr>
         <th />
         <th class="text-center pre-line">
-          {{ $t('remediation.instructionExecute.jobs.startedAt') }}
+          {{ t('remediation.instructionExecute.jobs.startedAt') }}
         </th>
         <th class="text-center pre-line">
-          {{ $t('remediation.instructionExecute.jobs.launchedAt') }}
+          {{ t('remediation.instructionExecute.jobs.launchedAt') }}
         </th>
         <th class="text-center pre-line">
-          {{ $t('remediation.instructionExecute.jobs.completedAt') }}
+          {{ t('remediation.instructionExecute.jobs.completedAt') }}
         </th>
       </tr>
     </template>
-    <template #item="row">
+
+    <template #item="{ item }">
       <remediation-instruction-assigned-jobs-row
-        :job="row.item"
-        :expanded="row.isExpanded"
+        :job="getRawJob(item)"
+        :expanded="isJobExpanded(item)"
         :executable="executable"
         :cancelable="cancelable"
         @execute-job="$emit('execute-job', $event)"
         @cancel-job-execution="$emit('cancel-job-execution', $event)"
-        @update:expanded="row.expand"
+        @update:expanded="toggleExpanded(item, $event)"
       />
     </template>
-    <template #expanded-item="{ item }">
-      <remediation-instruction-assigned-jobs-expand-panel :job="item" />
+
+    <template #expanded-row="{ item, columns }">
+      <tr>
+        <td :colspan="columns.length" class="jobs-assigned-table__expand-cell">
+          <remediation-instruction-assigned-jobs-expand-panel :job="getRawJob(item)" />
+        </td>
+      </tr>
     </template>
   </v-data-table>
 </template>
 
 <script>
-import RemediationInstructionAssignedJobsRow from './partials/remediation-instruction-assigned-jobs-row.vue';
+import { ref } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import RemediationInstructionAssignedJobsExpandPanel from './partials/remediation-instruction-assigned-jobs-expand-panel.vue';
+import RemediationInstructionAssignedJobsRow from './partials/remediation-instruction-assigned-jobs-row.vue';
 
 export default {
   components: {
     RemediationInstructionAssignedJobsRow,
     RemediationInstructionAssignedJobsExpandPanel,
   },
+
   props: {
     jobs: {
       type: Array,
@@ -62,28 +74,59 @@ export default {
       default: false,
     },
   },
+
+  emits: ['execute-job', 'cancel-job-execution'],
+
   setup() {
+    const { t } = useI18n();
+    const expandedJobIds = ref([]);
     const headers = [
-      { value: 'name' },
-      { value: 'name' },
-      { value: 'startedAt' },
-      { value: 'launchedAt' },
-      { value: 'completedAt' },
+      { title: '', key: 'name', sortable: false },
+      { title: '', key: 'startedAt', sortable: false },
+      { title: '', key: 'launchedAt', sortable: false },
+      { title: '', key: 'completedAt', sortable: false },
     ];
 
-    return { headers };
+    const getRawJob = job => job?.raw ?? job;
+    const getJobId = (job) => {
+      const rawJob = getRawJob(job);
+
+      return rawJob._id || rawJob.job_id || rawJob.name;
+    };
+    const isJobExpanded = job => expandedJobIds.value.includes(getJobId(job));
+
+    const toggleExpanded = (job, expanded) => {
+      const id = getJobId(job);
+
+      expandedJobIds.value = expanded
+        ? [...expandedJobIds.value, id]
+        : expandedJobIds.value.filter(jobId => jobId !== id);
+    };
+
+    return {
+      t,
+      headers,
+      expandedJobIds,
+      getRawJob,
+      isJobExpanded,
+      toggleExpanded,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .jobs-assigned-table {
-    tr {
-      border-bottom: none !important;
-    }
-
-    tbody tr:hover {
-      background: unset !important;
-    }
+.jobs-assigned-table {
+  :deep(tr) {
+    border-bottom: none !important;
   }
+
+  :deep(tbody tr:hover) {
+    background: unset !important;
+  }
+
+  &__expand-cell {
+    padding: 0;
+  }
+}
 </style>

@@ -1,50 +1,51 @@
 <template>
   <v-menu
-    bottom
-    left
-    @click.native.stop=""
+    v-if="actions.length"
+    v-model="menu"
+    :close-on-content-click="false"
+    location="bottom end"
+    @click.stop=""
   >
-    <template #activator="{ on }">
-      <v-btn
+    <template #activator="{ props }">
+      <c-action-btn
+        :tooltip="$t('common.moreButton')"
         :small="small"
-        icon
-        v-on="on"
-      >
-        <v-icon>more_vert</v-icon>
-      </v-btn>
+        icon="more_vert"
+        v-bind="props"
+      />
     </template>
+
     <c-list
       :items="actions"
       item-text="title"
       item-value="title"
       return-object
-      @input="selectAction"
+      @update:value="selectAction"
     >
       <template #item-title="{ item }">
-        <span class="mr-4">
-          <v-progress-circular
-            v-if="item.loading"
-            :color="item.iconColor"
-            :size="16"
-            :width="2"
-            indeterminate
-          />
-          <v-icon
-            v-else
-            :color="item.iconColor"
-            :disabled="item.disabled"
-            class="ma-0 pa-0"
-            left
-            small
-          >
-            {{ item.icon }}
-          </v-icon>
-        </span>
-        <span
-          :class="item.cssClass"
-          class="text-body-1"
-        >
-          {{ item.title }}
+        <span class="actions-panel__menu-item">
+          <span class="actions-panel__menu-item-icon mr-4">
+            <v-progress-circular
+              v-if="item.loading"
+              :color="item.iconColor"
+              :size="16"
+              :width="2"
+              indeterminate
+            />
+            <c-icon
+              v-else
+              :color="item.iconColor"
+              :disabled="item.disabled"
+              :size="item.iconSize"
+              :small="!item.iconSize"
+              class="ma-0 pa-0"
+            >
+              {{ item.icon }}
+            </c-icon>
+          </span>
+          <span :class="item.cssClass" class="text-body-1">
+            {{ item.title }}
+          </span>
         </span>
       </template>
     </c-list>
@@ -63,12 +64,25 @@ export default {
       default: false,
     },
   },
-  setup() {
-    const selectAction = item => item?.method?.();
 
+  data() {
     return {
-      selectAction,
+      menu: false,
     };
+  },
+
+  methods: {
+    closeMenu() {
+      this.menu = false;
+    },
+
+    selectAction(item) {
+      item?.method?.();
+
+      if (item?.closeOnClick !== false) {
+        this.closeMenu();
+      }
+    },
   },
 };
 </script>

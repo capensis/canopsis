@@ -1,26 +1,27 @@
 <template>
   <c-number-field
-    v-field.number="value"
+    :value="currentValue"
     :label="label || $t('common.impactLevel')"
     :placeholder="placeholder"
-    :single-line="singleLine"
     :disabled="disabled"
     :name="name"
     :max="max"
     :min="min"
     :required="required"
+    @update:value="updateValue"
   />
 </template>
 
 <script>
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value', 'update:modelValue'],
+
   props: {
     value: {
+      type: [Number, String],
+      required: false,
+    },
+    modelValue: {
       type: [Number, String],
       required: false,
     },
@@ -31,10 +32,6 @@ export default {
     name: {
       type: String,
       default: 'impact_level',
-    },
-    singleLine: {
-      type: Boolean,
-      default: false,
     },
     min: {
       type: Number,
@@ -53,9 +50,21 @@ export default {
       default: false,
     },
   },
+
   computed: {
+    currentValue() {
+      return this.modelValue ?? this.value;
+    },
+
     placeholder() {
       return `${this.min}-${this.max}`;
+    },
+  },
+
+  methods: {
+    updateValue(value) {
+      this.$emit('update:value', value);
+      this.$emit('update:modelValue', value);
     },
   },
 };

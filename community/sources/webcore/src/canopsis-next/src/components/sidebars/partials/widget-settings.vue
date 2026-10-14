@@ -2,41 +2,46 @@
   <v-form
     :class="{ 'widget-settings--divider': divider }"
     class="widget-settings"
-    @submit.prevent="$emit('submit')"
+    @submit.prevent="emit('submit')"
   >
-    <v-list
-      class="widget-settings__list py-0"
-      expand
-    >
+    <v-list class="widget-settings__list py-0">
       <slot />
     </v-list>
-    <v-layout class="widget-settings__submit-btn-wrapper pa-4">
+
+    <c-layout class="widget-settings__submit-btn-wrapper pa-4">
       <v-btn
         :loading="submitting"
         :disabled="submitting"
         type="submit"
         color="primary"
       >
-        {{ $t('common.save') }}
+        {{ t('common.save') }}
       </v-btn>
-    </v-layout>
+    </c-layout>
   </v-form>
 </template>
 
-<script>
-export default {
-  inject: ['$sidebar'],
-  props: {
-    submitting: {
-      type: Boolean,
-      default: false,
-    },
-    divider: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+import { useI18n } from '@/hooks/i18n';
+
+defineProps({
+  submitting: {
+    type: Boolean,
+    default: false,
   },
-};
+  dirty: {
+    type: Boolean,
+    default: false,
+  },
+  divider: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(['submit']);
+
+const { t } = useI18n();
 </script>
 
 <style lang="scss">
@@ -44,7 +49,8 @@ export default {
   --item-divider-border: 1px solid var(--v-divider-border-color);
 
   &--divider {
-    .v-list-group, .widget-settings-flat-item {
+    .v-list-group,
+    .widget-settings-flat-item {
       &:not(:last-of-type) {
         border-bottom: var(--item-divider-border);
       }
@@ -56,13 +62,10 @@ export default {
   }
 
   &__submit-btn-wrapper {
-    background-color: var(--v-application-background-base);
     position: sticky;
     bottom: 0;
-
-    .theme--light & {
-      background-color: #fff;
-    }
+    z-index: 2;
+    background-color: rgb(var(--v-theme-surface));
   }
 }
 </style>

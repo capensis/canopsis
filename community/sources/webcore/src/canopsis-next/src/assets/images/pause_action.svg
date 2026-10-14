@@ -1,0 +1,16 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+>
+  <path
+    d="M3 22V4H6V2H8V4H16V2H18V4H21V12H19V10H5V20H12V22H3Z"
+    fill="currentColor"
+  />
+  <path
+    d="M19 22V15H21V22H19ZM15 22V15H17V22H15Z"
+    fill="currentColor"
+  />
+</svg>

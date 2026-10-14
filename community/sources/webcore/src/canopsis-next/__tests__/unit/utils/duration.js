@@ -1,0 +1,22 @@
+import { randomArrayItem } from '@unit/utils/array';
+import Faker from 'faker';
+
+import { TIME_UNITS } from '@/constants';
+
+export const randomTimeUnit = () => randomArrayItem(Object.values(TIME_UNITS));
+
+export const randomDurationValue = () => ({
+  unit: randomTimeUnit(),
+  value: Faker.datatype.number(),
+});
+
+export const randomDurationEnabledValue = () => ({
+  ...randomDurationValue(),
+
+  enabled: Faker.datatype.boolean(),
+});
+
+export const randomPeriodicRefresh = () => ({
+  value: Faker.datatype.number(),
+  unit: randomTimeUnit(),
+});

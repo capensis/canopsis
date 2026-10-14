@@ -1,11 +1,6 @@
-import { isString, isFunction } from 'lodash';
-import { ref, unref, computed, onBeforeUnmount } from 'vue';
-import { Ajax } from 'jodit/esm/core/request';
-import { ajaxInstances } from 'jodit/esm/modules/uploader/helpers/send';
+import { computed, onBeforeUnmount, ref, unref } from 'vue';
 
 import { FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-
-import icons from '@/plugins/vuetify/components/icons';
 
 import localStorageService from '@/services/local-storage';
 
@@ -17,16 +12,11 @@ import { useI18n } from '@/hooks/i18n';
 /**
  * Hook for managing text editor upload functionality.
  *
- * Provides upload configuration and handlers for file/image uploads in Jodit editor.
- *
  * @param {Object} params - The parameters object.
  * @param {Ref<Object>} params.editor - Reference to the Jodit editor instance.
  * @param {boolean} params.isPublic - Whether uploads should be public.
  * @param {number} [params.maxFileSize] - Maximum file size in bytes.
- *
- * @returns {Object} An object containing upload-related configuration and options.
- * @returns {ComputedRef<Object>} return.controlsOptions - Control options for file/image tags.
- * @returns {ComputedRef<Object>} return.uploaderOptions - Uploader configuration options.
+ * @returns {Object} Upload control and uploader options.
  */
 export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
   const { t } = useI18n();
@@ -43,82 +33,59 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
   /**
    * Custom upload function for handling file uploads with progress tracking.
    *
-   * @param {Array} request - Array of files to upload.
-   * @param {Function} showProgress - Callback function to update upload progress (0-100).
-   * @returns {Promise<Object>} Promise that resolves with upload response or error.
+   * @param {FormData|File[]} request - Files to upload.
+   * @param {Function} showProgress - Callback function that updates upload progress.
+   * @returns {Promise<Object>}
    */
-  const customUploadFunction = (request, showProgress) => {
-    const { uploader } = unref(editor);
-    const { fileValidator: uploaderFileValidator } = uploader.options ?? {};
+  const customUploadFunction = (request, showProgress) =>
+    new Promise((resolve) => {
+      const { uploader } = unref(editor);
+      const { fileValidator: uploaderFileValidator } = uploader.options ?? {};
+      const formData = request instanceof FormData ? request : new FormData();
 
-    if (uploaderFileValidator) {
-      try {
-        request.forEach(uploaderFileValidator);
-      } catch (err) {
-        return Promise.resolve({
-          error: err.message,
-        });
+      if (!(request instanceof FormData)) {
+        request.forEach(file => formData.append('files[]', file));
       }
-    }
 
-    const ajax = new Ajax({
-      xhr: () => {
-        const xhr = new XMLHttpRequest();
-        if (uploader.j.ow.FormData !== undefined && xhr.upload) {
-          showProgress(10);
-          xhr.upload.addEventListener('progress', (event) => {
-            if (event.lengthComputable) {
-              let percentComplete = event.loaded / event.total;
-              percentComplete *= 100;
-              showProgress(percentComplete);
-            }
-          }, false);
-        } else {
-          showProgress(100);
+      if (uploaderFileValidator) {
+        try {
+          Array.from(formData.values()).forEach(uploaderFileValidator);
+        } catch (err) {
+          resolve({ error: err.message });
+          return;
         }
-        return xhr;
-      },
-      method: uploader.o.method || 'POST',
-      data: request,
-      url: isFunction(uploader.o.url)
-        ? uploader.o.url(request)
-        : uploader.o.url,
-      headers: uploader.o.headers,
-      queryBuild: uploader.o.queryBuild,
-      contentType: uploader.o.contentType.call(uploader, request),
-      withCredentials: uploader.o.withCredentials || false,
-    });
+      }
 
-    let instances = ajaxInstances.get(uploader);
+      const xhr = new XMLHttpRequest();
 
-    if (!instances) {
-      instances = new Set();
-      ajaxInstances.set(uploader, instances);
-    }
-
-    instances.add(ajax);
-    uploader.j.e.one('beforeDestruct', ajax.destruct);
-
-    return ajax
-      .send()
-      .then(resp => resp.json())
-      .catch(error => ({
-        error,
-      }))
-      .finally(() => {
-        ajax.destruct();
-
-        if (instances) {
-          instances.delete(ajax);
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          showProgress((event.loaded / event.total) * 100);
         }
       });
-  };
+
+      xhr.addEventListener('load', () => {
+        try {
+          resolve(JSON.parse(xhr.responseText));
+        } catch (err) {
+          resolve({ error: err.message });
+        }
+      });
+
+      xhr.addEventListener('error', () => resolve({ error: xhr.statusText }));
+      xhr.open('POST', `${FILE_BASE_URL}?public=${unref(isPublic)}`);
+      xhr.setRequestHeader(
+        'Authorization',
+        `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}`,
+      );
+      xhr.send(formData);
+    });
 
   /**
    * Checks if the upload response indicates success.
    *
    * @param {Array} response - Upload response array.
-   * @returns {boolean} True if response has items, false otherwise.
+   * @returns {boolean}
    */
   const isSuccess = response => response?.length;
 
@@ -126,15 +93,16 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * Extracts error message from upload response.
    *
    * @param {Object|Array} response - Upload response object or array.
-   * @returns {string} Error message if present, empty string otherwise.
+   * @returns {string}
    */
-  const getMessage = response => response?.error || response?.filter?.(file => file.error).join(' ');
+  const getMessage = response =>
+    response?.error || response?.filter?.(file => file.error).join(' ');
 
   /**
    * Processes upload response and formats it for the editor.
    *
    * @param {Object|Array} response - Upload response from server.
-   * @returns {Object} Processed response with files, baseurl, error, and msg.
+   * @returns {Object}
    */
   const process = (response) => {
     const files = response.filter(file => !file.error);
@@ -167,18 +135,15 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
   /**
    * Default success handler for file uploads.
    *
-   * Inserts uploaded files (images or links) into the editor.
-   *
    * @param {Object} response - Upload response containing files array and baseurl.
    */
   const defaultHandlerSuccess = (response) => {
     if (response.files && response.files.length) {
       response.files.forEach((file) => {
-        const [tagName, attr] = file.mediatype && file.mediatype.startsWith('image')
-          ? ['img', 'src']
-          : ['a', 'href'];
+        const [tagName, attr] =
+          file.mediatype && file.mediatype.startsWith('image') ? ['img', 'src'] : ['a', 'href'];
 
-        const attrValue = isString(file) ? file : response.baseurl + file._id;
+        const attrValue = response.baseurl + file._id;
         const unwrappedEditor = unref(editor);
         const elm = unwrappedEditor.createInside.element(tagName);
 
@@ -186,12 +151,15 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
 
         if (tagName === 'a' && file.filename) {
           elm.setAttribute('target', '_blank');
-
           elm.innerText = file.filename;
         }
 
         if (tagName === 'img') {
-          unwrappedEditor.selection.insertImage(elm, null, unwrappedEditor.options.imageDefaultWidth);
+          unwrappedEditor.selection.insertImage(
+            elm,
+            null,
+            unwrappedEditor.options.imageDefaultWidth,
+          );
         } else {
           unwrappedEditor.selection.insertNode(elm);
         }
@@ -222,21 +190,10 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
 /**
  * Hook for managing text editor variables menu functionality.
  *
- * Provides functionality for inserting and managing variables in the text editor,
- * including variable selection, menu positioning, and variable insertion.
- *
  * @param {Object} params - The parameters object.
  * @param {Ref<Object>} params.editor - Reference to the Jodit editor instance.
  * @param {Array} params.variables - Array of available variables.
- *
- * @returns {Object} An object containing variables-related state and methods.
- * @returns {ComputedRef<boolean>} return.hasVariables - Whether variables are available.
- * @returns {Ref<boolean>} return.variablesShown - Whether the variables menu is visible.
- * @returns {Ref<string>} return.variablesMenuValue - Current selected variable value.
- * @returns {Ref<Object>} return.variablesMenuPosition - Position of the variables menu.
- * @returns {ComputedRef<Object>} return.variablesButton - Button configuration for variables.
- * @returns {Function} return.pasteVariable - Function to paste a variable into the editor.
- * @returns {Function} return.closeVariablesMenu - Function to close the variables menu.
+ * @returns {Object} Variables state and methods.
  */
 export const useTextEditorVariables = ({ editor, variables }) => {
   const variablesShown = ref(false);
@@ -245,18 +202,30 @@ export const useTextEditorVariables = ({ editor, variables }) => {
     x: 0,
     y: 0,
   });
+  const lastRange = ref(null);
 
   const hasVariables = computed(() => hasAtLeastOneVariable(unref(variables)));
+
+  const isEditorNode = node => node && unref(editor)?.editor?.contains(node);
+
+  const saveSelectionRange = () => {
+    const selection = unref(editor).selection?.sel;
+
+    if (!selection?.rangeCount || !isEditorNode(selection.anchorNode)) {
+      return;
+    }
+
+    lastRange.value = selection.getRangeAt(0).cloneRange();
+  };
 
   /**
    * Extracts variable value from a variable group match result.
    *
    * @param {Array} variableGroup - Variable group array from matchPayloadVariableBySelection.
-   * @returns {string} Extracted variable value.
+   * @returns {string}
    */
   const getVariableValueFromGroup = (variableGroup) => {
-    const [,, content] = variableGroup;
-
+    const [, , content] = variableGroup;
     const parts = content.trim().split(' ');
 
     return parts.length > 1 ? parts[1] : parts[0];
@@ -264,23 +233,25 @@ export const useTextEditorVariables = ({ editor, variables }) => {
 
   /**
    * Selects variable value at the current cursor position.
-   *
-   * Updates variablesMenuValue and adjusts selection to match the complete variable.
    */
   const selectVariableValueByCursor = () => {
     const selection = unref(editor).selection?.sel ?? {};
     const { anchorNode, anchorOffset, focusOffset } = selection;
 
-    if (!anchorNode) {
+    if (!isEditorNode(anchorNode)) {
       return;
     }
 
     const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
-
-    const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
+    const variableGroup = matchPayloadVariableBySelection(
+      anchorNode.nodeValue,
+      selectionStart,
+      selectionEnd,
+    );
 
     if (!variableGroup) {
       variablesMenuValue.value = undefined;
+      saveSelectionRange();
       return;
     }
 
@@ -299,13 +270,15 @@ export const useTextEditorVariables = ({ editor, variables }) => {
 
       unref(editor).selection.selectRange(range);
     }
+
+    saveSelectionRange();
   };
 
   /**
-   * Shows the variables menu at the specified position.
+   * Shows variables menu at button position.
    *
    * @param {Object} instance - Jodit editor instance.
-   * @param {HTMLElement} target - Target element that triggered the menu.
+   * @param {HTMLElement} target - Target element.
    * @param {Object} options - Options object.
    * @param {Event} options.originalEvent - Original DOM event.
    */
@@ -324,7 +297,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   };
 
   /**
-   * Closes the variables menu and removes selection change listener.
+   * Closes variables menu and removes listeners.
    */
   const closeVariablesMenu = () => {
     variablesShown.value = false;
@@ -336,16 +309,29 @@ export const useTextEditorVariables = ({ editor, variables }) => {
    * Extracts the variable value from a variable string format.
    *
    * @param {string} variableString - Variable string in format "{{ value }}".
-   * @returns {string} Extracted variable value without braces and spaces.
+   * @returns {string}
    */
-  const extractVariableValue = variableString => variableString.replace('{{ ', '').replace(' }}', '');
+  const extractVariableValue = variableString =>
+    variableString.replace('{{ ', '').replace(' }}', '');
 
   /**
-   * Determines the text to insert based on whether replacing an existing variable.
+   * Wraps bare variable values into template syntax.
    *
-   * @param {string} variable - New variable string in format "{{ value }}".
-   * @param {Array|null} variableGroup - Existing variable group match, or null if no match.
-   * @returns {string} Text to insert into the editor.
+   * @param {string} variable - Variable string or bare variable name.
+   * @returns {string}
+   */
+  const normalizeVariable = (variable) => {
+    const trimmedVariable = String(variable ?? '').trim();
+
+    return trimmedVariable.startsWith('{{') ? trimmedVariable : `{{ ${trimmedVariable} }}`;
+  };
+
+  /**
+   * Determines the text to insert.
+   *
+   * @param {string} variable - New variable string.
+   * @param {Array|null} variableGroup - Existing variable group match.
+   * @returns {string}
    */
   const getTextToInsert = (variable, variableGroup) => {
     if (!variableGroup) {
@@ -360,7 +346,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   };
 
   /**
-   * Inserts a text node into the specified range and positions cursor after it.
+   * Inserts a text node into range and positions cursor after it.
    *
    * @param {Range} range - DOM Range object where text should be inserted.
    * @param {string} text - Text content to insert.
@@ -374,42 +360,32 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   };
 
   /**
-   * Pastes a variable into the editor at the current selection.
+   * Pastes a variable into editor selection.
    *
-   * Replaces existing variable if one is selected, otherwise inserts new variable.
-   * Preserves formatting and spaces around the insertion point.
-   *
-   * @param {string} variable - Variable string in format "{{ value }}" to insert.
+   * @param {string} variable - Variable string in format "{{ value }}".
    */
   const pasteVariable = (variable) => {
     selectVariableValueByCursor();
     const selection = unref(editor).selection?.sel ?? {};
-    const { focusNode } = selection;
+    const hasEditorSelection = selection.rangeCount > 0 && isEditorNode(selection.focusNode);
+    const range = hasEditorSelection ? selection.getRangeAt(0) : lastRange.value?.cloneRange();
+    const focusNode = range?.startContainer;
 
-    if (!focusNode) {
+    if (!range || !focusNode) {
       return;
     }
 
-    const { anchorOffset, focusOffset } = selection;
-    const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
-
-    const variableGroup = matchPayloadVariableBySelection(focusNode.nodeValue, selectionStart, selectionEnd);
-    const textToInsert = getTextToInsert(variable, variableGroup);
-
-    let range;
-
-    if (selection.rangeCount > 0) {
-      range = selection.getRangeAt(0);
-    } else {
-      range = document.createRange();
-      range.setStart(focusNode, selectionStart);
-      range.setEnd(focusNode, selectionEnd);
-    }
+    const [selectionStart, selectionEnd] = [range.startOffset, range.endOffset].sort();
+    const variableGroup = focusNode.nodeValue
+      ? matchPayloadVariableBySelection(focusNode.nodeValue, selectionStart, selectionEnd)
+      : null;
+    const textToInsert = getTextToInsert(normalizeVariable(variable), variableGroup);
 
     insertTextNode(range, textToInsert);
     selection.removeAllRanges();
     selection.addRange(range);
     unref(editor).selection.selectRange(range);
+    lastRange.value = range.cloneRange();
 
     closeVariablesMenu();
   };
@@ -421,10 +397,13 @@ export const useTextEditorVariables = ({ editor, variables }) => {
   }));
 
   const variablesExtraIcon = computed(() => ({
-    variables: `<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">${icons.variables_x?.component?.template ?? 'variable_add'}</i>`,
+    variables:
+      '<i class="material-icons v-icon v-icon--small" style="width: 14px; height: 14px;">data_object</i>',
   }));
 
-  onBeforeUnmount(() => document.removeEventListener('selectionchange', selectVariableValueByCursor));
+  onBeforeUnmount(() =>
+    document.removeEventListener('selectionchange', selectVariableValueByCursor),
+  );
 
   return {
     hasVariables,

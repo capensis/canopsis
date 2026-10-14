@@ -1,21 +1,13 @@
 <template>
   <v-menu
-    :value="value"
-    :position-x="positionX"
-    :position-y="positionY"
+    :model-value="value"
+    :target="[positionX, positionY]"
     :close-on-content-click="false"
-    absolute
-    @input="$emit('close')"
+    @update:model-value="updateShown"
   >
     <v-list dense>
-      <v-list-item
-        v-for="item in items"
-        :key="item.event"
-        @click="applyEvent(item.event)"
-      >
-        <v-list-item-content>
-          <v-list-item-title>{{ item.text }}</v-list-item-title>
-        </v-list-item-content>
+      <v-list-item v-for="item in items" :key="item.event" @click="applyEvent(item.event)">
+        <v-list-item-title>{{ item.text }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -41,6 +33,7 @@ export default {
       default: false,
     },
   },
+  emits: ['add:point', 'edit:point', 'remove:point', 'close'],
   computed: {
     items() {
       if (this.editing) {
@@ -65,6 +58,12 @@ export default {
     },
   },
   methods: {
+    updateShown(value) {
+      if (!value) {
+        this.$emit('close');
+      }
+    },
+
     applyEvent(event) {
       this.$emit(event);
     },

@@ -1,3 +1,5 @@
+import { FILTERS } from '@/helpers/filter';
+
 export const widgetColumnsFiltersMixin = {
   props: {
     columnsFilters: {
@@ -16,7 +18,7 @@ export const widgetColumnsFiltersMixin = {
   },
   methods: {
     getFilter(filter, attributes = []) {
-      const filterFunc = this.$options.filters[filter];
+      const filterFunc = FILTERS[filter];
 
       return value => (filterFunc ? filterFunc(value, ...attributes) : value);
     },

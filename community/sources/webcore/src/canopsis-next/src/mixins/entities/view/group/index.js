@@ -1,16 +1,17 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState, mapStores } from 'pinia';
 
 import { MAX_LIMIT } from '@/constants';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('view');
-const { mapActions: mapAuthActions } = createNamespacedHelpers('auth');
+import { useAuthStore } from '@/stores/modules/auth';
+import { useViewStore } from '@/stores/modules/view';
 
 /**
  * @mixin Helpers for the view group entity
  */
 export const entitiesViewGroupMixin = {
   computed: {
-    ...mapGetters({
+    ...mapStores(useViewStore),
+    ...mapState(useViewStore, {
       groupsPending: 'pending',
       groups: 'items',
       getGroupById: 'getGroupById',
@@ -18,8 +19,9 @@ export const entitiesViewGroupMixin = {
       getViewTabById: 'getViewTabById',
     }),
   },
+
   methods: {
-    ...mapActions({
+    ...mapActions(useViewStore, {
       fetchGroupsList: 'fetchList',
       fetchGroupsListWithoutStore: 'fetchListWithoutStore',
       createGroup: 'create',
@@ -30,7 +32,7 @@ export const entitiesViewGroupMixin = {
       removePrivateGroup: 'removePrivateGroup',
     }),
 
-    ...mapAuthActions(['fetchCurrentUser']),
+    ...mapActions(useAuthStore, ['fetchCurrentUser']),
 
     fetchAllGroupsListWithWidgets() {
       return this.fetchGroupsList({
@@ -47,10 +49,7 @@ export const entitiesViewGroupMixin = {
     },
 
     fetchAllGroupsListWithWidgetsWithCurrentUser() {
-      return Promise.all([
-        this.fetchAllGroupsListWithWidgets(),
-        this.fetchCurrentUser(),
-      ]);
+      return Promise.all([this.fetchAllGroupsListWithWidgets(), this.fetchCurrentUser()]);
     },
   },
 };

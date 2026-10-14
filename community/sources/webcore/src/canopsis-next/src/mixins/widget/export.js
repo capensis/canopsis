@@ -6,9 +6,9 @@ import { openUrlInNewTab } from '@/helpers/url';
 /**
  * @typedef {Object} ExportCsvMixin
  * @property {Object} methods
- * @property {function} methods.downloadFile
- * @property {function} methods.generateFile
- * @property {function} methods.waitGeneratingFile
+ * @property {Function} methods.downloadFile
+ * @property {Function} methods.generateFile
+ * @property {Function} methods.waitGeneratingFile
  */
 
 /**

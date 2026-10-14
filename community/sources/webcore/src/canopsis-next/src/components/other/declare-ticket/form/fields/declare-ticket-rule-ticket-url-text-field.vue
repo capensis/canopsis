@@ -1,11 +1,12 @@
 <template>
-  <v-text-field
-    v-field="value"
+  <c-text-field
+    :model-value="value"
     :label="$t('declareTicket.ticketURL')"
     :name="name"
     :disabled="disabled"
+    @update:model-value="$emit('update:value', $event)"
   >
-    <template #append="">
+    <template #append-inner>
       <c-help-icon
         :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })"
         icon="help"
@@ -13,15 +14,12 @@
         left
       />
     </template>
-  </v-text-field>
+  </c-text-field>
 </template>
 
 <script>
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: String,

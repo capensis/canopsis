@@ -1,52 +1,63 @@
 <template>
   <div>
-    <v-layout>
+    <c-layout>
       <c-pbehavior-type-field
-        v-field="form.active_on_pbh"
-        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')"
+        v-model="activeOnPbhField"
+        :label="t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')"
         :is-item-disabled="isActiveItemDisabled"
+        name="active_on_pbh"
         chips
         multiple
       />
-    </v-layout>
-    <v-layout>
+    </c-layout>
+    <c-layout>
       <c-pbehavior-type-field
-        v-field="form.disabled_on_pbh"
-        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')"
+        v-model="disabledOnPbhField"
+        :label="t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')"
         :is-item-disabled="isDisabledItemDisabled"
+        name="disabled_on_pbh"
         chips
         multiple
       />
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
 <script>
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
       default: () => ({}),
     },
   },
-  mounted() {
-    this.fetchFieldPbehaviorTypesList();
-  },
-  methods: {
-    isActiveItemDisabled(item) {
-      return this.form.disabled_on_pbh.includes(item._id);
-    },
+  emits: ['update:form'],
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const createFieldModel = field => computed({
+        get: () => props.form[field],
+        set: value => emit('update:form', {
+            ...props.form,
+            [field]: value,
+          }),
+      });
+    const activeOnPbhField = createFieldModel('active_on_pbh');
+    const disabledOnPbhField = createFieldModel('disabled_on_pbh');
 
-    isDisabledItemDisabled(item) {
-      return this.form.active_on_pbh.includes(item._id);
-    },
+    const isActiveItemDisabled = item => props.form.disabled_on_pbh.includes(item._id);
+    const isDisabledItemDisabled = item => props.form.active_on_pbh.includes(item._id);
+
+    return {
+      t,
+      activeOnPbhField,
+      disabledOnPbhField,
+      isActiveItemDisabled,
+      isDisabledItemDisabled,
+    };
   },
 };
 </script>

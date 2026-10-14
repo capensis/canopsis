@@ -1,0 +1,3 @@
+export default function setup() {
+  process.env.TZ = 'Europe/Paris';
+}

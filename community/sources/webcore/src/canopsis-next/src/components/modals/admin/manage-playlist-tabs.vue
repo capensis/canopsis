@@ -1,78 +1,79 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createPlaylist.manageTabs') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createPlaylist.manageTabs') }}</span>
       </template>
-      <template #text="">
-        <manage-playlist-tabs-form
-          v-model="form.selectedTabs"
-          :groups="groups"
-        />
+
+      <template #text>
+        <manage-playlist-tabs-form v-model:selected-tabs="selectedTabs" :groups="groups" />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { computed, ref } from 'vue';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 import ManagePlaylistTabsForm from '@/components/other/playlists/form/manage-playlist-tabs-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.managePlaylistTabs,
-  components: {
-    ManagePlaylistTabsForm,
-    ModalWrapper,
-  },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: {
-        selectedTabs: this.modal.config.selectedTabs || [],
-      },
-    };
-  },
-  computed: {
-    groups() {
-      return this.config.groups || [];
-    },
-  },
-  methods: {
-    async submit() {
-      if (this.config.action) {
-        this.config.action(this.form.selectedTabs);
+  components: { ManagePlaylistTabsForm },
 
-        this.$modals.hide();
-      }
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const selectedTabs = ref(config.value.selectedTabs ?? []);
+    const groups = computed(() => config.value.groups ?? []);
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const { pending: submitting, handler: submit } = usePendingHandler(async () => {
+      await config.value.action?.(selectedTabs.value);
+
+      closeModal();
+    });
+
+    useFormConfirmableCloseModal({
+      form: selectedTabs,
+      submit,
+      close: closeModal,
+    });
+
+    return {
+      t,
+      groups,
+      selectedTabs,
+      submitting,
+      closeModal,
+      submit,
+    };
   },
 };
 </script>

@@ -7,17 +7,28 @@
 export const removeTrailingSlashes = (url = '') => url.replace(/([^:]\/)\/+/g, '$1');
 
 /**
+ * Function for check url is valid
+ *
+ * @param {string} string
+ * @return {boolean}
+ */
+export const isValidUrl = (string) => {
+  try {
+    const url = new URL(string.replace(/{{(.+)}}/g, ''));
+
+    return /^(https?:\/\/)/.test(url.href);
+  } catch {
+    return false;
+  }
+};
+
+/**
  * We need to use this function to avoid problem with double slashes in url
  *
  * @example http://example.com//something//something will be redirected to http://example.com/something/something
  */
 export const reloadPageWithTrailingSlashes = () => {
-  const {
-    origin,
-    pathname,
-    search,
-    href,
-  } = window.location;
+  const { origin, pathname, search, href } = window.location;
   const preparedHref = `${removeTrailingSlashes(`${origin}${pathname}`)}${search}`;
 
   if (href !== preparedHref) {

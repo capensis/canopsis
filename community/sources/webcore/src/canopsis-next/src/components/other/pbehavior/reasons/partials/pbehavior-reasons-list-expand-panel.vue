@@ -1,29 +1,27 @@
 <template>
-  <v-tabs
-    background-color="secondary lighten-1"
-    slider-color="primary"
-    dark
-    centered
-  >
-    <v-tab>{{ $t('common.description') }}</v-tab>
-    <v-tab-item>
-      <v-layout
-        class="pa-3 secondary lighten-2"
-        column
-      >
-        <v-flex xs12>
-          <v-card>
-            <v-card-text>
-              <pre>{{ pbehaviorReason.description }}</pre>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-tab-item>
-  </v-tabs>
+  <div class="planning-expand-panel">
+    <v-tabs
+      color="primary"
+      class="secondary lighten-1"
+      align-tabs="center"
+      model-value="description"
+    >
+      <v-tab value="description">
+        {{ t('common.description') }}
+      </v-tab>
+    </v-tabs>
+
+    <v-window model-value="description">
+      <c-window-expand-item value="description">
+        <pre class="planning-expand-panel__pre">{{ pbehaviorReason.description || '-' }}</pre>
+      </c-window-expand-item>
+    </v-window>
+  </div>
 </template>
 
 <script>
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     pbehaviorReason: {
@@ -31,5 +29,20 @@ export default {
       default: () => ({}),
     },
   },
+
+  setup() {
+    const { t } = useI18n();
+
+    return { t };
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.planning-expand-panel {
+  &__pre {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}
+</style>

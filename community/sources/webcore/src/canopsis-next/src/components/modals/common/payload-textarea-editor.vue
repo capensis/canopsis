@@ -1,95 +1,84 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <c-modal-wrapper close>
       <template #title>
-        {{ title }}
+        <span>{{ title }}</span>
       </template>
+
       <template #text>
         <c-payload-textarea-field
-          v-model="form.text"
-          :required="isRequired"
+          :value="text"
+          :required="required"
           :label="config.label"
-          :name="config.name"
+          :name="config.name || 'text'"
           :variables="config.variables"
           autofocus
+          @update:value="text = $event"
         />
       </template>
+
       <template #actions>
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
+        <v-btn variant="text" @click="close">
           {{ $t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
-<script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+<script setup>
+import { computed } from 'vue';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { normalizeHandlebarsNbsp } from '@/helpers/handlebars/normalize';
 
-import ModalWrapper from '../modal-wrapper.vue';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-export default {
-  name: MODALS.payloadTextareaEditor,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  inject: ['$system'],
-  components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const text = this.modal.config.text ?? '';
+});
 
-    return {
-      form: {
-        text,
-      },
-    };
+const { t } = useI18n();
+const modals = useModals();
+
+const config = computed(() => props.modal.config ?? {});
+const title = computed(() => config.value.title ?? t('modals.textEditor.title'));
+const required = computed(() => (
+  config.value.rules?.required ||
+  config.value.rules?.includes?.('required') ||
+  config.value.required
+));
+const form = useForm({
+  initialValues: {
+    text: props.modal.config?.text ?? '',
   },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.textEditor.title');
-    },
+});
+const { values, isSubmitting } = form;
+const text = form.model('text');
 
-    variables() {
-      return this.config.variables;
-    },
-
-    isRequired() {
-      return this.config.rules?.required;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form.text);
-        }
-
-        this.$modals.hide();
-      }
-    },
-  },
+const close = () => {
+  modals.hide({ id: props.modal.id });
 };
+
+const submit = form.handleSubmit(async () => {
+  await config.value.action?.(normalizeHandlebarsNbsp(values.value.text));
+
+  close();
+});
+
+useFormConfirmableCloseModal({ form: values, submit, close });
 </script>

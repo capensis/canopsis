@@ -1,14 +1,11 @@
 <template>
-  <v-breadcrumbs
-    :items="breadcrumbs"
-    class="pa-0"
-  >
+  <v-breadcrumbs :items="breadcrumbs" class="pa-0">
     <template #item="{ item }">
       <v-btn
         :disabled="item.last"
         :loading="item.last && pending"
-        small
-        text
+        size="small"
+        variant="text"
         @click="$emit('click', item)"
       >
         <span class="text-none">
@@ -35,6 +32,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['click'],
+
   computed: {
     breadcrumbs() {
       const breadcrumbs = this.previousMaps.map(({ name }, index) => ({

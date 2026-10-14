@@ -31,23 +31,27 @@ export const useTestVariablesTabData = (props = {}, type, emit) => {
 
   const isEmptyItems = computed(() => !items.value.length);
 
-  watch(() => props.form, (newForm) => {
-    const newItems = convertRuleToTemplateTestingTestValidateForm(newForm, unref(type));
+  watch(
+    () => props.form,
+    (newForm) => {
+      const newItems = convertRuleToTemplateTestingTestValidateForm(newForm, unref(type));
 
-    if (isOmitEqual(items.value, newItems, ['value', 'updateField'])) {
-      return;
-    }
+      if (isOmitEqual(items.value, newItems, ['value', 'updateField'])) {
+        return;
+      }
 
-    items.value = newItems.map((newItem) => {
-      const { key } = newItem;
+      items.value = newItems.map((newItem) => {
+        const { key } = newItem;
 
-      return {
-        ...newItem,
-        value: get(newForm, key),
-        updateField: value => updateField(key, value),
-      };
-    });
-  }, { immediate: true });
+        return {
+          ...newItem,
+          value: get(newForm, key),
+          updateField: value => updateField(key, value),
+        };
+      });
+    },
+    { deep: true, immediate: true },
+  );
 
   return {
     items,

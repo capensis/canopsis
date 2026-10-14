@@ -1,52 +1,50 @@
 <template>
-  <portal :to="target">
+  <Teleport v-if="mounted && targetElement" :to="targetSelector">
     <div :style="style" class="c-mass-actions-panel">
-      <v-layout align-center justify-center>
+      <c-layout align="center" justify="center">
         <v-card class="c-mass-actions-panel__card">
           <v-card-text class="pa-1">
-            <v-layout class="gap-4 pa-3" align-center>
+            <c-layout class="pa-2" gap="3" align="center">
               <span class="c-mass-actions-panel__message mr-1">
                 {{ message }}
               </span>
               <v-divider vertical />
               <c-enabled-field
-                v-field="value"
-                :label="$t('common.massActionsPanel.keepSelectedAfterAction')"
+                :model-value="modelValue"
+                :label="t('common.massActionsPanel.keepSelectedAfterAction')"
                 class="c-mass-actions-panel__enabled-field"
+                density="compact"
                 hide-details
+                no-margin
+                @update:model-value="$emit('update:modelValue', $event)"
               />
               <v-divider vertical />
               <slot name="actions" />
               <v-divider vertical />
               <c-action-btn
-                :tooltip="$t('common.massActionsPanel.clearSelection')"
+                :tooltip="t('common.massActionsPanel.clearSelection')"
                 icon="close"
                 small
-                @click="clearSelected"
+                @click="$emit('clear:selected')"
               />
-            </v-layout>
+            </c-layout>
           </v-card-text>
         </v-card>
-      </v-layout>
+      </c-layout>
     </div>
-  </portal>
+  </Teleport>
 </template>
 
 <script>
-import { computed, inject, onBeforeUnmount } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
-import { PORTALS_NAMES } from '@/constants';
+import { TELEPORTS_NAMES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: false,
     },
@@ -60,7 +58,7 @@ export default {
     },
     x: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     y: {
       type: Number,
@@ -75,44 +73,43 @@ export default {
       default: 1,
     },
   },
+
+  emits: ['update:modelValue', 'clear:selected'],
+
   setup(props, { emit }) {
-    const { tc } = useI18n();
-    const { updateModel } = useModelField(props, emit);
+    const { t } = useI18n();
+    const mounted = ref(false);
     const modal = inject('$modal', null);
 
-    const wrapperClass = computed(() => ({
-      'c-mass-actions-panel': true,
-      'c-mass-actions-panel--fixed': props.fixed,
+    const targetName = computed(
+      () => `${TELEPORTS_NAMES.massActionsPanel}${modal?.id ? `-${modal.id}` : ''}`,
+    );
+    const targetSelector = computed(() => `[data-teleport-target="${targetName.value}"]`);
+    const targetElement = computed(() => mounted.value ? document.querySelector(targetSelector.value) : null,
+    );
+
+    const message = computed(() => t('common.massActionsPanel.recordsSelected', props.selected.length, {
+        count: props.selected.length,
+      }),
+    );
+
+    const style = computed(() => ({
+      gridColumnStart: props.x + 1,
+      gridColumnEnd: props.x + 1 + props.w,
+      gridRowStart: props.y + 1,
+      gridRowEnd: props.y + props.h + 1,
     }));
-    const target = computed(() => `${PORTALS_NAMES.massActionsPanel}${modal?.id ? `-${modal.id}` : ''}`);
 
-    const message = computed(() => (
-      tc('common.massActionsPanel.recordsSelected', props.selected.length, { count: props.selected.length })
-    ));
-
-    const style = computed(() => (
-      {
-        gridColumnStart: props.x + 1,
-        gridColumnEnd: props.x + 1 + props.w,
-        gridRowStart: props.y + 1,
-        gridRowEnd: props.y + 2,
-      }
-    ));
-
-    /**
-     * Emits 'clear:selected' to notify the parent to clear the mass selection.
-     */
-    const clearSelected = () => emit('clear:selected');
-
-    onBeforeUnmount(() => updateModel(props.defaultValue));
+    onMounted(() => (mounted.value = true));
+    onBeforeUnmount(() => emit('update:modelValue', props.defaultValue));
 
     return {
-      wrapperClass,
-      target,
+      t,
+      mounted,
+      targetElement,
+      targetSelector,
       message,
       style,
-
-      clearSelected,
     };
   },
 };
@@ -139,9 +136,18 @@ export default {
   &__enabled-field {
     margin: 0;
 
-    .v-input--selection-controls {
+    .v-switch {
       margin: 0;
       padding: 0;
+    }
+
+    .v-input__control,
+    .v-selection-control {
+      min-height: 32px;
+    }
+
+    .v-label {
+      font-size: 13px;
     }
   }
 }

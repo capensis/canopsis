@@ -1,29 +1,29 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-name-field
-      v-field="form.name"
+      :model-value="form.name"
       autofocus
       required
+      @update:model-value="updateField('name', $event)"
     />
-    <mermaid-editor v-field="form.parameters" />
-  </v-layout>
+    <mermaid-editor :form="form.parameters" @update:form="updateField('parameters', $event)" />
+  </c-layout>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 import MermaidEditor from './fields/mermaid-editor.vue';
 
 export default {
-  inject: ['$validator'],
   components: { MermaidEditor },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
   props: {
     form: {
       type: Object,
       required: true,
     },
   },
+  emits: ['update:form'],
 };
 </script>

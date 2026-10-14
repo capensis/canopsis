@@ -1,13 +1,13 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions } from 'pinia';
 
-const { mapActions } = createNamespacedHelpers('service');
+import { useServiceStore } from '@/stores/modules/service';
 
 export const entitiesEntityDependenciesMixin = {
   methods: {
-    ...mapActions({
-      fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
-      fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
-    }),
+    ...mapActions(useServiceStore, [
+      'fetchServiceDependenciesWithoutStore',
+      'fetchServiceImpactsWithoutStore',
+    ]),
 
     fetchDependenciesList(data) {
       return this.impact

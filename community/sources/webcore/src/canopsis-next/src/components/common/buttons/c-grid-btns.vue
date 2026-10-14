@@ -1,5 +1,5 @@
 <template>
-  <v-flex>
+  <div>
     <c-action-btn
       v-if="editing"
       :tooltip="$t('alarm.tooltips.resetChangeColumns')"
@@ -11,8 +11,9 @@
       :tooltip="$t(`alarm.tooltips.${editing ? 'finishChangeColumns' : 'startChangeColumns'}`)"
       @click="$emit('toggle')"
     />
-  </v-flex>
+  </div>
 </template>
+
 <script>
 export default {
   props: {
@@ -21,5 +22,7 @@ export default {
       default: false,
     },
   },
+
+  emits: ['reset', 'toggle'],
 };
 </script>
