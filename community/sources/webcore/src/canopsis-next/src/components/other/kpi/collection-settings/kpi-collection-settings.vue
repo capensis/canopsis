@@ -1,40 +1,32 @@
 <template>
   <v-form @submit.prevent="submit">
-    <v-layout>
-      <v-flex xs6>
+    <v-row>
+      <v-col cols="6">
         <kpi-collection-settings-basic-metrics-list />
-      </v-flex>
-      <v-flex xs6>
+      </v-col>
+      <v-col cols="6">
         <kpi-collection-settings-optional-metrics-form
           v-if="form"
-          v-model="form"
+          :value="form"
+          @update:value="form = $event"
         />
-        <v-layout
-          v-else
-          class="my-2"
-          justify-center
-        >
-          <v-progress-circular
-            color="primary"
-            indeterminate
-          />
-        </v-layout>
-      </v-flex>
-    </v-layout>
+        <c-layout v-else class="my-2" justify-center>
+          <v-progress-circular color="primary" indeterminate />
+        </c-layout>
+      </v-col>
+    </v-row>
     <v-divider class="mt-3" />
-    <v-layout
-      class="mt-3"
-      justify-end
-    >
+    <c-layout class="mt-3" justify-end>
       <v-btn
-        :disabled="isDisabled || isFormNotChanged"
+        :disabled="!form || isFormNotChanged"
         :loading="submitting"
-        class="primary mr-0"
+        class="mr-0"
+        color="primary"
         type="submit"
       >
         {{ $t('common.submit') }}
       </v-btn>
-    </v-layout>
+    </c-layout>
   </v-form>
 </template>
 
@@ -43,36 +35,49 @@ import { cloneDeep, isEqual } from 'lodash';
 
 import { metricsSettingsToForm } from '@/helpers/entities/metrics-settings/form';
 
-import { entitiesMetricsSettingsMixin } from '@/mixins/entities/metrics-settings';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useMetricsSettings } from '@/hooks/store/modules/metrics-settings';
 
-import KpiCollectionSettingsBasicMetricsList from './partials/kpi-collection-settings-basic-metrics-list.vue';
 import KpiCollectionSettingsOptionalMetricsForm from './form/kpi-collection-settings-optional-metrics-form.vue';
+import KpiCollectionSettingsBasicMetricsList from './partials/kpi-collection-settings-basic-metrics-list.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     KpiCollectionSettingsOptionalMetricsForm,
     KpiCollectionSettingsBasicMetricsList,
   },
-  mixins: [
-    entitiesMetricsSettingsMixin,
-    submittableMixinCreator(),
-  ],
+
+  setup() {
+    const { fetchMetricsSettingsWithoutStore, updateMetricsSettings } = useMetricsSettings();
+
+    const { pending: submitting, handler: submitWithPending } = usePendingHandler(handler => handler(),
+    );
+
+    return {
+      fetchMetricsSettingsWithoutStore,
+      updateMetricsSettings,
+      submitting,
+      submitWithPending,
+    };
+  },
+
   data() {
     return {
       initialForm: null,
       form: null,
     };
   },
+
   computed: {
     isFormNotChanged() {
       return isEqual(this.form, this.initialForm);
     },
   },
+
   mounted() {
     this.fetchMetricsSettings();
   },
+
   methods: {
     setInitialForm() {
       this.initialForm = cloneDeep(this.form);
@@ -86,15 +91,13 @@ export default {
     },
 
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
+      await this.submitWithPending(async () => {
         await this.updateMetricsSettings({ data: this.form });
 
         this.setInitialForm();
 
         this.$popups.success({ text: this.$t('success.default') });
-      }
+      });
     },
   },
 };

@@ -1,85 +1,90 @@
 <template>
-  <v-layout
-    class="my-2"
-    justify-center
-  >
-    <v-progress-circular
-      v-if="!form"
-      color="primary"
-      indeterminate
-    />
-    <v-flex
-      v-else
-      offset-xs1
-      md10
-    >
-      <v-form @submit.prevent="submit">
-        <notifications-settings-form v-model="form" />
-        <v-divider class="mt-3" />
-        <v-layout
-          class="mt-3"
-          justify-end
-        >
-          <v-btn
-            :disabled="isDisabled"
-            :loading="submitting"
-            class="primary mr-0"
-            type="submit"
-          >
-            {{ $t('common.submit') }}
-          </v-btn>
-        </v-layout>
-      </v-form>
-    </v-flex>
-  </v-layout>
+  <c-layout class="my-2" justify="center">
+    <v-progress-circular v-if="pending" color="primary" indeterminate />
+
+    <v-row v-else justify="center" no-gutters>
+      <v-col cols="12" md="10">
+        <v-form @submit.prevent="submit">
+          <notifications-settings-form />
+
+          <v-divider class="mt-3" />
+
+          <c-layout class="mt-3" justify="end">
+            <v-btn
+              :disabled="isSubmitting"
+              :loading="isSubmitting"
+              color="primary"
+              type="submit"
+            >
+              {{ t('common.submit') }}
+            </v-btn>
+          </c-layout>
+        </v-form>
+      </v-col>
+    </v-row>
+  </c-layout>
 </template>
 
 <script>
-import { VALIDATION_DELAY } from '@/constants';
+import { onMounted, ref } from 'vue';
 
 import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
 
-import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
+import { useNotificationSettings } from '@/hooks/store/modules/notification-settings';
 
 import NotificationsSettingsForm from './form/notifications-settings-form.vue';
 
 export default {
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     NotificationsSettingsForm,
   },
-  mixins: [
-    entitiesNotificationSettingsMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      form: null,
-    };
-  },
-  mounted() {
-    this.fetchNotificationsSettings();
-  },
-  methods: {
-    async fetchNotificationsSettings() {
-      const notificationsSettings = await this.fetchNotificationSettingsWithoutStore();
 
-      this.form = notificationsSettingsToForm(notificationsSettings);
-    },
+  setup() {
+    const { t } = useI18n();
+    const popups = usePopups();
+    const pending = ref(true);
 
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+    const { fetchNotificationSettingsWithoutStore, updateNotificationSettings } =
+      useNotificationSettings();
 
-      if (isFormValid) {
-        await this.updateNotificationSettings({ data: this.form });
+    const form = useForm({
+      initialValues: notificationsSettingsToForm(),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
 
-        this.$popups.success({ text: this.$t('success.default') });
+    /**
+     * Fetches notification settings and resets the form with server values.
+     */
+    const fetchNotificationsSettings = async () => {
+      pending.value = true;
+
+      try {
+        const notificationsSettings = await fetchNotificationSettingsWithoutStore();
+
+        form.reset(notificationsSettingsToForm(notificationsSettings));
+      } finally {
+        pending.value = false;
       }
-    },
+    };
+
+    const submit = handleSubmit(async () => {
+      await updateNotificationSettings({ data: values.value });
+
+      popups.success({ text: t('success.default') });
+    });
+
+    onMounted(fetchNotificationsSettings);
+
+    return {
+      t,
+      pending,
+      isSubmitting,
+
+      submit,
+    };
   },
 };
 </script>

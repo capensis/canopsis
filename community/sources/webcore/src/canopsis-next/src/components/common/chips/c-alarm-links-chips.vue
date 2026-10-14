@@ -6,7 +6,7 @@
     :inline-count="inlineCount"
     :category="category"
     :only-icon="onlyIcon"
-    v-on="$listeners"
+    @activate="$emit('activate')"
   />
 </template>
 
@@ -17,7 +17,11 @@ import { authMixin } from '@/mixins/auth';
 
 export default {
   inject: ['$system'],
+
+  emits: ['activate'],
+
   mixins: [authMixin],
+
   props: {
     alarm: {
       type: Object,
@@ -40,9 +44,12 @@ export default {
       default: false,
     },
   },
+
   computed: {
     hasAccessToLinks() {
-      return this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links]);
+      return this.checkAccess(
+        BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links],
+      );
     },
   },
 };

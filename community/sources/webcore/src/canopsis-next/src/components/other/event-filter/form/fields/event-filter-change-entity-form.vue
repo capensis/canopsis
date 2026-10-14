@@ -1,23 +1,21 @@
 <template>
-  <v-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <span class="text-subtitle-1">
       {{ $t('eventFilter.changeEntityOptions') }}
     </span>
 
     <c-form-block>
       <c-form-block-row :label="$t('externalData.title')">
-        <div class="py-3">
-          <external-data-form
-            v-field="form.external_data"
-            :variables="templateVars.external_data"
-            optionally
-          />
-        </div>
+        <external-data-field
+          v-model:external-data="externalDataField"
+          :variables="templateVars.external_data"
+          optionally
+        />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.resource')">
         <c-payload-text-field
-          v-field="form.config.resource"
+          v-model:value="configField.resource"
           :label="$t('eventFilter.resource')"
           :name="`${name}.resource`"
           :variables="templateVars.config"
@@ -27,7 +25,7 @@
 
       <c-form-block-row :label="$t('common.component')">
         <c-payload-text-field
-          v-field="form.config.component"
+          v-model:value="configField.component"
           :label="$t('eventFilter.component')"
           :name="`${name}.component`"
           :variables="templateVars.config"
@@ -37,7 +35,7 @@
 
       <c-form-block-row :label="$t('common.connector')">
         <c-payload-text-field
-          v-field="form.config.connector"
+          v-model:value="configField.connector"
           :label="$t('eventFilter.connector')"
           :name="`${name}.connector`"
           :variables="templateVars.config"
@@ -47,7 +45,7 @@
 
       <c-form-block-row :label="$t('common.connectorName')">
         <c-payload-text-field
-          v-field="form.config.connector_name"
+          v-model:value="configField.connector_name"
           :label="$t('eventFilter.connectorName')"
           :name="`${name}.connector_name`"
           :variables="templateVars.config"
@@ -57,7 +55,7 @@
 
       <c-form-block-row :label="$t('common.upstream')">
         <c-payload-text-field
-          v-field="form.config.upstream"
+          v-model:value="configField.upstream"
           :label="$t('eventFilter.upstream')"
           :name="`${name}.upstream`"
           :variables="templateVars.config"
@@ -65,27 +63,21 @@
         />
       </c-form-block-row>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
-import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
+import { useFormModels } from '@/hooks/form';
+
+import ExternalDataField from '@/components/forms/external-data/external-data-field.vue';
 
 export default {
   components: {
-    ExternalDataForm,
-  },
-  model: {
-    prop: 'form',
-    event: 'input',
+    ExternalDataField,
   },
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     name: {
       type: String,
       default: 'config',
@@ -95,17 +87,27 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props) {
-    const someRequired = computed(() => !(
-      props.form.config.resource
-       || props.form.config.component
-       || props.form.config.connector
-       || props.form.config.connector_name
-       || props.form.config.upstream
-    ));
+  setup() {
+    const { externalDataField, configField } = useFormModels({
+      externalDataField: 'external_data',
+      configField: 'config',
+    });
+
+    const someRequired = computed(
+      () => !(
+          configField.value?.resource ||
+          configField.value?.component ||
+          configField.value?.connector ||
+          configField.value?.connector_name ||
+          configField.value?.upstream
+        ),
+    );
 
     return {
       someRequired,
+
+      externalDataField,
+      configField,
     };
   },
 };

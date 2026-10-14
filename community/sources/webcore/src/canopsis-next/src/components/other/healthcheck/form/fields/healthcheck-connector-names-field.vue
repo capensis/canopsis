@@ -5,46 +5,26 @@
     :label="$t('common.connectorName')"
     :placeholder="!value.length ? $t('common.all') : ''"
     :persistent-placeholder="!value.length"
+    :show-count="showCount"
     item-text="name"
     item-value="name"
     class="healthcheck-connector-names-field"
+    density="compact"
     multiple
     clearable
+    autocomplete
+    hide-details
     @input="$emit('input', $event)"
   >
-    <template #item="{ item, attrs, on, parent}">
-      <v-list-item
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-action>
-          <v-checkbox
-            :input-value="attrs.inputValue"
-            :color="parent.color"
-            hide-details
-            small
-          />
-        </v-list-item-action>
-        <v-list-item-content>
-          {{ item.name }}
-        </v-list-item-content>
+    <template #item="{ item, props, search }">
+      <v-list-item v-bind="getItemProps(props)">
+        <template #prepend="{ isSelected }">
+          <v-checkbox-btn :model-value="isSelected || value.includes(item.name)" color="primary" />
+        </template>
+        <v-list-item-title>
+          <v-list-item-mask :text="item.name" :mask="search" />
+        </v-list-item-title>
       </v-list-item>
-    </template>
-    <template #selection="{ item, index, parent }">
-      <v-chip
-        v-if="index < showCount"
-        small
-        close
-        @click:close="parent.onChipInput(item)"
-      >
-        <span class="text-truncate">
-          {{ item }}
-        </span>
-      </v-chip>
-      <span v-else-if="index === showCount">
-        +{{ value.length - showCount }} {{ $t('common.more') }}
-      </span>
-      <span v-else />
     </template>
   </c-entity-field>
 </template>
@@ -63,11 +43,21 @@ export default {
       default: 2,
     },
   },
+
+  emits: ['input'],
+
   setup() {
     const entityTypes = [BASIC_ENTITY_TYPES.connector];
 
+    const getItemProps = (itemProps) => {
+      const { title, ...listItemProps } = itemProps;
+
+      return listItemProps;
+    };
+
     return {
       entityTypes,
+      getItemProps,
     };
   },
 };
@@ -76,17 +66,8 @@ export default {
 <style lang="scss">
 .healthcheck-connector-names-field {
   & ::placeholder {
-    .theme--dark & {
-      color: var(--v-text-dark-primary) !important;
-    }
-
-    .theme--light & {
-      color: var(--v-text-light-primary) !important;
-    }
-  }
-
-  &.v-autocomplete input {
-    padding: 8px 0 !important;
+    color: currentColor !important;
+    opacity: 1;
   }
 }
 </style>

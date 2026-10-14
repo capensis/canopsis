@@ -1,76 +1,81 @@
 import { omit } from 'lodash';
-import { useRouter, useRoute } from 'vue-router/composables';
+import { useRoute, useRouter } from 'vue-router';
 
 import { ROUTES_NAMES } from '@/constants';
 
 /**
- * Hook for view routing functionality
- * Replaces the viewRouterMixin with Composition API
+ * Hook for view routing functionality.
  *
- * @param {Object} options - Options object
- * @param {import('vue').Ref<Object>} options.view - Reactive reference to the current view
- * @param {import('vue').Ref<Object>} options.tab - Reactive reference to the current tab
- * @returns {Object} An object containing view router methods
+ * @param {Object} options - Options object.
+ * @param {import('vue').Ref<Object>} options.view - Reactive reference to the current view.
+ * @param {import('vue').Ref<Object>} options.tab - Reactive reference to the current tab.
+ * @returns {Object} View router methods.
  */
 export const useViewRouter = ({ view, tab } = {}) => {
   const router = useRouter();
   const route = useRoute();
 
   /**
-   * Redirect to home page if we are surfing on this view at the moment
+   * Redirect to home page if we are surfing on this view at the moment.
+   *
+   * @returns {Promise<unknown>|undefined}
    */
   const redirectToHomeIfCurrentRoute = () => {
     const { name, params = {} } = route;
 
     if (name === ROUTES_NAMES.view && params.id === view?.value?._id) {
-      router.push({ name: ROUTES_NAMES.home });
+      return router.push({ name: ROUTES_NAMES.home });
     }
+
+    return undefined;
   };
 
   /**
-   * Redirect to first view tab if exists
+   * Redirect to first view tab if exists.
    *
-   * @return {Promise<unknown>}
+   * @returns {Promise<unknown>|undefined}
    */
-  const redirectToFirstTab = () => new Promise((resolve, reject) => {
+  const redirectToFirstTab = () => {
     if (!view?.value?.tabs?.length) {
-      return resolve();
+      return Promise.resolve();
     }
 
     return router.replace({
       query: {
         tabId: view.value.tabs[0]._id,
       },
-    }, resolve, reject);
-  });
+    });
+  };
 
   /**
-   * Redirect to view root route (without tabId)
+   * Redirect to view root route (without tabId).
    *
-   * @return {Promise<unknown>}
+   * @returns {Promise<unknown>}
    */
-  const redirectToViewRoot = () => new Promise((resolve, reject) => router.replace({
-    query: omit(route.query, 'tabId'),
-  }, resolve, reject));
+  const redirectToViewRoot = () =>
+    router.replace({
+      query: omit(route.query, 'tabId'),
+    });
 
   /**
-   * Redirect to selected view and tab, if it's different then the view/tab we're actually on
+   * Redirect to selected view and tab, if it's different then the view/tab we're actually on.
    *
-   * @param {string} tabId
-   * @param {string} viewId
-   * @return {Promise<unknown>}
+   * @param {Object} payload - Redirect payload.
+   * @param {string} payload.tabId - Selected tab id.
+   * @param {string} payload.viewId - Selected view id.
+   * @returns {Promise<unknown>|undefined}
    */
-  const redirectToSelectedViewAndTab = ({ tabId, viewId }) => new Promise((resolve, reject) => {
+  const redirectToSelectedViewAndTab = ({ tabId, viewId }) => {
     if (tab?.value?._id === tabId) {
-      return resolve();
+      return Promise.resolve();
     }
 
     return router.push({
       name: ROUTES_NAMES.view,
       params: { id: viewId },
       query: { tabId },
-    }, resolve, reject);
-  });
+    });
+  };
 
   return {
     router,

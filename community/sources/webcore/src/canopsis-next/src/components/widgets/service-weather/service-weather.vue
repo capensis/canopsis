@@ -1,101 +1,103 @@
 <template>
-  <div class="pa-2">
-    <v-layout
-      class="mx-1"
-      wrap
+  <div class="service-weather-widget pa-2">
+    <v-row
+      v-if="hasAccessToCategory || hasAccessToUserFilter"
+      class="service-weather-widget__filters mx-1 mb-2 flex-grow-0"
+      align="center"
+      no-gutters
     >
-      <v-flex
+      <v-col
         v-if="hasAccessToCategory"
-        xs3
+        class="service-weather-widget__filter-cell"
+        cols="3"
       >
         <c-entity-category-field
           :category="query.category"
           class="mr-3"
-          @input="updateCategory"
+          @update:category="updateCategory"
         />
-      </v-flex>
-      <v-flex xs5>
-        <v-layout align-center>
-          <template v-if="hasAccessToUserFilter">
-            <filter-selector
-              :value="query.filter"
-              :locked-value="query.lockedFilter"
-              :label="$t('settings.selectAFilter')"
-              :filters="userPreference.filters"
-              :locked-filters="widget.filters"
-              @input="updateSelectedFilter"
-            />
-            <filters-list-btn
-              :widget-id="widget._id"
-              :entity-types="[$constants.ENTITY_TYPES.service]"
-              addable
-              editable
-              with-entity
-              with-service-weather
-              private
-              entity-counters-type
-            />
-          </template>
-          <c-enabled-field
-            v-if="isHideGrayEnabled"
-            :value="query.hide_grey"
-            :label="$t('serviceWeather.hideGrey')"
-            class="ml-3"
-            @input="updateHideGray"
+      </v-col>
+
+      <v-col
+        v-if="hasAccessToUserFilter || isHideGrayEnabled"
+        class="service-weather-widget__filter-cell d-flex align-center"
+        cols="5"
+      >
+        <template v-if="hasAccessToUserFilter">
+          <filter-selector
+            :model-value="query.filter"
+            :locked-value="query.lockedFilter"
+            :label="$t('settings.selectAFilter')"
+            :filters="userPreferenceFilters"
+            :locked-filters="widget.filters"
+            @update:model-value="updateSelectedFilter"
           />
-        </v-layout>
-      </v-flex>
-    </v-layout>
-    <v-fade-transition
-      v-if="servicesPending"
-      key="progress"
-      mode="out-in"
-    >
+
+          <filters-list-btn
+            :widget-id="widget._id"
+            :entity-types="[ENTITY_TYPES.service]"
+            addable
+            editable
+            with-entity
+            with-service-weather
+            private
+            entity-counters-type
+          />
+        </template>
+
+        <c-enabled-field
+          v-if="isHideGrayEnabled"
+          :model-value="query.hide_grey"
+          :label="$t('serviceWeather.hideGrey')"
+          class="ml-3 mt-0"
+          color="primary"
+          hide-details
+          inline
+          no-margin
+          @update:model-value="updateHideGray"
+        />
+      </v-col>
+    </v-row>
+
+    <v-fade-transition v-if="servicesPending" mode="out-in">
       <v-progress-linear
+        key="progress"
         class="progress-linear-absolute--top"
         height="2"
         indeterminate
       />
     </v-fade-transition>
-    <v-layout
-      key="content"
-      class="fill-height"
-      wrap
-    >
-      <v-layout
-        v-if="hasNoData"
-        justify-center
-      >
-        <v-alert
-          v-if="servicesError"
-          type="error"
-        >
-          <v-layout align-center>
-            <div class="mr-4">
-              {{ $t('errors.default') }}
-            </div>
-            <c-help-icon
-              icon="help"
-              top
-            >
-              <div v-if="servicesError.name">
-                {{ $t('common.name') }}: {{ servicesError.name }}
+
+    <v-row class="fill-height" density="compact">
+      <v-col v-if="hasNoData" cols="12">
+        <c-layout justify="center" column>
+          <v-alert v-if="servicesError" type="error">
+            <c-layout align="center">
+              <div class="mr-4">
+                {{ $t('errors.default') }}
               </div>
-              <div v-if="servicesError.description">
-                {{ $t('common.description') }}: {{ servicesError.description }}
-              </div>
-            </c-help-icon>
-          </v-layout>
-        </v-alert>
-        <v-alert type="info">
-          {{ $t('common.noData') }}
-        </v-alert>
-      </v-layout>
+              <c-help-icon icon="help" location="top">
+                <div v-if="servicesError.name">
+                  {{ $t('common.name') }}: {{ servicesError.name }}
+                </div>
+                <div v-if="servicesError.description">
+                  {{ $t('common.description') }}: {{ servicesError.description }}
+                </div>
+              </c-help-icon>
+            </c-layout>
+          </v-alert>
+
+          <v-alert type="info">
+            {{ $t('common.noData') }}
+          </v-alert>
+        </c-layout>
+      </v-col>
+
       <template v-else>
-        <v-flex
+        <v-col
           v-for="service in services"
           :key="service._id"
-          :class="flexSize"
+          :cols="columnSize"
         >
           <service-weather-item
             :service="service"
@@ -118,25 +120,33 @@
             @show:alarms="showAlarmListModal(service)"
             @show:root-cause="openRootCauseDiagram(service)"
           />
-        </v-flex>
+        </v-col>
       </template>
-    </v-layout>
+    </v-row>
   </div>
 </template>
 
 <script>
-import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USER_PERMISSIONS } from '@/constants';
+import { mapActions, mapState } from 'pinia';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import {
+  ENTITY_TYPES,
+  MODALS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  USER_PERMISSIONS,
+} from '@/constants';
+
+import { useWeatherServiceWidgetStore } from '@/stores/modules/weather-service-widget';
+
 import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
-import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
-import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
-import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { entitiesServiceMixin } from '@/mixins/entities/service';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { authMixin } from '@/mixins/auth';
+import { entitiesServiceMixin } from '@/mixins/entities/service';
+import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
+import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -149,15 +159,16 @@ export default {
     FiltersListBtn,
     ServiceWeatherItem,
   },
+
   mixins: [
     permissionsWidgetsServiceWeatherFilters,
     permissionsWidgetsServiceWeatherCategory,
     widgetPeriodicRefreshMixin,
-    widgetFilterSelectMixin,
     entitiesServiceMixin,
     widgetFetchQueryMixin,
     authMixin,
   ],
+
   props: {
     widget: {
       type: Object,
@@ -165,23 +176,63 @@ export default {
     },
     hideActions: {
       type: Boolean,
-      required: false,
+      default: false,
+    },
+    visible: {
+      type: Boolean,
+      default: false,
     },
   },
-  computed: {
-    flexSize() {
-      const columnsCount = {
-        m: this.widget.parameters.columnMobile,
-        t: this.widget.parameters.columnTablet,
-        l: this.widget.parameters.columnDesktop,
-        xl: this.widget.parameters.columnDesktop,
-      }[this.$mq];
 
-      return `xs${12 / columnsCount}`;
+  data() {
+    return {
+      ENTITY_TYPES,
+    };
+  },
+
+  computed: {
+    ...mapState(useWeatherServiceWidgetStore, {
+      getWeatherServicesListByWidgetId: 'getListByWidgetId',
+      getWeatherServicesPendingByWidgetId: 'getPendingByWidgetId',
+      getWeatherServicesErrorByWidgetId: 'getErrorByWidgetId',
+    }),
+
+    columnSize() {
+      return 12 / this.columnsCount;
+    },
+
+    columnsCount() {
+      const displayName = this.$vuetify.display.name;
+
+      if (['xs', 'sm'].includes(displayName)) {
+        return this.widget.parameters.columnMobile;
+      }
+
+      if (displayName === 'md') {
+        return this.widget.parameters.columnTablet;
+      }
+
+      return this.widget.parameters.columnDesktop;
+    },
+
+    services() {
+      return this.getWeatherServicesListByWidgetId(this.widget._id);
+    },
+
+    servicesPending() {
+      return this.getWeatherServicesPendingByWidgetId(this.widget._id);
+    },
+
+    servicesError() {
+      return this.getWeatherServicesErrorByWidgetId(this.widget._id);
     },
 
     hasNoData() {
       return this.services.length === 0;
+    },
+
+    userPreferenceFilters() {
+      return this.userPreference?.filters ?? [];
     },
 
     hasMoreInfosAccess() {
@@ -220,7 +271,12 @@ export default {
       return this.widget.parameters.showRootCauseByStateClick ?? true;
     },
   },
+
   methods: {
+    ...mapActions(useWeatherServiceWidgetStore, {
+      fetchWeatherServicesList: 'fetchList',
+    }),
+
     showAdditionalInfoModal(service) {
       if (this.hideActions) {
         return;
@@ -246,20 +302,19 @@ export default {
 
     showAlarmListModal(service) {
       try {
-        const widget = generatePreparedDefaultAlarmListWidget();
+        const alarmListWidget = generatePreparedDefaultAlarmListWidget();
 
-        widget._id = this.widget._id;
-        widget.parameters = {
-          ...widget.parameters,
+        alarmListWidget._id = this.widget._id;
+        alarmListWidget.parameters = {
+          ...alarmListWidget.parameters,
           ...this.widget.parameters.alarmsList,
-
           serviceDependenciesColumns: this.widget.parameters.serviceDependenciesColumns,
         };
 
         this.$modals.show({
           name: MODALS.alarmsList,
           config: {
-            widget,
+            widget: alarmListWidget,
             title: this.$t('modals.alarmsList.prefixTitle', { prefix: service.name }),
             fetchList: params => this.fetchServiceAlarmsWithoutStore({ id: service._id, params }),
           },
@@ -288,13 +343,12 @@ export default {
 
       this.query = {
         ...this.query,
-
         hide_grey: hideGrey,
       };
     },
 
     updateCategory(category) {
-      const categoryId = category && category._id;
+      const categoryId = category?._id;
 
       this.updateContentInUserPreference({
         category: categoryId,
@@ -302,13 +356,21 @@ export default {
 
       this.query = {
         ...this.query,
-
         category: categoryId,
       };
     },
 
+    updateSelectedFilter(filter) {
+      this.updateContentInUserPreference({ mainFilter: filter });
+
+      this.query = {
+        ...this.query,
+        filter,
+      };
+    },
+
     fetchList() {
-      this.fetchServicesList({
+      return this.fetchWeatherServicesList({
         params: this.getQuery(),
         widgetId: this.widget._id,
       });
@@ -316,3 +378,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.service-weather-widget {
+  &__filter-cell {
+    min-width: 0;
+
+    :deep(.filter-selector) {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+}
+</style>

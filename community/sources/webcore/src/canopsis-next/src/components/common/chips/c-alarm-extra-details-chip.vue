@@ -1,7 +1,7 @@
 <template>
-  <span :style="style" class="c-alarm-extra-details-chip" v-on="$listeners">
-    <slot>
-      <v-icon v-if="icon" :color="iconColor" small>
+  <span v-bind="$attrs" :style="style" class="c-alarm-extra-details-chip">
+    <slot :icon-color="preparedIconColor">
+      <v-icon v-if="icon" :color="preparedIconColor" size="small">
         {{ icon }}
       </v-icon>
     </slot>
@@ -9,19 +9,27 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 
 import { COLORS } from '@/config';
 
+import { getMostReadableTextColor } from '@/helpers/color';
+
 export default {
+  inheritAttrs: false,
+
   props: {
     color: {
       type: String,
       default: COLORS.secondary,
     },
+    themeColor: {
+      type: String,
+      default: '',
+    },
     iconColor: {
       type: String,
-      default: 'white',
+      default: '',
     },
     icon: {
       type: String,
@@ -29,9 +37,21 @@ export default {
     },
   },
   setup(props) {
-    const style = computed(() => ({ backgroundColor: props.color }));
+    const system = inject('$system', {});
+    const preparedColor = computed(
+      () =>
+        (props.themeColor && system.theme?.colors?.icons?.[props.themeColor]) ||
+        COLORS.alarmExtraDetails[props.themeColor] ||
+        props.color,
+    );
+    const preparedIconColor = computed(
+      () =>
+        props.iconColor ||
+        getMostReadableTextColor(preparedColor.value, { level: 'AA', size: 'large' }),
+    );
+    const style = computed(() => ({ backgroundColor: preparedColor.value }));
 
-    return { style };
+    return { preparedIconColor, style };
   },
 };
 </script>

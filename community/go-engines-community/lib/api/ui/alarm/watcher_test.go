@@ -1,0 +1,548 @@
+package alarm_test
+
+import (
+	"context"
+	"testing"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/ui/alarm"
+	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/ui/websocket"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
+)
+
+func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOneChangeStream(t *testing.T) {
+	ctx := t.Context()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	alarmId := "test-alarm"
+	roomId := "test-room"
+	connId1 := "test-conn-1"
+	connId2 := "test-conn-2"
+	connId3 := "test-conn-3"
+	userID1 := "test-user-1"
+	userID2 := "test-user-2"
+	changeCh := make(chan struct{}, 1)
+	done := make(chan struct{})
+	mockChangeStream := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		case _, ok := <-changeCh:
+			if ok {
+				return true
+			}
+
+			return false
+		}
+	}).Times(2)
+	mockChangeStream.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId
+	})
+	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		close(done)
+	})
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
+	mockStore := mock_alarm.NewMockStore(ctrl)
+	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID1)).Return(&alarm.Alarm{Bookmark: true}, nil)
+	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId), gomock.Eq(userID2)).Return(&alarm.Alarm{Bookmark: false}, nil)
+	mockHub := mock_websocket.NewMockHub(ctrl)
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Alarm{Bookmark: true}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Alarm{Bookmark: false}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId2, connId3)))
+
+	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
+	data := []string{alarmId}
+	err := w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID1,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId3,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	changeCh <- struct{}{}
+	close(changeCh)
+
+	select {
+	case <-time.After(time.Second):
+		t.Error("test is executing too long")
+	case <-done:
+	}
+}
+
+func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultipleChangeStreams(t *testing.T) {
+	ctx := t.Context()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	alarmId1 := "test-alarm-1"
+	alarmId2 := "test-alarm-2"
+	roomId := "test-room"
+	connId1 := "test-conn-1"
+	connId2 := "test-conn-2"
+	userID := "test-user-2"
+	alarmResForConnId1 := &alarm.Alarm{ID: alarmId1}
+	alarmResForConnId2 := &alarm.Alarm{ID: alarmId2}
+	changeCh1 := make(chan struct{}, 1)
+	changeCh2 := make(chan struct{}, 1)
+	done := make(chan struct{}, 2)
+	defer close(done)
+	mockChangeStream1 := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream1.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		case _, ok := <-changeCh1:
+			if ok {
+				return true
+			}
+
+			return false
+		}
+	}).Times(2)
+	mockChangeStream1.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId1
+	})
+	mockChangeStream1.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
+	mockChangeStream2 := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream2.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		case _, ok := <-changeCh2:
+			if ok {
+				return true
+			}
+
+			return false
+		}
+	}).Times(2)
+	mockChangeStream2.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId2
+	})
+	mockChangeStream2.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream1, nil)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream2, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
+	mockStore := mock_alarm.NewMockStore(ctrl)
+	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId1), gomock.Eq(userID)).Return(alarmResForConnId1, nil)
+	mockStore.EXPECT().GetByID(gomock.Any(), gomock.Eq(alarmId2), gomock.Eq(userID)).Return(alarmResForConnId2, nil)
+	mockHub := mock_websocket.NewMockHub(ctrl)
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId1), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(alarmResForConnId2), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmsGroup, roomId), connId2)))
+
+	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
+	err := w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []string{alarmId1},
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StartWatch(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []string{alarmId2},
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	changeCh1 <- struct{}{}
+	close(changeCh1)
+	changeCh2 <- struct{}{}
+	close(changeCh2)
+
+	closedStreams := 0
+	after := time.After(time.Second)
+	for {
+		select {
+		case <-after:
+			t.Error("test is executing too long")
+		case <-done:
+			closedStreams++
+			if closedStreams == 2 {
+				return
+			}
+		}
+	}
+}
+
+func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCreateOneChangeStream(t *testing.T) {
+	ctx := t.Context()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	alarmId := "test-alarm"
+	roomId := "test-room"
+	connId1 := "test-conn-1"
+	connId2 := "test-conn-2"
+	connId3 := "test-conn-3"
+	userID1 := "test-user-1"
+	userID2 := "test-user-2"
+	changeCh := make(chan struct{}, 1)
+	done := make(chan struct{})
+	mockChangeStream := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		case _, ok := <-changeCh:
+			if ok {
+				return true
+			}
+
+			return false
+		}
+	}).Times(2)
+	mockChangeStream.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+		FullDocument types.Alarm `bson:"fullDocument"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId
+	})
+	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		close(done)
+	})
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
+	mockStore := mock_alarm.NewMockStore(ctrl)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID1)).Return(&alarm.Details{Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: true}}}}, nil)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Any(), gomock.Eq(userID2)).Return(&alarm.Details{Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: false}}}}, nil)
+	mockHub := mock_websocket.NewMockHub(ctrl)
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId, Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: true}}}}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId, Children: &alarm.ChildrenDetails{Data: []alarm.Alarm{{Bookmark: false}}}}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2, connId3)))
+
+	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
+	data := []alarm.DetailsRequest{{ID: alarmId}}
+	err := w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID1,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId3,
+		UserID:  userID2,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	changeCh <- struct{}{}
+	close(changeCh)
+
+	select {
+	case <-time.After(time.Second):
+		t.Error("test is executing too long")
+	case <-done:
+	}
+}
+
+func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreateMultipleChangeStreams(t *testing.T) {
+	ctx := t.Context()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	alarmId1 := "test-alarm-1"
+	alarmId2 := "test-alarm-2"
+	roomId := "test-room"
+	connId1 := "test-conn-1"
+	connId2 := "test-conn-2"
+	userID := "test-user-2"
+	changeCh1 := make(chan struct{}, 1)
+	changeCh2 := make(chan struct{}, 1)
+	done := make(chan struct{}, 2)
+	defer close(done)
+	mockChangeStream1 := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream1.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		case _, ok := <-changeCh1:
+			if ok {
+				return true
+			}
+
+			return false
+		}
+	}).Times(2)
+	mockChangeStream1.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+		FullDocument types.Alarm `bson:"fullDocument"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId1
+	})
+	mockChangeStream1.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
+	mockChangeStream2 := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream2.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		case _, ok := <-changeCh2:
+			if ok {
+				return true
+			}
+
+			return false
+		}
+	}).Times(2)
+	mockChangeStream2.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+		FullDocument types.Alarm `bson:"fullDocument"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId2
+	})
+	mockChangeStream2.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream1, nil)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream2, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
+	mockStore := mock_alarm.NewMockStore(ctrl)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId1}), gomock.Eq(userID)).Return(&alarm.Details{ID: alarmId1}, nil)
+	mockStore.EXPECT().GetDetails(gomock.Any(), gomock.Eq(alarm.DetailsRequest{ID: alarmId2}), gomock.Eq(userID)).Return(&alarm.Details{ID: alarmId2}, nil)
+	mockHub := mock_websocket.NewMockHub(ctrl)
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId1}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId1)))
+	mockHub.EXPECT().SendMessage(gomock.Any(), gomock.Eq(&alarm.Details{ID: alarmId2}), gomock.Eq(websocket.ToConnection(websocket.GroupRoom(websocket.RoomAlarmDetailsGroup, roomId), connId2)))
+
+	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
+	err := w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId1,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []alarm.DetailsRequest{{ID: alarmId1}},
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StartWatchDetails(ctx, websocket.JoinOptions{
+		ConnID:  connId2,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []alarm.DetailsRequest{{ID: alarmId2}},
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	changeCh1 <- struct{}{}
+	close(changeCh1)
+	changeCh2 <- struct{}{}
+	close(changeCh2)
+
+	closedStreams := 0
+	after := time.After(time.Second)
+	for {
+		select {
+		case <-after:
+			t.Error("test is executing too long")
+		case <-done:
+			closedStreams++
+			if closedStreams == 2 {
+				return
+			}
+		}
+	}
+}
+
+func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	alarmId := "test-alarm"
+	roomId := "test-room"
+	connId := "test-conn"
+	userID := "test-user"
+	changeCh := make(chan struct{})
+	defer close(changeCh)
+	done := make(chan struct{})
+	mockChangeStream := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream.EXPECT().Next(gomock.Any()).DoAndReturn(func(nextCtx context.Context) bool {
+		select {
+		case <-nextCtx.Done():
+			return false
+		case <-changeCh:
+			return false
+		}
+	})
+	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		close(done)
+	})
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
+	mockStore := mock_alarm.NewMockStore(ctrl)
+	mockHub := mock_websocket.NewMockHub(ctrl)
+
+	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
+	data := []string{alarmId}
+	err := w.StartWatch(t.Context(), websocket.JoinOptions{
+		ConnID:  connId,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: data,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StopWatch(t.Context(), websocket.LeaveOptions{
+		ConnID: connId,
+		RoomID: roomId,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	select {
+	case <-time.After(time.Second):
+		t.Error("test is executing too long")
+	case <-done:
+	}
+}
+
+func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	alarmId := "test-alarm"
+	roomId := "test-room"
+	connId := "test-conn"
+	userID := "test-user"
+	changeCh := make(chan struct{})
+	defer close(changeCh)
+	done := make(chan struct{})
+	mockChangeStream := mock_mongo.NewMockChangeStream(ctrl)
+	mockChangeStream.EXPECT().Next(gomock.Any()).DoAndReturn(func(nextCtx context.Context) bool {
+		select {
+		case <-nextCtx.Done():
+			return false
+		case <-changeCh:
+			return false
+		}
+	})
+	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		close(done)
+	})
+	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
+	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
+	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
+	mockStore := mock_alarm.NewMockStore(ctrl)
+	mockHub := mock_websocket.NewMockHub(ctrl)
+
+	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
+	err := w.StartWatchDetails(t.Context(), websocket.JoinOptions{
+		ConnID:  connId,
+		UserID:  userID,
+		RoomID:  roomId,
+		Payload: []alarm.DetailsRequest{{ID: alarmId}},
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	err = w.StopWatch(t.Context(), websocket.LeaveOptions{
+		ConnID: connId,
+		RoomID: roomId,
+	})
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	select {
+	case <-time.After(time.Second):
+		t.Error("test is executing too long")
+	case <-done:
+	}
+}

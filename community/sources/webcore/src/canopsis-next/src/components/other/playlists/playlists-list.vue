@@ -18,74 +18,75 @@
         :enablable="updatable"
         :disablable="updatable"
         playlist
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #fullscreen="{ item }">
       <c-enabled :value="item.fullscreen" />
     </template>
+
     <template #interval="{ item }">
-      {{ item.interval | duration }}
+      {{ formatDuration(item.interval) }}
     </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+
     <template #actions="{ item }">
-      <v-layout align-center>
-        <c-action-btn :tooltip="$t('common.play')">
-          <template #button="">
+      <c-layout gap="1">
+        <c-action-btn :tooltip="t('common.play')">
+          <template #button="{ props: buttonProps }">
             <v-btn
-              :to="getPlaylistRouteById(item._id, true)"
-              class="mx-1 ma-0"
+              v-bind="buttonProps"
+              :to="getPlaylistRouteById(item._id)"
+              variant="text"
               icon
             >
-              <v-icon>play_arrow</v-icon>
+              <c-icon>play_arrow</c-icon>
             </v-btn>
           </template>
         </c-action-btn>
         <c-copy-btn
           :value="getPlaylistRouteFullUrlById(item._id)"
-          :tooltip="$t('common.copyLink')"
+          :tooltip="t('common.copyLink')"
           @success="onSuccessCopied"
           @error="onErrorCopied"
         />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
-      </v-layout>
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
     </template>
+
     <template #expand="{ item }">
-      <playlist-list-expand-item :playlist="item" />
+      <playlists-list-expand-item :playlist="item" />
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { APP_HOST } from '@/config';
 import { ROUTES_NAMES } from '@/constants';
 
+import { convertDurationToString } from '@/helpers/date/duration';
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import PlaylistListExpandItem from './partials/playlists-list-expand-item.vue';
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
+
+import PlaylistsListExpandItem from './partials/playlists-list-expand-item.vue';
 
 export default {
   components: {
-    PlaylistListExpandItem,
+    PlaylistsListExpandItem,
   },
+
   props: {
     playlists: {
       type: Array,
@@ -116,57 +117,46 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.fullscreen'),
-          value: 'fullscreen',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.enabled'),
-          value: 'enabled',
-        },
-        {
-          text: this.$t('common.interval'),
-          value: 'interval',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    getPlaylistRouteById(id, userAction = false) {
-      return {
-        name: ROUTES_NAMES.playlist,
-        params: { id, userAction },
-        query: { autoplay: true },
-      };
-    },
 
-    getPlaylistRouteFullUrlById(id) {
-      const { href } = this.$router.resolve(this.getPlaylistRouteById(id));
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
+
+  setup() {
+    const router = useRouter();
+    const popups = usePopups();
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.fullscreen'), value: 'fullscreen', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.interval'), value: 'interval', sortable: false },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    const getPlaylistRouteById = id => ({
+      name: ROUTES_NAMES.playlist,
+      params: { id },
+      query: { autoplay: true },
+    });
+
+    const getPlaylistRouteFullUrlById = (id) => {
+      const { href } = router.resolve(getPlaylistRouteById(id));
 
       return removeTrailingSlashes(`${APP_HOST}${href}`);
-    },
+    };
 
-    onSuccessCopied() {
-      this.$popups.success({ text: this.$t('success.linkCopied') });
-    },
+    const onSuccessCopied = () => popups.success({ text: t('success.linkCopied') });
+    const onErrorCopied = () => popups.error({ text: t('errors.default') });
 
-    onErrorCopied() {
-      this.$popups.error({ text: this.$t('errors.default') });
-    },
+    return {
+      headers,
+      t,
+      formatDuration: convertDurationToString,
+      getPlaylistRouteById,
+      getPlaylistRouteFullUrlById,
+      onSuccessCopied,
+      onErrorCopied,
+    };
   },
 };
 </script>

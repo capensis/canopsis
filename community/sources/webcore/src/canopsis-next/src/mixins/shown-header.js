@@ -1,23 +1,29 @@
-import { createNamespacedHelpers } from 'vuex';
+import { ROUTES_NAMES, VIEW_SCREEN_MODES } from '@/constants';
 
-const { mapGetters } = createNamespacedHelpers('info');
-const { mapGetters: mapActiveViewGetters } = createNamespacedHelpers('activeView');
+import { activeViewMixin } from '@/mixins/active-view';
 
-/**
- * Mixin to determine header visibility based on route and kiosk mode settings
- */
 export const shownHeaderMixin = {
-  computed: {
-    ...mapGetters(['showHeaderOnKioskMode']),
+  mixins: [activeViewMixin],
 
-    ...mapActiveViewGetters({
-      activeViewIsKioskScreenMode: 'isKioskScreenMode',
-    }),
+  computed: {
+    isFullscreenMode() {
+      return [VIEW_SCREEN_MODES.fullscreen, VIEW_SCREEN_MODES.kioskFullscreen].includes(
+        this.activeViewScreenMode,
+      );
+    },
+
+    isKioskMode() {
+      return this.activeViewIsKioskScreenMode || this.$route?.name === ROUTES_NAMES.viewKiosk;
+    },
 
     shownHeader() {
-      return this.activeViewIsKioskScreenMode
-        ? this.showHeaderOnKioskMode
-        : !this.$route?.meta?.hideHeader;
+      if (this.isFullscreenMode) {
+        return false;
+      }
+
+      return this.isKioskMode ? this.showHeaderOnKioskMode : !this.$route?.meta?.hideHeader;
     },
   },
 };
+
+export default shownHeaderMixin;

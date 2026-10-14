@@ -1,203 +1,215 @@
 <template>
   <div class="position-relative">
-    <c-progress-overlay :pending="remediationMetricsPending" />
-    <remediation-statistics-filters
-      v-model="options"
-      :min-date="minDate"
-    />
+    <c-progress-overlay :pending="remediationStatisticPending" />
+
+    <remediation-statistics-filters v-model="query" :min-date="minDate" />
+
     <remediation-statistics-chart
       :metrics="metrics"
       :data-type="query.type"
       :sampling="query.sampling"
       :min-date="minDate"
       :downloading="downloading"
-      responsive
       @export:csv="exportRemediationStatisticsAsCsv"
       @export:png="exportRemediationStatisticsAsPng"
     />
   </div>
 </template>
 
-<script>
-import { REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
+<script setup>
+import { computed, onMounted, ref, watch } from 'vue';
+
 import {
-  QUICK_RANGES,
-  SAMPLINGS,
-  REMEDIATION_STATISTICS_CHART_DATA_TYPE,
+  EXPORT_FETCHING_INTERVAL,
+  REMEDIATION_STATISTICS_FILENAME_PREFIX,
+} from '@/config';
+import {
   DATETIME_FORMATS,
+  EXPORT_STATUSES,
+  QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
+  REMEDIATION_STATISTICS_CHART_DATA_TYPE,
+  SAMPLINGS,
 } from '@/constants';
 
-import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import {
-  convertStartDateIntervalToTimestampByTimezone,
-  convertStopDateIntervalToTimestampByTimezone,
-} from '@/helpers/date/date-intervals';
+  convertDateToStartOfDayTimestampByTimezone,
+  convertDateToString,
+} from '@/helpers/date/date';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { saveFile } from '@/helpers/file/files';
+import { openUrlInNewTab } from '@/helpers/url';
 
-import { localQueryMixin } from '@/mixins/query/query';
-import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
-import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
-import { exportMixinCreator } from '@/mixins/widget/export';
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
+import { useInfo } from '@/hooks/store/modules/info';
+import { useMetrics } from '@/hooks/store/modules/metrics';
+import { useRemediationStatistic } from '@/hooks/store/modules/remediation-statistic';
 
+import RemediationStatisticsChart from './partials/remediation-statistics-chart.vue';
 import RemediationStatisticsFilters from './partials/remediation-statistics-filters.vue';
 
-const RemediationStatisticsChart = () => import(/* webpackChunkName: "Remediation" */ './partials/remediation-statistics-chart.vue');
+const { t } = useI18n();
+const popups = usePopups();
+const { timezone } = useInfo();
+const {
+  remediationStatisticMetrics,
+  remediationStatisticMeta,
+  remediationStatisticPending,
+  fetchRemediationStatisticList,
+} = useRemediationStatistic();
+const { createRemediationExport, fetchMetricExport } = useMetrics();
 
-export default {
-  inject: ['$system'],
-  components: {
-    RemediationStatisticsFilters,
-    RemediationStatisticsChart,
+const downloading = ref(false);
+const query = ref({
+  sampling: SAMPLINGS.day,
+  type: REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
+  instruction: '',
+  interval: {
+    from: QUICK_RANGES.last7Days.start,
+    to: QUICK_RANGES.last7Days.stop,
   },
-  mixins: [
-    localQueryMixin,
-    entitiesRemediationStatisticMixin,
-    entitiesMetricsMixin,
-    exportMixinCreator({
-      createExport: 'createRemediationExport',
-      fetchExport: 'fetchMetricExport',
-    }),
-  ],
-  data() {
-    return {
-      downloading: false,
-      query: {
-        sampling: SAMPLINGS.day,
-        type: REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
-        instruction: '',
-        interval: {
-          from: QUICK_RANGES.last7Days.start,
-          to: QUICK_RANGES.last7Days.stop,
-        },
+});
+
+const minDate = computed(() => {
+  const value = remediationStatisticMeta.value?.minDate ?? remediationStatisticMeta.value?.min_date;
+
+  return value ? convertDateToStartOfDayTimestampByTimezone(value, timezone.value) : null;
+});
+
+const interval = computed(() => convertMetricIntervalToTimestamp({
+    interval: query.value.interval,
+    timezone: timezone.value,
+  }),
+);
+
+const metrics = computed(() => convertMetricsToTimezone(
+    remediationStatisticMetrics.value.filter(
+      ({ timestamp }) => !minDate.value || timestamp >= minDate.value,
+    ),
+    timezone.value,
+  ),
+);
+
+const isInstructionType = instruction =>
+  [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
+
+const getQuery = () => {
+  const { instruction } = query.value;
+  const result = {
+    ...interval.value,
+
+    sampling: query.value.sampling,
+  };
+
+  if (isInstructionType(instruction)) {
+    result.instruction_type = instruction;
+  } else if (instruction) {
+    result.instruction = instruction;
+  }
+
+  return result;
+};
+
+const fetchList = () => fetchRemediationStatisticList({ params: getQuery() });
+
+const getInstructionString = (instruction) => {
+  if (!instruction) {
+    return t('remediation.statistic.allInstructions');
+  }
+
+  return isInstructionType(instruction)
+    ? t(`remediation.instruction.types.${instruction}`)
+    : instruction;
+};
+
+const getFileName = () => {
+  const fromTime = convertDateToString(interval.value.from, DATETIME_FORMATS.short);
+  const toTime = convertDateToString(interval.value.to, DATETIME_FORMATS.short);
+  const instruction = getInstructionString(query.value.instruction);
+
+  return [
+    REMEDIATION_STATISTICS_FILENAME_PREFIX,
+    fromTime,
+    toTime,
+    query.value.sampling,
+    query.value.type,
+    instruction,
+  ].join('-');
+};
+
+const waitGeneratingFile = id => new Promise((resolve, reject) => {
+    setTimeout(async () => {
+      try {
+        const exportData = await fetchMetricExport({ id });
+
+        if (exportData.status === EXPORT_STATUSES.completed) {
+          resolve(exportData);
+
+          return;
+        }
+
+        if (exportData.status === EXPORT_STATUSES.failed) {
+          reject();
+
+          return;
+        }
+
+        resolve(waitGeneratingFile(id));
+      } catch (err) {
+        reject(err);
+      }
+    }, EXPORT_FETCHING_INTERVAL);
+  });
+
+const exportRemediationStatisticsAsPng = async (blob) => {
+  try {
+    await saveFile(blob, getFileName());
+  } catch (err) {
+    console.error(err);
+
+    popups.error({ text: err.message || t('errors.default') });
+  }
+};
+
+const exportRemediationStatisticsAsCsv = async () => {
+  downloading.value = true;
+
+  try {
+    const exportRequest = await createRemediationExport({ data: getQuery() });
+    const id = exportRequest._id ?? exportRequest.id;
+    const fileData = await waitGeneratingFile(id);
+
+    openUrlInNewTab(getExportMetricDownloadFileUrl(fileData._id ?? fileData.id));
+  } catch (err) {
+    console.error(err);
+
+    popups.error({ text: t('kpi.popups.exportFailed') });
+  } finally {
+    downloading.value = false;
+  }
+};
+
+watch(minDate, (value) => {
+  if (value && interval.value.from < value) {
+    query.value = {
+      ...query.value,
+      interval: {
+        ...query.value.interval,
+        from: value,
       },
     };
-  },
-  computed: {
-    minDate() {
-      const { minDate } = this.remediationMetricsMeta ?? {};
+  }
+});
 
-      return minDate ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone) : null;
-    },
+watch(query, (value, oldValue) => {
+  if (isMetricsQueryChanged(value, oldValue, minDate.value)) {
+    fetchList();
+  }
+});
 
-    metrics() {
-      return convertMetricsToTimezone(
-        this.remediationMetrics.filter(({ timestamp }) => timestamp >= this.minDate),
-        this.$system.timezone,
-      );
-    },
-
-    interval() {
-      return {
-        from: convertStartDateIntervalToTimestampByTimezone(
-          this.query.interval.from,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-        to: convertStopDateIntervalToTimestampByTimezone(
-          this.query.interval.to,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-      };
-    },
-  },
-  watch: {
-    minDate() {
-      if (this.interval.from < this.minDate) {
-        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
-      }
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    customQueryCondition(query, oldQuery) {
-      return isMetricsQueryChanged(query, oldQuery, this.minDate);
-    },
-
-    getInstructionString(instruction) {
-      if (!instruction) {
-        return this.$t('remediation.statistic.allInstructions');
-      }
-
-      return this.isInstructionType(instruction)
-        ? this.$t(`remediation.instruction.types.${instruction}`)
-        : instruction;
-    },
-
-    getFileName() {
-      const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.short);
-      const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.short);
-
-      const instruction = this.getInstructionString(this.query.instruction);
-
-      return [
-        REMEDIATION_STATISTICS_FILENAME_PREFIX,
-        fromTime,
-        toTime,
-        this.query.sampling,
-        this.query.type,
-        instruction,
-      ].join('-');
-    },
-
-    async exportRemediationStatisticsAsPng(blob) {
-      try {
-        await saveFile(blob, this.getFileName());
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: err.message || this.$t('errors.default') });
-      }
-    },
-
-    async exportRemediationStatisticsAsCsv() {
-      this.downloading = true;
-
-      try {
-        const fileData = await this.generateFile({
-          data: this.getQuery(),
-        });
-
-        this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
-      } catch (err) {
-        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
-      } finally {
-        this.downloading = false;
-      }
-    },
-
-    isInstructionType(instruction) {
-      return [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
-    },
-
-    getQuery() {
-      const { instruction } = this.query;
-      const query = {
-        ...this.interval,
-
-        sampling: this.query.sampling,
-      };
-
-      if (this.isInstructionType(instruction)) {
-        query.instruction_type = instruction;
-      } else if (instruction) {
-        query.instruction = instruction;
-      }
-
-      return query;
-    },
-
-    fetchList() {
-      this.fetchRemediationMetricsList({ params: this.getQuery() });
-    },
-  },
-};
+onMounted(fetchList);
 </script>

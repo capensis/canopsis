@@ -7,87 +7,71 @@
       indeterminate
     />
     <div class="pa-3">
-      <v-layout>
-        <v-flex xs6>
-          <h3 class="text-h5 text-center my-1 white--text">
+      <c-layout>
+        <v-col cols="6">
+          <h3 class="text-h5 text-center my-1 text-white">
             {{ $t('context.impacts') }}
           </h3>
           <v-container>
             <v-card>
               <v-card-text>
-                <v-data-iterator :items="impact">
-                  <template #item="props">
-                    <v-flex>
-                      <v-card>
-                        <v-card-title>{{ props.item }}</v-card-title>
-                      </v-card>
-                    </v-flex>
-                  </template>
-                  <template #no-data="">
-                    <v-flex>
-                      <v-card>
-                        <v-card-title>{{ $t('common.noData') }}</v-card-title>
-                      </v-card>
-                    </v-flex>
-                  </template>
-                </v-data-iterator>
+                <c-layout v-if="impact.length" gap="2" column>
+                  <v-card v-for="item in impact" :key="item">
+                    <v-card-title>{{ item }}</v-card-title>
+                  </v-card>
+                </c-layout>
+                <v-card v-else>
+                  <v-card-title>{{ $t('common.noData') }}</v-card-title>
+                </v-card>
               </v-card-text>
             </v-card>
           </v-container>
-        </v-flex>
-        <v-flex xs6>
-          <h3 class="text-h5 text-center my-1 white--text">
+        </v-col>
+        <v-col cols="6">
+          <h3 class="text-h5 text-center my-1 text-white">
             {{ $t('context.dependencies') }}
           </h3>
           <v-container>
             <v-card>
               <v-card-text>
-                <v-data-iterator :items="depends">
-                  <template #item="props">
-                    <v-flex>
-                      <v-card>
-                        <v-card-title>{{ props.item }}</v-card-title>
-                      </v-card>
-                    </v-flex>
-                  </template>
-                  <template #no-data="">
-                    <v-flex>
-                      <v-card>
-                        <v-card-title>{{ $t('common.noData') }}</v-card-title>
-                      </v-card>
-                    </v-flex>
-                  </template>
-                </v-data-iterator>
+                <c-layout v-if="depends.length" gap="2" column>
+                  <v-card v-for="item in depends" :key="item">
+                    <v-card-title>{{ item }}</v-card-title>
+                  </v-card>
+                </c-layout>
+                <v-card v-else>
+                  <v-card-title>{{ $t('common.noData') }}</v-card-title>
+                </v-card>
               </v-card-text>
             </v-card>
           </v-container>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </c-layout>
     </div>
   </div>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions } from 'pinia';
 
 import Observer from '@/services/observer';
 
-const { mapActions } = createNamespacedHelpers('entity');
+import { useEntityStore } from '@/stores/modules/entity';
 
 export default {
   inject: {
     $periodicRefresh: {
-      default() {
-        return new Observer();
-      },
+      default: () => new Observer(),
     },
   },
+
   props: {
     entity: {
       type: Object,
       required: true,
     },
   },
+
   data() {
     return {
       pending: false,
@@ -95,23 +79,28 @@ export default {
       depends: [],
     };
   },
+
   mounted() {
     this.fetchList();
 
     this.$periodicRefresh.register(this.fetchList);
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.$periodicRefresh.unregister(this.fetchList);
   },
+
   methods: {
-    ...mapActions({
+    ...mapActions(useEntityStore, {
       fetchContextEntityContextGraphWithoutStore: 'fetchContextGraphWithoutStore',
     }),
 
     async fetchList() {
       this.pending = true;
 
-      const { impact, depends } = await this.fetchContextEntityContextGraphWithoutStore({ id: this.entity._id });
+      const { impact, depends } = await this.fetchContextEntityContextGraphWithoutStore({
+        id: this.entity._id,
+      });
 
       this.impact = impact;
       this.depends = depends;

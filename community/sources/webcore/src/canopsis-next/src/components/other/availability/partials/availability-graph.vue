@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="availability-graph position-relative" align-start justify-center>
+  <c-layout class="availability-graph position-relative" align="start" justify="center">
     <c-progress-overlay :pending="pending" />
 
     <div class="availability-graph__content">
@@ -14,33 +14,35 @@
         @export:png="exportAvailabilityHistoryAsPng"
       />
     </div>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import { isEqual } from 'lodash';
+import { mapActions } from 'pinia';
 
-import { AVAILABILITY_DISPLAY_PARAMETERS, DATETIME_FORMATS, SAMPLINGS, TIME_UNITS } from '@/constants';
 import { AVAILABILITY_FILENAME_PREFIX } from '@/config';
+import { AVAILABILITY_DISPLAY_PARAMETERS, DATETIME_FORMATS, SAMPLINGS, TIME_UNITS } from '@/constants';
+
+import { useMetricsStore } from '@/stores/modules/metrics';
 
 import { convertDateToString, getDiffBetweenDates } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
-import { saveFile } from '@/helpers/file/files';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { saveFile } from '@/helpers/file/files';
 import { openUrlInNewTab } from '@/helpers/url';
 
 import { localQueryMixin } from '@/mixins/query/query';
 
 import AvailabilityHistory from '@/components/other/availability/partials/availability-history.vue';
 
-const { mapActions: mapAvailabilityActions } = createNamespacedHelpers('availability');
-
 export default {
+  inject: ['$system'],
+
   components: { AvailabilityHistory },
-  mixins: [
-    localQueryMixin,
-  ],
+
+  mixins: [localQueryMixin],
+
   props: {
     availability: {
       type: Object,
@@ -59,6 +61,7 @@ export default {
       default: AVAILABILITY_DISPLAY_PARAMETERS.uptime,
     },
   },
+
   data() {
     return {
       pending: false,
@@ -69,6 +72,7 @@ export default {
       },
     };
   },
+
   watch: {
     interval(interval, oldInterval) {
       if (!isEqual(interval, oldInterval)) {
@@ -76,14 +80,16 @@ export default {
       }
     },
   },
+
   mounted() {
     this.fetchList();
   },
+
   methods: {
-    ...mapAvailabilityActions({
-      fetchAvailabilityHistoryWithoutStore: 'fetchAvailabilityHistoryWithoutStore',
-      fetchAvailabilityHistoryExport: 'fetchAvailabilityHistoryExport',
-    }),
+    ...mapActions(useMetricsStore, [
+      'fetchAvailabilityHistoryWithoutStore',
+      'fetchAvailabilityHistoryExport',
+    ]),
 
     getSamplingByInterval() {
       const daysDiff = getDiffBetweenDates(this.interval.to, this.interval.from, TIME_UNITS.day);
@@ -108,11 +114,12 @@ export default {
       this.pending = true;
 
       try {
-        const availabilities = await this.fetchAvailabilityHistoryWithoutStore({
+        const response = await this.fetchAvailabilityHistoryWithoutStore({
           params: this.getQuery(),
         });
+        const availabilities = Array.isArray(response) ? response : (response?.data ?? []);
 
-        this.availabilities = convertMetricsToTimezone(availabilities);
+        this.availabilities = convertMetricsToTimezone(availabilities, this.$system.timezone);
       } catch (err) {
         console.error(err);
       } finally {
@@ -122,16 +129,10 @@ export default {
 
     getFileName() {
       const { from, to } = this.interval;
-
       const fromTime = convertDateToString(from, DATETIME_FORMATS.short);
       const toTime = convertDateToString(to, DATETIME_FORMATS.short);
 
-      return [
-        AVAILABILITY_FILENAME_PREFIX,
-        fromTime,
-        toTime,
-        this.query.sampling,
-      ].join('-');
+      return [AVAILABILITY_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },
 
     async exportAvailabilityHistoryAsPng(blob) {
@@ -153,7 +154,7 @@ export default {
         });
 
         openUrlInNewTab(getExportMetricDownloadFileUrl(fileData._id));
-      } catch (err) {
+      } catch {
         this.$popups.error({ text: this.$t('availability.popups.exportCSVFailed') });
       } finally {
         this.downloading = false;

@@ -8,7 +8,6 @@
       :x="shape.x"
       :y="shape.y"
       :cursor="readonly ? '' : 'move'"
-      v-on="$listeners"
     />
     <text-editor
       ref="editor"

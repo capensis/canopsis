@@ -1,55 +1,49 @@
 <template>
-  <v-tooltip top>
-    <template #activator="{ on }">
+  <c-tooltip location="top">
+    <template #activator="{ props }">
       <v-btn
-        :input-value="isPeriodicRefreshEnabled"
+        v-bind="props"
+        :active="isPeriodicRefreshEnabled"
         :loading="activeViewPending"
         color="secondary"
-        fab
-        dark
-        v-on="on"
+        size="x-large"
+        icon
         @click.stop="refreshHandler"
       >
-        <v-icon v-if="!isPeriodicRefreshEnabled">
-          refresh
-        </v-icon>
+        <v-icon v-if="!isPeriodicRefreshEnabled" icon="refresh" />
         <v-progress-circular
           v-else
+          :model-value="periodicRefreshProgressValue"
           :rotate="270"
-          :size="30"
+          :size="40"
           :width="2"
-          :value="periodicRefreshProgressValue"
-          class="periodic-refresh-progress"
           color="white"
-          button
         >
           <span class="refresh-btn">
-            {{ periodicRefreshProgress | maxDurationByUnit }}
+            {{ periodicRefreshProgress }}
           </span>
         </v-progress-circular>
       </v-btn>
     </template>
     <span>{{ tooltipContent }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
 
-import { uid } from '@/helpers/uid';
 import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
+import { uid } from '@/helpers/uid';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
 
 export default {
   inject: ['$periodicRefresh'],
-  mixins: [
-    activeViewMixin,
-    layoutNavigationEditingModeMixin,
-  ],
+  mixins: [activeViewMixin, layoutNavigationEditingModeMixin],
   data() {
     return {
+      popupId: null,
       periodicRefreshInterval: null,
       periodicRefreshProgress: undefined,
     };
@@ -73,7 +67,9 @@ export default {
     },
 
     periodicRefreshProgressValue() {
-      return this.periodicRefreshProgress / (this.periodicRefreshDelay / 100);
+      return this.periodicRefreshDelay
+        ? this.periodicRefreshProgress / (this.periodicRefreshDelay / 100)
+        : 0;
     },
 
     isPeriodicRefreshEnabled() {
@@ -81,9 +77,7 @@ export default {
     },
 
     periodicRefreshDelay() {
-      return this.view?.periodic_refresh
-        ? durationToSeconds(this.view.periodic_refresh)
-        : 0;
+      return this.view?.periodic_refresh ? durationToSeconds(this.view.periodic_refresh) : 0;
     },
 
     refreshHandler() {
@@ -94,7 +88,11 @@ export default {
   },
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
-      if (value && (!oldValue || !this.periodicRefreshInterval) && !this.periodicRefreshFullPaused) {
+      if (
+        value &&
+        (!oldValue || !this.periodicRefreshInterval) &&
+        !this.periodicRefreshFullPaused
+      ) {
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
@@ -110,11 +108,17 @@ export default {
     },
 
     isNavigationEditingMode(value) {
-      this.periodicRefreshPausedWatcher(value, this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPausedWhileEditingGroups'));
+      this.periodicRefreshPausedWatcher(
+        value,
+        this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPausedWhileEditingGroups'),
+      );
     },
 
     activeViewPeriodicRefreshPaused(value) {
-      this.periodicRefreshPausedWatcher(value, this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPaused'));
+      this.periodicRefreshPausedWatcher(
+        value,
+        this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPaused'),
+      );
     },
   },
 
@@ -124,13 +128,16 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopPeriodicRefreshInterval();
   },
 
   methods: {
     periodicRefreshPausedWatcher(value, pausedPopup) {
-      if (value !== !!this.periodicRefreshInterval || value !== this.periodicRefreshFullPaused) {
+      if (
+        value !== Boolean(this.periodicRefreshInterval) ||
+        value !== this.periodicRefreshFullPaused
+      ) {
         return;
       }
 
@@ -207,7 +214,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .refresh-btn {
   text-decoration: none;
   text-transform: none;

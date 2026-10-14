@@ -1,20 +1,22 @@
 <template>
   <widget-settings-item :title="$t('settings.defaultSortColumn')">
-    <v-layout>
-      <v-select
-        v-field="value.column"
+    <c-layout gap="2" column>
+      <c-select
+        :model-value="modelValue.column"
         :items="columns"
         :label="columnsLabel"
-        :item-text="itemText"
+        :item-title="itemTitle"
         :item-value="itemValue"
+        hide-details
+        @update:model-value="updateField('column', $event)"
       />
-    </v-layout>
-    <v-layout>
-      <v-select
-        v-field="value.order"
+      <c-select
+        :model-value="modelValue.order"
         :items="orders"
+        hide-details
+        @update:model-value="updateField('order', $event)"
       />
-    </v-layout>
+    </c-layout>
   </widget-settings-item>
 </template>
 
@@ -26,14 +28,15 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 /**
  * Component to select the default column to sort on settings
  *
- * @prop {Object} [value] - Object containing the default sort column's name and the sort direction
+ * @prop {Object} [modelValue] - Object containing the default sort column's name and the sort direction
  *
- * @event value#input
+ * @event modelValue#update:modelValue
  */
 export default {
   components: { WidgetSettingsItem },
+
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: () => ({
         column: '',
@@ -48,7 +51,7 @@ export default {
       type: String,
       default: null,
     },
-    itemText: {
+    itemTitle: {
       type: String,
       default: 'text',
     },
@@ -57,9 +60,21 @@ export default {
       default: 'value',
     },
   },
+
+  emits: ['update:modelValue'],
+
   computed: {
     orders() {
       return Object.values(SORT_ORDERS);
+    },
+  },
+
+  methods: {
+    updateField(field, value) {
+      this.$emit('update:modelValue', {
+        ...this.modelValue,
+        [field]: value,
+      });
     },
   },
 };

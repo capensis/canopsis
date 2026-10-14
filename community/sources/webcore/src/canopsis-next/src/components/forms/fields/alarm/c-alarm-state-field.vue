@@ -1,13 +1,15 @@
 <template>
-  <v-select
-    v-field="value"
-    v-validate="rules"
+  <c-select
+    :model-value="value"
     :label="label || $t('common.states')"
     :items="availableStateTypes"
     :disabled="disabled"
     :name="name"
-    :error-messages="errors.collect(name)"
+    :required="required"
+    item-title="text"
+    item-value="value"
     hide-details
+    @update:model-value="updateValue"
   />
 </template>
 
@@ -15,11 +17,7 @@
 import { ALARM_STATES } from '@/constants';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value', 'update:modelValue'],
   props: {
     value: {
       type: Number,
@@ -43,15 +41,17 @@ export default {
     },
   },
   computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-
     availableStateTypes() {
-      return Object.values(ALARM_STATES)
-        .map(value => ({ value, text: this.$t(`common.stateTypes.${value}`) }));
+      return Object.values(ALARM_STATES).map(value => ({
+        value,
+        text: this.$t(`common.stateTypes.${value}`),
+      }));
+    },
+  },
+  methods: {
+    updateValue(value) {
+      this.$emit('update:value', value);
+      this.$emit('update:modelValue', value);
     },
   },
 };

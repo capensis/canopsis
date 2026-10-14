@@ -1,129 +1,137 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <v-text-field
-          v-model="form.title"
-          v-validate="'required'"
-          :label="$t('common.title')"
-          :error-messages="errors.collect('title')"
+
+      <template #text>
+        <c-text-field
+          v-model="titleField"
+          :label="t('common.title')"
           name="title"
           autofocus
+          required
         />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="isSubmitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ t('common.submit') }}
         </v-btn>
-        <v-tooltip
-          v-if="config.deletable"
-          :disabled="group.deletable"
-          top
-        >
-          <template #activator="{ on }">
-            <div
-              class="ml-2"
-              v-on="on"
-            >
+
+        <c-tooltip v-if="config.deletable" :disabled="group.deletable" location="top">
+          <template #activator="{ props: activatorProps }">
+            <div class="ml-2" v-bind="activatorProps">
               <v-btn
-                :disabled="submitting || !group.deletable"
-                :outlined="$system.dark"
-                class="error"
+                :disabled="isSubmitting || !group.deletable"
+                :loading="removing"
                 color="error"
                 @click="remove"
               >
-                {{ $t('common.delete') }}
+                {{ t('common.delete') }}
               </v-btn>
             </div>
           </template>
-          <span>{{ $t('modals.group.errors.isNotEmpty') }}</span>
-        </v-tooltip>
+
+          <span>{{ t('modals.group.errors.isNotEmpty') }}</span>
+        </c-tooltip>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { groupToRequest } from '@/helpers/entities/view/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 
 export default {
   name: MODALS.createGroup,
-  $_veeValidate: {
-    validator: 'new',
-  },
-  inject: ['$system'],
-  components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: {
-        title: this.modal.config.group.title || '',
-      },
-    };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.group.create.title');
-    },
 
-    group() {
-      return this.config.group;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  methods: {
-    remove() {
-      this.$modals.show({
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
+    const removing = ref(false);
+    const config = computed(() => props.modal.config ?? {});
+    const group = computed(() => config.value.group ?? {});
+    const title = computed(() => config.value.title ?? t('modals.group.create.title'));
+
+    const form = useForm({
+      initialValues: {
+        title: group.value.title ?? '',
+      },
+    });
+    const { values, model, handleSubmit, isSubmitting } = form;
+    const titleField = model('title');
+
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(groupToRequest({ ...group.value, ...values.value }));
+
+      closeModal();
+    });
+
+    const remove = () => {
+      modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
             try {
-              await this.config.remove?.();
+              removing.value = true;
 
-              this.$modals.hide();
+              await config.value.remove?.();
+
+              closeModal();
             } catch (err) {
-              this.$popups.error({ text: this.$t('modals.group.errors.isNotEmpty') });
+              console.warn(err);
+
+              popups.error({ text: t('modals.group.errors.isNotEmpty') });
+            } finally {
+              removing.value = false;
             }
           },
         },
       });
-    },
+    };
 
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        this.config.action?.(groupToRequest({ ...this.group, ...this.form }));
-
-        this.$modals.hide();
-      }
-    },
+    return {
+      t,
+      config,
+      group,
+      title,
+      titleField,
+      isSubmitting,
+      removing,
+      submit,
+      remove,
+      closeModal,
+    };
   },
 };
 </script>

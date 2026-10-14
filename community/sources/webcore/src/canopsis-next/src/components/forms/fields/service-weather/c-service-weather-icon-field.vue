@@ -1,46 +1,54 @@
 <template>
-  <v-select
-    v-field="value"
-    :label="label"
+  <c-select
+    :model-value="modelValue"
     :items="availableIcons"
+    :label="label"
     :loading="pending"
     :name="name"
-    :error-messages="errors.collect(name)"
     :disabled="disabled"
+    item-title="text"
     item-value="icon"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #selection="{ item }">
-      <v-icon :class="disabled ? 'text--disabled' : ''">
+      <v-icon :class="disabled ? 'text-disabled' : ''">
         {{ item.icon }}
       </v-icon>
       <span class="ml-2">
         {{ item.text }}
       </span>
     </template>
-    <template #item="{ item }">
-      <v-icon>{{ item.icon }}</v-icon>
-      <span class="ml-2">
-        {{ item.text }}
-      </span>
+
+    <template #item="{ props: itemProps, item }">
+      <v-list-item v-bind="itemProps">
+        <template #prepend>
+          <v-icon>{{ item.icon }}</v-icon>
+        </template>
+        <template #title>
+          {{ item.text }}
+        </template>
+      </v-list-item>
     </template>
-  </v-select>
+  </c-select>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { uniqBy } from 'lodash';
+import { computed, onMounted, ref } from 'vue';
 
-import { MAX_LIMIT, PBEHAVIOR_TYPE_TYPES, SERVICE_STATES, WEATHER_ICONS } from '@/constants';
+import {
+  MAX_LIMIT,
+  PBEHAVIOR_TYPE_TYPES,
+  SERVICE_STATES,
+  WEATHER_ICONS,
+} from '@/constants';
 
-const { mapActions: mapPbehaviorTypesActions } = createNamespacedHelpers('pbehaviorTypes');
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -61,68 +69,74 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      pbehaviorTypes: [],
-      pending: false,
+
+  emits: ['update:modelValue'],
+
+  setup() {
+    const { t } = useI18n();
+    const { fetchPbehaviorTypesListWithoutStore } = usePbehaviorType();
+
+    const pbehaviorTypes = ref([]);
+    const pending = ref(false);
+
+    const serviceWeatherIcons = computed(() => [
+      {
+        icon: WEATHER_ICONS[SERVICE_STATES.ok],
+        text: t('serviceWeather.iconTypes.ok'),
+      },
+      {
+        icon: WEATHER_ICONS[SERVICE_STATES.minor],
+        text: t('serviceWeather.iconTypes.minorOrMajor'),
+      },
+      {
+        icon: WEATHER_ICONS[SERVICE_STATES.critical],
+        text: t('serviceWeather.iconTypes.critical'),
+      },
+    ]);
+
+    const pbehaviorTypeIcons = computed(() => {
+      const serviceWeatherIconSet = new Set(serviceWeatherIcons.value.map(({ icon }) => icon));
+
+      return uniqBy(
+        pbehaviorTypes.value
+          .filter(({ icon_name: icon }) => icon && !serviceWeatherIconSet.has(icon))
+          .map(({ icon_name: icon, name: text }) => ({ icon, text })),
+        'icon',
+      );
+    });
+
+    const availableIcons = computed(() => [
+      ...serviceWeatherIcons.value,
+      ...pbehaviorTypeIcons.value,
+    ]);
+
+    const fetchTypesList = async () => {
+      try {
+        pending.value = true;
+
+        const { data: types = [] } = await fetchPbehaviorTypesListWithoutStore({
+          params: {
+            types: [
+              PBEHAVIOR_TYPE_TYPES.inactive,
+              PBEHAVIOR_TYPE_TYPES.maintenance,
+              PBEHAVIOR_TYPE_TYPES.pause,
+            ],
+            limit: MAX_LIMIT,
+          },
+        });
+
+        pbehaviorTypes.value = types;
+      } finally {
+        pending.value = false;
+      }
     };
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
 
-    pbehaviorTypeIcons() {
-      return this.pbehaviorTypes.map(pbehaviorType => ({
-        icon: pbehaviorType.icon_name,
-        text: pbehaviorType.name,
-      }));
-    },
+    onMounted(fetchTypesList);
 
-    serviceWeatherIcons() {
-      return [
-        {
-          icon: WEATHER_ICONS[SERVICE_STATES.ok],
-          text: this.$t('serviceWeather.iconTypes.ok'),
-        },
-        {
-          icon: WEATHER_ICONS[SERVICE_STATES.minor],
-          text: this.$t('serviceWeather.iconTypes.minorOrMajor'),
-        },
-        {
-          icon: WEATHER_ICONS[SERVICE_STATES.critical],
-          text: this.$t('serviceWeather.iconTypes.critical'),
-        },
-      ];
-    },
-
-    availableIcons() {
-      return [...this.serviceWeatherIcons, ...this.pbehaviorTypeIcons];
-    },
-  },
-  mounted() {
-    this.fetchTypesList();
-  },
-  methods: {
-    ...mapPbehaviorTypesActions({
-      fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
-    }),
-
-    async fetchTypesList() {
-      this.pending = true;
-
-      const { data: types } = await this.fetchPbehaviorTypesListWithoutStore({
-        params: {
-          types: [PBEHAVIOR_TYPE_TYPES.inactive, PBEHAVIOR_TYPE_TYPES.maintenance, PBEHAVIOR_TYPE_TYPES.pause],
-          limit: MAX_LIMIT,
-        },
-      });
-
-      this.pbehaviorTypes = types;
-      this.pending = false;
-    },
+    return {
+      pending,
+      availableIcons,
+    };
   },
 };
 </script>

@@ -1,39 +1,30 @@
 <template>
-  <v-tooltip left>
-    <template #activator="{ on }">
-      <v-badge
-        :color="badgeColor"
-        class="logged-users-count"
-        overlap
-      >
-        <template #badge="">
-          {{ count }}
-        </template>
+  <c-tooltip location="left">
+    <template #activator="{ props }">
+      <v-badge :color="badgeColor" :content="count" class="logged-users-count">
         <v-btn
-          text
+          size="x-small"
+          variant="text"
           icon
-          small
-          v-on="on"
+          v-bind="props"
         >
-          <v-icon
-            color="white"
-            small
-          >
+          <c-icon color="white" size="small">
             people
-          </v-icon>
+          </c-icon>
         </v-btn>
       </v-badge>
     </template>
+
     <span>{{ $t('layout.sideBar.loggedUsersCount') }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions } from 'pinia';
 
 import { SOCKET_ROOMS } from '@/config';
 
-const { mapActions } = createNamespacedHelpers('auth');
+import { useAuthStore } from '@/stores/modules/auth';
 
 export default {
   props: {
@@ -42,25 +33,25 @@ export default {
       default: 'primary',
     },
   },
+
   data() {
     return {
       count: '',
     };
   },
+
   mounted() {
     this.fetchData();
 
-    this.$socket
-      .join(SOCKET_ROOMS.loggedUserCount)
-      .addListener(this.setCount);
+    this.$socket.join(SOCKET_ROOMS.loggedUserCount).addListener(this.setCount);
   },
-  beforeDestroy() {
-    this.$socket
-      .leave(SOCKET_ROOMS.loggedUserCount)
-      .removeListener(this.setCount);
+
+  beforeUnmount() {
+    this.$socket.leave(SOCKET_ROOMS.loggedUserCount).removeListener(this.setCount);
   },
+
   methods: {
-    ...mapActions(['fetchLoggedUsersCountWithoutStore']),
+    ...mapActions(useAuthStore, ['fetchLoggedUsersCountWithoutStore']),
 
     setCount(count) {
       this.count = count;
@@ -85,8 +76,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 2px;
-    right: 2px;
     height: 17px;
     min-height: 17px;
     width: 17px;

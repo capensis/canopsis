@@ -20,7 +20,7 @@ import { LLM_MODEL_TYPES } from '@/constants';
  */
 export const llmToForm = (llm = {}, defaultValue = false) => ({
   enabled: llm.enabled ?? true,
-  type: LLM_MODEL_TYPES.gemini,
+  type: llm.type ?? LLM_MODEL_TYPES.gemini,
   name: llm.name ?? '',
   api_key: llm.api_key ?? '',
   model: llm.model ?? '',

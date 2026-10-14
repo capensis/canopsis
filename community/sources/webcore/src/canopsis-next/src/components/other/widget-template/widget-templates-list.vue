@@ -5,34 +5,34 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
-    advanced-pagination
     search
+    advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ formatDate(item.updated) }}
     </template>
+
     <template #type="{ item }">
-      {{ $t(`widgetTemplate.types.${item.type}`) }}
+      {{ t(`widgetTemplate.types.${item.type}`) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click.stop="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click.stop="$emit('remove', item._id)"
-        />
-      </v-layout>
+      <c-layout align="center">
+        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
+        <c-action-btn v-if="removable" type="delete" @click.stop="$emit('remove', item._id)" />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     widgetTemplates: {
@@ -60,16 +60,45 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.name'), value: 'title', sortable: false },
-        { text: this.$t('common.type'), value: 'type', sortable: false },
-        { text: this.$t('common.lastModifiedOn'), value: 'updated', sortable: false },
-        { text: this.$t('common.lastModifiedBy'), value: 'author.display_name', sortable: false },
-        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-      ];
-    },
+
+  emits: ['update:options', 'edit', 'remove'],
+
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'title',
+        sortable: false,
+      },
+      {
+        text: t('common.type'),
+        value: 'type',
+        sortable: false,
+      },
+      {
+        text: t('common.lastModifiedOn'),
+        value: 'updated',
+        sortable: false,
+      },
+      {
+        text: t('common.lastModifiedBy'),
+        value: 'author.display_name',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    return {
+      t,
+      headers,
+      formatDate: convertDateToString,
+    };
   },
 };
 </script>

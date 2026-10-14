@@ -1,29 +1,37 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const useAnomalyMonitoredConnectortoreModule = () => useStoreModuleHooks('anomalyMonitoredConnector');
+import { useAnomalyMonitoredConnectorStore } from '@/stores/modules/anomaly-monitored-connector';
 
 /**
- * Custom hook for accessing actions related to anomaly monitored connectors from Vuex store module.
+ * Anomaly monitored connector store facade.
  *
- * @returns {Object} Actions for anomaly monitored connectors CRUD, bulk enabled toggles, and fetches.
+ * @returns {Object}
  */
 export const useAnomalyMonitoredConnector = () => {
-  const { useActions } = useAnomalyMonitoredConnectortoreModule();
-
-  const actions = useActions({
-    createAnomalyMonitoredConnector: 'create',
-    updateAnomalyMonitoredConnector: 'update',
-    removeAnomalyMonitoredConnector: 'remove',
-    bulkRemoveAnomalyMonitoredConnectors: 'bulkRemove',
-    bulkEnableAnomalyMonitoredConnectors: 'bulkEnable',
-    bulkDisableAnomalyMonitoredConnectors: 'bulkDisable',
-    updateAnomalyMonitoredConnectorEnabled: 'updateEnabled',
-    fetchAnomalyMonitoredConnectorsListWithoutStore: 'fetchListWithoutStore',
-    fetchAnomalyMonitoredConnectorStatesListWithoutStore: 'fetchStatesListWithoutStore',
-    fetchAnomalyMonitoredConnectorHistoryWithoutStore: 'fetchConnectorHistoryWithoutStore',
-  });
+  const anomalyMonitoredConnectorStore = useAnomalyMonitoredConnectorStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(anomalyMonitoredConnectorStore);
 
   return {
-    ...actions,
+    anomalyMonitoredConnectors: items,
+    anomalyMonitoredConnectorsMeta: meta,
+    anomalyMonitoredConnectorsPending: pending,
+    anomalyMonitoredConnectorsFetchingParams: fetchingParams,
+
+    fetchAnomalyMonitoredConnectorsList: anomalyMonitoredConnectorStore.fetchList,
+    fetchAnomalyMonitoredConnectorsListWithPreviousParams:
+      anomalyMonitoredConnectorStore.fetchListWithPreviousParams,
+    fetchAnomalyMonitoredConnectorsListWithoutStore:
+      anomalyMonitoredConnectorStore.fetchListWithoutStore,
+    createAnomalyMonitoredConnector: anomalyMonitoredConnectorStore.create,
+    updateAnomalyMonitoredConnector: anomalyMonitoredConnectorStore.update,
+    updateAnomalyMonitoredConnectorEnabled: anomalyMonitoredConnectorStore.updateEnabled,
+    removeAnomalyMonitoredConnector: anomalyMonitoredConnectorStore.remove,
+    bulkRemoveAnomalyMonitoredConnectors: anomalyMonitoredConnectorStore.bulkRemove,
+    bulkEnableAnomalyMonitoredConnectors: anomalyMonitoredConnectorStore.bulkEnable,
+    bulkDisableAnomalyMonitoredConnectors: anomalyMonitoredConnectorStore.bulkDisable,
+    fetchAnomalyMonitoredConnectorStatesListWithoutStore:
+      anomalyMonitoredConnectorStore.fetchStatesListWithoutStore,
+    fetchAnomalyMonitoredConnectorHistoryWithoutStore:
+      anomalyMonitoredConnectorStore.fetchConnectorHistoryWithoutStore,
   };
 };

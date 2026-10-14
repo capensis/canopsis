@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    v-field="form.patterns"
+    v-model:value="patternsField"
     :some-required="!isChangeEntityType"
     :required="isChangeEntityType"
     :with-entity="!isChangeEntityType"
@@ -17,11 +17,10 @@ import { computed } from 'vue';
 
 import { isChangeEntityEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 
+import { useFormModel } from '@/hooks/form';
+
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  emits: ['update:form'],
   props: {
     form: {
       type: Object,
@@ -37,9 +36,13 @@ export default {
     },
   },
   setup(props) {
+    const patternsField = useFormModel('patterns');
+
     const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(props.form.type));
 
     return {
+      patternsField,
+
       isChangeEntityType,
     };
   },

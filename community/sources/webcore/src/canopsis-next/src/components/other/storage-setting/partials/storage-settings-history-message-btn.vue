@@ -1,11 +1,7 @@
 <template>
-  <v-tooltip :disabled="!history" bottom>
-    <template #activator="{ on }">
-      <v-btn
-        v-bind="$attrs"
-        v-on="on"
-        @click="$emit('click')"
-      >
+  <c-tooltip :disabled="!history" location="bottom">
+    <template #activator="{ props }">
+      <v-btn v-bind="{ ...$attrs, ...props }" @click="$emit('click')">
         <slot />
       </v-btn>
     </template>
@@ -16,7 +12,7 @@
       deleted-count-message-key="storageSetting.history.entity.deletedCount"
       hide-deleted
     />
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
@@ -31,5 +27,7 @@ export default {
       required: false,
     },
   },
+
+  emits: ['click'],
 };
 </script>

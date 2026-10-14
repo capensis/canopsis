@@ -59,6 +59,7 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
 
   [ROUTES_NAMES.adminRights]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminUsers]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminApiAccessTokens]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminRoles]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminBroadcastMessages]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminPlaylists]: BROADCAST_MESSAGE_VIEWS.administration,

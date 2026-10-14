@@ -1,90 +1,80 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <declare-ticket-rule-form
-          v-model="form"
-          :rule-id="config.declareTicketRule?._id"
-        />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+
+      <template #text>
+        <declare-ticket-rule-form :rule-id="config.declareTicketRule?._id" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitDisabled"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
-import { declareTicketRuleToForm, formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import {
+  declareTicketRuleToForm,
+  formToDeclareTicketRule,
+} from '@/helpers/entities/declare-ticket/rule/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createDeclareTicketRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
+
   components: {
     DeclareTicketRuleForm,
-    ModalWrapper,
     AiChatSidebar,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
-
-    const { config, close } = useInnerModal(props);
     const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const close = () => modals.hide({ id: props.modal.id });
 
-    const form = ref(declareTicketRuleToForm(config.value.declareTicketRule));
+    const form = useForm({
+      initialValues: declareTicketRuleToForm(config.value.declareTicketRule),
+    });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
 
       modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.declareTicketRule?._id,
@@ -92,31 +82,31 @@ export default {
     });
 
     const isNew = computed(() => !config.value.declareTicketRule?._id);
-    const title = computed(() => config.value.title ?? t('modals.createDeclareTicketRule.create.title'));
+    const title = computed(
+      () => config.value.title ?? t('modals.createDeclareTicketRule.create.title'),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.declareTicketRule,
-      method: async () => {
-        const result = await config.value.action?.(formToDeclareTicketRule(form.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToDeclareTicketRule(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        close();
+      close();
 
-        return result;
-      },
+      return result;
     });
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.attrs.pending);
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({ form: values, submit, close });
 
     return {
-      form,
+      t,
       config,
       isNew,
-      type,
       title,
       submitting,
+      submitDisabled,
       chatShown,
       chatOptions,
       submitLabel,

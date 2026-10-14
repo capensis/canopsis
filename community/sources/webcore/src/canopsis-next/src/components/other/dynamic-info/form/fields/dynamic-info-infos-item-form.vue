@@ -1,50 +1,55 @@
 <template>
-  <v-layout class="gap-2" column>
-    <v-layout align-center justify-space-between>
+  <c-layout gap="2" column>
+    <c-layout align="center" justify="space-between" gap="2">
       <c-name-field
-        v-field="form.name"
-        v-validate="nameRules"
-        :error-messages="errors.collect(nameFieldName)"
-        :name="nameFieldName"
+        :model-value="form.name"
+        :name="`${name}.name`"
+        :unique="uniqueNames"
+        required
+        @update:model-value="updateField('name', $event)"
       />
-      <v-flex v-if="removable" shrink>
-        <div>
-          <c-action-btn type="delete" @click="remove" />
-        </div>
-      </v-flex>
-    </v-layout>
-    <dynamic-info-information-type-field :value="form.type" @input="changeType" />
+      <c-action-btn v-if="removable" type="delete" @click="remove" />
+    </c-layout>
+
+    <dynamic-info-information-type-field
+      :model-value="form.type"
+      :name="`${name}.type`"
+      @update:model-value="changeType"
+    />
+
     <c-mixed-field
       v-if="isDefaultType"
-      v-field="form.value"
+      :value="form.value"
       :label="$t('common.value')"
       :types="mixedFieldTypes"
-      :name="valueFieldName"
+      :name="`${name}.value`"
       required
+      @update:value="updateField('value', $event)"
     />
 
     <c-payload-text-field
       v-else-if="isTemplateType"
-      v-field="form.value"
+      :value="form.value"
       :label="$t('common.value')"
-      :variables="isTemplateType ? variables : copyVariables"
-      :name="valueFieldName"
+      :variables="variables"
+      :name="`${name}.value`"
       required
+      @update:value="updateField('value', $event)"
     />
 
-    <c-select-field
+    <c-combobox
       v-else
-      v-field="form.value"
+      :model-value="form.value"
       :label="$t('common.value')"
       :items="copyVariables"
-      :name="valueFieldName"
+      :name="`${name}.value`"
       :menu-props="comboboxMenuProps"
       :return-object="false"
       children-key="variables"
       required
-      combobox
+      @update:model-value="updateCopyValue"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -52,20 +57,15 @@ import { computed } from 'vue';
 
 import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERN_FIELD_TYPES } from '@/constants';
 
-import { useValidator } from '@/hooks/validator/validator';
 import { useModelField } from '@/hooks/form/model-field';
 
 import DynamicInfoInformationTypeField from './dynamic-info-information-type-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     DynamicInfoInformationTypeField,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -75,13 +75,9 @@ export default {
       type: String,
       default: '',
     },
-    existingNames: {
+    uniqueNames: {
       type: Array,
       default: () => [],
-    },
-    initialName: {
-      type: String,
-      default: '',
     },
     variables: {
       type: Array,
@@ -96,9 +92,10 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit }) {
-    const validator = useValidator();
 
+  emits: ['update:form', 'remove'],
+
+  setup(props, { emit }) {
     const mixedFieldTypes = [
       { value: PATTERN_FIELD_TYPES.string },
       { value: PATTERN_FIELD_TYPES.number },
@@ -106,23 +103,14 @@ export default {
       { value: PATTERN_FIELD_TYPES.stringArray },
     ];
 
-    const { updateModel } = useModelField(props, emit);
+    const { updateField, updateModel } = useModelField(props, emit);
 
-    const getFieldName = field => `${props.name}.${field}`;
-
-    const nameFieldName = computed(() => getFieldName('name'));
-    const valueFieldName = computed(() => getFieldName('value'));
-
-    const nameRules = computed(() => ({
-      required: true,
-      unique: {
-        values: props.existingNames,
-        initialValue: props.initialName,
-      },
-    }));
-
-    const isDefaultType = computed(() => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfo);
-    const isTemplateType = computed(() => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfoFromTemplate);
+    const isDefaultType = computed(
+      () => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
+    );
+    const isTemplateType = computed(
+      () => props.form.type === DYNAMIC_INFO_INFORMATION_TYPES.setToInfoFromTemplate,
+    );
 
     const comboboxMenuProps = computed(() => ({
       minWidth: 200,
@@ -131,27 +119,23 @@ export default {
     const changeType = (type) => {
       updateModel({
         ...props.form,
-
         type,
         value: '',
       });
-
-      validator.errors.remove(valueFieldName.value);
     };
+
+    const updateCopyValue = newValue => updateField('value', newValue?.value || newValue);
 
     const remove = () => emit('remove', props.form);
 
     return {
       mixedFieldTypes,
-
-      nameFieldName,
-      valueFieldName,
-      nameRules,
       isDefaultType,
       isTemplateType,
       comboboxMenuProps,
-
+      updateField,
       changeType,
+      updateCopyValue,
       remove,
     };
   },

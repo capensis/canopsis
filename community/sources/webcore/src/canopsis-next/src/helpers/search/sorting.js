@@ -16,12 +16,13 @@ import { MAX_SAVED_ADVANCED_SEARCHES } from '@/constants';
  * @param {string} [key = 'search']
  * @returns {Search[]}
  */
-export const sortPinnedSearches = (searches, activeSearch, key = 'search') => uniq(searches).sort((a, b) => {
-  const aFactor = Number(a[key] === activeSearch) + (a.pinned ? 2 : 0);
-  const bFactor = Number(b[key] === activeSearch) + (b.pinned ? 2 : 0);
+export const sortPinnedSearches = (searches, activeSearch, key = 'search') =>
+  uniq(searches).sort((a, b) => {
+    const aFactor = Number(a[key] === activeSearch) + (a.pinned ? 2 : 0);
+    const bFactor = Number(b[key] === activeSearch) + (b.pinned ? 2 : 0);
 
-  return bFactor - aFactor;
-});
+    return bFactor - aFactor;
+  });
 
 /**
  * Keep only the first MAX_SAVED_ADVANCED_SEARCHES searches

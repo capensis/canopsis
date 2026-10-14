@@ -1,9 +1,6 @@
 <template>
-  <c-information-block :title="$tc('common.alarm', 2)">
-    <template
-      v-if="history"
-      #subtitle=""
-    >
+  <c-information-block :title="$t('common.alarm', 2)">
+    <template v-if="history" #subtitle="">
       <storage-settings-history-message
         :history="history"
         archived-count-message-key="storageSetting.history.alarm.archivedCount"
@@ -11,40 +8,35 @@
       />
     </template>
     <c-enabled-duration-field
-      v-field="form.archive_after"
+      :duration="form.archive_after"
       :label="$t('storageSetting.alarm.archiveAfter')"
       :suffix="$t('common.after')"
       name="alarm.archive_after"
       switcher
       hide-value-on-false
+      @update:duration="updateField('archive_after', $event)"
     />
     <c-enabled-duration-field
-      v-field="form.delete_after"
+      :duration="form.delete_after"
       :label="$t('storageSetting.alarm.deleteAfter')"
       :suffix="$t('common.after')"
       :after="form.archive_after"
       name="alarm.delete_after"
       switcher
       hide-value-on-false
-      @input="validateDeleteAfter"
+      @update:duration="updateField('delete_after', $event)"
     />
   </c-information-block>
 </template>
 
 <script>
-import { nextTick } from 'vue';
-
-import { useValidator } from '@/hooks/validator/validator';
+import { useModelField } from '@/hooks/form';
 
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
 export default {
-  inject: ['$validator'],
   components: { StorageSettingsHistoryMessage },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -55,13 +47,14 @@ export default {
       required: false,
     },
   },
-  setup() {
-    const validator = useValidator();
 
-    const validateDeleteAfter = () => nextTick(() => validator.validate('alarm.delete_after'));
+  emits: ['update:form'],
+
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
 
     return {
-      validateDeleteAfter,
+      updateField,
     };
   },
 };

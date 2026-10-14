@@ -1,32 +1,25 @@
 <template>
-  <v-layout column>
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
-    <kpi-filter-patterns-form
-      v-field="form.patterns"
-      class="mt-2"
-    />
-  </v-layout>
+  <c-layout gap="3" column>
+    <c-name-field v-model="name" autofocus required />
+    <kpi-filter-patterns-form :form="patterns" @update:form="patterns = $event" />
+  </c-layout>
 </template>
 
 <script>
+import { useFormModels } from '@/hooks/form';
+
 import KpiFilterPatternsForm from './kpi-filter-patterns-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: { KpiFilterPatternsForm },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
+
+  setup() {
+    const { name, patterns } = useFormModels(['name', 'patterns']);
+
+    return {
+      name,
+      patterns,
+    };
   },
 };
 </script>

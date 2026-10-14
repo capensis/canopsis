@@ -1,35 +1,31 @@
 <template>
-  <v-layout class="gap-3" column>
-    <c-enabled-field v-field="form.enabled" with-background />
+  <c-layout gap="3" column>
+    <c-enabled-field v-model="enabled" with-background />
+
     <c-entity-field
-      v-field="form.name"
+      v-model:value="name"
       :label="$t('common.connectorName')"
       :entity-types="entityTypes"
       item-text="name"
       item-value="name"
       required
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
+import { useFormModels } from '@/hooks/form';
+
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      required: true,
-    },
-  },
   setup() {
+    const { name, enabled } = useFormModels(['name', 'enabled']);
     const entityTypes = [BASIC_ENTITY_TYPES.connector];
 
     return {
+      name,
+      enabled,
       entityTypes,
     };
   },

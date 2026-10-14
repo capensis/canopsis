@@ -10,13 +10,11 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
-import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
+import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 
-const { mapActions: mapDeclareTicketRuleActions } = createNamespacedHelpers('declareTicketRule');
+import AlarmWebhookExecutionTimelineCard from '@/components/other/alarm/partials/alarm-webhook-execution-timeline-card.vue';
 
 export default {
   components: { AlarmWebhookExecutionTimelineCard },
@@ -33,23 +31,30 @@ export default {
       response: null,
     };
   },
+  setup() {
+    const { fetchTestDeclareTicketExecutionWebhooksResponse } = useDeclareTicketRule();
+
+    return {
+      fetchTestDeclareTicketExecutionWebhooksResponse,
+    };
+  },
   computed: {
     expandable() {
-      return [EVENT_ENTITY_TYPES.webhookComplete, EVENT_ENTITY_TYPES.webhookFail].includes(this.step._t);
+      return [EVENT_ENTITY_TYPES.webhookComplete, EVENT_ENTITY_TYPES.webhookFail].includes(
+        this.step._t,
+      );
     },
   },
   methods: {
-    ...mapDeclareTicketRuleActions({
-      fetchTestDeclareTicketExecutionWebhooksResponse: 'fetchTestDeclareTicketExecutionWebhooksResponse',
-    }),
-
     async expandResponse(value) {
       if (value) {
         if (!this.response) {
           this.pending = true;
 
           try {
-            this.response = await this.fetchTestDeclareTicketExecutionWebhooksResponse({ id: this.step.webhookId });
+            this.response = await this.fetchTestDeclareTicketExecutionWebhooksResponse({
+              id: this.step.webhookId,
+            });
           } catch (err) {
             console.error(err);
           } finally {

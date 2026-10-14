@@ -1,20 +1,19 @@
-import { isEqual, isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 import { prepareWidgetQuery } from '@/helpers/entities/widget/query';
 
-import { queryWidgetMixin } from '@/mixins/widget/query';
+import { queryWidgetMixin } from './query';
 
-/**
- * @mixin Add query logic with fetch
- */
 export const widgetFetchQueryMixin = {
   mixins: [queryWidgetMixin],
+
   props: {
     visible: {
       type: Boolean,
       default: true,
     },
   },
+
   watch: {
     query(value, oldValue) {
       if (this.customQueryCondition(value, oldValue) && this.visible) {
@@ -30,11 +29,13 @@ export const widgetFetchQueryMixin = {
 
     widget: 'setQuery',
   },
+
   async mounted() {
     await this.fetchUserPreference({ id: this.widget._id });
 
     this.setQuery();
   },
+
   methods: {
     customQueryCondition(value, oldValue) {
       return !isEqual(value, oldValue) && !isEmpty(value);

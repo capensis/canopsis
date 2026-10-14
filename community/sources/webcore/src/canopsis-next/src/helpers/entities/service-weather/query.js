@@ -3,12 +3,12 @@ import { DEFAULT_WEATHER_LIMIT } from '@/config';
 import { convertSortToQuery } from '@/helpers/entities/shared/query';
 
 /**
- * This function converts widget with type 'ServiceWeather' to query Object
+ * Converts a ServiceWeather widget to a query object.
  *
  * @param {Object} widget
- * @returns {{}}
+ * @returns {Object}
  */
-export function convertWeatherWidgetToQuery(widget) {
+export const convertWeatherWidgetToQuery = (widget) => {
   const { limit, mainFilter } = widget.parameters;
 
   return {
@@ -17,16 +17,16 @@ export function convertWeatherWidgetToQuery(widget) {
     lockedFilter: mainFilter,
     with_tag_colors: true,
   };
-}
+};
 
 /**
- * This function converts userPreference with widget type 'ServiceWeather' to query Object
+ * Converts a ServiceWeather user preference to a query object.
  *
  * @param {Object} userPreference
- * @returns {{ category: string }}
+ * @returns {{ category: string, filter: *, hide_grey: boolean }}
  */
-export function convertWeatherUserPreferenceToQuery({ content }) {
+export const convertWeatherUserPreferenceToQuery = ({ content }) => {
   const { category, mainFilter, hide_grey: hideGrey = false } = content;
 
   return { category, filter: mainFilter, hide_grey: hideGrey };
-}
+};

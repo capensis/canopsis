@@ -1,58 +1,57 @@
 <template>
-  <v-layout class="gap-3" align-center>
-    <v-flex xs6>
-      <v-text-field
-        v-field="item[itemText]"
-        v-validate="textValidationRules"
+  <c-layout class="c-text-pair-field" gap="3" align="center">
+    <div class="c-text-pair-field__column">
+      <c-text-field
+        :model-value="item[itemText]"
         :label="textLabel"
         :disabled="disabled"
         :name="textFieldName"
-        :error-messages="errors.collect(textFieldName)"
+        :required="textRequired"
+        @update:model-value="updateField(itemText, $event)"
       />
-    </v-flex>
+    </div>
 
-    <v-flex xs6>
-      <c-select-field
+    <div class="c-text-pair-field__column">
+      <c-select
         v-if="items.length"
-        v-field="item[itemValue]"
+        :model-value="item[itemValue]"
         :label="valueLabel"
         :disabled="disabled"
         :items="items"
         :name="valueFieldName"
         :required="valueRequired"
+        item-title="text"
+        item-value="value"
+        @update:model-value="updateField(itemValue, $event)"
       />
       <c-payload-text-field
         v-else
-        v-field="item[itemValue]"
+        :value="item[itemValue]"
         :label="valueLabel"
         :disabled="disabled"
         :name="valueFieldName"
         :variables="variables"
         :required="valueRequired"
+        @update:value="updateField(itemValue, $event)"
       >
         <template #append="">
           <slot name="append-value" />
         </template>
       </c-payload-text-field>
-    </v-flex>
+    </div>
 
-    <c-action-btn
-      v-if="!disabled"
-      type="delete"
-      @click="$emit('remove')"
-    />
-  </v-layout>
+    <c-action-btn v-if="!disabled" type="delete" @click="$emit('remove')" />
+  </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
+import { formMixin } from '@/mixins/form';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'item',
-    event: 'input',
-  },
+  emits: ['update:item'],
+  mixins: [formMixin],
   props: {
     item: {
       type: Object,
@@ -100,18 +99,22 @@ export default {
     },
   },
   setup(props) {
-    const textValidationRules = computed(() => ({
-      required: props.textRequired,
-    }));
-
     const textFieldName = computed(() => `${props.name}.${props.itemText}`);
     const valueFieldName = computed(() => `${props.name}.${props.itemValue}`);
 
     return {
-      textValidationRules,
       textFieldName,
       valueFieldName,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-text-pair-field {
+  &__column {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+</style>

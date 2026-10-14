@@ -8,7 +8,8 @@ const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
  * @param {number} index
  * @return {string}
  */
-export const getLetterByIndex = (index = 0) => String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);
+export const getLetterByIndex = (index = 0) =>
+  String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);
 
 /**
  * Convert number to string with fixed point
@@ -17,7 +18,8 @@ export const getLetterByIndex = (index = 0) => String.fromCharCode(FIRST_LETTER_
  * @param {number} [digits = 3]
  * @return {string}
  */
-export const convertNumberToFixedString = (value, digits = 3) => value && Number(value).toFixed(digits);
+export const convertNumberToFixedString = (value, digits = 3) =>
+  value && Number(value).toFixed(digits);
 
 /**
  * Convert number to rounded percent string
@@ -33,9 +35,7 @@ export const convertNumberToRoundedPercentString = (value, precision = 3) => {
   }
 
   const tmp = 10 ** precision;
-
   const filteredValue = 100 * value;
-
   const roundedValue = Math.round(filteredValue * tmp) / tmp;
 
   return `${roundedValue}%`;

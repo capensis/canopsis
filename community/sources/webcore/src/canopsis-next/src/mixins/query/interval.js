@@ -1,8 +1,17 @@
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
+/**
+ * Mixin for components that keep metric interval filters in `query`.
+ */
 export const queryIntervalFilterMixin = {
   inject: ['$system'],
+
   methods: {
+    /**
+     * Convert current interval query into request interval params.
+     *
+     * @returns {Object}
+     */
     getIntervalQuery() {
       const { interval, with_history: withHistory } = this.query;
 
@@ -28,6 +37,11 @@ export const queryIntervalFilterMixin = {
       return result;
     },
 
+    /**
+     * Update interval value in local query.
+     *
+     * @param {Object} interval
+     */
     updateInterval(interval) {
       this.query = {
         ...this.query,
