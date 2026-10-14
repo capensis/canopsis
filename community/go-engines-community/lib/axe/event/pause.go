@@ -15,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -30,7 +29,6 @@ func NewPauseProcessor(
 	client mongo.DbClient,
 	autoInstructionMatcher AutoInstructionMatcher,
 	remediationRpcClient engine.RPCClient,
-	metricsSender metrics.Sender,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
@@ -45,7 +43,6 @@ func NewPauseProcessor(
 		entityCollection:       client.Collection(mongo.EntityMongoCollection),
 		autoInstructionMatcher: autoInstructionMatcher,
 		remediationRpcClient:   remediationRpcClient,
-		metricsSender:          metricsSender,
 		eventGenerator:         eventGenerator,
 		publisher:              publisher,
 		encoder:                encoder,
@@ -60,7 +57,6 @@ type pauseProcessor struct {
 	entityCollection       mongo.DbCollection
 	autoInstructionMatcher AutoInstructionMatcher
 	remediationRpcClient   engine.RPCClient
-	metricsSender          metrics.Sender
 	eventGenerator         event.Generator
 	publisher              amqp.Publisher
 	encoder                encoding.Encoder
@@ -258,22 +254,6 @@ func (p *pauseProcessor) postProcess(
 				Msg("panic on post process of pause")
 		}
 	}()
-
-	entity := *event.Entity
-	if result.Entity.ID != "" {
-		entity = result.Entity
-	}
-
-	p.metricsSender.SendEventMetrics(
-		result.Alarm,
-		entity,
-		result.AlarmChange,
-		event.Parameters.Timestamp.Time,
-		event.Parameters.Initiator,
-		event.Parameters.User,
-		event.Parameters.Instruction,
-		"",
-	)
 
 	p.countersHelper.UpdateStates(ctx, countersRes)
 
