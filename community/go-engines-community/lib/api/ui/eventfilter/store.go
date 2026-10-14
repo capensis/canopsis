@@ -539,9 +539,22 @@ func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (
 		exdates[i].End = r.Exdates[i].End
 	}
 
-	externalData, err := apiexternaldata.TransformRefParameters(ctx, r.ExternalData, s.dbExdataTableCollection)
+	transformedRefParameters, err := apiexternaldata.TransformRefParameters(ctx, toRefParameters(r.ExternalData), s.dbExdataTableCollection)
 	if err != nil {
 		return eventfilter.Rule{}, err
+	}
+
+	externalData := make([]eventfilter.ExternalDataParameters, len(transformedRefParameters))
+	for i, refParameters := range transformedRefParameters {
+		onMismatch := eventfilter.OnMismatchError
+		if r.ExternalData[i].OnMismatch != nil {
+			onMismatch = *r.ExternalData[i].OnMismatch
+		}
+
+		externalData[i] = eventfilter.ExternalDataParameters{
+			RefParameters: refParameters,
+			OnMismatch:    onMismatch,
+		}
 	}
 
 	return eventfilter.Rule{

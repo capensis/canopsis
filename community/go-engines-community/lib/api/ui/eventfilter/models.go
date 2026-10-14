@@ -16,13 +16,13 @@ import (
 )
 
 type EditRequest struct {
-	Author       string                       `json:"author" swaggerignore:"true"`
-	Description  string                       `json:"description" binding:"required,max=255"`
-	Type         string                       `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int64                        `json:"priority" binding:"min=0"`
-	Enabled      bool                         `json:"enabled"`
-	Config       eventfilter.RuleConfig       `json:"config"`
-	ExternalData []externaldata.RefParameters `json:"external_data,omitempty" binding:"dive"`
+	Author       string                          `json:"author" swaggerignore:"true"`
+	Description  string                          `json:"description" binding:"required,max=255"`
+	Type         string                          `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Priority     int64                           `json:"priority" binding:"min=0"`
+	Enabled      bool                            `json:"enabled"`
+	Config       eventfilter.RuleConfig          `json:"config"`
+	ExternalData []ExternalDataParametersRequest `json:"external_data,omitempty" binding:"dive"`
 
 	patternfields.EntityRequest
 	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
@@ -35,21 +35,21 @@ type EditRequest struct {
 }
 
 type Response struct {
-	ID           string                          `bson:"_id" json:"_id"`
-	Author       *author.Author                  `bson:"author" json:"author" swaggerignore:"true"`
-	Description  string                          `bson:"description" json:"description"`
-	Type         string                          `bson:"type" json:"type"`
-	Priority     int64                           `bson:"priority" json:"priority"`
-	Enabled      bool                            `bson:"enabled" json:"enabled"`
-	Config       eventfilter.RuleConfig          `bson:"config" json:"config"`
-	ExternalData []externaldatatable.RefResponse `bson:"external_data" json:"external_data,omitempty"`
-	Created      *datetime.CpsTime               `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *datetime.CpsTime               `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-	RRule        string                          `bson:"rrule" json:"rrule"`
-	Start        *datetime.CpsTime               `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
-	Stop         *datetime.CpsTime               `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
-	Exdates      []types.Exdate                  `bson:"exdates" json:"exdates"`
-	Exceptions   []Exception                     `bson:"exceptions" json:"exceptions"`
+	ID           string                           `bson:"_id" json:"_id"`
+	Author       *author.Author                   `bson:"author" json:"author" swaggerignore:"true"`
+	Description  string                           `bson:"description" json:"description"`
+	Type         string                           `bson:"type" json:"type"`
+	Priority     int64                            `bson:"priority" json:"priority"`
+	Enabled      bool                             `bson:"enabled" json:"enabled"`
+	Config       eventfilter.RuleConfig           `bson:"config" json:"config"`
+	ExternalData []ExternalDataParametersResponse `bson:"external_data" json:"external_data,omitempty"`
+	Created      *datetime.CpsTime                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *datetime.CpsTime                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	RRule        string                           `bson:"rrule" json:"rrule"`
+	Start        *datetime.CpsTime                `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
+	Stop         *datetime.CpsTime                `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
+	Exdates      []types.Exdate                   `bson:"exdates" json:"exdates"`
+	Exceptions   []Exception                      `bson:"exceptions" json:"exceptions"`
 
 	EventsCount         int64 `bson:"events_count" json:"events_count"`
 	FailuresCount       int64 `bson:"failures_count" json:"failures_count"`
@@ -57,6 +57,30 @@ type Response struct {
 
 	EventPattern                     pattern.Event `bson:"event_pattern" json:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
+}
+
+type ExternalDataParametersRequest struct {
+	externaldata.RefParameters `bson:",inline"`
+	// Possible values.
+	//   * `0` - Throw error
+	//   * `1` - Skip rule
+	//   * `2` - Skip action with external data reference
+	OnMismatch *int `json:"on_mismatch,omitempty" binding:"omitempty,oneof=0 1 2"`
+}
+
+func toRefParameters(data []ExternalDataParametersRequest) []externaldata.RefParameters {
+	res := make([]externaldata.RefParameters, len(data))
+	for i, d := range data {
+		res[i] = d.RefParameters
+	}
+
+	return res
+}
+
+type ExternalDataParametersResponse struct {
+	externaldatatable.RefResponse `bson:",inline"`
+
+	OnMismatch *int `bson:"on_mismatch,omitempty" json:"on_mismatch,omitempty"`
 }
 
 type Exception struct {
