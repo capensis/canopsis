@@ -1,10 +1,4 @@
-import {
-  cloneDeep,
-  pick,
-  isEmpty,
-  omit,
-  isArray,
-} from 'lodash';
+import { cloneDeep, pick, isEmpty, omit, isArray } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -15,7 +9,7 @@ import {
   PATTERNS_FIELDS,
 } from '@/constants';
 
-import { uid } from '@/helpers/uid';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import {
   exceptionsToForm,
   exceptionsToRequest,
@@ -24,9 +18,12 @@ import {
   formExceptionsToExceptions,
   formExdatesToExdates,
 } from '@/helpers/entities/pbehavior/form';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { externalDataToForm, formToExternalData } from '@/helpers/entities/shared/external-data/form';
+import {
+  externalDataToForm,
+  formToExternalData,
+} from '@/helpers/entities/shared/external-data/form';
 import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/shared/form';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -77,7 +74,6 @@ import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/s
 
 /**
  * @typedef {FilterPatterns} EventFilter
- * @property {string} _id
  * @property {EventFilterType} type
  * @property {string} description
  * @property {number} priority
@@ -108,9 +104,8 @@ import { primitiveArrayToForm, formToPrimitiveArray } from '@/helpers/entities/s
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') => (
-  String(eventFilterActionValue || '').replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '')
-);
+export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') =>
+  String(eventFilterActionValue || '').replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '');
 
 /**
  * Convert event filter action to form
@@ -121,7 +116,9 @@ export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = 
 export const eventFilterActionToForm = (eventFilterAction = {}) => {
   let { value } = eventFilterAction;
 
-  if (eventFilterAction.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+  if (
+    eventFilterAction.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
+  ) {
     value = eventFilterDictionaryActionValueToForm(value);
   } else if (isArray(value)) {
     value = primitiveArrayToForm(value);
@@ -143,7 +140,9 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => {
  * @returns {EventFilterConfigForm}
  */
 export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
-  actions: (eventFilterConfig.actions ? cloneDeep(eventFilterConfig.actions) : []).map(eventFilterActionToForm),
+  actions: (eventFilterConfig.actions ? cloneDeep(eventFilterConfig.actions) : []).map(
+    eventFilterActionToForm,
+  ),
   on_success: eventFilterConfig.on_success ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   on_failure: eventFilterConfig.on_failure ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   resource: eventFilterConfig.resource ?? '',
@@ -191,12 +190,11 @@ export const eventFilterPatternToForm = (eventFilter) => {
  * @returns {EventFilterForm}
  */
 export const eventFilterToForm = (eventFilter = {}, timezone) => ({
-  _id: eventFilter._id ?? '',
   type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter.description ?? '',
   priority: eventFilter.priority,
   enabled: eventFilter.enabled ?? true,
-  rrule: eventFilter.rrule ?? null,
+  rrule: eventFilter.rrule ?? '',
   start: eventFilter.start,
   stop: eventFilter.stop,
   exceptions: exceptionsToForm(eventFilter.exceptions),
@@ -212,9 +210,8 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
  * @param {string} [eventFilterActionValue = '']
  * @returns {string}
  */
-export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = '') => (
-  `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionValue}`
-);
+export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = '') =>
+  `${EVENT_FILTER_EVENT_EXTRA_PREFIX}${eventFilterActionValue}`;
 
 /**
  * Convert from to event filter action fields
@@ -225,16 +222,21 @@ export const formToEventFilterDictionaryActionValue = (eventFilterActionValue = 
 export const formToEventFilterAction = (eventFilterActionForm) => {
   let { value } = eventFilterActionForm;
 
-  if (eventFilterActionForm.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+  if (
+    eventFilterActionForm.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary
+  ) {
     value = formToEventFilterDictionaryActionValue(value);
   } else if (isArray(value) && value.length > 0 && value[0]?.key) {
     value = formToPrimitiveArray(value);
   }
 
-  return omit({
-    ...eventFilterActionForm,
-    value,
-  }, ['key']);
+  return omit(
+    {
+      ...eventFilterActionForm,
+      value,
+    },
+    ['key'],
+  );
 };
 
 /**
@@ -258,7 +260,13 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
-      eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name', 'upstream']);
+      eventFilter.config = pick(config, [
+        'resource',
+        'component',
+        'connector',
+        'connector_name',
+        'upstream',
+      ]);
       patternsFields = [PATTERNS_FIELDS.event];
       break;
     case EVENT_FILTER_TYPES.enrichment:

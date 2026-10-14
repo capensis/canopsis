@@ -1,12 +1,31 @@
 import { isArray, omit } from 'lodash';
 
-import { WIDGET_TYPES } from '@/constants';
+import { FEATURES_SERVICE_KEYS, WIDGET_TYPES } from '@/constants';
 
 import { featuresService } from '@/services/features';
 
 import { mapIds } from '@/helpers/array';
-
-import { convertAlarmUserPreferenceToQuery, convertAlarmWidgetToQuery } from '../alarm/query';
+import {
+  convertAlarmUserPreferenceToQuery,
+  convertAlarmWidgetToQuery,
+} from '@/helpers/entities/alarm/query';
+import {
+  convertAvailabilityUserPreferenceToQuery,
+  convertAvailabilityWidgetParametersToQuery,
+} from '@/helpers/entities/availability/query';
+import { convertCounterWidgetToQuery } from '@/helpers/entities/counter/query';
+import {
+  convertContextUserPreferenceToQuery,
+  convertContextWidgetToQuery,
+} from '@/helpers/entities/entity/query';
+import {
+  convertExternalDataTableUserPreferenceToQuery,
+  convertExternalDataTableWidgetToQuery,
+} from '@/helpers/entities/external-data-table/query';
+import {
+  convertMapUserPreferenceToQuery,
+  convertMapWidgetToQuery,
+} from '@/helpers/entities/map/query';
 import {
   convertChartUserPreferenceToQuery,
   convertChartWidgetToQuery,
@@ -14,20 +33,12 @@ import {
   convertPieChartWidgetToQuery,
   convertStatisticsUserPreferenceToQuery,
   convertStatisticsWidgetParametersToQuery,
-} from '../metric/query';
-import { convertContextUserPreferenceToQuery, convertContextWidgetToQuery } from '../entity/query';
-import { convertWeatherUserPreferenceToQuery, convertWeatherWidgetToQuery } from '../service-weather/query';
-import { convertMapUserPreferenceToQuery, convertMapWidgetToQuery } from '../map/query';
-import { convertCounterWidgetToQuery } from '../counter/query';
-import { convertStatsCalendarWidgetToQuery } from '../stats/query';
+} from '@/helpers/entities/metric/query';
 import {
-  convertAvailabilityUserPreferenceToQuery,
-  convertAvailabilityWidgetParametersToQuery,
-} from '../availability/query';
-import {
-  convertExternalDataTableUserPreferenceToQuery,
-  convertExternalDataTableWidgetToQuery,
-} from '../external-data-table/query';
+  convertWeatherUserPreferenceToQuery,
+  convertWeatherWidgetToQuery,
+} from '@/helpers/entities/service-weather/query';
+import { convertStatsCalendarWidgetToQuery } from '@/helpers/entities/stats/query';
 
 /**
  * This function converts userPreference to query Object
@@ -40,8 +51,6 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
   const convertersMap = {
     [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
     [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
-    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
-    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
     [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
@@ -50,8 +59,12 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
     [WIDGET_TYPES.availability]: convertAvailabilityUserPreferenceToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
 
-    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+    ...featuresService.get(
+      FEATURES_SERVICE_KEYS.helpers.query.convertUserPreferenceToQuery.convertersMap,
+    ),
   };
 
   const converter = convertersMap[widgetType];
@@ -69,10 +82,8 @@ export function convertWidgetToQuery(widget) {
   const convertersMap = {
     [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
     [WIDGET_TYPES.context]: convertContextWidgetToQuery,
-    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
-    [WIDGET_TYPES.map]: convertMapWidgetToQuery,
-    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
@@ -81,8 +92,10 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
     [WIDGET_TYPES.availability]: convertAvailabilityWidgetParametersToQuery,
     [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
+    [WIDGET_TYPES.map]: convertMapWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
 
-    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+    ...featuresService.get(FEATURES_SERVICE_KEYS.helpers.query.convertWidgetToQuery.convertersMap),
   };
 
   const converter = convertersMap[widget.type];
@@ -99,7 +112,7 @@ export function convertWidgetToQuery(widget) {
  */
 export function prepareWidgetQuery(widget, userPreference) {
   const { filters: widgetFilters = [] } = widget;
-  const { filters: userPreferenceFilters } = userPreference;
+  const { filters: userPreferenceFilters = [] } = userPreference;
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
 
@@ -136,10 +149,7 @@ export function prepareWidgetQuery(widget, userPreference) {
  * @returns {Object[]} An array of objects, each representing a column with `name`, `label`, and optionally `template`.
  */
 export const widgetToExportQueryColumns = ({ parameters } = {}) => {
-  const {
-    widgetExportColumns,
-    widgetColumns,
-  } = parameters;
+  const { widgetExportColumns, widgetColumns } = parameters;
 
   const hasExportColumns = !!widgetExportColumns?.length;
   const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
@@ -158,6 +168,5 @@ export const widgetToExportQueryColumns = ({ parameters } = {}) => {
  * @param {string} [search=''] - A search string to return if no items are selected.
  * @returns {string} A query string constructed from selected items or the provided search string.
  */
-export const selectedToQuery = (selected = [], search = '') => (
-  selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : search
-);
+export const selectedToQuery = (selected = [], search = '') =>
+  selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : search;

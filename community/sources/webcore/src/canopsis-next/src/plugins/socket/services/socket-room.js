@@ -12,80 +12,40 @@ class SocketRoom {
     this.messagesToSend = [];
   }
 
-  /**
-   * Add listener to message listeners array
-   *
-   * @param {Function} listener
-   * @return {SocketRoom}
-   */
   addListener(listener) {
     this.listeners.push(listener);
 
     return this;
   }
 
-  /**
-   * Remove listener from message listeners array
-   *
-   * @param {Function} listener
-   * @return {SocketRoom}
-   */
   removeListener(listener) {
     this.listeners = this.listeners.filter(item => item !== listener);
 
     return this;
   }
 
-  /**
-   * Increment count of joins to room
-   *
-   * @return {SocketRoom}
-   */
   increment() {
     this.count += 1;
 
     return this;
   }
 
-  /**
-   * Decrement count of joins to room
-   *
-   * @return {SocketRoom}
-   */
   decrement() {
     this.count -= 1;
 
     return this;
   }
 
-  /**
-   * Check if no joins to room
-   *
-   * @returns {boolean}
-   */
   isEmpty() {
     return this.count <= 0;
   }
 
-  /**
-   * Call all message listeners with context
-   *
-   * @param {any} context
-   * @param {Array} restArgs
-   * @return {SocketRoom}
-   */
   call(context, ...restArgs) {
     this.listeners.forEach(listener => listener.call(context, ...restArgs));
 
     return this;
   }
 
-  /**
-   * Send payload to room
-   *
-   * @param {Object} payload
-   * @return {SocketRoom}
-   */
   send(payload) {
     const message = {
       type: REQUEST_MESSAGES_TYPES.send,
@@ -99,34 +59,20 @@ class SocketRoom {
       return this;
     }
 
-    this.parentSend(message);
+    this.parentSend?.(message);
 
     return this;
   }
 
-  /**
-   * Marks the room as joined or not on the socket layer.
-   *
-   * When `joined` becomes true, sends every message queued by `send` while the room was not joined,
-   * then clears that queue.
-   *
-   * @param {boolean} joined - Whether the socket has successfully joined this room.
-   */
   setJoined(joined) {
     this.joined = joined;
 
     if (joined) {
-      this.messagesToSend.forEach(message => this.parentSend(message));
+      this.messagesToSend.forEach(message => this.parentSend?.(message));
       this.messagesToSend = [];
     }
   }
 
-  /**
-   * Update the payload of the room
-   *
-   * @param {string} field
-   * @param {*} value
-   */
   updatePayloadField(field, value) {
     if (!this.payload) {
       this.payload = {};

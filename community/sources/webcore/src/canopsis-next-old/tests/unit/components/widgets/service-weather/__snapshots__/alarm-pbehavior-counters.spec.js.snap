@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with custom props 1`] = `
+<div
+  class="layout alarm-counters column"
+>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <!---->
+    <div
+      class="layout justify-space-around align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
+      >
+        assignment_returned
+      </i>
+      <span
+        class="text-caption white--text"
+      >
+    1
+      </span>
+    </div>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <!---->
+    <div
+      class="layout justify-space-around align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
+      >
+        add_photo_alternate
+      </i>
+      <span
+        class="text-caption white--text"
+      >
+    3
+      </span>
+    </div>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <!---->
+    <div
+      class="layout justify-space-around align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
+      >
+        more_horiz
+      </i>
+      <span
+        class="text-caption white--text"
+      >
+    12
+      </span>
+    </div>
+  </span>
+</div>
+`;
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with custom props 2`] = `undefined`;
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with default props 1`] = `
+<div
+  class="layout alarm-counters column"
+>
+  <!---->
+</div>
+`;
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with default props 2`] = `undefined`;

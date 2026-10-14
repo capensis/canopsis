@@ -1,58 +1,61 @@
 <template>
-  <v-layout>
-    <v-select
-      v-field="value"
-      v-validate="'required'"
-      :items="configurations"
-      :label="$t('remediation.job.configuration')"
-      :error-messages="errors.collect('configuration')"
-      :loading="pending"
-      name="configuration"
-      item-text="name"
-      item-value="_id"
-      return-object
-    />
-  </v-layout>
+  <c-select
+    :model-value="modelValue"
+    :items="configurations"
+    :label="$t('remediation.job.configuration')"
+    :loading="pending"
+    name="configuration"
+    item-title="name"
+    item-value="_id"
+    return-object
+    required
+    @update:model-value="$emit('update:modelValue', $event)"
+  />
 </template>
 
 <script>
+import { onMounted, ref } from 'vue';
+
 import { MAX_LIMIT } from '@/constants';
 
-import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
+import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
 
 export default {
-  inject: ['$validator'],
-  mixins: [entitiesRemediationConfigurationMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: [Object, String],
       required: false,
     },
   },
-  data() {
-    return {
-      pending: false,
-      configurations: [],
+
+  emits: ['update:modelValue'],
+
+  setup() {
+    const { fetchRemediationConfigurationsListWithoutStore } = useRemediationConfiguration();
+
+    const pending = ref(false);
+    const configurations = ref([]);
+
+    const fetchConfigurations = async () => {
+      try {
+        pending.value = true;
+
+        const { data } = await fetchRemediationConfigurationsListWithoutStore({
+          params: { limit: MAX_LIMIT },
+        });
+
+        configurations.value = data;
+      } finally {
+        pending.value = false;
+      }
     };
-  },
-  mounted() {
-    this.fetchConfigurations();
-  },
-  methods: {
-    async fetchConfigurations() {
-      this.pending = true;
 
-      const { data: configurations } = await this.fetchRemediationConfigurationsListWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
+    onMounted(fetchConfigurations);
 
-      this.configurations = configurations;
-      this.pending = false;
-    },
+    return {
+      pending,
+      configurations,
+    };
   },
 };
 </script>

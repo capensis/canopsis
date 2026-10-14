@@ -1,16 +1,9 @@
 <template>
-  <v-layout>
-    <v-flex
-      class="mt-3"
-      xs1
-    >
-      <v-layout
-        class="fill-height"
-        align-center
-        column
-      >
+  <v-row class="flex-grow-0" no-gutters>
+    <v-col class="mt-3" cols="1">
+      <c-layout class="fill-height" align="center" column>
         <v-avatar
-          class="white--text"
+          class="text-white"
           color="primary"
           size="32"
         >
@@ -18,20 +11,18 @@
         </v-avatar>
         <span
           v-if="!isLastStep"
-          class="step-line primary mt-3"
+          class="step-line mt-3"
         />
-      </v-layout>
-    </v-flex>
-    <v-flex xs11>
-      <v-layout>
-        <v-text-field
-          :value="step.name"
-          :label="$t('common.name')"
-          readonly
-          hide-details
-          filled
-        />
-      </v-layout>
+      </c-layout>
+    </v-col>
+    <v-col cols="11">
+      <c-text-field
+        :model-value="step.name"
+        :label="t('common.name')"
+        variant="filled"
+        readonly
+        hide-details
+      />
       <remediation-instruction-status
         :completed-at="step.completed_at"
         :time-to-complete="step.time_to_complete"
@@ -43,24 +34,31 @@
         :is-first-step="isFirstStep"
         :next-pending="nextPending"
         :previous-pending="previousPending"
-        v-on="$listeners"
         @finish="showEndpointModal"
+        @next-operation="$emit('next-operation')"
+        @previous-operation="$emit('previous-operation')"
+        @execute-job="$emit('execute-job', $event)"
+        @cancel-job-execution="$emit('cancel-job-execution', $event)"
       />
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
-import RemediationInstructionExecuteStepOperations from './remediation-instruction-execute-step-operations.vue';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
+import RemediationInstructionExecuteStepOperations from './remediation-instruction-execute-step-operations.vue';
 
 export default {
   components: {
     RemediationInstructionExecuteStepOperations,
     RemediationInstructionStatus,
   },
+
   props: {
     step: {
       type: Object,
@@ -87,28 +85,40 @@ export default {
       default: false,
     },
   },
-  methods: {
-    showEndpointModal() {
-      this.$modals.show({
+
+  emits: ['next-step', 'next-operation', 'previous-operation', 'execute-job', 'cancel-job-execution'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const modals = useModals();
+
+    const showEndpointModal = () => {
+      modals.show({
         name: MODALS.confirmation,
         dialogProps: {
           persistent: true,
         },
         config: {
           hideTitle: true,
-          text: this.step.endpoint,
-          action: () => this.$emit('next-step', true),
-          cancel: () => this.$emit('next-step', false),
+          text: props.step.endpoint,
+          action: () => emit('next-step', true),
+          cancel: () => emit('next-step', false),
         },
       });
-    },
+    };
+
+    return {
+      t,
+      showEndpointModal,
+    };
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .step-line {
   flex: 1;
   width: 2px;
+  background: rgb(var(--v-theme-primary));
 }
 </style>

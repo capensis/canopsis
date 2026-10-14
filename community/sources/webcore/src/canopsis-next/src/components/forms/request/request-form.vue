@@ -1,118 +1,153 @@
 <template>
-  <v-layout class="gap-2" column>
-    <request-url-field
+  <div>
+    <c-form-block-row
       v-if="!hideUrl"
-      v-field="form"
-      :help-text="urlHelpText ||$t('common.request.urlHelp')"
-      :name="name"
-      :disabled="disabled"
-      :url-variables="urlVariables"
-    />
-    <v-layout v-if="withMultipleUrls">
-      <v-flex
-        offset-xs6
-        xs6
+      :label="urlLabel || $t('common.url')"
+      :depth="depth"
+      :indented="indentedRows"
+    >
+      <request-url-field
+        :method="form.method"
+        :url="form.url"
+        :help-text="urlHelpText || $t('common.request.urlHelp')"
+        :name="name"
+        :disabled="disabled"
+        :url-variables="urlVariables"
+        @update:method="updateField('method', $event)"
+        @update:url="updateField('url', $event)"
+      />
+    </c-form-block-row>
+
+    <c-form-block-row
+      v-if="withMultipleUrls"
+      :label="$t('scenario.allowMultipleUrls')"
+      :depth="depth"
+    >
+      <c-enabled-field
+        :value="multiple"
+        :label="$t('scenario.allowMultipleUrls')"
+        :disabled="disabled"
+        @update:model-value="updateMultiple"
       >
-        <c-enabled-field
-          :value="multiple"
-          :label="$t('scenario.allowMultipleUrls')"
-          :disabled="disabled"
-          @input="updateMultiple"
-        >
-          <template #append>
-            <c-help-icon
-              :text="$t('scenario.allowMultipleUrlsTooltip')"
-              icon="help"
-              color="grey darken-1"
-              left
-            />
-          </template>
-        </c-enabled-field>
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-flex
-        class="mr-3"
-        xs6
-      >
-        <c-information-block :title="$t('common.request.timeoutSettings')">
-          <c-duration-field
-            v-field="form.timeout"
-            :disabled="disabled"
-            :units-label="$t('common.unit')"
-            clearable
+        <template #append>
+          <c-help-icon
+            :text="$t('scenario.allowMultipleUrlsTooltip')"
+            icon="help"
+            color="grey darken-1"
+            left
           />
-        </c-information-block>
-      </v-flex>
-      <v-flex xs6>
-        <c-information-block :title="$t('common.request.repeatRequest')">
-          <span v-if="hideRepeat" class="font-italic mt-4">{{ $t('common.request.repeatRequestInTomlFile') }}</span>
-          <c-retry-field
-            v-else
-            v-field="form"
-            :disabled="disabled"
-          />
-        </c-information-block>
-      </v-flex>
-    </v-layout>
-    <c-enabled-field
-      v-field="form.skip_verify"
+        </template>
+      </c-enabled-field>
+    </c-form-block-row>
+
+    <c-form-block-row
+      :label="$t('common.request.timeoutSettings')"
+      :depth="depth"
+      :indented="indentedRows"
+    >
+      <c-duration-field
+        v-model:duration="timeout"
+        :disabled="disabled"
+        :units-label="$t('common.unit')"
+        :name="`${name}.timeout`"
+        :min="1"
+        clearable
+      />
+    </c-form-block-row>
+
+    <c-form-block-row
+      :label="$t('common.request.repeatRequest')"
+      :depth="depth"
+      :indented="indentedRows"
+      :align="hideRepeat ? 'center' : undefined"
+    >
+      <span v-if="hideRepeat" class="font-italic">
+        {{ $t('common.request.repeatRequestInTomlFile') }}
+      </span>
+      <c-retry-field
+        v-else
+        :value="form"
+        :disabled="disabled"
+        @update:value="updateModel"
+      />
+    </c-form-block-row>
+
+    <c-form-block-row
       :label="$t('common.request.skipVerify')"
-      :disabled="disabled"
-      hide-details
-    />
+      :depth="depth"
+      :align="alignSkipVerify ? 'center' : undefined"
+    >
+      <c-enabled-field
+        :model-value="form.skip_verify"
+        :label="$t('common.request.skipVerify')"
+        :disabled="disabled"
+        hide-details
+        @update:model-value="updateField('skip_verify', $event)"
+      />
+    </c-form-block-row>
+
     <slot name="additional-fields" />
-    <c-information-block v-if="!hideAuth" :title="$t('user.auth')" class="mb-2 mt-2">
+
+    <c-form-block-row v-if="!hideAuth" :label="$t('user.auth')" :depth="depth">
       <request-auth-with-token-field
-        v-field="form.auth"
+        :value="form.auth"
         :auth-token="authToken"
         :name="`${name}.auth`"
         :disabled="disabled"
         :only-credentials="!withAuthToken"
+        @update:value="updateField('auth', $event)"
         @update:auth-token="updateAuthToken"
       />
-    </c-information-block>
-    <c-information-block
+    </c-form-block-row>
+
+    <c-form-block-row
       v-if="!hideHeaders"
-      :title="$tc('common.header', 2)"
-      :help-text="$t('common.request.headersHelpText')"
-      class="mb-2"
-      help-icon="help"
-      help-icon-color="grey darken-1"
+      :label="$t('common.header', 2)"
+      :depth="depth"
+      indented
     >
       <request-headers-field
-        v-field="form.headers"
+        :headers="form.headers"
         :name="`${name}.headers`"
         :disabled="disabled"
         :headers-variables="headersVariables"
+        @update:headers="updateField('headers', $event)"
       />
-    </c-information-block>
-    <c-payload-textarea-field
-      v-field="form.payload"
+    </c-form-block-row>
+
+    <c-form-block-row
       :label="$t('common.payload')"
-      :line-height="16"
-      :disabled="disabled"
-      :variables="payloadVariables"
-      :name="`${name}.payload`"
-    />
-  </v-layout>
+      :depth="depth"
+      :indented="indentedRows"
+    >
+      <c-payload-textarea-field
+        :value="form.payload"
+        :label="$t('common.payload')"
+        :line-height="16"
+        :disabled="disabled"
+        :variables="payloadVariables"
+        :name="`${name}.payload`"
+        @update:value="updateField('payload', $event)"
+      />
+    </c-form-block-row>
+  </div>
 </template>
 
 <script>
-import RequestUrlField from './fields/request-url-field.vue';
-import RequestHeadersField from './fields/request-headers-field.vue';
+import { computed } from 'vue';
+
+import { useModelField } from '@/hooks/form/model-field';
+
 import RequestAuthWithTokenField from './fields/request-auth-with-token-field.vue';
+import RequestHeadersField from './fields/request-headers-field.vue';
+import RequestUrlField from './fields/request-url-field.vue';
 
 export default {
-  inject: ['$validator'],
+  emits: ['update:form', 'update:multiple', 'update:auth-token'],
   components: {
     RequestUrlField,
     RequestHeadersField,
     RequestAuthWithTokenField,
-  },
-  model: {
-    prop: 'form',
-    event: 'input',
   },
   props: {
     form: {
@@ -171,19 +206,44 @@ export default {
       type: Boolean,
       default: false,
     },
+    urlLabel: {
+      type: String,
+      default: '',
+    },
     urlHelpText: {
       type: String,
       default: '',
     },
+    depth: {
+      type: [Number, String],
+      default: 0,
+    },
+    indentedRows: {
+      type: Boolean,
+      default: false,
+    },
+    alignSkipVerify: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup(props, { emit }) {
+    const { updateModel, updateField } = useModelField(props, emit);
+
     const updateMultiple = multiple => emit('update:multiple', multiple);
     const updateAuthToken = authToken => emit('update:auth-token', authToken);
+    const timeout = computed({
+      get: () => props.form.timeout,
+      set: value => updateField('timeout', value),
+    });
 
     return {
+      updateModel,
+      updateField,
       updateMultiple,
       updateAuthToken,
+      timeout,
     };
   },
 };

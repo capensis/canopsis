@@ -1,11 +1,11 @@
 <template>
-  <c-simple-tooltip :content="tooltip">
-    <template #activator="{ on }">
-      <v-icon :color="color" v-on="on">
+  <c-tooltip :content="tooltip">
+    <template #activator="{ props: activatorProps }">
+      <v-icon v-bind="activatorProps" :color="color">
         {{ icon }}
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
@@ -45,22 +45,34 @@ export default {
         return '$vuetify.icons.assignment_one';
       }
 
-      return isInstructionTypeAnySimpleManual(props.type) ? '$vuetify.icons.manual_instruction' : 'assignment';
+      return isInstructionTypeAnySimpleManual(props.type)
+        ? '$vuetify.icons.manual_instruction'
+        : 'assignment';
     });
 
-    const color = computed(() => ({
-      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]: COLORS.remediation.executionStatus.running,
-      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: COLORS.remediation.executionStatus.completed,
-      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: COLORS.remediation.executionStatus.failed,
-      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: COLORS.remediation.executionStatus.aborted,
-      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]: COLORS.remediation.executionStatus.skipped,
-      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.waiting]: COLORS.remediation.executionStatus.running,
-    }[props.status]));
+    const color = computed(
+      () => ({
+          [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]:
+            COLORS.remediation.executionStatus.running,
+          [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]:
+            COLORS.remediation.executionStatus.completed,
+          [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]:
+            COLORS.remediation.executionStatus.failed,
+          [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]:
+            COLORS.remediation.executionStatus.aborted,
+          [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]:
+            COLORS.remediation.executionStatus.skipped,
+          [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.waiting]:
+            COLORS.remediation.executionStatus.running,
+        })[props.status],
+    );
 
     const tooltip = computed(() => {
       const messageKeySuffix = `${REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual}.${props.status}`;
 
-      return t(`remediation.instructionExecute.stepsTitles.${messageKeySuffix}`, { name: props.name });
+      return t(`remediation.instructionExecute.stepsTitles.${messageKeySuffix}`, {
+        name: props.name,
+      });
     });
 
     return {

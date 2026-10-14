@@ -1,47 +1,50 @@
 <template>
-  <v-layout column>
-    <span class="text-subtitle-1 font-weight-bold mb-2">{{ $t('common.infos') }}</span>
-    <meta-alarm-rule-infos-item-form
-      v-for="(item, index) in infos"
-      v-field="infos[index]"
-      :key="item.key"
-      :name="item.key"
-      @remove="removeItemFromArray(index)"
-    />
-    <v-layout class="my-4">
-      <v-btn color="primary" @click="add">
-        {{ $t('common.add') }}
-      </v-btn>
-    </v-layout>
-  </v-layout>
+  <c-form-block-array-field
+    :form="infos"
+    :item-to-form="metaAlarmRuleInfosItemToForm"
+    :label="t('common.infos')"
+    :add-button-label="t('entity.addInfos')"
+    @update:form="$emit('update:infos', $event)"
+  >
+    <template #item="{ index, remove }">
+      <meta-alarm-rule-infos-item-form
+        :form="infos[index]"
+        :name="infos[index].key"
+        @update:form="updateItemInArray(index, $event)"
+        @remove="remove"
+      />
+    </template>
+  </c-form-block-array-field>
 </template>
+
 <script>
 import { metaAlarmRuleInfosItemToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 
-import MetaAlarmRuleInfosItemForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-infos-item-form.vue';
+import MetaAlarmRuleInfosItemForm from './meta-alarm-rule-infos-item-form.vue';
 
 export default {
   components: { MetaAlarmRuleInfosItemForm },
-  model: {
-    prop: 'infos',
-    event: 'input',
-  },
+
   props: {
     infos: {
       type: Array,
       default: () => [],
     },
   },
-  setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-    const add = () => addItemIntoArray(metaAlarmRuleInfosItemToForm());
+  emits: ['update:infos'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateItemInArray } = useArrayModelField(props, emit);
 
     return {
-      add,
-      removeItemFromArray,
+      t,
+      metaAlarmRuleInfosItemToForm,
+      updateItemInArray,
     };
   },
 };

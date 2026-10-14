@@ -1,5 +1,5 @@
-import { isEqual } from 'lodash';
-import { watch, set, onBeforeUnmount } from 'vue';
+import isEqual from 'lodash/isEqual';
+import { onBeforeUnmount, watch } from 'vue';
 
 import { SOCKET_ROOMS } from '@/config';
 
@@ -8,81 +8,93 @@ import { mapIds } from '@/helpers/array';
 import { useSocket } from '@/hooks/socket';
 
 /**
- * Subscribes to the anomaly monitored connector states socket room, applies push
- * updates to the paged `connectors` list and `meta.total_count`, and re-subscribes
- * when the set of ids on the current page changes. Cleans up the listener on unmount.
+ * Subscribes to live anomaly monitored connector states over websocket.
  *
- * @param {Object} params
- * @param {import('vue').Ref<Array>} params.connectors - Current page of connector state rows.
- * @param {import('vue').Ref<Object>} params.meta - List metadata (e.g. `total_count`).
+ * Joins `SOCKET_ROOMS.anomalyMonitoredConnectorStates` with the current connector ids,
+ * updates `connectors` and `meta.total_count` when the room pushes new data, and
+ * reconnects whenever the connector id list changes. Leaves the room on unmount.
+ *
+ * @param {Object} options
+ * @param {import('vue').Ref<Array>} options.connectors - Reactive list of monitored connectors.
+ * @param {import('vue').Ref<{ total_count: number }>} options.meta - Pagination meta updated from socket.
  */
 export const useHealthcheckConnectorsSocket = ({ connectors, meta }) => {
   const socket = useSocket();
+  const connectorsRef = connectors;
+  const metaRef = meta;
 
   /**
-   * Applies live anomaly monitored connector state updates from the socket to the
-   * paged list and total count, skipping no-op per-index changes.
+   * Applies incoming socket payload to `connectors` and `meta.total_count`.
    *
-   * @param {Object} data - Payload from the anomaly monitored connector states room.
-   * @param {Array} data.data - Connectors in list order, aligned with the current page slice.
-   * @param {number} data.total_count - Total number of connectors across all pages.
+   * @param {Object} [data]
+   * @param {Array} [data.data] - Next connectors list.
+   * @param {number} [data.total_count] - Next total count.
    */
-  const socketListener = (data) => {
-    data.data.forEach((connector, index) => {
-      if (isEqual(connector, connectors.value[index])) {
-        return;
-      }
+  const socketListener = (data = {}) => {
+    const nextConnectors = data.data ?? [];
 
-      set(connectors.value, index, connector);
-    });
+    if (!isEqual(connectorsRef.value, nextConnectors)) {
+      connectorsRef.value = nextConnectors;
+    }
 
-    if (meta.value.total_count !== data.total_count) {
-      set(meta.value, 'total_count', data.total_count);
+    if (metaRef.value.total_count !== data.total_count) {
+      metaRef.value = {
+        ...metaRef.value,
+        total_count: data.total_count,
+      };
     }
   };
 
   /**
-   * Subscribes to the anomaly monitored connector states room for the given connector ids
-   * and registers the {@link socketListener} to receive push updates.
+   * Joins the anomaly monitored connector states room for the given ids.
    *
-   * @param {string[]} [ids=[]] - Connector ids to scope the subscription; empty subscribes without filtering.
-   * @returns {Object} The socket instance (chainable from join).
+   * @param {Array<string|number>} [ids] - Connector ids to subscribe to.
    */
-  const joinToSocketRoom = (ids = []) => socket
-    .join(SOCKET_ROOMS.anomalyMonitoredConnectorStates, { ids }, true)
-    .addListener(socketListener);
+  const joinToSocketRoom = (ids = []) => {
+    if (!socket) {
+      return;
+    }
+
+    socket
+      .join(SOCKET_ROOMS.anomalyMonitoredConnectorStates, { ids }, true)
+      .addListener(socketListener);
+  };
 
   /**
-   * Unsubscribes from the anomaly monitored connector states room and detaches
-   * {@link socketListener}.
-   *
-   * @returns {Object} The socket instance (chainable from leave).
+   * Leaves the anomaly monitored connector states room and removes the listener.
    */
-  const leaveFromSocketRoom = () => socket
-    .leave(SOCKET_ROOMS.anomalyMonitoredConnectorStates)
-    .removeListener(socketListener);
+  const leaveFromSocketRoom = () => {
+    if (!socket) {
+      return;
+    }
+
+    socket.leave(SOCKET_ROOMS.anomalyMonitoredConnectorStates).removeListener(socketListener);
+  };
 
   /**
-   * Re-subscribes the socket with a fresh set of connector ids (e.g. after the paged
-   * list or filters change). Leaves the room first, then joins again.
+   * Rejoins the room with a new set of connector ids.
    *
-   * @param {string[]} [ids=[]] - Connector ids passed to {@link joinToSocketRoom}.
+   * @param {Array<string|number>} [ids] - Connector ids to subscribe to.
    */
   const reconnectToSocketRoom = (ids = []) => {
     leaveFromSocketRoom();
     joinToSocketRoom(ids);
   };
 
-  watch(connectors, (items, prevItems) => {
-    const newIds = mapIds(items, 'id');
-    const oldIds = mapIds(prevItems ?? [], 'id');
+  watch(
+    connectorsRef,
+    (items, prevItems) => {
+      const newIds = mapIds(items, 'id');
+      const oldIds = mapIds(prevItems ?? [], 'id');
 
-    if (isEqual(newIds, oldIds)) {
-      return;
-    }
+      if (isEqual(newIds, oldIds)) {
+        return;
+      }
 
-    reconnectToSocketRoom(newIds);
-  }, { immediate: true });
+      reconnectToSocketRoom(newIds);
+    },
+    { immediate: true },
+  );
 
   onBeforeUnmount(leaveFromSocketRoom);
 };

@@ -3,45 +3,48 @@
     :class="{ 'ai-chat-textarea--empty-chat': emptyChat }"
     class="ai-chat-textarea"
   >
-    <c-alert :value="!!errorMessage" type="error">
+    <c-alert v-if="errorMessage" type="error">
       <span v-html="sanitizedErrorMessage" class="font-weight-regular" />
     </c-alert>
-    <v-textarea
-      v-field="prompt"
-      v-validate="promptRules"
+    <c-textarea
       ref="textareaElement"
+      :model-value="modelValue"
       :placeholder="$t('llm.chat.promptPlaceholder')"
       :aria-label="$t('llm.chat.promptPlaceholder')"
       :auto-grow="emptyChat"
       :disabled="thinking || disabled"
-      :error-messages="errors.collect('prompt')"
+      :max-length="LLM_AI_CHAT_PROMPT_MAX_LENGTH"
       name="prompt"
       rows="5"
-      solo
+      variant="solo"
       flat
+      required
       hide-details
+      @update:model-value="$emit('update:modelValue', $event)"
       @keydown.enter="enterKeydown"
     />
-    <v-layout
-      class="px-4 pb-4 gap-2"
+    <c-layout
+      class="px-4 pb-4"
+      gap="2"
+      align="end"
+      justify="space-between"
       wrap
-      align-end
-      justify-space-between
     >
       <ai-chat-llm-field
         :value="llm"
         :items="llms"
         :pending="llmsPending"
         :disabled="llmsDisabled || disabled"
-        @input="updateLlm"
+        @update:value="$emit('update:llm', $event)"
       />
       <v-btn
         v-if="thinking"
         color="secondary"
-        depressed
+        type="button"
+        variant="elevated"
         @click="stop"
       >
-        <v-icon class="mr-2">
+        <v-icon class="mr-2" size="small">
           stop
         </v-icon>
         <span>{{ $t('common.stop') }}</span>
@@ -50,12 +53,13 @@
         v-else
         :disabled="askDisabled || disabled"
         color="primary"
-        depressed
+        type="button"
+        variant="elevated"
         @click="ask"
       >
         {{ $t('llm.chat.ask') }}
       </v-btn>
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
@@ -66,21 +70,15 @@ import { LLM_AI_CHAT_PROMPT_MAX_LENGTH } from '@/constants';
 
 import { sanitizeHtml } from '@/helpers/html';
 
-import { useValidator } from '@/hooks/validator/validator';
-
 import AiChatLlmField from './partials/ai-chat-llm-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     AiChatLlmField,
   },
-  model: {
-    prop: 'prompt',
-    event: 'input',
-  },
+  emits: ['update:modelValue', 'update:llm', 'ask', 'stop'],
   props: {
-    prompt: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -114,46 +112,33 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = useValidator();
-
     const textareaElement = ref(null);
 
     const llmsDisabled = computed(() => props.llms.length <= 1 || !props.emptyChat);
     const askDisabled = computed(() => (
       props.llmsPending
       || !props.llms?.length
-      || !props.prompt.trim()
+      || !props.modelValue.trim()
     ));
 
     const sanitizedErrorMessage = computed(() => sanitizeHtml(props.errorMessage ?? ''));
-
-    const promptRules = computed(() => ({
-      required: true,
-      max: LLM_AI_CHAT_PROMPT_MAX_LENGTH,
-    }));
 
     /**
      * Forwards the selected LLM from `ai-chat-llm-field` to the parent via `update:llm`.
 
      * @param {Object|null} newLlm - Selected LLM record (same shape as the `llm` prop), or null when cleared.
-     */
-    const updateLlm = newLlm => emit('update:llm', newLlm);
-
-    /**
      * Emits the user message and chosen model so the parent can run the AI request.
      *
      * Payload: `{ llm: string | null, prompt: string }` (`prompt` is trimmed).
      */
-    const ask = async () => {
-      const isValid = await validator.validateAll();
-
-      if (!isValid) {
+    const ask = () => {
+      if (askDisabled.value || props.disabled) {
         return;
       }
 
       emit('ask', {
         llm: props.llm?._id,
-        prompt: props.prompt.trim(),
+        prompt: props.modelValue.trim(),
       });
     };
 
@@ -184,9 +169,8 @@ export default {
       llmsDisabled,
       askDisabled,
       sanitizedErrorMessage,
-      promptRules,
+      LLM_AI_CHAT_PROMPT_MAX_LENGTH,
 
-      updateLlm,
       ask,
       enterKeydown,
       stop,
@@ -206,7 +190,7 @@ export default {
 
   border-top: 1px solid var(--v-divider-border-color, rgba(0, 0, 0, 0.12));
 
-  ::v-deep textarea {
+  :deep(textarea) {
     max-height: var(--llm-ai-chat-textarea-max-height);
     overflow-y: auto;
     resize: none;

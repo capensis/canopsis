@@ -7,38 +7,35 @@
       :headers="headers"
       :loading="pending || columnsFiltersPending || entityInfoPropertyPending"
       :total-items="meta.total_count"
-      :options.sync="options"
+      :options="options"
       :toolbar-props="toolbarProps"
       :select-all="selectable"
+      :mass-actions-grid-parameters="widgetCurrentGridParameters"
+      :default-keep-selected-after-action="defaultKeepSelectedAfterAction"
       expand
       no-pagination
+      @update:options="updateOptions"
     >
-      <template #toolbar="">
+      <template #toolbar>
         <slot name="toolbar" />
-        <v-flex
-          v-if="preparedColumns.length"
-          xs12
-        >
-          <v-layout
-            wrap
-            align-center
-          >
+        <div v-if="preparedColumns.length" class="w-100">
+          <c-layout align="center" justify="center" wrap>
             <c-pagination
               :page="options.page"
               :limit="options.itemsPerPage"
               :total="meta.total_count"
               type="top"
-              @input="updatePage"
+              @update:page="updatePage"
             />
-          </v-layout>
-        </v-flex>
+          </c-layout>
+        </div>
       </template>
       <template
         v-for="column in preparedColumns"
+        :key="column.value"
         #[column.value]="{ item }"
       >
         <entity-column-cell
-          :key="column.value"
           :entity="item"
           :column="column"
           :columns-filters="columnsFilters"
@@ -69,7 +66,7 @@
         <mass-actions-panel
           :items="selected"
           :default-inherited-pbehavior="widget.parameters.defaultInheritedPbehavior"
-          class="ml-3"
+          small
           @clear:items="clearSelected"
         />
       </template>
@@ -80,38 +77,44 @@
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
-      @input="updatePaginationOptions"
+      @update:pagination="updatePaginationOptions"
     />
   </div>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { isEqual, pick } from 'lodash';
 
-import { authMixin } from '@/mixins/auth';
-import { widgetOptionsMixin } from '@/mixins/widget/options';
+import { PAGINATION_LIMIT } from '@/config';
+import { MODALS, DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_GRID_SIZES_KEYS } from '@/constants';
+
+import {
+  convertDataTableSortToQuery,
+  convertQuerySortToDataTableSort,
+} from '@/helpers/entities/shared/query';
+
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 import { widgetColumnsEntityInfoPropertyMixin } from '@/mixins/widget/columns/entity-info-property';
 
-import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
 import ActionsPanel from '../actions/actions-panel.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
+import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
 
 import EntitiesListExpandPanel from './entities-list-expand-panel.vue';
 
 export default {
   components: {
+    ActionsPanel,
     EntitiesListExpandPanel,
     EntityColumnCell,
-    ActionsPanel,
     MassActionsPanel,
   },
+
   mixins: [
-    authMixin,
-    widgetOptionsMixin,
     entitiesAlarmColumnsFiltersMixin,
     widgetColumnsEntityInfoPropertyMixin,
   ],
+
   props: {
     widget: {
       type: Object,
@@ -146,17 +149,35 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:query'],
+
   data() {
     return {
       columnsFilters: [],
       columnsFiltersPending: false,
     };
   },
+
   computed: {
+    displayGridSize() {
+      return DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$vuetify.display.name] ?? WIDGET_GRID_SIZES_KEYS.desktop;
+    },
+
+    widgetCurrentGridParameters() {
+      const gridParameters = this.widget.grid_parameters ?? {};
+
+      return pick(gridParameters[this.displayGridSize] ?? gridParameters, ['x', 'y', 'w', 'h']);
+    },
+
+    defaultKeepSelectedAfterAction() {
+      return this.widget.parameters.keepSelectedAfterAction ?? false;
+    },
+
     toolbarProps() {
       return {
-        'justify-space-between': true,
-        'align-center': true,
+        justify: 'space-between',
+        align: 'center',
       };
     },
 
@@ -176,16 +197,68 @@ export default {
       return this.hideActions
         ? this.preparedColumns
         : [
-          ...this.preparedColumns,
+            ...this.preparedColumns,
 
-          { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ];
+            { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
+          ];
     },
 
     showRootCauseByStateClick() {
       return this.widget.parameters.showRootCauseByStateClick ?? true;
     },
+
+    options: {
+      get() {
+        const {
+          page = 1,
+          itemsPerPage,
+          limit,
+          sortBy = [],
+          sortDesc = [],
+        } = this.query;
+
+        return {
+          page,
+          itemsPerPage: itemsPerPage || limit || PAGINATION_LIMIT,
+          sortBy: convertQuerySortToDataTableSort(sortBy, sortDesc),
+        };
+      },
+
+      set(newOptions = {}) {
+        const {
+          page = 1,
+          itemsPerPage = PAGINATION_LIMIT,
+          sortBy = [],
+          sortDesc = [],
+        } = newOptions;
+        const sort = sortBy[0]?.key
+          ? convertDataTableSortToQuery(sortBy)
+          : { sortBy, sortDesc };
+        const convertedOptions = {
+          page,
+          itemsPerPage,
+          sortBy: sort.sortBy,
+          sortDesc: sort.sortDesc,
+        };
+        const oldOptions = {
+          page: this.query.page ?? 1,
+          itemsPerPage: this.query.itemsPerPage ?? PAGINATION_LIMIT,
+          sortBy: this.query.sortBy ?? [],
+          sortDesc: this.query.sortDesc ?? [],
+        };
+
+        if (isEqual(convertedOptions, oldOptions)) {
+          return;
+        }
+
+        this.$emit('update:query', {
+          ...this.query,
+          ...convertedOptions,
+        });
+      },
+    },
   },
+
   async mounted() {
     this.fetchEntityInfoPropertiesList({ params: { paginate: false } });
 
@@ -193,7 +266,12 @@ export default {
     this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
     this.columnsFiltersPending = false;
   },
+
   methods: {
+    updateOptions(options) {
+      this.options = options;
+    },
+
     updateItemsPerPage(itemsPerPage) {
       this.$emit('update:query', { ...this.query, itemsPerPage });
     },

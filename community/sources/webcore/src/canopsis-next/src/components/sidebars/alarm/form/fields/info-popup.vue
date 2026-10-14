@@ -1,10 +1,6 @@
 <template>
   <widget-settings-item :title="$t('settings.infoPopup.title')">
-    <v-btn
-      class="primary"
-      small
-      @click="edit"
-    >
+    <v-btn color="primary" size="small" @click="edit">
       {{ $t('common.create') }}/{{ $t('common.edit') }}
     </v-btn>
   </widget-settings-item>
@@ -13,19 +9,13 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
-  mixins: [formMixin],
-  model: {
-    prop: 'popups',
-    event: 'input',
-  },
+
   props: {
-    popups: {
+    modelValue: {
       type: [Array, Object],
       default: () => [],
     },
@@ -38,15 +28,18 @@ export default {
       default: () => [],
     },
   },
+
+  emits: ['update:modelValue'],
+
   methods: {
     edit() {
       this.$modals.show({
         name: MODALS.infoPopupSetting,
         config: {
-          infoPopups: this.popups,
+          infoPopups: this.modelValue,
           columns: this.columns,
           variables: this.variables,
-          action: popups => this.updateModel(popups),
+          action: popups => this.$emit('update:modelValue', popups),
         },
       });
     },

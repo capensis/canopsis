@@ -6,6 +6,7 @@
     :total-items="totalItems"
     :options="options"
     :select-all="removable"
+    :hide-mass-actions="!active"
     search
     advanced-pagination
     @update:options="$emit('update:options', $event)"
@@ -21,26 +22,29 @@
         @refresh="$emit('refresh')"
       />
     </template>
-    <template #headerCell="{ header }">
-      <span class="c-table-header__text--multiline">{{ header.text }}</span>
-    </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+
     <template #status="{ item }">
       <remediation-instructions-approval-icon :instruction="item" />
     </template>
+
     <template #type="{ item }">
       {{ $t(`remediation.instruction.types.${item.type}`) }}
     </template>
+
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ dateToString(item.updated) }}
     </template>
+
     <template #last_executed_on="{ item }">
-      {{ item.last_executed_on | date }}
+      {{ dateToString(item.last_executed_on) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
+      <c-layout>
         <c-action-btn
           v-if="isInstructionDismissed(item)"
           :tooltip="$t('remediation.instruction.approvalDismissed')"
@@ -55,39 +59,34 @@
           color="error"
           @click="$emit('approve', item)"
         />
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item)"
-        />
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
         <c-db-export-btn :id="item._id" instruction />
-      </v-layout>
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item)" />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { convertDateToString } from '@/helpers/date/date';
+import {
+  isInstructionDismissed,
+  isApproveRequested,
+} from '@/helpers/entities/remediation/instruction/form';
 import { isUserHasRole } from '@/helpers/entities/user/entity';
-import { isApproveRequested, isInstructionDismissed } from '@/helpers/entities/remediation/instruction/form';
 
 import { authMixin } from '@/mixins/auth';
 
-import RemediationInstructionsApprovalIcon
-  from '@/components/other/remediation/instructions/partials/remediation-instructions-approval-icon.vue';
+import RemediationInstructionsApprovalIcon from './partials/remediation-instructions-approval-icon.vue';
 
 export default {
-  components: { RemediationInstructionsApprovalIcon },
+  components: {
+    RemediationInstructionsApprovalIcon,
+  },
+
   mixins: [authMixin],
+
   props: {
     remediationInstructions: {
       type: Array,
@@ -117,7 +116,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
+
+  emits: ['update:options', 'refresh', 'remove-selected', 'duplicate', 'remove', 'approve', 'edit'],
+
   computed: {
     headers() {
       return [
@@ -153,7 +159,6 @@ export default {
         {
           text: this.$t('remediation.instruction.table.monthExecutions'),
           value: 'month_executions',
-          sortable: false,
         },
         {
           text: this.$t('remediation.instruction.table.lastExecutedOn'),
@@ -167,15 +172,22 @@ export default {
       ];
     },
   },
+
   methods: {
+    dateToString(timestamp) {
+      return convertDateToString(timestamp);
+    },
+
     isInstructionDismissed(remediationInstruction) {
       return isInstructionDismissed(remediationInstruction);
     },
 
     isNeedApproveByCurrentUser(remediationInstruction) {
-      return isApproveRequested(remediationInstruction)
-        && (remediationInstruction.approval.user?._id === this.currentUser._id
-        || isUserHasRole(this.currentUser, remediationInstruction.approval.role));
+      return (
+        isApproveRequested(remediationInstruction) &&
+        (remediationInstruction.approval.user?._id === this.currentUser._id ||
+          isUserHasRole(this.currentUser, remediationInstruction.approval.role))
+      );
     },
   },
 };

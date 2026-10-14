@@ -3,99 +3,107 @@
     ref="calendar"
     :events="events"
     :loading="pending"
-    :timez0ne.sync="timezone"
+    :timezone="timezone"
     readonly
     hide-details-menu
+    @update:timezone="timezone = $event"
     @change:pagination="fetchEvents"
   />
 </template>
 
-<script>
+<script setup>
+import { nextTick, onMounted, ref } from 'vue';
+
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getMostReadableTextColor } from '@/helpers/color';
-import { getPbehaviorColor, isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 import {
   convertDateToDateObjectByTimezone,
   convertDateToString,
   convertDateToTimestampByTimezone,
   getLocalTimezone,
 } from '@/helpers/date/date';
+import { getPbehaviorColor, isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 
-import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
-import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 
-export default {
-  mixins: [
-    entitiesPbehaviorMixin,
-    entitiesPbehaviorTimespansMixin,
-  ],
-  props: {
-    entityId: {
-      type: String,
-      required: false,
-    },
+const props = defineProps({
+  entityId: {
+    type: String,
+    default: '',
   },
-  data() {
+});
+
+const { fetchPbehaviorsCalendarWithoutStore, fetchEntitiesPbehaviorsCalendarWithoutStore } = usePbehavior();
+
+const calendar = ref(null);
+const pending = ref(false);
+const events = ref([]);
+const timezone = ref(getLocalTimezone());
+
+const convertPbehaviorsCalendarToEvents = (pbehaviors = []) => pbehaviors.map((pbehavior, index) => {
+    const start = convertDateToDateObjectByTimezone(pbehavior.from, pbehavior.timezone);
+    const end =
+      pbehavior.to && convertDateToDateObjectByTimezone(pbehavior.to, pbehavior.timezone);
+    const isTimed = !isFullDayEvent(start, end);
+    const fromString = convertDateToString(pbehavior.from, DATETIME_FORMATS.medium);
+    const toString = pbehavior.to
+      ? convertDateToString(pbehavior.to, DATETIME_FORMATS.medium)
+      : '';
+    const color = getPbehaviorColor(pbehavior);
+    const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+
     return {
-      pending: false,
-      events: [],
-      timezone: getLocalTimezone(),
+      id: index,
+      color,
+      iconColor,
+      start,
+      end,
+      icon: pbehavior.type?.icon_name,
+      name: `${fromString}${toString ? ` - ${toString}` : ''} ${pbehavior.title}`,
+      timed: isTimed,
     };
-  },
-  mounted() {
-    this.fetchEvents();
-  },
-  methods: {
-    convertPbehaviorsCalendarToEvents(pbehaviors) {
-      return pbehaviors.map((pbehavior, index) => {
-        const start = convertDateToDateObjectByTimezone(pbehavior.from, pbehavior.timezone);
-        const end = pbehavior.to && convertDateToDateObjectByTimezone(pbehavior.to, pbehavior.timezone);
+  });
 
-        const isTimed = !isFullDayEvent(start, end);
+const fetchPbehaviorsCalendar = () => {
+  const filled = calendar.value?.filled;
 
-        const fromString = convertDateToString(pbehavior.from, DATETIME_FORMATS.medium);
-        const toString = convertDateToString(pbehavior.to, DATETIME_FORMATS.medium);
-        const color = getPbehaviorColor(pbehavior);
-        const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+  if (!filled?.start || !filled?.end) {
+    return [];
+  }
 
-        return {
-          id: index,
-          color,
-          iconColor,
-          start,
-          end,
-          icon: pbehavior.type.icon_name,
-          name: `${fromString} - ${toString} ${pbehavior.title}`,
-          timed: isTimed,
-        };
-      });
-    },
+  const params = {
+    from: convertDateToTimestampByTimezone(filled.start, timezone.value),
+    to: convertDateToTimestampByTimezone(filled.end, timezone.value),
+  };
 
-    fetchPbehaviorsCalendar() {
-      const params = {
-        from: convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.timezone),
-        to: convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.timezone),
-      };
+  if (props.entityId) {
+    return fetchEntitiesPbehaviorsCalendarWithoutStore({
+      params: {
+        ...params,
+        _id: props.entityId,
+      },
+    });
+  }
 
-      if (this.entityId) {
-        params._id = this.entityId;
-
-        return this.fetchEntitiesPbehaviorsCalendarWithoutStore({ params });
-      }
-
-      return this.fetchPbehaviorsCalendarWithoutStore({ params });
-    },
-
-    async fetchEvents() {
-      this.pending = true;
-
-      const pbehaviorsCalendar = await this.fetchPbehaviorsCalendar();
-
-      this.events = this.convertPbehaviorsCalendarToEvents(pbehaviorsCalendar);
-
-      this.pending = false;
-    },
-  },
+  return fetchPbehaviorsCalendarWithoutStore({ params });
 };
+
+const fetchEvents = async () => {
+  pending.value = true;
+
+  try {
+    const pbehaviorsCalendar = await fetchPbehaviorsCalendar();
+
+    events.value = convertPbehaviorsCalendarToEvents(pbehaviorsCalendar);
+  } finally {
+    pending.value = false;
+  }
+};
+
+onMounted(async () => {
+  await nextTick();
+
+  fetchEvents();
+});
 </script>

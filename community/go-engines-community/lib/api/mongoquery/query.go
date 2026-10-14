@@ -1,27 +1,10 @@
 package mongoquery
 
 import (
-	"fmt"
+	"regexp"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
-
-// GetSortQuery returns sort query which support consistent sort : sort by "_id" is added
-// if sortBy is not "_id".
-func GetSortQuery(sortBy, sort string) bson.M {
-	sortDir := 1
-	if sort == pagination.SortDesc {
-		sortDir = -1
-	}
-
-	q := bson.D{{Key: sortBy, Value: sortDir}}
-	if sortBy != "_id" {
-		q = append(q, bson.E{Key: "_id", Value: 1})
-	}
-
-	return bson.M{"$sort": q}
-}
 
 // GetSearchQuery returns search query, it returns parsed search filter if it can be parsed
 // or regex search filter by searchBy otherwise.
@@ -31,7 +14,7 @@ func GetSearchQuery(search string, searchBy []string) bson.M {
 	}
 
 	searchRegexp := bson.Regex{
-		Pattern: fmt.Sprintf(".*%s.*", search),
+		Pattern: GetSearchPattern(search),
 		Options: "i",
 	}
 
@@ -43,4 +26,12 @@ func GetSearchQuery(search string, searchBy []string) bson.M {
 	return bson.M{
 		"$or": searchMatch,
 	}
+}
+
+func GetSearchPattern(search string) string {
+	if _, err := regexp.Compile(search); err == nil {
+		return search
+	}
+
+	return ".*" + regexp.QuoteMeta(search) + ".*"
 }

@@ -4,27 +4,33 @@
     :close-on-content-click="false"
     content-class="date-time-picker"
     transition="slide-y-transition"
-    max-width="290"
-    right
+    min-width="370"
+    max-width="370"
+    location="bottom start"
   >
-    <template #activator="{ on }">
-      <slot :value="value" :on="on" name="activator">
+    <template #activator="{ props: activatorProps }">
+      <slot
+        :value="value"
+        :on="activatorProps"
+        :props="activatorProps"
+        name="activator"
+      >
         <v-btn
+          v-bind="activatorProps"
+          variant="flat"
           icon
-          fab
-          small
-          v-on="on"
         >
           <v-icon>calendar_today</v-icon>
         </v-btn>
       </slot>
     </template>
     <date-time-picker
-      v-field="value"
+      :value="value"
       :label="label"
       :round-hours="roundHours"
       :allowed-dates="allowedDates"
       @close="close"
+      @update:value="$emit('update:value', $event)"
     />
   </v-menu>
 </template>
@@ -33,11 +39,8 @@
 import DateTimePicker from './date-time-picker.vue';
 
 export default {
+  emits: ['update:value'],
   components: { DateTimePicker },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: [Date, Number],

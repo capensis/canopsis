@@ -1,17 +1,21 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState, mapStores } from 'pinia';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('template/vars');
+import { useTemplateVarsStore } from '@/stores/modules/template-vars';
 
 export const entitiesTemplateVarsMixin = {
   computed: {
-    ...mapGetters({
-      templateVars: 'items',
+    ...mapStores(useTemplateVarsStore),
+    ...mapState(useTemplateVarsStore, {
       templateVarsPending: 'pending',
+      templateVars: 'items',
     }),
   },
+
   methods: {
-    ...mapActions({
+    ...mapActions(useTemplateVarsStore, {
       fetchTemplateVars: 'fetchList',
     }),
   },
 };
+
+export default entitiesTemplateVarsMixin;

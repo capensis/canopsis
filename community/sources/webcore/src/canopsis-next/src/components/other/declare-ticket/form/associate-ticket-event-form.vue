@@ -1,41 +1,61 @@
 <template>
-  <c-information-block :title="$t('declareTicket.ticketUrlAndId')">
-    <c-name-field
-      v-field="form.ticket_system_name"
-      :label="$t('common.systemName')"
-      :name="systemNameFieldName"
-      autofocus
-    />
-    <v-layout>
-      <v-flex
-        class="mr-3"
-        xs6
-      >
-        <declare-ticket-rule-ticket-id-text-field
-          v-field="form.ticket"
-          :name="ticketFieldName"
-          required
-        />
-      </v-flex>
-      <v-flex xs6>
+  <div>
+    <c-form-block-row :label="$t('common.systemName')" :depth="depth">
+      <c-name-field
+        :model-value="form.ticket_system_name"
+        :label="$t('common.systemName')"
+        :name="systemNameFieldName"
+        @update:model-value="updateField('ticket_system_name', $event)"
+      />
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('declareTicket.ticketID')" :depth="depth">
+      <declare-ticket-rule-ticket-id-text-field
+        :value="form.ticket"
+        :name="ticketFieldName"
+        :ticket-formats="ticketFormats"
+        :validation-rules="ticketValidationRules"
+        autofocus
+        required
+        @update:value="updateField('ticket', $event)"
+      />
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('declareTicket.ticketURL')" :depth="depth">
+      <div class="d-flex flex-column">
         <declare-ticket-rule-ticket-url-text-field
-          v-field="form.ticket_url"
+          :value="form.ticket_url"
           :name="ticketUrlFieldName"
+          @update:value="updateField('ticket_url', $event)"
         />
-      </v-flex>
-    </v-layout>
-    <declare-ticket-rule-ticket-url-title-field v-field="form.ticket_url_title" />
-    <declare-ticket-rule-ticket-custom-fields-field
-      v-field="form.mapping"
-      :name="name"
-    />
-  </c-information-block>
+        <declare-ticket-rule-ticket-url-title-field
+          :value="form.ticket_url_title"
+          @update:value="updateField('ticket_url_title', $event)"
+        />
+      </div>
+    </c-form-block-row>
+
+    <c-form-block-row :label="$t('common.customField', 2)" :depth="depth" indented>
+      <declare-ticket-rule-ticket-custom-fields-field
+        :value="form.mapping"
+        :name="name"
+        @update:value="updateField('mapping', $event)"
+      />
+    </c-form-block-row>
+  </div>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { isTicketIdMatchingFormats } from '@/helpers/entities/associate-ticket/event/form';
+
+import { useI18n } from '@/hooks/i18n';
+import { formMixin } from '@/mixins/form';
+
+import DeclareTicketRuleTicketCustomFieldsField from './fields/declare-ticket-rule-ticket-custom-fields-field.vue';
 import DeclareTicketRuleTicketIdTextField from './fields/declare-ticket-rule-ticket-id-text-field.vue';
 import DeclareTicketRuleTicketUrlTextField from './fields/declare-ticket-rule-ticket-url-text-field.vue';
-import DeclareTicketRuleTicketCustomFieldsField from './fields/declare-ticket-rule-ticket-custom-fields-field.vue';
 import DeclareTicketRuleTicketUrlTitleField from './fields/declare-ticket-rule-ticket-url-title-field.vue';
 
 export default {
@@ -45,10 +65,8 @@ export default {
     DeclareTicketRuleTicketUrlTextField,
     DeclareTicketRuleTicketIdTextField,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
+  emits: ['update:form'],
   props: {
     form: {
       type: Object,
@@ -58,24 +76,33 @@ export default {
       type: String,
       required: false,
     },
-  },
-  computed: {
-    systemNameFieldName() {
-      return this.prepareFieldName('system_name');
+    depth: {
+      type: Number,
+      default: 0,
     },
-
-    ticketFieldName() {
-      return this.prepareFieldName('ticket');
-    },
-
-    ticketUrlFieldName() {
-      return this.prepareFieldName('ticket_url');
+    ticketFormats: {
+      type: Array,
+      default: () => [],
     },
   },
-  methods: {
-    prepareFieldName(name) {
-      return [this.name, name].filter(Boolean).join('.');
-    },
+  setup(props) {
+    const { t } = useI18n();
+    const prepareFieldName = fieldName => [props.name, fieldName].filter(Boolean).join('.');
+
+    const systemNameFieldName = computed(() => prepareFieldName('system_name'));
+    const ticketFieldName = computed(() => prepareFieldName('ticket'));
+    const ticketUrlFieldName = computed(() => prepareFieldName('ticket_url'));
+    const ticketValidationRules = computed(() => [
+      value => isTicketIdMatchingFormats(value, props.ticketFormats) ||
+        t('declareTicket.incorrectTicketFormat'),
+    ]);
+
+    return {
+      systemNameFieldName,
+      ticketFieldName,
+      ticketUrlFieldName,
+      ticketValidationRules,
+    };
   },
 };
 </script>

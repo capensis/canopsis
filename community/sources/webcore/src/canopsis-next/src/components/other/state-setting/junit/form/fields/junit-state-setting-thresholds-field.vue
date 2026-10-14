@@ -1,50 +1,57 @@
 <template>
-  <v-layout>
-    <v-flex xs4>
-      <h5 class="text-subtitle-1 font-weight-bold">
-        {{ $t('stateSetting.junit.criterion') }}: {{ label }}
+  <c-layout class="junit-state-setting-thresholds-field" gap="6">
+    <c-layout class="junit-state-setting-thresholds-field__criterion" column>
+      <h5 class="junit-state-setting-thresholds-field__title text-subtitle-1">
+        {{ t('stateSetting.junit.criterion') }}: {{ label }}
       </h5>
       <junit-state-setting-thresholds-type-field
-        v-field="value.type"
-        class="mt-3"
+        :model-value="value.type"
+        :name="`${name}.type`"
+        class="mt-2"
+        @update:model-value="updateValueField('type', $event)"
       />
-    </v-flex>
-    <v-flex>
+    </c-layout>
+
+    <c-layout class="junit-state-setting-thresholds-field__states" gap="1" column>
       <junit-state-setting-threshold-state-field
-        v-field="value.minor"
+        :model-value="value.minor"
         :type="value.type"
+        :max="value.major"
         :name="`${name}.minor`"
-        :label="$t('stateSetting.states.minor')"
+        :label="t('common.stateTypes.minor')"
+        @update:model-value="updateValueField('minor', $event)"
       />
       <junit-state-setting-threshold-state-field
-        v-field="value.major"
+        :model-value="value.major"
         :type="value.type"
+        :max="value.critical"
         :name="`${name}.major`"
-        :label="$t('stateSetting.states.major')"
+        :label="t('common.stateTypes.major')"
+        @update:model-value="updateValueField('major', $event)"
       />
       <junit-state-setting-threshold-state-field
-        v-field="value.critical"
+        :model-value="value.critical"
         :type="value.type"
         :name="`${name}.critical`"
-        :label="$t('stateSetting.states.critical')"
+        :label="t('common.stateTypes.critical')"
+        @update:model-value="updateValueField('critical', $event)"
       />
-    </v-flex>
-  </v-layout>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
-import JunitStateSettingThresholdsTypeField from './junit-state-setting-thresholds-type-field.vue';
+import { useI18n } from '@/hooks/i18n';
+
 import JunitStateSettingThresholdStateField from './junit-state-setting-threshold-state-field.vue';
+import JunitStateSettingThresholdsTypeField from './junit-state-setting-thresholds-type-field.vue';
 
 export default {
   components: {
-    JunitStateSettingThresholdsTypeField,
     JunitStateSettingThresholdStateField,
+    JunitStateSettingThresholdsTypeField,
   },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+
   props: {
     value: {
       type: Object,
@@ -59,5 +66,40 @@ export default {
       default: '',
     },
   },
+
+  emits: ['update:value'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const updateValueField = (field, value) => {
+      emit('update:value', {
+        ...props.value,
+        [field]: value,
+      });
+    };
+
+    return {
+      t,
+      updateValueField,
+    };
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.junit-state-setting-thresholds-field {
+  width: 100%;
+
+  &__criterion,
+  &__states {
+    flex: 1 1 0;
+    min-width: 0;
+    align-self: start;
+  }
+
+  &__title {
+    font-weight: 700;
+  }
+}
+</style>

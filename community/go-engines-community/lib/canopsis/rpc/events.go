@@ -127,6 +127,12 @@ type WebhookEvent struct {
 	Healthcheck    bool   `json:"healthcheck"`
 }
 
+type WebhookResultEvent struct {
+	Execution string `json:"execution"`
+	Error     *Error `json:"error"`
+	ErrIndex  *int64 `json:"err_index"`
+}
+
 // PbehaviorRecomputeEvent
 //
 //easyjson:json

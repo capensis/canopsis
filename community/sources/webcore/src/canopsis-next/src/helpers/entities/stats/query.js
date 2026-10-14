@@ -1,13 +1,13 @@
 import { convertAlarmStateFilterToQuery } from '@/helpers/entities/alarm/query';
 
 /**
- * This function converts widget with type 'StatsCalendar' to query Object
+ * Convert StatsCalendar widget to query.
  *
  * @param {Object} widget
- * @returns {{}}
+ * @returns {Object}
  */
-export function convertStatsCalendarWidgetToQuery(widget) {
-  const { filters = [], parameters: { considerPbehaviors = false } } = widget;
+export const convertStatsCalendarWidgetToQuery = (widget) => {
+  const { filters = [], parameters: { considerPbehaviors = false } = {} } = widget;
 
   return {
     ...convertAlarmStateFilterToQuery(widget),
@@ -16,4 +16,4 @@ export function convertStatsCalendarWidgetToQuery(widget) {
     filters,
     time_field: 't',
   };
-}
+};

@@ -1,10 +1,12 @@
 <template>
   <div class="c-advanced-data-table">
-    <v-layout v-bind="toolbarProps" class="px-4" wrap>
-      <v-flex v-if="shownSearch" xs4>
+    <v-row v-bind="toolbarProps" class="px-4" wrap>
+      <div v-if="shownSearch" class="c-advanced-data-table__search">
         <c-search
           v-if="search"
+          :model-value="options?.search"
           :label="searchLabel"
+          :disabled="searchDisabled"
           @submit="updateSearch"
         />
         <c-advanced-search
@@ -14,7 +16,8 @@
           @submit="updateAdvancedSearch"
           @reset="resetSearch"
         />
-      </v-flex>
+      </div>
+
       <slot
         :selected="selected"
         :update-search="updateSearch"
@@ -22,154 +25,134 @@
         :reset-search="resetSearch"
         name="toolbar"
       />
-      <v-flex
-        v-if="hasMassActionsSlot"
-        xs12
+
+      <c-mass-actions-panel
+        v-if="selectAll && selected.length && hasMassActionsSlot && !hideMassActions"
+        v-model="keepSelectedAfterAction"
+        v-bind="massActionsGridParameters"
+        :selected="selected"
+        :default-value="defaultKeepSelectedAfterAction"
+        @clear:selected="clearSelected(keepSelectedAfterAction, true)"
       >
-        <v-expand-transition>
-          <v-layout
-            v-if="selected.length"
-            class="px-2 mt-1"
-          >
-            <slot
-              :selected="selected"
-              :selected-keys="selectedKeys"
-              :count="selected.length"
-              :clear-selected="clearSelected"
-              name="mass-actions"
-            />
-          </v-layout>
-        </v-expand-transition>
-      </v-flex>
-    </v-layout>
-    <v-data-table
+        <template #actions>
+          <slot
+            :selected="selected"
+            :selected-keys="selectedKeys"
+            :count="selected.length"
+            :clear-selected="clearSelected"
+            name="mass-actions"
+          />
+        </template>
+      </c-mass-actions-panel>
+    </v-row>
+
+    <v-data-table-server
       v-model="selected"
+      v-model:expanded="expandedItems"
       ref="dataTable"
       :headers="preparedHeaders"
-      :items="visibleItems"
+      :items="items"
       :loading="loading"
-      :server-items-length="totalItems"
+      :items-length="itemsLength"
       :no-data-text="noDataText"
-      :options="vDataTableOptions"
-      :header-text="headerText"
-      :footer-props="{ itemsPerPageOptions: itemsPerPageItems }"
-      :item-key="itemKey"
+      :page="vDataTableOptions.page"
+      :items-per-page="vDataTableOptions.itemsPerPage"
+      :sort-by="vuetifySortBy"
+      :item-value="itemKey"
       :show-select="selectAll"
       :show-expand="expand"
       :item-selectable="isItemSelectable"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
       :class="tableClass"
-      :dense="dense"
-      :ultra-dense="ultraDense"
+      :density="density"
       :loader-height="loaderHeight"
-      :ellipsis-headers="ellipsisHeaders"
       :expand-icon="expandIcon"
-      checkbox-color="primary"
+      color="primary"
+      return-object
       @update:options="updateDataTableOptions"
     >
-      <template v-if="hasHeaderSelectSlot" #header.data-table-select="props">
+      <template v-if="hasHeaderSelectSlot" #[`header.data-table-select`]="props">
         <slot name="header.data-table-select" v-bind="props" />
       </template>
 
       <template v-if="hasItemSlot" #item="props">
-        <slot name="item" v-bind="props" />
+        <slot name="item" v-bind="getItemsProps(props)" />
       </template>
 
-      <template
-        v-for="header in headers"
-        #[getItemSlotName(header)]="props"
-      >
-        <slot
-          :name="header.value"
-          v-bind="getItemsProps(props)"
-        >
-          {{ props.item | get(header.value) }}
+      <template v-for="header in headers" #[getItemSlotName(header)]="props">
+        <slot :name="getHeaderKey(header)" v-bind="getItemsProps(props)">
+          {{ getItemValue(props.item, getHeaderKey(header)) }}
         </slot>
       </template>
 
-      <template v-if="isExpandableItem" #item.data-table-expand="props">
-        <v-icon
-          v-if="checkIsExpandableItem(props.item)"
-          :class="{ 'v-data-table__expand-icon--active': props.isExpanded }"
+      <template #[`item.data-table-expand`]="props">
+        <c-icon
+          v-if="checkIsExpandableItem(getRawItem(props.item))"
+          :class="{ 'v-data-table__expand-icon--active': isItemExpanded(getRawItem(props.item)) }"
           class="v-data-table__expand-icon"
-          @click.stop="props.expand(!props.isExpanded)"
+          @click.stop="toggleExpand(getRawItem(props.item))"
         >
           {{ expandIcon }}
-        </v-icon>
+        </c-icon>
         <span v-else />
       </template>
 
-      <template
-        v-if="hasExpandSlot"
-        #expanded-item="props"
-      >
-        <div
-          v-if="checkIsExpandableItem(props.item)"
-          class="secondary lighten-2"
+      <template v-if="hasExpandSlot" #expanded-row="props">
+        <c-table-expand-row
+          :ref="(el) => setExpandRowRef(el, props.item)"
+          :colspan="preparedHeaders.length"
+          :content-class="expandContentClass"
+          expanded
+          @after-close="removeExpandedItem(props.item)"
         >
-          <slot
-            v-bind="props"
-            name="expand"
-          />
-        </div>
+          <slot v-bind="getItemsProps(props)" name="expand" />
+        </c-table-expand-row>
       </template>
 
-      <template #header="props">
-        <slot
-          name="header"
-          v-bind="props"
-        />
+      <template v-if="hasHeaderSlot" #headers="props">
+        <slot name="header" v-bind="props" />
       </template>
 
-      <template
-        v-for="header in headerScopedSlots"
-        #[header]="props"
-      >
-        <slot
-          :name="header"
-          v-bind="props"
-        />
+      <template v-for="header in headerScopedSlots" #[header]="props">
+        <slot :name="header" v-bind="props" />
       </template>
 
-      <template #progress="props">
-        <slot
-          name="progress"
-          v-bind="props"
-        />
+      <template v-if="hasProgressSlot" #loader="props">
+        <slot name="progress" v-bind="props" />
       </template>
 
-      <template #body.prepend="props">
-        <slot
-          name="body.prepend"
-          v-bind="props"
-        />
+      <template v-if="hasBodyPrependSlot" #[`body.prepend`]="props">
+        <slot name="body.prepend" v-bind="props" />
       </template>
-    </v-data-table>
+    </v-data-table-server>
 
     <c-table-pagination
       v-if="!noPagination && options && advancedPagination"
-      :total-items="totalItems"
+      :total-items="itemsLength"
       :items-per-page="options.itemsPerPage"
       :items="itemsPerPageItems"
       :page="options.page"
+      :total-visible="paginationTotalVisible"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
-      @input="updatePaginationOptions"
+      @update:pagination="updatePaginationOptions"
     />
   </div>
 </template>
 
 <script>
-import { pick } from 'lodash';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import pick from 'lodash/pick';
 
 import { mapIds } from '@/helpers/array';
-import { prepareQueryWithAdvancedSearch, prepareQueryWithoutAdvancedSearch } from '@/helpers/search/advanced-search';
+import { convertDataTableSortToQuery } from '@/helpers/entities/shared/query';
+import {
+  prepareQueryWithAdvancedSearch,
+  prepareQueryWithoutAdvancedSearch,
+} from '@/helpers/search/advanced-search';
 
 export default {
-  model: {
-    prop: 'selected',
-    event: 'input',
-  },
   props: {
     headers: {
       type: Array,
@@ -199,6 +182,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    searchDisabled: {
+      type: Boolean,
+      default: false,
+    },
     advancedSearch: {
       type: Boolean,
       default: false,
@@ -206,6 +193,10 @@ export default {
     advancedPagination: {
       type: Boolean,
       default: false,
+    },
+    paginationTotalVisible: {
+      type: Number,
+      required: false,
     },
     hideActions: {
       type: Boolean,
@@ -217,7 +208,7 @@ export default {
     },
     totalItems: {
       type: Number,
-      required: false,
+      default: 0,
     },
     itemKey: {
       type: String,
@@ -275,6 +266,10 @@ export default {
       type: String,
       default: '$expand',
     },
+    expandContentClass: {
+      type: [String, Array, Object],
+      default: 'secondary lighten-2',
+    },
     advancedSearchAttributes: {
       type: Array,
       default: () => [],
@@ -283,15 +278,56 @@ export default {
       type: Boolean,
       default: false,
     },
+    massActionsGridParameters: {
+      type: Object,
+      required: false,
+    },
+    defaultKeepSelectedAfterAction: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassActions: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['update:options'],
+
   data() {
     return {
       selectedItems: [],
+      expandedItems: [],
+      expandRows: {},
+      keepSelectedAfterAction: this.defaultKeepSelectedAfterAction ?? false,
     };
   },
+
   computed: {
     vDataTableOptions() {
-      return pick(this.options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']);
+      return pick(this.options, [
+        'page',
+        'itemsPerPage',
+        'sortBy',
+        'sortDesc',
+        'groupBy',
+        'groupDesc',
+        'mustSort',
+        'multiSort',
+      ]);
+    },
+
+    vuetifySortBy() {
+      const sortBy = this.vDataTableOptions.sortBy ?? [];
+      const sortDesc = this.vDataTableOptions.sortDesc ?? [];
+
+      return sortBy.map((item, index) => item.key
+          ? item
+          : {
+              key: item,
+              order: sortDesc[index] ? 'desc' : 'asc',
+            },
+      );
     },
 
     preparedHeaders() {
@@ -299,8 +335,8 @@ export default {
 
       if (this.selectAll) {
         headers.push({
-          value: 'data-table-select',
-          text: '',
+          key: 'data-table-select',
+          title: '',
           sortable: false,
           width: '1px',
         });
@@ -308,21 +344,33 @@ export default {
 
       if (this.expand) {
         headers.push({
-          value: 'data-table-expand',
-          text: '',
+          key: 'data-table-expand',
+          title: '',
           sortable: false,
           width: '1px',
+          headerProps: {
+            noPadding: false,
+          },
+          cellProps: {
+            noPadding: false,
+          },
         });
       }
 
       return [
         ...headers,
-        ...this.headers,
+        ...this.headers.map(header => ({
+          ...header,
+          key: header.key ?? header.value,
+          title: header.title ?? header[this.headerText],
+        })),
       ];
     },
 
     headerScopedSlots() {
-      return Object.keys(this.$scopedSlots ?? {}).filter(name => name.startsWith('header.'));
+      return Object.keys(this.$slots ?? {}).filter(
+        name => name.startsWith('header.') && name !== 'header.data-table-select',
+      );
     },
 
     selected: {
@@ -338,54 +386,149 @@ export default {
       return mapIds(this.selected, this.itemKey);
     },
 
-    visibleItems() {
-      return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
-    },
-
     hasHeaderSelectSlot() {
-      return this.$slots['header.data-table-select'] || this.$scopedSlots['header.data-table-select'];
+      return this.$slots['header.data-table-select'];
     },
 
     hasItemSlot() {
-      return this.$slots.item || this.$scopedSlots.item;
+      return this.$slots.item;
     },
 
     hasExpandSlot() {
-      return this.$slots.expand || this.$scopedSlots.expand;
+      return this.$slots.expand;
+    },
+
+    hasHeaderSlot() {
+      return this.$slots.header;
+    },
+
+    hasProgressSlot() {
+      return this.$slots.progress;
+    },
+
+    hasBodyPrependSlot() {
+      return this.$slots['body.prepend'];
     },
 
     hasMassActionsSlot() {
-      return this.$slots['mass-actions'] || this.$scopedSlots['mass-actions'];
+      return this.$slots['mass-actions'];
     },
 
     shownSearch() {
       return this.search || this.advancedSearch;
     },
+
+    density() {
+      return {
+        [this.ultraDense]: 'compact',
+        [this.dense]: 'comfortable',
+      }.true;
+    },
+
+    itemsLength() {
+      return this.totalItems || this.items.length;
+    },
   },
+
   watch: {
     items(items) {
       if (this.selectAll) {
-        const itemKeys = items.map(item => item[this.itemKey]);
+        const selectedKeys = new Set(this.selectedItems.map(item => this.getItemKey(item)));
 
-        this.selectedItems = this.selectedItems.filter(selectedItem => itemKeys.includes(selectedItem[this.itemKey]));
+        this.selectedItems = items.filter(
+          item => selectedKeys.has(this.getItemKey(item)) && !this.isDisabledItem(item),
+        );
       }
+
+      const expandedKeys = new Set(this.expandedItems.map(item => this.getItemKey(item)));
+
+      this.expandedItems = items.filter(
+        item => expandedKeys.has(this.getItemKey(item)) && this.checkIsExpandableItem(item),
+      );
     },
   },
+
   methods: {
+    getRawItem(item) {
+      return item?.raw ?? item;
+    },
+
+    getItemKey(item) {
+      return get(this.getRawItem(item), this.itemKey);
+    },
+
     checkIsExpandableItem(item) {
       return this.isExpandableItem ? this.isExpandableItem(item) : true;
     },
 
+    setExpandRowRef(element, item) {
+      const key = this.getItemKey(item);
+
+      if (!key) {
+        return;
+      }
+
+      if (!element) {
+        delete this.expandRows[key];
+
+        return;
+      }
+
+      this.expandRows[key] = element;
+    },
+
+    isItemExpanded(item) {
+      const key = this.getItemKey(item);
+
+      return this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key);
+    },
+
+    toggleExpand(item) {
+      if (!this.checkIsExpandableItem(item)) {
+        return;
+      }
+
+      const key = this.getItemKey(item);
+
+      if (this.isItemExpanded(item)) {
+        this.expandRows[key]?.hide();
+
+        return;
+      }
+
+      if (!this.expandedItems.some(expandedItem => this.getItemKey(expandedItem) === key)) {
+        this.expandedItems = [...this.expandedItems, item];
+      }
+    },
+
+    removeExpandedItem(item) {
+      const key = this.getItemKey(item);
+
+      this.expandedItems = this.expandedItems.filter(
+        expandedItem => this.getItemKey(expandedItem) !== key,
+      );
+    },
+
     updateOptions(options) {
+      if (isEqual(this.options, options)) {
+        return;
+      }
+
       this.selected = [];
+      this.expandedItems = [];
+      this.expandRows = {};
 
       this.$emit('update:options', options);
     },
 
     updateDataTableOptions(options) {
+      const sort = convertDataTableSortToQuery(options.sortBy);
+
       return this.updateOptions({
         ...this.options,
-        ...pick(options, ['page', 'itemsPerPage', 'sortBy', 'sortDesc', 'groupBy', 'groupDesc', 'mustSort', 'multiSort']),
+        ...pick(options, ['page', 'itemsPerPage', 'groupBy', 'mustSort', 'multiSort']),
+        sortBy: sort.sortBy,
+        sortDesc: sort.sortDesc,
       });
     },
 
@@ -413,24 +556,38 @@ export default {
       this.updateOptions({ ...this.options, page, itemsPerPage });
     },
 
-    clearSelected() {
+    clearSelected(keepSelected = this.keepSelectedAfterAction, force = false) {
+      if (keepSelected && !force) {
+        return;
+      }
+
       this.selectedItems = [];
     },
 
     getItemsProps(state) {
+      const item = this.getRawItem(state.item);
+
       return {
         index: state.index,
-        item: state.item,
+        item,
         selected: state.selected,
-        disabled: this.isDisabledItem(state.item),
-        expanded: state.expanded,
-        select: value => state.selected = value || !state.selected,
-        expand: state.expand,
+        disabled: this.isDisabledItem(item),
+        expanded: this.isItemExpanded(item),
+        select: state.toggleSelect,
+        expand: this.toggleExpand,
       };
     },
 
+    getHeaderKey(header) {
+      return header.value ?? header.key;
+    },
+
     getItemSlotName(header) {
-      return `item.${header.value}`;
+      return `item.${this.getHeaderKey(header)}`;
+    },
+
+    getItemValue(item, value) {
+      return get(item, value);
     },
 
     isItemSelectable(item) {
@@ -442,12 +599,51 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-data-table {
-  ::v-deep thead th {
+  :deep(thead th) {
     vertical-align: middle;
+  }
+
+  :deep(.v-data-table__expand-icon) {
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s ease-out;
+  }
+
+  :deep(.v-data-table__expand-icon--active) {
+    transform: rotate(-180deg);
+  }
+
+  &__search {
+    display: flex;
+    align-items: center;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+
+    :deep(.c-action-btn) {
+      align-self: center;
+    }
   }
 
   & .c-checkbox-wrapper {
     display: inline-flex;
+  }
+}
+</style>
+
+<style lang="scss">
+.c-advanced-data-table__search {
+  flex: 1 1 0;
+  max-width: none;
+}
+
+.c-advanced-data-table__toolbar-field {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+
+  .c-field {
+    width: max-content;
+    flex: 0 0 auto;
   }
 }
 </style>

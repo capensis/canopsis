@@ -1,32 +1,36 @@
 <template>
   <v-container>
-    <v-layout class="gap-2" column>
-      <span class="text-body-2">{{ $t('settings.quickActions.title') }}</span>
-      <span>{{ $t('settings.quickActions.description') }}</span>
+    <c-layout gap="2" column>
+      <span class="text-body-2">
+        {{ t('settings.quickActions.title') }}
+      </span>
+      <span>{{ t('settings.quickActions.description') }}</span>
       <c-widget-template-field
-        :value="template"
+        :model-value="template"
         :templates="templates"
         :pending="templatesPending"
-        @input="updateTemplate"
+        @update:model-value="updateTemplate"
       />
       <quick-alarm-actions-form
-        :actions="value"
+        :actions="modelValue"
         :massive="massive"
-        @input="updateValue"
+        @update:actions="updateValue"
       />
-    </v-layout>
+    </c-layout>
   </v-container>
 </template>
 
 <script>
+import { useI18n } from '@/hooks/i18n';
 import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
 import QuickAlarmActionsForm from '@/components/common/actions-panel/quick-alarm-actions-form.vue';
 
 export default {
   components: { QuickAlarmActionsForm },
+
   props: {
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -34,16 +38,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    title: {
-      type: String,
-      default: '',
-    },
-    description: {
-      type: String,
-      default: '',
-    },
     template: {
-      type: String,
+      type: [String, Symbol],
       default: '',
     },
     templates: {
@@ -55,10 +51,15 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue', 'update:template'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'actions', emit);
 
     return {
+      t,
       updateTemplate,
       updateValue,
     };

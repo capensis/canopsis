@@ -23,9 +23,7 @@ type Event interface {
 // NewEvent creates new event.
 func NewEvent() Event {
 	return &event{
-		component: component{
-			ComponentType: "VEVENT",
-		},
+		ComponentType: "VEVENT",
 	}
 }
 

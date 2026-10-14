@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with custom props 1`] = `
+<div
+  add-button-label="Add comment"
+  label="Comments"
+>
+  <div>
+    <pbehavior-comment-field-stub
+      comment="[object Object]"
+      max="255"
+    />
+  </div>
+  <div>
+    <pbehavior-comment-field-stub
+      comment="[object Object]"
+      max="255"
+    />
+  </div>
+  <button
+    type="button"
+  >
+    add
+  </button>
+</div>
+`;
+
+exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with default props 1`] = `
+<div
+  add-button-label="Add comment"
+  label="Comments"
+>
+  <button
+    type="button"
+  >
+    add
+  </button>
+</div>
+`;

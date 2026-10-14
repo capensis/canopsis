@@ -1,32 +1,31 @@
 <template>
-  <v-select
-    :value="value"
-    :label="$t('modals.createPbehaviorType.fields.type')"
+  <c-select
+    :model-value="selectedType"
     :items="defaultTypes"
+    :label="t('modals.createPbehaviorType.fields.type')"
     :disabled="disabled"
     :loading="pending"
+    item-title="text"
     item-value="type"
-    item-text="name"
+    name="type"
+    required
     return-object
-    @input="updateValue"
+    @update:model-value="updateModel"
   />
 </template>
 
 <script>
 import { find } from 'lodash';
+import { computed, onMounted, ref } from 'vue';
 
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { formBaseMixin } from '@/mixins/form';
-import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 export default {
-  mixins: [
-    formBaseMixin,
-    entitiesPbehaviorTypeMixin,
-  ],
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: PBEHAVIOR_TYPE_TYPES.active,
     },
@@ -35,40 +34,57 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      pending: false,
-      defaultTypes: [],
-    };
-  },
-  mounted() {
-    this.fetchDefaultTypes();
-  },
-  methods: {
-    async fetchDefaultTypes() {
-      this.pending = true;
 
-      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
-        params: { default: true },
-      });
+  emits: ['update:modelValue', 'update:color', 'sync:color'],
 
-      this.defaultTypes = data.map(type => ({
-        ...type,
-        name: this.$t(`modals.createPbehaviorType.canonicalTypes.${type.type}`),
-      }));
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { fetchPbehaviorTypesListWithoutStore } = usePbehaviorType();
 
-      this.pending = false;
+    const pending = ref(false);
+    const defaultTypes = ref([]);
 
-      const activeType = find(data, { type: this.value });
+    const selectedType = computed(
+      () => find(defaultTypes.value, { type: props.modelValue }) ?? props.modelValue,
+    );
 
-      if (activeType) {
-        this.$emit('update:color', activeType.color);
+    const fetchDefaultTypes = async () => {
+      try {
+        pending.value = true;
+
+        const { data = [] } = await fetchPbehaviorTypesListWithoutStore({
+          params: { default: true },
+        });
+
+        defaultTypes.value = data.map(type => ({
+          ...type,
+          text: t(`modals.createPbehaviorType.canonicalTypes.${type.type}`),
+        }));
+
+        const activeType = find(data, { type: props.modelValue });
+
+        if (activeType) {
+          emit('sync:color', activeType.color);
+        }
+      } finally {
+        pending.value = false;
       }
-    },
+    };
 
-    updateValue(value = {}) {
-      this.$emit('input', value.type, value.color);
-    },
+    const updateModel = (value = {}) => {
+      emit('update:modelValue', value.type);
+      emit('update:color', value.color);
+    };
+
+    onMounted(fetchDefaultTypes);
+
+    return {
+      t,
+      pending,
+      defaultTypes,
+      selectedType,
+      updateModel,
+    };
   },
 };
 </script>

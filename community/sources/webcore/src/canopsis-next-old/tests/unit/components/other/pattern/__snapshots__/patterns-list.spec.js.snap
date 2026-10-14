@@ -1,0 +1,1598 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
+<div
+  class="c-advanced-data-table"
+  duplicable="true"
+  removable="true"
+  updatable="true"
+>
+  <div
+    class="layout px-4 wrap"
+  >
+    <div
+      class="flex xs4"
+    >
+      <c-search-stub
+        label=""
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="v-data-table theme--light v-data-table--selectable"
+    header-text="text"
+  >
+    <div
+      class="v-data-table__wrapper"
+    >
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
+          <tr>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-select"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </th>
+            <th
+              aria-label="Title: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="title"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Title
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Type"
+              class="text-start"
+              data-value="type"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
+            </th>
+            <th
+              aria-label="Last modified on: Sorted descending. Activate to remove sorting."
+              aria-sort="descending"
+              class="text-start sortable active desc"
+              data-value="updated"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Last modified by: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="author.display_name"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last modified by
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Actions"
+              class="text-start"
+              data-value="actions"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <thead>
+          <tr
+            class="v-data-table__progress"
+          >
+            <th
+              class="column"
+              colspan="6"
+            >
+              <div
+                aria-valuemax="100"
+                aria-valuemin="0"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
+                role="progressbar"
+                style="height: 2px;"
+              >
+                <div
+                  class="v-progress-linear__background primary"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
+                />
+                <div
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
+                >
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
+                  >
+                    <div
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:48
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-0
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Entity pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:49
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-1
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Pbehavior pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:50
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-2
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:51
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-3
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Entity pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:52
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-4
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Pbehavior pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:53
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-5
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:54
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-6
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Entity pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:55
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-7
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Pbehavior pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:56
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-8
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:57
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+        author-9
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    items-per-page="10"
+    page="2"
+    total-items="11"
+  />
+</div>
+`;
+
+exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout px-4 wrap"
+  >
+    <div
+      class="flex xs4"
+    >
+      <c-search-stub
+        label=""
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="v-data-table theme--light v-data-table--selectable"
+    header-text="text"
+  >
+    <div
+      class="v-data-table__wrapper"
+    >
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
+          <tr>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-select"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </th>
+            <th
+              aria-label="Title: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="title"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Title
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Type"
+              class="text-start"
+              data-value="type"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Type
+                </span>
+              </div>
+            </th>
+            <th
+              aria-label="Last modified on: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="updated"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last modified on
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Actions"
+              class="text-start"
+              data-value="actions"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Actions
+                </span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:48
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Entity pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:49
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Pbehavior pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:50
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:51
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Entity pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:52
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Pbehavior pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:53
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:54
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Entity pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:55
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Pbehavior pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:56
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                Alarm pattern
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <span>
+                04/03/2021 13:44:57
+              </span>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub />
+</div>
+`;

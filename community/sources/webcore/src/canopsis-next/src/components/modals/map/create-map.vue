@@ -1,78 +1,84 @@
 <template>
-  <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createMap.title') }}</span>
+  <v-form @submit.prevent>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createMap.title') }}</span>
       </template>
-      <template #text="">
-        <v-layout column>
-          <v-flex
+
+      <template #text>
+        <c-layout column>
+          <v-col
             v-for="type in availableTypes"
             :key="type"
-            class="my-1 cursor-pointer"
+            class="my-1 pa-0 cursor-pointer"
             @click="selectType(type)"
           >
             <v-card>
-              <v-card-title
-                class="py-3"
-                primary-title
-              >
-                <v-layout>
+              <v-card-title class="py-3">
+                <c-layout class="w-100" align="center">
                   <div class="text-subtitle-1">
-                    {{ $t(`map.types.${type}`) }}
+                    {{ t(`map.types.${type}`) }}
                   </div>
                   <v-spacer />
-                  <v-icon class="text--secondary">
+                  <v-icon color="grey" size="20">
                     {{ getIconByType(type) }}
                   </v-icon>
-                </v-layout>
+                </c-layout>
               </v-card-title>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </c-layout>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { MODALS, MAP_TYPES, MAP_ICON_BY_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 export default {
   name: MODALS.createMap,
-  components: {
-    ModalWrapper,
-  },
-  mixins: [
-    modalInnerMixin,
-  ],
-  computed: {
-    availableTypes() {
-      return Object.values(MAP_TYPES);
-    },
-  },
-  methods: {
-    getIconByType(type) {
-      return MAP_ICON_BY_TYPES[type];
-    },
 
-    selectType(type) {
-      this.$modals.show({
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+
+    const availableTypes = computed(() => Object.values(MAP_TYPES));
+
+    const getIconByType = type => MAP_ICON_BY_TYPES[type];
+
+    const selectType = (type) => {
+      modals.show({
         name: CREATE_MAP_MODAL_NAMES_BY_TYPE[type],
         config: {
           map: { type },
           action: async (map) => {
-            await this.config.action(map);
+            await props.modal.config.action?.(map);
 
-            this.$modals.hide();
+            modals.hide({ id: props.modal.id });
           },
         },
       });
-    },
+    };
+
+    return {
+      t,
+      availableTypes,
+      getIconByType,
+      selectType,
+    };
   },
 };
 </script>

@@ -1,0 +1,632 @@
+$seeAlarmBtnHeight: 18px;
+$mobileBreakpoint: 450px;
+
+html {
+  background-color: var(--v-application-background-base);
+}
+
+.v-application .text-body-2 {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  letter-spacing: .0178571429em !important;
+}
+
+.v-app--disabled-transitions {
+  .v-navigation-drawer {
+    &, .v-item-group, .v-expansion-panel {
+      transition: none !important;
+    }
+  }
+
+  .v-main, .v-toolbar {
+    transition: none !important;
+  }
+}
+
+.v-toolbar--fixed {
+  z-index: 3;
+}
+
+.v-overlay {
+  z-index: 8;
+}
+
+.v-navigation-drawer--is-mobile, .v-navigation-drawer--temporary {
+  z-index: 9;
+}
+
+.v-list {
+  .v-list-item {
+    > *:not(.v-list-item__action) {
+      .v-input {
+        &, &__slot {
+          margin-top: 4px;
+        }
+
+        &__slot {
+          margin-bottom: 8px;
+        }
+
+        .v-messages {
+          display: block;
+        }
+      }
+    }
+  }
+
+  &-group--disabled .v-list-group__header.v-list-item:not(.v-list-item--disabled) {
+    color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
+    pointer-events: none;
+  }
+
+  .v-subheader {
+    font-size: 1.1428571429rem;
+    color: inherit;
+  }
+}
+
+.v-tabs__div {
+  max-width: none;
+}
+
+.fab {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.wf-loading, .wf-inactive {
+  .v-icon {
+    max-width: 24px !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+}
+
+.v-window__container--is-active {
+  height: 100% !important;
+}
+
+.position {
+  &-relative {
+    position: relative;
+  }
+
+  &-absolute {
+    position: absolute;
+  }
+}
+
+.validation-header.error--text {
+  animation: shake .6s cubic-bezier(.25,.8,.5,1);
+  transition: .3s cubic-bezier(.25,.8,.5,1);
+}
+
+.draggable {
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.cursor {
+  &-pointer {
+    cursor: pointer !important;
+  }
+
+  &-move {
+    cursor: move !important;
+  }
+
+  &-default {
+    cursor: default !important;
+  }
+}
+
+.pre {
+  white-space: pre;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.pre-line {
+  white-space: pre-line !important;
+}
+
+.v-tooltip__content {
+  max-width: 60%;
+
+  @media screen and (max-width: $mobileBreakpoint) {
+    max-width: 80%;
+  }
+}
+
+.operator-chip {
+  background: #a6a6a6;
+  padding: 3px 8px;
+  color: white;
+  border-radius: 5px;
+}
+
+.fill-min-height {
+  min-height: 100vh;
+}
+
+.v-menu__activator {
+  &--disabled {
+    cursor: default !important;
+
+    & * {
+      cursor: default !important;
+    }
+  }
+}
+
+.v-tab {
+  &.v-tab--disabled {
+    opacity: .5;
+  }
+
+  &--tooltip {
+    padding: 0;
+
+    &.v-tab--disabled {
+      cursor: default;
+
+      &, * {
+        pointer-events: auto;
+      }
+
+      &:before, .v-ripple__container {
+        display: none;
+      }
+    }
+
+    span:not(.v-tooltip) {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 16px;
+    }
+  }
+}
+
+.c-nowrap {
+  white-space: nowrap;
+}
+
+.progress-linear-absolute--top {
+  position: absolute !important;
+  width: 100% !important;
+  margin: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.group-checkbox {
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.group-item__active, .group-panel__active {
+  background-color: var(--v-secondary-darken1) !important;
+}
+
+.c-extra-details__message {
+  max-width: 600px;
+  white-space: pre-line;
+}
+
+.c-table-header {
+  &__text {
+    &--multiline {
+      white-space: pre-line !important;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+}
+
+.c-word {
+  &-break {
+    &-all {
+      word-break: break-all;
+    }
+  }
+
+  &-wrap {
+    &-break {
+      word-wrap: break-word;
+    }
+  }
+}
+
+.border-radius-rounded {
+  border-radius: 50% !important;
+}
+
+.map-preview__help-icon.v-icon {
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.alarm-counters {
+  background-color: rgba(0, 0, 0, .2);
+  flex-basis: 60px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+@keyframes blink {
+  0% { opacity: 1 }
+  50% { opacity: 0.3 }
+}
+
+.blinking {
+  animation: blink 2s linear infinite;
+}
+
+.kpi-widget {
+  &__title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  &__chart, &__table {
+    width: 100%;
+  }
+
+  &__list {
+    gap: 50px;
+  }
+
+  &__actions {
+    width: 100%;
+  }
+}
+
+.widget-filters {
+  column-gap: 24px;
+
+  &__sampling {
+    max-width: 100px;
+  }
+
+  &__filter-selector, &__interval {
+    max-width: 200px;
+  }
+}
+
+.fill-width {
+  width: 100%;
+}
+
+.v-btn-legacy-m {
+  &--x {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  &--y {
+    margin-bottom: 6px;
+    margin-top: 6px;
+  }
+
+  margin: 6px 8px;
+}
+
+.v-icon svg {
+  fill: currentColor;
+}
+
+.overflow-visible {
+  overflow: visible !important;
+}
+
+.remove-card-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  margin: 0 !important;
+  height: auto;
+}
+
+.text-ucfirst {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.color--inherit {
+  color: inherit !important;
+}
+
+.color--current-color {
+  color: currentColor !important;
+}
+
+.table {
+  &__grid  > .v-data-table__wrapper > table {
+    & > tbody > tr > td,
+    & > thead > tr > th {
+      position: relative;
+
+      &:after {
+        content: ' ';
+        background: rgba(0, 0, 0, 0.12);
+        position: absolute;
+        right: -1px;
+        top: 0;
+        width: 1px;
+        height: 100%;
+      }
+    }
+  }
+
+  &__resize-handler {
+    cursor: col-resize;
+
+    display: flex;
+    justify-content: center;
+
+    width: 15px;
+
+    position: absolute;
+    right: -7px;
+    top: 0;
+
+    height: 100%;
+
+    z-index: 2;
+  }
+
+  &__dragging-handler {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    z-index: 1;
+
+    &:after {
+      content: ' ';
+      position: absolute;
+      transition: .3s cubic-bezier(.25, .8, .5, 1);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: var(--v-secondary-base);
+      opacity: 0.0;
+    }
+
+    &:hover:after {
+      opacity: 0.1;
+    }
+  }
+
+  &--wrapped {
+    & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
+      word-break: break-all;
+      word-wrap: break-word;
+
+      .v-icon {
+        word-break: normal;
+        word-wrap: normal;
+      }
+    }
+  }
+
+  &--truncated {
+    td .table-cell__content {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
+}
+
+.display-block {
+  display: block !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.sticky-bottom-buttons {
+  position: sticky;
+  bottom: 10px;
+  pointer-events: none;
+
+  button {
+    pointer-events: all;
+  }
+}
+
+.v-menu__content {
+  max-height: 90vh;
+}
+
+.top-bar-menu__content {
+  max-height: 95vh;
+
+  .v-avatar {
+    border-radius: unset;
+  }
+}
+
+.v-list-item__mask {
+  .theme--light & {
+    color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
+    background: #eeeeee;
+  }
+
+  .theme--dark & {
+    color: var(--v-text-dark-disabled, rgba(255, 255, 255, 0.5));
+    background: #494949;
+  }
+}
+
+.v-autocomplete.v-select input {
+  min-width: 64px;
+}
+
+*[aria-required="true"] label, label[aria-required="true"] {
+  &:before {
+    content: '*' !important;
+    padding-right: 4px !important;
+    color: var(--v-error-base) !important;
+  }
+}
+
+.v-select.v-select--chips.v-select--chips--small .v-select__selections {
+  min-height: 32px;
+}
+
+.not-required label:before {
+  content: none !important;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@for $i from 0 through 16 {
+  .row-gap-#{$i}, .gap-#{$i} {
+    row-gap: $i * 4px;
+  }
+  .col-gap-#{$i}, .gap-#{$i} {
+    column-gap: $i * 4px;
+  }
+}
+
+.state {
+  $states: ok, minor, major, critical;
+
+  @each $state in $states {
+    &-#{$state} {
+      &, & *:not(svg, g, path) {
+        color: var(--v-state-#{$state}-text-base);
+      }
+    }
+  }
+
+  &-pause {
+    background-color: var(--v-state-pause-base);
+
+    &, & *:not(svg, g, path) {
+      color: white;
+    }
+  }
+
+  &-unknown {
+    color: white;
+  }
+}
+
+.impact-state {
+  $impactStates: (0: white, 1: black, 2: black, 3: black, 4: white);
+
+  @each $state, $color in $impactStates {
+    &-#{$state} {
+      background-color: var(--v-impact-state-#{$state}-base);
+
+      &, & *:not(svg, g, path) {
+        color: $color;
+      }
+    }
+  }
+}
+
+.c-alternative-bg-panel {
+  border-radius: 8px !important;
+
+  .v-expansion-panel-header {
+    flex-direction: row-reverse;
+    color: grey;
+
+    .v-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .theme--light & {
+    background-color: var(--v-application-background-darken1) !important;
+    border: 1px solid var(--v-application-background-darken2) !important;
+
+    .v-expansion-panel-header,
+    .v-card,
+    .v-data-table,
+    .v-data-table tbody tr,
+    .treeview-data-table {
+      // For selictivity
+      background-color: var(--v-application-background-darken1) !important;
+      border-color: var(--v-application-background-darken1) !important;
+    }
+
+    .v-expansion-panel-header,
+        :not(.v-btn__content:has(.v-icon), .v-pagination__navigation:has(.v-icon),
+          .v-input--selection-controls__input:has(.v-icon), .v-alert__wrapper:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text) {
+      color: var(--v-application-background-darken4) !important;
+    }
+  }
+
+  .theme--dark & {
+    color: var(--v-active-color-base) !important;
+    background-color: var(--v-application-background-lighten2) !important;
+    border: 1px solid var(--v-application-background-lighten3) !important;
+
+    .v-expansion-panel-header,
+    .v-card,
+    .v-data-table,
+    .v-data-table tbody tr,
+    .treeview-data-table {
+      // For selictivity
+      color: var(--v-active-color-base) !important;
+      background-color: var(--v-application-background-lighten2) !important;
+      border-color: var(--v-application-background-lighten2) !important;
+    }
+
+    .v-expansion-panel-header,
+        :not(.v-btn__content:has(.v-icon), .v-pagination__navigation:has(.v-icon), .v-alert__wrapper:has(.v-icon),
+          .v-input--selection-controls__input:has(.v-icon), .v-alert__wrapper:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text){
+      color: var(--v-application-background-lighten5) !important;
+    }
+  }
+}
+
+.status {
+  $statuses: ok stealthy flapping ongoing cancelled noEvents unknown;
+
+  @each $status in $statuses {
+    &-#{$status} {
+      background-color: var(--v-status-#{$status}-base);
+    }
+  }
+}
+
+
+.all-inherit {
+  all: inherit;
+}
+
+.text-center {
+  text-align: center;
+}

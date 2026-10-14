@@ -1,45 +1,47 @@
 <template>
-  <entities-list-table-with-pagination
-    :widget="widget"
-    :entities="contextEntities"
-    :pending="contextEntitiesPending"
-    :meta="contextEntitiesMeta"
-    :query.sync="query"
-    :columns="widget.parameters.widgetColumns"
-    :selectable="!hideMassSelection"
-    :hide-actions="hideActions"
-  >
-    <template #toolbar="">
-      <v-layout class="gap-4 py-4 pt-0" wrap align-end>
-        <v-flex>
-          <c-entity-advanced-search
-            :searches="searches"
-            @submit="updateSearch"
-            @reset="resetSearch"
-            @toggle-pin:search="togglePinSearch"
-            @remove:search="removeSearch"
-          />
-        </v-flex>
-        <v-flex v-if="hasAccessToCategory">
-          <c-entity-category-field
-            :category="query.category"
-            hide-details
-            @input="updateCategory"
-          />
-        </v-flex>
-        <v-flex>
-          <v-layout
+  <div class="entities-list-widget">
+    <entities-list-table-with-pagination
+      :widget="widget"
+      :entities="contextEntities"
+      :pending="contextEntitiesPending"
+      :meta="contextEntitiesMeta"
+      :query="query"
+      :columns="widget.parameters.widgetColumns"
+      :selectable="!hideMassSelection"
+      :hide-actions="hideActions"
+      @update:query="query = $event"
+    >
+      <template #toolbar>
+        <c-layout class="entities-list-widget__toolbar gap-4 py-4 pt-0" align="end" wrap>
+          <div class="entities-list-widget__toolbar-cell entities-list-widget__toolbar-cell--advanced-search">
+            <c-entity-advanced-search
+              :searches="searches"
+              @submit="updateSearch"
+              @reset="resetSearch"
+              @toggle-pin:search="togglePinSearch"
+              @remove:search="removeSearch"
+            />
+          </div>
+          <div v-if="hasAccessToCategory" class="entities-list-widget__toolbar-cell">
+            <c-entity-category-field
+              :category="query.category"
+              hide-details
+              @update:category="updateCategory"
+            />
+          </div>
+          <c-layout
             v-if="hasAccessToUserFilter"
-            align-end
+            class="entities-list-widget__toolbar-cell entities-list-widget__toolbar-cell--filter"
+            align="end"
           >
             <filter-selector
-              :value="query.filter"
+              :model-value="query.filter"
               :locked-value="query.lockedFilter"
               :label="$t('settings.selectAFilter')"
-              :filters="userPreference.filters"
+              :filters="userPreferenceFilters"
               :locked-filters="widget.filters"
               hide-details
-              @input="updateSelectedFilter"
+              @update:model-value="updateSelectedFilter"
             />
             <filters-list-btn
               :widget-id="widget._id"
@@ -51,33 +53,37 @@
               with-pbehavior
               entity-counters-type
             />
-          </v-layout>
-        </v-flex>
-        <v-flex>
-          <v-checkbox
-            :input-value="query.no_events"
-            :label="$t('context.noEventsFilter')"
-            color="primary"
-            hide-details
-            @change="updateNoEvents"
-          />
-        </v-flex>
-        <template v-if="!hideActions">
-          <v-flex v-if="hasAccessToCreateEntity">
-            <context-fab />
-          </v-flex>
-          <v-flex v-if="hasAccessToExportAsCsv">
-            <c-action-btn
-              :loading="downloading"
-              :tooltip="$t('settings.exportAsCsv')"
-              icon="cloud_download"
-              @click="exportContextList"
+          </c-layout>
+          <div class="entities-list-widget__toolbar-cell">
+            <c-enabled-field
+              :model-value="query.no_events"
+              :label="$t('context.noEventsFilter')"
+              class="mt-0"
+              color="primary"
+              hide-details
+              inline
+              no-margin
+              @update:model-value="updateNoEvents"
             />
-          </v-flex>
-        </template>
-      </v-layout>
-    </template>
-  </entities-list-table-with-pagination>
+          </div>
+          <template v-if="!hideActions">
+            <div v-if="hasAccessToCreateEntity">
+              <context-fab />
+            </div>
+            <div v-if="hasAccessToExportAsCsv">
+              <c-action-btn
+                :loading="downloading"
+                :tooltip="$t('settings.exportAsCsv')"
+                icon="cloud_download"
+                top
+                @click="exportContextList"
+              />
+            </div>
+          </template>
+        </c-layout>
+      </template>
+    </entities-list-table-with-pagination>
+  </div>
 </template>
 
 <script>
@@ -88,13 +94,12 @@ import { USER_PERMISSIONS } from '@/constants';
 import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
 import { authMixin } from '@/mixins/auth';
-import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { exportMixinCreator } from '@/mixins/widget/export';
-import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
-import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
+import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
+import { widgetAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/saved-items';
+import { exportMixinCreator } from '@/mixins/widget/export';
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -102,18 +107,21 @@ import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.
 import ContextFab from './actions/context-fab.vue';
 import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';
 
+/**
+ * Context explorer widget runtime foundation.
+ */
 export default {
   components: {
-    FilterSelector,
-    FiltersListBtn,
     ContextFab,
     EntitiesListTableWithPagination,
+    FilterSelector,
+    FiltersListBtn,
   },
+
   mixins: [
     authMixin,
     widgetAdvancedSearchSavedItemsMixin,
     widgetFetchQueryMixin,
-    widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     permissionsWidgetsContextFilters,
     permissionsWidgetsContextCategory,
@@ -122,6 +130,7 @@ export default {
       fetchExport: 'fetchContextExport',
     }),
   ],
+
   props: {
     widget: {
       type: Object,
@@ -136,11 +145,13 @@ export default {
       default: false,
     },
   },
+
   data() {
     return {
       downloading: false,
     };
   },
+
   computed: {
     hasAccessToCreateEntity() {
       return this.checkAccess(USER_PERMISSIONS.business.context.actions.createEntity);
@@ -149,7 +160,12 @@ export default {
     hasAccessToExportAsCsv() {
       return this.checkAccess(USER_PERMISSIONS.business.context.actions.exportAsCsv);
     },
+
+    userPreferenceFilters() {
+      return this.userPreference.filters ?? [];
+    },
   },
+
   methods: {
     updateNoEvents(noEvents) {
       this.updateContentInUserPreference({
@@ -165,7 +181,7 @@ export default {
     },
 
     updateCategory(category) {
-      const categoryId = category && category._id;
+      const categoryId = category?._id;
 
       this.updateContentInUserPreference({
         category: categoryId,
@@ -176,6 +192,16 @@ export default {
 
         page: 1,
         category: categoryId,
+      };
+    },
+
+    updateSelectedFilter(filter) {
+      this.updateContentInUserPreference({ mainFilter: filter });
+
+      this.query = {
+        ...this.query,
+        page: 1,
+        filter,
       };
     },
 
@@ -225,7 +251,7 @@ export default {
         });
 
         this.downloadFile(getContextExportDownloadFileUrl(fileData._id));
-      } catch (err) {
+      } catch {
         this.$popups.error({ text: this.$t('context.popups.exportFailed') });
       } finally {
         this.downloading = false;
@@ -234,3 +260,18 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.entities-list-widget__toolbar-cell {
+  min-width: 180px;
+}
+
+.entities-list-widget__toolbar-cell--advanced-search {
+  flex: 1 1 360px;
+  min-width: 320px;
+}
+
+.entities-list-widget__toolbar-cell--filter {
+  min-width: 260px;
+}
+</style>

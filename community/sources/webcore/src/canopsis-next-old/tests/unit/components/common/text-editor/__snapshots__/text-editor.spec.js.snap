@@ -1,0 +1,2285 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
+<div
+  class="text-editor"
+>
+  <c-label-stub
+    class="mb-2"
+    error="true"
+  >
+    Text editor label
+  </c-label-stub>
+  <div
+    class="text-editor error--text"
+  >
+    <div
+      class="jodit-container jodit jodit_theme_default jodit-wysiwyg_mode"
+      contenteditable="false"
+      style="min-height: 200px; max-height: auto; min-width: 200px; max-width: 100%; height: auto; width: auto;"
+    >
+      <div
+        class="jodit-toolbar__box"
+      >
+        <div
+          class="jodit-toolbar-editor-collection jodit-toolbar-editor-collection_mode_horizontal jodit-toolbar-editor-collection_size_middle"
+        >
+          <input
+            disabled="true"
+            style="width: 0; height:0; position: absolute; visibility: hidden;"
+            tab-index="-1"
+          />
+          <div
+            class="jodit-ui-group jodit-ui-group_line_true jodit-ui-group_size_middle"
+          >
+            <div
+              class="jodit-ui-group jodit-ui-group_size_middle"
+            >
+              <span
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_empty jodit-toolbar-button_text-icons_true jodit-ui-group__empty"
+                data-ref="empty"
+                ref="empty"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  />
+                  <span
+                    class="jodit-toolbar-button__text"
+                  >
+                    empty
+                  </span>
+                </button>
+              </span>
+              <span
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_empty jodit-toolbar-button_text-icons_true jodit-ui-group__empty"
+                data-ref="empty"
+                ref="empty"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  />
+                  <span
+                    class="jodit-toolbar-button__text"
+                  >
+                    empty
+                  </span>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="jodit-workplace"
+        contenteditable="false"
+        style="min-height: 198px; height: auto;"
+      >
+        <div
+          aria-disabled="false"
+          class="jodit-wysiwyg"
+          contenteditable="true"
+          spellcheck="false"
+          style="min-height: 198px;"
+          tabindex="-1"
+        >
+          <div>
+            <p>
+              Paragraph
+            </p>
+          </div>
+        </div>
+        <div
+          class="jodit-source"
+        >
+          <textarea
+            class="jodit-source__mirror"
+            style="min-height: 198px; height: 0px;"
+          />
+        </div>
+      </div>
+      <div
+        class="jodit-status-bar jodit_hidden"
+      />
+    </div>
+    <div
+      style="display: none;"
+    >
+      <div>
+        <p>
+          Paragraph
+        </p>
+      </div>
+    </div>
+    <!---->
+    <div
+      class="text-editor__details"
+    >
+      <div
+        class="v-messages theme--light error--text"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        >
+          <div
+            class="v-messages__message"
+          >
+            Error
+          </div>
+        </transition-group-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`text-editor Renders \`text-editor\` with default props 1`] = `
+<div
+  class="text-editor"
+>
+  <!---->
+  <div
+    class="text-editor"
+  >
+    <div
+      class="jodit-container jodit jodit_theme_default jodit-wysiwyg_mode"
+      contenteditable="false"
+      style="min-height: 200px; max-height: auto; min-width: 200px; max-width: 100%; height: auto; width: auto;"
+    >
+      <div
+        class="jodit-toolbar__box"
+      >
+        <div
+          class="jodit-toolbar-editor-collection jodit-toolbar-editor-collection_mode_horizontal jodit-toolbar-editor-collection_size_middle"
+        >
+          <input
+            disabled="true"
+            style="width: 0; height:0; position: absolute; visibility: hidden;"
+            tab-index="-1"
+          />
+          <div
+            class="jodit-ui-group jodit-ui-group_line_true jodit-ui-group_size_middle"
+          >
+            <div
+              class="jodit-ui-group jodit-ui-group_size_middle"
+            >
+              <span
+                aria-label="Change mode"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_source jodit-ui-group__source"
+                data-ref="source"
+                ref="source"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_source jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      code
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Bold"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_bold jodit-ui-group__bold"
+                data-ref="bold"
+                ref="bold"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_bold jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_bold
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Italic"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_italic jodit-ui-group__italic"
+                data-ref="italic"
+                ref="italic"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_italic jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_italic
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Strike through"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_strikethrough jodit-ui-group__strikethrough"
+                data-ref="strikethrough"
+                ref="strikethrough"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_strikethrough jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      strikethrough_s
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Underline"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_underline jodit-ui-group__underline"
+                data-ref="underline"
+                ref="underline"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_underline jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_underlined
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Insert Unordered List"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_ul jodit-toolbar-button_with-trigger_true jodit-ui-group__ul"
+                data-ref="ul"
+                ref="ul"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_ul jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_list_bulleted
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Insert Ordered List"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_ol jodit-toolbar-button_with-trigger_true jodit-ui-group__ol"
+                data-ref="ol"
+                ref="ol"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_ol jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_list_numbered
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Font family"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_font jodit-toolbar-button_with-trigger_true jodit-ui-group__font"
+                data-ref="font"
+                ref="font"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_font jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      font_download
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Font size"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_fontsize jodit-toolbar-button_with-trigger_true jodit-ui-group__fontsize"
+                data-ref="fontsize"
+                ref="fontsize"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_fontsize jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      text_fields
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Fill color or set the text color"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_brush jodit-toolbar-button_with-trigger_true jodit-ui-group__brush"
+                data-ref="brush"
+                ref="brush"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_brush jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_paint
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Insert format block"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_paragraph jodit-toolbar-button_with-trigger_true jodit-ui-group__paragraph"
+                data-ref="paragraph"
+                ref="paragraph"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_paragraph jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      notes
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Insert Image"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_image jodit-ui-group__image"
+                data-ref="image"
+                ref="image"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_image jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      image
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Insert table"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_table jodit-ui-group__table"
+                data-ref="table"
+                ref="table"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_table jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      table_chart
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Insert link"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_link jodit-ui-group__link"
+                data-ref="link"
+                ref="link"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_link jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      link
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Align"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_left jodit-toolbar-button_with-trigger_true jodit-ui-group__left"
+                data-ref="left"
+                ref="left"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_left jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_align_left
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Undo"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_undo jodit-ui-group__undo"
+                data-ref="undo"
+                disabled="disabled"
+                ref="undo"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  disabled="disabled"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_undo jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      undo
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Redo"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_redo jodit-ui-group__redo"
+                data-ref="redo"
+                disabled="disabled"
+                ref="redo"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  disabled="disabled"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_redo jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      redo
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="jodit-workplace"
+        contenteditable="false"
+        style="min-height: 198px; height: auto;"
+      >
+        <div
+          aria-disabled="false"
+          class="jodit-wysiwyg"
+          contenteditable="true"
+          spellcheck="false"
+          style="min-height: 198px;"
+          tabindex="-1"
+        >
+          <p>
+            <br />
+          </p>
+        </div>
+        <div
+          class="jodit-source"
+        >
+          <textarea
+            class="jodit-source__mirror"
+            style="min-height: 198px; height: 0px;"
+          />
+        </div>
+        <span
+          class="jodit-placeholder"
+          data-ref="placeholder"
+          style="display: block;"
+        >
+          Start writing...
+        </span>
+      </div>
+      <div
+        class="jodit-status-bar jodit_hidden"
+      />
+    </div>
+    <div
+      style="display: none;"
+    >
+      <p>
+        <br />
+      </p>
+    </div>
+    <!---->
+    <div
+      class="text-editor__details"
+    >
+      <div
+        class="v-messages theme--light error--text"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`text-editor Renders \`text-editor\` with files 1`] = `
+<div
+  class="text-editor"
+>
+  <!---->
+  <div
+    class="text-editor"
+  >
+    <div
+      class="jodit-container jodit jodit_theme_default jodit-wysiwyg_mode"
+      contenteditable="false"
+      style="min-height: 200px; max-height: auto; min-width: 200px; max-width: 100%; height: auto; width: auto;"
+    >
+      <div
+        class="jodit-toolbar__box"
+      >
+        <div
+          class="jodit-toolbar-editor-collection jodit-toolbar-editor-collection_mode_horizontal jodit-toolbar-editor-collection_size_middle"
+        >
+          <input
+            disabled="true"
+            style="width: 0; height:0; position: absolute; visibility: hidden;"
+            tab-index="-1"
+          />
+          <div
+            class="jodit-ui-group jodit-ui-group_line_true jodit-ui-group_size_middle"
+          >
+            <div
+              class="jodit-ui-group jodit-ui-group_size_middle"
+            >
+              <span
+                aria-label="Change mode"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_source jodit-ui-group__source"
+                data-ref="source"
+                ref="source"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_source jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      code
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Bold"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_bold jodit-ui-group__bold"
+                data-ref="bold"
+                ref="bold"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_bold jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_bold
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Italic"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_italic jodit-ui-group__italic"
+                data-ref="italic"
+                ref="italic"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_italic jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_italic
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Strike through"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_strikethrough jodit-ui-group__strikethrough"
+                data-ref="strikethrough"
+                ref="strikethrough"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_strikethrough jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      strikethrough_s
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Underline"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_underline jodit-ui-group__underline"
+                data-ref="underline"
+                ref="underline"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_underline jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_underlined
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Insert Unordered List"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_ul jodit-toolbar-button_with-trigger_true jodit-ui-group__ul"
+                data-ref="ul"
+                ref="ul"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_ul jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_list_bulleted
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Insert Ordered List"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_ol jodit-toolbar-button_with-trigger_true jodit-ui-group__ol"
+                data-ref="ol"
+                ref="ol"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_ol jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_list_numbered
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Font family"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_font jodit-toolbar-button_with-trigger_true jodit-ui-group__font"
+                data-ref="font"
+                ref="font"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_font jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      font_download
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Font size"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_fontsize jodit-toolbar-button_with-trigger_true jodit-ui-group__fontsize"
+                data-ref="fontsize"
+                ref="fontsize"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_fontsize jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      text_fields
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Fill color or set the text color"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_brush jodit-toolbar-button_with-trigger_true jodit-ui-group__brush"
+                data-ref="brush"
+                ref="brush"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_brush jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_paint
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Insert format block"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_paragraph jodit-toolbar-button_with-trigger_true jodit-ui-group__paragraph"
+                data-ref="paragraph"
+                ref="paragraph"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_paragraph jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      notes
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Insert Image"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_image jodit-ui-group__image"
+                data-ref="image"
+                ref="image"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_image jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      image
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Insert table"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_table jodit-ui-group__table"
+                data-ref="table"
+                ref="table"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_table jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      table_chart
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Insert link"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_link jodit-ui-group__link"
+                data-ref="link"
+                ref="link"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_link jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      link
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Align"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_left jodit-toolbar-button_with-trigger_true jodit-ui-group__left"
+                data-ref="left"
+                ref="left"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_left jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_align_left
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Undo"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_undo jodit-ui-group__undo"
+                data-ref="undo"
+                disabled="disabled"
+                ref="undo"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  disabled="disabled"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_undo jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      undo
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Redo"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_redo jodit-ui-group__redo"
+                data-ref="redo"
+                disabled="disabled"
+                ref="redo"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  disabled="disabled"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_redo jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      redo
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="jodit-workplace"
+        contenteditable="false"
+        style="min-height: 198px; height: auto;"
+      >
+        <div
+          aria-disabled="false"
+          class="jodit-wysiwyg"
+          contenteditable="true"
+          spellcheck="false"
+          style="min-height: 198px;"
+          tabindex="-1"
+        >
+          <p>
+            <br />
+          </p>
+        </div>
+        <div
+          class="jodit-source"
+        >
+          <textarea
+            class="jodit-source__mirror"
+            style="min-height: 198px; height: 0px;"
+          />
+        </div>
+        <span
+          class="jodit-placeholder"
+          data-ref="placeholder"
+          style="display: block;"
+        >
+          Start writing...
+        </span>
+      </div>
+      <div
+        class="jodit-status-bar jodit_hidden"
+      />
+    </div>
+    <div
+      style="display: none;"
+    >
+      <p>
+        <br />
+      </p>
+    </div>
+    <!---->
+    <div
+      class="text-editor__details"
+    >
+      <div
+        class="v-messages theme--light error--text"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`text-editor Renders \`text-editor\` with variables 1`] = `
+<div
+  class="text-editor"
+>
+  <!---->
+  <div
+    class="text-editor"
+  >
+    <div
+      class="jodit-container jodit jodit_theme_default jodit-wysiwyg_mode"
+      contenteditable="false"
+      style="min-height: 200px; max-height: auto; min-width: 200px; max-width: 100%; height: auto; width: auto;"
+    >
+      <div
+        class="jodit-toolbar__box"
+      >
+        <div
+          class="jodit-toolbar-editor-collection jodit-toolbar-editor-collection_mode_horizontal jodit-toolbar-editor-collection_size_middle"
+        >
+          <input
+            disabled="true"
+            style="width: 0; height:0; position: absolute; visibility: hidden;"
+            tab-index="-1"
+          />
+          <div
+            class="jodit-ui-group jodit-ui-group_line_true jodit-ui-group_size_middle"
+          >
+            <div
+              class="jodit-ui-group jodit-ui-group_size_middle"
+            >
+              <span
+                aria-label="Change mode"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_source jodit-ui-group__source"
+                data-ref="source"
+                ref="source"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_source jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      code
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Bold"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_bold jodit-ui-group__bold"
+                data-ref="bold"
+                ref="bold"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_bold jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_bold
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Italic"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_italic jodit-ui-group__italic"
+                data-ref="italic"
+                ref="italic"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_italic jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_italic
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Strike through"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_strikethrough jodit-ui-group__strikethrough"
+                data-ref="strikethrough"
+                ref="strikethrough"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_strikethrough jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      strikethrough_s
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Underline"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_underline jodit-ui-group__underline"
+                data-ref="underline"
+                ref="underline"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_underline jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_underlined
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Insert Unordered List"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_ul jodit-toolbar-button_with-trigger_true jodit-ui-group__ul"
+                data-ref="ul"
+                ref="ul"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_ul jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_list_bulleted
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Insert Ordered List"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_ol jodit-toolbar-button_with-trigger_true jodit-ui-group__ol"
+                data-ref="ol"
+                ref="ol"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_ol jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_list_numbered
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Font family"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_font jodit-toolbar-button_with-trigger_true jodit-ui-group__font"
+                data-ref="font"
+                ref="font"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_font jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      font_download
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Font size"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_fontsize jodit-toolbar-button_with-trigger_true jodit-ui-group__fontsize"
+                data-ref="fontsize"
+                ref="fontsize"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_fontsize jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      text_fields
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Fill color or set the text color"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_brush jodit-toolbar-button_with-trigger_true jodit-ui-group__brush"
+                data-ref="brush"
+                ref="brush"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_brush jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_paint
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Insert format block"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_paragraph jodit-toolbar-button_with-trigger_true jodit-ui-group__paragraph"
+                data-ref="paragraph"
+                ref="paragraph"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_paragraph jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      notes
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Insert Image"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_image jodit-ui-group__image"
+                data-ref="image"
+                ref="image"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_image jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      image
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Insert table"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_table jodit-ui-group__table"
+                data-ref="table"
+                ref="table"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_table jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      table_chart
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Insert link"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_link jodit-ui-group__link"
+                data-ref="link"
+                ref="link"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_link jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      link
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                aria-label="Align"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_left jodit-toolbar-button_with-trigger_true jodit-ui-group__left"
+                data-ref="left"
+                ref="left"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_left jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      format_align_left
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+                <span
+                  class="jodit-toolbar-button__trigger"
+                  role="trigger"
+                >
+                  <svg
+                    viewBox="0 0 10 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span
+                aria-label="Undo"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_undo jodit-ui-group__undo"
+                data-ref="undo"
+                ref="undo"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_undo jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      undo
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <span
+                aria-label="Redo"
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_redo jodit-ui-group__redo"
+                data-ref="redo"
+                disabled="disabled"
+                ref="redo"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  disabled="disabled"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_redo jodit-icon"
+                      style="font-size: 18px;"
+                    >
+                      redo
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+              <div
+                class="jodit-ui-separator"
+              />
+              <span
+                class="jodit-toolbar-button jodit-toolbar-button_size_middle jodit-toolbar-button_variant_initial jodit-toolbar-button_variables jodit-ui-group__variables"
+                data-ref="variables"
+                ref="variables"
+                role="listitem"
+              >
+                <button
+                  aria-pressed="false"
+                  class="jodit-toolbar-button__button"
+                  role="button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <span
+                    class="jodit-toolbar-button__icon"
+                  >
+                    <i
+                      class="material-icons v-icon v-icon--small jodit-icon_variables jodit-icon"
+                      style="width: 18px; height: 18px;"
+                    >
+                      variable_add
+                    </i>
+                  </span>
+                  <span
+                    class="jodit-toolbar-button__text"
+                  />
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="jodit-workplace"
+        contenteditable="false"
+        style="min-height: 198px; height: auto;"
+      >
+        <div
+          aria-disabled="false"
+          class="jodit-wysiwyg"
+          contenteditable="true"
+          spellcheck="false"
+          style="min-height: 198px;"
+          tabindex="-1"
+        >
+          <p>
+            {{ test.test }}
+          </p>
+        </div>
+        <div
+          class="jodit-source"
+        >
+          <textarea
+            class="jodit-source__mirror"
+            style="min-height: 198px; height: 0px;"
+          />
+        </div>
+      </div>
+      <div
+        class="jodit-status-bar jodit_hidden"
+      />
+    </div>
+    <div
+      style="display: none;"
+    >
+      <p>
+        {{ test.test }}
+      </p>
+    </div>
+    <variables-menu-stub
+      childrenkey="variables"
+      clickableparent="true"
+      dense="true"
+      items="[object Object]"
+      positionx="112"
+      positiony="189"
+      value=""
+      visible="true"
+    />
+    <div
+      class="text-editor__details"
+    >
+      <div
+        class="v-messages theme--light error--text"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,94 +1,73 @@
 <template>
-  <v-layout column>
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
-    <c-duration-field
-      v-field="form.delay"
-      :label="$t('common.delay')"
-      :units-label="$t('common.unit')"
-      name="delay"
-      clearable
-    />
-    <c-triggers-field
-      :value="form.triggers"
-      with-additional-values
-      @input="updateField('triggers', $event)"
-    />
-    <c-disable-during-periods-field v-field="form.disable_during_periods" />
-    <c-priority-field v-field="form.priority" />
-    <v-tabs
-      slider-color="primary"
-      centered
-    >
-      <v-tab :class="{ 'error--text': hasParametersChildrenError }">
-        {{ $tc('common.action', 2) }}
-      </v-tab>
-      <v-tab>{{ $t('common.testQuery') }}</v-tab>
+  <c-layout gap="2" column>
+    <c-enabled-field v-model="enabledField" with-background />
 
-      <v-tab-item eager>
-        <scenario-actions-form
-          v-field="form.actions"
-          ref="parametersFormElement"
-          :template-vars="templateVars"
-          class="mt-2"
-          name="actions"
-        />
-      </v-tab-item>
-      <v-tab-item>
-        <v-layout class="mt-2">
-          <c-alert :value="!isWebhookActionExist" type="error">
-            {{ $t('scenario.errors.testQueryRequireSteps') }}
-          </c-alert>
-          <scenario-test-query v-if="isWebhookActionExist" :form="form" />
-        </v-layout>
-      </v-tab-item>
-    </v-tabs>
-  </v-layout>
+    <c-form-general-patterns-tabs
+      :form="formValues"
+      :rule-id="ruleId"
+      :type="testType"
+      :patterns-label="t('common.actionsLabel')"
+      :disabled-test-query-tooltip="disabledTestQueryTooltip"
+    >
+      <template #general="{ setRef }">
+        <scenario-general-form :ref="setRef" />
+      </template>
+
+      <template #patterns="{ setRef, templateVars }">
+        <scenario-actions-form :ref="setRef" :template-vars="templateVars" />
+      </template>
+
+      <template #test-query="{ setRef }">
+        <scenario-test-query :ref="setRef" :form="formValues" />
+      </template>
+    </c-form-general-patterns-tabs>
+  </c-layout>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
-import { isWebhookActionType } from '@/helpers/entities/action';
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
+import { isWebhookActionType } from '@/helpers/entities/action/form';
+
+import { useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import ScenarioTestQuery from '@/components/other/scenario/partials/scenario-test-query.vue';
 
 import ScenarioActionsForm from './scenario-actions-form.vue';
+import ScenarioGeneralForm from './scenario-general-form.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { ScenarioTestQuery, ScenarioActionsForm },
-  mixins: [formMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
+  components: {
+    ScenarioActionsForm,
+    ScenarioGeneralForm,
+    ScenarioTestQuery,
   },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  setup(props) {
-    const isWebhookActionExist = computed(() => props.form.actions.some(({ type }) => isWebhookActionType(type)));
 
-    const parametersFormElement = ref();
-    const { hasChildrenError: hasParametersChildrenError } = useValidationElementChildren(parametersFormElement);
+  props: {
+    ruleId: {
+      type: String,
+      required: false,
+    },
+  },
+
+  setup() {
+    const { t } = useI18n();
+    const form = useFormContext();
+    const enabledField = form.model('enabled');
+    const hasWebhookAction = computed(() => form.values.value.actions?.some(action => isWebhookActionType(action.type)),
+    );
+    const disabledTestQueryTooltip = computed(() => hasWebhookAction.value ? '' : t('scenario.errors.testQueryRequireSteps'),
+    );
 
     return {
-      isWebhookActionExist,
-      parametersFormElement,
-      hasParametersChildrenError,
+      t,
+      formValues: form.values,
+      enabledField,
+      testType: TEMPLATE_TESTING_TEST_TYPES.scenario,
+      disabledTestQueryTooltip,
     };
   },
 };

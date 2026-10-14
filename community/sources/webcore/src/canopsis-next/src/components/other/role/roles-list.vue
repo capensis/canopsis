@@ -6,53 +6,61 @@
     :options="options"
     :total-items="totalItems"
     :select-all="removable"
+    :is-disabled-item="isDisabledRole"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="$emit('remove-selected', selected)"
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        role
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
       />
     </template>
+
     <template #auth_config.inactivity_interval="{ item }">
-      {{ durationToString(item.auth_config.inactivity_interval) }}
+      {{ durationToString(item.auth_config?.inactivity_interval) }}
     </template>
+
     <template #auth_config.expiration_interval="{ item }">
-      {{ durationToString(item.auth_config.expiration_interval) }}
+      {{ durationToString(item.auth_config?.expiration_interval) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
+      <c-layout gap="1">
         <c-action-btn
           v-if="updatable"
-          :disabled="!item.editable"
+          :disabled-button="!item.editable"
           type="edit"
-          @click="$emit('edit', item)"
+          @click.stop="$emit('edit', item)"
         />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
+        <c-action-btn v-if="duplicable" type="duplicate" @click.stop="$emit('duplicate', item)" />
         <c-action-btn
           v-if="removable"
-          :disabled="!item.deletable"
+          :disabled-button="!item.deletable"
           type="delete"
-          @click="$emit('remove', item._id)"
+          @click.stop="$emit('remove', item)"
         />
-      </v-layout>
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { convertDurationToString } from '@/helpers/date/duration';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     roles: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     pending: {
       type: Boolean,
@@ -60,11 +68,11 @@ export default {
     },
     options: {
       type: Object,
-      required: false,
+      required: true,
     },
     totalItems: {
       type: Number,
-      required: false,
+      default: 0,
     },
     removable: {
       type: Boolean,
@@ -79,35 +87,42 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('role.inactivityInterval'),
-          value: 'auth_config.inactivity_interval',
-          sortable: false,
-        },
-        {
-          text: this.$t('role.expirationInterval'),
-          value: 'auth_config.expiration_interval',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actions',
-          sortable: false,
-        },
-      ];
-    },
-  },
-  methods: {
-    durationToString(duration) {
-      return duration ? `${duration.value}${duration.unit}` : this.$t('common.notAvailable');
-    },
+
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
+
+  setup() {
+    const { t } = useI18n();
+
+    const headers = computed(() => [
+      {
+        text: t('common.name'),
+        value: 'name',
+      },
+      {
+        text: t('role.inactivityInterval'),
+        value: 'auth_config.inactivity_interval',
+        sortable: false,
+      },
+      {
+        text: t('role.expirationInterval'),
+        value: 'auth_config.expiration_interval',
+        sortable: false,
+      },
+      {
+        text: t('common.actionsLabel'),
+        value: 'actions',
+        sortable: false,
+      },
+    ]);
+
+    const durationToString = duration => duration ? convertDurationToString(duration) : t('common.notAvailable');
+    const isDisabledRole = ({ deletable = true }) => !deletable;
+
+    return {
+      headers,
+      durationToString,
+      isDisabledRole,
+    };
   },
 };
 </script>

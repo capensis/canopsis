@@ -1,78 +1,51 @@
 <template>
-  <v-layout
-    class="mt-2"
-    column
+  <c-card-iterator-form
+    :value="jobsField"
+    :disabled="disabled"
+    :draggable-group="draggableGroup"
+    :required-error-message="t('remediation.instruction.errors.jobRequired')"
+    :add-button-label="t('remediation.instruction.addJob')"
+    :name="name"
+    item-key="key"
+    iterator-class="mb-2"
+    required
+    @add="addJob"
+    @update:value="jobsField = $event"
   >
-    <c-alert
-      v-if="!jobs.length"
-      type="info"
-    >
-      {{ $t('remediation.instruction.emptyJobs') }}
-    </c-alert>
-    <c-information-block :title="$t('remediation.instruction.listJobs')">
-      <c-draggable-list-field
-        v-field="jobs"
+    <template #item="{ index, item: job }">
+      <remediation-instruction-job-field
+        :job="jobsField[index]"
+        :jobs="jobsItems"
+        :name="`${name}.${job.key}`"
+        :job-number="index + 1"
         :disabled="disabled"
-        :group="draggableGroup"
-        handle=".job-drag-handler"
-        ghost-class="white"
-      >
-        <v-card
-          v-for="(job, index) in jobs"
-          :key="job.key"
-          class="my-2"
-        >
-          <v-card-text>
-            <remediation-instruction-job-field
-              v-field="jobs[index]"
-              :jobs="jobsItems"
-              :name="job.key"
-              :job-number="index + 1"
-              :disabled="disabled"
-              class="py-1"
-              @remove="removeItemFromArray(index)"
-            />
-          </v-card-text>
-        </v-card>
-      </c-draggable-list-field>
-
-      <c-btn-with-error
-        :error="hasJobsErrors ? $t('remediation.instruction.errors.jobRequired') : ''"
-        :disabled="disabled"
-        outlined
-        @click="addJob"
-      >
-        {{ $t('remediation.instruction.addJob') }}
-      </c-btn-with-error>
-    </c-information-block>
-  </v-layout>
+        :loading="pending"
+        @update:job="updateItemInArray(index, $event)"
+        @remove="removeJob(index)"
+      />
+    </template>
+  </c-card-iterator-form>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
+
 import { MAX_LIMIT } from '@/constants';
 
 import { remediationInstructionJobToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import { formArrayMixin } from '@/mixins/form';
-import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
+import { useFormArray } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 
 import RemediationInstructionJobField from './fields/remediation-instruction-job-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     RemediationInstructionJobField,
   },
-  mixins: [formArrayMixin, entitiesRemediationJobMixin],
-  model: {
-    prop: 'jobs',
-    event: 'input',
-  },
   props: {
-    jobs: {
-      type: Array,
-      default: () => ([]),
-    },
     name: {
       type: String,
       default: 'jobs',
@@ -82,58 +55,52 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      isDragging: false,
-      jobsItems: [],
+  setup() {
+    const { t } = useI18n();
+    const jobsField = useFormArray('jobs');
+    const { fetchRemediationJobsListWithoutStore } = useRemediationJob();
+
+    const draggableGroup = {
+      name: 'remediation-instruction-jobs',
     };
-  },
-  computed: {
-    hasJobsErrors() {
-      return this.errors.has(this.name);
-    },
 
-    draggableGroup() {
-      return {
-        name: 'remediation-instruction-jobs',
-        pull: false,
-        put: false,
-      };
-    },
-  },
-  watch: {
-    jobs() {
-      this.$validator.validate(this.name);
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  created() {
-    this.$validator.attach({
-      name: this.name,
-      rules: 'min_value:1',
-      getter: () => this.jobs.length,
-      vm: this,
-    });
-  },
-  beforeDestroy() {
-    this.$validator.detach(this.name);
-  },
-  methods: {
-    addJob() {
-      this.addItemIntoArray(remediationInstructionJobToForm());
-    },
+    const jobsItems = ref([]);
 
-    async fetchList() {
-      const { data: jobs } = await this.fetchRemediationJobsListWithoutStore({
+    const { pending, handler: fetchList } = usePendingHandler(async () => {
+      const { data: jobs } = await fetchRemediationJobsListWithoutStore({
         params: {
           limit: MAX_LIMIT,
         },
       });
 
-      this.jobsItems = jobs;
-    },
+      jobsItems.value = jobs;
+    });
+
+    const addJob = () => {
+      jobsField.value = [...jobsField.value, remediationInstructionJobToForm()];
+    };
+    const updateItemInArray = (index, value) => {
+      const jobs = [...jobsField.value];
+
+      jobs[index] = value;
+      jobsField.value = jobs;
+    };
+    const removeJob = (index) => {
+      jobsField.value = jobsField.value.filter((job, jobIndex) => jobIndex !== index);
+    };
+
+    onMounted(fetchList);
+
+    return {
+      t,
+      draggableGroup,
+      jobsField,
+      jobsItems,
+      pending,
+      updateItemInArray,
+      addJob,
+      removeJob,
+    };
   },
 };
 </script>

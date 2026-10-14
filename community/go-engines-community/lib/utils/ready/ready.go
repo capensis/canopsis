@@ -16,21 +16,24 @@ func CheckAll(
 	ctx context.Context,
 	retryDelay time.Duration,
 	retries int,
-	withPostgres, withTechPostgres bool,
+	diagnosePostgresMigration, withPostgres, withTechPostgres bool,
 	logger zerolog.Logger,
 ) error {
+	var err error
 	logger.Info().Msg("checking")
-	err := Check(ctx, CheckRedis, "redis", retryDelay, retries, logger)
-	if err != nil {
-		return err
-	}
-	err = Check(ctx, CheckMongo, "mongo", retryDelay, retries, logger)
-	if err != nil {
-		return err
-	}
-	err = Check(ctx, CheckAMQP, "amqp", retryDelay, retries, logger)
-	if err != nil {
-		return err
+	if !diagnosePostgresMigration {
+		err = Check(ctx, CheckRedis, "redis", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
+		err = Check(ctx, CheckMongo, "mongo", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
+		err = Check(ctx, CheckAMQP, "amqp", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
 	}
 
 	if withPostgres {

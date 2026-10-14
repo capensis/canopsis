@@ -1,202 +1,192 @@
 <template>
-  <bar-chart
-    :datasets="datasets"
-    :options="chartOptions"
-    :dark="$system.dark"
-  >
+  <bar-chart :datasets="datasets" :options="chartOptions">
     <template #actions="{ chart }">
       <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
-        v-on="$listeners"
+        @export:csv="$emit('export:csv')"
+        @export:png="$emit('export:png', $event)"
       />
     </template>
   </bar-chart>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
+
 import { COLORS } from '@/config';
 import {
-  SAMPLINGS,
   REMEDIATION_STATISTICS_BAR_PERCENTAGE,
   REMEDIATION_STATISTICS_CHART_DATA_TYPE,
-  TIME_UNITS_BY_SAMPLING,
+  SAMPLINGS,
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
+import { useI18n } from '@/hooks/i18n';
+
 import BarChart from '@/components/common/chart/bar-chart.vue';
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
 
-export default {
-  inject: ['$system'],
-  components: { ChartExportActions, BarChart },
-  props: {
-    metrics: {
-      type: Array,
-      default: () => [],
-    },
-    dataType: {
-      type: String,
-      default: REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
-    },
-    sampling: {
-      type: String,
-      default: SAMPLINGS.day,
-    },
-    responsive: {
-      type: Boolean,
-      default: false,
-    },
-    downloading: {
-      type: Boolean,
-      default: false,
-    },
-    minDate: {
-      type: Number,
-      required: false,
-    },
+const props = defineProps({
+  metrics: {
+    type: Array,
+    default: () => [],
   },
-  computed: {
-    isPercentDataType() {
-      return this.dataType === REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent;
-    },
+  dataType: {
+    type: String,
+    default: REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
+  },
+  sampling: {
+    type: String,
+    default: SAMPLINGS.day,
+  },
+  downloading: {
+    type: Boolean,
+    default: false,
+  },
+  minDate: {
+    type: Number,
+    required: false,
+  },
+});
 
-    maxValueByType() {
-      return this.isPercentDataType ? 100 : null;
-    },
+defineEmits(['export:csv', 'export:png']);
 
-    samplingUnit() {
-      return TIME_UNITS_BY_SAMPLING[this.sampling];
-    },
+const { t } = useI18n();
 
-    datasets() {
-      if (this.isPercentDataType) {
-        const ratio = this.metrics.map(metric => ({
-          x: metric.timestamp * 1000,
-          y: metric.ratio,
-        }));
+const isPercentDataType = computed(
+  () => props.dataType === REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
+);
+const maxValueByType = computed(() => (isPercentDataType.value ? 100 : null));
 
-        return [{
-          backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticRatioRemediations),
-          barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-          label: this.$tc('common.percent', 1),
-          order: 1,
-          data: ratio,
-        }];
-      }
+const datasets = computed(() => {
+  if (isPercentDataType.value) {
+    const ratio = props.metrics.map(metric => ({
+      x: metric.timestamp * 1000,
+      y: metric.ratio,
+    }));
 
-      const { assigned, executed } = this.metrics.reduce((acc, metric) => {
-        const x = metric.timestamp * 1000;
-
-        acc.assigned.push({ x, y: metric.assigned, assigned: true });
-        acc.executed.push({ x, y: metric.executed });
-
-        return acc;
-      }, {
-        assigned: [],
-        executed: [],
-      });
-
-      return [{
-        backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
+    return [
+      {
+        backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticRatioRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediation.statistic.labels.withAssignedRemediations'),
-        order: 2,
-        data: assigned,
-      }, {
-        backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticExecutedRemediations),
-        barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediation.statistic.labels.remediated'),
+        label: t('common.percent'),
         order: 1,
-        data: executed,
-      }];
+        data: ratio,
+      },
+    ];
+  }
+
+  const { assigned, executed } = props.metrics.reduce(
+    (acc, metric) => {
+      const x = metric.timestamp * 1000;
+
+      acc.assigned.push({ x, y: metric.assigned, assigned: true });
+      acc.executed.push({ x, y: metric.executed });
+
+      return acc;
     },
-
-    chartOptions() {
-      return {
-        animation: false,
-        responsive: this.responsive,
-        scales: {
-          x: {
-            type: 'time',
-            stacked: true,
-            ticks: {
-              min: this.minDate * 1000,
-              max: Date.now(),
-              source: 'data',
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-              callback: this.getChartTimeTickLabel,
-            },
-          },
-          y: {
-            max: this.maxValueByType,
-            beginAtZero: true,
-            ticks: {
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-              callback: this.getChartValueTickLabel,
-            },
-          },
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        plugins: {
-          legend: {
-            position: 'top',
-            align: 'end',
-            labels: {
-              boxWidth: 20,
-              boxHeight: 20,
-            },
-          },
-          tooltip: {
-            itemSort: (a, b) => b.dataset.order - a.dataset.order,
-            callbacks: {
-              title: this.getChartTooltipTitle,
-              label: this.getChartTooltipLabel,
-            },
-          },
-        },
-      };
+    {
+      assigned: [],
+      executed: [],
     },
-  },
-  methods: {
-    getChartValueTickLabel(value) {
-      return `${value}${this.isPercentDataType ? '%' : ''}`;
+  );
+
+  return [
+    {
+      backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
+      barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
+      label: t('remediation.statistic.labels.withAssignedRemediations'),
+      order: 2,
+      data: assigned,
     },
-
-    getChartTimeTickLabel(_, index, data) {
-      const { value } = data[index] ?? {};
-
-      return getDateLabelBySampling(value, this.sampling).split('\n');
+    {
+      backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticExecutedRemediations),
+      barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
+      label: t('remediation.statistic.labels.remediated'),
+      order: 1,
+      data: executed,
     },
+  ];
+});
 
-    getChartTooltipTitle(data) {
-      const [dataset] = data;
-      const { x: timestamp } = dataset.raw;
+const getChartValueTickLabel = value => `${value}${isPercentDataType.value ? '%' : ''}`;
+const getChartTimeTickLabel = (_, index, data) => {
+  const { value } = data[index] ?? {};
 
-      return getDateLabelBySampling(timestamp, this.sampling);
-    },
-
-    getChartTooltipLabel(tooltip) {
-      const { raw } = tooltip;
-
-      if (this.isPercentDataType) {
-        return this.$t('remediation.statistic.tooltips.remediated', { value: `${raw.y}%` });
-      }
-
-      return this.$t(`remediation.statistic.tooltips.${raw.assigned ? 'assigned' : 'remediated'}`, { value: raw.y });
-    },
-  },
+  return getDateLabelBySampling(value, props.sampling).split('\n');
 };
+
+const getChartTooltipTitle = (data) => {
+  const [dataset] = data;
+  const { x: timestamp } = dataset.raw;
+
+  return getDateLabelBySampling(timestamp, props.sampling);
+};
+
+const getChartTooltipLabel = ({ raw }) => {
+  if (isPercentDataType.value) {
+    return t('remediation.statistic.tooltips.remediated', { value: `${raw.y}%` });
+  }
+
+  return t(`remediation.statistic.tooltips.${raw.assigned ? 'assigned' : 'remediated'}`, {
+    value: raw.y,
+  });
+};
+
+const chartOptions = computed(() => ({
+  animation: false,
+  responsive: true,
+  scales: {
+    x: {
+      type: 'time',
+      stacked: true,
+      ticks: {
+        min: props.minDate ? props.minDate * 1000 : undefined,
+        max: Date.now(),
+        source: 'data',
+        font: {
+          size: 11,
+          family: 'Arial, sans-serif',
+        },
+        callback: getChartTimeTickLabel,
+      },
+    },
+    y: {
+      max: maxValueByType.value,
+      beginAtZero: true,
+      ticks: {
+        font: {
+          size: 11,
+          family: 'Arial, sans-serif',
+        },
+        callback: getChartValueTickLabel,
+      },
+    },
+  },
+  interaction: {
+    intersect: false,
+    mode: 'index',
+  },
+  plugins: {
+    legend: {
+      position: 'top',
+      align: 'end',
+      labels: {
+        boxWidth: 20,
+        boxHeight: 20,
+      },
+    },
+    tooltip: {
+      itemSort: (a, b) => b.dataset.order - a.dataset.order,
+      callbacks: {
+        title: getChartTooltipTitle,
+        label: getChartTooltipLabel,
+      },
+    },
+  },
+}));
 </script>

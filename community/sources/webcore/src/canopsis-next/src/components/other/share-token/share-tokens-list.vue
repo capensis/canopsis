@@ -1,7 +1,7 @@
 <template>
   <c-advanced-data-table
-    :items="shareTokens"
     :headers="headers"
+    :items="shareTokens"
     :loading="pending"
     :total-items="totalItems"
     :options="options"
@@ -13,34 +13,53 @@
     <template #mass-actions="{ selected }">
       <c-action-btn
         v-if="removable"
-        :tooltip="$t('shareToken.revokeSelectedTokens')"
+        :tooltip="t('shareToken.revokeSelectedTokens')"
         type="delete"
+        small
         @click="$emit('remove-selected', selected)"
       />
     </template>
+
     <template #created="{ item }">
-      {{ item.created | date }}
+      {{ dateToString(item.created) }}
     </template>
+
     <template #expired="{ item }">
-      {{ item.expired | date('long', $t('common.notAvailable')) }}
+      {{ dateToString(item.expired, notAvailableText) }}
     </template>
+
     <template #accessed="{ item }">
-      {{ item.accessed | date('long', $t('common.notAvailable')) }}
+      {{ dateToString(item.accessed, notAvailableText) }}
     </template>
+
+    <template #roles="{ item }">
+      <div class="d-flex flex-wrap ga-1">
+        <v-chip v-for="role in item.roles" :key="role._id">
+          {{ role.name }}
+        </v-chip>
+      </div>
+    </template>
+
     <template #actions="{ item }">
-      <v-layout>
+      <div class="d-flex">
         <c-action-btn
           v-if="removable"
-          :tooltip="$t('shareToken.revokeToken')"
+          :tooltip="t('shareToken.revokeToken')"
           type="delete"
-          @click="$emit('remove', item)"
+          @click.stop="$emit('remove', item)"
         />
-      </v-layout>
+      </div>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     shareTokens: {
@@ -49,11 +68,11 @@ export default {
     },
     pending: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     totalItems: {
       type: Number,
-      required: false,
+      default: 0,
     },
     options: {
       type: Object,
@@ -64,25 +83,67 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      const headers = [
-        { text: this.$t('common.id'), value: '_id', sortable: false },
-        { text: this.$t('common.description'), value: 'description' },
-        { text: this.$t('common.value'), value: 'value', sortable: false },
-        { text: this.$tc('common.user'), value: 'user.display_name' },
-        { text: this.$tc('common.role'), value: 'role.name', sortable: false },
-        { text: this.$t('common.created'), value: 'created' },
-        { text: this.$t('common.expired'), value: 'expired' },
-        { text: this.$t('common.accessed'), value: 'accessed' },
+
+  emits: ['update:options', 'remove', 'remove-selected'],
+
+  setup(props) {
+    const { t } = useI18n();
+
+    const headers = computed(() => {
+      const items = [
+        {
+          text: t('common.name'),
+          value: 'description',
+        },
+        {
+          text: t('common.value'),
+          value: 'value',
+          sortable: false,
+        },
+        {
+          text: t('common.user'),
+          value: 'user.display_name',
+          sortable: false,
+        },
+        {
+          text: t('common.role', 2),
+          value: 'roles',
+          sortable: false,
+        },
+        {
+          text: t('common.created'),
+          value: 'created',
+        },
+        {
+          text: t('apiToken.expirationDate'),
+          value: 'expired',
+        },
+        {
+          text: t('apiToken.lastUsedDate'),
+          value: 'accessed',
+        },
       ];
 
-      if (this.removable) {
-        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
+      if (props.removable) {
+        items.push({
+          text: t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+        });
       }
 
-      return headers;
-    },
+      return items;
+    });
+
+    const notAvailableText = computed(() => t('common.notAvailable'));
+    const dateToString = (date, defaultValue) => convertDateToString(date, undefined, defaultValue);
+
+    return {
+      t,
+      headers,
+      notAvailableText,
+      dateToString,
+    };
   },
 };
 </script>

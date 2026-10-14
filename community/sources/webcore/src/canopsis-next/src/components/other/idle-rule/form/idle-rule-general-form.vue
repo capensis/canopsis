@@ -1,112 +1,156 @@
 <template>
-  <v-layout column>
-    <template v-if="!isEntityType">
-      <idle-rule-alarm-type-field
-        v-field="form.alarm_condition"
-        :label="$t('common.type')"
-        class="mb-2"
-      />
-    </template>
+  <c-layout column>
     <c-name-field
-      v-field="form.name"
+      v-model="nameField"
+      :max-length="FORM_MAX_STRING_LENGTH"
       autofocus
       required
     />
-    <c-description-field
-      v-field="form.description"
-      required
-    />
-    <v-layout justify-space-between>
-      <v-flex xs7>
+
+    <c-form-block>
+      <c-form-block-row :label="t('common.priority')">
+        <c-priority-field v-model="priorityField" :min="MIN_PRIORITY" />
+      </c-form-block-row>
+
+      <c-form-block-row v-if="!isEntityType" :label="t('common.type')" indented>
+        <idle-rule-alarm-type-field v-model="alarmConditionField" :label="t('common.type')" />
+      </c-form-block-row>
+
+      <c-form-block-row :label="t('common.description')" indented>
+        <c-description-field v-model="descriptionField" required />
+      </c-form-block-row>
+
+      <c-form-block-row :label="t('idleRules.timeRangeAwaiting')">
         <c-duration-field
-          v-field="form.duration"
-          :label="$t('idleRules.timeRangeAwaiting')"
+          v-model:duration="durationField"
+          :label="t('idleRules.timeRangeAwaiting')"
+          :min="MIN_DURATION_VALUE"
+          name="duration"
           required
         />
-      </v-flex>
-      <v-flex xs3>
-        <c-priority-field v-field="form.priority" />
-      </v-flex>
-    </v-layout>
-    <c-disable-during-periods-field v-field="form.disable_during_periods" />
-    <template v-if="!isEntityType">
-      <c-action-type-field
-        v-field="form.operation.type"
-        :types="actionTypes"
-        name="operation.type"
-      />
-      <action-parameters-form
-        v-model="parameters"
-        :type="form.operation.type"
-        name="operation.parameters"
-      />
-      <c-description-field
-        v-if="isAssociateTicketAction"
-        v-field="form.comment"
-        :label="$tc('common.comment')"
-        name="comment"
-      />
-    </template>
-  </v-layout>
+      </c-form-block-row>
+
+      <c-form-block-row :label="t('common.disableDuringPeriods')">
+        <c-disable-during-periods-field v-model="disableDuringPeriodsField" />
+      </c-form-block-row>
+
+      <template v-if="!isEntityType">
+        <c-form-block-row :label="t('common.type')">
+          <c-action-type-field
+            v-model="operationTypeField"
+            :types="actionTypes"
+            name="operation.type"
+          />
+        </c-form-block-row>
+
+        <action-parameters-form
+          v-model="parameters"
+          :type="operationTypeField"
+          :depth="1"
+          name="operation.parameters"
+        />
+
+        <c-form-block-row
+          v-if="isAssociateTicketAction"
+          :label="t('common.comment')"
+          :depth="1"
+          indented
+          top-border
+        >
+          <c-description-field v-model="commentField" :label="t('common.comment')" name="comment" />
+        </c-form-block-row>
+      </template>
+    </c-form-block>
+  </c-layout>
 </template>
 
 <script>
-import { ACTION_TYPES } from '@/constants';
+import { computed } from 'vue';
+
+import { ACTION_TYPES, FORM_MAX_STRING_LENGTH, MIN_DURATION_VALUE, MIN_PRIORITY } from '@/constants';
 
 import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
-import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 
 import IdleRuleAlarmTypeField from './fields/idle-rule-alarm-type-field.vue';
 
+const IDLE_RULE_ACTION_TYPES = [
+  ACTION_TYPES.snooze,
+  ACTION_TYPES.ack,
+  ACTION_TYPES.ackremove,
+  ACTION_TYPES.cancel,
+  ACTION_TYPES.assocticket,
+  ACTION_TYPES.changeState,
+  ACTION_TYPES.pbehavior,
+  ACTION_TYPES.pause,
+];
+
 export default {
-  inject: ['$validator'],
-  components: { IdleRuleAlarmTypeField, ActionParametersForm },
-  mixins: [formMixin, formValidationHeaderMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
+  components: {
+    ActionParametersForm,
+    IdleRuleAlarmTypeField,
   },
+
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     isEntityType: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    parameters: {
-      get() {
-        const { type, parameters } = this.form.operation;
 
-        return parameters[type];
-      },
+  setup() {
+    const { t } = useI18n();
+    const form = useFormContext();
 
-      set(value) {
-        this.updateField(`operation.parameters.${this.form.operation.type}`, value);
-      },
-    },
+    const {
+      nameField,
+      priorityField,
+      alarmConditionField,
+      descriptionField,
+      durationField,
+      disableDuringPeriodsField,
+      operationTypeField,
+      commentField,
+    } = form.models({
+      nameField: 'name',
+      priorityField: 'priority',
+      alarmConditionField: 'alarm_condition',
+      descriptionField: 'description',
+      durationField: 'duration',
+      disableDuringPeriodsField: 'disable_during_periods',
+      operationTypeField: 'operation.type',
+      commentField: 'comment',
+    });
 
-    isAssociateTicketAction() {
-      return isAssociateTicketActionType(this.form.operation.type);
-    },
+    const parameters = computed({
+      get: () => form.getValue(`operation.parameters.${operationTypeField.value}`),
+      set: value => form.setValue(`operation.parameters.${operationTypeField.value}`, value),
+    });
 
-    actionTypes() {
-      return [
-        ACTION_TYPES.snooze,
-        ACTION_TYPES.ack,
-        ACTION_TYPES.ackremove,
-        ACTION_TYPES.cancel,
-        ACTION_TYPES.assocticket,
-        ACTION_TYPES.changeState,
-        ACTION_TYPES.pbehavior,
-      ];
-    },
+    const isAssociateTicketAction = computed(() => isAssociateTicketActionType(operationTypeField.value),
+    );
+
+    return {
+      t,
+      nameField,
+      priorityField,
+      alarmConditionField,
+      descriptionField,
+      durationField,
+      disableDuringPeriodsField,
+      operationTypeField,
+      commentField,
+      parameters,
+      actionTypes: IDLE_RULE_ACTION_TYPES,
+      isAssociateTicketAction,
+      FORM_MAX_STRING_LENGTH,
+      MIN_DURATION_VALUE,
+      MIN_PRIORITY,
+    };
   },
 };
 </script>

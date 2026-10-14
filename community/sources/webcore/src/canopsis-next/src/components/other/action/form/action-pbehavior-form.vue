@@ -1,29 +1,50 @@
 <template>
-  <pbehavior-form
-    v-field="value"
-    :name-label="$t('common.namePrefix')"
-    :name-tooltip="$t('scenario.tooltips.pbehaviorActionsNamePrefix')"
-    no-pattern
-    no-enabled
-    no-comments
+  <pbehavior-general-form
+    :form="modelValue"
+    :name="name"
+    :name-label="t('common.namePrefix')"
+    :name-tooltip="t('scenario.tooltips.pbehaviorActionsNamePrefix')"
+    :depth="depth"
     with-start-on-trigger
+    block-child
+    no-comments
+    @update:form="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
-import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
+import { useI18n } from '@/hooks/i18n';
+
+import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
 export default {
-  components: { PbehaviorForm },
-  model: {
-    prop: 'value',
-    event: 'input',
+  components: {
+    PbehaviorGeneralForm,
   },
+
   props: {
-    value: {
+    modelValue: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
+    name: {
+      type: String,
+      default: 'parameters',
+    },
+    depth: {
+      type: Number,
+      default: 0,
+    },
+  },
+
+  emits: ['update:modelValue'],
+
+  setup() {
+    const { t } = useI18n();
+
+    return {
+      t,
+    };
   },
 };
 </script>

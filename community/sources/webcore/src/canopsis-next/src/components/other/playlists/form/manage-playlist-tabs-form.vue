@@ -1,146 +1,116 @@
 <template>
-  <v-layout>
-    <v-flex
-      class="manage-playlist-tabs mr-2"
-      xs12
+  <div class="manage-playlist-tabs">
+    <div class="text-center mb-2">
+      {{ t('modals.createPlaylist.groups') }}
+    </div>
+
+    <v-expansion-panels
+      :model-value="openedPanels"
+      variant="accordion"
+      multiple
+      readonly
     >
-      <v-flex class="text-center mb-2">
-        {{ $t('modals.createPlaylist.groups') }}
-      </v-flex>
-      <v-expansion-panels
-        :value="openedPanels"
-        accordion
-        readonly
-        multiple
-        dark
+      <group-panel
+        v-for="group in groups"
+        :key="group._id"
+        :group="group"
+        hide-actions
       >
-        <group-panel
-          v-for="group in groups"
-          :key="group._id"
-          :group="group"
-          hide-actions
+        <template #title>
+          <v-checkbox
+            :model-value="isGroupSelected(group)"
+            :disabled="isDisabledGroup(group)"
+            :label="group.title"
+            class="manage-playlist-tabs__checkbox"
+            color="primary"
+            density="compact"
+            hide-details
+            @click.stop
+            @update:model-value="selectGroupHandler(group, $event)"
+          />
+        </template>
+
+        <v-expansion-panels
+          :model-value="getPanelValueFromArray(group.views)"
+          variant="accordion"
+          multiple
+          readonly
         >
-          <template #title="">
-            <v-layout align-center>
-              <v-checkbox
-                :input-value="selectedGroupsIds"
-                :value="group._id"
-                :disabled="isDisabledGroup(group)"
-                class="group-checkbox mt-0 pt-0"
-                color="primary"
-                @change="selectGroupHandler(group, $event)"
-              >
-                <template #label>
-                  {{ group.title }}
-                </template>
-              </v-checkbox>
-            </v-layout>
-          </template>
-          <v-expansion-panels
-            :value="getPanelValueFromArray(group.views)"
-            accordion
-            readonly
-            hide-actions
-            multiple
-            dark
-          >
-            <v-expansion-panel
-              v-for="view in group.views"
-              :key="view._id"
-              class="tabs-panel"
-            >
-              <v-expansion-panel-header
-                class="pa-0"
-                hide-actions
-              >
-                <group-view-panel :view="view">
-                  <template #title="">
-                    <v-checkbox
-                      :input-value="selectedViewsIds"
-                      :value="view._id"
-                      :disabled="isDisabledView(view)"
-                      class="group-checkbox mt-0 pt-0"
-                      color="primary"
-                      @change="selectViewHandler(view, $event)"
-                    >
-                      <template #label>
-                        <span class="text-truncate fill-width">
-                          {{ view.title }}
-                          <span
-                            v-show="view.description"
-                            class="ml-1"
-                          >
-                            ({{ view.description }})
-                          </span>
-                        </span>
-                      </template>
-                    </v-checkbox>
-                  </template>
-                </group-view-panel>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content hide-actions>
-                <v-expansion-panels
-                  :value="getPanelValueFromArray(view.tabs)"
-                  accordion
-                  readonly
-                  hide-actions
-                  multiple
-                  dark
-                >
-                  <v-expansion-panel
-                    v-for="tab in view.tabs"
-                    :key="tab._id"
+          <v-expansion-panel v-for="view in group.views" :key="view._id" class="tabs-panel">
+            <v-expansion-panel-title class="pa-0" hide-actions>
+              <group-view-panel :view="view">
+                <template #title>
+                  <v-checkbox
+                    :model-value="isViewSelected(view)"
+                    :disabled="isDisabledView(view)"
+                    class="manage-playlist-tabs__checkbox"
+                    color="primary"
+                    density="compact"
+                    hide-details
+                    @click.stop
+                    @update:model-value="selectViewHandler(view, $event)"
                   >
-                    <v-expansion-panel-header
-                      class="pa-0"
-                      hide-actions
-                    >
-                      <tab-panel-content :tab="tab">
-                        <template #title="">
-                          <v-checkbox
-                            :input-value="selectedTabsIds"
-                            :value="tab._id"
-                            :label="tab.title"
-                            class="ml-10"
-                            color="primary"
-                            @change="selectTabHandler(tab, $event)"
-                          >
-                            <template #label>
-                              {{ tab.title }}
-                            </template>
-                          </v-checkbox>
-                        </template>
-                      </tab-panel-content>
-                    </v-expansion-panel-header>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </group-panel>
-      </v-expansion-panels>
-    </v-flex>
-  </v-layout>
+                    <template #label>
+                      <span class="text-truncate w-100">
+                        {{ view.title }}
+                        <span v-show="view.description" class="ml-1">
+                          ({{ view.description }})
+                        </span>
+                      </span>
+                    </template>
+                  </v-checkbox>
+                </template>
+              </group-view-panel>
+            </v-expansion-panel-title>
+
+            <v-expansion-panel-text>
+              <v-expansion-panels
+                :model-value="getPanelValueFromArray(view.tabs)"
+                variant="accordion"
+                multiple
+                readonly
+              >
+                <v-expansion-panel v-for="tab in view.tabs" :key="tab._id">
+                  <v-expansion-panel-title class="pa-0" hide-actions>
+                    <div class="tab-panel-item secondary lighten-2">
+                      <v-checkbox
+                        :model-value="selectedTabsIds.includes(tab._id)"
+                        :label="tab.title"
+                        class="manage-playlist-tabs__checkbox ml-10"
+                        color="primary"
+                        density="compact"
+                        hide-details
+                        @click.stop
+                        @update:model-value="selectTabHandler(tab, $event)"
+                      />
+                    </div>
+                  </v-expansion-panel-title>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </group-panel>
+    </v-expansion-panels>
+  </div>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { createRangeArray } from '@/helpers/array';
 
-import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
-import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
+import { useI18n } from '@/hooks/i18n';
 
-import TabPanelContent from '../partials/tab-panel-content.vue';
+import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
+import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 
 export default {
   components: {
-    TabPanelContent,
-    GroupViewPanel,
     GroupPanel,
+    GroupViewPanel,
   },
-  model: {
-    prop: 'selectedTabs',
-    event: 'input',
-  },
+
   props: {
     groups: {
       type: Array,
@@ -151,97 +121,137 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    openedPanels() {
-      return this.getPanelValueFromArray(this.groups);
-    },
 
-    selectedTabsIds() {
-      return this.selectedTabs.map(({ _id }) => _id);
-    },
+  emits: ['update:selectedTabs'],
 
-    selectedViewsIds() {
-      return this.groups.reduce((acc, { views }) => {
-        views.forEach(({ _id: viewId, tabs = [] }) => {
-          if (tabs.length && tabs.every(({ _id: tabId }) => this.selectedTabsIds.includes(tabId))) {
-            acc.push(viewId);
-          }
-        });
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-        return acc;
-      }, []);
-    },
+    const openedPanels = computed(() => createRangeArray(props.groups.length));
+    const selectedTabsIds = computed(() => props.selectedTabs.map(({ _id }) => _id));
 
-    selectedGroupsIds() {
-      return this.groups.reduce((acc, { _id: groupId, views }) => {
-        if (views.length && views.every(({ _id: viewId }) => this.selectedViewsIds.includes(viewId))) {
-          acc.push(groupId);
-        }
+    const getPanelValueFromArray = values => createRangeArray(values?.length ?? 0);
+    const isDisabledView = view => !view.tabs?.length;
+    const isDisabledGroup = group => !group.views?.length || group.views.every(isDisabledView);
+    const isViewSelected = view =>
+      !!view.tabs?.length && view.tabs.every(({ _id }) => selectedTabsIds.value.includes(_id));
+    const isGroupSelected = group => !!group.views?.length && group.views.every(isViewSelected);
 
-        return acc;
-      }, []);
-    },
-  },
-  methods: {
-    getPanelValueFromArray(values = []) {
-      return createRangeArray(values.length);
-    },
-
-    selectTabHandler(tab, checkedTabs) {
-      const checked = checkedTabs.includes(tab._id);
-
-      this.updateSelectedTabs([tab], checked);
-    },
-
-    selectViewHandler(view, checkedViewsIds) {
-      const checked = checkedViewsIds.includes(view._id);
-
-      this.updateSelectedTabs(view.tabs, checked);
-    },
-
-    selectGroupHandler(group, selectedGroups) {
-      const checked = selectedGroups.includes(group._id);
-      const groupTabs = group.views.reduce((acc, view) => {
-        acc.push(...view.tabs);
-        return acc;
-      }, []);
-
-      this.updateSelectedTabs(groupTabs, checked);
-    },
-
-    updateSelectedTabs(tabs, checked) {
+    const updateSelectedTabs = (tabs, checked) => {
       const tabIds = tabs.map(({ _id }) => _id);
-      const tabsWithoutSelected = this.selectedTabs.filter(({ _id: tabId }) => !tabIds.includes(tabId));
+      const tabsWithoutSelected = props.selectedTabs.filter(({ _id }) => !tabIds.includes(_id));
 
-      this.$emit('input', !checked ? tabsWithoutSelected : [...tabsWithoutSelected, ...tabs]);
-    },
+      emit(
+        'update:selectedTabs',
+        checked ? [...tabsWithoutSelected, ...tabs] : tabsWithoutSelected,
+      );
+    };
 
-    isDisabledGroup(group) {
-      return !group.views.length || group.views.every(this.isDisabledView);
-    },
+    const selectTabHandler = (tab, checked) => updateSelectedTabs([tab], checked);
+    const selectViewHandler = (view, checked) => updateSelectedTabs(view.tabs ?? [], checked);
+    const selectGroupHandler = (group, checked) => {
+      const groupTabs =
+        group.views?.reduce((acc, view) => {
+          acc.push(...(view.tabs ?? []));
 
-    isDisabledView(view) {
-      return !view.tabs?.length;
-    },
+          return acc;
+        }, []) ?? [];
+
+      updateSelectedTabs(groupTabs, checked);
+    };
+
+    return {
+      t,
+      openedPanels,
+      selectedTabsIds,
+      getPanelValueFromArray,
+      isDisabledView,
+      isDisabledGroup,
+      isViewSelected,
+      isGroupSelected,
+      selectTabHandler,
+      selectViewHandler,
+      selectGroupHandler,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .manage-playlist-tabs {
-    & ::v-deep .panel-header {
-      display: flex;
-      flex: inherit;
-      align-items: center;
+.manage-playlist-tabs {
+  :deep(.v-expansion-panel-text__wrapper) {
+    padding: 0;
+  }
+
+  :deep(.group-panel__title) {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  :deep(.group-view-panel),
+  :deep(.panel-item-content),
+  :deep(.panel-item-content__title) {
+    min-height: 48px;
+    height: 48px;
+    overflow: hidden;
+  }
+
+  :deep(.group-view-panel),
+  :deep(.panel-item-content),
+  :deep(.panel-item-content__title) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  :deep(.group-view-panel) {
+    flex: 1 1 auto;
+  }
+
+  :deep(.panel-item-content) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  &__checkbox {
+    width: 100%;
+    min-height: 48px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    :deep(.v-input__control),
+    :deep(.v-selection-control) {
+      min-height: 48px;
+      height: 48px;
     }
-    & ::v-deep .v-expansion-panel__body {
-      transition: none !important;
+
+    :deep(.v-selection-control__wrapper) {
+      flex: 0 0 40px;
+      height: 48px;
+    }
+
+    :deep(.v-label) {
+      min-width: 0;
+      overflow: hidden;
     }
   }
-  .tabs-panel {
-    & ::v-deep .v-expansion-panel__header {
-      padding: 0;
-      margin: 0;
-    }
+}
+
+.tabs-panel {
+  :deep(.v-expansion-panel-title) {
+    padding: 0;
+    margin: 0;
   }
+}
+
+.tab-panel-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+}
 </style>

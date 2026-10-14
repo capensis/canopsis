@@ -1,23 +1,15 @@
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters, mapActions } = createNamespacedHelpers('filter');
-
 export const entitiesFilterMixin = {
   computed: {
-    ...mapGetters({
-      filters: 'items',
-      filtersPending: 'pending',
-      filtersMeta: 'meta',
-    }),
+    filters: () => [],
+    filtersPending: () => false,
+    filtersMeta: () => ({}),
   },
   methods: {
-    ...mapActions({
-      fetchFiltersListWithoutStore: 'fetchListWithoutStore',
-      fetchFiltersListWithPreviousParams: 'fetchListWithPreviousParams',
-      fetchFiltersList: 'fetchList',
-      removeFilter: 'remove',
-      createFilter: 'create',
-      updateFilter: 'update',
-    }),
+    fetchFiltersListWithoutStore: () => Promise.resolve({ data: [] }),
+    fetchFiltersListWithPreviousParams: () => Promise.resolve({ data: [] }),
+    fetchFiltersList: () => Promise.resolve({ data: [] }),
+    removeFilter: () => Promise.resolve(),
+    createFilter: () => Promise.resolve(),
+    updateFilter: () => Promise.resolve(),
   },
 };

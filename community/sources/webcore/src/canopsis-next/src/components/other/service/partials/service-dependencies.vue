@@ -1,115 +1,92 @@
 <template>
-  <v-layout column>
-    <service-dependencies-show-type-field
-      v-if="isCustomType"
-      v-model="showType"
-      class="mb-3"
-    />
+  <c-layout column>
+    <service-dependencies-show-type-field v-if="isCustomType" v-model="showType" class="mb-3" />
     <state-settings-summary
       v-if="showStateSetting"
       :pending="pendingStateSetting"
       :state-setting="stateSetting"
       :entity="root"
+      class="mb-3"
     />
-    <c-treeview-data-table
-      ref="treeviewDataTable"
-      :items="items"
-      :headers="headers"
-      :loading="hasActivePending"
-      :load-children="loadChildren"
-      class="service-dependencies"
-      item-key="key"
-    >
-      <template #expand="{ item }">
-        <service-dependencies-expand
+    <v-table class="service-dependencies" density="compact">
+      <thead>
+        <tr>
+          <th class="service-dependencies__icons" />
+          <th v-for="column in headers" :key="column.value">
+            {{ column.text }}
+          </th>
+        </tr>
+        <tr>
+          <th :colspan="headers.length + 1" class="service-dependencies__loader pa-0">
+            <v-progress-linear
+              :active="hasActivePending"
+              color="primary"
+              height="2"
+              indeterminate
+            />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <service-dependencies-row
+          v-for="item in items"
+          :key="item.key"
           :item="item"
-          :pending="pendingByIds[item.parentId]"
+          :columns="headers"
+          :level="0"
+          :opened="opened"
+          :pending-by-ids="pendingByIds"
+          @toggle="toggle"
           @load="loadMore"
           @show="showTreeOfDependenciesModal"
         />
-      </template>
-      <template #expand-append="{ item }">
-        <div
-          v-if="includeRoot && isInRootIds(item._id)"
-          class="expand-append"
-        >
-          <v-icon>arrow_right_alt</v-icon>
-          <v-chip
-            :class="getEntityColorClass(item.entity)"
-            class="ma-0"
-            text-color="white"
-          >
-            <span class="px-2 text-body-2 font-weight-bold">{{ item.entity.impact_state }}</span>
-          </v-chip>
-        </div>
-      </template>
-      <template #items="{ item }">
-        <tr>
-          <td
-            v-for="(header, index) in headers"
-            :key="header.value"
-          >
-            <c-no-events-icon
-              v-if="!index"
-              :value="item.entity | get('idle_since')"
-              color="error"
-              top
-            />
-            <service-dependencies-entity-cell
-              v-else-if="item.entity"
-              :item="item"
-              :column="header"
-            />
-          </td>
-        </tr>
-      </template>
-    </c-treeview-data-table>
-  </v-layout>
+      </tbody>
+    </v-table>
+  </c-layout>
 </template>
 
 <script>
-import { get, uniq } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
+import get from 'lodash/get';
+import uniq from 'lodash/uniq';
+import { mapActions } from 'pinia';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+import {
+  ENTITY_FIELDS,
+  MODALS,
+  TREE_OF_DEPENDENCIES_SHOW_TYPES,
+} from '@/constants';
 
 import Observer from '@/services/observer';
 
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { useServiceStore } from '@/stores/modules/service';
+import { useStateSettingStore } from '@/stores/modules/state-setting';
+
 import {
-  dependencyToTreeviewDependency,
-  normalizeDependencies,
-  getLoadMoreDenormalizedChild,
   dependenciesDenormalize,
+  dependencyToTreeviewDependency,
+  getLoadMoreDenormalizedChild,
+  normalizeDependencies,
 } from '@/helpers/entities/service-dependencies/list';
 
-import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
-
+import ServiceDependenciesShowTypeField from '@/components/other/service/form/fields/service-dependencies-show-type-field.vue';
 import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
-import ServiceDependenciesShowTypeField
-  from '@/components/other/service/form/fields/service-dependencies-show-type-field.vue';
 
-import ServiceDependenciesExpand from './service-dependencies-expand.vue';
-import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
-
-const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
+import ServiceDependenciesRow from './service-dependencies-row.vue';
 
 export default {
   inject: {
     $periodicRefresh: {
-      default() {
-        return new Observer();
-      },
+      default: () => new Observer(),
     },
   },
+
   components: {
+    ServiceDependenciesRow,
     ServiceDependenciesShowTypeField,
     StateSettingsSummary,
-    ServiceDependenciesExpand,
-    ServiceDependenciesEntityCell,
   },
-  mixins: [entitiesEntityDependenciesMixin],
+
   props: {
     root: {
       type: Object,
@@ -121,7 +98,7 @@ export default {
     },
     columns: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     impact: {
       type: Boolean,
@@ -136,19 +113,20 @@ export default {
       default: TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies,
     },
   },
+
   data() {
     return {
       rootIds: [],
       dependenciesByIds: {},
-
       metaByIds: {},
+      opened: [],
       pendingByIds: {},
-      pendingStateSetting: true,
+      pendingStateSetting: false,
       stateSetting: undefined,
-
       showType: TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies,
     };
   },
+
   computed: {
     isCustomType() {
       return this.type === TREE_OF_DEPENDENCIES_SHOW_TYPES.custom;
@@ -164,23 +142,19 @@ export default {
       return meta.page < meta.page_count;
     },
 
+    hasActivePending() {
+      return Object.values(this.pendingByIds).some(Boolean);
+    },
+
     treeviewRoot() {
       return dependencyToTreeviewDependency(this.root);
     },
 
-    hasActivePending() {
-      return Object.values(this.pendingByIds).some(pending => pending);
-    },
-
     headers() {
-      return [
-        { sortable: false, text: '', value: 'no-events-icon' },
-
-        ...this.columns.map(column => ({
-          ...column,
-          isState: column.value?.endsWith(ENTITY_FIELDS.state),
-        })),
-      ];
+      return this.columns.map(column => ({
+        ...column,
+        isState: column.value?.endsWith(ENTITY_FIELDS.state),
+      }));
     },
 
     items() {
@@ -197,13 +171,16 @@ export default {
       return items;
     },
   },
+
   watch: {
     type() {
       this.refresh();
     },
+
     showType() {
       this.refresh();
     },
+
     showStateSetting: {
       immediate: true,
       handler(value) {
@@ -213,29 +190,45 @@ export default {
       },
     },
   },
-  mounted() {
-    this.refresh();
 
-    this.$periodicRefresh.register(this.refresh);
+  mounted() {
+    if (this.includeRoot) {
+      this.setRootDependencies();
+    }
+
+    this.refresh();
+    this.$periodicRefresh?.register?.(this.refresh);
   },
-  beforeDestroy() {
-    this.$periodicRefresh.unregister(this.refresh);
+
+  beforeUnmount() {
+    this.$periodicRefresh?.unregister?.(this.refresh);
   },
+
   methods: {
-    ...mapEntityActions({
-      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
+    ...mapActions(useServiceStore, [
+      'fetchServiceDependenciesWithoutStore',
+      'fetchServiceImpactsWithoutStore',
+    ]),
+    ...mapActions(useStateSettingStore, {
+      fetchStateSettingsList: 'fetchList',
     }),
 
     refresh() {
-      this.setRootDependencies();
-      this.fetchRootDependencies();
+      this.fetchRootDependencies({ replace: true });
     },
 
     async fetchEntityStateSetting() {
       this.pendingStateSetting = true;
 
       try {
-        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.root._id } });
+        const { data } = await this.fetchStateSettingsList({
+          params: {
+            _id: this.root._id,
+            limit: 1,
+          },
+        });
+
+        [this.stateSetting] = data ?? [];
       } catch (err) {
         console.error(err);
       } finally {
@@ -243,7 +236,15 @@ export default {
       }
     },
 
-    async fetchRootDependencies() {
+    async fetchRootDependencies({ replace = false } = {}) {
+      if (replace) {
+        const { result, dependencies, meta } = await this.requestDependencies(this.rootId);
+
+        this.replaceRootDependencies(result, dependencies, meta);
+
+        return;
+      }
+
       const ids = await this.fetchDependenciesById(this.rootId);
 
       if (!this.includeRoot) {
@@ -251,34 +252,55 @@ export default {
       }
     },
 
-    setRootDependencies() {
-      this.$refs.treeviewDataTable.clearOpened();
-
+    replaceRootDependencies(result, dependencies, meta) {
       const dependenciesByIds = {};
       const rootIds = [];
+      const opened = [];
+
+      if (this.includeRoot) {
+        const treeviewRoot = dependencyToTreeviewDependency(this.root, this.impact);
+
+        dependenciesByIds[treeviewRoot._id] = {
+          ...treeviewRoot,
+          children: result,
+        };
+        rootIds.push(treeviewRoot._id);
+        opened.push(treeviewRoot.key);
+      }
+
+      Object.entries(dependencies).forEach(([dependencyId, dependency]) => {
+        dependenciesByIds[dependencyId] = {
+          ...dependency,
+          children: dependenciesByIds[dependencyId]?.children ?? dependency.children,
+        };
+      });
+
+      this.dependenciesByIds = dependenciesByIds;
+      this.rootIds = this.includeRoot ? rootIds : result;
+      this.metaByIds = { [this.rootId]: meta };
+      this.opened = opened;
+    },
+
+    setRootDependencies() {
+      const dependenciesByIds = {};
+      const rootIds = [];
+
+      this.opened = [];
 
       if (this.includeRoot) {
         const treeviewRoot = dependencyToTreeviewDependency(this.root, this.impact);
 
         dependenciesByIds[treeviewRoot._id] = treeviewRoot;
         rootIds.push(treeviewRoot._id);
+        this.opened.push(treeviewRoot.key);
       }
 
       this.rootIds = rootIds;
       this.dependenciesByIds = dependenciesByIds;
     },
 
-    getEntityColorClass(entity) {
-      return getEntityColorClass(entity, COLOR_INDICATOR_TYPES.impactState);
-    },
-
-    isInRootIds(id) {
-      return this.rootIds.includes(id);
-    },
-
     showTreeOfDependenciesModal(dependency) {
       const { entity } = dependency;
-
       const hasChildren = this.impact ? !!entity.impacts_count : !!entity.depends_count;
 
       if (this.rootId === entity._id || !hasChildren) {
@@ -302,7 +324,6 @@ export default {
         page: meta.page + 1,
         limit: PAGINATION_LIMIT,
       };
-
       const ids = await this.fetchDependenciesById(parentId, params);
 
       if (!this.includeRoot && isRoot) {
@@ -310,48 +331,88 @@ export default {
       }
     },
 
-    loadChildren(dependency) {
-      return this.fetchDependenciesById(dependency._id);
+    async toggle(item) {
+      if (item.loadMore || item.cycle || !item.children) {
+        return;
+      }
+
+      if (this.opened.includes(item.key)) {
+        this.opened = this.opened.filter(key => key !== item.key);
+
+        return;
+      }
+
+      if (!get(this.dependenciesByIds, [item._id, 'children', 'length'])) {
+        await this.fetchDependenciesById(item._id);
+      }
+
+      this.opened = [...this.opened, item.key];
     },
 
     getDependencyChildren(id) {
       return get(this.dependenciesByIds, [id, 'children']);
     },
 
+    async requestDependencies(id, params = { limit: PAGINATION_LIMIT }) {
+      this.pendingByIds = {
+        ...this.pendingByIds,
+        [id]: true,
+      };
+
+      try {
+        const selectedType = this.isCustomType ? this.showType : this.type;
+        const fetchList = this.impact
+          ? this.fetchServiceImpactsWithoutStore
+          : this.fetchServiceDependenciesWithoutStore;
+        const { data, meta } = await fetchList({
+          id,
+          params: {
+            ...params,
+            define_state:
+              selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
+            with_flags: true,
+          },
+        });
+        const { dependencies, result } = normalizeDependencies(data, this.impact);
+
+        return { meta, dependencies, result };
+      } finally {
+        this.pendingByIds = {
+          ...this.pendingByIds,
+          [id]: false,
+        };
+      }
+    },
+
     async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
-      this.$set(this.pendingByIds, id, true);
-
-      const selectedType = this.isCustomType
-        ? this.showType
-        : this.type;
-
-      const { data, meta } = await this.fetchDependenciesList({
-        id,
-        params: {
-          ...params,
-
-          define_state: selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
-          with_flags: true,
-        },
-      });
-
-      const { dependencies, result } = normalizeDependencies(data, this.impact);
+      const { meta, dependencies, result } = await this.requestDependencies(id, params);
 
       Object.entries(dependencies).forEach(([dependencyId, dependency]) => {
         const children = this.getDependencyChildren(dependencyId) ?? dependency.children;
 
-        this.$set(this.dependenciesByIds, dependencyId, { ...dependency, children });
+        this.dependenciesByIds = {
+          ...this.dependenciesByIds,
+          [dependencyId]: { ...dependency, children },
+        };
       });
 
       if (this.dependenciesByIds[id] && result.length) {
         const oldChildren = this.getDependencyChildren(id) ?? [];
         const children = uniq([...oldChildren, ...result]);
 
-        this.$set(this.dependenciesByIds[id], 'children', children);
+        this.dependenciesByIds = {
+          ...this.dependenciesByIds,
+          [id]: {
+            ...this.dependenciesByIds[id],
+            children,
+          },
+        };
       }
 
-      this.$set(this.metaByIds, id, meta);
-      this.$set(this.pendingByIds, id, false);
+      this.metaByIds = {
+        ...this.metaByIds,
+        [id]: meta,
+      };
 
       return result;
     },
@@ -360,16 +421,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.service-dependencies ::v-deep .v-treeview-node__label {
-  overflow: initial;
+.service-dependencies {
+  width: 100%;
 
-  &, .expand-append {
-    display: inline-flex;
-    align-items: center;
+  &__icons {
+    width: 1%;
+  }
 
-    .v-chip__content {
-      height: 20px;
-    }
+  &__loader {
+    border-bottom: none !important;
+    height: 0;
+    line-height: 0;
   }
 }
 </style>

@@ -144,9 +144,11 @@ type ApiConfig struct {
 	MetricsCacheExpiration   time.Duration
 	WebsocketPingInterval    time.Duration
 	NotificationDisplayCount int
-	LLM                      struct {
-		OffTopicErrors  []string
-		SuggestedModels []LLMModelConf
+	ActionLogger             struct {
+		Enabled bool
+	}
+	LLM struct {
+		SuggestedModels map[string][]LLMModelConf
 	}
 }
 
@@ -489,11 +491,9 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 			Msgf("AuthorScheme of %s config section is used", sectionName)
 	}
 
+	conf.ActionLogger.Enabled = parseBool(cfg.API.ActionLogger.Enabled, "Enabled", sectionName+".action_logger", logger)
+
 	conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
-	conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
-	for i := range conf.LLM.OffTopicErrors {
-		conf.LLM.OffTopicErrors[i] = strings.ToLower(conf.LLM.OffTopicErrors[i])
-	}
 
 	return &BaseApiConfigProvider{
 		conf:   conf,
@@ -555,10 +555,6 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	}
 
 	p.conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
-	p.conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
-	for i := range p.conf.LLM.OffTopicErrors {
-		p.conf.LLM.OffTopicErrors[i] = strings.ToLower(p.conf.LLM.OffTopicErrors[i])
-	}
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {

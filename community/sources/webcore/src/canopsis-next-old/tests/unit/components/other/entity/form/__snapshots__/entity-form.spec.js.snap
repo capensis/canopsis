@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity-form Renders \`entity-form\` with custom props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <div
+    additional-label="Manage Infos"
+    form="[object Object]"
+  >
+    <entity-general-form-stub
+      form="[object Object]"
+      preparestatesettingform="[Function]"
+    />
+    <entity-manage-infos-form-stub
+      infos=""
+    />
+  </div>
+</div>
+`;
+
+exports[`entity-form Renders \`entity-form\` with default form 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <div
+    additional-label="Manage Infos"
+    form="[object Object]"
+  >
+    <entity-general-form-stub
+      form="[object Object]"
+      preparestatesettingform="[Function]"
+    />
+    <entity-manage-infos-form-stub
+      infos=""
+    />
+  </div>
+</div>
+`;

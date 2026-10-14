@@ -1,26 +1,32 @@
 <template>
   <c-number-field
-    v-field="value"
-    :label="label || $t('common.priority')"
-    :disabled="disabled"
-    :loading="loading"
+    v-bind="$attrs"
+    :value="modelValue"
+    :label="label || t('common.priority')"
     :name="name"
     :min="min"
     :required="required"
-  />
+    :disabled="disabled"
+    @update:value="updateModel"
+  >
+    <template v-for="(_, slot) in $slots" #[slot]="slotProps">
+      <slot :name="slot" v-bind="slotProps || {}" />
+    </template>
+  </c-number-field>
 </template>
 
 <script>
+import { MIN_PRIORITY } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  inheritAttrs: false,
+
   props: {
-    value: {
+    modelValue: {
       type: [Number, String],
-      required: false,
+      default: undefined,
     },
     label: {
       type: String,
@@ -32,7 +38,7 @@ export default {
     },
     min: {
       type: Number,
-      default: 0,
+      default: MIN_PRIORITY,
     },
     required: {
       type: Boolean,
@@ -42,10 +48,21 @@ export default {
       type: Boolean,
       default: false,
     },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
+  },
+
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const updateModel = (value) => {
+      emit('update:modelValue', value);
+    };
+
+    return {
+      t,
+      updateModel,
+    };
   },
 };
 </script>
