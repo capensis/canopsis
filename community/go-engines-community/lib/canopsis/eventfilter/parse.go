@@ -2,6 +2,7 @@ package eventfilter
 
 import (
 	"fmt"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -11,12 +12,19 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+// ParsedExternalDataParameters extends externaldata.ParsedRefParameters with the OnMismatch
+// value carried over from ExternalDataParameters.
+type ParsedExternalDataParameters struct {
+	externaldata.ParsedRefParameters
+	OnMismatch int
+}
+
 type ParsedRule struct {
 	ID           string
 	Description  string
 	Type         string
 	Config       ParsedRuleConfig
-	ExternalData []externaldata.ParsedRefParameters
+	ExternalData []ParsedExternalDataParameters
 	Created      datetime.CpsTime
 	Updated      datetime.CpsTime
 
@@ -49,30 +57,68 @@ type ParsedAction struct {
 	Description string
 	Value       any
 	ParsedValue libtemplate.ParsedTemplate
+
+	// ExternalDataRefs lists the ExternalData references (Rule.ExternalData[*].Reference)
+	// this action's Value depends on. It's used to skip actions relying on external data
+	// that couldn't be fetched when OnMismatchSkipActions applies.
+	ExternalDataRefs []string
 }
 
 func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
+	refs := make([]string, len(rule.ExternalData))
+	for i, d := range rule.ExternalData {
+		refs[i] = d.Reference
+	}
+
 	parsedActions := make([]ParsedAction, len(rule.Config.Actions))
 	for i, action := range rule.Config.Actions {
 		var parsedValue libtemplate.ParsedTemplate
+		var externalDataRefs []string
 		switch action.Type {
 		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate, ActionSetTagsFromTemplate:
 			if str, ok := action.Value.(string); ok {
 				parsedValue = tplExecutor.Parse(str)
+				for _, ref := range refs {
+					if parsedValue.ContainsField("ExternalData." + ref) {
+						externalDataRefs = append(externalDataRefs, ref)
+					}
+				}
+			}
+		case ActionCopy, ActionCopyToEntityInfo, ActionSetTags, ActionSetEntityInfoFromDictionary:
+			if str, ok := action.Value.(string); ok {
+				for _, ref := range refs {
+					prefix := "ExternalData." + ref
+					if str == prefix || strings.HasPrefix(str, prefix+".") {
+						externalDataRefs = append(externalDataRefs, ref)
+					}
+				}
 			}
 		}
 
 		parsedActions[i] = ParsedAction{
-			Index:       i,
-			Type:        action.Type,
-			Name:        action.Name,
-			Description: action.Description,
-			Value:       action.Value,
-			ParsedValue: parsedValue,
+			Index:            i,
+			Type:             action.Type,
+			Name:             action.Name,
+			Description:      action.Description,
+			Value:            action.Value,
+			ParsedValue:      parsedValue,
+			ExternalDataRefs: externalDataRefs,
 		}
 	}
 
-	parsedExternalData := externaldata.ParseRefParameters(rule.ExternalData, tplExecutor)
+	refParameters := make([]externaldata.RefParameters, len(rule.ExternalData))
+	for i, d := range rule.ExternalData {
+		refParameters[i] = d.RefParameters
+	}
+
+	parsedRefParameters := externaldata.ParseRefParameters(refParameters, tplExecutor)
+	parsedExternalData := make([]ParsedExternalDataParameters, len(parsedRefParameters))
+	for i, parsed := range parsedRefParameters {
+		parsedExternalData[i] = ParsedExternalDataParameters{
+			ParsedRefParameters: parsed,
+			OnMismatch:          rule.ExternalData[i].OnMismatch,
+		}
+	}
 
 	r := ParsedRule{
 		ID:          rule.ID,
