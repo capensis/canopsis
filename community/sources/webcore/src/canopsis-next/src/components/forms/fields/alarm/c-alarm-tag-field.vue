@@ -2,7 +2,7 @@
   <c-lazy-search-field
     :value="selectedItems"
     :items="items"
-    :label="label || $tc('common.tag')"
+    :label="label || $t('common.tag')"
     :loading="wholePending"
     :disabled="disabled"
     :name="name"
@@ -12,49 +12,41 @@
     :autocomplete="!combobox"
     :hide-details="!required"
     :hide-selected="hideSelected"
+    :hide-no-data="false"
     :item-text="itemText"
     :item-value="itemValue"
     :multiple="multiple"
+    :show-count="showCount"
     class="c-alarm-tag-field"
     chips
-    dense
     clearable
     return-object
-    @input="changeSelectedItems"
+    @update:value="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   >
     <template #selection="{ item, index }">
       <c-chip
-        v-if="!showCount || index < showCount"
-        :color="item.color"
-        :title="item[itemText]"
+        :color="getSelectionColor(item)"
+        :text-color="getSelectionTextColor(item)"
+        :title="getSelectionText(item)"
         class="c-alarm-tag-field__tag px-2"
         closable
-        ellipsis
         @close="removeItemFromSelectedItemsByIndex(index)"
       >
-        {{ item[itemText] }}
+        {{ getSelectionText(item) }}
       </c-chip>
-      <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
-      <span v-else />
     </template>
-    <template #item="{ item, attrs, on, parent }">
-      <v-list-item
-        class="c-alarm-tag-field__list-item"
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-action v-if="multiple">
-          <v-checkbox
-            :input-value="attrs.inputValue"
-            :color="parent.color"
-          />
-        </v-list-item-action>
-        <v-list-item-content class="c-word-break-all">
-          {{ item[itemText] }}
-        </v-list-item-content>
+    <template #item="{ item, props: itemProps, search }">
+      <v-list-item class="c-alarm-tag-field__list-item text-break" v-bind="itemProps">
+        <template v-if="multiple" #prepend="{ isSelected }">
+          <v-checkbox-btn :model-value="isSelected" color="primary" />
+        </template>
+
+        <v-list-item-title class="c-word-break-all">
+          <v-list-item-mask :text="String(getSelectionText(item) ?? '')" :mask="search" />
+        </v-list-item-title>
       </v-list-item>
     </template>
     <template v-if="$slots['no-data']" #no-data="">
@@ -68,11 +60,14 @@ import { computed, toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
+import { getMostReadableTextColor } from '@/helpers/color';
+
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 
 export default {
+  emits: ['update:value', 'update:selected-items'],
   props: {
     value: {
       type: [Array],
@@ -130,9 +125,9 @@ export default {
     const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'));
     const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'));
     const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'));
-    const fetchHandler = computed(() => (
-      props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore
-    ));
+    const fetchHandler = computed(
+      () => (props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore),
+    );
 
     const {
       selectedItems,
@@ -144,17 +139,25 @@ export default {
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      idParamsKey,
-      fetchHandler,
-      idKey: itemValue,
-      value: toRef(props, 'value'),
-      addable: toRef(props, 'addable'),
-      multiple: true,
-      attachValue: true,
-    }, emit);
+    } = useLazySearch(
+      {
+        idParamsKey,
+        fetchHandler,
+        idKey: itemValue,
+        value: toRef(props, 'value'),
+        addable: toRef(props, 'addable'),
+        multiple: true,
+        attachValue: true,
+      },
+      emit,
+    );
 
-    watch(() => props.onlyLabels, fetchItems);
+    const getSelectionText = item => item?.[itemText.value] ?? item;
+    const getSelectionColor = item => item?.color;
+    const getSelectionTextColor = item =>
+      getMostReadableTextColor(getSelectionColor(item), { level: 'AA', size: 'large' });
+
+    watch(() => props.onlyLabels, () => fetchItems());
 
     return {
       selectedItems,
@@ -167,6 +170,9 @@ export default {
       fetchMoreItems,
       changeSelectedItems,
       updateSearch,
+      getSelectionText,
+      getSelectionColor,
+      getSelectionTextColor,
       removeItemFromSelectedItemsByIndex,
     };
   },
@@ -174,23 +180,45 @@ export default {
 </script>
 
 <style lang="scss">
-$selectIconsWidth: 56px;
-
 .c-alarm-tag-field {
-  .v-select__selections {
-    width: calc(100% - 56px);
+  .v-select__selection,
+  .v-autocomplete__selection {
+    width: auto;
+    max-width: calc(100% - 56px);
+    height: 24px;
+    margin: 0;
   }
 
-  &__tag {
+  &__tag.c-chip.v-chip {
+    display: inline-flex;
+    align-items: center;
     max-width: 100%;
+    height: 24px !important;
+    min-height: 24px !important;
+    margin: 0;
+
+    .c-chip__text {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .v-chip__content {
+      display: flex !important;
+      align-items: center;
+      height: 100% !important;
+    }
   }
 
   &__list {
     max-width: 400px;
   }
 
-  &__list-item .v-list-item {
-    height: unset !important;
+  &__list-item.v-list-item {
+    min-height: unset !important;
   }
 }
 </style>

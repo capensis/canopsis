@@ -3,7 +3,7 @@
     :cx="centerX"
     :cy="centerY"
     :r="radius"
-    v-on="$listeners"
+    v-bind="$attrs"
   />
 </template>
 

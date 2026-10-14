@@ -52,9 +52,7 @@ func (p *connectorProcessor) Process(ctx context.Context, event *types.Event, pa
 	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 	if partialRes == nil {
 		res.EventMetric = techmetrics.CheEventMetric{
-			EventMetric: techmetrics.EventMetric{
-				EventType: event.EventType,
-			},
+			EventType: event.EventType,
 		}
 
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {

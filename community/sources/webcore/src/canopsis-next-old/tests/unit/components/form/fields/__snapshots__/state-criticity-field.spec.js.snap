@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`state-criticity-field Renders \`state-criticity-field\` with custom props correctly 1`] = `
+<div
+  class="layout"
+>
+  <div
+    autofocus="autofocus"
+    class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense"
+  >
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="0"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Ok
+      </span>
+    </button>
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="1"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Minor
+      </span>
+    </button>
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="3"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Critical
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`state-criticity-field Renders \`state-criticity-field\` with default props correctly 1`] = `
+<div
+  class="layout"
+>
+  <div
+    autofocus="autofocus"
+    class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense"
+  >
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="0"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Ok
+      </span>
+    </button>
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="1"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Minor
+      </span>
+    </button>
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="2"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Major
+      </span>
+    </button>
+    <button
+      class="v-btn v-btn--has-bg theme--light v-size--default"
+      type="button"
+      value="3"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Critical
+      </span>
+    </button>
+  </div>
+</div>
+`;

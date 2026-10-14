@@ -2,14 +2,16 @@
   <c-alarm-actions-chips
     :items="filteredTags"
     :active-items="selectedTags"
-    :small="small"
     :inline-count="inlineCount"
     :closable-active="closableActive"
     item-class="c-alarm-tags-chips__chip"
     item-text="value"
     item-value="value"
+    small
     row
-    v-on="$listeners"
+    @select="$emit('select', $event)"
+    @close="$emit('close', $event)"
+    @activate="$emit('activate', $event)"
   />
 </template>
 
@@ -17,6 +19,8 @@
 import { computed } from 'vue';
 
 export default {
+  emits: ['select', 'close', 'activate'],
+
   props: {
     alarm: {
       type: Object,
@@ -51,9 +55,10 @@ export default {
       default: '',
     },
   },
+
   setup(props) {
     const filteredTags = computed(() => {
-      const tags = (props.alarm.tag_colors ?? []);
+      const tags = props.alarm.tag_colors ?? [];
       const regexps = [];
 
       if (props.nameFilter) {
@@ -71,9 +76,7 @@ export default {
       return tags;
     });
 
-    return {
-      filteredTags,
-    };
+    return { filteredTags };
   },
 };
 </script>
@@ -81,9 +84,5 @@ export default {
 <style lang="scss">
 .c-alarm-tags-chips__chip .v-chip__content {
   padding: 0 4px;
-
-  * {
-    color: white;
-  }
 }
 </style>

@@ -1,0 +1,236 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom props 1`] = `
+<div
+  class="layout column gap-3"
+>
+  <!---->
+  <div
+    depth="0"
+  >
+    <c-name-field-stub
+      autofocus=""
+      name="name"
+      required=""
+      value="pbehavior"
+    />
+  </div>
+  <c-form-block-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Apply for all dependant entities"
+    >
+      <c-enabled-field-stub
+        hide-details=""
+        label="Apply for all dependant entities"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Duration"
+    >
+      <c-enabled-field-stub
+        class="mt-0 mb-1"
+        hide-details=""
+        label="Start on trigger"
+        value="true"
+      />
+      <c-duration-field-stub
+        name="duration"
+        required=""
+        value="[object Object]"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Pbehavior reason and type"
+    >
+      <div
+        class="layout"
+      >
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-reason-field-stub
+            class="mr-2"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-type-field-stub
+            class="ml-2"
+            name="type"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
+      </div>
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Color"
+    >
+      <c-enabled-color-picker-field-stub
+        justify-end=""
+        label="Use special color for this event?"
+        row=""
+        value="#123123"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Recurrence rule"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+        withexdatetype="true"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Comments"
+    >
+      <pbehavior-comments-field-stub
+        comments=""
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+</div>
+`;
+
+exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required props 1`] = `
+<div
+  class="layout column gap-3"
+>
+  <!---->
+  <div
+    depth="0"
+  >
+    <c-name-field-stub
+      autofocus=""
+      name="name"
+      required=""
+      value="pbehavior"
+    />
+  </div>
+  <c-form-block-stub>
+    <!---->
+    <c-form-block-row-stub
+      depth="0"
+      label="Duration"
+    >
+      <!---->
+      <div
+        class="layout gap-2 mb-3 align-center"
+      >
+        <div
+          class="flex xs6"
+        >
+          <c-enabled-field-stub
+            hide-details=""
+            label="Whole day"
+          />
+        </div>
+        <div
+          class="flex xs6"
+        >
+          <!---->
+        </div>
+      </div>
+      <div
+        class="layout gap-2 align-center"
+      >
+        <div
+          class="flex"
+        >
+          <date-time-splitted-range-picker-field-stub
+            end="Thu Mar 04 2021 13:33:20 GMT+0100 (Central European Standard Time)"
+            endlabel="End"
+            endmax="2026-03-04"
+            endmin="2021-03-04"
+            endrules="[object Object]"
+            name="tstart"
+            start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
+            startlabel="Start"
+            startrules="[object Object]"
+          />
+        </div>
+        <div
+          class="flex"
+        >
+          <c-timezone-field-stub
+            server=""
+          />
+        </div>
+      </div>
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Pbehavior reason and type"
+    >
+      <div
+        class="layout"
+      >
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-reason-field-stub
+            class="mr-2"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
+        <div
+          class="flex xs6"
+        >
+          <c-pbehavior-type-field-stub
+            class="ml-2"
+            name="type"
+            required=""
+            return-object=""
+            value="[object Object]"
+          />
+        </div>
+      </div>
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      label="Color"
+    >
+      <c-enabled-color-picker-field-stub
+        justify-end=""
+        label="Use special color for this event?"
+        row=""
+        value="#123123"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Recurrence rule"
+    >
+      <pbehavior-recurrence-rule-field-stub
+        form="[object Object]"
+        withexdatetype="true"
+      />
+    </c-form-block-row-stub>
+    <c-form-block-row-stub
+      depth="0"
+      indented=""
+      label="Comments"
+    >
+      <pbehavior-comments-field-stub
+        comments=""
+      />
+    </c-form-block-row-stub>
+  </c-form-block-stub>
+</div>
+`;

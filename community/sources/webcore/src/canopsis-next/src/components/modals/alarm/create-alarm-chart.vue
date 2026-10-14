@@ -1,107 +1,89 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ title }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        {{ title }}
       </template>
-      <template #text="">
-        <v-list
-          class="widget-settings widget-settings--divider widget-settings__list py-0"
-          expand
-        >
+      <template #text>
+        <v-list class="widget-settings widget-settings--divider widget-settings__list py-0">
           <component
             :is="formComponent"
-            v-model="form"
+            v-model="values"
             :only-external="onlyExternal"
-            required-title
           />
         </v-list>
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
-        <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
-          type="submit"
-        >
-          {{ $t('common.submit') }}
+        <v-btn :loading="isSubmitting" color="primary" type="submit">
+          {{ t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY, WIDGET_TYPES } from '@/constants';
+import { computed } from 'vue';
+
+import { WIDGET_TYPES } from '@/constants';
 
 import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import BarChartWidgetForm from '@/components/sidebars/chart/form/bar-chart-widget-form.vue';
 import LineChartWidgetForm from '@/components/sidebars/chart/form/line-chart-widget-form.vue';
 import NumbersWidgetForm from '@/components/sidebars/chart/form/numbers-widget-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createAlarmChart,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: {
-    BarChartWidgetForm,
-    LineChartWidgetForm,
-    NumbersWidgetForm,
-    ModalWrapper,
-  },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const form = useForm({ initialValues: alarmListChartToForm(config.value.chart) });
+    const { values, handleSubmit, isSubmitting } = form;
+    const formComponent = computed(
+      () => ({
+          [WIDGET_TYPES.barChart]: BarChartWidgetForm,
+          [WIDGET_TYPES.lineChart]: LineChartWidgetForm,
+          [WIDGET_TYPES.numbers]: NumbersWidgetForm,
+        })[values.value.type],
+    );
+    const title = computed(
+      () => config.value.title ?? t('modals.createAlarmChart.BarChart.create.title'),
+    );
+    const onlyExternal = computed(() => config.value.onlyExternal ?? false);
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToAlarmListChart(values.value));
+      closeModal();
+    });
+
+    useFormConfirmableCloseModal({ form: values, submit, close: closeModal });
+
     return {
-      form: alarmListChartToForm(this.modal.config.chart),
+      t,
+      values,
+      formComponent,
+      title,
+      onlyExternal,
+      isSubmitting,
+      closeModal,
+      submit,
     };
-  },
-  computed: {
-    formComponent() {
-      return {
-        [WIDGET_TYPES.barChart]: 'bar-chart-widget-form',
-        [WIDGET_TYPES.lineChart]: 'line-chart-widget-form',
-        [WIDGET_TYPES.numbers]: 'numbers-widget-form',
-      }[this.form.type] ?? 'div';
-    },
-
-    title() {
-      return this.config.title ?? this.$t(`modals.createAlarmChart.${WIDGET_TYPES.barChart}.create.title`);
-    },
-
-    onlyExternal() {
-      return this.config.onlyExternal;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config?.action?.(formToAlarmListChart(this.form));
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

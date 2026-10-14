@@ -1,88 +1,120 @@
 <template>
-  <v-layout>
+  <c-layout class="event-filter-drop-intervals-field" gap="3">
     <date-time-picker-text-field
-      v-validate="startRules"
       :value="startString"
       :label="$t('common.start')"
-      :error-message="errors.collect('start')"
+      :rules="startRules"
       name="start"
-      @input="updateStartDate"
+      class="event-filter-drop-intervals-field__date"
+      @update:value="updateStartDate"
     />
     <date-time-picker-text-field
-      v-validate="stopRules"
       :value="stopString"
       :label="$t('common.stop')"
-      :error-message="errors.collect('stop')"
-      class="ml-2"
+      :rules="stopRules"
       name="stop"
-      @input="updateStopDate"
+      class="event-filter-drop-intervals-field__date"
+      @update:value="updateStopDate"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDateToDateObject, convertDateToString, convertDateToTimestamp } from '@/helpers/date/date';
-
-import { formMixin } from '@/mixins/form';
+import {
+  convertDateToDateObject,
+  convertDateToString,
+  convertDateToTimestamp,
+} from '@/helpers/date/date';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
-  inject: ['$validator'],
+  emits: ['update:start', 'update:stop'],
   components: { DateTimePickerTextField },
-  mixins: [formMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
+    start: {
+      type: Number,
+      default: null,
+    },
+    stop: {
+      type: Number,
+      default: null,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
-  computed: {
-    startString() {
-      return this.form.start && convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker);
-    },
+  setup(props, { emit }) {
+    const startString = computed(
+      () => props.start && convertDateToString(props.start, DATETIME_FORMATS.dateTimePicker),
+    );
 
-    stopString() {
-      return this.form.stop && convertDateToString(this.form.stop, DATETIME_FORMATS.dateTimePicker);
-    },
+    const stopString = computed(
+      () => props.stop && convertDateToString(props.stop, DATETIME_FORMATS.dateTimePicker),
+    );
 
-    startRules() {
-      return {
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
+    const startRules = computed(() => ({
+      required: props.required,
+      date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+    }));
 
-    stopRules() {
-      return {
-        after: [convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker)],
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
-  },
-  watch: {
-    'form.rrule': function watchRRule() {
-      this.errors.remove('start');
-      this.errors.remove('stop');
-    },
-  },
-  methods: {
-    prepareDate(date) {
-      return date ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker)) : null;
-    },
+    const stopRules = computed(() => ({
+      required: props.required,
+      after: [convertDateToString(props.start, DATETIME_FORMATS.dateTimePicker)],
+      date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+    }));
 
-    updateStartDate(value) {
-      this.updateField('start', this.prepareDate(value));
-    },
+    /**
+     * Parses a date-time picker string into a Unix timestamp for the form model
+     *
+     * @param {string|null|undefined} date - Raw value from the date-time picker
+     * @returns {number|null}
+     */
+    const prepareDate = date => date
+        ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker))
+        : null;
 
-    updateStopDate(value) {
-      this.updateField('stop', this.prepareDate(value));
-    },
+    /**
+     * Writes the interval start timestamp and emits `update:start`
+     *
+     * @param {string|null|undefined} value - Raw value from the start date-time picker
+     */
+    const updateStartDate = value => emit('update:start', prepareDate(value));
+
+    /**
+     * Writes the interval end timestamp and emits `update:stop`
+     *
+     * @param {string|null|undefined} value - Raw value from the stop date-time picker
+     */
+    const updateStopDate = value => emit('update:stop', prepareDate(value));
+
+    return {
+      startString,
+      stopString,
+      startRules,
+      stopRules,
+      updateStartDate,
+      updateStopDate,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.event-filter-drop-intervals-field {
+  &__date {
+    flex: 0 1 30ch;
+    max-width: 100%;
+
+    :deep(.v-input) {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+}
+</style>

@@ -1,40 +1,37 @@
 <template>
-  <v-layout column>
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
-      with-background
-    />
+  <c-layout gap="3" column>
+    <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
+
     <c-name-field
-      v-field="form.name"
+      v-model="name"
+      :label="t('modals.createPbehaviorReason.fields.name')"
       autofocus
       required
     />
-    <v-text-field
-      v-field="form.description"
-      v-validate="'required'"
-      :label="$t('modals.createPbehaviorReason.fields.description')"
-      :error-messages="errors.collect('description')"
-      name="description"
-    />
-  </v-layout>
+
+    <c-form-block>
+      <c-form-block-row :label="t('modals.createPbehaviorReason.fields.description')" indented>
+        <c-description-field v-model="description" name="description" required />
+      </c-form-block-row>
+    </c-form-block>
+  </c-layout>
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
+import { useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
+  setup() {
+    const { t } = useI18n();
+    const { name, description, visible } = useFormModels(['name', 'description', 'visible']);
+
+    return {
+      t,
+      name,
+      description,
+      visible,
+    };
   },
 };
 </script>

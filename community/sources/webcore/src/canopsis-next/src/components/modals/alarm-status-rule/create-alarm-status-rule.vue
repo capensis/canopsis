@@ -1,126 +1,104 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
-        <span>{{ config.title }}</span>
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <alarm-status-rule-form
-          v-model="form"
           :disablable="config.disablable"
           :flapping="config.flapping"
           :default-rule="isDefaultRule"
         />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
       </template>
-      <template #actions="">
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
+        </v-btn>
+
         <v-btn
           :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { computed } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY, DEFAULT_RESOLVE_RULE_ID } from '@/constants';
+import { DEFAULT_RESOLVE_RULE_ID } from '@/constants';
 
-import { alarmStatusRuleToForm, formToAlarmStatusRule } from '@/helpers/entities/alarm-status-rule/form';
+import {
+  alarmStatusRuleToForm,
+  formToAlarmStatusRule,
+} from '@/helpers/entities/alarm-status-rule/form';
 
-import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createAlarmStatusRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: { AlarmStatusRuleForm, ModalWrapper, AiChatSidebar },
+  components: { AlarmStatusRuleForm },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
 
-    const { rule, flapping } = props.modal.config;
-
-    const form = ref(alarmStatusRuleToForm(rule, flapping));
-
-    const llmContext = computed(() => (
-      config.value.flapping
-        ? LLM_SOCKET_CONTEXTS.flappingRule
-        : LLM_SOCKET_CONTEXTS.resolveRule
-    ));
-
+    const isNew = computed(() => !config.value.rule?._id || config.value.duplicating);
+    const title = computed(() => config.value.title);
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
     const isDefaultRule = computed(() => config.value.rule?._id === DEFAULT_RESOLVE_RULE_ID);
+    const form = useForm({
+      initialValues: alarmStatusRuleToForm(config.value.rule, config.value.flapping),
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-      modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.rule?._id,
-      context: llmContext,
-      disabled: isDefaultRule,
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToAlarmStatusRule(values.value));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        const result = await config.value.action?.(formToAlarmStatusRule(form.value));
-
-        await config.value.afterSubmit?.(result);
-
-        close();
-
-        return result;
-      },
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
     });
-
-    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form,
+      t,
       config,
-      isDefaultRule,
-      isDisabled,
+      title,
+      submitLabel,
       submitting,
-      chatShown,
-      chatOptions,
+      isDefaultRule,
+      closeModal,
       submit,
-      close,
     };
   },
 };

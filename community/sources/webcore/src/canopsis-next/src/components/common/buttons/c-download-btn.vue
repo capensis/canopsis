@@ -2,7 +2,7 @@
   <c-action-btn
     :icon="icon"
     :color="color"
-    :tooltip="tooltip"
+    :tooltip="preparedTooltip"
     :disabled="disabled || downloading"
     :loading="downloading"
     @click="downloadContent"
@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import { saveJsonFile, saveCsvFile, saveTextFile, saveFile } from '@/helpers/file/files';
+import { saveCsvFile, saveFile, saveJsonFile, saveTextFile } from '@/helpers/file/files';
 
 /**
  * @example
- *   c-download-btn(value="Text content", type="txt", name="txt_file") -> txt_file.txt
- *   c-download-btn(:value="{ json: 'json' }", type="json", name="json_file") -> json_file.json
- *   c-download-btn(value="csv", type="csv", name="csv_file") -> csv_file.csv
- *   c-download-btn(value="Text", name="without_type_file") -> without_type_file.txt
- *   c-download-btn(:value="blob", name="custom_type_file", type="log") -> custom_type_file.log
+ *   <c-download-btn value="Text content" type="txt" name="txt_file" /> -> txt_file.txt
+ *   <c-download-btn :value="{ json: 'json' }" type="json" name="json_file" /> -> json_file.json
+ *   <c-download-btn value="csv" type="csv" name="csv_file" /> -> csv_file.csv
+ *   <c-download-btn value="Text" name="without_type_file" /> -> without_type_file.txt
+ *   <c-download-btn :value="blob" name="custom_type_file" type="log" /> -> custom_type_file.log
  */
 export default {
   props: {
@@ -48,20 +48,26 @@ export default {
     },
     tooltip: {
       type: String,
-      default() {
-        return this.$t('common.download');
-      },
+      default: '',
     },
     disabled: {
       type: Boolean,
       default: false,
     },
   },
+
   data() {
     return {
       downloading: false,
     };
   },
+
+  computed: {
+    preparedTooltip() {
+      return this.tooltip || this.$t('common.download');
+    },
+  },
+
   methods: {
     download() {
       const handler = {

@@ -1,86 +1,96 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <comment-template-form v-model="form" />
+
+      <template #text>
+        <comment-template-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { commentTemplateToForm, formToCommentTemplate } from '@/helpers/entities/comment-template/form';
+import {
+  commentTemplateToForm,
+  formToCommentTemplate,
+} from '@/helpers/entities/comment-template/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import CommentTemplateForm from '@/components/other/comment-template/form/comment-template-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createCommentTemplate,
-  $_veeValidate: {
-    validator: 'new',
-  },
-  components: { CommentTemplateForm, ModalWrapper },
+
+  components: { CommentTemplateForm },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
 
-    const form = ref(commentTemplateToForm(config.value.template));
+    const config = computed(() => props.modal.config ?? {});
+    const close = () => modals.hide({ id: props.modal.id });
 
-    const title = computed(() => config.value.title || t('modals.createCommentTemplate.create.title'));
+    const form = useForm({
+      initialValues: commentTemplateToForm(config.value.template),
+    });
+    const { handleSubmit, isSubmitting: submitting } = form;
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToCommentTemplate(form.value));
+    const title = computed(
+      () => config.value.title || t('modals.createCommentTemplate.create.title'),
+    );
+    const submitLabel = computed(() => t(config.value.template?._id ? 'common.save' : 'common.create'),
+    );
 
-        close();
-      },
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToCommentTemplate(form.values.value));
+
+      close();
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: form.values,
+      submit,
+      close,
+    });
 
     return {
-      form,
+      t,
       title,
       submitting,
-      isDisabled,
-
+      submitLabel,
       submit,
       close,
     };

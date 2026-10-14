@@ -5,9 +5,9 @@ export default {
   form: 'Form',
   impact: 'Impact',
   depends: 'Depends',
-  addInformation: 'Add Information',
+  addInfos: 'Add infos',
   emptyInfos: 'No information',
-  availabilityState: 'Hi availability state',
+  availabilityState: 'Availability state',
   types: {
     [ENTITY_TYPES.component]: 'Component',
     [ENTITY_TYPES.connector]: 'Connector',
@@ -28,10 +28,18 @@ export default {
     alarmLastComment: 'Alarm last comment',
     importSource: 'Import source',
     imported: 'Imported date',
+    pause: 'Pause',
+    pauseAuthor: 'Pause author',
+    pauseInitiator: 'Pause initiator',
+  },
+  popups: {
+    pauseOperation: 'Pause operation may take up to 60 seconds to appear in the interface',
+    resumeOperation: 'Resume operation may take up to 60 seconds to appear in the interface',
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Show all dependencies',
-    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]: 'Show dependencies defining the state',
+    [TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState]:
+      'Show dependencies defining the state',
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.custom]: 'Show selector',
   },
   comments: {

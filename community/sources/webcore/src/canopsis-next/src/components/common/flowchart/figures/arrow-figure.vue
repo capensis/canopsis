@@ -1,8 +1,5 @@
 <template>
-  <path
-    :fill="fill"
-    :d="path"
-  />
+  <path :fill="fill" :d="path" />
 </template>
 
 <script>

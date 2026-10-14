@@ -15,12 +15,7 @@ import { usePattern } from '@/hooks/store/modules/pattern';
  * @param {ComputedRef} options.patterns - Computed patterns to check
  * @returns {Object} An object containing counters, pending state, checkFilter function, and computed properties
  */
-export const usePatternCounters = ({
-  counterMethod,
-  entityCountersType,
-  hasError,
-  patterns,
-}) => {
+export const usePatternCounters = ({ counterMethod, entityCountersType, hasError, patterns }) => {
   const { t } = useI18n();
   const counters = ref({});
   const { checkPatternsEntitiesCount, checkPatternsAlarmsCount } = usePattern();
@@ -30,9 +25,11 @@ export const usePatternCounters = ({
     const unwrappedEntityCountersType = unref(entityCountersType);
     const unwrappedPatterns = unref(patterns);
 
-    const method = unwrappedCounterMethod ?? {
-      [true]: checkPatternsAlarmsCount,
-      [unwrappedEntityCountersType]: checkPatternsEntitiesCount,
+    const method =
+      unwrappedCounterMethod ??
+      {
+        [true]: checkPatternsAlarmsCount,
+        [unwrappedEntityCountersType]: checkPatternsEntitiesCount,
     }.true;
 
     try {
@@ -44,28 +41,23 @@ export const usePatternCounters = ({
     }
   });
 
-  const hasAllInCounter = computed(() => (counters.value?.all?.count > 0));
-  const allOverLimit = computed(() => (counters.value?.all?.over_limit ?? false));
-  const allCount = computed(() => (counters.value?.all?.count ?? 0));
+  const combinedCounter = computed(() =>
+    unref(entityCountersType) ? counters.value?.combined : counters.value?.alarms?.combined,
+  );
+
+  const hasAllInCounter = computed(() => combinedCounter.value?.count > 0);
+  const allOverLimit = computed(() => combinedCounter.value?.over_limit ?? false);
+  const allCount = computed(() => combinedCounter.value?.count ?? 0);
 
   const patternsCountMessageBind = computed(() => {
-    let entityCounter;
-    let alarmCounter;
-
-    if (unref(hasError)) {
-      return { errorMessage: t('pattern.errors.required') };
-    }
-
-    if (unref(entityCountersType)) {
-      entityCounter = counters.value?.all;
-    } else {
-      alarmCounter = counters.value?.all;
-      entityCounter = counters.value?.entities;
-    }
+    const isEntityCountersType = unref(entityCountersType);
 
     return {
-      alarmCounter,
-      entityCounter,
+      errorMessage: unref(hasError) ? t('pattern.errors.required') : undefined,
+      alarmCounter: isEntityCountersType ? undefined : counters.value?.alarms?.combined,
+      entityCounter: isEntityCountersType
+        ? counters.value?.combined
+        : counters.value?.entities?.entity_pattern,
     };
   });
 

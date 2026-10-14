@@ -1,27 +1,23 @@
 <template>
-  <div>
-    <v-layout align-center>
-      <v-flex>
-        <v-text-field
-          v-field="value"
-          :label="label"
-          :name="name"
-          :error-messages="errorMessages"
-          :autofocus="autofocus"
-          @focus="focus"
-          @blur="blur"
-        />
-      </v-flex>
-      <v-flex>
-        <date-time-picker-menu
-          :value="objectValue"
-          :label="label"
-          :round-hours="roundHours"
-          @input="updateObjectField"
-        />
-      </v-flex>
-    </v-layout>
-  </div>
+  <c-layout align="center">
+    <c-text-field
+      :model-value="value"
+      :label="label"
+      :name="name"
+      :autofocus="autofocus"
+      :required="fieldRequired"
+      :validation-rules="validationRules"
+      @update:model-value="updateModel"
+      @focus="focus"
+      @blur="blur"
+    />
+    <date-time-picker-menu
+      :value="objectValue"
+      :label="label"
+      :round-hours="roundHours"
+      @update:value="updateObjectField"
+    />
+  </c-layout>
 </template>
 
 <script>
@@ -34,24 +30,12 @@ import { convertDateToDateObject, convertDateToString } from '@/helpers/date/dat
 import { formBaseMixin } from '@/mixins/form';
 
 import DateTimePickerMenu from './date-time-picker-menu.vue';
+import { createDateTimeValidationRules, isRequiredRule } from './validation-rules';
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
-  inject: ['$validator'],
+  emits: ['update:value', 'update:objectValue'],
   components: { DateTimePickerMenu },
   mixins: [formBaseMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: String,
@@ -63,7 +47,7 @@ export default {
     },
     name: {
       type: String,
-      default: null,
+      default: '',
     },
     roundHours: {
       type: Boolean,
@@ -77,6 +61,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    rules: {
+      type: Object,
+      default: () => ({}),
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -85,16 +77,12 @@ export default {
     };
   },
   computed: {
-    errorMessages() {
-      if (this.$validator && this.errors && this.name) {
-        return this.errors.collect(this.name);
-      }
-
-      return [];
+    fieldRequired() {
+      return this.required || isRequiredRule(this.rules);
     },
 
-    ruleName() {
-      return `picker_format_${this.name}`;
+    validationRules() {
+      return createDateTimeValidationRules(this.rules, this.dateObjectPreparer);
     },
   },
   watch: {
@@ -113,30 +101,9 @@ export default {
       }
     },
   },
-  created() {
-    if (this.$validator && this.name) {
-      this.$validator.attach({
-        name: this.name,
-        rules: {
-          picker_format: {
-            preparer: this.dateObjectPreparer,
-          },
-        },
-        getter: () => this.value,
-        vm: this,
-      });
-    }
-  },
-  beforeDestroy() {
-    if (this.$validator && this.name) {
-      this.$validator.detach(this.name);
-    }
-  },
   methods: {
     updateObjectField(value) {
-      this.updateModel(
-        convertDateToString(value, DATETIME_FORMATS.dateTimePicker),
-      );
+      this.updateModel(convertDateToString(value, DATETIME_FORMATS.dateTimePicker));
     },
 
     focus() {
@@ -152,7 +119,7 @@ export default {
         if (!isEmpty(value)) {
           this.objectValue = this.dateObjectPreparer(value);
         }
-      } catch (err) {
+      } catch {
         this.objectValue = null;
       }
 

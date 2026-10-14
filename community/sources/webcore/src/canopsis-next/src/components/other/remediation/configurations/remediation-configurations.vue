@@ -4,7 +4,7 @@
       :remediation-configurations="remediationConfigurations"
       :pending="remediationConfigurationsPending"
       :total-items="remediationConfigurationsMeta.total_count"
-      :options.sync="options"
+      :options="options"
       :removable="hasDeleteAnyRemediationConfigurationAccess"
       :duplicable="hasCreateAnyRemediationConfigurationAccess"
       :updatable="hasUpdateAnyRemediationConfigurationAccess"
@@ -13,101 +13,84 @@
       @duplicate="showDuplicateRemediationConfigurationModal"
       @edit="showEditRemediationConfigurationModal"
       @refresh="fetchList"
+      @update:options="updateOptions"
     />
   </v-card-text>
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { onMounted } from 'vue';
 
-import { MODALS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
-import { localQueryMixin } from '@/mixins/query/query';
-import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
-import {
-  permissionsTechnicalRemediationConfigurationMixin,
-} from '@/mixins/permissions/technical/remediation-configuration';
+import { useCRUDPermissions } from '@/hooks/auth';
+import { useFetchListWithOptions } from '@/hooks/query/shared';
+import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
 
+import { useRemediationConfigurationsActions } from './hooks/remediation-configurations';
 import RemediationConfigurationsList from './remediation-configurations-list.vue';
 
 export default {
-  components: { RemediationConfigurationsList },
-  mixins: [
-    localQueryMixin,
-    entitiesRemediationConfigurationMixin,
-    permissionsTechnicalRemediationConfigurationMixin,
-  ],
+  components: {
+    RemediationConfigurationsList,
+  },
+
   props: {
     active: {
       type: Boolean,
       default: true,
     },
   },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    fetchList() {
-      const params = this.getQuery();
-      params.with_flags = true;
 
-      this.fetchRemediationConfigurationsList({ params });
-    },
+  setup() {
+    const {
+      remediationConfigurations,
+      remediationConfigurationsMeta,
+      remediationConfigurationsPending,
+      fetchRemediationConfigurationsList,
+    } = useRemediationConfiguration();
 
-    showEditRemediationConfigurationModal(remediationConfiguration) {
-      this.$modals.show({
-        name: MODALS.createRemediationConfiguration,
-        config: {
-          title: this.$t('modals.createRemediationConfiguration.edit.title'),
-          remediationConfiguration,
-          action: async (configuration) => {
-            await this.updateRemediationConfiguration({ id: remediationConfiguration._id, data: configuration });
-
-            this.$popups.success({
-              text: this.$t('modals.createRemediationConfiguration.edit.popups.success', {
-                configurationName: configuration.name,
-              }),
-            });
-
-            await this.fetchList();
+    const {
+      options,
+      updateOptions,
+      handler: fetchList,
+    } = useFetchListWithOptions({
+      fetchListHandler: ({ params }) => fetchRemediationConfigurationsList({
+          params: {
+            ...params,
+            with_flags: true,
           },
-        },
-      });
-    },
+        }),
+    });
 
-    showRemoveRemediationConfigurationModal(remediationConfiguration) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removeRemediationConfiguration({ id: remediationConfiguration._id });
-            await this.fetchList();
-          },
-        },
-      });
-    },
+    const {
+      hasCreateAccess: hasCreateAnyRemediationConfigurationAccess,
+      hasUpdateAccess: hasUpdateAnyRemediationConfigurationAccess,
+      hasDeleteAccess: hasDeleteAnyRemediationConfigurationAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.remediationConfiguration);
 
-    showDuplicateRemediationConfigurationModal(remediationConfiguration) {
-      this.$modals.show({
-        name: MODALS.createRemediationConfiguration,
-        config: {
-          title: this.$t('modals.createRemediationConfiguration.duplicate.title'),
-          remediationConfiguration: omit(remediationConfiguration, ['_id']),
-          action: async (configuration) => {
-            await this.createRemediationConfiguration({ data: configuration });
+    const {
+      showEditRemediationConfigurationModal,
+      showRemoveRemediationConfigurationModal,
+      showDuplicateRemediationConfigurationModal,
+    } = useRemediationConfigurationsActions(fetchList);
 
-            this.$popups.success({
-              text: this.$t('modals.createRemediationConfiguration.duplicate.popups.success', {
-                configurationName: remediationConfiguration.name,
-              }),
-            });
+    onMounted(fetchList);
 
-            await this.fetchList();
-          },
-        },
-      });
-    },
-
+    return {
+      remediationConfigurations,
+      remediationConfigurationsMeta,
+      remediationConfigurationsPending,
+      options,
+      updateOptions,
+      hasCreateAnyRemediationConfigurationAccess,
+      hasUpdateAnyRemediationConfigurationAccess,
+      hasDeleteAnyRemediationConfigurationAccess,
+      showEditRemediationConfigurationModal,
+      showRemoveRemediationConfigurationModal,
+      showDuplicateRemediationConfigurationModal,
+      fetchList,
+    };
   },
 };
 </script>

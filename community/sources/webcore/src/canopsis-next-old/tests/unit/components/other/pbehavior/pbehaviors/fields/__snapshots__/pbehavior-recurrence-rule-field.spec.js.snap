@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-field\` with custom props 1`] = `
+<div
+  class="layout gap-3 justify-center column"
+>
+  <c-label-stub
+    label="Recurrence"
+  />
+  <div
+    class="layout"
+  >
+    <div
+      class="c-word-break-all pa-3 mr-2 v-sheet theme--light rounded-xxl grey lighten-2"
+    >
+      <p>
+        RRULE:FREQ=DAILY
+      </p>
+      <p>
+        every day
+      </p>
+      <!---->
+    </div>
+    <c-action-btn-stub
+      tooltip="Edit recurrence rule"
+      type="edit"
+    />
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
+</div>
+`;
+
+exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-field\` with required props 1`] = `
+<div
+  class="layout gap-3 justify-center column"
+>
+  <c-label-stub
+    label="Recurrence"
+  />
+  <div>
+    <button
+      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+      type="button"
+    >
+      <span
+        class="v-btn__content"
+      >
+      Add recurrence rule
+      </span>
+    </button>
+  </div>
+</div>
+`;

@@ -1,4 +1,4 @@
-import store from '@/store';
+import { useAuthStore } from '@/stores/modules/auth';
 
 import { Handlebars } from './handlebars';
 import { normalizeHandlebarsNbsp } from './normalize';
@@ -18,10 +18,8 @@ export function registerTemplate(id, template, instance = Handlebars) {
     return instance.registerPrecompiledTemplate(id, precompiledTemplate);
   }
 
-  // eslint-disable-next-line no-new-func
   const compiledTemplateFunc = new Function(`return ${precompiledTemplate}`);
 
-  // eslint-disable-next-line no-param-reassign
   instance.partials[id] = instance.template(compiledTemplateFunc());
 
   return instance.partials[id];
@@ -34,7 +32,6 @@ export function registerTemplate(id, template, instance = Handlebars) {
  * @param {Handlebars} [instance = Handlebars] - The Handlebars instance from which to unregister the template.
  */
 export function unregisterTemplate(id, instance = Handlebars) {
-  // eslint-disable-next-line no-param-reassign
   delete instance.partials?.[id];
 }
 
@@ -47,9 +44,11 @@ export function unregisterTemplate(id, instance = Handlebars) {
  * @return {Promise<string>}
  */
 export async function runTemplate(id, context, instance = Handlebars) {
+  const authStore = useAuthStore();
+
   const preparedContext = {
-    env: store.getters['template/vars/items'] ?? {},
-    user: store.getters['auth/currentUser'] ?? {},
+    //env: store.getters['template/vars/items'] ?? {}, // TODO: continue
+    user: authStore.currentUser ?? {},
 
     ...context,
   };

@@ -7,6 +7,7 @@ export const ROUTES_NAMES = {
   alarms: 'alarms',
   adminRights: 'admin-rights',
   adminUsers: 'admin-users',
+  adminApiAccessTokens: 'admin-api-access-tokens',
   adminRoles: 'admin-roles',
   adminBroadcastMessages: 'admin-broadcast-messages',
   adminPlaylists: 'admin-playlists',
@@ -24,7 +25,6 @@ export const ROUTES_NAMES = {
   adminCustomObjectsLlms: 'admin-custom-objects-llms',
   adminTemplateTesting: 'admin-template-testing',
   adminJobsManagement: 'admin-jobs-management',
-  adminSettingsUserInterface: 'admin-settings-user-interface',
   adminSettingsViewsImportExport: 'admin-settings-views-import-export',
   adminSettingsNotifications: 'admin-settings-notifications',
   adminSettingsCommentTemplates: 'admin-settings-comment-templates',
@@ -56,7 +56,6 @@ export const OLD_ROUTES = {
   remediation: '/admin/remediation', // Is using for rederect to exploitationRemediation
   externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminCustomObjectsExternalDataTables
   entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminCustomObjectsEntityInfosProperties
-  parameters: '/admin/parameters', // Is using for redirect to adminSettingsUserInterface
 };
 
 export const ROUTES = {
@@ -68,6 +67,7 @@ export const ROUTES = {
   alarms: '/alarms/:id',
   adminRights: '/admin/rights',
   adminUsers: '/admin/users',
+  adminApiAccessTokens: '/admin/api-access-tokens',
   adminRoles: '/admin/roles',
   adminBroadcastMessages: '/admin/broadcast-messages',
   adminPlaylists: '/admin/playlists',
@@ -85,7 +85,6 @@ export const ROUTES = {
   adminCustomObjectsMaps: '/admin/maps',
   adminCustomObjectsTags: '/admin/tags',
   adminCustomObjectsLlms: '/admin/llms',
-  adminSettingsUserInterface: '/admin/user-interface',
   adminSettingsViewsImportExport: '/admin/views-import-export',
   adminSettingsNotifications: '/admin/notifications',
   adminSettingsCommentTemplates: '/admin/comment-templates',
@@ -128,7 +127,7 @@ export const POPUP_TYPES = {
   error: 'error',
 };
 
-export const PORTALS_NAMES = {
+export const TELEPORTS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
   massActionsPanel: 'mass-actions-panel',
 };
@@ -375,7 +374,7 @@ export const ASSOCIATIVE_TABLES_NAMES = {
 
 export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
 
-export const VALIDATION_DELAY = 300;
+export const VALIDATION_DELAY = 300; // TODO: remove it
 
 export const TRIGGERS_TYPES = {
   create: 'create',
@@ -383,6 +382,8 @@ export const TRIGGERS_TYPES = {
   statedec: 'statedec',
   changestate: 'changestate',
   changestatus: 'changestatus',
+  changedoutput: 'changedoutput',
+  changedlongoutput: 'changedlongoutput',
   ack: 'ack',
   ackremove: 'ackremove',
   cancel: 'cancel',
@@ -390,6 +391,7 @@ export const TRIGGERS_TYPES = {
   comment: 'comment',
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
+  declareticketwebhookfail: 'declareticketwebhookfail',
   assocticket: 'assocticket',
   ticketremove: 'ticketremove',
   snooze: 'snooze',
@@ -407,11 +409,62 @@ export const TRIGGERS_TYPES = {
   autoinstructionresultok: 'autoinstructionresultok',
   autoinstructionresultfail: 'autoinstructionresultfail',
   eventscount: 'eventscount',
+  pause: 'pause',
+  resume: 'resume',
+};
+
+export const TRIGGERS_GROUPS = {
+  general: 'general',
+  pbehavior: 'pbehavior',
+  tickets: 'tickets',
+  instructions: 'instructions',
+};
+
+export const GROUPED_TRIGGERS = {
+  [TRIGGERS_GROUPS.general]: [
+    TRIGGERS_TYPES.create,
+    TRIGGERS_TYPES.ack,
+    TRIGGERS_TYPES.ackremove,
+    TRIGGERS_TYPES.cancel,
+    TRIGGERS_TYPES.uncancel,
+    TRIGGERS_TYPES.comment,
+    TRIGGERS_TYPES.snooze,
+    TRIGGERS_TYPES.unsnooze,
+    TRIGGERS_TYPES.resolve,
+    TRIGGERS_TYPES.activate,
+    TRIGGERS_TYPES.stateinc,
+    TRIGGERS_TYPES.statedec,
+    TRIGGERS_TYPES.changestate,
+    TRIGGERS_TYPES.changestatus,
+    TRIGGERS_TYPES.changedoutput,
+    TRIGGERS_TYPES.changedlongoutput,
+    TRIGGERS_TYPES.eventscount,
+    TRIGGERS_TYPES.pause,
+    TRIGGERS_TYPES.resume,
+  ],
+  [TRIGGERS_GROUPS.pbehavior]: [TRIGGERS_TYPES.pbhenter, TRIGGERS_TYPES.pbhleave],
+  [TRIGGERS_GROUPS.tickets]: [
+    TRIGGERS_TYPES.declareticket,
+    TRIGGERS_TYPES.declareticketwebhook,
+    TRIGGERS_TYPES.assocticket,
+    TRIGGERS_TYPES.ticketremove,
+  ],
+  [TRIGGERS_GROUPS.instructions]: [
+    TRIGGERS_TYPES.instructionfail,
+    TRIGGERS_TYPES.autoinstructionfail,
+    TRIGGERS_TYPES.instructionjobfail,
+    TRIGGERS_TYPES.instructioncomplete,
+    TRIGGERS_TYPES.autoinstructioncomplete,
+    TRIGGERS_TYPES.instructionjobcomplete,
+    TRIGGERS_TYPES.autoinstructionresultok,
+    TRIGGERS_TYPES.autoinstructionresultfail,
+  ],
 };
 
 export const PRO_TRIGGERS = [
   TRIGGERS_TYPES.declareticket,
   TRIGGERS_TYPES.declareticketwebhook,
+  TRIGGERS_TYPES.declareticketwebhookfail,
   TRIGGERS_TYPES.instructionfail,
   TRIGGERS_TYPES.autoinstructionfail,
   TRIGGERS_TYPES.instructionjobcomplete,
@@ -422,9 +475,7 @@ export const PRO_TRIGGERS = [
   TRIGGERS_TYPES.autoinstructionresultfail,
 ];
 
-export const DEPRECATED_TRIGGERS = [
-  TRIGGERS_TYPES.declareticket,
-];
+export const DEPRECATED_TRIGGERS = [TRIGGERS_TYPES.declareticket];
 
 export const HEADERS = {
   authorization: 'Authorization',
@@ -459,9 +510,7 @@ export const LOGOUT_RESPONSE_STATUSES = [
   RESPONSE_STATUSES.serviceUnavailable,
 ];
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [
-  RESPONSE_STATUSES.forbidden,
-];
+export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.forbidden];
 
 export const PAYLOADS_INFO_VARIABLES = {
   value: '.Value',
@@ -540,10 +589,24 @@ export const DENSE_TYPES = {
   small: 2,
 };
 
-export const LINKED_RULES_TYPES = ['widget', 'eventfilter', 'linkrule', 'scenario', 'declareticketrule'];
+export const LINKED_RULES_TYPES = [
+  'widget',
+  'eventfilter',
+  'linkrule',
+  'scenario',
+  'declareticketrule',
+];
 
 export const LINKED_RULES_COUNT = 5;
 
 export const INFOS_NAME_VARIABLE = '%infos_name%';
 
 export const INFOS_VARIABLE_PREFIX = '(index ';
+
+export const FORM_GENERAL_PATTERNS_TABS = {
+  general: 'general',
+  patterns: 'patterns',
+  testQuery: 'test-query',
+  testing: 'testing',
+  additional: 'additional',
+};

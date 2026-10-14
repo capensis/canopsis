@@ -38,6 +38,7 @@ export const PATTERN_OPERATORS = {
 
   ticketAssociated: 'ticket_associated',
   ticketNotAssociated: 'ticket_not_associated',
+  ticketCreationFailed: 'ticket_creation_failed',
 
   canceled: 'canceled',
   notCanceled: 'not_canceled',
@@ -135,6 +136,7 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.isNotEmpty,
   PATTERN_OPERATORS.ticketAssociated,
   PATTERN_OPERATORS.ticketNotAssociated,
+  PATTERN_OPERATORS.ticketCreationFailed,
   PATTERN_OPERATORS.acked,
   PATTERN_OPERATORS.notAcked,
   PATTERN_OPERATORS.snoozed,
@@ -180,10 +182,7 @@ export const PATTERN_ARRAY_OPERATORS = [
   PATTERN_OPERATORS.withoutLabel,
 ];
 
-export const PATTERN_DURATION_OPERATORS = [
-  PATTERN_OPERATORS.longer,
-  PATTERN_OPERATORS.shorter,
-];
+export const PATTERN_DURATION_OPERATORS = [PATTERN_OPERATORS.longer, PATTERN_OPERATORS.shorter];
 
 export const PATTERN_NUMBER_OPERATORS = [
   PATTERN_OPERATORS.equal,
@@ -204,20 +203,11 @@ export const PATTERN_STRING_OPERATORS = [
   PATTERN_OPERATORS.regexp,
 ];
 
-export const PATTERN_BOOLEAN_OPERATORS = [
-  PATTERN_OPERATORS.equal,
-  PATTERN_OPERATORS.notEqual,
-];
+export const PATTERN_BOOLEAN_OPERATORS = [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual];
 
-export const PATTERN_NULL_OPERATORS = [
-  PATTERN_OPERATORS.equal,
-  PATTERN_OPERATORS.notEqual,
-];
+export const PATTERN_NULL_OPERATORS = [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual];
 
-export const PATTERN_EXISTS_OPERATORS = [
-  PATTERN_OPERATORS.exist,
-  PATTERN_OPERATORS.notExist,
-];
+export const PATTERN_EXISTS_OPERATORS = [PATTERN_OPERATORS.exist, PATTERN_OPERATORS.notExist];
 
 export const PATTERN_ALARM_TAG_LABEL_OPERATORS = [
   PATTERN_OPERATORS.withLabel,
@@ -250,10 +240,7 @@ export const PATTERN_QUICK_RANGES_DURATIONS = {
   [QUICK_RANGES.last30Days.value]: { value: 30, unit: TIME_UNITS.day },
 };
 
-export const PATTERN_QUICK_RANGES = [
-  ...PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
-  QUICK_RANGES.custom,
-];
+export const PATTERN_QUICK_RANGES = [...PATTERN_QUICK_RANGES_WITHOUT_CUSTOM, QUICK_RANGES.custom];
 
 export const PATTERN_CUSTOM_ITEM_VALUE = Symbol('custom');
 

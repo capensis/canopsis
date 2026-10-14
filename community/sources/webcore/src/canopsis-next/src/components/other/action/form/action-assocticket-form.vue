@@ -1,7 +1,9 @@
 <template>
   <associate-ticket-event-form
-    v-field="value"
+    :form="modelValue"
     :name="name"
+    :depth="depth"
+    @update:form="$emit('update:modelValue', $event)"
   />
 </template>
 
@@ -9,21 +11,23 @@
 import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: { AssociateTicketEventForm },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+
   props: {
-    value: {
+    modelValue: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     name: {
       type: String,
-      required: 'parameters',
+      default: 'parameters',
+    },
+    depth: {
+      type: Number,
+      default: 0,
     },
   },
+
+  emits: ['update:modelValue'],
 };
 </script>

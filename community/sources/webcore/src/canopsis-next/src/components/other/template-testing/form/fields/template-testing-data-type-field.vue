@@ -1,12 +1,17 @@
 <template>
-  <c-select-field
-    v-field="value"
+  <c-select
+    :model-value="value"
     :items="items"
-    :label="label || $t('common.filterByType')"
+    :label="label || t('common.filterByType')"
     :name="name"
     :disabled="disabled"
     :required="required"
     :clearable="clearable"
+    :hide-details="hideDetails"
+    class="template-testing-data-type-field"
+    item-title="text"
+    item-value="value"
+    @update:model-value="$emit('update:value', $event)"
   />
 </template>
 
@@ -18,10 +23,6 @@ import { TEMPLATE_TESTING_DATA_TYPES } from '@/constants';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Number,
@@ -47,18 +48,31 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
   },
+  emits: ['update:value'],
   setup() {
     const { t } = useI18n();
 
     const items = computed(() => Object.values(TEMPLATE_TESTING_DATA_TYPES).map(value => ({
-      value,
-      text: t(`templateTesting.dataTypes.${value}`),
-    })));
+        value,
+        text: t(`templateTesting.dataTypes.${value}`),
+      })),
+    );
 
     return {
+      t,
       items,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.template-testing-data-type-field {
+  min-width: 200px;
+}
+</style>

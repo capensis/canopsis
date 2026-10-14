@@ -1,5 +1,11 @@
 <script>
+import { h } from 'vue';
+
+const LEGACY_HTML_TAGS = new Set(['center']);
+
 export default {
+  inheritAttrs: false,
+
   props: {
     template: {
       type: String,
@@ -14,18 +20,19 @@ export default {
       default: () => ({}),
     },
   },
+
   computed: {
     parentNode() {
       return this.parent || this.$parent;
     },
 
     parentOptions() {
-      return this.parentNode.$options;
+      return this.parentNode?.$options ?? {};
     },
 
     methodProps() {
       return Object.entries(this.parentOptions.methods ?? {}).reduce((acc, [key]) => {
-        acc[key] = this.parentNode[key];
+        acc[key] = this.parentNode[key]?.bind(this.parentNode);
 
         return acc;
       }, {});
@@ -33,12 +40,12 @@ export default {
 
     props() {
       return Object.entries({
-        ...this.parentNode.$data,
-        ...this.parentNode.$props,
+        ...this.parentNode?.$data,
+        ...this.parentNode?.$props,
         ...this.methodProps,
         ...this.templateProps,
       }).reduce((acc, [key, value]) => {
-        if (!this.isDeclaredByMixin(key)) {
+        if (!this.isDeclaredByCurrentComponent(key)) {
           acc[key] = value;
         }
 
@@ -48,38 +55,50 @@ export default {
 
     propsTypes() {
       return Object.keys({
-        ...this.parentNode.$data,
+        ...this.parentNode?.$data,
         ...this.parentOptions.props,
         ...this.parentOptions.methods,
         ...this.templateProps,
-      }).filter(key => !this.isDeclaredByMixin(key));
+      }).filter(key => !this.isDeclaredByCurrentComponent(key));
     },
 
     component() {
       return {
-        template: this.template || '<div></div>',
+        template: this.template || '<div />',
         components: this.parentOptions.components,
         computed: this.parentOptions.computed,
         props: this.propsTypes,
-        // eslint-disable-next-line no-underscore-dangle
-        provide: this.parentNode._provided,
+        compilerOptions: {
+          whitespace: 'preserve',
+          isCustomElement: tag => LEGACY_HTML_TAGS.has(tag),
+        },
+
+        setup: () => ({
+          ...this.parentNode?.$.provides,
+        }),
       };
     },
   },
+
   methods: {
-    isDeclaredByMixin(key) {
-      return this.$data[key] || this.$props[key] || this.$options.computed[key] || this.$options.methods[key];
+    isDeclaredByCurrentComponent(key) {
+      return (
+        key in (this.$data ?? {}) ||
+        key in (this.$props ?? {}) ||
+        key in (this.$options.computed ?? {}) ||
+        key in (this.$options.methods ?? {})
+      );
     },
   },
-  render(h) {
+
+  render() {
     if (!this.template) {
       return null;
     }
 
-    // eslint-disable-next-line consistent-return
     return h(this.component, {
-      props: this.props,
-      on: this.$listeners,
+      ...this.props,
+      ...this.$attrs,
     });
   },
 };

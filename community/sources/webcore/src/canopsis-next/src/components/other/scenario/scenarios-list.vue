@@ -18,20 +18,19 @@
         :enablable="updatable"
         :disablable="updatable"
         scenario
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
-    <template #headerCell="{ header }">
-      <span class="pre-line header-text">{{ header.text }}</span>
-    </template>
+
     <template #delay="{ item }">
-      <span>{{ item.delay | duration }}</span>
+      <span>{{ formatDuration(item.delay) }}</span>
     </template>
+
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
+
     <template #enabled="{ item }">
       <c-help-icon
         v-if="hasDeprecatedTrigger(item)"
@@ -40,37 +39,26 @@
         icon="error"
         top
       />
-      <c-enabled
-        v-else
-        :value="item.enabled"
-      />
+      <c-enabled v-else :value="item.enabled" />
     </template>
+
     <template #created="{ item }">
-      {{ item.created | date }}
+      {{ formatDate(item.created) }}
     </template>
+
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ formatDate(item.updated) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+      <c-layout gap="1">
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
         <c-db-export-btn :id="item._id" scenario />
-      </v-layout>
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
     </template>
+
     <template #expand="{ item }">
       <scenarios-list-expand-item :scenario="item" />
     </template>
@@ -80,6 +68,8 @@
 <script>
 import { computed } from 'vue';
 
+import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
 import { useI18n } from '@/hooks/i18n';
@@ -90,6 +80,7 @@ export default {
   components: {
     ScenariosListExpandItem,
   },
+
   props: {
     scenarios: {
       type: Array,
@@ -120,6 +111,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
+
   setup() {
     const { t } = useI18n();
 
@@ -139,6 +133,8 @@ export default {
 
     return {
       headers,
+      formatDate: convertDateToString,
+      formatDuration: convertDurationToString,
       hasDeprecatedTrigger,
     };
   },

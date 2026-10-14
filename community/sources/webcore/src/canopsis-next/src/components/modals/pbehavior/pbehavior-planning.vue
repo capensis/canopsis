@@ -1,79 +1,78 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ $t('modals.pbehaviorPlanning.title') }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <pbehavior-planning-calendar
-          :pbehaviors-by-id.sync="form.pbehaviorsById"
-          :added-pbehaviors-by-id.sync="form.addedPbehaviorsById"
-          :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById"
-          :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById"
+          :pbehaviors-by-id="form.pbehaviorsById"
+          :added-pbehaviors-by-id="form.addedPbehaviorsById"
+          :changed-pbehaviors-by-id="form.changedPbehaviorsById"
+          :removed-pbehaviors-by-id="form.removedPbehaviorsById"
           :with-inherited="config.withInherited"
           :read-only="readOnly"
           :entity-pattern="entityPattern"
           :default-fields="defaultFields"
-          :timezone.sync="calendarTimezone"
+          :timezone="calendarTimezone"
+          @update:pbehaviors-by-id="updateFormField('pbehaviorsById', $event)"
+          @update:added-pbehaviors-by-id="updateFormField('addedPbehaviorsById', $event)"
+          @update:changed-pbehaviors-by-id="updateFormField('changedPbehaviorsById', $event)"
+          @update:removed-pbehaviors-by-id="updateFormField('removedPbehaviorsById', $event)"
+          @update:timezone="calendarTimezone = $event"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
           {{ $t('common.cancel') }}
         </v-btn>
+
         <v-btn
           :disabled="isDisabled"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
 import { keyBy, omit } from 'lodash';
 
-import { MODALS } from '@/constants';
-
 import {
   getPbehaviorNameByEntities,
+  getPbehaviorsInitialTimezone,
   pbehaviorToDuplicateForm,
   pbehaviorToRequest,
-  getPbehaviorsInitialTimezone,
 } from '@/helpers/entities/pbehavior/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { useModals } from '@/hooks/modals';
+import { useInfo } from '@/hooks/store/modules/info';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.pbehaviorPlanning,
-  components: { PbehaviorPlanningCalendar, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    entitiesInfoMixin,
-    entitiesPbehaviorMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
+  components: { PbehaviorPlanningCalendar },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
   data() {
-    const { pbehaviors = [], pbehaviorsToAdd = [] } = this.modal.config;
+    const { pbehaviors = [], pbehaviorsToAdd = [] } = this.modal.config ?? {};
 
     return {
+      submitting: false,
       calendarTimezone: getPbehaviorsInitialTimezone(pbehaviors),
       form: {
         pbehaviorsById: keyBy(pbehaviors, '_id'),
@@ -83,7 +82,32 @@ export default {
       },
     };
   },
+
+  setup() {
+    const modals = useModals();
+    const { autoSuggestPbehaviorName } = useInfo();
+    const {
+      bulkCreatePbehaviors,
+      bulkUpdatePbehaviors,
+      removePbehaviors,
+      updateSeveralPbehaviorComments,
+    } = usePbehavior();
+
+    return {
+      modals,
+      autoSuggestPbehaviorName,
+      bulkCreatePbehaviors,
+      bulkUpdatePbehaviors,
+      removePbehaviors,
+      updateSeveralPbehaviorComments,
+    };
+  },
+
   computed: {
+    config() {
+      return this.modal.config ?? {};
+    },
+
     defaultName() {
       return this.autoSuggestPbehaviorName
         ? getPbehaviorNameByEntities(this.config.entities, this.calendarTimezone)
@@ -111,26 +135,91 @@ export default {
     entityPattern() {
       return this.config.entityPattern;
     },
+
+    isDisabled() {
+      return this.submitting || this.readOnly;
+    },
   },
+
   methods: {
+    closeModal() {
+      this.modals.hide({ id: this.modal.id });
+    },
+
+    updateFormField(field, value) {
+      this.form = {
+        ...this.form,
+        [field]: value,
+      };
+    },
+
+    async createPbehaviorsWithComments(pbehaviors) {
+      const response = await this.bulkCreatePbehaviors({ data: pbehaviors });
+
+      await Promise.all(
+        response.map(({ id, errors, item: pbehavior }) => {
+          if (!errors) {
+            return this.updateSeveralPbehaviorComments({
+              comments: pbehavior.comments,
+              pbehavior: {
+                ...pbehavior,
+                _id: id,
+                comments: [],
+              },
+            });
+          }
+
+          return Promise.reject(errors);
+        }),
+      );
+
+      return response;
+    },
+
+    async updatePbehaviorsWithComments(pbehaviors = [], originalPbehaviors = []) {
+      const response = await this.bulkUpdatePbehaviors({ data: pbehaviors });
+
+      await Promise.all(
+        pbehaviors.map(pbehavior => this.updateSeveralPbehaviorComments({
+            pbehavior: originalPbehaviors.find(({ _id }) => _id === pbehavior._id),
+            comments: pbehavior.comments,
+          }),
+        ),
+      );
+
+      return response;
+    },
+
     async submit() {
-      const { pbehaviors: originalPbehaviors } = this.config;
-      const createdPbehaviors = Object.values(this.form.addedPbehaviorsById)
-        .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])));
-      const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
-      const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
+      this.submitting = true;
 
-      const [createdPbehaviorsResult, updatedPbehaviorsResult, removedPbehaviorsResult] = await Promise.all([
-        createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
-        updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors, originalPbehaviors),
-        removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
-      ]);
+      try {
+        const { pbehaviors: originalPbehaviors = [] } = this.config;
+        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById).map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])),
+        );
+        const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(
+          pbehaviorToRequest,
+        );
+        const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      if (this.config.afterSubmit) {
-        await this.config.afterSubmit(createdPbehaviorsResult, updatedPbehaviorsResult, removedPbehaviorsResult);
+        const [createdPbehaviorsResult, updatedPbehaviorsResult, removedPbehaviorsResult] =
+          await Promise.all([
+            createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
+            updatedPbehaviors.length &&
+              this.updatePbehaviorsWithComments(updatedPbehaviors, originalPbehaviors),
+            removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
+          ]);
+
+        await this.config.afterSubmit?.(
+          createdPbehaviorsResult,
+          updatedPbehaviorsResult,
+          removedPbehaviorsResult,
+        );
+
+        this.closeModal();
+      } finally {
+        this.submitting = false;
       }
-
-      this.$modals.hide();
     },
   },
 };

@@ -144,6 +144,13 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
+					// task may be sent as abandoned because prev execution was too long, there is a chance that
+					// prev task finishes in the exact same time as we sent abandoned task, so we need to check again
+					// if it's completed.
+					if execution.ActionExecutions[len(execution.ActionExecutions)-1].Executed {
+						return
+					}
+
 					step := 0
 					for _, e := range execution.ActionExecutions {
 						if e.Executed {

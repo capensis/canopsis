@@ -1,10 +1,11 @@
 <template>
-  <v-layout column>
+  <c-layout gap="2" column>
     <c-lazy-search-field
-      v-field="form.ticket"
+      :value="form.ticket"
       :items="associatedTickets"
-      :label="$t('modals.removeAssociatedTicketEvent.associatedTicketLabel')"
-      :hint="$t('modals.removeAssociatedTicketEvent.associatedTicketHint')"
+      :label="t('modals.removeAssociatedTicketEvent.associatedTicketLabel')"
+      :hint="t('modals.removeAssociatedTicketEvent.associatedTicketHint')"
+      :disabled="ticketDisabled"
       item-text="text"
       item-value="value"
       name="ticket"
@@ -12,27 +13,28 @@
       persistent-hint
       required
       autocomplete
+      @update:value="updateField('ticket', $event)"
     />
     <c-description-field
-      v-field="form.comment"
-      :label="$t('common.reason')"
-      :max-length="255"
+      :model-value="form.comment"
+      :label="t('common.reason')"
+      :max-length="FORM_MAX_STRING_LENGTH"
       name="reason"
       required
+      @update:model-value="updateField('comment', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { computed, onMounted } from 'vue';
 
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -42,8 +44,16 @@ export default {
       type: Array,
       default: () => [],
     },
+    ticketDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['update:form'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
     const associatedTickets = computed(() => {
@@ -77,7 +87,10 @@ export default {
     });
 
     return {
+      t,
+      FORM_MAX_STRING_LENGTH,
       associatedTickets,
+      updateField,
     };
   },
 };

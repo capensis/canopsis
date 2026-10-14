@@ -1,72 +1,53 @@
 <template>
-  <v-tabs
-    slider-color="primary"
-    centered
-  >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
-    <v-tab :class="{ 'error--text': hasPagesError }">
-      {{ $t('broadcastMessage.viewsAndPages') }}
-    </v-tab>
+  <div>
+    <v-tabs v-model="activeTab" color="primary" align-tabs="center">
+      <v-tab value="general">
+        {{ t('common.general') }}
+      </v-tab>
+      <v-tab value="views">
+        {{ t('broadcastMessage.viewsAndPages') }}
+      </v-tab>
+    </v-tabs>
 
-    <v-tab-item eager>
-      <broadcast-message-general-form
-        v-field="form"
-        ref="generalElement"
-      />
-    </v-tab-item>
-    <v-tab-item eager>
-      <broadcast-message-views-form
-        v-field="form.views"
-        ref="pagesElement"
-        :tree-items="treeItems"
-      />
-    </v-tab-item>
-  </v-tabs>
+    <v-window v-model="activeTab" class="pt-3">
+      <v-window-item value="general">
+        <broadcast-message-general-form />
+      </v-window-item>
+      <v-window-item value="views">
+        <broadcast-message-views-form :tree-items="treeItems" />
+      </v-window-item>
+    </v-window>
+  </div>
 </template>
 
 <script>
 import { ref } from 'vue';
 
-import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
+import { useI18n } from '@/hooks/i18n';
 
 import BroadcastMessageGeneralForm from './broadcast-message-general-form.vue';
 import BroadcastMessageViewsForm from './broadcast-message-views-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     BroadcastMessageGeneralForm,
     BroadcastMessageViewsForm,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      required: true,
-    },
-    treeItems: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  setup() {
-    const generalElement = ref(null);
-    const pagesElement = ref(null);
 
-    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
-    const { hasChildrenError: hasPagesError } = useValidationElementChildren(pagesElement);
+  props: {
+    treeItems: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+
+  setup() {
+    const { t } = useI18n();
+    const activeTab = ref('general');
 
     return {
-      generalElement,
-      pagesElement,
-
-      hasGeneralError,
-      hasPagesError,
+      t,
+      activeTab,
     };
   },
 };

@@ -1,93 +1,104 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createTicketStatusJob.edit.title') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <ticket-status-job-form
-          v-model="form"
+          :form="values"
           :is-new="isNew"
+          @update:form="updateForm"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
-          @click="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import {
+  formToTicketStatusJob,
+  ticketStatusJobToForm,
+} from '@/helpers/entities/ticket-status-job/form';
 
-import { ticketStatusJobToForm, formToTicketStatusJob } from '@/helpers/entities/ticket-status-job/form';
-
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import TicketStatusJobForm from '@/components/other/ticket-status-job/ticket-status-job-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createTicketStatusJob,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     TicketStatusJobForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const ticketStatusJob = computed(() => config.value.ticketStatusJob);
+    const isNew = computed(() => !ticketStatusJob.value?._id);
+    const title = computed(
+      () => config.value.title || t('modals.createTicketStatusJob.edit.title'),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
 
-    const form = ref(ticketStatusJobToForm(config.value.ticketStatusJob ?? {}));
+    const form = useForm({
+      initialValues: ticketStatusJobToForm(ticketStatusJob.value),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
 
-    const isNew = computed(() => !config.value.ticketStatusJob?._id);
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const updateForm = value => (values.value = value);
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToTicketStatusJob(form.value));
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToTicketStatusJob(values.value));
 
-        close();
-      },
+      closeModal();
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
+      t,
+      title,
+      values,
       isNew,
-      isDisabled,
-      submitting,
+      isSubmitting,
+      submitLabel,
       submit,
-      close,
+      updateForm,
+      closeModal,
     };
   },
 };

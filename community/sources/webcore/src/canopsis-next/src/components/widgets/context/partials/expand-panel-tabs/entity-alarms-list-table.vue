@@ -4,39 +4,41 @@
     :meta="meta"
     :alarms="alarms"
     :columns="columns"
-    :query.sync="query"
+    :query="query"
+    :loading="pending"
     :expandable="!resolved"
     :hide-pagination="!resolved"
     hide-actions
+    @update:query="updateQuery"
   />
 </template>
 
 <script>
 import { isEqual } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions } from 'pinia';
 
 import { PAGINATION_LIMIT } from '@/config';
 
 import Observer from '@/services/observer';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { useAlarmStore } from '@/stores/modules/alarm';
+
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/alarms-list-table-with-pagination.vue';
-
-const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export default {
   inject: {
     $periodicRefresh: {
-      default() {
-        return new Observer();
-      },
+      default: () => new Observer(),
     },
   },
+
   components: {
     AlarmsListTableWithPagination,
   },
+
   props: {
     entity: {
       type: Object,
@@ -51,6 +53,7 @@ export default {
       required: false,
     },
   },
+
   data() {
     return {
       pending: false,
@@ -62,11 +65,13 @@ export default {
       },
     };
   },
+
   computed: {
     widget() {
       return generatePreparedDefaultAlarmListWidget();
     },
   },
+
   watch: {
     resolved: 'fetchList',
     query(query, prevQuery) {
@@ -75,42 +80,54 @@ export default {
       }
     },
   },
+
   mounted() {
     this.fetchList();
 
     this.$periodicRefresh.register(this.fetchList);
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.$periodicRefresh.unregister(this.fetchList);
   },
+
   methods: {
-    ...mapAlarmActions({
-      fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
-      fetchOpenAlarmsListWithoutStore: 'fetchOpenAlarmsListWithoutStore',
-    }),
+    ...mapActions(useAlarmStore, [
+      'fetchResolvedAlarmsListWithoutStore',
+      'fetchOpenAlarmsListWithoutStore',
+    ]),
+
+    updateQuery(query) {
+      this.query = query;
+    },
 
     async fetchList() {
       this.pending = true;
 
-      if (this.resolved) {
-        const params = convertWidgetQueryToRequest(this.query);
+      try {
+        if (this.resolved) {
+          const params = convertWidgetQueryToRequest(this.query);
 
-        const { data, meta } = await this.fetchResolvedAlarmsListWithoutStore({
-          params: { ...params, _id: this.entity._id },
-        });
+          const { data, meta } = await this.fetchResolvedAlarmsListWithoutStore({
+            params: { ...params, _id: this.entity._id },
+          });
 
-        this.alarms = data;
-        this.meta = meta;
-      } else {
-        const alarm = await this.fetchOpenAlarmsListWithoutStore({
-          params: { _id: this.entity._id },
-        });
+          this.alarms = data ?? [];
+          this.meta = meta ?? {};
+        } else {
+          const alarm = await this.fetchOpenAlarmsListWithoutStore({
+            params: { _id: this.entity._id },
+          });
 
-        this.alarms = alarm ? [alarm] : [];
-        this.meta = { total_count: this.alarms.length };
+          this.alarms = alarm ? [alarm] : [];
+          this.meta = { total_count: this.alarms.length };
+        }
+      } catch {
+        this.alarms = [];
+        this.meta = {};
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
     },
   },
 };

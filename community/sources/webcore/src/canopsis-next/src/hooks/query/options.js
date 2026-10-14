@@ -4,19 +4,34 @@ import { computed, unref } from 'vue';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { isSeveralEqual } from '@/helpers/collection';
+import {
+  convertDataTableSortToQuery,
+  convertQuerySortToDataTableSort,
+} from '@/helpers/entities/shared/query';
 
 /**
  * Custom hook to manage query options for pagination and sorting.
  *
  * @param {Ref} query - The reactive reference to the query object.
  * @param {Function} updateQuery - The function to update the query object.
- * @returns {Object} - Object containing computed options for pagination and sorting.
+ * @returns {Object} Object containing computed options for pagination and sorting.
  */
 export const useQueryOptions = (query, updateQuery) => {
   const options = computed(() => {
-    const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = unref(query);
+    const {
+      page = 1,
+      itemsPerPage = PAGINATION_LIMIT,
+      sortBy = [],
+      sortDesc = [],
+      ...restQuery
+    } = unref(query);
 
-    return { page, itemsPerPage, sortBy, sortDesc, ...restQuery };
+    return {
+      page,
+      itemsPerPage,
+      sortBy: convertQuerySortToDataTableSort(sortBy, sortDesc),
+      ...restQuery,
+    };
   });
 
   /**
@@ -30,6 +45,8 @@ export const useQueryOptions = (query, updateQuery) => {
       'search',
       'page',
       'itemsPerPage',
+      'sortBy',
+      'sortDesc',
       'totalItems',
       'groupBy',
       'groupDesc',
@@ -37,17 +54,21 @@ export const useQueryOptions = (query, updateQuery) => {
       'mustSort',
     ]);
 
-    const isEqualOptions = isSeveralEqual(
-      options.value,
-      value,
-      ['search', 'page', 'itemsPerPage', 'sortBy', 'sortDesc', ...Object.keys(otherValues)],
-    );
+    const isEqualOptions = isSeveralEqual(options.value, value, [
+      'search',
+      'page',
+      'itemsPerPage',
+      'sortBy',
+      'sortDesc',
+      ...Object.keys(otherValues),
+    ]);
 
     if (isEqualOptions) {
       return;
     }
 
     const oldItemsPerPage = unwrappedQuery.itemsPerPage ?? PAGINATION_LIMIT;
+    const sort = convertDataTableSortToQuery(value);
 
     updateQuery({
       ...pick(unwrappedQuery, Object.keys(value)),
@@ -55,8 +76,8 @@ export const useQueryOptions = (query, updateQuery) => {
       search: value.search || '',
       page: value.itemsPerPage <= oldItemsPerPage ? value.page : 1,
       itemsPerPage: value.itemsPerPage || PAGINATION_LIMIT,
-      sortBy: value.sortBy || [],
-      sortDesc: value.sortDesc || [],
+      sortBy: sort.sortBy,
+      sortDesc: sort.sortDesc,
 
       ...otherValues,
     });
@@ -66,7 +87,7 @@ export const useQueryOptions = (query, updateQuery) => {
     /**
      * Get function to extract pagination and sorting options from the query object.
      *
-     * @returns {Object} - Object containing page, itemsPerPage, sortBy, sortDesc, and other query parameters.
+     * @returns {Object} Object containing page, itemsPerPage, sortBy, sortDesc, and other query parameters.
      */
     get: () => options.value,
 
