@@ -25,20 +25,14 @@ echo "install golang $GOLANG_VERSION."
 wget https://go.dev/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
 tar -C ~ -xzf go$GOLANG_VERSION.linux-amd64.tar.gz
 
-YARN_VERSION=$(grep "^YARN_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
 NODE_VERSION=$(grep "^NODE_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
-echo "install yarn $YARN_VERSION."
+echo "install nodejs $NODE_VERSION."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 nvm install $NODE_VERSION
-nvm alias defaut $NODE_VERSION
+nvm alias default $NODE_VERSION
 node -v
-npm install -g corepack
-yarn init -2
-yarn set version $YARN_VERSION
-yarn install
-yarn --version
 
 %build
 export PATH=$PATH:~/go/bin
@@ -49,20 +43,21 @@ make -C community/sources/webcore/src/canopsis-next VERSION=%{version_upstream}
 
 %install
 make -C community/go-engines-community DESTDIR=%{buildroot} install
-make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYSTEMD_UNITS="engine-action engine-axe engine-che engine-fifo engine-pbehavior" SERVICES="canopsis-api"
+make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYSTEMD_UNITS="engine-action engine-axe engine-che engine-fifo engine-pbehavior" SERVICES="canopsis-internal-api canopsis-public-api prometheus-exporter"
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} install
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} nginx_config
 
 %preun
-%systemd_preun canopsis-engine-go@.service
 if [ $1 -eq 0 ]; then
-  systemctl disable canopsis-engine-go@
-  systemctl stop canopsis-engine-go@
-fi
-%systemd_preun canopsis-service@canopsis-api.service
-if [ $1 -eq 0 ]; then
-  systemctl disable canopsis-service@canopsis-api.service
-  systemctl stop canopsis-service@canopsis-api.service
+  for unit in $(systemctl list-unit-files | grep "canopsis-engine-go" | awk '{print $1}'); do
+    systemctl stop "$unit" >/dev/null 2>&1
+    systemctl disable "$unit" >/dev/null 2>&1
+  done
+
+  for unit in $(systemctl list-unit-files | grep "canopsis-service" | awk '{print $1}'); do
+    systemctl stop "$unit" >/dev/null 2>&1
+    systemctl disable "$unit" >/dev/null 2>&1
+  done
 fi
 
 %files

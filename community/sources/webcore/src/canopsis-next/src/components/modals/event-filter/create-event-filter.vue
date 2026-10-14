@@ -1,97 +1,64 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
+    <c-modal-wrapper text-class="position-relative" close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <template-testing-test-variables-wrapper
-          v-model="form"
+        <event-filter-form
           :rule-id="ruleId"
-          :type="type"
-        >
-          <template #default="{ templateVars, copyVars }">
-            <c-enabled-field v-model="form.enabled" with-background />
-            <event-filter-form
-              v-model="form"
-              :template-vars="templateVars"
-              :copy-vars="copyVars"
-              :is-disabled-id-field="config.isDisabledIdField"
-              :event-attributes="eventAttributes"
-              :attributes-pending="pending"
-            />
-            <ai-chat-sidebar
-              v-if="chatShown"
-              v-bind="chatOptions.bind"
-              v-on="chatOptions.on"
-            />
-          </template>
-        </template-testing-test-variables-wrapper>
+          :is-disabled-id-field="isDisabledIdField"
+          :event-attributes="eventAttributes"
+          :attributes-pending="pending"
+        />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
       <template #actions="">
         <v-btn
           :disabled="submitting"
-          depressed
-          text
-          @click="close"
+          variant="text"
+          @click="closeModal"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitDisabled"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import {
-  computed,
-  ref,
-  watch,
-  inject,
-  toRef,
-} from 'vue';
+import { computed, inject, toRef, watch } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
-import {
-  isChangeEntityEventFilterRuleType,
-  isEnrichmentEventFilterRuleType,
-} from '@/helpers/entities/event-filter/rule/entity';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
+import { useModals } from '@/hooks/modals';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createEventFilter,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
-    EventFilterForm,
     AiChatSidebar,
-    TemplateTestingTestVariablesWrapper,
-    ModalWrapper,
+    EventFilterForm,
   },
   props: {
     modal: {
@@ -100,72 +67,74 @@ export default {
     },
   },
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
-
     const system = inject('$system');
 
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
     const { t } = useI18n();
-    const { validator } = useValidationFormErrors();
 
-    const form = ref(eventFilterToForm(config.value.rule, system.timezone));
+    const form = useForm({
+      initialValues: eventFilterToForm(config.value.rule, system.timezone),
+    });
+    const { values, handleSubmit, submitting, reset } = form;
 
     const { fetchEventFilterPatternFields } = usePatternsFields();
 
-    const {
-      pending,
-      eventAttributes,
-    } = usePatternsFieldsFetching(fetchEventFilterPatternFields);
-
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
-
-      modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.rule?._id,
-      context: LLM_SOCKET_CONTEXTS.eventFilter,
-    });
+    const { pending, eventAttributes } = usePatternsFieldsFetching(fetchEventFilterPatternFields);
 
     const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
-    const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
-    const isChangeEntity = computed(() => isChangeEntityEventFilterRuleType(form.value.type));
+    const isNew = computed(() => !config.value.rule?._id || config.value.duplicating);
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const isDisabledIdField = computed(
+      () => config.value.isDisabledIdField || config.value.submittingIdField,
+    );
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        const result = await config.value.action?.(formToEventFilter(form.value, system.timezone));
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
+      modal: toRef(props, 'modal'),
+      ruleId: ruleId.value,
+      context: LLM_SOCKET_CONTEXTS.eventFilter,
+    });
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.attrs.pending);
 
-        await config.value.afterSubmit?.(result);
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-        close();
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToEventFilter(values.value, system.timezone));
 
-        return result;
-      },
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
-    watch(() => form.value.type, () => validator.errors.clear());
+    watch(
+      () => values.value.type,
+      () => reset(values.value),
+    );
 
     return {
-      form,
       config,
       ruleId,
-      type,
       title,
       pending,
       eventAttributes,
-      isEnrichment,
-      isChangeEntity,
-      isDisabled,
       submitting,
+      submitDisabled,
+      isDisabledIdField,
       chatShown,
       chatOptions,
+      submitLabel,
       submit,
-      close,
+      closeModal,
     };
   },
 };

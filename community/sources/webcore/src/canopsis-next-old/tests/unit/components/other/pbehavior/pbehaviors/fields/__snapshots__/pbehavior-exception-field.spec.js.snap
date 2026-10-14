@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props 1`] = `
+<div
+  class="layout pbehavior-exception-field column"
+>
+  <div
+    class="layout gap-2 justify-space-between"
+  >
+    <div
+      class="flex pbehavior-exception-field__interval xs7"
+    >
+      <date-time-splitted-range-picker-field-stub
+        disabled="true"
+        end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        endlabel="End"
+        endrules="[object Object]"
+        name="dates"
+        start="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        startlabel="Begin"
+        startrules="[object Object]"
+      />
+    </div>
+    <div
+      class="flex xs5"
+    >
+      <c-pbehavior-type-field-stub
+        disabled="true"
+        name="type"
+        return-object=""
+        value=""
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout"
+  >
+    <v-switch-stub
+      backgroundcolor=""
+      class="mt-0"
+      color="primary"
+      disabled="true"
+      errorcount="1"
+      errormessages=""
+      hidedetails="true"
+      label="Whole day"
+      messages=""
+      ripple="true"
+      rules=""
+      successmessages=""
+      valuecomparator="[Function]"
+    />
+  </div>
+</div>
+`;
+
+exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props with defined type 1`] = `
+<div
+  class="layout pbehavior-exception-field column"
+>
+  <div
+    class="layout gap-2 justify-space-between"
+  >
+    <div
+      class="flex pbehavior-exception-field__interval xs7"
+    >
+      <date-time-splitted-range-picker-text-stub
+        end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        endlabel="End"
+        start="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        startlabel="Begin"
+      />
+    </div>
+    <div
+      class="flex xs5"
+    >
+      <c-pbehavior-type-text-stub
+        value="type"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout"
+  >
+    <v-switch-stub
+      backgroundcolor=""
+      class="mt-0"
+      color="primary"
+      disabled="true"
+      errorcount="1"
+      errormessages=""
+      hidedetails="true"
+      label="Whole day"
+      messages=""
+      ripple="true"
+      rules=""
+      successmessages=""
+      valuecomparator="[Function]"
+    />
+  </div>
+</div>
+`;
+
+exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with default props 1`] = `
+<div
+  class="layout pbehavior-exception-field column"
+>
+  <div
+    class="layout gap-2 justify-space-between"
+  >
+    <div
+      class="flex pbehavior-exception-field__interval xs7"
+    >
+      <date-time-splitted-range-picker-field-stub
+        endlabel="End"
+        endrules="[object Object]"
+        name="dates"
+        startlabel="Begin"
+        startrules="[object Object]"
+      />
+    </div>
+    <!---->
+    <div
+      class="flex pbehavior-exception-field__actions shrink"
+    >
+      <button
+        class="btn--editing v-btn v-btn--active v-btn--fab v-btn--icon v-btn--round theme--light v-size--default"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light primary--text"
+          >
+            check
+          </i>
+        </span>
+      </button>
+      <button
+        class="v-btn-legacy-m--y v-btn v-btn--icon v-btn--round theme--light v-size--default error--text"
+        type="button"
+      >
+        <span
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            delete
+          </i>
+        </span>
+      </button>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <v-switch-stub
+      backgroundcolor=""
+      class="mt-0"
+      color="primary"
+      errorcount="1"
+      errormessages=""
+      hidedetails="true"
+      label="Whole day"
+      messages=""
+      ripple="true"
+      rules=""
+      successmessages=""
+      valuecomparator="[Function]"
+    />
+  </div>
+</div>
+`;

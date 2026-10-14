@@ -1,67 +1,64 @@
 <template>
-  <v-layout wrap>
-    <v-flex xs7>
+  <v-row density="comfortable">
+    <v-col cols="7">
       <component
         :is="component"
-        v-field="duration.enabled"
-        v-validate
-        :error-messages="errors.collect(enabledFieldName)"
+        :model-value="duration.enabled"
+        :label="label"
         :name="enabledFieldName"
         color="primary"
         class="pb-2"
+        hide-details
+        @update:model-value="updateEnabled"
       >
-        <template #label="">
-          <v-layout class="full-width">
-            {{ label }}
-            <c-help-icon
-              v-if="helpText"
-              :text="helpText"
-              icon-class="ml-2"
-              color="info"
-              max-width="300"
-              top
-            />
-            <v-fade-transition>
-              <span v-if="suffix && !hideDuration" class="pr-2 pl-1 float-right text-lowercase">{{ suffix }}</span>
-            </v-fade-transition>
-          </v-layout>
+        <template #label>
+          <v-row class="w-100" align="center" no-gutters>
+            <v-col>
+              {{ label }}
+              <c-help-icon
+                v-if="helpText"
+                :text="helpText"
+                icon-class="ml-2"
+                color="info"
+                max-width="300"
+                top
+              />
+            </v-col>
+            <v-col cols="auto">
+              <v-fade-transition>
+                <span v-if="suffix && !hideDuration" class="pr-2 pl-1 text-lowercase">
+                  {{ suffix }}
+                </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
         </template>
       </component>
-    </v-flex>
+    </v-col>
+
     <v-fade-transition>
-      <v-flex v-if="!hideDuration" xs4>
+      <v-col v-if="!hideDuration" cols="5">
         <c-duration-field
-          v-field="duration"
+          :duration="duration"
           :units-label="$t('common.unit')"
           :disabled="!duration.enabled"
           :required="duration.enabled"
           :units="timeUnits"
           :name="name"
           :min="min"
-          @input="validate"
+          @update:duration="updateModel"
         />
-      </v-flex>
+      </v-col>
     </v-fade-transition>
-    <v-flex v-if="errors.has(name)" xs9>
-      <v-messages
-        :value="errors.collect(name)"
-        color="error"
-      />
-    </v-flex>
-  </v-layout>
+  </v-row>
 </template>
 
 <script>
-import { computed, toRef } from 'vue';
+import { AVAILABLE_TIME_UNITS } from '@/constants';
 
-import { useEnabledDurationField } from '@/components/forms/fields/duration/hooks/enabled-duration-field';
+import { convertUnit } from '@/helpers/date/duration';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'duration',
-    event: 'input',
-  },
   props: {
     duration: {
       type: Object,
@@ -81,7 +78,7 @@ export default {
     },
     name: {
       type: String,
-      required: false,
+      default: 'duration',
     },
     units: {
       type: Array,
@@ -100,33 +97,56 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const enabledFieldName = computed(() => `${props.name}.enabled`);
 
-    const hideDuration = computed(() => props.hideValueOnFalse && !props.duration.enabled);
+  emits: ['update:duration'],
 
-    const component = computed(() => (props.switcher ? 'c-enabled-field' : 'v-checkbox'));
+  computed: {
+    enabledFieldName() {
+      return `${this.name}.enabled`;
+    },
 
-    const {
-      timeUnits,
-      min,
-      validate,
-    } = useEnabledDurationField({
-      duration: toRef(props, 'duration'),
-      name: toRef(props, 'name'),
-      units: toRef(props, 'units'),
-      after: toRef(props, 'after'),
-    });
+    hideDuration() {
+      return this.hideValueOnFalse && !this.duration.enabled;
+    },
 
-    return {
-      enabledFieldName,
-      hideDuration,
-      component,
+    component() {
+      return this.switcher ? 'c-enabled-field' : 'c-checkbox';
+    },
 
-      timeUnits,
-      min,
-      validate,
-    };
+    timeUnits() {
+      const units = this.units || [
+        AVAILABLE_TIME_UNITS.day,
+        AVAILABLE_TIME_UNITS.week,
+        AVAILABLE_TIME_UNITS.month,
+        AVAILABLE_TIME_UNITS.year,
+      ];
+
+      return units.map(({ value, text }) => ({
+        value,
+        text: this.$t(text, this.duration?.value || 0),
+      }));
+    },
+
+    min() {
+      if (!this.duration?.enabled || !this.after) {
+        return 1;
+      }
+
+      return Math.floor(convertUnit(this.after.value, this.after.unit, this.duration.unit)) + 1;
+    },
+  },
+
+  methods: {
+    updateModel(duration) {
+      this.$emit('update:duration', duration);
+    },
+
+    updateEnabled(enabled) {
+      this.updateModel({
+        ...this.duration,
+        enabled,
+      });
+    },
   },
 };
 </script>

@@ -1,40 +1,36 @@
 <template>
-  <third-party-login
-    :title="$t('login.loginWithOauth')"
-    :links="links"
-  />
+  <third-party-login :title="t('login.loginWithOauth')" :links="links" />
 </template>
 
-<script>
-import qs from 'qs';
+<script setup>
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 
 import { API_HOST, API_ROUTES, APP_HOST } from '@/config';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { useInfo } from '@/hooks/store/modules/info';
 
-import ThirdPartyLogin from './partials/third-party-login.vue';
+import ThirdPartyLogin from './third-party-login.vue';
 
-export default {
-  components: { ThirdPartyLogin },
-  mixins: [entitiesInfoMixin],
-  computed: {
-    links() {
-      return (this.oauthConfig?.providers ?? []).map((provider) => {
-        const { redirect = '' } = this.$route.query;
+const route = useRoute();
+const { t } = useI18n();
+const { oauthConfig } = useInfo();
 
-        const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.oauth.login}${provider}/login`);
-        const query = qs.stringify({
-          redirect: removeTrailingSlashes(`${APP_HOST}${redirect}`),
-        });
+const redirect = computed(() => route.query.redirect ?? '');
 
-        return {
-          title: `${this.$t('common.login')} ${provider}`,
-          href: `${loginUrl}?${query}`,
-        };
-      });
-    },
-  },
-};
+const links = computed(() => (oauthConfig.value?.providers ?? []).map((provider) => {
+    const loginUrl = removeTrailingSlashes(`${API_HOST}${API_ROUTES.oauth.login}${provider}/login`);
+    const query = new URLSearchParams({
+      redirect: removeTrailingSlashes(`${APP_HOST}${redirect.value}`),
+    });
+
+    return {
+      title: `${t('common.login')} ${provider}`,
+      href: `${loginUrl}?${query}`,
+    };
+  }),
+);
 </script>

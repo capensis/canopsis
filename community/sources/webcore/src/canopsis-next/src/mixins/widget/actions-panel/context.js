@@ -1,12 +1,9 @@
 import { BUSINESS_USER_PERMISSIONS_ACTIONS_MAP, ENTITY_TYPES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import { entitiesServiceMixin } from '@/mixins/entities/service';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
+import { entitiesServiceMixin } from '@/mixins/entities/service';
 
-/**
- * @mixin Mixin for the alarms list actions panel, show modal of the action
- */
 export const widgetActionsPanelContextMixin = {
   mixins: [authMixin, entitiesServiceMixin, entitiesContextEntityMixin],
   methods: {

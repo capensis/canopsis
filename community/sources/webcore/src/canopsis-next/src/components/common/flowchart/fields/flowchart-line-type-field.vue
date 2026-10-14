@@ -1,50 +1,44 @@
 <template>
-  <v-layout
-    justify-space-between
-    align-center
-  >
+  <c-layout align="center" justify-space-between>
     <v-label>{{ label }}</v-label>
-    <v-flex xs3>
+    <v-col cols="3">
       <v-select
-        v-field="value"
+        :model-value="value"
         :items="types"
         class="mt-0 pt-0"
         hide-details
+        @update:model-value="updateModel"
       >
-        <template
-          v-for="slotName in ['selection', 'item']"
-          #[slotName]="{ item }"
-        >
-          <svg
-            :key="slotName"
-            viewBox="0 0 50 40"
-            width="30"
-            height="30"
-          >
+        <template v-for="slotName in ['selection', 'item']" :key="slotName" #[slotName]="{ item }">
+          <svg viewBox="0 0 50 40" width="30" height="30">
             <points-line-path
               :points="points"
-              :type="item"
+              :type="getItemValue(item)"
               stroke="currentColor"
               stroke-width="2"
             />
           </svg>
         </template>
       </v-select>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </c-layout>
 </template>
 
 <script>
 import { LINE_TYPES } from '@/constants';
 
+import { formBaseMixin } from '@/mixins/form';
+
 import PointsLinePath from '@/components/common/flowchart/common/points-line-path.vue';
 
 export default {
   components: { PointsLinePath },
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
   },
+  emits: ['input', 'update:value'],
   props: {
     value: {
       type: String,
@@ -86,6 +80,11 @@ export default {
 
     types() {
       return Object.values(LINE_TYPES);
+    },
+  },
+  methods: {
+    getItemValue(item) {
+      return item?.raw ?? item?.value ?? item;
     },
   },
 };

@@ -1,9 +1,12 @@
 import { isArray, isEqual, omit, pick } from 'lodash';
 
-import { DATETIME_FORMATS, SORT_ORDERS, ADVANCED_SEARCH_FIELDS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
+import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
 
 /**
  * @typedef {Object} DataTableSortOptions
@@ -12,10 +15,10 @@ import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp
  */
 
 /**
- * This function converts widget.parameters.sort to query Object
+ * Convert widget.parameters.sort to query object.
  *
  * @param {Object} widget
- * @returns {DataTableSortOptions | {}}
+ * @returns {{ sortBy: string[], sortDesc: boolean[] }}
  */
 export const convertSortToQuery = ({ parameters }) => {
   const { sort } = parameters;
@@ -30,12 +33,12 @@ export const convertSortToQuery = ({ parameters }) => {
 };
 
 /**
- * Convert vuetify data table sort options to sort options with comparison
+ * Convert Vuetify data table sort options to query options with comparison.
  *
- * @param {DataTableSortOptions} [newOptions = {}]
- * @param {DataTableSortOptions} [oldOptions = {}]
- * @param {string[]} [optionsKeys = ['page', 'itemsPerPage', 'sortBy', 'sortDesc']]
- * @return {DataTableSortOptions}
+ * @param {Object} [newOptions={}]
+ * @param {Object} [oldOptions={}]
+ * @param {string[]} [optionsKeys=['page', 'itemsPerPage', 'sortBy', 'sortDesc']]
+ * @returns {Object}
  */
 export const convertDataTableOptionsToQuery = (
   newOptions = {},
@@ -55,10 +58,10 @@ export const convertDataTableOptionsToQuery = (
 };
 
 /**
- * Convert sortBy and sordDesc query parameters to request
+ * Convert sortBy and sortDesc query parameters to request.
  *
  * @param {string[]} sortBy
- * @param {string[]} sortDesc
+ * @param {boolean[]} sortDesc
  * @returns {{ sort_by: string, sort: string } | { multi_sort: string[] } | {}}
  */
 export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
@@ -74,15 +77,47 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
   }
 
   return {
-    multi_sort: sortBy
-      .map((property, index) => (
-        `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`
-      )),
+    multi_sort: sortBy.map(
+      (property, index) =>
+        `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`,
+    ),
   };
 };
 
 /**
- * Convert filter to query filters
+ * Convert canonical query sort to Vuetify 4 data table sort options.
+ *
+ * @param {string[]} [sortBy=[]]
+ * @param {boolean[]} [sortDesc=[]]
+ * @returns {{ key: string, order: string }[]}
+ */
+export const convertQuerySortToDataTableSort = (sortBy = [], sortDesc = []) =>
+  sortBy.map((key, index) => ({
+    key,
+    order: sortDesc?.[index] ? SORT_ORDERS.desc.toLowerCase() : SORT_ORDERS.asc.toLowerCase(),
+  }));
+
+/**
+ * Convert Vuetify 4 data table sort options to canonical query sort.
+ *
+ * @param {{ sortBy?: string[], sortDesc?: boolean[] } | { key: string, order: string }[]} [options=[]]
+ * @returns {{ sortBy: string[], sortDesc: boolean[] }}
+ */
+export const convertDataTableSortToQuery = (options = []) => {
+  const sortBy = isArray(options) ? options : options.sortBy ?? [];
+
+  return {
+    sortBy: sortBy.map(sortItem => sortItem.key ?? sortItem),
+    sortDesc: sortBy.map((sortItem, index) =>
+      sortItem.order
+        ? sortItem.order === SORT_ORDERS.desc.toLowerCase()
+        : (options.sortDesc?.[index] ?? false),
+    ),
+  };
+};
+
+/**
+ * Convert filter to query filters.
  *
  * @param {string | string[]} filter
  * @returns {string[]}
@@ -90,7 +125,7 @@ export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
 export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**
- * Convert locked filter and main filter to query filters
+ * Convert locked filter and main filter to query filters.
  *
  * @param {string | string[]} filter
  * @param {string | string[]} lockedFilter
@@ -102,7 +137,7 @@ export const convertFiltersToQuery = (filter, lockedFilter) => [
 ];
 
 /**
- * Convert widget query to request parameters
+ * Convert widget query to request parameters.
  *
  * @param {Object} query
  * @returns {Object}
@@ -173,13 +208,12 @@ export const convertWidgetQueryToRequest = (query) => {
 /**
  * Constructs a query object for list data retrieval.
  *
- * @param {Object} [options = {}] - The options for constructing the query.
- * @param {number} [options.page = 1] - The current page number.
+ * @param {Object} [options={}] - The options for constructing the query.
+ * @param {number} [options.page=1] - The current page number.
  * @param {string} [options.search] - The search term to filter results.
  * @param {number} options.itemsPerPage - The number of items per page.
- * @param {string[]} [options.sortBy = []] - The fields to sort by.
- * @param {string[]} [options.sortDesc = []] - The sort order for each field in `sortBy`.
- * @param {string} [options.[ADVANCED_SEARCH_FIELDS.search]] - The search pattern to filter results.
+ * @param {string[]} [options.sortBy=[]] - The fields to sort by.
+ * @param {boolean[]} [options.sortDesc=[]] - The sort order for each field in `sortBy`.
  * @returns {Object} The constructed query object.
  */
 export const getQueryForList = ({
@@ -189,7 +223,7 @@ export const getQueryForList = ({
   itemsPerPage,
   sortBy = [],
   sortDesc = [],
-  [ADVANCED_SEARCH_FIELDS.search]: searchPattern,
+  search_pattern: searchPattern,
 } = {}) => {
   const query = {
     page,
@@ -203,7 +237,7 @@ export const getQueryForList = ({
   }
 
   if (searchPattern) {
-    query[ADVANCED_SEARCH_FIELDS.search] = searchPattern;
+    query.search_pattern = searchPattern;
   }
 
   if (category) {

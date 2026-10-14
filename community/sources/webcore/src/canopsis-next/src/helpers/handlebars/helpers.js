@@ -1,18 +1,16 @@
-import {
-  get,
-  isFunction,
-  isNumber,
-  isObject,
-  isString,
-  pick,
-} from 'lodash';
 import Handlebars from 'handlebars';
+import { get, isFunction, isNumber, isObject, isString, pick } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import { uid } from '@/helpers/uid';
+import {
+  convertDateToStringWithFormatForToday,
+  convertDateToString,
+  getLocalTimezone,
+} from '@/helpers/date/date';
+import { formatNow } from '@/helpers/date/date-intervals';
 import { convertDurationToString } from '@/helpers/date/duration';
-import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
+import { uid } from '@/helpers/uid';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -23,7 +21,10 @@ import { convertDateToStringWithFormatForToday, convertDateToString } from '@/he
  */
 function prepareAttributes(attributes) {
   return Object.entries(attributes)
-    .map(([key, value]) => `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
+    .map(
+      ([key, value]) =>
+        `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`,
+    )
     .join(' ');
 }
 
@@ -45,9 +46,7 @@ export function timestampHelper(date, options = {}) {
     return '';
   }
 
-  return format
-    ? convertDateToString(date, format)
-    : convertDateToStringWithFormatForToday(date);
+  return format ? convertDateToString(date, format) : convertDateToStringWithFormatForToday(date);
 }
 
 /**
@@ -132,7 +131,9 @@ export async function requestHelper(options) {
     options,
   };
 
-  return new Handlebars.SafeString(`<c-request-helper key="${helperId}" helper-id="${helperId}"></c-request-helper>`);
+  return new Handlebars.SafeString(
+    `<c-request-helper key="${helperId}" helper-id="${helperId}"></c-request-helper>`,
+  );
 }
 
 /**
@@ -169,13 +170,13 @@ export function compareHelper(a, operator, b, options = {}) {
 
     switch (operator) {
       case '==':
-        result = preparedA == preparedB; // eslint-disable-line eqeqeq
+        result = preparedA == preparedB; // eslint-disable-line eqeqeq -- Handlebars `==` operator
         break;
       case '===':
         result = preparedA === preparedB;
         break;
       case '!=':
-        result = preparedA != preparedB; // eslint-disable-line eqeqeq
+        result = preparedA != preparedB; // eslint-disable-line eqeqeq -- Handlebars `!=` operator
         break;
       case '!==':
         result = preparedA !== preparedB;
@@ -199,7 +200,7 @@ export function compareHelper(a, operator, b, options = {}) {
         result = preparedA >= preparedB;
         break;
       case 'typeof':
-        result = typeof preparedA === preparedB; // eslint-disable-line valid-typeof
+        result = typeof preparedA === preparedB;
         break;
       default:
         throw new Error(`helper {{compare}}: invalid operator: '${operator}'`);
@@ -406,7 +407,7 @@ export function copyHelper(value = '', options = {}) {
   }
 
   return new Handlebars.SafeString(
-    `<c-copy-wrapper ${prepareAttributes({ value })} />${options.fn(this)}</c-copy-wrapper>`,
+    `<c-copy-wrapper ${prepareAttributes({ value })}>${options.fn(this)}</c-copy-wrapper>`,
   );
 }
 
@@ -447,12 +448,54 @@ export function mapHelper(string, options) {
 
   const color = Handlebars.escapeExpression(options?.hash?.color ?? 'gray');
   const textColor = Handlebars.escapeExpression(options?.hash?.textColor ?? 'black');
-  const chips = string.replace(/map\[|]/g, '')
+  const chips = string
+    .replace(/map\[|]/g, '')
     .split(/\s+/)
     .map(item => `<v-chip color="${color}" text-color="${textColor}">${item}</v-chip>`)
     .join('');
 
-  return new Handlebars.SafeString(
-    `<v-row class="gap-2" wrap>${chips}</v-row>`,
-  );
+  return new Handlebars.SafeString(`<v-row class="ga-2" wrap>${chips}</v-row>`);
+}
+
+/**
+ * Return the current date and time.
+ *
+ * @example Default format and system timezone:
+ * {{now}}
+ *
+ * @example Named format:
+ * {{now format='short'}}
+ *
+ * @example Date in a specific timezone:
+ * {{now format='long' timezone='Europe/Paris'}}
+ *
+ * @example Date shifted five days into the past:
+ * {{now format='short' offset='-5d'}}
+ *
+ * @example Realtime clock shifted fifteen minutes forward:
+ * {{now format='time' timezone='UTC' realtime=true offset='+15m'}}
+ *
+ * @param {string} [format]
+ * @param {string} [timezone]
+ * @param {boolean} [realtime]
+ * @param {string} [offset]
+ * @returns {string|Handlebars.SafeString}
+ */
+export function nowHelper(options = {}) {
+  const { format, timezone, realtime, offset, adjustment, delta } = options.hash ?? {};
+  const helperOffset = offset ?? adjustment ?? delta;
+
+  const normalizedOptions = {
+    format: format || DATETIME_FORMATS.long,
+    timezone: timezone || getLocalTimezone(),
+    ...(helperOffset ? { offset: helperOffset } : {}),
+  };
+
+  if (realtime === true || realtime === 'true') {
+    const attributes = prepareAttributes(normalizedOptions);
+
+    return new Handlebars.SafeString(`<c-now ${attributes}></c-now>`);
+  }
+
+  return formatNow(normalizedOptions);
 }

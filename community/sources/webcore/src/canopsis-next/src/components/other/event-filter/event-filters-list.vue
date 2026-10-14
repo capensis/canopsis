@@ -19,7 +19,6 @@
         :enablable="updatable"
         :disablable="updatable"
         event-filter
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
@@ -31,14 +30,10 @@
       {{ $t(`eventFilter.types.${item.type}`) }}
     </template>
     <template #enabled="{ item }">
-      <c-enabled :value="item | get('enabled', true)" />
+      <c-enabled :value="item.enabled ?? true" />
     </template>
     <template #unread_failures_count="{ item }">
-      <c-circle-badge
-        v-if="item.unread_failures_count"
-        color="error"
-        small
-      >
+      <c-circle-badge v-if="item.unread_failures_count" color="error" small>
         {{ item.unread_failures_count }}
       </c-circle-badge>
       <template v-else>
@@ -46,33 +41,21 @@
       </template>
     </template>
     <template #created="{ item }">
-      {{ item.created | date }}
+      {{ dateToString(item.created) }}
     </template>
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ dateToString(item.updated) }}
     </template>
     <template #calendar="{ item }">
       <v-icon>{{ isCalendarRule(item) ? 'check' : 'clear' }}</v-icon>
     </template>
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
         <c-db-export-btn :id="item._id" event-filter />
-      </v-layout>
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
     </template>
     <template #expand="{ item }">
       <event-filters-list-expand-panel
@@ -87,6 +70,8 @@
 <script>
 import { computed } from 'vue';
 
+import { convertDateToString } from '@/helpers/date/date';
+
 import { useI18n } from '@/hooks/i18n';
 
 import EventFiltersListExpandPanel from './partials/event-filters-list-expand-panel.vue';
@@ -95,6 +80,7 @@ export default {
   components: {
     EventFiltersListExpandPanel,
   },
+  emits: ['update:options', 'refresh', 'edit', 'duplicate', 'remove'],
   props: {
     eventFilters: {
       type: Array,
@@ -126,14 +112,14 @@ export default {
     },
   },
   setup() {
-    const { t, tc } = useI18n();
+    const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.id'), value: '_id' },
-      { text: t('common.type'), value: 'type', sortable: false },
+      { text: t('common.type'), value: 'type' },
       { text: t('common.priority'), value: 'priority' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
-      { text: tc('common.error', 2), value: 'unread_failures_count', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
+      { text: t('common.error', 2), value: 'unread_failures_count' },
       { text: t('common.author'), value: 'author.display_name' },
       { text: t('common.created'), value: 'created' },
       { text: t('common.updated'), value: 'updated' },
@@ -151,14 +137,13 @@ export default {
      * @param {Array} [item.exceptions] - Array of exception dates
      * @return {boolean} True if item has any calendar-related properties configured
      */
-    const isCalendarRule = item => item.start
-      || item.rrule
-      || item.exdates?.length
-      || item.exceptions?.length;
+    const isCalendarRule = item => item.start || item.rrule || item.exdates?.length || item.exceptions?.length;
+    const dateToString = value => convertDateToString(value);
 
     return {
       headers,
       isCalendarRule,
+      dateToString,
     };
   },
 };

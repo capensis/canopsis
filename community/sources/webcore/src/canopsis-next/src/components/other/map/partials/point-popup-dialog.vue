@@ -1,20 +1,19 @@
 <template>
   <v-menu
-    :value="true"
-    :position-x="positionX"
-    :position-y="positionY"
+    :model-value="true"
+    :target="[positionX, positionY]"
     :close-on-content-click="false"
-    ignore-click-outside
-    absolute
-    top
+    location="top"
+    @update:model-value="$emit('close')"
   >
     <point-popup
-      v-click-outside="clickOutsideDirective"
       :point="point"
       :template="popupTemplate"
       :color-indicator="colorIndicator"
       :actions="popupActions"
-      v-on="$listeners"
+      @show:alarms="$emit('show:alarms')"
+      @show:map="$emit('show:map')"
+      @close="$emit('close')"
     />
   </v-menu>
 </template>
@@ -24,6 +23,7 @@ import PointPopup from './point-popup.vue';
 
 export default {
   components: { PointPopup },
+
   props: {
     point: {
       type: Object,
@@ -50,14 +50,7 @@ export default {
       required: false,
     },
   },
-  computed: {
-    clickOutsideDirective() {
-      return {
-        handler: () => this.$emit('close'),
-        include: () => Array.from(document.querySelectorAll('.point-icon')),
-        closeConditional: () => true,
-      };
-    },
-  },
+
+  emits: ['close', 'show:alarms', 'show:map'],
 };
 </script>

@@ -1,311 +1,266 @@
 <template>
   <div class="recurrence-rule-form">
-    <v-layout column>
-      <v-layout>
-        <v-flex
-          class="pr-2"
-          xs6
-        >
-          <recurrence-rule-frequency-field
-            :value="form.freq"
-            :autofocus="autofocus"
-            @input="updateFrequency"
-          />
-          <recurrence-rule-interval-field
-            v-if="isFrequencyEnabled"
-            v-model="form"
-          />
-          <recurrence-rule-advanced-repeat-field
-            v-if="isMonthlyFrequency"
-            v-model="form"
-            :start="start"
-          />
-        </v-flex>
-        <v-flex
-          class="pl-2"
-          xs6
-        >
+    <c-form-block>
+      <c-form-block-row :label="t('recurrenceRule.freq')">
+        <recurrence-rule-frequency-field
+          :model-value="form.rrule.freq"
+          @update:model-value="updateRruleField('freq', $event)"
+        />
+      </c-form-block-row>
+
+      <template v-if="isFrequencyEnabled">
+        <c-form-block-row :label="t('recurrenceRule.count')">
+          <c-layout column>
+            <recurrence-rule-interval-field
+              :model-value="form.rrule"
+              @update:model-value="updateFormField('rrule', $event)"
+            />
+
+            <c-enabled-field
+              v-model="enabledAdvancedFields"
+              :label="t('recurrenceRule.tabs.advanced')"
+              hide-details
+            />
+
+            <v-expand-transition>
+              <c-layout v-if="enabledAdvancedFields" column>
+                <v-row>
+                  <v-col cols="6">
+                    <recurrence-rule-weekday-field
+                      :model-value="form.rrule.wkst"
+                      @update:model-value="updateRruleField('wkst', $event)"
+                    />
+                  </v-col>
+
+                  <v-col v-if="!isYearlyFrequency" cols="12">
+                    <recurrence-rule-weekday-field
+                      :model-value="form.rrule.byweekday"
+                      chips
+                      @update:model-value="updateRruleField('byweekday', $event)"
+                    />
+                  </v-col>
+
+                  <v-col cols="12">
+                    <recurrence-rule-month-field
+                      :model-value="form.rrule.bymonth"
+                      @update:model-value="updateRruleField('bymonth', $event)"
+                    />
+                  </v-col>
+
+                  <v-col
+                    v-for="field in advancedFields"
+                    :key="field.name"
+                    cols="6"
+                  >
+                    <recurrence-rule-advanced-field
+                      :model-value="form.rrule[field.name]"
+                      :label="t(`recurrenceRule.${field.name}`)"
+                      :help-text="t(`recurrenceRule.tooltips.${field.name}`)"
+                      :name="field.name"
+                      :negative="field.negative"
+                      :min="field.min"
+                      :max="field.max"
+                      @update:model-value="updateRruleField(field.name, $event)"
+                    />
+                  </v-col>
+                </v-row>
+              </c-layout>
+            </v-expand-transition>
+          </c-layout>
+        </c-form-block-row>
+
+        <c-form-block-row :label="t('pbehavior.exdates.title')">
+          <div class="py-4">
+            <pbehavior-exceptions-field
+              :exdates="form.exdates"
+              :add-button-label="t('pbehavior.exceptions.create')"
+              :with-exdate-type="withExdateType"
+              @update:exdates="updateFormField('exdates', $event)"
+            />
+          </div>
+        </c-form-block-row>
+
+        <c-form-block-row :label="t('pbehavior.exceptions.title')">
+          <div class="py-4">
+            <pbehavior-exceptions-list
+              v-if="form.exceptions.length"
+              :exceptions="form.exceptions"
+              @update:exceptions="updateFormField('exceptions', $event)"
+            />
+
+            <pbehavior-recurrence-rule-exceptions-list-menu
+              :value="form.exceptions"
+              @update:value="updateFormField('exceptions', $event)"
+            />
+          </div>
+        </c-form-block-row>
+
+        <c-form-block-row :label="t('common.end')">
           <recurrence-rule-end-field
-            v-if="isFrequencyEnabled"
-            v-model="form"
+            :model-value="form.rrule"
+            @update:model-value="updateFormField('rrule', $event)"
           />
-        </v-flex>
-      </v-layout>
-      <c-collapse-panel
-        v-if="isFrequencyEnabled"
-        :color="advancedCollapseColor"
-        class="my-2"
-      >
-        <template #header="">
-          <span>{{ $t('recurrenceRule.tabs.advanced') }}</span>
-        </template>
-        <template #actions="">
-          <v-icon>$vuetify.icons.expand</v-icon>
-        </template>
-        <v-layout wrap>
-          <v-flex xs6>
-            <recurrence-rule-weekday-field v-model="form.wkst" />
-          </v-flex>
-          <v-flex
-            v-if="!isYearlyFrequency"
-            xs12
-          >
-            <recurrence-rule-weekday-field
-              v-model="form.byweekday"
-              chips
+        </c-form-block-row>
+
+        <c-form-block-row :label="t('common.recurrence')">
+          <div class="py-4">
+            <recurrence-rule-information
+              :rrule="rruleBodyForInformation"
+              :exdates="form.exdates"
+              :exceptions="form.exceptions"
             />
-          </v-flex>
-          <v-flex xs12>
-            <recurrence-rule-month-field v-model="form.bymonth" />
-          </v-flex>
-          <v-flex
-            v-for="(field, index) in advancedFields"
-            :key="field.name"
-            :class="`${index % 2 ? 'pl' : 'pr'}-2`"
-            xs6
-          >
-            <recurrence-rule-advanced-field
-              v-model="form[field.name]"
-              :label="$t(`recurrenceRule.${field.name}`)"
-              :help-text="$t(`recurrenceRule.tooltips.${field.name}`)"
-              :name="field.name"
-              :negative="field.negative"
-              :min="field.min"
-              :max="field.max"
-            />
-          </v-flex>
-        </v-layout>
-      </c-collapse-panel>
-    </v-layout>
-    <recurrence-rule-information
-      v-if="isFrequencyEnabled"
-      :rrule="recurrenceRuleString"
-    />
-    <c-alert
-      :value="errors.has('recurrenceRule')"
-      type="error"
-    >
-      {{ errors.first('recurrenceRule') }}
+          </div>
+        </c-form-block-row>
+      </template>
+    </c-form-block>
+
+    <c-alert v-if="recurrenceRuleError" type="error">
+      {{ recurrenceRuleError }}
     </c-alert>
   </div>
 </template>
 
-<script>
-import { RRule, rrulestr } from 'rrule';
-import { isNull, map } from 'lodash';
+<script setup>
+import { isNil, isNumber } from 'lodash';
+import { RRule } from 'rrule';
+import { computed, watch } from 'vue';
 
 import {
   formOptionsToRecurrenceRuleOptions,
-  recurrenceRuleToFormOptions,
+  getRecurrenceAdvancedFieldNames,
+  recurrenceRuleFormOptionsToRruleBodyString,
 } from '@/helpers/entities/shared/recurrence-rule/form';
 
-import { formBaseMixin } from '@/mixins/form';
+import { useFormContext, useFormErrorsMap } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
-import RecurrenceRuleAdvancedField from '@/components/forms/recurrence-rule/fields/recurrence-rule-advanced-field.vue';
-import RecurrenceRuleEndField from '@/components/forms/recurrence-rule/fields/recurrence-rule-end-field.vue';
-import RecurrenceRuleIntervalField from '@/components/forms/recurrence-rule/fields/recurrence-rule-interval-field.vue';
+import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
+import PbehaviorRecurrenceRuleExceptionsListMenu from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-list-menu.vue';
+import PbehaviorExceptionsList from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-exceptions-list.vue';
 
+import RecurrenceRuleAdvancedField from './fields/recurrence-rule-advanced-field.vue';
+import RecurrenceRuleEndField from './fields/recurrence-rule-end-field.vue';
+import RecurrenceRuleFrequencyField from './fields/recurrence-rule-frequency-field.vue';
+import RecurrenceRuleIntervalField from './fields/recurrence-rule-interval-field.vue';
 import RecurrenceRuleMonthField from './fields/recurrence-rule-month-field.vue';
 import RecurrenceRuleWeekdayField from './fields/recurrence-rule-weekday-field.vue';
-import RecurrenceRuleFrequencyField from './fields/recurrence-rule-frequency-field.vue';
-import RecurrenceRuleAdvancedRepeatField from './fields/recurrence-rule-advanced-repeat-field.vue';
 
-export default {
-  inject: ['$validator', '$system'],
-  components: {
-    RecurrenceRuleAdvancedRepeatField,
-    RecurrenceRuleIntervalField,
-    RecurrenceRuleEndField,
-    RecurrenceRuleAdvancedField,
-    RecurrenceRuleMonthField,
-    RecurrenceRuleWeekdayField,
-    RecurrenceRuleFrequencyField,
-    RecurrenceRuleInformation,
+const props = defineProps({
+  form: {
+    type: Object,
+    required: true,
   },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'rrule',
-    event: 'input',
+  start: {
+    type: Date,
+    default: undefined,
   },
-  props: {
-    rrule: {
-      type: String,
-      default: '',
-    },
-    start: {
-      type: Date,
-      required: false,
-    },
-    autofocus: {
-      type: Boolean,
-      default: false,
-    },
+  withExdateType: {
+    type: Boolean,
+    default: false,
   },
-  data() {
-    let recurrenceRule;
+});
 
-    if (this.rrule) {
-      try {
-        recurrenceRule = rrulestr(this.rrule);
-      } catch (err) {
-        console.error(err);
-      }
-    }
+const emit = defineEmits(['update:form']);
 
-    if (!recurrenceRule) {
-      recurrenceRule = new RRule();
-    }
+const { t } = useI18n();
+const formContext = useFormContext();
+const { collectErrors } = useFormErrorsMap();
 
-    return {
-      recurrenceRuleObject: recurrenceRule,
-      form: recurrenceRuleToFormOptions(recurrenceRule.origOptions),
-    };
-  },
-  computed: {
-    isFrequencyEnabled() {
-      return !isNull(this.form.freq);
+const isFrequencyEnabled = computed(() => isNumber(props.form.rrule.freq));
+const isHourlyFrequency = computed(() => props.form.rrule.freq === RRule.HOURLY);
+const isMonthlyFrequency = computed(() => props.form.rrule.freq === RRule.MONTHLY);
+const isYearlyFrequency = computed(() => props.form.rrule.freq === RRule.YEARLY);
+const recurrenceRuleError = computed(() => collectErrors('recurrenceRule')[0]);
+
+const advancedFields = computed(() => {
+  const fields = [
+    {
+      name: 'bysetpos',
+      negative: true,
+      min: 1,
+      max: 366,
     },
+  ];
 
-    isHourlyFrequency() {
-      return this.form.freq === RRule.HOURLY;
-    },
-
-    isWeeklyFrequency() {
-      return this.form.freq === RRule.WEEKLY;
-    },
-
-    isMonthlyFrequency() {
-      return this.form.freq === RRule.MONTHLY;
-    },
-
-    isYearlyFrequency() {
-      return this.form.freq === RRule.YEARLY;
-    },
-
-    advancedFields() {
-      const fields = [{
-        name: 'bysetpos',
-        negative: true,
-        min: 1,
-        max: 366,
-      }];
-
-      if (!this.isMonthlyFrequency) {
-        fields.push({
-          name: 'byyearday',
-          negative: true,
-          min: 1,
-          max: 366,
-        });
-      }
-
-      if (!this.isYearlyFrequency) {
-        fields.push({
-          name: 'bymonthday',
-          negative: true,
-          min: 1,
-          max: 31,
-        });
-      }
-
-      if (!this.isMonthlyFrequency && !this.isYearlyFrequency) {
-        fields.push({
-          name: 'byweekno',
-          negative: true,
-          min: 1,
-          max: 53,
-        });
-      }
-
-      if (this.isHourlyFrequency) {
-        fields.push({
-          name: 'byhour',
-          min: 0,
-          max: 23,
-        });
-      }
-
-      return fields;
-    },
-
-    recurrenceRuleString() {
-      return this.recurrenceRuleObject.toString();
-    },
-
-    advancedCollapseColor() {
-      return this.$system.dark ? '#555' : '#e0e0e0';
-    },
-  },
-  watch: {
-    form: {
-      deep: true,
-      handler() {
-        this.changeRecurrenceRuleOption();
-      },
-    },
-  },
-  mounted() {
-    this.changeRecurrenceRuleOption();
-  },
-  methods: {
-    resetForm() {
-      const recurrenceRule = new RRule();
-
-      this.recurrenceRuleObject = recurrenceRule;
-      this.form = recurrenceRuleToFormOptions(recurrenceRule.origOptions);
-    },
-
-    updateFrequency(frequency) {
-      if (!frequency) {
-        this.resetForm();
-        return;
-      }
-
-      this.form.freq = frequency;
-
-      if (!this.isWeeklyFrequency && this.form.byweekday) {
-        this.form.byweekday = [];
-      }
-    },
-
-    /**
-     * For each changes in the form we call this function.
-     * If RRule isn't valid then add error message to visible RRule field
-     * Else remove errors and $emit changes
-     */
-    changeRecurrenceRuleOption() {
-      try {
-        this.recurrenceRuleObject = new RRule(
-          formOptionsToRecurrenceRuleOptions(
-            this.form,
-            map(this.advancedFields, 'name'),
-          ),
-        );
-
-        if (!this.errors.has('recurrenceRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
-          this.errors.add({
-            field: 'recurrenceRule',
-            msg: this.$t('recurrenceRule.errors.main'),
-          });
-        } else {
-          this.errors.remove('recurrenceRule');
-
-          this.updateModel(this.recurrenceRuleString.replace(/.*RRULE:/, ''));
-        }
-      } catch (err) {
-        this.updateModel('');
-      }
-    },
-  },
-};
-</script>
-
-<style lang="scss" scoped>
-.recurrence-rule-form {
-  p {
-    -ms-word-break: break-all;
-    word-break: break-all;
+  if (!isMonthlyFrequency.value) {
+    fields.push({
+      name: 'byyearday',
+      negative: true,
+      min: 1,
+      max: 366,
+    });
   }
-}
-</style>
+
+  if (!isYearlyFrequency.value) {
+    fields.push({
+      name: 'bymonthday',
+      negative: true,
+      min: 1,
+      max: 31,
+    });
+  }
+
+  if (!isMonthlyFrequency.value && !isYearlyFrequency.value) {
+    fields.push({
+      name: 'byweekno',
+      negative: true,
+      min: 1,
+      max: 53,
+    });
+  }
+
+  if (isHourlyFrequency.value) {
+    fields.push({
+      name: 'byhour',
+      min: 0,
+      max: 23,
+    });
+  }
+
+  return fields;
+});
+
+const rruleBodyForInformation = computed(() => recurrenceRuleFormOptionsToRruleBodyString(props.form.rrule),
+);
+
+const updateFormField = (field, value) => emit('update:form', {
+    ...props.form,
+    [field]: value,
+  });
+
+const updateRruleField = (field, value) => updateFormField('rrule', {
+    ...props.form.rrule,
+    [field]: value,
+  });
+
+const enabledAdvancedFields = computed({
+  get: () => props.form.rrule.advancedEnabled ?? false,
+  set: value => updateRruleField('advancedEnabled', value),
+});
+
+const validateRecurrenceRrule = () => {
+  if (isNil(props.form.rrule.freq)) {
+    formContext.setFieldError('recurrenceRule', undefined);
+
+    return;
+  }
+
+  try {
+    const names = getRecurrenceAdvancedFieldNames(props.form.rrule);
+    const rrule = new RRule(formOptionsToRecurrenceRuleOptions(props.form.rrule, names));
+
+    if (!rrule.isFullyConvertibleToText()) {
+      formContext.addError('recurrenceRule', t('recurrenceRule.errors.main'));
+
+      return;
+    }
+
+    formContext.setFieldError('recurrenceRule', undefined);
+  } catch {
+    formContext.addError('recurrenceRule', t('recurrenceRule.errors.main'));
+  }
+};
+
+watch(() => props.form.rrule, validateRecurrenceRrule, { deep: true, immediate: true });
+</script>

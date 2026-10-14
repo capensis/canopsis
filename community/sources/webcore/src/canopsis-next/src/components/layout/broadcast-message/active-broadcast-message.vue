@@ -6,48 +6,45 @@
       :message="activeMessage.message"
       :color="activeMessage.color"
     >
-      <template
-        v-if="isLoggedIn"
-        #actions=""
-      >
+      <template v-if="isLoggedIn" #actions>
         <template v-if="activeMessage.maintenance">
           <v-btn
             class="mr-2"
             color="white"
-            outlined
-            rounded
-            small
+            variant="outlined"
+            rounded="pill"
+            size="small"
             @click="showEditBroadcastMessageModal(activeMessage)"
           >
-            <v-icon small>
+            <c-icon small>
               edit
-            </v-icon>
+            </c-icon>
           </v-btn>
           <v-btn
             class="my-0 ml-0 mr-2"
             color="white"
-            outlined
-            rounded
-            small
+            variant="outlined"
+            rounded="pill"
+            size="small"
             @click="showConfirmationLeaveMaintenanceMode"
           >
-            <v-icon small>
+            <c-icon small>
               logout
-            </v-icon>
+            </c-icon>
           </v-btn>
         </template>
         <v-btn
-          v-else
+          v-if="!activeMessage.maintenance && activeMessage.closable"
           class="my-0 ml-0 mr-2"
           color="white"
-          outlined
-          rounded
-          small
+          variant="outlined"
+          rounded="pill"
+          size="small"
           @click="showConfirmationMarkAsRead(activeMessage)"
         >
-          <v-icon small>
+          <c-icon small>
             close
-          </v-icon>
+          </c-icon>
         </v-btn>
       </template>
     </broadcast-message>
@@ -56,8 +53,8 @@
 
 <script>
 import { pick } from 'lodash';
-import { computed, ref, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router/composables';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, ROUTES_NAMES_TO_BROADCAST_MESSAGES } from '@/constants';
@@ -68,17 +65,17 @@ import { useAuth } from '@/hooks/auth';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useSocketRoom } from '@/hooks/socket';
-import { useInfo } from '@/hooks/store/modules/info';
 import { useBroadcastMessages } from '@/hooks/store/modules/broadcast-message';
-import { useViewGroup } from '@/hooks/store/modules/view';
+import { useInfo } from '@/hooks/store/modules/info';
+import { useView } from '@/hooks/store/modules/view';
 
 import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
 export default {
   components: { BroadcastMessage },
+
   setup() {
     const route = useRoute();
-
     const activeMessages = ref([]);
 
     const { t } = useI18n();
@@ -91,46 +88,28 @@ export default {
       fetchBroadcastMessagesListWithPreviousParams,
       fetchActiveBroadcastMessagesListWithoutStore,
     } = useBroadcastMessages();
-    const { getViewById } = useViewGroup();
+    const { getViewById } = useView();
 
-    /**
-     * Filters active broadcast messages based on current route and view context
-     * Shows messages that are configured for:
-     * - The current route's broadcast message view type
-     * - Specific view IDs that match the current route parameter
-     * - View group IDs when available
-     */
     const filteredActiveMessagesByRoute = computed(() => {
       const routeView = ROUTES_NAMES_TO_BROADCAST_MESSAGES[route.name];
       const { id: routeId } = route.params;
-      const currentView = getViewById.value(routeId);
+      const currentView = getViewById(routeId);
 
-      return activeMessages.value.filter(({ views: messageViews }) => (messageViews || []).some(
+      const hasMatchingView = message => (message.views || []).some(
         messageView => isBroadcastMessageViewMatchingRoute(messageView, routeView, routeId, currentView),
-      ));
+      );
+
+      return activeMessages.value.filter(message => message.maintenance || hasMatchingView(message));
     });
 
-    /**
-     * Sets the active broadcast messages
-     *
-     * @param {Array} [messages=[]] - Array of broadcast messages to set as active
-     */
-    const setActiveMessages = (messages = []) => activeMessages.value = messages;
+    const setActiveMessages = (messages = []) => (activeMessages.value = messages);
 
-    /**
-     * Fetches the list of active broadcast messages without storing in Vuex
-     * Fetches the list of active broadcast messages and updates the local state.
-     */
     const fetchList = async () => {
       const data = await fetchActiveBroadcastMessagesListWithoutStore();
 
       setActiveMessages(data);
     };
 
-    /**
-     * Disables maintenance mode by updating the maintenance mode setting
-     * and refreshing the application info.
-     */
     const disableMaintenanceMode = async () => {
       await updateMaintenanceMode({
         data: { enabled: false },
@@ -139,14 +118,6 @@ export default {
       return fetchAppInfo();
     };
 
-    /**
-     * Shows a modal to edit the broadcast message associated with maintenance mode
-     *
-     * @param {Object} broadcastMessage - The broadcast message object to edit
-     * @param {string} broadcastMessage._id - Unique identifier of the broadcast message
-     * @param {string} broadcastMessage.message - Message content
-     * @param {string} broadcastMessage.color - Message color
-     */
     const showEditBroadcastMessageModal = (broadcastMessage) => {
       modals.show({
         name: MODALS.createMaintenance,
@@ -166,9 +137,6 @@ export default {
       });
     };
 
-    /**
-     * Shows a confirmation modal to leave maintenance mode
-     */
     const showConfirmationLeaveMaintenanceMode = () => {
       modals.show({
         name: MODALS.confirmation,
@@ -184,27 +152,23 @@ export default {
       });
     };
 
-    /**
-     * Shows a confirmation modal for marking a broadcast message as read.
-     * Upon confirmation, disables maintenance mode and refreshes the broadcast messages list.
-     */
-    const showConfirmationMarkAsRead = (broadcaseMessage = {}) => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        title: t('modals.confirmationMarkAsRead.title'),
-        text: t('modals.confirmationMarkAsRead.text'),
-        action: async () => {
-          await markBroadcastMessageAsRead({ id: broadcaseMessage._id });
+    const showConfirmationMarkAsRead = (broadcastMessage = {}) => modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: t('modals.confirmationMarkAsRead.title'),
+          text: t('modals.confirmationMarkAsRead.text'),
+          action: async () => {
+            await markBroadcastMessageAsRead({ id: broadcastMessage._id });
 
-          return fetchList();
+            return fetchList();
+          },
         },
-      },
-    });
+      });
 
     useSocketRoom({
       room: SOCKET_ROOMS.broadcastMessages,
-      data: null,
-      needAuth: false,
+      payload: null,
+      authNeeded: false,
       listener: setActiveMessages,
     });
 

@@ -1,48 +1,45 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const useEventsRecordStoreModule = () => useStoreModuleHooks('eventsRecord');
+import { useEventsRecordStore } from '@/stores/modules/events-record';
 
 /**
- * Custom hook for accessing actions related to events record Vuex store module.
+ * Events record store facade.
  *
- * @returns {Object} An object containing functions to access actions related to events record Vuex store module.
- *
- * @example
- * // Usage example
- * import { useEventsRecord } from './path/to/useEventsRecord';
- *
- * setup() {
- *   const {
- *     createEventsRecordExport,
- *     fetchEventsRecordExport,
- *     removeEventsRecordEvent,
- *     bulkRemoveEventsRecordEvent,
- *     playbackEventsRecordEvents,
- *     stopPlaybackEventsRecordEvents,
- *     removeEventsRecord,
- *     fetchEventsRecordsListWithoutStore,
- *     fetchEventsRecordEventsListWithoutStore,
- *   } = useEventsRecord();
- *
- *   // Access and use the actions as needed
- * }
+ * @returns {Object}
  */
 export const useEventsRecord = () => {
-  const { useActions } = useEventsRecordStoreModule();
-
-  const actions = useActions({
-    createEventsRecordExport: 'createExport',
-    fetchEventsRecordExport: 'fetchExport',
-    removeEventsRecordEvent: 'removeEvent',
-    bulkRemoveEventsRecordEvent: 'bulkRemoveEvent',
-    playbackEventsRecordEvents: 'playback',
-    stopPlaybackEventsRecordEvents: 'stopPlayback',
-    removeEventsRecord: 'remove',
-    fetchEventsRecordsListWithoutStore: 'fetchListWithoutStore',
-    fetchEventsRecordEventsListWithoutStore: 'fetchEventsListWithoutStore',
-  });
+  const eventsRecordStore = useEventsRecordStore();
+  const {
+    currentPending,
+    currentStatus,
+    recordings,
+    resendings,
+    limit,
+    recordingsById,
+    resendingsById,
+  } = storeToRefs(eventsRecordStore);
 
   return {
-    ...actions,
+    eventsRecordCurrentPending: currentPending,
+    eventsRecordCurrentStatus: currentStatus,
+    eventsRecordRecordings: recordings,
+    eventsRecordResendings: resendings,
+    eventsRecordLimit: limit,
+    eventsRecordRecordingsById: recordingsById,
+    eventsRecordResendingsById: resendingsById,
+
+    setEventsRecordCurrentStatus: eventsRecordStore.setCurrentStatus,
+    fetchEventsRecordsListWithoutStore: eventsRecordStore.fetchListWithoutStore,
+    fetchEventsRecordEventsListWithoutStore: eventsRecordStore.fetchEventsListWithoutStore,
+    createEventsRecordExport: eventsRecordStore.createExport,
+    fetchEventsRecordExport: eventsRecordStore.fetchExport,
+    playbackEventsRecord: eventsRecordStore.playback,
+    stopEventsRecordPlayback: eventsRecordStore.stopPlayback,
+    removeEventsRecord: eventsRecordStore.remove,
+    removeEventsRecordEvent: eventsRecordStore.removeEvent,
+    bulkRemoveEventsRecordEvents: eventsRecordStore.bulkRemoveEvent,
+    fetchCurrentEventsRecord: eventsRecordStore.fetchCurrent,
+    startCurrentEventsRecord: eventsRecordStore.startCurrent,
+    stopCurrentEventsRecord: eventsRecordStore.stopCurrent,
   };
 };

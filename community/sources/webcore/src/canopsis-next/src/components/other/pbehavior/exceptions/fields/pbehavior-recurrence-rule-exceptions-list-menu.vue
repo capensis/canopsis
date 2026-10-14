@@ -1,86 +1,149 @@
 <template>
-  <v-menu offset-y>
-    <template #activator="{ on }">
+  <v-menu v-model="menu" max-height="300">
+    <template #activator="{ props: activatorProps }">
       <v-btn
+        v-bind="activatorProps"
         :loading="pending"
-        :disabled="!availableExceptions.length"
-        class="mr-0"
+        :disabled="!availableExceptions.length && !hasMoreExceptions"
         color="primary"
-        v-on="on"
+        variant="outlined"
       >
         {{ $t('pbehavior.exceptions.choose') }}
       </v-btn>
     </template>
-    <v-list dense>
+
+    <v-list density="comfortable">
       <v-list-item
         v-for="exception in availableExceptions"
         :key="exception._id"
         @click="addItemIntoArray(exception)"
       >
-        <v-list-item-content>
-          <v-list-item-title>{{ exception.name }}</v-list-item-title>
-        </v-list-item-content>
+        <v-list-item-title>{{ exception.name }}</v-list-item-title>
       </v-list-item>
+
+      <v-list-item v-if="pending">
+        <v-list-item-title class="text-center">
+          <v-progress-circular size="24" indeterminate />
+        </v-list-item-title>
+      </v-list-item>
+
+      <div ref="appendElement" class="pbehavior-exceptions-list-menu__append" />
     </v-list>
   </v-menu>
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants';
+import { ref, computed, onBeforeUnmount, onMounted, watch } from 'vue';
+
+import { PAGINATION_LIMIT } from '@/config';
 
 import { mapIds } from '@/helpers/array';
 
-import { formArrayMixin } from '@/mixins/form';
-import { entitiesPbehaviorExceptionMixin } from '@/mixins/entities/pbehavior/exceptions';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
 
 export default {
-  inject: ['$validator'],
-  mixins: [
-    formArrayMixin,
-    entitiesPbehaviorExceptionMixin,
-  ],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: Array,
       required: true,
     },
   },
-  data() {
-    return {
-      pending: false,
-      exceptions: [],
-    };
-  },
-  computed: {
-    selectedExceptionsIds() {
-      return mapIds(this.value);
-    },
+  setup(props, { emit }) {
+    const { addItemIntoArray } = useArrayModelField(props, emit);
+    const { fetchPbehaviorExceptionsListWithoutStore } = usePbehaviorException();
 
-    availableExceptions() {
-      return this.exceptions.filter(({ _id: id }) => !this.selectedExceptionsIds.includes(id));
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    async fetchList() {
-      this.pending = true;
+    const menu = ref(false);
+    const exceptions = ref([]);
+    const pending = ref(false);;
+    const page = ref(1);
+    const pageCount = ref(1);
+    const appendElement = ref(null);
+    let requestNumber = 0;
+
+    const selectedExceptionsIds = computed(() => mapIds(props.value));
+
+    const availableExceptions = computed(
+      () => exceptions.value.filter(({ _id: id }) => !selectedExceptionsIds.value.includes(id)),
+    );
+    const hasMoreExceptions = computed(() => pageCount.value > page.value);
+
+    const fetchList = async (nextPage = 1) => {
+      const currentRequestNumber = ++requestNumber;
 
       try {
-        const { data } = await this.fetchPbehaviorExceptionsListWithoutStore({ params: { limit: MAX_LIMIT } });
+        pending.value = true;
 
-        this.exceptions = data;
+        const { data = [], meta = {} } = await fetchPbehaviorExceptionsListWithoutStore({
+          params: {
+            page: nextPage,
+            limit: PAGINATION_LIMIT,
+          },
+        });
+
+        if (currentRequestNumber !== requestNumber) {
+          return;
+        }
+
+        page.value = nextPage;
+        pageCount.value = meta.page_count ?? 1;
+        exceptions.value = nextPage === 1 ? data : [...exceptions.value, ...data];
       } catch (err) {
         console.error(err);
       } finally {
-        this.pending = false;
+        if (currentRequestNumber === requestNumber) {
+          pending.value = false;
+        }
       }
-    },
+    };
+
+    const fetchMoreExceptions = () => {
+      if (!pending.value && hasMoreExceptions.value) {
+        fetchList(page.value + 1);
+      }
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && menu.value) {
+        fetchMoreExceptions();
+      }
+    });
+
+    watch(menu, (opened) => {
+      if (opened) {
+        fetchList();
+      }
+    });
+
+    onMounted(fetchList);
+
+    watch(appendElement, (element, oldElement) => {
+      if (oldElement) {
+        observer.unobserve(oldElement);
+      }
+
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    onBeforeUnmount(() => observer.disconnect());
+
+    return {
+      menu,
+      pending,
+      availableExceptions,
+      hasMoreExceptions,
+      appendElement,
+      addItemIntoArray,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pbehavior-exceptions-list-menu__append {
+  height: 1px;
+}
+</style>

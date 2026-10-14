@@ -30,8 +30,9 @@ type MessageProcessor struct {
 }
 
 func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	eventMetric := techmetrics.AxeEventMetric{}
-	eventMetric.Timestamp = time.Now()
+	eventMetric := techmetrics.AxeEventMetric{
+		Timestamp: time.Now(),
+	}
 
 	ctx, task := trace.NewTask(parentCtx, "axe.WorkerProcess")
 	defer task.End()
@@ -81,14 +82,14 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			return nil, err
 		}
 
-		p.logError(err, "cannot process event", "", msg)
+		p.logError(err, "cannot process event", event.AlarmID, msg)
 		return nil, nil
 	}
 
 	if event.Healthcheck {
 		_, err := p.AlarmCollection.DeleteMany(ctx, bson.M{"healthcheck": true})
 		if err != nil {
-			p.logError(err, "cannot delete temporary alarm", "", d.Body)
+			p.logError(err, "cannot delete temporary alarm", event.AlarmID, d.Body)
 		}
 	}
 

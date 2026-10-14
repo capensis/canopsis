@@ -13,14 +13,16 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-
 import SettingsButtonField from '@/components/sidebars/form/fields/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
-  mixins: [formMixin],
+
   props: {
+    modelValue: {
+      type: String,
+      default: undefined,
+    },
     value: {
       type: String,
       default: '',
@@ -54,18 +56,30 @@ export default {
       required: false,
     },
   },
+
+  emits: ['update:modelValue'],
+
   computed: {
+    currentValue() {
+      return this.modelValue ?? this.value;
+    },
+
     isValueEmpty() {
-      return this.defaultValue === String(this.value);
+      return this.defaultValue === String(this.currentValue);
     },
   },
+
   methods: {
+    updateModel(value) {
+      this.$emit('update:modelValue', value);
+    },
+
     showTextEditorModal() {
       this.$modals.show({
         name: MODALS.textEditor,
         dialogProps: this.dialogProps,
         config: {
-          text: this.value,
+          text: this.currentValue,
           variables: this.variables,
           sanitizeOptions: this.sanitizeOptions,
           action: value => this.updateModel(value),

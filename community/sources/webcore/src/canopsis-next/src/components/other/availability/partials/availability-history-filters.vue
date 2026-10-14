@@ -1,18 +1,18 @@
 <template>
-  <v-layout class="availability-history-filters gap-6" wrap>
+  <c-layout class="availability-history-filters" gap="6" wrap>
     <c-sampling-field
       :value="sampling"
       :samplings="availableSamplings"
       class="availability-history-filters__sampling"
-      @input="$emit('update:sampling', $event)"
+      @update:value="$emit('update:sampling', $event)"
     />
     <availability-show-type-field
-      :value="showType"
+      :model-value="showType"
       :label="$t('common.show')"
       class="availability-history-filters__show-type"
-      @input="$emit('update:showType', $event)"
+      @update:model-value="$emit('update:showType', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -24,6 +24,7 @@ import AvailabilityShowTypeField from '@/components/other/availability/form/fiel
 
 export default {
   components: { AvailabilityShowTypeField },
+
   props: {
     sampling: {
       type: String,
@@ -38,6 +39,9 @@ export default {
       required: false,
     },
   },
+
+  emits: ['update:sampling', 'update:showType'],
+
   setup() {
     const availableSamplings = computed(() => [SAMPLINGS.hour, SAMPLINGS.day]);
 
@@ -50,7 +54,8 @@ export default {
 
 <style lang="scss">
 .availability-history-filters {
-  &__sampling, &__show-type {
+  &__sampling,
+  &__show-type {
     max-width: 200px;
     flex: 1;
   }

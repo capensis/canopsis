@@ -5,11 +5,24 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :search-disabled="showTopUserByConnections"
     :select-all="removable"
     advanced-pagination
     search
     @update:options="$emit('update:options', $event)"
   >
+    <template #toolbar>
+      <v-switch
+        :model-value="showTopUserByConnections"
+        :label="$t('user.showTopUserByConnections')"
+        class="users-list__top-user-switch ml-4"
+        color="primary"
+        density="compact"
+        hide-details
+        @update:model-value="$emit('update:showTopUserByConnections', $event)"
+      />
+    </template>
+
     <template #mass-actions="{ selected, clearSelected }">
       <c-table-mass-actions-panel
         :items="selected"
@@ -17,50 +30,51 @@
         :disablable="updatable"
         :removable="removable"
         user
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
     </template>
+
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+
     <template #active="{ item }">
-      <c-enabled :value="item.active_connects > 0" />
+      <c-icon :color="item.active_connects > 0 ? 'success' : 'error'">
+        {{ item.active_connects > 0 ? 'check_circle' : 'cancel' }}
+      </c-icon>
     </template>
+
     <template #source="{ item }">
-      {{ item.source || $constants.AUTH_METHODS.local }}
+      {{ item.source || AUTH_METHODS.local }}
     </template>
+
     <template #roles="{ item }">
-      <v-layout class="gap-2" wrap>
-        <v-chip
-          v-for="role in item.roles"
-          :key="role._id"
-        >
+      <c-layout gap="1" wrap>
+        <v-chip v-for="role in item.roles" :key="role._id">
           {{ role.name }}
         </v-chip>
-      </v-layout>
+      </c-layout>
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click.stop="$emit('edit', item)"
-        />
+      <c-layout gap="1">
+        <c-action-btn v-if="updatable" type="edit" @click.stop="$emit('edit', item)" />
         <c-action-btn
           v-if="removable"
-          :disabled="!item.deletable"
+          :disabled-button="!item.deletable"
           type="delete"
           @click.stop="$emit('remove', item)"
         />
-      </v-layout>
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
+
+import { AUTH_METHODS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -72,7 +86,7 @@ export default {
     },
     totalItems: {
       type: Number,
-      required: false,
+      default: 0,
     },
     pending: {
       type: Boolean,
@@ -90,9 +104,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    showTopUserByConnections: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['update:options', 'update:showTopUserByConnections', 'edit', 'remove', 'refresh'],
+
   setup() {
-    const { t, tc } = useI18n();
+    const { t } = useI18n();
 
     const headers = computed(() => [
       {
@@ -112,7 +133,7 @@ export default {
         value: 'lastname',
       },
       {
-        text: tc('common.role', 2),
+        text: t('common.role', 2),
         value: 'roles',
         sortable: false,
       },
@@ -142,6 +163,7 @@ export default {
     ]);
 
     return {
+      AUTH_METHODS,
       headers,
     };
   },

@@ -1,154 +1,129 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
-        {{ title }}
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" with-background />
-          <template-testing-test-variables-wrapper
-            v-model="form"
-            :rule-id="scenarioId"
-            :type="type"
-          >
-            <template #default="{ templateVars }">
-              <scenario-form
-                v-model="form"
-                :template-vars="templateVars"
-              />
-            </template>
-          </template-testing-test-variables-wrapper>
-        </v-layout>
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+
+      <template #text>
+        <scenario-form :rule-id="scenarioId" />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting || chatPending"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
+import { computed, inject, toRef } from 'vue';
+
+import { LLM_SOCKET_CONTEXTS } from '@/constants';
+
 import {
-  computed,
-  ref,
-  inject,
-  set,
-  toRef,
-} from 'vue';
-
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
-
-import { formToScenario, scenarioToForm } from '@/helpers/entities/scenario/form';
+  formToScenario,
+  scenarioErrorToForm,
+  scenarioToForm,
+} from '@/helpers/entities/scenario/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createScenario,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
-    ScenarioForm,
-    TemplateTestingTestVariablesWrapper,
-    ModalWrapper,
     AiChatSidebar,
+    ScenarioForm,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.scenario;
-
-    const system = inject('$system');
-
-    const { config, close } = useInnerModal(props);
     const { t } = useI18n();
+    const modals = useModals();
 
-    const form = ref(scenarioToForm(config.value.scenario, system.timezone));
+    const system = inject('$system', {});
 
-    const scenarioId = computed(() => config.value.scenario?._id);
-    const title = computed(() => config.value.title ?? t('modals.createScenario.create.title'));
+    const config = computed(() => props.modal.config ?? {});
+    const scenario = computed(() => config.value.scenario);
+    const scenarioId = computed(() => scenario.value?._id);
+    const isNew = computed(() => !scenarioId.value);
+    const title = computed(() => config.value.title || t('modals.createScenario.create.title'));
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.save'));
 
-    const formRef = computed({
-      get: () => form.value.actions,
-      set: actions => set(form, 'actions', actions),
+    const form = useForm({
+      initialValues: scenarioToForm(scenario.value, system.timezone),
+      errorsToValidation: errors => scenarioErrorToForm(errors, form.values.value),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
+    const actions = computed({
+      get: () => values.value.actions,
+      set: newActions => (values.value.actions = newActions),
     });
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form: formRef,
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToScenario(values.value, system.timezone));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
+
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: actions,
       modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.scenario?._id,
+      ruleId: scenarioId,
       context: LLM_SOCKET_CONTEXTS.scenario,
     });
-
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        const result = await config.value.action?.(formToScenario(form.value, system.timezone));
-
-        await config.value.afterSubmit?.(result);
-
-        close();
-
-        return result;
-      },
-    });
+    const chatPending = computed(() => chatOptions.value.attrs.pending);
 
     useEntityInfoPropertyFetching();
-    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form,
-      config,
-      scenarioId,
-      type,
+      t,
       title,
-      isDisabled,
-      submitting,
+      scenarioId,
+      submitLabel,
+      isSubmitting,
       chatShown,
       chatOptions,
+      chatPending,
       submit,
-      close,
+      closeModal,
     };
   },
 };

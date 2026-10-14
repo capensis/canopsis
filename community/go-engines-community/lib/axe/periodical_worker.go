@@ -37,8 +37,9 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(parentCtx context.Context) {
-	metric := techmetrics.AxePeriodicalMetric{}
-	metric.Timestamp = time.Now()
+	metric := techmetrics.AxePeriodicalMetric{
+		Timestamp: time.Now(),
+	}
 	eventCount := 0
 	idleEventCount := 0
 	defer func() {

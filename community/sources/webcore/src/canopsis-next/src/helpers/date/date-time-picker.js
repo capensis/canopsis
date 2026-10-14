@@ -1,13 +1,36 @@
 /**
- * Immutable update time in the Date value
+ * Returns time string from Vuetify item/value shapes.
  *
- * @param {Date} value
- * @param {string} [time = '00:00'];
+ * @param {*} time Time value.
+ * @param {string} [defaultValue='00:00'] Default time.
+ * @returns {string}
+ */
+export const normalizeTimeString = (time, defaultValue = '00:00') => {
+  if (time?.raw) {
+    return normalizeTimeString(time.raw, defaultValue);
+  }
+
+  if (time?.value) {
+    return normalizeTimeString(time.value, defaultValue);
+  }
+
+  if (time?.title) {
+    return normalizeTimeString(time.title, defaultValue);
+  }
+
+  return String(time ?? defaultValue);
+};
+
+/**
+ * Immutable update time in the Date value.
+ *
+ * @param {Date} value Date value.
+ * @param {*} [time='00:00'] Time in HH:mm format or Vuetify item.
  * @returns {Date}
  */
 export const getDateObjectByTime = (value, time = '00:00') => {
   const newValue = value ? new Date(value.getTime()) : new Date();
-  const [hours = 0, minutes = 0] = time.split(':');
+  const [hours = 0, minutes = 0] = normalizeTimeString(time).split(':');
 
   newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, 0, 0);
 
@@ -15,10 +38,10 @@ export const getDateObjectByTime = (value, time = '00:00') => {
 };
 
 /**
- * Immutable update date in the Date value
+ * Immutable update date in the Date value.
  *
- * @param {Date} value
- * @param {string} date
+ * @param {Date} value Date value.
+ * @param {string} date Date in YYYY-MM-DD format.
  * @returns {Date}
  */
 export const getDateObjectByDate = (value, date) => {

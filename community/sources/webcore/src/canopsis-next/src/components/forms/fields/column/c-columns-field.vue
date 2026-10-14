@@ -1,15 +1,18 @@
 <template>
   <c-card-iterator-form
-    v-field="columns"
+    :value="modelValue"
+    :name="name || undefined"
     :handle="`.${dragItemHandleClass}`"
     :iterator-class="{ empty: isColumnsEmpty }"
+    add-button-justify="end"
     @add="add"
+    @update:value="$emit('update:modelValue', $event)"
   >
     <template #item="{ item: column, index }">
       <column-field
-        v-field="columns[index]"
         :key="column.key"
-        :name="column.key"
+        :model-value="modelValue[index]"
+        :name="getColumnFieldName(column.key)"
         :type="type"
         :drag-handle-class="dragItemHandleClass"
         :with-html="withHtml"
@@ -25,6 +28,7 @@
         :variables="variables"
         :excluded-columns="excludedColumns"
         class="mb-3"
+        @update:model-value="updateItemInArray(index, $event)"
         @remove="remove(index)"
       />
     </template>
@@ -39,25 +43,20 @@ import { ENTITIES_TYPES } from '@/constants';
 import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { useAsyncBootingParent } from '@/hooks/render/async-booting';
 
 import ColumnField from './partials/column-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { ColumnField },
-  model: {
-    prop: 'columns',
-    event: 'input',
-  },
+
   props: {
+    modelValue: {
+      type: Array,
+      default: () => [],
+    },
     type: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-    },
-    columns: {
-      type: [Array, Object],
-      default: () => [],
     },
     withTemplate: {
       type: Boolean,
@@ -107,25 +106,31 @@ export default {
       type: Array,
       required: false,
     },
+    name: {
+      type: String,
+      default: '',
+    },
   },
+
+  emits: ['update:modelValue'],
+
   setup(props, { emit }) {
     const dragItemHandleClass = 'column-drag-handle';
-
-    const isColumnsEmpty = computed(() => !props.columns.length);
-
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
-
-    useAsyncBootingParent(2);
-
+    const isColumnsEmpty = computed(() => !props.modelValue.length);
+    const { addItemIntoArray, removeItemFromArray, updateItemInArray } = useArrayModelField(
+      props,
+      emit,
+    );
     const add = () => addItemIntoArray(widgetColumnToForm());
-    const remove = index => removeItemFromArray(index);
+    const getColumnFieldName = key => [props.name, key].filter(Boolean).join('.');
 
     return {
       dragItemHandleClass,
       isColumnsEmpty,
-
       add,
-      remove,
+      remove: removeItemFromArray,
+      updateItemInArray,
+      getColumnFieldName,
     };
   },
 };

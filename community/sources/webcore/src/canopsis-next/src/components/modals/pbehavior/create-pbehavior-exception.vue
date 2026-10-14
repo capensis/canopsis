@@ -1,78 +1,100 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createPbehaviorException.title') }}</span>
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <pbehavior-exception-form
-          v-model="form"
-          with-type
-        />
+
+      <template #text>
+        <pbehavior-exception-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed } from 'vue';
 
-import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/entities/pbehavior/exception/form';
+import {
+  formToPbehaviorException,
+  pbehaviorExceptionToForm,
+} from '@/helpers/entities/pbehavior/exception/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createPbehaviorException,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: {
-    PbehaviorExceptionForm,
-    ModalWrapper,
-  },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      form: pbehaviorExceptionToForm(this.modal.config.pbehaviorException),
-    };
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+  components: { PbehaviorExceptionForm },
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToPbehaviorException(this.form));
-        }
-
-        this.$modals.hide();
-      }
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const exception = computed(() => config.value.pbehaviorException ?? config.value.exception);
+    const isNew = computed(() => !exception.value?._id);
+    const title = computed(
+      () => config.value.title ||
+        t(`modals.createPbehaviorException.${isNew.value ? 'create' : 'edit'}.title`),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+
+    const form = useForm({
+      initialValues: pbehaviorExceptionToForm(exception.value),
+    });
+    const { values, handleSubmit, submitting } = form;
+
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToPbehaviorException(values.value));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
+
+    return {
+      t,
+      title,
+      submitLabel,
+      submitting,
+      closeModal,
+      submit,
+    };
   },
 };
 </script>

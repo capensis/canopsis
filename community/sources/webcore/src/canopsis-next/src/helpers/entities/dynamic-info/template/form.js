@@ -1,4 +1,3 @@
-import { uuid } from '@/helpers/uuid';
 import { uid } from '@/helpers/uid';
 
 /**
@@ -7,76 +6,50 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {Object} DynamicInfoTemplate
- * @property {string} _id
- * @property {string} title
- * @property {string[]} names
- */
-
-/**
  * @typedef {DynamicInfoTemplate} DynamicInfoTemplateForm
  * @property {KeyValue[]} names
  */
 
 /**
- * Generate dynamic info template form name object by dynamic info template name string
+ * Create a dynamic info template name form item.
  *
- * @param {string} [name = '']
- * @returns {KeyValue}
+ * @param {string} [name=''] - Template info name.
+ * @returns {{ key: string, value: string }}
  */
-export function generateTemplateFormName(name = '') {
-  return {
-    key: uid(),
-    value: name,
-  };
-}
+export const generateTemplateFormName = (name = '') => ({
+  key: uid('dynamic-info-template-name'),
+  value: name,
+});
 
 /**
- * Convert a dynamic information's template object to a dynamic information's template form object
+ * Convert a dynamic info template object to a form object.
  *
- * @param {string} [_id = '']
- * @param {string} [title = '']
- * @param {string[]} [names = []]
- * @returns {DynamicInfoTemplateForm}
+ * @param {Object} [template={}] - Dynamic info template entity.
+ * @returns {{ _id: string, title: string, names: Array<{ key: string, value: string }> }}
  */
-export function templateToForm({
-  _id = uuid(),
-  title = '',
-  names = [],
-} = {}) {
-  return {
-    _id,
-    title,
-    names: names.map(generateTemplateFormName),
-  };
-}
+export const templateToForm = (template = {}) => ({
+  _id: template._id ?? uid('dynamic-info-template'),
+  title: template.title ?? '',
+  names: (template.names ?? []).map(generateTemplateFormName),
+});
 
 /**
- * Convert a dynamic information's template form object to a dynamic information's template object
+ * Convert a dynamic info template form object to an API compatible object.
  *
- * @param {string} [_id = uuid()]
- * @param {string} [title = '']
- * @param {KeyValue[]} [names = []]
- * @returns {DynamicInfoTemplate}
+ * @param {Object} [form={}] - Dynamic info template form object.
+ * @returns {{ _id: string, title: string, names: string[] }}
  */
-export function formToTemplate({
-  _id = uuid(),
-  title = '',
-  names = [],
-} = {}) {
-  return {
-    _id,
-    title,
-    names: names.map(({ value }) => value),
-  };
-}
+export const formToTemplate = (form = {}) => ({
+  _id: form._id ?? uid('dynamic-info-template'),
+  title: form.title ?? '',
+  names: (form.names ?? []).map(({ value }) => value),
+});
 
 /**
- * Convert template to dynamic info's informations array
+ * Convert a dynamic info template to dynamic info information form items.
  *
- * @param {DynamicInfoTemplate} template
- * @returns {{ name: string, value: string }[]}
+ * @param {Object} [template={}] - Dynamic info template entity.
+ * @returns {Array<{ name: string, value: string }>}
  */
-export function templateToDynamicInfoInfos(template) {
-  return template.names.map(name => ({ name, value: '' }));
-}
+export const templateToDynamicInfoInfos = (template = {}) =>
+  (template.names ?? []).map(name => ({ name, value: '' }));

@@ -1,69 +1,57 @@
 <template>
-  <v-layout
-    class="mt-2"
-    column
-  >
-    <v-layout>
-      <v-flex xs11>
-        <v-alert
-          :value="!operations.length"
-          type="info"
-        >
-          {{ $t('remediation.instruction.emptyOperations') }}
-        </v-alert>
-      </v-flex>
-    </v-layout>
+  <c-layout gap="2" column>
     <c-draggable-list-field
-      v-field="operations"
+      :model-value="operations"
       :disabled="disabled"
       :class="{ 'grey lighten-1': isDragging }"
+      class="flex-column gap-2"
       ghost-class="grey"
       handle=".operation-drag-handler"
+      item-key="key"
+      @update:model-value="updateModel"
       @start="startDragging"
       @end="endDragging"
     >
-      <remediation-instruction-operation-field
-        v-for="(operation, index) in operations"
-        v-field="operations[index]"
-        :key="operation.key"
-        :index="index"
-        :operation-number="getOperationNumber(index)"
-        :disabled="disabled"
-        :template-vars="templateVars"
-        class="py-1"
-        @remove="removeOperation(index)"
-      />
+      <template #item="{ element: operation, index }">
+        <remediation-instruction-operation-field
+          :operation="operation"
+          :name="`${name}.${operation.key}`"
+          :operation-number="getOperationNumber(index)"
+          :disabled="disabled"
+          :template-vars="templateVars"
+          @update:operation="updateItemInArray(index, $event)"
+          @remove="removeOperation(index)"
+        />
+      </template>
     </c-draggable-list-field>
     <c-btn-with-error
       :error="hasOperationsErrors ? $t('remediation.instruction.errors.operationRequired') : ''"
       :disabled="disabled"
-      outlined
+      variant="outlined"
       @click="addOperation"
     >
       {{ $t('remediation.instruction.addOperation') }}
     </c-btn-with-error>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { computed, ref, watch } from 'vue';
+
 import {
   remediationInstructionStepOperationToForm,
   getOperationNumber,
 } from '@/helpers/entities/remediation/instruction/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useFormErrorsMap } from '@/hooks/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidationAttachMinValueForField } from '@/hooks/validator/validation-attach-min-value';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     RemediationInstructionOperationField,
-  },
-  mixins: [formArrayMixin],
-  model: {
-    prop: 'operations',
-    event: 'input',
   },
   props: {
     name: {
@@ -72,7 +60,7 @@ export default {
     },
     operations: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
     stepNumber: {
       type: [String, Number],
@@ -87,52 +75,61 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      isDragging: false,
+  emits: ['update:operations'],
+  setup(props, { emit }) {
+    const isDragging = ref(false);
+
+    const { hasError } = useFormErrorsMap();
+    const { updateModel, addItemIntoArray, updateItemInArray, removeItemFromArray } =
+      useArrayModelField(props, emit);
+
+    const hasOperationsErrors = computed(() => hasError(props.name));
+
+    const { asyncValidateMinValueRule } = useValidationAttachMinValueForField(
+      props.name,
+      () => props.operations.length,
+    );
+
+    watch(() => props.operations, asyncValidateMinValueRule);
+
+    /**
+     * Appends a new empty operation to the operations list.
+     */
+    const addOperation = () => addItemIntoArray(remediationInstructionStepOperationToForm());
+
+    /**
+     * Returns the display number for an operation within the current step.
+     *
+     * @param {number} index - Zero-based index of the operation in the list.
+     * @returns {string}
+     */
+    const getOperationNumberByIndex = index => getOperationNumber(props.stepNumber, index);
+
+    /**
+     * Marks the draggable list as being dragged to apply visual feedback.
+     */
+    const startDragging = () => {
+      isDragging.value = true;
     };
-  },
-  computed: {
-    hasOperationsErrors() {
-      return this.errors.has(this.name);
-    },
-  },
-  watch: {
-    operations() {
-      this.$validator.validate(this.name);
-    },
-  },
-  created() {
-    this.$validator.attach({
-      name: this.name,
-      rules: 'min_value:1',
-      getter: () => this.operations.length,
-      vm: this,
-    });
-  },
-  beforeDestroy() {
-    this.$validator.detach(this.name);
-  },
-  methods: {
-    getOperationNumber(index) {
-      return getOperationNumber(this.stepNumber, index);
-    },
 
-    addOperation() {
-      this.addItemIntoArray(remediationInstructionStepOperationToForm());
-    },
+    /**
+     * Clears the dragging state when the drag operation ends.
+     */
+    const endDragging = () => {
+      isDragging.value = false;
+    };
 
-    removeOperation(index) {
-      this.removeItemFromArray(index);
-    },
-
-    startDragging() {
-      this.isDragging = true;
-    },
-
-    endDragging() {
-      this.isDragging = false;
-    },
+    return {
+      isDragging,
+      hasOperationsErrors,
+      getOperationNumber: getOperationNumberByIndex,
+      updateModel,
+      updateItemInArray,
+      addOperation,
+      removeOperation: removeItemFromArray,
+      startDragging,
+      endDragging,
+    };
   },
 };
 </script>

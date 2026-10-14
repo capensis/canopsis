@@ -126,4 +126,10 @@ const (
 	LLMConfigCollection         = "llm_config"
 	LLMChatHistoryCollection    = "llm_chat_history"
 	LLMMessageHistoryCollection = "llm_message_history"
+
+	EntityImportPublicCollection = "entity_import_public"
+	EntityExportPublicCollection = "entity_export_public"
+	AlarmExportPublicCollection  = "alarm_export_public"
+
+	PublicAPITokenCollection = "public_api_token"
 )

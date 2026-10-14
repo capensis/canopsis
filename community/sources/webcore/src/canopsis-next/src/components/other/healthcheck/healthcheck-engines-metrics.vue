@@ -1,10 +1,10 @@
 <template>
-  <v-layout class="pl-4" column>
+  <c-layout class="pl-4" column>
     <c-enabled-field
-      :value="settings.enabled"
+      :model-value="settings.enabled"
       :label="$t('techMetric.enabled')"
       :disabled="settingsPending"
-      @change="changeTechMetricsEnabled"
+      @update:model-value="changeTechMetricsEnabled"
     />
     <v-data-table
       :headers="headers"
@@ -12,76 +12,83 @@
       :loading="pending"
       loader-height="2"
     >
-      <template #no-data="">
-        <td
-          class="text-center"
-          colspan="2"
-        >
-          <div>{{ $t('techMetric.noDumps') }}</div>
-        </td>
-        <td>
-          <c-action-btn
-            :disabled="exporting"
-            :tooltip="$t('techMetric.generateDump')"
-            icon="play_circle"
-            color="secondary"
-            @click="exportTechMetrics"
-          />
-        </td>
+      <template #no-data>
+        <tr>
+          <td class="text-center" colspan="2">
+            <div>{{ $t('techMetric.noDumps') }}</div>
+          </td>
+          <td>
+            <c-action-btn
+              :disabled="exporting"
+              :tooltip="$t('techMetric.generateDump')"
+              icon="play_circle"
+              color="secondary"
+              @click="exportTechMetrics"
+            />
+          </td>
+        </tr>
       </template>
       <template #item="{ item }">
-        <td
-          v-if="!exporting && (item.disabled || item.notCreated)"
-          class="text-center"
-          colspan="2"
-        >
-          <div>{{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}</div>
-        </td>
-        <template v-else>
-          <td>{{ item.created | date }}</td>
-          <td>
-            <v-progress-circular
-              v-if="exporting"
-              color="primary"
-              indeterminate
-            />
-            <span v-else>{{ item.duration | duration }}</span>
+        <tr>
+          <td
+            v-if="!exporting && (getMetricItem(item).disabled || getMetricItem(item).notCreated)"
+            class="text-center"
+            colspan="2"
+          >
+            <div>
+              {{
+                getMetricItem(item).disabled
+                  ? $t('techMetric.metricsDisabled')
+                  : $t('techMetric.noDumps')
+              }}
+            </div>
           </td>
-        </template>
-        <td>
-          <c-action-btn
-            :disabled="exporting || item.disabled"
-            :tooltip="$t('techMetric.generateDump')"
-            icon="play_circle"
-            color="secondary"
-            @click="exportTechMetrics"
-          />
-          <c-action-btn
-            v-if="item.readyToDownload"
-            :disabled="exporting"
-            :tooltip="$t('techMetric.downloadDump')"
-            icon="save_alt"
-            color="secondary"
-            @click="downloadTechMetrics"
-          />
-        </td>
+          <template v-else>
+            <td>{{ formatDate(getMetricItem(item).created) }}</td>
+            <td>
+              <v-progress-circular v-if="exporting" color="primary" indeterminate />
+              <span v-else>
+                {{ formatDuration(getMetricItem(item).duration) }}
+              </span>
+            </td>
+          </template>
+          <td>
+            <c-action-btn
+              :disabled="exporting || getMetricItem(item).disabled"
+              :tooltip="$t('techMetric.generateDump')"
+              icon="play_circle"
+              color="secondary"
+              @click="exportTechMetrics"
+            />
+            <c-action-btn
+              v-if="getMetricItem(item).readyToDownload"
+              :disabled="exporting"
+              :tooltip="$t('techMetric.downloadDump')"
+              icon="save_alt"
+              color="secondary"
+              @click="downloadTechMetrics"
+            />
+          </td>
+        </tr>
       </template>
     </v-data-table>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { TECH_METRICS_EXPORT_STATUSES } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { openUrlInNewTab } from '@/helpers/url';
 
 import { useI18n } from '@/hooks/i18n';
+import { useFilePolling } from '@/hooks/polling';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useTechMetrics } from '@/hooks/store/modules/tech-metrics';
-import { useFilePolling } from '@/hooks/polling';
 
 export default {
   setup() {
@@ -96,47 +103,30 @@ export default {
       updateTechMetricsSettings,
     } = useTechMetrics();
 
-    const metrics = computed(() => (
-      (metric.value ? [metric.value] : []).map(item => ({
+    const metrics = computed(() => (metric.value ? [metric.value] : []).map(item => ({
         ...item,
-
         disabled: item.status === TECH_METRICS_EXPORT_STATUSES.disabled,
         readyToDownload: item.status === TECH_METRICS_EXPORT_STATUSES.success,
         notCreated: item.status === TECH_METRICS_EXPORT_STATUSES.none,
-      }))
-    ));
+      })),
+    );
 
     const headers = computed(() => [
-      { text: t('common.created'), width: '33%', sortable: false },
-      { text: t('common.timeTaken'), width: '33%', sortable: false },
-      { text: t('common.actionsLabel'), width: '33%', sortable: false },
+      { title: t('common.created'), key: 'created', width: '33%', sortable: false },
+      { title: t('common.timeTaken'), key: 'duration', width: '33%', sortable: false },
+      { title: t('common.actionsLabel'), key: 'actions', width: '33%', sortable: false },
     ]);
 
-    /**
-     * Handles fetching and managing the state of technical metrics.
-     */
-    const {
-      pending,
-      handler: fetchTechMetrics,
-    } = usePendingHandler(async () => {
+    const { pending, handler: fetchTechMetrics } = usePendingHandler(async () => {
       metric.value = await fetchTechMetricsExport();
 
       return metric.value;
     });
 
-    /**
-     * Handles fetching and managing the state of settings.
-     */
-    const {
-      pending: settingsPending,
-      handler: fetchSettings,
-    } = usePendingHandler(async () => {
+    const { pending: settingsPending, handler: fetchSettings } = usePendingHandler(async () => {
       settings.value = await fetchTechMetricsSettings();
     });
 
-    /**
-     * Handles file generation and download for technical metrics export.
-     */
     const { poll: generateFile } = useFilePolling({
       createHandler: createTechMetricsExport,
       fetchHandler: fetchTechMetrics,
@@ -144,24 +134,11 @@ export default {
       failedStatus: TECH_METRICS_EXPORT_STATUSES.failed,
     });
 
-    /**
-     * Initiates the download of the technical metrics file.
-     */
     const downloadTechMetrics = () => openUrlInNewTab(getTechMetricsDownloadFileUrl());
+    const getMetricItem = item => item.raw ?? item;
 
-    /**
-     * Handles exporting technical metrics and managing the state of the export process.
-     */
-    const {
-      pending: exporting,
-      handler: exportTechMetrics,
-    } = usePendingHandler(generateFile);
+    const { pending: exporting, handler: exportTechMetrics } = usePendingHandler(generateFile);
 
-    /**
-     * Updates the enabled status of technical metrics settings.
-     *
-     * @param {boolean} enabled - The new enabled status.
-     */
     const changeTechMetricsEnabled = async (enabled) => {
       try {
         settingsPending.value = true;
@@ -186,17 +163,17 @@ export default {
 
     return {
       settings,
-
       metrics,
       headers,
-
       pending,
       settingsPending,
       exporting,
-
       exportTechMetrics,
       downloadTechMetrics,
       changeTechMetricsEnabled,
+      getMetricItem,
+      formatDate: convertDateToString,
+      formatDuration: convertDurationToString,
     };
   },
 };

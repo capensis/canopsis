@@ -10,35 +10,33 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #message="{ item }">
-      <broadcast-message
-        :message="item.message"
-        :color="item.color"
-      />
+      <broadcast-message :message="item.message" :color="item.color" />
     </template>
+
     <template #status="{ item }">
-      <span :class="{ 'success--text': item.status === activeStatus, 'grey--text': item.status !== activeStatus }">
-        {{ $t(`broadcastMessage.statuses.${item.status}`) }}
+      <span
+        :class="{
+          'text-success': item.status === activeStatus,
+          'text-grey': item.status !== activeStatus,
+        }"
+      >
+        {{ t(`broadcastMessage.statuses.${item.status}`) }}
       </span>
     </template>
+
     <template #start="{ item }">
-      {{ item.start | date }}
+      {{ convertDateToString(item.start) }}
     </template>
+
     <template #end="{ item }">
-      {{ item.end | date }}
+      {{ convertDateToString(item.end) }}
     </template>
+
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="editable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="deletable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
-      </v-layout>
+      <c-layout>
+        <c-action-btn v-if="editable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="deletable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
@@ -48,16 +46,17 @@ import { computed } from 'vue';
 
 import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
 
-import { getNowTimestamp } from '@/helpers/date/date';
+import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
-import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
+import BroadcastMessage from './partials/broadcast-message.vue';
 
 export default {
   components: {
     BroadcastMessage,
   },
+
   props: {
     broadcastMessages: {
       type: Array,
@@ -84,10 +83,12 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const activeStatus = BROADCAST_MESSAGES_STATUSES.active;
 
+  emits: ['update:options', 'edit', 'remove'],
+
+  setup(props) {
     const { t } = useI18n();
+    const activeStatus = BROADCAST_MESSAGES_STATUSES.active;
 
     const headers = computed(() => [
       {
@@ -119,28 +120,29 @@ export default {
     ]);
 
     const preparedBroadcastMessages = computed(() => props.broadcastMessages.map((message) => {
-      const now = getNowTimestamp();
-      let status = BROADCAST_MESSAGES_STATUSES.pending;
+        const now = getNowTimestamp();
+        let status = BROADCAST_MESSAGES_STATUSES.pending;
 
-      if (now >= message.start) {
-        status = now <= message.end
-          ? BROADCAST_MESSAGES_STATUSES.active
-          : BROADCAST_MESSAGES_STATUSES.expired;
-      }
+        if (now >= message.start) {
+          status =
+            now <= message.end
+              ? BROADCAST_MESSAGES_STATUSES.active
+              : BROADCAST_MESSAGES_STATUSES.expired;
+        }
 
-      return {
-        ...message,
-
-        status,
-      };
-    }));
+        return {
+          ...message,
+          status,
+        };
+      }),
+    );
 
     return {
+      t,
       activeStatus,
-
       headers,
-
       preparedBroadcastMessages,
+      convertDateToString,
     };
   },
 };

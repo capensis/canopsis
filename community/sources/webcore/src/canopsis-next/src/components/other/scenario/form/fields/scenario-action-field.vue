@@ -1,161 +1,192 @@
 <template>
   <c-card-iterator-item
-    ref="cardIteratorItemElement"
     :item-number="actionNumber"
-    @remove="removeAction"
+    :drag-handle-class="dragHandleClass"
+    :removable="false"
   >
-    <template #header="">
-      <c-action-type-field
-        v-field="action.type"
-        :name="`${name}.type`"
+    <template #header>
+      <c-layout gap="2" align="start">
+        <c-action-type-field
+          :model-value="modelValue.type"
+          :name="`${name}.type`"
+          required
+          @update:model-value="updateField('type', $event)"
+        />
+
+        <c-layout class="scenario-action-field__actions" gap="1" align="center">
+          <c-action-btn type="duplicate" @click="duplicate" />
+          <c-action-btn type="delete" @click="remove" />
+        </c-layout>
+      </c-layout>
+    </template>
+
+    <c-layout gap="3" column>
+      <v-row density="compact">
+        <v-col cols="6">
+          <c-enabled-field
+            :model-value="modelValue.emit_trigger_success"
+            :label="t('common.emitTriggerSuccess')"
+            :name="`${name}.emit_trigger_success`"
+            hide-details
+            @update:model-value="updateField('emit_trigger_success', $event)"
+          />
+        </v-col>
+
+        <v-col v-if="isWebhookAction && parameters.declare_ticket?.enabled" cols="6">
+          <c-enabled-field
+            :model-value="modelValue.emit_trigger_fail"
+            :label="t('common.emitTriggerFail')"
+            :name="`${name}.emit_trigger_fail`"
+            hide-details
+            @update:model-value="updateField('emit_trigger_fail', $event)"
+          />
+        </v-col>
+      </v-row>
+
+      <action-author-field
+        :model-value="parameters"
+        :name="parametersName"
+        :variables="templateVars.author"
+        @update:model-value="parameters = $event"
       />
 
-      <c-action-btn type="duplicate" @click="duplicateAction" />
-    </template>
-    <v-layout>
-      <v-flex xs6>
-        <c-enabled-field
-          v-field="action.emit_trigger"
-          :label="$t('common.emitTrigger')"
-        />
-        <action-author-field v-model="parameters" :variables="templateVars.author" />
-      </v-flex>
-      <v-flex
-        v-if="isWebhookActionType"
-        xs6
+      <v-expand-transition>
+        <c-form-block v-if="isWebhookAction">
+          <c-form-block-row :label="t('scenario.skip')">
+            <c-layout column>
+              <c-enabled-field
+                :model-value="parameters.skip_for_child"
+                :label="t('scenario.skipForChild')"
+                :name="`${parametersName}.skip_for_child`"
+                hide-details
+                @update:model-value="updateParametersField('skip_for_child', $event)"
+              />
+
+              <c-enabled-field
+                :model-value="parameters.skip_for_instruction"
+                :label="t('scenario.skipForInstruction')"
+                :name="`${parametersName}.skip_for_instruction`"
+                hide-details
+                @update:model-value="updateParametersField('skip_for_instruction', $event)"
+              />
+            </c-layout>
+          </c-form-block-row>
+        </c-form-block>
+      </v-expand-transition>
+
+      <c-form-block>
+        <c-form-block-row :label="t('scenario.workflow')" align-center>
+          <c-workflow-field
+            :model-value="modelValue.drop_scenario_if_not_matched"
+            :stop-label="t('common.stop')"
+            :continue-label="t('scenario.remainingAction')"
+            :name="`${name}.drop_scenario_if_not_matched`"
+            @update:model-value="updateField('drop_scenario_if_not_matched', $event)"
+          />
+        </c-form-block-row>
+
+        <template v-if="isWebhookAction">
+          <c-form-block-row :label="t('scenario.workflowInCaseOfFailure')" align-center>
+            <c-workflow-field
+              :model-value="parameters.stop_on_fail"
+              :stop-label="t('common.stop')"
+              :continue-label="t('scenario.remainingStep')"
+              :name="`${parametersName}.stop_on_fail`"
+              @update:model-value="updateParametersField('stop_on_fail', $event)"
+            />
+          </c-form-block-row>
+
+          <c-form-block-row :label="t('scenario.workflowInCaseOfSuccess')" align-center>
+            <c-workflow-field
+              :model-value="parameters.stop_on_success"
+              :stop-label="t('common.stop')"
+              :continue-label="t('scenario.remainingStep')"
+              :name="`${parametersName}.stop_on_success`"
+              @update:model-value="updateParametersField('stop_on_success', $event)"
+            />
+          </c-form-block-row>
+        </template>
+
+        <c-form-block-row :label="t('common.comment')" indented>
+          <c-textarea
+            :model-value="modelValue.comment"
+            :label="t('common.comment')"
+            :name="`${name}.comment`"
+            @update:model-value="updateField('comment', $event)"
+          />
+        </c-form-block-row>
+      </c-form-block>
+
+      <c-form-general-patterns-tabs
+        :form="modelValue"
+        :hide-general="isPbehaviorRemoveAction"
+        :with-template-testing="false"
+        :patterns-label="t('common.pattern', 2)"
       >
-        <c-enabled-field
-          v-model="parameters.skip_for_child"
-          :label="$t('scenario.skipForChild')"
-        />
-        <c-enabled-field
-          v-model="parameters.skip_for_instruction"
-          :label="$t('scenario.skipForInstruction')"
-          class="mt-0"
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout justify-space-between>
-      <c-workflow-field
-        v-field="action.drop_scenario_if_not_matched"
-        :label="$t('scenario.workflow')"
-        :continue-label="$t('scenario.remainingAction')"
-      />
-      <template v-if="isWebhookActionType">
-        <c-workflow-field
-          v-model="parameters.stop_on_fail"
-          :label="$t('scenario.workflowInCaseOfFailure')"
-          :continue-label="$t('scenario.remainingStep')"
-        />
-        <c-workflow-field
-          v-model="parameters.stop_on_success"
-          :label="$t('scenario.workflowInCaseOfSuccess')"
-          :continue-label="$t('scenario.remainingStep')"
-        />
-      </template>
-    </v-layout>
-    <v-textarea
-      v-field="action.comment"
-      :label="$tc('common.comment')"
-      class="mt-2"
-    />
-    <v-tabs
-      v-model="activeTab"
-      slider-color="primary"
-      background-color="transparent"
-      centered
-    >
-      <v-tab v-if="!isPbehaviorRemoveAction" :class="{ 'error--text': hasGeneralError }">
-        {{ $t('common.general') }}
-      </v-tab>
-      <v-tab :class="{ 'error--text': hasPatternsError }">
-        {{ $tc('common.pattern') }}
-      </v-tab>
-    </v-tabs>
-    <v-divider />
-    <v-tabs-items
-      v-model="activeTab"
-      class="pt-2"
-    >
-      <v-tab-item v-if="!isPbehaviorRemoveAction" eager>
-        <action-parameters-form
-          v-model="parameters"
-          ref="general"
-          :name="`${name}.parameters`"
-          :type="action.type"
-          :has-previous-webhook="hasPreviousWebhook"
-          :template-vars="templateVars"
-          class="mt-4"
-        />
-      </v-tab-item>
-      <v-tab-item eager>
-        <scenario-action-patterns-form
-          v-field="action.patterns"
-          ref="patterns"
-          :name="name"
-          class="mt-4"
-        />
-      </v-tab-item>
-    </v-tabs-items>
+        <template #general="{ setRef }">
+          <c-form-block>
+            <action-parameters-form
+              v-model="parameters"
+              :ref="setRef"
+              :type="modelValue.type"
+              :name="parametersName"
+              :depth="actionParametersDepth"
+              :has-previous-webhook="hasPreviousWebhook"
+              :template-vars="templateVars"
+            />
+          </c-form-block>
+        </template>
+
+        <template #patterns="{ setRef }">
+          <scenario-action-patterns-form
+            :ref="setRef"
+            :model-value="modelValue.patterns"
+            :name="`${name}.patterns`"
+            @update:model-value="updateField('patterns', $event)"
+          />
+        </template>
+      </c-form-general-patterns-tabs>
+    </c-layout>
   </c-card-iterator-item>
 </template>
 
 <script>
-import { Validator } from 'vee-validate';
+import { computed, toRef } from 'vue';
 
-import { isPbehaviorRemoveActionType, isWebhookActionType } from '@/helpers/entities/action';
+import {
+  isAssociateTicketActionType,
+  isPbehaviorRemoveActionType,
+  isWebhookActionType,
+} from '@/helpers/entities/action/form';
 
-import { formMixin } from '@/mixins/form';
-import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
+import { useConfirmableForm } from '@/hooks/confirmable-form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 import ActionAuthorField from '@/components/other/action/form/fields/action-author-field.vue';
 
 import ScenarioActionPatternsForm from '../scenario-action-patterns-form.vue';
 
-const SCENARIO_ACTION_TABS = {
-  general: 0,
-  patterns: 1,
-};
-
 export default {
-  inject: {
-    $validator: {
-      default: () => new Validator(),
-    },
-    $aiChat: {
-      default: () => ({}),
-    },
-  },
   components: {
     ActionAuthorField,
     ActionParametersForm,
     ScenarioActionPatternsForm,
   },
-  mixins: [
-    formMixin,
-    confirmableFormMixinCreator({
-      field: 'action',
-      method: 'removeAction',
-      cloning: true,
-    }),
-  ],
-  model: {
-    prop: 'action',
-    event: 'input',
-  },
+
   props: {
-    action: {
+    modelValue: {
       type: Object,
       required: true,
     },
     name: {
       type: String,
-      default: 'action',
+      required: true,
     },
     actionNumber: {
-      type: [Number, String],
-      default: 0,
+      type: Number,
+      required: true,
     },
     hasPreviousWebhook: {
       type: Boolean,
@@ -165,84 +196,59 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    dragHandleClass: {
+      type: String,
+      default: 'item-drag-handler',
+    },
   },
-  data() {
-    return {
-      activeTab: SCENARIO_ACTION_TABS.general,
-      cardIteratorItemElement: null,
-      hasGeneralError: false,
-      hasPatternsError: false,
+
+  emits: ['update:modelValue', 'remove', 'duplicate'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
+    const parametersName = computed(() => `${props.name}.parameters.${props.modelValue.type}`);
+    const parameters = computed({
+      get: () => props.modelValue.parameters?.[props.modelValue.type] ?? {},
+      set: value => updateField(`parameters.${props.modelValue.type}`, value),
+    });
+    const isWebhookAction = computed(() => isWebhookActionType(props.modelValue.type));
+    const isPbehaviorRemoveAction = computed(() => isPbehaviorRemoveActionType(props.modelValue.type),
+    );
+    const actionParametersDepth = computed(() => (
+      isAssociateTicketActionType(props.modelValue.type) ? 1 : 0
+    ));
+
+    const updateParametersField = (field, value) => {
+      updateField(`parameters.${props.modelValue.type}.${field}`, value);
     };
-  },
-  computed: {
-    isPbehaviorRemoveAction() {
-      return isPbehaviorRemoveActionType(this.action.type);
-    },
 
-    isWebhookActionType() {
-      return isWebhookActionType(this.action.type);
-    },
-
-    parameters: {
-      get() {
-        const { type, parameters } = this.action;
-
-        return parameters[type];
-      },
-      set(value) {
-        this.updateField(`parameters.${this.action.type}`, value);
-      },
-    },
-  },
-  created() {
-    this.$aiChat?.registerExpandFunction?.(this.showPatternsForAiChat);
-  },
-  mounted() {
-    this.$watch(() => this.$refs.general?.hasAnyError, (value) => {
-      this.hasGeneralError = value;
+    const { confirmAction: remove } = useConfirmableForm({
+      form: toRef(props, 'modelValue'),
+      action: () => emit('remove'),
     });
 
-    this.$watch(() => this.$refs.patterns.hasAnyError, (value) => {
-      this.hasPatternsError = value;
-    });
-  },
-  beforeUnmount() {
-    this.aiChat?.unregisterExpandFunction?.(this.showPatternsForAiChat);
-  },
-  methods: {
-    removeAction() {
-      this.$emit('remove');
-    },
+    const duplicate = () => emit('duplicate');
 
-    duplicateAction() {
-      this.$emit('duplicate');
-    },
-
-    goToPatternsTab() {
-      if (this.activeTab !== SCENARIO_ACTION_TABS.patterns) {
-        this.activeTab = SCENARIO_ACTION_TABS.patterns;
-      }
-    },
-
-    toggleOnExpanded() {
-      if (!this.$refs.cardIteratorItemElement.expanded) {
-        this.$refs.cardIteratorItemElement.expanded = true;
-      }
-    },
-
-    async showPatternsForAiChat({ key } = {}) {
-      if (this.action.key !== key) {
-        return;
-      }
-
-      this.goToPatternsTab();
-
-      await this.$nextTick();
-
-      this.toggleOnExpanded();
-
-      await this.$nextTick();
-    },
+    return {
+      t,
+      parametersName,
+      parameters,
+      actionParametersDepth,
+      isWebhookAction,
+      isPbehaviorRemoveAction,
+      updateField,
+      updateParametersField,
+      remove,
+      duplicate,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.scenario-action-field__actions {
+  flex: 0 0 auto;
+  min-height: 48px;
+}
+</style>

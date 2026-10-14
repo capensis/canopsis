@@ -1,17 +1,35 @@
+<template>
+  <div class="pie-chart">
+    <div class="pie-chart__canvas">
+      <canvas ref="canvas" />
+    </div>
+    <slot :chart="chart" name="actions" />
+  </div>
+</template>
+
 <script>
+import {
+  ArcElement,
+  Chart,
+  Legend,
+  PieController,
+  Tooltip,
+} from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { merge } from 'lodash';
+import { markRaw } from 'vue';
 
-import { chartEmptyPieMixin } from '@/mixins/chart/empty-pie';
-import { chartDataLabelsMixin } from '@/mixins/chart/data-labels';
+import { chartEmptyPiePlugin } from '@/helpers/charts/empty-pie';
 
-import { Pie } from '@/externals/vue-chart/components';
+Chart.register(
+  ArcElement,
+  Legend,
+  PieController,
+  Tooltip,
+);
 
 export default {
-  extends: Pie,
-  mixins: [chartEmptyPieMixin, chartDataLabelsMixin],
   props: {
-    ...Pie.props,
-
     labels: {
       type: Array,
       required: false,
@@ -25,6 +43,13 @@ export default {
       default: () => ({}),
     },
   },
+
+  data() {
+    return {
+      chart: null,
+    };
+  },
+
   computed: {
     chartData() {
       return {
@@ -34,27 +59,74 @@ export default {
     },
 
     mergedOptions() {
-      return merge({
-        responsive: true,
-        maintainAspectRatio: false,
-      }, this.options);
+      return merge(
+        {
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+        this.options,
+      );
     },
   },
+
   watch: {
-    chartData(data, oldData) {
-      if (data !== oldData) {
-        this.updateChart(data, this.mergedOptions);
-      }
+    chartData: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      },
     },
 
-    mergedOptions(options, oldOptions) {
-      if (options !== oldOptions) {
-        this.updateChart(this.chartData, options);
-      }
+    mergedOptions: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      },
     },
   },
+
   mounted() {
-    this.renderChart(this.chartData, this.mergedOptions);
+    this.renderChart();
+  },
+
+  beforeUnmount() {
+    this.chart?.destroy();
+    this.chart = null;
+  },
+
+  methods: {
+    renderChart() {
+      this.chart = markRaw(
+        new Chart(this.$refs.canvas, {
+          type: 'pie',
+          data: this.chartData,
+          options: this.mergedOptions,
+          plugins: [ChartDataLabels, chartEmptyPiePlugin],
+        }),
+      );
+    },
+
+    updateChart() {
+      if (!this.chart) {
+        return;
+      }
+
+      this.chart.data = this.chartData;
+      this.chart.options = this.mergedOptions;
+      this.chart.update();
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pie-chart {
+  position: relative;
+  width: 100%;
+
+  &__canvas {
+    position: relative;
+    height: 400px;
+  }
+}
+</style>

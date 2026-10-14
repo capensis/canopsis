@@ -9,16 +9,20 @@ export const modelEventKeyComputed = uid('_modelEventKey');
 export default {
   computed: {
     [modelPropKeyComputed]() {
-      if (this.$options.model && this.$options.model.prop) {
-        return this.$options.model.prop;
+      const event = this.$options.emits?.find(emit => emit.startsWith('update:'));
+
+      if (event) {
+        return event.replace('update:', '');
       }
 
       return 'value';
     },
 
     [modelEventKeyComputed]() {
-      if (this.$options.model && this.$options.model.event) {
-        return this.$options.model.event;
+      const event = this.$options.emits?.find(emit => emit.startsWith('update:'));
+
+      if (event) {
+        return event;
       }
 
       return 'input';

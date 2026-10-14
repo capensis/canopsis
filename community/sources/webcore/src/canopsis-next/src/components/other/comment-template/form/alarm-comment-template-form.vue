@@ -1,29 +1,31 @@
 <template>
   <v-card class="c-alternative-bg-panel" rounded="xl">
     <v-card-text>
-      <v-layout class="gap-2" column>
-        <c-select-field
+      <c-layout gap="2" column>
+        <c-select
           v-if="templates.length"
-          v-field="form.template"
+          :model-value="form.template"
           :items="templates"
-          :label="$tc('common.template', 1)"
+          :label="t('common.template', 1)"
           name="template"
-          item-text="name"
+          item-title="name"
           item-value="_id"
           return-object
           clearable
-          @input="clearErrors"
+          @update:model-value="updateField('template', $event)"
         />
         <c-name-field
-          v-for="field in fields"
-          v-field="form[field.name]"
+          v-for="(field, index) in fields"
           :key="field.name"
+          :model-value="form[field.name]"
           :required="field.required"
           :label="field.label || field.name"
           :name="field.name"
-          :max-length="255"
+          :max-length="FORM_MAX_STRING_LENGTH"
+          :autofocus="index === 0"
+          @update:model-value="updateField(field.name, $event)"
         />
-      </v-layout>
+      </c-layout>
     </v-card-text>
   </v-card>
 </template>
@@ -31,15 +33,12 @@
 <script>
 import { computed } from 'vue';
 
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
+import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
-import { useValidator } from '@/hooks/validator/validator';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -50,19 +49,22 @@ export default {
       default: () => [],
     },
   },
-  setup(props) {
+
+  emits: ['update:form'],
+
+  setup(props, { emit }) {
     const { t } = useI18n();
-    const validator = useValidator();
+    const { updateField } = useModelField(props, emit);
 
     const fields = computed(() => (
       props.form.template?.fields ?? [{ name: 'comment', label: t('common.note'), required: true }]
     ));
 
-    const clearErrors = () => validator.errors.clear();
-
     return {
+      t,
+      FORM_MAX_STRING_LENGTH,
       fields,
-      clearErrors,
+      updateField,
     };
   },
 };

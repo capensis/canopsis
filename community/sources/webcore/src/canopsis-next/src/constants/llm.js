@@ -2,13 +2,18 @@ import { PATTERN_TYPES } from './pattern';
 
 export const LLM_MODEL_TYPES = {
   gemini: 'gemini',
+  claude: 'claude',
+  chatgpt: 'chatgpt',
 };
 
 export const LLM_THINKING_LEVELS = {
+  none: 'none',
   minimal: 'minimal',
   low: 'low',
   medium: 'medium',
   high: 'high',
+  xhigh: 'xhigh',
+  max: 'max',
 };
 
 export const LLM_AI_CHAT_WIDTH = 400;

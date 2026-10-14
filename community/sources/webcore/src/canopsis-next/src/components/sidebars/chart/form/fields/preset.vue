@@ -1,54 +1,48 @@
 <template>
   <widget-settings-item :title="$t('settings.chart.preset')">
-    <v-select
+    <c-select
       v-model="preset"
       :items="presetsWithCustom"
       :label="$t('settings.chart.preset')"
+      item-title="text"
+      item-value="value"
     >
-      <template #item="{ item, attrs, on }">
-        <v-list-item
-          v-bind="attrs"
-          v-on="on"
-        >
-          <v-list-item-content>{{ item.text }}</v-list-item-content>
-          <v-list-item-action v-if="item.helpText">
+      <template #item="{ props, item }">
+        <v-list-item v-bind="getItemProps(props)">
+          <v-list-item-title>{{ getItem(item).text }}</v-list-item-title>
+
+          <template v-if="getItem(item).helpText" #append>
             <c-help-icon
-              :text="item.helpText"
+              :text="getItem(item).helpText"
               icon="help"
               size="20"
               left
             />
-          </v-list-item-action>
+          </template>
         </v-list-item>
       </template>
-    </v-select>
+    </c-select>
   </widget-settings-item>
 </template>
 
 <script>
 import { isEqual, isUndefined } from 'lodash';
 
-import { KPI_PIE_CHART_SHOW_MODS, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
+import { CHART_PRESET_CUSTOM_ITEM_VALUE, KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
+import { formToMetricPresets } from '@/helpers/entities/metric/form';
 import {
   getWidgetChartPresetParameters,
   getWidgetChartPresetTypesByWidgetType,
 } from '@/helpers/entities/metric/widget';
-import { formToMetricPresets } from '@/helpers/entities/metric/form';
-
-import { formBaseMixin } from '@/mixins/form';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'parameters',
-    event: 'input',
-  },
+
   props: {
-    parameters: {
+    modelValue: {
       type: Object,
       required: true,
     },
@@ -56,30 +50,25 @@ export default {
       type: String,
       required: true,
     },
-    label: {
-      type: String,
-      required: false,
-    },
-    name: {
-      type: String,
-      default: 'preset',
-    },
   },
+
+  emits: ['update:modelValue'],
+
   computed: {
     preset: {
       get() {
         return this.presets.find(({ parameters }) => {
-          const { metrics: oldMetrics, ...oldParameters } = this.parameters;
-          const { metrics: newMetrics, ...newParameters } = { ...this.parameters, ...parameters };
+          const { metrics: oldMetrics, ...oldParameters } = this.modelValue;
+          const { metrics: newMetrics, ...newParameters } = { ...this.modelValue, ...parameters };
 
           return isEqual(oldParameters, newParameters)
             && isEqual(formToMetricPresets(oldMetrics), formToMetricPresets(newMetrics));
-        }) ?? CHART_PRESET_CUSTOM_ITEM_VALUE;
+        })?.value ?? CHART_PRESET_CUSTOM_ITEM_VALUE;
       },
 
       set(preset) {
         if (preset !== CHART_PRESET_CUSTOM_ITEM_VALUE) {
-          this.updateModel(this.getParametersByPreset(preset));
+          this.$emit('update:modelValue', this.getParametersByPreset(preset));
         }
       },
     },
@@ -112,10 +101,21 @@ export default {
       ];
     },
   },
+
   methods: {
+    getItem(item) {
+      return item?.raw ?? item ?? {};
+    },
+
+    getItemProps(props) {
+      const { title, ...itemProps } = props;
+
+      return itemProps;
+    },
+
     getParametersByPreset(preset) {
       return {
-        ...this.parameters,
+        ...this.modelValue,
         ...getWidgetChartPresetParameters(this.type, preset),
         chart_title: this.$t(`settings.chart.presetChartHeaders.${preset}`),
       };
@@ -123,14 +123,16 @@ export default {
 
     getPresetHelpTextByParameters(parameters) {
       const result = [{
-        label: this.$tc('common.header'),
+        label: this.$t('common.header'),
         value: parameters.chart_title,
       }];
 
       if (!isUndefined(parameters.stacked)) {
         result.push({
           label: this.$t('settings.chart.graphType'),
-          value: parameters.stacked ? this.$t('settings.chart.stackedBars') : this.$t('settings.chart.separateBars'),
+          value: parameters.stacked
+            ? this.$t('settings.chart.stackedBars')
+            : this.$t('settings.chart.separateBars'),
         });
       }
 
@@ -172,7 +174,7 @@ export default {
       if (parameters.show_mode) {
         result.push({
           label: this.$t('settings.chart.sharesType'),
-          value: this.$tc(
+          value: this.$t(
             `common.${parameters.show_mode === KPI_PIE_CHART_SHOW_MODS.numbers ? 'number' : 'percent'}`,
             2,
           ),

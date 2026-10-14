@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptions-field\` with custom props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <pbehavior-exceptions-list-stub
+    disabled="true"
+    exceptions="[object Object]"
+  />
+  <pbehavior-exceptions-field-stub
+    addbuttonlabel=""
+    disabled="true"
+    exdates="[object Object],[object Object]"
+    name="exdates"
+    requirederrormessage=""
+    withexdatetype="true"
+  />
+</div>
+`;
+
+exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptions-field\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <!---->
+  <pbehavior-exceptions-field-stub
+    addbuttonlabel=""
+    exdates=""
+    name="exdates"
+    requirederrormessage=""
+  />
+</div>
+`;

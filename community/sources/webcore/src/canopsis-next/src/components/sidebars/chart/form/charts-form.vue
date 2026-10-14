@@ -1,48 +1,52 @@
 <template>
-  <widget-settings-group :title="$tc('common.chart', 2)">
-    <v-layout
-      class="pa-3"
-      column
-    >
-      <field-draggable-list
-        v-field="charts"
-        @edit="showEditChartModal"
-        @remove="showRemoveChartModal"
+  <widget-settings-item :title="$t('common.chart', 2)">
+    <c-layout gap="2" column>
+      <c-draggable-list-field
+        :model-value="modelValue"
+        handle=".chart-drag-handler"
+        @update:model-value="$emit('update:modelValue', $event)"
       >
-        <template #title="{ item }">
-          <v-layout align-center>
-            <v-icon large>
-              {{ $constants.WIDGET_ICONS[item.type] }}
-            </v-icon>
-            <span class="ml-3">{{ item.title }}</span>
-          </v-layout>
-        </template>
-      </field-draggable-list>
-      <v-menu bottom>
-        <template #activator="{ on }">
-          <v-flex>
+        <template #item="{ element, index }">
+          <c-layout align="center" gap="2">
+            <v-icon class="chart-drag-handler" icon="drag_indicator" />
+            <v-icon :icon="widgetIcons[element.type]" />
+            <span class="flex-grow-1">{{ element.title }}</span>
             <v-btn
-              class="ml-0 mt-3"
-              color="primary"
-              v-on="on"
-            >
+              icon="edit"
+              variant="text"
+              size="small"
+              @click="editChart(element, index)"
+            />
+            <v-btn
+              icon="delete"
+              variant="text"
+              size="small"
+              @click="removeChart(index)"
+            />
+          </c-layout>
+        </template>
+      </c-draggable-list-field>
+      <div class="align-self-start">
+        <v-menu>
+          <template #activator="{ props }">
+            <v-btn v-bind="props" color="primary" size="small">
               {{ $t('common.add') }}
             </v-btn>
-          </v-flex>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="{ type, text, icon } in chartTypes"
-            :key="text"
-            @click="showCreateChartModal(type)"
-          >
-            <v-icon>{{ icon }}</v-icon>
-            <span class="ml-3">{{ text }}</span>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-layout>
-  </widget-settings-group>
+          </template>
+          <v-list>
+            <v-list-item v-for="type in chartTypes" :key="type" @click="createChart(type)">
+              <template #prepend>
+                <v-icon :icon="widgetIcons[type]" />
+              </template>
+              <v-list-item-title>{{
+                $t(`modals.createWidget.types.${type}.title`)
+              }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+    </c-layout>
+  </widget-settings-item>
 </template>
 
 <script>
@@ -50,67 +54,58 @@ import { MODALS, WIDGET_ICONS, WIDGET_TYPES } from '@/constants';
 
 import { addKeyInEntity } from '@/helpers/array';
 
-import { formArrayMixin } from '@/mixins/form';
-
-import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
-import FieldDraggableList from '@/components/sidebars/form/fields/draggable-list.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
-  components: { WidgetSettingsGroup, FieldDraggableList },
-  mixins: [formArrayMixin],
-  model: {
-    prop: 'charts',
-    event: 'input',
-  },
+  components: { WidgetSettingsItem },
   props: {
-    charts: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
   },
-  computed: {
-    chartTypes() {
-      return [
-        WIDGET_TYPES.barChart,
-        WIDGET_TYPES.lineChart,
-        WIDGET_TYPES.numbers,
-      ].map(type => ({
-        text: this.$t(`modals.createWidget.types.${type}.title`),
-        icon: WIDGET_ICONS[type],
-        type,
-      }));
-    },
+  emits: ['update:modelValue'],
+  data() {
+    return {
+      widgetIcons: WIDGET_ICONS,
+      chartTypes: [WIDGET_TYPES.barChart, WIDGET_TYPES.lineChart, WIDGET_TYPES.numbers],
+    };
   },
   methods: {
-    showCreateChartModal(type) {
+    createChart(type) {
       this.$modals.show({
         name: MODALS.createAlarmChart,
         config: {
           chart: { type },
           title: this.$t(`modals.createAlarmChart.${type}.create.title`),
           onlyExternal: true,
-          action: newChart => this.addItemIntoArray(addKeyInEntity(newChart)),
+          action: chart => this.$emit('update:modelValue', [...this.modelValue, addKeyInEntity(chart)]),
         },
       });
     },
-
-    showEditChartModal(chart, index) {
+    editChart(chart, index) {
       this.$modals.show({
         name: MODALS.createAlarmChart,
         config: {
           chart,
           title: this.$t(`modals.createAlarmChart.${chart.type}.edit.title`),
           onlyExternal: true,
-          action: newChart => this.updateItemInArray(index, { ...newChart, key: chart.key }),
+          action: (value) => {
+            const charts = [...this.modelValue];
+            charts[index] = { ...value, key: chart.key };
+            this.$emit('update:modelValue', charts);
+          },
         },
       });
     },
-
-    showRemoveChartModal(chart, index) {
+    removeChart(index) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.removeItemFromArray(index),
+          action: () => this.$emit(
+              'update:modelValue',
+              this.modelValue.filter((_, i) => i !== index),
+            ),
         },
       });
     },

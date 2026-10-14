@@ -49,7 +49,7 @@ export const viewBoxMixin = {
 
     this.resizeObserver.observe(this.$parent.$el);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$flowchart.off('wheel', this.moveViewBoxByWheelEvent);
 
     this.resizeObserver.unobserve(this.$parent.$el);

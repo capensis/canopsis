@@ -2,9 +2,19 @@ import { computed, unref } from 'vue';
 
 import { isParent } from '@/helpers/vue-base';
 
-import { useValidator } from './validator';
+import { useFormContext } from '@/hooks/form';
 
-const EMPTY_VALIDATOR_FIELDS = [];
+/**
+ * Resolves a Vue component instance or a DOM node to a native Element.
+ *
+ * @param {Object|Element|null|undefined} node - Vue component instance (`$el`) or a DOM node.
+ * @returns {Element|null}
+ */
+const getElement = (node) => {
+  const el = node?.$el ?? node;
+
+  return el instanceof Element ? el : null;
+};
 
 /**
  * Computes and returns a list of validator fields for the children of a given parent component.
@@ -16,15 +26,22 @@ const EMPTY_VALIDATOR_FIELDS = [];
  * @returns {import('vue').ComputedRef<Array>}
  */
 export const useValidationElementChildrenFields = (parent) => {
-  const validator = useValidator();
+  const formContext = useFormContext();
 
   return computed(() => {
-    if (!validator) {
-      return EMPTY_VALIDATOR_FIELDS;
-    }
+    const fieldsWithInstances = formContext.getAllPathStatesWithInstances();
 
     const node = unref(parent);
+    const nodeEl = getElement(node);
 
-    return validator.fields.items.filter(({ vm }) => isParent(vm, node));
+    return fieldsWithInstances.filter(({ instance } = {}) => {
+      const instanceEl = getElement(instance);
+
+      return (
+        (nodeEl && nodeEl === instanceEl) ||
+        nodeEl?.contains?.(instanceEl) ||
+        isParent(instance, node)
+      );
+    });
   });
 };

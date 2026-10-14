@@ -1,30 +1,34 @@
 <template>
-  <v-select
-    v-field="value"
-    v-validate="'required'"
-    :items="actionTypes"
-    :error-messages="errors.collect(name)"
-    :label="label || $t('common.type')"
+  <c-select
+    v-bind="$attrs"
+    :model-value="currentValue"
+    :items="items"
+    :label="label || t('common.type')"
     :name="name"
+    item-title="text"
+    item-value="value"
+    @update:model-value="updateModel"
   />
 </template>
 
 <script>
-import { ACTION_TYPES, PRO_ACTION_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { ACTION_TYPES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  mixins: [entitiesInfoMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  inheritAttrs: false,
+
   props: {
+    modelValue: {
+      type: String,
+      default: undefined,
+    },
     value: {
       type: String,
-      required: true,
+      default: undefined,
     },
     label: {
       type: String,
@@ -36,20 +40,33 @@ export default {
     },
     types: {
       type: Array,
-      required: false,
+      default: () => Object.values(ACTION_TYPES),
     },
   },
-  computed: {
-    actionTypes() {
-      const types = this.types || Object.values(ACTION_TYPES);
 
-      return types
-        .filter(type => !PRO_ACTION_TYPES.includes(type) || this.isProVersion)
-        .map(type => ({
-          value: type,
-          text: this.$t(`scenario.actions.${type}`),
-        }));
-    },
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const currentValue = computed(() => props.modelValue ?? props.value);
+
+    const items = computed(() => props.types.map(type => ({
+        value: type,
+        text: t(`scenario.actions.${type}`),
+      })),
+    );
+
+    const updateModel = (value) => {
+      emit('update:modelValue', value);
+    };
+
+    return {
+      t,
+      currentValue,
+      items,
+      updateModel,
+    };
   },
 };
 </script>

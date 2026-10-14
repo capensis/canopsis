@@ -1,0 +1,74 @@
+import { generateShallowRenderer } from '@unit/utils/vue';
+import Faker from 'faker';
+
+import { AVAILABILITY_SHOW_TYPE, QUICK_RANGES } from '@/constants';
+
+import AvailabilityBar from '@/components/other/availability/partials/availability-bar.vue';
+
+const stubs = {
+  'availability-filters': {
+    template: '<button class="availability-filters" v-bind="$attrs" />',
+  },
+  'availability-bar-chart': {
+    template: '<div class="availability-bar-chart" v-bind="$attrs" />',
+  },
+};
+
+describe('availability-bar', () => {
+  const factory = generateShallowRenderer(AvailabilityBar, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+
+  test('Update query emitted after trigger filters', () => {
+    const wrapper = factory({
+      propsData: {
+        availability: {
+          uptime: Faker.datatype.number(),
+          downtime: Faker.datatype.number(),
+          inactive_time: Faker.datatype.number(),
+        },
+        query: {
+          interval: {
+            from: QUICK_RANGES.today.start,
+            to: QUICK_RANGES.today.stop,
+          },
+        },
+      },
+    });
+
+    const newInterval = QUICK_RANGES.last3Months;
+
+    wrapper.vm.$emit('update:interval', newInterval);
+
+    expect(wrapper.emitted('update:interval')).toEqual([[newInterval]]);
+  });
+
+  test('Show type changed after trigger filters', async () => {
+    const wrapper = factory({
+      propsData: {
+        availability: {
+          uptime_duration: Faker.datatype.number(),
+          downtime_duration: Faker.datatype.number(),
+          inactive_time: Faker.datatype.number(),
+        },
+        query: {
+          interval: {
+            from: QUICK_RANGES.today.start,
+            to: QUICK_RANGES.today.stop,
+          },
+        },
+      },
+    });
+
+    expect(wrapper.vm.showType).toBe(AVAILABILITY_SHOW_TYPE.percent);
+
+    wrapper.vm.showType = AVAILABILITY_SHOW_TYPE.duration;
+
+    expect(wrapper.vm.showType).toBe(AVAILABILITY_SHOW_TYPE.duration);
+  });
+});

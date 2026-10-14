@@ -2,28 +2,12 @@
   <c-action-btn
     v-bind="$attrs"
     :tooltip="tooltip"
-  >
-    <template #button="{ on: tooltipOn }">
-      <div class="c-action-btn__button-wrapper" v-on="tooltipOn">
-        <v-btn
-          v-clipboard:copy="value"
-          v-clipboard:success="onSuccessCopied"
-          v-clipboard:error="onErrorCopied"
-          :small="small"
-          :fab="fab"
-          class="mx-1 ma-0 c-action-btn__button"
-          icon
-        >
-          <v-icon
-            :color="color"
-            :small="iconSmall"
-          >
-            {{ icon }}
-          </v-icon>
-        </v-btn>
-      </div>
-    </template>
-  </c-action-btn>
+    :small="small"
+    :icon-small="iconSmall"
+    :icon="icon"
+    :color="color"
+    @click="copy"
+  />
 </template>
 
 <script>
@@ -54,19 +38,17 @@ export default {
       type: Boolean,
       default: false,
     },
-    fab: {
-      type: Boolean,
-      default: false,
-    },
   },
-  setup(props, { emit }) {
-    const onSuccessCopied = () => emit('success');
-    const onErrorCopied = () => emit('error');
-
-    return {
-      onSuccessCopied,
-      onErrorCopied,
-    };
+  emits: ['success', 'error'],
+  methods: {
+    async copy() {
+      try {
+        await navigator.clipboard.writeText(this.value);
+        this.$emit('success');
+      } catch (err) {
+        this.$emit('error', err);
+      }
+    },
   },
 };
 </script>

@@ -1,55 +1,31 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const useBroadcastMessageStoreModule = () => useStoreModuleHooks('broadcastMessage');
+import { useBroadcastMessageStore } from '@/stores/modules/broadcast-message';
 
 /**
- * Custom hook for accessing actions related to broadcast messages from Vuex store module.
+ * Broadcast message store facade.
  *
- * @returns {Object} An object containing functions to create, update, remove, and fetch broadcast messages list.
+ * Keeps direct Pinia usage out of components and exposes entity-specific aliases.
  *
- * @example
- * // Usage example within a Vue component
- * import { useBroadcastMessages } from './path/to/useBroadcastMessages';
- *
- * export default {
- *   setup() {
- *     const {
- *       createBroadcastMessage,
- *       updateBroadcastMessage,
- *       removeBroadcastMessage,
- *       fetchBroadcastMessagesListWithoutStore,
- *       fetchBroadcastMessagesListWithPreviousParams,
- *       fetchActiveBroadcastMessagesListWithoutStore
- *     } = useBroadcastMessages();
- *
- *     // Access and use the functions as needed
- *
- *     return {
- *       createBroadcastMessage,
- *       updateBroadcastMessage,
- *       removeBroadcastMessage,
- *       fetchBroadcastMessagesListWithoutStore,
- *       fetchBroadcastMessagesListWithPreviousParams,
- *       fetchActiveBroadcastMessagesListWithoutStore
- *       markBroadcastMessageAsRead
- *     };
- *   }
- * }
+ * @returns {Object}
  */
 export const useBroadcastMessages = () => {
-  const { useActions } = useBroadcastMessageStoreModule();
-
-  const actions = useActions({
-    createBroadcastMessage: 'create',
-    updateBroadcastMessage: 'update',
-    removeBroadcastMessage: 'remove',
-    fetchBroadcastMessagesListWithoutStore: 'fetchListWithoutStore',
-    fetchBroadcastMessagesListWithPreviousParams: 'fetchListWithPreviousParams',
-    fetchActiveBroadcastMessagesListWithoutStore: 'fetchActiveListWithoutStore',
-    markBroadcastMessageAsRead: 'markAsRead',
-  });
+  const broadcastMessageStore = useBroadcastMessageStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(broadcastMessageStore);
 
   return {
-    ...actions,
+    broadcastMessages: items,
+    broadcastMessagesMeta: meta,
+    broadcastMessagesPending: pending,
+    broadcastMessagesFetchingParams: fetchingParams,
+
+    fetchBroadcastMessagesList: broadcastMessageStore.fetchList,
+    fetchBroadcastMessagesListWithPreviousParams: broadcastMessageStore.fetchListWithPreviousParams,
+    fetchBroadcastMessagesListWithoutStore: broadcastMessageStore.fetchListWithoutStore,
+    fetchActiveBroadcastMessagesListWithoutStore: broadcastMessageStore.fetchActiveListWithoutStore,
+    createBroadcastMessage: broadcastMessageStore.create,
+    updateBroadcastMessage: broadcastMessageStore.update,
+    removeBroadcastMessage: broadcastMessageStore.remove,
+    markBroadcastMessageAsRead: broadcastMessageStore.markAsRead,
   };
 };

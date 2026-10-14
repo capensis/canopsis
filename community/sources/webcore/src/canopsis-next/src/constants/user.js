@@ -7,11 +7,6 @@ export const USER_METRIC_PARAMETERS = {
   maxUserSession: 'max_user_session',
 };
 
-export const USERS_TABS = {
-  users: 'users',
-  shareTokens: 'shareTokens',
-};
-
 export const USER_PAYLOADS_VARIABLES = {
   email: '.User.Email',
   username: '.User.Username',

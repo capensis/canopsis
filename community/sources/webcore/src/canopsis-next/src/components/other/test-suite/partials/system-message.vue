@@ -1,8 +1,10 @@
 <template>
   <div class="system-message">
-    <v-layout align-center>
+    <c-layout align="center">
       <span class="mr-1">
-        <slot name="label">{{ label }}</slot>
+        <slot name="label">
+          {{ label }}
+        </slot>
       </span>
       <c-copy-btn
         :value="value"
@@ -15,7 +17,7 @@
         :name="fileName"
         type="txt"
       />
-    </v-layout>
+    </c-layout>
     <pre class="pre-wrap system-message__text">
       <slot>{{ value }}</slot>
     </pre>

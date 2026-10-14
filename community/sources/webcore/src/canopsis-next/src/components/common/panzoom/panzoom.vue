@@ -1,59 +1,46 @@
 <template>
-  <v-layout
+  <c-layout
     class="panzoom"
-    justify-center
-    @mousewheel="handleScale"
+    justify="center"
+    @wheel="handleScale"
     @mousemove="handleMove"
   >
     <div :style="containerStyles">
       <slot />
     </div>
-    <v-layout
-      class="panzoom__top-left-actions"
-      column
-    >
+
+    <c-layout class="panzoom__top-left-actions" column>
       <v-btn
         :disabled="scale === maxZoom"
-        class="secondary ma-0 mb-1"
-        icon
-        dark
+        class="mb-1"
+        color="secondary"
+        icon="add"
         @click="handleScaleIn"
-      >
-        <v-icon>add</v-icon>
-      </v-btn>
+      />
       <v-btn
         :disabled="scale === minZoom"
-        class="secondary ma-0"
-        dark
-        icon
+        color="secondary"
+        icon="remove"
         @click="handleScaleOut"
-      >
-        <v-icon>remove</v-icon>
-      </v-btn>
-    </v-layout>
-    <v-layout
-      v-if="helpText"
-      class="panzoom__bottom-right-actions"
-      column
-    >
-      <v-tooltip top>
-        <template #activator="{ on }">
+      />
+    </c-layout>
+
+    <c-layout v-if="helpText" class="panzoom__bottom-right-actions" column>
+      <c-tooltip location="top">
+        <template #activator="{ props }">
           <v-icon
+            v-bind="props"
             class="panzoom__help-icon"
             color="secondary"
             size="32"
-            v-on="on"
           >
             help
           </v-icon>
         </template>
-        <div
-          v-html="helpText"
-          class="pre-wrap"
-        />
-      </v-tooltip>
-    </v-layout>
-  </v-layout>
+        <div v-html="helpText" class="pre-wrap" />
+      </c-tooltip>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -81,6 +68,7 @@ export default {
       required: false,
     },
   },
+
   data() {
     return {
       scale: 1,
@@ -88,6 +76,7 @@ export default {
       translateY: 0,
     };
   },
+
   computed: {
     containerStyles() {
       return {
@@ -95,6 +84,7 @@ export default {
       };
     },
   },
+
   methods: {
     reset() {
       this.scale = 1;

@@ -22,19 +22,16 @@ export default {
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',
+    operations: 'Operations',
     addJob: 'Add job',
     endpoint: 'Endpoint',
     job: 'Job | Jobs',
-    listJobs: 'List of jobs',
     endpointAvatar: 'EP',
-    workflow: 'Workflow if this step fails:',
+    workflow: 'If this action didn\'t match',
     jobWorkflow: 'Workflow if this job fails:',
     remainingStep: 'Continue with remaining steps',
     remainingJob: 'Continue with remaining job',
     timeToComplete: 'Time to complete',
-    emptySteps: 'No steps added yet',
-    emptyOperations: 'No operations added yet',
-    emptyJobs: 'No jobs added yet',
     timeoutAfterExecution: 'Timeout after instruction execution',
     requestApproval: 'Request for approval',
     type: 'Instruction type',
@@ -56,7 +53,8 @@ export default {
     repeatTriggers: 'Repeat triggers',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
-      enabledRepeatTriggerTooltip: 'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
+      enabledRepeatTriggerTooltip:
+        'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
     },
     table: {
       rating: 'Rating',
@@ -72,8 +70,8 @@ export default {
 
   configuration: {
     host: 'Host',
+    clientId: 'Client id',
     usingConfiguration: 'Cannot be deleted since it is in use',
-    massRemove: 'Delete selected configurations',
   },
 
   instructionExecute: {
@@ -88,7 +86,8 @@ export default {
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
-      connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      connectionError:
+        'There is a problem with connection. Please click on refresh button or reload the page.',
       wasAborted: '{instructionName} has been aborted',
       wasPaused: '{instructionName} instruction paused.',
       wasFinished: '{instructionName} instruction finished.',
@@ -208,15 +207,15 @@ export default {
     jobId: 'Job ID',
     addJobs: 'Add {count} job | Add {count} jobs',
     usingJob: 'Cannot be deleted since it is in use',
-    massRemove: 'Delete selected jobs',
     query: 'Query',
     multipleExecutions: 'Allow parallel execution',
     jobWaitInterval: 'Job wait interval',
     addPayload: 'Add payload',
     deletePayload: 'Delete payload',
-    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-      + '<i>For example:</i>'
-      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    payloadHelp:
+      '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+      '<i>For example:</i>' +
+      '<pre>{\'{\'}\n  resource: "{\'{{ .Alarm.Value.Resource }}\'}",\n  entity: "{\'{{ .Entity.ID }}\'}"\n{\'}\'}</pre>',
     errors: {
       invalidJSON: 'Invalid JSON',
     },

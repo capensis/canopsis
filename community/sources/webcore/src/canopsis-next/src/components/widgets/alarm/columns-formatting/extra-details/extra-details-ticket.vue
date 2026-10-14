@@ -1,35 +1,25 @@
 <template>
-  <div>
-    <c-simple-tooltip
-      :content="tooltipContent"
-      top
-    >
-      <template #activator="{ on }">
-        <v-badge
-          :value="!!failedTicket"
-          class="time-line-flag"
-          color="transparent"
-          offset-y="15px"
-          overlap
-        >
-          <template #badge="">
-            <v-icon
-              class="extra-details-ticket__badge-icon"
-              color="error"
-              size="14"
-            >
-              error
-            </v-icon>
-          </template>
-          <c-alarm-extra-details-chip :color="color" :icon="icon" v-on="on" />
-        </v-badge>
-      </template>
-    </c-simple-tooltip>
-  </div>
+  <c-tooltip :content="tooltipContent" html top>
+    <template #activator="{ props: activatorProps }">
+      <v-badge
+        :model-value="!!failedTicket"
+        class="time-line-flag"
+        color="transparent"
+        offset-y="15px"
+      >
+        <template #badge>
+          <v-icon class="extra-details-ticket__badge-icon" color="error" size="14">
+            error
+          </v-icon>
+        </template>
+
+        <c-alarm-extra-details-chip v-bind="activatorProps" :icon="icon" theme-color="tickets" />
+      </v-badge>
+    </template>
+  </c-tooltip>
 </template>
 
 <script>
-import { COLORS } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
@@ -55,12 +45,9 @@ export default {
     const { tooltipContent } = useExtraDetailsTicketTooltip(props);
 
     const icon = getAlarmActionIcon(ALARM_LIST_ACTIONS_TYPES.declareTicket);
-    const color = COLORS.alarmExtraDetails.ticket;
-
     return {
       tooltipContent,
       icon,
-      color,
     };
   },
 };

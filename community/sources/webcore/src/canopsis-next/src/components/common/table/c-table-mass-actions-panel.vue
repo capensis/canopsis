@@ -1,52 +1,52 @@
 <template>
-  <v-layout>
+  <c-layout gap="1">
     <c-action-btn
-      v-if="removable && someOneRemovable && config.remove"
-      :tooltip="config.removeTooltip"
+      v-if="removable && someOneRemovable && activeConfig.remove"
+      :tooltip="removeTooltip"
       :small="small"
       type="delete"
       @click="showRemoveModal"
     />
     <c-action-btn
-      v-if="enablable && someOneDisable && config.enable"
-      :tooltip="$t(`${config.tooltipPrefix}.massEnable`)"
+      v-if="enablable && someOneDisable && activeConfig.enable"
+      :tooltip="t(`${activeConfig.tooltipPrefix}.massEnable`)"
       :small="small"
       icon="check_circle"
       color="primary"
       @click="showEnableModal"
     />
     <c-action-btn
-      v-if="disablable && someOneEnable && config.disable"
-      :tooltip="$t(`${config.tooltipPrefix}.massDisable`)"
+      v-if="disablable && someOneEnable && activeConfig.disable"
+      :tooltip="t(`${activeConfig.tooltipPrefix}.massDisable`)"
       :small="small"
       icon="cancel"
       color="error"
       @click="showDisableModal"
     />
     <c-action-btn
-      v-if="unhideable && someOneHidden && config.unhide"
-      :tooltip="$t(`${config.tooltipPrefix}.massUnhide`)"
+      v-if="unhideable && someOneHidden && activeConfig.unhide"
+      :tooltip="t(`${activeConfig.tooltipPrefix}.massUnhide`)"
       :small="small"
       icon="check_circle"
       color="primary"
       @click="showUnhideModal"
     />
     <c-action-btn
-      v-if="hideable && someOneVisible && config.hide"
-      :tooltip="$t(`${config.tooltipPrefix}.massHide`)"
+      v-if="hideable && someOneVisible && activeConfig.hide"
+      :tooltip="t(`${activeConfig.tooltipPrefix}.massHide`)"
       :small="small"
       icon="cancel"
       color="error"
       @click="showHideModal"
     />
     <c-db-export-btn
-      v-if="config.exportProps"
+      v-if="activeConfig.exportProps"
       :ids="itemsIds"
       :small="small"
-      v-bind="config.exportProps"
+      v-bind="activeConfig.exportProps"
       @refresh="afterSubmit"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -59,29 +59,30 @@ import { mapIds, pickIds } from '@/helpers/array';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
+import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
+import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
 import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
+import { useDynamicInfoTemplates } from '@/hooks/store/modules/dynamic-info-templates';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useFlappingRules } from '@/hooks/store/modules/flapping-rules';
-import { useResolveRules } from '@/hooks/store/modules/resolve-rules';
 import { useIdleRules } from '@/hooks/store/modules/idle-rules';
 import { useLinkRule } from '@/hooks/store/modules/link-rule';
-import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
-import { useSnmpRule } from '@/hooks/store/modules/snmp-rule';
-import { useScenario } from '@/hooks/store/modules/scenario';
-import { useDeclareTicketRule } from '@/hooks/store/modules/declare-ticket-rule';
-import { usePbehavior } from '@/hooks/store/modules/pbehavior';
-import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
-import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
-import { usePlaylist } from '@/hooks/store/modules/playlist';
-import { useMaps } from '@/hooks/store/modules/maps';
-import { useUser } from '@/hooks/store/modules/user';
-import { useRole } from '@/hooks/store/modules/role';
-import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
-import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
-import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
 import { useLlm } from '@/hooks/store/modules/llm';
-import { useAnomalyMonitoredConnector } from '@/hooks/store/modules/anomaly-monitored-connector';
+import { useMap } from '@/hooks/store/modules/map';
+import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
+import { usePbehaviorException } from '@/hooks/store/modules/pbehavior-exception';
+import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { usePlaylist } from '@/hooks/store/modules/playlist';
+import { useRemediationConfiguration } from '@/hooks/store/modules/remediation-configuration';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemediationJob } from '@/hooks/store/modules/remediation-job';
+import { useResolveRules } from '@/hooks/store/modules/resolve-rules';
+import { useRole } from '@/hooks/store/modules/role';
+import { useScenario } from '@/hooks/store/modules/scenario';
+import { useSnmpRule } from '@/hooks/store/modules/snmp-rule';
+import { useUser } from '@/hooks/store/modules/user';
 
 export default {
   props: {
@@ -91,7 +92,7 @@ export default {
     },
     small: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     removable: {
       type: Boolean,
@@ -117,27 +118,15 @@ export default {
       type: String,
       default: '_id',
     },
-    pbehavior: {
-      type: Boolean,
-      default: false,
-    },
-    pbehaviorType: {
-      type: Boolean,
-      default: false,
-    },
-    pbehaviorReason: {
-      type: Boolean,
-      default: false,
-    },
-    pbehaviorException: {
-      type: Boolean,
-      default: false,
-    },
     dynamicInfo: {
       type: Boolean,
       default: false,
     },
-    eventFilter: {
+    dynamicInfoTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    scenario: {
       type: Boolean,
       default: false,
     },
@@ -157,19 +146,27 @@ export default {
       type: Boolean,
       default: false,
     },
+    declareTicket: {
+      type: Boolean,
+      default: false,
+    },
+    llm: {
+      type: Boolean,
+      default: false,
+    },
+    map: {
+      type: Boolean,
+      default: false,
+    },
     metaAlarmRule: {
       type: Boolean,
       default: false,
     },
-    snmpRule: {
+    pbehavior: {
       type: Boolean,
       default: false,
     },
-    scenario: {
-      type: Boolean,
-      default: false,
-    },
-    declareTicket: {
+    eventFilter: {
       type: Boolean,
       default: false,
     },
@@ -177,7 +174,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    map: {
+    pbehaviorType: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorReason: {
+      type: Boolean,
+      default: false,
+    },
+    pbehaviorException: {
       type: Boolean,
       default: false,
     },
@@ -201,369 +206,346 @@ export default {
       type: Boolean,
       default: false,
     },
-    llm: {
-      type: Boolean,
-      default: false,
-    },
     anomalyMonitoredConnector: {
       type: Boolean,
       default: false,
     },
+    snmpRule: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['clear:items', 'refresh'],
+
   setup(props, { emit }) {
-    const { te, tc, t } = useI18n();
+    const { te, t } = useI18n();
     const modals = useModals();
     const popups = usePopups();
 
-    const {
-      bulkEnableDynamicInfos,
-      bulkDisableDynamicInfos,
-      bulkRemoveDynamicInfos,
-    } = useDynamicInfo();
+    const { bulkEnableDynamicInfos, bulkDisableDynamicInfos, bulkRemoveDynamicInfos } =
+      useDynamicInfo();
 
-    const {
-      bulkEnableEventFilters,
-      bulkDisableEventFilters,
-      bulkRemoveEventFilters,
-    } = useEventFilter();
+    const { bulkRemoveDynamicInfoTemplates } = useDynamicInfoTemplates();
 
-    const {
-      bulkEnableFlappingRules,
-      bulkDisableFlappingRules,
-      bulkRemoveFlappingRules,
-    } = useFlappingRules();
-
-    const {
-      bulkEnableResolveRules,
-      bulkDisableResolveRules,
-      bulkRemoveResolveRules,
-    } = useResolveRules();
-
-    const {
-      bulkEnableIdleRules,
-      bulkDisableIdleRules,
-      bulkRemoveIdleRules,
-    } = useIdleRules();
-
-    const {
-      bulkEnableLinkRules,
-      bulkDisableLinkRules,
-      bulkRemoveLinkRules,
-    } = useLinkRule();
-
-    const {
-      bulkEnableMetaAlarmRules,
-      bulkDisableMetaAlarmRules,
-      bulkRemoveMetaAlarmRules,
-    } = useMetaAlarmRule();
-
-    const {
-      bulkEnableSnmpRules,
-      bulkDisableSnmpRules,
-      bulkRemoveSnmpRules,
-    } = useSnmpRule();
-
-    const {
-      bulkEnableScenarios,
-      bulkDisableScenarios,
-      bulkRemoveScenarios,
-    } = useScenario();
-
+    const { bulkEnableScenarios, bulkDisableScenarios, bulkRemoveScenarios } = useScenario();
+    const { bulkEnableEventFilters, bulkDisableEventFilters, bulkRemoveEventFilters } =
+      useEventFilter();
+    const { bulkEnableFlappingRules, bulkDisableFlappingRules, bulkRemoveFlappingRules } =
+      useFlappingRules();
+    const { bulkEnableResolveRules, bulkDisableResolveRules, bulkRemoveResolveRules } =
+      useResolveRules();
+    const { bulkEnableIdleRules, bulkDisableIdleRules, bulkRemoveIdleRules } = useIdleRules();
+    const { bulkEnableLinkRules, bulkDisableLinkRules, bulkRemoveLinkRules } = useLinkRule();
     const {
       bulkEnableDeclareTicketRules,
       bulkDisableDeclareTicketRules,
       bulkRemoveDeclareTicketRules,
     } = useDeclareTicketRule();
-
+    const { bulkRemoveLlms, bulkEnableLlms, bulkDisableLlms } = useLlm();
+    const { bulkRemoveMaps } = useMap();
+    const { bulkEnableMetaAlarmRules, bulkDisableMetaAlarmRules, bulkRemoveMetaAlarmRules } =
+      useMetaAlarmRule();
     const {
-      bulkRemovePbehaviors,
-      bulkEnablePbehaviors,
-      bulkDisablePbehaviors,
-    } = usePbehavior();
-
-    const {
-      bulkEnablePlaylists,
-      bulkDisablePlaylists,
-      bulkRemovePlaylists,
-    } = usePlaylist();
-
-    const {
-      bulkHidePbehaviorTypes,
-      bulkUnhidePbehaviorTypes,
-      bulkRemovePbehaviorTypes,
-    } = usePbehaviorType();
-
-    const {
-      bulkHidePbehaviorReasons,
-      bulkUnhidePbehaviorReasons,
-      bulkRemovePbehaviorReasons,
-    } = usePbehaviorReason();
-
+      bulkEnableAnomalyMonitoredConnectors,
+      bulkDisableAnomalyMonitoredConnectors,
+      bulkRemoveAnomalyMonitoredConnectors,
+    } = useAnomalyMonitoredConnector();
+    const { bulkEnablePbehaviors, bulkDisablePbehaviors, bulkRemovePbehaviors } = usePbehavior();
+    const { bulkEnablePlaylist, bulkDisablePlaylist, bulkRemovePlaylist } = usePlaylist();
+    const { bulkHidePbehaviorTypes, bulkUnhidePbehaviorTypes, bulkRemovePbehaviorTypes } =
+      usePbehaviorType();
+    const { bulkHidePbehaviorReasons, bulkUnhidePbehaviorReasons, bulkRemovePbehaviorReasons } =
+      usePbehaviorReason();
     const {
       bulkHidePbehaviorExceptions,
       bulkUnhidePbehaviorExceptions,
       bulkRemovePbehaviorExceptions,
     } = usePbehaviorException();
-
+    const { bulkRemoveUsers, bulkEnableUsers, bulkDisableUsers } = useUser();
+    const { bulkRemoveRoles } = useRole();
     const {
-      bulkRemoveMaps,
-    } = useMaps();
-
-    const {
-      bulkRemoveUsers,
-      bulkEnableUsers,
-      bulkDisableUsers,
-    } = useUser();
-
-    const {
-      bulkRemoveRoles,
-    } = useRole();
-
-    const {
+      bulkRemoveRemediationInstructions,
       bulkEnableRemediationInstructions,
       bulkDisableRemediationInstructions,
-      bulkRemoveRemediationInstructions,
     } = useRemediationInstruction();
+    const { bulkRemoveRemediationConfigurations } = useRemediationConfiguration();
+    const { bulkRemoveRemediationJobs } = useRemediationJob();
+    const { bulkEnableSnmpRules, bulkDisableSnmpRules, bulkRemoveSnmpRules } = useSnmpRule();
 
-    const {
-      bulkRemoveRemediationConfigurations,
-    } = useRemediationConfiguration();
-
-    const {
-      bulkRemoveRemediationJobs,
-    } = useRemediationJob();
-
-    const {
-      bulkRemoveLlms,
-      bulkEnableLlms,
-      bulkDisableLlms,
-    } = useLlm();
-
-    const {
-      bulkRemoveAnomalyMonitoredConnectors,
-      bulkEnableAnomalyMonitoredConnectors,
-      bulkDisableAnomalyMonitoredConnectors,
-    } = useAnomalyMonitoredConnector();
-
+    const someOneEnable = computed(() => props.items.some(({ enabled }) => enabled));
+    const someOneDisable = computed(() => props.items.some(({ enabled }) => !enabled));
+    const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
+    const someOneVisible = computed(() => props.items.some(({ hidden }) => !hidden));
+    const someOneHidden = computed(() => props.items.some(({ hidden }) => hidden));
     const itemsIds = computed(() => mapIds(props.items, props.itemId));
 
-    const enablableItems = computed(() => (
-      props.pbehavior ? props.items.filter(({ editable }) => editable) : props.items
-    ));
-
-    const enablableItemsIds = computed(() => pickIds(enablableItems.value, props.itemId));
-
-    const someOneEnable = computed(() => enablableItems.value.some(({ enabled }) => enabled));
-    const someOneDisable = computed(() => enablableItems.value.some(({ enabled }) => !enabled));
-    const someOneRemovable = computed(() => props.items.some(({ deletable = true }) => deletable));
-
-    const hideableItems = computed(() => props.items);
-    const hideableItemsIds = computed(() => pickIds(hideableItems.value, props.itemId));
-    const someOneVisible = computed(() => hideableItems.value.some(({ hidden }) => !hidden));
-    const someOneHidden = computed(() => hideableItems.value.some(({ hidden }) => hidden));
-
-    const config = computed(() => {
-      const activeConfig = {
-        [props.pbehavior]: {
-          remove: bulkRemovePbehaviors,
-          enable: bulkEnablePbehaviors,
-          disable: bulkDisablePbehaviors,
-          tooltipPrefix: 'pbehavior',
-          exportProps: { pbehavior: true },
-        },
-        [props.dynamicInfo]: {
+    const activeConfig = computed(() => {
+      if (props.dynamicInfo) {
+        return {
           remove: bulkRemoveDynamicInfos,
           enable: bulkEnableDynamicInfos,
           disable: bulkDisableDynamicInfos,
           tooltipPrefix: 'dynamicInfo',
           exportProps: { dynamicInfo: true },
-        },
-        [props.eventFilter]: {
-          remove: bulkRemoveEventFilters,
-          enable: bulkEnableEventFilters,
-          disable: bulkDisableEventFilters,
-          tooltipPrefix: 'eventFilter',
-          exportProps: { eventFilter: true },
-        },
-        [props.flappingRule]: {
-          remove: bulkRemoveFlappingRules,
-          enable: bulkEnableFlappingRules,
-          disable: bulkDisableFlappingRules,
-          tooltipPrefix: 'flappingRule',
-          exportProps: { flappingRule: true },
-        },
-        [props.resolveRule]: {
-          remove: bulkRemoveResolveRules,
-          enable: bulkEnableResolveRules,
-          disable: bulkDisableResolveRules,
-          tooltipPrefix: 'resolveRule',
-          exportProps: { resolveRule: true },
-        },
-        [props.idleRule]: {
-          remove: bulkRemoveIdleRules,
-          enable: bulkEnableIdleRules,
-          disable: bulkDisableIdleRules,
-          tooltipPrefix: 'idleRules',
-          exportProps: { idleRule: true },
-        },
-        [props.linkRule]: {
-          remove: bulkRemoveLinkRules,
-          enable: bulkEnableLinkRules,
-          disable: bulkDisableLinkRules,
-          tooltipPrefix: 'linkRule',
-          exportProps: { linkRule: true },
-        },
-        [props.metaAlarmRule]: {
-          remove: bulkRemoveMetaAlarmRules,
-          enable: bulkEnableMetaAlarmRules,
-          disable: bulkDisableMetaAlarmRules,
-          tooltipPrefix: 'metaAlarmRule',
-          exportProps: { metaAlarmRule: true },
-        },
-        [props.snmpRule]: {
-          remove: bulkRemoveSnmpRules,
-          enable: bulkEnableSnmpRules,
-          disable: bulkDisableSnmpRules,
-          tooltipPrefix: 'snmpRule',
-        },
-        [props.scenario]: {
+        };
+      }
+
+      if (props.dynamicInfoTemplate) {
+        return {
+          remove: bulkRemoveDynamicInfoTemplates,
+          tooltipPrefix: 'dynamicInfo.templatesList',
+        };
+      }
+
+      if (props.scenario) {
+        return {
           remove: bulkRemoveScenarios,
           enable: bulkEnableScenarios,
           disable: bulkDisableScenarios,
           tooltipPrefix: 'scenario',
           exportProps: { scenario: true },
-        },
-        [props.declareTicket]: {
+        };
+      }
+
+      if (props.eventFilter) {
+        return {
+          remove: bulkRemoveEventFilters,
+          enable: bulkEnableEventFilters,
+          disable: bulkDisableEventFilters,
+          tooltipPrefix: 'eventFilter',
+          exportProps: { eventFilter: true },
+        };
+      }
+
+      if (props.flappingRule) {
+        return {
+          remove: bulkRemoveFlappingRules,
+          enable: bulkEnableFlappingRules,
+          disable: bulkDisableFlappingRules,
+          tooltipPrefix: 'flappingRule',
+          exportProps: { flappingRule: true },
+        };
+      }
+
+      if (props.resolveRule) {
+        return {
+          remove: bulkRemoveResolveRules,
+          enable: bulkEnableResolveRules,
+          disable: bulkDisableResolveRules,
+          tooltipPrefix: 'resolveRule',
+          exportProps: { resolveRule: true },
+        };
+      }
+
+      if (props.idleRule) {
+        return {
+          remove: bulkRemoveIdleRules,
+          enable: bulkEnableIdleRules,
+          disable: bulkDisableIdleRules,
+          tooltipPrefix: 'idleRules',
+          exportProps: { idleRule: true },
+        };
+      }
+
+      if (props.linkRule) {
+        return {
+          remove: bulkRemoveLinkRules,
+          enable: bulkEnableLinkRules,
+          disable: bulkDisableLinkRules,
+          tooltipPrefix: 'linkRule',
+          exportProps: { linkRule: true },
+        };
+      }
+
+      if (props.declareTicket) {
+        return {
           remove: bulkRemoveDeclareTicketRules,
           enable: bulkEnableDeclareTicketRules,
           disable: bulkDisableDeclareTicketRules,
           tooltipPrefix: 'declareTicket',
           exportProps: { declareTicket: true },
-        },
-        [props.playlist]: {
-          remove: bulkRemovePlaylists,
-          enable: bulkEnablePlaylists,
-          disable: bulkDisablePlaylists,
+        };
+      }
+
+      if (props.llm) {
+        return {
+          remove: bulkRemoveLlms,
+          enable: bulkEnableLlms,
+          disable: bulkDisableLlms,
+          tooltipPrefix: 'llm',
+          removeConfirmation: 'modals.confirmationPhrase.deleteSelectedLlms',
+        };
+      }
+
+      if (props.map) {
+        return {
+          remove: bulkRemoveMaps,
+          tooltipPrefix: 'map',
+        };
+      }
+
+      if (props.metaAlarmRule) {
+        return {
+          remove: bulkRemoveMetaAlarmRules,
+          enable: bulkEnableMetaAlarmRules,
+          disable: bulkDisableMetaAlarmRules,
+          tooltipPrefix: 'metaAlarmRule',
+          exportProps: { metaAlarmRule: true },
+        };
+      }
+
+      if (props.pbehavior) {
+        return {
+          remove: bulkRemovePbehaviors,
+          enable: bulkEnablePbehaviors,
+          disable: bulkDisablePbehaviors,
+          tooltipPrefix: 'pbehavior',
+          exportProps: { pbehavior: true },
+        };
+      }
+
+      if (props.playlist) {
+        return {
+          remove: bulkRemovePlaylist,
+          enable: bulkEnablePlaylist,
+          disable: bulkDisablePlaylist,
           tooltipPrefix: 'playlist',
-        },
-        [props.pbehaviorType]: {
+        };
+      }
+
+      if (props.pbehaviorType) {
+        return {
           remove: bulkRemovePbehaviorTypes,
           hide: bulkHidePbehaviorTypes,
           unhide: bulkUnhidePbehaviorTypes,
           tooltipPrefix: 'pbehavior',
-        },
-        [props.pbehaviorReason]: {
+        };
+      }
+
+      if (props.pbehaviorReason) {
+        return {
           remove: bulkRemovePbehaviorReasons,
           hide: bulkHidePbehaviorReasons,
           unhide: bulkUnhidePbehaviorReasons,
           tooltipPrefix: 'pbehavior',
-        },
-        [props.pbehaviorException]: {
+        };
+      }
+
+      if (props.pbehaviorException) {
+        return {
           remove: bulkRemovePbehaviorExceptions,
           hide: bulkHidePbehaviorExceptions,
           unhide: bulkUnhidePbehaviorExceptions,
           tooltipPrefix: 'pbehavior',
-        },
-        [props.map]: {
-          remove: bulkRemoveMaps,
-          tooltipPrefix: 'map',
-        },
-        [props.role]: {
-          remove: bulkRemoveRoles,
-          tooltipPrefix: 'role',
-        },
-        [props.user]: {
+        };
+      }
+
+      if (props.user) {
+        return {
           remove: bulkRemoveUsers,
           enable: bulkEnableUsers,
           disable: bulkDisableUsers,
           tooltipPrefix: 'user',
-        },
-        [props.instruction]: {
+        };
+      }
+
+      if (props.role) {
+        return {
+          remove: bulkRemoveRoles,
+          tooltipPrefix: 'role',
+        };
+      }
+
+      if (props.instruction) {
+        return {
           remove: bulkRemoveRemediationInstructions,
           enable: bulkEnableRemediationInstructions,
           disable: bulkDisableRemediationInstructions,
           tooltipPrefix: 'remediation.instruction',
           exportProps: { instruction: true },
-        },
-        [props.remediationConfiguration]: {
+        };
+      }
+
+      if (props.remediationConfiguration) {
+        return {
           remove: bulkRemoveRemediationConfigurations,
           tooltipPrefix: 'remediation.configuration',
           exportProps: { jobConfig: true },
-        },
-        [props.remediationJob]: {
+        };
+      }
+
+      if (props.remediationJob) {
+        return {
           remove: bulkRemoveRemediationJobs,
           tooltipPrefix: 'remediation.job',
           exportProps: { job: true },
-        },
-        [props.llm]: {
-          remove: bulkRemoveLlms,
-          enable: bulkEnableLlms,
-          disable: bulkDisableLlms,
-          tooltipPrefix: 'llm',
-          removePhraseMessagesKey: 'modals.confirmationPhrase.deleteSelectedLlms',
-        },
-        [props.anomalyMonitoredConnector]: {
+        };
+      }
+
+      if (props.anomalyMonitoredConnector) {
+        return {
           remove: bulkRemoveAnomalyMonitoredConnectors,
           enable: bulkEnableAnomalyMonitoredConnectors,
           disable: bulkDisableAnomalyMonitoredConnectors,
           tooltipPrefix: 'anomalyMonitoredConnector',
-        },
-      }.true ?? {};
-
-      const massRemoveTooltipKey = `${activeConfig.tooltipPrefix}.massRemove`;
-
-      if (te(massRemoveTooltipKey)) {
-        activeConfig.removeTooltip = t(massRemoveTooltipKey);
+        };
       }
 
-      return activeConfig;
+      if (props.snmpRule) {
+        return {
+          remove: bulkRemoveSnmpRules,
+          enable: bulkEnableSnmpRules,
+          disable: bulkDisableSnmpRules,
+          tooltipPrefix: 'snmpRule',
+        };
+      }
+
+      return {};
     });
 
-    /**
-     * Clears selected items and triggers list refresh after a mass action.
-     */
+    const removeTooltip = computed(() => {
+      const massRemoveTooltipKey = `${activeConfig.value.tooltipPrefix}.massRemove`;
+
+      return te(massRemoveTooltipKey) ? t(massRemoveTooltipKey) : '';
+    });
+
     const afterSubmit = async () => {
       emit('clear:items');
       emit('refresh');
     };
 
-    /**
-     * Shows popup errors for failed mass action responses and injects
-     * the corresponding rule name by response index.
-     *
-     * @param {Array.<{status: number|string, message?: string}>} response
-     * @param {string} messageKey
-     */
-    const showErrorPopups = (response = [], messageKey) => (
-      response.forEach(({ status = RESPONSE_STATUSES.success, message, error }, index) => {
+    const showErrorPopups = (response = [], messageKey) => {
+      response.forEach(({ status, message, error }, index) => {
         if (status !== RESPONSE_STATUSES.success) {
           const ruleName = props.items[index]?.name;
           const text = te(messageKey) ? t(messageKey, { name: ruleName }) : message || error;
 
           popups.error({ text });
         }
-      })
-    );
+      });
+    };
 
-    /**
-     * Shows a confirmation modal for bulk remove operation.
-     * On confirmation, removes selected items and refreshes the list.
-     */
     const showRemoveModal = () => {
-      if (config.value.removePhraseMessagesKey) {
-        const { removePhraseMessagesKey: keyPrefix } = config.value;
+      if (activeConfig.value.removeConfirmation) {
+        const confirmationKey = activeConfig.value.removeConfirmation;
         const count = props.items.length;
-        const countValues = { count };
 
         modals.show({
           name: MODALS.confirmationPhrase,
           config: {
-            title: tc(`${keyPrefix}.title`, count, countValues),
-            text: tc(`${keyPrefix}.text`, count, countValues),
-            phraseText: t(`${keyPrefix}.phraseText`),
-            phrase: t(`${keyPrefix}.phrase`),
+            title: t(`${confirmationKey}.title`, count, { count }),
+            text: t(`${confirmationKey}.text`, count, { count }),
+            phraseText: t(`${confirmationKey}.phraseText`),
+            phrase: t(`${confirmationKey}.phrase`),
             action: async () => {
-              await config.value.remove({ data: pickIds(props.items, props.itemId) });
+              const response = await activeConfig.value.remove({
+                data: pickIds(props.items, props.itemId),
+              });
+
+              showErrorPopups(response, `${activeConfig.value.tooltipPrefix}.removeForbidden`);
+
+              return afterSubmit();
             },
           },
         });
@@ -575,9 +557,11 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            const response = await config.value.remove({ data: pickIds(props.items, props.itemId) });
+            const response = await activeConfig.value.remove({
+              data: pickIds(props.items, props.itemId),
+            });
 
-            showErrorPopups(response, `${config.value.tooltipPrefix}.removeForbidden`);
+            showErrorPopups(response, `${activeConfig.value.tooltipPrefix}.removeForbidden`);
 
             return afterSubmit();
           },
@@ -585,79 +569,68 @@ export default {
       });
     };
 
-    /**
-     * Shows a confirmation modal for bulk enable operation.
-     * On confirmation, enables selected items and refreshes the list.
-     */
     const showEnableModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          await config.value.enable({ data: enablableItemsIds.value });
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await activeConfig.value.enable({ data: pickIds(props.items, props.itemId) });
 
-          return afterSubmit();
+            return afterSubmit();
+          },
         },
-      },
-    });
+      });
 
-    /**
-     * Shows a confirmation modal for bulk disable operation.
-     * On confirmation, disables selected items and refreshes the list.
-     */
     const showDisableModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          const response = await config.value.disable({ data: enablableItemsIds.value });
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            const response = await activeConfig.value.disable({
+              data: pickIds(props.items, props.itemId),
+            });
 
-          showErrorPopups(response, `${config.value.tooltipPrefix}.disableForbidden`);
+            showErrorPopups(response, `${activeConfig.value.tooltipPrefix}.disableForbidden`);
 
-          return afterSubmit();
+            return afterSubmit();
+          },
         },
-      },
-    });
+      });
 
-    /**
-     * Shows a confirmation modal for bulk unhide operation.
-     * On confirmation, unhides selected items and refreshes the list.
-     */
     const showUnhideModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          await config.value.unhide({ data: hideableItemsIds.value });
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await activeConfig.value.unhide({ data: pickIds(props.items, props.itemId) });
 
-          return afterSubmit();
+            return afterSubmit();
+          },
         },
-      },
-    });
+      });
 
-    /**
-     * Shows a confirmation modal for bulk hide operation.
-     * On confirmation, hides selected items and refreshes the list.
-     */
     const showHideModal = () => modals.show({
-      name: MODALS.confirmation,
-      config: {
-        action: async () => {
-          const response = await config.value.hide({ data: hideableItemsIds.value });
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            const response = await activeConfig.value.hide({
+              data: pickIds(props.items, props.itemId),
+            });
 
-          showErrorPopups(response, `${config.value.tooltipPrefix}.hideForbidden`);
+            showErrorPopups(response, `${activeConfig.value.tooltipPrefix}.hideForbidden`);
 
-          return afterSubmit();
+            return afterSubmit();
+          },
         },
-      },
-    });
+      });
 
     return {
-      config,
-      itemsIds,
+      t,
+      activeConfig,
+      removeTooltip,
       someOneEnable,
       someOneDisable,
+      someOneRemovable,
       someOneVisible,
       someOneHidden,
-      someOneRemovable,
-
+      itemsIds,
       afterSubmit,
       showRemoveModal,
       showEnableModal,

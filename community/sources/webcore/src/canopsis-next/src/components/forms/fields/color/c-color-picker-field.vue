@@ -1,71 +1,84 @@
 <template>
-  <v-layout align-center>
-    <template v-if="splitted">
-      <v-btn
-        key="splitted"
-        :disabled="disabled"
-        class="mr-3"
-        small
-        @click="showColorPickerModal"
-      >
-        {{ label }}
-      </v-btn>
-      <div
-        :style="style"
-        class="pa-1 text-center"
-      >
-        {{ color }}
-      </div>
-    </template>
-    <v-btn
-      v-else
-      key="not-splitted"
-      :style="style"
-      :disabled="disabled"
-      @click="showColorPickerModal"
+  <v-input :hide-details="hideDetails">
+    <div
+      :class="[
+        'd-flex flex-column align-stretch',
+        justifyEnd ? 'justify-end' : 'justify-center',
+        { 'w-100': fillWidth },
+      ]"
     >
-      {{ label }}
-    </v-btn>
-    <v-messages
-      v-if="errors.has(name)"
-      :value="errors.collect(name)"
-      color="error"
-    />
-  </v-layout>
+      <div v-if="splitted" class="d-flex align-center justify-space-between">
+        <v-btn :disabled="disabled" class="mr-3" @click="shown = true">
+          {{ displayLabel }}
+        </v-btn>
+
+        <div :style="style" class="pa-1 text-center">
+          {{ colorValue }}
+        </div>
+      </div>
+
+      <div
+        :class="[
+          'color-picker__button__wrapper d-flex align-center',
+          justifyEnd ? 'justify-end' : 'justify-center',
+          { 'w-100': fillWidth },
+        ]"
+      >
+        <v-menu v-model="shown" :close-on-content-click="false" location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <slot
+              :props="activatorProps"
+              :color="colorValue"
+              :label="displayLabel"
+              :style="style"
+              :disabled="disabled"
+              name="activator"
+            >
+              <c-btn-with-error
+                v-bind="activatorProps"
+                :error="buttonError"
+                :size="size"
+                :style="style"
+                :disabled="disabled"
+              >
+                <v-icon v-if="icon">{{ icon }}</v-icon>
+                <span v-else-if="!hideLabel">{{ displayLabel }}</span>
+              </c-btn-with-error>
+            </slot>
+          </template>
+
+          <v-card>
+            <v-color-picker v-model="colorValue" :mode="type" show-swatches />
+          </v-card>
+        </v-menu>
+      </div>
+    </div>
+  </v-input>
 </template>
 
 <script>
-import { Validator } from 'vee-validate';
-
-import { MODALS } from '@/constants';
+import { computed, ref, watch } from 'vue';
 
 import { getMostReadableTextColor } from '@/helpers/color';
 
-import { formBaseMixin } from '@/mixins/form';
-import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
+import { useField } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: {
-    $validator: {
-      default: new Validator(),
-    },
-  },
-  mixins: [
-    formBaseMixin,
-    validationAttachRequiredMixin,
-  ],
-  model: {
-    prop: 'color',
-    event: 'input',
-  },
   props: {
+    modelValue: {
+      type: String,
+      default: undefined,
+    },
     label: {
       type: String,
-      default() {
-        return this.$t('common.selectColor');
-      },
+      required: false,
     },
     color: {
+      type: String,
+      default: '',
+    },
+    icon: {
       type: String,
       default: '',
     },
@@ -89,49 +102,89 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  computed: {
-    style() {
-      return {
-        backgroundColor: this.color,
-        color: getMostReadableTextColor(this.color, { level: 'AA', size: 'large' }),
-      };
+    justifyEnd: {
+      type: Boolean,
+      default: false,
+    },
+    hideLabel: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    size: {
+      type: String,
+      default: undefined,
+    },
+    fillWidth: {
+      type: Boolean,
+      default: false,
     },
   },
-  watch: {
-    required: {
-      immediate: true,
-      handler(required) {
-        if (required && !this.disabled) {
-          this.attachRequiredRule();
 
-          return;
-        }
+  emits: ['update:modelValue', 'update:color'],
 
-        this.detachRequiredRule();
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const shown = ref(false);
+    const fieldName = computed(() => props.name || props.label || 'color');
+    const fieldRules = computed(() => ({
+      required: props.required,
+    }));
+    const { value, errors, setValue, validate } = useField(fieldName, fieldRules, {
+      initialValue: props.modelValue ?? props.color,
+      validateOnMount: false,
+      validateOnValueUpdate: false,
+    });
+
+    const colorValue = computed({
+      get: () => props.modelValue ?? props.color ?? value.value,
+      set: (value) => {
+        setValue(value, false);
+        emit('update:modelValue', value);
+        emit('update:color', value);
       },
-    },
-  },
-  beforeDestroy() {
-    this.detachRequiredRule();
-  },
-  methods: {
-    showColorPickerModal() {
-      this.$modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          color: this.color,
-          type: this.type,
-          action: (color) => {
-            this.updateModel(color);
+    });
 
-            if (this.required) {
-              this.$nextTick(() => this.$validator.validate(this.name));
-            }
-          },
-        },
-      });
-    },
+    const displayLabel = computed(() => props.label ?? t('common.selectColor'));
+    const buttonError = computed(() => errors.value[0] ?? '');
+
+    const style = computed(() => ({
+      backgroundColor: colorValue.value,
+      color: getMostReadableTextColor(
+        colorValue.value,
+        props.icon ? { level: 'AA', size: 'large' } : undefined,
+      ),
+    }));
+
+    watch(
+      () => props.modelValue,
+      (nextValue) => {
+        if (nextValue !== undefined) {
+          setValue(nextValue, false);
+        }
+      },
+    );
+
+    watch(
+      () => props.color,
+      (nextValue) => {
+        if (props.modelValue === undefined) {
+          setValue(nextValue, false);
+        }
+      },
+    );
+
+    return {
+      shown,
+      colorValue,
+      displayLabel,
+      style,
+      buttonError,
+      validate,
+    };
   },
 };
 </script>

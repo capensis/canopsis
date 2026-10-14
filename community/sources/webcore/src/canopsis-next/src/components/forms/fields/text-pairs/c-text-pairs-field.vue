@@ -1,75 +1,50 @@
 <template>
-  <v-layout
-    :class="{ 'text-pairs__disabled': disabled }"
-    class="text-pairs"
-    wrap
-  >
-    <v-flex
-      v-show="title"
-      xs12
+  <c-layout :class="{ 'text-pairs__disabled': disabled }" class="text-pairs" column>
+    <slot v-if="!items.length" name="no-data" />
+    <c-form-block-array-field
+      :form="items"
+      :add-button-label="addButtonLabel"
+      :disabled="disabled"
+      :item-key="itemKey"
+      :item-to-form="textPairToForm"
+      :error-messages="collectErrors(name)"
+      :required-error-message="requiredErrorMessage"
+      :label="title || ''"
+      @update:form="updateModel"
     >
-      <h4 class="ml-1">
-        {{ title }}
-      </h4>
-    </v-flex>
-    <v-flex xs12>
-      <slot
-        v-if="!items.length"
-        name="no-data"
-      />
-      <c-text-pair-field
-        v-for="(item, index) in items"
-        v-field="items[index]"
-        :key="item[itemKey]"
-        :disabled="disabled"
-        :value-required="valueRequired"
-        :text-required="textRequired"
-        :text-label="textLabel"
-        :value-label="valueLabel"
-        :item-text="itemText"
-        :item-value="itemValue"
-        :name="item[itemKey]"
-        :variables="variables"
-        :items="valueItems"
-        @remove="removeItemFromArray(index)"
-      >
-        <template #append-value="">
-          <slot
-            :item="item"
-            name="append-value"
-          />
-        </template>
-      </c-text-pair-field>
-    </v-flex>
-    <v-flex
-      v-if="!disabled"
-      xs12
-    >
-      <v-layout>
-        <v-btn
-          class="ml-0"
-          color="primary"
-          outlined
-          @click="addItem"
+      <template #item="{ index, remove }">
+        <c-text-pair-field
+          :item="items[index]"
+          :disabled="disabled"
+          :value-required="valueRequired"
+          :text-required="textRequired"
+          :text-label="textLabel"
+          :value-label="valueLabel"
+          :item-text="itemText"
+          :item-value="itemValue"
+          :name="items[index][itemKey]"
+          :variables="variables"
+          :items="valueItems"
+          @update:item="updateItemInArray(index, $event)"
+          @remove="remove"
         >
-          {{ addButtonLabel || $t('common.add') }}
-        </v-btn>
-      </v-layout>
-    </v-flex>
-  </v-layout>
+          <template #append-value="">
+            <slot :item="items[index]" name="append-value" />
+          </template>
+        </c-text-pair-field>
+      </template>
+    </c-form-block-array-field>
+  </c-layout>
 </template>
 
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
 
+import { useFormErrorsMap } from '@/hooks/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'items',
-    event: 'input',
-  },
+  emits: ['update:items'],
   props: {
     title: {
       type: String,
@@ -115,6 +90,10 @@ export default {
       type: String,
       required: false,
     },
+    requiredErrorMessage: {
+      type: String,
+      default: '',
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -129,13 +108,14 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
-
-    const addItem = () => addItemIntoArray(textPairToForm());
+    const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
+    const { collectErrors } = useFormErrorsMap();
 
     return {
-      addItem,
-      removeItemFromArray,
+      collectErrors,
+      textPairToForm,
+      updateModel,
+      updateItemInArray,
     };
   },
 };

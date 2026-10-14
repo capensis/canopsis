@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`] = `
+<div
+  class="modal-wrapper v-card v-sheet theme--light fill-min-height"
+>
+  <div
+    class="v-card__title white--text"
+    style="background-color: red;"
+  >
+    <div
+      class="modal-wrapper__title text-h5"
+    >
+      <div>
+        <div>
+          Title
+        </div>
+      </div>
+      <div>
+        <modal-title-buttons-stub
+          close="true"
+          minimize="true"
+        />
+      </div>
+    </div>
+    <modal-mass-actions-panel-stub
+      id="modal-wrapper-test"
+    />
+  </div>
+  <div
+    class="v-card__text"
+  >
+    <div>
+      Text
+    </div>
+  </div>
+  <div
+    class="layout justify-end column"
+  >
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <div
+      class="v-card__actions justify-end align-center pa-3"
+    >
+      <div>
+        Actions
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`modal-wrapper Renders \`modal-wrapper\` with default props 1`] = `
+<div
+  class="modal-wrapper v-card v-sheet theme--light"
+/>
+`;
+
+exports[`modal-wrapper Renders \`modal-wrapper\` with minimized modal 1`] = `
+<div
+  class="modal-wrapper v-card v-sheet theme--light"
+>
+  <div
+    class="v-card__title white--text"
+  >
+    <div
+      class="modal-wrapper__title text-h5"
+    >
+      <div>
+        <div>
+          Title
+        </div>
+      </div>
+      <div>
+        <modal-title-buttons-stub />
+      </div>
+    </div>
+    <modal-mass-actions-panel-stub
+      id="modal-wrapper-test"
+    />
+  </div>
+  <!---->
+</div>
+`;

@@ -7,7 +7,6 @@
       :width="shape.width"
       :height="shape.height"
       :cursor="readonly ? '' : 'move'"
-      v-on="$listeners"
     />
     <text-editor
       ref="editor"

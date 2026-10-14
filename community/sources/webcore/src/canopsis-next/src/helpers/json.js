@@ -49,7 +49,7 @@ export const isValidJsonData = (json) => {
     const data = JSON.parse(json);
 
     return !isString(data);
-  } catch (err) {
+  } catch {
     return false;
   }
 };

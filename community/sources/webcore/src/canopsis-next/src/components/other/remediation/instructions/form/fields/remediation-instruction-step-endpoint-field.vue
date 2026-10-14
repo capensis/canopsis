@@ -1,62 +1,24 @@
 <template>
-  <v-layout
-    class="mt-2"
-    column
+  <c-text-field
+    :model-value="modelValue"
+    :label="t('remediation.instruction.endpoint')"
+    :name="name"
+    :disabled="disabled"
+    required
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <v-layout class="py-1">
-      <v-flex
-        class="mt-3"
-        xs1
-      >
-        <c-draggable-step-number
-          :color="draggableStepNumberColor"
-          disabled
-        >
-          {{ $t('remediation.instruction.endpointAvatar') }}
-        </c-draggable-step-number>
-      </v-flex>
-      <v-flex xs11>
-        <v-layout>
-          <v-flex
-            class="px-1"
-            xs11
-          >
-            <v-text-field
-              v-field="value"
-              v-validate="'required'"
-              :label="$t('remediation.instruction.endpoint')"
-              :name="name"
-              :error-messages="errors.collect(name)"
-              :disabled="disabled"
-              filled
-            >
-              <template #append="">
-                <c-help-icon
-                  :text="$t('remediation.instruction.tooltips.endpoint')"
-                  icon="help"
-                  left
-                />
-              </template>
-            </v-text-field>
-          </v-flex>
-          <v-flex xs1 />
-        </v-layout>
-      </v-flex>
-    </v-layout>
-  </v-layout>
+    <template #append>
+      <c-help-icon :text="t('remediation.instruction.tooltips.endpoint')" icon="help" left />
+    </template>
+  </c-text-field>
 </template>
 
 <script>
-import { uid } from '@/helpers/uid';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -64,19 +26,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'endpoint',
+    },
   },
-  computed: {
-    fieldSuffix() {
-      return uid();
-    },
+  emits: ['update:modelValue'],
+  setup() {
+    const { t } = useI18n();
 
-    name() {
-      return `endpoint${this.fieldSuffix}`;
-    },
-
-    draggableStepNumberColor() {
-      return this.errors.has(this.name) ? 'error' : 'primary';
-    },
+    return {
+      t,
+    };
   },
 };
 </script>

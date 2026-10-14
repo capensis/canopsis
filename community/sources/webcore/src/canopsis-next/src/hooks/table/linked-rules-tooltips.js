@@ -50,7 +50,9 @@ export const useLinkedRulesTooltips = (i18nPrefix = 'common.linkedRulesTooltip')
       const rulesMessages = getLinkedRulesMessageForType(linkedRules[ruleType]);
 
       if (rulesMessages) {
-        message += t(`common.linkedRulesTooltip.linkedRules.${ruleType}`, { rules: rulesMessages });
+        message += t(`common.linkedRulesTooltip.linkedRules.${ruleType}`, {
+          rules: rulesMessages,
+        });
       }
     });
 
