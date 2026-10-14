@@ -1,8 +1,5 @@
 <template>
-  <v-layout
-    class="kpi-widget-filters"
-    wrap
-  >
+  <c-layout class="kpi-widget-filters" wrap>
     <c-quick-date-interval-field
       v-if="showInterval"
       :interval="interval"
@@ -10,28 +7,29 @@
       :quick-ranges="quickRanges"
       class="kpi-widget-filters__interval"
       short
-      @input="$emit('update:interval', $event)"
+      @update:interval="$emit('update:interval', $event)"
     />
     <c-sampling-field
       v-if="showSampling"
       :value="sampling"
       class="kpi-widget-filters__sampling"
-      @input="$emit('update:sampling', $event)"
+      @update:value="$emit('update:sampling', $event)"
     />
-    <v-layout
+    <c-layout
       v-if="showFilter"
-      align-end
+      class="kpi-widget-filters__filter-cell"
+      align="end"
     >
       <filter-selector
+        :model-value="filters"
         :label="$t('settings.selectAFilter')"
         :filters="userFilters"
         :locked-filters="widgetFilters"
         :locked-value="lockedFilters"
-        :value="filters"
         class="kpi-widget-filters__filter-selector mr-4"
         clearable
         hide-details
-        @input="$emit('update:filters', $event)"
+        @update:model-value="$emit('update:filters', $event)"
       />
       <filters-list-btn
         :widget-id="widgetId"
@@ -40,18 +38,22 @@
         private
         with-entity
       />
-    </v-layout>
-  </v-layout>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
 import { METRICS_QUICK_RANGES } from '@/constants';
 
-import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 export default {
-  components: { FilterSelector, FiltersListBtn },
+  components: {
+    FilterSelector,
+    FiltersListBtn,
+  },
+
   props: {
     widgetId: {
       type: String,
@@ -98,6 +100,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:interval', 'update:sampling', 'update:filters'],
+
   computed: {
     quickRanges() {
       return Object.values(METRICS_QUICK_RANGES);
@@ -114,8 +119,20 @@ export default {
     max-width: 100px;
   }
 
-  &__filter-selector, &__interval {
+  &__interval {
     max-width: 200px;
+    flex-grow: 1;
+  }
+
+  &__filter-cell {
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
+    min-width: 260px;
+
+    :deep(.filter-selector) {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
   }
 }
 </style>

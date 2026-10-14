@@ -1,31 +1,59 @@
 <template>
-  <v-tooltip bottom>
-    <template #activator="{ on }">
+  <c-tooltip location="bottom">
+    <template #activator="{ props: tooltipProps }">
       <v-btn
-        :icon="$vuetify.breakpoint.smAndDown"
+        v-bind="tooltipProps"
         class="mx-2 my-1"
-        depressed
-        v-on="on"
+        variant="text"
         @click="$emit('click')"
       >
-        <span v-if="$vuetify.breakpoint.mdAndUp">{{ $t('calendar.today') }}</span>
-        <v-icon v-else>
+        <span class="calendar-today-btn__label">
+          {{ t('calendar.today') }}
+        </span>
+        <v-icon class="calendar-today-btn__icon">
           today
         </v-icon>
       </v-btn>
     </template>
+
     <span>{{ todayDate }}</span>
-  </v-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  computed: {
-    todayDate() {
-      return convertDateToString(getNowTimestamp(), 'dddd, MMMM D');
-    },
+  emits: ['click'],
+
+  setup() {
+    const { t } = useI18n();
+    const todayDate = computed(() => convertDateToString(getNowTimestamp(), 'dddd, MMMM D'));
+
+    return {
+      t,
+      todayDate,
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.calendar-today-btn__icon {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .calendar-today-btn__label {
+    display: none;
+  }
+
+  .calendar-today-btn__icon {
+    display: inline-flex;
+  }
+}
+</style>

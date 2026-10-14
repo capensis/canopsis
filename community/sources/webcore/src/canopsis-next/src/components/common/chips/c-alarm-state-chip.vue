@@ -1,9 +1,5 @@
 <template>
-  <v-layout
-    :class="classes"
-    class="c-alarm-state-chip"
-    align-center
-  >
+  <c-layout :class="classes" class="c-alarm-state-chip" align="center">
     <c-alarm-chip
       :value="value"
       :badge-value="badgeValue"
@@ -11,10 +7,7 @@
       @click="$emit('click', $event)"
     >
       <template v-if="appendIconName" #append>
-        <v-icon
-          class="c-alarm-state-chip__append-icon"
-          size="14"
-        >
+        <v-icon class="c-alarm-state-chip__append-icon" size="14">
           {{ appendIconName }}
         </v-icon>
       </template>
@@ -27,7 +20,7 @@
     >
       account_circle
     </v-icon>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -36,6 +29,8 @@ import { computed } from 'vue';
 import { ALARM_LIST_STEPS, ALARM_STATES } from '@/constants';
 
 export default {
+  emits: ['click'],
+
   props: {
     value: {
       type: [Number, String],
@@ -58,6 +53,7 @@ export default {
       required: false,
     },
   },
+
   setup(props) {
     const showIcon = computed(() => props.type === ALARM_LIST_STEPS.changeState);
     const classes = computed(() => ({
@@ -66,8 +62,8 @@ export default {
     }));
 
     return {
-      showIcon,
       classes,
+      showIcon,
     };
   },
 };

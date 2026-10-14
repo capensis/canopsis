@@ -1,80 +1,96 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close fill-height>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <dynamic-info-template-form v-model="form" />
+
+      <template #text>
+        <dynamic-info-template-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          :loading="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { computed } from 'vue';
 
-import { templateToForm, formToTemplate } from '@/helpers/entities/dynamic-info/template/form';
+import { formToTemplate, templateToForm } from '@/helpers/entities/dynamic-info/template/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import DynamicInfoTemplateForm from '@/components/other/dynamic-info/form/dynamic-info-template-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createDynamicInfoTemplate,
-  $_veeValidate: {
-    validator: 'new',
+  components: { DynamicInfoTemplateForm },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: { DynamicInfoTemplateForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { template = {} } = this.modal.config;
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+
+    const config = computed(() => props.modal.config ?? {});
+    const isNew = computed(() => !config.value.template);
+    const title = computed(
+      () => config.value.title || t('modals.createDynamicInfoTemplate.create.title'),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const form = useForm({
+      initialValues: templateToForm(config.value.template),
+    });
+    const namesField = form.array('names');
+
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const submit = form.handleSubmit(async () => {
+      if (!namesField.value.length) {
+        return;
+      }
+
+      await config.value.action?.(formToTemplate(form.values.value));
+
+      closeModal();
+    });
+
+    useFormConfirmableCloseModal({
+      submit,
+
+      form: form.values,
+      close: closeModal,
+    });
 
     return {
-      form: templateToForm(template),
+      t,
+      config,
+      submitting: form.submitting,
+      title,
+      submitLabel,
+      submit,
+      closeModal,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createDynamicInfoTemplate.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToTemplate(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

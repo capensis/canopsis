@@ -1,0 +1,112 @@
+<template>
+  <div
+    :class="{ 'modals-wrapper--active': modals.length > 0 }"
+    :style="{ zIndex }"
+    class="modals-wrapper"
+  >
+    <modal-base
+      v-for="modal in modals"
+      :key="modal.id"
+      :modal="modal"
+    />
+    <div class="pbehavior-calendar-event-menu" />
+  </div>
+</template>
+
+<script>
+/**
+ * Wrapper for all modal windows
+ */
+export default {
+  computed: {
+    modals() {
+      return this.$store.getters[`${this.$modals.moduleName}/modals`];
+    },
+
+    zIndex() {
+      return this.modals.length * 300;
+    },
+  },
+  watch: {
+    $route: {
+      handler(newValue, prevValue) {
+        if (newValue.path === prevValue.path) {
+          return;
+        }
+
+        if (this.modals && this.modals.length) {
+          this.modals.forEach(modal => !modal.minimized && this.$modals.hide({ id: modal.id }));
+        }
+      },
+      deep: true,
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+$minimizedDialogMaxWidth: 360px;
+
+.modals-wrapper {
+  display: none;
+
+  .pbehavior-calendar-event-menu {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  &--active {
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    flex-wrap: wrap-reverse;
+    pointer-events: none;
+    justify-content: center;
+    align-items: flex-end;
+    align-content: flex-start;
+    z-index: 300;
+
+    & ::v-deep {
+      .v-menu__content {
+        pointer-events: auto;
+      }
+
+      .v-dialog__content {
+        &--minimized {
+          margin: 8px 8px 0 8px;
+          position: relative;
+          height: auto;
+          max-width: $minimizedDialogMaxWidth;
+          pointer-events: all;
+          z-index: inherit !important;
+          padding: 0 !important;
+
+          .v-dialog {
+            margin: 0;
+            box-shadow: none;
+            transition: none;
+
+            .v-card {
+              &.fill-min-height {
+                min-height: auto;
+              }
+
+              &__title {
+                padding: 0 10px;
+
+                .headline {
+                  font-size: 16px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>

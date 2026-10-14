@@ -1,0 +1,75 @@
+import { isNil } from 'lodash';
+
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from '@/helpers/date/date';
+
+/**
+ * Converts query parameters into a request object.
+ *
+ * @param {Object} [params = {}] - The query parameters.
+ * @param {number} [params.page = 1] - The current page number.
+ * @param {string} [params.search] - The search term to filter results.
+ * @param {number} [params.type] - The type to filter results.
+ * @param {number} [params.status] - The status to filter results.
+ * @param {Object} [params.interval] - The interval term to filter results.
+ * @param {number} params.itemsPerPage - The number of items per page.
+ * @param {string[]} [params.sortBy=[]] - An array of fields to sort by.
+ * @param {boolean[]} [params.sortDesc=[]] - An array indicating the sort direction for each field in `sortBy`.
+ * @param {string} [params.lastRunStatus] - The last run status to filter results.
+ * @param {string} [params.searchPattern] - The search pattern to filter results.
+ * @returns {Object} The request object containing pagination, sorting, and search parameters.
+ */
+export const convertQueryToRequest = ({
+  page = 1,
+  search = '',
+  type,
+  status,
+  interval,
+  itemsPerPage,
+  sortBy = [],
+  sortDesc = [],
+  last_run_status: lastRunStatus,
+  search_pattern: searchPattern,
+} = {}) => {
+  const query = {
+    page,
+    limit: itemsPerPage,
+
+    ...convertSortToRequest(sortBy, sortDesc),
+  };
+
+  if (search) {
+    query.search = search;
+  }
+
+  if (!isNil(type)) {
+    query.type = type;
+  }
+
+  if (!isNil(status)) {
+    query.status = status;
+  }
+
+  if (!isNil(lastRunStatus)) {
+    query.last_run_status = lastRunStatus;
+  }
+
+  if (interval?.from) {
+    query.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
+      interval.from,
+    ));
+  }
+
+  if (interval?.to) {
+    query.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
+      interval.to,
+    ));
+  }
+
+  if (searchPattern) {
+    query.search_pattern = searchPattern;
+  }
+
+  return query;
+};

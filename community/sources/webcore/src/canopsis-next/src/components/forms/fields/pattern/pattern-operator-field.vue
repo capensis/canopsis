@@ -1,12 +1,14 @@
 <template>
-  <c-select-field
-    v-field="value"
-    v-validate="rules"
+  <c-select
+    :model-value="value"
     :items="availableOperators"
-    :error-messages="errors.collect(name)"
-    :label="label || $tc('common.condition')"
+    :label="label || $t('common.condition')"
     :disabled="disabled"
     :name="name"
+    :required="required"
+    item-title="text"
+    item-value="value"
+    @update:model-value="$emit('update:value', $event)"
   />
 </template>
 
@@ -14,11 +16,7 @@
 import { PATTERN_OPERATORS } from '@/constants';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: String,
@@ -46,12 +44,6 @@ export default {
     },
   },
   computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-
     availableOperators() {
       return this.operators.map(condition => ({
         value: condition,

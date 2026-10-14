@@ -340,12 +340,10 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	multipleURLs := task.Action.Parameters.MultipleURLs != nil && *task.Action.Parameters.MultipleURLs
 	now := datetime.NewMicroTime()
 	history := libwebhook.History{
-		BaseHistory: libwebhook.BaseHistory{
-			ID:        utils.NewID(),
-			Status:    libwebhook.StatusCreated,
-			Request:   *task.Action.Parameters.Request,
-			CreatedAt: now,
-		},
+		ID:        utils.NewID(),
+		Status:    libwebhook.StatusCreated,
+		Request:   *task.Action.Parameters.Request,
+		CreatedAt: now,
 		Execution: task.ExecutionID,
 		Alarms:    []string{task.Alarm.ID},
 		Rule:      task.ScenarioID,

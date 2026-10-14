@@ -43,7 +43,10 @@ export const formArrayMixin = {
      * @return {Array}
      */
     updateFieldInArrayItem(index, fieldName, value) {
-      return this.updateItemInArray(index, setField(this[this[modelPropKeyComputed]][index], fieldName, value));
+      return this.updateItemInArray(
+        index,
+        setField(this[this[modelPropKeyComputed]][index], fieldName, value),
+      );
     },
 
     /**

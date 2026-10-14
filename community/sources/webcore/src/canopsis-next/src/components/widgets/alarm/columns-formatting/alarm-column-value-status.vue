@@ -29,40 +29,31 @@
     :alarm="alarm"
     :style="chipStyle"
   >
-    <c-simple-tooltip
-      :content="tooltipContent"
-      top
-      v-on="$listeners"
-    >
-      <template #activator="{ on }">
+    <c-tooltip :content="tooltipContent" top>
+      <template #activator="{ props: activatorProps }">
         <v-icon
+          v-bind="activatorProps"
           size="16"
           color="white"
           class="alarm-column-value-status__icon mr-2"
-          v-on="on"
         >
           {{ status.icon }}
         </v-icon>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </alarm-status-chip-with-relations>
-  <c-simple-tooltip
-    v-else
-    :content="tooltipContent"
-    top
-    v-on="$listeners"
-  >
-    <template #activator="{ on }">
+  <c-tooltip v-else :content="tooltipContent" top>
+    <template #activator="{ props: activatorProps }">
       <v-icon
+        v-bind="activatorProps"
         :style="iconStyle"
         :size="iconSize"
         class="alarm-column-value-status__icon"
-        v-on="on"
       >
         {{ status.icon }}
       </v-icon>
     </template>
-  </c-simple-tooltip>
+  </c-tooltip>
 </template>
 
 <script>
@@ -84,6 +75,7 @@ export default {
   components: {
     AlarmStatusChipWithRelations,
   },
+
   props: {
     alarm: {
       type: Object,
@@ -94,43 +86,42 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
     const { t, te } = useI18n();
 
     const statusValue = computed(() => props.alarm.v.status?.val);
     const isNoEventsStatus = computed(() => statusValue.value === ALARM_STATUSES.noEvents);
-    const isOngoingStatus = computed(() => statusValue.value === ALARM_STATUSES.ongoing);
     const idleSince = computed(() => props.alarm.entity?.idle_since);
     const resolved = computed(() => !!props.alarm.v.resolved);
     const status = computed(() => formatAlarmStatus(statusValue.value, resolved.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
-    const statusColor = computed(() => ({
-      [COLOR_INDICATOR_TYPES_WITH_STATUS.state]: state.value.color,
-      [COLOR_INDICATOR_TYPES_WITH_STATUS.status]: status.value.color,
-    }[getColorIndicatorByStatusAndState(statusValue.value)]));
-
+    const statusColor = computed(
+      () => ({
+          [COLOR_INDICATOR_TYPES_WITH_STATUS.state]: state.value.color,
+          [COLOR_INDICATOR_TYPES_WITH_STATUS.status]: status.value.color,
+        })[getColorIndicatorByStatusAndState(statusValue.value)],
+    );
     const iconSize = computed(() => (props.small ? 24 : undefined));
     const iconStyle = computed(() => ({ color: statusColor.value, caretColor: statusColor.value }));
     const chipStyle = computed(() => ({ backgroundColor: iconStyle.value.color }));
-    const tooltipContent = computed(() => (resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
-      ? t(`common.statusResolvedTypes.${statusValue.value}`)
-      : t(`common.statusTypes.${statusValue.value}`)));
-
-    const hasRelations = computed(() => (
-      !!props.alarm.entity?.upstream || props.alarm.entity?.downstream_count > 0
-    ));
+    const tooltipContent = computed(() => resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
+        ? t(`common.statusResolvedTypes.${statusValue.value}`)
+        : t(`common.statusTypes.${statusValue.value}`),
+    );
+    const hasRelations = computed(
+      () => !!props.alarm.entity?.upstream || props.alarm.entity?.downstream_count > 0,
+    );
 
     return {
-      statusValue,
-      isNoEventsStatus,
-      isOngoingStatus,
+      chipStyle,
       hasRelations,
-      idleSince,
-      status,
-      state,
       iconSize,
       iconStyle,
-      chipStyle,
+      idleSince,
+      isNoEventsStatus,
+      status,
+      statusValue,
       tooltipContent,
     };
   },

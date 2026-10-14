@@ -125,8 +125,7 @@ func (s *storage) createDestDir() (string, string, error) {
 
 	err := os.MkdirAll(path, os.ModeDir|dirPerm)
 	if err != nil {
-		var pathError *os.PathError
-		if errors.As(err, &pathError) {
+		if pathError, ok := errors.AsType[*os.PathError](err); ok {
 			err = fmt.Errorf("permission error %s %s", pathError.Op, hashPath)
 		}
 

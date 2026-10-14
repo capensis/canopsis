@@ -4,6 +4,8 @@
       v-if="pending"
       :in-progress-text="pendingTexts.inProgress"
       :cancel-button-label="pendingTexts.cancel"
+      :style="progressStyle"
+      class="ai-chat-sidebar__progress"
       @cancel="cancel"
     />
     <ai-chat-sidebar-wrapper
@@ -29,11 +31,20 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import {
+  ref,
+  watch,
+  computed,
+  onBeforeUnmount,
+} from 'vue';
+
+import { getMaxZIndex } from '@/helpers/vuetify';
 
 import PatternProgress from '@/components/forms/fields/pattern/pattern-progress.vue';
 import AiChatSidebarWrapper from '@/components/other/llm/chat/ai-chat-sidebar-wrapper.vue';
 import AiChat from '@/components/other/llm/chat/ai-chat.vue';
+
+const AI_CHAT_PENDING_CLASS = 'ai-chat-sidebar--pending';
 
 export default {
   components: {
@@ -41,6 +52,7 @@ export default {
     AiChatSidebarWrapper,
     AiChat,
   },
+  emits: ['update:pending', 'update:minimized', 'update:patterns', 'update:json-string'],
   props: {
     initialMinimized: {
       type: Boolean,
@@ -83,6 +95,9 @@ export default {
     const aiChatElement = ref(null);
 
     const restartable = computed(() => !aiChatElement.value?.emptyChat);
+    const progressStyle = {
+      zIndex: getMaxZIndex() + 1,
+    };
 
     /**
      * Opens the restart confirmation on the nested `ai-chat` (leaves socket room and resets session on confirm).
@@ -123,9 +138,20 @@ export default {
      */
     const updateJsonString = newJsonString => emit('update:json-string', newJsonString);
 
+    watch(
+      () => props.pending,
+      (pending) => {
+        document.body.classList.toggle(AI_CHAT_PENDING_CLASS, pending);
+      },
+      { immediate: true },
+    );
+
+    onBeforeUnmount(() => document.body.classList.remove(AI_CHAT_PENDING_CLASS));
+
     return {
       aiChatElement,
       restartable,
+      progressStyle,
 
       restart,
       cancel,
@@ -140,10 +166,19 @@ export default {
 
 <style lang="scss">
 .ai-chat-sidebar {
-  display: none;
+  display: block;
 
-  .v-dialog--active &, .menuable__content__active & {
-    display: block !important;
+  &__progress.c-progress-overlay {
+    position: fixed;
+    inset: 0;
   }
+}
+
+body.ai-chat-sidebar--pending {
+  overflow: hidden;
+}
+
+body.ai-chat-sidebar--pending .modal-wrapper .v-card-text {
+  overflow: hidden;
 }
 </style>

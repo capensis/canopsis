@@ -12,32 +12,35 @@
 </template>
 
 <script>
-import { get, minBy, isNil } from 'lodash';
+import { get, isNil, minBy } from 'lodash';
 
 import { COLORS } from '@/config';
 import {
-  MODALS,
-  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINE_ISSUES,
   HEALTHCHECK_ENGINES_NAMES,
   HEALTHCHECK_NETWORK_GRAPH_OPTIONS,
+  HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS,
+  HEALTHCHECK_STATUSES,
+  MODALS,
 } from '@/constants';
 
-import { getHealthcheckNodeRenderedPositionDiff, getHealthcheckInfoDiv } from '@/helpers/charts/healthcheck';
-import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
+import {
+  getHealthcheckInfoDiv,
+  getHealthcheckNodeRenderedPositionDiff,
+} from '@/helpers/charts/healthcheck';
 import { convertDateToString } from '@/helpers/date/date';
-
-import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
+import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
   components: { NetworkGraph },
-  mixins: [healthcheckNodesMixin],
+
   props: {
     services: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     enginesGraph: {
       type: Object,
@@ -64,124 +67,122 @@ export default {
       required: false,
     },
   },
+
   computed: {
     servicesNodes() {
-      return this.services
+      return this.services.length
         ? [
-          ...this.services.map(node => ({
-            classes: node.name === HEALTHCHECK_SERVICES_NAMES.rabbit ? [] : ['service-title--bottom'],
-            data: {
-              id: node.name,
-              name: node.name,
-              color: getHealthcheckNodeColor(node),
-              is_running: node.is_running,
-              nodes: node.nodes,
-              running_nodes: node.running_nodes,
+            ...this.services.map(node => ({
+              classes:
+                node.name === HEALTHCHECK_SERVICES_NAMES.rabbit ? [] : ['service-title--bottom'],
+              data: {
+                ...node,
+                id: node.name,
+                color: getHealthcheckNodeColor(node),
+              },
+            })),
+            {
+              classes: ['service-node--without-node'],
+              data: {
+                id: HEALTHCHECK_SERVICES_NAMES.events,
+                name: HEALTHCHECK_SERVICES_NAMES.events,
+              },
             },
-          })),
-
-          {
-            classes: ['service-node--without-node'],
-            data: {
-              id: HEALTHCHECK_SERVICES_NAMES.events,
-              name: HEALTHCHECK_SERVICES_NAMES.events,
+            {
+              classes: ['service-node--without-node'],
+              data: {
+                id: HEALTHCHECK_SERVICES_NAMES.healthcheck,
+                name: HEALTHCHECK_SERVICES_NAMES.healthcheck,
+              },
             },
-          },
-          {
-            classes: ['service-node--without-node'],
-            data: {
-              id: HEALTHCHECK_SERVICES_NAMES.healthcheck,
-              name: HEALTHCHECK_SERVICES_NAMES.healthcheck,
+            {
+              data: {
+                id: HEALTHCHECK_SERVICES_NAMES.api,
+                name: HEALTHCHECK_SERVICES_NAMES.api,
+                color: COLORS.primary,
+              },
             },
-          },
-          {
-            data: {
-              id: HEALTHCHECK_SERVICES_NAMES.api,
-              name: HEALTHCHECK_SERVICES_NAMES.api,
-              color: COLORS.primary,
+            {
+              locked: true,
+              classes: ['service-node--without-node'],
+              data: {
+                id: HEALTHCHECK_SERVICES_NAMES.enginesChain,
+                name: HEALTHCHECK_SERVICES_NAMES.enginesChain,
+              },
             },
-          },
-          {
-            locked: true,
-            classes: ['service-node--without-node'],
-            data: {
-              id: HEALTHCHECK_SERVICES_NAMES.enginesChain,
-              name: HEALTHCHECK_SERVICES_NAMES.enginesChain,
-            },
-          },
-        ]
+          ]
         : [];
     },
 
     servicesEdges() {
-      return this.services
+      return this.services.length
         ? [
-          {
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.mongo,
-              target: HEALTHCHECK_SERVICES_NAMES.api,
-              color: COLORS.healthcheck.edgeGray,
-              label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.mongo),
+            {
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.mongo,
+                target: HEALTHCHECK_SERVICES_NAMES.api,
+                color: COLORS.healthcheck.edgeGray,
+                label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.mongo),
+              },
             },
-          },
-          {
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.events,
-              target: HEALTHCHECK_SERVICES_NAMES.rabbit,
-              color: COLORS.healthcheck.edgeBlack,
+            {
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.events,
+                target: HEALTHCHECK_SERVICES_NAMES.rabbit,
+                color: COLORS.healthcheck.edgeBlack,
+              },
             },
-          },
-          {
-            classes: ['service-edge--diagonal-right'],
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.rabbit,
-              target: HEALTHCHECK_SERVICES_NAMES.api,
-              color: COLORS.healthcheck.edgeGray,
-              label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.rabbit),
+            {
+              classes: ['service-edge--diagonal-right'],
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.rabbit,
+                target: HEALTHCHECK_SERVICES_NAMES.api,
+                color: COLORS.healthcheck.edgeGray,
+                label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.rabbit),
+              },
             },
-          },
-          {
-            classes: ['service-edge--diagonal-left'],
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.timescaleDB,
-              target: HEALTHCHECK_SERVICES_NAMES.api,
-              color: COLORS.healthcheck.edgeGray,
-              label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.timescaleDB),
+            {
+              classes: ['service-edge--diagonal-left'],
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.timescaleDB,
+                target: HEALTHCHECK_SERVICES_NAMES.api,
+                color: COLORS.healthcheck.edgeGray,
+                label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.timescaleDB),
+              },
             },
-          },
-          {
-            classes: ['service-edge--multiline'],
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.redis,
-              target: HEALTHCHECK_SERVICES_NAMES.api,
-              color: COLORS.healthcheck.edgeGray,
-              label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.redis),
+            {
+              classes: ['service-edge--multiline'],
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.redis,
+                target: HEALTHCHECK_SERVICES_NAMES.api,
+                color: COLORS.healthcheck.edgeGray,
+                label: this.getNodeEdgeLabel(HEALTHCHECK_SERVICES_NAMES.redis),
+              },
             },
-          },
-          {
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.api,
-              target: HEALTHCHECK_SERVICES_NAMES.healthcheck,
-              color: COLORS.healthcheck.edgeGray,
+            {
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.api,
+                target: HEALTHCHECK_SERVICES_NAMES.healthcheck,
+                color: COLORS.healthcheck.edgeGray,
+              },
             },
-          },
-          {
-            data: {
-              source: HEALTHCHECK_SERVICES_NAMES.rabbit,
-              target: HEALTHCHECK_ENGINES_NAMES.fifo,
-              color: COLORS.healthcheck.edgeBlack,
+            {
+              data: {
+                source: HEALTHCHECK_SERVICES_NAMES.rabbit,
+                target: HEALTHCHECK_ENGINES_NAMES.fifo,
+                color: COLORS.healthcheck.edgeBlack,
+              },
             },
-          },
-          {
-            classes: ['service-edge--multiline'],
-            data: {
-              source: HEALTHCHECK_ENGINES_NAMES.fifo,
-              target: HEALTHCHECK_SERVICES_NAMES.redis,
-              color: COLORS.healthcheck.edgeGray,
-              label: this.getNodeEdgeLabel(HEALTHCHECK_ENGINES_NAMES.fifo),
+            {
+              classes: ['service-edge--multiline'],
+              data: {
+                source: HEALTHCHECK_ENGINES_NAMES.fifo,
+                target: HEALTHCHECK_SERVICES_NAMES.redis,
+                color: COLORS.healthcheck.edgeGray,
+                label: this.getNodeEdgeLabel(HEALTHCHECK_ENGINES_NAMES.fifo),
+              },
             },
-          },
-        ]
+          ]
         : [];
     },
 
@@ -219,7 +220,10 @@ export default {
         nodes.push(HEALTHCHECK_ENGINES_NAMES.fifo);
 
         if (!parameters[HEALTHCHECK_ENGINES_NAMES.fifo]) {
-          parameters[HEALTHCHECK_ENGINES_NAMES.fifo] = { is_running: true };
+          parameters[HEALTHCHECK_ENGINES_NAMES.fifo] = {
+            status: HEALTHCHECK_STATUSES.healthy,
+            issues: [],
+          };
         }
       }
 
@@ -227,7 +231,6 @@ export default {
         const nodeParameters = get(parameters, name, {});
         const data = {
           ...nodeParameters,
-
           name,
           id: name,
         };
@@ -242,15 +245,13 @@ export default {
     },
 
     enginesEdges() {
-      return this.enginesGraphEdges.map(
-        edge => ({
-          data: {
-            source: edge.from,
-            target: edge.to,
-            color: COLORS.healthcheck.edgeBlack,
-          },
-        }),
-      );
+      return this.enginesGraphEdges.map(edge => ({
+        data: {
+          source: edge.from,
+          target: edge.to,
+          color: COLORS.healthcheck.edgeBlack,
+        },
+      }));
     },
 
     enginesElements() {
@@ -268,7 +269,7 @@ export default {
           halign: 'right',
           valignBox: 'top',
           halignBox: 'right',
-          tpl: data => `<div class="subtitle-1">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: '.service-title--bottom',
@@ -276,7 +277,7 @@ export default {
           halign: 'center',
           valignBox: 'bottom',
           halignBox: 'center',
-          tpl: data => `<div class="subtitle-1">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: `node[id="${HEALTHCHECK_SERVICES_NAMES.rabbit}"]`,
@@ -290,12 +291,12 @@ export default {
           query: '.service-node--without-node',
           valign: 'center',
           halign: 'center',
-          tpl: data => `<div class="headline">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-h5">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: `node[id="${HEALTHCHECK_SERVICES_NAMES.events}"]`,
           halign: 'center',
-          tpl: data => `<div class="headline">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="text-h5">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: '.engine',
@@ -434,9 +435,6 @@ export default {
           direction: true,
           spacingFactor: HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor,
         },
-        /**
-         * Here we are adding the service elements on the left side of fifo-engine
-         */
         ready() {
           const zoom = this.zoom();
           const [fifoNode] = this.getElementById(HEALTHCHECK_ENGINES_NAMES.fifo);
@@ -456,7 +454,8 @@ export default {
               return element;
             }
 
-            let itemDiffFactors = HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS[element.data.id];
+            let itemDiffFactors =
+              HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS[element.data.id];
 
             if (!itemDiffFactors && element.data.id === HEALTHCHECK_SERVICES_NAMES.enginesChain) {
               itemDiffFactors = { x: 0, y: hasSNMPNode && hasSNMPEdge ? -1.5 : -0.5 };
@@ -468,10 +467,13 @@ export default {
 
             return {
               ...element,
-
               renderedPosition: {
-                x: (getHealthcheckNodeRenderedPositionDiff(itemDiffFactors.x) * zoom) + positionWithMinY.x,
-                y: (getHealthcheckNodeRenderedPositionDiff(itemDiffFactors.y) * zoom) + positionWithMinY.y,
+                x:
+                  getHealthcheckNodeRenderedPositionDiff(itemDiffFactors.x) * zoom +
+                  positionWithMinY.x,
+                y:
+                  getHealthcheckNodeRenderedPositionDiff(itemDiffFactors.y) * zoom +
+                  positionWithMinY.y,
               },
             };
           });
@@ -484,17 +486,13 @@ export default {
 
     tooltipOptions() {
       return {
-        offsetY: (HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSize / 2) + 5,
+        offsetY: HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSize / 2 + 5,
         getContent: this.getTooltipContent,
       };
     },
   },
+
   watch: {
-    '$i18n.locale': {
-      handler() {
-        this.$nextTick(this.refreshGraph);
-      },
-    },
     services() {
       this.$nextTick(this.refreshGraph);
     },
@@ -507,22 +505,17 @@ export default {
       this.$nextTick(this.refreshParameters);
     },
   },
+
   methods: {
-    /**
-     * Refresh whole cytoscape graph
-     */
     refreshGraph() {
-      this.$refs.networkGraph.remountCytoscape();
+      this.$refs.networkGraph?.remountCytoscape();
     },
 
-    /**
-     * Refresh data on cytoscape nodes cytoscape
-     */
     refreshParameters() {
       Object.entries(this.enginesParameters).forEach(([nodeId, nodeParameters]) => {
-        const node = this.$refs.networkGraph.$cy.getElementById(nodeId);
+        const node = this.$refs.networkGraph?.$cy?.getElementById(nodeId);
 
-        if (node.length) {
+        if (node?.length) {
           const data = { ...node.data(), ...nodeParameters };
           const color = getHealthcheckNodeColor(data);
 
@@ -537,121 +530,110 @@ export default {
       });
     },
 
-    /**
-     * Get content for the tooltip by node data
-     *
-     * @param {Object} data
-     * @return {string}
-     */
+    getNodeEdgeLabel(name) {
+      const nodeEdgeLabelKey = `healthcheck.nodes.${name}.edgeLabel`;
+
+      return this.$te(nodeEdgeLabelKey) ? this.$t(nodeEdgeLabelKey) : name;
+    },
+
+    getNodeName(name) {
+      const nodeLabelKey = `healthcheck.nodes.${name}.name`;
+
+      return this.$te(nodeLabelKey) ? this.$t(nodeLabelKey) : name;
+    },
+
+    getTooltipText(data = {}) {
+      if (data.is_unknown) {
+        return this.$t('healthcheck.unknown');
+      }
+
+      return (data.issues ?? [])
+        .map((issue) => {
+          const issueKey = `healthcheck.issues.${issue}`;
+
+          return this.$te(issueKey)
+            ? this.$t(issueKey, { name: this.getNodeName(data.name) })
+            : issue;
+        })
+        .join('\n');
+    },
+
     getTooltipContent(data) {
       if (this.getTooltip) {
         return this.getTooltip(data);
       }
 
-      const TOOLTIP_TEXTS_MAP = {
-        [HEALTHCHECK_SERVICES_NAMES.enginesChain]: this.hasInvalidEnginesOrder
+      const tooltipMessage =
+        data.id === HEALTHCHECK_SERVICES_NAMES.enginesChain && this.hasInvalidEnginesOrder
           ? this.$t('healthcheck.invalidEnginesOrder')
-          : '',
-        [HEALTHCHECK_SERVICES_NAMES.timescaleDB]: !data.is_running
-          ? this.$t('healthcheck.metricsUnavailable')
-          : '',
-      };
+          : this.getTooltipText(data);
 
-      const tooltipMessage = TOOLTIP_TEXTS_MAP[data.id] ?? this.getTooltipText(data);
-
-      return tooltipMessage ? `<div class="pre-wrap">${tooltipMessage}</div>` : '';
+          return tooltipMessage ? `<div class="pre-wrap">${tooltipMessage}</div>` : '';
     },
 
-    /**
-     * Get html label for engines chain service node
-     *
-     * @param {string} id
-     * @return {string}
-     */
     getEnginesChainHtmlLabel({ id }) {
-      const nameSpan = `<span class="headline">${this.getNodeName(id)}</span>`;
+      const nameSpan = `<span class="text-h5">${this.getNodeName(id)}</span>`;
       let wrapperDivClass = '';
       let icon = '';
 
       if (this.hasInvalidEnginesOrder) {
-        wrapperDivClass = 'v-chip theme--light px-3 py-1 error white--text cursor-pointer';
-        icon = '<i class="v-icon material-icons theme--dark ml-2">warning</i>';
+        wrapperDivClass =
+          'healthcheck-network-graph__chain-error text-white px-3 py-1 cursor-pointer';
+        icon = '<i class="v-icon material-icons text-white ml-2">warning</i>';
       }
 
       return `<div class="${wrapperDivClass}">${nameSpan}${icon}</div>`;
     },
 
-    /**
-     * Get html label for service node
-     *
-     * @param {Object} data
-     * @return {string}
-     */
     getServiceNodeHtmlLabel(data) {
       const { id, nodes, running_nodes: runningNodes = 0 } = data;
-      const elements = [`<div class="subtitle-1">${this.getNodeName(id)}</div>`];
+      const elements = [`<div class="text-subtitle-1">${this.getNodeName(id)}</div>`];
 
       if (this.showDescription && !isNil(nodes)) {
-        elements.push(getHealthcheckInfoDiv(this.$t('healthcheck.runningNodes', { nodes, runningNodes })));
+        elements.push(
+          getHealthcheckInfoDiv(this.$t('healthcheck.runningNodes', { nodes, runningNodes })),
+        );
       }
 
       return `<div class="ml-2">${elements.join('')}</div>`;
     },
 
-    /**
-     * Get html label for engine node
-     *
-     * @param {string} id
-     * @param {number} time
-     * @param {number} instances
-     * @param {number} minInstances
-     * @param {number} queueLength
-     * @param {number} maxQueueLength
-     * @param {boolean} isTooFewInstances
-     * @param {boolean} isQueueOverflown
-     * @param {boolean} isUnknown
-     * @return {string}
-     */
     getEngineHtmlLabel({
       id,
       time,
       instances,
       min_instances: minInstances,
       queue_length: queueLength,
-      is_too_few_instances: isTooFewInstances,
-      is_queue_overflown: isQueueOverflown,
+      issues = [],
       is_unknown: isUnknown,
     }) {
-      const elements = [`<div class="subtitle-1">${this.getNodeName(id)}</div>`];
+      const isTooFewInstances = issues.includes(HEALTHCHECK_ENGINE_ISSUES.tooFewInstances);
+      const isQueueOverflown = issues.includes(HEALTHCHECK_ENGINE_ISSUES.queueOverflowed);
+      const elements = [`<div class="text-subtitle-1">${this.getNodeName(id)}</div>`];
 
       if (!isUnknown && this.showDescription) {
         elements.push(
-          isNil(time)
-            ? null
-            : getHealthcheckInfoDiv(convertDateToString(time)),
+          isNil(time) ? null : getHealthcheckInfoDiv(convertDateToString(time)),
           isNil(queueLength)
             ? null
             : getHealthcheckInfoDiv(
-              this.$t('healthcheck.queueLength', { queueLength, maxQueueLength: this.maxQueueLength }),
-              isQueueOverflown,
-            ),
+                this.$t('healthcheck.queueLength', {
+                  queueLength,
+                }),
+                isQueueOverflown,
+              ),
           isNil(instances) && isNil(minInstances)
             ? null
             : getHealthcheckInfoDiv(
-              this.$t('healthcheck.instancesCount', { instances, minInstances }),
-              isTooFewInstances,
-            ),
+                this.$t('healthcheck.instancesCount', { instances, minInstances }),
+                isTooFewInstances,
+              ),
         );
       }
 
       return `<div class="ml-2">${elements.filter(Boolean).join('')}</div>`;
     },
 
-    /**
-     * Show modal window for each 'engine' node
-     *
-     * @param {Object} engine
-     */
     showEngineModal(engine) {
       const excludedServices = [
         HEALTHCHECK_SERVICES_NAMES.api,
@@ -674,44 +656,30 @@ export default {
       }
     },
 
-    /**
-     * Show modal window for 'enginesChain' node
-     */
     showEngineChainReferenceModal() {
       this.$modals.show({
         name: MODALS.healthcheckEnginesChainReference,
       });
     },
 
-    /**
-     * Handler for the 'tap' event on node for cytoscape
-     *
-     * @param {Object} target
-     */
+    isWrongEngine(engine = {}) {
+      return engine.status !== HEALTHCHECK_STATUSES.healthy || engine.is_unknown;
+    },
+
     nodeTapHandler({ target }) {
       const engine = target.data();
 
       if (engine.name !== HEALTHCHECK_SERVICES_NAMES.enginesChain) {
         this.showEngineModal(engine);
       } else if (this.hasInvalidEnginesOrder) {
-        this.showEngineChainReferenceModal(engine);
+        this.showEngineChainReferenceModal();
       }
     },
 
-    /**
-     * Handler for the 'mouseover' event on node for cytoscape
-     *
-     * @param {Object} target
-     */
     nodeMouseoverHandler({ target }) {
       target.style('border-color', COLORS.healthcheck.edgeGray);
     },
 
-    /**
-     * Handler for the 'mouseout' event on node for cytoscape
-     *
-     * @param {Object} target
-     */
     nodeMouseoutHandler({ target }) {
       target.style('border-color', target.data('color'));
     },
@@ -722,5 +690,13 @@ export default {
 <style lang="scss" scoped>
 .healthcheck-network-graph {
   overflow: hidden;
+}
+
+:deep(.healthcheck-network-graph__chain-error) {
+  display: inline-flex;
+  align-items: center;
+  color: rgb(var(--v-theme-on-error));
+  background: rgb(var(--v-theme-error));
+  border-radius: 16px;
 }
 </style>

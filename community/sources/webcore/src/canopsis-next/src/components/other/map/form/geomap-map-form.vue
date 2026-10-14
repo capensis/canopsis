@@ -1,29 +1,29 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-name-field
-      v-field="form.name"
+      :model-value="form.name"
       autofocus
       required
+      @update:model-value="updateField('name', $event)"
     />
-    <geomap-editor v-field="form.parameters" />
-  </v-layout>
+    <geomap-editor :form="form.parameters" @update:form="updateField('parameters', $event)" />
+  </c-layout>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 import GeomapEditor from './fields/geomap-editor.vue';
 
 export default {
-  inject: ['$validator'],
   components: { GeomapEditor },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
   props: {
     form: {
       type: Object,
       required: true,
     },
   },
+  emits: ['update:form'],
 };
 </script>

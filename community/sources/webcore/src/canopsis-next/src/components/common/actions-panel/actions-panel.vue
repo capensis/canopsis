@@ -1,28 +1,27 @@
 <template>
-  <div
-    :class="{ 'actions-panel--small': small }"
-    class="actions-panel"
-  >
-    <v-layout align-center>
+  <div :class="{ 'actions-panel--small': small }" class="actions-panel">
+    <c-layout align="center">
       <actions-panel-btn
         v-for="action in preparedActions.inline"
         :key="action.title"
         :action="action"
+        :small="small"
       />
       <actions-panel-menu
-        key="dropdown-menu"
+        v-if="preparedActions.dropDown.length"
+        ref="menuElement"
         :actions="preparedActions.dropDown"
+        :small="small"
       />
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { useDisplay } from 'vuetify';
 
 import { DEFAULT_ALARM_ACTIONS_INLINE_COUNT } from '@/constants';
-
-import { useComponentInstance } from '@/hooks/vue';
 
 import ActionsPanelBtn from './actions-panel-btn.vue';
 import ActionsPanelMenu from './actions-panel-menu.vue';
@@ -32,6 +31,7 @@ export default {
     ActionsPanelBtn,
     ActionsPanelMenu,
   },
+
   props: {
     actions: {
       type: Array,
@@ -50,11 +50,13 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
-    const instance = useComponentInstance();
+    const { xl } = useDisplay();
+    const menuElement = ref(null);
 
     const preparedActions = computed(() => {
-      if (!props.ignoreMediaQuery && instance.$mq !== 'xl') {
+      if (!props.ignoreMediaQuery && !xl.value) {
         return {
           inline: [],
           dropDown: props.actions,
@@ -76,7 +78,11 @@ export default {
       };
     });
 
+    const closeMenu = () => menuElement.value?.closeMenu?.();
+
     return {
+      closeMenu,
+      menuElement,
       preparedActions,
     };
   },
@@ -85,12 +91,25 @@ export default {
 
 <style lang="scss">
 .actions-panel {
-  &__menu-item-loader {
-    margin-right: 32px;
+  &__menu-item {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+  }
+
+  &__menu-item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 
   &--small {
-    .v-btn--icon {
+    .v-btn--icon.v-btn--density-default,
+    .v-btn--icon.v-btn--density-comfortable,
+    .v-btn--icon.v-btn--density-compact {
       width: 24px;
       height: 24px;
 

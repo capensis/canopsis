@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-form Renders \`service-form\` with custom props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div
+    additional-label="Entity patterns"
+    form="[object Object]"
+    patterns-label="Manage Infos"
+  >
+    <service-general-form-stub
+      form="[object Object]"
+      preparestatesettingform="[Function]"
+      templatevars="[object Object]"
+    />
+    <service-manage-infos-form-stub
+      infos=""
+    />
+    <service-entity-patterns-form-stub
+      patterns="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`service-form Renders \`service-form\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div
+    additional-label="Entity patterns"
+    form="[object Object]"
+    patterns-label="Manage Infos"
+  >
+    <service-general-form-stub
+      form="[object Object]"
+      preparestatesettingform="[Function]"
+      templatevars="[object Object]"
+    />
+    <service-manage-infos-form-stub
+      infos=""
+    />
+    <service-entity-patterns-form-stub
+      patterns="[object Object]"
+    />
+  </div>
+</div>
+`;

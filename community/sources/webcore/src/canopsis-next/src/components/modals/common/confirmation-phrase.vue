@@ -1,113 +1,109 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ config.title }}</span>
       </template>
-      <template #text="">
-        <c-alert
-          color="warning"
-          icon="info"
-        >
-          <span
-            v-html="config.text"
-            class="pre-line text-body-2"
-          />
-        </c-alert>
+
+      <template #text>
+        <v-alert class="mb-3 pre-line" type="warning">
+          <span v-html="sanitizedText" class="text-body-2" />
+        </v-alert>
+
         <div class="my-3">
           <p v-html="sanitizedPhraseText" class="mb-2" />
-          <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>
+          <code v-text="originalPhrase" class="text-black bg-grey-lighten-2 d-inline-block pa-1" />
         </div>
-        <v-text-field
+
+        <c-text-field
           v-model="phrase"
-          :label="$t('modals.confirmationPhrase.phrase')"
+          :label="t('modals.confirmationPhrase.phrase')"
           class="mt-2"
           autofocus
         />
+
         <component
           v-if="config.additionalForm?.component"
           :is="config.additionalForm.component"
           v-model="additionalForm"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled || !phrasesEqual"
-          class="primary"
+          :disabled="submitting || !phrasesEqual"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.yes') }}
+          {{ t('common.yes') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed, ref } from 'vue';
 
 import { sanitizeHtml } from '@/helpers/html';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
-/**
- * Confirmation phrase modal
- */
 export default {
-  name: MODALS.confirmationPhrase,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: { ModalWrapper },
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
-
+    const { t } = useI18n();
+    const modals = useModals();
     const phrase = ref('');
+    const submitting = ref(false);
+    const config = computed(() => props.modal.config ?? {});
     const additionalForm = ref(config.value.additionalForm?.form);
-
     const originalPhrase = computed(() => config.value.phrase);
     const phrasesEqual = computed(() => phrase.value === originalPhrase.value);
+    const sanitizedText = computed(() => sanitizeHtml(config.value.text || ''));
     const sanitizedPhraseText = computed(() => sanitizeHtml(config.value.phraseText || ''));
 
-    const { submitting, isDisabled, submit } = useSubmittableForm({
-      form: { phrase },
-      method: async () => {
-        if (phrasesEqual.value) {
-          await config.value.action?.(additionalForm.value);
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-          close();
-        }
-      },
-    });
+    const submit = async () => {
+      if (!phrasesEqual.value) {
+        return;
+      }
+
+      try {
+        submitting.value = true;
+
+        await config.value.action?.(additionalForm.value);
+
+        closeModal();
+      } finally {
+        submitting.value = false;
+      }
+    };
 
     return {
+      t,
       phrase,
       additionalForm,
       config,
       originalPhrase,
       phrasesEqual,
+      sanitizedText,
       sanitizedPhraseText,
       submitting,
-      isDisabled,
+      closeModal,
       submit,
     };
   },

@@ -1,90 +1,103 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <widget-template-form v-model="form" />
+
+      <template #text>
+        <widget-template-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          type="submit"
           color="primary"
+          type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS } from '@/constants';
 
-import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/entities/widget/template/form';
+import { formToWidgetTemplate, widgetTemplateToForm } from '@/helpers/entities/widget/template/form';
+import { getWidgetTemplateModalTitle } from '@/helpers/entities/widget/template/modal-title';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useI18n } from '@/hooks/i18n';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import WidgetTemplateForm from '@/components/other/widget-template/form/widget-template-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createWidgetTemplate,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: {
-    WidgetTemplateForm,
-    ModalWrapper,
-  },
+
+  components: { WidgetTemplateForm },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
-    const { t } = useI18n();
+    const { t, te } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const form = useForm({
+      initialValues: widgetTemplateToForm(config.value.widgetTemplate),
+    });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-    const form = ref(widgetTemplateToForm(config.value.widgetTemplate));
+    const title = computed(() => {
+      if (config.value.title) {
+        return config.value.title;
+      }
 
-    const title = computed(() => config.value.title ?? t('modals.createWidgetTemplate.create.title'));
+      return getWidgetTemplateModalTitle({
+        t,
+        te,
+        type: values.value.type ?? config.value.widgetTemplate?.type,
+        isEdit: !!config.value.widgetTemplate?._id,
+      });
+    });
+    const submitLabel = computed(() => t(config.value.widgetTemplate?._id ? 'common.save' : 'common.create'),
+    );
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToWidgetTemplate(form.value));
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToWidgetTemplate(values.value));
 
-        close();
-      },
+      closeModal();
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
+      t,
       title,
-      submit,
-      isDisabled,
       submitting,
+      submitLabel,
+      submit,
+      closeModal,
     };
   },
 };

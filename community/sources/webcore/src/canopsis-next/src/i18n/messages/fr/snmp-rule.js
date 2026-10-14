@@ -17,13 +17,13 @@ export default {
   uploadMib: 'Envoyer un fichier MIB',
   addSnmpRule: 'Ajouter une règle SNMP',
   uploadedMibPopup:
-    'Le fichier a été téléchargé.\nNotifications: {notification}\nObjets: {object}'
-    + '|Les fichiers ont été téléchargés.\nNotifications: {notification}\nObjets: {object}',
+    'Le fichier a été téléchargé.\nNotifications: {notification}\nObjets: {object}' +
+    '|Les fichiers ont été téléchargés.\nNotifications: {notification}\nObjets: {object}',
   massRemove: 'Supprimer les règles SNMP',
   massEnable: 'Activer les règles SNMP',
   massDisable: 'Désactiver les règles SNMP',
   states: {
-    [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+    [SNMP_TEMPLATE_STATE_STATES.info]: 'OK',
     [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',
     [SNMP_TEMPLATE_STATE_STATES.major]: 'Majeur',
     [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critique',

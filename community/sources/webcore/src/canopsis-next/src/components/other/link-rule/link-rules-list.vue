@@ -17,7 +17,6 @@
         :enablable="updatable"
         :disablable="updatable"
         link-rule
-        small
         @clear:items="clearSelected"
         @refresh="$emit('refresh')"
       />
@@ -26,33 +25,23 @@
       <c-enabled :value="item.enabled" />
     </template>
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ dateToString(item.updated) }}
     </template>
     <template #actions="{ item }">
-      <v-layout>
-        <c-action-btn
-          v-if="updatable"
-          type="edit"
-          @click="$emit('edit', item)"
-        />
-        <c-action-btn
-          v-if="duplicable"
-          type="duplicate"
-          @click="$emit('duplicate', item)"
-        />
-        <c-action-btn
-          v-if="removable"
-          type="delete"
-          @click="$emit('remove', item._id)"
-        />
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
         <c-db-export-btn :id="item._id" link-rule />
-      </v-layout>
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -87,12 +76,15 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:options', 'edit', 'duplicate', 'remove', 'refresh'],
+
   setup() {
     const { t } = useI18n();
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
       { text: t('common.lastModifiedOn'), value: 'updated' },
       { text: t('common.lastModifiedBy'), value: 'author.display_name' },
       {
@@ -102,8 +94,11 @@ export default {
       },
     ]);
 
+    const dateToString = date => convertDateToString(date);
+
     return {
       headers,
+      dateToString,
     };
   },
 };

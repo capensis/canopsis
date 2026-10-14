@@ -1,103 +1,98 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        {{ title }}
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <external-data-table-form
-          v-model="form"
-          :is-new="isNew"
-          :from-config="fromConfig"
-        />
+
+      <template #text>
+        <external-data-table-form :is-new="isNew" :from-config="fromConfig" />
       </template>
-      <template #actions="">
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
+        </v-btn>
+
         <v-btn
           :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          :disabled="isDisabled"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed } from 'vue';
 
 import { externalDataTableToForm } from '@/helpers/entities/external-data-table/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import ExternalDataTableForm from '@/components/other/external-data-table/form/external-data-table-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createExternalDataTable,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     ExternalDataTableForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const externalDataTable = computed(() => config.value.externalDataTable);
+    const isNew = computed(() => !externalDataTable.value);
+    const fromConfig = computed(() => externalDataTable.value?.from_config);
+    const title = computed(
+      () => config.value.title || t('modals.createExternalDataTable.create.title'),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const form = ref(externalDataTableToForm(config.value.externalDataTable));
+    const form = useForm({
+      initialValues: externalDataTableToForm(externalDataTable.value),
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(form.value);
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-        close();
-      },
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(values.value);
+
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    const title = computed(() => config.value.title || t('modals.createExternalDataTable.create.title'));
-    const isNew = computed(() => !config.value.externalDataTable);
-    const fromConfig = computed(() => config.value.externalDataTable?.from_config);
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
-
-      isDisabled,
+      t,
       submitting,
-
       title,
       isNew,
       fromConfig,
-
+      submitLabel,
       submit,
-      close,
+      closeModal,
     };
   },
 };

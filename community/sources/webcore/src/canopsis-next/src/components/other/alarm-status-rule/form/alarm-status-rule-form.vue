@@ -1,56 +1,41 @@
 <template>
-  <v-layout class="gap-2" column>
+  <c-layout gap="2" column>
     <c-enabled-field
-      v-field="form.enabled"
+      v-model="enabledField"
       :disabled="disablable || defaultRule"
       hide-details
       with-background
     />
-    <c-name-field
-      v-field="form.name"
-      autofocus
-      required
-    />
-    <c-duration-field
-      v-field="form.duration"
-      required
-    />
-    <c-priority-field v-field="form.priority" :disabled="defaultRule" />
-    <c-number-field
-      v-if="flapping"
-      v-field="form.freq_limit"
-      :label="$t('common.frequencyLimit')"
-      :min="1"
-      name="freq_limit"
-    />
-    <c-description-field
-      v-field="form.description"
-      required
-    />
-    <alarm-status-rule-patterns-form
-      v-if="!defaultRule"
-      v-field="form.patterns"
-      :flapping="flapping"
-      class="mt-2"
-    />
-  </v-layout>
+
+    <c-form-general-patterns-tabs>
+      <template #general="{ setRef }">
+        <alarm-status-rule-general-form
+          :ref="setRef"
+          :flapping="flapping"
+          :default-rule="defaultRule"
+        />
+      </template>
+
+      <template v-if="!defaultRule" #patterns="{ setRef }">
+        <alarm-status-rule-patterns-form :ref="setRef" :flapping="flapping" />
+      </template>
+    </c-form-general-patterns-tabs>
+  </c-layout>
 </template>
 
 <script>
+import { useFormModel } from '@/hooks/form';
+
+import AlarmStatusRuleGeneralForm from './alarm-status-rule-general-form.vue';
 import AlarmStatusRulePatternsForm from './alarm-status-rule-patterns-form.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { AlarmStatusRulePatternsForm },
-  model: {
-    prop: 'form',
-    event: 'input',
+  components: {
+    AlarmStatusRuleGeneralForm,
+    AlarmStatusRulePatternsForm,
   },
+
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     flapping: {
       type: Boolean,
       default: false,
@@ -63,6 +48,14 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const enabledField = useFormModel('enabled');
+
+    return {
+      enabledField,
+    };
   },
 };
 </script>

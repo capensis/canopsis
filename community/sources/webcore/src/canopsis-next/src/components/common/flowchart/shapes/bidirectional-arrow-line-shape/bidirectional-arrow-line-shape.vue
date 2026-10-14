@@ -4,7 +4,6 @@
     :readonly="readonly"
     :marker-start="`url(#${shape._id}-start)`"
     :marker-end="`url(#${shape._id}-end)`"
-    v-on="$listeners"
   >
     <marker
       :id="`${shape._id}-end`"

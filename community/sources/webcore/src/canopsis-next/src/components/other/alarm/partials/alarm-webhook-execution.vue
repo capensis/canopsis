@@ -1,41 +1,32 @@
 <template>
-  <v-layout column>
-    <v-layout
-      class="gap-3"
-      align-center
-      justify-space-between
-    >
-      <v-flex xs10>
+  <c-layout column>
+    <v-row align="center" justify="space-between" density="comfortable">
+      <v-col cols="10">
         <c-alarm-field
-          v-field="alarm"
+          :value="alarm"
           :disabled="pending || isExecutionRunning"
           :params="alarmsPatternsParams"
           name="alarms"
+          @update:value="$emit('update:alarm', $event)"
         />
-      </v-flex>
-      <v-flex xs2>
+      </v-col>
+      <v-col cols="2">
         <v-btn
           :disabled="hasErrors || !alarm"
           :loading="pending || isExecutionRunning"
-          class="white--text"
+          class="text-white"
           color="orange"
           block
           @click="runTestExecution"
         >
           {{ $t('alarm.runTest') }}
         </v-btn>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <v-expand-transition>
-      <v-layout
-        v-if="executionStatus"
-        column
-      >
-        <v-layout
-          class="mb-4"
-          align-center
-        >
-          <span class="text-subtitle-1 mr-5">{{ $t('common.webhookStatus') }}:</span>
+      <c-layout v-if="executionStatus" column>
+        <c-layout class="mb-4" align="center">
+          <span class="text-subtitle-1 mr-5"> {{ $t('common.webhookStatus') }}: </span>
           <alarm-webhook-execution-status
             :running="isExecutionRunning"
             :success="isExecutionSucceeded"
@@ -46,15 +37,15 @@
             type="delete"
             @click="clearWebhookStatus"
           />
-        </v-layout>
+        </c-layout>
         <v-card v-if="isSomeOneWebhookStarted">
           <v-card-text>
             <slot :webhooks="executionStatus.webhooks" name="webhooks" />
           </v-card-text>
         </v-card>
-      </v-layout>
+      </c-layout>
     </v-expand-transition>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -71,10 +62,7 @@ import AlarmWebhookExecutionStatus from './alarm-webhook-execution-status.vue';
 
 export default {
   components: { AlarmWebhookExecutionStatus },
-  model: {
-    prop: 'alarm',
-    event: 'input',
-  },
+  emits: ['update:alarm', 'run:execution', 'clear:execution'],
   props: {
     alarm: {
       type: String,
@@ -103,9 +91,9 @@ export default {
     );
     const isExecutionSucceeded = computed(() => isWebhookExecutionSucceeded(props.executionStatus));
     const isExecutionFailed = computed(() => isWebhookExecutionFailed(props.executionStatus));
-    const isSomeOneWebhookStarted = computed(() => props.executionStatus?.webhooks.some(
-      webhook => !isWebhookExecutionWaiting(webhook),
-    ));
+    const isSomeOneWebhookStarted = computed(
+      () => props.executionStatus?.webhooks.some(webhook => !isWebhookExecutionWaiting(webhook)),
+    );
 
     const runTestExecution = () => emit('run:execution');
     const clearWebhookStatus = () => emit('clear:execution');

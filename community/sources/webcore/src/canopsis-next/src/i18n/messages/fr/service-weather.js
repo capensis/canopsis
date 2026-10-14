@@ -37,6 +37,9 @@ export default {
     [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Non acquittées',
     [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Sous PBh',
     [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acquittées sous PBh',
+    [SERVICE_WEATHER_STATE_COUNTERS.paused]: 'En pause',
+    [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: 'Inactives acquittées',
+    [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: 'Dépendances inactives',
   },
   stateCountersTooltips: {
     [SERVICE_WEATHER_STATE_COUNTERS.all]: 'alarmes au total',
@@ -50,5 +53,8 @@ export default {
     [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'non acquittées',
     [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'sous PBh',
     [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'acquittées sous PBh',
+    [SERVICE_WEATHER_STATE_COUNTERS.paused]: 'alarmes en pause',
+    [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedInactive]: 'alarmes inactives acquittées',
+    [SERVICE_WEATHER_STATE_COUNTERS.inactiveDepends]: 'dépendances inactives',
   },
 };

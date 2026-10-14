@@ -13,18 +13,15 @@
       :item="placeholder"
       class="grid-layout__placeholder primary darken-1"
     />
+
     <grid-item
-      v-for="layoutItem in layout"
-      v-bind="itemBind"
+      v-for="layoutItem in currentLayout"
+      v-bind="itemProps"
       :key="layoutItem.i"
       :item="layoutItem"
-      v-on="itemOn"
     >
       <template #default="props">
-        <slot
-          name="item"
-          v-bind="props"
-        />
+        <slot name="item" v-bind="props" />
       </template>
     </grid-item>
   </div>
@@ -47,14 +44,14 @@ import GridItem from './partials/grid-item.vue';
 export default {
   components: { GridItem },
   mixins: [formBaseMixin],
-  model: {
-    prop: 'layout',
-    event: 'input',
-  },
   props: {
+    modelValue: {
+      type: Array,
+      default: undefined,
+    },
     layout: {
       type: Array,
-      default: () => [],
+      default: undefined,
     },
     disabled: {
       type: Boolean,
@@ -81,6 +78,7 @@ export default {
       default: 50,
     },
   },
+  emits: ['update:modelValue', 'update:layout'],
   data() {
     return {
       width: null,
@@ -96,9 +94,13 @@ export default {
     };
   },
   computed: {
+    currentLayout() {
+      return this.modelValue ?? this.layout ?? [];
+    },
+
     itemBind() {
       return {
-        layout: this.layout,
+        layout: this.currentLayout,
         containerWidth: this.width,
         rowHeight: this.rowHeight,
         columnsCount: this.columnsCount,
@@ -109,17 +111,24 @@ export default {
       };
     },
 
-    itemOn() {
+    itemListeners() {
       if (this.disabled) {
         return {};
       }
 
       return {
-        resize: this.resizeItemHandler,
-        resized: this.resizedItemHandler,
-        move: this.moveItemHandler,
-        moved: this.movedItemHandler,
-        toggle: this.toggleAutoHeightHandler,
+        onResize: this.resizeItemHandler,
+        onResized: this.resizedItemHandler,
+        onMove: this.moveItemHandler,
+        onMoved: this.movedItemHandler,
+        onToggle: this.toggleAutoHeightHandler,
+      };
+    },
+
+    itemProps() {
+      return {
+        ...this.itemBind,
+        ...this.itemListeners,
       };
     },
 
@@ -135,11 +144,11 @@ export default {
 
     enabledLayoutStyle() {
       const [, marginY] = this.margin;
-      const rowCount = calculateLayoutRowsCount(this.layout);
-      const bottom = calculateLayoutBottom(this.layout);
+      const rowCount = calculateLayoutRowsCount(this.currentLayout);
+      const bottom = calculateLayoutBottom(this.currentLayout);
 
       return {
-        height: `${(bottom * this.rowHeight) + (marginY * rowCount) + marginY}px`,
+        height: `${bottom * this.rowHeight + marginY * rowCount + marginY}px`,
       };
     },
 
@@ -165,15 +174,22 @@ export default {
       this.resizeObserverHandler();
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.removeAllListeners();
   },
   methods: {
+    updateLayout(layout) {
+      this.$emit('update:modelValue', layout);
+      this.$emit('update:layout', layout);
+
+      return layout;
+    },
+
     toggleAutoHeightHandler(layoutItem) {
       const newLayoutItem = { ...layoutItem, autoHeight: !layoutItem.autoHeight };
-      const newLayout = compactLayout(replaceLayoutItemInLayout(this.layout, newLayoutItem));
+      const newLayout = compactLayout(replaceLayoutItemInLayout(this.currentLayout, newLayoutItem));
 
-      this.updateModel(newLayout);
+      this.updateLayout(newLayout);
     },
 
     /**
@@ -187,14 +203,14 @@ export default {
       this.resizing = true;
 
       const newLayoutItem = { ...layoutItem, h, w };
-      const newLayout = compactLayout(replaceLayoutItemInLayout(this.layout, newLayoutItem));
+      const newLayout = compactLayout(replaceLayoutItemInLayout(this.currentLayout, newLayoutItem));
 
       this.placeholder = {
         ...this.placeholder,
         ...newLayoutItem,
       };
 
-      this.updateModel(newLayout);
+      this.updateLayout(newLayout);
     },
 
     /**
@@ -206,9 +222,9 @@ export default {
      */
     resizedItemHandler(layoutItem, w, h) {
       const newLayoutItem = { ...layoutItem, w, h };
-      const newLayout = compactLayout(replaceLayoutItemInLayout(this.layout, newLayoutItem));
+      const newLayout = compactLayout(replaceLayoutItemInLayout(this.currentLayout, newLayoutItem));
 
-      this.updateModel(newLayout);
+      this.updateLayout(newLayout);
       this.resizing = false;
     },
 
@@ -222,14 +238,14 @@ export default {
     moveItemHandler(layoutItem, x, y) {
       this.moving = true;
 
-      const newLayout = compactLayout(moveLayoutItem(this.layout, layoutItem, x, y, true));
+      const newLayout = compactLayout(moveLayoutItem(this.currentLayout, layoutItem, x, y, true));
 
       this.placeholder = {
         ...this.placeholder,
         ...findLayoutItem(newLayout, layoutItem.i),
       };
 
-      this.updateModel(newLayout);
+      this.updateLayout(newLayout);
     },
 
     /**
@@ -240,9 +256,9 @@ export default {
      * @param {number} y
      */
     movedItemHandler(layoutItem, x, y) {
-      const newLayout = compactLayout(moveLayoutItem(this.layout, layoutItem, x, y, true));
+      const newLayout = compactLayout(moveLayoutItem(this.currentLayout, layoutItem, x, y, true));
 
-      this.updateModel(newLayout);
+      this.updateLayout(newLayout);
       this.moving = false;
     },
 
@@ -284,7 +300,8 @@ export default {
   }
 
   &__placeholder {
-    opacity: .35;
+    background-color: rgb(var(--v-theme-primary)) !important;
+    opacity: 0.35;
 
     &:after {
       content: none !important;

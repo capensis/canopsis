@@ -1,5 +1,9 @@
-import { PATTERNS_FIELDS } from '@/constants';
+import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
+import {
+  dynamicInfoInformationToForm,
+  formToDynamicInfoInformation,
+} from '@/helpers/entities/dynamic-info/information/form';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 /**
@@ -24,18 +28,27 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
 /**
  * Convert a dynamic information's object to a dynamic information's form object
  *
- * @param {DynamicInfo} dynamicInfo
+ * @param {DynamicInfo} [dynamicInfo={}]
  * @returns {DynamicInfoForm}
  */
-export const dynamicInfoToForm = (dynamicInfo = {}) => ({
-  _id: dynamicInfo._id ?? '',
-  name: dynamicInfo.name ?? '',
-  enabled: dynamicInfo.enabled ?? true,
-  description: dynamicInfo.description ?? '',
-  disable_during_periods: dynamicInfo.disable_during_periods ?? [],
-  patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
-  infos: dynamicInfo.infos ?? [],
-});
+export const dynamicInfoToForm = (dynamicInfo = {}) => {
+  const infos = (
+    dynamicInfo.infos?.length
+      ? dynamicInfo.infos
+      : [{ type: DYNAMIC_INFO_INFORMATION_TYPES.setToInfo }]
+  ).map(dynamicInfoInformationToForm);
+
+  return {
+    infos,
+
+    _id: dynamicInfo._id ?? '',
+    name: dynamicInfo.name ?? '',
+    enabled: dynamicInfo.enabled ?? true,
+    description: dynamicInfo.description ?? '',
+    disable_during_periods: dynamicInfo.disable_during_periods ?? [],
+    patterns: filterPatternsToForm(dynamicInfo, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+  };
+};
 
 /**
  * Convert a dynamic information's form object to a API compatible dynamic info object
@@ -44,10 +57,11 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => ({
  * @returns {DynamicInfo}
  */
 export const formToDynamicInfo = (form) => {
-  const { patterns, ...dynamicInfo } = form;
+  const { patterns, infos = [], ...dynamicInfo } = form;
 
   return {
     ...dynamicInfo,
+    infos: infos.map(formToDynamicInfoInformation),
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 };

@@ -1,143 +1,122 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <v-layout class="gap-2" column>
-          <c-enabled-field v-model="form.enabled" with-background />
-          <template-testing-test-variables-wrapper
-            v-model="form"
-            :rule-id="dynamicInfoId"
-            :type="type"
-          >
-            <template #default="{ templateVars, copyVars }">
-              <dynamic-info-form
-                v-model="form"
-                :is-disabled-id-field="isDisabledIdField"
-                :template-vars="templateVars"
-                :copy-vars="copyVars"
-              />
-            </template>
-          </template-testing-test-variables-wrapper>
-        </v-layout>
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
+
+      <template #text>
+        <dynamic-info-form
+          :rule-id="dynamicInfoId"
+          :is-disabled-id-field="isDisabledIdField"
         />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
           {{ $t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitDisabled"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS, MODALS } from '@/constants';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createDynamicInfo,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
+
   components: {
-    DynamicInfoForm,
     AiChatSidebar,
-    TemplateTestingTestVariablesWrapper,
-    ModalWrapper,
+    DynamicInfoForm,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
-
-    const { config, close } = useInnerModal(props);
     const { t } = useI18n();
+    const modals = useModals();
 
-    const form = ref(dynamicInfoToForm(config.value.dynamicInfo));
+    const config = computed(() => props.modal.config ?? {});
+    const isNew = computed(() => !config.value.dynamicInfo?._id);
+    const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
+    const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
+    const isDisabledIdField = computed(
+      () => !!(config.value.isDisabledIdField || config.value.submittingIdField),
+    );
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+    const { values, handleSubmit, submitting } = useForm({
+      initialValues: dynamicInfoToForm(config.value.dynamicInfo),
+    });
 
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
       modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.dynamicInfo?._id,
+      ruleId: dynamicInfoId,
       context: LLM_SOCKET_CONTEXTS.dynamicInfos,
     });
+    const submitDisabled = computed(() => submitting.value || chatOptions.value.attrs.pending);
 
-    const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
-    const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
-    const isDisabledIdField = computed(() => config.value.isDisabledIdField);
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        const result = await config.value.action?.(formToDynamicInfo(form.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToDynamicInfo(values.value));
 
-        await config.value.afterSubmit?.(result);
+      await config.value.afterSubmit?.(result);
 
-        close();
-
-        return result;
-      },
+      closeModal();
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      submit,
+      form: values,
+      close: closeModal,
+    });
 
     return {
-      form,
       config,
-      dynamicInfoId,
-      type,
-      title,
-      isDisabledIdField,
-      isDisabled,
       submitting,
+      submitDisabled,
+      isNew,
+      title,
+      submitLabel,
+      values,
+      dynamicInfoId,
+      isDisabledIdField,
       chatShown,
       chatOptions,
       submit,
-      close,
+      closeModal,
     };
   },
 };

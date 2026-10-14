@@ -1,5 +1,5 @@
-import { escapeRegExp } from 'lodash';
 import Handlebars from 'handlebars';
+import { escapeRegExp } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 

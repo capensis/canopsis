@@ -1,34 +1,39 @@
 <template>
-  <v-layout class="gap-2">
-    <v-flex v-bind="flexSizeProp">
-      <c-select-field
-        v-field="value.type"
+  <v-row class="flex-grow-0" density="compact">
+    <v-col :cols="hasParameterField ? 4 : 6">
+      <c-select
+        :model-value="value.type"
         :label="$t('request.whereToAdd')"
         :name="`${name}.type`"
         :disabled="disabled"
         :required="required"
         :items="types"
+        item-title="text"
+        item-value="value"
+        @update:model-value="updateField('type', $event)"
       />
-    </v-flex>
-    <v-flex v-if="hasParameterField" v-bind="flexSizeProp">
-      <v-text-field
-        v-field="value.parameter"
+    </v-col>
+    <v-col v-if="hasParameterField" cols="4">
+      <c-text-field
+        :model-value="value.parameter"
         :label="$t('request.parameterName')"
         :name="`${name}.parameter`"
         :disabled="disabled"
         :required="required"
+        @update:model-value="updateField('parameter', $event)"
       />
-    </v-flex>
-    <v-flex v-bind="flexSizeProp">
+    </v-col>
+    <v-col :cols="hasParameterField ? 4 : 6">
       <external-auth-token-field
-        v-field="value.rule"
+        :value="value.rule"
         :label="$t('request.tokenValue')"
         :name="`${name}.rule`"
         :disabled="disabled"
         :required="required"
+        @update:value="updateField('rule', $event)"
       />
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -36,16 +41,14 @@ import { computed } from 'vue';
 
 import { REQUEST_AUTH_TOKEN_TYPES } from '@/constants';
 
+import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
 import ExternalAuthTokenField from '@/components/other/external-auth-token/form/fields/external-auth-token-field.vue';
 
 export default {
+  emits: ['update:value'],
   components: { ExternalAuthTokenField },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Object,
@@ -64,36 +67,32 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
 
     const types = computed(() => Object.values(REQUEST_AUTH_TOKEN_TYPES).map(type => ({
-      value: type,
-      text: t(`request.authTokenTypes.${type}`),
-    })));
+        value: type,
+        text: t(`request.authTokenTypes.${type}`),
+      })),
+    );
 
     const isAnyHeaderAuthorizationType = computed(() => [
-      REQUEST_AUTH_TOKEN_TYPES.headerAuthorization,
-      REQUEST_AUTH_TOKEN_TYPES.headerAuthorizationBearer,
-    ].includes(props.value.type));
+        REQUEST_AUTH_TOKEN_TYPES.headerAuthorization,
+        REQUEST_AUTH_TOKEN_TYPES.headerAuthorizationBearer,
+      ].includes(props.value.type),
+    );
 
-    const isHeaderCustomParameterType = computed(() => (
-      props.value.type === REQUEST_AUTH_TOKEN_TYPES.headerCustomParameter
-    ));
+    const isHeaderCustomParameterType = computed(
+      () => props.value.type === REQUEST_AUTH_TOKEN_TYPES.headerCustomParameter,
+    );
 
     const isPayloadType = computed(() => props.value.type === REQUEST_AUTH_TOKEN_TYPES.payload);
     const isUrlType = computed(() => props.value.type === REQUEST_AUTH_TOKEN_TYPES.url);
 
-    const hasParameterField = computed(() => (
-      isHeaderCustomParameterType.value || isPayloadType.value || isUrlType.value
-    ));
-
-    const flexSizeProp = computed(() => {
-      if (hasParameterField.value) {
-        return { xs4: true };
-      }
-      return { xs6: true };
-    });
+    const hasParameterField = computed(
+      () => isHeaderCustomParameterType.value || isPayloadType.value || isUrlType.value,
+    );
 
     return {
       types,
@@ -102,7 +101,7 @@ export default {
       isPayloadType,
       isUrlType,
       hasParameterField,
-      flexSizeProp,
+      updateField,
     };
   },
 };

@@ -1,85 +1,89 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
+    <c-modal-wrapper close>
       <template #title>
         <span>{{ title }}</span>
       </template>
+
       <template #text>
-        <junit-state-setting-form v-model="form" />
+        <junit-state-setting-form />
       </template>
+
       <template #actions>
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed } from 'vue';
 
-import { junitStateSettingToForm, formToJunitStateSetting } from '@/helpers/entities/state-setting/junit/form';
+import {
+  formToJunitStateSetting,
+  junitStateSettingToForm,
+} from '@/helpers/entities/state-setting/junit/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { authMixin } from '@/mixins/auth';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import JunitStateSettingForm from '@/components/other/state-setting/junit/form/junit-state-setting-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createJunitStateSetting,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+  components: { JunitStateSettingForm },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: {
-    JunitStateSettingForm,
-    ModalWrapper,
-  },
-  mixins: [
-    modalInnerMixin,
-    authMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const title = computed(() => config.value.title || t('modals.createJunitStateSetting.title'));
+
+    const form = useForm({
+      initialValues: junitStateSettingToForm(config.value.stateSetting),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
+
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToJunitStateSetting(values.value));
+
+      closeModal();
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
+
     return {
-      form: junitStateSettingToForm(this.modal.config.stateSetting),
+      t,
+      title,
+      isSubmitting,
+      submit,
+      closeModal,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createJunitStateSetting.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToJunitStateSetting(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

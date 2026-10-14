@@ -6,11 +6,15 @@ export const permissionsWidgetsAlarmsListRemediationInstructionsFilters = {
   mixins: [authMixin],
   computed: {
     hasAccessToRemediationInstructionsFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter);
+      return this.checkAccess(
+        USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter,
+      );
     },
 
     hasAccessToUserRemediationInstructionsFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter);
+      return this.checkAccess(
+        USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter,
+      );
     },
   },
 };

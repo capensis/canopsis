@@ -1,33 +1,35 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const useRemediationJobStoreModule = () => useStoreModuleHooks('remediationJob');
+import { useRemediationJobStore } from '@/stores/modules/remediation-job';
 
 /**
- * Hook to access remediation job store.
+ * Remediation job store facade.
  *
- * @returns {Object} An object containing getters and actions for remediation jobs.
+ * @returns {Object}
  */
 export const useRemediationJob = () => {
-  const { useGetters, useActions } = useRemediationJobStoreModule();
+  const remediationJobStore = useRemediationJobStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(remediationJobStore);
 
-  const getters = useGetters({
-    remediationJobs: 'items',
-    remediationJobsPending: 'pending',
-    remediationJobsMeta: 'meta',
-  });
+  // TODO: Ask backend to add a dedicated bulk route for remediation jobs.
+  const bulkRemoveRemediationJobs = async ({ data = [] } = {}) => {
+    await Promise.all(data.map(({ _id: id }) => remediationJobStore.remove({ id })));
 
-  const actions = useActions({
-    fetchRemediationJobsList: 'fetchList',
-    fetchRemediationJobsListWithPreviousParams: 'fetchListWithPreviousParams',
-    fetchRemediationJobsListWithoutStore: 'fetchListWithoutStore',
-    createRemediationJob: 'create',
-    updateRemediationJob: 'update',
-    removeRemediationJob: 'remove',
-    bulkRemoveRemediationJobs: 'bulkRemove',
-  });
+    return [];
+  };
 
   return {
-    ...getters,
-    ...actions,
+    remediationJobs: items,
+    remediationJobsMeta: meta,
+    remediationJobsPending: pending,
+    remediationJobsFetchingParams: fetchingParams,
+
+    fetchRemediationJobsList: remediationJobStore.fetchList,
+    fetchRemediationJobsListWithPreviousParams: remediationJobStore.fetchListWithPreviousParams,
+    fetchRemediationJobsListWithoutStore: remediationJobStore.fetchListWithoutStore,
+    createRemediationJob: remediationJobStore.create,
+    updateRemediationJob: remediationJobStore.update,
+    removeRemediationJob: remediationJobStore.remove,
+    bulkRemoveRemediationJobs,
   };
 };

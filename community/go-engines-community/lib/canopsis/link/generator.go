@@ -2,15 +2,10 @@ package link
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sort"
-	"sync"
-	"text/template"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/js"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -21,14 +16,6 @@ import (
 )
 
 const workers = 10
-const jsFuncName = "generate"
-
-var (
-	ErrValueIsntSlice      = errors.New("value is not slice")
-	ErrValueIsntSliceOrMap = errors.New("value is not slice or map")
-	ErrLabelIsMissing      = errors.New("label is missing")
-	ErrURLIsMissing        = errors.New("url is missing")
-)
 
 func NewGenerator(
 	client mongo.DbClient,
@@ -44,6 +31,7 @@ func NewGenerator(
 		tplExecutor:             tplExecutor,
 		externalDataGetter:      externalDataGetter,
 		logger:                  logger,
+		ruleProvider:            NewRuleProvider(client, tplExecutor, logger),
 	}
 }
 
@@ -55,9 +43,7 @@ type generator struct {
 	tplExecutor             libtemplate.Executor
 	externalDataGetter      externaldata.Getter
 	logger                  zerolog.Logger
-
-	rulesMx sync.RWMutex
-	rules   []parsedRule
+	ruleProvider            RuleProvider
 }
 
 type AlarmWithData struct {
@@ -76,37 +62,12 @@ type entityWithAlarm struct {
 	Alarm        *types.Alarm `bson:"alarm"`
 }
 
-type parsedRule struct {
-	ID            string
-	Type          string
-	AlarmPattern  pattern.Alarm
-	EntityPattern pattern.Entity
-	ExternalData  []externaldata.ParsedRefParameters
-	Links         []Parameters
-	UrlTpls       []*template.Template
-	LabelTpls     []*template.Template
-	CodeExecutor  js.Executor
-}
-
-type linkWithCategory struct {
-	Link
-	Category string
-}
-
 func (g *generator) Load(ctx context.Context) error {
-	rules, err := g.getRules(ctx)
-	if err != nil {
-		return err
-	}
-
-	g.rulesMx.Lock()
-	defer g.rulesMx.Unlock()
-	g.rules = rules
-	return nil
+	return g.ruleProvider.Load(ctx)
 }
 
 func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, user User) (LinksByCategory, error) {
-	res, err := g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
+	res, err := g.runWorkers(ctx, func(ctx context.Context, rule ParsedRule) (map[string][]GeneratedLink, error) {
 		return g.generateLinksByAlarms(ctx, rule, []AlarmWithData{
 			{
 				Alarm:  alarm,
@@ -127,7 +88,7 @@ func (g *generator) GenerateForAlarms(ctx context.Context, ids []string, user Us
 		return nil, err
 	}
 
-	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
+	return g.runWorkers(ctx, func(ctx context.Context, rule ParsedRule) (map[string][]GeneratedLink, error) {
 		return g.generateLinksByAlarms(ctx, rule, alarms, user)
 	})
 }
@@ -138,15 +99,15 @@ func (g *generator) GenerateForEntities(ctx context.Context, ids []string, user 
 		return nil, err
 	}
 
-	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
+	return g.runWorkers(ctx, func(ctx context.Context, rule ParsedRule) (map[string][]GeneratedLink, error) {
 		return g.generateLinksByEntities(ctx, rule, entities, user)
 	})
 }
 
 func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string, user User) ([]Link, error) {
-	rule := g.getRule(ruleId)
-	if rule.ID == "" {
-		return nil, ErrNoRule
+	rule, err := g.ruleProvider.Rule(ruleId)
+	if err != nil {
+		return nil, err
 	}
 
 	alarms, err := g.getAlarms(ctx, alarmIds)
@@ -187,27 +148,49 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 
 	if rule.CodeExecutor != nil {
 		args := g.getCodeArgs(rule, alarms, entities, user)
-		return g.getLinksByCode(ctx, rule.CodeExecutor, args)
+		links, err := ExecCode(ctx, rule, args)
+		if err != nil {
+			return nil, err
+		}
+
+		res := make([]Link, len(links))
+		for i, link := range links {
+			res[i] = link.Link
+			res[i].RuleID = ""
+		}
+
+		return res, nil
 	}
 
 	data := g.getTplData(rule, alarms, entities, user)
-	return g.getLinksByTpl(rule.Links, rule.UrlTpls, rule.LabelTpls, data)
+
+	links, err := ExecTemplate(rule, data, g.tplExecutor)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]Link, len(links))
+	for i, link := range links {
+		res[i] = link.Link
+		res[i].RuleID = ""
+	}
+
+	return res, nil
 }
 
 func (g *generator) runWorkers(
 	ctx context.Context,
-	f func(context.Context, parsedRule) (map[string][]linkWithCategory, error),
+	f func(context.Context, ParsedRule) (map[string][]GeneratedLink, error),
 ) (map[string]LinksByCategory, error) {
 	eg, ctx := errgroup.WithContext(ctx)
-	inCh := make(chan parsedRule)
-	outCh := make(chan map[string][]linkWithCategory)
+	inCh := make(chan ParsedRule)
+	outCh := make(chan map[string][]GeneratedLink)
 
 	go func() {
 		defer close(inCh)
 
-		g.rulesMx.RLock()
-		defer g.rulesMx.RUnlock()
-		for _, rule := range g.rules {
+		rules := g.ruleProvider.Rules()
+		for _, rule := range rules {
 			select {
 			case <-ctx.Done():
 				return
@@ -255,87 +238,6 @@ func (g *generator) runWorkers(
 	}
 
 	return res, nil
-}
-
-func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
-	cursor, err := g.linkCollection.Find(ctx, bson.M{"enabled": true})
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	parsedRules := make([]parsedRule, 0)
-	for cursor.Next(ctx) {
-		rule := Rule{}
-		err = cursor.Decode(&rule)
-		if err != nil {
-			return nil, err
-		}
-
-		parsedExternalData := externaldata.ParseRefParameters(rule.ExternalData, g.tplExecutor)
-		pr := parsedRule{
-			ID:            rule.ID,
-			Type:          rule.Type,
-			AlarmPattern:  rule.AlarmPattern,
-			EntityPattern: rule.EntityPattern,
-			ExternalData:  parsedExternalData,
-		}
-
-		if rule.SourceCode != "" {
-			pr.CodeExecutor, err = js.Compile(rule.ID, rule.SourceCode)
-			if err != nil {
-				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid source code in link rule")
-				continue
-			}
-
-			parsedRules = append(parsedRules, pr)
-			continue
-		}
-
-		pr.Links = rule.Links
-		pr.UrlTpls = make([]*template.Template, len(rule.Links))
-		pr.LabelTpls = make([]*template.Template, len(rule.Links))
-		for i, link := range rule.Links {
-			if link.URL == "" {
-				g.logger.Error().Str("rule", rule.ID).Msg("empty url template in link rule")
-				break
-			}
-
-			parsedUrl := g.tplExecutor.Parse(link.URL)
-			err = parsedUrl.Err
-			if err != nil {
-				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid url template in link rule")
-				break
-			}
-
-			if link.Label == "" {
-				g.logger.Error().Str("rule", rule.ID).Msg("empty label template in link rule")
-				break
-			}
-
-			parsedLabel := g.tplExecutor.Parse(link.Label)
-			err = parsedLabel.Err
-			if err != nil {
-				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid label template in link rule")
-				break
-			}
-
-			pr.UrlTpls[i] = parsedUrl.Tpl
-			pr.LabelTpls[i] = parsedLabel.Tpl
-		}
-		if err != nil {
-			continue
-		}
-
-		parsedRules = append(parsedRules, pr)
-	}
-
-	if err = cursor.Err(); err != nil {
-		return nil, err
-	}
-
-	return parsedRules, nil
 }
 
 func (g *generator) getAlarms(ctx context.Context, ids []string) ([]AlarmWithData, error) {
@@ -418,8 +320,8 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 	return entities, err
 }
 
-func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []AlarmWithData, user User) (map[string][]linkWithCategory, error) {
-	res := make(map[string][]linkWithCategory, len(alarms))
+func (g *generator) generateLinksByAlarms(ctx context.Context, rule ParsedRule, alarms []AlarmWithData, user User) (map[string][]GeneratedLink, error) {
+	res := make(map[string][]GeneratedLink, len(alarms))
 	for i := range alarms {
 		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarms[i].Alarm)
 		if err != nil {
@@ -449,7 +351,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 
 		if rule.CodeExecutor != nil {
 			args := g.getCodeArgs(rule, argAlarms, argEntities, user)
-			res[alarms[i].ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
+			res[alarms[i].ID], err = ExecCode(ctx, rule, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 			}
@@ -458,7 +360,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[alarms[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.UrlTpls, rule.LabelTpls, data)
+		res[alarms[i].ID], err = ExecTemplate(rule, data, g.tplExecutor)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 		}
@@ -467,8 +369,8 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 	return res, nil
 }
 
-func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithAlarm, user User) (map[string][]linkWithCategory, error) {
-	res := make(map[string][]linkWithCategory, len(entities))
+func (g *generator) generateLinksByEntities(ctx context.Context, rule ParsedRule, entities []entityWithAlarm, user User) (map[string][]GeneratedLink, error) {
+	res := make(map[string][]GeneratedLink, len(entities))
 	for i := range entities {
 		if entities[i].Alarm == nil && rule.Type == TypeAlarm {
 			continue
@@ -511,7 +413,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 
 		if rule.CodeExecutor != nil {
 			args := g.getCodeArgs(rule, argAlarms, argEntities, user)
-			res[entities[i].ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
+			res[entities[i].ID], err = ExecCode(ctx, rule, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 			}
@@ -520,7 +422,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.UrlTpls, rule.LabelTpls, data)
+		res[entities[i].ID], err = ExecTemplate(rule, data, g.tplExecutor)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 		}
@@ -529,21 +431,9 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 	return res, nil
 }
 
-func (g *generator) getRule(id string) parsedRule {
-	g.rulesMx.RLock()
-	defer g.rulesMx.RUnlock()
-	for _, rule := range g.rules {
-		if rule.ID == id {
-			return rule
-		}
-	}
-
-	return parsedRule{}
-}
-
 func (g *generator) addExternalData(
 	ctx context.Context,
-	rule parsedRule,
+	rule ParsedRule,
 	alarms []AlarmWithData,
 	entities []EntityWithData,
 ) error {
@@ -616,181 +506,8 @@ func (g *generator) processExternalData(
 	return res.ExternalData, nil
 }
 
-func (g *generator) getLinksWithCategoryByTpl(
-	id string,
-	linkParameters []Parameters,
-	urlTpls []*template.Template,
-	labelTpls []*template.Template,
-	data map[string]any,
-) ([]linkWithCategory, error) {
-	res := make([]linkWithCategory, len(linkParameters))
-	for i, linkTpl := range linkParameters {
-		url, err := g.tplExecutor.ExecuteByTpl(urlTpls[i], data)
-		if err != nil {
-			return nil, err
-		}
-
-		label, err := g.tplExecutor.ExecuteByTpl(labelTpls[i], data)
-		if err != nil {
-			return nil, err
-		}
-
-		res[i] = linkWithCategory{
-			Category: linkTpl.Category,
-			Link: Link{
-				RuleID:     id,
-				Label:      label,
-				IconName:   linkTpl.IconName,
-				Url:        url,
-				Action:     linkTpl.Action,
-				Single:     linkTpl.Single,
-				HideInMenu: linkTpl.HideInMenu,
-			},
-		}
-	}
-
-	return res, nil
-}
-
-func (g *generator) getLinksByTpl(
-	linkParameters []Parameters,
-	urlTpls []*template.Template,
-	labelTpls []*template.Template,
-	data map[string]any,
-) ([]Link, error) {
-	res := make([]Link, len(linkParameters))
-	for i, linkTpl := range linkParameters {
-		url, err := g.tplExecutor.ExecuteByTpl(urlTpls[i], data)
-		if err != nil {
-			return nil, err
-		}
-
-		label, err := g.tplExecutor.ExecuteByTpl(labelTpls[i], data)
-		if err != nil {
-			return nil, err
-		}
-
-		res[i] = Link{
-			Label:      label,
-			IconName:   linkTpl.IconName,
-			Url:        url,
-			Action:     linkTpl.Action,
-			Single:     linkTpl.Single,
-			HideInMenu: linkTpl.HideInMenu,
-		}
-	}
-
-	return res, nil
-}
-
-func (g *generator) getLinksWithCategoryByCode(
-	ctx context.Context,
-	id string,
-	codeExecutor js.Executor,
-	args []any,
-) ([]linkWithCategory, error) {
-	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	s, ok := r.([]any)
-	if !ok {
-		return nil, ErrValueIsntSlice
-	}
-
-	res := make([]linkWithCategory, len(s))
-	for i := 0; i < len(s); i++ {
-		item, ok := s[i].(map[string]any)
-		if !ok {
-			return nil, ErrValueIsntSliceOrMap
-		}
-
-		category, _ := item["category"].(string)
-		label, _ := item["label"].(string)
-		iconName, _ := item["icon_name"].(string)
-		url, _ := item["url"].(string)
-		action, _ := item["action"].(string)
-		if url == "" {
-			return nil, ErrURLIsMissing
-		}
-		if label == "" {
-			return nil, ErrLabelIsMissing
-		}
-
-		res[i] = linkWithCategory{
-			Category: category,
-			Link: Link{
-				RuleID:   id,
-				Label:    label,
-				IconName: iconName,
-				Url:      url,
-				Action:   action,
-			},
-		}
-		if single, ok := item["single"].(bool); ok {
-			res[i].Link.Single = single
-		}
-		if hideInMenu, ok := item["hide_in_menu"].(bool); ok {
-			res[i].Link.HideInMenu = hideInMenu
-		}
-	}
-
-	return res, nil
-}
-
-func (g *generator) getLinksByCode(
-	ctx context.Context,
-	codeExecutor js.Executor,
-	args []any,
-) ([]Link, error) {
-	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	s, ok := r.([]any)
-	if !ok {
-		return nil, ErrValueIsntSlice
-	}
-
-	res := make([]Link, len(s))
-	for i := 0; i < len(s); i++ {
-		item, ok := s[i].(map[string]any)
-		if !ok {
-			return nil, ErrValueIsntSliceOrMap
-		}
-
-		label, _ := item["label"].(string)
-		iconName, _ := item["icon_name"].(string)
-		url, _ := item["url"].(string)
-		action, _ := item["action"].(string)
-		if url == "" {
-			return nil, ErrURLIsMissing
-		}
-		if label == "" {
-			return nil, ErrLabelIsMissing
-		}
-
-		res[i] = Link{
-			Label:    label,
-			IconName: iconName,
-			Url:      url,
-			Action:   action,
-		}
-		if single, ok := item["single"].(bool); ok {
-			res[i].Single = single
-		}
-		if hideInMenu, ok := item["hide_in_menu"].(bool); ok {
-			res[i].HideInMenu = hideInMenu
-		}
-	}
-
-	return res, nil
-}
-
 func (g *generator) getTplData(
-	rule parsedRule,
+	rule ParsedRule,
 	alarms []AlarmWithData,
 	entities []EntityWithData,
 	user User,
@@ -813,7 +530,7 @@ func (g *generator) getTplData(
 }
 
 func (g *generator) getCodeArgs(
-	rule parsedRule,
+	rule ParsedRule,
 	alarms []AlarmWithData,
 	entities []EntityWithData,
 	user User,

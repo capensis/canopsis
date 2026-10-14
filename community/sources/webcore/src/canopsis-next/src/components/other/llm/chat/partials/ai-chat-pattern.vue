@@ -1,19 +1,22 @@
 <template>
-  <v-layout :class="{ 'ai-chat-pattern--active': active }" class="ai-chat-pattern pa-4" column>
-    <v-layout class="gap-2">
-      <v-flex>
-        <v-layout class="ai-chat-pattern__content grey--text" column>
+  <c-layout :class="{ 'ai-chat-pattern--active': active }" class="ai-chat-pattern pa-4" column>
+    <c-layout gap="2">
+      <div class="flex-grow-1">
+        <c-layout class="ai-chat-pattern__content grey--text" column>
           <strong>
-            <div class="ai-chat-pattern__patterns-text text-ucfirst">{{ patternsText }}</div>
-            <span v-if="originalVersionText">{{ originalVersionText }}</span>
+            <div class="ai-chat-pattern__patterns-text text-ucfirst">
+              {{ patternsText }}
+            </div>
+            <span v-if="originalVersionText">
+              {{ originalVersionText }}
+            </span>
           </strong>
           <span>{{ versionText }}</span>
           <div>
             <v-btn
               class="ai-chat-pattern__see-pattern-btn mt-2"
               color="primary"
-              text
-              depressed
+              variant="text"
               @click="toggleExpanded"
             >
               <v-icon class="mr-2" color="primary">
@@ -22,8 +25,8 @@
               <span>{{ expanded ? $t('llm.chat.pattern.hidePattern') : $t('llm.chat.pattern.seePattern') }}</span>
             </v-btn>
           </div>
-        </v-layout>
-      </v-flex>
+        </c-layout>
+      </div>
       <div v-if="!active && !history">
         <c-action-btn
           :tooltip="$t('llm.chat.pattern.restoreVersion')"
@@ -34,15 +37,17 @@
           @click="restoreVersion"
         />
       </div>
-    </v-layout>
+    </c-layout>
     <v-expand-transition>
       <div v-if="expanded">
         <div class="pt-3 text-caption">
-          <pre class="ai-chat-pattern__json pa-4">{{ parsedJson }}</pre>
+          <pre class="ai-chat-pattern__json pa-4">
+{{ parsedJson }}
+</pre>
         </div>
       </div>
     </v-expand-transition>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -54,6 +59,7 @@ import { stringifyJson } from '@/helpers/json';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
+  emits: ['restore:version'],
   props: {
     patterns: {
       type: Object,
@@ -77,7 +83,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t, tc } = useI18n();
+    const { t } = useI18n();
 
     const expanded = ref(false);
 
@@ -85,7 +91,7 @@ export default {
       const keys = Object.keys(props.patterns);
       const texts = keys.map(key => t(`pattern.patternsFields.${key}`));
 
-      return tc('llm.chat.patternsMessage', texts.length, { patterns: texts.join(', ') });
+      return t('llm.chat.patternsMessage', texts.length, { patterns: texts.join(', ') });
     });
 
     const originalVersionText = computed(() => (

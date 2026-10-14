@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div
+    reverse=""
+    type="0"
+    value="[object Object]"
+  >
+    <event-filter-general-form-stub
+      copyvars="[object Object]"
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <event-filter-patterns-form-stub
+      eventattributes=""
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div
+    reverse=""
+    type="0"
+    value="[object Object]"
+  >
+    <event-filter-general-form-stub
+      copyvars="[object Object]"
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <event-filter-patterns-form-stub
+      eventattributes=""
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div
+    reverse=""
+    type="0"
+    value="[object Object]"
+  >
+    <event-filter-general-form-stub
+      copyvars="[object Object]"
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <event-filter-patterns-form-stub
+      eventattributes=""
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` type 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div
+    reverse=""
+    type="0"
+    value="[object Object]"
+  >
+    <event-filter-general-form-stub
+      copyvars="[object Object]"
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <event-filter-patterns-form-stub
+      eventattributes=""
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    value="true"
+    with-background=""
+  />
+  <div
+    reverse=""
+    type="0"
+    value="[object Object]"
+  >
+    <event-filter-general-form-stub
+      copyvars="[object Object]"
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <event-filter-patterns-form-stub
+      eventattributes=""
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] = `
+<div
+  class="layout gap-3 column"
+>
+  <c-enabled-field-stub
+    with-background=""
+  />
+  <div
+    reverse=""
+    type="0"
+    value="[object Object]"
+  >
+    <event-filter-general-form-stub
+      copyvars="[object Object]"
+      form="[object Object]"
+      templatevars="[object Object]"
+    />
+    <event-filter-patterns-form-stub
+      eventattributes=""
+      form="[object Object]"
+    />
+  </div>
+</div>
+`;

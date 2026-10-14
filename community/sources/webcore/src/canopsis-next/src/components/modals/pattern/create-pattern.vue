@@ -1,123 +1,122 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
-        <span>{{ config.title }}</span>
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <pattern-form v-model="form" />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+
+      <template #text>
+        <pattern-form />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled || chatOptions.bind.pending"
+          :disabled="submitting || chatPending"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
 import {
   MODALS,
-  VALIDATION_DELAY,
   PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS,
   PATTERN_TYPES_TO_PATTERNS_FIELDS,
 } from '@/constants';
 
 import { patternToForm, formToPattern } from '@/helpers/entities/pattern/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PatternForm from '@/components/forms/pattern-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 
 export default {
   name: MODALS.createPattern,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
+
   components: {
     PatternForm,
     AiChatSidebar,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-  setup(props) {
-    const { config, close } = useInnerModal(props);
 
-    const form = ref(patternToForm(config.value.pattern));
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+
+    const initialValues = patternToForm(config.value.pattern);
 
     if (config.value.type) {
-      form.value.type = config.value.type;
+      initialValues.type = config.value.type;
     }
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        const result = await config.value.action?.(formToPattern(form.value));
+    const form = useForm({
+      initialValues,
+    });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-        await config.value.afterSubmit?.(result);
+    const title = computed(() => config.value.title);
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const submitLabel = computed(() => t(config.value.pattern?._id ? 'common.save' : 'common.create'));
 
-        close();
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToPattern(values.value));
 
-        return result;
-      },
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
-
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
       modal: toRef(props, 'modal'),
       ruleId: props.modal.config?.pattern?._id,
       context: PATTERN_TYPES_TO_LLM_SOCKET_CONTEXTS[config.value.type],
       field: PATTERN_TYPES_TO_PATTERNS_FIELDS[config.value.type],
     });
+    const chatPending = computed(() => chatOptions.value.attrs.pending);
 
     return {
-      config,
-      form,
-      isDisabled,
+      t,
+      title,
       submitting,
-      close,
+      closeModal,
+      submitLabel,
       submit,
       chatShown,
       chatOptions,
+      chatPending,
     };
   },
 };

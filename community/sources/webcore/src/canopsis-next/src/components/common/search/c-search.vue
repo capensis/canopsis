@@ -1,10 +1,11 @@
 <template>
-  <v-layout class="px-4" align-end>
+  <c-layout class="w-100" align="end">
     <c-search-field
       v-model="localValue"
       :combobox="combobox"
       :items="items"
       :label="label"
+      :disabled="disabled"
       @submit="submit"
       @remove:item="removeItem"
       @toggle-pin:item="togglePinItem"
@@ -12,17 +13,19 @@
       <slot />
     </c-search-field>
     <c-action-btn
+      :disabled="disabled"
       :tooltip="$t('common.search')"
       icon="search"
       @click="submit"
     />
     <c-action-btn
+      :disabled="disabled"
       :tooltip="$t('common.clearSearch')"
       icon="clear"
       @click="clear"
     />
     <slot />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -35,7 +38,7 @@ import { useSearchLocalValue, useSearchSavedItems } from './hooks/search';
  */
 export default {
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -55,19 +58,25 @@ export default {
       type: Array,
       default: () => [],
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['update:modelValue', 'submit', 'add:item', 'remove:item', 'toggle-pin:item'],
+
   setup(props, { emit }) {
     const { addItem, removeItem, togglePinItem } = useSearchSavedItems(emit);
 
-    const {
-      localValue,
-      submit,
-      clear,
-    } = useSearchLocalValue({
-      value: toRef(props, 'value'),
-      fields: toRef(props, 'fields'),
-      onSubmit: addItem,
-    }, emit);
+    const { localValue, submit, clear } = useSearchLocalValue(
+      {
+        value: toRef(props, 'modelValue'),
+        fields: toRef(props, 'fields'),
+        onSubmit: addItem,
+      },
+      emit,
+    );
 
     return {
       localValue,

@@ -1,35 +1,43 @@
 <template>
   <div>
-    <c-images-viewer
-      :images="imagesWithKey"
-      :active="config.active"
-      item-key="key"
-    />
-    <v-btn
-      class="ma-1 images-viewer__close-btn"
-      icon
-      @click="$modals.hide"
-    >
-      <v-icon color="white">
+    <c-images-viewer :images="imagesWithKey" :active="config.active" item-key="key" />
+
+    <v-btn class="ma-1 images-viewer__close-btn" icon @click="close">
+      <c-icon color="white">
         close
-      </v-icon>
+      </c-icon>
     </v-btn>
   </div>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import { addKeyInEntities } from '@/helpers/array';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
+import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 
 export default {
-  name: MODALS.imagesViewer,
-  mixins: [modalInnerMixin],
+  components: { CImagesViewer },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
   computed: {
+    config() {
+      return this.modal.config ?? {};
+    },
+
     imagesWithKey() {
       return addKeyInEntities(this.config.images);
+    },
+  },
+
+  methods: {
+    close() {
+      this.$modals.hide({ id: this.modal.id });
     },
   },
 };

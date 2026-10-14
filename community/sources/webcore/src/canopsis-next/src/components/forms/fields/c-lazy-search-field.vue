@@ -1,117 +1,96 @@
 <template>
-  <c-select-field
-    v-field="value"
-    v-bind="$attrs"
-    :search-input="search"
+  <component
+    :is="fieldComponent"
+    :model-value="value"
+    v-bind="fieldAttrs"
+    :search="internalSearch"
     :label="label"
     :loading="loading"
     :items="items"
     :name="name"
-    :item-text="getItemText"
+    :item-title="getItemText"
     :item-value="getItemValue"
-    :item-disabled="itemDisabled"
+    :item-props="getItemProps"
     :multiple="isMultiple"
-    :deletable-chips="isMultiple"
-    :small-chips="isMultiple"
+    :closable-chips="isMultiple"
     :chips="isMultiple"
     :disabled="disabled"
     :required="required"
     :menu-props="preparedMenuProps"
     :clearable="clearable"
-    :autocomplete="autocomplete"
-    :combobox="!autocomplete"
     :return-object="returnObject"
     :no-data-text="noDataText"
-    class="c-lazy-search-field mt-4"
+    class="c-lazy-search-field"
     no-filter
-    dense
     @focus="onFocus"
     @blur="onBlur"
-    @update:search-input="updateSearch"
+    @update:model-value="updateValue"
+    @update:search="updateSearch"
   >
-    <template #item="{ item, attrs, on, parent }">
+    <template #item="slotProps">
       <slot
-        :attrs="attrs"
-        :on="on"
-        :item="item"
-        :parent="parent"
+        v-bind="getLegacySlotProps(slotProps)"
+        :attrs="slotProps.props"
+        :search="internalSearch"
         name="item"
       >
-        <v-list-item
-          class="c-lazy-search-field--tile"
-          v-bind="attrs"
-          v-on="on"
-        >
-          <slot
-            :item="item"
-            name="icon"
-          />
-          <v-list-item-content>
-            <v-list-item-mask :text="getItemText(item)" :mask="internalSearch" />
-          </v-list-item-content>
-          <span v-if="withType" class="ml-4 grey--text">{{ item.type }}</span>
+        <v-list-item class="c-lazy-search-field--tile" v-bind="slotProps.props">
+          <template v-if="$slots.icon" #prepend>
+            <slot :item="getSlotItem(slotProps.item)" name="icon" />
+          </template>
+          <v-list-item-title>
+            <v-list-item-mask
+              :text="String(getItemText(getSlotItem(slotProps.item)) ?? '')"
+              :mask="internalSearch"
+            />
+          </v-list-item-title>
+          <template v-if="withType" #append>
+            <span class="ml-4 text-medium-emphasis">
+              {{ getSlotItem(slotProps.item).type }}
+            </span>
+          </template>
         </v-list-item>
       </slot>
     </template>
+    <template v-if="$slots.icon && !isMultiple && hasSelectedValue" #prepend-inner>
+      <slot :item="selectedFieldItem" name="icon" />
+    </template>
+    <template v-if="$slots['prepend-item']" #prepend-item="">
+      <slot name="prepend-item" />
+    </template>
     <template #append-item="">
-      <div
-        ref="appendElement"
-        class="c-lazy-search-field__append"
-      />
+      <div ref="appendElement" class="c-lazy-search-field__append" />
     </template>
-    <template v-if="$scopedSlots.selection" #selection="{ item, index, parent }">
-      <slot
-        :item="item"
-        :index="index"
-        :parent="parent"
-        name="selection"
-      />
+    <template v-if="$slots.selection && isMultiple" #chip="slotProps">
+      <slot name="selection" v-bind="getLegacySlotProps(slotProps)" />
     </template>
-    <template v-else-if="isMultiple" #selection="{ item, parent, disabled: selectionDisabled }">
+    <template v-else-if="isMultiple" #chip="{ item, props: selectionProps }">
       <v-chip
-        v-if="isMultiple"
-        :disabled="selectionDisabled"
+        v-bind="selectionProps"
         class="c-lazy-search-field__chip"
-        small
-        close
-        @click:close="parent.onChipInput(item)"
+        size="small"
+        closable
       >
-        <span class="text-truncate">{{ getItemText(item) }}</span>
+        <span class="text-truncate">
+          {{ getItemText(getSelectionItem(item)) }}
+        </span>
       </v-chip>
     </template>
     <template v-if="$slots['no-data']" #no-data="">
       <slot name="no-data" />
     </template>
-  </c-select-field>
+  </component>
 </template>
 
 <script>
-import {
-  debounce,
-  isArray,
-  isString,
-  isFunction,
-  get,
-} from 'lodash';
-import {
-  computed,
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
-
-import { useValidator } from '@/hooks/validator/validator';
+import { debounce, isArray, isFunction, isNil, isNumber, isString, isSymbol, get } from 'lodash';
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   inheritAttrs: false,
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
-      type: [Array, String, Object],
+      type: [Array, String, Number, Object, Symbol],
       default: '',
     },
     name: {
@@ -125,6 +104,10 @@ export default {
     itemText: {
       type: [String, Function],
       default: '_id',
+    },
+    itemTitle: {
+      type: [String, Function],
+      default: '',
     },
     itemValue: {
       type: [String, Function],
@@ -187,78 +170,92 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props, { emit }) {
+  emits: ['update:value', 'update:modelValue', 'update:search', 'fetch', 'fetch:more'],
+  setup(props, { emit, attrs }) {
     const internalSearch = ref(props.search);
     const isFocused = ref(false);
     const appendElement = ref(null);
 
-    const validator = useValidator();
-
+    const fieldComponent = computed(() => (props.autocomplete ? 'c-autocomplete' : 'c-combobox'));
     const isMultiple = computed(() => isArray(props.value));
-    const preparedMenuProps = computed(() => ({ ...props.menuProps, contentClass: 'c-lazy-search-field__list', eager: true }));
+    const hasSelectedValue = computed(() => {
+      if (isMultiple.value) {
+        return false;
+      }
 
-    /**
-     * Set the internal search value.
-     * @param {any} value - The value to set as the internal search.
-     */
-    const setInternalSearch = value => internalSearch.value = value;
+      return !isNil(props.value) && props.value !== '';
+    });
+    const preparedMenuProps = computed(() => ({
+      ...props.menuProps,
+      contentClass: 'c-lazy-search-field__list',
+      eager: true,
+    }));
+    const fieldAttrs = computed(() => attrs);
 
-    /**
-     * Emit an update search event.
-     *
-     * @param {any} value - The value to emit for the update search event.
-     */
-    const emitUpdateSearch = value => emit('update:search', value);
+    const resolvedItemTitle = computed(() => props.itemTitle || props.itemText);
 
-    /**
-     * Debounced version of `emitUpdateSearch` based on the specified throttle time.
-     *
-     * @param {any} value - The value to emit for the update search event.
-     */
-    const debouncedEmitUpdateSearch = debounce(emitUpdateSearch, props.throttle);
-
-    /**
-     * Get the value of an item based on the provided item.
-     *
-     * @param {any} item - The item to get the value from.
-     * @returns {any} The value of the item.
-     */
     const getItemValue = (item) => {
-      if (isString(item)) {
+      if (isString(item) || isNumber(item) || isSymbol(item)) {
         return item;
       }
 
       return isFunction(props.itemValue) ? props.itemValue(item) : get(item, props.itemValue);
     };
 
-    /**
-     * Get the text of an item based on the provided item.
-     *
-     * @param {any} item - The item to get the text from.
-     * @returns {string} The text of the item.
-     */
     const getItemText = (item) => {
-      if (isString(item)) {
+      if (isString(item) || isNumber(item) || isSymbol(item)) {
         return item;
       }
 
-      const text = isFunction(props.itemText) ? props.itemText(item) : get(item, props.itemText);
+      const text = isFunction(resolvedItemTitle.value)
+        ? resolvedItemTitle.value(item)
+        : get(item, resolvedItemTitle.value);
 
       return text ?? getItemValue(item);
     };
 
-    /**
-     * Update the search value and emit the update event if conditions are met.
-     *
-     * @param {any} value - The new value for the search.
-     * @param {boolean} [force = false] - Whether to force emit the update event.
-     */
-    const updateSearch = (value, force = false) => {
-      if (validator.errors.has(props.name)) {
-        validator.errors.remove(props.name);
+    const getSlotItem = item => item?.raw ?? item;
+
+    const getSelectionItem = (item) => {
+      const rawItem = getSlotItem(item);
+      const value = getItemValue(rawItem);
+
+      return props.items.find(entity => getItemValue(entity) === value) ?? rawItem;
+    };
+
+    const selectedFieldItem = computed(() => {
+      if (!hasSelectedValue.value) {
+        return null;
       }
 
-      setInternalSearch(value);
+      return getSelectionItem(props.value);
+    });
+
+    const getLegacySlotProps = (slotProps) => {
+      const item = getSlotItem(slotProps?.item);
+
+      return {
+        ...slotProps,
+        item: slotProps?.name === 'item' ? item : getSelectionItem(item),
+        vuetifyItem: slotProps?.item,
+      };
+    };
+
+    const getItemProps = (item) => {
+      const rawItem = getSlotItem(item);
+
+      if (isFunction(props.itemDisabled)) {
+        return { disabled: props.itemDisabled(rawItem) };
+      }
+
+      return {};
+    };
+
+    const emitUpdateSearch = value => emit('update:search', value);
+    const debouncedEmitUpdateSearch = debounce(emitUpdateSearch, props.debounce);
+
+    const updateSearch = (value, force = false) => {
+      internalSearch.value = value;
 
       if (force) {
         emitUpdateSearch(value);
@@ -267,9 +264,11 @@ export default {
       }
     };
 
-    /**
-     * Handle the focus event.
-     */
+    const updateValue = (value) => {
+      emit('update:value', value);
+      emit('update:modelValue', value);
+    };
+
     const onFocus = () => {
       isFocused.value = true;
 
@@ -278,47 +277,67 @@ export default {
       }
     };
 
-    /**
-     * Handle the blur event.
-     */
-    const onBlur = () => isFocused.value = false;
+    const onBlur = () => {
+      isFocused.value = false;
+    };
 
-    /**
-     * Handle the intersection observer callback for lazy loading more items.
-     *
-     * @param {IntersectionObserverEntry[]} entries - The entries observed by the intersection observer.
-     */
     const intersectionHandler = (entries) => {
       const [entry] = entries;
 
-      if (entry.isIntersecting && props.hasMore) {
-        emit('fetch:more');
+      if (!entry.isIntersecting || !props.hasMore) {
+        return;
       }
+
+      const listEl = appendElement.value?.closest('.v-list');
+
+      if (listEl && listEl.scrollHeight > listEl.clientHeight && listEl.scrollTop <= 0) {
+        return;
+      }
+
+      emit('fetch:more');
     };
 
     const observer = new IntersectionObserver(intersectionHandler);
 
-    watch(() => props.search, setInternalSearch);
+    watch(
+      () => props.search,
+      (value) => {
+        internalSearch.value = value;
+      },
+    );
+
     watch(isMultiple, () => updateSearch(null, true));
 
-    onMounted(() => observer.observe(appendElement.value));
+    onMounted(() => {
+      if (appendElement.value) {
+        observer.observe(appendElement.value);
+      }
+    });
     onBeforeUnmount(() => {
-      observer.unobserve(appendElement.value);
+      if (appendElement.value) {
+        observer.unobserve(appendElement.value);
+      }
+
       observer.disconnect();
     });
 
     return {
       appendElement,
-
       internalSearch,
-      isFocused,
+      fieldComponent,
+      fieldAttrs,
       preparedMenuProps,
-
       isMultiple,
-
+      hasSelectedValue,
+      selectedFieldItem,
       getItemValue,
       getItemText,
+      getLegacySlotProps,
+      getSelectionItem,
+      getSlotItem,
+      getItemProps,
       updateSearch,
+      updateValue,
       onFocus,
       onBlur,
     };
@@ -333,20 +352,14 @@ export default {
   }
 
   &__append {
-    position: absolute;
-    pointer-events: none;
-    right: 0;
-    bottom: 0;
-    left: 0;
     height: 30px;
+    margin-top: -30px;
+    pointer-events: none;
+    opacity: 0;
   }
 
-  .v-select__selections {
+  .v-select__selection {
     max-width: calc(100% - 24px);
-  }
-
-  &.v-autocomplete:not(.v-input--is-focused).v-select--chips input {
-    max-height: 32px;
   }
 
   &__chip {

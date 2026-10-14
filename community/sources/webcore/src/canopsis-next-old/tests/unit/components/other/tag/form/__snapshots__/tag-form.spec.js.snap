@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
+<div>
+  <tag-general-form-stub
+    form="[object Object]"
+    isimported="true"
+    maxtagnamelength="11"
+  />
+</div>
+`;
+
+exports[`tag-form Renders \`tag-form\` with default props 1`] = `
+<div>
+  <tag-general-form-stub
+    form="[object Object]"
+    maxtagnamelength="20"
+  />
+  <tag-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;

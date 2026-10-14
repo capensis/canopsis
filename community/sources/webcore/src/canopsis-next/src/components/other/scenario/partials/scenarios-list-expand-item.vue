@@ -1,70 +1,43 @@
 <template>
-  <v-layout class="secondary lighten-2 py-3">
-    <v-flex
-      xs12
-      sm8
-      offset-sm2
-    >
-      <v-card>
-        <v-card-text>
-          <v-layout
-            wrap
-            justify-center
-            align-center
-          >
-            <v-flex
-              v-if="scenario.author"
-              xs12
-            >
-              <scenario-info-item
-                :label="$t('common.author')"
-                :value="scenario.author.display_name"
-                icon="person"
-              />
-            </v-flex>
-            <v-flex xs12>
-              <scenario-info-item
-                :label="$tc('common.trigger', 2)"
-                :value="preparedTriggers"
-                icon="bolt"
-              />
-            </v-flex>
-            <v-flex
-              v-if="hasDisableDuringPeriods"
-              xs12
-            >
-              <scenario-info-item
-                :label="$t('common.disableDuringPeriods')"
-                :value="scenario.disable_during_periods.join(', ')"
-                icon="highlight_off"
-              />
-            </v-flex>
-            <v-flex
-              v-for="(action, index) in scenario.actions"
-              :key="index"
-              class="mt-2"
-              xs12
-            >
-              <scenario-action-card
-                :action="action"
-                :action-number="index + 1"
-              />
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-      </v-card>
-    </v-flex>
-  </v-layout>
+  <c-expand-panel-card class="bg-secondary-lighten-2 py-3" cols="8">
+    <c-layout justify="center" align="center" wrap>
+      <div v-if="scenario.author" class="w-100">
+        <scenario-info-item
+          :label="$t('common.author')"
+          :value="scenario.author.display_name"
+          icon="person"
+        />
+      </div>
+      <div class="w-100">
+        <scenario-info-item
+          :label="$t('common.trigger', 2)"
+          :value="preparedTriggers"
+          icon="bolt"
+        />
+      </div>
+      <div v-if="hasDisableDuringPeriods" class="w-100">
+        <scenario-info-item
+          :label="$t('common.disableDuringPeriods')"
+          :value="scenario.disable_during_periods.join(', ')"
+          icon="highlight_off"
+        />
+      </div>
+      <div v-for="(action, index) in scenario.actions" :key="index" class="mt-2 w-100">
+        <scenario-action-card :action="action" :action-number="index + 1" />
+      </div>
+    </c-layout>
+  </c-expand-panel-card>
 </template>
 
 <script>
 import { isEmpty } from 'lodash';
 
-import ScenarioInfoItem from './scenario-info-item.vue';
 import ScenarioActionCard from './scenario-action-card.vue';
+import ScenarioInfoItem from './scenario-info-item.vue';
 
 export default {
   components: { ScenarioInfoItem, ScenarioActionCard },
+
   props: {
     scenario: {
       type: Object,
@@ -73,17 +46,19 @@ export default {
   },
   computed: {
     preparedTriggers() {
-      return this.scenario.triggers.map(({ type, ...rest }) => {
-        if (isEmpty(rest)) {
-          return type;
-        }
+      return this.scenario.triggers
+        .map(({ type, ...rest }) => {
+          if (isEmpty(rest)) {
+            return type;
+          }
 
-        const preparedRest = Object.entries(rest)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join(', ');
+          const preparedRest = Object.entries(rest)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
 
-        return `${type} (${preparedRest})`;
-      }).join(', ');
+          return `${type} (${preparedRest})`;
+        })
+        .join(', ');
     },
 
     hasDisableDuringPeriods() {

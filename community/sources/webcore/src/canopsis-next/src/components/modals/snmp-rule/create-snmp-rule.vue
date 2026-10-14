@@ -1,103 +1,93 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <snmp-rule-form v-model="form" />
+
+      <template #text>
+        <snmp-rule-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS } from '@/constants';
 
-import { snmpRuleToForm, formToSnmpRule } from '@/helpers/entities/snmp-rule/form';
+import { formToSnmpRule, snmpRuleToForm } from '@/helpers/entities/snmp-rule/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createSnmpRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
+
   components: {
     SnmpRuleForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const {
-      config,
-      close,
-    } = useInnerModal(props);
+    const modals = useModals();
 
-    const form = ref(snmpRuleToForm(config.value.snmpRule));
+    const config = computed(() => props.modal.config ?? {});
+    const close = () => modals.hide({ id: props.modal.id });
 
-    const {
-      submit,
-      isDisabled,
-      submitting,
-    } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToSnmpRule(form.value));
+    const form = useForm({
+      initialValues: snmpRuleToForm(config.value.snmpRule),
+    });
+    const { handleSubmit, isSubmitting: submitting } = form;
 
-        close();
-      },
+    const title = computed(() => config.value.title || t('modals.createSnmpRule.create.title'));
+    const submitLabel = computed(() => t(config.value.snmpRule?._id ? 'common.save' : 'common.create'),
+    );
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToSnmpRule(form.values.value));
+
+      close();
     });
 
     useFormConfirmableCloseModal({
-      form,
+      form: form.values,
       submit,
       close,
     });
 
-    const title = computed(() => config.value.title || t('modals.createSnmpRule.create.title'));
-
     return {
-      form,
-
-      isDisabled,
-      submitting,
-
+      t,
       title,
-
+      submitting,
+      submitLabel,
       submit,
       close,
     };

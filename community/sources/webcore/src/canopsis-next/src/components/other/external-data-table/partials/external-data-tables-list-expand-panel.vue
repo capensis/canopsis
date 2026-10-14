@@ -3,7 +3,7 @@
     <v-card>
       <v-card-text>
         <external-data-table-records-list
-          v-model="columns"
+          :columns="columns"
           :records="records"
           :pending="pending"
           :options="options"
@@ -14,7 +14,7 @@
           selectable
           expandable
           disabled-types
-          @input="updateColumns"
+          @update:columns="updateColumns"
           @import="showImportExternalDataTablesModal"
           @add="showCreateExternalDataTableRecordModal"
           @edit="showEditExternalDataTableRecordModal"
@@ -27,16 +27,10 @@
     </v-card>
   </div>
 </template>
+
 <script>
 import { pick } from 'lodash';
-import {
-  ref,
-  toRef,
-  inject,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { ref, toRef, inject, watch, onMounted, onBeforeUnmount } from 'vue';
 
 import Observer from '@/services/observer';
 
@@ -47,19 +41,20 @@ import {
 
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 
-import ExternalDataTableRecordsList
-  from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
+import ExternalDataTableRecordsList from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
 
 import { useExternalDataTableRecordsList } from '../hooks/external-data-table-records';
 
 export default {
   components: { ExternalDataTableRecordsList },
+
   props: {
     externalDataTable: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { updateExternalDataTable } = useExternalDataTable();
 
@@ -83,20 +78,28 @@ export default {
 
     const columns = ref({});
 
-    const updateColumns = newColumns => updateExternalDataTable({
-      id: props.externalDataTable._id,
-      data: {
-        ...pick(props.externalDataTable, ['type', 'name', 'description']),
+    const updateColumns = (newColumns) => {
+      columns.value = newColumns;
 
-        column_tags: formToExternalDataTableColumnTags(newColumns),
-      },
-    });
+      return updateExternalDataTable({
+        id: props.externalDataTable._id,
+        data: {
+          ...pick(props.externalDataTable, ['type', 'name', 'description']),
+
+          column_tags: formToExternalDataTableColumnTags(newColumns),
+        },
+      });
+    };
 
     const observer = inject('$refresh', new Observer());
 
-    watch(() => props.externalDataTable, (newExternalDataTable) => {
-      columns.value = externalDataTableColumnConfigsToForm(newExternalDataTable.column_configs);
-    }, { deep: true, immediate: true });
+    watch(
+      () => props.externalDataTable,
+      (newExternalDataTable) => {
+        columns.value = externalDataTableColumnConfigsToForm(newExternalDataTable.column_configs);
+      },
+      { deep: true, immediate: true },
+    );
 
     onMounted(() => observer.registerChild(fetchList));
     onBeforeUnmount(() => observer.unregisterChild(fetchList));

@@ -1,15 +1,21 @@
 <template>
-  <img
-    :src="config.src"
-    alt=""
-  >
+  <img :src="config.src" alt="" />
 </template>
 
 <script>
-import { modalInnerMixin } from '@/mixins/modal/inner';
-
 export default {
-  mixins: [modalInnerMixin],
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  computed: {
+    config() {
+      return this.modal.config ?? {};
+    },
+  },
 };
 </script>
 

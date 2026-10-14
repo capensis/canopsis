@@ -33,11 +33,11 @@ func (r AlarmRequest) ToModelWithoutFields(collectionName string) savedpattern.A
 		}
 	}
 
-	forbiddenFields := GetForbiddenFieldsInAlarmPattern(collectionName)
-	onlyTimeAbsoluteFields := GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collectionName)
+	disabledFields := disabledFieldsInAlarmPattern[collectionName]
+	onlyTimeAbsoluteFields := onlyAbsoluteTimeCondFieldsInAlarmPattern[collectionName]
 
 	return savedpattern.AlarmPatternFields{
-		AlarmPattern:               r.CorporatePattern.AlarmPattern.RemoveFields(forbiddenFields, onlyTimeAbsoluteFields),
+		AlarmPattern:               r.CorporatePattern.AlarmPattern.RemoveFields(disabledFields, onlyTimeAbsoluteFields),
 		CorporateAlarmPattern:      r.CorporatePattern.ID,
 		CorporateAlarmPatternTitle: r.CorporatePattern.Title,
 	}

@@ -1,8 +1,15 @@
 <template>
-  <v-radio-group v-field="value" :disabled="disabled">
-    <template #label="">
-      {{ $t('common.type') }}
+  <c-radio-group
+    :model-value="modelValue"
+    :disabled="disabled"
+    color="primary"
+    inline
+    @update:model-value="$emit('update:modelValue', $event)"
+  >
+    <template #label>
+      {{ t('common.type') }}
     </template>
+
     <v-radio
       v-for="type in types"
       :key="type"
@@ -10,20 +17,17 @@
       :label="type"
       class="text-uppercase"
     />
-  </v-radio-group>
+  </c-radio-group>
 </template>
 
 <script>
 import { ROLE_TYPES } from '@/constants';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: ROLE_TYPES.ui,
     },
@@ -32,11 +36,15 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue'],
+
   setup() {
-    const types = Object.values(ROLE_TYPES);
+    const { t } = useI18n();
 
     return {
-      types,
+      t,
+      types: Object.values(ROLE_TYPES),
     };
   },
 };

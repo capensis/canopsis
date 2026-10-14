@@ -1,97 +1,46 @@
 <template>
-  <v-layout column>
-    <c-name-field
-      v-field="form.name"
-      :label="$t('externalAuthToken.tokenName')"
-      name="name"
-      autofocus
-      required
-    />
-    <c-description-field v-field="form.description" />
-    <request-form
-      v-field="form.request"
-      :url-variables="templateVars.request"
-      :headers-variables="templateVars.request"
-      :payload-variables="templateVars.request"
-      :url-help-text="$t('externalAuthToken.urlHelp')"
-      name="request"
-    />
-    <c-information-block :title="$t('common.token')">
-      <v-layout class="gap-2">
-        <v-flex xs6>
-          <c-enabled-field
-            v-field="form.allow_variables"
-            :label="$t('externalAuthToken.allowVariables')"
-          />
-        </v-flex>
-        <v-flex xs6>
-          <c-payload-text-field
-            v-if="form.allow_variables"
-            v-field="form.template"
-            v-validate="'required'"
-            :label="$t('common.token')"
-            :variables="templateVars.template"
-            :error-messages="errors.collect('response_field')"
-            name="response_field"
-          >
-            <template #append="">
-              <c-help-icon
-                :text="$t('externalAuthToken.tokenExpirationHelpText')"
-                icon="help"
-                color="grey darken-1"
-                top
-              />
-            </template>
-          </c-payload-text-field>
-          <v-text-field
-            v-else
-            v-field="form.response_field"
-            v-validate="'required'"
-            :label="$t('common.token')"
-            :error-messages="errors.collect('response_field')"
-            name="response_field"
-          >
-            <template #append="">
-              <c-help-icon
-                :text="$t('externalAuthToken.tokenExpirationHelpText')"
-                icon="help"
-                color="grey darken-1"
-                top
-              />
-            </template>
-          </v-text-field>
-        </v-flex>
-      </v-layout>
-    </c-information-block>
-    <c-information-block :title="$t('externalAuthToken.tokenExpirationTime')">
-      <c-duration-field
-        v-field="form.expiration_duration"
-        required
-        same-width
-      />
-    </c-information-block>
-  </v-layout>
+  <c-form-general-patterns-tabs
+    :form="formValues"
+    :rule-id="ruleId"
+    :type="type"
+    @update:form="updateForm"
+  >
+    <template #general="{ setRef, templateVars }">
+      <external-auth-token-general-form :ref="setRef" :template-vars="templateVars" />
+    </template>
+  </c-form-general-patterns-tabs>
 </template>
 
 <script>
-import RequestForm from '@/components/forms/request/request-form.vue';
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
+import { useFormContext } from '@/hooks/form';
+
+import ExternalAuthTokenGeneralForm from './external-auth-token-general-form.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { RequestForm },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  components: { ExternalAuthTokenGeneralForm },
+
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
+    ruleId: {
+      type: String,
+      required: false,
     },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
-    },
+  },
+
+  setup() {
+    const form = useFormContext();
+    const type = TEMPLATE_TESTING_TEST_TYPES.externalAuthToken;
+
+    const updateForm = (value) => {
+      form.values.value = value;
+    };
+
+    return {
+      formValues: form.values,
+      type,
+      updateForm,
+    };
   },
 };
 </script>

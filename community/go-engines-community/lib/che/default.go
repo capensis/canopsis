@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
@@ -321,17 +321,16 @@ func NewEngine(
 	})
 
 	s = Services{
-		TechMetricsSender:   techMetricsSender,
-		Cfg:                 cfg,
-		DbClient:            primaryDbClient,
-		PgPoolProvider:      pgPoolProvider,
-		SuspendedEventRedis: suspendedEventRedis,
-		AmqpPublisher:       amqpPublisher,
-		AmqpConsumeChPool:   amqpConsumeChPool,
-		MetaUpdater:         metricsEntityMetaUpdater,
+		TechMetricsSender:       techMetricsSender,
+		Cfg:                     cfg,
+		DbClient:                primaryDbClient,
+		PgPoolProvider:          pgPoolProvider,
+		SuspendedEventRedis:     suspendedEventRedis,
+		AmqpPublisher:           amqpPublisher,
+		AmqpConsumeChPool:       amqpConsumeChPool,
+		MetaUpdater:             metricsEntityMetaUpdater,
+		EventProcessorContainer: event.NewProcessorContainer(),
 	}
-
-	s.EventProcessorContainer = event.NewProcessorContainer()
 	s.EventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
 	s.EventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
 	s.EventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))

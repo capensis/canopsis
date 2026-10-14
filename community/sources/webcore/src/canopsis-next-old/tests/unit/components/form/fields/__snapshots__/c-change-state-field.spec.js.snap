@@ -1,0 +1,319 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-change-state-field Renders \`c-change-state-field\` after validate correctly 1`] = `
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
+  >
+    <state-criticity-field-stub
+      mandatory="true"
+      statevalues="[object Object]"
+      value="2"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
+  >
+    <div
+      class="v-input v-textarea v-input--has-state theme--light v-text-field error--text"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label theme--light error--text"
+              style="left: 0px; position: absolute;"
+            >
+              Note
+            </label>
+            <textarea
+              autofocus="autofocus"
+              name="changeState.output"
+              rows="5"
+              variables=""
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light error--text"
+            role="alert"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-form-block-row-stub>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` with allowed change severity to info correctly 1`] = `
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
+  >
+    <state-criticity-field-stub
+      mandatory="true"
+      statevalues="[object Object]"
+      value="0"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
+  >
+    <div
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Custom label
+            </label>
+            <textarea
+              autofocus="autofocus"
+              name="customLabelFieldName.output"
+              rows="5"
+              variables=""
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-form-block-row-stub>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` with custom label correctly 1`] = `
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
+  >
+    <state-criticity-field-stub
+      mandatory="true"
+      statevalues="[object Object]"
+      value="0"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
+  >
+    <div
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Note
+            </label>
+            <textarea
+              autofocus="autofocus"
+              name="customLabelFieldName.output"
+              rows="5"
+              variables=""
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-form-block-row-stub>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` with errors correctly 1`] = `
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
+  >
+    <state-criticity-field-stub
+      mandatory="true"
+      statevalues="[object Object]"
+      value="0"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
+  >
+    <div
+      class="v-input v-textarea v-input--has-state v-input--is-label-active v-input--is-dirty theme--light v-text-field error--text"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light error--text"
+              style="left: 0px; position: absolute;"
+            >
+              Note
+            </label>
+            <textarea
+              autofocus="autofocus"
+              name="customName.output"
+              rows="5"
+              variables=""
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light error--text"
+            role="alert"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            >
+              <div
+                class="v-messages__message"
+              >
+                Output error
+              </div>
+            </transition-group-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-form-block-row-stub>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` without allowed change severity to info correctly 1`] = `
+<div>
+  <c-form-block-row-stub
+    align-center=""
+    depth="0"
+    label="Severity"
+  >
+    <state-criticity-field-stub
+      mandatory="true"
+      statevalues="[object Object]"
+      value="0"
+    />
+  </c-form-block-row-stub>
+  <c-form-block-row-stub
+    depth="0"
+    label="Note"
+  >
+    <div
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Custom label
+            </label>
+            <textarea
+              autofocus="autofocus"
+              name="changeState.output"
+              rows="5"
+              variables=""
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-form-block-row-stub>
+</div>
+`;

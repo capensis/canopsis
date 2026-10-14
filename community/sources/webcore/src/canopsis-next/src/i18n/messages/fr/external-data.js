@@ -62,7 +62,8 @@ export default {
   },
   tableCanBeDeletedInConfig: 'La table ne peut être supprimée que dans le fichier de configuration',
   tableCanBeDeletedAfter: 'La table pourra être supprimée après la suppression de\n{rules}',
-  tableRemovedFromConfig: 'La table est supprimée du fichier de configuration, mais elle reste utilisée dans les éléments suivants.\n<strong>Replacer la table dans le fichier de configuration ou supprimer tous les éléments qui l\'utilisent</strong>\n{rules}',
+  tableRemovedFromConfig:
+    'La table est supprimée du fichier de configuration, mais elle reste utilisée dans les éléments suivants.\n<strong>Replacer la table dans le fichier de configuration ou supprimer tous les éléments qui l\'utilisent</strong>\n{rules}',
   tableEmptyColumns: 'Veuillez choisir au moins 1 colonne dans les paramètres',
   tableColumnTypes: {
     [EXTERNAL_DATA_TABLE_COLUMN_TAGS.noTag]: 'Pas d\'étiquette',
@@ -75,25 +76,29 @@ export default {
     },
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number]: {
       text: '@:common.variableTypes.number',
-      tooltip: 'Les valeurs dans le champ doivent contenir uniquement :<br>• nombres<br>• virgules<br>• points<br>• signes moins<br>• espace',
+      tooltip:
+        'Les valeurs dans le champ doivent contenir uniquement :<br>• nombres<br>• virgules<br>• points<br>• signes moins<br>• espace',
     },
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean]: {
       text: '@:common.variableTypes.boolean',
-      tooltip: 'Les valeurs dans le champ doivent contenir l\'une des valeurs suivantes (insensible à la casse) :<br>• yes / no<br>• y / n<br>• oui / non<br>• true / false<br>• 1 / 0<br><br>Toutes ces valeurs seront converties en true / false',
+      tooltip:
+        'Les valeurs dans le champ doivent contenir l\'une des valeurs suivantes (insensible à la casse) :<br>• yes / no<br>• y / n<br>• oui / non<br>• true / false<br>• 1 / 0<br><br>Toutes ces valeurs seront converties en true / false',
     },
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: {
       text: '@:common.timestamp',
     },
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: {
       text: 'Date/heure',
-      tooltip: 'Les valeurs dans le champ doivent être dans l\'un des formats suivants :<br>• 1990-12-31T00:00:00.000Z<br>• 1990-12-31T00:00:00:00:00<br>• 1990-12-31T00:00:00Z<br>• 1990-12-31T00:00:00+00:00',
+      tooltip:
+        'Les valeurs dans le champ doivent être dans l\'un des formats suivants :<br>• 1990-12-31T00:00:00.000Z<br>• 1990-12-31T00:00:00:00:00<br>• 1990-12-31T00:00:00Z<br>• 1990-12-31T00:00:00+00:00',
     },
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray]: {
       text: '@:common.variableTypes.array',
     },
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp]: {
       text: '@:common.regexp',
-      tooltip: 'Une nouvelle colonne Priorité sera ajoutée après ces étapes :<br>1. À toutes les valeurs ^ est ajouté au début et $ à la fin (sauf pour le .*)<br>2. Chaque valeur est notée<br><br><table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="border: 1px solid currentColor;" class="pa-2">Type de valeur</th><th style="border: 1px solid currentColor;" class="pa-2">Score</th></tr></thead><tbody><tr><td style="border: 1px solid currentColor;" class="pa-2">Vide OU .* OU .+</td><td style="border: 1px solid currentColor;" class="pa-2">0</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Contient * OU regex général</td><td style="border: 1px solid currentColor;" class="pa-2">1</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Avec un seul ^ OU $</td><td style="border: 1px solid currentColor;" class="pa-2">2</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Valeur exacte (commence par ^ et finit par $)</td><td style="border: 1px solid currentColor;" class="pa-2">3</td></tr></tbody></table><br>3. La colonne Priorité est ajoutée avec la priorité résumée (toutes les priorités des colonnes regexp sont additionnées)',
+      tooltip:
+        'Une nouvelle colonne Priorité sera ajoutée après ces étapes :<br>1. À toutes les valeurs ^ est ajouté au début et $ à la fin (sauf pour le .*)<br>2. Chaque valeur est notée<br><br><table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="border: 1px solid currentColor;" class="pa-2">Type de valeur</th><th style="border: 1px solid currentColor;" class="pa-2">Score</th></tr></thead><tbody><tr><td style="border: 1px solid currentColor;" class="pa-2">Vide OU .* OU .+</td><td style="border: 1px solid currentColor;" class="pa-2">0</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Contient * OU regex général</td><td style="border: 1px solid currentColor;" class="pa-2">1</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Avec un seul ^ OU $</td><td style="border: 1px solid currentColor;" class="pa-2">2</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Valeur exacte (commence par ^ et finit par $)</td><td style="border: 1px solid currentColor;" class="pa-2">3</td></tr></tbody></table><br>3. La colonne Priorité est ajoutée avec la priorité résumée (toutes les priorités des colonnes regexp sont additionnées)',
     },
   },
   tableColumnDataTypesAdditionalChips: {
@@ -120,6 +125,7 @@ export default {
         },
       },
     },
-    forbiddenSeparator: 'Ce séparateur ne peut pas être utilisé car il entre en conflit avec le séparateur de table',
+    forbiddenSeparator:
+      'Ce séparateur ne peut pas être utilisé car il entre en conflit avec le séparateur de table',
   },
 };

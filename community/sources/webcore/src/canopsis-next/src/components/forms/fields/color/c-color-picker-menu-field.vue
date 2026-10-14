@@ -1,41 +1,35 @@
 <template>
   <v-menu
+    v-model="shown"
     :close-on-content-click="false"
     :disabled="disabled"
     content-class="c-color-picker-menu-field__dropdown"
-    bottom
-    left
-    offset-x
+    location="bottom end"
   >
-    <template #activator="{ on }">
+    <template #activator="{ props: activatorProps }">
       <v-btn
+        v-bind="activatorProps"
         :style="style"
         :disabled="disabled"
         class="c-color-picker-menu-field__button ma-0 pa-0"
         block
-        v-on="on"
       />
     </template>
-    <c-color-chrome-picker-field v-model="colorObject" />
-    <c-color-compact-picker-field v-model="colorObject" />
+
+    <v-card>
+      <v-color-picker v-model="colorValue" mode="hex" hide-inputs />
+    </v-card>
   </v-menu>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { computed, ref } from 'vue';
 
 import { colorToHex } from '@/helpers/color';
 
-import { formBaseMixin } from '@/mixins/form';
-
 export default {
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: 'transparent',
     },
@@ -44,33 +38,26 @@ export default {
       default: false,
     },
   },
-  computed: {
-    colorObject: {
-      get() {
-        return colorToHex(this.value);
-      },
 
-      set(value) {
-        this.updateModel(value.hex);
-      },
-    },
+  emits: ['update:modelValue'],
 
-    style() {
-      return {
-        backgroundColor: this.value && `${this.value} !important`,
-      };
-    },
-  },
-  methods: {
-    showColorPickerModal() {
-      this.$modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          color: this.value,
-          action: color => this.updateModel(color),
-        },
-      });
-    },
+  setup(props, { emit }) {
+    const shown = ref(false);
+
+    const colorValue = computed({
+      get: () => colorToHex(props.modelValue),
+      set: value => emit('update:modelValue', value),
+    });
+
+    const style = computed(() => ({
+      backgroundColor: props.modelValue && `${props.modelValue} !important`,
+    }));
+
+    return {
+      shown,
+      colorValue,
+      style,
+    };
   },
 };
 </script>
@@ -87,8 +74,7 @@ export default {
   &__dropdown {
     max-width: 245px;
 
-    .vc-chrome,
-    .vc-compact {
+    .v-color-picker {
       box-shadow: none;
       width: 100%;
     }
