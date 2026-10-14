@@ -1,8 +1,7 @@
 <template>
   <div
     :style="{ background: color }"
-    class="test-suite-chip white--text"
-    v-on="$listeners"
+    class="test-suite-chip text-white"
   >
     <slot>{{ $t(`testSuite.statuses.${value}`) }}</slot>
   </div>
@@ -18,6 +17,7 @@ export default {
       default: TEST_SUITE_STATUSES.passed,
     },
   },
+
   computed: {
     color() {
       return TEST_SUITE_COLORS[this.value];

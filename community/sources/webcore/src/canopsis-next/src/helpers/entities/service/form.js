@@ -2,8 +2,8 @@ import { isNumber, omit } from 'lodash';
 
 import { ALARM_STATES, PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
-import { infosToArray } from '../shared/form';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { infosToArray } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {FilterPatterns} Service
@@ -40,10 +40,7 @@ export const serviceToForm = (service = {}) => ({
   infos: infosToArray(service.infos),
   output_template: service.output_template ?? '',
   sli_avail_state: service.sli_avail_state ?? ALARM_STATES.ok,
-  patterns: filterPatternsToForm(
-    service,
-    [PATTERNS_FIELDS.entity],
-  ),
+  patterns: filterPatternsToForm(service, [PATTERNS_FIELDS.entity]),
   coordinates: service.coordinates ?? {
     lat: undefined,
     lng: undefined,

@@ -1,49 +1,55 @@
 <template>
-  <v-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <c-name-field
-      v-field="form.name"
+      :model-value="form.name"
       autofocus
       required
+      @update:model-value="updateField('name', $event)"
     />
     <c-form-block>
       <c-form-block-row :label="$t('common.category')">
         <c-entity-category-field
-          v-field="form.category"
+          :category="form.category"
           addable
+          clearable
           required
+          @update:category="updateField('category', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('entity.availabilityState')">
         <c-alarm-state-field
-          v-field="form.sli_avail_state"
+          :value="form.sli_avail_state"
           :label="$t('entity.availabilityState')"
           required
+          @update:value="updateField('sli_avail_state', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('entity.impact')">
         <c-impact-level-field
-          v-field="form.impact_level"
+          :value="form.impact_level"
           required
+          @update:value="updateField('impact_level', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.coordinates')">
         <c-coordinates-field
-          v-field="form.coordinates"
+          :value="form.coordinates"
           row
+          @update:value="updateField('coordinates', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('service.outputTemplate')">
         <text-editor-field
-          v-validate="'required'"
-          v-field="form.output_template"
+          :model-value="form.output_template"
           :label="$t('service.outputTemplate')"
-          :error-messages="errors.collect('output_template')"
           :variables="templateVars.output"
           name="output_template"
+          required
+          @update:model-value="updateField('output_template', $event)"
         />
       </c-form-block-row>
 
@@ -54,23 +60,21 @@
         />
       </c-form-block-row>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { useModelField } from '@/hooks/form/model-field';
+
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     TextEditorField,
     EntityStateSetting,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -84,6 +88,16 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+
+  emits: ['update:form'],
+
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+
+    return {
+      updateField,
+    };
   },
 };
 </script>

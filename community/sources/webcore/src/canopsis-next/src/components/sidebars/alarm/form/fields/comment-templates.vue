@@ -1,15 +1,16 @@
 <template>
-  <widget-settings-group :title="$t('settings.commentTemplates.title')">
+  <widget-settings-group :title="t('settings.commentTemplates.title')">
     <v-container>
-      <v-layout class="gap-2" column>
+      <c-layout gap="2" column>
         <span class="text-body-2">
-          {{ $tc('common.template', 2) }}
+          {{ t('common.template', 2) }}
         </span>
-        <span>{{ $t('settings.commentTemplates.description') }}</span>
+        <span>{{ t('settings.commentTemplates.description') }}</span>
         <c-card-iterator-field
-          v-field="templates"
+          :data="modelValue"
           :handle="`.${dragItemHandleClass}`"
           item-key="key"
+          @update:data="$emit('update:modelValue', $event)"
         >
           <template #item="{ index }">
             <c-card-iterator-item
@@ -18,100 +19,94 @@
               @remove="removeTemplate(index)"
             >
               <template #header>
-                <c-select-field
-                  v-field="templates[index].template"
-                  :items="getAvailableTemplates(templates[index].template)"
-                  :label="$tc('common.template', 1)"
-                  :name="`commentTemplates[${index}].template`"
+                <c-select
+                  :model-value="modelValue[index].template"
+                  :items="getAvailableTemplates(modelValue[index].template)"
+                  :label="t('common.template', 1)"
+                  :name="`${name}.${modelValue[index].key}.template`"
                   :loading="pending"
-                  item-text="name"
+                  item-title="name"
                   item-value="_id"
                   item-disabled="disabled"
                   hide-details
                   required
+                  @update:model-value="updateTemplate(index, $event)"
                 />
               </template>
             </c-card-iterator-item>
           </template>
         </c-card-iterator-field>
-        <v-layout
-          class="mt-2"
-          justify-end
-        >
-          <v-btn
-            color="primary"
-            @click="addTemplate"
-          >
-            {{ $t('common.add') }}
+        <c-layout class="mt-2" justify="end">
+          <v-btn color="primary" @click="addTemplate">
+            {{ t('common.add') }}
           </v-btn>
-        </v-layout>
-      </v-layout>
+        </c-layout>
+      </c-layout>
     </v-container>
   </widget-settings-group>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { uid } from '@/helpers/uid';
 
-import { useCommentTemplates } from '@/hooks/store/modules/comment-template';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
-import { usePendingHandler } from '@/hooks/query/pending';
+import { useI18n } from '@/hooks/i18n';
+import { useCommentTemplate } from '@/hooks/store/modules/comment-template';
 
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 
 export default {
-  inject: ['$validator'],
   components: { WidgetSettingsGroup },
-  model: {
-    prop: 'templates',
-    event: 'input',
-  },
+
   props: {
-    templates: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
+    name: {
+      type: String,
+      default: 'comment_templates',
+    },
   },
-  setup(props, { emit }) {
-    const dragItemHandleClass = 'template-drag-handler';
 
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const dragItemHandleClass = 'template-drag-handler';
     const availableTemplates = ref([]);
 
-    const { fetchCommentTemplatesListWithoutStore } = useCommentTemplates();
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
-
-    /**
-     * Fetch available comment templates
-     */
-    const {
-      pending,
-      handler: fetchTemplates,
-    } = usePendingHandler(async () => {
-      const response = await fetchCommentTemplatesListWithoutStore({
-        params: { limit: 1000 },
-      });
-
-      availableTemplates.value = response.data;
-    });
-
-    /**
-     * Get available templates with disabled state for already selected ones
-     *
-     * @param {string} currentTemplate - Current template ID to exclude from disabling
-     * @returns {Array} Array of templates with disabled property
-     */
-    const getAvailableTemplates = currentTemplate => (
-      availableTemplates.value.map(template => ({
-        ...template,
-        disabled: props.templates.some(item => item.template === template._id && item.template !== currentTemplate),
-      }))
+    const { fetchCommentTemplatesListWithoutStore } = useCommentTemplate();
+    const { addItemIntoArray, updateFieldInArrayItem, removeItemFromArray } = useArrayModelField(
+      props,
+      emit,
     );
 
-    /**
-     * Add new template to the templates array
-     */
+    const pending = ref(false);
+
+    const fetchTemplates = async () => {
+      try {
+        pending.value = true;
+
+        const response = await fetchCommentTemplatesListWithoutStore({
+          params: { limit: 1000 },
+        });
+
+        availableTemplates.value = response.data;
+      } finally {
+        pending.value = false;
+      }
+    };
+
+    const getAvailableTemplates = currentTemplate => availableTemplates.value.map(template => ({
+        ...template,
+        disabled: props.modelValue.some(
+          item => item.template === template._id && item.template !== currentTemplate,
+        ),
+      }));
+
     const addTemplate = () => {
       addItemIntoArray({
         key: uid(),
@@ -119,22 +114,18 @@ export default {
       });
     };
 
-    /**
-     * Remove template from the templates array
-     *
-     * @param {number} index - Index of the template to remove
-     */
+    const updateTemplate = (index, value) => updateFieldInArrayItem(index, 'template', value);
     const removeTemplate = index => removeItemFromArray(index);
 
-    onMounted(() => {
-      fetchTemplates();
-    });
+    onMounted(fetchTemplates);
 
     return {
+      t,
       dragItemHandleClass,
       pending,
       getAvailableTemplates,
       addTemplate,
+      updateTemplate,
       removeTemplate,
     };
   },

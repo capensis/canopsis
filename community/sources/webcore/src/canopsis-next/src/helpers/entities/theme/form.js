@@ -1,7 +1,7 @@
 import { COLORS } from '@/config';
-import { THEME_FONT_SIZES } from '@/constants';
+import { DEFAULT_WIDGET_BORDER_RADIUS, THEME_FONT_SIZES } from '@/constants';
 
-import { isDarkColor, getLightenOrDarkenColor } from '@/helpers/color';
+import { getLightenOrDarkenColor, isDarkColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} ThemeEnabledColor
@@ -20,14 +20,27 @@ import { isDarkColor, getLightenOrDarkenColor } from '@/helpers/color';
  */
 
 /**
+ * @typedef {Object} ThemeWidgetColorsForm
+ * @property {string} title_background
+ * @property {string} content_background
+ * @property {ThemeEnabledColor} border
+ */
+
+/**
  * @typedef {ThemeStatesColors} ThemeStatesColorsForm
+ */
+
+/**
+ * @typedef {ThemeIconsColors} ThemeIconsColorsForm
  */
 
 /**
  * @typedef {ThemeColors} ThemeColorsForm
  * @property {ThemeMainColorsForm} main
  * @property {ThemeTableColorsForm} table
+ * @property {ThemeWidgetColorsForm} widget
  * @property {ThemeStatesColorsForm} state
+ * @property {ThemeIconsColorsForm} icons
  */
 
 /**
@@ -50,26 +63,30 @@ import { isDarkColor, getLightenOrDarkenColor } from '@/helpers/color';
  * @param {number} [amount] - The amount to adjust the background color if needed.
  * @returns {Object} - An object containing standardized colors and their backgrounds.
  */
-export const convertTypeColors = (main, amount) => ({
+export const convertTypeColors = (main = {}, amount) => ({
   error: main.error || COLORS.error,
-  error_background: !main.error && !main.error_background
-    ? COLORS.errorBackground
-    : main.error_background || getLightenOrDarkenColor(main.error, amount),
+  error_background:
+    !main.error && !main.error_background
+      ? COLORS.errorBackground
+      : main.error_background || getLightenOrDarkenColor(main.error, amount),
 
   warning: main.warning || COLORS.warning,
-  warning_background: !main.warning && !main.warning_background
-    ? COLORS.warningBackground
-    : main.warning_background || getLightenOrDarkenColor(main.warning, amount),
+  warning_background:
+    !main.warning && !main.warning_background
+      ? COLORS.warningBackground
+      : main.warning_background || getLightenOrDarkenColor(main.warning, amount),
 
   success: main.success || COLORS.success,
-  success_background: !main.success && !main.success_background
-    ? COLORS.successBackground
-    : main.success_background || getLightenOrDarkenColor(main.success, amount),
+  success_background:
+    !main.success && !main.success_background
+      ? COLORS.successBackground
+      : main.success_background || getLightenOrDarkenColor(main.success, amount),
 
   info: main.info || COLORS.info,
-  info_background: !main.info && !main.info_background
-    ? COLORS.infoBackground
-    : main.info_background || getLightenOrDarkenColor(main.info, amount),
+  info_background:
+    !main.info && !main.info_background
+      ? COLORS.infoBackground
+      : main.info_background || getLightenOrDarkenColor(main.info, amount),
 });
 
 /**
@@ -79,11 +96,11 @@ export const convertTypeColors = (main, amount) => ({
  * @returns {ThemeMainColorsForm}
  */
 export const themeMainColorsToForm = (main = {}) => ({
-  primary: main.primary ?? COLORS.primary,
-  secondary: main.secondary ?? COLORS.secondary,
-  accent: main.accent ?? COLORS.accent,
-  background: main.background ?? COLORS.background,
-  active_color: main.active_color ?? COLORS.activeColor,
+  primary: main.primary || COLORS.primary,
+  secondary: main.secondary || COLORS.secondary,
+  accent: main.accent || COLORS.accent,
+  background: main.background || COLORS.background,
+  active_color: main.active_color || COLORS.activeColor,
 
   ...convertTypeColors(main),
 });
@@ -96,26 +113,46 @@ export const themeMainColorsToForm = (main = {}) => ({
  */
 export const themeTableColorsToForm = (table = {}) => {
   const isDarkRowColor = table.row_color && isDarkColor(table.row_color);
-  const shiftRowColor = table.shift_row_color ?? (
-    isDarkRowColor ? COLORS.table.shiftRowDarkColor : COLORS.table.shiftRowColor
-  );
-  const hoverRowColor = table.hover_row_color ?? (
-    isDarkRowColor ? COLORS.table.hoverRowDarkColor : COLORS.table.hoverRowColor
-  );
+  const shiftRowEnabled = table.shift_row?.enabled ?? Boolean(table.shift_row);
+  const hoverRowEnabled = table.hover_row?.enabled ?? Boolean(table.hover_row);
+  const shiftRowColor =
+    table.shift_row_color ||
+    table.shift_row?.color ||
+    (isDarkRowColor ? COLORS.table.shiftRowDarkColor : COLORS.table.shiftRowColor);
+  const hoverRowColor =
+    table.hover_row_color ||
+    table.hover_row?.color ||
+    (isDarkRowColor ? COLORS.table.hoverRowDarkColor : COLORS.table.hoverRowColor);
 
   return {
-    background: table.background ?? COLORS.table.background,
-    row_color: table.row_color ?? COLORS.table.rowColor,
+    background: table.background || COLORS.table.background,
+    row_color: table.row_color || COLORS.table.rowColor,
     shift_row: {
-      enabled: !!table.shift_row,
+      enabled: shiftRowEnabled,
       color: shiftRowColor,
     },
     hover_row: {
-      enabled: !!table.hover_row,
+      enabled: hoverRowEnabled,
       color: hoverRowColor,
     },
   };
 };
+
+/**
+ * Convert theme widget colors to form object.
+ *
+ * @param {ThemeWidgetColors} [widget = {}]
+ * @returns {ThemeWidgetColorsForm}
+ */
+export const themeWidgetColorsToForm = (widget = {}) => ({
+  border: {
+    enabled: widget.border?.enabled ?? Boolean(widget.border),
+    color: widget.border_color || widget.border?.color || COLORS.widget.borderColor,
+    radius: widget.border_radius ?? widget.border?.radius ?? DEFAULT_WIDGET_BORDER_RADIUS,
+  },
+  title_background: widget.title_background || COLORS.widget.titleBackground,
+  content_background: widget.content_background || COLORS.widget.contentBackground,
+});
 
 /**
  * Convert theme main colors to form object
@@ -124,10 +161,32 @@ export const themeTableColorsToForm = (table = {}) => {
  * @returns {ThemeStatesColorsForm}
  */
 export const themeStatesColorsToForm = (states = {}) => ({
-  ok: states.ok ?? COLORS.state.ok,
-  minor: states.minor ?? COLORS.state.minor,
-  major: states.major ?? COLORS.state.major,
-  critical: states.critical ?? COLORS.state.critical,
+  ok: states.ok || COLORS.state.ok,
+  minor: states.minor || COLORS.state.minor,
+  major: states.major || COLORS.state.major,
+  critical: states.critical || COLORS.state.critical,
+  pause: states.pause || COLORS.state.pause,
+});
+
+/**
+ * Convert extra details colors to form object
+ *
+ * @param {ThemeIconsColors} [icons = {}]
+ * @returns {ThemeIconsColorsForm}
+ */
+export const themeIconsColorsToForm = (icons = {}) => ({
+  ack: icons.ack || COLORS.alarmExtraDetails.ack,
+  canceled: icons.canceled || COLORS.alarmExtraDetails.canceled,
+  children: icons.children || COLORS.alarmExtraDetails.children,
+  parent: icons.parent || COLORS.alarmExtraDetails.parent,
+  comment: icons.comment || COLORS.alarmExtraDetails.comment,
+  snooze: icons.snooze || COLORS.alarmExtraDetails.snooze,
+  tickets: icons.tickets || icons.ticket || COLORS.alarmExtraDetails.tickets,
+  cancel_delay:
+    icons.cancel_delay ||
+    icons.close_delay ||
+    icons.closeDelay ||
+    COLORS.alarmExtraDetails.cancel_delay,
 });
 
 /**
@@ -139,7 +198,10 @@ export const themeStatesColorsToForm = (states = {}) => ({
 export const themeColorsToForm = (colors = {}) => ({
   main: themeMainColorsToForm(colors.main),
   table: themeTableColorsToForm(colors.table),
+  widget: themeWidgetColorsToForm(colors.widget),
   state: themeStatesColorsToForm(colors.state),
+  icons: themeIconsColorsToForm(colors.icons ?? colors.extra_details),
+  status: colors.status || COLORS.status,
 });
 
 /**
@@ -155,33 +217,65 @@ export const themeToForm = (theme = {}) => ({
 });
 
 /**
- * Convert theme table colors form to API compatible object
+ * Convert table colors to theme object.
  *
- * @param {ThemeTableColorsForm} table
+ * @param {ThemeTableColors|ThemeTableColorsForm} [table = {}]
  * @returns {ThemeTableColors}
  */
-const formTableColorsToTheme = table => ({
-  ...table,
+export const tableColorsToTheme = (table = {}) => {
+  const shiftRowEnabled = table.shift_row?.enabled ?? Boolean(table.shift_row);
+  const hoverRowEnabled = table.hover_row?.enabled ?? Boolean(table.hover_row);
 
-  shift_row: table.shift_row?.enabled ?? false,
-  shift_row_color: table.shift_row?.color ?? null,
-  hover_row: table.hover_row?.enabled ?? false,
-  hover_row_color: table.hover_row?.color ?? null,
-});
+  return {
+    ...table,
+    shift_row: shiftRowEnabled,
+    shift_row_color: shiftRowEnabled
+      ? table.shift_row?.color || table.shift_row_color || null
+      : null,
+    hover_row: hoverRowEnabled,
+    hover_row_color: hoverRowEnabled
+      ? table.hover_row?.color || table.hover_row_color || null
+      : null,
+  };
+};
 
 /**
- * Convert theme colors form to API compatible object
+ * Convert widget colors from form to API object.
  *
- * @param {ThemeColorsForm} colors
+ * @param {ThemeWidgetColorsForm} [widget = {}]
+ * @returns {ThemeWidgetColors}
+ */
+export const formWidgetColorsToTheme = (widget = {}) => {
+  const preparedWidget = themeWidgetColorsToForm(widget);
+
+  return {
+    title_background: preparedWidget.title_background,
+    content_background: preparedWidget.content_background,
+    border: preparedWidget.border.enabled,
+    border_color: preparedWidget.border.color,
+    border_radius: preparedWidget.border.radius,
+  };
+};
+
+/**
+ * Convert colors from form to API object.
+ *
+ * @param {ThemeColorsForm} [colors = {}]
  * @returns {ThemeColors}
  */
-const formColorsToTheme = colors => ({
-  ...colors,
-  table: formTableColorsToTheme(colors.table),
-});
+export const formColorsToTheme = (colors = {}) => {
+  const { extra_details: extraDetails, ...preparedColors } = colors;
+
+  return {
+    ...preparedColors,
+    table: tableColorsToTheme(colors.table),
+    widget: formWidgetColorsToTheme(colors.widget),
+    icons: themeIconsColorsToForm(colors.icons ?? extraDetails),
+  };
+};
 
 /**
- * Convert theme form to API compatible object
+ * Convert theme form to API object.
  *
  * @param {ThemeForm} form
  * @returns {Theme}

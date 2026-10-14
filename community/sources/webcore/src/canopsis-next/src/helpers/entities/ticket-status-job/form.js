@@ -4,28 +4,10 @@ import {
 } from '@/helpers/entities/declare-ticket/rule/form';
 
 /**
- * @typedef {Object} TicketStatusJob
- * @property {string} [rule_name]
- * @property {string} [rule_type]
- * @property {string} [ticket_id]
- * @property {string} [ticket_system_name]
- * @property {DeclareTicketRuleCheckTicketStatus} [check_ticket_status]
- */
-
-/**
- * @typedef {Object} TicketStatusJobForm
- * @property {string} [rule_name]
- * @property {string} [rule_type]
- * @property {string} [ticket_system_name]
- * @property {string} [ticket_id]
- * @property {DeclareTicketRuleCheckTicketStatusForm} [check_ticket_status]
- */
-
-/**
- * Convert ticket status job entity to form object
+ * Convert ticket status job object to form compatible object.
  *
- * @param {TicketStatusJob} job
- * @returns {TicketStatusJobForm}
+ * @param {Object} job
+ * @returns {Object}
  */
 export const ticketStatusJobToForm = (job = {}) => ({
   rule_name: job.rule_name ?? '',
@@ -36,15 +18,15 @@ export const ticketStatusJobToForm = (job = {}) => ({
 });
 
 /**
- * Convert ticket status job form to entity
+ * Convert ticket status job form to API compatible object.
  *
- * @param {TicketStatusJobForm} form
- * @returns {TicketStatusJob}
+ * @param {Object} form
+ * @returns {Object}
  */
 export const formToTicketStatusJob = form => ({
   rule_name: form.rule_name,
   rule_type: form.rule_type,
-  ticket_id: form.ticket_id,
   ticket_system_name: form.ticket_system_name,
+  ticket_id: form.ticket_id,
   check_ticket_status: formToDeclareTicketRuleCheckTicketStatus(form.check_ticket_status),
 });

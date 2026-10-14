@@ -1,13 +1,17 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapStores } from 'pinia';
 
-const { mapActions } = createNamespacedHelpers('view');
+import { useViewStore } from '@/stores/modules/view';
 
 /**
  * @mixin Helpers for the view entity
  */
 export const entitiesViewMixin = {
+  computed: {
+    ...mapStores(useViewStore),
+  },
+
   methods: {
-    ...mapActions({
+    ...mapActions(useViewStore, {
       createView: 'createView',
       updateView: 'updateView',
       updateViewsPositions: 'updateViewPositions',

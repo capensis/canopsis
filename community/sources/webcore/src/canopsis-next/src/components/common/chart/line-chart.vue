@@ -1,17 +1,45 @@
+<template>
+  <div class="line-chart">
+    <div class="line-chart__canvas">
+      <canvas ref="canvas" />
+    </div>
+    <slot :chart="chart" name="actions" />
+  </div>
+</template>
+
 <script>
+import {
+  CategoryScale,
+  Chart,
+  Filler,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  TimeScale,
+  Tooltip,
+} from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import 'chartjs-adapter-moment';
 import { merge } from 'lodash';
+import { markRaw } from 'vue';
 
-import { chartBackgroundMixin } from '@/mixins/chart/background';
-import { chartZoomMixin } from '@/mixins/chart/zoom';
-
-import { Line } from '@/externals/vue-chart/components';
+Chart.register(
+  CategoryScale,
+  Filler,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  TimeScale,
+  Tooltip,
+  zoomPlugin,
+);
 
 export default {
-  extends: Line,
-  mixins: [chartBackgroundMixin, chartZoomMixin],
   props: {
-    ...Line.props,
-
     labels: {
       type: Array,
       required: false,
@@ -24,7 +52,18 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  data() {
+    return {
+      chart: null,
+    };
+  },
+
   computed: {
     chartData() {
       return {
@@ -32,46 +71,93 @@ export default {
         datasets: this.datasets,
       };
     },
-    mergedOptions() {
-      return merge({
-        responsive: true,
-        maintainAspectRatio: false,
 
-        plugins: {
-          zoom: {
-            pan: {
-              enabled: false,
-            },
+    mergedOptions() {
+      return merge(
+        {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
             zoom: {
-              wheel: {
+              pan: {
                 enabled: false,
               },
-              pinch: {
-                enabled: false,
-              },
-              drag: {
-                enabled: false,
+              zoom: {
+                wheel: {
+                  enabled: false,
+                },
+                pinch: {
+                  enabled: false,
+                },
+                drag: {
+                  enabled: false,
+                },
               },
             },
           },
-        } }, this.options);
+        },
+        this.options,
+      );
     },
   },
+
   watch: {
-    chartData(data, oldData) {
-      if (data !== oldData) {
-        this.updateChart(data, this.mergedOptions);
-      }
+    chartData: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      },
     },
 
-    mergedOptions(options, oldOptions) {
-      if (options !== oldOptions) {
-        this.updateChart(this.chartData, options);
-      }
+    mergedOptions: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      },
     },
   },
+
   mounted() {
-    this.renderChart(this.chartData, this.mergedOptions);
+    this.renderChart();
+  },
+
+  beforeUnmount() {
+    this.chart?.destroy();
+    this.chart = null;
+  },
+
+  methods: {
+    renderChart() {
+      this.chart = markRaw(
+        new Chart(this.$refs.canvas, {
+          type: 'line',
+          data: this.chartData,
+          options: this.mergedOptions,
+        }),
+      );
+    },
+
+    updateChart() {
+      if (!this.chart) {
+        return;
+      }
+
+      this.chart.data = this.chartData;
+      this.chart.options = this.mergedOptions;
+      this.chart.update();
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.line-chart {
+  position: relative;
+  width: 100%;
+
+  &__canvas {
+    position: relative;
+    height: 360px;
+  }
+}
+</style>

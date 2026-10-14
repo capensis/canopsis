@@ -1,31 +1,32 @@
 <template>
-  <v-select
-    v-field="value"
-    v-validate="rules"
-    :label="$t('common.state')"
+  <c-select
+    :model-value="modelValue"
     :items="availableCounters"
+    :label="t('common.state')"
     :name="name"
-    :error-messages="errors.collect(name)"
-    :item-disabled="isItemDisabled"
     :disabled="disabled"
+    :required="required"
+    :item-props="getItemProps"
     chips
-    deletable-chips
-    small-chips
+    closable-chips
     multiple
+    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
 <script>
-import { SERVICE_WEATHER_STATE_COUNTERS, SERVICE_WEATHER_MAX_STATE_COUNTERS } from '@/constants';
+import { computed } from 'vue';
+
+import {
+  SERVICE_WEATHER_MAX_STATE_COUNTERS,
+  SERVICE_WEATHER_STATE_COUNTERS,
+} from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -46,26 +47,32 @@ export default {
       default: SERVICE_WEATHER_MAX_STATE_COUNTERS,
     },
   },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
 
-    availableCounters() {
-      const messages = this.$t('serviceWeather.stateCounters');
+  emits: ['update:modelValue'],
+
+  setup(props) {
+    const { t, tm } = useI18n();
+
+    const availableCounters = computed(() => {
+      const messages = tm('serviceWeather.stateCounters');
 
       return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(value => ({
         value,
-        text: messages[value],
+        title: messages[value],
       }));
-    },
-  },
-  methods: {
-    isItemDisabled({ value }) {
-      return this.value.includes(value) ? false : this.value.length >= this.max;
-    },
+    });
+
+    const getItemProps = item => ({
+      disabled: props.modelValue.includes(item.value)
+        ? false
+        : props.modelValue.length >= props.max,
+    });
+
+    return {
+      t,
+      availableCounters,
+      getItemProps,
+    };
   },
 };
 </script>

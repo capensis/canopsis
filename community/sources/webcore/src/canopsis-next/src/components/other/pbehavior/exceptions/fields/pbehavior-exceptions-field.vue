@@ -1,44 +1,43 @@
 <template>
-  <v-layout
-    class="gap-3"
-    column
-  >
-    <slot
-      v-if="!exdates.length"
-      name="no-data"
-    />
+  <c-layout gap="3" column>
+    <slot v-if="!exdates.length" name="no-data" />
     <c-form-block-array-field
-      v-field="exdates"
+      :form="exdates"
       :item-to-form="pbehaviorExdateItemToForm"
       :add-button-label="addButtonLabel || $t('modals.createPbehaviorException.addDate')"
       :disabled="disabled"
       :required="required"
-      :error-messages="errors.collect(name)"
-      :required-error-message="resolvedRequiredErrorMessage"
+      @update:form="updateModel"
     >
       <template #item="{ index, remove }">
         <pbehavior-exception-field
-          v-field="exdates[index]"
+          :value="exdates[index]"
           :disabled="disabled"
           :with-type="withExdateType"
+          @update:value="updateItemInArray(index, $event)"
           @delete="remove"
         />
       </template>
+
+      <template #add-button="{ add }">
+        <c-btn-with-error
+          :error="addButtonError"
+          variant="outlined"
+          @click="add"
+        >
+          {{ addButtonLabel || $t('modals.createPbehaviorException.addDate') }}
+        </c-btn-with-error>
+      </template>
     </c-form-block-array-field>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import {
-  computed,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  watch,
-} from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
 
 import { pbehaviorExdateItemToForm } from '@/helpers/entities/pbehavior/form';
 
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useI18n } from '@/hooks/i18n';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
@@ -46,12 +45,8 @@ import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach
 import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 
 export default {
-  inject: ['$validator'],
+  emits: ['update:exdates'],
   components: { PbehaviorExceptionField },
-  model: {
-    prop: 'exdates',
-    event: 'input',
-  },
   props: {
     exdates: {
       type: Array,
@@ -82,20 +77,23 @@ export default {
       default: '',
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const { t } = useI18n();
+    const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
     const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
 
-    const {
-      validator,
-      attachMinValueRule,
-      detachMinValueRule,
-      validateMinValueRule,
-    } = useValidationAttachMinValue(props.name);
+    const { collectErrors, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+      useValidationAttachMinValue(props.name);
 
     const resolvedRequiredErrorMessage = computed(
       () => props.requiredErrorMessage || t('common.addAtLeastOneItem'),
     );
+    const errorMessages = computed(() => collectErrors(props.name));
+    const addButtonError = computed(() => (
+      props.required && errorMessages.value.length
+        ? resolvedRequiredErrorMessage.value
+        : errorMessages.value[0] ?? ''
+    ));
 
     /**
      * Returns the current number of exception dates for min_value validation.
@@ -109,11 +107,14 @@ export default {
      */
     const asyncValidateMinValueRule = () => nextTick(validateMinValueRule);
 
-    watch(() => props.exdates, () => {
-      if (props.required) {
-        asyncValidateMinValueRule();
-      }
-    });
+    watch(
+      () => props.exdates,
+      () => {
+        if (props.required) {
+          asyncValidateMinValueRule();
+        }
+      },
+    );
 
     onMounted(() => {
       fetchPbehaviorTypesFieldList();
@@ -128,9 +129,10 @@ export default {
     onBeforeUnmount(detachMinValueRule);
 
     return {
-      errors: validator.errors,
       pbehaviorExdateItemToForm,
-      resolvedRequiredErrorMessage,
+      addButtonError,
+      updateModel,
+      updateItemInArray,
     };
   },
 };

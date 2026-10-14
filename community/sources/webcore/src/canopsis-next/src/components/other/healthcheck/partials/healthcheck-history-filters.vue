@@ -22,12 +22,10 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { HEALTHCHECK_QUICK_RANGES } from '@/constants';
 
-import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue';
 import HealthcheckConnectorNamesField from '../form/fields/healthcheck-connector-names-field.vue';
+import HealthcheckEventTypesField from '../form/fields/healthcheck-event-types-field.vue';
 
 export default {
   components: {
@@ -52,12 +50,13 @@ export default {
       required: true,
     },
   },
-  setup() {
-    const quickRanges = computed(() => Object.values(HEALTHCHECK_QUICK_RANGES));
 
-    return {
-      quickRanges,
-    };
+  emits: ['update:interval', 'update:event-types', 'update:connector-names'],
+
+  computed: {
+    quickRanges() {
+      return Object.values(HEALTHCHECK_QUICK_RANGES);
+    },
   },
 };
 </script>
@@ -66,6 +65,7 @@ export default {
 .healthcheck-history-filters {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
 
   & > * {
     flex-grow: 0;
@@ -75,7 +75,8 @@ export default {
     width: 280px;
   }
 
-  &__connector-names, &__event-types {
+  &__connector-names,
+  &__event-types {
     width: 340px;
   }
 }

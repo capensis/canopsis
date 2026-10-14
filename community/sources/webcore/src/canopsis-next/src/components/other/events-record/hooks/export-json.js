@@ -1,44 +1,31 @@
 import { ref, unref } from 'vue';
 
-import { openUrlInNewTab } from '@/helpers/url';
 import { getEventsRecordFileUrl } from '@/helpers/entities/events-record/url';
+import { openUrlInNewTab } from '@/helpers/url';
 
-import { useEventsRecord } from '@/hooks/store/modules/events-record';
 import { useFilePolling } from '@/hooks/polling';
+import { useEventsRecord } from '@/hooks/store/modules/events-record';
 
-/**
- * Function to use events record export JSON
- *
- * @param {Object} options - Options for events record export JSON
- * @param {string} options.eventsRecordId - ID of the events record
- * @param {Array} [options.eventIds = []] - Array of event IDs (default: empty array)
- * @param {Array} [options.eventPattern = []] - Array of event pattern (default: empty array)
- * @returns {Object} Object containing downloading status and function to export JSON
- */
 export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], eventPattern = [] }) => {
   const downloading = ref(false);
 
-  const {
-    createEventsRecordExport,
-    fetchEventsRecordExport,
-  } = useEventsRecord();
+  const { createEventsRecordExport, fetchEventsRecordExport } = useEventsRecord();
 
   const { poll: generateFile } = useFilePolling({
     createHandler: createEventsRecordExport,
     fetchHandler: fetchEventsRecordExport,
-    endHandler: fileData => openUrlInNewTab(getEventsRecordFileUrl(fileData?._id)),
+    endHandler: fileData => openUrlInNewTab(getEventsRecordFileUrl(fileData?._id ?? fileData?.id)),
   });
 
-  /**
-   * Function to export JSON file
-   *
-   * @returns {Promise} Promise that resolves when the export process is completed
-   */
   const exportJson = async () => {
     try {
       downloading.value = true;
 
-      await generateFile({ id: unref(eventsRecordId), eventIds: unref(eventIds), eventPattern: unref(eventPattern) });
+      await generateFile({
+        id: unref(eventsRecordId),
+        eventIds: unref(eventIds),
+        eventPattern: unref(eventPattern),
+      });
     } finally {
       downloading.value = false;
     }
@@ -46,7 +33,6 @@ export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [], event
 
   return {
     downloading,
-
     exportJson,
   };
 };

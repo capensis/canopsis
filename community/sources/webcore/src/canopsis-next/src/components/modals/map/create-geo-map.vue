@@ -1,79 +1,94 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <geomap-map-form v-model="form" />
+
+      <template #text>
+        <geomap-map-form v-model:form="form" />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { mapToForm, formToMap } from '@/helpers/entities/map/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import GeomapMapForm from '@/components/other/map/form/geomap-map-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createGeoMap,
-  $_veeValidate: {
-    validator: 'new',
+
+  components: { GeomapMapForm },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: { GeomapMapForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const title = computed(() => config.value.title ?? t('modals.createGeoMap.create.title'));
+
+    const {
+      values: form,
+      handleSubmit,
+      isSubmitting,
+    } = useForm({
+      initialValues: mapToForm(config.value.map),
+    });
+
+    const closeModal = () => modals.hide({ id: props.modal.id });
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToMap(form.value));
+
+      closeModal();
+    });
+
+    useFormConfirmableCloseModal({
+      form,
+      submit,
+      close: closeModal,
+    });
+
     return {
-      form: mapToForm(this.modal.config.map),
+      t,
+      form,
+      title,
+      isSubmitting,
+      submit,
+      closeModal,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createGeoMap.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToMap(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

@@ -1,11 +1,8 @@
 <template>
-  <v-layout
-    class="py-2"
-    column
-  >
+  <c-layout class="py-2" column>
     <kpi-widget-filters
       :widget-id="widget._id"
-      :user-filters="userPreference.filters"
+      :user-filters="userPreferenceFilters"
       :widget-filters="widget.filters"
       :locked-filters="query.lockedFilter"
       :filters="query.filter"
@@ -19,14 +16,13 @@
       @update:sampling="updateSampling"
       @update:interval="updateInterval"
     />
-    <v-layout
-      class="pa-3"
-      column
-    >
+
+    <c-layout class="pa-3" column>
       <chart-loader
         v-if="aggregatedMetricsPending"
         :has-data="hasMetrics"
       />
+
       <numbers-metrics
         v-if="hasMetrics"
         :metrics="preparedMetrics"
@@ -37,57 +33,56 @@
         :hide-actions="hideActions"
         @export:csv="exportMetricsAsCsv"
       />
-    </v-layout>
-  </v-layout>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
+import { mapActions, mapState } from 'pinia';
 
 import {
-  NUMBERS_CHART_MAX_AUTO_FONT_SIZE,
-  NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT,
   NUMBERS_CHART_DEFAULT_FONT_SIZE,
+  NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT,
+  NUMBERS_CHART_MAX_AUTO_FONT_SIZE,
   NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
 } from '@/constants';
 
+import { useMetricsStore } from '@/stores/modules/metrics';
+
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
 
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
-import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
-import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
+import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
-import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 
-import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import NumbersMetrics from './partials/numbers-metrics.vue';
 
-const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
-
 export default {
   inject: ['$system'],
+
   components: {
-    KpiWidgetFilters,
     ChartLoader,
+    KpiWidgetFilters,
     NumbersMetrics,
   },
+
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     queryIntervalFilterMixin,
-    widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,
-    entitiesAggregatedMetricsMixin,
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
@@ -96,26 +91,43 @@ export default {
       fetchExport: 'fetchMetricExport',
     }),
   ],
+
   props: {
     widget: {
       type: Object,
       required: true,
-    },
-    tabId: {
-      type: String,
-      default: '',
     },
     hideActions: {
       type: Boolean,
       default: false,
     },
   },
+
   data() {
     return {
       containerWidth: null,
+      downloading: false,
     };
   },
+
   computed: {
+    ...mapState(useMetricsStore, {
+      getAggregatedMetricsListByWidgetId: 'getListByWidgetId',
+      getAggregatedMetricsPendingByWidgetId: 'getPendingByWidgetId',
+    }),
+
+    aggregatedMetrics() {
+      return this.getAggregatedMetricsListByWidgetId(this.widget._id);
+    },
+
+    aggregatedMetricsPending() {
+      return this.getAggregatedMetricsPendingByWidgetId(this.widget._id);
+    },
+
+    hasMetrics() {
+      return !!this.aggregatedMetrics.length;
+    },
+
     preparedMetrics() {
       return this.aggregatedMetrics.map((metric) => {
         const parameters = this.widgetMetricsMap[metric.title] ?? {};
@@ -128,10 +140,6 @@ export default {
       });
     },
 
-    hasMetrics() {
-      return !!this.aggregatedMetrics.length;
-    },
-
     valueFontSize() {
       if (this.widget.parameters.font_size) {
         return this.widget.parameters.font_size;
@@ -140,33 +148,58 @@ export default {
       if (this.containerWidth) {
         const size = Math.round(this.containerWidth / NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT);
 
-        return Math.max(Math.min(size, NUMBERS_CHART_MAX_AUTO_FONT_SIZE), NUMBERS_CHART_MIN_AUTO_FONT_SIZE);
+        return Math.max(
+          Math.min(size, NUMBERS_CHART_MAX_AUTO_FONT_SIZE),
+          NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
+        );
       }
 
       return NUMBERS_CHART_DEFAULT_FONT_SIZE;
     },
+
+    userPreferenceFilters() {
+      return this.userPreference?.filters ?? [];
+    },
   },
+
   created() {
     this.setWidgetMetricsMap();
 
     this.resizeObserver = new ResizeObserver(this.setElementWidth);
   },
+
   mounted() {
     this.resizeObserver.observe(this.$el);
     this.setElementWidth();
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.resizeObserver.unobserve(this.$el);
     this.resizeObserver.disconnect();
   },
+
   methods: {
-    ...mapMetricsActions({
+    ...mapActions(useMetricsStore, {
       createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
       fetchMetricExport: 'fetchMetricExport',
+      fetchAggregatedMetrics: 'fetchAggregatedMetrics',
     }),
 
+    customQueryCondition(query, oldQuery) {
+      return isMetricsQueryChanged(query, oldQuery);
+    },
+
+    updateSampling(sampling) {
+      this.updateContentInUserPreference({ sampling });
+
+      this.query = {
+        ...this.query,
+        sampling,
+      };
+    },
+
     setElementWidth() {
-      if (this.fontSize) {
+      if (this.widget.parameters.font_size) {
         return;
       }
 
@@ -184,7 +217,7 @@ export default {
     },
 
     async fetchList() {
-      await this.fetchAggregatedMetricsList({
+      await this.fetchAggregatedMetrics({
         widgetId: this.widget._id,
         params: this.getQuery(),
       });

@@ -1,6 +1,4 @@
-import { useStoreModuleHooks } from '@/hooks/store';
-
-const useServiceStoreModule = () => useStoreModuleHooks('service');
+import { useServiceStore } from '@/stores/modules/service';
 
 /**
  * Hook for accessing service store actions
@@ -8,19 +6,9 @@ const useServiceStoreModule = () => useStoreModuleHooks('service');
  * @returns {Object} Service store actions
  */
 export const useService = () => {
-  const { useActions } = useServiceStoreModule();
-
-  const actions = useActions({
-    fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore',
-    fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
-    fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
-    fetchEntityUpstreamWithoutStore: 'fetchUpstreamWithoutStore',
-    fetchEntityDownstreamsWithoutStore: 'fetchDownstreamsWithoutStore',
-    bulkRemoveServices: 'bulkRemove',
-    // TODO: finish add another actions and getters
-  });
+  const serviceStore = useServiceStore();
 
   return {
-    ...actions,
+    ...serviceStore,
   };
 };

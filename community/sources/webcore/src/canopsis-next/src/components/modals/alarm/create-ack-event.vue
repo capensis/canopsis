@@ -1,27 +1,25 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createAckEvent.title') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createAckEvent.title') }}</span>
       </template>
-      <template #text="">
-        <v-layout column>
+
+      <template #text>
+        <c-layout gap="2" column>
           <alarm-general-table
             v-if="config.items"
             :items="config.items"
-            class="mb-4"
           />
           <ack-event-form
-            v-model="form"
             :is-note-required="isNoteRequired"
             :hide-ack-resources="!isAllComponentAlarms"
           />
-          <v-radio-group
+          <c-radio-group
             v-model="actionType"
-            :label="$t('alarm.actionsRequired')"
+            :label="t('alarm.actionsRequired')"
             name="actionType"
             hide-details
-            column
           >
             <v-radio
               v-for="type in actionTypes"
@@ -30,122 +28,135 @@
               :label="type.label"
               color="primary"
             />
-          </v-radio-group>
-        </v-layout>
+          </c-radio-group>
+        </c-layout>
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ t('common.submit') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS, ACK_MODAL_ACTIONS_TYPES } from '@/constants';
+import { computed, ref } from 'vue';
+
+import { ACK_MODAL_ACTIONS_TYPES, MODALS } from '@/constants';
 
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import AckEventForm from '@/components/widgets/alarm/forms/ack-event-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create an ack event
  */
 export default {
   name: MODALS.createAckEvent,
-  $_veeValidate: {
-    validator: 'new',
+
+  components: { AlarmGeneralTable, AckEventForm },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: { AlarmGeneralTable, AckEventForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      actionType: ACK_MODAL_ACTIONS_TYPES.ack,
-      form: {
+
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+    const actionType = ref(ACK_MODAL_ACTIONS_TYPES.ack);
+
+    const form = useForm({
+      initialValues: {
         comment: '',
         ack_resources: false,
       },
-    };
-  },
-  computed: {
-    isAlarmsHasDeclareTicketRules() {
-      return this.config.items.some(
+    });
+
+    const isAlarmsHasDeclareTicketRules = computed(() => (config.value.items ?? []).some(
         ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
-      );
-    },
+      ),
+    );
 
-    isAllComponentAlarms() {
-      return this.config.items.every(({ entity }) => isEntityComponentType(entity.type));
-    },
+    const isAllComponentAlarms = computed(
+      () => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    );
 
-    actionTypes() {
+    const actionTypes = computed(() => {
       const types = [
         {
-          label: this.$t('alarm.acknowledge'),
+          label: t('alarm.acknowledge'),
           value: ACK_MODAL_ACTIONS_TYPES.ack,
         },
         {
-          label: this.$t('alarm.acknowledgeAndAssociateTicket'),
+          label: t('alarm.acknowledgeAndAssociateTicket'),
           value: ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket,
         },
       ];
 
-      if (this.isAlarmsHasDeclareTicketRules) {
+      if (isAlarmsHasDeclareTicketRules.value) {
         types.push({
-          label: this.$t('alarm.acknowledgeAndDeclareTicket'),
+          label: t('alarm.acknowledgeAndDeclareTicket'),
           value: ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket,
         });
       }
 
       return types;
-    },
+    });
 
-    isNoteRequired() {
-      return this.config?.isNoteRequired;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+    const isNoteRequired = computed(() => config.value?.isNoteRequired);
+    const { handleSubmit, isSubmitting: submitting } = form;
 
-      if (isFormValid) {
-        if (this.config.action) {
-          const needDeclareTicket = this.actionType === ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket;
-          const needAssociateTicket = this.actionType === ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket;
+    const submit = handleSubmit(async () => {
+      if (config.value.action) {
+        const needDeclareTicket = actionType.value === ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket;
+        const needAssociateTicket =
+          actionType.value === ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket;
 
-          await this.config.action(this.form, {
-            needDeclareTicket,
-            needAssociateTicket,
-          });
-        }
-
-        this.$modals.hide();
+        await config.value.action(form.values.value, {
+          needDeclareTicket,
+          needAssociateTicket,
+        });
       }
-    },
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({
+      form: form.values,
+      submit,
+      close,
+    });
+
+    return {
+      t,
+      config,
+      actionType,
+      actionTypes,
+      isAllComponentAlarms,
+      isNoteRequired,
+      submitting,
+      submit,
+      close,
+    };
   },
 };
 </script>

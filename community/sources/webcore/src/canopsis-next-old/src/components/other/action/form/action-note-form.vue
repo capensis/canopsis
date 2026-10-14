@@ -1,0 +1,41 @@
+<template>
+  <c-form-block-row :label="$t('scenario.output')" :depth="depth">
+    <c-payload-textarea-field
+      v-field="value.output"
+      :label="$t('scenario.output')"
+      :variables="templateVars.output"
+    >
+      <template #append="">
+        <c-help-icon
+          :text="$t('scenario.outputHelp')"
+          icon="help"
+          left
+        />
+      </template>
+    </c-payload-textarea-field>
+  </c-form-block-row>
+</template>
+
+<script>
+export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
+    depth: {
+      type: Number,
+      default: 0,
+    },
+  },
+};
+</script>

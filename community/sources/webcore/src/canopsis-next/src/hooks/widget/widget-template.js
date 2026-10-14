@@ -5,14 +5,15 @@ import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 import { useModelField } from '@/hooks/form/model-field';
 
 /**
- * Hook for managing widget template field functionality
+ * Hook for managing widget template field functionality.
  *
  * @param {Object} props - Component props containing template and model data
- * @param {string} valueKey - Key to extract value from the template object
+ * @param {string|import('vue').Ref<string>} valueKey - Key to extract value from the template object
  * @param {Function} emit - Vue emit function for model updates
- * @returns {Object} Object containing template update functions
- * @property {Function} updateTemplate - Updates both template and columns
- * @property {Function} updateValue - Updates model based on template type
+ * @returns {{
+ *   updateTemplate: Function,
+ *   updateValue: Function,
+ * }}
  */
 export const useWidgetTemplateField = (props, valueKey, emit) => {
   const { updateModel } = useModelField(props, emit);
@@ -20,28 +21,29 @@ export const useWidgetTemplateField = (props, valueKey, emit) => {
   /**
    * Emits an 'update:template' event with the new template and value.
    *
-   * @param {string} newTemplate - The updated template object or value.
-   * @param {any} newValue - The new value associated with the template.
+   * @param {string|Symbol} newTemplate
+   * @param {*} newValue
    */
-  const emitUpdateTemplate = (newTemplate, newValue) => emit('update:template', newTemplate, newValue);
+  const emitUpdateTemplate = (newTemplate, newValue) =>
+    emit('update:template', newTemplate, newValue);
 
   /**
-   * Updates both template and columns values
+   * Updates both template and value from selected widget template.
    *
-   * @param {WidgetTemplate} newTemplate - New template value to set
+   * @param {Object} newTemplate
    */
-  const updateTemplate = newTemplate => emitUpdateTemplate(newTemplate?.value, newTemplate?.[unref(valueKey)]);
+  const updateTemplate = newTemplate =>
+    emitUpdateTemplate(newTemplate?.value, newTemplate?.[unref(valueKey)]);
 
   /**
-   * Updates model value based on template type
-   * If template is CUSTOM_WIDGET_TEMPLATE, only updates value
-   * Otherwise updates both template and value
+   * Updates model value and switches to custom template when needed.
    *
-   * @param {Object} newValue - New value
+   * @param {*} newValue
    */
-  const updateValue = newValue => (props.template === CUSTOM_WIDGET_TEMPLATE
-    ? updateModel(newValue)
-    : emitUpdateTemplate(CUSTOM_WIDGET_TEMPLATE, newValue));
+  const updateValue = newValue =>
+    props.template === CUSTOM_WIDGET_TEMPLATE
+      ? updateModel(newValue)
+      : emitUpdateTemplate(CUSTOM_WIDGET_TEMPLATE, newValue);
 
   return {
     updateTemplate,

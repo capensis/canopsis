@@ -1,14 +1,12 @@
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
-import { saveFile } from '@/helpers/file/files';
 import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
+import { saveFile } from '@/helpers/file/files';
 
 import { exportMixinCreator } from '@/mixins/widget/export';
 
 export const metricsExportMixinCreator = ({ createExport, fetchExport }) => ({
-  mixins: [
-    exportMixinCreator({ createExport, fetchExport }),
-  ],
+  mixins: [exportMixinCreator({ createExport, fetchExport })],
   data() {
     return {
       downloading: false,
@@ -38,6 +36,7 @@ export const metricsExportMixinCreator = ({ createExport, fetchExport }) => ({
 
         this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
       } catch (err) {
+        console.error(err);
         this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
       } finally {
         this.downloading = false;

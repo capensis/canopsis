@@ -1,68 +1,43 @@
 <template>
-  <v-layout column>
-    <v-label v-if="label" :class="{ 'error--text': errorMessages.length > 0 }" class="mb-2">
+  <c-layout column>
+    <v-label v-if="label" :class="{ 'text-error': preparedErrorMessages.length > 0 }" class="mb-2">
+      <span v-if="required" class="text-error"> * </span>
       {{ label }}
     </v-label>
-    <v-layout
-      v-for="(item, index) in values"
-      :key="item.key"
-      align-center
-    >
-      <v-text-field
-        v-field="values[index].value"
-        v-validate="rules"
+    <c-layout v-for="(item, index) in values" :key="item.key" align="center">
+      <c-text-field
+        :model-value="values[index].value"
+        :required="required"
+        :max-length="maxLength"
         :disabled="disabled"
         :label="$t('common.value')"
         :name="`${name}.${item.key}.value`"
-        :error-messages="errors.collect(`${name}.${item.key}.value`)"
         class="not-required"
+        @update:model-value="updateItemValue(index, $event)"
       />
-      <c-action-btn
-        v-if="!disabled"
-        type="delete"
-        @click="removeItemFromArray(index)"
-      />
-    </v-layout>
-    <v-messages
-      v-if="errorMessages.length > 0"
-      :value="errorMessages"
-      color="error"
-      class="mb-2"
-    />
-    <v-flex>
-      <v-btn
+      <c-action-btn v-if="!disabled" type="delete" @click="removeItemFromArray(index)" />
+    </c-layout>
+    <div>
+      <c-btn-with-error
         :disabled="disabled"
-        :color="errorMessages.length ? 'error' : 'primary'"
-        outlined
+        :error="errorMessage"
+        variant="outlined"
         @click="addItem"
       >
         {{ $t('common.add') }}
-      </v-btn>
-    </v-flex>
-  </v-layout>
+      </c-btn-with-error>
+    </div>
+  </c-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, toRef, watch } from 'vue';
 
 import { uid } from '@/helpers/uid';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useField } from '@/hooks/form';
 
 export default {
-  $_veeValidate: {
-    name() {
-      return this.name;
-    },
-    value() {
-      return this.values;
-    },
-  },
-  inject: ['$validator'],
-  model: {
-    prop: 'values',
-    event: 'change',
-  },
   props: {
     name: {
       type: String,
@@ -93,21 +68,67 @@ export default {
       default: null,
     },
   },
-  setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
 
-    const rules = computed(() => (props.maxLength ? { max: props.maxLength } : null));
+  emits: ['change', 'update:values'],
+
+  setup(props, { emit }) {
+    const fieldName = computed(() => props.name || props.label || 'values');
+    const rules = computed(() => (props.required ? { required: true } : null));
+    const { errorMessage, setValue, validate } = useField(fieldName, rules, {
+      initialValue: props.values,
+      label: toRef(() => props.label || props.name),
+      validateOnValueUpdate: false,
+    });
+
+    const preparedErrorMessages = computed(() => {
+      if (props.errorMessages.length) {
+        return props.errorMessages;
+      }
+
+      return errorMessage.value ? [errorMessage.value] : [];
+    });
+    const errorMessageText = computed(() => preparedErrorMessages.value.join(', '));
+
+    const updateValues = (values) => {
+      emit('update:values', values);
+      emit('change', values);
+      setValue(values, false);
+
+      if (errorMessage.value) {
+        validate();
+      }
+    };
+
+    const updateItemValue = (index, value) => updateValues(
+        props.values.map((item, itemIndex) => (itemIndex === index ? { ...item, value } : item)),
+      );
+
+    const removeItemFromArray = index => updateValues(props.values.filter((item, itemIndex) => itemIndex !== index));
+
     /**
      * Adds an empty object item with key and value to the array
      */
-    const addItem = () => addItemIntoArray({ key: uid(), value: '' });
+    const addItem = () => updateValues([...props.values, { key: uid(), value: '' }]);
+
+    watch(
+      () => props.values,
+      value => setValue(value, false),
+    );
 
     return {
-      rules,
+      preparedErrorMessages,
+      errorMessage: errorMessageText,
 
       addItem,
+      updateItemValue,
       removeItemFromArray,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-label.text-error {
+  opacity: 1;
+}
+</style>
