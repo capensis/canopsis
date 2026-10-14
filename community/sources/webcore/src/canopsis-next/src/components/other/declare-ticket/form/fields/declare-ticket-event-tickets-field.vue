@@ -1,24 +1,24 @@
 <template>
-  <v-layout column>
-    <v-checkbox
+  <c-layout column>
+    <c-checkbox
       v-for="chip in chips"
       :key="chip.value"
-      :input-value="chip.active"
+      :model-value="chip.active"
       :label="chip.text"
       class="mt-0 pt-0"
       color="primary"
       hide-details
-      @change="updateActive(chip.value)"
+      @update:model-value="updateActive(chip.value)"
     >
-      <template #append="">
+      <template #append>
         <extra-details-ticket
           v-if="chip.assignedTickets.length"
           :tickets="chip.assignedTickets"
           class="ml-2"
         />
       </template>
-    </v-checkbox>
-  </v-layout>
+    </c-checkbox>
+  </c-layout>
 </template>
 
 <script>
@@ -34,10 +34,7 @@ import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/ex
 export default {
   components: { ExtraDetailsTicket },
   mixins: [formMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value'],
   props: {
     value: {
       type: Array,
@@ -80,11 +77,7 @@ export default {
     },
 
     updateActive(id) {
-      this.updateModel(
-        this.isActiveTicket(id)
-          ? filterValue(this.value, id)
-          : [...this.value, id],
-      );
+      this.updateModel(this.isActiveTicket(id) ? filterValue(this.value, id) : [...this.value, id]);
     },
   },
 };

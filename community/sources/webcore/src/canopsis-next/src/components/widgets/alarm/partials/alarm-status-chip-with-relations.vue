@@ -1,28 +1,26 @@
 <template>
   <v-chip
-    :small="small"
+    :size="small ? 'small' : undefined"
     :color="color"
-    :outlined="outlined"
+    :variant="outlined ? 'outlined' : 'flat'"
     class="pl-2 pr-1"
   >
     <slot />
-    <c-simple-tooltip :content="tooltipText" top>
-      <template #activator="{ on }">
+    <c-tooltip :content="tooltipText" top>
+      <template #activator="{ props: activatorProps }">
         <v-btn
+          v-bind="activatorProps"
+          size="x-small"
+          variant="text"
           icon
-          small
           @click.prevent.stop="showRelationsModal"
-          v-on="on"
         >
-          <v-icon
-            :color="iconColor"
-            size="16"
-          >
+          <v-icon :color="iconColor" size="16">
             $vuetify.icons.flow
           </v-icon>
         </v-btn>
       </template>
-    </c-simple-tooltip>
+    </c-tooltip>
   </v-chip>
 </template>
 
@@ -57,19 +55,16 @@ export default {
       default: false,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
     const modals = useModals();
     const entity = computed(() => props.alarm.entity);
     const hasUpstream = computed(() => entity.value.upstream !== undefined);
-
-    const title = computed(() => (hasUpstream.value
-      ? t('modals.entityUpstream.topLevelEntities')
-      : t('modals.entityUpstream.entities')));
-
-    const tooltipText = computed(() => (hasUpstream.value
-      ? t('modals.entityUpstream.seeTopEntities')
-      : t('modals.entityUpstream.seeEntities')));
+    const title = computed(() => hasUpstream.value ? t('modals.entityUpstream.topLevelEntities') : t('modals.entityUpstream.entities'),
+    );
+    const tooltipText = computed(() => hasUpstream.value ? t('modals.entityUpstream.seeTopEntities') : t('modals.entityUpstream.seeEntities'),
+    );
 
     /**
      * Show entity relations modal with upstream and downstream network graph
@@ -85,8 +80,8 @@ export default {
     };
 
     return {
-      tooltipText,
       showRelationsModal,
+      tooltipText,
     };
   },
 };

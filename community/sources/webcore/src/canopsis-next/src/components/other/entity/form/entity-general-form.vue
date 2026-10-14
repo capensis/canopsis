@@ -1,48 +1,58 @@
 <template>
-  <v-layout class="gap-3" column>
-    <v-layout class="gap-2">
-      <v-flex xs6>
-        <c-name-field
-          v-field="form.name"
-          disabled
-        />
-      </v-flex>
+  <c-layout gap="3" column>
+    <c-layout gap="2">
+      <c-name-field
+        :model-value="form.name"
+        class="flex-grow-1"
+        disabled
+        @update:model-value="updateField('name', $event)"
+      />
 
-      <v-flex xs6>
-        <c-entity-type-field
-          v-field="form.type"
-          disabled
-        />
-      </v-flex>
-    </v-layout>
+      <c-entity-type-field
+        :value="form.type"
+        class="flex-grow-1"
+        disabled
+        @update:value="updateField('type', $event)"
+      />
+    </c-layout>
     <c-form-block>
-      <c-form-block-row :label="$t('common.description')">
-        <c-description-field v-field="form.description" autofocus />
+      <c-form-block-row :label="$t('common.description')" indented>
+        <c-description-field
+          :model-value="form.description"
+          autofocus
+          @update:model-value="updateField('description', $event)"
+        />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.enabled')">
-        <c-enabled-field v-field="form.enabled" />
+        <c-enabled-field
+          :model-value="form.enabled"
+          @update:model-value="updateField('enabled', $event)"
+        />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('entity.availabilityState')">
         <c-alarm-state-field
-          v-field="form.sli_avail_state"
+          :value="form.sli_avail_state"
           :label="$t('entity.availabilityState')"
           required
+          @update:value="updateField('sli_avail_state', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('entity.impact')">
         <c-impact-level-field
-          v-field="form.impact_level"
+          :value="form.impact_level"
           required
+          @update:value="updateField('impact_level', $event)"
         />
       </c-form-block-row>
 
       <c-form-block-row :label="$t('common.coordinates')">
         <c-coordinates-field
-          v-field="form.coordinates"
+          :value="form.coordinates"
           row
+          @update:value="updateField('coordinates', $event)"
         />
       </c-form-block-row>
 
@@ -56,7 +66,7 @@
         />
       </c-form-block-row>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -64,17 +74,15 @@ import { computed } from 'vue';
 
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     EntityStateSetting,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -85,11 +93,16 @@ export default {
       default: data => data,
     },
   },
-  setup(props) {
+
+  emits: ['update:form'],
+
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
     const hasStateSetting = computed(() => isEntityComponentType(props.form.type));
 
     return {
       hasStateSetting,
+      updateField,
     };
   },
 };

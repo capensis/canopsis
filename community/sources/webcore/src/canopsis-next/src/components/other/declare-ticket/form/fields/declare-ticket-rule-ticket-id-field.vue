@@ -1,47 +1,50 @@
 <template>
-  <v-layout class="gap-3" column>
+  <c-layout gap="3" column>
     <declare-ticket-rule-ticket-id-payload-text-field
       v-if="value.ticket_id.template"
-      v-field="value.ticket_id.value"
+      :value="value.ticket_id.value"
       :name="name"
       :disabled="disabled"
       :variables="variables"
       :required="required"
+      @update:value="updateField('ticket_id.value', $event)"
     />
     <declare-ticket-rule-ticket-id-text-field
       v-else
-      v-field="value.ticket_id.value"
+      :value="value.ticket_id.value"
       :name="name"
       :disabled="disabled"
       :required="required"
+      @update:value="updateField('ticket_id.value', $event)"
     />
     <c-enabled-field
-      v-field="value.ticket_id.template"
+      :model-value="value.ticket_id.template"
       :label="$t('declareTicket.allowTicketIdTemplate')"
       hide-details
       no-margin
+      @update:model-value="updateField('ticket_id.template', $event)"
     />
     <c-enabled-field
-      v-field="value.is_regexp"
+      :model-value="value.is_regexp"
       :label="$t('declareTicket.isRegexp')"
+      @update:model-value="updateField('is_regexp', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 import DeclareTicketRuleTicketIdPayloadTextField from './declare-ticket-rule-ticket-id-payload-text-field.vue';
 import DeclareTicketRuleTicketIdTextField from './declare-ticket-rule-ticket-id-text-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     DeclareTicketRuleTicketIdTextField,
     DeclareTicketRuleTicketIdPayloadTextField,
   },
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  mixins: [formMixin],
+  emits: ['update:value'],
   props: {
     value: {
       type: Object,

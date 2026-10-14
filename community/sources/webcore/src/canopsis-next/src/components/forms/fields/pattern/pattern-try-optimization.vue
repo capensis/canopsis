@@ -1,16 +1,16 @@
 <template>
-  <c-alert :value="true" type="info">
-    <v-layout justify-space-between>
-      <v-flex>
+  <c-alert type="info">
+    <c-layout justify="space-between" align="center">
+      <div>
         <span v-html="$t('pattern.tryOptimizationHint')" />
-      </v-flex>
-      <v-btn color="info" @click="tryOptimization">
+      </div>
+      <v-btn color="info" type="button" @click="tryOptimization">
         <v-icon class="mr-2" color="white">
           wand_shine
         </v-icon>
         {{ $t('pattern.tryOptimization') }}
       </v-btn>
-    </v-layout>
+    </c-layout>
   </c-alert>
 </template>
 

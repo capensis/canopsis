@@ -1,101 +1,89 @@
 <template>
-  <v-layout
-    class="gap-3"
-    column
-  >
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
-      with-background
-    />
+  <c-layout gap="3" column>
+    <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
+
     <c-name-field
-      v-field="form.name"
+      v-model="name"
       :disabled="onlyColor"
       autofocus
       required
     />
+
     <c-form-block>
-      <c-form-block-row :label="$t('modals.createPbehaviorType.fields.description')">
+      <c-form-block-row :label="t('modals.createPbehaviorType.fields.description')" indented>
         <c-description-field
-          v-field="form.description"
+          v-model="description"
           :disabled="onlyColor"
           name="description"
           required
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('modals.createPbehaviorType.fields.type')">
+      <c-form-block-row :label="t('modals.createPbehaviorType.fields.type')">
         <pbehavior-type-default-type-field
-          :value="form.type"
+          v-model="type"
           :disabled="onlyColor"
-          @input="updateDefaultType"
+          @sync:color="syncColor"
           @update:color="updateColor"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('modals.createPbehaviorType.fields.priority')">
+      <c-form-block-row :label="t('modals.createPbehaviorType.fields.priority')">
         <c-priority-field
-          v-field="form.priority"
+          v-model="priority"
           :disabled="onlyColor"
           :loading="pendingPriority"
           required
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('modals.createPbehaviorType.fields.iconName')">
+      <c-form-block-row :label="t('modals.createPbehaviorType.fields.iconName')">
         <c-icon-field
-          v-field="form.icon_name"
-          :label="$t('modals.createPbehaviorType.iconNamePlaceholder')"
+          v-model="iconName"
+          :placeholder="t('modals.createPbehaviorType.iconNamePlaceholder')"
           :disabled="onlyColor"
           :required="!onlyColor"
+          name="icon_name"
         >
-          <template #no-data="">
+          <template #no-data>
             <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title v-html="$t('modals.createPbehaviorType.errors.iconName')" />
-              </v-list-item-content>
+              <v-list-item-title v-html="t('modals.createPbehaviorType.errors.iconName')" />
             </v-list-item>
           </template>
         </c-icon-field>
       </c-form-block-row>
 
-      <c-form-block-row
-        :label="$t('common.color')"
-        align-center
-      >
-        <v-layout class="gap-2" align-center justify-start>
-          <span v-if="onlyColor" class="text--secondary">{{ $t('pbehavior.types.defaultType') }}</span>
+      <c-form-block-row :label="t('common.color')" align-center>
+        <c-layout gap="2" align="center" justify-start>
+          <span v-if="onlyColor" class="text-medium-emphasis">
+            {{ t('pbehavior.types.defaultType') }}
+          </span>
           <c-color-picker-field
-            v-field="form.color"
+            v-model="color"
             :justify-end="onlyColor"
+            name="color"
+            hide-details
             required
-            @input="setColorWasChanged"
+            @update:model-value="setColorWasChanged"
           />
-        </v-layout>
+        </c-layout>
       </c-form-block-row>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { ref } from 'vue';
 
-import { useModelField } from '@/hooks/form/model-field';
+import { useFormContext, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import PbehaviorTypeDefaultTypeField from './pbehavior-type-default-type-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { PbehaviorTypeDefaultTypeField },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     onlyColor: {
       type: Boolean,
       default: false,
@@ -104,63 +92,71 @@ export default {
       type: Boolean,
       default: false,
     },
+    syncOriginalForm: {
+      type: Function,
+      default: undefined,
+    },
   },
-  setup(props, { emit }) {
-    const { updateModel, updateField } = useModelField(props, emit);
+
+  setup(props) {
+    const { t } = useI18n();
+    const form = useFormContext();
+    const { name, description, type, priority, color, visible, iconName } = useFormModels({
+      name: 'name',
+      description: 'description',
+      type: 'type',
+      priority: 'priority',
+      color: 'color',
+      visible: 'visible',
+      iconName: 'icon_name',
+    });
 
     const colorWasChanged = ref(false);
 
-    /**
-     * Marks the color as manually edited so it is no longer overwritten when the default type changes.
-     */
-    const setColorWasChanged = () => colorWasChanged.value = true;
-
-    /**
-     * Updates the selected canonical type and syncs the form color from the default type when the
-     * user has not changed the color manually.
-     *
-     * @param {string} type - Canonical pbehavior type value.
-     * @param {string} color - Default color associated with the selected type.
-     */
-    const updateDefaultType = (type, color) => {
-      const newForm = {
-        ...props.form,
-
-        type,
-      };
-
-      if (!colorWasChanged.value) {
-        newForm.color = color;
-      }
-
-      updateModel(newForm);
+    const setColorWasChanged = () => {
+      colorWasChanged.value = true;
     };
 
-    /**
-     * Applies the color suggested by the default type field. Ignores updates once the user has
-     * manually changed the color, and marks the color as user-edited when it differs from the form value.
-     *
-     * @param {string} color - Default color emitted by the selected canonical type.
-     */
-    const updateColor = (color) => {
-      if (props.form.color) {
+    const syncColor = (nextColor) => {
+      if (color.value) {
+        return;
+      }
+
+      form.reset({
+        ...form.values.value,
+
+        color: nextColor,
+      });
+      props.syncOriginalForm?.();
+    };
+
+    const updateColor = (nextColor) => {
+      if (color.value) {
         if (colorWasChanged.value) {
           return;
         }
 
-        if (props.form.color !== color) {
+        if (color.value !== nextColor) {
           colorWasChanged.value = true;
 
           return;
         }
       }
 
-      updateField('color', color);
+      color.value = nextColor;
     };
 
     return {
+      t,
+      name,
+      description,
+      type,
+      priority,
+      color,
+      visible,
+      iconName,
       setColorWasChanged,
-      updateDefaultType,
+      syncColor,
       updateColor,
     };
   },

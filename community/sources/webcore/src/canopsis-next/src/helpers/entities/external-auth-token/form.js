@@ -1,5 +1,3 @@
-import { REQUEST_AUTH_TYPES } from '@/constants';
-
 import { durationToForm } from '@/helpers/date/duration';
 import { requestToForm, formToRequest } from '@/helpers/entities/shared/request/form';
 
@@ -30,8 +28,7 @@ import { requestToForm, formToRequest } from '@/helpers/entities/shared/request/
  * @param {ExternalAuthToken} [externalAuthToken={}] - The external auth token entity
  * @returns {ExternalAuthTokenForm} The form data object
  */
-export const externalAuthTokenToForm = (externalAuthToken = {}) => {
-  const form = {
+export const externalAuthTokenToForm = (externalAuthToken = {}) => ({
     name: externalAuthToken.name ?? '',
     description: externalAuthToken.description ?? '',
     template: externalAuthToken.template ?? '',
@@ -39,15 +36,7 @@ export const externalAuthTokenToForm = (externalAuthToken = {}) => {
     allow_variables: !!externalAuthToken.template,
     expiration_duration: durationToForm(externalAuthToken.expiration_duration),
     request: requestToForm(externalAuthToken.request ?? {}),
-  };
-
-  /**
-   * Set the auth type to credentials specially only for this form
-   */
-  form.request.auth.type = REQUEST_AUTH_TYPES.credentials;
-
-  return form;
-};
+  });
 
 /**
  * Converts form data to an external auth token entity

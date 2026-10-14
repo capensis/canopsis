@@ -1,153 +1,138 @@
 <template>
-  <c-zoom-overlay>
-    <v-layout
-      class="geomap-editor"
-      column
-    >
-      <geomap
-        ref="map"
-        :style="mapStyles"
-        :disabled="shown"
-        :min-zoom="minZoom"
-        :options="mapOptions"
-        :center.sync="center"
-        class="geomap-editor__map mb-2"
-        @click="openAddingPointDialogByClick"
-        @dblclick="openAddingPointDialog"
-      >
-        <geomap-control-zoom
+  <map-editor-required-field
+    v-slot="{ hasError, messages }"
+    :name="pointsFieldName"
+    :valid="!!form.points.length"
+    :message="$t('geomap.errors.pointsRequired')"
+  >
+    <c-zoom-overlay>
+      <c-layout class="geomap-editor" column>
+        <geomap
+          ref="map"
+          :style="[mapStyles, { borderColor: hasError ? errorColor : undefined }]"
           :disabled="shown"
-          position="topleft"
-        />
-        <geomap-control-layers position="topright" />
-        <geomap-contextmenu
-          ref="contextmenu"
-          :disabled="shown"
-          :items="mapItems"
-          :marker-items="markerItems"
-        />
-        <geomap-control position="topleft">
-          <v-tooltip
-            max-width="unset"
-            min-width="max-content"
-            right
-          >
-            <template #activator="{ on }">
-              <v-btn
-                :class="{ 'lighten-4': !addOnClick }"
-                :disabled="shown"
-                class="secondary ma-0"
-                icon
-                dark
-                v-on="on"
-                @click="toggleAddingMode"
-              >
-                <v-icon>add_location</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('map.toggleAddingPointMode') }}</span>
-          </v-tooltip>
-        </geomap-control>
-        <geomap-control position="bottomright">
-          <c-help-icon
-            :text="$t('geomap.panzoom.helpText')"
-            size="32"
-            color="secondary"
-            icon="help"
-            top
-          />
-        </geomap-control>
-        <geomap-tile-layer
-          :name="$t('map.layers.openStreetMap')"
-          :url="$config.OPEN_STREET_LAYER_URL"
-          :visible="true"
-          layer-type="base"
-          no-wrap
-        />
-        <geomap-cluster-group
-          ref="pointsFeatureGroup"
-          :name="$t('map.layers.points')"
-          layer-type="overlay"
+          :min-zoom="minZoom"
+          :options="mapOptions"
+          :center="center"
+          class="geomap-editor__map mb-2"
+          @update:center="center = $event"
+          @click="openAddingPointDialogByClick"
+          @dblclick="openAddingPointDialog"
         >
-          <geomap-marker
-            v-for="{ coordinates, id, data, icon } in markers"
-            :key="id"
-            :lat-lng="coordinates"
-            :options="{ data }"
-            :draggable="!data.is_entity_coordinates && !shown"
-            @dragend="finishMovingMarker"
-            @dblclick="openEditPointForm(data)"
+          <geomap-control-zoom :disabled="shown" position="topleft" />
+          <geomap-control-layers position="topright" />
+          <geomap-contextmenu
+            ref="contextmenu"
+            :disabled="shown"
+            :items="mapItems"
+            :marker-items="markerItems"
+          />
+          <geomap-control position="topleft">
+            <c-tooltip max-width="unset" min-width="max-content" location="right">
+              <template #activator="{ props: activatorProps }">
+                <v-btn
+                  :class="{ 'lighten-4': !addOnClick }"
+                  :disabled="shown"
+                  class="secondary ma-0"
+                  icon
+                  v-bind="activatorProps"
+                  @click="toggleAddingMode"
+                >
+                  <v-icon>add_location</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('map.toggleAddingPointMode') }}</span>
+            </c-tooltip>
+          </geomap-control>
+          <geomap-control position="bottomright">
+            <c-help-icon
+              :text="$t('geomap.panzoom.helpText')"
+              size="32"
+              color="secondary"
+              icon="help"
+              top
+            />
+          </geomap-control>
+          <geomap-tile-layer
+            :name="$t('map.layers.openStreetMap')"
+            :url="openStreetLayerUrl"
+            :visible="true"
+            layer-type="base"
+            no-wrap
+          />
+          <geomap-cluster-group
+            ref="pointsFeatureGroup"
+            :name="$t('map.layers.points')"
+            layer-type="overlay"
           >
-            <geomap-icon :icon-anchor="icon.anchor">
+            <geomap-marker
+              v-for="{ coordinates, id, data, icon } in markers"
+              :key="id"
+              :lat-lng="coordinates"
+              :options="{ data }"
+              :draggable="!data.is_entity_coordinates && !shown"
+              @dragend="finishMovingMarker"
+              @dblclick="openEditPointForm(data)"
+            >
+              <geomap-icon :icon-anchor="icon.anchor">
+                <point-icon :style="icon.style" :entity="data.entity" :size="icon.size" />
+              </geomap-icon>
+            </geomap-marker>
+          </geomap-cluster-group>
+          <geomap-marker v-if="pointDialog" :lat-lng="placeholderPoint.coordinates">
+            <geomap-icon :icon-anchor="placeholderPoint.icon.anchor">
               <point-icon
-                :style="icon.style"
-                :entity="data.entity"
-                :size="icon.size"
+                :style="placeholderPoint.icon.style"
+                :entity="placeholderPoint.data.entity"
+                :size="placeholderPoint.icon.size"
               />
             </geomap-icon>
           </geomap-marker>
-        </geomap-cluster-group>
-        <geomap-marker
-          v-if="pointDialog"
-          :lat-lng="placeholderPoint.coordinates"
-        >
-          <geomap-icon :icon-anchor="placeholderPoint.icon.anchor">
-            <point-icon
-              :style="placeholderPoint.icon.style"
-              :entity="placeholderPoint.data.entity"
-              :size="placeholderPoint.icon.size"
-            />
-          </geomap-icon>
-        </geomap-marker>
-        <point-form-dialog-menu
-          :value="shown"
-          :point="pointDialog"
-          :position-x="clientX"
-          :position-y="clientY"
-          :editing="!!editingPoint"
-          :exists-entities="existsEntities"
-          coordinates
-          @cancel="closePointDialog"
-          @submit="submitPointDialog"
-          @remove="showRemovePointModal"
-          @fly:coordinates="handleUpdateCoordinates"
-        />
-      </geomap>
-      <v-messages
-        v-if="hasChildrenError"
-        :value="errorMessages"
-        color="error"
-      />
-    </v-layout>
-  </c-zoom-overlay>
+          <point-form-dialog-menu
+            :value="shown"
+            :point="pointDialog"
+            :position-x="clientX"
+            :position-y="clientY"
+            :editing="!!editingPoint"
+            :exists-entities="existsEntities"
+            coordinates
+            @cancel="closePointDialog"
+            @submit="submitPointDialog"
+            @remove="showRemovePointModal"
+            @fly:coordinates="handleUpdateCoordinates"
+          />
+        </geomap>
+        <v-messages v-if="hasError" :messages="messages" color="error" />
+      </c-layout>
+    </c-zoom-overlay>
+  </map-editor-required-field>
 </template>
 
 <script>
-
-import { COLORS } from '@/config';
+import { COLORS, OPEN_STREET_LAYER_URL } from '@/config';
 import { MODALS } from '@/constants';
 
-import { uid } from '@/helpers/uid';
 import { geomapPointToForm } from '@/helpers/entities/map/form';
 import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
+import { uid } from '@/helpers/uid';
 
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
-import Geomap from '@/components/common/geomap/geomap.vue';
-import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
-import GeomapControl from '@/components/common/geomap/geomap-control.vue';
-import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
-import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
-import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue';
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
-import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
+import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue';
+import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
+import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
+import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
+import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
+import Geomap from '@/components/common/geomap/geomap.vue';
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
+import MapEditorRequiredField from './map-editor-required-field.vue';
 import PointFormDialogMenu from './point-form-dialog-menu.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     Geomap,
     GeomapTileLayer,
@@ -160,12 +145,9 @@ export default {
     PointFormDialogMenu,
     GeomapIcon,
     PointIcon,
+    MapEditorRequiredField,
   },
-  mixins: [formMixin, validationChildrenMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
   props: {
     form: {
       type: Object,
@@ -188,8 +170,10 @@ export default {
       default: 'parameters',
     },
   },
+  emits: ['update:form'],
   data() {
     return {
+      openStreetLayerUrl: OPEN_STREET_LAYER_URL,
       center: undefined,
       addOnClick: false,
 
@@ -215,8 +199,8 @@ export default {
       };
     },
 
-    errorMessages() {
-      return [this.$t('geomap.errors.pointsRequired')];
+    errorColor() {
+      return COLORS.error;
     },
 
     mapOptions() {
@@ -228,7 +212,6 @@ export default {
     mapStyles() {
       return {
         cursor: this.addOnClick ? 'crosshair' : '',
-        borderColor: this.hasChildrenError ? COLORS.error : undefined,
       };
     },
 
@@ -261,40 +244,14 @@ export default {
     },
 
     existsEntities() {
-      return this.form.points.map(({ entity }) => entity);
+      return this.form.points.map(({ entity }) => entity?._id ?? entity);
     },
-  },
-  watch: {
-    form: {
-      deep: true,
-      handler() {
-        if (this.hasChildrenError) {
-          this.$validator.validate(this.pointsFieldName);
-        }
-      },
-    },
-  },
-  beforeDestroy() {
-    this.detachRules();
+
   },
   mounted() {
-    this.attachRequiredRule();
     this.$nextTick(this.fitMap);
   },
   methods: {
-    attachRequiredRule() {
-      this.$validator.attach({
-        name: this.pointsFieldName,
-        rules: 'required:true',
-        getter: () => !!this.form.points.length,
-        vm: this,
-      });
-    },
-
-    detachRules() {
-      this.$validator.detach(this.pointsFieldName);
-    },
-
     fitMap() {
       const { pointsFeatureGroup, map } = this.$refs;
 
@@ -308,7 +265,10 @@ export default {
     },
 
     updatePointInModel(data) {
-      this.updateField('points', this.form.points.map(point => (point._id === data._id ? data : point)));
+      this.updateField(
+        'points',
+        this.form.points.map(point => (point._id === data._id ? data : point)),
+      );
     },
 
     addPointToModel(data) {

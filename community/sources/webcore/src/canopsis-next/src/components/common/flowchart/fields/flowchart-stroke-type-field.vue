@@ -1,27 +1,21 @@
 <template>
-  <v-layout
-    justify-space-between
-    align-center
-  >
+  <c-layout align="center" justify-space-between>
     <v-label>{{ label }}</v-label>
-    <v-flex xs3>
+    <v-col cols="3">
       <v-select
-        v-field="value"
+        :model-value="value"
         :items="types"
+        item-title="value"
+        item-value="value"
         class="mt-0 pt-0"
         hide-details
+        return-object
+        @update:model-value="updateValue"
       >
-        <template
-          v-for="slotName in ['selection', 'item']"
-          #[slotName]="{ item }"
-        >
-          <svg
-            :key="slotName"
-            width="50"
-            height="4"
-          >
+        <template v-for="slotName in ['selection', 'item']" :key="slotName" #[slotName]="{ item }">
+          <svg width="50" height="4">
             <line
-              v-bind="item.properties"
+              v-bind="getItemValue(item).properties"
               x1="0"
               y1="0"
               x2="100%"
@@ -32,18 +26,22 @@
           </svg>
         </template>
       </v-select>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </c-layout>
 </template>
 
 <script>
 import { STROKE_TYPES } from '@/constants';
 
+import { formBaseMixin } from '@/mixins/form';
+
 export default {
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
   },
+  emits: ['input', 'update:value'],
   props: {
     value: {
       type: String,
@@ -67,6 +65,15 @@ export default {
           },
         },
       ];
+    },
+  },
+  methods: {
+    getItemValue(item) {
+      return item?.raw ?? item?.value ?? item;
+    },
+
+    updateValue(item) {
+      this.updateModel(item.value);
     },
   },
 };

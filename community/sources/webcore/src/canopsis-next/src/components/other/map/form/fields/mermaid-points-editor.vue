@@ -12,7 +12,7 @@
       :key="point._id"
       :x="point.x"
       :y="point.y"
-      :entity="point.entity"
+      :entity="getPointIconEntity(point)"
       :size="markerSize"
       :class="{ 'mermaid-points__point--no-events': moving }"
       class="mermaid-points__point"
@@ -50,8 +50,8 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { waitVuetifyAnimation } from '@/helpers/vuetify';
 import { mermaidPointToForm } from '@/helpers/entities/map/form';
+import { waitVuetifyAnimation } from '@/helpers/vuetify';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -63,12 +63,8 @@ import PointFormDialogMenu from './point-form-dialog-menu.vue';
 export default {
   components: { PointContextmenu, PointFormDialogMenu, MermaidPointMarker },
   mixins: [formBaseMixin],
-  model: {
-    prop: 'points',
-    event: 'input',
-  },
   props: {
-    points: {
+    value: {
       type: Array,
       default: () => [],
     },
@@ -81,6 +77,7 @@ export default {
       default: 24,
     },
   },
+  emits: ['input'],
   data() {
     return {
       pointsData: [],
@@ -103,7 +100,7 @@ export default {
   },
   computed: {
     existsEntities() {
-      return this.points.map(({ entity }) => entity);
+      return this.value.map(({ entity }) => entity?._id ?? entity);
     },
 
     isFormOpened() {
@@ -115,10 +112,10 @@ export default {
     },
   },
   watch: {
-    points: {
+    value: {
       immediate: true,
       handler() {
-        this.pointsData = cloneDeep(this.points);
+        this.pointsData = cloneDeep(this.value);
       },
     },
   },
@@ -220,11 +217,15 @@ export default {
       this.editing = true;
     },
 
+    getPointIconEntity(point) {
+      return point.entity?._id ?? point.entity;
+    },
+
     submitPointForm(data) {
       if (this.editing) {
-        this.updateModel(this.points.map(point => (point._id === data._id ? data : point)));
+        this.updateModel(this.value.map(point => (point._id === data._id ? data : point)));
       } else if (this.adding) {
-        this.updateModel([...this.points, data]);
+        this.updateModel([...this.value, data]);
       }
 
       this.clearMenuData();
@@ -237,7 +238,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => {
-            this.updateModel(this.points.filter(point => this.editingPoint._id !== point._id));
+            this.updateModel(this.value.filter(point => this.editingPoint._id !== point._id));
 
             this.clearMenuData();
           },

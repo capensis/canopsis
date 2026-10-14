@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 )
 
@@ -49,74 +48,54 @@ func BenchmarkEventComputer_Compute(b *testing.B) {
 		Type:  "test-active",
 		Exdates: []pbehavior.Exdate{
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(-3 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(-time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(-3 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(-time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(24 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(26 * time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(24 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(26 * time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(48 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(50 * time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(48 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(50 * time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(49 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(53 * time.Hour)},
-				},
-				Type: "test-pause",
+				Begin: datetime.CpsTime{Time: now.Add(49 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(53 * time.Hour)},
+				Type:  "test-pause",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(72 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(120 * time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(72 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(120 * time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(-3 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(-time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(-3 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(-time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(24 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(26 * time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(24 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(26 * time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(48 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(50 * time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(48 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(50 * time.Hour)},
+				Type:  "test-maintenance",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(49 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(53 * time.Hour)},
-				},
-				Type: "test-pause",
+				Begin: datetime.CpsTime{Time: now.Add(49 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(53 * time.Hour)},
+				Type:  "test-pause",
 			},
 			{
-				Exdate: types.Exdate{
-					Begin: datetime.CpsTime{Time: now.Add(72 * time.Hour)},
-					End:   datetime.CpsTime{Time: now.Add(120 * time.Hour)},
-				},
-				Type: "test-maintenance",
+				Begin: datetime.CpsTime{Time: now.Add(72 * time.Hour)},
+				End:   datetime.CpsTime{Time: now.Add(120 * time.Hour)},
+				Type:  "test-maintenance",
 			},
 		},
 		Location: now.Location(),

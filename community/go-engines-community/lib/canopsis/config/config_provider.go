@@ -148,8 +148,7 @@ type ApiConfig struct {
 		Enabled bool
 	}
 	LLM struct {
-		OffTopicErrors  []string
-		SuggestedModels []LLMModelConf
+		SuggestedModels map[string][]LLMModelConf
 	}
 }
 
@@ -495,10 +494,6 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 	conf.ActionLogger.Enabled = parseBool(cfg.API.ActionLogger.Enabled, "Enabled", sectionName+".action_logger", logger)
 
 	conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
-	conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
-	for i := range conf.LLM.OffTopicErrors {
-		conf.LLM.OffTopicErrors[i] = strings.ToLower(conf.LLM.OffTopicErrors[i])
-	}
 
 	return &BaseApiConfigProvider{
 		conf:   conf,
@@ -560,10 +555,6 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	}
 
 	p.conf.LLM.SuggestedModels = cfg.API.LLM.SuggestedModels
-	p.conf.LLM.OffTopicErrors = cfg.API.LLM.OffTopicErrors
-	for i := range p.conf.LLM.OffTopicErrors {
-		p.conf.LLM.OffTopicErrors[i] = strings.ToLower(p.conf.LLM.OffTopicErrors[i])
-	}
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {

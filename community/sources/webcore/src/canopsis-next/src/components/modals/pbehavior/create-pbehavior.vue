@@ -1,143 +1,131 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <v-layout
-          v-if="noPattern"
-          class="gap-2"
-          column
-        >
+
+      <template #text>
+        <c-layout v-if="noPattern" gap="2" column>
           <pbehavior-general-form
-            v-field="form"
+            :form="values"
             :with-inherited="withInherited"
             with-enabled
+            @update:form="updateForm"
           />
-        </v-layout>
+        </c-layout>
+
         <pbehavior-form
           v-else
-          v-model="form"
+          :form="values"
           :with-inherited="withInherited"
           :pbehavior-id="pbehaviorId"
           pbehavior-counter-type
+          @update:form="updateForm"
         />
+
         <ai-chat-sidebar
           v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
+          v-bind="chatOptions.attrs"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting || chatOptions.attrs.pending"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
-<script>
-import { computed, ref, toRef } from 'vue';
+<script setup>
+import { computed, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS } from '@/constants';
 
-import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
+import {
+  formToPbehavior,
+  pbehaviorToForm,
+  pbehaviorToRequest,
+} from '@/helpers/entities/pbehavior/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
-export default {
-  name: MODALS.createPbehavior,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  components: { PbehaviorForm, PbehaviorGeneralForm, ModalWrapper, AiChatSidebar },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+});
 
-    const { pbehavior, timezone } = props.modal.config;
+const { t } = useI18n();
+const modals = useModals();
 
-    const form = ref(pbehaviorToForm(pbehavior, null, timezone));
+const config = computed(() => props.modal.config ?? {});
+const pbehavior = computed(() => config.value.pbehavior);
+const isNew = computed(() => !pbehavior.value?._id);
+const title = computed(
+  () => config.value.title ||
+    t(`modals.createPbehavior.${isNew.value ? 'create' : 'edit'}.title`),
+);
+const noPattern = computed(() => !!config.value.noPattern);
+const withInherited = computed(() => !!config.value.withInherited);
+const pbehaviorId = computed(() => pbehavior.value?._id);
+const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const title = computed(() => config.value.title || t('modals.createPbehavior.create.title'));
-    const noPattern = computed(() => !!config.value.noPattern);
-    const withInherited = computed(() => !!config.value.withInherited);
-    const pbehaviorId = computed(() => config.value.pbehavior?._id);
+const form = useForm({
+  initialValues: pbehaviorToForm(pbehavior.value, null, config.value.timezone),
+});
+const { values, handleSubmit, submitting } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+const {
+  shown: chatShown,
+  options: chatOptions,
+} = useAiChatForm({
+  form: values,
+  modal: toRef(props, 'modal'),
+  ruleId: pbehaviorId,
+  context: LLM_SOCKET_CONTEXTS.pbehavior,
+});
 
-      modal: toRef(props, 'modal'),
-      ruleId: pbehaviorId,
-      context: LLM_SOCKET_CONTEXTS.pbehavior,
-    });
-
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.pbehavior,
-      method: async () => {
-        const result = await config.value.action?.(
-          pbehaviorToRequest(formToPbehavior(form.value, config.value.timezone)),
-        );
-
-        await config.value.afterSubmit?.(result);
-
-        close();
-
-        return result;
-      },
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    return {
-      form,
-      title,
-      noPattern,
-      withInherited,
-      pbehaviorId,
-      submitting,
-      chatShown,
-      chatOptions,
-      submitLabel,
-      submit,
-      close,
-    };
-  },
+const closeModal = () => modals.hide({ id: props.modal.id });
+const updateForm = (value) => {
+  values.value = value;
 };
+
+const submit = handleSubmit(async () => {
+  const result = await config.value.action?.(
+    pbehaviorToRequest(formToPbehavior(values.value, config.value.timezone)),
+  );
+
+  await config.value.afterSubmit?.(result);
+
+  closeModal();
+
+  return result;
+});
+
+useFormConfirmableCloseModal({
+  form: values,
+  submit,
+  close: closeModal,
+});
 </script>

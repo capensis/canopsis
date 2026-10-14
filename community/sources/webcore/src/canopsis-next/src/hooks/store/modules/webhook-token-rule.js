@@ -1,31 +1,17 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { useWebhookTokenRuleStore } from '@/stores/modules/webhook-token-rule';
 
 /**
- * Hook for accessing webhook token rule store module helpers
+ * Webhook token rule store hook.
  *
- * @returns {Object} Store module hooks for external auth token management
- */
-export const useWebhookTokenRuleStoreModule = () => useStoreModuleHooks('webhookTokenRule');
-
-/**
- * Hook for webhook token rule management operations
- * Provides actions for CRUD operations on webhook token rules
- *
- * @returns {Object} Object containing webhook token rule actions:
- * - fetchWebhookTokenRulesListWithoutStore: Fetch tokens list without storing in state
- * - createWebhookTokenRule: Create new external auth token
- * - updateWebhookTokenRule: Update existing external auth token
- * - removeWebhookTokenRule: Remove external auth token
+ * @returns {Object}
  */
 export const useWebhookTokenRule = () => {
-  const { useActions } = useWebhookTokenRuleStoreModule();
+  const webhookTokenRuleStore = useWebhookTokenRuleStore();
 
-  const actions = useActions({
-    fetchWebhookTokenRulesListWithoutStore: 'fetchListWithoutStore',
-    createWebhookTokenRule: 'create',
-    updateWebhookTokenRule: 'update',
-    removeWebhookTokenRule: 'remove',
-  });
-
-  return actions;
+  return {
+    fetchWebhookTokenRulesListWithoutStore: webhookTokenRuleStore.fetchListWithoutStore,
+    createWebhookTokenRule: webhookTokenRuleStore.create,
+    updateWebhookTokenRule: webhookTokenRuleStore.update,
+    removeWebhookTokenRule: webhookTokenRuleStore.remove,
+  };
 };

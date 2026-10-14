@@ -1,33 +1,36 @@
 <template>
-  <v-layout class="gap-3" column>
-    <c-enabled-field v-field="form.enabled" hide-details with-background />
+  <c-layout gap="3" column>
+    <c-enabled-field v-model="enabledField" hide-details with-background />
+
     <c-form-general-patterns-tabs
-      v-field="form"
+      :form="formValues"
       :rule-id="ruleId"
       :type="type"
-      :patterns-label="$t('metaAlarmRule.patternsTabLabel')"
+      :patterns-label="t('metaAlarmRule.patternsTabLabel')"
     >
       <template #general="{ setRef, templateVars }">
         <meta-alarm-rule-general-form
-          v-field="form"
           :ref="setRef"
           :disabled-id-field="disabledIdField"
           :template-vars="templateVars"
         />
       </template>
+
       <template #patterns="{ setRef, templateVars }">
         <meta-alarm-rule-parameters-form
-          v-field="form"
           :ref="setRef"
           :template-vars="templateVars"
         />
       </template>
     </c-form-general-patterns-tabs>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
+import { useFormContext } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import MetaAlarmRuleGeneralForm from './meta-alarm-rule-general-form.vue';
 import MetaAlarmRuleParametersForm from './meta-alarm-rule-parameters-form.vue';
@@ -37,15 +40,8 @@ export default {
     MetaAlarmRuleGeneralForm,
     MetaAlarmRuleParametersForm,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     ruleId: {
       type: String,
       default: undefined,
@@ -55,10 +51,19 @@ export default {
       default: false,
     },
   },
+
   setup() {
+    const { t } = useI18n();
+    const form = useFormContext();
+    const enabledField = form.model('enabled');
     const type = TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule;
 
-    return { type };
+    return {
+      t,
+      formValues: form.values,
+      enabledField,
+      type,
+    };
   },
 };
 </script>

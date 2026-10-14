@@ -411,43 +411,40 @@ export const getShapeYBounds = (shape) => {
 export const getShapesBounds = (shapes) => {
   const shapesArray = isArray(shapes) ? shapes : Object.values(shapes);
 
-  return shapesArray.reduce((acc, shape) => {
-    const {
-      min: minX,
-      max: maxX,
-    } = getShapeXBounds(shape);
-    const {
-      min: minY,
-      max: maxY,
-    } = getShapeYBounds(shape);
+  return shapesArray.reduce(
+    (acc, shape) => {
+      const { min: minX, max: maxX } = getShapeXBounds(shape);
+      const { min: minY, max: maxY } = getShapeYBounds(shape);
 
-    if (minX < acc.min.x) {
-      acc.min.x = minX;
-    }
+      if (minX < acc.min.x) {
+        acc.min.x = minX;
+      }
 
-    if (minY < acc.min.y) {
-      acc.min.y = minY;
-    }
+      if (minY < acc.min.y) {
+        acc.min.y = minY;
+      }
 
-    if (maxX > acc.max.x) {
-      acc.max.x = maxX;
-    }
+      if (maxX > acc.max.x) {
+        acc.max.x = maxX;
+      }
 
-    if (maxY > acc.max.y) {
-      acc.max.y = maxY;
-    }
+      if (maxY > acc.max.y) {
+        acc.max.y = maxY;
+      }
 
-    return acc;
-  }, {
-    min: {
-      x: Infinity,
-      y: Infinity,
+      return acc;
     },
-    max: {
-      x: -Infinity,
-      y: -Infinity,
+    {
+      min: {
+        x: Infinity,
+        y: Infinity,
+      },
+      max: {
+        x: -Infinity,
+        y: -Infinity,
+      },
     },
-  });
+  );
 };
 
 /**
@@ -461,7 +458,5 @@ export const getPropertyValueByShapes = (shapes, path) => {
   const [firstShape] = shapes;
   const value = get(firstShape, path);
 
-  return shapes?.every(shape => get(shape, path) === value)
-    ? value
-    : undefined;
+  return shapes?.every(shape => get(shape, path) === value) ? value : undefined;
 };

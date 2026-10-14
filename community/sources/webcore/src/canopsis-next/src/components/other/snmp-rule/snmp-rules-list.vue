@@ -1,98 +1,70 @@
 <template>
-  <div>
-    <c-advanced-data-table
-      :headers="headers"
-      :items="items"
-      :loading="pending"
-      :total-items="totalItems"
-      :options="options"
-      :select-all="removable || updatable"
-      class="v-table-small"
-      advanced-pagination
-      search
-      @update:options="$emit('update:options', $event)"
-    >
-      <template #mass-actions="{ selected, clearSelected }">
-        <c-table-mass-actions-panel
-          :items="selected"
-          :removable="removable"
-          :enablable="updatable"
-          :disablable="updatable"
-          snmp-rule
-          small
-          @clear:items="clearSelected"
-          @refresh="$emit('refresh')"
-        />
+  <c-advanced-data-table
+    :headers="headers"
+    :items="items"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable || updatable"
+    class="v-table-small"
+    advanced-pagination
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected, clearSelected }">
+      <c-table-mass-actions-panel
+        :items="selected"
+        :removable="removable"
+        :enablable="updatable"
+        :disablable="updatable"
+        snmp-rule
+        small
+        @clear:items="clearSelected"
+        @refresh="$emit('refresh')"
+      />
+    </template>
+
+    <template #oid="{ item }">
+      <snmp-rules-list-item-cell :fields="oidFields" :source="item.oid" />
+    </template>
+
+    <template #output="{ item }">
+      <snmp-rules-list-item-cell :fields="commonFields" :source="item.output" />
+    </template>
+
+    <template #resource="{ item }">
+      <snmp-rules-list-item-cell :fields="commonFields" :source="item.resource" />
+    </template>
+
+    <template #component="{ item }">
+      <snmp-rules-list-item-cell :fields="commonFields" :source="item.component" />
+    </template>
+
+    <template #state="{ item }">
+      <template v-if="isTemplateStateType(item)">
+        <snmp-rules-list-item-cell :fields="templateStateFields" :source="item.state" />
+        <snmp-rules-list-item-cell :fields="stateOidField" />
+        <div class="pl-3">
+          <snmp-rules-list-item-cell :fields="stateOidFields" :source="item.state.stateoid" />
+        </div>
       </template>
-      <template #oid="{ item }">
-        <snmp-rules-list-item-cell
-          :fields="oidFields"
-          :source="item.oid"
-        />
+      <template v-else>
+        <snmp-rules-list-item-cell :fields="stateFields" :source="item.state" />
       </template>
-      <template #output="{ item }">
-        <snmp-rules-list-item-cell
-          :fields="commonFields"
-          :source="item.output"
-        />
-      </template>
-      <template #resource="{ item }">
-        <snmp-rules-list-item-cell
-          :fields="commonFields"
-          :source="item.resource"
-        />
-      </template>
-      <template #component="{ item }">
-        <snmp-rules-list-item-cell
-          :fields="commonFields"
-          :source="item.component"
-        />
-      </template>
-      <template #state="{ item }">
-        <template v-if="isTemplateStateType(item)">
-          <snmp-rules-list-item-cell
-            :fields="templateStateFields"
-            :source="item.state"
-          />
-          <snmp-rules-list-item-cell :fields="stateOidField" />
-          <div class="pl-3">
-            <snmp-rules-list-item-cell
-              :fields="stateOidFields"
-              :source="item.state.stateoid"
-            />
-          </div>
-        </template>
-        <template v-else>
-          <snmp-rules-list-item-cell
-            :fields="stateFields"
-            :source="item.state"
-          />
-        </template>
-      </template>
-      <template #enabled="{ item }">
-        <c-enabled :value="item.enabled" />
-      </template>
-      <template #actions="{ item }">
-        <v-layout>
-          <c-action-btn
-            v-if="updatable"
-            type="edit"
-            @click="$emit('edit', item)"
-          />
-          <c-action-btn
-            v-if="duplicable"
-            type="duplicate"
-            @click="$emit('duplicate', item)"
-          />
-          <c-action-btn
-            v-if="removable"
-            type="delete"
-            @click="$emit('remove', item._id)"
-          />
-        </v-layout>
-      </template>
-    </c-advanced-data-table>
-  </div>
+    </template>
+
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
+
+    <template #actions="{ item }">
+      <c-layout>
+        <c-action-btn v-if="updatable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn v-if="duplicable" type="duplicate" @click="$emit('duplicate', item)" />
+        <c-action-btn v-if="removable" type="delete" @click="$emit('remove', item._id)" />
+      </c-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -115,6 +87,7 @@ export default {
   components: {
     SnmpRulesListItemCell,
   },
+
   props: {
     options: {
       type: Object,
@@ -145,6 +118,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:options', 'edit', 'remove', 'duplicate', 'refresh'],
+
   setup() {
     const { t } = useI18n();
 
@@ -177,7 +153,6 @@ export default {
       {
         text: t('common.enabled'),
         value: 'enabled',
-        sortable: false,
       },
       {
         text: t('common.actionsLabel'),
@@ -203,16 +178,16 @@ export default {
 </script>
 
 <style lang="scss">
-  .v-table-small table.v-table {
-    tbody td:first-child,
-    tbody td:not(:first-child),
-    tbody th:first-child,
-    tbody th:not(:first-child),
-    thead td:first-child,
-    thead td:not(:first-child),
-    thead th:first-child,
-    thead th:not(:first-child) {
-      padding: 0 10px;
-    }
+.v-table-small table.v-table {
+  tbody td:first-child,
+  tbody td:not(:first-child),
+  tbody th:first-child,
+  tbody th:not(:first-child),
+  thead td:first-child,
+  thead td:not(:first-child),
+  thead th:first-child,
+  thead th:not(:first-child) {
+    padding: 0 10px;
   }
+}
 </style>

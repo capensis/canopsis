@@ -1,6 +1,6 @@
 <template>
   <pattern-editor-field
-    v-field="patterns"
+    :patterns="patterns"
     :disabled="disabled"
     :readonly="readonly"
     :name="name"
@@ -11,11 +11,12 @@
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
     class="c-entity-patterns-field"
+    @update:patterns="$emit('update:value', $event)"
   >
     <template #append-count="">
       <v-btn
         v-if="alarmCounter && alarmCounter.count"
-        text
+        variant="text"
         small
         @click="showPatternAlarmsModal()"
       >
@@ -23,7 +24,7 @@
       </v-btn>
       <v-btn
         v-if="entityCounter && entityCounter.count"
-        text
+        variant="text"
         small
         @click="showPatternEntitiesModal()"
       >
@@ -35,7 +36,6 @@
 
 <script>
 import { isArray } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import {
   BASIC_ENTITY_TYPES,
@@ -44,29 +44,26 @@ import {
   MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
+  PATTERN_EXISTS_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
   ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
   ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
-import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
+import { mergePatternAttributes } from '@/helpers/entities/pattern/fields/form';
 
+import { useEntityCategory } from '@/hooks/store/modules/entity-category';
+import { useService } from '@/hooks/store/modules/service';
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
-const { mapActions: mapEntityCategoryActions } = createNamespacedHelpers('entityCategory');
-const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
-
 export default {
+  emits: ['update:patterns', 'update:value', 'show:alarms', 'show:entities'],
   components: { PatternEditorField },
   mixins: [entitiesEntityInfoPropertyMixin],
-  model: {
-    prop: 'patterns',
-    event: 'input',
-  },
   props: {
     patterns: {
       type: Object,
@@ -207,7 +204,7 @@ export default {
           is: 'c-entity-field',
           props: {
             required: true,
-            entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.connector],
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
           },
         },
       };
@@ -262,7 +259,7 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
         ],
         valueField: {
-          is: 'c-select-field',
+          is: 'c-select',
           props: (rule) => {
             const isMultiple = isArray(rule?.value);
 
@@ -270,12 +267,11 @@ export default {
               items: this.categories,
               loading: this.categoriesPending,
               itemValue: '_id',
-              itemText: 'name',
+              itemTitle: 'name',
               ellipsis: !isMultiple,
               chips: isMultiple,
               multiple: isMultiple,
-              deletableChips: isMultiple,
-              smallChips: isMultiple,
+              closableChips: isMultiple,
             };
           },
         },
@@ -294,7 +290,6 @@ export default {
           is: 'c-entity-type-field',
           props: {
             types: Object.values(ENTITY_TYPES),
-            required: true,
           },
         },
       };
@@ -346,7 +341,7 @@ export default {
           options: this.infosOptions,
         },
         {
-          text: this.$tc('common.componentInfo', 2),
+          text: this.$t('common.componentInfo', 2),
           value: ENTITY_PATTERN_FIELDS.componentInfos,
           options: this.componentInfosOptions,
         },
@@ -359,6 +354,19 @@ export default {
           text: this.$t('common.impactLevel'),
           value: ENTITY_PATTERN_FIELDS.impactLevel,
           options: this.impactLevelOptions,
+        },
+        {
+          text: this.$t('entity.fields.pause'),
+          value: ENTITY_PATTERN_FIELDS.pause,
+          options: { operators: PATTERN_EXISTS_OPERATORS },
+        },
+        {
+          text: this.$t('entity.fields.pauseAuthor'),
+          value: ENTITY_PATTERN_FIELDS.pauseAuthor,
+        },
+        {
+          text: this.$t('entity.fields.pauseInitiator'),
+          value: ENTITY_PATTERN_FIELDS.pauseInitiator,
         },
         {
           text: this.$t('common.lastEventDate'),
@@ -379,9 +387,6 @@ export default {
     this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
-    ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
-    ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
-
     showPatternAlarmsModal() {
       this.$emit('show:alarms');
     },
@@ -391,9 +396,11 @@ export default {
     },
 
     async fetchCategories() {
+      const { fetchCategoriesListWithoutStore } = useEntityCategory();
+
       this.categoriesPending = true;
 
-      const { data: categories } = await this.fetchCategoriesListWithoutStore({
+      const { data: categories } = await fetchCategoriesListWithoutStore({
         params: { limit: MAX_LIMIT },
       });
 
@@ -402,7 +409,8 @@ export default {
     },
 
     async fetchInfos() {
-      const { data: infos } = await this.fetchEntityInfosKeysWithoutStore({
+      const { fetchEntityInfosKeysWithoutStore } = useService();
+      const { data: infos } = await fetchEntityInfosKeysWithoutStore({
         params: { limit: MAX_LIMIT },
       });
 

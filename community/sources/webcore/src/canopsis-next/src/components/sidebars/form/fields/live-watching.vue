@@ -1,9 +1,10 @@
 <template>
   <c-enabled-field
-    v-field="value"
+    :model-value="modelValue"
     hide-details
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #label="">
+    <template #label>
       {{ $t('settings.liveWatching') }}
       <c-help-icon
         :text="$t('settings.liveWatchingTooltip')"
@@ -17,15 +18,13 @@
 
 <script>
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: false,
     },
   },
+
+  emits: ['update:modelValue'],
 };
 </script>

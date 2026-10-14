@@ -1,62 +1,56 @@
 <template>
-  <v-layout>
-    <v-flex
-      class="pr-2"
-      xs3
-    >
-      <v-select
-        v-field="condition.type"
+  <v-row align="center">
+    <v-col class="pr-2" cols="3">
+      <c-select
+        :model-value="condition.type"
         :items="conditionTypes"
         :label="$t('common.type')"
         :disabled="disabled"
+        item-title="text"
+        item-value="value"
+        @update:model-value="updateField('type', $event)"
       />
-    </v-flex>
-    <v-flex
-      class="px-2"
-      xs4
-    >
-      <v-select
-        v-field="condition.attribute"
-        v-validate="'required'"
+    </v-col>
+    <v-col class="px-2" cols="4">
+      <c-select
+        :model-value="condition.attribute"
         :items="columnsForSelectedConditionType"
         :label="$t('common.attribute')"
         :name="conditionFieldName"
-        :error-messages="errors.collect(conditionFieldName)"
         :disabled="disabled"
-        item-text="name"
+        item-title="name"
         item-value="name"
+        required
+        @update:model-value="updateField('attribute', $event)"
       />
-    </v-flex>
-    <v-flex
-      class="pl-2"
-      xs5
-    >
-      <v-layout align-center>
+    </v-col>
+    <v-col class="pl-2" cols="5">
+      <c-layout align="center" gap="2">
         <c-payload-text-field
-          v-field="condition.value"
+          :value="condition.value"
           :label="$t('common.value')"
           :disabled="disabled"
           :variables="variables"
           :name="valueFieldName"
           clearable
+          @update:value="updateField('value', $event)"
         />
         <v-btn
           v-if="!disabled"
           :disabled="disabledRemove"
+          density="compact"
+          size="small"
+          variant="text"
           icon
-          small
           @click="removeCondition"
         >
-          <v-icon
-            color="error"
-            small
-          >
+          <v-icon color="error" small>
             delete
           </v-icon>
         </v-btn>
-      </v-layout>
-    </v-flex>
-  </v-layout>
+      </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -64,14 +58,11 @@ import { computed } from 'vue';
 
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
 
+import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'condition',
-    event: 'input',
-  },
+  emits: ['update:condition'],
   props: {
     condition: {
       type: Object,
@@ -100,20 +91,23 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
 
-    const conditionTypes = computed(() => Object.values(EXTERNAL_DATA_CONDITION_TYPES)
-      .map(type => ({ text: t(`externalData.conditionTypes.${type}`), value: type })));
+    const conditionTypes = computed(() => Object.values(EXTERNAL_DATA_CONDITION_TYPES).map(type => ({
+        text: t(`externalData.conditionTypes.${type}`),
+        value: type,
+      })),
+    );
 
-    const columnsForSelectedConditionType = computed(() => (
-      props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
-        ? props.columns.filter(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp)
-        : props.columns
-    ));
+    const columnsForSelectedConditionType = computed(() => props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
+        ? props.columns.filter(
+            column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
+          )
+        : props.columns,
+    );
 
     const conditionFieldName = computed(() => `${props.name}.condition`);
-
     const valueFieldName = computed(() => `${props.name}.value`);
-
     const removeCondition = () => emit('remove', props.condition);
 
     return {
@@ -121,6 +115,7 @@ export default {
       columnsForSelectedConditionType,
       conditionFieldName,
       valueFieldName,
+      updateField,
       removeCondition,
     };
   },

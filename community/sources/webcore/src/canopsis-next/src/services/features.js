@@ -1,13 +1,4 @@
-import {
-  get,
-  flow,
-  uniq,
-  isArray,
-  isFunction,
-  isObject,
-  isUndefined,
-  merge,
-} from 'lodash';
+import { get, flow, uniq, isArray, isFunction, isObject, isUndefined, merge } from 'lodash';
 
 /**
  * Get combined value from features by key
@@ -16,62 +7,73 @@ import {
  * @param {string} key
  * @returns {*}
  */
-const getValue = (features, key) => features.reduce((acc, feature) => {
-  const value = get(feature, key);
+const getValue = (features, key) =>
+  features.reduce((acc, feature) => {
+    const value = get(feature, key);
 
-  if (isUndefined(value)) {
+    if (isUndefined(value)) {
+      return acc;
+    }
+
+    if (isUndefined(acc)) {
+      return value;
+    }
+
+    if (typeof value !== typeof acc) {
+      console.error(
+        `Feature service: Different types of values for '${key}' key: '${acc}', '${value}'`,
+      );
+
+      return acc;
+    }
+
+    if (isFunction(value)) {
+      return flow([acc, value]);
+    }
+
+    if (isArray(value)) {
+      return uniq(value.concat(acc));
+    }
+
+    if (isObject(value)) {
+      return merge(acc, value);
+    }
+
     return acc;
-  }
-
-  if (isUndefined(acc)) {
-    return value;
-  }
-
-  if (typeof value !== typeof acc) {
-    console.error(`Feature service: Different types of values for '${key}' key: '${acc}', '${value}'`);
-
-    return acc;
-  }
-
-  if (isFunction(value)) {
-    return flow([acc, value]);
-  }
-
-  if (isArray(value)) {
-    return uniq(value.concat(acc));
-  }
-
-  if (isObject(value)) {
-    return merge(acc, value);
-  }
-
-  return acc;
-}, undefined);
+  }, undefined);
 
 /**
  * @class Features
  */
 class Features {
   constructor() {
-    const featuresFiles = require.context('../features/', true, /index\.js$/);
+    const featureEntries = import.meta.glob('../features/**/index.js', {
+      eager: true,
+    });
 
     this.cache = {};
-    this.features = Object.values(
-      featuresFiles
-        .keys()
-        .reduce((acc, key) => {
-          const [, feature, ...rest] = key.split('/');
 
-          if (!acc[feature] || acc[feature].length > rest.length) {
-            acc[feature] = {
-              key,
-              length: rest.length,
-            };
-          }
+    const featureMap = Object.entries(featureEntries).reduce((acc, [path, module]) => {
+      // Vite glob keys are paths like "../features/<feature>/index.js".
+      // Webpack require.context keys were "./<feature>/index.js", and the first segment is skipped.
+      const contextKey = `./${path.replace(/\\/g, '/').split('/features/').pop()}`;
+      const [, feature, ...rest] = contextKey.split('/');
 
-          return acc;
-        }, {}),
-    ).map(({ key }) => featuresFiles(key).default);
+      if (!feature) {
+        return acc;
+      }
+
+      if (!acc[feature] || acc[feature].depth > rest.length) {
+        acc[feature] = {
+          module,
+          depth: rest.length,
+        };
+      }
+
+      return acc;
+    }, {});
+
+    this.features = Object.values(featureMap).map(({ module }) => module.default);
   }
 
   /**

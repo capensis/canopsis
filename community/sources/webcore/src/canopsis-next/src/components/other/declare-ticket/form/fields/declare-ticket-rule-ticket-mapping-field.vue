@@ -2,8 +2,9 @@
   <div>
     <c-form-block-row :label="$t('declareTicket.ticketUrlAndId')" :depth="depth" top-border>
       <c-enabled-field
-        v-field="form.declare_ticket.enabled"
+        :model-value="form.declare_ticket.enabled"
         :disabled="isDeclareTicketExist"
+        @update:model-value="updateField('declare_ticket.enabled', $event)"
       >
         <template #append>
           <c-help-icon
@@ -15,55 +16,64 @@
         </template>
       </c-enabled-field>
 
-      <c-alert
-        v-if="isDeclareTicketExist"
-        type="info"
-      >
+      <c-alert v-if="isDeclareTicketExist" type="info">
         {{ $t('declareTicket.webhookTicketDeclarationExist') }}
       </c-alert>
     </c-form-block-row>
 
     <v-expand-transition>
       <div v-if="form.declare_ticket.enabled">
-        <c-form-block-row v-if="!hideEmptyResponse" :depth="depth + 1" :label="$t('declareTicket.emptyResponse')">
+        <c-form-block-row
+          v-if="!hideEmptyResponse"
+          :depth="depth + 1"
+          :label="$t('declareTicket.emptyResponse')"
+        >
           <c-enabled-field
-            v-field="form.declare_ticket.empty_response"
+            :model-value="form.declare_ticket.empty_response"
             :label="$t('declareTicket.emptyResponse')"
+            @update:model-value="updateField('declare_ticket.empty_response', $event)"
           />
         </c-form-block-row>
 
         <c-form-block-row :depth="depth + 1" :label="$t('declareTicket.ticketID')">
           <declare-ticket-rule-ticket-id-field
-            v-field="form.declare_ticket"
+            :value="form.declare_ticket"
             :disabled="disabled"
             :name="ticketIdFieldName"
             :required="ticketIdRequired"
             :variables="variables"
+            @update:value="updateField('declare_ticket', $event)"
           />
         </c-form-block-row>
 
         <c-form-block-row :depth="depth + 1" :label="$t('declareTicket.ticketURL')">
           <declare-ticket-rule-ticket-url-field
-            v-field="form.declare_ticket.ticket_url"
+            :form="form.declare_ticket.ticket_url"
             :disabled="disabled"
             :name="ticketUrlFieldName"
             :variables="variables"
+            @update:form="updateField('declare_ticket.ticket_url', $event)"
           />
 
-          <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
+          <declare-ticket-rule-ticket-url-title-field
+            :value="form.declare_ticket.ticket_url_title"
+            @update:value="updateField('declare_ticket.ticket_url_title', $event)"
+          />
 
-          <v-text-field
+          <c-text-field
             v-if="withTicketSystemName"
-            v-field="form.ticket_system_name"
+            :model-value="form.ticket_system_name"
             :label="$t('declareTicket.ticketSystemName')"
+            @update:model-value="updateField('ticket_system_name', $event)"
           />
         </c-form-block-row>
 
-        <c-form-block-row :depth="depth + 1" :label="$tc('common.customField', 2)" indented>
+        <c-form-block-row :depth="depth + 1" :label="$t('common.customField', 2)">
           <declare-ticket-rule-ticket-custom-fields-field
-            v-field="form.declare_ticket.mapping"
+            :value="form.declare_ticket.mapping"
             :name="name"
             :disabled="disabled"
+            @update:value="updateField('declare_ticket.mapping', $event)"
           />
         </c-form-block-row>
       </div>
@@ -75,24 +85,22 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
+import { formMixin } from '@/mixins/form';
 
-import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './declare-ticket-rule-ticket-custom-fields-field.vue';
+import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketUrlField from './declare-ticket-rule-ticket-url-field.vue';
 import DeclareTicketRuleTicketUrlTitleField from './declare-ticket-rule-ticket-url-title-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     DeclareTicketRuleTicketUrlField,
     DeclareTicketRuleTicketCustomFieldsField,
     DeclareTicketRuleTicketIdField,
     DeclareTicketRuleTicketUrlTitleField,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
+  emits: ['update:form'],
   props: {
     form: {
       type: Object,
@@ -143,9 +151,12 @@ export default {
     const ticketUrlFieldName = computed(() => `${props.name}.ticket_url`);
 
     const ticketUrlHelpText = computed(() => [
-      t('declareTicket.ticketUrlAndIdHelpText'),
-      props.onlyOneTicketId && t('declareTicket.dataFromOneStepAttention'),
-    ].filter(Boolean).join('\n'));
+        t('declareTicket.ticketUrlAndIdHelpText'),
+        props.onlyOneTicketId && t('declareTicket.dataFromOneStepAttention'),
+      ]
+        .filter(Boolean)
+        .join('\n'),
+    );
 
     return {
       ticketIdFieldName,

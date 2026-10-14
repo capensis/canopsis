@@ -49,8 +49,9 @@ ENV CMD ${CMD}
 
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
-RUN if [ -f "/canopsis-api-pro" ] ; then apk add net-snmp-libs; fi
-RUN case "${CMD}" in canopsis-api*) ln -sf /canopsis-api-${CANOPSIS_EDITION} /canopsis-api && ( cd /opt/canopsis/bin && ln -sf canopsis-api-${CANOPSIS_EDITION} canopsis-api ) ;; esac
+RUN if [ -f "/canopsis-internal-api-pro" ] ; then apk add net-snmp-libs; fi
+RUN case "${CMD}" in canopsis-internal-api*) ln -sf /canopsis-internal-api-${CANOPSIS_EDITION} /canopsis-internal-api && ( cd /opt/canopsis/bin && ln -sf canopsis-internal-api-${CANOPSIS_EDITION} canopsis-internal-api ) ;; esac
+RUN case "${CMD}" in canopsis-public-api*) ln -sf /canopsis-public-api-${CANOPSIS_EDITION} /canopsis-public-api && ( cd /opt/canopsis/bin && ln -sf canopsis-public-api-${CANOPSIS_EDITION} canopsis-public-api ) ;; esac
 
 USER canopsis:canopsis
 
@@ -104,16 +105,16 @@ COPY pro/go-engines-pro/config/import-context-graph /opt/canopsis/share/config/i
 USER canopsis:canopsis
 
 #
-# canopsis-api-* overrides
+# canopsis-internal-api-* overrides
 #
 
-FROM final-container AS canopsis-api-community
+FROM final-container AS canopsis-internal-api-community
 EXPOSE 8082
 USER root
 RUN apk add --no-cache postgresql17-client
 USER canopsis:canopsis
 
-FROM final-container AS canopsis-api-pro
+FROM final-container AS canopsis-internal-api-pro
 EXPOSE 8082
 USER root
 RUN apk add --no-cache postgresql17-client

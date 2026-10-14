@@ -1,30 +1,31 @@
 <template>
   <c-patterns-field
-    v-field="patterns"
+    :value="patterns"
     :entity-attributes="entityAttributes"
     :pending="pending"
     some-required
     with-entity
     entity-counters-type
+    @update:value="updateModel"
   />
 </template>
 
 <script>
+import { useModelField } from '@/hooks/form/model-field';
 import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'patterns',
-    event: 'input',
-  },
   props: {
     patterns: {
       type: Object,
       default: () => ({}),
     },
   },
-  setup() {
+
+  emits: ['update:patterns'],
+
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
     const { fetchServicePatternFields } = usePatternsFields();
 
     const {
@@ -35,6 +36,7 @@ export default {
     return {
       pending,
       entityAttributes,
+      updateModel,
     };
   },
 };

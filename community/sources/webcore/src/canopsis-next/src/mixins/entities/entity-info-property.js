@@ -1,10 +1,10 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('entityInfoProperty');
+import { useEntityInfoPropertyStore } from '@/stores/modules/entity-info-property';
 
 export const entitiesEntityInfoPropertyMixin = {
   computed: {
-    ...mapGetters({
+    ...mapState(useEntityInfoPropertyStore, {
       entityInfoProperties: 'items',
       entityInfoPropertiesWithAlias: 'itemsWithAlias',
       entityInfoPropertiesWithoutAlias: 'itemsWithoutAlias',
@@ -14,7 +14,7 @@ export const entitiesEntityInfoPropertyMixin = {
   },
 
   methods: {
-    ...mapActions({
+    ...mapActions(useEntityInfoPropertyStore, {
       fetchEntityInfoPropertiesList: 'fetchList',
       createEntityInfoProperty: 'create',
       updateEntityInfoProperty: 'update',

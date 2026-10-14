@@ -1,31 +1,24 @@
 <template>
-  <v-text-field
-    v-field="value"
-    v-validate="'required'"
-    :label="$t('remediation.instruction.endpoint')"
+  <c-text-field
+    :model-value="modelValue"
+    :label="t('remediation.instruction.endpoint')"
     :name="name"
-    :error-messages="errors.collect(name)"
     :disabled="disabled"
+    required
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #append="">
-      <c-help-icon
-        :text="$t('remediation.instruction.tooltips.endpoint')"
-        icon="help"
-        left
-      />
+    <template #append>
+      <c-help-icon :text="t('remediation.instruction.tooltips.endpoint')" icon="help" left />
     </template>
-  </v-text-field>
+  </c-text-field>
 </template>
 
 <script>
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -37,6 +30,14 @@ export default {
       type: String,
       default: 'endpoint',
     },
+  },
+  emits: ['update:modelValue'],
+  setup() {
+    const { t } = useI18n();
+
+    return {
+      t,
+    };
   },
 };
 </script>

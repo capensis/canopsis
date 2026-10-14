@@ -10,23 +10,26 @@
     :refresh-alarms-list="refreshAlarmsList"
     :columns-settings="columnsSettings"
     expandable
-    v-on="$listeners"
+    eager
+    @update:query="$emit('update:query', $event)"
+    @select:tag="$emit('select:tag', $event)"
+    @remove:tag="$emit('remove:tag', $event)"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 
-import AlarmsListTableWithPagination from '../partials/alarms-list-table-with-pagination.vue';
-
-/**
- * Group-alarm-list component
- *
- * @module alarm
- *
- */
 export default {
-  components: { AlarmsListTableWithPagination },
+  components: {
+    /**
+     * We need to do it by defineAsyncComponent to avoid circular dependency.
+     */
+    AlarmsListTableWithPagination: defineAsyncComponent(
+      () => import('../partials/alarms-list-table-with-pagination.vue'),
+    ),
+  },
+
   props: {
     children: {
       type: Object,
@@ -50,16 +53,20 @@ export default {
     },
     refreshAlarmsList: {
       type: Function,
-      default: () => () => {},
+      default: () => {},
     },
     columnsSettings: {
       type: Object,
       default: () => ({}),
     },
   },
+
+  emits: ['update:query', 'select:tag', 'remove:tag'],
+
   setup(props) {
-    const alarms = computed(() => props.children?.data ?? []);
-    const meta = computed(() => props.children?.meta ?? {});
+    const alarms = computed(() => (Array.isArray(props.children) ? props.children : (props.children?.data ?? [])),
+    );
+    const meta = computed(() => (Array.isArray(props.children) ? {} : (props.children?.meta ?? {})));
 
     return {
       alarms,

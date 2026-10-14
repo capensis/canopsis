@@ -1,0 +1,23 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+>
+  <path
+    d="M3 22V4H6V2H8V4H16V2H18V4H21V12H19V10H5V20H12V22H3Z"
+    fill="currentColor"
+  />
+  <g clip-path="url(#pbehavior-clip)">
+    <path
+      d="M22.4046 20.7083L18.2338 16.5375C18.6463 15.4833 18.4171 14.2458 17.5463 13.375C16.6296 12.4583 15.2546 12.275 14.1546 12.7792L16.1255 14.75L14.7505 16.125L12.7338 14.1542C12.1838 15.2542 12.413 16.6292 13.3296 17.5458C14.2005 18.4167 15.438 18.6458 16.4921 18.2333L20.663 22.4042C20.8463 22.5875 21.1213 22.5875 21.3046 22.4042L22.3588 21.35C22.588 21.1667 22.588 20.8458 22.4046 20.7083Z"
+      fill="currentColor"
+    />
+  </g>
+  <defs>
+    <clipPath id="pbehavior-clip">
+      <rect width="11" height="11" fill="white" transform="translate(12 12)" />
+    </clipPath>
+  </defs>
+</svg>

@@ -1,5 +1,8 @@
 import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 
+const DEFAULT_ENGINE_MINIMAL_INSTANCES = 0;
+const DEFAULT_ENGINE_OPTIMAL_INSTANCES = 0;
+
 /**
  * @typedef {Object} EngineParameters
  * @property {boolean} enabled
@@ -48,8 +51,8 @@ export const healthcheckParametersToForm = (healthcheckParameters = {}) => ({
 
     acc[engineName] = {
       enabled: !!engineParameters.enabled,
-      minimal: engineParameters.minimal,
-      optimal: engineParameters.optimal,
+      minimal: engineParameters.minimal ?? DEFAULT_ENGINE_MINIMAL_INSTANCES,
+      optimal: engineParameters.optimal ?? DEFAULT_ENGINE_OPTIMAL_INSTANCES,
     };
 
     return acc;

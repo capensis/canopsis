@@ -1,20 +1,22 @@
 <template>
-  <router-link
-    :class="{ editing: isNavigationEditingMode }"
-    :event="routerLinkEvents"
-    :title="view.title"
-    :to="viewLink"
-    class="panel-item-content-link"
-  >
-    <group-view-panel
-      :view="view"
-      :is-order-changed="isGroupsOrderChanged"
-      :is-view-active="isViewActive"
-      :editable="(isViewPrivate || hasViewEditButtonAccess) && isNavigationEditingMode"
-      :duplicable="(isViewPrivate || hasCreateAnyViewAccess) && isNavigationEditingMode"
-      @duplicate="showDuplicateViewModal"
-      @change="showEditViewModal"
-    />
+  <router-link v-slot="{ href, navigate }" :to="viewLink" custom>
+    <a
+      :class="{ editing: isNavigationEditingMode }"
+      :href="href"
+      :title="view.title"
+      class="panel-item-content-link"
+      @click="handleClick($event, navigate)"
+    >
+      <group-view-panel
+        :view="view"
+        :is-order-changed="isGroupsOrderChanged"
+        :is-view-active="isViewActive"
+        :editable="(isViewPrivate || hasViewEditButtonAccess) && isNavigationEditingMode"
+        :duplicable="(isViewPrivate || hasCreateAnyViewAccess) && isNavigationEditingMode"
+        @duplicate="showDuplicateViewModal"
+        @change="showEditViewModal"
+      />
+    </a>
   </router-link>
 </template>
 
@@ -40,34 +42,41 @@ export default {
     isViewPrivate() {
       return this.view.is_private;
     },
+  },
+  methods: {
+    handleClick(event, navigate) {
+      if (this.isGroupsOrderChanged) {
+        event.preventDefault();
 
-    routerLinkEvents() {
-      return this.isGroupsOrderChanged ? [] : ['click'];
+        return;
+      }
+
+      navigate(event);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-  .panel-item-content-link {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    display: inline-block;
-    vertical-align: middle;
+.panel-item-content-link {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
 
-    &.editing {
-      cursor: move;
+  &.editing {
+    cursor: move;
 
-      .panel-item-content {
-        cursor: inherit;
-      }
+    :deep(.panel-item-content) {
+      cursor: inherit;
     }
   }
+}
 </style>

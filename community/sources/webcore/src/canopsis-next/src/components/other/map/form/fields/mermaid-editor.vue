@@ -1,77 +1,70 @@
 <template>
-  <v-layout column>
-    <v-layout
-      :style="editorStyles"
-      class="mermaid-editor mb-2"
-    >
-      <v-flex class="mermaid-editor__sidebar">
-        <mermaid-code-editor
-          v-field="form.code"
-          class="fill-height"
-        />
-      </v-flex>
-      <v-flex class="mermaid-editor__content">
-        <v-layout
-          class="mermaid-editor__toolbar px-2"
-          align-center
-          justify-end
-        >
-          <add-location-btn
-            v-model="addOnClick"
-            class="mr-2"
-          />
-          <mermaid-theme-field
-            v-field="form.theme"
-            class="mermaid-editor__theme-picker"
-          />
-        </v-layout>
-        <div class="mermaid-editor__preview">
-          <mermaid-code-preview
+  <map-editor-required-field
+    v-slot="{ hasError, messages }"
+    :name="name"
+    :valid="!!form.code && !!form.points.length"
+    :message="$t('mermaid.errors.emptyMermaid')"
+  >
+    <c-layout column>
+      <c-layout
+        :style="[editorStyles, { borderColor: hasError ? errorColor : undefined }]"
+        class="mermaid-editor mb-2"
+      >
+        <v-col class="mermaid-editor__sidebar pa-0">
+          <mermaid-code-editor
             :value="form.code"
-            :theme="form.theme"
+            class="fill-height"
+            @input="updateField('code', $event)"
           />
-          <mermaid-points-editor
-            v-field="form.points"
-            :add-on-click="addOnClick"
-            class="mermaid-editor__points"
-          />
-        </div>
-      </v-flex>
-    </v-layout>
-    <v-messages
-      v-if="hasChildrenError"
-      :value="errorMessages"
-      color="error"
-    />
-  </v-layout>
+        </v-col>
+        <v-col class="mermaid-editor__content pa-0">
+          <c-layout class="mermaid-editor__toolbar px-2" align="center" justify="end">
+            <add-location-btn :value="addOnClick" class="mr-2" @input="addOnClick = $event" />
+            <mermaid-theme-field
+              :value="form.theme"
+              class="mermaid-editor__theme-picker"
+              @input="updateField('theme', $event)"
+            />
+          </c-layout>
+          <div class="mermaid-editor__preview">
+            <mermaid-code-preview :value="form.code" :theme="form.theme" />
+            <mermaid-points-editor
+              :value="form.points"
+              :add-on-click="addOnClick"
+              class="mermaid-editor__points"
+              @input="updateField('points', $event)"
+            />
+          </div>
+        </v-col>
+      </c-layout>
+      <v-messages v-if="hasError" :messages="messages" color="error" />
+    </c-layout>
+  </map-editor-required-field>
 </template>
 
 <script>
 import { COLORS } from '@/config';
 
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
 import AddLocationBtn from './add-location-btn.vue';
+import MapEditorRequiredField from './map-editor-required-field.vue';
 import MermaidCodeEditor from './mermaid-code-editor.vue';
-import MermaidThemeField from './mermaid-theme-field.vue';
 import MermaidPointsEditor from './mermaid-points-editor.vue';
+import MermaidThemeField from './mermaid-theme-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     AddLocationBtn,
     MermaidCodeEditor,
     MermaidThemeField,
     MermaidCodePreview,
     MermaidPointsEditor,
+    MapEditorRequiredField,
   },
-  mixins: [formMixin, validationChildrenMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
   props: {
     form: {
       type: Object,
@@ -86,14 +79,15 @@ export default {
       default: 'parameters',
     },
   },
+  emits: ['update:form'],
   data() {
     return {
       addOnClick: false,
     };
   },
   computed: {
-    errorMessages() {
-      return [this.$t('mermaid.errors.emptyMermaid')];
+    errorColor() {
+      return COLORS.error;
     },
 
     editorStyles() {
@@ -101,38 +95,7 @@ export default {
 
       return {
         minHeight: `${minHeight}px`,
-        borderColor: this.hasChildrenError ? COLORS.error : undefined,
       };
-    },
-  },
-  watch: {
-    form: {
-      deep: true,
-      handler() {
-        if (this.hasChildrenError) {
-          this.$validator.validate(this.name);
-        }
-      },
-    },
-  },
-  mounted() {
-    this.attachRequiredRule();
-  },
-  beforeDestroy() {
-    this.detachRules();
-  },
-  methods: {
-    attachRequiredRule() {
-      this.$validator.attach({
-        name: this.name,
-        rules: 'required:true',
-        getter: () => !!this.form.code && !!this.form.points.length,
-        vm: this,
-      });
-    },
-
-    detachRules() {
-      this.$validator.detach(this.name);
     },
   },
 };

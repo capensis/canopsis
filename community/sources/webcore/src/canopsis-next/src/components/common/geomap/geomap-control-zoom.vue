@@ -1,47 +1,51 @@
 <template>
-  <v-layout column>
-    <v-btn
-      :disabled="disabled || zoomInDisabled"
-      class="secondary ma-0 mb-1"
-      icon
-      dark
-      @click="zoomIn"
-    >
-      <v-icon>add</v-icon>
-    </v-btn>
-    <v-btn
-      :disabled="disabled || zoomOutDisabled"
-      class="secondary ma-0 mb-1"
-      dark
-      icon
-      @click="zoomOut"
-    >
-      <v-icon>remove</v-icon>
-    </v-btn>
-  </v-layout>
+  <geomap-control :position="position">
+    <c-layout column>
+      <v-btn
+        :disabled="disabled || zoomInDisabled"
+        class="mb-1"
+        color="secondary"
+        icon="add"
+        @click="zoomIn"
+      />
+      <v-btn
+        :disabled="disabled || zoomOutDisabled"
+        class="mb-1"
+        color="secondary"
+        icon="remove"
+        @click="zoomOut"
+      />
+    </c-layout>
+  </geomap-control>
 </template>
 
 <script>
 import GeomapControl from './geomap-control.vue';
 
 export default {
-  extends: GeomapControl,
+  inject: ['geomapRoot'],
+  components: { GeomapControl },
+
   props: {
+    position: {
+      type: String,
+      default: 'topleft',
+    },
     disabled: {
       type: Boolean,
       default: false,
     },
   },
+
   data() {
     return {
       zoom: 0,
-      mapObject: undefined,
     };
   },
+
   computed: {
     map() {
-      // eslint-disable-next-line no-underscore-dangle
-      return this.mapObject?._map;
+      return this.geomapRoot.mapObject;
     },
 
     zoomInDisabled() {
@@ -60,6 +64,7 @@ export default {
       return this.zoom === this.map.getMinZoom();
     },
   },
+
   mounted() {
     this.$nextTick(() => {
       this.zoom = this.map.getZoom();
@@ -67,9 +72,11 @@ export default {
       this.map.on('zoom', this.setCurrentZoom);
     });
   },
-  beforeDestroy() {
-    this.map.off('zoom', this.setCurrentZoom);
+
+  beforeUnmount() {
+    this.map?.off('zoom', this.setCurrentZoom);
   },
+
   methods: {
     setCurrentZoom({ target }) {
       this.zoom = target.getZoom();
