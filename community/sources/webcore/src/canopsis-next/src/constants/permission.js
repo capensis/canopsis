@@ -276,6 +276,7 @@ export const USER_PERMISSIONS = {
         category: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_category`,
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
+        exportAlarmTimeline: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAlarmTimeline`,
 
         bookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_bookmark`,
         filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
