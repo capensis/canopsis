@@ -238,6 +238,7 @@ func (p *serviceProcessor) sendPauseChanges(ctx context.Context, event *types.Ev
 		pauseEvent.Initiator = pause.Initiator
 		pauseEvent.PauseType = pause.Type
 		pauseEvent.PauseSource = pause.Source
+		pauseEvent.PauseSourceType = pause.SourceType
 		pauseEvent.PausePath = pause.Path
 		pauseEvent.Inherited = true
 
@@ -255,8 +256,13 @@ func (p *serviceProcessor) sendPauseChanges(ctx context.Context, event *types.Ev
 
 		resumeEvent.EventType = types.EventTypeResume
 		resumeEvent.Timestamp = event.Timestamp
+		if changes.ServiceName != "" {
+			resumeEvent.Output = types.OutputServicePrefix + changes.ServiceName
+		}
+
 		resumeEvent.Initiator = types.InitiatorSystem
 		resumeEvent.PauseSource = entity.Pause.Source
+		resumeEvent.PauseSourceType = entity.Pause.SourceType
 		resumeEvent.PausePath = entity.Pause.Path
 
 		err = p.sendEvent(ctx, resumeEvent)

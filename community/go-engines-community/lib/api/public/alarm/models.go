@@ -88,6 +88,7 @@ type Response struct {
 	ChangeState *Step `bson:"change_state" json:"change_state"`
 	Ticket      *Step `bson:"ticket" json:"ticket"`
 	LastComment *Step `bson:"last_comment" json:"last_comment"`
+	Pause       *Step `bson:"pause" json:"pause"`
 
 	CreationDate                datetime.CpsTime  `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
 	Resolved                    *datetime.CpsTime `bson:"resolved" json:"resolved" swaggertype:"integer"`

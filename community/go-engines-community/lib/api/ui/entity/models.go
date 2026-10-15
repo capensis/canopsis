@@ -306,3 +306,15 @@ type RefResponse struct {
 	Component string `bson:"component" json:"component,omitempty"`
 	Connector string `bson:"connector" json:"connector,omitempty"`
 }
+
+type PauseRequest struct {
+	ID        string `json:"_id" binding:"required"`
+	Comment   string `json:"comment" binding:"max=255"`
+	Inherited bool   `json:"inherited"`
+	Type      string `json:"type" binding:"max=255"`
+}
+
+type ResumeRequest struct {
+	ID      string `json:"_id" binding:"required"`
+	Comment string `json:"comment" binding:"max=255"`
+}

@@ -527,6 +527,14 @@ func (h *upstreamHelper) createAlarm(
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
 	}
 
+	if entity.Pause != nil {
+		newStep := types.NewAlarmStep(types.AlarmStepPause, now, entity.Pause.Author,
+			entity.Pause.Message, entity.Pause.UserID, "", entity.Pause.Initiator, false)
+		alarm.Value.Pause = &newStep
+		alarm.Value.Steps = append(alarm.Value.Steps, newStep)
+		alarm.Value.InactiveStart = &now
+	}
+
 	result.IsInstructionMatched, err = h.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 	if err != nil {
 		return result, err

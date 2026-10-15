@@ -195,7 +195,9 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 			types.EventTypeAssocTicket,
 			types.EventTypeTicketRemove,
 			types.EventTypeChangestate,
-			types.EventTypeSnooze:
+			types.EventTypeSnooze,
+			types.EventTypePause,
+			types.EventTypeResume:
 			role := roles[0]
 			value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
 			a.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)
@@ -206,6 +208,13 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value, contextUser, c
 	if longOutputValue != nil && longOutputValue.Type() != fastjson.TypeString {
 		value.Set("long_output", fastjson.MustParse(`""`))
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
+	}
+
+	for _, field := range []string{"pause_source", "pause_source_type", "pause_path"} {
+		if value.Exists(field) {
+			value.Del(field)
+			a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("%s cannot be set in an event, it has been removed", field)
+		}
 	}
 
 	author, err := getStringField(value, "author")

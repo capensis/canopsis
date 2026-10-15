@@ -570,6 +570,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 	totalActivePipeline := []bson.M{
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.snooze": bson.M{"$exists": false}},
+			{"v.pause": bson.M{"$exists": false}},
 			{"$or": []bson.M{
 				{"v.pbehavior_info": bson.M{"$exists": false}},
 				{"v.pbehavior_info.canonical_type": bson.M{"$eq": pbehavior.TypeActive}},
@@ -580,6 +581,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 
 	totalSnoozePipeline := []bson.M{
 		{"$match": bson.M{"v.snooze": bson.M{"$exists": true}}},
+		{"$count": "count"},
+	}
+
+	totalPausePipeline := []bson.M{
+		{"$match": bson.M{"v.pause": bson.M{"$exists": true}}},
 		{"$count": "count"},
 	}
 
@@ -611,6 +617,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 			"total":           totalPipeline,
 			"total_active":    totalActivePipeline,
 			"total_snooze":    totalSnoozePipeline,
+			"total_pause":     totalPausePipeline,
 			"total_ack":       totalAckPipeline,
 			"total_unack":     totalUnackPipeline,
 			"total_ticket":    totalTicketPipeline,

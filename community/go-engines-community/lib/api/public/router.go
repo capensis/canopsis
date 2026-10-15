@@ -120,7 +120,7 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 
 				r.With(authorize(permObj, model.PermissionUpdate)).
 					With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
-					Patch("/bulk/pbehaviors", pbhAPI.BulkPatch)
+					Patch(bulkPrefix+"/pbehaviors", pbhAPI.BulkPatch)
 
 				r.Route(bulkPrefix+"/connector-pbehaviors", func(r chi.Router) {
 					r.With(authorize(permObj, model.PermissionCreate)).
@@ -139,15 +139,30 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 			}
 			{
 				entityAPI := entity.NewAPI(
-					entity.NewStore(s.SecondaryDbClient, patternfields.NewTransformer(s.SecondaryDbClient), s.LinkGenerator, s.UserProvider),
-					s.Binder, s.Responder)
+					entity.NewStore(s.SecondaryDbClient, patternfields.NewTransformer(s.SecondaryDbClient),
+						s.LinkGenerator, s.UserProvider, amqp.NewPooledPublisher(s.AMQPPubChPool), s.EventGenerator, json.NewEncoder()),
+					s.Binder, s.Responder, json.NewDecoder())
+				permObj := apisecurity.ObjEntity
 				r.Route("/entities", func(r chi.Router) {
-					r.With(authorize(apisecurity.ObjEntity, model.PermissionRead)).
+					r.With(authorize(permObj, model.PermissionRead)).
 						Get("/", entityAPI.List)
 
-					r.With(authorize(apisecurity.ObjEntity, model.PermissionRead)).
+					r.With(authorize(permObj, model.PermissionRead)).
 						Post("/search", entityAPI.Search)
+
+					r.With(authorize(permObj, model.PermissionUpdate)).
+						Post("/pause", entityAPI.Pause)
+
+					r.With(authorize(permObj, model.PermissionUpdate)).
+						Post("/resume", entityAPI.Resume)
 				})
+
+				r.With(authorize(permObj, model.PermissionUpdate)).
+					With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, false)).
+					Post(bulkPrefix+"/entities/pause", entityAPI.BulkPause)
+				r.With(authorize(permObj, model.PermissionUpdate)).
+					With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, false)).
+					Post(bulkPrefix+"/entities/resume", entityAPI.BulkResume)
 			}
 			{
 				entityImportAPI := entityimport.NewAPI(
@@ -221,7 +236,7 @@ func RegisterRoutes(s Services, opts Options, extra ...func(r chi.Router)) (*chi
 				r.With(authorize(permObj, model.PermissionUpdate)).
 					With(middleware.PreProcessBulk(s.APIConfigProvider, s.Responder, true)).
 					With(middleware.ReloadEnforcerPolicyOnChange(s.Enforcer, s.Logger)).
-					Patch("/bulk/users", userAPI.BulkPatch)
+					Patch(bulkPrefix+"/users", userAPI.BulkPatch)
 			}
 
 			for _, f := range extra {
