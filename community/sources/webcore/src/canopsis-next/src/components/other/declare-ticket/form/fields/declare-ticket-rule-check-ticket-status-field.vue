@@ -58,6 +58,7 @@
           :name="`${name}.ticket_status_source`"
           :disabled="disabled"
           :variables="ticketStatusTemplateVars"
+          :with-template="withTemplates"
           :depth="depth + 1"
           @update:form="updateField('ticket_status', $event)"
         />
@@ -116,6 +117,10 @@ export default {
     topBorder: {
       type: Boolean,
       default: false,
+    },
+    withTemplates: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props) {

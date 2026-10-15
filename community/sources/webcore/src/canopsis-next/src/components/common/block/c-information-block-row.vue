@@ -1,14 +1,14 @@
 <template>
-  <c-layout class="pt-2" align="center">
+  <div class="d-flex align-center ga-4 pt-2">
     <div :style="labelStyles">
-      <div class="text-subtitle-1 font-weight-bold">
+      <div class="c-information-block-row__label text-body-2">
         {{ label }}
       </div>
     </div>
     <div class="text-break">
       <slot>{{ value }}</slot>
     </div>
-  </c-layout>
+  </div>
 </template>
 
 <script>
@@ -24,7 +24,7 @@ export default {
     },
     width: {
       type: [Number, String],
-      default: 160,
+      default: 200,
     },
   },
   computed: {
@@ -37,3 +37,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.c-information-block-row__label {
+  font-weight: 700 !important;
+}
+</style>
