@@ -313,7 +313,7 @@ func (s *baseService) applyAlarmRule(
 		event.EventType = types.EventTypePause
 		event.Output = s.genPauseOutput(rule)
 		event.Inherited = rule.Operation.Parameters.Inherited
-		event.PauseType = rule.Operation.Parameters.Type
+		event.PauseType = rule.Operation.Parameters.PauseType
 	default:
 		return nil, fmt.Errorf("unknown idle rule id=%q operation type=%q", rule.ID, rule.Operation.Type)
 	}
@@ -396,7 +396,7 @@ func (s *baseService) genPauseOutput(rule idlerule.Rule) string {
 			outputBuilder.WriteRune('.')
 		}
 
-		if rule.Operation.Parameters.Type != "" {
+		if rule.Operation.Parameters.PauseType != "" {
 			if rule.Operation.Parameters.Output == "" {
 				outputBuilder.WriteString(". ")
 			} else {
@@ -404,7 +404,7 @@ func (s *baseService) genPauseOutput(rule idlerule.Rule) string {
 			}
 
 			outputBuilder.WriteString(types.OutputTypePrefix)
-			outputBuilder.WriteString(rule.Operation.Parameters.Type)
+			outputBuilder.WriteString(rule.Operation.Parameters.PauseType)
 			outputBuilder.WriteRune('.')
 		}
 	}

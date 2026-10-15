@@ -75,10 +75,11 @@ type Parameters struct {
 	Tstop          *datetime.CpsTime `json:"tstop" bson:"tstop,omitempty" swaggertype:"integer"`
 	StartOnTrigger *bool             `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
 	Color          string            `json:"color" bson:"color,omitempty"`
-	// Pbehavior and Pause
+	// Pbehavior
 	Type string `json:"type" bson:"type,omitempty" binding:"max=255"`
 	// Pause
-	Inherited bool `json:"inherited" bson:"inherited,omitempty"`
+	Inherited bool   `json:"inherited" bson:"inherited,omitempty"`
+	PauseType string `json:"pause_type" bson:"pause_type,omitempty" binding:"max=255"`
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.

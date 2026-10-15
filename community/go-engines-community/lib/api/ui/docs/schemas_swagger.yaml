@@ -112,6 +112,9 @@ definitions:
       output:
         maxLength: 1000
         type: string
+      pause_type:
+        description: PauseType is used in pause action.
+        type: string
       reason:
         description: Reason is used in pbehavior action.
         type: string
@@ -169,7 +172,7 @@ definitions:
         description: Tstop is used in pbehavior action.
         type: integer
       type:
-        description: Type is used in pbehavior and pause action.
+        description: Type is used in pbehavior action.
         maxLength: 255
         type: string
     type: object
@@ -3811,15 +3814,22 @@ definitions:
     type: object
   git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_ui_idlerule.Parameters:
     properties:
+      color:
+        type: string
       duration:
         allOf:
         - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
+      inherited:
+        description: Pause
+        type: boolean
       name:
         description: Pbehavior
         maxLength: 255
         type: string
       output:
+        type: string
+      pause_type:
         type: string
       reason:
         $ref: '#/definitions/pbehavior.Reason'
@@ -3868,6 +3878,9 @@ definitions:
       output:
         maxLength: 255
         type: string
+      pause_type:
+        maxLength: 255
+        type: string
       reason:
         type: string
       rrule:
@@ -3905,7 +3918,7 @@ definitions:
       tstop:
         type: integer
       type:
-        description: Pbehavior and Pause
+        description: Pbehavior
         maxLength: 255
         type: string
     type: object
@@ -6319,6 +6332,8 @@ definitions:
         $ref: '#/definitions/request.WebhookAuthToken'
       author:
         type: string
+      color:
+        type: string
       declare_ticket:
         $ref: '#/definitions/webhook.DeclareTicket'
       duration:
@@ -6328,6 +6343,7 @@ definitions:
       forward_author:
         type: boolean
       inherited:
+        description: Pause
         type: boolean
       multiple_urls:
         type: boolean
@@ -6335,6 +6351,8 @@ definitions:
         description: Pbehavior
         type: string
       output:
+        type: string
+      pause_type:
         type: string
       reason:
         $ref: '#/definitions/pbehavior.Reason'
@@ -6374,9 +6392,7 @@ definitions:
       tstop:
         type: integer
       type:
-        allOf:
-        - $ref: '#/definitions/pbehavior.Type'
-        description: Pbehavior and Pause
+        $ref: '#/definitions/pbehavior.Type'
     type: object
   scenario.Scenario:
     properties:
