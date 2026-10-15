@@ -128,10 +128,10 @@ export const useEntityStore = defineStore('entity', () => {
 
   const bulkEnable = ({ data } = {}) => request.put(API_ROUTES.bulkEntitiesEnable, data);
   const bulkDisable = ({ data } = {}) => request.put(API_ROUTES.bulkEntitiesDisable, data);
-  const pause = ({ data } = {}) => request.put(API_ROUTES.entityPause, data);
-  const resume = ({ data } = {}) => request.put(API_ROUTES.entityResume, data);
-  const bulkPause = ({ data } = {}) => request.put(API_ROUTES.bulkEntitiesPause, data);
-  const bulkResume = ({ data } = {}) => request.put(API_ROUTES.bulkEntitiesResume, data);
+  const pause = ({ data } = {}) => request.post(API_ROUTES.entityPause, data);
+  const resume = ({ data } = {}) => request.post(API_ROUTES.entityResume, data);
+  const bulkPause = ({ data } = {}) => request.post(API_ROUTES.bulkEntitiesPause, data);
+  const bulkResume = ({ data } = {}) => request.post(API_ROUTES.bulkEntitiesResume, data);
 
   return {
     getListByWidgetId,
